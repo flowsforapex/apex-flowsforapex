@@ -18,4 +18,4 @@ https://knowledgebase.mt-ag.com/q/flowsforapex
 3. Commit your changes in your fork (or in your branch when working with multiple developers on it)
 4. Send a pull request so we can verify and decide on taking over your changes
 
-Important: export your APEX app as ZIP and retain its original IDs!
+Important: export your APEX app as ZIP with retaining the original IDs and then unzip the file into your repository!
