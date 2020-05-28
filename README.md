@@ -10,3 +10,12 @@ https://apex.mt-ag.com/flowsforapex
 Introduction slides can be found here:
 
 https://knowledgebase.mt-ag.com/q/flowsforapex
+
+# How to contribute
+1. Fork the repository apex-flowsforapex to get your own copy
+1. Install the scripts in directories src/ddl and src/plsql in your APEX workspace schema
+2. Configure /src/apex/setenv_and_install.sql und run it to install the application
+3. Commit your changes in your fork (or in your branch when working with multiple developers on it)
+4. Send a pull request so we can verify and decide on taking over your changes
+
+Important: export your APEX app as ZIP and retain its original IDs!
