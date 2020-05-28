@@ -1,4 +1,5 @@
 begin
+  -- change this accordingly
   apex_application_install.set_workspace('TEST2');
   apex_application_install.generate_application_id;
   apex_application_install.generate_offset;
