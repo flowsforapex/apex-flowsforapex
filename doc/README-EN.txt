@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v2.1.0                *
+*            Flows for APEX v2.0.0                *
 *          Installation instructions              *
 *                                                 *
 *                                                 *
@@ -19,9 +19,6 @@ INSTALLING THE APPLICATION
 - When asked to install the supporting objects, select "Yes"
 
 HISTORY
-v2.1.0
-- Updated bpmn.io libraries to 7.0.0
-
 v2.0.0
 - Reworked API package
 - Added demo app
