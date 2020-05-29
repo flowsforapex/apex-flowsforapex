@@ -19,3 +19,5 @@ https://knowledgebase.mt-ag.com/q/flowsforapex
 4. Send a pull request so we can verify and decide on taking over your changes
 
 <b>Important:</b> export your APEX app as ZIP with retaining the original IDs and then unzip the file into your repository!
+
+Communication for this project is done using http://flowsforapex.slack.com. DM me on Twitter (@nielsdb) to get involved.
