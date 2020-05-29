@@ -8,7 +8,7 @@ wwv_flow_api.component_begin (
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>59800345087111703
 ,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
+,p_default_id_offset=>0
 ,p_default_owner=>'FLOWSFORAPEX'
 );
 wwv_flow_api.create_flow(
