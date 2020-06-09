@@ -11,6 +11,10 @@ Introduction <b>slides</b> can be found here:
 
 https://knowledgebase.mt-ag.com/q/flowsforapex
 
+A presentation of Flows for APEX v1 can be found at ODTUG (requires a membership):
+
+https://www.odtug.com/p/do/sd/sid=13259
+
 # How to contribute as a developer to this project
 1. Fork the repository apex-flowsforapex to get your own copy
 1. Install the scripts in directories src/ddl and src/plsql in your APEX workspace schema
