@@ -11,7 +11,7 @@ Introduction <b>slides</b> can be found here:
 
 https://knowledgebase.mt-ag.com/q/flowsforapex
 
-A presentation of Flows for APEX v1 can be found at ODTUG (requires a membership):
+A <b>video</b> of Flows for APEX v1 can be found at ODTUG (requires a membership):
 
 https://www.odtug.com/p/do/sd/sid=13259
 
