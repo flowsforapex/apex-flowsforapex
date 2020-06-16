@@ -1,0 +1,78 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLW_SUBFLOWS" directorySegmentName="seg_0" id="8612A1F8-A638-7728-13FF-CCD1175897EE">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="SFL_PARENT_PROCESS" id="0BF7400B-6FA3-75A5-CE81-FDDCEF6D1DD2">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SFL_ID" id="25C4E287-0B3E-2F05-5132-27045D9F8ECC">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="SFL_STATUS" id="50A5333A-3188-272D-8BA1-33C8076ED30D">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SFL_ROUTE" id="67A34A8A-0112-BCB0-F496-5448B2DFA52A">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SFL_STARTING_OBJECT" id="87C5935A-2CDE-FB19-0DA2-C4D0368C1263">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SFL_CURRENT" id="88AB1AF8-820E-E53D-1BF3-73B8A67092B7">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SFL_LAST_UPDATE" id="CD549765-F9BE-B0A5-5E37-7975EAD53A74">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SFL_PARENT_SUBFLOW" id="E3040F93-8C8B-4BDD-20BD-A5EEAD688CED">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SFL_LAST_COMPLETED" id="F6D52621-8FEB-47BF-B0F3-7C9ED75A5997">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="CON_PARENT_FK" id="06E637C2-AC9C-6A98-1783-900A92878F0E">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="SUBFLOWS_PK" id="9CB66C88-97A8-3DFF-0BB9-9287AFEC4D77">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<logging></logging>
+<segment>2A908853-5B7C-2EBF-CC59-33C89125E0FE</segment>
+<indexSegment>2A908853-5B7C-2EBF-CC59-33C89125E0FE</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev12c>

@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BusinessInfoDesign class="oracle.dbtools.crest.model.businessinfo.BusinessInfoDesign" name="Business Information" id="69EE2984-7D4A-CA68-3076-2BEE01C31641">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:18:17 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<shouldBeOpen>false</shouldBeOpen>
+</BusinessInfoDesign>

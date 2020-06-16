@@ -1,0 +1,76 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_DIAGRAMS" directorySegmentName="seg_0" id="DAB17781-7CF6-C986-730C-7CFF74C3C443">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>A06BED99-BC73-19B0-E50B-3A82969D84E8</segment>
+<tableSpace>1C3CC17A-0916-4DB7-E0B1-37F66ADFF2DB</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="DGRM_NAME" id="2310777B-980E-7FDF-FA4E-45DDF70D37CC">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="DGRM_ID" id="38ED1E66-0980-A096-7D9D-710F9BBED850">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:33:22 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="DGRM_CONTENT" id="E6EC3C0C-7A25-23D4-599B-FB303AFCF096">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="DGRM_UK" id="C4A39D41-B164-EC3D-28CB-7EA56CFF124C">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:29 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>1340AD9A-9B50-5D21-F780-1AFFCCAAC41F</segment>
+<tableSpace>1C3CC17A-0916-4DB7-E0B1-37F66ADFF2DB</tableSpace>
+</IndexProxy>
+</indexProxies>
+<lobStorages>
+<LobStorage class="oracle.dbtools.crest.model.design.storage.oracle.v11g.LobStorageOraclev11g" name="SYS_LOB0000102746C00002$$" id="F85B7276-1A40-1ABE-C944-4C8A684CC2EF">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:30 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<cache>NOCACHE</cache>
+<chunk>8192</chunk>
+<column>DGRM_CONTENT</column>
+<compression>NO</compression>
+<duplication>KEEP_DUPLICATES</duplication>
+<logging>YES</logging>
+<tableSpace>1C3CC17A-0916-4DB7-E0B1-37F66ADFF2DB</tableSpace>
+<lobStorageType>SECUREFILE</lobStorageType>
+</LobStorage>
+</lobStorages>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="DGRM_PK" id="F28C9128-AB12-381F-59A3-2FE5207D6978">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:32:37 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</PrimaryKey>
+</primaryKeys>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="DGRM_UK" id="66810CE1-B903-C25A-533C-04AEE2A109B3">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:29 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>1340AD9A-9B50-5D21-F780-1AFFCCAAC41F</segment>
+<tableSpace>1C3CC17A-0916-4DB7-E0B1-37F66ADFF2DB</tableSpace>
+<existingIndex>C4A39D41-B164-EC3D-28CB-7EA56CFF124C</existingIndex>
+<indexSegment>1340AD9A-9B50-5D21-F780-1AFFCCAAC41F</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev12c>

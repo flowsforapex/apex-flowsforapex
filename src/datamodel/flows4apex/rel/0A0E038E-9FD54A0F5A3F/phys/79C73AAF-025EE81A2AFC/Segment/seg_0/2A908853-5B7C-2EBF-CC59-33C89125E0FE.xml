@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<SegmentOraclev10g class="oracle.dbtools.crest.model.design.storage.oracle.v10g.SegmentOraclev10g" name="Storage2" directorySegmentName="seg_0" id="2A908853-5B7C-2EBF-CC59-33C89125E0FE">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</SegmentOraclev10g>

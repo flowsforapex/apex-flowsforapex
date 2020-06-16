@@ -1,0 +1,160 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="8612A1F8-A638-7728-13FF-CCD1175897EE" name="FLW_SUBFLOWS">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>12BCD86F-E9AC-7FA2-B580-EFF4B41D39BA</importedID>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="SFL_ID" id="25C4E287-0B3E-2F05-5132-27045D9F8ECC">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>3D8ED735-0EE4-48FF-0B37-099CE19F0769</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>BA48F307-6944-84BC-649E-CA606B17D174</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementGenerateAlways>true</autoIncrementGenerateAlways>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementOrder>false</autoIncrementOrder>
+</Column>
+<Column name="SFL_PARENT_SUBFLOW" id="E3040F93-8C8B-4BDD-20BD-A5EEAD688CED">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>CC9698F5-E448-2658-0EAA-FDA88EA4C7FD</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>BA48F307-6944-84BC-649E-CA606B17D174</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFL_PARENT_PROCESS" id="0BF7400B-6FA3-75A5-CE81-FDDCEF6D1DD2">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>1282F876-2EE9-1706-7959-314A609E7963</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>BA48F307-6944-84BC-649E-CA606B17D174</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="C249BD48-6D22-21FD-3111-19241F521949" referredColumn="B152D25D-C6E4-676B-CD1A-3FE9FF4E50FF"/>
+</associations>
+</Column>
+<Column name="SFL_STARTING_OBJECT" id="87C5935A-2CDE-FB19-0DA2-C4D0368C1263">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>96F77C3D-B1CA-A8C8-B92E-28B5A35BDD3C</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>8732CECF-08AF-1F89-6BC9-9DCCD088AD31</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFL_ROUTE" id="67A34A8A-0112-BCB0-F496-5448B2DFA52A">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>4343ECAE-3EB6-950C-2B14-25A5DE6A42AF</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>DC0E176C-817D-A2DF-2A71-809F76729730</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFL_LAST_COMPLETED" id="F6D52621-8FEB-47BF-B0F3-7C9ED75A5997">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>3362BBBF-CFFC-0F46-4BE4-3293E3F3BE66</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>8732CECF-08AF-1F89-6BC9-9DCCD088AD31</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFL_CURRENT" id="88AB1AF8-820E-E53D-1BF3-73B8A67092B7">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>82AB2A0D-6C2C-2A99-A4EF-377CE48459DB</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>8732CECF-08AF-1F89-6BC9-9DCCD088AD31</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFL_STATUS" id="50A5333A-3188-272D-8BA1-33C8076ED30D">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>9FE2F8A6-6F9A-35CA-8100-A7B1739E235F</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>EC381288-6DCF-B053-CCFE-666227F029C5</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFL_LAST_UPDATE" id="CD549765-F9BE-B0A5-5E37-7975EAD53A74">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>A86FD9A8-2E7D-DA92-C313-31BEC8B139BD</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<domain>034E83C5-76FF-EB05-F97E-01200711D1F4</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="9CB66C88-97A8-3DFF-0BB9-9287AFEC4D77" name="SUBFLOWS_PK">
+<sourceDDLFile>flows_object.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>6A873EFB-D476-DE89-7765-61A832E7AB57</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="25C4E287-0B3E-2F05-5132-27045D9F8ECC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="06E637C2-AC9C-6A98-1783-900A92878F0E" name="CON_PARENT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="0BF7400B-6FA3-75A5-CE81-FDDCEF6D1DD2"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
