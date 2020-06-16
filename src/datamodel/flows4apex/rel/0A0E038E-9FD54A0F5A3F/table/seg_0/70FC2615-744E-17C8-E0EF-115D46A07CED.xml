@@ -22,6 +22,9 @@
 <autoIncrementColumn>true</autoIncrementColumn>
 <identityColumn>true</identityColumn>
 <autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
 </Column>
 <Column name="CONN_BPMN_ID" id="5B64ECA5-EF09-76B8-2BAC-1F0087A2789A">
 <sourceConnName>vm_apex201.flows4apex</sourceConnName>

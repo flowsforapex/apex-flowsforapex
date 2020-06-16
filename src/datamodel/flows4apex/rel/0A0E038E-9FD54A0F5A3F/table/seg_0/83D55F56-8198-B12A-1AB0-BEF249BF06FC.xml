@@ -30,22 +30,18 @@
 <autoIncrementCache>20</autoIncrementCache>
 <autoIncrementOrder>false</autoIncrementOrder>
 </Column>
-<Column name="PRCS_DGRM_NAME" id="CC2E6A93-3430-3A00-548B-E3D3D351811C">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOW_PROCESSES</sourceObjSchema>
-<sourceObjName>PRCS_DGRM_NAME</sourceObjName>
+<Column name="PRCS_DGRM_ID" id="2C184F82-301D-D1DD-AF27-100BFD33922B">
 <createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<createdTime>2020-06-16 22:00:31 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>150 CHAR</dataTypeSize>
+<logicalDatatype>LOGDT019</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
 <autoIncrementCycle>false</autoIncrementCycle>
 <associations>
-<colAssociation fkAssociation="E5D778CD-E1C8-4BD2-BBA1-460DA1307C4A" referredColumn="2310777B-980E-7FDF-FA4E-45DDF70D37CC"/>
+<colAssociation fkAssociation="A45FC064-3A9C-8307-E02C-5E3FB762F644" referredColumn="38ED1E66-0980-A096-7D9D-710F9BBED850"/>
 </associations>
 </Column>
 <Column name="PRCS_NAME" id="D208AFEC-02CB-634E-9557-DE30443F1CB1">
@@ -59,8 +55,8 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>150 BYTE</dataTypeSize>
-<ownDataTypeParameters>150 BYTE,,</ownDataTypeParameters>
+<dataTypeSize>150 CHAR</dataTypeSize>
+<ownDataTypeParameters>150 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 <Column name="PRCS_PRCS_ID" id="249FC0F1-7995-51D2-5DA6-83726673249A">
@@ -78,50 +74,6 @@
 <colAssociation fkAssociation="7E84E08E-2A56-12DD-68F0-A2FA98E372DF" referredColumn="93D9275C-C3B5-3575-D1F1-1505D76BF61C"/>
 </associations>
 </Column>
-<Column name="PRCS_CURRENT" id="45A398CF-21BC-52A4-35FC-9331AE6378B6">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOW_PROCESSES</sourceObjSchema>
-<sourceObjName>PRCS_CURRENT</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:28 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>50 BYTE</dataTypeSize>
-<ownDataTypeParameters>50 BYTE,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="PRCS_INIT_DATE" id="E72868C4-B46A-52F3-475F-DC2CCC5CA46C">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOW_PROCESSES</sourceObjSchema>
-<sourceObjName>PRCS_INIT_DATE</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:28 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT007</logicalDatatype>
-<dataTypeSize>7</dataTypeSize>
-<ownDataTypeParameters>7,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="PRCS_LAST_UPDATE" id="662D3F18-6782-AB69-D86E-0DA0FF8222E7">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOW_PROCESSES</sourceObjSchema>
-<sourceObjName>PRCS_LAST_UPDATE</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:28 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT007</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
 <Column name="PRCS_STATUS" id="F026F7A4-D601-437C-515C-F667D0FA9E22">
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:31:21 UTC</createdTime>
@@ -131,6 +83,62 @@
 <logicalDatatype>LOGDT024</logicalDatatype>
 <dataTypeSize>20 CHAR</dataTypeSize>
 <ownDataTypeParameters>20 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="PRCS_CURRENT_OBJ_ID" id="45A398CF-21BC-52A4-35FC-9331AE6378B6">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_PROCESSES</sourceObjSchema>
+<sourceObjName>PRCS_CURRENT</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="B219CB32-470D-D174-DC00-D1AACF2C9CAB" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+</associations>
+</Column>
+<Column name="PRCS_INIT_TS" id="E72868C4-B46A-52F3-475F-DC2CCC5CA46C">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_PROCESSES</sourceObjSchema>
+<sourceObjName>PRCS_INIT_DATE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="PRCS_LAST_UPDATE_TS" id="662D3F18-6782-AB69-D86E-0DA0FF8222E7">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_PROCESSES</sourceObjSchema>
+<sourceObjName>PRCS_LAST_UPDATE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="PRCS_FINISH_TS" id="B339D0D5-291A-0E0A-ADF3-8CCE284391C6">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 22:09:44 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 </columns>
@@ -162,16 +170,6 @@
 <colUsage columnID="93D9275C-C3B5-3575-D1F1-1505D76BF61C"/>
 </indexColumnUsage>
 </ind_PK_UK>
-<ind_PK_UK id="DA58E540-238A-F718-88C4-AC285AED7D7F" name="PRCS_DGRM_FK">
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:29 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<indexState>Foreign Key</indexState>
-<isSurrogateKey>false</isSurrogateKey>
-<indexColumnUsage>
-<colUsage columnID="CC2E6A93-3430-3A00-548B-E3D3D351811C"/>
-</indexColumnUsage>
-</ind_PK_UK>
 <ind_PK_UK id="E5569CE7-A8F1-3D78-FDCE-F428BFA5175C" name="PRCS_PRCS_FK">
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:27:03 UTC</createdTime>
@@ -180,6 +178,26 @@
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
 <colUsage columnID="249FC0F1-7995-51D2-5DA6-83726673249A"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="AD51660E-6ADC-F90D-5EAD-C8AEB9CCE367" name="PRCS_DGRM_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 22:00:31 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2C184F82-301D-D1DD-AF27-100BFD33922B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="8A9A17C9-6F58-BAE0-BF4C-59571177039B" name="PRCS_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 22:11:20 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="45A398CF-21BC-52A4-35FC-9331AE6378B6"/>
 </indexColumnUsage>
 </ind_PK_UK>
 </indexes>

@@ -22,6 +22,7 @@
 <autoIncrementColumn>true</autoIncrementColumn>
 <identityColumn>true</identityColumn>
 <autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementOrder>false</autoIncrementOrder>
 </Column>
 <Column name="DGRM_NAME" id="2310777B-980E-7FDF-FA4E-45DDF70D37CC">
 <sourceConnName>vm_apex201.flows4apex</sourceConnName>
