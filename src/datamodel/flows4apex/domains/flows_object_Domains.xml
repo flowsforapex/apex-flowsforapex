@@ -80,16 +80,5 @@
 <fileName>flows_object_Domains</fileName>
 <logicalDatatype>LOGDT024</logicalDatatype>
 </Domain>
-<Domain class="oracle.dbtools.crest.model.design.Domain" name="VARCHAR_0_0_50 CHAR" id="ED1CFFC7-CF79-11C2-F40E-26E75D0CBB84">
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:21:42 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<avTSortOrder>0</avTSortOrder>
-<dataTypePrecision>0</dataTypePrecision>
-<dataTypeScale>0</dataTypeScale>
-<dataTypeSize>50 CHAR</dataTypeSize>
-<fileName>flows_object_Domains</fileName>
-<logicalDatatype>LOGDT024</logicalDatatype>
-</Domain>
 </domains>
 </DomainFile>
