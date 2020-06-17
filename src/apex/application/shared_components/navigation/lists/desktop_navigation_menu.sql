@@ -12,12 +12,12 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list(
- p_id=>wwv_flow_api.id(13532902167440269587)
+ p_id=>wwv_flow_api.id(13154737356932239191)
 ,p_name=>'Desktop Navigation Menu'
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13533048733145270109)
+ p_id=>wwv_flow_api.id(13154590791227238669)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'Workflow Editor'
 ,p_list_item_link_target=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
@@ -25,7 +25,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13535013157328032351)
+ p_id=>wwv_flow_api.id(13152626367044476427)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'Process Instances'
 ,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.::::'

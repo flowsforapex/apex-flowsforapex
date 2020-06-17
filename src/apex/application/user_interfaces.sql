@@ -1,7 +1,7 @@
 prompt --application/user_interfaces
 begin
 --   Manifest
---     USER INTERFACES: 984337
+--     USER INTERFACES: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_user_interface(
- p_id=>wwv_flow_api.id(13533038870183269920)
+ p_id=>wwv_flow_api.id(13154600654189238858)
 ,p_ui_type_name=>'DESKTOP'
 ,p_display_name=>'Desktop'
 ,p_display_seq=>10
@@ -22,14 +22,14 @@ wwv_flow_api.create_user_interface(
 ,p_home_url=>'f?p=&APP_ID.:1:&SESSION.'
 ,p_login_url=>'f?p=&APP_ID.:LOGIN:&SESSION.'
 ,p_theme_style_by_user_pref=>false
-,p_navigation_list_id=>wwv_flow_api.id(13532902167440269587)
+,p_navigation_list_id=>wwv_flow_api.id(13154737356932239191)
 ,p_navigation_list_position=>'SIDE'
-,p_navigation_list_template_id=>wwv_flow_api.id(13533004133722269820)
+,p_navigation_list_template_id=>wwv_flow_api.id(13154635390650238958)
 ,p_nav_list_template_options=>'#DEFAULT#:js-defaultCollapsed:js-navCollapsed--default:t-TreeNav--styleB'
 ,p_css_file_urls=>'#APP_IMAGES#app-icon.css?version=#APP_VERSION#'
 ,p_nav_bar_type=>'LIST'
-,p_nav_bar_list_id=>wwv_flow_api.id(13533038575256269918)
-,p_nav_bar_list_template_id=>wwv_flow_api.id(13533003751104269818)
+,p_nav_bar_list_id=>wwv_flow_api.id(13154600949116238860)
+,p_nav_bar_list_template_id=>wwv_flow_api.id(13154635773268238960)
 ,p_nav_bar_template_options=>'#DEFAULT#'
 );
 wwv_flow_api.component_end;

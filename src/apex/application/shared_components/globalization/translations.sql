@@ -1,7 +1,7 @@
 prompt --application/shared_components/globalization/translations
 begin
 --   Manifest
---     TRANSLATIONS: 984337
+--     TRANSLATIONS: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'

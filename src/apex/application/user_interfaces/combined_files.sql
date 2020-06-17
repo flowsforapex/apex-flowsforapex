@@ -1,7 +1,7 @@
 prompt --application/user_interfaces/combined_files
 begin
 --   Manifest
---     COMBINED FILES: 984337
+--     COMBINED FILES: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'

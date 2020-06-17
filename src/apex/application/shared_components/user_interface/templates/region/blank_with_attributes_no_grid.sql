@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_plug_template(
- p_id=>wwv_flow_api.id(13532928465764269709)
+ p_id=>wwv_flow_api.id(13154711058608239069)
 ,p_layout=>'TABLE'
 ,p_template=>'<div id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES# class="#REGION_CSS_CLASSES#">#PREVIOUS##BODY##SUB_REGIONS##NEXT#</div>'
 ,p_page_plug_template_name=>'Blank with Attributes (No Grid)'
@@ -25,18 +25,18 @@ wwv_flow_api.create_plug_template(
 ,p_translate_this_template=>'N'
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(40807245836241333)
-,p_plug_template_id=>wwv_flow_api.id(13532928465764269709)
-,p_name=>'Body'
-,p_placeholder=>'BODY'
+ p_id=>wwv_flow_api.id(238893577954016929)
+,p_plug_template_id=>wwv_flow_api.id(13154711058608239069)
+,p_name=>'Sub Regions'
+,p_placeholder=>'SUB_REGIONS'
 ,p_has_grid_support=>false
 ,p_glv_new_row=>true
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(40807764604241333)
-,p_plug_template_id=>wwv_flow_api.id(13532928465764269709)
-,p_name=>'Sub Regions'
-,p_placeholder=>'SUB_REGIONS'
+ p_id=>wwv_flow_api.id(238894096722016929)
+,p_plug_template_id=>wwv_flow_api.id(13154711058608239069)
+,p_name=>'Body'
+,p_placeholder=>'BODY'
 ,p_has_grid_support=>false
 ,p_glv_new_row=>true
 );

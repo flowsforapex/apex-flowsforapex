@@ -1,7 +1,7 @@
 prompt --application/shared_components/navigation/tabs/parent
 begin
 --   Manifest
---     TOP LEVEL TABS: 984337
+--     TOP LEVEL TABS: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'

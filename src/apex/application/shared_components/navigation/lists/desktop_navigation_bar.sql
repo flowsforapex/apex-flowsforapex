@@ -12,12 +12,12 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list(
- p_id=>wwv_flow_api.id(13533038575256269918)
+ p_id=>wwv_flow_api.id(13154600949116238860)
 ,p_name=>'Desktop Navigation Bar'
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13533050176980270130)
+ p_id=>wwv_flow_api.id(13154589347392238648)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'&APP_USER.'
 ,p_list_item_link_target=>'#'
@@ -26,20 +26,20 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13533050729716270130)
+ p_id=>wwv_flow_api.id(13154588794656238648)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'---'
 ,p_list_item_link_target=>'separator'
-,p_parent_list_item_id=>wwv_flow_api.id(13533050176980270130)
+,p_parent_list_item_id=>wwv_flow_api.id(13154589347392238648)
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13533051131753270132)
+ p_id=>wwv_flow_api.id(13154588392619238646)
 ,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'Sign Out'
 ,p_list_item_link_target=>'&LOGOUT_URL.'
 ,p_list_item_icon=>'fa-sign-out'
-,p_parent_list_item_id=>wwv_flow_api.id(13533050176980270130)
+,p_parent_list_item_id=>wwv_flow_api.id(13154589347392238648)
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.component_end;

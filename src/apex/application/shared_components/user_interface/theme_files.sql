@@ -1,7 +1,7 @@
 prompt --application/shared_components/user_interface/theme_files
 begin
 --   Manifest
---     THEME FILES: 984337
+--     THEME FILES: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'

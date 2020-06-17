@@ -1,7 +1,7 @@
 prompt --application/deployment/buildoptions
 begin
 --   Manifest
---     INSTALL BUILD OPTIONS: 984337
+--     INSTALL BUILD OPTIONS: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'

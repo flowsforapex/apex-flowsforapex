@@ -1,7 +1,7 @@
 prompt --application/shared_components/user_interface/templates/popuplov
 begin
 --   Manifest
---     LOV TEMPLATES: 984337
+--     LOV TEMPLATES: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_popup_lov_template(
- p_id=>wwv_flow_api.id(13533017984439269859)
+ p_id=>wwv_flow_api.id(13154621539933238919)
 ,p_page_name=>'winlov'
 ,p_page_title=>'Search Dialog'
 ,p_page_html_head=>wwv_flow_string.join(wwv_flow_t_varchar2(
