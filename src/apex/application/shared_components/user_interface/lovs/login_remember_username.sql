@@ -12,13 +12,13 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list_of_values(
- p_id=>wwv_flow_api.id(13533044003527270063)
+ p_id=>wwv_flow_api.id(13154595520845238715)
 ,p_lov_name=>'LOGIN_REMEMBER_USERNAME'
-,p_lov_query=>'.'||wwv_flow_api.id(13533044003527270063)||'.'
+,p_lov_query=>'.'||wwv_flow_api.id(13154595520845238715)||'.'
 ,p_location=>'STATIC'
 );
 wwv_flow_api.create_static_lov_data(
- p_id=>wwv_flow_api.id(13533044357879270070)
+ p_id=>wwv_flow_api.id(13154595166493238708)
 ,p_lov_disp_sequence=>10
 ,p_lov_disp_value=>'Remember username'
 ,p_lov_return_value=>'Y'

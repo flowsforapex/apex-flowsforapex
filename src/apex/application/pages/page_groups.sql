@@ -1,7 +1,7 @@
 prompt --application/pages/page_groups
 begin
 --   Manifest
---     PAGE GROUPS: 984337
+--     PAGE GROUPS: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_page_group(
- p_id=>wwv_flow_api.id(13533042001919270013)
+ p_id=>wwv_flow_api.id(13154597522453238765)
 ,p_group_name=>'Administration'
 );
 wwv_flow_api.component_end;

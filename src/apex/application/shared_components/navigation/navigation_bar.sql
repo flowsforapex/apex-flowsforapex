@@ -1,7 +1,7 @@
 prompt --application/shared_components/navigation/navigation_bar
 begin
 --   Manifest
---     ICON BAR ITEMS: 984337
+--     ICON BAR ITEMS: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
