@@ -1,6 +1,44 @@
 create or replace package body flow_bpmn_parser_pkg
 as
+
+  -- Standard Data Types to use
   subtype t_vc50  is varchar2(50 char);
+  subtype t_vc200 is varchar2(200 char);
+
+  -- Types for temporary storage of parsing result
+  type t_objt_rec is
+    record
+    (
+      objt_bpmn_id        t_vc50
+    , objt_name           t_vc200
+    , objt_type           t_vc50
+    , objt_tag_name       t_vc50
+    , objt_parent_bpmn_id t_vc50
+    );
+  type t_objt_tab is table of t_objt_rec;
+
+  type t_conn_rec is
+    record
+    (
+      conn_bpmn_id     t_vc50
+    , conn_name        t_vc200
+    , conn_src_bpmn_id t_vc50
+    , conn_tgt_bpmn_id t_vc50
+    , conn_type        t_vc50
+    , conn_tag_name    t_vc50
+    );
+  type t_conn_tab is table of t_conn_rec;
+
+  type t_id_lookup_tab is table of number index by t_vc50;
+
+  -- Variables to hold data during parse run
+  -- g_dgrm_id     flow_diagrams.dgrm_id%type; -- Think if we want this as a global
+  g_objects     t_objt_tab;
+  g_connections t_conn_tab;
+
+  -- Let's see if we need this or not
+  g_objt_lookup t_id_lookup_tab;
+
 
   function upload_diagram
   (
@@ -139,15 +177,16 @@ as
             , p_conn_tag_name
             , p_conn_origin
             )
+      returning conn_id into po_conn_id
     ;
   end insert_connection;
 
   procedure parse_steps
   (
-    p_diagram_name in flow_diagrams.dgrm_name%type
-  , p_xml          in xmltype
-  , p_proc_type    in t_vc50
-  , p_proc_id      in t_vc50
+    pi_diagram_name in flow_diagrams.dgrm_id%type
+  , pi_xml          in xmltype
+  , pi_proc_type    in t_vc50
+  , pi_proc_id      in t_vc50
   )
   as
   begin
