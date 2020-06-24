@@ -3,14 +3,8 @@ as
    select prcs.prcs_id
         , prcs.prcs_name
         , prcs.prcs_dgrm_name
-        , case
-          when prcs.prcs_current is not null
-          then
-            objt.objt_name
-          when prcs.prcs_current is null
-          then
-            'n.a.'
-          end as prcs_current
+        , prcs.prcs_main_subflow
+        , prcs.prcs_status
         , prcs.prcs_init_date
         , prcs.prcs_last_update
         , null  as start_link

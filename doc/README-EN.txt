@@ -20,6 +20,13 @@ INSTALLING THE APPLICATION
 - Optionally, you can now import the demo app in the same way
 
 HISTORY
+v4.0.0
+- Support for subprocesses (n levels deep)
+- Support for Parallel Gateways and parallel flows, including waiting to merge
+- New Subflow architecture to support Parallel Gateways, Sub Processes
+- Process viewer now shows all present and completed steps. 
+
+
 v3.0.0
 - XML parsing now done using PL/SQL only
 - Upgraded all bpmn.io libraries to 7.2.0
