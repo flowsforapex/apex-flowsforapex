@@ -1,19 +1,19 @@
 prompt --application/create_application
 begin
 --   Manifest
---     FLOW: 480340
+--     FLOW: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>59800345087111703
-,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
-,p_default_owner=>'FLOWSFORAPEX'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>984337
+,p_default_id_offset=>0
+,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_flow(
  p_id=>wwv_flow.g_flow_id
-,p_owner=>nvl(wwv_flow_application_install.get_schema,'FLOWSFORAPEX')
+,p_owner=>nvl(wwv_flow_application_install.get_schema,'MT_NDBRUIJN')
 ,p_name=>nvl(wwv_flow_application_install.get_application_name,'Flows for APEX')
 ,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'FLOWSFORAPEX')
 ,p_page_view_logging=>'YES'
@@ -23,7 +23,6 @@ wwv_flow_api.create_flow(
 ,p_compatibility_mode=>'19.2'
 ,p_flow_language=>'en'
 ,p_flow_language_derived_from=>'FLOW_PRIMARY_LANGUAGE'
-,p_allow_feedback_yn=>'Y'
 ,p_date_format=>'DD-MON-YYYY'
 ,p_timestamp_format=>'DS'
 ,p_timestamp_tz_format=>'DS'
@@ -31,13 +30,13 @@ wwv_flow_api.create_flow(
 ,p_flow_image_prefix => nvl(wwv_flow_application_install.get_image_prefix,'')
 ,p_documentation_banner=>'Application created from create application wizard 2020.01.31.'
 ,p_authentication=>'PLUGIN'
-,p_authentication_id=>wwv_flow_api.id(13652304759320366066)
+,p_authentication_id=>wwv_flow_api.id(13154738174097239207)
 ,p_application_tab_set=>1
 ,p_logo_type=>'T'
 ,p_logo_text=>'Flows for APEX'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Release 2.0'
+,p_flow_version=>'Release 3.0'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -50,9 +49,9 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Workflow'
 ,p_last_updated_by=>'NDBRUIJN'
-,p_last_upd_yyyymmddhh24miss=>'20200528112405'
+,p_last_upd_yyyymmddhh24miss=>'20200617133140'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
-,p_files_version=>8
+,p_files_version=>10
 ,p_ui_type_name => null
 );
 wwv_flow_api.component_end;

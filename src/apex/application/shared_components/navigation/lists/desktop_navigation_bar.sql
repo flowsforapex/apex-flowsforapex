@@ -6,18 +6,18 @@ begin
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>59800345087111703
-,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
-,p_default_owner=>'FLOWSFORAPEX'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>984337
+,p_default_id_offset=>0
+,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list(
- p_id=>wwv_flow_api.id(13652441984301366413)
+ p_id=>wwv_flow_api.id(13154600949116238860)
 ,p_name=>'Desktop Navigation Bar'
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13652453586025366625)
+ p_id=>wwv_flow_api.id(13154589347392238648)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'&APP_USER.'
 ,p_list_item_link_target=>'#'
@@ -26,20 +26,20 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13652454138761366625)
+ p_id=>wwv_flow_api.id(13154588794656238648)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'---'
 ,p_list_item_link_target=>'separator'
-,p_parent_list_item_id=>wwv_flow_api.id(13652453586025366625)
+,p_parent_list_item_id=>wwv_flow_api.id(13154589347392238648)
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13652454540798366627)
+ p_id=>wwv_flow_api.id(13154588392619238646)
 ,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'Sign Out'
 ,p_list_item_link_target=>'&LOGOUT_URL.'
 ,p_list_item_icon=>'fa-sign-out'
-,p_parent_list_item_id=>wwv_flow_api.id(13652453586025366625)
+,p_parent_list_item_id=>wwv_flow_api.id(13154589347392238648)
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.component_end;

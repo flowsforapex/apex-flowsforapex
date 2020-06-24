@@ -6,13 +6,13 @@ begin
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>59800345087111703
-,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
-,p_default_owner=>'FLOWSFORAPEX'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>984337
+,p_default_id_offset=>0
+,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_template(
- p_id=>wwv_flow_api.id(13652317211151366161)
+ p_id=>wwv_flow_api.id(13154725722266239112)
 ,p_theme_id=>42
 ,p_name=>'Modal Dialog'
 ,p_internal_name=>'MODAL_DIALOG'
@@ -143,29 +143,29 @@ wwv_flow_api.create_template(
 ,p_reference_id=>2098960803539086924
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(160180759969337815)
-,p_page_template_id=>wwv_flow_api.id(13652317211151366161)
-,p_name=>'Content Body'
-,p_placeholder=>'BODY'
-,p_has_grid_support=>true
+ p_id=>wwv_flow_api.id(238923023292016941)
+,p_page_template_id=>wwv_flow_api.id(13154725722266239112)
+,p_name=>'Dialog Footer'
+,p_placeholder=>'REGION_POSITION_03'
+,p_has_grid_support=>false
 ,p_glv_new_row=>true
-,p_max_fixed_grid_columns=>12
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(160181302914337816)
-,p_page_template_id=>wwv_flow_api.id(13652317211151366161)
+ p_id=>wwv_flow_api.id(238923448689016941)
+,p_page_template_id=>wwv_flow_api.id(13154725722266239112)
 ,p_name=>'Dialog Header'
 ,p_placeholder=>'REGION_POSITION_01'
 ,p_has_grid_support=>false
 ,p_glv_new_row=>true
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(160181728311337816)
-,p_page_template_id=>wwv_flow_api.id(13652317211151366161)
-,p_name=>'Dialog Footer'
-,p_placeholder=>'REGION_POSITION_03'
-,p_has_grid_support=>false
+ p_id=>wwv_flow_api.id(238923991634016942)
+,p_page_template_id=>wwv_flow_api.id(13154725722266239112)
+,p_name=>'Content Body'
+,p_placeholder=>'BODY'
+,p_has_grid_support=>true
 ,p_glv_new_row=>true
+,p_max_fixed_grid_columns=>12
 );
 wwv_flow_api.component_end;
 end;

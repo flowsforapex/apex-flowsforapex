@@ -6,13 +6,13 @@ begin
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>59800345087111703
-,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
-,p_default_owner=>'FLOWSFORAPEX'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>984337
+,p_default_id_offset=>0
+,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_shortcut(
- p_id=>wwv_flow_api.id(13652445239516366502)
+ p_id=>wwv_flow_api.id(13154597693901238771)
 ,p_shortcut_name=>'DELETE_CONFIRM_MSG'
 ,p_shortcut_type=>'TEXT_ESCAPE_JS'
 ,p_shortcut=>'Would you like to perform this delete action?'

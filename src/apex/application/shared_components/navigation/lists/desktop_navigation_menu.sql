@@ -6,18 +6,18 @@ begin
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>59800345087111703
-,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
-,p_default_owner=>'FLOWSFORAPEX'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>984337
+,p_default_id_offset=>0
+,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list(
- p_id=>wwv_flow_api.id(13652305576485366082)
+ p_id=>wwv_flow_api.id(13154737356932239191)
 ,p_name=>'Desktop Navigation Menu'
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13652452142190366604)
+ p_id=>wwv_flow_api.id(13154590791227238669)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'Workflow Editor'
 ,p_list_item_link_target=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
@@ -25,7 +25,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(13654416566373128846)
+ p_id=>wwv_flow_api.id(13152626367044476427)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'Process Instances'
 ,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.::::'

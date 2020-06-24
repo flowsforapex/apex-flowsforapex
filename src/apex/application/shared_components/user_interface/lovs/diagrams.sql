@@ -6,21 +6,26 @@ begin
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>59800345087111703
-,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
-,p_default_owner=>'FLOWSFORAPEX'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>984337
+,p_default_id_offset=>0
+,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list_of_values(
- p_id=>wwv_flow_api.id(146803569295347214)
+ p_id=>wwv_flow_api.id(229100460972389341)
 ,p_lov_name=>'DIAGRAMS'
-,p_source_type=>'TABLE'
+,p_lov_query=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'  select drgm.r',
+'       , drgm.d',
+'    from flow_r_drgm_vw drgm',
+'       ;'))
+,p_source_type=>'SQL'
 ,p_location=>'LOCAL'
-,p_query_table=>'DIAGRAMS'
-,p_return_column_name=>'DGM_NAME'
-,p_display_column_name=>'DGM_NAME'
+,p_query_table=>'FLOW_DIAGRAMS'
+,p_return_column_name=>'R'
+,p_display_column_name=>'D'
 ,p_group_sort_direction=>'ASC'
-,p_default_sort_column_name=>'DGM_NAME'
+,p_default_sort_column_name=>'D'
 ,p_default_sort_direction=>'ASC'
 );
 wwv_flow_api.component_end;

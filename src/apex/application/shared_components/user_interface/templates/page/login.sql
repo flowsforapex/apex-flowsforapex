@@ -6,13 +6,13 @@ begin
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>59800345087111703
-,p_default_application_id=>480340
-,p_default_id_offset=>13603073842510480015
-,p_default_owner=>'FLOWSFORAPEX'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>984337
+,p_default_id_offset=>0
+,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_template(
- p_id=>wwv_flow_api.id(13652311809568366147)
+ p_id=>wwv_flow_api.id(13154731123849239126)
 ,p_theme_id=>42
 ,p_name=>'Login'
 ,p_internal_name=>'LOGIN'
@@ -137,29 +137,29 @@ wwv_flow_api.create_template(
 ,p_reference_id=>2099711150063350616
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(160159727402337809)
-,p_page_template_id=>wwv_flow_api.id(13652311809568366147)
-,p_name=>'Content Body'
-,p_placeholder=>'BODY'
-,p_has_grid_support=>true
+ p_id=>wwv_flow_api.id(238943949164016948)
+,p_page_template_id=>wwv_flow_api.id(13154731123849239126)
+,p_name=>'Body Footer'
+,p_placeholder=>'REGION_POSITION_02'
+,p_has_grid_support=>false
 ,p_glv_new_row=>true
-,p_max_fixed_grid_columns=>12
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(160160236605337809)
-,p_page_template_id=>wwv_flow_api.id(13652311809568366147)
+ p_id=>wwv_flow_api.id(238944514998016948)
+,p_page_template_id=>wwv_flow_api.id(13154731123849239126)
 ,p_name=>'Body Header'
 ,p_placeholder=>'REGION_POSITION_01'
 ,p_has_grid_support=>false
 ,p_glv_new_row=>true
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(160160802439337809)
-,p_page_template_id=>wwv_flow_api.id(13652311809568366147)
-,p_name=>'Body Footer'
-,p_placeholder=>'REGION_POSITION_02'
-,p_has_grid_support=>false
+ p_id=>wwv_flow_api.id(238945024201016948)
+,p_page_template_id=>wwv_flow_api.id(13154731123849239126)
+,p_name=>'Content Body'
+,p_placeholder=>'BODY'
+,p_has_grid_support=>true
 ,p_glv_new_row=>true
+,p_max_fixed_grid_columns=>12
 );
 wwv_flow_api.component_end;
 end;
