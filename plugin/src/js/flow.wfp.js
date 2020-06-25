@@ -5,7 +5,8 @@
   $.widget( "flow.wfp", {
     options: {
       ajaxIdentifier: null,
-      itemsToSubmit: null
+      itemsToSubmit: null,
+      
     },
     _create: function() {
       this._defaultXml =
@@ -26,39 +27,49 @@
         refresh: () => { this.refresh(); },
         reset: () => { this.reset(); },
         loadDiagram: () => { this.loadDiagram(); },
+        addMarker: () => { this.addMArker(); },
         widgetName: "wfp",
         type: "flow.wfp"
       });
     },
-    loadDiagram: function() {
-      var me = this;
-      var bpmnViewer$ = me.bpmnViewer$;
-      bpmnViewer$.importXML( this.diagram || this._defaultXml, function( err ) {
-        if ( !err ) {
-          apex.debug.trace( "XML imported." );
-          var canvas = bpmnViewer$.get( "canvas" );
-          canvas.zoom( "fit-viewport" );
-          try {
-            canvas.addMarker( me.current, "highlight" );
-          } catch (e) {
-            apex.debug.warn( "Adding Marker failed.", e );
-          }
-        } else {
-          apex.debug.error( "Loading Diagram failed.", err, this.diagram );
-        }
-      });
+    loadDiagram: async function() {
+//      var me = this;
+      const bpmnViewer$ = this.bpmnViewer$;
+      try {
+        const result = await bpmnViewer$.importXML( this.diagram || this._defaultXml );
+        const { warnings } = result;
+        apex.debug.warn( "Warnings during XML Import", warnings );
+
+        this.zoom( "fit-viewport" );
+        this.addMarkers( this.current, "highlight" );
+      } catch (err) {
+        apex.debug.error( "Loading Diagram failed.", err, this.diagram );
+      }
+    },
+    addMarkers: function( markers, markerClass ) {
+      let canvas = this.bpmnViewer$.get( "canvas" );
+      if ( Array.isArray( markers ) ) {
+        markers.forEach( currentMarker => {
+          canvas.addMarker( currentMarker, markerClass );
+        });
+      } else {
+        canvas.addMarker( markers, markerClass );
+      }
+    },
+    zoom: function( zoomOption ) {
+      this.bpmnViewer$.get( "canvas" ).zoom( zoomOption );
     },
     refresh: function() {
       apex.debug.info( "Enter Refresh", this.options );
       apex.debug.info( "Test Selector...", $( this.options.itemsToSubmit, apex.gPageContext$ ) );
       apex.server.plugin( this.options.ajaxIdentifier, {
-        pageItems: '#' + this.options.itemsToSubmit
+        pageItems: $( this.options.itemsToSubmit, apex.gPageContext$ )
       }, {
         refreshObject: "#" + this.canvasId,
         loadingIndicator: "#" + this.canvasId
       }).then( pData => {
-        this.diagram = pData.diagram;
-        this.current = pData.current;
+        this.diagram = pData.data.diagram;
+        this.current = pData.data.current;
         this.loadDiagram();
       });
     },
