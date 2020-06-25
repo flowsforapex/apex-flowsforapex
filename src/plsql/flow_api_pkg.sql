@@ -8,29 +8,42 @@ as
   ) return number;
   
   function next_step_exists
-  ( 
-    p_process_id in flow_processes.prcs_id%type
+  ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean;
-  
+
+  function next_step_exists_yn
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return varchar2;
+
   function next_multistep_exists
-  ( 
-    p_process_id in flow_processes.prcs_id%type
+  ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean;
-  
+
+  function next_multistep_exists_yn
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return varchar2;
+    
+  function get_current_progress -- creates the markings for the bpmn viewer to show current progress 
+  ( 
+    p_process_id in flow_processes.prcs_id%type 
+  ) return varchar2;
+
   procedure flow_start
   (
     p_process_id in flow_processes.prcs_id%type
   );
   
-  procedure subflow_next_branch
+  procedure flow_next_branch
   ( p_process_id  in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_branch_name in varchar2
   );
     
-  procedure subflow_next_step
+  procedure flow_next_step
   (
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -338,7 +351,8 @@ exception
 end subflow_complete;
 
   function next_step_exists -- not using this now.  Needs checking. remove PROCESS
-  ( p_process_id in number
+  ( p_process_id in flow_processes.prcs_id%type
+  ,  p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean
   is
     l_next_count number;
@@ -378,11 +392,30 @@ end subflow_complete;
       raise;
   end next_step_exists;
 
-function next_multistep_exists -- note I've changed the return type to varchar2 
+  function next_step_exists_yn 
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return varchar2
+  is
+      l_ret boolean;
+  begin
+      l_ret := next_step_exists
+              ( p_process_id => p_process_id
+              , p_subflow_id => p_subflow_id
+              );
+      if l_ret = true
+      then
+          return 'y';
+      else 
+          return 'n';
+      end if;
+  end;
+
+function next_multistep_exists 
 ( p_process_id in flow_processes.prcs_id%type
 , p_subflow_id in flow_subflows.sbfl_id%type
-) return varchar2
--- returns 'true' if next step requires a choice of direction (i.e., has a tag of
+) return boolean
+-- returns true if next step requires a choice of direction (i.e., has a tag of
 -- - an Opening Exclusive Gateway
 -- - an Opening Optional Gateway
 is
@@ -405,18 +438,37 @@ begin
     
       if l_next_count > 1
       then
-        return 'true';
+        return true;
       else
-        return 'false';
+        return false;
       end if;
   else
-    return 'false';
+    return false;
   end if;
 exception
   when others
   then
     raise;
 end next_multistep_exists;
+
+function next_multistep_exists_yn 
+( p_process_id in flow_processes.prcs_id%type
+, p_subflow_id in flow_subflows.sbfl_id%type
+) return varchar2
+is
+    l_ret boolean;
+begin
+    l_ret := next_multistep_exists
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            );
+    if l_ret = true
+    then
+        return 'y';
+    else 
+        return 'n';
+    end if;
+end;
 
 function get_current_progress -- creates the markings for the bpmn viewer to show current progress
 ( p_process_id in flow_processes.prcs_id%type
@@ -536,7 +588,7 @@ begin
     , p_last_completed => null
   );
   -- step into first step
-  subflow_next_step 
+  flow_next_step 
         (p_process_id => p_process_id
         ,p_subflow_id => l_main_subflow_id
         ,p_forward_route => null
@@ -557,7 +609,7 @@ exception
     raise;
 end flow_start;
 
-procedure subflow_next_step
+procedure flow_next_step
 ( p_process_id in flow_processes.prcs_id%type
 , p_subflow_id in flow_subflows.sbfl_id%type
 , p_forward_route in flow_connections.conn_id%type
@@ -582,7 +634,7 @@ is
   l_num_unfinished_subflows    number;
   l_gateway_forward_status varchar2(10);
 begin
-  apex_debug.message(p_message => 'Begin subflow_next_step', p_level => 3) ;
+  apex_debug.message(p_message => 'Begin flow_next_step', p_level => 3) ;
   l_dgrm_name:= get_dgrm_name( p_process_id => p_process_id);
   -- Get current object and current subflow info
   select sbfl.sbfl_current
@@ -678,7 +730,7 @@ begin
             apex_debug.message(p_message => 'Next Step is Sub-Process End '||l_conn_target_ref, p_level => 4) ;
        
             -- return parent flow to running & do next step
-            subflow_next_step 
+            flow_next_step 
                 ( p_process_id => p_process_id
                 , p_subflow_id => l_sbfl_id_par
                 , p_forward_route => null
@@ -798,7 +850,7 @@ begin
                           , p_last_completed =>  l_conn_target_ref        
                           );
                       -- step into first step on the new path
-                      subflow_next_step 
+                      flow_next_step 
                           (p_process_id => p_process_id
                           ,p_subflow_id => l_sbfl_id_sub
                           ,p_forward_route => new_path.route
@@ -837,7 +889,7 @@ begin
                     and sbfl.sbfl_parent_process = p_process_id
                       ;
                 -- step into first step on the new path
-                subflow_next_step 
+                flow_next_step 
                           (p_process_id => p_process_id
                           ,p_subflow_id => l_sbfl_id
                           ,p_forward_route => null
@@ -880,7 +932,7 @@ begin
                 , p_last_completed => l_sbfl_last_completed -- previous activity on parent proc
                 );
         -- step into sub_process
-        subflow_next_step 
+        flow_next_step 
               (p_process_id => p_process_id
               ,p_subflow_id => l_sbfl_id_sub
               ,p_forward_route => null
@@ -926,10 +978,10 @@ exception
   when others
   then
     raise;
-end subflow_next_step;
+end flow_next_step;
 
 
-procedure subflow_next_branch
+procedure flow_next_branch
 ( p_process_id  in flow_processes.prcs_id%type
 , p_subflow_id in flow_subflows.sbfl_id%type
 , p_branch_name in varchar2
@@ -941,7 +993,7 @@ is
   l_current_tag_name    flow_objects.objt_tag_name%type;
   l_new_subflow         flow_subflows.sbfl_id%type;
 begin
-  apex_debug.message(p_message => 'Begin subflow_next_branch', p_level => 3) ;
+  apex_debug.message(p_message => 'Begin flow_next_branch', p_level => 3) ;
   -- get diagram name and current state
   select prcs.prcs_dgrm_name
        , sbfl.sbfl_current
@@ -980,7 +1032,7 @@ begin
             and conn.conn_dgrm_name = l_dgrm_name
             and conn.conn_id = p_branch_name
                 ;
-            -- possibly change this to call subflow_next_step?
+            -- possibly change this to call flow_next_step?
             update flow_subflows sbfl
             set   sbfl.sbfl_current = l_conn_target_ref
                 , sbfl.sbfl_last_completed = l_sbfl_current
@@ -1043,7 +1095,7 @@ exception
   when others
   then
     raise;
-end subflow_next_branch;
+end flow_next_branch;
 
 procedure flow_reset
 ( p_process_id in flow_processes.prcs_id%type
