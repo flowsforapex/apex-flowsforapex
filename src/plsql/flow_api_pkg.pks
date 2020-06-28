@@ -5,8 +5,14 @@ as
   ( 
     p_diagram_name in flow_diagrams.dgrm_name%type
   , p_process_name in flow_processes.prcs_name%type default null
-  ) return number;
-  
+  ) return flow_processes.prcs_id%type;
+
+  function flow_create
+  (
+    p_diagram_id   in flow_diagrams.dgrm_id%type
+  , p_process_name in flow_processes.prcs_name%type default null
+  ) return flow_processes.prcs_id%type;
+
   function next_step_exists
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
