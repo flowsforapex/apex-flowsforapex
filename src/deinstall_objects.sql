@@ -16,6 +16,12 @@ drop view "FLOW_P0010_2_VW"
 drop view "FLOW_P0010_3_VW"
 /
 
+drop table "FLOW_SUBFLOW_LOG"
+/
+
+drop table "FLOW_SUBFLOWS"
+/
+
 drop table "FLOW_CONNECTIONS"
 /
 
