@@ -22,8 +22,6 @@
       this.bpmnViewer$ = new BpmnJS({ container: '#' + this.canvasId });
 //      this.eventBus$   = this.bpmnViewer$.get('eventBus');
 //      this.eventBus$.on( 'element.click', (e) => { alert( "Clicked on " + e.element.id ); } );
-      //this.refresh();
-      //this.diagram     = this._defaultXML;
       region.create( this.regionId, {
         widget: () => { return this.element; },
         refresh: () => { this.refresh(); },
