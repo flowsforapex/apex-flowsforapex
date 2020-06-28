@@ -3,7 +3,7 @@
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:18:18 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
-<shouldBeOpen>false</shouldBeOpen>
+<shouldBeOpen>true</shouldBeOpen>
 <selectedRDBMSSite>79C73AAF-E1A7-E669-7DF0-025EE81A2AFC</selectedRDBMSSite>
 <importConnectionStamps>
 <importConnectionStamp class="oracle.dbtools.crest.imports.DBConnectionStamp">
@@ -16,6 +16,21 @@
 <importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
 <fileName>flows_object.sql</fileName>
 <pathName>/Users/moklein/Downloads</pathName>
+<dbType>14</dbType>
+</importDDLFileStamp>
+<importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
+<fileName>flow_processes.sql</fileName>
+<pathName>/Users/moklein/Documents/git/github/apex-flowsforapex/src/ddl</pathName>
+<dbType>14</dbType>
+</importDDLFileStamp>
+<importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
+<fileName>flow_subflow_log.sql</fileName>
+<pathName>/Users/moklein/Documents/git/github/apex-flowsforapex/src/ddl</pathName>
+<dbType>14</dbType>
+</importDDLFileStamp>
+<importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
+<fileName>flow_subflows.sql</fileName>
+<pathName>/Users/moklein/Documents/git/github/apex-flowsforapex/src/ddl</pathName>
 <dbType>14</dbType>
 </importDDLFileStamp>
 </importDDLFileStamps>

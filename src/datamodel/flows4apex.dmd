@@ -9,5 +9,8 @@
 <designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="1CEC62C2-16E2-E2E4-09C9-4392E1AE83E3">
 <designStoragePath>/flows_object</designStoragePath>
 </designDescr>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="EF0C3BD0-2BF1-0986-26E7-65B41B3FEE10">
+<designStoragePath>/flow_processes</designStoragePath>
+</designDescr>
 </usedDesignStorageDescriptors>
 </OSDM_Design>

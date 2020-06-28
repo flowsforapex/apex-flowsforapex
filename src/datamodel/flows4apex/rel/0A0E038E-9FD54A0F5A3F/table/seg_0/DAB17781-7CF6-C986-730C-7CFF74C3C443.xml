@@ -23,6 +23,7 @@
 <identityColumn>true</identityColumn>
 <autoIncrementCycle>false</autoIncrementCycle>
 <autoIncrementOrder>false</autoIncrementOrder>
+<notNullConstraintName>DGRM_ID_NN</notNullConstraintName>
 </Column>
 <Column name="DGRM_NAME" id="2310777B-980E-7FDF-FA4E-45DDF70D37CC">
 <sourceConnName>vm_apex201.flows4apex</sourceConnName>
@@ -37,6 +38,7 @@
 <dataTypeSize>150 CHAR</dataTypeSize>
 <ownDataTypeParameters>150 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
+<notNullConstraintName>DGRM_NAME_NN</notNullConstraintName>
 </Column>
 <Column name="DGRM_CONTENT" id="E6EC3C0C-7A25-23D4-599B-FB303AFCF096">
 <sourceConnName>vm_apex201.flows4apex</sourceConnName>
@@ -79,7 +81,7 @@
 <colUsage columnID="2310777B-980E-7FDF-FA4E-45DDF70D37CC"/>
 </indexColumnUsage>
 </ind_PK_UK>
-<ind_PK_UK id="C4A39D41-B164-EC3D-28CB-7EA56CFF124C" name="DGRM_UK">
+<ind_PK_UK id="C4A39D41-B164-EC3D-28CB-7EA56CFF124C" name="DGRM_NAME_IX">
 <sourceConnName>vm_apex201.flows4apex</sourceConnName>
 <sourceObjSchema>FLOWS4APEX</sourceObjSchema>
 <sourceObjName>DGRM_UK</sourceObjName>
