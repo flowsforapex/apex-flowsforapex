@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_plugin(
- p_id=>wwv_flow_api.id(22916634747945578376)
+ p_id=>wwv_flow_api.id(3771004776426930402)
 ,p_plugin_type=>'REGION TYPE'
 ,p_name=>'COM.MTAG.AS.WFP.REGION'
 ,p_display_name=>'Display BPMN.IO workflow'
@@ -45,8 +45,8 @@ wwv_flow_api.create_plugin(
 ,p_files_version=>2
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(24501082917843842154)
-,p_plugin_id=>wwv_flow_api.id(22916634747945578376)
+ p_id=>wwv_flow_api.id(2186556606528666624)
+,p_plugin_id=>wwv_flow_api.id(3771004776426930402)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -56,8 +56,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_translatable=>false
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(24509249140689107029)
-,p_plugin_id=>wwv_flow_api.id(22916634747945578376)
+ p_id=>wwv_flow_api.id(2178390383683401749)
+,p_plugin_id=>wwv_flow_api.id(3771004776426930402)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
@@ -67,8 +67,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_translatable=>false
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(24509445320875108659)
-,p_plugin_id=>wwv_flow_api.id(22916634747945578376)
+ p_id=>wwv_flow_api.id(2178194203497400119)
+,p_plugin_id=>wwv_flow_api.id(3771004776426930402)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
@@ -78,8 +78,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_translatable=>false
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(24509451547871110057)
-,p_plugin_id=>wwv_flow_api.id(22916634747945578376)
+ p_id=>wwv_flow_api.id(2178187976501398721)
+,p_plugin_id=>wwv_flow_api.id(3771004776426930402)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>40

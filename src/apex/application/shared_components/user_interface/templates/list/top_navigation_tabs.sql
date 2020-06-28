@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list_template(
- p_id=>wwv_flow_api.id(13533009748363269826)
+ p_id=>wwv_flow_api.id(13154629776009238952)
 ,p_list_template_current=>'<li class="t-NavTabs-item #A03# is-active" id="#A01#"><a href="#LINK#" class="t-NavTabs-link #A04# " title="#TEXT_ESC_SC#"><span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true"></span><span class="t-NavTabs-label">#TEXT_ESC_SC#</span><span class'
 ||'="t-NavTabs-badge #A05#">#A02#</span></a></li>'
 ,p_list_template_noncurrent=>'<li class="t-NavTabs-item #A03#" id="#A01#"><a href="#LINK#" class="t-NavTabs-link #A04# " title="#TEXT_ESC_SC#"><span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true"></span><span class="t-NavTabs-label">#TEXT_ESC_SC#</span><span class="t-NavTab'

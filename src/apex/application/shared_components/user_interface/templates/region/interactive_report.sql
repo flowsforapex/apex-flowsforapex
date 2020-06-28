@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_plug_template(
- p_id=>wwv_flow_api.id(13532953799140269737)
+ p_id=>wwv_flow_api.id(13154685725232239041)
 ,p_layout=>'TABLE'
 ,p_template=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES# class="t-IRR-region #REGION_CSS_CLASSES#">',

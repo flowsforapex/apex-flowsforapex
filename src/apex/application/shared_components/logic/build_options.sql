@@ -1,7 +1,7 @@
 prompt --application/shared_components/logic/build_options
 begin
 --   Manifest
---     BUILD OPTIONS: 984337
+--     BUILD OPTIONS: 100
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_build_option(
- p_id=>wwv_flow_api.id(37400304990131006)
+ p_id=>wwv_flow_api.id(239100605712269628)
 ,p_build_option_name=>'Exclude'
 ,p_build_option_status=>'EXCLUDE'
 );

@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_button_templates(
- p_id=>wwv_flow_api.id(13533016365938269846)
+ p_id=>wwv_flow_api.id(13154623158434238932)
 ,p_template_name=>'Text'
 ,p_internal_name=>'TEXT'
 ,p_template=>'<button onclick="#JAVASCRIPT#" class="t-Button #BUTTON_CSS_CLASSES#" type="button" #BUTTON_ATTRIBUTES# id="#BUTTON_ID#"><span class="t-Button-label">#LABEL#</span></button>'

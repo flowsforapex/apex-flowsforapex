@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_plug_template(
- p_id=>wwv_flow_api.id(13532924626209269684)
+ p_id=>wwv_flow_api.id(13154714898163239094)
 ,p_layout=>'TABLE'
 ,p_template=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div class="t-Alert #REGION_CSS_CLASSES#" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>',
@@ -44,8 +44,8 @@ wwv_flow_api.create_plug_template(
 ,p_template_comment=>'Red Theme'
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(40798466004241330)
-,p_plug_template_id=>wwv_flow_api.id(13532924626209269684)
+ p_id=>wwv_flow_api.id(238902876554016932)
+,p_plug_template_id=>wwv_flow_api.id(13154714898163239094)
 ,p_name=>'Region Body'
 ,p_placeholder=>'BODY'
 ,p_has_grid_support=>true

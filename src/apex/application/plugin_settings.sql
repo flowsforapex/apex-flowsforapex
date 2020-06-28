@@ -9,19 +9,31 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_plugin_setting(
- p_id=>wwv_flow_api.id(13532899378505269555)
+ p_id=>wwv_flow_api.id(13154738440343239216)
 ,p_plugin_type=>'REGION TYPE'
-,p_plugin=>'NATIVE_DISPLAY_SELECTOR'
+,p_plugin=>'NATIVE_IR'
+,p_attribute_01=>'IG'
+);
+wwv_flow_api.create_plugin_setting(
+ p_id=>wwv_flow_api.id(13154738707737239216)
+,p_plugin_type=>'ITEM TYPE'
+,p_plugin=>'NATIVE_RICH_TEXT_EDITOR'
 ,p_attribute_01=>'Y'
 );
 wwv_flow_api.create_plugin_setting(
- p_id=>wwv_flow_api.id(13532899541975269560)
+ p_id=>wwv_flow_api.id(13154739087184239216)
 ,p_plugin_type=>'ITEM TYPE'
-,p_plugin=>'NATIVE_COLOR_PICKER'
-,p_attribute_01=>'modern'
+,p_plugin=>'NATIVE_STAR_RATING'
+,p_attribute_01=>'fa-star'
+,p_attribute_04=>'#VALUE#'
 );
 wwv_flow_api.create_plugin_setting(
- p_id=>wwv_flow_api.id(13532899893134269560)
+ p_id=>wwv_flow_api.id(13154739363657239216)
+,p_plugin_type=>'REGION TYPE'
+,p_plugin=>'NATIVE_CSS_CALENDAR'
+);
+wwv_flow_api.create_plugin_setting(
+ p_id=>wwv_flow_api.id(13154739631238239218)
 ,p_plugin_type=>'ITEM TYPE'
 ,p_plugin=>'NATIVE_YES_NO'
 ,p_attribute_01=>'Y'
@@ -29,28 +41,16 @@ wwv_flow_api.create_plugin_setting(
 ,p_attribute_05=>'SWITCH_CB'
 );
 wwv_flow_api.create_plugin_setting(
- p_id=>wwv_flow_api.id(13532900160715269562)
+ p_id=>wwv_flow_api.id(13154739982397239218)
+,p_plugin_type=>'ITEM TYPE'
+,p_plugin=>'NATIVE_COLOR_PICKER'
+,p_attribute_01=>'modern'
+);
+wwv_flow_api.create_plugin_setting(
+ p_id=>wwv_flow_api.id(13154740145867239223)
 ,p_plugin_type=>'REGION TYPE'
-,p_plugin=>'NATIVE_CSS_CALENDAR'
-);
-wwv_flow_api.create_plugin_setting(
- p_id=>wwv_flow_api.id(13532900437188269562)
-,p_plugin_type=>'ITEM TYPE'
-,p_plugin=>'NATIVE_STAR_RATING'
-,p_attribute_01=>'fa-star'
-,p_attribute_04=>'#VALUE#'
-);
-wwv_flow_api.create_plugin_setting(
- p_id=>wwv_flow_api.id(13532900816635269562)
-,p_plugin_type=>'ITEM TYPE'
-,p_plugin=>'NATIVE_RICH_TEXT_EDITOR'
+,p_plugin=>'NATIVE_DISPLAY_SELECTOR'
 ,p_attribute_01=>'Y'
-);
-wwv_flow_api.create_plugin_setting(
- p_id=>wwv_flow_api.id(13532901084029269562)
-,p_plugin_type=>'REGION TYPE'
-,p_plugin=>'NATIVE_IR'
-,p_attribute_01=>'IG'
 );
 wwv_flow_api.component_end;
 end;
