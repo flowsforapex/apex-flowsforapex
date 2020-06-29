@@ -1,4 +1,4 @@
-create or replace view flow_p0010_4_vw
+create or replace view flow_p0010_subflows_vw
 as
   select sbfl.sbfl_id
        , sbfl.sbfl_sbfl_id

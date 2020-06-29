@@ -111,8 +111,8 @@ as
 
   function flow_create
   (
-    p_diagram_name in flow_diagrams.dgrm_name%type
-  , p_process_name in flow_processes.prcs_name%type default null
+    pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_prcs_name in flow_processes.prcs_name%type default null
   ) return flow_processes.prcs_id%type
   as
     l_dgrm_id flow_diagrams.dgrm_id%type;
@@ -121,14 +121,14 @@ as
     select dgrm_id
       into l_dgrm_id
       from flow_diagrams
-     where dgrm_name = p_diagram_name
+     where dgrm_name = pi_dgrm_name
     ;
   
     return
       flow_create
       (
-        p_diagram_id   => l_dgrm_id
-      , p_process_name => p_process_name
+        pi_dgrm_id   => l_dgrm_id
+      , pi_prcs_name => pi_prcs_name
       )
     ;
   
@@ -136,8 +136,8 @@ as
 
   function flow_create
   (
-    p_diagram_id   in flow_diagrams.dgrm_id%type
-  , p_process_name in flow_processes.prcs_name%type default null
+    pi_dgrm_id   in flow_diagrams.dgrm_id%type
+  , pi_prcs_name in flow_processes.prcs_name%type default null
   ) return flow_processes.prcs_id%type
   is
     l_ret flow_processes.prcs_id%type;
@@ -152,8 +152,8 @@ as
           , prcs.prcs_last_update
           )
     values
-          ( p_process_name
-          , p_diagram_id
+          ( pi_prcs_name
+          , pi_dgrm_id
           , 'created'
           , systimestamp
           , systimestamp
@@ -165,6 +165,37 @@ as
     return l_ret;
   end flow_create;
 
+  procedure flow_create
+  (
+    pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_prcs_name in flow_processes.prcs_name%type
+  )
+  as
+    l_prcs_id flow_processes.prcs_id%type;
+  begin
+    l_prcs_id :=
+      flow_create
+      (
+        pi_dgrm_name => pi_dgrm_name
+      , pi_prcs_name => pi_prcs_name
+      );
+  end flow_create;
+
+  procedure flow_create
+  (
+    pi_dgrm_id   in flow_diagrams.dgrm_id%type
+  , pi_prcs_name in flow_processes.prcs_name%type
+  )
+  as
+    l_prcs_id flow_processes.prcs_id%type;
+  begin
+    l_prcs_id :=
+      flow_create
+      (
+        pi_dgrm_id   => pi_dgrm_id
+      , pi_prcs_name => pi_prcs_name
+      );
+  end flow_create;
 
   function subflow_start
   ( 
@@ -172,8 +203,8 @@ as
   , p_parent_subflow  in flow_subflows.sbfl_id%type
   , p_starting_object in flow_objects.objt_bpmn_id%type
   , p_current_object  in flow_objects.objt_bpmn_id%type
-  , p_route           in flow_connections.conn_id%type
-  , p_last_completed  in flow_objects.objt_id%type
+  , p_route           in flow_subflows.sbfl_route%type
+  , p_last_completed  in flow_objects.objt_bpmn_id%type
   --, p_lane
   ) return flow_subflows.sbfl_id%type
   is 
@@ -481,7 +512,7 @@ end get_current_progress;
   )
   is
     l_dgrm_id         flow_diagrams.dgrm_id%type;
-    l_objt_id         flow_objects.objt_id%type;
+    l_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
     l_main_subflow_id flow_subflows.sbfl_id%type;
     l_process_status  flow_processes.prcs_status%type;
   begin
@@ -516,8 +547,8 @@ end get_current_progress;
       end;
       
       -- get the object to start with
-      select objt.objt_id
-        into l_objt_id
+      select objt.objt_bpmn_id
+        into l_objt_bpmn_id
         from flow_objects objt
        where objt.objt_id not in ( select conn.conn_tgt_objt_id 
                                      from flow_connections conn
@@ -544,8 +575,8 @@ end get_current_progress;
       subflow_start 
       ( p_process_id => p_process_id
       , p_parent_subflow => null
-      , p_starting_object => l_objt_id
-      , p_current_object => l_objt_id
+      , p_starting_object => l_objt_bpmn_id
+      , p_current_object => l_objt_bpmn_id
       , p_route => 'main'
       , p_last_completed => null
       )
@@ -569,9 +600,9 @@ end get_current_progress;
   end flow_start;
 
 procedure flow_next_step
-( p_process_id in flow_processes.prcs_id%type
-, p_subflow_id in flow_subflows.sbfl_id%type
-, p_forward_route in flow_connections.conn_id%type
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_forward_route in flow_connections.conn_bpmn_id%type
 )
 is
   l_dgrm_id              flow_diagrams.dgrm_id%type;
@@ -923,23 +954,20 @@ begin
         ;
     end case;
 
-exception
-  when TOO_MANY_ROWS
-  then
-    apex_error.add_error
-    ( p_message => 'Branch instead of next step was found.'
-    , p_display_location => apex_error.c_on_error_page
-    );
-  when NO_DATA_FOUND
-  then
-    apex_error.add_error
-    ( p_message => 'Next step does not exist.'
-    , p_display_location => apex_error.c_on_error_page
-    );
-  when others
-  then
-    raise;
-end flow_next_step;
+  exception
+    when TOO_MANY_ROWS
+    then
+      apex_error.add_error
+      ( p_message => 'Branch instead of next step was found.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    when NO_DATA_FOUND
+    then
+      apex_error.add_error
+      ( p_message => 'Next step does not exist.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+  end flow_next_step;
 
 
   procedure flow_next_branch
@@ -972,7 +1000,7 @@ end flow_next_step;
     select objt.objt_tag_name
       into l_current_tag_name
       from flow_objects objt
-     where objt.objt_id = l_sbfl_current
+     where objt.objt_bpmn_id = l_sbfl_current
        and objt.objt_dgrm_id = l_dgrm_id
     ;
     case l_current_tag_name 
@@ -997,7 +1025,7 @@ end flow_next_step;
               on src_objt.objt_id = conn.conn_src_objt_id
            where src_objt.objt_bpmn_id = l_sbfl_current
              and conn.conn_dgrm_id = l_dgrm_id
-             and conn.conn_id = p_branch_name
+             and conn.conn_bpmn_id = p_branch_name
           ;
           -- possibly change this to call flow_next_step?
           update flow_subflows sbfl
@@ -1061,10 +1089,6 @@ end flow_next_step;
              -- create subflow and initialise
              -- set current subflow to status split, current = null
     end case;
-  exception
-    when others
-    then
-      raise;
   end flow_next_branch;
 
   procedure flow_reset

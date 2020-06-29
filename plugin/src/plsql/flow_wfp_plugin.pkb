@@ -57,6 +57,8 @@ as
     l_context           apex_exec.t_context;
     l_diagram_col_idx   pls_integer;
     l_current_col_idx   pls_integer;
+    l_completed_col_idx pls_integer;
+    l_last_comp_col_idx pls_integer;
     l_row_found         boolean;
     l_column_value_list apex_plugin_util.t_column_value_list2;
     l_data_type_list    apex_application_global.vc_arr2;
@@ -87,6 +89,24 @@ as
       (
         p_context     => l_context
       , p_column_name => p_region.attribute_02
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_varchar2
+      );
+
+    l_completed_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_04
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_varchar2
+      );
+
+    l_last_comp_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_06
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
@@ -124,6 +144,46 @@ as
           (
             p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
           , p_sep => p_region.attribute_03
+          );
+        
+        for i in 1..l_markers.count loop
+          apex_json.write( p_value => l_markers(i) );
+        end loop;
+      end if;
+
+      apex_json.close_array;
+
+      apex_json.open_array
+      (
+        p_name => 'completed'
+      );
+      
+      if l_completed_col_idx is not null then
+        l_markers :=
+          apex_string.split
+          (
+            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
+          , p_sep => p_region.attribute_05
+          );
+        
+        for i in 1..l_markers.count loop
+          apex_json.write( p_value => l_markers(i) );
+        end loop;
+      end if;
+
+      apex_json.close_array;
+
+      apex_json.open_array
+      (
+        p_name => 'lastCompleted'
+      );
+
+      if l_last_comp_col_idx is not null then
+        l_markers :=
+          apex_string.split
+          (
+            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
+          , p_sep => p_region.attribute_07
           );
         
         for i in 1..l_markers.count loop

@@ -3,15 +3,27 @@ as
 
   function flow_create
   ( 
-    p_diagram_name in flow_diagrams.dgrm_name%type
-  , p_process_name in flow_processes.prcs_name%type default null
+    pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_prcs_name in flow_processes.prcs_name%type default null
   ) return flow_processes.prcs_id%type;
 
   function flow_create
   (
-    p_diagram_id   in flow_diagrams.dgrm_id%type
-  , p_process_name in flow_processes.prcs_name%type default null
+    pi_dgrm_id   in flow_diagrams.dgrm_id%type
+  , pi_prcs_name in flow_processes.prcs_name%type default null
   ) return flow_processes.prcs_id%type;
+
+  procedure flow_create
+  (
+    pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_prcs_name in flow_processes.prcs_name%type
+  );
+
+  procedure flow_create
+  (
+    pi_dgrm_id   in flow_diagrams.dgrm_id%type
+  , pi_prcs_name in flow_processes.prcs_name%type
+  );
 
   function next_step_exists
   ( p_process_id in flow_processes.prcs_id%type
@@ -53,7 +65,7 @@ as
   (
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_forward_route in flow_connections.conn_id%type  --optional
+  , p_forward_route in flow_connections.conn_bpmn_id%type  --optional
   );
   procedure flow_reset
   ( 
