@@ -8,11 +8,11 @@ wwv_flow_api.component_begin (
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>984337
-,p_default_id_offset=>0
+,p_default_id_offset=>329200360457307309
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_plug_template(
- p_id=>wwv_flow_api.id(13154673404090239019)
+ p_id=>wwv_flow_api.id(12990673231403854050)
 ,p_layout=>'TABLE'
 ,p_template=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div class="t-Wizard #REGION_CSS_CLASSES#" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>',
@@ -41,8 +41,8 @@ wwv_flow_api.create_plug_template(
 ,p_translate_this_template=>'N'
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(238806662758016896)
-,p_plug_template_id=>wwv_flow_api.id(13154673404090239019)
+ p_id=>wwv_flow_api.id(74806490071631927)
+,p_plug_template_id=>wwv_flow_api.id(12990673231403854050)
 ,p_name=>'Wizard Sub Regions'
 ,p_placeholder=>'SUB_REGIONS'
 ,p_has_grid_support=>true
