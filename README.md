@@ -1,7 +1,7 @@
-# apex-flowsforapex v3.0.0
+# apex-flowsforapex
 Flows for APEX - Model and run workflows all within APEX!
 
-This github repository is for developers willing to contribute to Flows for APEX.
+This github repository is for developers willing to contribute to the upcoming version of Flows for APEX.
 
 If you are looking for a <b>demo</b> or want to <b>download</b> the packaged app, please go to the website: 
 
