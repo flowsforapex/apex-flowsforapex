@@ -9,26 +9,24 @@ as
   type t_objt_rec is
     record
     (
-      objt_bpmn_id        t_vc50
-    , objt_name           t_vc200
+      objt_name           t_vc200
     , objt_type           t_vc50
     , objt_tag_name       t_vc50
     , objt_parent_bpmn_id t_vc50
     );
-  type t_objt_tab is table of t_objt_rec;
+  type t_objt_tab is table of t_objt_rec index by t_vc50;
 
   type t_conn_rec is
     record
     (
-      conn_bpmn_id     t_vc50
-    , conn_name        t_vc200
+      conn_name        t_vc200
     , conn_src_bpmn_id t_vc50
     , conn_tgt_bpmn_id t_vc50
     , conn_type        t_vc50
     , conn_tag_name    t_vc50
     , conn_origin      t_vc50
     );
-  type t_conn_tab is table of t_conn_rec;
+  type t_conn_tab is table of t_conn_rec index by t_vc50;
 
   type t_id_lookup_tab is table of number index by t_vc50;
 
@@ -53,13 +51,12 @@ as
     l_objt_rec t_objt_rec;
   begin
   
-    l_objt_rec.objt_bpmn_id        := pi_objt_bpmn_id;
     l_objt_rec.objt_name           := pi_objt_name;
     l_objt_rec.objt_type           := pi_objt_type;
     l_objt_rec.objt_tag_name       := pi_objt_tag_name;
     l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
 
-    g_objects( g_objects.count + 1 ) := l_objt_rec;
+    g_objects( pi_objt_bpmn_id ) := l_objt_rec;
   
   end register_object;
 
@@ -77,7 +74,6 @@ as
     l_conn_rec t_conn_rec;
   begin
 
-    l_conn_rec.conn_bpmn_id     := pi_conn_bpmn_id;
     l_conn_rec.conn_name        := pi_conn_name;
     l_conn_rec.conn_src_bpmn_id := pi_conn_src_bpmn_id;
     l_conn_rec.conn_tgt_bpmn_id := pi_conn_tgt_bpmn_id;
@@ -85,9 +81,184 @@ as
     l_conn_rec.conn_tag_name    := pi_conn_tag_name;
     l_conn_rec.conn_origin      := pi_conn_origin;
 
-    g_connections( g_connections.count + 1 ) := l_conn_rec;
+    g_connections( pi_conn_bpmn_id ) := l_conn_rec;
 
   end register_connection;
+
+  procedure insert_object
+  (
+    pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
+  , pi_objt_name      in flow_objects.objt_name%type default null
+  , pi_objt_type      in flow_objects.objt_type%type default null
+  , pi_objt_tag_name  in flow_objects.objt_tag_name%type default null
+  , pi_objt_objt_id   in flow_objects.objt_objt_id%type default null
+  , po_objt_id       out nocopy flow_objects.objt_id%type
+  )
+  as
+  begin
+    insert
+      into flow_objects
+           (
+             objt_dgrm_id
+           , objt_bpmn_id
+           , objt_name
+           , objt_type
+           , objt_tag_name
+           , objt_objt_id
+           )
+    values (
+             g_dgrm_id
+           , pi_objt_bpmn_id
+           , pi_objt_name
+           , pi_objt_type
+           , pi_objt_tag_name
+           , pi_objt_objt_id
+           )
+      returning objt_id into po_objt_id
+    ;
+  end insert_object;
+
+  procedure insert_connection
+  (
+    pi_conn_bpmn_id      in flow_connections.conn_bpmn_id%type
+  , pi_conn_name         in flow_connections.conn_name%type
+  , pi_conn_src_objt_id  in flow_connections.conn_src_objt_id%type
+  , pi_conn_tgt_objt_id  in flow_connections.conn_tgt_objt_id%type
+  , pi_conn_type         in flow_connections.conn_type%type
+  , pi_conn_tag_name     in flow_connections.conn_tag_name%type
+  , pi_conn_origin       in flow_connections.conn_origin%type -- ?? needed ??
+  , po_conn_id          out flow_connections.conn_id%type
+  )
+  as
+  begin
+    insert
+      into flow_connections
+            (
+              conn_dgrm_id
+            , conn_bpmn_id
+            , conn_name
+            , conn_src_objt_id
+            , conn_tgt_objt_id
+            , conn_type
+            , conn_tag_name
+            , conn_origin
+            )
+    values (
+              g_dgrm_id
+            , pi_conn_bpmn_id
+            , pi_conn_name
+            , pi_conn_src_objt_id
+            , pi_conn_tgt_objt_id
+            , pi_conn_type
+            , pi_conn_tag_name
+            , pi_conn_origin
+            )
+      returning conn_id into po_conn_id
+    ;
+  end insert_connection;
+
+  procedure process_objects
+  as
+    l_cur_objt_bpmn_id t_vc50;
+    l_cur_object       t_objt_rec;
+    l_objt_id          flow_objects.objt_id%type;
+  begin
+
+    l_cur_objt_bpmn_id := g_objects.first;
+    while l_cur_objt_bpmn_id is not null
+    loop
+      -- reset object id, we get it if insert done
+      l_objt_id     := null;
+      l_cur_object := g_objects( l_cur_objt_bpmn_id );
+
+      -- no parent, we can insert without checking further
+      if l_cur_object.objt_parent_bpmn_id is null then
+        
+        insert_object
+        (
+          pi_objt_bpmn_id  => l_cur_objt_bpmn_id
+        , pi_objt_name     => l_cur_object.objt_name
+        , pi_objt_type     => l_cur_object.objt_type
+        , pi_objt_tag_name => l_cur_object.objt_tag_name
+        , po_objt_id       => l_objt_id
+        );
+
+      -- has parent but we know ID already
+      elsif g_objt_lookup.exists( l_cur_object.objt_parent_bpmn_id ) then
+
+        insert_object
+        (
+          pi_objt_bpmn_id  => l_cur_objt_bpmn_id
+        , pi_objt_name     => l_cur_object.objt_name
+        , pi_objt_type     => l_cur_object.objt_type
+        , pi_objt_tag_name => l_cur_object.objt_tag_name
+        , pi_objt_objt_id  => g_objt_lookup( l_cur_object.objt_parent_bpmn_id )
+        , po_objt_id       => l_objt_id
+        );
+
+      end if;
+
+      -- Object processed, but into lookup and remove from things to process
+      if l_objt_id is not null then
+
+        g_objt_lookup( l_cur_objt_bpmn_id ) := l_objt_id;
+
+      end if;
+
+      l_cur_objt_bpmn_id := g_objects.next( l_cur_objt_bpmn_id );
+    end loop;
+
+    -- restart with remaining set if still objects to process
+    if g_objects.count > 0 then
+      process_objects;
+    end if;
+  end process_objects;
+
+  procedure process_connections
+  as
+    l_cur_conn_bpmn_id t_vc50;
+    l_cur_conn         t_conn_rec;
+    l_conn_id          flow_connections.conn_id%type;
+  begin
+
+    while l_cur_conn_bpmn_id is not null
+    loop
+      l_conn_id := null;
+
+      -- verify if we know the IDs for source and target connection if set
+      -- anything strange stop all processing and raise error
+      if (  ( l_cur_conn.conn_src_bpmn_id is not null and not g_objt_lookup.exists( l_cur_conn.conn_src_bpmn_id ) )
+         or ( l_cur_conn.conn_tgt_bpmn_id is not null and not g_objt_lookup.exists( l_cur_conn.conn_tgt_bpmn_id ) )
+         )
+      then
+        raise_application_error(-20000, 'Connection Source or Target not found!');
+      else
+        insert_connection
+        (
+          pi_conn_bpmn_id      => l_cur_conn_bpmn_id
+        , pi_conn_name         => l_cur_conn.conn_name
+        , pi_conn_src_objt_id  => g_objt_lookup( l_cur_conn.conn_src_bpmn_id )
+        , pi_conn_tgt_objt_id  => g_objt_lookup( l_cur_conn.conn_tgt_bpmn_id )
+        , pi_conn_type         => l_cur_conn.conn_type
+        , pi_conn_tag_name     => l_cur_conn.conn_tag_name
+        , pi_conn_origin       => l_cur_conn.conn_origin
+        , po_conn_id           => l_conn_id
+        );
+      end if;
+
+      l_cur_conn_bpmn_id := g_connections.next( l_cur_conn_bpmn_id );
+    end loop;
+
+  end process_connections;
+
+  procedure finalize
+  as
+  begin
+
+    process_objects;
+    process_connections;
+    
+  end finalize;
 
   function upload_diagram
   (
@@ -151,79 +322,6 @@ as
      where objt.objt_dgrm_id = g_dgrm_id
     ;
   end cleanup_parsing_tables;
-
-  procedure insert_object
-  (
-    pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
-  , pi_objt_name      in flow_objects.objt_name%type default null
-  , pi_objt_type      in flow_objects.objt_type%type default null
-  , pi_objt_tag_name  in flow_objects.objt_tag_name%type default null
-  , pi_objt_objt_id   in flow_objects.objt_objt_id%type default null
-  , po_objt_id       out nocopy flow_objects.objt_id%type
-  )
-  as
-  begin
-    insert
-      into flow_objects
-           (
-             objt_dgrm_id
-           , objt_bpmn_id
-           , objt_name
-           , objt_type
-           , objt_tag_name
-           , objt_objt_id
-           )
-    values (
-             g_dgrm_id
-           , pi_objt_bpmn_id
-           , pi_objt_name
-           , pi_objt_type
-           , pi_objt_tag_name
-           , pi_objt_objt_id
-           )
-      returning objt_id into po_objt_id
-    ;
-  end insert_object;
-
-  procedure insert_connection
-  (
-    pi_conn_dgrm_id      in flow_connections.conn_dgrm_id%type
-  , pi_conn_bpmn_id      in flow_connections.conn_bpmn_id%type
-  , pi_conn_name         in flow_connections.conn_name%type
-  , pi_conn_src_objt_id  in flow_connections.conn_src_objt_id%type
-  , pi_conn_tgt_objt_id  in flow_connections.conn_tgt_objt_id%type
-  , pi_conn_type         in flow_connections.conn_type%type
-  , pi_conn_tag_name     in flow_connections.conn_tag_name%type
-  , pi_conn_origin       in flow_connections.conn_origin%type -- ?? needed ??
-  , po_conn_id          out flow_connections.conn_id%type
-  )
-  as
-  begin
-    insert
-      into flow_connections
-            (
-              conn_dgrm_id
-            , conn_bpmn_id
-            , conn_name
-            , conn_src_objt_id
-            , conn_tgt_objt_id
-            , conn_type
-            , conn_tag_name
-            , conn_origin
-            )
-    values (
-              g_dgrm_id
-            , pi_conn_bpmn_id
-            , pi_conn_name
-            , pi_conn_src_objt_id
-            , pi_conn_tgt_objt_id
-            , pi_conn_type
-            , pi_conn_tag_name
-            , pi_conn_origin
-            )
-      returning conn_id into po_conn_id
-    ;
-  end insert_connection;
 
   procedure parse_steps
   (
@@ -399,6 +497,10 @@ as
     
     -- start recursive processsing of xml
     parse_xml( pi_xml => xmltype(l_dgrm_content), pi_parent_id => null );
+
+    -- finally insert all parsed data
+    finalize;
+
   end parse;
   
   procedure upload_and_parse
