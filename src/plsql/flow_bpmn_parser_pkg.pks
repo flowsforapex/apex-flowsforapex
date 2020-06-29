@@ -14,10 +14,5 @@ as
   , pi_dgrm_content in flow_diagrams.dgrm_content%type
   );
 
-  procedure parse
-  (
-    pi_dgrm_id in flow_diagrams.dgrm_id%type
-  );
-
 end flow_bpmn_parser_pkg;
 /
