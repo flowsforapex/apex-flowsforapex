@@ -1,73 +1,9 @@
-create or replace package flow_api_pkg
-as
-
-  function flow_create
-  ( 
-    p_diagram_name in flow_diagrams.dgrm_name%type
-  , p_process_name in flow_processes.prcs_name%type default null
-  ) return number;
-  
-  function next_step_exists
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean;
-
-  function next_step_exists_yn
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2;
-
-  function next_multistep_exists
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean;
-
-  function next_multistep_exists_yn
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2;
-    
-  function get_current_progress -- creates the markings for the bpmn viewer to show current progress 
-  ( 
-    p_process_id in flow_processes.prcs_id%type 
-  ) return varchar2;
-
-  procedure flow_start
-  (
-    p_process_id in flow_processes.prcs_id%type
-  );
-  
-  procedure flow_next_branch
-  ( p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_branch_name in varchar2
-  );
-    
-  procedure flow_next_step
-  (
-    p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_forward_route in flow_connections.conn_id%type  --optional
-  );
-  procedure flow_reset
-  ( 
-    p_process_id in flow_processes.prcs_id%type
-  );
-  
-  procedure flow_delete
-  ( 
-    p_process_id in flow_processes.prcs_id%type
-  );
-  
-end flow_api_pkg;
-/
-
 create or replace package body flow_api_pkg
 as
 -- get diagram name
   function get_dgrm_name
   (
-    p_prcs_id in flow_processes.prcs_id%type
+    p_process_id in flow_processes.prcs_id%type
   ) return varchar2
   is
     l_dgrm_name flow_diagrams.dgrm_name%type;
@@ -76,9 +12,9 @@ as
     select prcs.prcs_dgrm_name
       into l_dgrm_name
       from flow_processes prcs
-     where prcs.prcs_id = p_prcs_id
+     where prcs.prcs_id = p_process_id
     ;
-         
+
     return l_dgrm_name;
   exception
     when others then
@@ -171,7 +107,6 @@ as
         into  flow_processes prcs
             ( prcs.prcs_name
             , prcs.prcs_dgrm_name
-            , prcs.prcs_current
             , prcs.prcs_status
             , prcs.prcs_init_date
             , prcs.prcs_last_update
@@ -179,7 +114,6 @@ as
       values
             ( p_process_name
             , p_diagram_name
-            , null
             , 'created'
             , sysdate
             , sysdate
@@ -234,10 +168,7 @@ begin
       into l_ret;
     apex_debug.message(p_message => 'Subflow '||l_ret||' started', p_level => 3) ;
     return l_ret;
-exception
-  when others
-  then
-    raise;
+
 end subflow_start;
 
 procedure subflow_complete
@@ -255,7 +186,7 @@ is
     l_parent_subflow_current flow_subflows.sbfl_current%type;
 begin
     apex_debug.message(p_message => 'Begin subflow_complete', p_level => 3) ;
-    
+
     select sbfl.sbfl_parent_subflow
          , sbfl.sbfl_current
          , sbfl.sbfl_status
@@ -301,7 +232,7 @@ begin
 
     if l_parent_subflow_id is not null 
     then   
-        
+
         select count(sbfl.sbfl_id)
         into l_remaining_siblings
         from flow_subflows sbfl
@@ -344,10 +275,7 @@ begin
 
     end if
     ;
-exception
-  when others
-  then
-    raise;
+
 end subflow_complete;
 
   function next_step_exists -- not using this now.  Needs checking. remove PROCESS
@@ -435,7 +363,7 @@ begin
        and conn.conn_dgrm_name = l_dgrm_name
        and conn.conn_source_ref = sbfl.sbfl_current
          ;
-    
+
       if l_next_count > 1
       then
         return true;
@@ -512,10 +440,7 @@ begin
       from markings m
     ;
     return l_marker_json;
-exception
-  when others
-  then
-    raise;
+
 end get_current_progress;
 
 procedure flow_start
@@ -603,10 +528,7 @@ begin
    where prcs.prcs_dgrm_name = l_dgrm_name 
      and prcs.prcs_id = p_process_id
        ;
-exception
-  when others
-  then
-    raise;
+
 end flow_start;
 
 procedure flow_next_step
@@ -728,7 +650,7 @@ begin
             apex_debug.message(p_message => 'Next Step is Process End '||l_conn_target_ref, p_level => 4) ;
         else  
             apex_debug.message(p_message => 'Next Step is Sub-Process End '||l_conn_target_ref, p_level => 4) ;
-       
+
             -- return parent flow to running & do next step
             flow_next_step 
                 ( p_process_id => p_process_id
@@ -1091,10 +1013,7 @@ begin
            -- create subflow & initialise
            -- set current subflow to status split, current = null
   end case;
-exception
-  when others
-  then
-    raise;
+
 end flow_next_branch;
 
 procedure flow_reset
@@ -1114,15 +1033,11 @@ begin
    where sbfl.sbfl_parent_process = p_process_id
        ;
   update flow_processes prcs
-     set prcs.prcs_current = null
-       , prcs.prcs_last_update = sysdate
+     set prcs.prcs_last_update = sysdate
        , prcs.prcs_status = 'created'
    where prcs.prcs_id = p_process_id
        ;
-exception
-  when others
-  then
-    raise;
+
 end flow_reset;
 
 procedure flow_delete
@@ -1145,11 +1060,7 @@ begin
     from flow_processes prcs
    where prcs.prcs_id = p_process_id
        ;
-       
-exception
-  when others
-  then
-    raise;
+
 end flow_delete;
 
 end flow_api_pkg;

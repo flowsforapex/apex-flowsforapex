@@ -1,12 +1,3 @@
-create or replace package flow_bpmn_parser_pkg
-as
-  procedure parse
-  (
-    p_diagram_name in flow_diagrams.dgrm_name%type
-  );
-end;
-/
-
 create or replace package body flow_bpmn_parser_pkg
 as
   subtype t_vc50  is varchar2(50 char);

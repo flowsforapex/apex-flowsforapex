@@ -1,5 +1,5 @@
 create view FLOW_P0010_2_VW
-as 
+as
    select prcs.prcs_id
         , prcs.prcs_name
         , prcs.prcs_dgrm_name
@@ -11,8 +11,4 @@ as
         , null  as reset_link
         , null  as delete_link
      from flow_processes prcs
-left join flow_objects   objt on 
-          (   prcs.prcs_current = objt.objt_id
-          and prcs.prcs_dgrm_name = objt.objt_dgrm_name
-          )
 /

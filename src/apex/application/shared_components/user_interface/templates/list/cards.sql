@@ -8,11 +8,11 @@ wwv_flow_api.component_begin (
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>984337
-,p_default_id_offset=>0
+,p_default_id_offset=>329200360457307309
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list_template(
- p_id=>wwv_flow_api.id(13154644164457238971)
+ p_id=>wwv_flow_api.id(12990643991770854002)
 ,p_list_template_current=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<li class="t-Cards-item is-active #A04#">',
 '  <div class="t-Card">',
