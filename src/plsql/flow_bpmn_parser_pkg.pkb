@@ -159,9 +159,10 @@ as
 
   procedure process_objects
   as
-    l_cur_objt_bpmn_id t_vc50;
-    l_cur_object       t_objt_rec;
-    l_objt_id          flow_objects.objt_id%type;
+    l_cur_objt_bpmn_id  t_vc50;
+    l_next_objt_bpmn_id t_vc50;
+    l_cur_object        t_objt_rec;
+    l_objt_id           flow_objects.objt_id%type;
   begin
 
     l_cur_objt_bpmn_id := g_objects.first;
@@ -198,14 +199,18 @@ as
 
       end if;
 
-      -- Object processed, but into lookup and remove from things to process
+
+      -- Get next ID for lookup and if object was processed
+      -- put it into lookup and remove from things to process
+      l_next_objt_bpmn_id := g_objects.next( l_cur_objt_bpmn_id );
       if l_objt_id is not null then
 
         g_objt_lookup( l_cur_objt_bpmn_id ) := l_objt_id;
+        g_objects.delete( l_cur_objt_bpmn_id );
 
       end if;
 
-      l_cur_objt_bpmn_id := g_objects.next( l_cur_objt_bpmn_id );
+      l_cur_objt_bpmn_id := l_next_objt_bpmn_id;
     end loop;
 
     -- restart with remaining set if still objects to process
@@ -221,9 +226,11 @@ as
     l_conn_id          flow_connections.conn_id%type;
   begin
 
+    l_cur_conn_bpmn_id := g_connections.first;
     while l_cur_conn_bpmn_id is not null
     loop
-      l_conn_id := null;
+      l_conn_id  := null;
+      l_cur_conn := g_connections( l_cur_conn_bpmn_id );
 
       -- verify if we know the IDs for source and target connection if set
       -- anything strange stop all processing and raise error
@@ -237,8 +244,8 @@ as
         (
           pi_conn_bpmn_id      => l_cur_conn_bpmn_id
         , pi_conn_name         => l_cur_conn.conn_name
-        , pi_conn_src_objt_id  => g_objt_lookup( l_cur_conn.conn_src_bpmn_id )
-        , pi_conn_tgt_objt_id  => g_objt_lookup( l_cur_conn.conn_tgt_bpmn_id )
+        , pi_conn_src_objt_id  => case when l_cur_conn.conn_src_bpmn_id is not null then g_objt_lookup( l_cur_conn.conn_src_bpmn_id ) else null end
+        , pi_conn_tgt_objt_id  => case when l_cur_conn.conn_tgt_bpmn_id is not null then g_objt_lookup( l_cur_conn.conn_tgt_bpmn_id ) else null end
         , pi_conn_type         => l_cur_conn.conn_type
         , pi_conn_tag_name     => l_cur_conn.conn_tag_name
         , pi_conn_origin       => l_cur_conn.conn_origin
