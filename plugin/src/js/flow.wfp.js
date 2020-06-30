@@ -22,7 +22,7 @@
       this.regionId    = this.element[0].id;
       this.canvasId    = this.regionId + '_canvas';
       this.bpmnViewer$ = new BpmnJS({ container: '#' + this.canvasId });
-      this.refresh();
+//      this.refresh();
 //      this.eventBus$   = this.bpmnViewer$.get('eventBus');
 //      this.eventBus$.on( 'element.click', (e) => { alert( "Clicked on " + e.element.id ); } );
       region.create( this.regionId, {
@@ -75,10 +75,12 @@
         refreshObject: "#" + this.canvasId,
         loadingIndicator: "#" + this.canvasId
       }).then( pData => {
-        this.diagram       = pData.data.diagram;
-        this.current       = pData.data.current;
-        this.completed     = pData.data.completed;
-        this.lastCompleted = pData.data.lastCompleted;
+        if ( pData.found ) {
+          this.diagram       = pData.data.diagram;
+          this.current       = pData.data.current;
+          this.completed     = pData.data.completed;
+          this.lastCompleted = pData.data.lastCompleted;
+        }
         this.loadDiagram();
       });
     },
