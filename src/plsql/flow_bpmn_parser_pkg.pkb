@@ -397,9 +397,11 @@ as
     if pi_parent_id is null then
       for rec in (
                  select proc.proc_id
-                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type
+                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
+                      , proc.proc_type
                       , proc.proc_steps
                       , proc.proc_sub_procs
+                      , proc.proc_name
                    from xmltable
                       (
                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
@@ -407,6 +409,7 @@ as
                         columns
                           proc_id        varchar2(50 char) path '@id'
                         , proc_type      varchar2(50 char) path 'name()'
+                        , proc_name      varchar2(50 char) path '@name'
                         , proc_steps     xmltype           path '* except bpmn:subProcess'
                         , proc_sub_procs xmltype           path 'bpmn:subProcess'
                       ) proc
@@ -417,7 +420,9 @@ as
         register_object
         (
           pi_objt_bpmn_id        => rec.proc_id
-        , pi_objt_type           => rec.proc_type
+        , pi_objt_type           => rec.proc_type_rem
+        , pi_objt_tag_name       => rec.proc_type
+        , pi_objt_name           => rec.proc_name
         , pi_objt_parent_bpmn_id => pi_parent_id
         );
 
@@ -425,7 +430,7 @@ as
         parse_steps
         ( 
           pi_xml          => rec.proc_steps
-        , pi_proc_type    => rec.proc_type
+        , pi_proc_type    => rec.proc_type_rem
         , pi_proc_bpmn_id => rec.proc_id
         );
         
@@ -444,15 +449,18 @@ as
     else
       for rec in (
                  select proc.proc_id
-                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type
+                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
+                      , proc.proc_type
                       , proc.proc_steps
                       , proc.proc_sub_procs
+                      , proc.proc_name
                    from xmltable
                       (
                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                       , 'bpmn:subProcess' passing pi_xml
                         columns
                           proc_id        varchar2(50 char) path '@id'
+                        , proc_name      varchar2(50 char) path '@name'
                         , proc_type      varchar2(50 char) path 'name()'
                         , proc_steps     xmltype           path '* except bpmn:subProcess'
                         , proc_sub_procs xmltype           path 'bpmn:subProcess'
@@ -464,7 +472,9 @@ as
         register_object
         (
           pi_objt_bpmn_id        => rec.proc_id
-        , pi_objt_type           => rec.proc_type
+        , pi_objt_type           => rec.proc_type_rem
+        , pi_objt_tag_name       => rec.proc_type
+        , pi_objt_name           => rec.proc_name
         , pi_objt_parent_bpmn_id => pi_parent_id
         );
 
@@ -472,7 +482,7 @@ as
         parse_steps
         ( 
           pi_xml          => rec.proc_steps
-        , pi_proc_type    => rec.proc_type
+        , pi_proc_type    => rec.proc_type_rem
         , pi_proc_bpmn_id => rec.proc_id
         );
         

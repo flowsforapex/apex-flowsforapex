@@ -1,8 +1,8 @@
-create view flow_p0010_branches_vw
+create or replace view flow_p0010_branches_vw
 as
   select prcs.prcs_id
        , sbfl.sbfl_id
-       , conn.conn_name as d
+       , coalesce( conn.conn_name, conn.conn_bpmn_id ) as d
        , conn.conn_bpmn_id as r
     from flow_connections conn
     join flow_objects src_objt

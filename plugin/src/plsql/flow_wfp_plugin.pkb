@@ -63,10 +63,17 @@ as
     l_column_value_list apex_plugin_util.t_column_value_list2;
     l_data_type_list    apex_application_global.vc_arr2;
 
-    l_markers apex_t_varchar2;
+    l_completed_markers apex_t_varchar2;
+    l_last_comp_markers apex_t_varchar2;
+    l_current_markers   apex_t_varchar2;
 
     l_return apex_plugin.t_region_ajax_result;
   begin
+    apex_plugin_util.debug_region
+    (
+      p_plugin => p_plugin
+    , p_region => p_region
+    );
 
     l_context :=
       apex_exec.open_query_context
@@ -139,15 +146,15 @@ as
       );
 
       if l_current_col_idx is not null then
-        l_markers :=
+        l_current_markers :=
           apex_string.split
           (
             p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
           , p_sep => p_region.attribute_03
           );
         
-        for i in 1..l_markers.count loop
-          apex_json.write( p_value => l_markers(i) );
+        for i in 1..l_current_markers.count loop
+          apex_json.write( p_value => l_current_markers(i) );
         end loop;
       end if;
 
@@ -159,15 +166,15 @@ as
       );
       
       if l_completed_col_idx is not null then
-        l_markers :=
+        l_completed_markers :=
           apex_string.split
           (
             p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
           , p_sep => p_region.attribute_05
           );
         
-        for i in 1..l_markers.count loop
-          apex_json.write( p_value => l_markers(i) );
+        for i in 1..l_completed_markers.count loop
+          apex_json.write( p_value => l_completed_markers(i) );
         end loop;
       end if;
 
@@ -179,15 +186,15 @@ as
       );
 
       if l_last_comp_col_idx is not null then
-        l_markers :=
+        l_last_comp_markers :=
           apex_string.split
           (
             p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
           , p_sep => p_region.attribute_07
           );
         
-        for i in 1..l_markers.count loop
-          apex_json.write( p_value => l_markers(i) );
+        for i in 1..l_last_comp_markers.count loop
+          apex_json.write( p_value => l_last_comp_markers(i) );
         end loop;
       end if;
 

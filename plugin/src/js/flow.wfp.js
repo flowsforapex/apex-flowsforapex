@@ -30,7 +30,7 @@
         refresh: () => { this.refresh(); },
         reset: () => { this.reset(); },
         loadDiagram: () => { this.loadDiagram(); },
-        addMarker: () => { this.addMArker(); },
+        addMarkers: () => { this.addMarkers(); },
         widgetName: "wfp",
         type: "flow.wfp"
       });
@@ -69,7 +69,6 @@
     },
     refresh: function() {
       apex.debug.info( "Enter Refresh", this.options );
-      apex.debug.info( "Test Selector...", $( this.options.itemsToSubmit, apex.gPageContext$ ) );
       apex.server.plugin( this.options.ajaxIdentifier, {
         pageItems: $( this.options.itemsToSubmit, apex.gPageContext$ )
       }, {

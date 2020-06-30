@@ -63,9 +63,9 @@ as
     
   procedure flow_next_step
   (
-    p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_forward_route in flow_connections.conn_bpmn_id%type  --optional
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_forward_route in varchar2
   );
   procedure flow_reset
   ( 

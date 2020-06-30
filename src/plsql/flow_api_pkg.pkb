@@ -99,7 +99,7 @@ as
     , p_subflow_id
     , sysdate
     , p_notes
-      );
+    );
   exception
     when others then
       apex_error.add_error
@@ -602,7 +602,7 @@ end get_current_progress;
 procedure flow_next_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in flow_connections.conn_bpmn_id%type
+, p_forward_route in varchar2
 )
 is
   l_dgrm_id              flow_diagrams.dgrm_id%type;
@@ -683,6 +683,8 @@ begin
   , p_notes => ''
   );
   l_sbfl_last_completed := l_sbfl_current;
+
+  apex_debug.message(p_message => 'Before CASE ' || coalesce(l_target_objt_tag, '!NULL!'), p_level => 3) ;
 
     case (l_target_objt_tag)
 
@@ -826,7 +828,7 @@ begin
             -- get all forward parallel paths and create subflows for them
             -- these are paths forward of l_conn_target_ref as we are doing double step
             for new_path in (
-                select conn.conn_id route
+                select conn.conn_bpmn_id route
                      , objt.objt_bpmn_id target
                   from flow_connections conn
                   join flow_objects objt
@@ -893,7 +895,7 @@ begin
       apex_debug.message(p_message => 'Next Step is subProcess start '||l_conn_target_ref, p_level => 4) ;   
       -- find subProcess startEvent
       begin
-        select objt.objt_id
+        select objt.objt_bpmn_id
           into l_target_objt_sub
           from flow_objects objt
          where objt.objt_objt_id  = l_conn_tgt_objt_id
