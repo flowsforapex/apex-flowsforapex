@@ -169,7 +169,7 @@ as
         l_completed_markers :=
           apex_string.split
           (
-            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
+            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_completed_col_idx )
           , p_sep => p_region.attribute_05
           );
         
@@ -189,7 +189,7 @@ as
         l_last_comp_markers :=
           apex_string.split
           (
-            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
+            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_last_comp_col_idx )
           , p_sep => p_region.attribute_07
           );
         
