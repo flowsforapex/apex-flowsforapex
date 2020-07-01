@@ -1,6 +1,6 @@
 PROMPT >> Loading Example "Timer Example"
 begin
-insert into diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_content)
  values (
 'Timer Example',
 apex_string.join_clob(

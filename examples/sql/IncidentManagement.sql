@@ -1,6 +1,6 @@
 PROMPT >> Loading Example "Incident Management"
 begin
-insert into diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_content)
  values (
 'Incident Management',
 apex_string.join_clob(

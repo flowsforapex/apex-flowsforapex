@@ -1,6 +1,6 @@
 PROMPT >> Loading Example "The Pizza Collaboration"
 begin
-insert into diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_content)
  values (
 'The Pizza Collaboration',
 apex_string.join_clob(

@@ -1,6 +1,6 @@
 PROMPT >> Loading Example "Order Fulfillment and Procurement"
 begin
-insert into diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_content)
  values (
 'Order Fulfillment and Procurement',
 apex_string.join_clob(

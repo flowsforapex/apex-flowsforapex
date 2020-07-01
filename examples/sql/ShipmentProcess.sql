@@ -1,6 +1,6 @@
 PROMPT >> Loading Example "Shipment Process"
 begin
-insert into diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_content)
  values (
 'Shipment Process',
 apex_string.join_clob(

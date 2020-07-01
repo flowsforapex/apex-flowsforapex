@@ -1,6 +1,6 @@
 PROMPT >> Loading Example "Holidays"
 begin
-insert into diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_content)
  values (
 'Holidays',
 apex_string.join_clob(
