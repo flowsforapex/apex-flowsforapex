@@ -1,0 +1,84 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<DomainFile class="oracle.dbtools.crest.model.design.DomainFileWrapper" fileName="flows_object_Domains">
+<domains>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="Date_0_0_0" id="034E83C5-76FF-EB05-F97E-01200711D1F4">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT007</logicalDatatype>
+</Domain>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="VARCHAR_0_0_100 CHAR" id="52F55E26-C9CF-E95C-BC29-413023FD4E33">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<dataTypePrecision>0</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<dataTypeSize>100 CHAR</dataTypeSize>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT024</logicalDatatype>
+</Domain>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="CLOB_0_0_0" id="56A2BAB7-F9EC-1C7D-A4AE-080039A6D234">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT028</logicalDatatype>
+</Domain>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="NUMERIC_0_0_0" id="BA48F307-6944-84BC-649E-CA606B17D174">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT019</logicalDatatype>
+</Domain>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="VARCHAR_0_0_150" id="BB038236-2C24-E032-B4E5-EF5968E22DF4">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<dataTypePrecision>0</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<dataTypeSize>150</dataTypeSize>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT024</logicalDatatype>
+</Domain>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="VARCHAR_0_0_200 CHAR" id="C7BBF8B1-7D8D-9EB7-A8E7-FA243A9CAC0D">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<dataTypePrecision>0</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<dataTypeSize>200 CHAR</dataTypeSize>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT024</logicalDatatype>
+</Domain>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="VARCHAR_0_0_100" id="DC0E176C-817D-A2DF-2A71-809F76729730">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<dataTypePrecision>0</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<dataTypeSize>100</dataTypeSize>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT024</logicalDatatype>
+</Domain>
+<Domain class="oracle.dbtools.crest.model.design.Domain" name="VARCHAR_0_0_20" id="EC381288-6DCF-B053-CCFE-666227F029C5">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:21:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<avTSortOrder>0</avTSortOrder>
+<dataTypePrecision>0</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<dataTypeSize>20</dataTypeSize>
+<fileName>flows_object_Domains</fileName>
+<logicalDatatype>LOGDT024</logicalDatatype>
+</Domain>
+</domains>
+</DomainFile>

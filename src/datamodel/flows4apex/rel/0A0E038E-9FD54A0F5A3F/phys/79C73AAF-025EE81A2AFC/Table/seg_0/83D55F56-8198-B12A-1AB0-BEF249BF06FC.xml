@@ -1,0 +1,70 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_PROCESSES" directorySegmentName="seg_0" id="83D55F56-8198-B12A-1AB0-BEF249BF06FC">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="PRCS_DGRM_ID" id="2C184F82-301D-D1DD-AF27-100BFD33922B">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_INIT_TS" id="8D8D283D-7633-F56B-E98F-C3D4663072C0">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_ID" id="93D9275C-C3B5-3575-D1F1-1505D76BF61C">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_MAIN_SUBFLOW" id="95F89BDD-B145-E3D3-2E21-7489161AC108">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_LAST_UPDATE" id="B3DACBD9-C4FD-554A-1667-217800C3E152">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_NAME" id="D208AFEC-02CB-634E-9557-DE30443F1CB1">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_STATUS" id="F026F7A4-D601-437C-515C-F667D0FA9E22">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="PRCS_PK" id="ED425ADF-3AC6-4017-8A53-875B6378E561">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="PRCS_DGRM_FK" id="AD51660E-6ADC-F90D-5EAD-C8AEB9CCE367">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="PRCS_PK" id="8C6439F3-718A-80ED-1300-A0EF3EE6C507">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev12c>

@@ -1,0 +1,81 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="EE2A7E9F-7E2F-0322-728F-56476ED5A19D" name="FLOW_SUBFLOW_LOG">
+<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>F80E1BB4-70BB-045C-5BB6-33F1CCAEAA3F</importedID>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="SFLG_PRCS_ID" id="724FD395-89C6-DAB4-D049-C9B7551F52A0">
+<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>39D99C60-2912-115C-514A-727241791A3D</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_OBJT_ID" id="7F5AD5B0-3217-9CC9-5349-DF12AB668CB1">
+<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>2EB39A6F-DE90-8730-15D8-A84F7E88D92F</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypePrecision>0</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<dataTypeSize>50</dataTypeSize>
+<ownDataTypeParameters>50,0,0</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_SBFL_ID" id="2D15A613-37EF-1F9F-D263-86DCB4BCE09F">
+<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>2BFF8F63-E0D1-3B81-53DF-40D4DDABDA24</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_LAST_UPDATED" id="B5CF96D6-CAC3-2D2B-1B25-3E572EB65002">
+<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>E6A40FED-4FD1-1090-EA17-FB2A0D472623</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_NOTES" id="C73E7532-F3F5-142D-9915-3428866EE3E1">
+<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>0D379842-2A59-2646-7820-67E377F23B40</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypePrecision>0</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,0,0</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+</Table>

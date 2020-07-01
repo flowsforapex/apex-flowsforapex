@@ -1,0 +1,37 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<relationalModel class="oracle.dbtools.crest.model.design.relational.RelationalDesign" name="Relational_1" id="0A0E038E-2C5A-09FA-A7C5-9FD54A0F5A3F" mainViewID="4517612E-E53C-5CD4-AD5A-3F9AD32968D4">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:18:18 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<shouldBeOpen>true</shouldBeOpen>
+<selectedRDBMSSite>79C73AAF-E1A7-E669-7DF0-025EE81A2AFC</selectedRDBMSSite>
+<importConnectionStamps>
+<importConnectionStamp class="oracle.dbtools.crest.imports.DBConnectionStamp">
+<connName>vm_apex201.flows4apex</connName>
+<connUser>flows4apex</connUser>
+<connType>1</connType>
+</importConnectionStamp>
+</importConnectionStamps>
+<importDDLFileStamps>
+<importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
+<fileName>flows_object.sql</fileName>
+<pathName>/Users/moklein/Downloads</pathName>
+<dbType>14</dbType>
+</importDDLFileStamp>
+<importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
+<fileName>flow_processes.sql</fileName>
+<pathName>/Users/moklein/Documents/git/github/apex-flowsforapex/src/ddl</pathName>
+<dbType>14</dbType>
+</importDDLFileStamp>
+<importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
+<fileName>flow_subflow_log.sql</fileName>
+<pathName>/Users/moklein/Documents/git/github/apex-flowsforapex/src/ddl</pathName>
+<dbType>14</dbType>
+</importDDLFileStamp>
+<importDDLFileStamp class="oracle.dbtools.crest.imports.DDLFileStamp">
+<fileName>flow_subflows.sql</fileName>
+<pathName>/Users/moklein/Documents/git/github/apex-flowsforapex/src/ddl</pathName>
+<dbType>14</dbType>
+</importDDLFileStamp>
+</importDDLFileStamps>
+</relationalModel>

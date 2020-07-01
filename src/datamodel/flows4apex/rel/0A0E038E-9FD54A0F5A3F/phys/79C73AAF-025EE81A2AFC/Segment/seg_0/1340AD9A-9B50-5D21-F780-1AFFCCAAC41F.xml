@@ -1,0 +1,8 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<SegmentOraclev10g class="oracle.dbtools.crest.model.design.storage.oracle.v10g.SegmentOraclev10g" name="Storage5" directorySegmentName="seg_0" id="1340AD9A-9B50-5D21-F780-1AFFCCAAC41F">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:29 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<initrans>2</initrans>
+<maxTrans>255</maxTrans>
+</SegmentOraclev10g>

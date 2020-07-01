@@ -1,0 +1,98 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="DAB17781-7CF6-C986-730C-7CFF74C3C443" name="FLOW_DIAGRAMS">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FLOW_DIAGRAMS</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<abbreviation>DGRM</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="DGRM_ID" id="38ED1E66-0980-A096-7D9D-710F9BBED850">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:33:22 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementOrder>false</autoIncrementOrder>
+<notNullConstraintName>DGRM_ID_NN</notNullConstraintName>
+</Column>
+<Column name="DGRM_NAME" id="2310777B-980E-7FDF-FA4E-45DDF70D37CC">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_DIAGRAMS</sourceObjSchema>
+<sourceObjName>DGRM_NAME</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>150 CHAR</dataTypeSize>
+<ownDataTypeParameters>150 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<notNullConstraintName>DGRM_NAME_NN</notNullConstraintName>
+</Column>
+<Column name="DGRM_CONTENT" id="E6EC3C0C-7A25-23D4-599B-FB303AFCF096">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_DIAGRAMS</sourceObjSchema>
+<sourceObjName>DGRM_CONTENT</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<dataTypeSize>4000</dataTypeSize>
+<ownDataTypeParameters>4000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="F28C9128-AB12-381F-59A3-2FE5207D6978" name="DGRM_PK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:32:37 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="38ED1E66-0980-A096-7D9D-710F9BBED850"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="66810CE1-B903-C25A-533C-04AEE2A109B3" name="DGRM_UK">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>DGRM_UK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:29 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2310777B-980E-7FDF-FA4E-45DDF70D37CC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="C4A39D41-B164-EC3D-28CB-7EA56CFF124C" name="DGRM_NAME_IX">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>DGRM_UK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:29 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2310777B-980E-7FDF-FA4E-45DDF70D37CC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

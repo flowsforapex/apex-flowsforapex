@@ -1,0 +1,208 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="70FC2615-744E-17C8-E0EF-115D46A07CED" name="FLOW_CONNECTIONS">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FLOW_CONNECTIONS</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<abbreviation>CONN</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="CONN_ID" id="549FEEA8-6432-42F8-82E9-30A04F9E77A3">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:44:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
+<notNullConstraintName>CONN_ID_NN</notNullConstraintName>
+</Column>
+<Column name="CONN_BPMN_ID" id="5B64ECA5-EF09-76B8-2BAC-1F0087A2789A">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_CONNECTIONS</sourceObjSchema>
+<sourceObjName>CONN_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<notNullConstraintName>CONN_BPMN_ID_NN</notNullConstraintName>
+</Column>
+<Column name="CONN_DGRM_ID" id="F8426165-D211-5942-34F0-A524B54784CD">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:34:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<notNullConstraintName>CONN_DGRM_ID_NN</notNullConstraintName>
+<associations>
+<colAssociation fkAssociation="D8E1CAC9-EA82-B782-61FA-1E6662A50320" referredColumn="38ED1E66-0980-A096-7D9D-710F9BBED850"/>
+</associations>
+</Column>
+<Column name="CONN_NAME" id="3766EA0C-29BF-FF84-CBA3-B16F32C0710A">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_CONNECTIONS</sourceObjSchema>
+<sourceObjName>CONN_NAME</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200 CHAR</dataTypeSize>
+<ownDataTypeParameters>200 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="CONN_SRC_OBJT_ID" id="D3F5677D-D2B3-3663-5653-F20EAF3471D3">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:45:47 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="BF21B869-A382-6B22-485F-34CDF93E0D36" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+</associations>
+</Column>
+<Column name="CONN_TGT_OBJT_ID" id="4669B5E7-A8DC-0A51-CAF3-2ECEF83BA71F">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:46:23 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="F952E283-C13E-ABFA-2799-D38AA8644DA3" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+</associations>
+</Column>
+<Column name="CONN_TYPE" id="A24E6996-4A87-7D4B-082B-B5059451EB47">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_CONNECTIONS</sourceObjSchema>
+<sourceObjName>CONN_TYPE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="CONN_TAG_NAME" id="3E02F622-7920-79BD-3F9F-E1B2DF1BE708">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_CONNECTIONS</sourceObjSchema>
+<sourceObjName>CONN_TAG_NAME</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="CONN_ORIGIN" id="32C020C4-4F3E-B667-6501-CF3C5D697D7B">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_CONNECTIONS</sourceObjSchema>
+<sourceObjName>CONN_ORIGIN</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="5F4E9BA5-9B8F-8FAC-AC10-7555F5B06961" name="CONN_PK">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>CONN_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:29 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="549FEEA8-6432-42F8-82E9-30A04F9E77A3"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="D9A83742-FDE3-96B2-B6C3-FE6C5A8A70D3" name="CONN_UK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:44:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F8426165-D211-5942-34F0-A524B54784CD"/>
+<colUsage columnID="5B64ECA5-EF09-76B8-2BAC-1F0087A2789A"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="0FBB58E5-EDBF-F2F3-98EB-09E4432C4414" name="CONN_DGRM_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:34:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F8426165-D211-5942-34F0-A524B54784CD"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="FDD5A51F-9F10-BC97-CE90-8CA553158C6B" name="CONN_SRC_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:45:47 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="D3F5677D-D2B3-3663-5653-F20EAF3471D3"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="EE599825-A40A-188E-2107-64CA94A8999D" name="CONN_TGT_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:46:23 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="4669B5E7-A8DC-0A51-CAF3-2ECEF83BA71F"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

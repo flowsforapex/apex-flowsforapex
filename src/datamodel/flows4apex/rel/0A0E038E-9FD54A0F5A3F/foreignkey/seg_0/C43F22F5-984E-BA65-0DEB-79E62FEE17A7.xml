@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="C43F22F5-984E-BA65-0DEB-79E62FEE17A7" containerWithKeyObject="C337809B-E24A-5FDE-82B5-C3981D6A62E6" localFKIndex="5C128F32-D5A7-3004-8AD4-CE14A899FF0F" name="SBFL_PRCS_FK">
+<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:50:36 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>FE187AB2-3E2E-A604-1ACC-77BBB309A472</importedID>
+<referredTableLongName>FLOW_PROCESSES</referredTableLongName>
+<deleteRule>CASCADE</deleteRule>
+<referredTableID>83D55F56-8198-B12A-1AB0-BEF249BF06FC</referredTableID>
+<keyObject>8C6439F3-718A-80ED-1300-A0EF3EE6C507</keyObject>
+<referredKeyID>8C6439F3-718A-80ED-1300-A0EF3EE6C507</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>PRCS_ID</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

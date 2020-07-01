@@ -1,0 +1,11 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableSpaceOraclev10g class="oracle.dbtools.crest.model.design.storage.oracle.v10g.TableSpaceOraclev10g" name="APEX_2900584415762523" directorySegmentName="seg_0" id="1C3CC17A-0916-4DB7-E0B1-37F66ADFF2DB">
+<sourceConnName>vm_apex201.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>APEX_2900584415762523</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:20:28 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<emUniformSize>0</emUniformSize>
+<extentManagement>LOCAL</extentManagement>
+</TableSpaceOraclev10g>

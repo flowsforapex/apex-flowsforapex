@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="flows4apex" id="EC9D1147-31A5-BF28-6F5C-F7DBA65816EC" version="3.5">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-16 21:18:17 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>EC9D1147-31A5-BF28-6F5C-F7DBA65816EC</designId>
+<usedDesignStorageDescriptors>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="1CEC62C2-16E2-E2E4-09C9-4392E1AE83E3">
+<designStoragePath>/flows_object</designStoragePath>
+</designDescr>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="EF0C3BD0-2BF1-0986-26E7-65B41B3FEE10">
+<designStoragePath>/flow_processes</designStoragePath>
+</designDescr>
+</usedDesignStorageDescriptors>
+</OSDM_Design>

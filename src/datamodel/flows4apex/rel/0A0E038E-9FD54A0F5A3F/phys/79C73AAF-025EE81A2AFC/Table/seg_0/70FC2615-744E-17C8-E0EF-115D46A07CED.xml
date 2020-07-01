@@ -1,0 +1,95 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_CONNECTIONS" directorySegmentName="seg_0" id="70FC2615-744E-17C8-E0EF-115D46A07CED">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="CONN_ORIGIN" id="32C020C4-4F3E-B667-6501-CF3C5D697D7B">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_NAME" id="3766EA0C-29BF-FF84-CBA3-B16F32C0710A">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_TAG_NAME" id="3E02F622-7920-79BD-3F9F-E1B2DF1BE708">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_TGT_OBJT_ID" id="4669B5E7-A8DC-0A51-CAF3-2ECEF83BA71F">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_ID" id="549FEEA8-6432-42F8-82E9-30A04F9E77A3">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_BPMN_ID" id="5B64ECA5-EF09-76B8-2BAC-1F0087A2789A">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_TYPE" id="A24E6996-4A87-7D4B-082B-B5059451EB47">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_SRC_OBJT_ID" id="D3F5677D-D2B3-3663-5653-F20EAF3471D3">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_DGRM_ID" id="F8426165-D211-5942-34F0-A524B54784CD">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="CONN_DGRM_FK" id="0FBB58E5-EDBF-F2F3-98EB-09E4432C4414">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="CONN_TGT_OBJT_FK" id="EE599825-A40A-188E-2107-64CA94A8999D">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<deferrable>YES</deferrable>
+<initially>DEFERRED</initially>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="CONN_SRC_OBJT_FK" id="FDD5A51F-9F10-BC97-CE90-8CA553158C6B">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<deferrable>YES</deferrable>
+<initially>DEFERRED</initially>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="CONN_PK" id="5F4E9BA5-9B8F-8FAC-AC10-7555F5B06961">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</PrimaryKey>
+</primaryKeys>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="CONN_UK" id="D9A83742-FDE3-96B2-B6C3-FE6C5A8A70D3">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev12c>
