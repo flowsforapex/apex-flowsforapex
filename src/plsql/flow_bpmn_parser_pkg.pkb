@@ -497,7 +497,59 @@ as
       end loop;
     end if;
   end parse_xml;
-  
+
+  procedure parse_collaboration
+  (
+    pi_xml in xmltype
+  )
+  as
+
+  begin
+    for rec in (
+                 select colab_id
+                      , colab_name
+                      , colab_type
+                      , colab_src_ref
+                      , colab_tgt_ref
+                   from xmltable
+                        (
+                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                        , '/bpmn:definitions/bpmn:collaboration/*' passing pi_xml
+                          columns
+                            colab_id      varchar2(50 char)  path '@id'
+                          , colab_name    varchar2(200 char) path '@name'
+                          , colab_type    varchar2(50 char)  path 'name()'
+                          , colab_src_ref varchar2(50 char)  path '@sourceRef'
+                          , colab_tgt_ref varchar2(50 char)  path '@targetRef'
+                        ) colab    
+    ) loop
+    
+      case
+        when rec.colab_src_ref is null then
+          register_object
+          (
+            pi_objt_bpmn_id        => rec.colab_id
+          , pi_objt_tag_name       => rec.colab_type
+          , pi_objt_name           => rec.colab_name
+          );
+        else
+          register_connection
+          (
+            pi_conn_bpmn_id     => rec.colab_id
+          , pi_conn_name        => rec.colab_name
+          , pi_conn_src_bpmn_id => rec.colab_src_ref
+          , pi_conn_tgt_bpmn_id => rec.colab_tgt_ref
+          , pi_conn_type        => null
+          , pi_conn_tag_name    => rec.colab_type
+          , pi_conn_origin      => null
+          );
+
+      end case;
+    
+    end loop;
+    
+  end parse_collaboration;
+
   procedure parse
   as
     l_dgrm_content clob;
@@ -511,7 +563,9 @@ as
       from flow_diagrams
      where dgrm_id = g_dgrm_id
     ;
-    
+
+    -- parse out collaboration part first
+    parse_collaboration( pi_xml => xmltype(l_dgrm_content) );    
     -- start recursive processsing of xml
     parse_xml( pi_xml => xmltype(l_dgrm_content), pi_parent_id => null );
 
