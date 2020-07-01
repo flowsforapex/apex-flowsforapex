@@ -8,7 +8,7 @@ wwv_flow_api.component_begin (
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>984337
-,p_default_id_offset=>337300529223913927
+,p_default_id_offset => 0
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_page(
@@ -25,7 +25,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12661519404833546827)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20200701000416'
+,p_last_upd_yyyymmddhh24miss=>'20200701130448'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(326700311202168525)
@@ -270,6 +270,7 @@ wwv_flow_api.create_report_region(
 ,p_query_row_template=>wwv_flow_api.id(12661460559733546718)
 ,p_query_num_rows=>100
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_query_no_data_found=>'No current flow instances found.'
 ,p_query_num_rows_type=>'ROW_RANGES_WITH_LINKS'
 ,p_pagination_display_position=>'BOTTOM_LEFT'
 ,p_csv_output=>'N'
@@ -494,22 +495,22 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_event_type=>'change'
 );
 wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(331396530860413614)
+,p_event_id=>wwv_flow_api.id(326698474087168507)
+,p_event_result=>'FALSE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(12659446712359152649)
+);
+wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(326697977342168502)
 ,p_event_id=>wwv_flow_api.id(326698474087168507)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'Y'
 ,p_action=>'NATIVE_SHOW'
-,p_affected_elements_type=>'JQUERY_SELECTOR'
-,p_affected_elements=>'.js-hide-no-prcs'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(326697835065168501)
-,p_event_id=>wwv_flow_api.id(326698474087168507)
-,p_event_result=>'FALSE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'Y'
-,p_action=>'NATIVE_HIDE'
 ,p_affected_elements_type=>'JQUERY_SELECTOR'
 ,p_affected_elements=>'.js-hide-no-prcs'
 );
@@ -522,6 +523,16 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'JQUERY_SELECTOR'
 ,p_affected_elements=>'.js-react-on-prcs'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(326697835065168501)
+,p_event_id=>wwv_flow_api.id(326698474087168507)
+,p_event_result=>'FALSE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'JQUERY_SELECTOR'
+,p_affected_elements=>'.js-hide-no-prcs'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(326698203360168504)
@@ -607,7 +618,7 @@ wwv_flow_api.create_page_da_action(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(326697122636168493)
-,p_name=>'MultiStep Descision taken - trigger process'
+,p_name=>'MultiStep Decision taken - trigger process'
 ,p_event_sequence=>140
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(326697153216168494)

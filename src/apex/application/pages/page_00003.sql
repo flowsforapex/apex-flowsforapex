@@ -8,7 +8,7 @@ wwv_flow_api.component_begin (
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>984337
-,p_default_id_offset=>337300529223913927
+,p_default_id_offset => 0
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_page(
@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20200629175712'
+,p_last_upd_yyyymmddhh24miss=>'20200701111602'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12660171646147794773)
@@ -65,7 +65,7 @@ wwv_flow_api.create_page_button(
 wwv_flow_api.create_page_branch(
  p_id=>wwv_flow_api.id(12659445061602152633)
 ,p_branch_name=>'Redirect'
-,p_branch_action=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:RP:P1_NAME:&P3_NAME.&success_msg=#SUCCESS_MSG#'
+,p_branch_action=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:RP,:P1_NAME:&P3_NAME.&success_msg=#SUCCESS_MSG#'
 ,p_branch_point=>'BEFORE_COMPUTATION'
 ,p_branch_type=>'REDIRECT_URL'
 ,p_branch_sequence=>10
@@ -112,16 +112,20 @@ wwv_flow_api.create_page_process(
 ,p_process_point=>'ON_SUBMIT_BEFORE_COMPUTATION'
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Delete Diagram'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'delete ',
-'  from flow_p0003_vw dgrm',
-' where dgrm.dgrm_name = :P3_NAME',
-'     ;',
-'',
-':P3_NAME:= '''';'))
+,p_process_sql_clob=>'flow_p0003_api.delete_diagram( pi_dgrm_name => :p3_name );'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'DELETE'
-,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_process_when_button_id=>wwv_flow_api.id(12660170076569794758)
+,p_process_success_message=>'Diagram deleted.'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(331396632111413615)
+,p_process_sequence=>20
+,p_process_point=>'ON_SUBMIT_BEFORE_COMPUTATION'
+,p_process_type=>'NATIVE_SESSION_STATE'
+,p_process_name=>'Clear Cache'
+,p_attribute_01=>'CLEAR_CACHE_CURRENT_PAGE'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when_button_id=>wwv_flow_api.id(12660170076569794758)
 );
 wwv_flow_api.component_end;
 end;
