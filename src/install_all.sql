@@ -26,3 +26,6 @@ end;
 
 PROMPT >> Install Application
 @apex/install.sql
+
+PROMPT >> Finished Installation of Flows4APEX
+PROMPT >> ====================================

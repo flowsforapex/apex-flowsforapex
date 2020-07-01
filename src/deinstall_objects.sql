@@ -1,50 +1,28 @@
-drop package body "FLOW_API_PKG"
-/
+PROMPT >> Removing Flows4APEX Database Objects
+PROMPT >> ====================================
 
-drop package "FLOW_API_PKG"
-/
+PROMPT >> Packages
+drop package flow_p0003_api;
+drop package flow_p0010_api;
+drop package flow_bpmn_parser_pkg;
+drop package flow_api_pkg;
 
-drop package body "FLOW_BPMN_PARSER_PKG"
-/
+PROMPT >> Views
+drop view flow_dgrm_lov;
+drop view flow_p0001_vw;
+drop view flow_p0003_vw;
+drop view flow_p0010_vw;
+drop view flow_p0010_branches_vw;
+drop view flow_p0010_instances_vw;
+drop view flow_p0010_subflows_vw;
 
-drop package "FLOW_BPMN_PARSER_PKG"
-/
+PROMPT >> Tables
+drop table flow_connections cascade constraints;
+drop table flow_objects cascade constraints;
+drop table flow_processes cascade constraints;
+drop table flow_subflows cascade constraints;
+drop table flow_subflow_log cascade constraints;
+drop table flow_diagrams cascade constraints;
 
-drop view "FLOW_R_DRGM_VW"
-/
-
-drop view "FLOW_P0001_VW"
-/
-
-drop view "FLOW_P0003_VW"
-/
-
-drop view "FLOW_P0010_VW"
-/
-
-drop view "FLOW_P0010_2_VW"
-/
-
-drop view "FLOW_P0010_3_VW"
-/
-
-drop view "FLOW_P0010_4_VW"
-/
-
-drop table "FLOW_SUBFLOW_LOG"
-/
-
-drop table "FLOW_SUBFLOWS"
-/
-
-drop table "FLOW_CONNECTIONS"
-/
-
-drop table "FLOW_PROCESSES"
-/
-
-drop table "FLOW_OBJECTS"
-/
-
-drop table "FLOW_DIAGRAMS" 
-/
+PROMPT >> Finished Removal of Flows4APEX Database Objects
+PROMPT >> ===============================================
