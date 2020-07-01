@@ -25,7 +25,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12661519404833546827)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20200701130448'
+,p_last_upd_yyyymmddhh24miss=>'20200701140536'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(326700311202168525)
@@ -643,27 +643,6 @@ wwv_flow_api.create_page_da_action(
 '    branch: myBranch',
 '  });',
 'apex.theme.closeRegion("multi_step_chooser");'))
-);
-wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(12659446073682152643)
-,p_process_sequence=>10
-,p_process_point=>'BEFORE_HEADER'
-,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Load Diagram'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select prcs.dgrm_content',
-'     , prcs.sbfl_current',
-'     , prcs.sbfl_id',
-'  into :P10_DIAGRAM',
-'     , :P10_CURRENT',
-'     , :P10_SBFL_ID',
-'  from flow_p0010_vw prcs',
-' where prcs.prcs_id = :P10_ID',
-';'))
-,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'P10_PRCS_ID'
-,p_process_when_type=>'ITEM_IS_NOT_NULL'
-,p_required_patch=>wwv_flow_api.id(254099927431422650)
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(326697817461168500)
