@@ -1,0 +1,6 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<StorageDesignOraclev12cR2 class="oracle.dbtools.crest.model.design.storage.oracle.v12cr2.StorageDesignOraclev12cR2" name="Oracle Database 12cR2" id="293D790A-1755-6830-54A7-B26176DBED4D" siteID="79C73AAF-E1A7-E669-7DF0-025EE81A2AFC" siteName="Oracle Database 12cR2" siteType="14">
+<createdBy>moklein</createdBy>
+<createdTime>2020-06-28 19:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</StorageDesignOraclev12cR2>

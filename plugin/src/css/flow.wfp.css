@@ -1,0 +1,16 @@
+.rendercanvas {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.wfp-current:not(.djs-connection) .djs-visual > :nth-child(1) {
+  fill: green !important;
+}
+
+.wfp-last-completed:not(.djs-connection) .djs-visual > :nth-child(1) {
+  fill: red !important;
+}
+.wfp-completed:not(.djs-connection) .djs-visual > :nth-child(1) {
+  fill: DarkGrey !important;
+}
