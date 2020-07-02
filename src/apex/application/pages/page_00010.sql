@@ -28,6 +28,19 @@ wwv_flow_api.create_page(
 ,p_last_upd_yyyymmddhh24miss=>'20200701212745'
 );
 wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(160796420876501967)
+,p_plug_name=>'Choose Branch'
+,p_region_name=>'multi_step_chooser'
+,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
+,p_plug_template=>wwv_flow_api.id(12495608896288880263)
+,p_plug_display_sequence=>50
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(173008747142503554)
 ,p_plug_name=>'Flow Control'
 ,p_region_template_options=>'#DEFAULT#:js-useLocalStorage:is-expanded:t-Region--scrollBody'
@@ -353,19 +366,6 @@ wwv_flow_api.create_report_columns(
 ,p_column_html_expression=>'<span class="clickable-action fa fa-eye" data-prcs="#PRCS_ID#" data-action="view" title="View Process Instance"></span>'
 ,p_derived_column=>'Y'
 ,p_include_in_export=>'Y'
-);
-wwv_flow_api.create_page_plug(
- p_id=>wwv_flow_api.id(160796420876501967)
-,p_plug_name=>'Choose Branch'
-,p_region_name=>'multi_step_chooser'
-,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
-,p_plug_template=>wwv_flow_api.id(12495608896288880263)
-,p_plug_display_sequence=>50
-,p_include_in_reg_disp_sel_yn=>'Y'
-,p_plug_display_point=>'REGION_POSITION_04'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6127698437330102702)

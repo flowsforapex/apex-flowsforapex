@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'NDBRUIJN'
-,p_last_upd_yyyymmddhh24miss=>'20200701204014'
+,p_last_upd_yyyymmddhh24miss=>'20200702140816'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12491866042341262842)
@@ -72,9 +72,9 @@ wwv_flow_api.create_page_item(
 ,p_is_required=>true
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(12491866042341262842)
-,p_prompt=>'Flow'
+,p_prompt=>'Parsed Flow'
 ,p_display_as=>'NATIVE_SELECT_LIST'
-,p_named_lov=>'DIAGRAMS'
+,p_named_lov=>'DIAGRAMS_PARSED'
 ,p_lov_display_null=>'YES'
 ,p_cHeight=>1
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)

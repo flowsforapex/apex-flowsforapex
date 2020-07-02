@@ -1,7 +1,7 @@
-prompt --application/shared_components/user_interface/lovs/diagrams
+prompt --application/shared_components/user_interface/lovs/diagrams_parsed
 begin
 --   Manifest
---     DIAGRAMS
+--     DIAGRAMS_PARSED
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
@@ -12,11 +12,11 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_list_of_values(
- p_id=>wwv_flow_api.id(98199214391636409)
-,p_lov_name=>'DIAGRAMS'
+ p_id=>wwv_flow_api.id(599957119101802)
+,p_lov_name=>'DIAGRAMS_PARSED'
 ,p_source_type=>'TABLE'
 ,p_location=>'LOCAL'
-,p_query_table=>'FLOW_R_DIAGRAMS'
+,p_query_table=>'FLOW_R_DIAGRAMS_PARSED'
 ,p_return_column_name=>'R'
 ,p_display_column_name=>'D'
 ,p_group_sort_direction=>'ASC'
