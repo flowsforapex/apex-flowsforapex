@@ -573,7 +573,31 @@ as
     finalize;
 
   end parse;
-  
+
+  procedure parse
+  (
+    pi_dgrm_id in flow_diagrams.dgrm_id%type
+  )
+  as
+  begin
+    g_dgrm_id := pi_dgrm_id;
+    parse;
+  end parse;
+
+  procedure parse
+  (
+    pi_dgrm_name in flow_diagrams.dgrm_name%type
+  )
+  as
+  begin
+    select dgrm_id
+      into g_dgrm_id
+      from flow_diagrams
+     where dgrm_name = pi_dgrm_name
+    ;
+    parse;
+  end parse;
+
   procedure upload_and_parse
   (
     pi_dgrm_name    in flow_diagrams.dgrm_name%type

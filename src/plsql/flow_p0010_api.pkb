@@ -40,9 +40,14 @@ as
     end case;
 
     apex_json.open_object;
-    apex_json.write( p_name => 'success', p_value => true );
+    apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
     apex_json.close_all;
   
+  exception
+    -- One of the rare cases where we ignore exceptions
+    -- The reason is, that we already notified APEX of errors and therefore processing is already stopped
+    when others then
+      null;
   end process_action;
 
 end flow_p0010_api;

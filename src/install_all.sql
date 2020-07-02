@@ -9,7 +9,7 @@ PROMPT >> Please enter needed Variables
 ACCEPT ws_name char default 'FLOWS4APEX' PROMPT 'Enter Workspace Name: [FLOWS4APEX]'
 ACCEPT parsing_schema char default 'FLOWS4APEX' PROMPT 'Enter Parsing Schema: [FLOWS4APEX]'
 ACCEPT app_alias char default 'F4A' PROMPT 'Enter Application Alias: [F4A]'
-ACCEPP app_name char default 'Flows for APEX' PROMPT 'Enter Application Name: [Flows for APEX]'
+ACCEPT app_name char default 'Flows for APEX' PROMPT 'Enter Application Name: [Flows for APEX]'
 
 
 @install_db.sql
