@@ -735,8 +735,15 @@ begin
         ;
     when 'bpmn:exclusiveGateway'
     then
-        -- handles opening and closing (but not combined)
+        -- handles opening and closing and closing&reopening
         apex_debug.message(p_message => 'Next Step is exclusiveGateway '||l_conn_target_ref, p_level => 4) ;
+        -- first check if this is a closing gateway with only one forward path.  If so, skip to next step.
+        select count(*)
+          into l_num_forward_connections
+          from flow_connections conn 
+         where conn.conn_src_objt_id = l_conn_tgt_objt_id
+           and conn.conn_dgrm_id = l_dgrm_id
+        ;
         update flow_subflows sbfl
            set sbfl.sbfl_current = l_conn_target_ref
              , sbfl.sbfl_last_completed = l_sbfl_last_completed
@@ -745,6 +752,15 @@ begin
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
         ;      
+        if l_num_forward_connections = 1
+        then
+            -- only one forward path.  don't stop - do next step.
+            flow_next_step 
+                ( p_process_id => p_process_id
+                , p_subflow_id => p_subflow_id
+                , p_forward_route => null
+                );
+        end if;
     when 'bpmn:parallelGateway'
     then
         apex_debug.message(p_message => 'Next Step is parallelGateway '||l_conn_target_ref, p_level => 4) ;
@@ -821,8 +837,8 @@ begin
         end if;
         -- now do forward path, if you have token to 'proceed'
         if l_gateway_forward_status = 'proceed' then 
-        if l_num_forward_connections > 1
-        then
+          if l_num_forward_connections > 1
+          then
             -- we have splitting gateway going forward
             begin
             -- get all forward parallel paths and create subflows for them
@@ -889,8 +905,8 @@ begin
             , p_subflow_id => l_sbfl_id
             , p_forward_route => null
             );
-        end if;  -- single path
-      end if;  -- forward token
+          end if;  -- single path
+        end if;  -- forward token
     when 'bpmn:subProcess' then
       apex_debug.message(p_message => 'Next Step is subProcess start '||l_conn_target_ref, p_level => 4) ;   
       -- find subProcess startEvent
@@ -1082,7 +1098,8 @@ begin
              and sbfl.sbfl_prcs_id = p_process_id
                ;
   
-      when 'bpmn:optionalGateway'
+      when 'bpmn:inclusiveGateway'
+
     then
           apex_debug.message(p_message => 'Begin creating optional Flows', p_level => 3) ;
           -- to be implemented

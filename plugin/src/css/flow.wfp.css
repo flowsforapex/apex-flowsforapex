@@ -9,8 +9,8 @@
 }
 
 .wfp-last-completed:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: red !important;
+  fill: grey !important;
 }
 .wfp-completed:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: DarkGrey !important;
+  fill: grey !important;
 }
