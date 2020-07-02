@@ -8,7 +8,8 @@ drop package flow_bpmn_parser_pkg;
 drop package flow_api_pkg;
 
 PROMPT >> Views
-drop view flow_dgrm_lov;
+drop view flow_r_diagrams;
+drop view flow_r_diagrams_parsed;
 drop view flow_p0001_vw;
 drop view flow_p0003_vw;
 drop view flow_p0010_vw;

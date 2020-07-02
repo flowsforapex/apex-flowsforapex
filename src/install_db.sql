@@ -23,4 +23,5 @@ PROMPT >> installing Views
 @views/flow_p0010_instances_vw.sql
 @views/flow_p0010_subflows_vw.sql
 @views/flow_p0010_branches_vw.sql
-@views/flow_dgrm_lov.sql
+@views/flow_r_diagrams.sql
+@views/flow_r_diagrams_parsed.sql
