@@ -17,7 +17,8 @@ as
     , p_region => p_region
     );
 
-    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="rendercanvas"></div>' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="rendercanvas" style="display: none;"></div>' );
+    sys.htp.p( '<span class="wfp-plugin nodatafound" style="display: none;">' || p_region.no_data_found_message ||'</span>' );
 
     apex_javascript.add_onload_code
     (
@@ -38,6 +39,12 @@ as
                   (
                     p_name      => 'noDataFoundMessage'
                   , p_value     => p_region.no_data_found_message
+                  , p_add_comma => true
+                  ) ||
+                  apex_javascript.add_attribute
+                  (
+                    p_name      => 'refreshOnLoad'
+                  , p_value     => ( p_region.attribute_08 = 'Y' )
                   , p_add_comma => false
                   ) ||
                 '})'
