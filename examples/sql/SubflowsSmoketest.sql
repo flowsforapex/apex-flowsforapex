@@ -399,6 +399,7 @@ apex_string.join_clob(
   , '</bpmn:definitions>'
   )
 ));
+commit;
 end;
 /
 
