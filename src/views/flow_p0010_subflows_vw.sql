@@ -1,21 +1,30 @@
 create or replace view flow_p0010_subflows_vw
 as
   select i_sbfl.*
-       , case 
-           when i_sbfl.sbfl_status = 'split' then 'fa fa-share-alt'
-           when i_sbfl.sbfl_status = 'in subprocess' then 'fa fa-share-alt'
-           when i_sbfl.sbfl_status = 'waiting at gateway' then 'fa fa-hand-stop-o'
-           when i_sbfl.is_multistep = 'n' then 'clickable-action next-subflow-step-link fa fa-sign-out'
-           when i_sbfl.is_multistep = 'y' then 'clickable-action next-subflow-multistep-link fa fa-tasks'
-         end as class_string
-       , case i_sbfl.is_multistep
-           when 'n' then 'next_step'
-           when 'y' then 'choose_branch'
-         end as data_action
-       , case i_sbfl.is_multistep
-           when 'n' then 'Go to next step'
-           when 'y' then 'Choose branch'
-         end as title
+       , case
+          when i_sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway') then
+            '<span class="' ||
+            case i_sbfl.sbfl_status
+              when 'split' then 'fa fa-share-alt'
+              when 'in subprocess' then 'fa fa-share-alt'
+              when 'waiting at gateway' then 'fa fa-hand-stop-o'
+            end ||
+            '"></span>'
+          else
+            '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" title="' ||
+            case i_sbfl.is_multistep
+              when 'y' then ' next-subflow-multistep-link" title="Choose branch" aria-label="Choose branch"'
+              when 'n' then ' next-subflow-step-link" title="Go to next step" aria-label="Go to next step"'
+            end || '" data-prcs="' || i_sbfl.sbfl_prcs_id || '" data-sbfl="' || i_sbfl.sbfl_id || '" data-action="' ||
+            case i_sbfl.is_multistep
+              when 'y' then 'choose_branch'
+              when 'n' then 'next_step'
+            end || '"><span aria-hidden="true" class="' ||
+            case i_sbfl.is_multistep
+              when 'y' then 'fa fa-tasks'
+              when 'n' then 'fa fa-sign-out'
+            end || '"></span></button>'
+         end as action_html      
     from (
            select sbfl.sbfl_id
                 , sbfl.sbfl_sbfl_id
@@ -25,7 +34,6 @@ as
                 , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as sbfl_current
                 , sbfl.sbfl_last_update
                 , sbfl.sbfl_status
-                , null as next_step_link
                 , flow_api_pkg.next_multistep_exists_yn(p_process_id => sbfl.sbfl_prcs_id, p_subflow_id => sbfl_id) as is_multistep
                 , sbfl.sbfl_prcs_id
              from flow_subflows sbfl

@@ -35,6 +35,7 @@
         reset: () => { this.reset(); },
         loadDiagram: () => { this.loadDiagram(); },
         addMarkers: () => { this.addMarkers(); },
+        getViewerInstance: () => { return this.bpmnViewer$; },
         widgetName: "wfp",
         type: "flow.wfp"
       });

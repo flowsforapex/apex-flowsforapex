@@ -4,7 +4,7 @@
 <createdTime>2020-06-16 21:52:53 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
 <referredTableLongName>FLOW_OBJECTS</referredTableLongName>
-<deleteRule>NO ACTION</deleteRule>
+<deleteRule>CASCADE</deleteRule>
 <referredTableID>A02A7C75-D817-F949-9BBB-2D1A5BEFEE1B</referredTableID>
 <keyObject>6F96D5A1-EB95-6ECE-E802-3E321F5E5748</keyObject>
 <referredKeyID>6F96D5A1-EB95-6ECE-E802-3E321F5E5748</referredKeyID>
