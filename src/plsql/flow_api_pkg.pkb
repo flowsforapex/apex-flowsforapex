@@ -844,8 +844,9 @@ begin
                 l_sbfl_id := l_sbfl_id_par;
                 --restart parent split subflow
                 update flow_subflows sbfl
-                  set sbfl.sbfl_status = 'running'
+                  set sbfl.sbfl_last_completed = l_conn_target_ref
                     , sbfl.sbfl_current = l_conn_target_ref
+                    , sbfl.sbfl_status = 'running'
                     , sbfl.sbfl_last_update = sysdate
                 where sbfl.sbfl_last_completed = l_sbfl_starting_object
                   and sbfl.sbfl_status = 'split'
@@ -1069,7 +1070,6 @@ begin
           and sbfl.sbfl_prcs_id = p_process_id
         ;
     end case;
-
   exception
     when TOO_MANY_ROWS
     then
@@ -1084,7 +1084,6 @@ begin
       , p_display_location => apex_error.c_on_error_page
       );
   end flow_next_step;
-
 
   procedure flow_next_branch
   ( p_process_id  in flow_processes.prcs_id%type
@@ -1105,65 +1104,30 @@ begin
     apex_debug.info('p_BRANCH_NAME passed in :',p_branch_name);
     select prcs.prcs_dgrm_id
          , sbfl.sbfl_current
+         , objt.objt_tag_name
+         , objt.objt_id
       into l_dgrm_id
          , l_sbfl_current
-      from flow_subflows sbfl
-      join flow_processes prcs
+         , l_current_tag_name
+         , l_sbfl_current_objt_id
+      from flow_processes prcs
+      join flow_subflows sbfl
         on sbfl.sbfl_prcs_id = prcs.prcs_id
+      join flow_objects objt
+        on sbfl.sbfl_current = objt.objt_bpmn_id
+       and prcs.prcs_dgrm_id = objt_dgrm_id
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
-    ;
-    
-    --get current object tag type
-    select objt.objt_tag_name
-         , objt.objt_id
-      into l_current_tag_name
-         , l_sbfl_current_objt_id
-      from flow_objects objt
-     where objt.objt_bpmn_id = l_sbfl_current
-       and objt.objt_dgrm_id = l_dgrm_id
-    ;
+    ;  
     case l_current_tag_name 
-      when 'bpmn:exclusiveGateway' then
+    when 'bpmn:exclusiveGateway' then
       -- only only path chosen.  Keep existing subflow but switch to chosen path
-        begin
-
-          -- log current step as completed
-          log_step_completion
-          ( p_process_id => p_process_id
-          , p_subflow_id => p_subflow_id
-          , p_completed_object => l_sbfl_current
-          , p_notes => ''
-          );
-
-          select tgt_objt.objt_bpmn_id
-            into l_conn_target_ref
-            from flow_connections conn
-            join flow_objects tgt_objt
-              on tgt_objt.objt_id = conn.conn_tgt_objt_id
-            join flow_objects src_objt
-              on src_objt.objt_id = conn.conn_src_objt_id
-           where src_objt.objt_bpmn_id = l_sbfl_current
-             and conn.conn_dgrm_id = l_dgrm_id
-             and conn.conn_bpmn_id = p_branch_name
-          ;
-          -- possibly change this to call flow_next_step?
-          update flow_subflows sbfl
-          set   sbfl.sbfl_current = l_conn_target_ref
-              , sbfl.sbfl_last_completed = l_sbfl_current
-              , sbfl.sbfl_last_update = sysdate
-              , sbfl.sbfl_status = 'running'
-          where sbfl.sbfl_id  = p_subflow_id
-            and sbfl.sbfl_prcs_id = p_process_id
-              ;
-        exception
-        when NO_DATA_FOUND 
-        then
-            apex_error.add_error
-            ( p_message => 'No branch was found.'
-            , p_display_location => apex_error.c_on_error_page
-            );
-        end;
+      -- step into first step on the chosen path
+      flow_next_step 
+        (p_process_id => p_process_id
+        ,p_subflow_id => p_subflow_id
+        ,p_forward_route => p_branch_name
+        );          
     when 'bpmn:inclusiveGateway' then
       apex_debug.message(p_message => 'Begin creating parallel flows for inclusiveGateway', p_level => 3) ;
       -- get all forward parallel paths and create subflows for them if they are in forward path(s) chosen
