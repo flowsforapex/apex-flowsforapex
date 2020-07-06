@@ -43,7 +43,11 @@ CREATE TABLE flow_objects (
     objt_name      VARCHAR2(200 CHAR),
     objt_type      VARCHAR2(50 CHAR),
     objt_tag_name  VARCHAR2(50 CHAR),
-    objt_objt_id   NUMBER
+    objt_objt_id   NUMBER,
+    objt_sub_tag_name VARCHAR2(50 CHAR),
+    objt_timer_date VARCHAR2(50 BYTE), 
+	objt_timer_duration VARCHAR2(50 BYTE), 
+	objt_timer_cycle VARCHAR2(50 BYTE)
 );
 
 ALTER TABLE flow_objects ADD CONSTRAINT objt_pk PRIMARY KEY ( objt_id );

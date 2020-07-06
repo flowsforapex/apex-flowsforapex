@@ -1,0 +1,43 @@
+-- DBMS_SCHEDULER setup for timers --
+
+-- As SYS, if missing grants
+GRANT CREATE JOB TO ffa;
+
+GRANT EXECUTE ON default_in_memory_job_class TO ffa;
+
+
+-- as schema owner
+--BEGIN
+--DBMS_SCHEDULER.drop_program(program_name => 'FLOW_START_TIMER_P');
+--DBMS_SCHEDULER.drop_program_argument(program_name => 'P_TIMER_ID', argument_position => 1);
+--DBMS_SCHEDULER.drop_job(job_name => 'FLOW_START_TIMER_J');
+--END;
+BEGIN
+DBMS_SCHEDULER.create_program (
+   program_name        => 'FLOW_START_TIMER_P',
+   program_type        => 'STORED_PROCEDURE',
+   program_action      => '"FLOW_TIMERS_PKG"."TIMER_EXPIRED"',
+   number_of_arguments => 2,
+   enabled             => FALSE,
+   comments            => 'Start a timer for Flows for APEX'
+   );
+END;
+BEGIN
+DBMS_SCHEDULER.define_program_argument(
+   program_name      => 'FLOW_START_TIMER_P',
+   argument_position => 1,
+   argument_name     => 'P_PROCESS_ID',
+   argument_type     => 'VARCHAR2',
+   out_argument      => FALSE);
+END;
+BEGIN
+DBMS_SCHEDULER.define_program_argument(
+   program_name      => 'FLOW_START_TIMER_P',
+   argument_position => 2,
+   argument_name     => 'P_SUBFLOW_ID',
+   argument_type     => 'VARCHAR2',
+   out_argument      => FALSE);
+END;
+BEGIN
+DBMS_SCHEDULER.enable (name => 'FLOW_START_TIMER_P');
+END;
