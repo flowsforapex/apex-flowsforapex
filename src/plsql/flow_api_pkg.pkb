@@ -1130,7 +1130,6 @@ begin
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
         ;
-    end case;
     when  'bpmn:task' --- next step is a simple activity / task
     then 
         -- should this be when others?  
