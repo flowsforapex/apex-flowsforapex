@@ -16,11 +16,10 @@ wwv_flow_api.create_list_of_values(
 ,p_lov_name=>'DIAGRAMS_PARSED'
 ,p_source_type=>'TABLE'
 ,p_location=>'LOCAL'
-,p_query_table=>'FLOW_R_DIAGRAMS_PARSED'
-,p_return_column_name=>'R'
-,p_display_column_name=>'D'
+,p_query_table=>'FLOW_DIAGRAMS_PARSED_LOV'
+,p_return_column_name=>'DGRM_NAME'
+,p_display_column_name=>'DGRM_NAME'
 ,p_group_sort_direction=>'ASC'
-,p_default_sort_column_name=>'D'
 ,p_default_sort_direction=>'ASC'
 );
 wwv_flow_api.component_end;

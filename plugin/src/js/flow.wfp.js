@@ -6,6 +6,8 @@
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null,
+      noDataFoundMessage: "Could not load Diagram",
+      refreshOnLoad: false,
       currentClass: "wfp-current",
       completedClass: "wfp-completed",
       lastCompletedClass: "wfp-last-completed"
@@ -22,7 +24,9 @@
       this.regionId    = this.element[0].id;
       this.canvasId    = this.regionId + '_canvas';
       this.bpmnViewer$ = new BpmnJS({ container: '#' + this.canvasId });
-//      this.refresh();
+      if ( this.options.refreshOnLoad ) {
+        this.refresh();
+      }
 //      this.eventBus$   = this.bpmnViewer$.get('eventBus');
 //      this.eventBus$.on( 'element.click', (e) => { alert( "Clicked on " + e.element.id ); } );
       region.create( this.regionId, {
@@ -31,12 +35,14 @@
         reset: () => { this.reset(); },
         loadDiagram: () => { this.loadDiagram(); },
         addMarkers: () => { this.addMarkers(); },
+        getViewerInstance: () => { return this.bpmnViewer$; },
         widgetName: "wfp",
         type: "flow.wfp"
       });
     },
     loadDiagram: async function() {
-//      var me = this;
+      $( "#" + this.canvasId ).show();
+      $( "#" + this.regionId + " span.nodatafound" ).hide();
       const bpmnViewer$ = this.bpmnViewer$;
       try {
         const result = await bpmnViewer$.importXML( this.diagram || this._defaultXml );
@@ -57,8 +63,10 @@
         markers.forEach( currentMarker => {
           canvas.addMarker( currentMarker, markerClass );
         });
-      } else {
+      } else if ( markers ) {
         canvas.addMarker( markers, markerClass );
+      } else {
+        apex.debug.warn( "No markers received?", markers );
       }
     },
     zoom: function( zoomOption ) {
@@ -80,8 +88,11 @@
           this.current       = pData.data.current;
           this.completed     = pData.data.completed;
           this.lastCompleted = pData.data.lastCompleted;
+          this.loadDiagram();
+        } else {
+          $( "#" + this.canvasId ).hide();
+          $( "#" + this.regionId + " span.nodatafound" ).show();
         }
-        this.loadDiagram();
       });
     },
     reset: function() {
