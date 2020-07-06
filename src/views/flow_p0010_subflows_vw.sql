@@ -8,6 +8,7 @@ as
               when 'split' then 'fa fa-share-alt'
               when 'in subprocess' then 'fa fa-share-alt'
               when 'waiting at gateway' then 'fa fa-hand-stop-o'
+              when 'waiting for timer' then 'fa fa-clock-o'
             end ||
             '"></span>'
           else
