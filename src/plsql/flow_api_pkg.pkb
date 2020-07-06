@@ -622,6 +622,7 @@ is
   l_target_objt_sub      flow_objects.objt_type%TYPE; --target object in subprocess
   l_num_back_connections    number;   -- number of connections leading into object
   l_num_forward_connections number;   -- number of connections forward from object
+  l_path_count              number;   -- used to count paths taken (eventGateway)
   l_num_unfinished_subflows    number;
   l_gateway_forward_status varchar2(10);
 begin
@@ -982,7 +983,7 @@ begin
                 ( p_message => 'No forward paths found for opening Parallel Gateway'
                 , p_display_location => apex_error.c_on_error_page
                 );
-              when too_many_rows then
+              when too_many_rows then  -- is this necessary?
                 apex_error.add_error
                 ( p_message => 'Too many forward paths found  opening Parallel Gateway'
                 , p_display_location => apex_error.c_on_error_page
@@ -1055,6 +1056,81 @@ begin
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
       ;  
+    when 'bpmn:eventBasedGateway'
+    then
+        -- eventGateway can have multiple inputs and outputs, but there is no waiting, etc.
+        -- incoming subflow continues on the first output path.
+        -- additional output paths create new subflows
+        apex_debug.message(p_message => 'Next Step is eventGateway '||l_conn_target_ref, p_level => 4) ;
+        begin
+            -- get all forward parallel paths and create subflows for them
+            -- these are paths forward of l_conn_target_ref as we are doing double step
+            l_path_count := 1;
+            for new_path in (
+                select conn.conn_bpmn_id route
+                     , objt.objt_bpmn_id target
+                  from flow_connections conn
+                  join flow_objects objt
+                    on objt.objt_id = conn.conn_tgt_objt_id
+                 where conn.conn_dgrm_id = l_dgrm_id
+                   and conn.conn_src_objt_id = l_conn_tgt_objt_id
+            )
+            loop
+                if l_path_count = 1
+                then
+                    -- continue to use existing subflow
+                    update flow_subflows sbfl
+                      set sbfl.sbfl_last_completed = l_sbfl_current
+                        , sbfl.sbfl_current = l_conn_target_ref
+                        , sbfl.sbfl_status = 'running'
+                        , sbfl.sbfl_last_update = sysdate 
+                    where sbfl.sbfl_id = p_subflow_id
+                      and sbfl.sbfl_prcs_id = p_process_id
+                        ;
+                    l_sbfl_id_sub := p_subflow_id;
+                else 
+                    -- create new subflows for additional forward paths starting here
+                    l_sbfl_id_sub := subflow_start
+                        ( p_process_id =>  p_process_id         
+                        , p_parent_subflow =>  l_sbfl_id        
+                        , p_starting_object =>  l_conn_target_ref         
+                        , p_current_object => l_conn_target_ref          
+                        , p_route =>  new_path.route         
+                        , p_last_completed =>  l_conn_target_ref        
+                        );
+                end if;
+                  -- step into first step on the new path
+                flow_next_step 
+                      (p_process_id => p_process_id
+                      ,p_subflow_id => l_sbfl_id_sub
+                      ,p_forward_route => new_path.route
+                      );
+                l_path_count := l_path_count + 1;
+            end loop;
+        exception
+              when no_data_found then
+                apex_error.add_error
+                ( p_message => 'No forward paths found for event Gateway'
+                , p_display_location => apex_error.c_on_error_page
+                );
+        end;
+    when  'bpmn:intermediateCatchEvent' --- next step is a simple activity / task
+    then 
+        -- then we make everything behave like a simple activity unless specifically supported
+        -- currently only supports timer & without checking its type is timer
+        -- but this will have a case type = timer, emailReceive. ....
+        -- this is currently just a stub.
+        apex_debug.message(p_message => 'Next Step is IntermediateCatchEvent '||l_conn_target_ref, p_level => 4) ;
+        update flow_subflows sbfl
+        set   sbfl.sbfl_current = l_conn_target_ref
+            , sbfl.sbfl_last_completed = l_sbfl_last_completed
+            , sbfl.sbfl_last_update = sysdate
+ --           , sbfl.sbfl_status = 'waiting for timer'
+            , sbfl.sbfl_status = 'running'
+        where sbfl.sbfl_id = p_subflow_id
+          and sbfl.sbfl_prcs_id = p_process_id
+        ;
+    end case;
     when  'bpmn:task' --- next step is a simple activity / task
     then 
         -- should this be when others?  

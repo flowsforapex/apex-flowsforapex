@@ -5,6 +5,7 @@ as
            when i_sbfl.sbfl_status = 'split' then 'fa fa-share-alt'
            when i_sbfl.sbfl_status = 'in subprocess' then 'fa fa-share-alt'
            when i_sbfl.sbfl_status = 'waiting at gateway' then 'fa fa-hand-stop-o'
+           when i_sbfl.sbfl_status = 'waiting for timer' then 'fa fa-clock-o'
            when i_sbfl.is_multistep = 'n' then 'clickable-action next-subflow-step-link fa fa-sign-out'
            when i_sbfl.is_multistep = 'y' then 'clickable-action next-subflow-multistep-link fa fa-tasks'
          end as class_string
