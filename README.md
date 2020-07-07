@@ -15,6 +15,10 @@ A <b>video</b> of Flows for APEX v1 can be found at ODTUG (requires a membership
 
 https://www.odtug.com/p/do/sd/sid=13259
 
+Introduction <b>blog</b> post:
+
+https://nielsdebr.blogspot.com/2020/06/flows-for-apex.html
+
 # How to contribute as a developer to this project
 1. Clone/fork the repository apex-flowsforapex to get your own copy
 2. Create a workspace with the ID 2400405578329584 (you will need your own APEX environment)
