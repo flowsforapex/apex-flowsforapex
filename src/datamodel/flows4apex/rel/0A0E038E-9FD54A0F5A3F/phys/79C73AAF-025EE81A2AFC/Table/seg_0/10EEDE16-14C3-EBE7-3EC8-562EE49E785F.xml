@@ -1,0 +1,62 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_OBJECT_ATTRIBUTES" directorySegmentName="seg_0" id="10EEDE16-14C3-EBE7-3EC8-562EE49E785F">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:42:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="OBAT_OBJT_ID" id="7D9A2FA6-E1D7-7994-50C6-388CFEA19CD4">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBAT_KEY" id="AC904B27-DE8F-8A5A-D8D6-B21A92E9FBE8">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBAT_VC_VALUE" id="AFA64FC1-160C-7A70-10DC-D256796EEB90">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBAT_NUM_VALUE" id="CEB6E062-58FE-E302-8D76-20AB837023FE">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBAT_DATE_VALUE" id="F055C614-39AD-8E63-DB32-DDA908F03B69">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="OBAT_OBJT_FK" id="9EB463CC-1010-1B21-C1EA-68269FE74613">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<deferrable>YES</deferrable>
+<initially>DEFERRED</initially>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="OBAT_PK" id="79639E21-DDC4-7F1F-6281-FA69583082EA">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:43:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</PrimaryKey>
+</primaryKeys>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.storage.oracle.TableCheckConstraintOracle">
+<TableCheckConstraint name="OBAT_CK" id="D2474772-A9B8-C899-C37D-1F6A6A77E9D8">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</TableCheckConstraint>
+</tableCheckConstraints>
+</TableProxyOraclev12c>
