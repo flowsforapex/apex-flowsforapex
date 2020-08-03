@@ -1,216 +1,337 @@
-CREATE OR REPLACE PACKAGE BODY flow_timers_pkg AS
 
+create or replace package body flow_timers_pkg as
+
+ 
 /******************************************************************************
-  RUN_JOB
+  STEP_TIMERS
 ******************************************************************************/
+  procedure step_timers is
 
-  PROCEDURE run_job (
-    p_process_id       IN  VARCHAR2
-  , p_subflow_id       IN  VARCHAR2
-  , p_start_date       IN  TIMESTAMP WITH TIME ZONE DEFAULT NULL
-  , p_repeat_interval  IN  VARCHAR2 DEFAULT NULL
-  , p_repeat_n_times   IN  NUMBER DEFAULT NULL
-  ) IS
-    l_name VARCHAR2 (64) := dbms_scheduler.generate_job_name ('FLOW_APEX_TIMER');
-  BEGIN
-    apex_debug.message(p_message => 'Begin run_job for subflow '||p_subflow_id , p_level => 3) ;
-    
-    dbms_scheduler.create_job (job_name => l_name, program_name => 'FLOW_START_TIMER_P', job_style => 'IN_MEMORY_RUNTIME'
-                             , start_date => p_start_date, repeat_interval => p_repeat_interval, enabled => false);
+    -- Cycle timers
+    cursor c1 is
+    select *
+      from flow_timers
+     where timr_status in (c_created, c_active)
+       and timr_cycle_string is not null
+    for update of timr_last_run
+                , timr_run_count
+                , timr_status;
 
-    IF p_repeat_n_times IS NOT NULL THEN
-      dbms_scheduler.set_attribute (name => l_name, attribute => 'max_runs', value => p_repeat_n_times);
+    -- duration timers
+    cursor c2 is
+    select *
+      from flow_timers
+     where timr_status = c_created
+       and timr_duration_string is not null
+    for update of timr_last_run
+                , timr_run_count
+                , timr_status;
 
-    END IF;
+    -- date timers
+    cursor c3 is
+      select *
+        from flow_timers
+       where timr_status = c_created
+         and timr_date_string is not null
+    for update of timr_last_run
+                , timr_run_count
+                , timr_status;
 
-    dbms_scheduler.set_job_argument_value (job_name => l_name, argument_name => 'P_PROCESS_ID', argument_value => p_process_id);
-    dbms_scheduler.set_job_argument_value (job_name => l_name, argument_name => 'P_SUBFLOW_ID', argument_value => p_subflow_id);
+  begin
+    -- get/set the timers (cycle)
+    for c1_row in c1 loop
+      if c1_row.timr_start_on + (c1_row.timr_interval_ym * nvl(c1_row.timr_run_count, 1))
+                              + (c1_row.timr_interval_ds * nvl(c1_row.timr_run_count, 1)) <= systimestamp then
+        update flow_timers
+        set timr_last_run = systimestamp
+          , timr_run_count = timr_run_count + 1
+          , timr_status = case when (timr_run_count + 1) = timr_repeat_times then c_ended
+                          else c_active end
+        where current of c1;
 
-    dbms_scheduler.enable (l_name);
-  END run_job;
+        -- return timer event to flow_api_pkg
+        flow_api_pkg.flow_handle_event (
+          p_process_id => c1_row.timr_prcs_id
+        , p_subflow_id => c1_row.timr_sbfl_id
+        );
+      end if;
+    end loop;
 
+  -- Get/set timers (duration)
+    for c2_row in c2 loop
+      if c2_row.timr_start_on <= systimestamp then
+        update flow_timers
+        set timr_last_run = systimestamp
+          , timr_run_count = timr_run_count + 1
+          , timr_status = c_ended
+        where current of c2;
 
+        -- return timer event to flow_api_pkg
+        flow_api_pkg.flow_handle_event (
+          p_process_id => c2_row.timr_prcs_id
+        , p_subflow_id => c2_row.timr_sbfl_id
+        );
+      end if;
+    end loop;
+
+  -- get/set timers (date)
+    for c3_row in c3 loop
+      if c3_row.timr_start_on <= systimestamp then
+        update flow_timers
+        set timr_last_run = systimestamp
+          , timr_run_count = timr_run_count + 1
+          , timr_status = c_ended
+        where current of c3;
+
+        -- return timer event to flow_api_pkg
+        flow_api_pkg.flow_handle_event (
+          p_process_id => c3_row.timr_prcs_id
+        , p_subflow_id => c3_row.timr_sbfl_id
+        );
+      end if;
+    end loop;
+  end step_timers;
 
 /******************************************************************************
   GET_DURATION
 ******************************************************************************/
 
-  PROCEDURE get_duration (
-    in_string      IN      VARCHAR2
-  , in_start_ts    IN      TIMESTAMP WITH TIME ZONE DEFAULT NULL
-  , out_start_ts   OUT     TIMESTAMP WITH TIME ZONE
-  , out_interv_ym  IN OUT  INTERVAL YEAR TO MONTH
-  , out_interv_ds  IN OUT  INTERVAL DAY TO SECOND
-  ) IS
-    l_int_years     NUMBER;
-    l_int_months    NUMBER;
-    l_int_days      NUMBER;
-    l_int_contains  VARCHAR2 (1);
-  BEGIN
-    IF regexp_replace (in_string, '[0-9]', '') LIKE 'PYM%' THEN
+  procedure get_duration (
+    in_string            in      varchar2
+  , in_start_ts          in     timestamp with time zone default null
+  , out_start_ts            out timestamp with time zone
+  , out_interv_ym        in out interval year to month
+  , out_interv_ds        in out interval day to second
+  ) is
+    l_int_years     number;
+    l_int_months    number;
+    l_int_days      number;
+    l_int_contains  varchar2 (2);
+  begin
+    if regexp_replace (in_string, '[0-9]', '') like 'PYM%' then
       l_int_contains  := 'M';
       l_int_years     := substr (in_string, 2, instr (in_string, 'Y', 1) - 2);
       l_int_months    := substr (in_string, instr (in_string, 'Y', 1) + 1, instr (in_string, 'M', 1) - instr (in_string, 'Y', 1) - 1);
 
-    ELSIF regexp_replace (in_string, '[0-9]', '') LIKE 'PY%' THEN
+    elsif regexp_replace (in_string, '[0-9]', '') like 'PY%' then
       l_int_contains  := 'Y';
       l_int_years     := substr (in_string, 2, instr (in_string, 'Y', 1) - 2);
 
-    ELSIF regexp_replace (in_string, '[0-9]', '') LIKE 'PM%' THEN
+    elsif regexp_replace (in_string, '[0-9]', '') like 'PM%' then
       l_int_contains  := 'M';
       l_int_months    := substr (in_string, 2, instr (in_string, 'M', 1) - 2);
 
-    END IF;
+    end if;
 
-    out_interv_ym  := numtoyminterval (nvl (l_int_years, 0), 'YEAR') + numtoyminterval (nvl (l_int_months, 0), 'MONTH');
+    if regexp_replace (in_string, '[0-9]', '') like 'PT%' then
+      l_int_contains  := 'PT';
+      out_interv_ds   := nvl (to_dsinterval (substr (in_string, instr (in_string, l_int_contains, 1))), INTERVAL '0' HOUR);
 
-    out_interv_ds  := nvl (to_dsinterval (substr (in_string, instr (in_string, l_int_contains, 1) + 1)), INTERVAL '0' HOUR);
+    else 
+      l_int_contains  := 'T';
+      out_interv_ds := nvl (to_dsinterval (substr (in_string, instr (in_string, l_int_contains, 1))), INTERVAL '0' HOUR);
 
-    out_start_ts   := nvl (in_start_ts, systimestamp) + out_interv_ym + out_interv_ds;
-      /*out_start_ts :=  in_start_ts + numtoyminterval(nvl(l_int_years, 0), 'YEAR')
-                                   + numtoyminterval(nvl(l_int_months, 0), 'MONTH')
-                                   + nvl(to_dsinterval(substr(in_string
-                                                             ,instr(in_string, l_int_contains, 1) + 1))
-                                        ,interval '0' HOUR);*/
-  END get_duration;
+    end if;
 
-  
+    out_interv_ym := numtoyminterval (nvl (l_int_years, 0), 'YEAR') + numtoyminterval (nvl (l_int_months, 0), 'MONTH');
+    out_start_ts  := nvl (in_start_ts, systimestamp) + out_interv_ym + out_interv_ds;
+
+  end get_duration;
 
 /******************************************************************************
   START_TIMER
 ******************************************************************************/
 
-  PROCEDURE start_timer (
-    p_process_id  IN  VARCHAR2
-  , p_subflow_id  IN  VARCHAR2 -- add parameter
-  ) IS
-    l_process_id          flow_processes.prcs_id%TYPE := p_process_id;
-    l_subflow_id          flow_subflows.sbfl_id%TYPE := p_subflow_id;
-    l_time_date           flow_objects.objt_timer_date%TYPE;
-    l_time_duration       flow_objects.objt_timer_duration%TYPE;
-    l_time_cycle          flow_objects.objt_timer_cycle%TYPE;
-    l_parsed_ts           TIMESTAMP WITH TIME ZONE;
-    l_parsed_duration_ym  INTERVAL YEAR TO MONTH;
-    l_parsed_duration_ds  INTERVAL DAY TO SECOND;
-    l_repeat_n_times      NUMBER;
-  BEGIN
-     apex_debug.message(p_message => 'Begin start_timer for subflow '||p_subflow_id , p_level => 3) ;
-/*    SELECT timr_timer_id
-         , timr_time_date
-         , timr_time_duration
-         , timr_time_cycle
-    INTO
-      l_timer_id
-    , l_time_date
-    , l_time_duration
-    , l_time_cycle
-    FROM flow_timers
-    WHERE timr_timer_id = p_timer_id; */
-      -- get timer info for the current timer object
-      select l_curr_objt_id
-           , objt_timer_date
-           , objt_timer_duration
-           , objt_timer_cycle
-        into l_timer_id
-           , l_time_date
-           , l_time_duration
-           , l_time_cycle
-        from flow_objects objt 
-        join flow_subflows sbfl on sbfl.sbfl_current = objt.objt_bpmn_id
+  procedure start_timer (
+    p_process_id  in  flow_processes.prcs_id%type
+  , p_subflow_id  in  flow_subflows.sbfl_id%type
+  ) is
 
-    IF l_time_date IS NOT NULL THEN
-      l_parsed_ts := to_timestamp_tz (replace (l_time_date, 'TZ', '  '), 'YYYY-MM-DD HH24:MI:SS TZR');
-      run_job (p_process_id => l_process_id, p_subflow_id => p_subflow_id, p_start_date => l_parsed_ts);
-    ELSIF l_time_duration IS NOT NULL THEN
-      get_duration (in_string => l_time_duration, in_start_ts => systimestamp, out_start_ts => l_parsed_ts
-                  , out_interv_ym => l_parsed_duration_ym, out_interv_ds => l_parsed_duration_ds);
+    l_time_date           flow_timers.timr_date_string%type;
+    l_time_duration       flow_timers.timr_duration_string%type;
+    l_time_cycle          flow_timers.timr_cycle_string%type;
+    l_parsed_ts           timestamp with time zone;
+    l_parsed_duration_ym  interval year to month;
+    l_parsed_duration_ds  interval day to second;
+    l_scheduler_string    varchar2(256);
+    l_repeat_n_times      number;
+  begin
+    select objt_timer_date
+         , objt_timer_duration
+         , objt_timer_cycle
+    into   l_time_date
+         , l_time_duration
+         , l_time_cycle
+    from flow_objects objt
+    join flow_subflows sbfl on sbfl.sbfl_current = objt.objt_bpmn_id
+    where sbfl.sbfl_id = p_subflow_id
+      and sbfl.sbfl_prcs_id = p_process_id
+        ;
 
-      run_job (p_process_id => l_process_id, p_subflow_id => l_subflow_id, p_start_date => l_parsed_ts);
-    ELSIF l_time_cycle IS NOT NULL THEN -- to be implemented using get_duration().
-      NULL;/* WORKING ON THIS, BROKEN...
+    -- date timers
+    if l_time_date is not null then
+      l_parsed_ts := to_timestamp_tz (replace (l_time_date, 'T', ' '), 'YYYY-MM-DD HH24:MI:SS TZR');
+
+      insert into flow_timers (
+          timr_prcs_id
+        , timr_sbfl_id
+        , timr_created_on
+        , timr_status
+        , timr_date_string
+        , timr_start_on
+      ) values ( 
+        p_process_id
+      , p_subflow_id
+      , systimestamp
+      , c_created
+      , l_time_date
+      , l_parsed_ts
+      );      
+
+    -- duration timers
+    elsif l_time_duration is not null then
+      get_duration (in_string            => l_time_duration
+                  , in_start_ts          => systimestamp
+                  , out_start_ts         => l_parsed_ts
+                  , out_interv_ym        => l_parsed_duration_ym
+                  , out_interv_ds        => l_parsed_duration_ds
+                  );
+
+      insert into flow_timers (
+          timr_prcs_id
+        , timr_sbfl_id
+        , timr_created_on
+        , timr_status
+        , timr_duration_string
+        , timr_start_on
+      ) values (
+        p_process_id
+      , p_subflow_id
+      , systimestamp
+      , c_created
+      , l_time_duration
+      , l_parsed_ts
+      );
+
+    -- cycle timers
+    elsif l_time_cycle is not null then
       l_repeat_n_times := substr(l_time_cycle,
                                  2,
                                  instr(l_time_cycle, '/', 1, 1) - 2);
-      l_parsed_ts := substr(l_time_cycle,
-                            instr(l_time_cycle, '/', 1, 2) + 2);
-                           
-      run_job ( p_timer_id        => l_timer_id
-              , p_process_id      => l_process_id
-              , p_start_date      => l_parsed_ts
-              , p_repeat_interval => l_parsed_duration_ym + l_parsed_duration_ds
-              , p_repeat_n_times  => l_repeat_n_times
-              );*/
-    END IF;
 
-  END start_timer;
-  
+      l_time_duration := substr(l_time_cycle,
+                                instr(l_time_cycle, '/', 1, 1) + 1);
 
+      get_duration (in_string            => l_time_duration
+                  , in_start_ts          => systimestamp
+                  , out_start_ts         => l_parsed_ts
+                  , out_interv_ym        => l_parsed_duration_ym
+                  , out_interv_ds        => l_parsed_duration_ds
+                  );
 
-/******************************************************************************
-  TIMER_EXPIRED
-******************************************************************************/
+      insert into flow_timers 
+        ( timr_prcs_id
+        , timr_sbfl_id
+        , timr_created_on
+        , timr_status
+        , timr_cycle_string
+        , timr_start_on
+        , timr_interval_ym
+        , timr_interval_ds
+        , timr_repeat_times
+      ) values 
+        ( p_process_id
+        , p_subflow_id
+        , systimestamp
+        , c_created
+        , l_time_cycle
+        , l_parsed_ts
+        , l_parsed_duration_ym
+        , l_parsed_duration_ds
+        , l_repeat_n_times
+        );
 
-  PROCEDURE timer_expired (
-    p_process_id  IN  VARCHAR2
-  , p_subflow_id  IN  VARCHAR2 
-  ) IS
-  BEGIN
-    apex_debug.message(p_message => 'Begin timer_expired for subflow '||p_subflow_id , p_level => 3) ;
-    -- set subflow status to running & call next step
-    update flow_subflows sbfl 
-       set sbfl.sbfl_status = 'running'
-         , sbfl.sbfl_last_update = sysdate
-     where sbfl.sbfl_prcs_id = p_process_id
-       and sbfl.sbfl_id = p_subflow_id
-         ;
+    end if;
 
-    flow_api_pkg.flow_next_step (
-      p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_forward_route => null
-    )
-  END timer_expired;
-
-
+  end start_timer;
 
 /******************************************************************************
-  KILL_TIMER
+  EXPIRE_TIMER
 ******************************************************************************/
 
-  PROCEDURE kill_timer (
-    p_process_id    IN   VARCHAR2
-  , p_subflow_id    IN   VARCHAR2
-  , out_return_code  OUT  NUMBER
-  ) IS
-  BEGIN
-    NULL; -- Implement here the removal of the job
-  END kill_timer;
-
-
+  procedure expire_timer (
+    p_process_id  in  flow_processes.prcs_id%type
+  , p_subflow_id  in  flow_subflows.sbfl_id%type 
+  ) is
+  begin
+    update flow_timers
+    set timr_status = c_expired
+    where timr_prcs_id = p_process_id
+      and timr_sbfl_id = p_subflow_id
+      and timr_status not in (c_ended, c_expired, c_terminated);
+  end expire_timer;
 
 /******************************************************************************
-  KILL_PROCESS_TIMERS
+  TERMINATE_TIMER
 ******************************************************************************/
 
-  PROCEDURE kill_process_timers (
-    p_process_id    IN   VARCHAR2
-  , out_return_code  OUT  NUMBER
-  ) IS
-  BEGIN
-    NULL; -- Implement here the removal of the job
-  END kill_process_timers;
-
-
+  procedure terminate_timer (
+      p_process_id    in   flow_processes.prcs_id%type
+    , p_subflow_id    in   flow_subflows.sbfl_id%type
+    , p_return_code   out  number
+    ) is
+  begin
+    update flow_timers
+       set timr_status = c_terminated
+     where timr_prcs_id = p_process_id
+       and timr_sbfl_id = p_subflow_id
+       and timr_status not in (c_ended, c_expired, c_terminated);
+  end terminate_timer;
 
 /******************************************************************************
-  KILL_ALL_TIMERS
+  TERMINATE_PROCESS_TIMERS
 ******************************************************************************/
 
-  PROCEDURE kill_all_timers (
-  , out_return_code  OUT  NUMBER
-  ) IS
-  BEGIN
-    NULL; -- Implement here the removal of the jobs
-  END kill_all_timers;
+  procedure terminate_process_timers (
+      p_process_id    in   flow_processes.prcs_id%type
+    , p_return_code   out  number
+    ) is
+  begin
+    update flow_timers
+    set timr_status = c_terminated
+    where timr_prcs_id = p_process_id
+      and timr_status not in (c_ended, c_expired, c_terminated);
+  end terminate_process_timers;
 
-END flow_timers_pkg;
+/******************************************************************************
+  TERMINATE_ALL_TIMERS
+******************************************************************************/
+
+  procedure terminate_all_timers (
+    p_return_code  out  number
+  ) is
+  begin
+    update flow_timers
+    set timr_status = c_terminated
+    where timr_status not in (c_ended, c_expired, c_terminated);
+  end terminate_all_timers;
+
+/******************************************************************************
+  DISABLE_SCHEDULED_JOB
+******************************************************************************/
+
+  procedure disable_scheduled_job is
+  begin
+    dbms_scheduler.disable (name => 'apex_flow_step_timers_j');
+  end;
+
+/******************************************************************************
+  ENABLE_SCHEDULED_JOB
+******************************************************************************/
+
+  procedure enable_scheduled_job is
+  begin
+    dbms_scheduler.enable (name => 'apex_flow_step_timers_j');
+  end;
+
+end flow_timers_pkg;
