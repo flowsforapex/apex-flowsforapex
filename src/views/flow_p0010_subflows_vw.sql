@@ -2,13 +2,14 @@ create or replace view flow_p0010_subflows_vw
 as
   select i_sbfl.*
        , case
-          when i_sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway') then
+          when i_sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event') then
             '<span class="' ||
             case i_sbfl.sbfl_status
               when 'split' then 'fa fa-share-alt'
               when 'in subprocess' then 'fa fa-share-alt'
               when 'waiting at gateway' then 'fa fa-hand-stop-o'
               when 'waiting for timer' then 'fa fa-clock-o'
+              when 'waiting for event' then 'fa fa-hand-stop-o'
             end ||
             '"></span>'
           else
@@ -25,7 +26,7 @@ as
               when 'y' then 'fa fa-tasks'
               when 'n' then 'fa fa-sign-out'
             end || '"></span></button>'
-         end as action_html      
+         end as action_html
     from (
            select sbfl.sbfl_id
                 , sbfl.sbfl_sbfl_id
