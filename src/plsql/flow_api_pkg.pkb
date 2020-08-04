@@ -624,6 +624,7 @@ is
   l_target_objt_sub      flow_objects.objt_type%TYPE; --target object in subprocess
   l_num_back_connections    number;   -- number of connections leading into object
   l_num_forward_connections number;   -- number of connections forward from object
+  l_path_count              number;   -- used to count paths taken (eventGateway)
   l_num_unfinished_subflows    number;
   l_gateway_forward_status varchar2(10);
 begin
