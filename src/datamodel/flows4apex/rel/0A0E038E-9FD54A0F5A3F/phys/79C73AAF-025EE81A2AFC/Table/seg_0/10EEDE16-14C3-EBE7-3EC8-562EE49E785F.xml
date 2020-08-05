@@ -4,10 +4,12 @@
 <createdTime>2020-07-10 15:42:01 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
 <logging>YES</logging>
+<organization>INDEX</organization>
 <partitionedRowMovement>DISABLE</partitionedRowMovement>
 <temporaryChanged>false</temporaryChanged>
 <accessDriverType>oracle_loader</accessDriverType>
 <rejectLimit></rejectLimit>
+<storeAs>CLOB</storeAs>
 <columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
 <ColumnProxy name="OBAT_OBJT_ID" id="7D9A2FA6-E1D7-7994-50C6-388CFEA19CD4">
 <createdBy>moklein</createdBy>
