@@ -50,14 +50,14 @@ as
   as
     l_objt_rec t_objt_rec;
   begin
-  
-    l_objt_rec.objt_name           := pi_objt_name;
-    l_objt_rec.objt_type           := pi_objt_type;
-    l_objt_rec.objt_tag_name       := pi_objt_tag_name;
-    l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
+    if pi_objt_bpmn_id is not null then
+      l_objt_rec.objt_name           := pi_objt_name;
+      l_objt_rec.objt_type           := pi_objt_type;
+      l_objt_rec.objt_tag_name       := pi_objt_tag_name;
+      l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
 
-    g_objects( pi_objt_bpmn_id ) := l_objt_rec;
-  
+      g_objects( pi_objt_bpmn_id ) := l_objt_rec;
+    end if;  
   end register_object;
 
   procedure register_connection
@@ -73,16 +73,16 @@ as
   as
     l_conn_rec t_conn_rec;
   begin
+    if pi_conn_bpmn_id is not null then
+      l_conn_rec.conn_name        := pi_conn_name;
+      l_conn_rec.conn_src_bpmn_id := pi_conn_src_bpmn_id;
+      l_conn_rec.conn_tgt_bpmn_id := pi_conn_tgt_bpmn_id;
+      l_conn_rec.conn_type        := pi_conn_type;
+      l_conn_rec.conn_tag_name    := pi_conn_tag_name;
+      l_conn_rec.conn_origin      := pi_conn_origin;
 
-    l_conn_rec.conn_name        := pi_conn_name;
-    l_conn_rec.conn_src_bpmn_id := pi_conn_src_bpmn_id;
-    l_conn_rec.conn_tgt_bpmn_id := pi_conn_tgt_bpmn_id;
-    l_conn_rec.conn_type        := pi_conn_type;
-    l_conn_rec.conn_tag_name    := pi_conn_tag_name;
-    l_conn_rec.conn_origin      := pi_conn_origin;
-
-    g_connections( pi_conn_bpmn_id ) := l_conn_rec;
-
+      g_connections( pi_conn_bpmn_id ) := l_conn_rec;
+    end if;
   end register_connection;
 
   procedure insert_object
@@ -344,25 +344,22 @@ as
                      , steps.steps_id
                      , steps.source_ref
                      , steps.target_ref
+                     , steps.child_elements
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                        , '*' passing pi_xml
                          columns
-                           steps_type varchar2(50 char)  path 'name()'
-                         , steps_name varchar2(200 char) path '@name'
-                         , steps_id   varchar2(50 char)  path '@id'
-                         , source_ref varchar2(50 char)  path '@sourceRef'
-                         , target_ref varchar2(50 char)  path '@targetRef'
+                           steps_type     varchar2(50 char)  path 'name()'
+                         , steps_name     varchar2(200 char) path '@name'
+                         , steps_id       varchar2(50 char)  path '@id'
+                         , source_ref     varchar2(50 char)  path '@sourceRef'
+                         , target_ref     varchar2(50 char)  path '@targetRef'
+                         , child_elements xmltype            path '* except bpmn:incoming except bpmn:outgoing'
                        ) steps
                )
     loop
-      -- fill the global variables
       case
-        -- We ignore Incoming and Outgoing here,
-        -- because those become attributes on existing connections
-        when rec.steps_type in ('bpmn:incoming', 'bpmn:outgoing') then
-          null;
         when rec.source_ref is null then -- assume objects don't have a sourceRef attribute
           register_object
           (
@@ -372,6 +369,8 @@ as
           , pi_objt_tag_name       => rec.steps_type
           , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
           );
+
+
         else
           register_connection
           (
@@ -573,7 +572,31 @@ as
     finalize;
 
   end parse;
-  
+
+  procedure parse
+  (
+    pi_dgrm_id in flow_diagrams.dgrm_id%type
+  )
+  as
+  begin
+    g_dgrm_id := pi_dgrm_id;
+    parse;
+  end parse;
+
+  procedure parse
+  (
+    pi_dgrm_name in flow_diagrams.dgrm_name%type
+  )
+  as
+  begin
+    select dgrm_id
+      into g_dgrm_id
+      from flow_diagrams
+     where dgrm_name = pi_dgrm_name
+    ;
+    parse;
+  end parse;
+
   procedure upload_and_parse
   (
     pi_dgrm_name    in flow_diagrams.dgrm_name%type

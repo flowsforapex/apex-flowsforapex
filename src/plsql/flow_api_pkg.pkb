@@ -205,7 +205,7 @@ as
   , p_current_object  in flow_objects.objt_bpmn_id%type
   , p_route           in flow_subflows.sbfl_route%type
   , p_last_completed  in flow_objects.objt_bpmn_id%type
-  --, p_lane
+  , p_status       in flow_subflows.sbfl_status%type default 'running'
   ) return flow_subflows.sbfl_id%type
   is 
     l_ret flow_subflows.sbfl_id%type;
@@ -229,7 +229,7 @@ as
          , p_route
          , p_last_completed
          , p_current_object
-         , 'running'
+         , p_status
          , systimestamp
          )
       returning sbfl_id into l_ret
@@ -550,10 +550,11 @@ end get_current_progress;
       select objt.objt_bpmn_id
         into l_objt_bpmn_id
         from flow_objects objt
-       where objt.objt_id not in ( select conn.conn_tgt_objt_id 
-                                     from flow_connections conn
-                                    where conn.conn_dgrm_id = l_dgrm_id
-                                 )
+       where not exists ( select null
+                           from flow_connections conn
+                          where conn.conn_dgrm_id = l_dgrm_id
+                            and conn.conn_tgt_objt_id = objt.objt_id
+                        )
          and objt.objt_dgrm_id = l_dgrm_id
          and objt.objt_tag_name = 'bpmn:startEvent'
          and objt.objt_type = 'PROCESS'
@@ -607,6 +608,7 @@ procedure flow_next_step
 is
   l_dgrm_id              flow_diagrams.dgrm_id%type;
   l_sbfl_last_completed  flow_subflows.sbfl_last_completed%type;
+  l_sbfl_last_completed_tag flow_objects.objt_tag_name%TYPE;
   l_sbfl_current         flow_subflows.sbfl_current%type;
   l_sbfl_starting_object flow_subflows.sbfl_starting_object%type;
   l_sbfl_status          flow_subflows.sbfl_status%type;
@@ -619,6 +621,7 @@ is
   l_target_objt_type     flow_objects.objt_type%TYPE;
   l_source_objt_tag      flow_objects.objt_tag_name%TYPE;
   l_target_objt_tag      flow_objects.objt_tag_name%TYPE;
+  l_objt_sub_tag_name    flow_objects.objt_sub_tag_name%type;
   l_target_objt_sub      flow_objects.objt_type%TYPE; --target object in subprocess
   l_num_back_connections    number;   -- number of connections leading into object
   l_num_forward_connections number;   -- number of connections forward from object
@@ -651,12 +654,14 @@ begin
          , objt_source.objt_tag_name
          , objt_target.objt_tag_name
          , conn.conn_tgt_objt_id
+         , objt_target.objt_sub_tag_name
       into l_conn_target_ref
          , l_source_objt_type
          , l_target_objt_type
          , l_source_objt_tag
          , l_target_objt_tag
          , l_conn_tgt_objt_id
+         , l_objt_sub_tag_name
       from flow_connections conn
       join flow_objects objt_source
         on conn.conn_src_objt_id = objt_source.objt_id
@@ -736,7 +741,7 @@ begin
         ;
     when 'bpmn:exclusiveGateway'
     then
-        -- handles opening and closing and closing&reopening
+        -- handles opening and closing and closing and reopening
         apex_debug.message(p_message => 'Next Step is exclusiveGateway '||l_conn_target_ref, p_level => 4) ;
         -- first check if this is a closing gateway with only one forward path.  If so, skip to next step.
         select count(*)
@@ -764,7 +769,7 @@ begin
         end if;
     when 'bpmn:inclusiveGateway'
     then
-        -- handles opening and closing but not closing&reopening
+        -- handles opening and closing but not closing and reopening
         apex_debug.message(p_message => 'Next Step is inclusiveGateway '||l_conn_target_ref, p_level => 4) ;
          -- test if this is splitting or merging (or both) gateway
         select count(*)
@@ -801,7 +806,7 @@ begin
         elsif (l_num_forward_connections = 1 AND l_num_back_connections >1)
         then
             -- merging gateway.  
-            -- note actual number of subflows could be 1 or more & not all possible 
+            -- note actual number of subflows could be 1 or more and not all possible 
             -- forward paths from the diagram may have been started.  So always work on running subflows
             -- not connections from the diagram.
             apex_debug.message(p_message => 'Merging Inclusive Gateway'||l_conn_target_ref, p_level => 4) ;       
@@ -1065,7 +1070,6 @@ begin
         begin
             -- get all forward parallel paths and create subflows for them
             -- these are paths forward of l_conn_target_ref as we are doing double step
-            l_path_count := 1;
             for new_path in (
                 select conn.conn_bpmn_id route
                      , objt.objt_bpmn_id target
@@ -1076,37 +1080,32 @@ begin
                    and conn.conn_src_objt_id = l_conn_tgt_objt_id
             )
             loop
-                if l_path_count = 1
-                then
-                    -- continue to use existing subflow
-                    update flow_subflows sbfl
-                      set sbfl.sbfl_last_completed = l_sbfl_current
-                        , sbfl.sbfl_current = l_conn_target_ref
-                        , sbfl.sbfl_status = 'running'
-                        , sbfl.sbfl_last_update = sysdate 
-                    where sbfl.sbfl_id = p_subflow_id
-                      and sbfl.sbfl_prcs_id = p_process_id
-                        ;
-                    l_sbfl_id_sub := p_subflow_id;
-                else 
-                    -- create new subflows for additional forward paths starting here
-                    l_sbfl_id_sub := subflow_start
-                        ( p_process_id =>  p_process_id         
-                        , p_parent_subflow =>  l_sbfl_id        
-                        , p_starting_object =>  l_conn_target_ref         
-                        , p_current_object => l_conn_target_ref          
-                        , p_route =>  new_path.route         
-                        , p_last_completed =>  l_conn_target_ref        
-                        );
-                end if;
-                  -- step into first step on the new path
+                -- create new subflows for forward event paths starting here
+                l_sbfl_id_sub := subflow_start
+                    ( p_process_id =>  p_process_id         
+                    , p_parent_subflow =>  p_subflow_id       
+                    , p_starting_object =>  l_conn_target_ref         
+                    , p_current_object => l_conn_target_ref          
+                    , p_route =>  new_path.route         
+                    , p_last_completed =>  l_conn_target_ref 
+                    , p_status => 'waiting for event'       
+                    );
+                -- step into first step on the new path
                 flow_next_step 
                       (p_process_id => p_process_id
                       ,p_subflow_id => l_sbfl_id_sub
                       ,p_forward_route => new_path.route
                       );
-                l_path_count := l_path_count + 1;
             end loop;
+            -- set current subflow to status split, current = eBG       
+            update flow_subflows sbfl
+              set sbfl.sbfl_last_completed = l_conn_target_ref
+                , sbfl.sbfl_current = l_conn_target_ref
+                , sbfl.sbfl_status = 'split'
+                , sbfl.sbfl_last_update = sysdate 
+            where sbfl.sbfl_id = p_subflow_id
+              and sbfl.sbfl_prcs_id = p_process_id
+                ;
         exception
               when no_data_found then
                 apex_error.add_error
@@ -1117,23 +1116,40 @@ begin
     when  'bpmn:intermediateCatchEvent' --- next step is a simple activity / task
     then 
         -- then we make everything behave like a simple activity unless specifically supported
-        -- currently only supports timer & without checking its type is timer
+        -- currently only supports timer and without checking its type is timer
         -- but this will have a case type = timer, emailReceive. ....
         -- this is currently just a stub.
         apex_debug.message(p_message => 'Next Step is IntermediateCatchEvent '||l_conn_target_ref, p_level => 4) ;
-        update flow_subflows sbfl
-        set   sbfl.sbfl_current = l_conn_target_ref
-            , sbfl.sbfl_last_completed = l_sbfl_last_completed
-            , sbfl.sbfl_last_update = sysdate
- --           , sbfl.sbfl_status = 'waiting for timer'
-            , sbfl.sbfl_status = 'running'
-        where sbfl.sbfl_id = p_subflow_id
-          and sbfl.sbfl_prcs_id = p_process_id
-        ;
-    end case;
+        if l_objt_sub_tag_name = 'bpmn:timerEventDefinition'
+        then
+            -- we have a timer.  Set status to waiting & schedule the timer.
+            update flow_subflows sbfl
+            set   sbfl.sbfl_current = l_conn_target_ref
+                , sbfl.sbfl_last_completed = l_sbfl_last_completed
+                , sbfl.sbfl_last_update = sysdate
+                , sbfl.sbfl_status = 'waiting for timer'
+            where sbfl.sbfl_id = p_subflow_id
+              and sbfl.sbfl_prcs_id = p_process_id
+            ;
+            flow_timers_pkg.start_timer(
+                p_process_id => p_process_id
+              , p_subflow_id => p_subflow_id
+            );
+        else
+            -- not a timer.  Just set it to running for now.  (other types to be implemented later)
+            update flow_subflows sbfl
+            set   sbfl.sbfl_current = l_conn_target_ref
+                , sbfl.sbfl_last_completed = l_sbfl_last_completed
+                , sbfl.sbfl_last_update = sysdate
+                , sbfl.sbfl_status = 'running'
+            where sbfl.sbfl_id = p_subflow_id
+              and sbfl.sbfl_prcs_id = p_process_id
+            ;
+        end if;
+        
     when  'bpmn:task' --- next step is a simple activity / task
     then 
-        -- should this be when others?  
+        -- should this be when others, or a list of other objects that behave similarly to basic tasks.
         -- then we make everything behave like a simple activity unless specifically supported
         -- currently any tag fails unless explicitly supported
         apex_debug.message(p_message => 'Next Step is task '||l_conn_target_ref, p_level => 4) ;
@@ -1256,6 +1272,187 @@ begin
     end case;
   end flow_next_branch;
 
+    procedure handle_event_gateway_event
+  ( p_process_id         in flow_processes.prcs_id%type
+  , p_parent_subflow_id  in flow_subflows.sbfl_id%type
+  , p_cleared_subflow_id in flow_subflows.sbfl_id%type
+  )
+  is 
+    l_forward_route         flow_connections.conn_id%type;
+    l_current_object        flow_subflows.sbfl_current%type;
+    l_child_starting_object flow_subflows.sbfl_starting_object%type;
+    l_dgrm_id               flow_diagrams.dgrm_id%type;
+    l_parent_sbfl           flow_subflows.sbfl_id%type;
+    l_return                varchar2(50);
+  begin
+    apex_debug.message(p_message => 'Begin handle_event_gateway_event', p_level => 3) ;
+    -- called from any event that has cleared (so expired timer, received message or signal, etc) to move eBG forwards
+    -- procedure has to:
+    -- - check that gateway has not already been cleared by another event
+    -- - resume the incoming subflow on the path of the first event to occur and call next_step
+    -- - stop / terminate all of the child subflows that were created to wait for other events
+    -- - including making sure any timers, message receivers, etc., are cleared up.
+
+    begin
+      select sbfl.sbfl_id
+        into l_parent_sbfl
+        from flow_subflows sbfl
+       where sbfl.sbfl_id = p_parent_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+         and sbfl.sbfl_status = 'split'
+          ;
+     exception
+       when no_data_found then
+        -- gateway aready cleared
+         raise; 
+     end;
+     -- make the incoming (main) (split) parent subflow proceed along the path of the cleared event.clear(
+    l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
+     select conn.conn_id
+          , sbfl.sbfl_current
+          , sbfl.sbfl_starting_object
+       into l_forward_route
+          , l_current_object
+          , l_child_starting_object
+       from flow_objects objt
+       join flow_subflows sbfl on sbfl.sbfl_current = objt.objt_bpmn_id
+       join flow_connections conn on conn.conn_src_objt_id = objt.objt_id
+      where sbfl.sbfl_id = p_cleared_subflow_id
+        and sbfl.sbfl_prcs_id = p_process_id
+        and objt.objt_dgrm_id = l_dgrm_id
+        and conn.conn_dgrm_id = l_dgrm_id
+          ;
+     update flow_subflows sbfl
+        set sbfl_status = 'running'
+          , sbfl_current = l_current_object
+          , sbfl_last_update = sysdate
+      where sbfl.sbfl_prcs_id = p_process_id
+        and sbfl.sbfl_id = p_parent_subflow_id
+        and sbfl.sbfl_status = 'split'
+          ;
+       flow_next_step(
+            p_process_id => p_process_id
+          , p_subflow_id => p_parent_subflow_id
+          , p_forward_route => null
+          );
+    -- now clear up all of the sibling subflows
+    begin
+      for child_subflows in (
+        select sbfl.sbfl_id
+             , sbfl.sbfl_current
+             , objt.objt_sub_tag_name
+          from flow_subflows sbfl
+          join flow_objects objt on sbfl.sbfl_current = objt.objt_bpmn_id
+         where sbfl.sbfl_sbfl_id = p_parent_subflow_id
+           and sbfl.sbfl_starting_object = l_child_starting_object
+           and objt.objt_dgrm_id = l_dgrm_id
+      )
+      loop
+          -- clean up any event handlers (timers, etc.) (add more here when supporting messageEvent, SignalEvent, etc.)
+          if child_subflows.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+          then
+            flow_timers_pkg.terminate_timer
+                ( p_process_id => p_process_id
+                , p_subflow_id => child_subflows.sbfl_id
+                , p_return_code => l_return
+                );
+          end if;
+          -- delete the completed subflow and log it as complete
+              
+          delete
+            from flow_subflows sbfl
+          where sbfl.sbfl_prcs_id = p_process_id
+            and sbfl.sbfl_id = child_subflows.sbfl_id
+              ;
+          -- logging - tbd
+      end loop;
+    end;  -- cleanup block
+  end handle_event_gateway_event;
+
+  procedure handle_intermediate_catch_event
+     ( p_process_id in flow_processes.prcs_id%type
+     , p_subflow_id in flow_subflows.sbfl_id%type
+     ) is
+  begin
+      apex_debug.message(p_message => 'Begin handle_intermediate_catch_event', p_level => 3) ;
+      update flow_subflows sbfl 
+         set sbfl.sbfl_status = 'running'
+           , sbfl.sbfl_last_update = sysdate
+       where sbfl.sbfl_prcs_id = p_process_id
+         and sbfl.sbfl_id = p_subflow_id
+           ;
+      flow_api_pkg.flow_next_step (
+        p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      , p_forward_route => null
+      );
+  end handle_intermediate_catch_event;
+
+
+  procedure flow_handle_event
+     ( p_process_id in flow_processes.prcs_id%type
+     , p_subflow_id in flow_subflows.sbfl_id%type
+    ) is
+    l_parent_subflow flow_subflows.sbfl_id%type;
+    l_prev_objt_tag_name flow_objects.objt_tag_name%type;
+    l_curr_objt_tag_name flow_objects.objt_tag_name%type;
+    l_dgrm_id   flow_diagrams.dgrm_id%type;
+  begin
+    apex_debug.message(p_message => 'Begin flow_handle_event', p_level => 3) ;
+    -- get previous event on the subflow to determine if it was eventBasedGateway (eBG)
+    -- an intermediateCatchEvent (iCE) following an eBG will always have exactly 1 input (from the eBG)
+    -- an independant iCE (not following an eBG) can have >1 inputs
+    -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
+    l_dgrm_id := get_dgrm_id (p_prcs_id => p_process_id);
+
+    begin
+      select prev_objt.objt_tag_name
+           , curr_objt.objt_tag_name
+           , sbfl.sbfl_sbfl_id
+        into l_prev_objt_tag_name
+           , l_curr_objt_tag_name
+           , l_parent_subflow
+      from flow_connections conn 
+      join flow_objects curr_objt on conn.conn_tgt_objt_id = curr_objt.objt_id 
+      join flow_subflows sbfl on sbfl.sbfl_current = curr_objt.objt_bpmn_id
+      join flow_objects prev_objt on conn.conn_src_objt_id = prev_objt.objt_id
+      where sbfl.sbfl_id = p_subflow_id
+      and   sbfl.sbfl_prcs_id = p_process_id
+      and   conn.conn_dgrm_id = l_dgrm_id
+      and   curr_objt.objt_dgrm_id = l_dgrm_id
+      and   prev_objt.objt_dgrm_id = l_dgrm_id
+        ;
+    exception
+      when too_many_rows then
+        l_prev_objt_tag_name := 'other';
+    end;
+
+    if l_curr_objt_tag_name = 'bpmn:startEvent' -- startEvent with associated event.
+    then
+ --      handle start_event_event
+ --         p_process_id => p_process_id
+ --       , p_subflow_id => p_subflow_id
+ --       );
+      null;
+    elsif l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent' and 
+            l_prev_objt_tag_name = 'bpmn:eventBasedGateway'  -- we have an eventBasedGateway
+    then 
+        handle_event_gateway_event (
+          p_process_id => p_process_id
+        , p_parent_subflow_id => l_parent_subflow
+        , p_cleared_subflow_id => p_subflow_id
+        );
+    elsif l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent'
+    then
+        -- independant iCE not following an eBG
+        -- set subflow status to running & call next step
+        handle_intermediate_catch_event (
+          p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );
+    end if;
+  end flow_handle_event;
+
   procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
   )
@@ -1266,6 +1463,14 @@ begin
     -- clear out run-time object_log
     -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
     -- into log audit trail  (not yet planned feature!)
+
+        /*
+    -- kill any timers sill running in the process
+    flow_timers_pkg.kill_process_timers(
+      p_Process_id => p_process_id
+      , out_return_code => null
+    );  */
+    
     delete
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
@@ -1294,6 +1499,13 @@ begin
     -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
     -- into log audit trail  (not yet planned feature!)
 
+    /*
+    -- kill any timers sill running in the process
+    flow_timers_pkg.kill_process_timers(
+      p_Process_id => p_process_id
+      , p_return_code => null
+    );  */
+
     delete
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
@@ -1311,4 +1523,4 @@ begin
   end flow_delete;
 
 end flow_api_pkg;
-/
+

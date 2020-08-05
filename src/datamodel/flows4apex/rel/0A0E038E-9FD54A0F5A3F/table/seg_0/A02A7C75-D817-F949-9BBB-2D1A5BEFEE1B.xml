@@ -102,6 +102,17 @@
 <ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
+<Column name="OBJT_SUBTYPE" id="797DE676-ACED-18B1-38C9-D0B68F659A8F">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 13:04:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>ED1CFFC7-CF79-11C2-F40E-26E75D0CBB84</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 <Column name="OBJT_OBJT_ID" id="D8632CB7-603E-E641-583D-449D23B1A8BE">
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:52:53 UTC</createdTime>
@@ -141,19 +152,6 @@
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
 <colUsage columnID="CA091046-629B-81EB-E5DC-6A3AFA7C40B6"/>
-<colUsage columnID="C50D61E3-6759-4B51-A3FC-082797916716"/>
-</indexColumnUsage>
-</ind_PK_UK>
-<ind_PK_UK id="98651323-DE3A-91A2-7CDA-76C3ED4C98D3" name="OBJT_BPMN_ID_IX">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
-<sourceObjName>OBJT_PK</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:29 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<indexState>Unique Plain Index</indexState>
-<isSurrogateKey>false</isSurrogateKey>
-<indexColumnUsage>
 <colUsage columnID="C50D61E3-6759-4B51-A3FC-082797916716"/>
 </indexColumnUsage>
 </ind_PK_UK>

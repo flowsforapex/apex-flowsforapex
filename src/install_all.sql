@@ -1,11 +1,15 @@
+set define '^'
+set concat '.'
+
 PROMPT >> Flows4APEX Installation
 PROMPT >> =======================
 
 PROMPT >> Please enter needed Variables
 
-ACCEPT ws_name char default 'FLOWS4APEX' PROMPT 'Enter Workspace Name: '
-ACCEPT parsing_schema char default 'FLOWS4APEX' PROMPT 'Enter Parsing Schema: '
-ACCEPT app_alias char default 'F4A' PROMPT 'Enter Application Alias: '
+ACCEPT ws_name char default 'FLOWS4APEX' PROMPT 'Enter Workspace Name: [FLOWS4APEX]'
+ACCEPT parsing_schema char default 'FLOWS4APEX' PROMPT 'Enter Parsing Schema: [FLOWS4APEX]'
+ACCEPT app_alias char default 'FLOWS4APEX' PROMPT 'Enter Application Alias: [FLOWS4APEX]'
+ACCEPT app_name char default 'Flows for APEX' PROMPT 'Enter Application Name: [Flows for APEX]'
 
 
 @install_db.sql
@@ -16,11 +20,12 @@ PROMPT >> ========================
 PROMPT >> Set up environment
 begin
   -- change this accordingly
-  apex_application_install.set_workspace('&ws_name.');
+  apex_application_install.set_workspace( p_workspace => '^ws_name.' );
   apex_application_install.generate_application_id;
   apex_application_install.generate_offset;
-  apex_application_install.set_schema('&parsing_schema.');
-  apex_application_install.set_application_alias('&app_alias.');
+  apex_application_install.set_schema( p_schema => '^parsing_schema.' );
+  apex_application_install.set_application_alias( p_application_alias => '^app_alias.' );
+  apex_application_install.set_application_name( p_application_name => '^app_name.' );
 end;
 /
 

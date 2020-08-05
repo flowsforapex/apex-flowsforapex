@@ -8,11 +8,11 @@ wwv_flow_api.component_begin (
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>984337
-,p_default_id_offset => 0
+,p_default_id_offset=>0
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_plug_template(
- p_id=>wwv_flow_api.id(12661507358603546788)
+ p_id=>wwv_flow_api.id(12495606500823880260)
 ,p_layout=>'TABLE'
 ,p_template=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div class="t-ButtonRegion t-Form--floatLeft #REGION_CSS_CLASSES#" id="#REGION_STATIC_ID#" #REGION_ATTRIBUTES#>',
@@ -40,19 +40,19 @@ wwv_flow_api.create_plug_template(
 ,p_template_comment=>'Red Theme'
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(254309027704675350)
-,p_plug_template_id=>wwv_flow_api.id(12661507358603546788)
-,p_name=>'Sub Regions'
-,p_placeholder=>'SUB_REGIONS'
+ p_id=>wwv_flow_api.id(88407660963008822)
+,p_plug_template_id=>wwv_flow_api.id(12495606500823880260)
+,p_name=>'Region Body'
+,p_placeholder=>'BODY'
 ,p_has_grid_support=>true
 ,p_glv_new_row=>true
 ,p_max_fixed_grid_columns=>12
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(254308518742675350)
-,p_plug_template_id=>wwv_flow_api.id(12661507358603546788)
-,p_name=>'Region Body'
-,p_placeholder=>'BODY'
+ p_id=>wwv_flow_api.id(88408169925008822)
+,p_plug_template_id=>wwv_flow_api.id(12495606500823880260)
+,p_name=>'Sub Regions'
+,p_placeholder=>'SUB_REGIONS'
 ,p_has_grid_support=>true
 ,p_glv_new_row=>true
 ,p_max_fixed_grid_columns=>12

@@ -8,11 +8,11 @@ wwv_flow_api.component_begin (
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>984337
-,p_default_id_offset => 0
+,p_default_id_offset=>0
 ,p_default_owner=>'MT_NDBRUIJN'
 );
 wwv_flow_api.create_row_template(
- p_id=>wwv_flow_api.id(12661462003314546721)
+ p_id=>wwv_flow_api.id(12495561145534880193)
 ,p_row_template_name=>'Comments'
 ,p_internal_name=>'COMMENTS'
 ,p_row_template1=>wwv_flow_string.join(wwv_flow_t_varchar2(

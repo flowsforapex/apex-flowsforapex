@@ -8,6 +8,7 @@ PROMPT >> ===========================
 @sql/ShipmentProcess.sql
 @sql/ThePizzaCollaboration.sql
 @sql/TimerExample.sql
+@sql/SubflowsSmoketest.sql
 
 PROMPT >> Example Diagrams Installation finished
 PROMPT >> ======================================
