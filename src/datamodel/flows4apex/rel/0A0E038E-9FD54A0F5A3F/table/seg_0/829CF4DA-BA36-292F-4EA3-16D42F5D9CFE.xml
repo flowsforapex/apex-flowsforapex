@@ -1,5 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="829CF4DA-BA36-292F-4EA3-16D42F5D9CFE" name="FLOW_TIMERS">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 16:12:33 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
@@ -21,7 +22,7 @@
 <identityColumn>true</identityColumn>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="TIMR_OBJT_ID" id="6303EAC7-52BE-59AE-6011-1904AB32A8C5">
+<Column name="TIMR_PRCS_ID" id="6303EAC7-52BE-59AE-6011-1904AB32A8C5">
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 16:18:41 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
@@ -32,7 +33,7 @@
 <previousColumn>false</previousColumn>
 <autoIncrementCycle>false</autoIncrementCycle>
 <associations>
-<colAssociation fkAssociation="B3EF0A71-B081-8B7B-53B2-67A2DFB96BC1" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+<colAssociation fkAssociation="CDFE1FC0-4369-CEA3-5C20-5764E77DB808" referredColumn="93D9275C-C3B5-3575-D1F1-1505D76BF61C"/>
 </associations>
 </Column>
 <Column name="TIMR_SBFL_ID" id="F2C4B628-F1AF-78CD-AF28-C3EC70554F68">
@@ -81,6 +82,126 @@
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
+<Column name="TIMR_STATUS" id="A47F60FD-1210-6018-8B0A-06D62960AC9C">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Stauts of the timer. For the status codes see constant definitions in FLOW_TIMERS_PKG package declaration.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>62C200D2-6C3F-28A8-0DBA-4E60CC46C77E</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>1 CHAR</dataTypeSize>
+<ownDataTypeParameters>1 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_DATE_STRING" id="8AA0C917-3A14-1F80-6D90-479199A51C5D">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Temporary column for testing. It will be removed when the new model from Moritz is available.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>5EAFEE6C-9B8A-D04E-7379-49599E84EF02</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_DURATION_STRING" id="945D6512-E14C-82DD-8902-3577860E9C4C">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Temporary column for testing. It will be removed when the new model from Moritz is available.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>6CB94317-9006-6EE3-2736-FB19CC391D05</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_CYCLE_STRING" id="37BF82A4-39C4-473E-B5F3-942F331D6E03">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Temporary column for testing. It will be removed when the new model from Moritz is available.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>54651B08-9B95-D1EB-19F2-A90C114682BA</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_START_ON" id="117D348E-F470-A22C-E9BF-CE37B16A48DB">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Expected start datetime.
+Used for both date and duration definitions.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>02677A75-4E37-6C43-4432-AECB03FDA63F</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_INTERVAL_YM" id="8EDA2E4A-879E-779E-33D4-23652927A7B3">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Interval YM for cycles.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>1B9868DC-33EF-7D5D-A64A-0C0A6825DB96</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT048</logicalDatatype>
+<dataTypePrecision>2</dataTypePrecision>
+<ownDataTypeParameters>,2,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_INTERVAL_DS" id="2A3808DD-A16C-2493-406E-C6E1E481CC9E">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Interval DS for cycles.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>412A6700-58A5-46C8-3E2F-22970075AE05</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT049</logicalDatatype>
+<dataTypePrecision>2</dataTypePrecision>
+<dataTypeScale>6</dataTypeScale>
+<ownDataTypeParameters>,2,6</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_REPEAT_TIMES" id="031C7577-538F-7029-D3D3-A2662AC5AFAF">
+<sourceDDLFile>install_tables.sql</sourceDDLFile>
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<commentInRDBMS><![CDATA[Number of runs for cycles.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<importedID>DDCA155E-79E0-253D-1F74-78C55C95D906</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 </columns>
 <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
 <ind_PK_UK id="FED657D9-3BB2-2812-F7DF-A19C88157CBE" name="TIMR_PK">
@@ -94,25 +215,14 @@
 <colUsage columnID="6B0B9E11-0422-780A-9021-01E865EF4DD0"/>
 </indexColumnUsage>
 </ind_PK_UK>
-<ind_PK_UK id="6C71B147-E993-A64A-8424-3489D322A543" name="TIMR_UK">
+<ind_PK_UK id="50564063-2F75-34E3-9712-DEE71D186E22" name="TIMR_PRCS_SBFL_IX">
 <createdBy>moklein</createdBy>
-<createdTime>2020-07-10 16:33:08 UTC</createdTime>
+<createdTime>2020-08-05 17:29:58 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
-<indexState>Unique Constraint</indexState>
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
 <colUsage columnID="6303EAC7-52BE-59AE-6011-1904AB32A8C5"/>
 <colUsage columnID="F2C4B628-F1AF-78CD-AF28-C3EC70554F68"/>
-</indexColumnUsage>
-</ind_PK_UK>
-<ind_PK_UK id="8FD2C367-1DAC-82C7-6664-52AFE8C8DECF" name="TIMR_OBJT_FK">
-<createdBy>moklein</createdBy>
-<createdTime>2020-07-10 16:18:41 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<indexState>Foreign Key</indexState>
-<isSurrogateKey>false</isSurrogateKey>
-<indexColumnUsage>
-<colUsage columnID="6303EAC7-52BE-59AE-6011-1904AB32A8C5"/>
 </indexColumnUsage>
 </ind_PK_UK>
 <ind_PK_UK id="61947A11-0EE7-437D-85EA-62399C4BC788" name="TIMR_SBFL_FK">
@@ -123,6 +233,16 @@
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
 <colUsage columnID="F2C4B628-F1AF-78CD-AF28-C3EC70554F68"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="999EBCA9-5C4B-1954-E427-65B3983072BB" name="TIMR_PRCS_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:16 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="6303EAC7-52BE-59AE-6011-1904AB32A8C5"/>
 </indexColumnUsage>
 </ind_PK_UK>
 </indexes>
