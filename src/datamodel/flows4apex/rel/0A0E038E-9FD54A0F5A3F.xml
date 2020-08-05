@@ -5,11 +5,18 @@
 <ownerDesignName>flows4apex</ownerDesignName>
 <shouldBeOpen>true</shouldBeOpen>
 <selectedRDBMSSite>79C73AAF-E1A7-E669-7DF0-025EE81A2AFC</selectedRDBMSSite>
+<redirectConnectionStamp class="oracle.dbtools.crest.imports.DBConnectionStamp">
+<connName>vm_apex201.flows4apex</connName>
+<connUser>flows4apex</connUser>
+<connType>1</connType>
+<syncSelected>-1</syncSelected>
+</redirectConnectionStamp>
 <importConnectionStamps>
 <importConnectionStamp class="oracle.dbtools.crest.imports.DBConnectionStamp">
 <connName>vm_apex201.flows4apex</connName>
 <connUser>flows4apex</connUser>
 <connType>1</connType>
+<syncSelected>1</syncSelected>
 </importConnectionStamp>
 </importConnectionStamps>
 <importDDLFileStamps>
