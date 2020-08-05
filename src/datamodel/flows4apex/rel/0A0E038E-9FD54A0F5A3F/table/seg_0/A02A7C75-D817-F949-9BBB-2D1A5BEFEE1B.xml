@@ -155,19 +155,6 @@
 <colUsage columnID="C50D61E3-6759-4B51-A3FC-082797916716"/>
 </indexColumnUsage>
 </ind_PK_UK>
-<ind_PK_UK id="98651323-DE3A-91A2-7CDA-76C3ED4C98D3" name="OBJT_BPMN_ID_IX">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
-<sourceObjName>OBJT_PK</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:29 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<indexState>Unique Plain Index</indexState>
-<isSurrogateKey>false</isSurrogateKey>
-<indexColumnUsage>
-<colUsage columnID="C50D61E3-6759-4B51-A3FC-082797916716"/>
-</indexColumnUsage>
-</ind_PK_UK>
 <ind_PK_UK id="E824194D-8C38-1D90-8A2C-A78E21BBF58B" name="OBJT_DGRM_FK">
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:35:58 UTC</createdTime>
