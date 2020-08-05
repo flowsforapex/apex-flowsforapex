@@ -56,8 +56,8 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>150</dataTypeSize>
-<ownDataTypeParameters>150,,</ownDataTypeParameters>
+<dataTypeSize>150 CHAR</dataTypeSize>
+<ownDataTypeParameters>150 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 <notNullConstraintName>PRCS_NAME_NN</notNullConstraintName>
 </Column>
@@ -69,8 +69,8 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>20</dataTypeSize>
-<ownDataTypeParameters>20,,</ownDataTypeParameters>
+<dataTypeSize>20 CHAR</dataTypeSize>
+<ownDataTypeParameters>20 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 <notNullConstraintName>PRCS_STATUS_NN</notNullConstraintName>
 </Column>
@@ -95,7 +95,7 @@
 <importedID>694A8F0B-77B9-2A5E-31DE-23F4424F5D59</importedID>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT015</logicalDatatype>
+<logicalDatatype>LOGDT046</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 <notNullConstraintName>PRCS_INIT_TS_NN</notNullConstraintName>
@@ -109,7 +109,7 @@
 <nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT015</logicalDatatype>
+<logicalDatatype>LOGDT046</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>

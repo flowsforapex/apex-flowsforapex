@@ -550,10 +550,11 @@ end get_current_progress;
       select objt.objt_bpmn_id
         into l_objt_bpmn_id
         from flow_objects objt
-       where objt.objt_id not in ( select conn.conn_tgt_objt_id 
-                                     from flow_connections conn
-                                    where conn.conn_dgrm_id = l_dgrm_id
-                                 )
+       where not exists ( select null
+                           from flow_connections conn
+                          where conn.conn_dgrm_id = l_dgrm_id
+                            and conn.conn_tgt_objt_id = objt.objt_id
+                        )
          and objt.objt_dgrm_id = l_dgrm_id
          and objt.objt_tag_name = 'bpmn:startEvent'
          and objt.objt_type = 'PROCESS'
@@ -740,7 +741,7 @@ begin
         ;
     when 'bpmn:exclusiveGateway'
     then
-        -- handles opening and closing and closing&reopening
+        -- handles opening and closing and closing and reopening
         apex_debug.message(p_message => 'Next Step is exclusiveGateway '||l_conn_target_ref, p_level => 4) ;
         -- first check if this is a closing gateway with only one forward path.  If so, skip to next step.
         select count(*)
@@ -768,7 +769,7 @@ begin
         end if;
     when 'bpmn:inclusiveGateway'
     then
-        -- handles opening and closing but not closing&reopening
+        -- handles opening and closing but not closing and reopening
         apex_debug.message(p_message => 'Next Step is inclusiveGateway '||l_conn_target_ref, p_level => 4) ;
          -- test if this is splitting or merging (or both) gateway
         select count(*)
@@ -805,7 +806,7 @@ begin
         elsif (l_num_forward_connections = 1 AND l_num_back_connections >1)
         then
             -- merging gateway.  
-            -- note actual number of subflows could be 1 or more & not all possible 
+            -- note actual number of subflows could be 1 or more and not all possible 
             -- forward paths from the diagram may have been started.  So always work on running subflows
             -- not connections from the diagram.
             apex_debug.message(p_message => 'Merging Inclusive Gateway'||l_conn_target_ref, p_level => 4) ;       
@@ -1115,7 +1116,7 @@ begin
     when  'bpmn:intermediateCatchEvent' --- next step is a simple activity / task
     then 
         -- then we make everything behave like a simple activity unless specifically supported
-        -- currently only supports timer & without checking its type is timer
+        -- currently only supports timer and without checking its type is timer
         -- but this will have a case type = timer, emailReceive. ....
         -- this is currently just a stub.
         apex_debug.message(p_message => 'Next Step is IntermediateCatchEvent '||l_conn_target_ref, p_level => 4) ;

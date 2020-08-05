@@ -102,6 +102,17 @@
 <ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
+<Column name="OBJT_SUBTYPE" id="797DE676-ACED-18B1-38C9-D0B68F659A8F">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 13:04:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>ED1CFFC7-CF79-11C2-F40E-26E75D0CBB84</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 <Column name="OBJT_OBJT_ID" id="D8632CB7-603E-E641-583D-449D23B1A8BE">
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:52:53 UTC</createdTime>

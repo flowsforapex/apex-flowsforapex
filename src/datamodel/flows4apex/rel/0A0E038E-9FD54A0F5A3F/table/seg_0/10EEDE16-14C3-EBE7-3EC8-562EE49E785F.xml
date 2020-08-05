@@ -1,0 +1,106 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="10EEDE16-14C3-EBE7-3EC8-562EE49E785F" name="FLOW_OBJECT_ATTRIBUTES">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:42:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<ordsAlias>table_7</ordsAlias>
+<abbreviation>OBAT</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="OBAT_OBJT_ID" id="7D9A2FA6-E1D7-7994-50C6-388CFEA19CD4">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="EB5186AB-53FD-A65C-3386-163B3CB9166F" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+</associations>
+</Column>
+<Column name="OBAT_KEY" id="AC904B27-DE8F-8A5A-D8D6-B21A92E9FBE8">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="OBAT_NUM_VALUE" id="CEB6E062-58FE-E302-8D76-20AB837023FE">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="OBAT_DATE_VALUE" id="F055C614-39AD-8E63-DB32-DDA908F03B69">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="OBAT_VC_VALUE" id="AFA64FC1-160C-7A70-10DC-D256796EEB90">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>4000 CHAR</dataTypeSize>
+<ownDataTypeParameters>4000 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="79639E21-DDC4-7F1F-6281-FA69583082EA" name="OBAT_PK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:43:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="7D9A2FA6-E1D7-7994-50C6-388CFEA19CD4"/>
+<colUsage columnID="AC904B27-DE8F-8A5A-D8D6-B21A92E9FBE8"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="9EB463CC-1010-1B21-C1EA-68269FE74613" name="OBAT_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="7D9A2FA6-E1D7-7994-50C6-388CFEA19CD4"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.constraint.TableLevelConstraint">
+<tableCheckConstraint name="OBAT_CK" directorySegmentName="seg_0" id="D2474772-A9B8-C899-C37D-1F6A6A77E9D8">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<rule><![CDATA[( obat_num_value is not null and obat_date_value is     null and obat_vc_value is     null ) or
+( obat_num_value is     null and obat_date_value is not null and obat_vc_value is     null ) or
+( obat_num_value is     null and obat_date_value is     null and obat_vc_value is not null )]]></rule>
+</tableCheckConstraint>
+</tableCheckConstraints>
+</Table>

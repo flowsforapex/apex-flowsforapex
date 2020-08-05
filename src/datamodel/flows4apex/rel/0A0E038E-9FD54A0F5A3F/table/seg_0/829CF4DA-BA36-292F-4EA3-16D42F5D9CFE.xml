@@ -1,0 +1,129 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="829CF4DA-BA36-292F-4EA3-16D42F5D9CFE" name="FLOW_TIMERS">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:12:33 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<ordsAlias>table_9</ordsAlias>
+<abbreviation>TIMR</abbreviation>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="TIMR_ID" id="6B0B9E11-0422-780A-9021-01E865EF4DD0">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:13:12 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_OBJT_ID" id="6303EAC7-52BE-59AE-6011-1904AB32A8C5">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:18:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="B3EF0A71-B081-8B7B-53B2-67A2DFB96BC1" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+</associations>
+</Column>
+<Column name="TIMR_SBFL_ID" id="F2C4B628-F1AF-78CD-AF28-C3EC70554F68">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:19:21 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="3C73092B-563A-521C-C8DD-C526A34EBCC2" referredColumn="66B25764-E27E-B4EF-B778-328ECCBAA58C"/>
+</associations>
+</Column>
+<Column name="TIMR_LAST_RUN" id="3A988AFA-5772-E316-662B-554ABFDA7115">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:20:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_RUN_COUNT" id="A9B841A9-5918-3CBF-E570-9B47E10F900E">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:22:56 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<defaultValue>0</defaultValue>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_CREATED_ON" id="504FB7AB-2796-4E56-14EA-71C3C4B07E00">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:21:43 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="FED657D9-3BB2-2812-F7DF-A19C88157CBE" name="TIMR_PK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:13:12 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="6B0B9E11-0422-780A-9021-01E865EF4DD0"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="6C71B147-E993-A64A-8424-3489D322A543" name="TIMR_UK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:33:08 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="6303EAC7-52BE-59AE-6011-1904AB32A8C5"/>
+<colUsage columnID="F2C4B628-F1AF-78CD-AF28-C3EC70554F68"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="8FD2C367-1DAC-82C7-6664-52AFE8C8DECF" name="TIMR_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:18:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="6303EAC7-52BE-59AE-6011-1904AB32A8C5"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="61947A11-0EE7-437D-85EA-62399C4BC788" name="TIMR_SBFL_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 16:19:21 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F2C4B628-F1AF-78CD-AF28-C3EC70554F68"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
