@@ -10,12 +10,14 @@ PROMPT >> Installing Tables
 PROMPT >> Installing Package Specifications
 @plsql/flow_api_pkg.pks
 @plsql/flow_bpmn_parser_pkg.pks
+@plsql/flow_timers_pkg.pks
 @plsql/flow_p0003_api.pks
 @plsql/flow_p0010_api.pks
 
 PRoMPT >> Installing Package Bodies
 @plsql/flow_api_pkg.pkb
 @plsql/flow_bpmn_parser_pkg.pkb
+@plsql/flow_timers_pkg.pkb
 @plsql/flow_p0003_api.pkb
 @plsql/flow_p0010_api.pkb
 

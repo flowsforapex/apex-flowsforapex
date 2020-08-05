@@ -2,7 +2,7 @@ create or replace view flow_p0010_subflows_vw
 as
   select i_sbfl.*
        , case
-          when i_sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event') then
+          when i_sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event', 'waiting for timer') then
             '<span class="' ||
             case i_sbfl.sbfl_status
               when 'split' then 'fa fa-share-alt'
