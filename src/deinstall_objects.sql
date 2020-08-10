@@ -24,6 +24,8 @@ drop table flow_processes cascade constraints;
 drop table flow_subflows cascade constraints;
 drop table flow_subflow_log cascade constraints;
 drop table flow_diagrams cascade constraints;
+drop table flow_timers cascade constraints;
+drop table flow_object_attributes cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
