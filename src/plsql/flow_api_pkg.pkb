@@ -1494,6 +1494,7 @@ begin
   ( p_process_id in flow_processes.prcs_id%type
   )
   is
+        l_return_code   number;
   begin
     apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
   
@@ -1501,12 +1502,12 @@ begin
     -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
     -- into log audit trail  (not yet planned feature!)
 
-        /*
+        
     -- kill any timers sill running in the process
-    flow_timers_pkg.kill_process_timers(
-      p_Process_id => p_process_id
-      , out_return_code => null
-    );  */
+    flow_timers_pkg.terminate_process_timers(
+        p_process_id => p_process_id
+      , p_return_code => l_return_code
+    );  
     
     delete
       from flow_subflow_log sflg 
@@ -1530,18 +1531,18 @@ begin
     p_process_id in flow_processes.prcs_id%type
   )
   is
+    l_return_code   number;
   begin
     apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
     -- clear out run-time object_log
     -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
     -- into log audit trail  (not yet planned feature!)
 
-    /*
     -- kill any timers sill running in the process
-    flow_timers_pkg.kill_process_timers(
-      p_Process_id => p_process_id
-      , p_return_code => null
-    );  */
+    flow_timers_pkg.terminate_process_timers(
+        p_process_id => p_process_id
+      , p_return_code => l_return_code
+    );  
 
     delete
       from flow_subflow_log sflg 
