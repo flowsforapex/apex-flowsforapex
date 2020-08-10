@@ -513,8 +513,10 @@ end get_current_progress;
   is
     l_dgrm_id         flow_diagrams.dgrm_id%type;
     l_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
+    l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
     l_main_subflow_id flow_subflows.sbfl_id%type;
     l_process_status  flow_processes.prcs_status%type;
+    l_new_subflow_status flow_subflows.sbfl_status%type;
   begin
     l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
     begin
@@ -548,7 +550,9 @@ end get_current_progress;
       
       -- get the object to start with
       select objt.objt_bpmn_id
+           , objt.objt_sub_tag_name
         into l_objt_bpmn_id
+           , l_objt_sub_tag_name
         from flow_objects objt
        where not exists ( select null
                            from flow_connections conn
@@ -572,6 +576,13 @@ end get_current_progress;
         );
     end;
   
+    if l_objt_sub_tag_name = 'bpmn:timerEventDefinition'
+    then 
+        l_new_subflow_status := 'waiting for timer';
+    else
+        l_new_subflow_status := 'running';
+    end if;
+
     l_main_subflow_id := 
       subflow_start 
       ( p_process_id => p_process_id
@@ -580,15 +591,31 @@ end get_current_progress;
       , p_current_object => l_objt_bpmn_id
       , p_route => 'main'
       , p_last_completed => null
+      , p_status => l_new_subflow_status 
       )
     ;
-    
-    -- step into first step
-    flow_next_step 
-    ( p_process_id => p_process_id
-    , p_subflow_id => l_main_subflow_id
-    , p_forward_route => null
-    );
+    -- check if start has a timer?
+    if l_objt_sub_tag_name = 'bpmn:timerEventDefinition'
+    then 
+      -- eventStart must be delayed with the timer 
+      flow_timers_pkg.start_timer(
+          p_process_id => p_process_id
+        , p_subflow_id => l_main_subflow_id
+      );
+    elsif l_objt_sub_tag_name is null
+    then
+      -- plain startEvent, step into first step
+      flow_next_step 
+      ( p_process_id => p_process_id
+      , p_subflow_id => l_main_subflow_id
+      , p_forward_route => null
+      );
+    else 
+        apex_error.add_error
+        ( p_message => 'You have an unsupported starting event type. Only (standard) Start Event and Timer Start Event are currently supported.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+    end if;
     
     -- update process status
     update flow_processes prcs
@@ -1397,59 +1424,69 @@ begin
     l_prev_objt_tag_name flow_objects.objt_tag_name%type;
     l_curr_objt_tag_name flow_objects.objt_tag_name%type;
     l_dgrm_id   flow_diagrams.dgrm_id%type;
+    l_sbfl_current flow_subflows.sbfl_current%type;
   begin
     apex_debug.message(p_message => 'Begin flow_handle_event', p_level => 3) ;
-    -- get previous event on the subflow to determine if it was eventBasedGateway (eBG)
+    -- look at current event to check if it is a startEvent.  (this also has no previous event!)
+    -- if not, examine previous event on the subflow to determine if it was eventBasedGateway (eBG)
     -- an intermediateCatchEvent (iCE) following an eBG will always have exactly 1 input (from the eBG)
     -- an independant iCE (not following an eBG) can have >1 inputs
     -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
     l_dgrm_id := get_dgrm_id (p_prcs_id => p_process_id);
 
-    begin
-      select prev_objt.objt_tag_name
-           , curr_objt.objt_tag_name
+      select curr_objt.objt_tag_name
            , sbfl.sbfl_sbfl_id
-        into l_prev_objt_tag_name
-           , l_curr_objt_tag_name
+           , sbfl.sbfl_current
+        into l_curr_objt_tag_name
            , l_parent_subflow
-      from flow_connections conn 
-      join flow_objects curr_objt on conn.conn_tgt_objt_id = curr_objt.objt_id 
+           , l_sbfl_current
+      from flow_objects curr_objt 
       join flow_subflows sbfl on sbfl.sbfl_current = curr_objt.objt_bpmn_id
-      join flow_objects prev_objt on conn.conn_src_objt_id = prev_objt.objt_id
       where sbfl.sbfl_id = p_subflow_id
       and   sbfl.sbfl_prcs_id = p_process_id
-      and   conn.conn_dgrm_id = l_dgrm_id
       and   curr_objt.objt_dgrm_id = l_dgrm_id
-      and   prev_objt.objt_dgrm_id = l_dgrm_id
         ;
-    exception
-      when too_many_rows then
-        l_prev_objt_tag_name := 'other';
-    end;
 
     if l_curr_objt_tag_name = 'bpmn:startEvent' -- startEvent with associated event.
     then
- --      handle start_event_event
- --         p_process_id => p_process_id
- --       , p_subflow_id => p_subflow_id
- --       );
-      null;
-    elsif l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent' and 
-            l_prev_objt_tag_name = 'bpmn:eventBasedGateway'  -- we have an eventBasedGateway
-    then 
-        handle_event_gateway_event (
-          p_process_id => p_process_id
-        , p_parent_subflow_id => l_parent_subflow
-        , p_cleared_subflow_id => p_subflow_id
-        );
-    elsif l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent'
-    then
-        -- independant iCE not following an eBG
-        -- set subflow status to running & call next step
+        -- required functionality same as iCE currently
         handle_intermediate_catch_event (
           p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
+    else
+      begin
+        select prev_objt.objt_tag_name
+          into l_prev_objt_tag_name
+          from flow_connections conn 
+          join flow_objects curr_objt on conn.conn_tgt_objt_id = curr_objt.objt_id 
+          join flow_objects prev_objt on conn.conn_src_objt_id = prev_objt.objt_id
+         where conn.conn_dgrm_id = l_dgrm_id
+           and   curr_objt.objt_bpmn_id = l_sbfl_current
+           and   curr_objt.objt_dgrm_id = l_dgrm_id
+           and   prev_objt.objt_dgrm_id = l_dgrm_id
+            ;
+      exception
+        when too_many_rows then
+            l_prev_objt_tag_name := 'other';
+      end;
+      if  l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent' and 
+            l_prev_objt_tag_name = 'bpmn:eventBasedGateway'  -- we have an eventBasedGateway
+      then 
+          handle_event_gateway_event (
+            p_process_id => p_process_id
+          , p_parent_subflow_id => l_parent_subflow
+          , p_cleared_subflow_id => p_subflow_id
+          );
+      elsif l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent'
+      then
+          -- independant iCE not following an eBG
+          -- set subflow status to running & call next step
+          handle_intermediate_catch_event (
+            p_process_id => p_process_id
+          , p_subflow_id => p_subflow_id
+          );
+      end if;
     end if;
   end flow_handle_event;
 
@@ -1457,6 +1494,7 @@ begin
   ( p_process_id in flow_processes.prcs_id%type
   )
   is
+        l_return_code   number;
   begin
     apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
   
@@ -1464,12 +1502,12 @@ begin
     -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
     -- into log audit trail  (not yet planned feature!)
 
-        /*
+        
     -- kill any timers sill running in the process
-    flow_timers_pkg.kill_process_timers(
-      p_Process_id => p_process_id
-      , out_return_code => null
-    );  */
+    flow_timers_pkg.terminate_process_timers(
+        p_process_id => p_process_id
+      , p_return_code => l_return_code
+    );  
     
     delete
       from flow_subflow_log sflg 
@@ -1493,18 +1531,18 @@ begin
     p_process_id in flow_processes.prcs_id%type
   )
   is
+    l_return_code   number;
   begin
     apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
     -- clear out run-time object_log
     -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
     -- into log audit trail  (not yet planned feature!)
 
-    /*
     -- kill any timers sill running in the process
-    flow_timers_pkg.kill_process_timers(
-      p_Process_id => p_process_id
-      , p_return_code => null
-    );  */
+    flow_timers_pkg.delete_process_timers(
+        p_process_id => p_process_id
+      , p_return_code => l_return_code
+    );  
 
     delete
       from flow_subflow_log sflg 
