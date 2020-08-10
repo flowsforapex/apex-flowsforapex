@@ -627,6 +627,21 @@ end get_current_progress;
     ;
   end flow_start;
 
+procedure flow_terminate
+( p_process_id  in  flow_processes.prcs_id%type)
+is
+  l_return_code number;
+begin
+    apex_debug.message(p_message => 'Begin flow_terminate', p_level => 3) ;
+    flow_timers_pkg.terminate_process_timers
+      ( p_process_id => p_process_id
+      , p_return_code => l_return_code
+      );
+    delete  from flow_subflows sbfl 
+    where sbfl.sbfl_prcs_id = p_process_id
+    ;
+end flow_terminate;
+
 procedure flow_next_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -755,6 +770,11 @@ begin
         if l_sbfl_id_par is null 
         then   
             apex_debug.message(p_message => 'Next Step is Process End '||l_conn_target_ref, p_level => 4) ;
+            -- check for Terminate sub-Event
+            if l_objt_sub_tag_name = 'bpmn:terminateEventDefinition'
+            then
+              flow_terminate (p_process_id => p_process_id);
+            end if;
         else  
             apex_debug.message(p_message => 'Next Step is Sub-Process End '||l_conn_target_ref, p_level => 4) ;
        
