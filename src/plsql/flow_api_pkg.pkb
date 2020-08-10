@@ -1539,7 +1539,7 @@ begin
     -- into log audit trail  (not yet planned feature!)
 
     -- kill any timers sill running in the process
-    flow_timers_pkg.terminate_process_timers(
+    flow_timers_pkg.delete_process_timers(
         p_process_id => p_process_id
       , p_return_code => l_return_code
     );  

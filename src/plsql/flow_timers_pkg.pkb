@@ -317,6 +317,22 @@ create or replace package body flow_timers_pkg as
   end terminate_all_timers;
 
 /******************************************************************************
+  delete_process_timers
+    delete all the timers of a process.
+******************************************************************************/
+
+  procedure delete_process_timers (
+    p_process_id    in   flow_processes.prcs_id%type
+  , p_return_code  out  number
+  ) is 
+  begin
+    delete from flow_timers
+    where timr_prcs_id = p_process_id;
+  end delete_process_timers;
+
+
+
+/******************************************************************************
   DISABLE_SCHEDULED_JOB
 ******************************************************************************/
 

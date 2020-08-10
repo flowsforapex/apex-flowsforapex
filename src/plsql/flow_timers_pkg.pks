@@ -81,6 +81,16 @@ create or replace package flow_timers_pkg as
   );
 
 /******************************************************************************
+  delete_process_timers
+    delete all the timers of a process.
+******************************************************************************/
+
+  procedure delete_process_timers (
+    p_process_id    in   flow_processes.prcs_id%type
+  , p_return_code  out  number
+  );
+
+/******************************************************************************
   terminate_all_timers
     termintate all the timers of any process.
 ******************************************************************************/
@@ -88,6 +98,7 @@ create or replace package flow_timers_pkg as
   procedure terminate_all_timers (
     p_return_code  out  number
   );
+
 
 /******************************************************************************
   disable_scheduled_job
