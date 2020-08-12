@@ -81,6 +81,10 @@ wwv_flow_api.create_page(
 '    background-color: #f0f0f0;',
 '}',
 '',
+'.mtag-bpmn-modeler {',
+'  position: relative;',
+'}',
+'',
 '.properties-panel-parent {',
 '  position: absolute;',
 '  top: 0;',
@@ -91,6 +95,8 @@ wwv_flow_api.create_page(
 '  border-left: 1px solid #ccc;',
 '  overflow: auto;',
 '  display: block;',
+'  height: 100%;',
+'  background-color: #f0f0f0;',
 '}',
 '.properties-panel-parent:empty {',
 '  display: none;',
@@ -102,7 +108,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20200811193920'
+,p_last_upd_yyyymmddhh24miss=>'20200812115829'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12491062133032033850)
