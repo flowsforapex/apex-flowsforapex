@@ -32,8 +32,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20200703191235'
+,p_last_updated_by=>'F4A'
+,p_last_upd_yyyymmddhh24miss=>'20200812103252'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(160796420876501967)
@@ -69,7 +69,7 @@ wwv_flow_api.create_report_region(
 ,p_display_sequence=>30
 ,p_region_css_classes=>'js-react-on-prcs js-hide-no-prcs'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
-,p_component_template_options=>'#DEFAULT#:t-Report--staticRowColors:t-Report--rowHighlightOff'
+,p_component_template_options=>'#DEFAULT#:t-Report--stretch:t-Report--staticRowColors:t-Report--rowHighlightOff'
 ,p_new_grid_row=>false
 ,p_display_point=>'BODY'
 ,p_source_type=>'NATIVE_SQL_REPORT'
@@ -201,7 +201,7 @@ wwv_flow_api.create_report_region(
 ,p_template=>wwv_flow_api.id(12495582446800880234)
 ,p_display_sequence=>20
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
-,p_component_template_options=>'#DEFAULT#:t-Report--staticRowColors:t-Report--rowHighlightOff'
+,p_component_template_options=>'#DEFAULT#:t-Report--stretch:t-Report--staticRowColors:t-Report--rowHighlightOff'
 ,p_display_point=>'BODY'
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
@@ -304,6 +304,7 @@ wwv_flow_api.create_report_columns(
 ,p_column_heading=>'<span class="fa fa-eye" title="View Process Instance"></span>'
 ,p_use_as_row_header=>'N'
 ,p_column_html_expression=>'<span class="clickable-action id-ref fa fa-eye" data-prcs="#PRCS_ID#" data-action="view" title="View Process Instance"></span>'
+,p_column_alignment=>'CENTER'
 ,p_derived_column=>'Y'
 ,p_include_in_export=>'Y'
 );
@@ -315,12 +316,13 @@ wwv_flow_api.create_report_columns(
 ,p_column_heading=>'Actions'
 ,p_use_as_row_header=>'N'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" title="Start Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="start"><span aria-hidden="true" class="t-Icon fa fa-play"></span></butto'
-||'n>',
+'<button type="button" title="Start Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="start" style="margin-left: 4px;"><span aria-hidden="true" class="t-Icon '
+||'fa fa-play"></span></button>',
 '<button type="button" title="Reset Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="reset"><span aria-hidden="true" class="t-Icon fa fa-undo"></span></butto'
 ||'n>',
 '<button type="button" title="Delete Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="delete"><span aria-hidden="true" class="t-Icon fa fa-trash"></span></bu'
 ||'tton>'))
+,p_column_alignment=>'CENTER'
 ,p_derived_column=>'Y'
 ,p_include_in_export=>'Y'
 );
@@ -337,10 +339,9 @@ wwv_flow_api.create_page_plug(
 ,p_query_table=>'FLOW_P0010_VW'
 ,p_query_where=>'prcs_id = :p10_prcs_id'
 ,p_include_rowid_column=>false
-,p_plug_source_type=>'PLUGIN_COM.MTAG.AS.WFP.REGION'
+,p_plug_source_type=>'PLUGIN_COM.MTAG.APEX.BPMNVIEWER.REGION'
 ,p_ajax_items_to_submit=>'P10_PRCS_ID'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_plug_query_no_data_found=>'Diagram not found.'
 ,p_attribute_01=>'DGRM_CONTENT'
 ,p_attribute_02=>'ALL_CURRENT'
 ,p_attribute_03=>':'
@@ -348,7 +349,9 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_05=>':'
 ,p_attribute_06=>'LAST_COMPLETED'
 ,p_attribute_07=>':'
-,p_attribute_08=>'Y'
+,p_attribute_08=>'N'
+,p_attribute_09=>'Y'
+,p_attribute_10=>'Y'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12491866708043262849)

@@ -71,7 +71,7 @@ CREATE TABLE flow_objects (
     objt_name      VARCHAR2(200 CHAR),
     objt_type      VARCHAR2(50 CHAR),
     objt_tag_name  VARCHAR2(50 CHAR),
-    objt_objt_id   NUMBER
+    objt_objt_id   NUMBER,
     objt_sub_tag_name VARCHAR2(50 CHAR),
     objt_timer_date VARCHAR2(50 CHAR), 
 	  objt_timer_duration VARCHAR2(50 CHAR), 

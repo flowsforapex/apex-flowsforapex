@@ -424,6 +424,7 @@ as
         from flow_connections conn
         join flow_objects objt
           on objt.objt_id = conn.conn_src_objt_id
+         and conn.conn_tag_name = 'bpmn:sequenceFlow'
        where conn.conn_dgrm_id = l_dgrm_id
          and objt.objt_bpmn_id = ( select sbfl.sbfl_current
                                      from flow_subflows sbfl
@@ -627,6 +628,21 @@ end get_current_progress;
     ;
   end flow_start;
 
+procedure flow_terminate
+( p_process_id  in  flow_processes.prcs_id%type)
+is
+  l_return_code number;
+begin
+    apex_debug.message(p_message => 'Begin flow_terminate', p_level => 3) ;
+    flow_timers_pkg.terminate_process_timers
+      ( p_process_id => p_process_id
+      , p_return_code => l_return_code
+      );
+    delete  from flow_subflows sbfl 
+    where sbfl.sbfl_prcs_id = p_process_id
+    ;
+end flow_terminate;
+
 procedure flow_next_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -755,6 +771,11 @@ begin
         if l_sbfl_id_par is null 
         then   
             apex_debug.message(p_message => 'Next Step is Process End '||l_conn_target_ref, p_level => 4) ;
+            -- check for Terminate sub-Event
+            if l_objt_sub_tag_name = 'bpmn:terminateEventDefinition'
+            then
+              flow_terminate (p_process_id => p_process_id);
+            end if;
         else  
             apex_debug.message(p_message => 'Next Step is Sub-Process End '||l_conn_target_ref, p_level => 4) ;
        
@@ -775,6 +796,7 @@ begin
           into l_num_forward_connections
           from flow_connections conn 
          where conn.conn_src_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         update flow_subflows sbfl
@@ -803,12 +825,14 @@ begin
           into l_num_back_connections
           from flow_connections conn 
          where conn.conn_tgt_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         select count(*)
           into l_num_forward_connections
           from flow_connections conn 
          where conn.conn_src_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         if l_num_back_connections = 1
@@ -901,12 +925,14 @@ begin
           into l_num_back_connections
           from flow_connections conn 
          where conn.conn_tgt_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         select count(*)
           into l_num_forward_connections
           from flow_connections conn 
          where conn.conn_src_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         
@@ -982,6 +1008,7 @@ begin
                   join flow_objects objt
                     on objt.objt_id = conn.conn_tgt_objt_id
                  where conn.conn_dgrm_id = l_dgrm_id
+                   and conn.conn_tag_name = 'bpmn:sequenceFlow'
                    and conn.conn_src_objt_id = l_conn_tgt_objt_id
             )
             loop
@@ -1104,6 +1131,7 @@ begin
                   join flow_objects objt
                     on objt.objt_id = conn.conn_tgt_objt_id
                  where conn.conn_dgrm_id = l_dgrm_id
+                   and conn.conn_tag_name = 'bpmn:sequenceFlow'
                    and conn.conn_src_objt_id = l_conn_tgt_objt_id
             )
             loop
@@ -1348,6 +1376,7 @@ begin
         and sbfl.sbfl_prcs_id = p_process_id
         and objt.objt_dgrm_id = l_dgrm_id
         and conn.conn_dgrm_id = l_dgrm_id
+        and conn.conn_tag_name = 'bpmn:sequenceFlow'
           ;
      update flow_subflows sbfl
         set sbfl_status = 'running'
