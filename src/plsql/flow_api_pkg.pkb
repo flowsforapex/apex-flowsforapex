@@ -424,6 +424,7 @@ as
         from flow_connections conn
         join flow_objects objt
           on objt.objt_id = conn.conn_src_objt_id
+         and conn.conn_tag_name = 'bpmn:sequenceFlow'
        where conn.conn_dgrm_id = l_dgrm_id
          and objt.objt_bpmn_id = ( select sbfl.sbfl_current
                                      from flow_subflows sbfl
@@ -795,6 +796,7 @@ begin
           into l_num_forward_connections
           from flow_connections conn 
          where conn.conn_src_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         update flow_subflows sbfl
@@ -823,12 +825,14 @@ begin
           into l_num_back_connections
           from flow_connections conn 
          where conn.conn_tgt_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         select count(*)
           into l_num_forward_connections
           from flow_connections conn 
          where conn.conn_src_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         if l_num_back_connections = 1
@@ -921,12 +925,14 @@ begin
           into l_num_back_connections
           from flow_connections conn 
          where conn.conn_tgt_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         select count(*)
           into l_num_forward_connections
           from flow_connections conn 
          where conn.conn_src_objt_id = l_conn_tgt_objt_id
+           and conn.conn_tag_name = 'bpmn:sequenceFlow'
            and conn.conn_dgrm_id = l_dgrm_id
         ;
         
@@ -1002,6 +1008,7 @@ begin
                   join flow_objects objt
                     on objt.objt_id = conn.conn_tgt_objt_id
                  where conn.conn_dgrm_id = l_dgrm_id
+                   and conn.conn_tag_name = 'bpmn:sequenceFlow'
                    and conn.conn_src_objt_id = l_conn_tgt_objt_id
             )
             loop
@@ -1124,6 +1131,7 @@ begin
                   join flow_objects objt
                     on objt.objt_id = conn.conn_tgt_objt_id
                  where conn.conn_dgrm_id = l_dgrm_id
+                   and conn.conn_tag_name = 'bpmn:sequenceFlow'
                    and conn.conn_src_objt_id = l_conn_tgt_objt_id
             )
             loop
@@ -1368,6 +1376,7 @@ begin
         and sbfl.sbfl_prcs_id = p_process_id
         and objt.objt_dgrm_id = l_dgrm_id
         and conn.conn_dgrm_id = l_dgrm_id
+        and conn.conn_tag_name = 'bpmn:sequenceFlow'
           ;
      update flow_subflows sbfl
         set sbfl_status = 'running'

@@ -10,6 +10,7 @@ as
   )
   as
   begin
+    apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s, Branch: %s', p0 => pi_action, p1 => pi_prcs_id, p2 => pi_sbfl_id, p3 => pi_branch);
     case upper(pi_action)
       when 'RESET' then
         flow_api_pkg.flow_reset( p_process_id => pi_prcs_id );
@@ -43,11 +44,6 @@ as
     apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
     apex_json.close_all;
   
-  exception
-    -- One of the rare cases where we ignore exceptions
-    -- The reason is, that we already notified APEX of errors and therefore processing is already stopped
-    when others then
-      null;
   end process_action;
 
 end flow_p0010_api;

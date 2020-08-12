@@ -34,8 +34,6 @@ as
   g_dgrm_id     flow_diagrams.dgrm_id%type;
   g_objects     t_objt_tab;
   g_connections t_conn_tab;
-
-  -- Let's see if we need this or not
   g_objt_lookup t_id_lookup_tab;
 
 
@@ -549,10 +547,19 @@ as
     
   end parse_collaboration;
 
+  procedure reset
+  as
+  begin
+    g_dgrm_id := null;
+    g_objects.delete;
+    g_connections.delete;
+    g_objt_lookup.delete;
+  end reset;
+
   procedure parse
   as
     l_dgrm_content clob;
-  begin    
+  begin
     -- delete any existing parsed information before parsing again
     cleanup_parsing_tables;
     
@@ -579,6 +586,7 @@ as
   )
   as
   begin
+    reset;
     g_dgrm_id := pi_dgrm_id;
     parse;
   end parse;
@@ -589,6 +597,7 @@ as
   )
   as
   begin
+    reset;
     select dgrm_id
       into g_dgrm_id
       from flow_diagrams
@@ -604,6 +613,7 @@ as
   )
   as
   begin
+    reset;
   
     upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
     parse;
