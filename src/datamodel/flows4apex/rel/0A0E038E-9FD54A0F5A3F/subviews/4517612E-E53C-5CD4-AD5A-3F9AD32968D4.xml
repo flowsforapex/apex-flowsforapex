@@ -32,7 +32,7 @@
 </OView>
 <OView class="oracle.dbtools.crest.swingui.relational.TVTable" oid="A02A7C75-D817-F949-9BBB-2D1A5BEFEE1B" otype="Table" vid="6C04DAB6-7749-4961-89DF-B310CB56F635">
 <hideElementsInCurrentOnly>false</hideElementsInCurrentOnly>
-<bounds x="660" y="176" width="250" height="212"/>
+<bounds x="660" y="176" width="250" height="219"/>
 </OView>
 <OView class="oracle.dbtools.crest.swingui.relational.TVTable" oid="C337809B-E24A-5FDE-82B5-C3981D6A62E6" otype="Table" vid="8AFD9AA0-F280-F514-3AAB-21DCA4192F32">
 <hideElementsInCurrentOnly>false</hideElementsInCurrentOnly>
@@ -58,6 +58,18 @@
 <point x="538" y="818"/>
 </points>
 </Connector>
+<Connector class="oracle.dbtools.crest.swingui.relational.TVFKRelation" oid="9062A49E-573D-B549-7D04-2DB1EC442C90" otype="FKIndexAssociation" vid_source="6C04DAB6-7749-4961-89DF-B310CB56F635" vid_target="6C04DAB6-7749-4961-89DF-B310CB56F635">
+<hideElementsInCurrentOnly>false</hideElementsInCurrentOnly>
+<backgroundColor>-16777216</backgroundColor>
+<lineWidth>1</lineWidth>
+<points>
+<point x="910" y="300"/>
+<point x="960" y="300"/>
+<point x="960" y="438"/>
+<point x="807" y="438"/>
+<point x="807" y="395"/>
+</points>
+</Connector>
 <Connector class="oracle.dbtools.crest.swingui.relational.TVFKRelation" oid="918EC96F-8C5F-F46D-9C1D-38844E3FBF66" otype="FKIndexAssociation" vid_source="D6A69703-AC9D-CE91-7900-6D59CB170E3C" vid_target="6C04DAB6-7749-4961-89DF-B310CB56F635">
 <hideElementsInCurrentOnly>false</hideElementsInCurrentOnly>
 <backgroundColor>-16777216</backgroundColor>
@@ -72,11 +84,11 @@
 <backgroundColor>-16777216</backgroundColor>
 <lineWidth>1</lineWidth>
 <points>
-<point x="910" y="300"/>
-<point x="935" y="300"/>
+<point x="910" y="331"/>
+<point x="935" y="331"/>
 <point x="935" y="413"/>
-<point x="807" y="413"/>
-<point x="807" y="388"/>
+<point x="841" y="413"/>
+<point x="841" y="395"/>
 </points>
 </Connector>
 <Connector class="oracle.dbtools.crest.swingui.relational.TVFKRelation" oid="A45FC064-3A9C-8307-E02C-5E3FB762F644" otype="FKIndexAssociation" vid_source="D6A69703-AC9D-CE91-7900-6D59CB170E3C" vid_target="79C3F926-6926-8DDE-69F5-BD562FC2ED3C">
