@@ -712,6 +712,7 @@ begin
         on conn.conn_tgt_objt_id = objt_target.objt_id
      where objt_source.objt_bpmn_id = l_sbfl_current
        and conn.conn_dgrm_id = l_dgrm_id
+       and conn.conn_tag_name = ‘bpmn:sequenceFlow’
        and conn.conn_bpmn_id like nvl2( p_forward_route, p_forward_route, '%' )
     ;
   exception
@@ -1265,7 +1266,7 @@ begin
        and prcs.prcs_dgrm_id = objt_dgrm_id
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
-    ;  
+    ;
     case l_current_tag_name 
     when 'bpmn:exclusiveGateway' then
       -- only only path chosen.  Keep existing subflow but switch to chosen path
@@ -1274,7 +1275,7 @@ begin
         (p_process_id => p_process_id
         ,p_subflow_id => p_subflow_id
         ,p_forward_route => p_branch_name
-        );          
+        );
     when 'bpmn:inclusiveGateway' then
       apex_debug.message(p_message => 'Begin creating parallel flows for inclusiveGateway', p_level => 3) ;
       -- get all forward parallel paths and create subflows for them if they are in forward path(s) chosen
@@ -1590,4 +1591,4 @@ begin
   end flow_delete;
 
 end flow_api_pkg;
-
+/

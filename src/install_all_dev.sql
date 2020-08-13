@@ -12,14 +12,13 @@ ACCEPT app_alias char default 'FLOWS4APEX' PROMPT 'Enter Application Alias: [FLO
 ACCEPT app_name char default 'Flows for APEX' PROMPT 'Enter Application Name: [Flows for APEX]'
 
 
---@install_db.sql
+@install_db.sql
 
 PROMPT >> Application Installation
 PROMPT >> ========================
 
 PROMPT >> Set up environment
 begin
-  -- change this accordingly
   apex_application_install.set_workspace( p_workspace => '^ws_name.' );
   apex_application_install.set_application_id( p_application_id => 100 );
   apex_application_install.set_schema( p_schema => '^parsing_schema.' );
