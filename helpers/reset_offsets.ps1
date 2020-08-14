@@ -1,6 +1,8 @@
+#!/usr/bin/env pwsh
+
 # Go into the parent folder of application
 # this is where the install.sql file is located
-# Then run these commands
+# Then run below commands or call this file
 
 $fileName = Get-ChildItem "./application/*.sql" -Recurse 
 $filename | %{ 

@@ -128,6 +128,21 @@
 <colAssociation fkAssociation="96A81091-8EEB-B12B-42CF-69573052C3A9" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
 </associations>
 </Column>
+<Column name="OBJT_LANE_REF" id="2DD673A3-A020-F69C-653B-6EE244D51B40">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-13 09:03:42 UTC</createdTime>
+<commentInRDBMS><![CDATA[Refrence to Lane if any.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="9062A49E-573D-B549-7D04-2DB1EC442C90" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+</associations>
+</Column>
 </columns>
 <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
 <ind_PK_UK id="6F96D5A1-EB95-6ECE-E802-3E321F5E5748" name="OBJT_PK">
@@ -173,6 +188,16 @@
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
 <colUsage columnID="D8632CB7-603E-E641-583D-449D23B1A8BE"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="86171DD4-2AB3-39F8-88A1-8F8388437B41" name="OBJT_OBJT_LANE_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-13 09:03:48 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2DD673A3-A020-F69C-653B-6EE244D51B40"/>
 </indexColumnUsage>
 </ind_PK_UK>
 </indexes>

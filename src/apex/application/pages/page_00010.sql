@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20200812103252'
+,p_last_upd_yyyymmddhh24miss=>'20200812120147'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(160796420876501967)
@@ -316,8 +316,8 @@ wwv_flow_api.create_report_columns(
 ,p_column_heading=>'Actions'
 ,p_use_as_row_header=>'N'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" title="Start Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="start" style="margin-left: 4px;"><span aria-hidden="true" class="t-Icon '
-||'fa fa-play"></span></button>',
+'<button type="button" title="Start Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="start" style="margin-left: .4rem;"><span aria-hidden="true" class="t-Ico'
+||'n fa fa-play"></span></button>',
 '<button type="button" title="Reset Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="reset"><span aria-hidden="true" class="t-Icon fa fa-undo"></span></butto'
 ||'n>',
 '<button type="button" title="Delete Process Instance" aria-label="My Button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-prcs="#PRCS_ID#" data-action="delete"><span aria-hidden="true" class="t-Icon fa fa-trash"></span></bu'
