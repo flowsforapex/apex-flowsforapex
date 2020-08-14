@@ -712,7 +712,7 @@ begin
         on conn.conn_tgt_objt_id = objt_target.objt_id
      where objt_source.objt_bpmn_id = l_sbfl_current
        and conn.conn_dgrm_id = l_dgrm_id
-       and conn.conn_tag_name = ‘bpmn:sequenceFlow’
+       and conn.conn_tag_name = 'bpmn:sequenceFlow'
        and conn.conn_bpmn_id like nvl2( p_forward_route, p_forward_route, '%' )
     ;
   exception
@@ -1178,7 +1178,7 @@ begin
         apex_debug.message(p_message => 'Next Step is IntermediateCatchEvent '||l_conn_target_ref, p_level => 4) ;
         if l_objt_sub_tag_name = 'bpmn:timerEventDefinition'
         then
-            -- we have a timer.  Set status to waiting & schedule the timer.
+            -- we have a timer.  Set status to waiting and schedule the timer.
             update flow_subflows sbfl
             set   sbfl.sbfl_current = l_conn_target_ref
                 , sbfl.sbfl_last_completed = l_sbfl_last_completed
@@ -1511,7 +1511,7 @@ begin
       elsif l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent'
       then
           -- independant iCE not following an eBG
-          -- set subflow status to running & call next step
+          -- set subflow status to running and call next step
           handle_intermediate_catch_event (
             p_process_id => p_process_id
           , p_subflow_id => p_subflow_id

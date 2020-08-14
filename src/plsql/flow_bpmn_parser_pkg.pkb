@@ -88,13 +88,13 @@ as
 
   procedure insert_object
   (
-    pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
-  , pi_objt_name      in flow_objects.objt_name%type default null
-  , pi_objt_type      in flow_objects.objt_type%type default null
-  , pi_objt_tag_name  in flow_objects.objt_tag_name%type default null
-  , pi_objt_objt_id   in flow_objects.objt_objt_id%type default null
-  , pi_objt_lane_ref  in flow_objects.objt_lane_ref%type default null
-  , po_objt_id       out nocopy flow_objects.objt_id%type
+    pi_objt_bpmn_id       in flow_objects.objt_bpmn_id%type
+  , pi_objt_name          in flow_objects.objt_name%type default null
+  , pi_objt_type          in flow_objects.objt_type%type default null
+  , pi_objt_tag_name      in flow_objects.objt_tag_name%type default null
+  , pi_objt_objt_id       in flow_objects.objt_objt_id%type default null
+  , pi_objt_objt_lane_id  in flow_objects.objt_objt_lane_id%type default null
+  , po_objt_id           out nocopy flow_objects.objt_id%type
   )
   as
   begin
@@ -107,7 +107,7 @@ as
            , objt_type
            , objt_tag_name
            , objt_objt_id
-           , objt_lane_ref
+           , objt_objt_lane_id
            )
     values (
              g_dgrm_id
@@ -116,7 +116,7 @@ as
            , pi_objt_type
            , pi_objt_tag_name
            , pi_objt_objt_id
-           , pi_objt_lane_ref
+           , pi_objt_objt_lane_id
            )
       returning objt_id into po_objt_id
     ;
@@ -198,13 +198,13 @@ as
         
         insert_object
         (
-          pi_objt_bpmn_id  => l_cur_objt_bpmn_id
-        , pi_objt_name     => l_cur_object.objt_name
-        , pi_objt_type     => l_cur_object.objt_type
-        , pi_objt_tag_name => l_cur_object.objt_tag_name
-        , pi_objt_objt_id  => case when l_cur_object.objt_parent_bpmn_id is not null then g_objt_lookup( l_cur_object.objt_parent_bpmn_id ) else null end
-        , pi_objt_lane_ref => case when g_lane_refs.exists( l_cur_objt_bpmn_id ) then g_objt_lookup( g_lane_refs( l_cur_objt_bpmn_id ) ) else null end
-        , po_objt_id       => l_objt_id
+          pi_objt_bpmn_id      => l_cur_objt_bpmn_id
+        , pi_objt_name         => l_cur_object.objt_name
+        , pi_objt_type         => l_cur_object.objt_type
+        , pi_objt_tag_name     => l_cur_object.objt_tag_name
+        , pi_objt_objt_id      => case when l_cur_object.objt_parent_bpmn_id is not null then g_objt_lookup( l_cur_object.objt_parent_bpmn_id ) else null end
+        , pi_objt_objt_lane_id => case when g_lane_refs.exists( l_cur_objt_bpmn_id ) then g_objt_lookup( g_lane_refs( l_cur_objt_bpmn_id ) ) else null end
+        , po_objt_id           => l_objt_id
         );
 
       -- checks not passed skip record for now
@@ -400,6 +400,7 @@ as
   , pi_proc_bpmn_id in t_vc50
   )
   as
+    l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
   begin
     for rec in (
                 select steps.steps_type
@@ -424,6 +425,23 @@ as
     loop
 
       if rec.source_ref is null then -- assume objects don't have a sourceRef attribute
+
+/*
+        -- Parse additional information from child elements
+        -- relevant for e.g. terminateEndEvent
+        -- Additionally collect generic attributes if possible
+        if rec.child_elements is not null then
+          l_objt_sub_tag_name := find_subtag_name( pi_xml => rec.child_elements );
+          parse_child_elements
+          (
+            pi_objt_bpmn_id => rec.steps_id
+          , pi_xml          => rec.child_elements
+          );
+        else
+          l_objt_sub_tag_name := null;
+        end if;
+*/
+
         register_object
         (
           pi_objt_bpmn_id        => rec.steps_id
