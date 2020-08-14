@@ -72,7 +72,7 @@ CREATE TABLE flow_objects (
     objt_type      VARCHAR2(50 CHAR),
     objt_tag_name  VARCHAR2(50 CHAR),
     objt_objt_id   NUMBER,
-    objt_lane_ref  NUMBER,
+    objt_objt_lane_id  NUMBER,
     objt_sub_tag_name VARCHAR2(50 CHAR),
     objt_timer_date VARCHAR2(50 CHAR), 
 	  objt_timer_duration VARCHAR2(50 CHAR), 
@@ -212,7 +212,7 @@ ALTER TABLE flow_objects
     NOT DEFERRABLE;
 
 ALTER TABLE flow_objects
-    ADD CONSTRAINT objt_objt_lane_fk FOREIGN KEY ( objt_lane_ref )
+    ADD CONSTRAINT objt_objt_lane_fk FOREIGN KEY ( objt_objt_lane_id )
         REFERENCES flow_objects ( objt_id )
             ON DELETE SET NULL;
 

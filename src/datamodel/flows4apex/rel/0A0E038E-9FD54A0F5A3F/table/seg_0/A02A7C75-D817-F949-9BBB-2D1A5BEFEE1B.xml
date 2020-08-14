@@ -128,7 +128,7 @@
 <colAssociation fkAssociation="96A81091-8EEB-B12B-42CF-69573052C3A9" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
 </associations>
 </Column>
-<Column name="OBJT_LANE_REF" id="2DD673A3-A020-F69C-653B-6EE244D51B40">
+<Column name="OBJT_OBJT_LANE_ID" id="2DD673A3-A020-F69C-653B-6EE244D51B40">
 <createdBy>moklein</createdBy>
 <createdTime>2020-08-13 09:03:42 UTC</createdTime>
 <commentInRDBMS><![CDATA[Refrence to Lane if any.]]></commentInRDBMS>
