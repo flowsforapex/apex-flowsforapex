@@ -53,18 +53,40 @@ For details, please see the setup file included with the Flows for APEX distribu
 To define a Timer Event, first drag the Event onto your new process canvas.   Select the 'Change Type' spanner icon on the pop-up menu, and select Timer version of that from the menu.  To then specify the Timer Configuration, use the Properties Panel on the right of the screen.  Under Timer, select the type of timer you want.  Under Timer Definition, specific the required time or interval, as below.
 
 - Date:  specifies a date and time for the process to start, using an [ISO 8601 date/time string](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations).  For example:
-
-```
-2007-04-05T14:30
-```
-
+  
+  ```
+  2007-04-05T14:30
+  ```
 - Duration:  specifies a delay from the current time or the process to start, using an [ISO 8601 duration](https://en.wikipedia.com/wiki/ISO_8601#Durations) string.  For example:
+  
   ```
   P3Y6M4DT12H30M5S" represents a duration of "three years, six months, four days, twelve hours, thirty minutes, and five seconds".
+  P3M represents 3 months.
+  PT5M represents 5 minutes.
+  PT30S represents 30 seconds.
   ```
-- Cycle Timer: for an initial run and then repeats an definied intervals, using a [ISO 8601 Repeating Interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals) specifier.  The alternate BPMN syntax for repeating intervals using CRON syntax is not currently supported.
+- Cycle Timer: for an initial run and then repeats an definied intervals, using a [ISO 8601 Repeating Interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals) specifier.  The alternate BPMN syntax for repeating intervals using CRON syntax is not currently supported.  For example:
+  
+  ```
+  R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M
+  ```
 
 ![Timer Event Start](images/timerStartEvent.png "Timer Start Event")
 
 ## Using Timers Before Object Sub-Type Parsing is Implemented
+
+1) create and save your diagram as normal.
+2) Using SQLDeveloper or the APEX SQL Workshop Object Browser:
+   1. examine FLOW_DIAGRAMS to get the DGRM_ID for your BPMN diagram.
+   2. query the FLOW_OBJECTS table to show all of the objects where OBJT_DGRM_ID is from your diagram.
+   3. From this, find the bpmn:startEvent or bpmn:intermediateCatchEvent events that you want to add a timer to.
+   4. For that event record, insert ‘bpmn:timerEventDefinition’ (without the quote marks) into the OBJT_SUB_TAG_NAME column.
+   5. Add either:
+      1. An ISO 8601 Date/time string (e.g., ‘2007-04-05T14:30’) into the OBJT_TIMER_DATE column; or
+      2. An ISO 8601 Duration string (e.g., ‘PT30S’ for a 30 sec delay) into the OBJT_TIMER_DURATION column; or
+      3. An ISO 8601 Cycle string (e.g., ‘R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M’) onto the OBJT_TIMER_CYCLE column.
+   6. Save / Commit the change.
+
+For example, to add the two 60 second timers (both Duration timers with string ‘PT60S’) onto the following BPMN diagram:![Temporary Example - Adding Timers Manually](images/tempEditTimerDefinitions1.png)
+After editing, your objects should look like this (note values in the right hand columns):![Temporary Example - Adding Timers Manually](images/tempEditTimerDefinitions2.png)
 
