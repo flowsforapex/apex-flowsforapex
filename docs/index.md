@@ -7,7 +7,7 @@ Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://j
 ## Flows for APEX documentation
 
 How to use new features
-- [Gateways and Parallel Flows](docs/GatewaysAndParallelFlows.md)
+- [Gateways and Parallel Flows](GatewaysAndParallelFlows.md)
 
 ### Markdown
 
