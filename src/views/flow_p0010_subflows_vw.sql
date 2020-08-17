@@ -14,17 +14,18 @@ as
             '"></span>'
           else
             '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" title="' ||
-            case i_sbfl.is_multistep
-              when 'y' then ' next-subflow-multistep-link" title="Choose branch" aria-label="Choose branch"'
-              when 'n' then ' next-subflow-step-link" title="Go to next step" aria-label="Go to next step"'
+            case 
+              when i_sbfl.sbfl_next_step_type in ( 'single-choice', 'multi-choice' ) then ' next-subflow-multistep-link" title="Choose branch" aria-label="Choose branch"'
+              when i_sbfl.sbfl_next_step_type = 'simple-step' then ' next-subflow-step-link" title="Go to next step" aria-label="Go to next step"'
             end || '" data-prcs="' || i_sbfl.sbfl_prcs_id || '" data-sbfl="' || i_sbfl.sbfl_id || '" data-action="' ||
-            case i_sbfl.is_multistep
-              when 'y' then 'choose_branch'
-              when 'n' then 'next_step'
+            case i_sbfl.sbfl_next_step_type
+              when 'single-choice' then 'choose_single'
+              when 'multi-choice' then 'choose_multiple'
+              when 'simple-step' then 'next_step'
             end || '"><span aria-hidden="true" class="' ||
-            case i_sbfl.is_multistep
-              when 'y' then 'fa fa-tasks'
-              when 'n' then 'fa fa-sign-out'
+            case
+              when i_sbfl.sbfl_next_step_type in ( 'single-choice', 'multi-choice' ) then 'fa fa-tasks'
+              when i_sbfl.sbfl_next_step_type = 'simple-step' then 'fa fa-sign-out'
             end || '"></span></button>'
          end as action_html
     from (
@@ -36,7 +37,7 @@ as
                 , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as sbfl_current
                 , sbfl.sbfl_last_update
                 , sbfl.sbfl_status
-                , flow_api_pkg.next_multistep_exists_yn(p_process_id => sbfl.sbfl_prcs_id, p_subflow_id => sbfl_id) as is_multistep
+                , flow_api_pkg.next_step_type( p_sbfl_id => sbfl_id ) as sbfl_next_step_type
                 , sbfl.sbfl_prcs_id
              from flow_subflows sbfl
              join flow_processes prcs

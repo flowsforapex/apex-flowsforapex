@@ -1,6 +1,10 @@
 create or replace package flow_api_pkg
 as
 
+  gc_step          constant varchar2(50 char) := 'simple-step';
+  gc_single_choice constant varchar2(50 char) := 'single-choice';
+  gc_multi_choice  constant varchar2(50 char) := 'multi-choice';
+
   function flow_create
   ( 
     pi_dgrm_name in flow_diagrams.dgrm_name%type
@@ -44,7 +48,12 @@ as
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return varchar2;
-    
+
+  function next_step_type
+  (
+    p_sbfl_id in flow_subflows.sbfl_id%type
+  ) return varchar2;
+
   function get_current_progress -- creates the markings for the bpmn viewer to show current progress 
   ( 
     p_process_id in flow_processes.prcs_id%type 
@@ -57,7 +66,7 @@ as
   
   procedure flow_next_branch
   ( p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
   , p_branch_name in varchar2
   );
     
@@ -69,8 +78,8 @@ as
   );
 
   procedure flow_handle_event
-  ( p_process_id  IN  flow_processes.prcs_id%type
-  , p_subflow_id  IN  flow_subflows.sbfl_id%type
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
   ); 
 
   procedure flow_reset

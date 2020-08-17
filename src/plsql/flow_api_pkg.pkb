@@ -441,24 +441,70 @@ as
     return l_return;
   end next_multistep_exists;
 
-function next_multistep_exists_yn 
-( p_process_id in flow_processes.prcs_id%type
-, p_subflow_id in flow_subflows.sbfl_id%type
-) return varchar2
-is
-    l_ret boolean;
-begin
-    l_ret := next_multistep_exists
-            ( p_process_id => p_process_id
-            , p_subflow_id => p_subflow_id
-            );
-    if l_ret = true
-    then
-        return 'y';
-    else 
-        return 'n';
-    end if;
-end;
+  function next_multistep_exists_yn 
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return varchar2
+  is
+      l_ret boolean;
+  begin
+      l_ret := next_multistep_exists
+              ( p_process_id => p_process_id
+              , p_subflow_id => p_subflow_id
+              );
+      if l_ret = true
+      then
+          return 'y';
+      else 
+          return 'n';
+      end if;
+  end next_multistep_exists_yn;
+
+  function next_step_type
+  (
+    p_sbfl_id in flow_subflows.sbfl_id%type
+  ) return varchar2
+  as
+    l_objt_tag_name flow_objects.objt_tag_name%type;
+    l_out_conns     number;
+
+    l_return varchar2(50 char);
+  begin
+      select objt.objt_tag_name
+           , count(*)
+        into l_objt_tag_name
+           , l_out_conns
+        from flow_subflows sbfl
+        join flow_processes prcs
+          on prcs.prcs_id = sbfl.sbfl_prcs_id
+        join flow_objects objt
+          on objt.objt_dgrm_id = prcs.prcs_dgrm_id
+         and objt.objt_bpmn_id = sbfl.sbfl_current
+        join flow_connections conn
+          on conn.conn_src_objt_id = objt.objt_id
+         and conn.conn_tag_name = 'bpmn:sequenceFlow'
+       where sbfl.sbfl_id = p_sbfl_id
+    group by objt.objt_tag_name
+    ;
+
+    case 
+      when l_out_conns > 1 then
+        l_return :=
+          case l_objt_tag_name
+            when 'bpmn:exclusiveGateway' then gc_single_choice
+            when 'bpmn:inclusiveGateway' then gc_multi_choice
+            else 'unknown'
+          end
+        ;
+      else
+        l_return := gc_step;
+    end case;
+
+    return l_return;
+  exception
+    when no_data_found then
+      return null;
+  end next_step_type;
 
 function get_current_progress -- creates the markings for the bpmn viewer to show current progress
 ( p_process_id in flow_processes.prcs_id%type

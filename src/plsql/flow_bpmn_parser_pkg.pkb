@@ -393,6 +393,16 @@ as
 
   end parse_lanes;
 
+  function find_subtag_name
+  (
+    pi_child_elements in xmltype
+  )
+    return t_vc50
+  as
+  begin
+    
+  end find_subtag_name;
+
   procedure parse_steps
   (
     pi_xml          in xmltype
@@ -441,7 +451,6 @@ as
           l_objt_sub_tag_name := null;
         end if;
 */
-
         register_object
         (
           pi_objt_bpmn_id        => rec.steps_id
