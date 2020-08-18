@@ -1296,6 +1296,14 @@ begin
     apex_debug.message(p_message => 'Begin flow_next_branch', p_level => 3) ;
     -- get diagram name and current state
     apex_debug.info('p_BRANCH_NAME passed in :',p_branch_name);
+    if p_branch_name is null
+    then 
+          apex_error.add_error
+          ( p_message => 'No forward path found for Gateway'
+          , p_display_location => apex_error.c_on_error_page
+          );
+    end if;
+
     select prcs.prcs_dgrm_id
          , sbfl.sbfl_current
          , objt.objt_tag_name
