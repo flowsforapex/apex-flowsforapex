@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.2.0">
+    <bpmn:collaboration id="Collaboration_03m7mlg">
+        <bpmn:participant id="Participant_1bg6eoy" name="MyBigExportCo" processRef="Process_0rxermh" />
+    </bpmn:collaboration>
+    <bpmn:process id="Process_0rxermh" isExecutable="false">
+        <bpmn:laneSet id="LaneSet_0q6sxw0">
+            <bpmn:lane id="Lane_1pfwkd3" name="Sales">
+                <bpmn:flowNodeRef>Event_12r2r0r</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_0bx24jl</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_1vn4tgg</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_1fh9sk7</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_1ucg2k6</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Event_1rpdwar</bpmn:flowNodeRef>
+            </bpmn:lane>
+            <bpmn:lane id="Lane_01xuw1t" name="Finance">
+                <bpmn:flowNodeRef>Activity_1qcogzg</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_0hl3wef</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_0ihn0nz</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_1qon03h</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_1ow2uze</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_0kh5iel</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_0pozgkx</bpmn:flowNodeRef>
+            </bpmn:lane>
+            <bpmn:lane id="Lane_06hpti2" name="Warehouse">
+                <bpmn:flowNodeRef>Activity_1nzl5vj</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_0dubqws</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_0slewqs</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_1cozv1y</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_1dewv3m</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_0vab9yd</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_10k4nk8</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_0dofsl8</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_0etzv1y</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Gateway_1gk5qxz</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Activity_1ll5xmd</bpmn:flowNodeRef>
+                <bpmn:flowNodeRef>Event_1nncfer</bpmn:flowNodeRef>
+            </bpmn:lane>
+        </bpmn:laneSet>
+        <bpmn:startEvent id="Event_12r2r0r" name="receive &#10;order">
+            <bpmn:outgoing>Flow_1q9sehx</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:task id="Activity_0bx24jl" name="check order">
+            <bpmn:incoming>Flow_1q9sehx</bpmn:incoming>
+            <bpmn:outgoing>Flow_167awfe</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:sequenceFlow id="Flow_1q9sehx" sourceRef="Event_12r2r0r" targetRef="Activity_0bx24jl" />
+        <bpmn:sequenceFlow id="Flow_167awfe" sourceRef="Activity_0bx24jl" targetRef="Gateway_1vn4tgg" />
+        <bpmn:parallelGateway id="Gateway_1vn4tgg">
+            <bpmn:incoming>Flow_167awfe</bpmn:incoming>
+            <bpmn:outgoing>Flow_1sd13zp</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1c1r2zc</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1g7mq2r</bpmn:outgoing>
+        </bpmn:parallelGateway>
+        <bpmn:task id="Activity_1fh9sk7" name="acknowledge receipt">
+            <bpmn:incoming>Flow_1sd13zp</bpmn:incoming>
+            <bpmn:outgoing>Flow_1q1imb1</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:sequenceFlow id="Flow_1sd13zp" sourceRef="Gateway_1vn4tgg" targetRef="Activity_1fh9sk7" />
+        <bpmn:sequenceFlow id="Flow_1q1imb1" sourceRef="Activity_1fh9sk7" targetRef="Gateway_0kh5iel" />
+        <bpmn:sequenceFlow id="Flow_1c1r2zc" sourceRef="Gateway_1vn4tgg" targetRef="Activity_1qcogzg" />
+        <bpmn:task id="Activity_1qcogzg" name="prepare invoice">
+            <bpmn:incoming>Flow_1c1r2zc</bpmn:incoming>
+            <bpmn:outgoing>Flow_08g9ycd</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Activity_0hl3wef" name="send invoice">
+            <bpmn:incoming>Flow_08g9ycd</bpmn:incoming>
+            <bpmn:outgoing>Flow_13x43g3</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:exclusiveGateway id="Gateway_0ihn0nz" name="export order">
+            <bpmn:incoming>Flow_13x43g3</bpmn:incoming>
+            <bpmn:outgoing>Flow_1augub3</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1y89hxj</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:subProcess id="Activity_1ow2uze" name="export documentation">
+            <bpmn:incoming>Flow_1augub3</bpmn:incoming>
+            <bpmn:outgoing>Flow_12eskoa</bpmn:outgoing>
+            <bpmn:startEvent id="Event_0n2zeza" name="start export doc">
+                <bpmn:outgoing>Flow_168l50p</bpmn:outgoing>
+            </bpmn:startEvent>
+            <bpmn:sequenceFlow id="Flow_168l50p" sourceRef="Event_0n2zeza" targetRef="Gateway_0r2ju5v" />
+            <bpmn:parallelGateway id="Gateway_0r2ju5v">
+                <bpmn:incoming>Flow_168l50p</bpmn:incoming>
+                <bpmn:outgoing>Flow_14k6c03</bpmn:outgoing>
+                <bpmn:outgoing>Flow_1bxvzh6</bpmn:outgoing>
+            </bpmn:parallelGateway>
+            <bpmn:task id="Activity_1c61tqz" name="create export customs doc">
+                <bpmn:incoming>Flow_14k6c03</bpmn:incoming>
+                <bpmn:outgoing>Flow_1lo31ye</bpmn:outgoing>
+            </bpmn:task>
+            <bpmn:sequenceFlow id="Flow_14k6c03" sourceRef="Gateway_0r2ju5v" targetRef="Activity_1c61tqz" />
+            <bpmn:task id="Activity_1w0hgj6" name="create LC docs">
+                <bpmn:incoming>Flow_1bxvzh6</bpmn:incoming>
+                <bpmn:outgoing>Flow_0xp2sdz</bpmn:outgoing>
+            </bpmn:task>
+            <bpmn:sequenceFlow id="Flow_1bxvzh6" sourceRef="Gateway_0r2ju5v" targetRef="Activity_1w0hgj6" />
+            <bpmn:sequenceFlow id="Flow_1lo31ye" sourceRef="Activity_1c61tqz" targetRef="Gateway_0wuum5f" />
+            <bpmn:parallelGateway id="Gateway_0wuum5f">
+                <bpmn:incoming>Flow_1lo31ye</bpmn:incoming>
+                <bpmn:incoming>Flow_0xp2sdz</bpmn:incoming>
+                <bpmn:outgoing>Flow_0tikood</bpmn:outgoing>
+            </bpmn:parallelGateway>
+            <bpmn:sequenceFlow id="Flow_0xp2sdz" sourceRef="Activity_1w0hgj6" targetRef="Gateway_0wuum5f" />
+            <bpmn:endEvent id="Event_0ctcxyt" name="export&#10;doc&#10;complete">
+                <bpmn:incoming>Flow_0tikood</bpmn:incoming>
+            </bpmn:endEvent>
+            <bpmn:sequenceFlow id="Flow_0tikood" sourceRef="Gateway_0wuum5f" targetRef="Event_0ctcxyt" />
+        </bpmn:subProcess>
+        <bpmn:exclusiveGateway id="Gateway_1qon03h">
+            <bpmn:incoming>Flow_12eskoa</bpmn:incoming>
+            <bpmn:incoming>Flow_1y89hxj</bpmn:incoming>
+            <bpmn:outgoing>Flow_1k267dh</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="Flow_08g9ycd" sourceRef="Activity_1qcogzg" targetRef="Activity_0hl3wef" />
+        <bpmn:sequenceFlow id="Flow_13x43g3" sourceRef="Activity_0hl3wef" targetRef="Gateway_0ihn0nz" />
+        <bpmn:sequenceFlow id="Flow_1augub3" name="export" sourceRef="Gateway_0ihn0nz" targetRef="Activity_1ow2uze" />
+        <bpmn:sequenceFlow id="Flow_12eskoa" sourceRef="Activity_1ow2uze" targetRef="Gateway_1qon03h" />
+        <bpmn:sequenceFlow id="Flow_1y89hxj" name="local" sourceRef="Gateway_0ihn0nz" targetRef="Gateway_1qon03h" />
+        <bpmn:parallelGateway id="Gateway_0kh5iel">
+            <bpmn:incoming>Flow_1k267dh</bpmn:incoming>
+            <bpmn:incoming>Flow_1q1imb1</bpmn:incoming>
+            <bpmn:incoming>Flow_0m694ug</bpmn:incoming>
+            <bpmn:outgoing>Flow_11f3g1p</bpmn:outgoing>
+        </bpmn:parallelGateway>
+        <bpmn:sequenceFlow id="Flow_1k267dh" sourceRef="Gateway_1qon03h" targetRef="Gateway_0kh5iel" />
+        <bpmn:task id="Activity_0pozgkx" name="approve order for shipping">
+            <bpmn:incoming>Flow_11f3g1p</bpmn:incoming>
+            <bpmn:outgoing>Flow_1ldxdu0</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:sequenceFlow id="Flow_11f3g1p" sourceRef="Gateway_0kh5iel" targetRef="Activity_0pozgkx" />
+        <bpmn:sequenceFlow id="Flow_1ldxdu0" sourceRef="Activity_0pozgkx" targetRef="Activity_1nzl5vj" />
+        <bpmn:task id="Activity_1nzl5vj" name="dispatch goods">
+            <bpmn:incoming>Flow_1ldxdu0</bpmn:incoming>
+            <bpmn:outgoing>Flow_0wgmqzj</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:sequenceFlow id="Flow_0wgmqzj" sourceRef="Activity_1nzl5vj" targetRef="Activity_1ucg2k6" />
+        <bpmn:task id="Activity_1ucg2k6" name="notify customer">
+            <bpmn:incoming>Flow_0wgmqzj</bpmn:incoming>
+            <bpmn:outgoing>Flow_0lktm44</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:endEvent id="Event_1rpdwar" name="end">
+            <bpmn:incoming>Flow_0lktm44</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="Flow_0lktm44" sourceRef="Activity_1ucg2k6" targetRef="Event_1rpdwar" />
+        <bpmn:inclusiveGateway id="Gateway_0dubqws" name="ship modes?">
+            <bpmn:incoming>Flow_1g7mq2r</bpmn:incoming>
+            <bpmn:outgoing>Flow_0b9zlpb</bpmn:outgoing>
+            <bpmn:outgoing>Flow_0rpxblp</bpmn:outgoing>
+            <bpmn:outgoing>Flow_1klmqrg</bpmn:outgoing>
+        </bpmn:inclusiveGateway>
+        <bpmn:task id="Activity_0slewqs" name="arrange air shipment">
+            <bpmn:incoming>Flow_0b9zlpb</bpmn:incoming>
+            <bpmn:outgoing>Flow_0i176ud</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Activity_1cozv1y" name="arrange ocean shipment">
+            <bpmn:incoming>Flow_0rpxblp</bpmn:incoming>
+            <bpmn:outgoing>Flow_1ffzptq</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Activity_1dewv3m" name="arrange surface shipment">
+            <bpmn:incoming>Flow_1klmqrg</bpmn:incoming>
+            <bpmn:outgoing>Flow_1b2cybl</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:sequenceFlow id="Flow_0b9zlpb" name="includes&#10;air freight?" sourceRef="Gateway_0dubqws" targetRef="Activity_0slewqs" />
+        <bpmn:sequenceFlow id="Flow_0rpxblp" name="includes&#10;ocean&#10;freight?" sourceRef="Gateway_0dubqws" targetRef="Activity_1cozv1y" />
+        <bpmn:sequenceFlow id="Flow_1klmqrg" name="includes&#10;surface&#10;transport?" sourceRef="Gateway_0dubqws" targetRef="Activity_1dewv3m" />
+        <bpmn:sequenceFlow id="Flow_0i176ud" sourceRef="Activity_0slewqs" targetRef="Gateway_0vab9yd" />
+        <bpmn:sequenceFlow id="Flow_1ffzptq" sourceRef="Activity_1cozv1y" targetRef="Gateway_0vab9yd" />
+        <bpmn:sequenceFlow id="Flow_1b2cybl" sourceRef="Activity_1dewv3m" targetRef="Gateway_0vab9yd" />
+        <bpmn:sequenceFlow id="Flow_1g7mq2r" sourceRef="Gateway_1vn4tgg" targetRef="Gateway_0dubqws" />
+        <bpmn:sequenceFlow id="Flow_0wnn500" sourceRef="Activity_0etzv1y" targetRef="Gateway_10k4nk8" />
+        <bpmn:sequenceFlow id="Flow_106dv3q" name="export" sourceRef="Gateway_10k4nk8" targetRef="Activity_1ll5xmd" />
+        <bpmn:sequenceFlow id="Flow_06832ls" name="local" sourceRef="Gateway_10k4nk8" targetRef="Activity_0dofsl8" />
+        <bpmn:sequenceFlow id="Flow_1lvy3kz" sourceRef="Activity_0dofsl8" targetRef="Gateway_1gk5qxz" />
+        <bpmn:sequenceFlow id="Flow_1s2y3pb" sourceRef="Gateway_0vab9yd" targetRef="Activity_0etzv1y" />
+        <bpmn:inclusiveGateway id="Gateway_0vab9yd">
+            <bpmn:incoming>Flow_0i176ud</bpmn:incoming>
+            <bpmn:incoming>Flow_1ffzptq</bpmn:incoming>
+            <bpmn:incoming>Flow_1b2cybl</bpmn:incoming>
+            <bpmn:outgoing>Flow_1s2y3pb</bpmn:outgoing>
+        </bpmn:inclusiveGateway>
+        <bpmn:exclusiveGateway id="Gateway_10k4nk8" name="export order?">
+            <bpmn:incoming>Flow_0wnn500</bpmn:incoming>
+            <bpmn:outgoing>Flow_106dv3q</bpmn:outgoing>
+            <bpmn:outgoing>Flow_06832ls</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:task id="Activity_0dofsl8" name="domestic packing">
+            <bpmn:incoming>Flow_06832ls</bpmn:incoming>
+            <bpmn:outgoing>Flow_1lvy3kz</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Activity_0etzv1y" name="pick goods">
+            <bpmn:incoming>Flow_1s2y3pb</bpmn:incoming>
+            <bpmn:outgoing>Flow_0wnn500</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:sequenceFlow id="Flow_0m694ug" sourceRef="Gateway_1gk5qxz" targetRef="Gateway_0kh5iel" />
+        <bpmn:exclusiveGateway id="Gateway_1gk5qxz">
+            <bpmn:incoming>Flow_1lvy3kz</bpmn:incoming>
+            <bpmn:incoming>Flow_04hn48e</bpmn:incoming>
+            <bpmn:outgoing>Flow_0m694ug</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:task id="Activity_1ll5xmd" name="export packing">
+            <bpmn:incoming>Flow_106dv3q</bpmn:incoming>
+            <bpmn:outgoing>Flow_0kel409</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:sequenceFlow id="Flow_0kel409" sourceRef="Activity_1ll5xmd" targetRef="Event_1nncfer" />
+        <bpmn:sequenceFlow id="Flow_04hn48e" sourceRef="Event_1nncfer" targetRef="Gateway_1gk5qxz" />
+        <bpmn:intermediateCatchEvent id="Event_1nncfer" name="24Hr &#10;security hold">
+            <bpmn:incoming>Flow_0kel409</bpmn:incoming>
+            <bpmn:outgoing>Flow_04hn48e</bpmn:outgoing>
+            <bpmn:timerEventDefinition id="TimerEventDefinition_06mibkf">
+                <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+            </bpmn:timerEventDefinition>
+        </bpmn:intermediateCatchEvent>
+    </bpmn:process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+        <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_03m7mlg">
+            <bpmndi:BPMNShape id="Participant_1bg6eoy_di" bpmnElement="Participant_1bg6eoy" isHorizontal="true">
+                <dc:Bounds x="170" y="110" width="1930" height="1060" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Lane_06hpti2_di" bpmnElement="Lane_06hpti2" isHorizontal="true">
+                <dc:Bounds x="200" y="780" width="1900" height="390" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Lane_01xuw1t_di" bpmnElement="Lane_01xuw1t" isHorizontal="true">
+                <dc:Bounds x="200" y="340" width="1900" height="440" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Lane_1pfwkd3_di" bpmnElement="Lane_1pfwkd3" isHorizontal="true">
+                <dc:Bounds x="200" y="110" width="1900" height="230" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="Flow_04hn48e_di" bpmnElement="Flow_04hn48e">
+                <di:waypoint x="1488" y="900" />
+                <di:waypoint x="1535" y="900" />
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_0kel409_di" bpmnElement="Flow_0kel409">
+                <di:waypoint x="1400" y="900" />
+                <di:waypoint x="1452" y="900" />

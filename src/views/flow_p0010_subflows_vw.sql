@@ -39,6 +39,7 @@ as
                 , sbfl.sbfl_status
                 , flow_api_pkg.next_step_type( p_sbfl_id => sbfl_id ) as sbfl_next_step_type
                 , sbfl.sbfl_prcs_id
+                , coalesce( lane.objt_name, to_char(lane.objt_id)) as sbfl_current_lane
              from flow_subflows sbfl
              join flow_processes prcs
                on prcs.prcs_id = sbfl.sbfl_prcs_id
@@ -54,5 +55,7 @@ as
         left join flow_connections conn
                on conn.conn_bpmn_id = sbfl.sbfl_route
               and conn.conn_dgrm_id = prcs.prcs_dgrm_id
+        left join flow_objects lane
+               on objt_curr.objt_objt_lane_id = lane.objt_id
          ) i_sbfl
 ;
