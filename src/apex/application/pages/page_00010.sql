@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20200812120147'
+,p_last_upd_yyyymmddhh24miss=>'20200817164400'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(160796420876501967)
@@ -95,7 +95,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(160799330531501996)
 ,p_query_column_id=>1
 ,p_column_alias=>'SBFL_ID'
-,p_column_display_sequence=>10
+,p_column_display_sequence=>9
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -103,7 +103,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(160799230943501995)
 ,p_query_column_id=>2
 ,p_column_alias=>'SBFL_SBFL_ID'
-,p_column_display_sequence=>11
+,p_column_display_sequence=>10
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -166,10 +166,10 @@ wwv_flow_api.create_report_columns(
 ,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(160796580484501969)
+ p_id=>wwv_flow_api.id(15681000129738601)
 ,p_query_column_id=>9
-,p_column_alias=>'IS_MULTISTEP'
-,p_column_display_sequence=>9
+,p_column_alias=>'SBFL_NEXT_STEP_TYPE'
+,p_column_display_sequence=>11
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -200,6 +200,7 @@ wwv_flow_api.create_report_region(
 ,p_parent_plug_id=>wwv_flow_api.id(173008747142503554)
 ,p_template=>wwv_flow_api.id(12495582446800880234)
 ,p_display_sequence=>20
+,p_region_css_classes=>'js-react-on-prcs'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#:t-Report--stretch:t-Report--staticRowColors:t-Report--rowHighlightOff'
 ,p_display_point=>'BODY'
@@ -352,6 +353,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'Y'
 ,p_attribute_10=>'Y'
+,p_attribute_11=>'N'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12491866708043262849)
@@ -367,9 +369,10 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(160796295436501966)
-,p_button_sequence=>20
+,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(160796420876501967)
 ,p_button_name=>'SELECT_BRANCH'
+,p_button_static_id=>'btn_SELECT_BRANCH'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--gapTop'
 ,p_button_template_id=>wwv_flow_api.id(12495522463331880131)
@@ -406,6 +409,33 @@ wwv_flow_api.create_page_item(
 ,p_attribute_01=>'N'
 );
 wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(15681115018738602)
+,p_name=>'P10_MULTI_BRANCH'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(160796420876501967)
+,p_prompt=>'Option'
+,p_display_as=>'NATIVE_SELECT_LIST'
+,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select conn.d',
+'     , conn.r',
+'  from flow_p0010_branches_vw conn',
+' where conn.prcs_id = :p10_prcs_id',
+'   and conn.sbfl_id = :p10_sbfl_id',
+';'))
+,p_lov_cascade_parent_items=>'P10_PRCS_ID,P10_SBFL_ID'
+,p_ajax_optimize_refresh=>'Y'
+,p_cHeight=>5
+,p_begin_on_new_line=>'N'
+,p_begin_on_new_field=>'N'
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_is_persistent=>'N'
+,p_lov_display_extra=>'NO'
+,p_attribute_01=>'NONE'
+,p_attribute_02=>'Y'
+);
+wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(12491864731021262829)
 ,p_name=>'P10_PRCS_ID'
 ,p_item_sequence=>10
@@ -417,7 +447,7 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(12519723272096181854)
-,p_name=>'P10_BRANCH'
+,p_name=>'P10_SINGLE_BRANCH'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(160796420876501967)
 ,p_prompt=>'Option'
@@ -556,8 +586,6 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'//var myElement = apex.jQuery( this.triggeringElement );',
-'',
 'var myAction  = this.data.action;',
 'var myProcess = this.data.prcs;',
 'var mySubflow = this.data.sbfl;',
@@ -606,18 +634,29 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'var myElement = apex.jQuery( this.triggeringElement );',
 '',
-'if ( myElement.data("action") !== "choose_branch" ) {',
+'if ( myElement.data("action") == "choose_single" || myElement.data("action") == "choose_multiple" ) {',
+'  apex.item( "P10_PRCS_ID" ).setValue( myElement.data( "prcs" ), null, true );',
+'  apex.item( "P10_SBFL_ID" ).setValue( myElement.data( "sbfl" ), null, true );',
+'  apex.jQuery("#btn_SELECT_BRANCH").data( "action", myElement.data("action") );',
+'  ',
+'  apex.theme.openRegion( "multi_step_chooser" );',
+'  if ( myElement.data("action") == "choose_single" ) {',
+'    apex.item( "P10_SINGLE_BRANCH" ).show();',
+'    apex.item( "P10_MULTI_BRANCH" ).hide();',
+'    apex.item( "P10_SINGLE_BRANCH" ).refresh();',
+'  } else {',
+'    apex.item( "P10_SINGLE_BRANCH" ).hide();',
+'    apex.item( "P10_MULTI_BRANCH" ).show();',
+'    apex.item( "P10_MULTI_BRANCH" ).refresh();',
+'  }',
+'  ',
+'} else {',
 '  apex.event.trigger( document, "wfp-action-request", {',
 '    action: myElement.data( "action" ),',
 '    prcs:   myElement.data( "prcs" ),',
 '    sbfl:   myElement.data( "sbfl" ),',
 '    branch: null',
 '  });',
-'} else {',
-'  apex.theme.openRegion( "multi_step_chooser" );',
-'  apex.item( "P10_PRCS_ID" ).setValue( myElement.data( "prcs" ), null, true );',
-'  apex.item( "P10_SBFL_ID" ).setValue( myElement.data( "sbfl" ), null, true );',
-'  apex.item( "P10_BRANCH" ).refresh();',
 '}'))
 );
 wwv_flow_api.create_page_da_event(
@@ -626,8 +665,6 @@ wwv_flow_api.create_page_da_event(
 ,p_event_sequence=>140
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(160796295436501966)
-,p_condition_element=>'P10_BRANCH'
-,p_triggering_condition_type=>'NOT_NULL'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'click'
 );
@@ -639,7 +676,12 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var myBranch = apex.item( "P10_BRANCH" ).getValue();',
+'var myBranch;',
+'if ( apex.jQuery( this.triggeringElement ).data( "action" ) == "choose_single" ) {',
+'  myBranch = apex.item( "P10_SINGLE_BRANCH" ).getValue();',
+'} else {',
+'  myBranch = apex.item( "P10_MULTI_BRANCH" ).getValue().join(":");',
+'}',
 'apex.event.trigger( document, "wfp-action-request", {',
 '    action: "choose_branch",',
 '    prcs:   apex.item( "P10_PRCS_ID" ).getValue(),',

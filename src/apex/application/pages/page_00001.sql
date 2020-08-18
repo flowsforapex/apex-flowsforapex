@@ -77,7 +77,7 @@ wwv_flow_api.create_page(
 '#APP_IMAGES#css/mtag.bpmnmodeler.properties-panel.css'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '#canvas {',
-'    height: 100vw;',
+'    height: 80vh;',
 '    background-color: #f0f0f0;',
 '}',
 '',
@@ -108,7 +108,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20200812115829'
+,p_last_upd_yyyymmddhh24miss=>'20200817132328'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12491062133032033850)
