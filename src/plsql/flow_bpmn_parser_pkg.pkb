@@ -400,7 +400,7 @@ as
     return t_vc50
   as
   begin
-    
+    null;
   end find_subtag_name;
 
   procedure parse_steps
