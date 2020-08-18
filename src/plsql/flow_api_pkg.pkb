@@ -1296,7 +1296,7 @@ begin
     apex_debug.message(p_message => 'Begin flow_next_branch', p_level => 3) ;
     -- get diagram name and current state
     apex_debug.info('p_BRANCH_NAME passed in :',p_branch_name);
-bugfix    if p_branch_name is null
+    if p_branch_name is null
     then 
           apex_error.add_error
           ( p_message => 'No forward path found for Gateway'
