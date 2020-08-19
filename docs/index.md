@@ -14,6 +14,7 @@ This application enables every APEX developer to create and run workflows for th
 - [Gateways and Parallel Flows](GatewaysAndParallelFlows.md)
 - [Using Sub Processes](SubProcesses.md)
 - [Using Timer Events](UsingTimerEvents.md)
+- [Using Lanes](UsingLanes.md)
 
 ### Using the Flows for APEX PL/SQL API
 
