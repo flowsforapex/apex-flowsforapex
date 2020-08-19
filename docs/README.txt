@@ -26,11 +26,15 @@ v4.0.0
 - Support for Parallel Gateways (AND) and parallel flows, including process re-synchronisation
 - Support for Inclusive Gateways (OR) and optional parallel flows, including process re-synchronisation
 - Support for IntermediateCatchEvents and eventBasedGateways
+- Support for Terminate Stop Events in top level processes
 - Process viewer now shows all present and completed steps, and expanded views of sub-processes
 - Basic support for process lanes
 - PL/SQL API changes to support subflow architecture
 - New demo app "Order Shipment"
-- New documentation
+- New Documentation, now also hosted on github pages at https://mt-ag.github.io/apex-flowsforapex/
+- Prototype lab Feature
+  - Timed Start Events
+  - Timer Intermediate Catch Events
 
 v3.0.0
 - XML parsing now done using PL/SQL only

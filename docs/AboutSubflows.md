@@ -12,7 +12,7 @@ This documentation explains the subflow architecture, it's implementation, and h
 
 A *Business Process* is defined using a BPMN Diagram, which is identified by a Diagram Name and Diagram ID.  This defines the rules and seqence in which a business process should be executed.  For example, the following BPMN diagram below shows the business process definition for an Order Shipment process.
 
-![Order Shipment Process](images/ShipmentProcess.png)
+![Order Shipment Process](images/ShipmentProcess.PNG)
 
 A *Process Instance* is one ocuurance of this business process.  Building on our Shipping example, this process would be followed for all orders.  There would be one Process Instance for each order.
 
@@ -144,8 +144,4 @@ When a process is deleted:
 The Subflow architecture implemented in V4 is designed to be performant and the working tables holding Process Instances, Subflows, Timers, and Subflow Progress have been designed with the intention that they should stay small, un-clutered, and hopefully cached!
 
 A subsequent inplementation project should move relevant performance and audit data from these working tables into audit trails, with process performance statistics, etc., being captured.  If anybody needs to build these functions into their project, please contact the Flows For APEX team to coordinate and contribute to the further development of the project.
-
-
-
-
 
