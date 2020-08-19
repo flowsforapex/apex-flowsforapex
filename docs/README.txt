@@ -7,9 +7,9 @@
 ***************************************************
 
 PREREQUISITES
-- Oracle Database 12c (all editions supported)
+- Oracle Database 12c or higher (all editions supported)
 - Oracle Application Express 20.1 or higher
-- Workspace with at least 10 MB space
+- APEX workspace with at least 10 MB space
 
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
