@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20200817164400'
+,p_last_upd_yyyymmddhh24miss=>'20200819104450'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(160796420876501967)
@@ -95,7 +95,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(160799330531501996)
 ,p_query_column_id=>1
 ,p_column_alias=>'SBFL_ID'
-,p_column_display_sequence=>9
+,p_column_display_sequence=>10
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -103,7 +103,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(160799230943501995)
 ,p_query_column_id=>2
 ,p_column_alias=>'SBFL_SBFL_ID'
-,p_column_display_sequence=>10
+,p_column_display_sequence=>11
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -121,7 +121,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(160799018324501993)
 ,p_query_column_id=>4
 ,p_column_alias=>'SBFL_ROUTE'
-,p_column_display_sequence=>6
+,p_column_display_sequence=>7
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -129,7 +129,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(160798879972501992)
 ,p_query_column_id=>5
 ,p_column_alias=>'SBFL_LAST_COMPLETED'
-,p_column_display_sequence=>7
+,p_column_display_sequence=>8
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -169,7 +169,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(15681000129738601)
 ,p_query_column_id=>9
 ,p_column_alias=>'SBFL_NEXT_STEP_TYPE'
-,p_column_display_sequence=>11
+,p_column_display_sequence=>12
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -177,15 +177,25 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(160798297119501986)
 ,p_query_column_id=>10
 ,p_column_alias=>'SBFL_PRCS_ID'
-,p_column_display_sequence=>8
+,p_column_display_sequence=>9
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
 wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(7695911351745146)
+ p_id=>wwv_flow_api.id(15681258975738603)
 ,p_query_column_id=>11
-,p_column_alias=>'ACTION_HTML'
+,p_column_alias=>'SBFL_CURRENT_LANE'
 ,p_column_display_sequence=>5
+,p_column_heading=>'Lane'
+,p_use_as_row_header=>'N'
+,p_derived_column=>'N'
+,p_include_in_export=>'Y'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(7695911351745146)
+,p_query_column_id=>12
+,p_column_alias=>'ACTION_HTML'
+,p_column_display_sequence=>6
 ,p_column_heading=>'Action'
 ,p_use_as_row_header=>'N'
 ,p_column_alignment=>'CENTER'
