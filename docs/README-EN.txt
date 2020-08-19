@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v3.0.0                *
+*            Flows for APEX v4.0.0                *
 *          Installation instructions              *
 *                                                 *
 *                                                 *
@@ -9,7 +9,7 @@
 PREREQUISITES
 - Oracle Database 12c (all editions supported)
 - Oracle Application Express 20.1 or higher
-- Workspace with at least 1 MB space
+- Workspace with at least 10 MB space
 
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
@@ -29,8 +29,8 @@ v4.0.0
 - Process viewer now shows all present and completed steps, and expanded views of sub-processes
 - Basic support for process lanes
 - PL/SQL API changes to support subflow architecture
-- new demo app
-- new Documentation
+- New demo app "Order Shipment"
+- New documentation
 
 v3.0.0
 - XML parsing now done using PL/SQL only
