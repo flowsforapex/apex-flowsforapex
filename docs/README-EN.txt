@@ -33,7 +33,6 @@ v4.0.0
 - New demo app "Order Shipment"
 - New Documentation, now also hosted on github pages at https://mt-ag.github.io/apex-flowsforapex/
 - Prototype lab Feature
-  - Timer Events
   - Timed Start Events
   - Timer Intermediate Catch Events
 
