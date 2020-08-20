@@ -43,5 +43,3 @@ A Terminate End Event will terminate all current branches rnning in the process,
 ![Terminate End Event](images/terminateEnd.png "Terminate End Event")
 
 Currently, Terminate End Events should only be placed in the top level process on any diagram, and not in any sub-process.
-
-

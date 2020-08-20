@@ -81,4 +81,3 @@ If no closing gateway is incuded, all routes must proceed to their own end event
 An Inclusive Gateway cannot act, simultaneosly, as both a Merging / Closing gateway and an Opening Gateway.
 
 ![Inclusive Gateway Can't Merge and Split](images/inclusiveMergeSplit.png "Inclusive Gateway Can't Merge and Split")
-

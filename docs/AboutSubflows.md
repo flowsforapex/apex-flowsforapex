@@ -145,7 +145,3 @@ The Subflow architecture implemented in V4 is designed to be performant and the 
 
 A subsequent inplementation project should move relevant performance and audit data from these working tables into audit trails, with process performance statistics, etc., being captured.  If anybody needs to build these functions into their project, please contact the Flows For APEX team to coordinate and contribute to the further development of the project.
 
-
-
-
-

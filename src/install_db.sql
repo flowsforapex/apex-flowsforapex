@@ -22,11 +22,12 @@ PRoMPT >> Installing Package Bodies
 @plsql/flow_p0010_api.pkb
 
 PROMPT >> installing Views
+@views/flow_subflows_vw.sql
+@views/flow_diagrams_lov.sql
+@views/flow_diagrams_parsed_lov.sql
 @views/flow_p0001_vw.sql
 @views/flow_p0003_vw.sql
 @views/flow_p0010_vw.sql
 @views/flow_p0010_instances_vw.sql
 @views/flow_p0010_subflows_vw.sql
 @views/flow_p0010_branches_vw.sql
-@views/flow_diagrams_lov.sql
-@views/flow_diagrams_parsed_lov.sql

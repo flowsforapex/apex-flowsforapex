@@ -15,4 +15,5 @@ as
      and prcs.prcs_dgrm_id = conn.conn_dgrm_id
    where conn.conn_tag_name = 'bpmn:sequenceFlow'
 order by conn.conn_name asc
+with read only
 ;

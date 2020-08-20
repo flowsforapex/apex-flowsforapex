@@ -400,7 +400,7 @@ as
     return t_vc50
   as
   begin
-    null;
+    return null;
   end find_subtag_name;
 
   procedure parse_steps
@@ -459,6 +459,13 @@ as
         , pi_objt_tag_name       => rec.steps_type
         , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
         );
+
+        -- Register Object on Lane if parent blongs to a lane
+        -- Those connections are not directly visible in the XML
+        -- but BPMN defines inheritance for these.
+        if g_lane_refs.exists( pi_proc_bpmn_id ) and rec.steps_id is not null then
+          g_lane_refs( rec.steps_id ) := g_lane_refs( pi_proc_bpmn_id );
+        end if;
 
         if rec.steps_type = 'bpmn:laneSet' then
           parse_lanes
