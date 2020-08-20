@@ -4,21 +4,17 @@ Flows for APEX - Model and run workflows all within APEX!
 
 This github repository is for developers willing to contribute to the upcoming version of Flows for APEX.
 
-If you are looking for a <b>demo</b> or want to <b>download</b> the packaged app, please go to the website:
+If you are looking for a **demo** or want to **download** the packaged app, please go to the website:
 
-https://apex.mt-ag.com/flowsforapex
+<https://apex.mt-ag.com/flowsforapex>
 
-Introduction <b>slides</b> can be found here:
+Introduction **slides** can be found here:
 
-https://knowledgebase.mt-ag.com/q/flowsforapex
+<https://knowledgebase.mt-ag.com/q/flowsforapex>
 
-A <b>video</b> of Flows for APEX v1 can be found at ODTUG (requires a membership):
+Introduction **blog** post:
 
-https://www.odtug.com/p/do/sd/sid=13259
-
-Introduction <b>blog</b> post:
-
-https://nielsdebr.blogspot.com/2020/06/flows-for-apex.html
+<https://nielsdebr.blogspot.com/2020/06/flows-for-apex.html>
 
 Feature Documentation
 
@@ -26,19 +22,29 @@ Documentation on features is included in the app distribution.  It's also hosted
 
 [https://mt-ag.github.io/apex-flowsforapex/](https://mt-ag.github.io/apex-flowsforapex/)
 
-# How to contribute as a developer to this project
+## How to contribute as a developer to this project
 
-1. Clone/fork the repository apex-flowsforapex to get your own copy
-2. Create a workspace with the ID 2400405578329584 (you will need your own APEX environment)
-3. Run /src/install_all.sql, enter the parameters and install all db objects together with the application
-4. Make your changes in the app and/or db objects
-5. Commit your changes in your branch (master branch or in your feature branch when working with multiple developers on it)
-6. Send a pull request so we can verify and decide on taking over your changes
+1. Clone/fork the repository apex-flowsforapex to get your own copy.
+2. Create a workspace with the ID 2400405578329584.
+   For this you will need your own APEX environment.
+3. Run /src/install_all_dev.sql.  
+   When prompted enter the parameters.  
+   This will install all DB-Objects and the application with fixed ID 100.  
+   Make sure you have Application ID 100 free for this.
+4. Make your changes in the app and/or db objects.
+5. Commit your changes in your own branch.  
+   Preferable a dedicated branch for the feature you're working on.
+6. Send in a pull request for review.  
+   We will then verify the changes before accepting the pull request.  
+   We might ask you to update your pull request based on our findings.
 
-<b>Some important rules:</b>
+**Some important rules:**
 
-1. Only import the app in the workspace with the ID mentioned above to prevent every file being touched by APEX after exporting it again.
-2. Export your APEX app "as ZIP" with the setting "retaining the original IDs" enabled.
+1. Retain Workspace ID and Application ID, otherwise each and every file of the application export will be marked as changed.  
+   Easiest way to achieve this is to use the provided development install script mentioned above.
+2. Always enable "Export as ZIP" and "Export with Original IDs".
 
-Communication for this project is done using http://flowsforapex.slack.com. DM me on Twitter (@nielsdb) to get involved.
+## Getting in touch
 
+Communication for this project is done using [Slack](http://flowsforapex.slack.com).  
+Send a DM on Twitter to [Niels de Bruijn (@nielsdb)](https://twitter.com/nielsdb?s=20) to get involved.
