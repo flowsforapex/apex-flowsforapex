@@ -13,4 +13,5 @@ as
      from flow_processes prcs
      join flow_diagrams dgrm
        on dgrm.dgrm_id = prcs.prcs_dgrm_id
+with read only
 ;

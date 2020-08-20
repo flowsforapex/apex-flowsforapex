@@ -58,4 +58,5 @@ as
         left join flow_objects lane
                on objt_curr.objt_objt_lane_id = lane.objt_id
          ) i_sbfl
+with read only
 ;
