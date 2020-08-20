@@ -6,6 +6,7 @@ drop package flow_p0003_api;
 drop package flow_p0010_api;
 drop package flow_bpmn_parser_pkg;
 drop package flow_api_pkg;
+drop package flow_timers_pkg;
 
 PROMPT >> Views
 drop view flow_p0001_vw;
