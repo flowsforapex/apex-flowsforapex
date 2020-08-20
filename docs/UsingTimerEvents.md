@@ -89,4 +89,3 @@ To define a Timer Event, first drag the Event onto your new process canvas.   Se
 
 For example, to add the two 60 second timers (both Duration timers with string ‘PT60S’) onto the following BPMN diagram:![Temporary Example - Adding Timers Manually](images/tempEditTimerDefinitions1.png)
 After editing, your objects should look like this (note values in the right hand columns):![Temporary Example - Adding Timers Manually](images/tempEditTimerDefinitions2.png)
-

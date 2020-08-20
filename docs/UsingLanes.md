@@ -22,4 +22,3 @@ Flows for APEX does not currently support processes using message flows and sign
 
 ![Message Flow between Pools not Supported](images/processWithMultiplePools.png "Message Flow between Pools not Supported")
 This example (correctly, in BPMN terms!) models the customer and company in separate pools.  However, Flows for APEX cannot currently handle the messageflows across pool boundaries.  Sequence flows have to be contained inside a pool.
-

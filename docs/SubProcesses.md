@@ -25,6 +25,3 @@ As is good BPMN style, a sub process should operate in a single lane.
 #### 3. Sub Processes cannot contain a Terminate End Event
 
 Sub processes can currently only contain a single, standard End Event.  Terminate End Events are not currently supported.
-
-
-
