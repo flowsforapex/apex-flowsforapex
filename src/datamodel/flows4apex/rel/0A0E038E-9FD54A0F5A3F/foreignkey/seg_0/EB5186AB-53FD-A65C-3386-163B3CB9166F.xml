@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="EB5186AB-53FD-A65C-3386-163B3CB9166F" containerWithKeyObject="10EEDE16-14C3-EBE7-3EC8-562EE49E785F" localFKIndex="9EB463CC-1010-1B21-C1EA-68269FE74613" name="OBAT_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 15:48:14 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<referredTableLongName>FLOW_OBJECTS</referredTableLongName>
+<deleteRule>CASCADE</deleteRule>
+<referredTableID>A02A7C75-D817-F949-9BBB-2D1A5BEFEE1B</referredTableID>
+<keyObject>6F96D5A1-EB95-6ECE-E802-3E321F5E5748</keyObject>
+<referredKeyID>6F96D5A1-EB95-6ECE-E802-3E321F5E5748</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>OBJT_ID</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

@@ -13,5 +13,7 @@ as
       on prcs.prcs_id = sbfl.sbfl_prcs_id
      and prcs.prcs_dgrm_id = src_objt.objt_dgrm_id
      and prcs.prcs_dgrm_id = conn.conn_dgrm_id
+   where conn.conn_tag_name = 'bpmn:sequenceFlow'
 order by conn.conn_name asc
+with read only
 ;

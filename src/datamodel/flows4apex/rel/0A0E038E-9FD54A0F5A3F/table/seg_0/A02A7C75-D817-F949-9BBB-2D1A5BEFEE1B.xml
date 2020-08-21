@@ -102,6 +102,17 @@
 <ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
+<Column name="OBJT_SUBTYPE" id="797DE676-ACED-18B1-38C9-D0B68F659A8F">
+<createdBy>moklein</createdBy>
+<createdTime>2020-07-10 13:04:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>ED1CFFC7-CF79-11C2-F40E-26E75D0CBB84</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 <Column name="OBJT_OBJT_ID" id="D8632CB7-603E-E641-583D-449D23B1A8BE">
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:52:53 UTC</createdTime>
@@ -115,6 +126,21 @@
 <autoIncrementCycle>false</autoIncrementCycle>
 <associations>
 <colAssociation fkAssociation="96A81091-8EEB-B12B-42CF-69573052C3A9" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
+</associations>
+</Column>
+<Column name="OBJT_OBJT_LANE_ID" id="2DD673A3-A020-F69C-653B-6EE244D51B40">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-13 09:03:42 UTC</createdTime>
+<commentInRDBMS><![CDATA[Refrence to Lane if any.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="9062A49E-573D-B549-7D04-2DB1EC442C90" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
 </associations>
 </Column>
 </columns>
@@ -144,19 +170,6 @@
 <colUsage columnID="C50D61E3-6759-4B51-A3FC-082797916716"/>
 </indexColumnUsage>
 </ind_PK_UK>
-<ind_PK_UK id="98651323-DE3A-91A2-7CDA-76C3ED4C98D3" name="OBJT_BPMN_ID_IX">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
-<sourceObjName>OBJT_PK</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:29 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<indexState>Unique Plain Index</indexState>
-<isSurrogateKey>false</isSurrogateKey>
-<indexColumnUsage>
-<colUsage columnID="C50D61E3-6759-4B51-A3FC-082797916716"/>
-</indexColumnUsage>
-</ind_PK_UK>
 <ind_PK_UK id="E824194D-8C38-1D90-8A2C-A78E21BBF58B" name="OBJT_DGRM_FK">
 <createdBy>moklein</createdBy>
 <createdTime>2020-06-16 21:35:58 UTC</createdTime>
@@ -175,6 +188,16 @@
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
 <colUsage columnID="D8632CB7-603E-E641-583D-449D23B1A8BE"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="86171DD4-2AB3-39F8-88A1-8F8388437B41" name="OBJT_OBJT_LANE_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-13 09:03:48 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2DD673A3-A020-F69C-653B-6EE244D51B40"/>
 </indexColumnUsage>
 </ind_PK_UK>
 </indexes>

@@ -4,6 +4,12 @@ prompt --install
 @@application/create_application.sql
 @@application/shared_components/navigation/lists/desktop_navigation_bar.sql
 @@application/shared_components/navigation/lists/desktop_navigation_menu.sql
+@@application/shared_components/files/js_mtag_bpmnmodeler_js.sql
+@@application/shared_components/files/js_mtag_bpmnmodeler_js_map.sql
+@@application/shared_components/files/js_mtag_bpmnmodeler_min_js.sql
+@@application/shared_components/files/css_mtag_bpmnmodeler_css.sql
+@@application/shared_components/files/css_mtag_bpmnmodeler_font_css.sql
+@@application/shared_components/files/css_mtag_bpmnmodeler_properties_panel_css.sql
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
@@ -91,7 +97,7 @@ prompt --install
 @@application/shared_components/globalization/dyntranslations.sql
 @@application/shared_components/user_interface/shortcuts/delete_confirm_msg.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
-@@application/shared_components/plugins/region_type/com_mtag_as_wfp_region.sql
+@@application/shared_components/plugins/region_type/com_mtag_apex_bpmnviewer_region.sql
 @@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00001.sql
@@ -100,4 +106,7 @@ prompt --install
 @@application/pages/page_00010.sql
 @@application/pages/page_00011.sql
 @@application/pages/page_09999.sql
+@@application/deployment/definition.sql
+@@application/deployment/checks.sql
+@@application/deployment/buildoptions.sql
 @@application/end_environment.sql

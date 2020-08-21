@@ -28,14 +28,15 @@ as
     );
   type t_conn_tab is table of t_conn_rec index by t_vc50;
 
+  type t_lane_ref_tab is table of t_vc50 index by t_vc50;
+
   type t_id_lookup_tab is table of number index by t_vc50;
 
   -- Variables to hold data during parse run
   g_dgrm_id     flow_diagrams.dgrm_id%type;
   g_objects     t_objt_tab;
   g_connections t_conn_tab;
-
-  -- Let's see if we need this or not
+  g_lane_refs   t_lane_ref_tab;
   g_objt_lookup t_id_lookup_tab;
 
 
@@ -50,14 +51,14 @@ as
   as
     l_objt_rec t_objt_rec;
   begin
-  
-    l_objt_rec.objt_name           := pi_objt_name;
-    l_objt_rec.objt_type           := pi_objt_type;
-    l_objt_rec.objt_tag_name       := pi_objt_tag_name;
-    l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
+    if pi_objt_bpmn_id is not null then
+      l_objt_rec.objt_name           := pi_objt_name;
+      l_objt_rec.objt_type           := pi_objt_type;
+      l_objt_rec.objt_tag_name       := pi_objt_tag_name;
+      l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
 
-    g_objects( pi_objt_bpmn_id ) := l_objt_rec;
-  
+      g_objects( pi_objt_bpmn_id ) := l_objt_rec;
+    end if;  
   end register_object;
 
   procedure register_connection
@@ -73,26 +74,27 @@ as
   as
     l_conn_rec t_conn_rec;
   begin
+    if pi_conn_bpmn_id is not null then
+      l_conn_rec.conn_name        := pi_conn_name;
+      l_conn_rec.conn_src_bpmn_id := pi_conn_src_bpmn_id;
+      l_conn_rec.conn_tgt_bpmn_id := pi_conn_tgt_bpmn_id;
+      l_conn_rec.conn_type        := pi_conn_type;
+      l_conn_rec.conn_tag_name    := pi_conn_tag_name;
+      l_conn_rec.conn_origin      := pi_conn_origin;
 
-    l_conn_rec.conn_name        := pi_conn_name;
-    l_conn_rec.conn_src_bpmn_id := pi_conn_src_bpmn_id;
-    l_conn_rec.conn_tgt_bpmn_id := pi_conn_tgt_bpmn_id;
-    l_conn_rec.conn_type        := pi_conn_type;
-    l_conn_rec.conn_tag_name    := pi_conn_tag_name;
-    l_conn_rec.conn_origin      := pi_conn_origin;
-
-    g_connections( pi_conn_bpmn_id ) := l_conn_rec;
-
+      g_connections( pi_conn_bpmn_id ) := l_conn_rec;
+    end if;
   end register_connection;
 
   procedure insert_object
   (
-    pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
-  , pi_objt_name      in flow_objects.objt_name%type default null
-  , pi_objt_type      in flow_objects.objt_type%type default null
-  , pi_objt_tag_name  in flow_objects.objt_tag_name%type default null
-  , pi_objt_objt_id   in flow_objects.objt_objt_id%type default null
-  , po_objt_id       out nocopy flow_objects.objt_id%type
+    pi_objt_bpmn_id       in flow_objects.objt_bpmn_id%type
+  , pi_objt_name          in flow_objects.objt_name%type default null
+  , pi_objt_type          in flow_objects.objt_type%type default null
+  , pi_objt_tag_name      in flow_objects.objt_tag_name%type default null
+  , pi_objt_objt_id       in flow_objects.objt_objt_id%type default null
+  , pi_objt_objt_lane_id  in flow_objects.objt_objt_lane_id%type default null
+  , po_objt_id           out nocopy flow_objects.objt_id%type
   )
   as
   begin
@@ -105,6 +107,7 @@ as
            , objt_type
            , objt_tag_name
            , objt_objt_id
+           , objt_objt_lane_id
            )
     values (
              g_dgrm_id
@@ -113,6 +116,7 @@ as
            , pi_objt_type
            , pi_objt_tag_name
            , pi_objt_objt_id
+           , pi_objt_objt_lane_id
            )
       returning objt_id into po_objt_id
     ;
@@ -163,42 +167,50 @@ as
     l_next_objt_bpmn_id t_vc50;
     l_cur_object        t_objt_rec;
     l_objt_id           flow_objects.objt_id%type;
+    l_parent_check      boolean;
+    l_lane_check        boolean;
   begin
 
     l_cur_objt_bpmn_id := g_objects.first;
     while l_cur_objt_bpmn_id is not null
     loop
       -- reset object id, we get it if insert done
-      l_objt_id     := null;
-      l_cur_object := g_objects( l_cur_objt_bpmn_id );
+      l_objt_id      := null;
+      l_cur_object   := g_objects( l_cur_objt_bpmn_id );
 
-      -- no parent, we can insert without checking further
-      if l_cur_object.objt_parent_bpmn_id is null then
+      -- check possible parent and lane
+      -- either not set or ID already known
+      l_parent_check :=
+           l_cur_object.objt_parent_bpmn_id is null
+        or (   l_cur_object.objt_parent_bpmn_id is not null
+           and g_objt_lookup.exists( l_cur_object.objt_parent_bpmn_id )
+           )
+      ;
+      l_lane_check :=
+           not g_lane_refs.exists( l_cur_objt_bpmn_id )
+        or ( g_lane_refs.exists( l_cur_objt_bpmn_id )
+           and g_objt_lookup.exists( g_lane_refs( l_cur_objt_bpmn_id ) )
+           )
+      ;
+
+      -- checks passed insert into table
+      if l_parent_check and l_lane_check then
         
         insert_object
         (
-          pi_objt_bpmn_id  => l_cur_objt_bpmn_id
-        , pi_objt_name     => l_cur_object.objt_name
-        , pi_objt_type     => l_cur_object.objt_type
-        , pi_objt_tag_name => l_cur_object.objt_tag_name
-        , po_objt_id       => l_objt_id
+          pi_objt_bpmn_id      => l_cur_objt_bpmn_id
+        , pi_objt_name         => l_cur_object.objt_name
+        , pi_objt_type         => l_cur_object.objt_type
+        , pi_objt_tag_name     => l_cur_object.objt_tag_name
+        , pi_objt_objt_id      => case when l_cur_object.objt_parent_bpmn_id is not null then g_objt_lookup( l_cur_object.objt_parent_bpmn_id ) else null end
+        , pi_objt_objt_lane_id => case when g_lane_refs.exists( l_cur_objt_bpmn_id ) then g_objt_lookup( g_lane_refs( l_cur_objt_bpmn_id ) ) else null end
+        , po_objt_id           => l_objt_id
         );
 
-      -- has parent but we know ID already
-      elsif g_objt_lookup.exists( l_cur_object.objt_parent_bpmn_id ) then
-
-        insert_object
-        (
-          pi_objt_bpmn_id  => l_cur_objt_bpmn_id
-        , pi_objt_name     => l_cur_object.objt_name
-        , pi_objt_type     => l_cur_object.objt_type
-        , pi_objt_tag_name => l_cur_object.objt_tag_name
-        , pi_objt_objt_id  => g_objt_lookup( l_cur_object.objt_parent_bpmn_id )
-        , po_objt_id       => l_objt_id
-        );
-
+      -- checks not passed skip record for now
+      else
+        null;
       end if;
-
 
       -- Get next ID for lookup and if object was processed
       -- put it into lookup and remove from things to process
@@ -330,6 +342,67 @@ as
     ;
   end cleanup_parsing_tables;
 
+  procedure parse_lanes
+  (
+    pi_laneset_xml  in xmltype
+  , pi_objt_bpmn_id in t_vc50
+  )
+  as
+  begin
+    for lane_rec in (
+      select lanes.lane_id
+           , lanes.lane_name
+           , lanes.lane_type
+           , lanes.child_elements
+        from xmltable
+             (
+               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+             , '*' passing pi_laneset_xml
+               columns
+                 lane_id   varchar2(50 char) path '@id'
+               , lane_name varchar2(50 char) path '@name'
+               , lane_type varchar2(50 char) path 'name()'
+               , child_elements xmltype path '*'
+             ) lanes
+    ) loop
+
+      register_object
+      (
+        pi_objt_bpmn_id        => lane_rec.lane_id
+      , pi_objt_name           => lane_rec.lane_name
+      , pi_objt_type           => null
+      , pi_objt_tag_name       => lane_rec.lane_type
+      , pi_objt_parent_bpmn_id => pi_objt_bpmn_id
+      );
+
+      for node_rec in (
+        select nodes.node_ref
+          from xmltable
+             (
+               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+             , '*' passing lane_rec.child_elements
+               columns
+                 node_ref   varchar2(50 char) path 'text()'
+             ) nodes
+      ) loop
+        dbms_output.put_line( 'Set Lane for "' || node_rec.node_ref || '" to "' || lane_rec.lane_id || '"' );
+        g_lane_refs( node_rec.node_ref ) := lane_rec.lane_id;
+      end loop;
+
+    end loop;
+
+  end parse_lanes;
+
+  function find_subtag_name
+  (
+    pi_child_elements in xmltype
+  )
+    return t_vc50
+  as
+  begin
+    return null;
+  end find_subtag_name;
+
   procedure parse_steps
   (
     pi_xml          in xmltype
@@ -337,6 +410,7 @@ as
   , pi_proc_bpmn_id in t_vc50
   )
   as
+    l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
   begin
     for rec in (
                 select steps.steps_type
@@ -344,46 +418,74 @@ as
                      , steps.steps_id
                      , steps.source_ref
                      , steps.target_ref
+                     , steps.child_elements
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                        , '*' passing pi_xml
                          columns
-                           steps_type varchar2(50 char)  path 'name()'
-                         , steps_name varchar2(200 char) path '@name'
-                         , steps_id   varchar2(50 char)  path '@id'
-                         , source_ref varchar2(50 char)  path '@sourceRef'
-                         , target_ref varchar2(50 char)  path '@targetRef'
+                           steps_type     varchar2(50 char)  path 'name()'
+                         , steps_name     varchar2(200 char) path '@name'
+                         , steps_id       varchar2(50 char)  path '@id'
+                         , source_ref     varchar2(50 char)  path '@sourceRef'
+                         , target_ref     varchar2(50 char)  path '@targetRef'
+                         , child_elements xmltype            path '* except bpmn:incoming except bpmn:outgoing'
                        ) steps
                )
     loop
-      -- fill the global variables
-      case
-        -- We ignore Incoming and Outgoing here,
-        -- because those become attributes on existing connections
-        when rec.steps_type in ('bpmn:incoming', 'bpmn:outgoing') then
-          null;
-        when rec.source_ref is null then -- assume objects don't have a sourceRef attribute
-          register_object
+
+      if rec.source_ref is null then -- assume objects don't have a sourceRef attribute
+
+/*
+        -- Parse additional information from child elements
+        -- relevant for e.g. terminateEndEvent
+        -- Additionally collect generic attributes if possible
+        if rec.child_elements is not null then
+          l_objt_sub_tag_name := find_subtag_name( pi_xml => rec.child_elements );
+          parse_child_elements
           (
-            pi_objt_bpmn_id        => rec.steps_id
-          , pi_objt_name           => rec.steps_name
-          , pi_objt_type           => pi_proc_type
-          , pi_objt_tag_name       => rec.steps_type
-          , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
+            pi_objt_bpmn_id => rec.steps_id
+          , pi_xml          => rec.child_elements
           );
         else
-          register_connection
+          l_objt_sub_tag_name := null;
+        end if;
+*/
+        register_object
+        (
+          pi_objt_bpmn_id        => rec.steps_id
+        , pi_objt_name           => rec.steps_name
+        , pi_objt_type           => pi_proc_type
+        , pi_objt_tag_name       => rec.steps_type
+        , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
+        );
+
+        -- Register Object on Lane if parent blongs to a lane
+        -- Those connections are not directly visible in the XML
+        -- but BPMN defines inheritance for these.
+        if g_lane_refs.exists( pi_proc_bpmn_id ) and rec.steps_id is not null then
+          g_lane_refs( rec.steps_id ) := g_lane_refs( pi_proc_bpmn_id );
+        end if;
+
+        if rec.steps_type = 'bpmn:laneSet' then
+          parse_lanes
           (
-            pi_conn_bpmn_id     => rec.steps_id
-          , pi_conn_name        => rec.steps_name
-          , pi_conn_src_bpmn_id => rec.source_ref
-          , pi_conn_tgt_bpmn_id => rec.target_ref
-          , pi_conn_type        => pi_proc_type
-          , pi_conn_tag_name    => rec.steps_type
-          , pi_conn_origin      => pi_proc_bpmn_id
-          );        
-      end case;
+            pi_laneset_xml  => rec.child_elements
+          , pi_objt_bpmn_id => rec.steps_id
+          );
+        end if;
+      else
+        register_connection
+        (
+          pi_conn_bpmn_id     => rec.steps_id
+        , pi_conn_name        => rec.steps_name
+        , pi_conn_src_bpmn_id => rec.source_ref
+        , pi_conn_tgt_bpmn_id => rec.target_ref
+        , pi_conn_type        => pi_proc_type
+        , pi_conn_tag_name    => rec.steps_type
+        , pi_conn_origin      => pi_proc_bpmn_id
+        );        
+      end if;
     end loop;  
   end parse_steps;
   
@@ -402,6 +504,7 @@ as
                       , proc.proc_steps
                       , proc.proc_sub_procs
                       , proc.proc_name
+                      , proc.proc_laneset
                    from xmltable
                       (
                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
@@ -412,6 +515,7 @@ as
                         , proc_name      varchar2(50 char) path '@name'
                         , proc_steps     xmltype           path '* except bpmn:subProcess'
                         , proc_sub_procs xmltype           path 'bpmn:subProcess'
+                        , proc_laneset   xmltype           path 'bpmn:laneSet'
                       ) proc
                  )
       loop
@@ -433,7 +537,7 @@ as
         , pi_proc_type    => rec.proc_type_rem
         , pi_proc_bpmn_id => rec.proc_id
         );
-        
+
         -- recurse if sub processes found
         if rec.proc_sub_procs is not null then
         
@@ -521,7 +625,7 @@ as
                           , colab_type    varchar2(50 char)  path 'name()'
                           , colab_src_ref varchar2(50 char)  path '@sourceRef'
                           , colab_tgt_ref varchar2(50 char)  path '@targetRef'
-                        ) colab    
+                        ) colab
     ) loop
     
       case
@@ -550,10 +654,19 @@ as
     
   end parse_collaboration;
 
+  procedure reset
+  as
+  begin
+    g_dgrm_id := null;
+    g_objects.delete;
+    g_connections.delete;
+    g_objt_lookup.delete;
+  end reset;
+
   procedure parse
   as
     l_dgrm_content clob;
-  begin    
+  begin
     -- delete any existing parsed information before parsing again
     cleanup_parsing_tables;
     
@@ -565,7 +678,7 @@ as
     ;
 
     -- parse out collaboration part first
-    parse_collaboration( pi_xml => xmltype(l_dgrm_content) );    
+    parse_collaboration( pi_xml => xmltype(l_dgrm_content) );
     -- start recursive processsing of xml
     parse_xml( pi_xml => xmltype(l_dgrm_content), pi_parent_id => null );
 
@@ -580,6 +693,7 @@ as
   )
   as
   begin
+    reset;
     g_dgrm_id := pi_dgrm_id;
     parse;
   end parse;
@@ -590,6 +704,7 @@ as
   )
   as
   begin
+    reset;
     select dgrm_id
       into g_dgrm_id
       from flow_diagrams
@@ -605,6 +720,7 @@ as
   )
   as
   begin
+    reset;
   
     upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
     parse;

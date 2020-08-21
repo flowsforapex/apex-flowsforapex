@@ -19,51 +19,96 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flows for APEX Modeler'
 ,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
-,p_javascript_file_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'https://unpkg.com/bpmn-js@7.2.0/dist/bpmn-modeler.production.min.js',
-'#IMAGE_PREFIX#libraries/apex/legacy_18.js'))
+,p_javascript_file_urls=>'#APP_IMAGES#js/mtag.bpmnmodeler#MIN#.js'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var bpmnModeler = new BpmnJS({',
-'    container: ''#canvas''',
+'var bpmnModeler = new bpmnModeler.Modeler({',
+'  container: "#canvas",',
+'  additionalModules: [',
+'    bpmnModeler.modules.propertiesPanelModule,',
+'    bpmnModeler.modules.propertiesProviderModule',
+'  ],',
+'  propertiesPanel: {',
+'    parent: "#properties"',
+'  }',
 '});',
 '',
+'async function loadDiagram( diagram ) {',
+'  const defaultDiagram =',
+'    "<?xml version=''1.0'' encoding=''UTF-8''?>" +',
+'    "<bpmn:definitions xmlns:xsi=''http://www.w3.org/2001/XMLSchema-instance'' xmlns:bpmn=''http://www.omg.org/spec/BPMN/20100524/MODEL'' xmlns:bpmndi=''http://www.omg.org/spec/BPMN/20100524/DI'' id=''Definitions_1wzb475'' targetNamespace=''http://bpmn.io/sch'
+||'ema/bpmn'' exporter=''bpmn-js (https://demo.bpmn.io)'' exporterVersion=''7.2.0''>" +',
+'    "<bpmn:process id=''Process_0rxermh'' isExecutable=''false'' />" +',
+'    "<bpmndi:BPMNDiagram id=''BPMNDiagram_1''>" +',
+'    "<bpmndi:BPMNPlane id=''BPMNPlane_1'' bpmnElement=''Process_0rxermh'' />" +',
+'    "</bpmndi:BPMNDiagram>" +',
+'    "</bpmn:definitions>";',
 '',
-''))
-,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var diagram = $v(''P1_DIAGRAM'');',
-'',
-'if (diagram == '''')',
-'    diagram =',
-'        "<?xml version=''1.0'' encoding=''UTF-8''?>" +',
-'        "<bpmn:definitions xmlns:xsi=''http://www.w3.org/2001/XMLSchema-instance'' xmlns:bpmn=''http://www.omg.org/spec/BPMN/20100524/MODEL'' xmlns:bpmndi=''http://www.omg.org/spec/BPMN/20100524/DI'' id=''Definitions_1wzb475'' targetNamespace=''http://bpmn.io'
-||'/schema/bpmn'' exporter=''bpmn-js (https://demo.bpmn.io)'' exporterVersion=''7.2.0''>" +',
-'        "<bpmn:process id=''Process_0rxermh'' isExecutable=''false'' />" +',
-'        "<bpmndi:BPMNDiagram id=''BPMNDiagram_1''>" +',
-'        "<bpmndi:BPMNPlane id=''BPMNPlane_1'' bpmnElement=''Process_0rxermh'' />" +',
-'        "</bpmndi:BPMNDiagram>" +',
-'        "</bpmn:definitions>";',
-'',
-'bpmnModeler.importXML(diagram, function(err) {',
-'    if (!err) {',
-'        console.log("success!");',
-'        bpmnModeler.get("canvas").zoom("fit-viewport");',
-'      ',
-'    } else {',
-'        console.log("something went wrong:", err);',
+'  try {',
+'    const result = await bpmnModeler.importXML( diagram || defaultDiagram );',
+'    const { warnings } = result;',
+'    bpmnModeler.get( "canvas" ).zoom( "fit-viewport" );',
+'    if (  warnings.length > 0 ) {',
+'      abex.debug.warn( "Warnings during Import.", warnings );',
 '    }',
-'});'))
+'  } catch( err ) {',
+'    apex.debug.error( err.message, err.warnings );',
+'  }',
+'}',
+'',
+'async function saveDiagram() {',
+'  try {',
+'    const result = await bpmnModeler.saveXML( { format: true } );',
+'    const { xml } = result;',
+'    const clobObj = new apex.ajax.clob( p => {',
+'      if ( p.readyState == 4 ) {',
+'        apex.navigation.redirect( apex.item( "P1_SAVE_URL" ).getValue() );',
+'        //apex.page.submit( "SAVE_DIAGRAM" );',
+'      }',
+'    });',
+'    clobObj._set( xml );',
+'  } catch( err ) {',
+'    apex.debug.error( err.message, err.warnings );',
+'  }',
+'}'))
+,p_javascript_code_onload=>'loadDiagram( apex.item("P1_DIAGRAM").getValue() );'
 ,p_css_file_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'https://unpkg.com/bpmn-js@7.2.0/dist/assets/bpmn-font/css/bpmn.css',
-'https://unpkg.com/bpmn-js@7.2.0/dist/assets/diagram-js.css'))
+'#APP_IMAGES#css/mtag.bpmnmodeler.css',
+'#APP_IMAGES#css/mtag.bpmnmodeler.font.css',
+'#APP_IMAGES#css/mtag.bpmnmodeler.properties-panel.css'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '#canvas {',
-'    height: 100vw;',
+'    height: 80vh;',
 '    background-color: #f0f0f0;',
+'}',
+'',
+'.mtag-bpmn-modeler {',
+'  position: relative;',
+'}',
+'',
+'.properties-panel-parent {',
+'  position: absolute;',
+'  top: 0;',
+'  bottom: 0;',
+'  right: 0;',
+'  width: 260px;',
+'  z-index: 10;',
+'  border-left: 1px solid #ccc;',
+'  overflow: auto;',
+'  display: block;',
+'  height: 100%;',
+'  background-color: #f0f0f0;',
+'}',
+'.properties-panel-parent:empty {',
+'  display: none;',
+'}',
+'.properties-panel-parent > .djs-properties-panel {',
+'  padding-bottom: 70px;',
+'  min-height:100%;',
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'NDBRUIJN'
-,p_last_upd_yyyymmddhh24miss=>'20200615184714'
+,p_last_updated_by=>'F4A'
+,p_last_upd_yyyymmddhh24miss=>'20200817132328'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12491062133032033850)
@@ -73,7 +118,12 @@ wwv_flow_api.create_page_plug(
 ,p_plug_display_sequence=>20
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_01'
-,p_plug_source=>'<div id="canvas"></div>'
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<div class="mtag-bpmn-modeler">',
+'  <div id="canvas"></div>',
+'  <div id="properties" class="properties-panel-parent"></div>',
+'</div>',
+''))
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
@@ -232,23 +282,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'bpmnModeler.saveXML({format: true}, function(err, xml) {',
-'',
-'    if (err) {',
-'        return console.error(''could not save BPMN 2.0 diagram'', err);',
-'    }',
-'        ',
-'    var clobObj = new apex.ajax.clob(',
-'        // Callback function. only process CLOB once it''s finished uploading to APEX',
-'        function(p){',
-'            if (p.readyState == 4){',
-'                apex.navigation.redirect($v(''P1_SAVE_URL''));',
-'            }',
-'    });',
-'        ',
-'    clobObj._set(xml);',
-'});'))
+,p_attribute_01=>'saveDiagram();'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(12491061622134033845)

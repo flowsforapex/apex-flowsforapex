@@ -9,45 +9,46 @@ as
   , pi_branch  in varchar2
   )
   as
+    l_error_occured boolean := false;
   begin
-    case upper(pi_action)
-      when 'RESET' then
-        flow_api_pkg.flow_reset( p_process_id => pi_prcs_id );
-      when 'START' then
-        flow_api_pkg.flow_start( p_process_id => pi_prcs_id );
-      when 'DELETE' then
-        flow_api_pkg.flow_delete( p_process_id => pi_prcs_id );
-      when 'NEXT_STEP' then
-        flow_api_pkg.flow_next_step
-        (
-          p_process_id    => pi_prcs_id
-        , p_subflow_id    => pi_sbfl_id
-        , p_forward_route => pi_branch
-        );
-      when 'CHOOSE_BRANCH' then
-        flow_api_pkg.flow_next_branch
-        (
-          p_process_id  => pi_prcs_id
-        , p_subflow_id  => pi_sbfl_id
-        , p_branch_name => pi_branch
-        );
-      else
-        apex_error.add_error
-        (
-          p_message          => 'Unknow action requested.'
-        , p_display_location => apex_error.c_on_error_page
-        );
-    end case;
-
-    apex_json.open_object;
-    apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
-    apex_json.close_all;
+    apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s, Branch: %s', p0 => pi_action, p1 => pi_prcs_id, p2 => pi_sbfl_id, p3 => pi_branch);
+    begin
+      case upper(pi_action)
+        when 'RESET' then
+          flow_api_pkg.flow_reset( p_process_id => pi_prcs_id );
+        when 'START' then
+          flow_api_pkg.flow_start( p_process_id => pi_prcs_id );
+        when 'DELETE' then
+          flow_api_pkg.flow_delete( p_process_id => pi_prcs_id );
+        when 'NEXT_STEP' then
+          flow_api_pkg.flow_next_step
+          (
+            p_process_id    => pi_prcs_id
+          , p_subflow_id    => pi_sbfl_id
+          , p_forward_route => pi_branch
+          );
+        when 'CHOOSE_BRANCH' then
+          flow_api_pkg.flow_next_branch
+          (
+            p_process_id  => pi_prcs_id
+          , p_subflow_id  => pi_sbfl_id
+          , p_branch_name => pi_branch
+          );
+        else
+          apex_error.add_error
+          (
+            p_message          => 'Unknow action requested.'
+          , p_display_location => apex_error.c_on_error_page
+          );
+      end case;
   
-  exception
-    -- One of the rare cases where we ignore exceptions
-    -- The reason is, that we already notified APEX of errors and therefore processing is already stopped
-    when others then
-      null;
+      apex_json.open_object;
+      apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
+      apex_json.close_all;
+    exception
+      when others then
+        l_error_occured := true;
+    end;
   end process_action;
 
 end flow_p0010_api;

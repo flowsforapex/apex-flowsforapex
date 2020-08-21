@@ -27,4 +27,5 @@ group by sbfl_prcs_id
       from flow_diagrams dgrm
       join flow_processes prcs
         on dgrm.dgrm_id = prcs.prcs_dgrm_id
+with read only
 ;

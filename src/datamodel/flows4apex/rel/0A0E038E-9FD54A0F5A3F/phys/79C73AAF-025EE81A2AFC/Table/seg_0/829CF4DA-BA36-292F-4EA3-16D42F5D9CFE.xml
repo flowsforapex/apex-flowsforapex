@@ -1,0 +1,111 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_TIMERS" directorySegmentName="seg_0" id="829CF4DA-BA36-292F-4EA3-16D42F5D9CFE">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="TIMR_REPEAT_TIMES" id="031C7577-538F-7029-D3D3-A2662AC5AFAF">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_START_ON" id="117D348E-F470-A22C-E9BF-CE37B16A48DB">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_INTERVAL_DS" id="2A3808DD-A16C-2493-406E-C6E1E481CC9E">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_CYCLE_STRING" id="37BF82A4-39C4-473E-B5F3-942F331D6E03">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_LAST_RUN" id="3A988AFA-5772-E316-662B-554ABFDA7115">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_CREATED_ON" id="504FB7AB-2796-4E56-14EA-71C3C4B07E00">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_PRCS_ID" id="6303EAC7-52BE-59AE-6011-1904AB32A8C5">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_ID" id="6B0B9E11-0422-780A-9021-01E865EF4DD0">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_DATE_STRING" id="8AA0C917-3A14-1F80-6D90-479199A51C5D">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_INTERVAL_YM" id="8EDA2E4A-879E-779E-33D4-23652927A7B3">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_DURATION_STRING" id="945D6512-E14C-82DD-8902-3577860E9C4C">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_STATUS" id="A47F60FD-1210-6018-8B0A-06D62960AC9C">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:01 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TIMR_RUN_COUNT" id="A9B841A9-5918-3CBF-E570-9B47E10F900E">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<defaultValue>0</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="TIMR_SBFL_ID" id="F2C4B628-F1AF-78CD-AF28-C3EC70554F68">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="TIMR_PRCS_SBFL_IX" id="50564063-2F75-34E3-9712-DEE71D186E22">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:29:58 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="TIMR_SBFL_FK" id="61947A11-0EE7-437D-85EA-62399C4BC788">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="TIMR_PRCS_FK" id="999EBCA9-5C4B-1954-E427-65B3983072BB">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:13:16 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="TIMR_PK" id="FED657D9-3BB2-2812-F7DF-A19C88157CBE">
+<createdBy>moklein</createdBy>
+<createdTime>2020-08-05 17:02:25 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev12c>

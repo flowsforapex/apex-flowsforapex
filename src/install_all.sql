@@ -19,7 +19,6 @@ PROMPT >> ========================
 
 PROMPT >> Set up environment
 begin
-  -- change this accordingly
   apex_application_install.set_workspace( p_workspace => '^ws_name.' );
   apex_application_install.generate_application_id;
   apex_application_install.generate_offset;
