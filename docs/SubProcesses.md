@@ -4,13 +4,13 @@
 
 BPMN allows encapsulation and detail hiding through the use of Sub Processes.  These can be defined in a diagram, allowing the details of a process to be hidden from the top level process.
 
-Flows for Apex allows you to create sub processes within your process.  Sub processes can contain other sub processes, and so a deep hierarchy of processes and sub processes can be built.  There is no arbitrary limit to how deep sub processes can be stacked -- although everything must be contained in a single BPMN diagram currently.
+Flows for APEX allows you to create sub processes within your process.  Sub processes can contain other sub processes, and so a deep hierarchy of processes and sub processes can be built.  There is no arbitrary limit to how deep sub processes can be stacked -- although everything must be contained in a single BPMN diagram currently.
 
 ![Nested Sub Processes](images/nestedSubProcesses.png "Nested Sub Processes")
 
 ### Creating Sub Processes
 
-Sub Processes are crreated using the modeller, as usual.
+Sub Processes are created using the modeller, as usual.
 
 ### Current Limitations
 
