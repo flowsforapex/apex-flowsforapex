@@ -14,11 +14,11 @@ A *Business Process* is defined using a BPMN Diagram, which is identified by a D
 
 ![Order Shipment Process](images/ShipmentProcess.png)
 
-A *Process Instance* is one ocuurance of this business process.  Building on our Shipping example, this process would be followed for all orders.  There would be one Process Instance for each order.
+A *Process Instance* is one occurance of this business process.  Building on our Shipping example, this process would be followed for all orders.  There would be one Process Instance for each order.
 
-Within that process instance, there could be one or more *subflows* running at any time.  Each *subflow* is a branch of the process tree.  Contiuing to build our example, the process instance starts with a single subflow running. Once it passes the first object, a paralle gateway, there would then be two subflows running - one with 'Decide if ...' activity as the next activity, and a second with 'Package Goods' as it's first activity.
+Within that process instance, there could be one or more *subflows* running at any time.  Each *subflow* is a branch of the process tree.  Continuing to build our example, the process instance starts with a single subflow running. Once it passes the first object, a parallel gateway, there would then be two subflows running - one with 'Decide if ...' activity as the next activity, and a second with 'Package Goods' as it's first activity.
 
-As the process continues, additional subflows can be added, multiple subflows can be synchronised and combined into one, and subflows can end.  Subflows are a transient object that is created, processed, and deleted as they are required or finished with.
+As the process continues, additional subflows can be added, multiple subflows can be synchronised and combined into one, and subflows can end.  Subflows are a transient objects that are created, processed, and deleted as they are required or finished with.
 
 As the process continues, and each object is completed, a record of object completion is kept in the FLOW_SUBFLOW_LOG table.
 
@@ -81,7 +81,7 @@ A child subflow is created for each forward path that is chosen.  Routes that do
 
 As each parallel child subflow reaches its merging / closing Inclusive Gateway object, they are set to status `waiting at gateway`.
 
-When *all* of the chosen child subflows have reached the merging gateway,they are complete, and the original parent subflow resumes its status of `running` and continues on the forward path.
+When *all* of the chosen child subflows have reached the merging gateway, they are complete and the original parent subflow resumes its status of `running` and continues on the forward path.
 
 #### Action at a Sub Process
 
@@ -104,13 +104,13 @@ If a subflow reaches an object with an attached timer -- such as a Timer Start E
 
 An Event Based Gateway is a decision / gateway event where the single forward path is chosen based on which event occurs first.  Once an event occurs on one of the possible forward paths, all other paths are terminated and the flow continues forward on the one chosen path.
 
-In our subflow architecture, the event starts operating as if it were a parallel gateway.  The incoming parent subflow is suspended with a status of `split`.  A child subflow is created for each of the possible forward paths.  Each child subflow will start with a first object which is an event-based Intermediate Catch Event -- such as a Timer Intermediate Catch Event or (in a release after 4.0...) a Message Intermediate Cartch Event or a Signal Intermediate Catch Event or a Condition based Intermediate Catch Event.
+In our subflow architecture, the event starts operating as if it was a parallel gateway.  The incoming parent subflow is suspended with a status of `split`.  A child subflow is created for each of the possible forward paths.  Each child subflow will start with a first object, which is an event-based Intermediate Catch Event -- such as a Timer Intermediate Catch Event or (in a release after 4.0...), a Message Intermediate Catch Event or a Signal Intermediate Catch Event or a Condition based Intermediate Catch Event.
 
 Each of these child subflows will start with an Intermediate Catch Event, and while these subflows are waiting for their respective events, they will have a status of `waiting for timer` or (later...) `waiting for message` or `waiting for signal` or waiting for condition`, as appropriate.
 
 Once one of these Intermediate Catch Events receives its event, the following occurs:
 
-- the event based Gateway parent subflow, which was left waiting with a status of `split`, will be used for the forward flow.  Its current object is set to the Intermedediate Catch Event which fired first.  Its status is reset to `running`.  A next_step is performed on that subflow to move the subflow on.
+- the event based Gateway parent subflow, which was left waiting with a status of `split`, will be used for the forward flow.  Its current object is set to the Intermediate Catch Event which fired first.  Its status is reset to `running`.  A next_step is performed on that subflow to move the subflow on.
 - all of the child subflows forward from the gateway are terminated and removed.
 
 #### Action at an End Event
@@ -141,7 +141,7 @@ When a process is deleted:
 
 ### On Performance, Auditing and Logging...
 
-The Subflow architecture implemented in V4 is designed to be performant and the working tables holding Process Instances, Subflows, Timers, and Subflow Progress have been designed with the intention that they should stay small, un-clutered, and hopefully cached!
+The Subflow architecture implemented in V4 is designed to be performant and the working tables holding Process Instances, Subflows, Timers, and Subflow Progress have been designed with the intention that they should stay small, un-cluttered, and hopefully cached!
 
 A subsequent inplementation project should move relevant performance and audit data from these working tables into audit trails, with process performance statistics, etc., being captured.  If anybody needs to build these functions into their project, please contact the Flows For APEX team to coordinate and contribute to the further development of the project.
 
