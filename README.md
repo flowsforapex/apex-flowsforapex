@@ -1,4 +1,4 @@
-# Flows for APEX - Model and run workflows all within APEX
+# Flows for APEX - Model and run process flows all within APEX
 
 This github repository is for developers willing to contribute to the upcoming version of Flows for APEX.
 
