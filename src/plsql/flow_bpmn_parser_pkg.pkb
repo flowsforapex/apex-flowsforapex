@@ -12,6 +12,7 @@ as
       objt_name           t_vc200
     , objt_type           t_vc50
     , objt_tag_name       t_vc50
+    , objt_sub_tag_name   t_vc50
     , objt_parent_bpmn_id t_vc50
     );
   type t_objt_tab is table of t_objt_rec index by t_vc50;
@@ -46,6 +47,7 @@ as
   , pi_objt_name           in flow_objects.objt_name%type default null
   , pi_objt_type           in flow_objects.objt_type%type default null
   , pi_objt_tag_name       in flow_objects.objt_tag_name%type default null
+  , pi_objt_sub_tag_name   in flow_objects.objt_sub_tag_name%type default null
   , pi_objt_parent_bpmn_id in flow_objects.objt_bpmn_id%type default null
   )
   as
@@ -55,6 +57,7 @@ as
       l_objt_rec.objt_name           := pi_objt_name;
       l_objt_rec.objt_type           := pi_objt_type;
       l_objt_rec.objt_tag_name       := pi_objt_tag_name;
+      l_objt_rec.objt_sub_tag_name   := pi_objt_sub_tag_name;
       l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
 
       g_objects( pi_objt_bpmn_id ) := l_objt_rec;
@@ -93,6 +96,7 @@ as
   , pi_objt_type          in flow_objects.objt_type%type default null
   , pi_objt_tag_name      in flow_objects.objt_tag_name%type default null
   , pi_objt_objt_id       in flow_objects.objt_objt_id%type default null
+  , pi_objt_sub_tag_name  in flow_objects.objt_sub_tag_name%type default null
   , pi_objt_objt_lane_id  in flow_objects.objt_objt_lane_id%type default null
   , po_objt_id           out nocopy flow_objects.objt_id%type
   )
@@ -106,6 +110,7 @@ as
            , objt_name
            , objt_type
            , objt_tag_name
+           , objt_sub_tag_name
            , objt_objt_id
            , objt_objt_lane_id
            )
@@ -115,6 +120,7 @@ as
            , pi_objt_name
            , pi_objt_type
            , pi_objt_tag_name
+           , pi_objt_sub_tag_name
            , pi_objt_objt_id
            , pi_objt_objt_lane_id
            )
@@ -204,6 +210,7 @@ as
         , pi_objt_tag_name     => l_cur_object.objt_tag_name
         , pi_objt_objt_id      => case when l_cur_object.objt_parent_bpmn_id is not null then g_objt_lookup( l_cur_object.objt_parent_bpmn_id ) else null end
         , pi_objt_objt_lane_id => case when g_lane_refs.exists( l_cur_objt_bpmn_id ) then g_objt_lookup( g_lane_refs( l_cur_objt_bpmn_id ) ) else null end
+        , pi_objt_sub_tag_name => l_cur_object.objt_sub_tag_name
         , po_objt_id           => l_objt_id
         );
 
@@ -395,12 +402,23 @@ as
 
   function find_subtag_name
   (
-    pi_child_elements in xmltype
+    pi_xml in xmltype
   )
     return t_vc50
   as
+    c_nsmap        constant t_vc200 := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
+    c_terminateEnd constant t_vc50  := 'bpmn:terminateEventDefinition';
+    c_timer        constant t_vc50  := 'bpmn:timerEventDefinition';
+    l_return t_vc50;
   begin
-    return null;
+
+    if pi_xml.existsNode( xpath => '/' || c_terminateEnd, nsmap => c_nsmap ) = 1 then
+      l_return := c_terminateEnd;
+    elsif pi_xml.existsNode( xpath => '/' || c_timer, nsmap => c_nsmap ) = 1 then
+      l_return := c_timer;
+    end if;
+
+    return l_return;
   end find_subtag_name;
 
   procedure parse_steps
@@ -436,27 +454,28 @@ as
 
       if rec.source_ref is null then -- assume objects don't have a sourceRef attribute
 
-/*
+
         -- Parse additional information from child elements
         -- relevant for e.g. terminateEndEvent
         -- Additionally collect generic attributes if possible
         if rec.child_elements is not null then
           l_objt_sub_tag_name := find_subtag_name( pi_xml => rec.child_elements );
-          parse_child_elements
-          (
-            pi_objt_bpmn_id => rec.steps_id
-          , pi_xml          => rec.child_elements
-          );
+          -- parse_child_elements
+          -- (
+          --   pi_objt_bpmn_id => rec.steps_id
+          -- , pi_xml          => rec.child_elements
+          -- );
         else
           l_objt_sub_tag_name := null;
         end if;
-*/
+
         register_object
         (
           pi_objt_bpmn_id        => rec.steps_id
         , pi_objt_name           => rec.steps_name
         , pi_objt_type           => pi_proc_type
         , pi_objt_tag_name       => rec.steps_type
+        , pi_objt_sub_tag_name   => l_objt_sub_tag_name
         , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
         );
 
