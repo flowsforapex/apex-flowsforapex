@@ -8,13 +8,13 @@ All process diagrams must start with a Start Event and with one or more End Even
 
 ### Start Event
 
-All processes must start with One (and only one) Start Event.
+All processes must start with one (and only one) Start Event.
 
-Good BPMN style would say that a Start Event should be named with a verb and a noun to describe the starting status.  Examples would be 'Receive Order' or 'Employee Resigns.'
+Good BPMN style would say that a Start Event should be named with a verb and a noun to describe the starting status.  Examples would be 'Receive Order' or 'Employee Resigns'.
 
 ### Start Event with Timer Event
 
-A Start Event may contain an optional Timer Event.  This will delay the start ofthe process until a defined time, until a delay occurs (duration), or on a repetitive basis (cycle).
+A Start Event may contain an optional Timer Event.  This will delay the start of the process until a defined time, until a delay occurs (duration), or on a repetitive basis (cycle).
 
 To define a Timer Start Event, first drag a Start Event onto your new process canvas.   Select the 'Change Type' spanner icon on the pop-up menu, and select Timer Start Event from the menu.  To then specify the Timer Configuration, use the Properties Panel on the right of the screen.  Under Timer, select the type of timer you want.  Under Timer Definition, specific the required time or interval, as below.
 
@@ -28,9 +28,9 @@ For more information on Timer Events, see the documentation Timer Events page.
 
 ### End Event
 
-A process must be defined with at least one end event, which ends the process on that process branch.
+A process must be defined with at least one End Event, which ends the process on that process branch.
 
-A process can be defined with more than one end event if it has multiple branches.  Each branch shuld have an End Event.
+A process can be defined with more than one End Event if it has multiple branches.  Each branch shuld have an End Event.
 
 ![Multiple End Events](images/parallelSeparateEnds.png "Multiple End Events are OK")
 
