@@ -77,11 +77,6 @@ as
   , p_forward_route in varchar2
   );
 
-  procedure flow_handle_event
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ); 
-
   procedure flow_reset
   ( 
     p_process_id in flow_processes.prcs_id%type
