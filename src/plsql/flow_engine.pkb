@@ -336,6 +336,80 @@ begin
     ;
 end flow_terminate;
 
+procedure flow_run_scriptTask
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_current       in flow_subflows.sbfl_current%type
+)
+is  
+  l_scrp_rec flow_scripts%rowtype;
+  l_prcs_rec flow_processes%rowtype;
+  l_args_list varchar2(2000);
+  l_arg1 varchar2(200);
+  l_arg2 varchar2(200);
+  l_arg3 varchar2(200);
+  l_proc varchar2(200);
+  l_call varchar2(2000);
+begin
+  apex_debug.message(p_message => 'Begin flow_run_taskScript', p_level => 3) ;
+  select *
+    into l_scrp_rec
+    from flow_scripts scrp
+   where scrp.scrp_objt_bpmn_id = p_current
+    ;
+  select * 
+    into l_prcs_rec
+    from flow_processes proc 
+   where proc.prcs_id = p_process_id
+   ;
+  -- build procedure call
+  l_args_list := '(pi_process_id => '||p_process_id||','||'pi_subflow_id =>'||p_subflow_id;
+  apex_debug.message(p_message => 'args_list_phase1'|| l_args_list, p_level => 3) ;
+  if l_scrp_rec.scrp_arg1 is not null
+  then
+    l_arg1 := ', '||l_scrp_rec.scrp_arg1||' => ';
+    if l_scrp_rec.scrp_value1 = '[pk]'
+    then
+      l_arg1 := l_arg1 || l_prcs_rec.prcs_ref_obj_id;
+    else 
+      l_arg1 := l_arg1 || l_scrp_rec.scrp_value1;
+      if l_scrp_rec.scrp_arg2 is not null
+      then
+        l_arg2 := ', '||l_scrp_rec.scrp_arg2||' => ';
+        if l_scrp_rec.scrp_value2 = '[pk]'
+        then
+          l_arg2 := l_arg2 || l_prcs_rec.prcs_ref_obj_id;
+        else 
+          l_arg2 := l_arg2 || l_scrp_rec.scrp_value2;
+          if l_scrp_rec.scrp_arg3 is not null
+          then
+            l_arg3 := ', '||l_scrp_rec.scrp_arg3||' => ';
+            if l_scrp_rec.scrp_value3 = '[pk]'
+            then
+              l_arg3 := l_arg3 || l_prcs_rec.prcs_ref_obj_id;
+            else 
+              l_arg3 := l_arg3 || l_scrp_rec.scrp_value3;
+            end if; -- value3 is pk
+          end if; -- value 3 is not null
+        end if;  -- value2 is pk
+      end if; -- arg2 is not null
+    end if; -- arg1 is pk
+  end if; -- arg1 is not null
+  l_args_list := l_args_list || l_arg1 || l_arg2 || l_arg3 || '); ';
+    apex_debug.message(p_message => 'args_list_phase2'|| l_args_list, p_level => 3) ;
+  if l_scrp_rec.scrp_package is not null
+  then 
+     l_proc := l_scrp_rec.scrp_package||'.'||l_scrp_rec.scrp_procedure;
+  else 
+     l_proc := l_scrp_rec.scrp_procedure;
+  end if;
+  l_call := 'begin '||l_proc||l_args_list||' end;';
+  apex_debug.message(p_message => 'Assembled procedure call in flow_run_taskScript : '|| l_call, p_level => 3) ;
+  execute immediate l_call;
+end flow_run_scriptTask;
+
+
+
 procedure flow_next_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -1239,6 +1313,105 @@ is
 begin
   null;
 end;
+
+
+procedure flow_run_scriptTask
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_current       in flow_subflows.sbfl_current%type
+)
+is  
+  l_scrp_rec flow_scripts%rowtype;
+  l_prcs_rec flow_processes%rowtype;
+  l_args_list varchar2(2000);
+  l_arg1 varchar2(200);
+  l_arg2 varchar2(200);
+  l_arg3 varchar2(200);
+  l_proc varchar2(200);
+  l_call varchar2(2000);
+begin
+  apex_debug.message(p_message => 'Begin flow_run_taskScript', p_level => 3) ;
+  select *
+    into l_scrp_rec
+    from flow_scripts scrp
+   where scrp.scrp_objt_bpmn_id = p_current
+    ;
+  select * 
+    into l_prcs_rec
+    from flow_processes proc 
+   where proc.prcs_id = p_process_id
+   ;
+  -- build procedure call
+  l_args_list := '(pi_process_id => '||p_process_id||','||'pi_subflow_id =>'||p_subflow_id;
+  apex_debug.message(p_message => 'args_list_phase1'|| l_args_list, p_level => 3) ;
+  if l_scrp_rec.scrp_arg1 is not null
+  then
+    l_arg1 := ', '||l_scrp_rec.scrp_arg1||' => ';
+    if l_scrp_rec.scrp_value1 = '[pk]'
+    then
+      l_arg1 := l_arg1 || l_prcs_rec.prcs_ref_obj_id;
+    else 
+      l_arg1 := l_arg1 || l_scrp_rec.scrp_value1;
+      if l_scrp_rec.scrp_arg2 is not null
+      then
+        l_arg2 := ', '||l_scrp_rec.scrp_arg2||' => ';
+        if l_scrp_rec.scrp_value2 = '[pk]'
+        then
+          l_arg2 := l_arg2 || l_prcs_rec.prcs_ref_obj_id;
+        else 
+          l_arg2 := l_arg2 || l_scrp_rec.scrp_value2;
+          if l_scrp_rec.scrp_arg3 is not null
+          then
+            l_arg3 := ', '||l_scrp_rec.scrp_arg3||' => ';
+            if l_scrp_rec.scrp_value3 = '[pk]'
+            then
+              l_arg3 := l_arg3 || l_prcs_rec.prcs_ref_obj_id;
+            else 
+              l_arg3 := l_arg3 || l_scrp_rec.scrp_value3;
+            end if; -- value3 is pk
+          end if; -- value 3 is not null
+        end if;  -- value2 is pk
+      end if; -- arg2 is not null
+    end if; -- arg1 is pk
+  end if; -- arg1 is not null
+  l_args_list := l_args_list || l_arg1 || l_arg2 || l_arg3 || '); ';
+    apex_debug.message(p_message => 'args_list_phase2'|| l_args_list, p_level => 3) ;
+  if l_scrp_rec.scrp_package is not null
+  then 
+     l_proc := l_scrp_rec.scrp_package||'.'||l_scrp_rec.scrp_procedure;
+  else 
+     l_proc := l_scrp_rec.scrp_procedure;
+  end if;
+  l_call := 'begin '||l_proc||l_args_list||' end;';
+  apex_debug.message(p_message => 'Assembled procedure call in flow_run_taskScript : '|| l_call, p_level => 3) ;
+  execute immediate l_call;
+end flow_run_scriptTask;
+
+procedure flow_run_sendTask
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+)
+is 
+
+begin
+  apex_debug.message(p_message => 'Begin flow_run_sendTask', p_level => 3) ;
+  select *
+    into l_send_rec
+    from flow_sendtasks send 
+   where send.send_objt_bpmn_id = p_current
+    ;
+  select * 
+    into l_prcs_rec
+    from flow_processes proc 
+   where proc.prcs_id = p_process_id
+   ;
+
+end flow_run_sendTask;
+
+
+
+
+
 
 /* 
 ================================================================================
