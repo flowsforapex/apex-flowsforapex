@@ -15,6 +15,8 @@ drop view flow_p0010_vw;
 drop view flow_p0010_branches_vw;
 drop view flow_p0010_instances_vw;
 drop view flow_p0010_subflows_vw;
+drop view flow_processes_vw;
+drop view flow_instances_vw;
 drop view flow_subflows_vw;
 drop view flow_diagrams_lov;
 drop view flow_diagrams_parsed_lov;
