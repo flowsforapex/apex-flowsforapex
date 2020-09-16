@@ -1,17 +1,40 @@
 create or replace view flow_p0010_instances_vw
 as
-   select prcs.prcs_id
-        , prcs.prcs_name
-        , dgrm.dgrm_name as prcs_dgrm_name
-        , prcs.prcs_main_subflow
-        , prcs.prcs_status
-        , prcs.prcs_init_ts as prcs_init_date
-        , prcs.prcs_last_update
-        , null  as start_link
-        , null  as reset_link
-        , null  as delete_link
-     from flow_processes prcs
-     join flow_diagrams dgrm
-       on dgrm.dgrm_id = prcs.prcs_dgrm_id
+   select prcs_id
+        , prcs_name
+        , prcs_dgrm_name
+        , prcs_status
+        , prcs_init_date
+        , prcs_last_update
+        , '<button type="button" title="' || btn_title || '" aria-label="' || btn_title || '"' ||
+          ' class="clickable-action t-Button t-Button--noLabel t-Button--icon"' ||
+          ' data-prcs="' || prcs_id || '" data-action="' || btn_action || '"' ||
+          '><span aria-hidden="true" class="' || btn_icon_class || '"></span></button>' ||
+          '<button type="button" title="Delete Process Instance" aria-label="Delete Process Instanc"' ||
+          ' class="clickable-action t-Button t-Button--noLabel t-Button--icon"' ||
+          ' data-prcs="' || prcs_id || '" data-action="delete"' ||
+          '><span aria-hidden="true" class="t-Icon fa fa-trash"></span></button>'
+          as btn
+     from ( select prcs_id
+                 , prcs_name
+                 , dgrm_name as prcs_dgrm_name
+                 , prcs_status
+                 , prcs_init_ts as prcs_init_date
+                 , prcs_last_update
+                 , case prcs_status
+                     when 'running' then 'Reset Process'
+                     when 'created' then 'Start Process'
+                   end as btn_title
+                 , 't-Icon fa ' ||
+                   case prcs_status
+                     when 'running' then 'fa-undo'
+                     when 'created' then 'fa-play'
+                   end as btn_icon_class
+                 , case prcs_status
+                     when 'running' then 'reset'
+                     when 'created' then 'start'
+                   end as btn_action
+              from flow_instances_vw
+          )
 with read only
 ;
