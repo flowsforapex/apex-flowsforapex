@@ -23,7 +23,7 @@ as
             case 
               when sbfl.sbfl_next_step_type in ( 'single-choice', 'multi-choice' ) then 'title="Choose branch" aria-label="Choose branch" '
               when sbfl.sbfl_next_step_type = 'simple-step' then 'title="Go to next step" aria-label="Go to next step" '
-            end || '"data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '" data-action="' ||
+            end || 'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '" data-action="' ||
             case sbfl.sbfl_next_step_type
               when 'single-choice' then 'choose_single'
               when 'multi-choice' then 'choose_multiple'
