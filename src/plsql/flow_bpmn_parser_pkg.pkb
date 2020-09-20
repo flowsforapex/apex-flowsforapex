@@ -2,7 +2,6 @@ create or replace package body flow_bpmn_parser_pkg
 as
 
   -- Standard Data Types to use
-  subtype t_vc50  is varchar2(50 char);
   subtype t_vc200 is varchar2(200 char);
 
   -- Types for temporary storage of parsing result
@@ -10,27 +9,25 @@ as
     record
     (
       objt_name           t_vc200
-    , objt_type           t_vc50
-    , objt_tag_name       t_vc50
-    , objt_parent_bpmn_id t_vc50
+    , objt_tag_name       flow_types_pkg.t_bpmn_id
+    , objt_parent_bpmn_id flow_types_pkg.t_bpmn_id
     );
-  type t_objt_tab is table of t_objt_rec index by t_vc50;
+  type t_objt_tab is table of t_objt_rec index by flow_types_pkg.t_bpmn_id;
 
   type t_conn_rec is
     record
     (
       conn_name        t_vc200
-    , conn_src_bpmn_id t_vc50
-    , conn_tgt_bpmn_id t_vc50
-    , conn_type        t_vc50
-    , conn_tag_name    t_vc50
-    , conn_origin      t_vc50
+    , conn_src_bpmn_id flow_types_pkg.t_bpmn_id
+    , conn_tgt_bpmn_id flow_types_pkg.t_bpmn_id
+    , conn_tag_name    flow_types_pkg.t_bpmn_id
+    , conn_origin      flow_types_pkg.t_bpmn_id
     );
-  type t_conn_tab is table of t_conn_rec index by t_vc50;
+  type t_conn_tab is table of t_conn_rec index by flow_types_pkg.t_bpmn_id;
 
-  type t_lane_ref_tab is table of t_vc50 index by t_vc50;
+  type t_lane_ref_tab is table of flow_types_pkg.t_bpmn_id index by flow_types_pkg.t_bpmn_id;
 
-  type t_id_lookup_tab is table of number index by t_vc50;
+  type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   -- Variables to hold data during parse run
   g_dgrm_id     flow_diagrams.dgrm_id%type;
@@ -44,7 +41,6 @@ as
   (
     pi_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
   , pi_objt_name           in flow_objects.objt_name%type default null
-  , pi_objt_type           in flow_objects.objt_type%type default null
   , pi_objt_tag_name       in flow_objects.objt_tag_name%type default null
   , pi_objt_parent_bpmn_id in flow_objects.objt_bpmn_id%type default null
   )
@@ -53,7 +49,6 @@ as
   begin
     if pi_objt_bpmn_id is not null then
       l_objt_rec.objt_name           := pi_objt_name;
-      l_objt_rec.objt_type           := pi_objt_type;
       l_objt_rec.objt_tag_name       := pi_objt_tag_name;
       l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
 
@@ -67,7 +62,6 @@ as
   , pi_conn_name        in flow_connections.conn_name%type
   , pi_conn_src_bpmn_id in flow_objects.objt_bpmn_id%type
   , pi_conn_tgt_bpmn_id in flow_objects.objt_bpmn_id%type
-  , pi_conn_type        in flow_connections.conn_type%type
   , pi_conn_tag_name    in flow_connections.conn_tag_name%type
   , pi_conn_origin      in flow_connections.conn_origin%type
   )
@@ -78,7 +72,6 @@ as
       l_conn_rec.conn_name        := pi_conn_name;
       l_conn_rec.conn_src_bpmn_id := pi_conn_src_bpmn_id;
       l_conn_rec.conn_tgt_bpmn_id := pi_conn_tgt_bpmn_id;
-      l_conn_rec.conn_type        := pi_conn_type;
       l_conn_rec.conn_tag_name    := pi_conn_tag_name;
       l_conn_rec.conn_origin      := pi_conn_origin;
 
@@ -90,7 +83,6 @@ as
   (
     pi_objt_bpmn_id       in flow_objects.objt_bpmn_id%type
   , pi_objt_name          in flow_objects.objt_name%type default null
-  , pi_objt_type          in flow_objects.objt_type%type default null
   , pi_objt_tag_name      in flow_objects.objt_tag_name%type default null
   , pi_objt_objt_id       in flow_objects.objt_objt_id%type default null
   , pi_objt_objt_lane_id  in flow_objects.objt_objt_lane_id%type default null
@@ -104,7 +96,6 @@ as
              objt_dgrm_id
            , objt_bpmn_id
            , objt_name
-           , objt_type
            , objt_tag_name
            , objt_objt_id
            , objt_objt_lane_id
@@ -113,7 +104,6 @@ as
              g_dgrm_id
            , pi_objt_bpmn_id
            , pi_objt_name
-           , pi_objt_type
            , pi_objt_tag_name
            , pi_objt_objt_id
            , pi_objt_objt_lane_id
@@ -128,7 +118,6 @@ as
   , pi_conn_name         in flow_connections.conn_name%type
   , pi_conn_src_objt_id  in flow_connections.conn_src_objt_id%type
   , pi_conn_tgt_objt_id  in flow_connections.conn_tgt_objt_id%type
-  , pi_conn_type         in flow_connections.conn_type%type
   , pi_conn_tag_name     in flow_connections.conn_tag_name%type
   , pi_conn_origin       in flow_connections.conn_origin%type -- ?? needed ??
   , po_conn_id          out flow_connections.conn_id%type
@@ -143,7 +132,6 @@ as
             , conn_name
             , conn_src_objt_id
             , conn_tgt_objt_id
-            , conn_type
             , conn_tag_name
             , conn_origin
             )
@@ -153,7 +141,6 @@ as
             , pi_conn_name
             , pi_conn_src_objt_id
             , pi_conn_tgt_objt_id
-            , pi_conn_type
             , pi_conn_tag_name
             , pi_conn_origin
             )
@@ -163,8 +150,8 @@ as
 
   procedure process_objects
   as
-    l_cur_objt_bpmn_id  t_vc50;
-    l_next_objt_bpmn_id t_vc50;
+    l_cur_objt_bpmn_id  flow_types_pkg.t_bpmn_id;
+    l_next_objt_bpmn_id flow_types_pkg.t_bpmn_id;
     l_cur_object        t_objt_rec;
     l_objt_id           flow_objects.objt_id%type;
     l_parent_check      boolean;
@@ -200,7 +187,6 @@ as
         (
           pi_objt_bpmn_id      => l_cur_objt_bpmn_id
         , pi_objt_name         => l_cur_object.objt_name
-        , pi_objt_type         => l_cur_object.objt_type
         , pi_objt_tag_name     => l_cur_object.objt_tag_name
         , pi_objt_objt_id      => case when l_cur_object.objt_parent_bpmn_id is not null then g_objt_lookup( l_cur_object.objt_parent_bpmn_id ) else null end
         , pi_objt_objt_lane_id => case when g_lane_refs.exists( l_cur_objt_bpmn_id ) then g_objt_lookup( g_lane_refs( l_cur_objt_bpmn_id ) ) else null end
@@ -233,7 +219,7 @@ as
 
   procedure process_connections
   as
-    l_cur_conn_bpmn_id t_vc50;
+    l_cur_conn_bpmn_id flow_types_pkg.t_bpmn_id;
     l_cur_conn         t_conn_rec;
     l_conn_id          flow_connections.conn_id%type;
   begin
@@ -258,7 +244,6 @@ as
         , pi_conn_name         => l_cur_conn.conn_name
         , pi_conn_src_objt_id  => case when l_cur_conn.conn_src_bpmn_id is not null then g_objt_lookup( l_cur_conn.conn_src_bpmn_id ) else null end
         , pi_conn_tgt_objt_id  => case when l_cur_conn.conn_tgt_bpmn_id is not null then g_objt_lookup( l_cur_conn.conn_tgt_bpmn_id ) else null end
-        , pi_conn_type         => l_cur_conn.conn_type
         , pi_conn_tag_name     => l_cur_conn.conn_tag_name
         , pi_conn_origin       => l_cur_conn.conn_origin
         , po_conn_id           => l_conn_id
@@ -345,7 +330,7 @@ as
   procedure parse_lanes
   (
     pi_laneset_xml  in xmltype
-  , pi_objt_bpmn_id in t_vc50
+  , pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
   )
   as
   begin
@@ -370,7 +355,6 @@ as
       (
         pi_objt_bpmn_id        => lane_rec.lane_id
       , pi_objt_name           => lane_rec.lane_name
-      , pi_objt_type           => null
       , pi_objt_tag_name       => lane_rec.lane_type
       , pi_objt_parent_bpmn_id => pi_objt_bpmn_id
       );
@@ -397,7 +381,7 @@ as
   (
     pi_child_elements in xmltype
   )
-    return t_vc50
+    return flow_types_pkg.t_bpmn_id
   as
   begin
     return null;
@@ -406,8 +390,8 @@ as
   procedure parse_steps
   (
     pi_xml          in xmltype
-  , pi_proc_type    in t_vc50
-  , pi_proc_bpmn_id in t_vc50
+  , pi_proc_type    in flow_types_pkg.t_bpmn_id
+  , pi_proc_bpmn_id in flow_types_pkg.t_bpmn_id
   )
   as
     l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
@@ -455,7 +439,6 @@ as
         (
           pi_objt_bpmn_id        => rec.steps_id
         , pi_objt_name           => rec.steps_name
-        , pi_objt_type           => pi_proc_type
         , pi_objt_tag_name       => rec.steps_type
         , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
         );
@@ -481,7 +464,6 @@ as
         , pi_conn_name        => rec.steps_name
         , pi_conn_src_bpmn_id => rec.source_ref
         , pi_conn_tgt_bpmn_id => rec.target_ref
-        , pi_conn_type        => pi_proc_type
         , pi_conn_tag_name    => rec.steps_type
         , pi_conn_origin      => pi_proc_bpmn_id
         );        
@@ -492,7 +474,7 @@ as
   procedure parse_xml
   (
     pi_xml       in xmltype
-  , pi_parent_id in t_vc50
+  , pi_parent_id in flow_types_pkg.t_bpmn_id
   )
   as
   begin
@@ -524,7 +506,6 @@ as
         register_object
         (
           pi_objt_bpmn_id        => rec.proc_id
-        , pi_objt_type           => rec.proc_type_rem
         , pi_objt_tag_name       => rec.proc_type
         , pi_objt_name           => rec.proc_name
         , pi_objt_parent_bpmn_id => pi_parent_id
@@ -576,7 +557,6 @@ as
         register_object
         (
           pi_objt_bpmn_id        => rec.proc_id
-        , pi_objt_type           => rec.proc_type_rem
         , pi_objt_tag_name       => rec.proc_type
         , pi_objt_name           => rec.proc_name
         , pi_objt_parent_bpmn_id => pi_parent_id
@@ -643,7 +623,6 @@ as
           , pi_conn_name        => rec.colab_name
           , pi_conn_src_bpmn_id => rec.colab_src_ref
           , pi_conn_tgt_bpmn_id => rec.colab_tgt_ref
-          , pi_conn_type        => null
           , pi_conn_tag_name    => rec.colab_type
           , pi_conn_origin      => null
           );
