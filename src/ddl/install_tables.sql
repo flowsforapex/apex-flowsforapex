@@ -142,7 +142,7 @@ CREATE TABLE flow_timers (
 );
 
 COMMENT ON COLUMN flow_timers.timr_status IS
-    'Stauts of the timer. For the status codes see constant definitions in FLOW_TIMERS_PKG package declaration.';
+    'Status of the timer. For the status codes see constant definitions in FLOW_TIMERS_PKG package declaration.';
 
 COMMENT ON COLUMN flow_timers.timr_date_string IS
     'Temporary column for testing. It will be removed when the new model from Moritz is available.';
@@ -246,6 +246,17 @@ ALTER TABLE flow_timers
             ON DELETE CASCADE
     NOT DEFERRABLE;
 
+create table flow_process_variables
+( prov_prcs_id number not null
+, prov_var_name varchar2(50) not null
+, prov_var_type varchar2(50) 
+, prov_var_vc2 varchar2(200)
+, prov_var_num number
+, prov_var_date date
+, prov_var_clob clob
+);
+
+alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_var_name);
 
 
 -- Oracle SQL Developer Data Modeler Summary Report: 

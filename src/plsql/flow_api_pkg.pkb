@@ -276,8 +276,12 @@ as
       when l_out_conns > 1 then
         l_return :=
           case l_objt_tag_name
-            when 'bpmn:exclusiveGateway' then gc_single_choice
-            when 'bpmn:inclusiveGateway' then gc_multi_choice
+--            flow_next_branch now removed so everything uses next_step. 
+--            FFA50 remove this procedure once UI apps adapted.
+--            when 'bpmn:exclusiveGateway' then gc_single_choice
+--            when 'bpmn:inclusiveGateway' then gc_multi_choice
+              when 'bpmn:exclusiveGateway' then gc_step
+              when 'bpmn:inclusiveGateway' then gc_step
             else 'unknown'
           end
         ;
@@ -339,6 +343,7 @@ exception
     raise;
 end get_current_progress;
 
+
 procedure flow_start
   ( p_process_id in flow_processes.prcs_id%type
   )
@@ -382,188 +387,54 @@ end flow_start;
 procedure flow_next_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in flow_diagrams.dgrm_id%type default null
+, p_forward_route in varchar2 default null -- FFA 41 remove this & only pass null once next_branch removed
 )
 is 
 begin
+  if p_forward_route is not null 
+  then
+        apex_error.add_error
+          ( p_message => 'Application Error: p_forward_route should not be specified on flow_next_step in V5.0'
+          , p_display_location => apex_error.c_on_error_page
+          );
+  end if;
+
   flow_engine.flow_next_step
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
-  , p_forward_route => p_forward_route);   -- FFA 41 remove this & only pass null once next_branch removed
+  , p_forward_route => null);   -- FFA 41 remove this & only pass null once next_branch removed
 end flow_next_step;
 
 
-procedure flow_next_branch  -- to be removed for FFA50
+procedure flow_next_branch  
   ( p_process_id  in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_branch_name in varchar2
   )
   is
-    l_dgrm_id             flow_processes.prcs_dgrm_id%type;
-    l_conn_target_ref     flow_objects.objt_bpmn_id%type;
-    l_conn_tgt_objt_id    flow_connections.conn_tgt_objt_id%type;
-    l_sbfl_current        flow_subflows.sbfl_current%type;
-    l_sbfl_current_objt_id flow_objects.objt_id%type;
-    l_current_tag_name    flow_objects.objt_tag_name%type;
-    l_new_subflow         flow_subflows.sbfl_id%type;
   begin
-    apex_debug.message(p_message => 'Begin flow_next_branch', p_level => 3) ;
-    -- get diagram name and current state
-    apex_debug.info('p_BRANCH_NAME passed in :',p_branch_name);
-    if p_branch_name is null
-    then 
           apex_error.add_error
-          ( p_message => 'No forward path found for Gateway'
+          ( p_message => 'Flow_next_branch removed for Flows for Apex V5.  See Documentation '
           , p_display_location => apex_error.c_on_error_page
           );
-    end if;
-
-    select prcs.prcs_dgrm_id
-         , sbfl.sbfl_current
-         , objt.objt_tag_name
-         , objt.objt_id
-      into l_dgrm_id
-         , l_sbfl_current
-         , l_current_tag_name
-         , l_sbfl_current_objt_id
-      from flow_processes prcs
-      join flow_subflows sbfl
-        on sbfl.sbfl_prcs_id = prcs.prcs_id
-      join flow_objects objt
-        on sbfl.sbfl_current = objt.objt_bpmn_id
-       and prcs.prcs_dgrm_id = objt_dgrm_id
-     where sbfl.sbfl_prcs_id = p_process_id
-       and sbfl.sbfl_id = p_subflow_id
-    ;
-    case l_current_tag_name 
-    when 'bpmn:exclusiveGateway' then
-      -- only only path chosen.  Keep existing subflow but switch to chosen path
-      -- step into first step on the chosen path
-      flow_next_step 
-        (p_process_id => p_process_id
-        ,p_subflow_id => p_subflow_id
-        ,p_forward_route => p_branch_name
-        );
-    when 'bpmn:inclusiveGateway' then
-      apex_debug.message(p_message => 'Begin creating parallel flows for inclusiveGateway', p_level => 3) ;
-      -- get all forward parallel paths and create subflows for them if they are in forward path(s) chosen
-      -- these are paths forward of l_conn_target_ref as we are doing double step.
-      begin
-        for new_path in (
-            select conn.conn_bpmn_id route
-                  , objt.objt_bpmn_id target
-              from flow_connections conn
-              join flow_objects objt
-                on objt.objt_id = conn.conn_tgt_objt_id
-              where conn.conn_dgrm_id = l_dgrm_id
-                and conn.conn_src_objt_id = l_sbfl_current_objt_id
-                and conn.conn_bpmn_id in (select * from table(apex_string.split(':'||p_branch_name||':',':')))
-        )
-        loop
-              -- path is included in list of chosen forward paths.
-              apex_debug.message(p_message => 'starting parallel flow for inclusiveGateway', p_level => 3) ;
-              l_new_subflow := flow_engine.subflow_start
-                  ( p_process_id =>  p_process_id         
-                  , p_parent_subflow =>  p_subflow_id        
-                  , p_starting_object =>  l_sbfl_current        
-                  , p_current_object => l_sbfl_current          
-                  , p_route =>  new_path.route         
-                  , p_last_completed =>  l_sbfl_current        
-                  );
-              -- step into first step on the new path
-              flow_next_step 
-                  (p_process_id => p_process_id
-                  ,p_subflow_id => l_new_subflow
-                  ,p_forward_route => new_path.route
-                  );
-        end loop;
-        -- set current subflow to status split, current = null       
-        update flow_subflows sbfl
-          set sbfl.sbfl_last_completed = l_sbfl_current
-            , sbfl.sbfl_current = ''
-            , sbfl.sbfl_status = 'split'
-            , sbfl.sbfl_last_update = sysdate 
-        where sbfl.sbfl_id = p_subflow_id
-          and sbfl.sbfl_prcs_id = p_process_id
-            ;
-      exception
-        when no_data_found then
-          apex_error.add_error
-          ( p_message => 'No forward paths found for opening Inclusive Gateway'
-          , p_display_location => apex_error.c_on_error_page
-          );
-      end;
-    end case;  
-  end flow_next_branch;
+  end flow_next_branch; 
 
   procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
   )
   is
-        l_return_code   number;
   begin
     apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
-  
-    -- clear out run-time object_log
-    -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
-    -- into log audit trail  (not yet planned feature!)
-
-        
-    -- kill any timers sill running in the process
-    flow_timers_pkg.terminate_process_timers(
-        p_process_id => p_process_id
-      , p_return_code => l_return_code
-    );  
-    
-    delete
-      from flow_subflow_log sflg 
-     where sflg_prcs_id = p_process_id
-    ;
-    
-    delete
-      from flow_subflows sbfl
-     where sbfl.sbfl_prcs_id = p_process_id
-    ;
-    
-    update flow_processes prcs
-       set prcs.prcs_last_update = sysdate
-         , prcs.prcs_status = 'created'
-     where prcs.prcs_id = p_process_id
-    ;
+    flow_engine.flow_reset (p_process_id => p_process_id);
   end flow_reset;
 
   procedure flow_delete
-  (
-    p_process_id in flow_processes.prcs_id%type
+  ( p_process_id in flow_processes.prcs_id%type
   )
   is
-    l_return_code   number;
   begin
     apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
-    -- clear out run-time object_log
-    -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
-    -- into log audit trail  (not yet planned feature!)
-
-    -- kill any timers sill running in the process
-    flow_timers_pkg.delete_process_timers(
-        p_process_id => p_process_id
-      , p_return_code => l_return_code
-    );  
-
-    delete
-      from flow_subflow_log sflg 
-     where sflg_prcs_id = p_process_id
-    ;
-    
-    delete
-      from flow_subflows sbfl
-     where sbfl.sbfl_prcs_id = p_process_id
-    ;
-    
-    delete
-      from flow_processes prcs
-     where prcs.prcs_id = p_process_id
-    ;
+    flow_engine.flow_delete (p_process_id => p_process_id);
   end flow_delete;
 
 end flow_api_pkg;
