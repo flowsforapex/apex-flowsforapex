@@ -5,6 +5,12 @@ as
   gc_single_choice constant varchar2(50 char) := 'single-choice';
   gc_multi_choice  constant varchar2(50 char) := 'multi-choice';
 
+/********************************************************************************
+**
+**        FLOW OPERATIONS (Create, Start, Next_step, Reset, Stop, Delete)
+**
+********************************************************************************/
+
   function flow_create
   ( 
     pi_dgrm_name in flow_diagrams.dgrm_name%type
@@ -29,6 +35,46 @@ as
   , pi_prcs_name in flow_processes.prcs_name%type
   );
 
+  procedure flow_start
+  (
+    p_process_id in flow_processes.prcs_id%type
+  );
+  
+  -- Note: flow_next_branch no longer required or supported in V5.0
+  procedure flow_next_branch
+  ( p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_branch_name in varchar2
+  );
+  
+  -- Note: p_forward_route parameter no longer supported in V5.0
+  procedure flow_next_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_forward_route in varchar2 default null
+  );
+
+-- Note: flow_reset only for debug / test / use.  
+-- For production usage, always delete and start a new process
+  procedure flow_reset
+  ( 
+    p_process_id in flow_processes.prcs_id%type
+  );
+  
+  procedure flow_delete
+  ( 
+    p_process_id in flow_processes.prcs_id%type
+  );
+
+
+
+ /********************************************************************************
+**
+**        APPLICATION HELPERS (Progress, Next Step needs Decisions, etc.)
+**
+********************************************************************************/ 
+  
   function next_step_exists
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -59,38 +105,6 @@ as
     p_process_id in flow_processes.prcs_id%type 
   ) return varchar2;
 
-  procedure flow_start
-  (
-    p_process_id in flow_processes.prcs_id%type
-  );
-  
-  procedure flow_next_branch
-  ( p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id  in flow_subflows.sbfl_id%type
-  , p_branch_name in varchar2
-  );
-    
-  procedure flow_next_step
-  (
-    p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_forward_route in varchar2
-  );
 
-  procedure flow_handle_event
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ); 
-
-  procedure flow_reset
-  ( 
-    p_process_id in flow_processes.prcs_id%type
-  );
-  
-  procedure flow_delete
-  ( 
-    p_process_id in flow_processes.prcs_id%type
-  );
-  
 end flow_api_pkg;
 /

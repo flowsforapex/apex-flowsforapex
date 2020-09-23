@@ -50,7 +50,7 @@ create or replace package body flow_timers_pkg as
         where current of c1;
 
         -- return timer event to flow_api_pkg
-        flow_api_pkg.flow_handle_event (
+        flow_engine.flow_handle_event (
           p_process_id => c1_row.timr_prcs_id
         , p_subflow_id => c1_row.timr_sbfl_id
         );
@@ -67,7 +67,7 @@ create or replace package body flow_timers_pkg as
         where current of c2;
 
         -- return timer event to flow_api_pkg
-        flow_api_pkg.flow_handle_event (
+        flow_engine.flow_handle_event (
           p_process_id => c2_row.timr_prcs_id
         , p_subflow_id => c2_row.timr_sbfl_id
         );
@@ -84,7 +84,7 @@ create or replace package body flow_timers_pkg as
         where current of c3;
 
         -- return timer event to flow_api_pkg
-        flow_api_pkg.flow_handle_event (
+        flow_engine.flow_handle_event (
           p_process_id => c3_row.timr_prcs_id
         , p_subflow_id => c3_row.timr_sbfl_id
         );
