@@ -42,8 +42,6 @@
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 15:48:14 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
-<deferrable>YES</deferrable>
-<initially>DEFERRED</initially>
 </ForeignKey>
 </foreignKeys>
 <primaryKeys>

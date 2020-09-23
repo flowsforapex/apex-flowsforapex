@@ -74,19 +74,6 @@
 <autoIncrementCycle>false</autoIncrementCycle>
 <notNullConstraintName>PRCS_STATUS_NN</notNullConstraintName>
 </Column>
-<Column name="PRCS_MAIN_SUBFLOW" id="95F89BDD-B145-E3D3-2E21-7489161AC108">
-<sourceDDLFile>flow_subflows.sql</sourceDDLFile>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-28 19:50:36 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<importedID>936B1728-451F-2D8A-73CD-BA54FE2C6137</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT019</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
 <Column name="PRCS_INIT_TS" id="8D8D283D-7633-F56B-E98F-C3D4663072C0">
 <sourceDDLFile>flow_subflows.sql</sourceDDLFile>
 <createdBy>moklein</createdBy>
