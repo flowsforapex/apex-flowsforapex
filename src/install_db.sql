@@ -6,12 +6,15 @@ PROMPT >> =============================
 
 PROMPT >> Installing Tables
 @ddl/install_tables.sql
+@ddl/install_extra_ddl_for_userTasks.sql
 
 PROMPT >> Installing Package Specifications
 -- Base Packages
+@plsql/flow_process_vars.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_bpmn_parser_pkg.pks
 @plsql/flow_timers_pkg.pks
+@plsql/flow_engine.pks
 
 -- Page Packages
 @plsql/flow_p0003_api.pks
@@ -35,6 +38,8 @@ PROMPT >> Installing Views
 
 PROMPT >> Installing Package Bodies
 -- Base Packages
+@plsql/flow_process_vars.pkb
+@plsql/flow_engine.pkb
 @plsql/flow_api_pkg.pkb
 @plsql/flow_bpmn_parser_pkg.pkb
 @plsql/flow_timers_pkg.pkb

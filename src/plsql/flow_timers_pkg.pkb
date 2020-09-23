@@ -67,7 +67,7 @@ as
              where current of timr_cur
             ;
             -- return timer event to flow_api_pkg
-            flow_api_pkg.flow_handle_event
+            flow_engine.flow_handle_event
             (
               p_process_id => rec.timr_prcs_id
             , p_subflow_id => rec.timr_sbfl_id
@@ -81,7 +81,7 @@ as
                  , timr_status = c_ended
              where current of timr_cur
             ;
-            flow_api_pkg.flow_handle_event
+            flow_engine.flow_handle_event
             (
               p_process_id => rec.timr_prcs_id
             , p_subflow_id => rec.timr_sbfl_id
