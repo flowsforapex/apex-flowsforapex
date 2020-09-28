@@ -72,21 +72,6 @@
 <ownDataTypeParameters>200 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="OBJT_TYPE" id="F6A2AA86-3CA1-F252-BF43-3C7FD53C8FC6">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOW_OBJECTS</sourceObjSchema>
-<sourceObjName>OBJT_TYPE</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:28 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>50 CHAR</dataTypeSize>
-<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
 <Column name="OBJT_TAG_NAME" id="8BB98B5F-AB0E-34A3-2214-538FF3F920FC">
 <sourceConnName>vm_apex201.flows4apex</sourceConnName>
 <sourceObjSchema>FLOW_OBJECTS</sourceObjSchema>
@@ -102,7 +87,7 @@
 <ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="OBJT_SUBTYPE" id="797DE676-ACED-18B1-38C9-D0B68F659A8F">
+<Column name="OBJT_SUB_TAG_NAME" id="797DE676-ACED-18B1-38C9-D0B68F659A8F">
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 13:04:01 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>

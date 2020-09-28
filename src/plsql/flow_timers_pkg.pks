@@ -9,12 +9,13 @@ create or replace package flow_timers_pkg as
 ******************************************************************************/
 
  -- TEST ONLY!!! Remov before merge.... --
-     procedure get_duration (
-    in_string            IN     VARCHAR2
-  , in_start_ts          IN     TIMESTAMP WITH TIME ZONE DEFAULT NULL
-  , out_start_ts            OUT TIMESTAMP WITH TIME ZONE
-  , out_interv_ym        IN OUT INTERVAL YEAR TO MONTH
-  , out_interv_ds        IN OUT INTERVAL DAY TO SECOND
+  procedure get_duration
+  (
+    in_string            in     varchar2
+  , in_start_ts          in     timestamp with time zone default null
+  , out_start_ts            out timestamp with time zone
+  , out_interv_ym        in out interval year to month
+  , out_interv_ds        in out interval day to second
   );
 -- END TEST ONLY --
 
@@ -44,9 +45,10 @@ create or replace package flow_timers_pkg as
   start_timer
     create a new timer instance.
 ******************************************************************************/
-  procedure start_timer (
-    p_process_id  in  flow_processes.prcs_id%type
-  , p_subflow_id  in  flow_subflows.sbfl_id%type
+  procedure start_timer
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   );
 
 /******************************************************************************
@@ -54,9 +56,10 @@ create or replace package flow_timers_pkg as
     increment the progress in a flow pushing it to the next step.
 ******************************************************************************/
 
-  procedure expire_timer (
-    p_process_id  in  flow_processes.prcs_id%type
-  , p_subflow_id  in  flow_subflows.sbfl_id%type
+  procedure expire_timer
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   );
 
 /******************************************************************************
@@ -64,10 +67,11 @@ create or replace package flow_timers_pkg as
     remove a timer instance before the expiration time.
 ******************************************************************************/
 
-  procedure terminate_timer (
-    p_process_id    in   flow_processes.prcs_id%type
-  , p_subflow_id    in   flow_subflows.sbfl_id%type
-  , p_return_code  out  number
+  procedure terminate_timer 
+  (
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type
+  , pi_return_code out number
   );
 
 /******************************************************************************
@@ -75,9 +79,10 @@ create or replace package flow_timers_pkg as
     terminate all the timers of a process.
 ******************************************************************************/
 
-  procedure terminate_process_timers (
-    p_process_id    in   flow_processes.prcs_id%type
-  , p_return_code  out  number
+  procedure terminate_process_timers
+  (
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_return_code out number
   );
 
 /******************************************************************************
@@ -85,9 +90,10 @@ create or replace package flow_timers_pkg as
     delete all the timers of a process.
 ******************************************************************************/
 
-  procedure delete_process_timers (
-    p_process_id    in   flow_processes.prcs_id%type
-  , p_return_code  out  number
+  procedure delete_process_timers
+  (
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_return_code out number
   );
 
 /******************************************************************************
@@ -95,8 +101,9 @@ create or replace package flow_timers_pkg as
     termintate all the timers of any process.
 ******************************************************************************/
 
-  procedure terminate_all_timers (
-    p_return_code  out  number
+  procedure terminate_all_timers
+  (
+    pi_return_code  out  number
   );
 
 
