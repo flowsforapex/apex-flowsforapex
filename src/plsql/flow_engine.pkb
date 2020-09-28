@@ -349,7 +349,7 @@ begin
       );
     else 
         apex_error.add_error
-        ( p_message => 'You have an unsupported starting event type. Only (standard) Start Event and Timer Start Event are currently supported.'
+        ( p_message => 'You have an unsupported starting event type. Only None (standard) Start Event and Timer Start Event are currently supported.'
         , p_display_location => apex_error.c_on_error_page
         );
     end if;
@@ -416,7 +416,7 @@ begin
             when 'process_var_num' then to_char(flow_process_vars.get_var_num(pi_prcs_id => p_process_id, pi_var_name => scrv_value))
             when 'process_var_date' then ''''||to_char(flow_process_vars.get_var_date(pi_prcs_id => p_process_id, pi_var_name => scrv_value))||''''
             when 'PK' then to_char(l_prcs_rec.prcs_ref_obj_id)
-            end   ,',')
+            end   ,',') within group (order by scrv_scrp_id)
         into l_arg1
         from flow_script_parameters scrv
         where scrv_scrp_id = l_scrp_rec.scrp_id;
@@ -1039,6 +1039,37 @@ begin
     
 end process_intermediateCatchEvent;
 
+procedure process_intermediateThrowEvent
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_step_info
+  )
+is 
+begin
+    -- currently only supports none Intermediate throw event (used as a process state marker)
+    -- but this might later have a case type = timer, emailSend, etc. ....
+    apex_debug.message(p_message => 'Begin process_IntermediateThrowEvent '||p_step_info.target_objt_ref, p_level => 4) ;
+    if p_step_info.target_objt_subtag = null
+    then
+        -- a none event.  Just call next step.  (other types to be implemented later)
+        update flow_subflows sbfl
+        set   sbfl.sbfl_current = p_step_info.target_objt_ref
+            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+            , sbfl.sbfl_last_update = sysdate
+            , sbfl.sbfl_status = 'running'
+        where sbfl.sbfl_id = p_subflow_id
+            and sbfl.sbfl_prcs_id = p_process_id
+        ;
+    else 
+        --- other type of intermediateThrowEvent that is not currently supported
+        apex_error.add_error
+            ( p_message => 'Currently unsupported type of Intermediate Throw Event encountered at '||p_sbfl_info.sbfl_current||' .'
+            , p_display_location => apex_error.c_on_error_page
+            );
+    end if;
+end process_intermediateThrowEvent;
+
 procedure process_userTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -1494,6 +1525,14 @@ begin
     when  'bpmn:intermediateCatchEvent' 
     then 
         flow_engine.process_intermediateCatchEvent
+         ( p_process_id => p_process_id
+         , p_subflow_id => p_subflow_id
+         , p_sbfl_info => l_sbfl_rec
+         , p_step_info => l_step_info
+         ); 
+    when  'bpmn:intermediateThrowEvent' 
+    then 
+        flow_engine.process_intermediateThrowEvent
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
