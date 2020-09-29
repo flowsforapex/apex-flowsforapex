@@ -387,7 +387,7 @@ end flow_start;
 procedure flow_next_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in varchar2 default null -- FFA 41 remove this & only pass null once next_branch removed
+, p_forward_route in varchar2 default null -- FFA 41 remove this and only pass null once next_branch removed
 )
 is 
 begin
@@ -402,7 +402,7 @@ begin
   flow_engine.flow_next_step
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
-  , p_forward_route => null);   -- FFA 41 remove this & only pass null once next_branch removed
+  , p_forward_route => null);   -- FFA 41 remove this and only pass null once next_branch removed
 end flow_next_step;
 
 
@@ -438,3 +438,4 @@ procedure flow_next_branch
   end flow_delete;
 
 end flow_api_pkg;
+/
