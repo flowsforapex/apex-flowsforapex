@@ -11,6 +11,7 @@ as
       objt_name           t_vc200
     , objt_tag_name       flow_types_pkg.t_bpmn_id
     , objt_parent_bpmn_id flow_types_pkg.t_bpmn_id
+    , objt_sub_tag_name   flow_types_pkg.t_bpmn_id
     );
   type t_objt_tab is table of t_objt_rec index by flow_types_pkg.t_bpmn_id;
 
@@ -389,10 +390,11 @@ as
   )
     return flow_types_pkg.t_bpmn_id
   as
-    c_nsmap        constant t_vc200 := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
-    c_terminateEnd constant t_vc50  := 'bpmn:terminateEventDefinition';
-    c_timer        constant t_vc50  := 'bpmn:timerEventDefinition';
-    l_return t_vc50;
+    c_nsmap        constant t_vc200                  := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
+    c_terminateEnd constant flow_types_pkg.t_bpmn_id := 'bpmn:terminateEventDefinition';
+    c_timer        constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
+
+    l_return flow_types_pkg.t_bpmn_id;
   begin
 
     if pi_xml.existsNode( xpath => '/' || c_terminateEnd, nsmap => c_nsmap ) = 1 then

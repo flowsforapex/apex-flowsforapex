@@ -42,13 +42,14 @@ create table flow_script_parameters
 
 alter table flow_scripts add constraint scrp_pk primary key (scrp_id);
 
-
 alter table flow_processes add 
 ( prcs_ref_obj_type  VARCHAR2(50 CHAR)    
 , prcs_ref_obj_id    NUMBER
 , prcs_initiator varchar2(200)
 , prcs_priority NUMBER
 );
+
+
 
 -- I'd like to be able to create a variable that contains a set of items.  
 -- Use case might be to set the list of userids that need to approve an expense report

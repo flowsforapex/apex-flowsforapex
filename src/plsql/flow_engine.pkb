@@ -1627,7 +1627,7 @@ begin
     ;
     
 --    flow_process_vars.delete_all_for_process (pi_prcs_id => p_process_id);
---    commented out during testing of inc/exclusive gateways & before run scriptTask is working
+--    commented out during testing of inc/exclusive gateways and before run scriptTask is working
 --    put this back in before FFA50
 --    process variables are NOT being cleared when the process is reset without this
 
@@ -1675,3 +1675,4 @@ begin
 end flow_delete;
 
 end flow_engine;
+/
