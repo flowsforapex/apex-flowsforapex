@@ -8,7 +8,7 @@ type flow_step_info is record
 , target_objt_id    flow_objects.objt_id%type
 , target_objt_ref   flow_objects.objt_bpmn_id%type
 , target_objt_tag   flow_objects.objt_tag_name%type
-, target_objt_subtag flow_objects.objt_subtype%type
+, target_objt_subtag flow_objects.objt_sub_tag_name%type
 );
 
 procedure flow_handle_event

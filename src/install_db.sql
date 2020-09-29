@@ -11,6 +11,8 @@ PROMPT >> Installing Tables
 PROMPT >> Installing Package Specifications
 -- Base Packages
 @plsql/flow_process_vars.pks
+@plsql/flow_constants_pkg.pks
+@plsql/flow_types_pkg.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_bpmn_parser_pkg.pks
 @plsql/flow_timers_pkg.pks
@@ -25,6 +27,7 @@ PROMPT >> Installing Views
 @views/flow_processes_vw.sql
 @views/flow_instances_vw.sql
 @views/flow_subflows_vw.sql
+@views/flow_process_inbox_vw.sql
 @views/flow_diagrams_lov.sql
 @views/flow_diagrams_parsed_lov.sql
 

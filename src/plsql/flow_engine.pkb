@@ -1048,7 +1048,7 @@ begin
     -- currently only supports none Intermediate throw event (used as a process state marker)
     -- but this might later have a case type = timer, emailSend, etc. ....
     apex_debug.message(p_message => 'Begin process_IntermediateThrowEvent '||p_step_info.target_objt_ref, p_level => 4) ;
-    if p_step_info.target_objt_subtag = null
+    if p_step_info.target_objt_subtag is null
     then
         -- a none event.  Just call next step.  (other types to be implemented later)
         update flow_subflows sbfl
@@ -1059,6 +1059,10 @@ begin
         where sbfl.sbfl_id = p_subflow_id
             and sbfl.sbfl_prcs_id = p_process_id
         ;
+        flow_next_step
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );
     else 
         --- other type of intermediateThrowEvent that is not currently supported
         apex_error.add_error
