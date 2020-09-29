@@ -42,7 +42,7 @@ create table flow_script_parameters
 
 alter table flow_scripts add constraint scrp_pk primary key (scrp_id);
 
-..
+
 alter table flow_processes add 
 ( prcs_ref_obj_type  VARCHAR2(50 CHAR)    
 , prcs_ref_obj_id    NUMBER

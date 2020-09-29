@@ -69,13 +69,13 @@ CREATE TABLE flow_objects (
     objt_dgrm_id       NUMBER NOT NULL,
     objt_name          VARCHAR2(200 CHAR),
     objt_tag_name      VARCHAR2(50 CHAR),
-    objt_subtype       VARCHAR2(50 CHAR),
+    objt_sub_tag_name  VARCHAR2(50 CHAR),
     objt_objt_id       NUMBER,
     objt_objt_lane_id  NUMBER
 );
 
 COMMENT ON COLUMN flow_objects.objt_objt_lane_id IS
-    'Refrence to Lane if any.';
+    'Reference to Lane if any.';
 
 ALTER TABLE flow_objects ADD CONSTRAINT objt_pk PRIMARY KEY ( objt_id );
 

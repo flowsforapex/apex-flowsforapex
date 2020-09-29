@@ -269,7 +269,6 @@ procedure subflow_complete
       update flow_processes prcs 
          set prcs.prcs_status = 'completed'
            , prcs.prcs_last_update = sysdate
-           , prcs.prcs_main_subflow = null
        where prcs.prcs_id = p_process_id
       ;
       apex_debug.message(p_message => 'Process Completed: Process '||p_process_id, p_level => 4) ;
@@ -280,11 +279,11 @@ procedure flow_start_process
 ( p_process_id    in flow_processes.prcs_id%type
 )
 is
-    l_dgrm_id         flow_diagrams.dgrm_id%type;
-    l_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
-    l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
-    l_main_subflow_id flow_subflows.sbfl_id%type;
-    l_new_subflow_status flow_subflows.sbfl_status%type;
+    l_dgrm_id               flow_diagrams.dgrm_id%type;
+    l_objt_bpmn_id          flow_objects.objt_bpmn_id%type;
+    l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
+    l_main_subflow_id       flow_subflows.sbfl_id%type;
+    l_new_subflow_status    flow_subflows.sbfl_status%type;
 begin
     l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
     begin
@@ -336,8 +335,8 @@ begin
     then 
       -- eventStart must be delayed with the timer 
       flow_timers_pkg.start_timer(
-          p_process_id => p_process_id
-        , p_subflow_id => l_main_subflow_id
+          pi_prcs_id => p_process_id
+        , pi_sbfl_id => l_main_subflow_id
       );
     elsif l_objt_sub_tag_name is null
     then
@@ -357,7 +356,6 @@ begin
     update flow_processes prcs
        set prcs.prcs_status = 'running'
          , prcs.prcs_last_update = sysdate
-         , prcs.prcs_main_subflow = l_main_subflow_id
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;
@@ -370,8 +368,8 @@ is
 begin
     apex_debug.message(p_message => 'Begin flow_terminate', p_level => 3) ;
     flow_timers_pkg.terminate_process_timers
-      ( p_process_id => p_process_id
-      , p_return_code => l_return_code
+      ( pi_prcs_id => p_process_id
+      , po_return_code => l_return_code
       );
     delete  from flow_subflows sbfl 
     where sbfl.sbfl_prcs_id = p_process_id
@@ -1022,8 +1020,8 @@ begin
             and sbfl.sbfl_prcs_id = p_process_id
         ;
         flow_timers_pkg.start_timer
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
         );
     else
         -- not a timer.  Just set it to running for now.  (other types to be implemented later)
@@ -1257,9 +1255,9 @@ begin
           if child_subflows.objt_sub_tag_name = 'bpmn:timerEventDefinition'
           then
             flow_timers_pkg.terminate_timer
-                ( p_process_id => p_process_id
-                , p_subflow_id => child_subflows.sbfl_id
-                , p_return_code => l_return
+                ( pi_prcs_id => p_process_id
+                , pi_sbfl_id => child_subflows.sbfl_id
+                , po_return_code => l_return
                 );
           end if;
           -- delete the completed subflow and log it as complete
@@ -1614,8 +1612,8 @@ begin
         
     -- kill any timers sill running in the process
     flow_timers_pkg.terminate_process_timers(
-        p_process_id => p_process_id
-      , p_return_code => l_return_code
+        pi_prcs_id => p_process_id
+      , po_return_code => l_return_code
     );  
     
     delete
@@ -1654,8 +1652,8 @@ begin
 
     -- kill any timers sill running in the process
     flow_timers_pkg.delete_process_timers(
-        p_process_id => p_process_id
-      , p_return_code => l_return_code
+        pi_prcs_id => p_process_id
+      , po_return_code => l_return_code
     );  
 
     delete
