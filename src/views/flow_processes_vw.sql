@@ -3,8 +3,9 @@ as
 with all_completed as (
   select sflg.sflg_prcs_id as prcs_id
        , listagg(sflg.sflg_objt_id, ':') within group (order by sflg.sflg_objt_id) as bpmn_ids
+       -- can be changed to listagg(distinct sflg.sflg_objt_id,...  RDBMS in 19c but not earlier versions
     from flow_subflow_log sflg
-   where sflg.sflg_objt_id not in ( select sbfl.sbfl_current
+   where sflg.sflg_objt_id not in ( select sbfl.sbfl_last_completed
                                       from flow_subflows sbfl
                                      where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
                                   )

@@ -24,15 +24,18 @@ as
                  , case prcs_status
                      when 'running' then 'Reset Process'
                      when 'created' then 'Start Process'
+                     when 'completed' then 'Reset Process'
                    end as btn_title
                  , 't-Icon fa ' ||
                    case prcs_status
                      when 'running' then 'fa-undo'
                      when 'created' then 'fa-play'
+                     when 'completed' then 'fa-undo'
                    end as btn_icon_class
                  , case prcs_status
                      when 'running' then 'reset'
                      when 'created' then 'start'
+                     when 'completed' then 'reset'
                    end as btn_action
               from flow_instances_vw
           )
