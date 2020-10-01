@@ -8,6 +8,11 @@ with all_completed as (
    where sflg.sflg_objt_id not in ( select sbfl.sbfl_last_completed
                                       from flow_subflows sbfl
                                      where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
+                                     union
+                                    select sbfl.sbfl_current
+                                      from flow_subflows sbfl
+                                     where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
+                                       and sbfl.sbfl_current is not null
                                   )
 group by sflg.sflg_prcs_id
 ), last_completed as (
