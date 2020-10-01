@@ -113,26 +113,43 @@ begin
     ;
 end get_number_of_connections;
 
-function get_exclusiveGateway_route
+function get_gateway_route
     ( pi_process_id     in flow_processes.prcs_id%type
     , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
-    ) return flow_connections.conn_bpmn_id%type
+    ) return varchar2
 is
-    l_forward_route     flow_connections.conn_bpmn_id%type;
+    l_forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
 begin
-   -- check if route is in process variable
-   l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, 'Route:'||pi_objt_bpmn_id);
-/*   if l_forward_route is null
-   then
-      -- check default route  -- fix FFA41
-      -- haven't parsed default route yet so just error
-      apex_error.add_error
-          ( p_message => 'No default route supplied on exclusiveGateway '||pi_objt_bpmn_id
-          , p_display_location => apex_error.c_on_error_page
-          );
-    end if; */
+    -- check if route is in process variable
+    l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, 'Route:'||pi_objt_bpmn_id);
+    if l_forward_route is null
+    then
+        begin
+            -- check default route 
+            select conn_bpmn_id
+              into l_forward_route
+              from flow_connections conn
+              join flow_objects objt 
+                on objt.objt_id = conn.conn_src_objt_id
+               and conn.conn_dgrm_id = objt.objt_dgrm_id
+             where conn.conn_is_default = 1
+               and objt.objt_bpmn_id = pi_objt_bpmn_id
+                ;
+        exception
+            when no_data_found then
+                apex_error.add_error
+                ( p_message => 'No route supplied in process variables and no default route specified on Gateway '||pi_objt_bpmn_id
+                , p_display_location => apex_error.c_on_error_page
+                );
+            when too_many_rows then
+                apex_error.add_error
+                ( p_message => 'More than one default route specified onGateway '||pi_objt_bpmn_id
+                , p_display_location => apex_error.c_on_error_page
+                );
+        end;
+    end if; 
     return l_forward_route;
-end get_exclusiveGateway_route;
+end get_gateway_route;
 
 function subflow_start
   ( 
@@ -712,7 +729,8 @@ begin
         then
             -- this is opening inclusiveGateway.  Step into it.  Forward paths will get opened by flow_next_step
             -- after user decision.
-            l_forward_routes := flow_process_vars.get_var_vc2(p_process_id, 'Route:'||p_step_info.target_objt_ref);
+            -- l_forward_routes := flow_process_vars.get_var_vc2(p_process_id, 'Route:'||p_step_info.target_objt_ref);
+            l_forward_routes := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
             apex_debug.message(p_message => 'Forward routes for inclusiveGateway '||p_step_info.target_objt_ref ||' :'||l_forward_routes, p_level => 4) ;
             begin
                 for new_path in (
@@ -840,7 +858,7 @@ procedure process_exclusiveGateway
 is 
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_back_connections      number;   -- number of connections back from object
-    l_forward_route             flow_connections.conn_bpmn_id%type;
+    l_forward_route             varchar2(2000);
 begin
     -- handles opening and closing and closing and reopening
     apex_debug.message(p_message => 'Begin process_exclusiveGateway for object: '||p_step_info.target_objt_tag, p_level => 3) ;
@@ -852,7 +870,7 @@ begin
     );
     if l_num_forward_connections > 1
     then -- opening gateway - get choice
-        l_forward_route := get_exclusiveGateway_route(p_process_id, p_step_info.target_objt_ref);
+        l_forward_route := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
     else -- closing gateway - keep going
         l_forward_route := null;
     end if;  
