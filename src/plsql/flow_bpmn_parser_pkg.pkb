@@ -12,6 +12,8 @@ as
     , objt_tag_name       flow_types_pkg.t_bpmn_id
     , objt_parent_bpmn_id flow_types_pkg.t_bpmn_id
     , objt_sub_tag_name   flow_types_pkg.t_bpmn_id
+    , objt_attached_to    flow_types_pkg.t_bpmn_id
+    , objt_interrupting   number
     );
   type t_objt_tab is table of t_objt_rec index by flow_types_pkg.t_bpmn_id;
 
@@ -45,6 +47,8 @@ as
   , pi_objt_tag_name       in flow_objects.objt_tag_name%type default null
   , pi_objt_sub_tag_name   in flow_objects.objt_sub_tag_name%type default null
   , pi_objt_parent_bpmn_id in flow_objects.objt_bpmn_id%type default null
+  , pi_objt_attached_to    in flow_objects.objt_attached_to%type default null 
+  , pi_objt_interrupting   in flow_objects.objt_interrupting%type default null
   )
   as
     l_objt_rec t_objt_rec;
@@ -54,6 +58,8 @@ as
       l_objt_rec.objt_tag_name       := pi_objt_tag_name;
       l_objt_rec.objt_sub_tag_name   := pi_objt_sub_tag_name;
       l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
+      l_objt_rec.objt_attached_to    := pi_objt_attached_to;
+      l_objt_rec.objt_interrupting   := pi_objt_interrupting;
 
       g_objects( pi_objt_bpmn_id ) := l_objt_rec;
     end if;  
@@ -90,6 +96,8 @@ as
   , pi_objt_objt_id       in flow_objects.objt_objt_id%type default null
   , pi_objt_sub_tag_name  in flow_objects.objt_sub_tag_name%type default null
   , pi_objt_objt_lane_id  in flow_objects.objt_objt_lane_id%type default null
+  , pi_objt_attached_to   in flow_objects.objt_attached_to%type default null
+  , pi_objt_interrupting  in flow_objects.objt_interrupting%type default null
   , po_objt_id           out nocopy flow_objects.objt_id%type
   )
   as
@@ -104,6 +112,8 @@ as
            , objt_sub_tag_name
            , objt_objt_id
            , objt_objt_lane_id
+           , objt_attached_to
+           , objt_interrupting
            )
     values (
              g_dgrm_id
@@ -113,6 +123,8 @@ as
            , pi_objt_sub_tag_name
            , pi_objt_objt_id
            , pi_objt_objt_lane_id
+           , pi_objt_attached_to
+           , pi_objt_interrupting
            )
       returning objt_id into po_objt_id
     ;
@@ -197,6 +209,8 @@ as
         , pi_objt_objt_id      => case when l_cur_object.objt_parent_bpmn_id is not null then g_objt_lookup( l_cur_object.objt_parent_bpmn_id ) else null end
         , pi_objt_objt_lane_id => case when g_lane_refs.exists( l_cur_objt_bpmn_id ) then g_objt_lookup( g_lane_refs( l_cur_objt_bpmn_id ) ) else null end
         , pi_objt_sub_tag_name => l_cur_object.objt_sub_tag_name
+        , pi_objt_attached_to  => l_cur_object.objt_attached_to
+        , pi_objt_interrupting => l_cur_object.objt_interrupting
         , po_objt_id           => l_objt_id
         );
 
@@ -390,9 +404,11 @@ as
   )
     return flow_types_pkg.t_bpmn_id
   as
-    c_nsmap        constant t_vc200                  := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
-    c_terminateEnd constant flow_types_pkg.t_bpmn_id := 'bpmn:terminateEventDefinition';
-    c_timer        constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
+    c_nsmap             constant t_vc200                  := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
+    c_terminateEnd      constant flow_types_pkg.t_bpmn_id := 'bpmn:terminateEventDefinition';
+    c_timer             constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
+    c_errorEvent        constant flow_types_pkg.t_bpmn_id := 'bpmn:errorEventDefinition';
+    c_escalationEvent   constant flow_types_pkg.t_bpmn_id := 'bpmn:escalationEventDefinition';
 
     l_return flow_types_pkg.t_bpmn_id;
   begin
@@ -401,6 +417,10 @@ as
       l_return := c_terminateEnd;
     elsif pi_xml.existsNode( xpath => '/' || c_timer, nsmap => c_nsmap ) = 1 then
       l_return := c_timer;
+    elsif pi_xml.existsNode( xpath => '/' || c_errorEvent, nsmap => c_nsmap ) = 1 then
+      l_return := c_errorEvent;
+    elsif pi_xml.existsNode( xpath => '/' || c_escalationEvent, nsmap => c_nsmap ) = 1 then
+      l_return := c_escalationEvent;
     end if;
 
     return l_return;
@@ -421,6 +441,8 @@ as
                      , steps.steps_id
                      , steps.source_ref
                      , steps.target_ref
+                     , steps.attached_to
+                     , case steps.interrupting when 'false' then 0 else 1 end as interrupting
                      , steps.child_elements
                   from xmltable
                        (
@@ -432,6 +454,8 @@ as
                          , steps_id       varchar2(50 char)  path '@id'
                          , source_ref     varchar2(50 char)  path '@sourceRef'
                          , target_ref     varchar2(50 char)  path '@targetRef'
+                         , attached_to    varchar2(50 char)  path '@attachedToRef'
+                         , interrupting   varchar2(50 char)  path '@cancelActivity'
                          , child_elements xmltype            path '* except bpmn:incoming except bpmn:outgoing'
                        ) steps
                )
@@ -462,6 +486,8 @@ as
         , pi_objt_tag_name       => rec.steps_type
         , pi_objt_sub_tag_name   => l_objt_sub_tag_name
         , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
+        , pi_objt_attached_to    => rec.attached_to
+        , pi_objt_interrupting   => rec.interrupting
         );
 
         -- Register Object on Lane if parent blongs to a lane

@@ -82,7 +82,9 @@ CREATE TABLE flow_objects (
     objt_tag_name      VARCHAR2(50 CHAR),
     objt_sub_tag_name  VARCHAR2(50 CHAR),
     objt_objt_id       NUMBER,
-    objt_objt_lane_id  NUMBER
+    objt_objt_lane_id  NUMBER,
+    objt_attached_to   VARCHAR2(50 CHAR),
+    objt_interrupting  NUMBER
 );
 
 COMMENT ON COLUMN flow_objects.objt_objt_lane_id IS
