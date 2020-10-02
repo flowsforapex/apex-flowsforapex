@@ -126,7 +126,7 @@ as
       );
   end flow_create;
 
-  function next_step_exists -- not using this now.  Needs checking. FFA41 remove PROCESS
+  /*function next_step_exists -- not using this now.  Needs checking. FFA41 remove PROCESS
   ( p_process_id in flow_processes.prcs_id%type
   ,  p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean
@@ -165,7 +165,7 @@ as
     when others
     then
       raise;
-  end next_step_exists;
+  end next_step_exists; 
 
   function next_step_exists_yn 
   ( p_process_id in flow_processes.prcs_id%type
@@ -184,7 +184,7 @@ as
       else 
           return 'n';
       end if;
-  end;
+  end;*/
 
   function next_multistep_exists 
   ( p_process_id in flow_processes.prcs_id%type

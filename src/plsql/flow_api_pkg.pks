@@ -74,7 +74,7 @@ as
 **        APPLICATION HELPERS (Progress, Next Step needs Decisions, etc.)
 **
 ********************************************************************************/ 
-  
+  /*
   function next_step_exists
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -83,7 +83,7 @@ as
   function next_step_exists_yn
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2;
+  ) return varchar2; */
 
   function next_multistep_exists
   ( p_process_id in flow_processes.prcs_id%type

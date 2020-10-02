@@ -19,13 +19,16 @@ CREATE TABLE flow_connections (
     conn_src_objt_id  NUMBER,
     conn_tgt_objt_id  NUMBER,
     conn_tag_name     VARCHAR2(50 CHAR),
-    conn_origin       VARCHAR2(50 CHAR)
+    conn_origin       VARCHAR2(50 CHAR),
+    conn_is_default   NUMBER DEFAULT 0 NOT NULL
 );
 
 ALTER TABLE flow_connections ADD CONSTRAINT conn_pk PRIMARY KEY ( conn_id );
 
 ALTER TABLE flow_connections ADD CONSTRAINT conn_uk UNIQUE ( conn_dgrm_id,
                                                              conn_bpmn_id );
+
+ALTER TABLE flow_connections ADD CONSTRAINT conn_default CHECK ( conn_is_default IN ( 0, 1 ) );
 
 CREATE TABLE flow_diagrams (
     dgrm_id       NUMBER
@@ -83,7 +86,7 @@ CREATE TABLE flow_objects (
 );
 
 COMMENT ON COLUMN flow_objects.objt_objt_lane_id IS
-    'Refrence to Lane if any.';
+    'Reference to Lane if any.';
 
 ALTER TABLE flow_objects ADD CONSTRAINT objt_pk PRIMARY KEY ( objt_id );
 

@@ -113,26 +113,43 @@ begin
     ;
 end get_number_of_connections;
 
-function get_exclusiveGateway_route
+function get_gateway_route
     ( pi_process_id     in flow_processes.prcs_id%type
     , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
-    ) return flow_connections.conn_bpmn_id%type
+    ) return varchar2
 is
-    l_forward_route     flow_connections.conn_bpmn_id%type;
+    l_forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
 begin
-   -- check if route is in process variable
-   l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, 'Route:'||pi_objt_bpmn_id);
-/*   if l_forward_route is null
-   then
-      -- check default route  -- fix FFA41
-      -- haven't parsed default route yet so just error
-      apex_error.add_error
-          ( p_message => 'No default route supplied on exclusiveGateway '||pi_objt_bpmn_id
-          , p_display_location => apex_error.c_on_error_page
-          );
-    end if; */
+    -- check if route is in process variable
+    l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, 'Route:'||pi_objt_bpmn_id);
+    if l_forward_route is null
+    then
+        begin
+            -- check default route 
+            select conn_bpmn_id
+              into l_forward_route
+              from flow_connections conn
+              join flow_objects objt 
+                on objt.objt_id = conn.conn_src_objt_id
+               and conn.conn_dgrm_id = objt.objt_dgrm_id
+             where conn.conn_is_default = 1
+               and objt.objt_bpmn_id = pi_objt_bpmn_id
+                ;
+        exception
+            when no_data_found then
+                apex_error.add_error
+                ( p_message => 'No route supplied in process variables and no default route specified on Gateway '||pi_objt_bpmn_id
+                , p_display_location => apex_error.c_on_error_page
+                );
+            when too_many_rows then
+                apex_error.add_error
+                ( p_message => 'More than one default route specified onGateway '||pi_objt_bpmn_id
+                , p_display_location => apex_error.c_on_error_page
+                );
+        end;
+    end if; 
     return l_forward_route;
-end get_exclusiveGateway_route;
+end get_gateway_route;
 
 function subflow_start
   ( 
@@ -269,7 +286,6 @@ procedure subflow_complete
       update flow_processes prcs 
          set prcs.prcs_status = 'completed'
            , prcs.prcs_last_update = sysdate
-           , prcs.prcs_main_subflow = null
        where prcs.prcs_id = p_process_id
       ;
       apex_debug.message(p_message => 'Process Completed: Process '||p_process_id, p_level => 4) ;
@@ -280,11 +296,11 @@ procedure flow_start_process
 ( p_process_id    in flow_processes.prcs_id%type
 )
 is
-    l_dgrm_id         flow_diagrams.dgrm_id%type;
-    l_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
-    l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
-    l_main_subflow_id flow_subflows.sbfl_id%type;
-    l_new_subflow_status flow_subflows.sbfl_status%type;
+    l_dgrm_id               flow_diagrams.dgrm_id%type;
+    l_objt_bpmn_id          flow_objects.objt_bpmn_id%type;
+    l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
+    l_main_subflow_id       flow_subflows.sbfl_id%type;
+    l_new_subflow_status    flow_subflows.sbfl_status%type;
 begin
     l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
     begin
@@ -336,8 +352,8 @@ begin
     then 
       -- eventStart must be delayed with the timer 
       flow_timers_pkg.start_timer(
-          p_process_id => p_process_id
-        , p_subflow_id => l_main_subflow_id
+          pi_prcs_id => p_process_id
+        , pi_sbfl_id => l_main_subflow_id
       );
     elsif l_objt_sub_tag_name is null
     then
@@ -349,7 +365,7 @@ begin
       );
     else 
         apex_error.add_error
-        ( p_message => 'You have an unsupported starting event type. Only (standard) Start Event and Timer Start Event are currently supported.'
+        ( p_message => 'You have an unsupported starting event type. Only None (standard) Start Event and Timer Start Event are currently supported.'
         , p_display_location => apex_error.c_on_error_page
         );
     end if;
@@ -357,7 +373,6 @@ begin
     update flow_processes prcs
        set prcs.prcs_status = 'running'
          , prcs.prcs_last_update = sysdate
-         , prcs.prcs_main_subflow = l_main_subflow_id
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;
@@ -370,8 +385,8 @@ is
 begin
     apex_debug.message(p_message => 'Begin flow_terminate', p_level => 3) ;
     flow_timers_pkg.terminate_process_timers
-      ( p_process_id => p_process_id
-      , p_return_code => l_return_code
+      ( pi_prcs_id => p_process_id
+      , po_return_code => l_return_code
       );
     delete  from flow_subflows sbfl 
     where sbfl.sbfl_prcs_id = p_process_id
@@ -416,7 +431,7 @@ begin
             when 'process_var_num' then to_char(flow_process_vars.get_var_num(pi_prcs_id => p_process_id, pi_var_name => scrv_value))
             when 'process_var_date' then ''''||to_char(flow_process_vars.get_var_date(pi_prcs_id => p_process_id, pi_var_name => scrv_value))||''''
             when 'PK' then to_char(l_prcs_rec.prcs_ref_obj_id)
-            end   ,',')
+            end   ,',') within group (order by scrv_scrp_id)
         into l_arg1
         from flow_script_parameters scrv
         where scrv_scrp_id = l_scrp_rec.scrp_id;
@@ -714,7 +729,8 @@ begin
         then
             -- this is opening inclusiveGateway.  Step into it.  Forward paths will get opened by flow_next_step
             -- after user decision.
-            l_forward_routes := flow_process_vars.get_var_vc2(p_process_id, 'Route:'||p_step_info.target_objt_ref);
+            -- l_forward_routes := flow_process_vars.get_var_vc2(p_process_id, 'Route:'||p_step_info.target_objt_ref);
+            l_forward_routes := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
             apex_debug.message(p_message => 'Forward routes for inclusiveGateway '||p_step_info.target_objt_ref ||' :'||l_forward_routes, p_level => 4) ;
             begin
                 for new_path in (
@@ -842,7 +858,7 @@ procedure process_exclusiveGateway
 is 
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_back_connections      number;   -- number of connections back from object
-    l_forward_route             flow_connections.conn_bpmn_id%type;
+    l_forward_route             varchar2(2000);
 begin
     -- handles opening and closing and closing and reopening
     apex_debug.message(p_message => 'Begin process_exclusiveGateway for object: '||p_step_info.target_objt_tag, p_level => 3) ;
@@ -854,7 +870,7 @@ begin
     );
     if l_num_forward_connections > 1
     then -- opening gateway - get choice
-        l_forward_route := get_exclusiveGateway_route(p_process_id, p_step_info.target_objt_ref);
+        l_forward_route := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
     else -- closing gateway - keep going
         l_forward_route := null;
     end if;  
@@ -1022,8 +1038,8 @@ begin
             and sbfl.sbfl_prcs_id = p_process_id
         ;
         flow_timers_pkg.start_timer
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
         );
     else
         -- not a timer.  Just set it to running for now.  (other types to be implemented later)
@@ -1038,6 +1054,41 @@ begin
     end if;
     
 end process_intermediateCatchEvent;
+
+procedure process_intermediateThrowEvent
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_step_info
+  )
+is 
+begin
+    -- currently only supports none Intermediate throw event (used as a process state marker)
+    -- but this might later have a case type = timer, emailSend, etc. ....
+    apex_debug.message(p_message => 'Begin process_IntermediateThrowEvent '||p_step_info.target_objt_ref, p_level => 4) ;
+    if p_step_info.target_objt_subtag is null
+    then
+        -- a none event.  Just call next step.  (other types to be implemented later)
+        update flow_subflows sbfl
+        set   sbfl.sbfl_current = p_step_info.target_objt_ref
+            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+            , sbfl.sbfl_last_update = sysdate
+            , sbfl.sbfl_status = 'running'
+        where sbfl.sbfl_id = p_subflow_id
+            and sbfl.sbfl_prcs_id = p_process_id
+        ;
+        flow_next_step
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );
+    else 
+        --- other type of intermediateThrowEvent that is not currently supported
+        apex_error.add_error
+            ( p_message => 'Currently unsupported type of Intermediate Throw Event encountered at '||p_sbfl_info.sbfl_current||' .'
+            , p_display_location => apex_error.c_on_error_page
+            );
+    end if;
+end process_intermediateThrowEvent;
 
 procedure process_userTask
   ( p_process_id    in flow_processes.prcs_id%type
@@ -1226,9 +1277,9 @@ begin
           if child_subflows.objt_sub_tag_name = 'bpmn:timerEventDefinition'
           then
             flow_timers_pkg.terminate_timer
-                ( p_process_id => p_process_id
-                , p_subflow_id => child_subflows.sbfl_id
-                , p_return_code => l_return
+                ( pi_prcs_id => p_process_id
+                , pi_sbfl_id => child_subflows.sbfl_id
+                , po_return_code => l_return
                 );
           end if;
           -- delete the completed subflow and log it as complete
@@ -1499,6 +1550,14 @@ begin
          , p_sbfl_info => l_sbfl_rec
          , p_step_info => l_step_info
          ); 
+    when  'bpmn:intermediateThrowEvent' 
+    then 
+        flow_engine.process_intermediateThrowEvent
+         ( p_process_id => p_process_id
+         , p_subflow_id => p_subflow_id
+         , p_sbfl_info => l_sbfl_rec
+         , p_step_info => l_step_info
+         ); 
     when  'bpmn:task' 
     then 
         flow_engine.process_task
@@ -1575,8 +1634,8 @@ begin
         
     -- kill any timers sill running in the process
     flow_timers_pkg.terminate_process_timers(
-        p_process_id => p_process_id
-      , p_return_code => l_return_code
+        pi_prcs_id => p_process_id
+      , po_return_code => l_return_code
     );  
     
     delete
@@ -1615,8 +1674,8 @@ begin
 
     -- kill any timers sill running in the process
     flow_timers_pkg.delete_process_timers(
-        p_process_id => p_process_id
-      , p_return_code => l_return_code
+        pi_prcs_id => p_process_id
+      , po_return_code => l_return_code
     );  
 
     delete

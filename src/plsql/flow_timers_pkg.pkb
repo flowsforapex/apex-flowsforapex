@@ -242,7 +242,7 @@ as
   (
     pi_prcs_id      in flow_processes.prcs_id%type
   , pi_sbfl_id      in flow_subflows.sbfl_id%type
-  , pi_return_code out number
+  , po_return_code out number
   )
   is
   begin
@@ -260,7 +260,7 @@ as
   procedure terminate_process_timers
   (
     pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_return_code out number
+  , po_return_code out number
   )
   is
   begin
@@ -276,7 +276,7 @@ as
 
   procedure terminate_all_timers
   (
-    pi_return_code  out  number
+    po_return_code  out  number
   )
   is
   begin
@@ -294,7 +294,7 @@ as
   procedure delete_process_timers
   (
     pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_return_code out number
+  , po_return_code out number
   )
   is 
   begin
