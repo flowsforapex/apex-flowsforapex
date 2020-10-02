@@ -153,13 +153,15 @@ end get_gateway_route;
 
 function subflow_start
   ( 
-    p_process_id      in flow_processes.prcs_id%type
-  , p_parent_subflow  in flow_subflows.sbfl_id%type
-  , p_starting_object in flow_objects.objt_bpmn_id%type
-  , p_current_object  in flow_objects.objt_bpmn_id%type
-  , p_route           in flow_subflows.sbfl_route%type
-  , p_last_completed  in flow_objects.objt_bpmn_id%type
-  , p_status       in flow_subflows.sbfl_status%type default 'running'
+    p_process_id                in flow_processes.prcs_id%type
+  , p_parent_subflow            in flow_subflows.sbfl_id%type
+  , p_starting_object           in flow_objects.objt_bpmn_id%type
+  , p_current_object            in flow_objects.objt_bpmn_id%type
+  , p_route                     in flow_subflows.sbfl_route%type
+  , p_last_completed            in flow_objects.objt_bpmn_id%type
+  , p_status                    in flow_subflows.sbfl_status%type default 'running'
+  , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
+  , p_new_proc_level            in boolean default false
   ) return flow_subflows.sbfl_id%type
   is 
     l_ret flow_subflows.sbfl_id%type;
@@ -169,6 +171,7 @@ function subflow_start
       into flow_subflows
          ( sbfl_prcs_id
          , sbfl_sbfl_id
+         , sbfl_process_level
          , sbfl_starting_object
          , sbfl_route
          , sbfl_last_completed
@@ -179,6 +182,7 @@ function subflow_start
     values
          ( p_process_id
          , p_parent_subflow
+         , p_parent_sbfl_proc_level
          , p_starting_object
          , p_route
          , p_last_completed
@@ -188,6 +192,13 @@ function subflow_start
          )
       returning sbfl_id into l_ret
     ;
+    if p_new_proc_level then
+        -- starting new process or new subprocess.  Set sbfl_process_level to new sbfl_id
+        update flow_subflows
+        set sbfl_process_level = l_ret
+        where sbfl_id = l_ret
+        ;
+    end if;
     apex_debug.message(p_message => 'Subflow '||l_ret||' started', p_level => 3) ;
     return l_ret;
 end subflow_start;
@@ -346,6 +357,8 @@ begin
       , p_route => 'main'
       , p_last_completed => null
       , p_status => l_new_subflow_status 
+      , p_parent_sbfl_proc_level => null 
+      , p_new_proc_level => true
       );
 
     if l_objt_sub_tag_name = 'bpmn:timerEventDefinition'
@@ -650,7 +663,9 @@ begin
                       , p_starting_object =>  p_step_info.target_objt_ref         
                       , p_current_object => p_step_info.target_objt_ref          
                       , p_route =>  new_path.route         
-                      , p_last_completed =>  p_step_info.target_objt_ref        
+                      , p_last_completed =>  p_step_info.target_objt_ref  
+                      , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
+                      , p_new_proc_level => false
                       );
                   -- step into first step on the new path
                   flow_next_step    
@@ -752,7 +767,9 @@ begin
                         , p_starting_object =>  p_step_info.target_objt_ref        
                         , p_current_object => p_step_info.target_objt_ref          
                         , p_route =>  new_path.route         
-                        , p_last_completed =>  p_step_info.target_objt_ref        
+                        , p_last_completed =>  p_step_info.target_objt_ref  
+                        , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
+                        , p_new_proc_level => false      
                         );
                     -- step into first step on the new path
                     flow_next_step 
@@ -932,6 +949,8 @@ begin
               , p_current_object => l_target_objt_sub -- subProc startEvent
               , p_route => 'sub main'
               , p_last_completed => p_sbfl_info.sbfl_last_completed -- previous activity on parent proc
+              , p_parent_sbfl_proc_level => null
+              , p_new_proc_level => true
               );
       -- step into sub_process
       flow_next_step   
@@ -986,7 +1005,9 @@ begin
                 , p_current_object => p_step_info.target_objt_ref          
                 , p_route =>  new_path.route         
                 , p_last_completed =>  p_step_info.target_objt_ref 
-                , p_status => 'waiting for event'       
+                , p_status => 'waiting for event'   
+                , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
+                , p_new_proc_level => false    
                 );
             -- step into first step on the new path
             flow_next_step   

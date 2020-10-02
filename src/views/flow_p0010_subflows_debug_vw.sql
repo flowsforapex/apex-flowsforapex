@@ -21,6 +21,7 @@ as
        , sbfl.sbfl_current_lane
        , sbfl.sbfl_current_lane_name
        , sbfl.sbfl_next_step_type
+       , sbfl.sbfl_process_level
        , case
           when sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event', 'waiting for timer') then
             '<span class="' ||
