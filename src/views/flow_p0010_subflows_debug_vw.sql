@@ -3,6 +3,7 @@
 create or replace view flow_p0010_subflows_debug_vw
 as
   select sbfl.sbfl_id
+       , sbfl.sbfl_sbfl_id
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_process_name
        , sbfl.sbfl_dgrm_name
@@ -15,12 +16,14 @@ as
        , sbfl.sbfl_current
        , sbfl.sbfl_current_name 
        , sbfl.sbfl_current_tag_name
-       , sbfl.sbfl_starting_object_name as sbfl_starting_object
+       , sbfl.sbfl_starting_object
+       , sbfl.sbfl_starting_object_name 
        , sbfl.sbfl_last_update
        , sbfl.sbfl_status
        , sbfl.sbfl_current_lane
        , sbfl.sbfl_current_lane_name
        , sbfl.sbfl_next_step_type
+       , sbfl.sbfl_process_level
        , case
           when sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event', 'waiting for timer') then
             '<span class="' ||
