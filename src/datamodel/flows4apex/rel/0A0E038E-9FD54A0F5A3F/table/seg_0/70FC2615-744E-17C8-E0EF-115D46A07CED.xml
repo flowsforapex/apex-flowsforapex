@@ -132,6 +132,21 @@
 <ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
+<Column name="CONN_IS_DEFAULT" id="DF59B66D-A9B5-CBEC-0246-DEBCC2D44F3A">
+<createdBy>moklein</createdBy>
+<createdTime>2020-10-01 17:07:55 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<listOfValues>
+<valueDef value="0" description="No"/>
+<valueDef value="1" description="Yes"/>
+</listOfValues>
+<defaultValue>0</defaultValue>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 </columns>
 <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
 <ind_PK_UK id="5F4E9BA5-9B8F-8FAC-AC10-7555F5B06961" name="CONN_PK">
