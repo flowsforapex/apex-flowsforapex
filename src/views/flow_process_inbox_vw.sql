@@ -1,4 +1,4 @@
-create view flow_process_inbox_vw as 
+create or replace view flow_process_inbox_vw as 
 select SBFL_ID,
        SBFL_SBFL_ID,
        SBFL_PRCS_ID,

@@ -1,4 +1,4 @@
-create view FLOW_P0003_VW
+create or replace view FLOW_P0003_VW
 as
   select dgrm.dgrm_id
        , dgrm.dgrm_name
