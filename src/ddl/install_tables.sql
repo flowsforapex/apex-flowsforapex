@@ -128,6 +128,7 @@ CREATE TABLE flow_subflows (
     sbfl_last_completed   VARCHAR2(50 CHAR),
     sbfl_current          VARCHAR2(50 CHAR),
     sbfl_status           VARCHAR2(20 CHAR),
+    sbfl_has_events        VARCHAR2(200 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL
 );
 

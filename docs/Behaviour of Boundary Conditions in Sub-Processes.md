@@ -22,8 +22,30 @@ This process has a SubProcess A.  In the sub-process, there is an exclusive gate
 
 Note that an error in this context is a *process error*, not a technical error in the application -- which would be handled by the application technology.
 
-- An Error End always interupts processing in the sub-process.  Processing in the sub-process, and any of its child sub-processes, are terminated.
+Behaviour is:
+
+- An Error End always interupts processing in the sub-process.  Processing in the sub-process, and any of its running child sub-processes, are terminated.
+- Terminated objects are not marked as having been completed.
 - If the immediate parent process contains an Error Boundary Event, processing continues on that path in the immediate parent.
   - In the  example above, the path would be: Error A -> A error End -> Error Boundary Event -> Error Handler in Parent -> Error End.
 - If the immediate parent process doesn't contain an Error Boundary Event, processing continues on the normal path in the immediate parent.
-  - In the example above, if there is an errorEnd but NOT a error Boundary Event, the path would be: Error A -> A Error End -> B -> Normal
+  - In the example above, if there is an errorEnd but NOT a error Boundary Event defined, the path would be: Error A -> A Error End -> B -> Normal End.
+
+### Timer Boundary Events
+
+![Timer Boundary Event Types](images/timerBoundaryEventTypes.png "Timer Boundary Event Types")
+
+Timer Boundary Events can be *interrupting* or *non-interrupting*.
+
+- An *interrupting timer boundary event* can be used to create a "timeout" after a specified time period or at a specified time.  When the timer fires at the specified time, processing of the sub-process and any child sub-processes is interrupted.  The parent subflow continues along the route forward from the interrupting timer boundary event.
+- A *non-interrupting timer boundary event* can be used to create a reminder  after the process step has been started for a specified time period, or at a specified time.  When the timer fires, processing of the parent task continues.  In addition, a new subflow processes tasks on the reminder route.
+
+A more complex example of how these can be used together is shown below.
+
+![Timer Boundary Event Example](images/timerBoundaryConditionsExample.png "Timer Boundary Event Example")
+In this example, sub-Process B has 3 boundaryEvents attached to it.  In addition to the Error Exit Event and corresponding Error Boundary Event for handling the error in the parent process, there are 2 timer booundary events.
+
+The Reminder Timer is set to fire after 2 days.  This is a non-interrupting timer.  When it fires, a reminder is sent to the user on a new subflow.
+
+The TimeOut Timer is  set to fire after 5 days.  This is an interrupting timer.  when it fires, and processing inside sub-process B is terminated.  The subflows that are running to process inside sub-process B are terminated.  The main subflow (which went from Start -> A -> B) proceeds to Timeout Handler.  C and D will not be executed.
+
