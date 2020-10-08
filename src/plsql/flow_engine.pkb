@@ -203,6 +203,53 @@ function subflow_start
     return l_ret;
 end subflow_start;
 
+procedure flow_stop_all_in_level
+( p_process_id   in flow_processes.prcs_id%type
+, p_subflow_id   in flow_subflows.sbfl_id%type
+)
+is
+    l_process_level   flow_subflows.sbfl_process_level%type;
+begin
+    apex_debug.message(p_message => 'Begin flow_stop_all_in_level for prcs '||p_process_id||' subflow '||p_subflow_id, p_level => 3) ;
+    --
+    begin
+      select sbfl.sbfl_process_level
+        into l_process_level 
+        from flow_subflows sbfl
+      where sbfl.sbfl_id = p_subflow_id
+        and sbfl.sbfl_prcs_id = p_process_id
+      ;
+    exception
+      when no_data_found 
+      then
+        return;
+    end;
+    -- find any running subprocesses with parent at this level
+    begin
+      for running_subprocs in (
+        select child_sbfl.sbfl_id
+          from flow_subflows parent_sbfl
+          join flow_subflows child_sbfl
+            on parent_sbfl.sbfl_current = child_sbfl.sbfl_starting_object
+         where parent_sbfl.sbfl_status = 'in subprocess'
+           and parent_sbfl.sbfl_process_level = l_process_level
+      )
+      loop
+        flow_stop_all_in_level
+        ( p_process_id => p_process_id
+        , p_subflow_id => running_subprocs.sbfl_id);
+      end loop;
+    exception
+      when no_data_found then
+        null;
+    end;
+    -- end all subflows in the level
+    delete from flow_subflows
+    where sbfl_process_level = l_process_level 
+      and sbfl_prcs_id = p_process_id
+      ;
+end flow_stop_all_in_level;
+
 procedure subflow_complete
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -244,13 +291,10 @@ procedure subflow_complete
       ;
     end if;
 
-    -- delete the completed subflow and log it as complete
-    delete
-      from flow_subflows sbfl
-     where sbfl.sbfl_prcs_id = p_process_id
-       and sbfl.sbfl_id = p_subflow_id
-       ;  
-      -- log current step as completed
+    -- delete the completed subflow and any remaining orphan subflows or child subprocesses
+    flow_stop_all_in_level(p_process_id, p_subflow_id);
+
+    -- log current step as completed
     log_step_completion
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
@@ -406,47 +450,6 @@ begin
     where sbfl.sbfl_prcs_id = p_process_id
     ;
 end flow_terminate;
-
-procedure flow_stop_all_in_level
-( p_process_id   in flow_processes.prcs_id%type
-, p_subflow_id   in flow_subflows.sbfl_id%type
-)
-is
-    l_process_level   flow_subflows.sbfl_process_level%type;
-begin
-    apex_debug.message(p_message => 'Begin flow_stop_all_in_level for prcs '||p_process_id||' subflow '||p_subflow_id, p_level => 3) ;
-    --
-    select sbfl_process_level
-      into l_process_level 
-      from flow_subflows
-     where sbfl_id = p_subflow_id
-       and sbfl_prcs_id = p_process_id
-     ;
-    -- find any running subprocesses with parent at this level
-    begin
-      for running_subprocs in (
-        select child_sbfl.sbfl_id
-          from flow_subflows parent_sbfl
-          join flow_subflows child_sbfl
-            on parent_sbfl.sbfl_current = child_sbfl.sbfl_starting_object
-         where parent_sbfl.sbfl_status = 'in subprocess'
-           and parent_sbfl.sbfl_process_level = l_process_level
-      )
-      loop
-        flow_stop_all_in_level
-        ( p_process_id => p_process_id
-        , p_subflow_id => running_subprocs.sbfl_id);
-      end loop;
-    exception
-      when no_data_found then
-        null;
-    end;
-    -- end all subflows in the level
-    delete from flow_subflows
-    where sbfl_process_level = l_process_level 
-      and sbfl_prcs_id = p_process_id
-      ;
-end flow_stop_all_in_level;
 
 procedure flow_set_boundary_timers
 ( p_process_id    in flow_processes.prcs_id%type
@@ -737,7 +740,7 @@ begin
             flow_stop_all_in_level
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
-            );
+            ); 
         elsif p_step_info.target_objt_subtag is null 
         then 
             -- normal end event
