@@ -11,6 +11,7 @@ as
       objt_name           t_vc200
     , objt_tag_name       flow_types_pkg.t_bpmn_id
     , objt_parent_bpmn_id flow_types_pkg.t_bpmn_id
+    , objt_sub_tag_name   flow_types_pkg.t_bpmn_id
     );
   type t_objt_tab is table of t_objt_rec index by flow_types_pkg.t_bpmn_id;
 
@@ -25,16 +26,18 @@ as
     );
   type t_conn_tab is table of t_conn_rec index by flow_types_pkg.t_bpmn_id;
 
-  type t_lane_ref_tab is table of flow_types_pkg.t_bpmn_id index by flow_types_pkg.t_bpmn_id;
+  type t_bpmn_ref_tab is table of flow_types_pkg.t_bpmn_id index by flow_types_pkg.t_bpmn_id;
+  type t_bpmn_id_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   -- Variables to hold data during parse run
-  g_dgrm_id     flow_diagrams.dgrm_id%type;
-  g_objects     t_objt_tab;
-  g_connections t_conn_tab;
-  g_lane_refs   t_lane_ref_tab;
-  g_objt_lookup t_id_lookup_tab;
+  g_dgrm_id      flow_diagrams.dgrm_id%type;
+  g_objects      t_objt_tab;
+  g_connections  t_conn_tab;
+  g_lane_refs    t_bpmn_ref_tab;
+  g_default_cons t_bpmn_id_tab;
+  g_objt_lookup  t_id_lookup_tab;
 
 
   procedure register_object
@@ -55,7 +58,7 @@ as
       l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
 
       g_objects( pi_objt_bpmn_id ) := l_objt_rec;
-    end if;  
+    end if;
   end register_object;
 
   procedure register_connection
@@ -128,7 +131,9 @@ as
   , po_conn_id          out flow_connections.conn_id%type
   )
   as
+    l_conn_is_default flow_connections.conn_is_default%type := 0;
   begin
+    l_conn_is_default := case when g_default_cons.exists(pi_conn_bpmn_id) then 1 else 0 end;
     insert
       into flow_connections
             (
@@ -139,6 +144,7 @@ as
             , conn_tgt_objt_id
             , conn_tag_name
             , conn_origin
+            , conn_is_default
             )
     values (
               g_dgrm_id
@@ -148,6 +154,7 @@ as
             , pi_conn_tgt_objt_id
             , pi_conn_tag_name
             , pi_conn_origin
+            , l_conn_is_default 
             )
       returning conn_id into po_conn_id
     ;
@@ -187,7 +194,7 @@ as
 
       -- checks passed insert into table
       if l_parent_check and l_lane_check then
-        
+
         insert_object
         (
           pi_objt_bpmn_id      => l_cur_objt_bpmn_id
@@ -267,7 +274,7 @@ as
 
     process_objects;
     process_connections;
-    
+
   end finalize;
 
   function upload_diagram
@@ -389,10 +396,11 @@ as
   )
     return flow_types_pkg.t_bpmn_id
   as
-    c_nsmap        constant t_vc200 := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
-    c_terminateEnd constant t_vc50  := 'bpmn:terminateEventDefinition';
-    c_timer        constant t_vc50  := 'bpmn:timerEventDefinition';
-    l_return t_vc50;
+    c_nsmap        constant t_vc200                  := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
+    c_terminateEnd constant flow_types_pkg.t_bpmn_id := 'bpmn:terminateEventDefinition';
+    c_timer        constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
+
+    l_return flow_types_pkg.t_bpmn_id;
   begin
 
     if pi_xml.existsNode( xpath => '/' || c_terminateEnd, nsmap => c_nsmap ) = 1 then
@@ -419,6 +427,7 @@ as
                      , steps.steps_id
                      , steps.source_ref
                      , steps.target_ref
+                     , steps.default_conn
                      , steps.child_elements
                   from xmltable
                        (
@@ -430,6 +439,7 @@ as
                          , steps_id       varchar2(50 char)  path '@id'
                          , source_ref     varchar2(50 char)  path '@sourceRef'
                          , target_ref     varchar2(50 char)  path '@targetRef'
+                         , default_conn   varchar2(50 char)  path '@default'
                          , child_elements xmltype            path '* except bpmn:incoming except bpmn:outgoing'
                        ) steps
                )
@@ -453,6 +463,10 @@ as
           l_objt_sub_tag_name := null;
         end if;
 
+        if rec.default_conn is not null then
+          g_default_cons(rec.default_conn) := 1;
+        end if;
+
         register_object
         (
           pi_objt_bpmn_id        => rec.steps_id
@@ -462,7 +476,7 @@ as
         , pi_objt_parent_bpmn_id => pi_proc_bpmn_id
         );
 
-        -- Register Object on Lane if parent blongs to a lane
+        -- Register Object on Lane if parent belongs to a lane
         -- Those connections are not directly visible in the XML
         -- but BPMN defines inheritance for these.
         if g_lane_refs.exists( pi_proc_bpmn_id ) and rec.steps_id is not null then
@@ -489,7 +503,7 @@ as
       end if;
     end loop;  
   end parse_steps;
-  
+
   procedure parse_xml
   (
     pi_xml       in xmltype
@@ -540,15 +554,15 @@ as
 
         -- recurse if sub processes found
         if rec.proc_sub_procs is not null then
-        
+
           parse_xml
           ( 
             pi_xml => rec.proc_sub_procs
           , pi_parent_id => rec.proc_id
           );
-        
+
         end if;
-        
+
       end loop;
     else
       for rec in (
@@ -588,7 +602,7 @@ as
         , pi_proc_type    => rec.proc_type_rem
         , pi_proc_bpmn_id => rec.proc_id
         );
-        
+
         -- recurse if we found any sub process
         if rec.proc_sub_procs is not null then
           parse_xml
@@ -626,7 +640,7 @@ as
                           , colab_tgt_ref varchar2(50 char)  path '@targetRef'
                         ) colab
     ) loop
-    
+
       case
         when rec.colab_src_ref is null then
           register_object
@@ -647,9 +661,9 @@ as
           );
 
       end case;
-    
+
     end loop;
-    
+
   end parse_collaboration;
 
   procedure reset
@@ -667,7 +681,7 @@ as
   begin
     -- delete any existing parsed information before parsing again
     cleanup_parsing_tables;
-    
+
     -- get the CLOB content
     select dgrm_content
       into l_dgrm_content
@@ -719,11 +733,11 @@ as
   as
   begin
     reset;
-  
+
     upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
     parse;
-    
+
   end upload_and_parse;
 
 end flow_bpmn_parser_pkg;
-/
+/ 
