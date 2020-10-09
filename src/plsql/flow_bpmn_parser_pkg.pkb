@@ -15,6 +15,17 @@ as
     );
   type t_objt_tab is table of t_objt_rec index by flow_types_pkg.t_bpmn_id;
 
+  type t_obat_rec is
+    record
+    (
+      obat_key            flow_types_pkg.t_bpmn_id
+    , obat_num_value      flow_object_attributes.obat_num_value%type
+    , obat_date_value     flow_object_attributes.obat_date_value%type
+    , obat_vc_value       flow_object_attributes.obat_vc_value%type
+    , obat_clob_value     flow_object_attributes.obat_clob_value%type
+    );
+  type t_obat_tab is table of t_obat_rec index by flow_types_pkg.t_bpmn_id;
+
   type t_conn_rec is
     record
     (
@@ -32,12 +43,13 @@ as
   type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   -- Variables to hold data during parse run
-  g_dgrm_id      flow_diagrams.dgrm_id%type;
-  g_objects      t_objt_tab;
-  g_connections  t_conn_tab;
-  g_lane_refs    t_bpmn_ref_tab;
-  g_default_cons t_bpmn_id_tab;
-  g_objt_lookup  t_id_lookup_tab;
+  g_dgrm_id        flow_diagrams.dgrm_id%type;
+  g_objects        t_objt_tab;
+  g_obj_attributes t_obat_tab;
+  g_connections    t_conn_tab;
+  g_lane_refs      t_bpmn_ref_tab;
+  g_default_cons   t_bpmn_id_tab;
+  g_objt_lookup    t_id_lookup_tab;
 
 
   procedure register_object
@@ -60,6 +72,28 @@ as
       g_objects( pi_objt_bpmn_id ) := l_objt_rec;
     end if;
   end register_object;
+
+  procedure register_object_attributes
+  (
+    pi_objt_id          in flow_object_attributes.obat_objt_id%type
+  , pi_obat_key         in flow_object_attributes.obat_key%type
+  , pi_obat_num_value   in flow_object_attributes.obat_num_value%type default null
+  , pi_obat_date_value  in flow_object_attributes.obat_date_value%type default null
+  , pi_obat_vc_value    in flow_object_attributes.obat_vc_value%type default null
+  , pi_obat_clob_value  in flow_object_attributes.obat_clob_value%type default null
+  )
+  as
+    l_obat_rec t_obat_rec;
+  begin
+    if pi_objt_bpmn_id is not null then
+      l_objt_rec.objt_name           := pi_objt_name;
+      l_objt_rec.objt_tag_name       := pi_objt_tag_name;
+      l_objt_rec.objt_sub_tag_name   := pi_objt_sub_tag_name;
+      l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
+
+      g_objects( pi_objt_bpmn_id ) := l_objt_rec;
+    end if;
+  end register_object_attributes;
 
   procedure register_connection
   (
@@ -396,21 +430,112 @@ as
   )
     return flow_types_pkg.t_bpmn_id
   as
-    c_nsmap        constant t_vc200                  := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
-    c_terminateEnd constant flow_types_pkg.t_bpmn_id := 'bpmn:terminateEventDefinition';
-    c_timer        constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
+    c_nsmap constant t_vc200 := flow_constants_pkg.gc_nsmap;
+
+    c_terminateEnd constant flow_types_pkg.t_bpmn_id := flow_constants_pkg.gc_bpmn_terminate_event_definition;
+
+    c_timer               constant flow_types_pkg.t_bpmn_id := flow_constants_pkg.gc_bpmn_timer_event_definition;
+    c_timer_type_date     constant flow_types_pkg.t_bpmn_id := 'bpmn:' || flow_constants_pkg.gc_timer_type_date;
+    c_timer_type_duration constant flow_types_pkg.t_bpmn_id := 'bpmn:' || flow_constants_pkg.gc_timer_type_duration;
+    c_timer_type_cycle    constant flow_types_pkg.t_bpmn_id := 'bpmn:' || flow_constants_pkg.gc_timer_type_cycle;
 
     l_return flow_types_pkg.t_bpmn_id;
   begin
 
     if pi_xml.existsNode( xpath => '/' || c_terminateEnd, nsmap => c_nsmap ) = 1 then
       l_return := c_terminateEnd;
+
     elsif pi_xml.existsNode( xpath => '/' || c_timer, nsmap => c_nsmap ) = 1 then
       l_return := c_timer;
+    elsif pi_xml.existsNode( xpath => '/' || c_timer_type_date, nsmap => c_nsmap ) = 1 then
+      l_return := c_timer_type_date;
+    elsif pi_xml.existsNode( xpath => '/' || c_timer_type_duration, nsmap => c_nsmap ) = 1 then
+      l_return := c_timer_type_duration;
+    elsif pi_xml.existsNode( xpath => '/' || c_timer_type_cycle, nsmap => c_nsmap ) = 1 then
+      l_return := c_timer_type_cycle;
     end if;
 
     return l_return;
   end find_subtag_name;
+
+  procedure parse_child_elements
+  (
+    pi_objt_bpmn_id
+  , pi_xml
+  , pi_subtag_name
+  )
+  as
+    l_st_type           flow_types_pkg.t_bpmn_id;
+    l_st_id             flow_types_pkg.t_bpmn_id;
+    l_st_details        xmltype;
+    l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
+    l_dt_value          flow_object_attributes.obat_vc_value%type;
+  begin
+
+    if pi_subtag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
+	  begin
+	    select subtag.st_type
+			 , subtag.st_id
+			 , subtag.st_details
+          into l_st_type
+             , l_st_id
+             , l_st_details
+          from xmltable
+               (
+                 xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+               , 'bpmn:timerEventDefinition' passing pi_xml
+                 columns
+                   st_type     varchar2(50 char)    path 'name()'
+                 , st_id       varchar2(50 char)    path '@id'
+                 , st_details  xmltype              path '*'
+               ) subtag;
+      end;
+
+      l_objt_sub_tag_name := find_subtag_name( pi_xml => l_st_details );
+
+      if l_objt_sub_tag_name = 'bpmn:' || flow_constants_pkg.gc_timer_type_date then
+        begin
+	      select detail.dt_value
+            into l_dt_value
+            from xmltable
+                 (
+                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                 , 'bpmn:timeDate' passing st_details
+                   columns
+                     dt_value varchar2(50 char) path 'text()'
+                 ) detail;
+        end;
+      elsif l_objt_sub_tag_name = 'bpmn:' || flow_constants_pkg.gc_timer_type_duration then
+	    begin
+	      select detail.dt_value
+            into l_dt_value
+            from xmltable
+                 (
+                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                 , 'bpmn:timeDuration' passing st_details
+                   columns
+                     dt_value varchar2(50 char) path 'text()'
+                 ) detail;
+        end;
+      elsif l_objt_sub_tag_name = 'bpmn:' || flow_constants_pkg.gc_timer_type_cycle then
+	    begin
+	      select detail.dt_value
+            into l_dt_value
+            from xmltable
+                 (
+                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                 , 'bpmn:timeCycle' passing st_details
+                   columns
+                     dt_value varchar2(50 char) path 'text()'
+                 ) detail;
+        end;
+      end if;
+
+    elsif pi_subtag_name = flow_constants_pkg.gc_bpmn_terminate_event_definition then
+      null;
+	end if;
+
+  end parse_child_elements;
 
   procedure parse_steps
   (
@@ -453,12 +578,12 @@ as
         -- Additionally collect generic attributes if possible
         if rec.child_elements is not null then
           l_objt_sub_tag_name := find_subtag_name( pi_xml => rec.child_elements );
-          -- parse_child_elements
-          -- (
-          --   pi_objt_bpmn_id => rec.steps_id
-          -- , pi_xml          => rec.child_elements
-          -- , pi_subtag_name  => l_objt_sub_tag_name
-          -- );
+          parse_child_elements
+          (
+            pi_objt_bpmn_id => rec.steps_id
+          , pi_xml          => rec.child_elements
+          , pi_subtag_name  => l_objt_sub_tag_name
+          );
         else
           l_objt_sub_tag_name := null;
         end if;
