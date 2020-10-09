@@ -82,7 +82,9 @@ CREATE TABLE flow_objects (
     objt_tag_name      VARCHAR2(50 CHAR),
     objt_sub_tag_name  VARCHAR2(50 CHAR),
     objt_objt_id       NUMBER,
-    objt_objt_lane_id  NUMBER
+    objt_objt_lane_id  NUMBER,
+    objt_attached_to   VARCHAR2(50 CHAR),
+    objt_interrupting  NUMBER
 );
 
 COMMENT ON COLUMN flow_objects.objt_objt_lane_id IS
@@ -120,11 +122,13 @@ CREATE TABLE flow_subflows (
     NOT NULL,
     sbfl_prcs_id          NUMBER NOT NULL,
     sbfl_sbfl_id          NUMBER,
+    sbfl_process_level    NUMBER,
     sbfl_starting_object  VARCHAR2(50 CHAR),
     sbfl_route            VARCHAR2(100 CHAR),
     sbfl_last_completed   VARCHAR2(50 CHAR),
     sbfl_current          VARCHAR2(50 CHAR),
     sbfl_status           VARCHAR2(20 CHAR),
+    sbfl_has_events        VARCHAR2(200 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
