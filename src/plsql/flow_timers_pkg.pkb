@@ -257,12 +257,6 @@ as
       , l_repeat_times
       )
     ;
-    update flow_subflows sbfl
-       set sbfl.sbfl_has_events = sbfl.sbfl_has_events||':T'
-     where sbfl.sbfl_id = pi_sbfl_id
-       and sbfl.sbfl_prcs_id = pi_prcs_id
-    ;
-
   end start_timer;
 
 /******************************************************************************

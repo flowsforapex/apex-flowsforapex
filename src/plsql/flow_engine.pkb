@@ -203,14 +203,14 @@ function subflow_start
     return l_ret;
 end subflow_start;
 
-procedure flow_stop_all_in_level
+procedure flow_terminate_level
 ( p_process_id   in flow_processes.prcs_id%type
 , p_subflow_id   in flow_subflows.sbfl_id%type
 )
 is
     l_process_level   flow_subflows.sbfl_process_level%type;
 begin
-    apex_debug.message(p_message => 'Begin flow_stop_all_in_level for prcs '||p_process_id||' subflow '||p_subflow_id, p_level => 3) ;
+    apex_debug.message(p_message => 'Begin flow_terminate_level for prcs '||p_process_id||' subflow '||p_subflow_id, p_level => 3) ;
     --
     begin
       select sbfl.sbfl_process_level
@@ -235,7 +235,7 @@ begin
            and parent_sbfl.sbfl_process_level = l_process_level
       )
       loop
-        flow_stop_all_in_level
+        flow_terminate_level
         ( p_process_id => p_process_id
         , p_subflow_id => running_subprocs.sbfl_id);
       end loop;
@@ -248,21 +248,22 @@ begin
     where sbfl_process_level = l_process_level 
       and sbfl_prcs_id = p_process_id
       ;
-end flow_stop_all_in_level;
+end flow_terminate_level;
 
 procedure subflow_complete
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
+  ( p_process_id        in flow_processes.prcs_id%type
+  , p_subflow_id        in flow_subflows.sbfl_id%type
+  , p_is_subprocess_end in boolean default false
   )
   is
-    l_remaining_subflows number;
-    l_remaining_siblings number;
-    l_current_object flow_subflows.sbfl_current%type;
-    l_current_subflow_status flow_subflows.sbfl_status%type;
-    l_parent_subflow_id flow_subflows.sbfl_sbfl_id%type;
-    l_parent_subflow_status flow_subflows.sbfl_status%type;
-    l_parent_subflow_last_completed flow_subflows.sbfl_last_completed%type;
-    l_parent_subflow_current flow_subflows.sbfl_current%type;
+    l_remaining_subflows              number;
+    l_remaining_siblings              number;
+    l_current_object                  flow_subflows.sbfl_current%type;
+    l_current_subflow_status          flow_subflows.sbfl_status%type;
+    l_parent_subflow_id               flow_subflows.sbfl_sbfl_id%type;
+    l_parent_subflow_status           flow_subflows.sbfl_status%type;
+    l_parent_subflow_last_completed   flow_subflows.sbfl_last_completed%type;
+    l_parent_subflow_current          flow_subflows.sbfl_current%type;
   begin
     apex_debug.message(p_message => 'Begin subflow_complete', p_level => 3) ;
     
@@ -292,7 +293,17 @@ procedure subflow_complete
     end if;
 
     -- delete the completed subflow and any remaining orphan subflows or child subprocesses
-    flow_stop_all_in_level(p_process_id, p_subflow_id);
+    if p_is_subprocess_end 
+    then
+        -- in different process levels.  Sub Processes can't end with multiple ends, so clear up rest of sub-proc
+        flow_terminate_level(p_process_id, p_subflow_id);
+    else
+        -- in the same process level so just delete the subflow
+        delete from flow_subflows
+        where   sbfl_id = p_subflow_id
+          and   sbfl_prcs_id = p_process_id
+          ;
+    end if;
 
     -- log current step as completed
     log_step_completion
@@ -496,7 +507,19 @@ begin
             ( pi_prcs_id => p_process_id
             , pi_sbfl_id => l_new_non_int_timer_sbfl
             );
+            -- set timer flag on child
+            update flow_subflows sbfl
+              set sbfl.sbfl_has_events = sbfl.sbfl_has_events||'T'
+            where sbfl.sbfl_id = l_new_non_int_timer_sbfl
+              and sbfl.sbfl_prcs_id = p_process_id
+            ;
         end case;
+        --- set timer flag on parent
+        update flow_subflows sbfl
+           set sbfl.sbfl_has_events = sbfl.sbfl_has_events||'T'
+         where sbfl.sbfl_id = p_subflow_id
+           and sbfl.sbfl_prcs_id = p_process_id
+        ;
     end loop;
   exception
     when no_data_found then
@@ -649,6 +672,12 @@ begin
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
         ;
+
+      -- set boundaryEvent Timers, if any
+      flow_set_boundary_timers 
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            );  
 end process_task;
 
 
@@ -692,6 +721,7 @@ begin
             subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
+            , p_is_subprocess_end => false
             );
         end if;
     else  
@@ -737,16 +767,24 @@ begin
                   );
             end;
             -- stop processing in sub process and all children
-            flow_stop_all_in_level
+            flow_terminate_level
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             ); 
-        elsif p_step_info.target_objt_subtag is null 
+        elsif p_step_info.target_objt_subtag = 'bpmn:terminateEventDefinition'
+        then
+            -- stop processing in sub process and all children
+            flow_terminate_level
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            ); 
+        elsif p_step_info.target_objt_subtag is null -- Normal End
         then 
             -- normal end event
             subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
+            , p_is_subprocess_end => true
             );
 
         end if;
@@ -821,6 +859,7 @@ begin
               subflow_complete
               ( p_process_id => p_process_id
               , p_subflow_id => completed_subflows.sbfl_id
+              , p_is_subprocess_end => false
               );
             end loop;
             l_gateway_forward_status := 'proceed';
@@ -1042,6 +1081,7 @@ begin
                   subflow_complete
                   ( p_process_id => p_process_id
                   , p_subflow_id => completed_subflows.sbfl_id
+                  , p_is_subprocess_end => false
                   );
                 end loop;     
                 --log gateway object as complete
@@ -1582,7 +1622,7 @@ begin
        ;
        if l_child_sbfl is not null 
        then 
-          flow_stop_all_in_level
+          flow_terminate_level
           ( p_process_id => p_process_id
           , p_subflow_id => l_child_sbfl
           );
@@ -1643,7 +1683,7 @@ begin
           p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
-    elsif l_curr_objt_tag_name in ( 'bpmn:subProcess' )   -- add activities into here later
+    elsif l_curr_objt_tag_name in ( 'bpmn:subProcess', 'bpmn:task' )   -- add activities into here later
     then
         handle_interrupting_boundary_event 
         ( p_process_id => p_process_id
@@ -1769,10 +1809,11 @@ begin
     );
   end;
   -- clean up any boundary events left over from the previous activity
-  if (l_step_info.source_objt_tag in ('bpmn:subProcess')      -- boundary event attachable types
+  if (l_step_info.source_objt_tag in ('bpmn:subProcess', 'bpmn:task')      -- boundary event attachable types
       and l_sbfl_rec.sbfl_has_events is not null )            -- subflow has events attached
   then
       -- 
+      apex_debug.message(p_message => 'boundary event cleanup triggered for subflow '||p_subflow_id, p_level => 4) ;
       flow_unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
 
