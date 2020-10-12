@@ -415,6 +415,7 @@ as
     c_timer             constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
     c_errorEvent        constant flow_types_pkg.t_bpmn_id := 'bpmn:errorEventDefinition';
     c_escalationEvent   constant flow_types_pkg.t_bpmn_id := 'bpmn:escalationEventDefinition';
+    c_linkEvent         constant flow_types_pkg.t_bpmn_id := 'bpmn:linkEventDefinition';
 
     l_return flow_types_pkg.t_bpmn_id;
   begin
@@ -427,6 +428,8 @@ as
       l_return := c_errorEvent;
     elsif pi_xml.existsNode( xpath => '/' || c_escalationEvent, nsmap => c_nsmap ) = 1 then
       l_return := c_escalationEvent;
+    elsif pi_xml.existsNode( xpath => '/' || c_linkEvent, nsmap => c_nsmap ) = 1 then
+      l_return := c_linkEvent;   
     end if;
 
     return l_return;
