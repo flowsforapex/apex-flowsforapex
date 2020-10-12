@@ -396,7 +396,6 @@ as
                  node_ref   varchar2(50 char) path 'text()'
              ) nodes
       ) loop
-        dbms_output.put_line( 'Set Lane for "' || node_rec.node_ref || '" to "' || lane_rec.lane_id || '"' );
         g_lane_refs( node_rec.node_ref ) := lane_rec.lane_id;
       end loop;
 
