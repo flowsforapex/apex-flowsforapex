@@ -12,16 +12,25 @@ Flows for APEX allows you to create sub processes within your process.  Sub proc
 
 Sub Processes are created using the modeller, as usual.
 
-### Current Limitations
+### Boundary Events on Sub Processes
+
+Starting with Flows for APEX V5.0, Sub Processes can have Timer and Error Boundary Events added to them.  See [behaviour Of Boundary Events in SubProcesses](behaviourOfBoundaryEventsinSubProcesses.md)
+
+### Terminate End Events in Sub Processes
+
+Starting with Flows for APEX V5.0, a Sub Process can contain a Terminate End Event.  If a Terminate End Event is reached, all processing in the sub process, along with any nested child sub processes running inside it, are terminated.  Control passes to the next event in the normal exit path to the sub process in its immediate parent process.
+
+## Current Limitations
 
 #### 1. Sub Processes must have 1 Start Event and 1 End Event
 
-A Sub Process must start with a single Start Event, which should be a simple Start Event (i.e., without any associated Timer, etc. event)
+A Sub Process must start with a single Start Event, which should be a simple Start Event (i.e., without any associated Timer, etc. event).
 
-#### 2. Sub Processes should operate in a single Lane
+A sub process must have a single, standard End Event.  (It may have additional non-standard end events, such as error end events, etc.).
 
-As is good BPMN style, a sub process should operate in a single lane.
+#### 2. A Sub Processes must operate in a single Lane
 
-#### 3. Sub Processes cannot contain a Terminate End Event
+As is good BPMN style, a sub process must operate in a single lane.
 
-Sub processes can currently only contain a single, standard End Event.  Terminate End Events are not currently supported.
+
+
