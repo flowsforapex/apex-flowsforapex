@@ -573,6 +573,40 @@ begin
   end;
 end flow_unset_boundary_timers;
 
+function flow_get_matching_link_object
+( pi_dgrm_id     in flow_diagrams.dgrm_id%type 
+, pi_link_bpmn_id   in flow_objects.objt_name%type
+) return varchar2
+is 
+    l_matching_catch_event  flow_objects.objt_bpmn_id%type;
+begin 
+     select catch_objt.objt_bpmn_id
+       into l_matching_catch_event
+       from flow_objects catch_objt
+       join flow_objects throw_objt
+         on catch_objt.objt_name = throw_objt.objt_name
+        and catch_objt.objt_dgrm_id = throw_objt.objt_dgrm_id
+        and catch_objt.objt_objt_id = throw_objt.objt_objt_id
+      where throw_objt.objt_dgrm_id = pi_dgrm_id
+        and throw_objt.objt_bpmn_id = pi_link_bpmn_id
+        and catch_objt.objt_sub_tag_name = 'bpmn:linkEventDefinition'
+        and throw_objt.objt_sub_tag_name = 'bpmn:linkEventDefinition'
+        and catch_objt.objt_tag_name = 'bpmn:intermediateCatchEvent'      
+        and throw_objt.objt_tag_name = 'bpmn:intermediateThrowEvent' 
+        ;
+    return l_matching_catch_event;
+exception
+  when no_data_found then
+      apex_error.add_error
+      ( p_message => 'Unable to find matching link catch event named '||pi_link_bpmn_id||' .'
+      , p_display_location => apex_error.c_on_error_page
+      );
+   when too_many_rows then
+      apex_error.add_error
+      ( p_message => 'More than one matching link catch event named '||pi_link_bpmn_id||' .'
+      , p_display_location => apex_error.c_on_error_page
+      );   
+end flow_get_matching_link_object;
 
 procedure flow_run_sync_plsql
 ( p_process_id    in flow_processes.prcs_id%type
@@ -1311,6 +1345,7 @@ begin
         );
     else
         -- not a timer.  Just set it to running for now.  (other types to be implemented later)
+        -- this includes bpmn:linkEventDefinition which should come here
         update flow_subflows sbfl
         set   sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -1330,6 +1365,7 @@ procedure process_intermediateThrowEvent
   , p_step_info     in flow_step_info
   )
 is 
+    l_next_objt      flow_objects.objt_bpmn_id%type;
 begin
     -- currently only supports none Intermediate throw event (used as a process state marker)
     -- but this might later have a case type = timer, emailSend, etc. ....
@@ -1349,6 +1385,33 @@ begin
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
+    elsif p_step_info.target_objt_subtag = 'bpmn:linkEventDefinition'
+    then
+        -- find matching link catching event & step to it
+        l_next_objt := flow_get_matching_link_object 
+          ( pi_dgrm_id => p_step_info.dgrm_id
+          , pi_link_bpmn_id => p_step_info.target_objt_ref
+          );
+        -- log throw event as complete
+        log_step_completion   
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        , p_completed_object => p_step_info.target_objt_ref
+        , p_notes => ''
+        );
+        -- jump into matching catch event
+        update flow_subflows sbfl
+        set   sbfl.sbfl_current = l_next_objt
+            , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+            , sbfl.sbfl_last_update = sysdate
+            , sbfl.sbfl_status = 'running'
+        where sbfl.sbfl_id = p_subflow_id
+            and sbfl.sbfl_prcs_id = p_process_id
+        ;
+        flow_next_step
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );      
     else 
         --- other type of intermediateThrowEvent that is not currently supported
         apex_error.add_error
