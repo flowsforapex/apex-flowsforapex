@@ -126,7 +126,7 @@ as
       );
   end flow_create;
 
-  function next_step_exists -- not using this now.  Needs checking. FFA41 remove PROCESS
+  /*function next_step_exists -- not using this now.  Needs checking. FFA41 remove PROCESS
   ( p_process_id in flow_processes.prcs_id%type
   ,  p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean
@@ -165,7 +165,7 @@ as
     when others
     then
       raise;
-  end next_step_exists;
+  end next_step_exists; 
 
   function next_step_exists_yn 
   ( p_process_id in flow_processes.prcs_id%type
@@ -184,7 +184,7 @@ as
       else 
           return 'n';
       end if;
-  end;
+  end;*/
 
   function next_multistep_exists 
   ( p_process_id in flow_processes.prcs_id%type
@@ -387,7 +387,7 @@ end flow_start;
 procedure flow_next_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in varchar2 default null -- FFA 41 remove this & only pass null once next_branch removed
+, p_forward_route in varchar2 default null -- FFA 41 remove this and only pass null once next_branch removed
 )
 is 
 begin
@@ -402,7 +402,7 @@ begin
   flow_engine.flow_next_step
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
-  , p_forward_route => null);   -- FFA 41 remove this & only pass null once next_branch removed
+  , p_forward_route => null);   -- FFA 41 remove this and only pass null once next_branch removed
 end flow_next_step;
 
 
@@ -438,3 +438,4 @@ procedure flow_next_branch
   end flow_delete;
 
 end flow_api_pkg;
+/

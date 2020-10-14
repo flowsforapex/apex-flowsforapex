@@ -9,32 +9,76 @@ as
   , po_timer_type out nocopy flow_object_attributes.obat_vc_value%type
   , po_timer_def  out nocopy flow_object_attributes.obat_vc_value%type
   )
-  as
+  is
+    l_objt_with_timer     flow_objects.objt_id%type;
   begin
-    for rec in (
-                select obat.obat_key
-                     , obat.obat_vc_value
-                  from flow_subflows sbfl
-                  join flow_processes prcs
-                    on prcs.prcs_id = sbfl.sbfl_prcs_id
-                  join flow_objects objt
-                    on objt.objt_bpmn_id = sbfl.sbfl_current
-                   and objt.objt_dgrm_id = prcs.prcs_dgrm_id
-                  join flow_object_attributes obat
-                    on obat.obat_objt_id = objt.objt_id
-                 where sbfl.sbfl_id = pi_sbfl_id
-                   and sbfl.sbfl_prcs_id = pi_prcs_id
-               )
-    loop
-      case rec.obat_key
-        when flow_constants_pkg.gc_timer_type_key then
-          po_timer_type := rec.obat_vc_value;
-        when flow_constants_pkg.gc_timer_def_key then
-          po_timer_def := rec.obat_vc_value;
-        else
-          null;
-      end case;
-    end loop;
+    -- get objt that timers are attached to (object or attached boundaryEvent)
+    begin 
+      select objt.objt_id
+        into l_objt_with_timer
+        from flow_subflows sbfl
+        join flow_processes prcs
+          on prcs.prcs_id = sbfl.sbfl_prcs_id
+        join flow_objects objt
+          on objt.objt_bpmn_id = sbfl.sbfl_current
+         and objt.objt_dgrm_id = prcs.prcs_dgrm_id
+       where sbfl.sbfl_id = pi_sbfl_id
+         and sbfl.sbfl_prcs_id = pi_prcs_id
+         and objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+         ;
+    exception
+      when no_data_found then
+        -- check for an interupting timer boundary event attached
+        begin
+          select boundary_objt.objt_id
+            into l_objt_with_timer
+            from flow_subflows sbfl
+            join flow_processes prcs
+              on prcs.prcs_id = sbfl.sbfl_prcs_id
+            join flow_objects main_objt
+              on main_objt.objt_bpmn_id = sbfl.sbfl_current
+             and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
+            join flow_objects boundary_objt
+              on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
+           where sbfl.sbfl_id = pi_sbfl_id
+             and sbfl.sbfl_prcs_id = pi_prcs_id
+             and boundary_objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+             and boundary_objt.objt_interrupting = 1
+             ;
+        exception
+          when no_data_found then
+            apex_error.add_error
+            ( p_message => 'Error finding object with timer in get_timer_definition. Subflow '||pi_sbfl_id||' .'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end;
+    end;
+    apex_debug.message(p_message => 'get_timer_definition.  Getting timer definition for object '||l_objt_with_timer||
+                       ' on subflow '|| pi_sbfl_id, p_level => 4) ;
+    begin 
+      for rec in (
+                  select obat.obat_key
+                        , obat.obat_vc_value
+                    from flow_object_attributes obat
+                    where obat.obat_objt_id = l_objt_with_timer
+                  )
+      loop
+        case rec.obat_key
+          when flow_constants_pkg.gc_timer_type_key then
+            po_timer_type := rec.obat_vc_value;
+          when flow_constants_pkg.gc_timer_def_key then
+            po_timer_def := rec.obat_vc_value;
+          else
+            null;
+        end case;
+      end loop;
+    exception
+      when no_data_found then
+            apex_error.add_error
+            ( p_message => 'No timer definitions found in get_timer_definition for object '||l_objt_with_timer||' .'
+            , p_display_location => apex_error.c_on_error_page
+            );
+    end;
   end get_timer_definition;
 
 /******************************************************************************
@@ -162,7 +206,7 @@ as
     , po_timer_type => l_timer_type
     , po_timer_def  => l_timer_def
     );
-
+    apex_debug.message(p_message => 'starting timer on subflow '||pi_sbfl_id||' type '||l_timer_type||' def '||l_timer_def, p_level => 4) ;
     case l_timer_type
       when flow_constants_pkg.gc_timer_type_date then
         l_parsed_ts := to_timestamp_tz( replace ( l_timer_def, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
@@ -213,7 +257,6 @@ as
       , l_repeat_times
       )
     ;
-
   end start_timer;
 
 /******************************************************************************
@@ -242,7 +285,7 @@ as
   (
     pi_prcs_id      in flow_processes.prcs_id%type
   , pi_sbfl_id      in flow_subflows.sbfl_id%type
-  , pi_return_code out number
+  , po_return_code out number
   )
   is
   begin
@@ -260,7 +303,7 @@ as
   procedure terminate_process_timers
   (
     pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_return_code out number
+  , po_return_code out number
   )
   is
   begin
@@ -276,7 +319,7 @@ as
 
   procedure terminate_all_timers
   (
-    pi_return_code  out  number
+    po_return_code  out  number
   )
   is
   begin
@@ -294,7 +337,7 @@ as
   procedure delete_process_timers
   (
     pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_return_code out number
+  , po_return_code out number
   )
   is 
   begin

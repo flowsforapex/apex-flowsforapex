@@ -22,7 +22,8 @@ as
         , flow_api_pkg.next_step_type( p_sbfl_id => sbfl_id ) as sbfl_next_step_type
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
-        , sbfl.sbfl_link as sbfl_link
+        , sbfl_process_level
+        , null as sbfl_link
      from flow_subflows sbfl
      join flow_processes prcs
        on prcs.prcs_id = sbfl.sbfl_prcs_id

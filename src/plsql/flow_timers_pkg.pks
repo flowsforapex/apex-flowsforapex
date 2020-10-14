@@ -71,7 +71,7 @@ create or replace package flow_timers_pkg as
   (
     pi_prcs_id      in flow_processes.prcs_id%type
   , pi_sbfl_id      in flow_subflows.sbfl_id%type
-  , pi_return_code out number
+  , po_return_code out number
   );
 
 /******************************************************************************
@@ -82,7 +82,7 @@ create or replace package flow_timers_pkg as
   procedure terminate_process_timers
   (
     pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_return_code out number
+  , po_return_code out number
   );
 
 /******************************************************************************
@@ -93,7 +93,7 @@ create or replace package flow_timers_pkg as
   procedure delete_process_timers
   (
     pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_return_code out number
+  , po_return_code out number
   );
 
 /******************************************************************************
@@ -103,7 +103,7 @@ create or replace package flow_timers_pkg as
 
   procedure terminate_all_timers
   (
-    pi_return_code  out  number
+    po_return_code  out  number
   );
 
 
