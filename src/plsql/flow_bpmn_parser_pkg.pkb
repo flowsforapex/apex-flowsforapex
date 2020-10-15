@@ -940,6 +940,7 @@ as
   begin
     g_dgrm_id := null;
     g_objects.delete;
+    g_obj_attribs.delete;
     g_connections.delete;
     g_objt_lookup.delete;
   end reset;
