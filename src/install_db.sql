@@ -10,13 +10,13 @@ PROMPT >> Installing Tables
 
 PROMPT >> Installing Package Specifications
 -- Base Packages
-@plsql/flow_process_vars.pks
-@plsql/flow_constants_pkg.pks
 @plsql/flow_types_pkg.pks
-@plsql/flow_api_pkg.pks
+@plsql/flow_constants_pkg.pks
 @plsql/flow_bpmn_parser_pkg.pks
+@plsql/flow_api_pkg.pks
 @plsql/flow_timers_pkg.pks
 @plsql/flow_engine.pks
+@plsql/flow_process_vars.pks
 
 -- Page Packages
 @plsql/flow_p0003_api.pks
