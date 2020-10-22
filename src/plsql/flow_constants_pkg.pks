@@ -7,6 +7,8 @@ as
   gc_bpmn_terminate_event_definition  constant flow_types_pkg.t_bpmn_id := 'bpmn:terminateEventDefinition';
   gc_bpmn_timer_event_definition      constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
 
+  gc_bpmn_object_documentation        constant flow_types_pkg.t_bpmn_id := 'bpmn:documentation';
+
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
 
