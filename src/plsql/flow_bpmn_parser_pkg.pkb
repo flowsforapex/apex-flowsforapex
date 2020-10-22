@@ -616,12 +616,14 @@ as
 
       if rec.child_details is null then
         -- register the child
-        register_object_attributes
-        (
-          pi_objt_bpmn_id      => pi_objt_bpmn_id
-        , pi_obat_key          => rec.child_type
-        , pi_obat_vc_value     => rec.child_value
+        if rec.child_value is not null then
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_obat_key          => rec.child_type
+          , pi_obat_vc_value     => rec.child_value
         );
+        end if;
       else
         if rec.child_type = flow_constants_pkg.gc_bpmn_timer_event_definition then
     	  begin
