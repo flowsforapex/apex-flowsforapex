@@ -22,15 +22,16 @@ Starting with Flows for APEX V5.0, a Sub Process can contain a Terminate End Eve
 
 ## Current Limitations
 
-#### 1. Sub Processes must have 1 Start Event and 1 End Event
+#### 1. Sub Processes must have a single Start Event.
 
 A Sub Process must start with a single Start Event, which should be a simple Start Event (i.e., without any associated Timer, etc. event).
 
-A sub process must have a single, standard End Event.  (It may have additional non-standard end events, such as error end events, etc.).
+#### 2. End Events
 
-#### 2. A Sub Processes must operate in a single Lane
+A sub process must have at least one End Event.  If more than 1 end events are specified, the sub Process waits for all active subflows to complete before returning to its parent process.  (It may have additional non-standard end events, such as error end events, etc.).
+
+#### 3. A Sub Processes must operate in a single Lane
 
 As is good BPMN style, a sub process must operate in a single lane.
 
-
-
+#### 4. Event Sub Processes are not yet supported.
