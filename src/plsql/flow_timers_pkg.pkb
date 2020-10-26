@@ -230,6 +230,12 @@ as
         , out_interv_ym => l_parsed_duration_ym
         , out_interv_ds => l_parsed_duration_ds
         );
+      when others then
+            apex_error.add_error
+            ( p_message => 'No timer definitions found in start_timer on subflow '||pi_sbfl_id||' type '||l_timer_type||' def '||l_timer_def
+            , p_display_location => apex_error.c_on_error_page
+            );
+
     end case;
 
     insert into flow_timers

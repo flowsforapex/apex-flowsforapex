@@ -219,7 +219,7 @@ ALTER TABLE flow_processes
 ALTER TABLE flow_subflows
     ADD CONSTRAINT sbfl_parent_sbfl_fk FOREIGN KEY ( sbfl_sbfl_id )
         REFERENCES flow_subflows ( sbfl_id )
-            ON DELETE CASCADE;
+            ON DELETE SET NULL;
 
 ALTER TABLE flow_subflows
     ADD CONSTRAINT sbfl_prcs_fk FOREIGN KEY ( sbfl_prcs_id )

@@ -23,7 +23,7 @@ procedure log_step_completion
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
-  , p_notes             in flow_subflow_log.sflg_notes%type
+  , p_notes             in flow_subflow_log.sflg_notes%type default null
   )
   is 
   begin
@@ -291,26 +291,16 @@ procedure subflow_complete
          and sbfl.sbfl_prcs_id = p_process_id
       ;
     end if;
-
-    -- delete the completed subflow and any remaining orphan subflows or child subprocesses
-    if p_is_subprocess_end 
-    then
-        -- in different process levels.  Sub Processes can't end with multiple ends, so clear up rest of sub-proc
-        flow_terminate_level(p_process_id, p_subflow_id);
-    else
-        -- in the same process level so just delete the subflow
-        delete from flow_subflows
-        where   sbfl_id = p_subflow_id
-          and   sbfl_prcs_id = p_process_id
-          ;
-    end if;
-
+    -- delete the subflow
+    delete from flow_subflows
+     where sbfl_id = p_subflow_id
+       and sbfl_prcs_id = p_process_id
+    ;
     -- log current step as completed
     log_step_completion
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_completed_object => l_current_object
-    , p_notes => ''
     );
     -- handle parallel flows with their own end events.  Last one completing needs to clear up the paret 'split' sbfl.
     -- if subflow has parent with   
@@ -339,23 +329,6 @@ procedure subflow_complete
           and sbfl.sbfl_id = l_parent_subflow_id
         ;       
       end if;  
-    end if;
-
-    -- check if there are ANY remaining subflows.  If not, close process
-    select count(*)
-      into l_remaining_subflows
-      from flow_subflows sbfl
-     where sbfl.sbfl_prcs_id = p_process_id
-    ;
-    
-    if l_remaining_subflows = 0 then 
-      -- No remaining subflows so process has completed
-      update flow_processes prcs 
-         set prcs.prcs_status = 'completed'
-           , prcs.prcs_last_update = sysdate
-       where prcs.prcs_id = p_process_id
-      ;
-      apex_debug.message(p_message => 'Process Completed: Process '||p_process_id, p_level => 4) ;
     end if;
 end subflow_complete;
 
@@ -413,8 +386,8 @@ begin
       , p_route => 'main'
       , p_last_completed => null
       , p_status => l_new_subflow_status 
-      , p_parent_sbfl_proc_level => null 
-      , p_new_proc_level => true
+      , p_parent_sbfl_proc_level => 0 
+      , p_new_proc_level => false
       );
 
     if l_objt_sub_tag_name = 'bpmn:timerEventDefinition'
@@ -446,21 +419,6 @@ begin
        and prcs.prcs_id = p_process_id
          ;
 end flow_start_process;
-
-procedure flow_terminate
-    ( p_process_id  in  flow_processes.prcs_id%type)
-is
-    l_return_code number;
-begin
-    apex_debug.message(p_message => 'Begin flow_terminate', p_level => 3) ;
-    flow_timers_pkg.terminate_process_timers
-      ( pi_prcs_id => p_process_id
-      , po_return_code => l_return_code
-      );
-    delete  from flow_subflows sbfl 
-    where sbfl.sbfl_prcs_id = p_process_id
-    ;
-end flow_terminate;
 
 procedure flow_set_boundary_timers
 ( p_process_id    in flow_processes.prcs_id%type
@@ -514,7 +472,7 @@ begin
               and sbfl.sbfl_prcs_id = p_process_id
             ;
         end case;
-        --- set timer flag on parent
+        --- set timer flag on parent (it can get more than 1)
         update flow_subflows sbfl
            set sbfl.sbfl_has_events = sbfl.sbfl_has_events||'T'
          where sbfl.sbfl_id = p_subflow_id
@@ -607,6 +565,169 @@ exception
       , p_display_location => apex_error.c_on_error_page
       );   
 end flow_get_matching_link_object;
+
+procedure flow_process_link_event
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_info     in flow_step_info
+  )
+is 
+    l_next_objt      flow_objects.objt_bpmn_id%type;
+begin 
+    -- find matching link catching event & step to it
+    l_next_objt := flow_get_matching_link_object 
+      ( pi_dgrm_id => p_step_info.dgrm_id
+      , pi_link_bpmn_id => p_step_info.target_objt_ref
+      );
+    -- log throw event as complete
+    log_step_completion   
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_completed_object => p_step_info.target_objt_ref
+    );
+    -- jump into matching catch event
+    update flow_subflows sbfl
+    set   sbfl.sbfl_current = l_next_objt
+        , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+        , sbfl.sbfl_last_update = sysdate
+        , sbfl.sbfl_status = 'running'
+    where sbfl.sbfl_id = p_subflow_id
+        and sbfl.sbfl_prcs_id = p_process_id
+    ;
+    flow_next_step
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );  
+end flow_process_link_event;
+
+procedure flow_get_boundary_event
+  ( pi_dgrm_id                  in  flow_diagrams.dgrm_id%type
+  , pi_throw_objt_bpmn_id       in  flow_objects.objt_bpmn_id%type
+  , pi_par_sbfl                 in  flow_subflows.sbfl_id%type
+  , pi_sub_tag_name             in  flow_objects.objt_sub_tag_name%type 
+  , po_boundary_objt            out flow_objects.objt_bpmn_id%type
+  , po_interrupting             out flow_objects.objt_interrupting%type
+  )
+is 
+begin
+    -- in later release if named errors and escalations are supported, change this to look for specific event
+    select boundary_objt.objt_bpmn_id
+         , boundary_objt.objt_interrupting
+      into po_boundary_objt
+         , po_interrupting
+      from flow_objects boundary_objt
+      join flow_subflows parent_sbfl
+        on parent_sbfl.sbfl_current = boundary_objt.objt_attached_to
+     where parent_sbfl.sbfl_id = pi_par_sbfl
+       and boundary_objt.objt_sub_tag_name = pi_sub_tag_name
+       and boundary_objt.objt_dgrm_id = pi_dgrm_id
+        ;
+exception
+  when no_data_found then
+      -- no boundary event found -- returned flow should continue from normal return
+      po_boundary_objt := null;
+      if pi_sub_tag_name in ('bpmn:errorEventDefinition') then
+         po_interrupting := 1;
+      else 
+         po_interrupting := 0;
+      end if;
+  when too_many_rows then
+      apex_error.add_error
+      ( p_message => 'More than one '||pi_sub_tag_name||' boundaryEvent found on sub process.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+end flow_get_boundary_event;
+
+
+procedure flow_process_boundary_event
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_info     in flow_step_info
+  , p_par_sbfl      in flow_subflows.sbfl_id%type
+  )
+is 
+    l_next_objt             flow_objects.objt_bpmn_id%type;
+    l_interrupting          flow_objects.objt_interrupting%type;
+    l_new_sbfl              flow_subflows.sbfl_id%type;
+    l_parent_processs_level flow_subflows.sbfl_process_level%type;
+begin 
+    -- set the throwing event to completed
+    log_step_completion   
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_completed_object => p_step_info.target_objt_ref
+    );
+    -- find matching boundary event of its type
+    flow_get_boundary_event
+      ( pi_dgrm_id => p_step_info.dgrm_id
+      , pi_throw_objt_bpmn_id => p_step_info.target_objt_ref
+      , pi_par_sbfl => p_par_sbfl
+      , pi_sub_tag_name => p_step_info.target_objt_subtag
+      , po_boundary_objt => l_next_objt
+      , po_interrupting => l_interrupting
+      );
+    if l_interrupting = 1 then
+        -- set parent subflow to boundary event & do next step
+        update flow_subflows sbfl
+          set sbfl.sbfl_current = l_next_objt
+            , sbfl.sbfl_last_completed = p_step_info.target_objt_ref 
+            , sbfl.sbfl_status = 'running'
+          where sbfl.sbfl_id = p_par_sbfl
+            and sbfl.sbfl_prcs_id = p_process_id
+            ;
+        flow_next_step
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_par_sbfl
+        );
+        -- stop processing in sub process and all children
+        flow_terminate_level
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        ); 
+    else 
+        -- non interrupting.  
+        select par_sbfl.sbfl_process_level
+          into l_parent_processs_level 
+          from flow_subflows par_sbfl
+         where par_sbfl.sbfl_id = p_par_sbfl
+           and par_sbfl.sbfl_prcs_id = p_process_id
+           ;
+        -- start new subflow starting at the boundary event & step to next task
+        l_new_sbfl := subflow_start
+        ( p_process_id => p_process_id
+        , p_parent_subflow => p_par_sbfl
+        , p_starting_object => l_next_objt
+        , p_current_object => l_next_objt
+        , p_route => 'from '||l_next_objt
+        , p_last_completed => null 
+        , p_status => 'running'
+        , p_parent_sbfl_proc_level => l_parent_processs_level
+        , p_new_proc_level => false
+        );
+        flow_next_step 
+        ( p_process_id => p_process_id
+        , p_subflow_id => l_new_sbfl
+        );
+        apex_debug.message(p_message => 'process_boundary_event.  target_objt_tag :'||p_step_info.target_objt_subtag, p_level => 3) ;
+    
+        if p_step_info.target_objt_tag = 'bpmn:intermediateThrowEvent'
+        then 
+            -- do next_step on triggering subflow if an ITE 
+            flow_next_step 
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            );
+        elsif p_step_info.target_objt_tag = 'bpmn:endEvent'
+        then
+            -- normal end event
+            subflow_complete
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            , p_is_subprocess_end => true
+            );
+        end if;
+    end if;
+end flow_process_boundary_event;
 
 procedure flow_run_sync_plsql
 ( p_process_id    in flow_processes.prcs_id%type
@@ -722,10 +843,11 @@ procedure process_endEvent
   , p_step_info     in flow_step_info
   )
 is
-  l_sbfl_id_par    flow_subflows.sbfl_id%type;  
-  l_boundary_event flow_objects.objt_bpmn_id%type;
-  l_subproc_objt   flow_objects.objt_bpmn_id%type;
-  l_exit_type      flow_objects.objt_sub_tag_name%type default null;
+  l_sbfl_id_par           flow_subflows.sbfl_id%type;  
+  l_boundary_event        flow_objects.objt_bpmn_id%type;
+  l_subproc_objt          flow_objects.objt_bpmn_id%type;
+  l_exit_type             flow_objects.objt_sub_tag_name%type default null;
+  l_remaining_subflows    number;
 begin
     --next step can be either end of process or sub-process returning to its parent
     -- get parent subflow
@@ -739,17 +861,17 @@ begin
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             , p_completed_object => p_step_info.target_objt_ref
-            , p_notes => ''
             );  
 
-    if l_sbfl_id_par is null 
+    if p_sbfl_info.sbfl_process_level = 0
     then   
         -- in a top level process
         apex_debug.message(p_message => 'Next Step is Process End '||p_step_info.target_objt_ref, p_level => 4) ;
         -- check for Terminate sub-Event
         if p_step_info.target_objt_subtag = 'bpmn:terminateEventDefinition'
         then
-            flow_terminate (p_process_id => p_process_id);
+              flow_terminate_level(p_process_id, p_subflow_id);
+
         elsif p_step_info.target_objt_subtag is null
         then
             subflow_complete
@@ -758,10 +880,27 @@ begin
             , p_is_subprocess_end => false
             );
         end if;
+        -- check if there are ANY remaining subflows.  If not, close process
+        select count(*)
+          into l_remaining_subflows
+          from flow_subflows sbfl
+         where sbfl.sbfl_prcs_id = p_process_id;
+        
+        if l_remaining_subflows = 0 
+        then 
+            -- No remaining subflows so process has completed
+            update flow_processes prcs 
+               set prcs.prcs_status = 'completed'
+                 , prcs.prcs_last_update = sysdate
+             where prcs.prcs_id = p_process_id;
+
+            apex_debug.message(p_message => 'Process Completed: Process '||p_process_id, p_level => 4) ;
+        end if;
     else  
         -- in a sub-process
         apex_debug.message
         (p_message => 'Next Step is Sub-Process End '||p_step_info.target_objt_ref||
+                      ' of type '||p_step_info.target_objt_subtag||
                       ' Resuming Parent Subflow : '||l_sbfl_id_par, p_level => 4
         ); 
 
@@ -804,7 +943,8 @@ begin
             flow_terminate_level
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
-            ); 
+            );
+
         elsif p_step_info.target_objt_subtag = 'bpmn:terminateEventDefinition'
         then
             -- stop processing in sub process and all children
@@ -812,6 +952,15 @@ begin
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             ); 
+        elsif p_step_info.target_objt_subtag = 'bpmn:escalationEventDefinition'
+        then
+            -- this can be interrupting or non-interupting
+            flow_process_boundary_event
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            , p_step_info => p_step_info
+            , p_par_sbfl => l_sbfl_id_par
+            );
         elsif p_step_info.target_objt_subtag is null -- Normal End
         then 
             -- normal end event
@@ -822,14 +971,24 @@ begin
             );
 
         end if;
-        -- Do next step in parent
-        flow_next_step 
+        -- check if there are ANY remaining subflows in the subProcess.  If not, close process
+        select count(*)
+          into l_remaining_subflows
+          from flow_subflows sbfl
+         where sbfl.sbfl_prcs_id = p_process_id
+           and sbfl.sbfl_process_level = p_sbfl_info.sbfl_process_level;
+        
+        if l_remaining_subflows = 0 
+        then 
+            -- No remaining subflows so subprocess has completed - return to parent and do next step
+            flow_next_step 
             ( p_process_id => p_process_id
             , p_subflow_id => l_sbfl_id_par
-            , p_forward_route => null
             );  
-    end if 
-    ;
+            apex_debug.message(p_message => 'SubProcess Completed: Process level '||p_sbfl_info.sbfl_process_level, p_level => 4) ;
+
+        end if;
+    end if; 
 end process_endEvent;
 
 procedure process_parallelGateway
@@ -1365,14 +1524,15 @@ procedure process_intermediateThrowEvent
   , p_step_info     in flow_step_info
   )
 is 
-    l_next_objt      flow_objects.objt_bpmn_id%type;
+  l_par_sbfl    flow_subflows.sbfl_id%type;
 begin
     -- currently only supports none Intermediate throw event (used as a process state marker)
     -- but this might later have a case type = timer, emailSend, etc. ....
     apex_debug.message(p_message => 'Begin process_IntermediateThrowEvent '||p_step_info.target_objt_ref, p_level => 4) ;
+
     if p_step_info.target_objt_subtag is null
     then
-        -- a none event.  Just call next step.  (other types to be implemented later)
+        -- a none event.  Make the ITE the current event then just call next step.  
         update flow_subflows sbfl
         set   sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -1387,31 +1547,35 @@ begin
         );
     elsif p_step_info.target_objt_subtag = 'bpmn:linkEventDefinition'
     then
-        -- find matching link catching event & step to it
-        l_next_objt := flow_get_matching_link_object 
-          ( pi_dgrm_id => p_step_info.dgrm_id
-          , pi_link_bpmn_id => p_step_info.target_objt_ref
-          );
-        -- log throw event as complete
-        log_step_completion   
+        flow_process_link_event
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
-        , p_completed_object => p_step_info.target_objt_ref
-        , p_notes => ''
-        );
-        -- jump into matching catch event
+        , p_step_info => p_step_info
+        );   
+    elsif p_step_info.target_objt_subtag = 'bpmn:escalationEventDefinition'
+    then
+        -- make the ITE the current event
         update flow_subflows sbfl
-        set   sbfl.sbfl_current = l_next_objt
-            , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
-            , sbfl.sbfl_last_update = sysdate
-            , sbfl.sbfl_status = 'running'
-        where sbfl.sbfl_id = p_subflow_id
-            and sbfl.sbfl_prcs_id = p_process_id
+           set sbfl.sbfl_current = p_step_info.target_objt_ref
+             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+             , sbfl.sbfl_last_update = sysdate
+             , sbfl.sbfl_status = 'running'
+         where sbfl.sbfl_id = p_subflow_id
+           and sbfl.sbfl_prcs_id = p_process_id
         ;
-        flow_next_step
+        -- get the subProcess event in the parent level
+        l_par_sbfl := get_subprocess_parent_subflow
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
-        );      
+        , p_current => p_step_info.target_objt_ref
+        );
+        -- escalate it to the boundary Event
+        flow_process_boundary_event
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        , p_step_info => p_step_info
+        , p_par_sbfl => l_par_sbfl
+        );  
     else 
         --- other type of intermediateThrowEvent that is not currently supported
         apex_error.add_error
@@ -1886,7 +2050,6 @@ begin
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   , p_completed_object => l_sbfl_rec.sbfl_current
-  , p_notes => ''
   );
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
 

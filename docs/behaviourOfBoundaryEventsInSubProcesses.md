@@ -1,10 +1,10 @@
-# Behavior of Boundary Conditions in Sub-Processes
+# Behavior of Boundary Events in Sub-Processes (New in V5.0)
 
-This is where things get a little complex - but understanding and mastering this complexity will help you build powerful business processes without getting distracted by all of the painful details of handing process errors, escallation, and all of those other things that turn your simple process model into spagetti!
+This is where things get a little complex - but understanding and mastering boundary events will help you build powerful business processes without getting distracted by all of the painful details of handing process errors, escallation, and all of those other things that turn your simple process model into spagetti!
 
 One of the good practice modeling concepts  in BPMN is to focus the model on the usual, happy-case path.  So your model should flow, left to right, along the happy case scenario.  The mess of
 
-Boundary Conditions come in several flavours, to handle:
+Boundary Events come in several flavours, to handle:
 
 - process errors
 - process escallation
@@ -12,7 +12,7 @@ Boundary Conditions come in several flavours, to handle:
 - reminders
 - interruptions
 
-Boundary Conditions can be attached to tasks (and task like activities) and to sub-processes.  This setion covers behaviour of boundary conditions when applied to sub-processes only.
+Boundary Events can be attached to tasks (and task like activities) and to sub-processes.  This setion covers behaviour of boundary events when applied to sub-processes only.
 
 ### Error EndEvents and Error Boundary Events.
 
@@ -45,7 +45,6 @@ A more complex example of how these can be used together is shown below.
 ![Timer Boundary Event Example](images/timerBoundaryConditionsExample.png "Timer Boundary Event Example")
 In this example, sub-Process B has 3 boundaryEvents attached to it.  In addition to the Error Exit Event and corresponding Error Boundary Event for handling the error in the parent process, there are 2 timer booundary events.
 
-The Reminder Timer is set to fire after 2 days.  This is a non-interrupting timer.  When it fires, a reminder is sent to the user on a new subflow.
+The Reminder Timer is set to fire after 2 days.  This is a non-interrupting timer.  When it fires, a reminder is sent to the user on a new subflow.  If Task B is completed before the boundary timer fires, the timer is terminated.  If the reminder timer fires, it starts a new subflow with Send Reminder as it's next task; Once the timer has fired, the subflow will continue to exist after the attached parent task (B) has been completed.
 
-The TimeOut Timer is  set to fire after 5 days.  This is an interrupting timer.  when it fires, and processing inside sub-process B is terminated.  The subflows that are running to process inside sub-process B are terminated.  The main subflow (which went from Start -> A -> B) proceeds to Timeout Handler.  C and D will not be executed.
-
+The TimeOut Timer is  set to fire after 5 days.  This is an interrupting timer.  when it fires, and processing inside sub-process B is terminated.  The subflows that are running to execute sub-process B are terminated.  The main subflow (which went from Start -> A -> B) proceeds to Timeout Handler.  C and D will not be executed.

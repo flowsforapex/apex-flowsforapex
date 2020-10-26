@@ -38,8 +38,8 @@ When the final End Event is met for a Process, the Process Instance is complete.
 
 ### Terminate End Event
 
-A Terminate End Event will terminate all current branches rnning in the process, and cause the Process to complete.
+A Terminate End Event will terminate all current branches running in the process, and cause the Process to complete.
 
 ![Terminate End Event](images/terminateEnd.png "Terminate End Event")
 
-Currently, Terminate End Events should only be placed in the top level process on any diagram, and not in any sub-process.
+starting with Flows for APEX V5.0, Terminate End Events may also be put into in any sub-process.  the behaviour of a Terminate Ene Event in a sub process is to immediatey end processing in the sub process, and retrn control to the next event in the parent process.  Any nested child sub processes that are running below the the sub process containing the terminate end event, are also terminated.
