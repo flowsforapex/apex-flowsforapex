@@ -603,7 +603,8 @@ as
                      , l_child_details
                   from xmltable
                        (
-                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'http://www.apex.mt-ag.com' as "apex")
                        , '*' passing pi_xml
                          columns
                            child_type     varchar2(50 char)    path 'name()'
@@ -615,8 +616,9 @@ as
     loop
 
       if rec.child_details is null then
-        -- register the child
+        -- register the child which does not have details
         if rec.child_value is not null then
+          -- if needed distinguish here between different attributes
           register_object_attributes
           (
             pi_objt_bpmn_id      => pi_objt_bpmn_id
@@ -625,6 +627,7 @@ as
         );
         end if;
       else
+        -- register the child which has details
         if rec.child_type = flow_constants_pkg.gc_bpmn_timer_event_definition then
     	  begin
     	    select details.detail_type
