@@ -32,7 +32,7 @@ as
     record
     (
       obat_sub_tag_name   flow_objects.objt_sub_tag_name%type
-    , obat_rec            t_obat_tab
+    , obat_tab            t_obat_tab
     );
   type t_objt_obat_tab is table of t_objt_obat_rec index by flow_types_pkg.t_bpmn_id;
   
@@ -124,10 +124,10 @@ as
 	  
       if not l_objt_obat_idx_exists then
         g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name := pi_objt_sub_tag_name;
-		g_obj_attribs(pi_objt_bpmn_id).obat_rec(1) := l_obat_rec;
+		g_obj_attribs(pi_objt_bpmn_id).obat_tab(1) := l_obat_rec;
 	  else
-        l_obat_idx := coalesce(g_obj_attribs(pi_objt_bpmn_id).obat_rec.last,0);
-        g_obj_attribs(pi_objt_bpmn_id).obat_rec(l_obat_idx + 1) := l_obat_rec;
+        l_obat_idx := coalesce(g_obj_attribs(pi_objt_bpmn_id).obat_tab.last,0);
+        g_obj_attribs(pi_objt_bpmn_id).obat_tab(l_obat_idx + 1) := l_obat_rec;
 	  end if;
 
     end if;
@@ -285,7 +285,7 @@ as
 
     -- check, if there are attributes for the object
     begin
-      l_obat_tab := g_obj_attribs(pi_objt_bpmn_id).obat_rec;
+      l_obat_tab := g_obj_attribs(pi_objt_bpmn_id).obat_tab;
       l_obat_exists := true;
     exception
       when no_data_found then
@@ -581,97 +581,97 @@ as
   (
     pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
   , pi_xml          in xmltype
-  , pi_subtag_name  in flow_objects.objt_sub_tag_name%type
   )
   as
-    l_st_type           flow_types_pkg.t_bpmn_id;
-    l_st_id             flow_types_pkg.t_bpmn_id;
-    l_st_details        xmltype;
-    l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
-    l_dt_value          flow_object_attributes.obat_vc_value%type;
+    l_child_type         flow_types_pkg.t_bpmn_id;
+    l_child_id           flow_types_pkg.t_bpmn_id;
+    l_child_value        flow_object_attributes.obat_vc_value%type;
+    l_child_details      xmltype;
+    l_detail_type        flow_types_pkg.t_bpmn_id;
+    l_detail_id          flow_types_pkg.t_bpmn_id;
+    l_detail_value       flow_object_attributes.obat_vc_value%type;
   begin
 
-    if pi_subtag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
-	  begin
-	    select subtag.st_type
-			 , subtag.st_id
-			 , subtag.st_details
-          into l_st_type
-             , l_st_id
-             , l_st_details
-          from xmltable
-               (
-                 xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-               , 'bpmn:timerEventDefinition' passing pi_xml
-                 columns
-                   st_type     varchar2(50 char)    path 'name()'
-                 , st_id       varchar2(50 char)    path '@id'
-                 , st_details  xmltype              path '*'
-               ) subtag;
-      end;
+    for rec in (
+                select children.child_type
+                     , children.child_id
+                     , children.child_value
+                     , children.child_details
+                  into l_child_type
+                     , l_child_id
+                     , l_child_value
+                     , l_child_details
+                  from xmltable
+                       (
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'http://www.apex.mt-ag.com' as "apex")
+                       , '*' passing pi_xml
+                         columns
+                           child_type     varchar2(50 char)    path 'name()'
+                         , child_id       varchar2(50 char)    path '@id'
+                         , child_value    varchar2(4000 char)  path 'text()'
+                         , child_details  xmltype              path '* except bpmn:incoming except bpmn:outgoing'
+                       ) children
+               )
+    loop
 
-      l_objt_sub_tag_name := find_subtag_name( pi_xml => l_st_details );
+      if rec.child_details is null then
+        -- register the child which does not have details
+        if rec.child_value is not null then
+          -- if needed distinguish here between different attributes
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_obat_key          => rec.child_type
+          , pi_obat_vc_value     => rec.child_value
+        );
+        end if;
+      else
+        -- register the child which has details
+        if rec.child_type = flow_constants_pkg.gc_bpmn_timer_event_definition then
+    	  begin
+    	    select details.detail_type
+    			 , details.detail_id
+    			 , details.detail_value
+              into l_detail_type
+                 , l_detail_id
+                 , l_detail_value
+              from xmltable
+                   (
+                     xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                   , '*' passing rec.child_details
+                     columns
+                       detail_type   varchar2(50 char)    path 'name()'
+                     , detail_id     varchar2(50 char)    path '@id'
+                     , detail_value  varchar2(4000 char)  path 'text()'
+                   ) details;
+          end;
 
-      -- register the timer type
-      register_object_attributes
-      (
-        pi_objt_bpmn_id      => pi_objt_bpmn_id
-      , pi_objt_sub_tag_name => pi_subtag_name
-      , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
-      , pi_obat_vc_value     => l_objt_sub_tag_name
-      );
+          -- register the timer type
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_objt_sub_tag_name => rec.child_type
+          , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
+          , pi_obat_vc_value     => l_detail_type
+          );
 		
-      if l_objt_sub_tag_name = flow_constants_pkg.gc_timer_type_date then
-        begin
-	      select detail.dt_value
-            into l_dt_value
-            from xmltable
-                 (
-                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                 , 'bpmn:timeDate' passing l_st_details
-                   columns
-                     dt_value varchar2(50 char) path 'text()'
-                 ) detail;
-        end;
+          -- register the timer definition
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_objt_sub_tag_name => rec.child_type
+          , pi_obat_key          => flow_constants_pkg.gc_timer_def_key
+          , pi_obat_vc_value     => l_detail_value
+          );
 		
-      elsif l_objt_sub_tag_name = flow_constants_pkg.gc_timer_type_duration then
-	    begin
-	      select detail.dt_value
-            into l_dt_value
-            from xmltable
-                 (
-                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                 , 'bpmn:timeDuration' passing l_st_details
-                   columns
-                     dt_value varchar2(50 char) path 'text()'
-                 ) detail;
-        end;
-      elsif l_objt_sub_tag_name = flow_constants_pkg.gc_timer_type_cycle then
-	    begin
-	      select detail.dt_value
-            into l_dt_value
-            from xmltable
-                 (
-                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                 , 'bpmn:timeCycle' passing l_st_details
-                   columns
-                     dt_value varchar2(50 char) path 'text()'
-                 ) detail;
-        end;
+        elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
+          null;
+	    end if;
+
       end if;
 
-      -- register the timer definition
-      register_object_attributes
-      (
-        pi_objt_bpmn_id      => pi_objt_bpmn_id
-      , pi_objt_sub_tag_name => pi_subtag_name
-      , pi_obat_key          => flow_constants_pkg.gc_timer_def_key
-      , pi_obat_vc_value     => l_dt_value
-      );
-		
-    elsif pi_subtag_name = flow_constants_pkg.gc_bpmn_terminate_event_definition then
-      null;
-	end if;
+    end loop;
 
   end parse_child_elements;
 
@@ -724,7 +724,6 @@ as
           (
             pi_objt_bpmn_id => rec.steps_id
           , pi_xml          => rec.child_elements
-          , pi_subtag_name  => l_objt_sub_tag_name
           );
         else
           l_objt_sub_tag_name := null;
