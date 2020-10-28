@@ -12,7 +12,6 @@ CREATE OR REPLACE PACKAGE flow_notif_pkg AS
 ******************************************************************************/
    PROCEDURE send_notification (
       p_process_id       IN   flow_processes.prcs_id%TYPE,
-      p_subflow_id       IN   flow_subflows.sbfl_id%TYPE,
       p_template_ident   IN   apex_appl_email_templates.static_id%TYPE,
       p_modeller_values  IN   CLOB,
       p_return_code      OUT  NUMBER
