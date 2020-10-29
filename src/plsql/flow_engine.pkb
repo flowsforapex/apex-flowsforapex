@@ -1614,6 +1614,11 @@ begin
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+    -- set boundaryEvent Timers, if any
+    flow_set_boundary_timers 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );  
 end process_userTask;
 
 procedure process_scriptTask
@@ -1692,6 +1697,11 @@ begin
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+    -- set boundaryEvent Timers, if any
+    flow_set_boundary_timers 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );  
 end process_manualTask;
 
 /* 
@@ -1919,7 +1929,11 @@ begin
           p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
-    elsif l_curr_objt_tag_name in ( 'bpmn:subProcess', 'bpmn:task' )   -- add activities into here later
+    elsif l_curr_objt_tag_name in ( 'bpmn:subProcess'
+                                  , 'bpmn:task' 
+                                  , 'bpmn:userTask'
+                                  , 'bpmn:manualTask'
+                                  )   -- add any objects that can support timer boundary events here
     then
         handle_interrupting_boundary_event 
         ( p_process_id => p_process_id
@@ -2045,7 +2059,11 @@ begin
     );
   end;
   -- clean up any boundary events left over from the previous activity
-  if (l_step_info.source_objt_tag in ('bpmn:subProcess', 'bpmn:task')      -- boundary event attachable types
+  if (l_step_info.source_objt_tag in ( 'bpmn:subProcess'
+                                     , 'bpmn:task'
+                                     , 'bpmn:userTask'
+                                     , 'bpmn:manualTask'
+                                    ) -- boundary event attachable types
       and l_sbfl_rec.sbfl_has_events is not null )            -- subflow has events attached
   then
       -- 
