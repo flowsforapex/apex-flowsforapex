@@ -1,6 +1,15 @@
 create or replace package body flow_engine
 as 
 
+type flow_step_info is record
+( dgrm_id           flow_diagrams.dgrm_id%type
+, source_objt_tag   flow_objects.objt_tag_name%type
+, target_objt_id    flow_objects.objt_id%type
+, target_objt_ref   flow_objects.objt_bpmn_id%type
+, target_objt_tag   flow_objects.objt_tag_name%type
+, target_objt_subtag flow_objects.objt_sub_tag_name%type
+);
+
 function get_dgrm_id
   (
     p_prcs_id in flow_processes.prcs_id%type
@@ -2189,6 +2198,37 @@ end flow_next_step;
 ****                       PROCESS INSTANCE FUNCTIONS (START, STOP, RESET, DELETE)
 ****
 *************************************************************************************************************/
+
+function flow_create
+  ( p_dgrm_id   in flow_diagrams.dgrm_id%type
+  , p_prcs_name in flow_processes.prcs_name%type default null
+  ) return flow_processes.prcs_id%type
+is
+    l_ret flow_processes.prcs_id%type;
+begin
+    apex_debug.message(p_message => 'Begin flow_create', p_level => 3) ;
+    insert 
+      into  flow_processes prcs
+          ( prcs.prcs_name
+          , prcs.prcs_dgrm_id
+          , prcs.prcs_status
+          , prcs.prcs_init_ts
+          , prcs.prcs_last_update
+          )
+    values
+          ( p_prcs_name
+          , p_dgrm_id
+          , 'created'
+          , systimestamp
+          , systimestamp
+          )
+      returning prcs.prcs_id into l_ret
+    ;
+    apex_debug.message(p_message => 'End flow_create', p_level => 3) ;
+
+    return l_ret;
+end flow_create;
+
 
 procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
