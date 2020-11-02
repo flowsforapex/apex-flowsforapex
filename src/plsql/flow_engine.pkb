@@ -1536,7 +1536,7 @@ is
   l_par_sbfl    flow_subflows.sbfl_id%type;
 begin
     -- currently only supports none Intermediate throw event (used as a process state marker)
-    -- but this might later have a case type = timer, emailSend, etc. ....
+    -- but this might later have a case type = timer, message, etc. ....
     apex_debug.message(p_message => 'Begin process_IntermediateThrowEvent '||p_step_info.target_objt_ref, p_level => 4) ;
 
     if p_step_info.target_objt_subtag is null
@@ -1650,7 +1650,7 @@ begin
     ;
 end process_scriptTask;
 
-procedure process_sendTask
+procedure process_serviceTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
@@ -1658,7 +1658,7 @@ procedure process_sendTask
   )
 is 
 begin
-     apex_debug.message(p_message => 'Begin process_sendTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+     apex_debug.message(p_message => 'Begin process_serviceTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -1667,10 +1667,10 @@ begin
     where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
     ;
-    -- current implementation is limited to one sendTask type, which is for apex message template sent from user defined PL/SQL script
-    -- future sendTask types could include text message, tweet, AOP document via email, etc.
-    -- current implementation is limited to synchronous send (i.e., email sent as part of Flows for APEX process).begin
-    -- future implementations could include async sendTask, where message generation is queued.
+    -- current implementation is limited to one serviceTask type, which is for apex message template sent from user defined PL/SQL script
+    -- future serviceTask types could include text message, tweet, AOP document via email, etc.
+    -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).
+    -- future implementations could include async serviceTask, where message generation is queued, or non-email services
 
     flow_run_sync_plsql 
         ( p_process_id => p_process_id
@@ -1678,7 +1678,7 @@ begin
         , p_current =>  p_step_info.target_objt_ref
         )
     ;
-end process_sendTask;
+end process_serviceTask;
 
 procedure process_manualTask
   ( p_process_id    in flow_processes.prcs_id%type
@@ -2188,8 +2188,8 @@ begin
          , p_sbfl_info => l_sbfl_rec
          , p_step_info => l_step_info
          );
-    when  'bpmn:sendTask' 
-    then flow_engine.process_sendTask
+    when  'bpmn:serviceTask' 
+    then flow_engine.process_serviceTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
