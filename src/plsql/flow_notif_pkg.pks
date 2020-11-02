@@ -4,6 +4,11 @@ CREATE OR REPLACE PACKAGE flow_notif_pkg AS
    Provides support to notifications in Flows for APEX.
 ******************************************************************************/
 
+/* FUNCTIONS */
+    FUNCTION get_transf_value (
+        in_value VARCHAR2
+    ) RETURN CLOB;
+
 /* PROCEDURES */
 /******************************************************************************
   send_notification
