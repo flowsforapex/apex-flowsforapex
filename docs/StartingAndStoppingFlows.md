@@ -42,4 +42,4 @@ A Terminate End Event will terminate all current branches running in the process
 
 ![Terminate End Event](images/terminateEnd.png "Terminate End Event")
 
-starting with Flows for APEX V5.0, Terminate End Events may also be put into in any sub-process.  the behaviour of a Terminate Ene Event in a sub process is to immediatey end processing in the sub process, and retrn control to the next event in the parent process.  Any nested child sub processes that are running below the the sub process containing the terminate end event, are also terminated.
+starting with Flows for APEX V5.0, Terminate End Events may also be put into in any sub-process.  the behaviour of a Terminate Ene Event in a sub process is to immediatey end processing in the sub process, and return control to the next event in the parent process.  Any nested child sub processes that are running below the the sub process containing the terminate end event, are also terminated.
