@@ -191,7 +191,7 @@ begin
    return po_vc2_value;
 exception
   when no_data_found then
-     if pi_var_name like 'Route:%' 
+     if pi_var_name like '%:route' 
      then
         -- special case error handling for FFA41 to permit next_branch to work.
         -- remove if...then...else and have all cases do the <else> action  in FFA50

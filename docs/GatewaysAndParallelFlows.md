@@ -89,5 +89,3 @@ An Inclusive Gateway cannot act, simultaneosly, as both a Merging / Closing gate
 #### Default Paths on Inclusive Gateways (New in V5.0)
 
 Like Exclusive Gateways, Inclusive Gateways can also have a single default path which is enabled if no other path is chosen.
-
-

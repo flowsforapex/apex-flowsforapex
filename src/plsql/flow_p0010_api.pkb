@@ -20,12 +20,24 @@ as
           flow_api_pkg.flow_start( p_process_id => pi_prcs_id );
         when 'DELETE' then
           flow_api_pkg.flow_delete( p_process_id => pi_prcs_id );
+        when 'RESERVE' then
+          flow_api_pkg.flow_reserve_step
+          (
+            p_process_id => pi_prcs_id
+          , p_subflow_id => pi_sbfl_id
+          , p_reservation => V('APP_USER')
+          );
+        when 'RELEASE' then
+          flow_api_pkg.flow_release_step
+          (
+            p_process_id => pi_prcs_id
+          , p_subflow_id => pi_sbfl_id
+          );         
         when 'NEXT_STEP' then
-          flow_api_pkg.flow_next_step
+          flow_api_pkg.flow_complete_step
           (
             p_process_id    => pi_prcs_id
           , p_subflow_id    => pi_sbfl_id
-          , p_forward_route => pi_branch
           );
         when 'CHOOSE_BRANCH' then
           flow_api_pkg.flow_next_branch

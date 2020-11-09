@@ -130,7 +130,7 @@ is
     l_forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
 begin
     -- check if route is in process variable
-    l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, 'Route:'||pi_objt_bpmn_id);
+    l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, pi_objt_bpmn_id||':route');
     if l_forward_route is null
     then
         begin
@@ -211,6 +211,92 @@ function subflow_start
     apex_debug.message(p_message => 'Subflow '||l_ret||' started', p_level => 3) ;
     return l_ret;
 end subflow_start;
+
+procedure flow_reserve_step
+( p_process_id   in flow_processes.prcs_id%type
+, p_subflow_id   in flow_subflows.sbfl_id%type
+, p_reservation  in flow_subflows.sbfl_reservation%type
+)
+is
+  l_existing_reservation  flow_subflows.sbfl_reservation%type;
+  e_reserved_by_other     exception;
+  e_reserved_by_same      exception;
+begin
+    apex_debug.message(p_message => 'Begin flow_reserve_step. Subflow '||p_subflow_id||' in Process '||p_process_id||' Reservation:'||p_reservation, p_level => 3) ;
+    -- check step is not already reserved
+    select sbfl_reservation
+      into l_existing_reservation
+      from flow_subflows sbfl 
+     where sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
+    ;
+    if l_existing_reservation is not null 
+    then 
+        if p_reservation = l_existing_reservation
+        then 
+           -- step already reserved by required reservation
+           raise e_reserved_by_same;
+        else 
+           raise e_reserved_by_other;
+        end if;
+    end if;
+    -- place the reservation
+    update flow_subflows sbfl
+       set sbfl_reservation = p_reservation
+     where sbfl_prcs_id = p_process_id
+       and sbfl_id = p_subflow_id
+    ;
+
+exception
+    when no_data_found
+    then
+      apex_error.add_error
+      ( p_message => 'Reservation unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    when e_reserved_by_other
+    then
+      apex_error.add_error
+      ( p_message => 'Reservation unsuccessful.  Step already reserved by another user.'
+      , p_display_location => apex_error.c_on_error_page
+      );    
+    when e_reserved_by_same
+    then
+      apex_error.add_error
+      ( p_message => 'Reservation already placed on next task.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+end flow_reserve_step;
+
+procedure flow_release_step
+( p_process_id   in flow_processes.prcs_id%type
+, p_subflow_id   in flow_subflows.sbfl_id%type
+)
+is
+  l_existing_reservation  flow_subflows.sbfl_reservation%type;
+begin
+    apex_debug.message(p_message => 'Begin flow_release_step. Subflow '||p_subflow_id||' in Process '||p_process_id, p_level => 3) ;
+    -- check step is not already reserved
+    select sbfl_reservation
+      into l_existing_reservation
+      from flow_subflows sbfl 
+     where sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
+    ;
+    -- place the reservation
+    update flow_subflows sbfl
+       set sbfl_reservation = null
+     where sbfl_prcs_id = p_process_id
+       and sbfl_id = p_subflow_id
+    ;
+exception
+    when no_data_found
+    then
+      apex_error.add_error
+      ( p_message => 'Reservation unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+end flow_release_step;
 
 procedure flow_terminate_level
 ( p_process_id   in flow_processes.prcs_id%type
@@ -409,7 +495,7 @@ begin
     elsif l_objt_sub_tag_name is null
     then
       -- plain startEvent, step into first step
-      flow_next_step  
+      flow_complete_step  
       ( p_process_id => p_process_id
       , p_subflow_id => l_main_subflow_id
       , p_forward_route => null
@@ -603,7 +689,7 @@ begin
     where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
     ;
-    flow_next_step
+    flow_complete_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );  
@@ -676,7 +762,7 @@ begin
       , po_interrupting => l_interrupting
       );
     if l_interrupting = 1 then
-        -- set parent subflow to boundary event & do next step
+        -- set parent subflow to boundary event & do flow_complete_step
         update flow_subflows sbfl
           set sbfl.sbfl_current = l_next_objt
             , sbfl.sbfl_last_completed = p_step_info.target_objt_ref 
@@ -684,7 +770,7 @@ begin
           where sbfl.sbfl_id = p_par_sbfl
             and sbfl.sbfl_prcs_id = p_process_id
             ;
-        flow_next_step
+        flow_complete_step
         ( p_process_id => p_process_id
         , p_subflow_id => p_par_sbfl
         );
@@ -713,7 +799,7 @@ begin
         , p_parent_sbfl_proc_level => l_parent_processs_level
         , p_new_proc_level => false
         );
-        flow_next_step 
+        flow_complete_step 
         ( p_process_id => p_process_id
         , p_subflow_id => l_new_sbfl
         );
@@ -722,7 +808,7 @@ begin
         if p_step_info.target_objt_tag = 'bpmn:intermediateThrowEvent'
         then 
             -- do next_step on triggering subflow if an ITE 
-            flow_next_step 
+            flow_complete_step 
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             );
@@ -808,7 +894,7 @@ begin
             );
   end;
   begin
-    flow_next_step (p_process_id => p_process_id, p_subflow_id => p_subflow_id);
+    flow_complete_step (p_process_id => p_process_id, p_subflow_id => p_subflow_id);
   end;
 
 end flow_run_sync_plsql;
@@ -990,7 +1076,7 @@ begin
         if l_remaining_subflows = 0 
         then 
             -- No remaining subflows so subprocess has completed - return to parent and do next step
-            flow_next_step 
+            flow_complete_step 
             ( p_process_id => p_process_id
             , p_subflow_id => l_sbfl_id_par
             );  
@@ -1111,7 +1197,7 @@ begin
                       , p_new_proc_level => false
                       );
                   -- step into first step on the new path
-                  flow_next_step    
+                  flow_complete_step    
                       (p_process_id => p_process_id
                       ,p_subflow_id => l_sbfl_id_sub
                       ,p_forward_route => new_path.route
@@ -1149,7 +1235,7 @@ begin
                 and sbfl.sbfl_prcs_id = p_process_id
             ;
             -- step into first step on the new path
-            flow_next_step   
+            flow_complete_step   
             ( p_process_id => p_process_id
             , p_subflow_id => l_sbfl_id
             , p_forward_route => null
@@ -1185,7 +1271,7 @@ begin
         );
         if l_num_back_connections = 1
         then
-            -- this is opening inclusiveGateway.  Step into it.  Forward paths will get opened by flow_next_step
+            -- this is opening inclusiveGateway.  Step into it.  Forward paths will get opened by flow_complete_step
             -- after user decision.
             -- l_forward_routes := flow_process_vars.get_var_vc2(p_process_id, 'Route:'||p_step_info.target_objt_ref);
             l_forward_routes := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
@@ -1215,7 +1301,7 @@ begin
                         , p_new_proc_level => false      
                         );
                     -- step into first step on the new path
-                    flow_next_step 
+                    flow_complete_step 
                         (p_process_id => p_process_id
                         ,p_subflow_id => l_new_subflow
                         ,p_forward_route => new_path.route
@@ -1301,7 +1387,7 @@ begin
                   and sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
                 ;
                 -- step into first step on the new path
-                flow_next_step     
+                flow_complete_step     
                 ( p_process_id => p_process_id
                 , p_subflow_id => l_sbfl_id
                 , p_forward_route => null
@@ -1344,7 +1430,7 @@ begin
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
     ;  
-    flow_next_step   
+    flow_complete_step   
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_forward_route => l_forward_route
@@ -1397,7 +1483,7 @@ begin
               , p_new_proc_level => true
               );
       -- step into sub_process
-      flow_next_step   
+      flow_complete_step   
             ( p_process_id => p_process_id
             , p_subflow_id => l_sbfl_id_sub
             , p_forward_route => null
@@ -1459,7 +1545,7 @@ begin
                 , p_new_proc_level => false    
                 );
             -- step into first step on the new path
-            flow_next_step   
+            flow_complete_step   
                     (p_process_id => p_process_id
                     ,p_subflow_id => l_sbfl_id_sub
                     ,p_forward_route => new_path.route
@@ -1536,12 +1622,12 @@ is
   l_par_sbfl    flow_subflows.sbfl_id%type;
 begin
     -- currently only supports none Intermediate throw event (used as a process state marker)
-    -- but this might later have a case type = timer, emailSend, etc. ....
+    -- but this might later have a case type = timer, message, etc. ....
     apex_debug.message(p_message => 'Begin process_IntermediateThrowEvent '||p_step_info.target_objt_ref, p_level => 4) ;
 
     if p_step_info.target_objt_subtag is null
     then
-        -- a none event.  Make the ITE the current event then just call next step.  
+        -- a none event.  Make the ITE the current event then just call flow_complete_step.  
         update flow_subflows sbfl
         set   sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -1550,7 +1636,7 @@ begin
         where sbfl.sbfl_id = p_subflow_id
             and sbfl.sbfl_prcs_id = p_process_id
         ;
-        flow_next_step
+        flow_complete_step
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
@@ -1650,7 +1736,7 @@ begin
     ;
 end process_scriptTask;
 
-procedure process_sendTask
+procedure process_serviceTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
@@ -1658,7 +1744,7 @@ procedure process_sendTask
   )
 is 
 begin
-     apex_debug.message(p_message => 'Begin process_sendTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+     apex_debug.message(p_message => 'Begin process_serviceTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -1667,10 +1753,10 @@ begin
     where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
     ;
-    -- current implementation is limited to one sendTask type, which is for apex message template sent from user defined PL/SQL script
-    -- future sendTask types could include text message, tweet, AOP document via email, etc.
-    -- current implementation is limited to synchronous send (i.e., email sent as part of Flows for APEX process).begin
-    -- future implementations could include async sendTask, where message generation is queued.
+    -- current implementation is limited to one serviceTask type, which is for apex message template sent from user defined PL/SQL script
+    -- future serviceTask types could include text message, tweet, AOP document via email, etc.
+    -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).
+    -- future implementations could include async serviceTask, where message generation is queued, or non-email services
 
     flow_run_sync_plsql 
         ( p_process_id => p_process_id
@@ -1678,7 +1764,7 @@ begin
         , p_current =>  p_step_info.target_objt_ref
         )
     ;
-end process_sendTask;
+end process_serviceTask;
 
 procedure process_manualTask
   ( p_process_id    in flow_processes.prcs_id%type
@@ -1769,7 +1855,7 @@ begin
         and sbfl.sbfl_id = p_parent_subflow_id
         and sbfl.sbfl_status = 'split'
           ;
-       flow_next_step           
+       flow_complete_step           
           ( p_process_id => p_process_id
           , p_subflow_id => p_parent_subflow_id
           , p_forward_route => null
@@ -1821,7 +1907,7 @@ begin
        where sbfl.sbfl_prcs_id = p_process_id
          and sbfl.sbfl_id = p_subflow_id
            ;
-      flow_next_step 
+      flow_complete_step 
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
       , p_forward_route => null
@@ -1885,7 +1971,7 @@ begin
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
          ;
-     flow_next_step (p_process_id, p_subflow_id);
+     flow_complete_step (p_process_id, p_subflow_id);
 
 end handle_interrupting_boundary_event;
 
@@ -1966,7 +2052,7 @@ begin
       elsif l_curr_objt_tag_name = 'bpmn:intermediateCatchEvent'
       then
           -- independant iCE not following an eBG
-          -- set subflow status to running and call next step
+          -- set subflow status to running and call flow_complete_step
           handle_intermediate_catch_event (
             p_process_id => p_process_id
           , p_subflow_id => p_subflow_id
@@ -1982,7 +2068,7 @@ end flow_handle_event;
 *************************************************************************************************************/
 
 
-procedure flow_next_step
+procedure flow_complete_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
 , p_forward_route in flow_connections.conn_bpmn_id%type default null
@@ -1993,7 +2079,7 @@ is
   l_dgrm_id               flow_diagrams.dgrm_id%type;
   l_prcs_check_id         flow_processes.prcs_id%type;
 begin
-  apex_debug.message(p_message => 'Begin flow_next_step', p_level => 3) ;
+  apex_debug.message(p_message => 'Begin flow_complete_step', p_level => 3) ;
   l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info
   begin
@@ -2070,7 +2156,8 @@ begin
       apex_debug.message(p_message => 'boundary event cleanup triggered for subflow '||p_subflow_id, p_level => 4) ;
       flow_unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
-
+  -- release subflow reservation
+  flow_release_step(p_process_id, p_subflow_id);
 
   -- log current step as completed
   log_step_completion   
@@ -2188,8 +2275,8 @@ begin
          , p_sbfl_info => l_sbfl_rec
          , p_step_info => l_step_info
          );
-    when  'bpmn:sendTask' 
-    then flow_engine.process_sendTask
+    when  'bpmn:serviceTask' 
+    then flow_engine.process_serviceTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -2209,7 +2296,7 @@ exception
       ( p_message => 'Next step does not exist.'
       , p_display_location => apex_error.c_on_error_page
       );
-end flow_next_step;
+end flow_complete_step;
 
 /************************************************************************************************************
 ****
