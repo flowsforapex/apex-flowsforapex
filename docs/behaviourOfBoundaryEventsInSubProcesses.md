@@ -7,7 +7,7 @@ One of the good practice modeling concepts  in BPMN is to focus the model on the
 Boundary Events come in several flavours, to handle:
 
 - process errors
-- process escallation
+- process escalation
 - timeouts
 - reminders
 - interruptions
@@ -48,3 +48,7 @@ In this example, sub-Process B has 3 boundaryEvents attached to it.  In addition
 The Reminder Timer is set to fire after 2 days.  This is a non-interrupting timer.  When it fires, a reminder is sent to the user on a new subflow.  If Task B is completed before the boundary timer fires, the timer is terminated.  If the reminder timer fires, it starts a new subflow with Send Reminder as it's next task; Once the timer has fired, the subflow will continue to exist after the attached parent task (B) has been completed.
 
 The TimeOut Timer is  set to fire after 5 days.  This is an interrupting timer.  when it fires, and processing inside sub-process B is terminated.  The subflows that are running to execute sub-process B are terminated.  The main subflow (which went from Start -> A -> B) proceeds to Timeout Handler.  C and D will not be executed.
+
+### Escalation Events
+
+Escalation events are used in a subprocess to signal an event or condition outside of the normal, but which is not a process error.  Escalations can be thrown by both intermediateThrowEvents and endEvents.  Both of these can throw interrupting and non-interrupting escalation events.

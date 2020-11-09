@@ -34,6 +34,24 @@ as
               when sbfl.sbfl_next_step_type = 'simple-step' then 'fa fa-sign-out'
             end || '"></span></button>'
          end as action_html
+       , case 
+          when sbfl.sbfl_status = 'running' then 
+            '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
+            case 
+                when sbfl.sbfl_reservation is null then 'title="Reserve Step" aria-label="Reserve Step" '
+                when sbfl.sbfl_reservation is not null then 'title="Release Reservation" aria-label="Release Reservation" '
+            end || 'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '" data-action="' ||
+            case 
+                when sbfl.sbfl_reservation is null then 'reserve'
+                when sbfl.sbfl_reservation is not null then 'release'
+              end || '"><span aria-hidden="true" class="' ||
+              case
+                when sbfl.sbfl_reservation is null then  'fa fa-lock'
+                when sbfl.sbfl_reservation is not null then 'fa fa-unlock'
+              end || '"></span></button>'  
+          else
+            null  
+         end as reservation_html
     from flow_subflows_vw sbfl
 with read only
 ;

@@ -256,13 +256,55 @@ procedure flow_start
         );
 end flow_start;
 
-procedure flow_next_step
+procedure flow_reserve_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in varchar2 default null -- FFA 41 remove this and only pass null once next_branch removed
+, p_reservation   in flow_subflows.sbfl_reservation%type
 )
 is 
 begin
+
+  flow_engine.flow_reserve_step
+  ( p_process_id  => p_process_id
+  , p_subflow_id  => p_subflow_id
+  , p_reservation => p_reservation
+  );
+end flow_reserve_step;
+
+procedure flow_release_step
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+)
+is 
+begin
+
+  flow_engine.flow_release_step
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  );
+end flow_release_step;
+
+procedure flow_complete_step
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+)
+is 
+begin
+
+  flow_engine.flow_complete_step
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  );
+end flow_complete_step;
+
+procedure flow_next_step
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_forward_route in varchar2 default null 
+)
+is 
+begin
+-- FFA50 Remove from here...
   if p_forward_route is not null 
   then
         apex_error.add_error
@@ -271,10 +313,18 @@ begin
           );
   end if;
 
-  flow_engine.flow_next_step
+  flow_engine.flow_complete_step
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   , p_forward_route => null);   -- FFA 41 remove this and only pass null once next_branch removed
+-- FFA50 ....to here
+/* FFA50  replace procedure with this before release
+          apex_error.add_error
+          ( p_message => 'Flow_next_step replaced by flow_complete_step for Flows for Apex V5.  See Documentation '
+          , p_display_location => apex_error.c_on_error_page
+          );
+
+*/
 end flow_next_step;
 
 
