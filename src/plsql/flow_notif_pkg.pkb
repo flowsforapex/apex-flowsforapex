@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE BODY flow_notif_pkg AS
+create or replace PACKAGE BODY flow_notif_pkg AS
 
 
     FUNCTION get_transf_value (
@@ -117,16 +117,8 @@ CREATE OR REPLACE PACKAGE BODY flow_notif_pkg AS
         END LOOP;
 
         dbms_lob.append(l_p_placeholders, '}');
-        dbms_output.put_line(l_p_placeholders);
       
-      -- ?OPTIONAL? Get substitutions for modeller values -- TBD...
-      -- l_substitution_arr := APEX_STRING.split(.....).LAST
-      -- if l_substitution_arr.COUNT > 0 THEN
-      --   LOOP
-      --     get_item_value(l_substitution_ar....);
-      -- end loop;
-      -- END ?OPTIONAL? --
-        apex_mail.send(p_to => 'fs@frasit.com', p_template_static_id => p_template_ident, p_placeholders => l_p_placeholders);
+        apex_mail.send(p_to => 'fs@frasit.com'/*Parameter TBD*/, p_template_static_id => p_template_ident, p_placeholders => l_p_placeholders);
 
         dbms_lob.freetemporary(l_templ_content_all);
         dbms_lob.freetemporary(l_p_placeholders);

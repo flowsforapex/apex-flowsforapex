@@ -1,10 +1,14 @@
-CREATE OR REPLACE PACKAGE flow_notif_pkg AS
+create or replace PACKAGE flow_notif_pkg AS
 /******************************************************************************
  Purpose:
    Provides support to notifications in Flows for APEX.
 ******************************************************************************/
 
 /* FUNCTIONS */
+/******************************************************************************
+  get_transf_value
+    Only for internal use in SQL.
+******************************************************************************/
     FUNCTION get_transf_value (
         in_value VARCHAR2
     ) RETURN CLOB;
