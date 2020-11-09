@@ -24,10 +24,11 @@ PROMPT >> Installing Package Specifications
 
 PROMPT >> Installing Views
 -- Base Views
-@views/flow_processes_vw.sql
 @views/flow_instances_vw.sql
+@views/flow_instance_details_vw.sql
+@views/flow_instance_inbox_vw.sql
+@views/flow_instane_variables_vw.sql
 @views/flow_subflows_vw.sql
-@views/flow_process_inbox_vw.sql
 @views/flow_diagrams_lov.sql
 @views/flow_diagrams_parsed_lov.sql
 

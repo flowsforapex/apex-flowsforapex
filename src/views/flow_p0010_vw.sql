@@ -5,5 +5,5 @@ as
        , all_completed
        , last_completed
        , all_current
-    from flow_processes_vw
+    from flow_instance_details_vw
 with read only;
