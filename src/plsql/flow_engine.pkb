@@ -110,14 +110,14 @@ begin
       into po_num_back_connections
       from flow_connections conn 
      where conn.conn_tgt_objt_id = pi_target_objt_id
-       and conn.conn_tag_name = 'bpmn:sequenceFlow'
+       and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        and conn.conn_dgrm_id = pi_dgrm_id
     ;
     select count(*)
       into po_num_forward_connections
       from flow_connections conn 
      where conn.conn_src_objt_id = pi_target_objt_id
-       and conn.conn_tag_name = 'bpmn:sequenceFlow'
+       and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        and conn.conn_dgrm_id = pi_dgrm_id
     ;
 end get_number_of_connections;
@@ -669,7 +669,7 @@ procedure flow_process_link_event
 is 
     l_next_objt      flow_objects.objt_bpmn_id%type;
 begin 
-    -- find matching link catching event & step to it
+    -- find matching link catching event and step to it
     l_next_objt := flow_get_matching_link_object 
       ( pi_dgrm_id => p_step_info.dgrm_id
       , pi_link_bpmn_id => p_step_info.target_objt_ref
@@ -762,7 +762,7 @@ begin
       , po_interrupting => l_interrupting
       );
     if l_interrupting = 1 then
-        -- set parent subflow to boundary event & do flow_complete_step
+        -- set parent subflow to boundary event and do flow_complete_step
         update flow_subflows sbfl
           set sbfl.sbfl_current = l_next_objt
             , sbfl.sbfl_last_completed = p_step_info.target_objt_ref 
@@ -787,7 +787,7 @@ begin
          where par_sbfl.sbfl_id = p_par_sbfl
            and par_sbfl.sbfl_prcs_id = p_process_id
            ;
-        -- start new subflow starting at the boundary event & step to next task
+        -- start new subflow starting at the boundary event and step to next task
         l_new_sbfl := subflow_start
         ( p_process_id => p_process_id
         , p_parent_subflow => p_par_sbfl
@@ -1001,7 +1001,7 @@ begin
 
         if p_step_info.target_objt_subtag = 'bpmn:errorEventDefinition'
         then
-            -- error exit event - return to errorBoundaryEvent if it exists & if not to normal exit
+            -- error exit event - return to errorBoundaryEvent if it exists and if not to normal exit
             begin
               select boundary_objt.objt_bpmn_id
                    , subproc_objt.objt_bpmn_id
@@ -1182,7 +1182,7 @@ begin
                   join flow_objects objt
                     on objt.objt_id = conn.conn_tgt_objt_id
                  where conn.conn_dgrm_id = p_step_info.dgrm_id
-                   and conn.conn_tag_name = 'bpmn:sequenceFlow'
+                   and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
                    and conn.conn_src_objt_id = p_step_info.target_objt_id
             )
             loop
@@ -1528,7 +1528,7 @@ begin
                 join flow_objects objt
                 on objt.objt_id = conn.conn_tgt_objt_id
                 where conn.conn_dgrm_id = p_step_info.dgrm_id
-                and conn.conn_tag_name = 'bpmn:sequenceFlow'
+                and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
                 and conn.conn_src_objt_id = p_step_info.target_objt_id
         )
         loop
@@ -1845,7 +1845,7 @@ begin
         and sbfl.sbfl_prcs_id = p_process_id
         and objt.objt_dgrm_id = l_dgrm_id
         and conn.conn_dgrm_id = l_dgrm_id
-        and conn.conn_tag_name = 'bpmn:sequenceFlow'
+        and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
           ;
      update flow_subflows sbfl
         set sbfl_status = 'running'
@@ -1945,7 +1945,7 @@ begin
         ;
     if l_parent_objt_tag = 'bpmn:subProcess'
     then
-       -- find a child subprocess & then stop all processing at that level and below
+       -- find a child subprocess and then stop all processing at that level and below
        select sbfl.sbfl_id
        into   l_child_sbfl
        from flow_subflows sbfl
@@ -1962,7 +1962,7 @@ begin
     end if;
     -- clean up any other boundary timers on the object
     flow_unset_boundary_timers (p_process_id, p_subflow_id);
-    -- switch processing onto boundaryEvent path & do next step
+    -- switch processing onto boundaryEvent path and do next step
     update flow_subflows sbfl
        set sbfl.sbfl_current = l_boundary_objt_bpmn_id
          , sbfl.sbfl_status = 'running'
@@ -2130,7 +2130,7 @@ begin
       join flow_subflows sbfl
         on sbfl.sbfl_current = objt_source.objt_bpmn_id 
      where conn.conn_dgrm_id = l_dgrm_id
-       and conn.conn_tag_name = 'bpmn:sequenceFlow'
+       and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        and conn.conn_bpmn_id like nvl2( p_forward_route, p_forward_route, '%' )
        and sbfl.sbfl_prcs_id = p_process_id
       and sbfl.sbfl_id = p_subflow_id
