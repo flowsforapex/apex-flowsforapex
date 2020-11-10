@@ -6,12 +6,11 @@ as
     pi_action  in varchar2
   , pi_prcs_id in flow_processes.prcs_id%type
   , pi_sbfl_id in flow_subflows.sbfl_id%type
-  , pi_branch  in varchar2
   )
   as
     l_error_occured boolean := false;
   begin
-    apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s, Branch: %s', p0 => pi_action, p1 => pi_prcs_id, p2 => pi_sbfl_id, p3 => pi_branch);
+    apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => pi_action, p1 => pi_prcs_id, p2 => pi_sbfl_id );
     begin
       case upper(pi_action)
         when 'RESET' then
@@ -38,13 +37,6 @@ as
           (
             p_process_id    => pi_prcs_id
           , p_subflow_id    => pi_sbfl_id
-          );
-        when 'CHOOSE_BRANCH' then
-          flow_api_pkg.flow_next_branch
-          (
-            p_process_id  => pi_prcs_id
-          , p_subflow_id  => pi_sbfl_id
-          , p_branch_name => pi_branch
           );
         else
           apex_error.add_error

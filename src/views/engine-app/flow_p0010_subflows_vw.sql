@@ -7,6 +7,7 @@ as
        , sbfl.sbfl_last_update
        , sbfl.sbfl_status
        , sbfl.sbfl_current_lane
+       , sbfl.sbfl_reservation
        , case
           when sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event', 'waiting for timer') then
             '<span class="' ||
