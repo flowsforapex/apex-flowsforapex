@@ -46,6 +46,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0010_subflows_vw.sql
 @views/engine-app/flow_p0010_branches_vw.sql
 @views/engine-app/flow_p0010_routes_vw.sql
+@views/engine-app/flow_p0010_variables_vw.sql
 
 PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0010_api.pks
