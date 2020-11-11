@@ -97,12 +97,12 @@ prompt --install
 @@application/shared_components/globalization/dyntranslations.sql
 @@application/shared_components/user_interface/shortcuts/delete_confirm_msg.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
+@@application/shared_components/plugins/region_type/com_mtag_apex_bpmnmodeler_region.sql
 @@application/shared_components/plugins/region_type/com_mtag_apex_bpmnviewer_region.sql
 @@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql
-@@application/pages/page_00001.sql
-@@application/pages/page_00002.sql
 @@application/pages/page_00003.sql
+@@application/pages/page_00004.sql
 @@application/pages/page_00010.sql
 @@application/pages/page_00011.sql
 @@application/pages/page_09999.sql

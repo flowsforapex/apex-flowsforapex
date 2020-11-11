@@ -132,3 +132,4 @@ create or replace PACKAGE BODY flow_notif_pkg AS
     END send_notification;
 
 END flow_notif_pkg;
+/

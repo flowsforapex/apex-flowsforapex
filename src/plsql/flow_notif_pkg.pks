@@ -26,3 +26,4 @@ create or replace PACKAGE flow_notif_pkg AS
       p_return_code      OUT  NUMBER
    );
 END flow_notif_pkg;
+/

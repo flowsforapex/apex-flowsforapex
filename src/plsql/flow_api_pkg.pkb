@@ -133,7 +133,7 @@ as
         from flow_connections conn
         join flow_objects objt
           on objt.objt_id = conn.conn_src_objt_id
-         and conn.conn_tag_name = 'bpmn:sequenceFlow'
+         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        where conn.conn_dgrm_id = l_dgrm_id
          and objt.objt_bpmn_id = ( select sbfl.sbfl_current
                                      from flow_subflows sbfl
@@ -191,7 +191,7 @@ as
          and objt.objt_bpmn_id = sbfl.sbfl_current
         join flow_connections conn
           on conn.conn_src_objt_id = objt.objt_id
-         and conn.conn_tag_name = 'bpmn:sequenceFlow'
+         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        where sbfl.sbfl_id = p_sbfl_id
     group by objt.objt_tag_name
     ;
@@ -204,8 +204,8 @@ as
 --            FFA50 remove this procedure once UI apps adapted.
 --            when 'bpmn:exclusiveGateway' then gc_single_choice
 --            when 'bpmn:inclusiveGateway' then gc_multi_choice
-              when 'bpmn:exclusiveGateway' then gc_step
-              when 'bpmn:inclusiveGateway' then gc_step
+              when flow_constants_pkg.gc_bpmn_gateway_exclusive then gc_step
+              when flow_constants_pkg.gc_bpmn_gateway_inclusive then gc_step
             else 'unknown'
           end
         ;
