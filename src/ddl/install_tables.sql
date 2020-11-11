@@ -286,9 +286,9 @@ ALTER TABLE flow_timers
 
 create table flow_process_variables
 ( prov_prcs_id number not null
-, prov_var_name varchar2(50) not null
-, prov_var_type varchar2(50) 
-, prov_var_vc2 varchar2(200)
+, prov_var_name varchar2(50 char) not null
+, prov_var_type varchar2(50 char) not null 
+, prov_var_vc2 varchar2(200 char)
 , prov_var_num number
 , prov_var_date date
 , prov_var_clob clob

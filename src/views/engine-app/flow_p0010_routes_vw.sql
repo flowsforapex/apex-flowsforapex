@@ -5,6 +5,7 @@ as
        , objt.objt_bpmn_id
        , coalesce( conn.conn_name, conn.conn_bpmn_id ) as d
        , conn.conn_bpmn_id as r
+       , case conn.conn_is_default when 1 then 'Y' else 'N' end conn_is_default
     from flow_connections conn
     join flow_objects objt
       on objt.objt_id = conn.conn_src_objt_id

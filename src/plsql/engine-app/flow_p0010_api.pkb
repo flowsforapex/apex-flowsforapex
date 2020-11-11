@@ -55,5 +55,53 @@ as
     end;
   end process_action;
 
+
+procedure process_variables_row
+(
+  pi_row_status    in varchar2
+, pi_prov_prcs_id  in out nocopy flow_process_variables.prov_prcs_id%type
+, pi_prov_var_name in out nocopy flow_process_variables.prov_var_name%type
+, pi_prov_var_type in flow_process_variables.prov_var_type%type
+, pi_prov_var_vc2  in flow_process_variables.prov_var_vc2%type
+, pi_prov_var_num  in flow_process_variables.prov_var_num%type
+, pi_prov_var_date in flow_process_variables.prov_var_date%type
+, pi_prov_var_clob in flow_process_variables.prov_var_clob%type
+)
+as
+begin
+  case pi_prov_var_type
+    when 'VARCHAR2' then
+      flow_process_vars.set_var
+      (
+        pi_prcs_id   => pi_prov_prcs_id
+      , pi_var_name  => pi_prov_var_name
+      , pi_vc2_value => pi_prov_var_vc2
+      );
+    when 'NUMBER' then
+      flow_process_vars.set_var
+      (
+        pi_prcs_id   => pi_prov_prcs_id
+      , pi_var_name  => pi_prov_var_name
+      , pi_num_value => pi_prov_var_num
+      );
+    when 'DATE' then
+      flow_process_vars.set_var
+      (
+        pi_prcs_id    => pi_prov_prcs_id
+      , pi_var_name   => pi_prov_var_name
+      , pi_date_value => pi_prov_var_date
+      );
+    when 'CLOB' then
+      flow_process_vars.set_var
+      (
+        pi_prcs_id    => pi_prov_prcs_id
+      , pi_var_name   => pi_prov_var_name
+      , pi_clob_value => pi_prov_var_clob
+      );
+    else
+      null;
+  end case;
+end process_variables_row;
+
 end flow_p0010_api;
 /
