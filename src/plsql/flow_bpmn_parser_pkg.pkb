@@ -17,6 +17,25 @@ as
     );
   type t_objt_tab is table of t_objt_rec index by flow_types_pkg.t_bpmn_id;
 
+  type t_obat_rec is
+    record
+    (
+      obat_key            flow_object_attributes.obat_key%type
+    , obat_num_value      flow_object_attributes.obat_num_value%type
+    , obat_date_value     flow_object_attributes.obat_date_value%type
+    , obat_vc_value       flow_object_attributes.obat_vc_value%type
+    , obat_clob_value     flow_object_attributes.obat_clob_value%type
+    );
+  type t_obat_tab is table of t_obat_rec index by pls_integer;
+
+  type t_objt_obat_rec is
+    record
+    (
+      obat_sub_tag_name   flow_objects.objt_sub_tag_name%type
+    , obat_tab            t_obat_tab
+    );
+  type t_objt_obat_tab is table of t_objt_obat_rec index by flow_types_pkg.t_bpmn_id;
+  
   type t_conn_rec is
     record
     (
@@ -34,12 +53,13 @@ as
   type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   -- Variables to hold data during parse run
-  g_dgrm_id      flow_diagrams.dgrm_id%type;
-  g_objects      t_objt_tab;
-  g_connections  t_conn_tab;
-  g_lane_refs    t_bpmn_ref_tab;
-  g_default_cons t_bpmn_id_tab;
-  g_objt_lookup  t_id_lookup_tab;
+  g_dgrm_id        flow_diagrams.dgrm_id%type;
+  g_objects        t_objt_tab;
+  g_obj_attribs    t_objt_obat_tab;
+  g_connections    t_conn_tab;
+  g_lane_refs      t_bpmn_ref_tab;
+  g_default_cons   t_bpmn_id_tab;
+  g_objt_lookup    t_id_lookup_tab;
 
 
   procedure register_object
@@ -66,6 +86,52 @@ as
       g_objects( pi_objt_bpmn_id ) := l_objt_rec;
     end if;
   end register_object;
+
+  procedure register_object_attributes
+  (
+    pi_objt_bpmn_id       in flow_objects.objt_bpmn_id%type
+  , pi_objt_sub_tag_name  in flow_objects.objt_sub_tag_name%type default null
+  , pi_obat_key           in flow_object_attributes.obat_key%type
+  , pi_obat_num_value     in flow_object_attributes.obat_num_value%type default null
+  , pi_obat_date_value    in flow_object_attributes.obat_date_value%type default null
+  , pi_obat_vc_value      in flow_object_attributes.obat_vc_value%type default null
+  , pi_obat_clob_value    in flow_object_attributes.obat_clob_value%type default null
+  )
+  as
+    l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
+
+    l_obat_rec              t_obat_rec;
+    l_obat_idx              pls_integer;
+	l_objt_obat_idx_exists  boolean := false;
+  begin
+    if pi_objt_bpmn_id is not null then
+
+	  -- check, if the index already exists
+	  begin
+	     l_objt_sub_tag_name := g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name;
+		 l_objt_obat_idx_exists := true;
+	  exception
+	    when no_data_found then
+		 l_objt_obat_idx_exists := false;
+	  end;
+
+	  -- fill attributes record
+	  l_obat_rec.obat_key        := pi_obat_key;
+	  l_obat_rec.obat_num_value  := pi_obat_num_value;
+	  l_obat_rec.obat_date_value := pi_obat_date_value;
+	  l_obat_rec.obat_vc_value   := pi_obat_vc_value;
+	  l_obat_rec.obat_clob_value := pi_obat_clob_value;
+	  
+      if not l_objt_obat_idx_exists then
+        g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name := pi_objt_sub_tag_name;
+		g_obj_attribs(pi_objt_bpmn_id).obat_tab(1) := l_obat_rec;
+	  else
+        l_obat_idx := coalesce(g_obj_attribs(pi_objt_bpmn_id).obat_tab.last,0);
+        g_obj_attribs(pi_objt_bpmn_id).obat_tab(l_obat_idx + 1) := l_obat_rec;
+	  end if;
+
+    end if;
+  end register_object_attributes;
 
   procedure register_connection
   (
@@ -132,6 +198,38 @@ as
     ;
   end insert_object;
 
+  procedure insert_object_attributes
+  (
+    pi_objt_id          in flow_object_attributes.obat_objt_id%type
+  , pi_obat_key         in flow_object_attributes.obat_key%type
+  , pi_obat_num_value   in flow_object_attributes.obat_num_value%type default null
+  , pi_obat_date_value  in flow_object_attributes.obat_date_value%type default null
+  , pi_obat_vc_value    in flow_object_attributes.obat_vc_value%type default null
+  , pi_obat_clob_value  in flow_object_attributes.obat_clob_value%type default null
+  )
+  as
+  begin
+    insert
+      into flow_object_attributes
+           (
+             obat_objt_id
+           , obat_key
+           , obat_num_value
+           , obat_date_value
+           , obat_vc_value
+           , obat_clob_value
+           )
+    values (
+             pi_objt_id
+           , pi_obat_key
+           , pi_obat_num_value
+           , pi_obat_date_value
+           , pi_obat_vc_value
+           , pi_obat_clob_value
+           )
+    ;
+  end insert_object_attributes;
+
   procedure insert_connection
   (
     pi_conn_bpmn_id      in flow_connections.conn_bpmn_id%type
@@ -172,6 +270,51 @@ as
     ;
   end insert_connection;
 
+  procedure process_object_attributes
+  (
+    pi_objt_id       in flow_object_attributes.obat_objt_id%type
+  , pi_objt_bpmn_id  in flow_types_pkg.t_bpmn_id
+  )
+  as
+    l_obat_tab      t_obat_tab;
+    l_obat_rec      t_obat_rec;
+    l_obat_exists   boolean;
+    l_cur_obat_idx  pls_integer;
+    l_next_obat_idx pls_integer;
+  begin
+
+    -- check, if there are attributes for the object
+    begin
+      l_obat_tab := g_obj_attribs(pi_objt_bpmn_id).obat_tab;
+      l_obat_exists := true;
+    exception
+      when no_data_found then
+        l_obat_exists := false;
+    end;
+
+    if l_obat_exists then
+      l_cur_obat_idx := l_obat_tab.first;
+      while l_cur_obat_idx is not null
+      loop
+        l_obat_rec := l_obat_tab( l_cur_obat_idx );
+
+        insert_object_attributes
+        (
+          pi_objt_id         => pi_objt_id
+        , pi_obat_key        => l_obat_rec.obat_key
+        , pi_obat_num_value  => l_obat_rec.obat_num_value
+        , pi_obat_date_value => l_obat_rec.obat_date_value
+        , pi_obat_vc_value   => l_obat_rec.obat_vc_value
+        , pi_obat_clob_value => l_obat_rec.obat_clob_value
+        );
+
+        l_next_obat_idx := l_obat_tab.next( l_cur_obat_idx );
+        l_cur_obat_idx := l_next_obat_idx;
+      end loop;
+    end if;
+
+  end process_object_attributes;
+
   procedure process_objects
   as
     l_cur_objt_bpmn_id  flow_types_pkg.t_bpmn_id;
@@ -206,7 +349,7 @@ as
 
       -- checks passed insert into table
       if l_parent_check and l_lane_check then
-        
+
         insert_object
         (
           pi_objt_bpmn_id      => l_cur_objt_bpmn_id
@@ -218,6 +361,12 @@ as
         , pi_objt_attached_to  => l_cur_object.objt_attached_to
         , pi_objt_interrupting => l_cur_object.objt_interrupting
         , po_objt_id           => l_objt_id
+        );
+
+        process_object_attributes
+        (
+          pi_objt_id           => l_objt_id
+        , pi_objt_bpmn_id      => l_cur_objt_bpmn_id
         );
 
       -- checks not passed skip record for now
@@ -288,7 +437,7 @@ as
 
     process_objects;
     process_connections;
-    
+
   end finalize;
 
   function upload_diagram
@@ -396,7 +545,6 @@ as
                  node_ref   varchar2(50 char) path 'text()'
              ) nodes
       ) loop
-        dbms_output.put_line( 'Set Lane for "' || node_rec.node_ref || '" to "' || lane_rec.lane_id || '"' );
         g_lane_refs( node_rec.node_ref ) := lane_rec.lane_id;
       end loop;
 
@@ -410,27 +558,122 @@ as
   )
     return flow_types_pkg.t_bpmn_id
   as
-    c_nsmap             constant t_vc200                  := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
-    c_terminateEnd      constant flow_types_pkg.t_bpmn_id := 'bpmn:terminateEventDefinition';
-    c_timer             constant flow_types_pkg.t_bpmn_id := 'bpmn:timerEventDefinition';
-    c_errorEvent        constant flow_types_pkg.t_bpmn_id := 'bpmn:errorEventDefinition';
-    c_escalationEvent   constant flow_types_pkg.t_bpmn_id := 'bpmn:escalationEventDefinition';
-
-    l_return flow_types_pkg.t_bpmn_id;
+    c_nsmap        constant t_vc200 := flow_constants_pkg.gc_nsmap;
+    l_return                flow_types_pkg.t_bpmn_id;
   begin
 
-    if pi_xml.existsNode( xpath => '/' || c_terminateEnd, nsmap => c_nsmap ) = 1 then
-      l_return := c_terminateEnd;
-    elsif pi_xml.existsNode( xpath => '/' || c_timer, nsmap => c_nsmap ) = 1 then
-      l_return := c_timer;
-    elsif pi_xml.existsNode( xpath => '/' || c_errorEvent, nsmap => c_nsmap ) = 1 then
-      l_return := c_errorEvent;
-    elsif pi_xml.existsNode( xpath => '/' || c_escalationEvent, nsmap => c_nsmap ) = 1 then
-      l_return := c_escalationEvent;
+    if pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_terminate_event_definition, nsmap => c_nsmap ) = 1 then
+      l_return := flow_constants_pkg.gc_bpmn_terminate_event_definition;
+    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_timer_event_definition, nsmap => c_nsmap ) = 1 then
+      l_return := flow_constants_pkg.gc_bpmn_timer_event_definition;
+    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_date, nsmap => c_nsmap ) = 1 then
+      l_return := flow_constants_pkg.gc_timer_type_date;
+    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_duration, nsmap => c_nsmap ) = 1 then
+      l_return := flow_constants_pkg.gc_timer_type_duration;
+    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1 then
+      l_return := flow_constants_pkg.gc_timer_type_cycle;
     end if;
 
     return l_return;
   end find_subtag_name;
+
+  procedure parse_child_elements
+  (
+    pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
+  , pi_xml          in xmltype
+  )
+  as
+    l_child_type         flow_types_pkg.t_bpmn_id;
+    l_child_id           flow_types_pkg.t_bpmn_id;
+    l_child_value        flow_object_attributes.obat_vc_value%type;
+    l_child_details      xmltype;
+    l_detail_type        flow_types_pkg.t_bpmn_id;
+    l_detail_id          flow_types_pkg.t_bpmn_id;
+    l_detail_value       flow_object_attributes.obat_vc_value%type;
+  begin
+
+    for rec in (
+                select children.child_type
+                     , children.child_id
+                     , children.child_value
+                     , children.child_details
+                  into l_child_type
+                     , l_child_id
+                     , l_child_value
+                     , l_child_details
+                  from xmltable
+                       (
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'http://www.apex.mt-ag.com' as "apex")
+                       , '*' passing pi_xml
+                         columns
+                           child_type     varchar2(50 char)    path 'name()'
+                         , child_id       varchar2(50 char)    path '@id'
+                         , child_value    varchar2(4000 char)  path 'text()'
+                         , child_details  xmltype              path '* except bpmn:incoming except bpmn:outgoing'
+                       ) children
+               )
+    loop
+
+      if rec.child_details is null then
+        -- register the child which does not have details
+        if rec.child_value is not null then
+          -- if needed distinguish here between different attributes
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_obat_key          => rec.child_type
+          , pi_obat_vc_value     => rec.child_value
+        );
+        end if;
+      else
+        -- register the child which has details
+        if rec.child_type = flow_constants_pkg.gc_bpmn_timer_event_definition then
+    	  begin
+    	    select details.detail_type
+    			 , details.detail_id
+    			 , details.detail_value
+              into l_detail_type
+                 , l_detail_id
+                 , l_detail_value
+              from xmltable
+                   (
+                     xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                   , '*' passing rec.child_details
+                     columns
+                       detail_type   varchar2(50 char)    path 'name()'
+                     , detail_id     varchar2(50 char)    path '@id'
+                     , detail_value  varchar2(4000 char)  path 'text()'
+                   ) details;
+          end;
+
+          -- register the timer type
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_objt_sub_tag_name => rec.child_type
+          , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
+          , pi_obat_vc_value     => l_detail_type
+          );
+		
+          -- register the timer definition
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_objt_sub_tag_name => rec.child_type
+          , pi_obat_key          => flow_constants_pkg.gc_timer_def_key
+          , pi_obat_vc_value     => l_detail_value
+          );
+		
+        elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
+          null;
+	    end if;
+
+      end if;
+
+    end loop;
+
+  end parse_child_elements;
 
   procedure parse_steps
   (
@@ -477,12 +720,11 @@ as
         -- Additionally collect generic attributes if possible
         if rec.child_elements is not null then
           l_objt_sub_tag_name := find_subtag_name( pi_xml => rec.child_elements );
-          -- parse_child_elements
-          -- (
-          --   pi_objt_bpmn_id => rec.steps_id
-          -- , pi_xml          => rec.child_elements
-          -- , pi_subtag_name  => l_objt_sub_tag_name
-          -- );
+          parse_child_elements
+          (
+            pi_objt_bpmn_id => rec.steps_id
+          , pi_xml          => rec.child_elements
+          );
         else
           l_objt_sub_tag_name := null;
         end if;
@@ -529,7 +771,7 @@ as
       end if;
     end loop;  
   end parse_steps;
-  
+
   procedure parse_xml
   (
     pi_xml       in xmltype
@@ -580,15 +822,15 @@ as
 
         -- recurse if sub processes found
         if rec.proc_sub_procs is not null then
-        
+
           parse_xml
           ( 
             pi_xml => rec.proc_sub_procs
           , pi_parent_id => rec.proc_id
           );
-        
+
         end if;
-        
+
       end loop;
     else
       for rec in (
@@ -628,7 +870,7 @@ as
         , pi_proc_type    => rec.proc_type_rem
         , pi_proc_bpmn_id => rec.proc_id
         );
-        
+
         -- recurse if we found any sub process
         if rec.proc_sub_procs is not null then
           parse_xml
@@ -666,7 +908,7 @@ as
                           , colab_tgt_ref varchar2(50 char)  path '@targetRef'
                         ) colab
     ) loop
-    
+
       case
         when rec.colab_src_ref is null then
           register_object
@@ -687,9 +929,9 @@ as
           );
 
       end case;
-    
+
     end loop;
-    
+
   end parse_collaboration;
 
   procedure reset
@@ -697,6 +939,7 @@ as
   begin
     g_dgrm_id := null;
     g_objects.delete;
+    g_obj_attribs.delete;
     g_connections.delete;
     g_objt_lookup.delete;
   end reset;
@@ -707,7 +950,7 @@ as
   begin
     -- delete any existing parsed information before parsing again
     cleanup_parsing_tables;
-    
+
     -- get the CLOB content
     select dgrm_content
       into l_dgrm_content
@@ -759,11 +1002,11 @@ as
   as
   begin
     reset;
-  
+
     upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
     parse;
-    
+
   end upload_and_parse;
 
 end flow_bpmn_parser_pkg;
-/
+/ 

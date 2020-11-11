@@ -39,7 +39,26 @@ as
   (
     p_process_id in flow_processes.prcs_id%type
   );
-  
+
+    procedure flow_reserve_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_reservation   in flow_subflows.sbfl_reservation%type
+  );  
+
+     procedure flow_release_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  ); 
+
+   procedure flow_complete_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  ); 
+
   -- Note: flow_next_branch no longer required or supported in V5.0
   procedure flow_next_branch
   ( p_process_id  in flow_processes.prcs_id%type
@@ -47,7 +66,7 @@ as
   , p_branch_name in varchar2
   );
   
-  -- Note: p_forward_route parameter no longer supported in V5.0
+  -- Note: flow_next_step no longer supported in V5.0.  Use flow_complete_step.  See doc.
   procedure flow_next_step
   (
     p_process_id    in flow_processes.prcs_id%type
@@ -74,16 +93,6 @@ as
 **        APPLICATION HELPERS (Progress, Next Step needs Decisions, etc.)
 **
 ********************************************************************************/ 
-  /*
-  function next_step_exists
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean;
-
-  function next_step_exists_yn
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2; */
 
   function next_multistep_exists
   ( p_process_id in flow_processes.prcs_id%type
@@ -99,12 +108,6 @@ as
   (
     p_sbfl_id in flow_subflows.sbfl_id%type
   ) return varchar2;
-
-  function get_current_progress -- creates the markings for the bpmn viewer to show current progress 
-  ( 
-    p_process_id in flow_processes.prcs_id%type 
-  ) return varchar2;
-
 
 end flow_api_pkg;
 /

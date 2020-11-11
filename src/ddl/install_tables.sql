@@ -128,6 +128,8 @@ CREATE TABLE flow_subflows (
     sbfl_last_completed   VARCHAR2(50 CHAR),
     sbfl_current          VARCHAR2(50 CHAR),
     sbfl_status           VARCHAR2(20 CHAR),
+    sbfl_has_events        VARCHAR2(200 CHAR),
+    sbfl_reservation      VARCHAR2(255 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
@@ -218,7 +220,7 @@ ALTER TABLE flow_processes
 ALTER TABLE flow_subflows
     ADD CONSTRAINT sbfl_parent_sbfl_fk FOREIGN KEY ( sbfl_sbfl_id )
         REFERENCES flow_subflows ( sbfl_id )
-            ON DELETE CASCADE;
+            ON DELETE SET NULL;
 
 ALTER TABLE flow_subflows
     ADD CONSTRAINT sbfl_prcs_fk FOREIGN KEY ( sbfl_prcs_id )
@@ -284,9 +286,9 @@ ALTER TABLE flow_timers
 
 create table flow_process_variables
 ( prov_prcs_id number not null
-, prov_var_name varchar2(50) not null
-, prov_var_type varchar2(50) 
-, prov_var_vc2 varchar2(200)
+, prov_var_name varchar2(50 char) not null
+, prov_var_type varchar2(50 char) not null 
+, prov_var_vc2 varchar2(200 char)
 , prov_var_num number
 , prov_var_date date
 , prov_var_clob clob

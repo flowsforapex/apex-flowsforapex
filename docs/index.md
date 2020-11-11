@@ -13,8 +13,10 @@ This application enables every APEX developer to create and run process flows fo
 - [Starting and Stopping Flows](StartingAndStoppingFlows.md)
 - [Gateways and Parallel Flows](GatewaysAndParallelFlows.md)
 - [Using Sub Processes](SubProcesses.md)
+- [Boundary Events in Sub Processes](behaviourOfBoundaryEventsInSubProcesses.md)
 - [Using Timer Events](UsingTimerEvents.md)
 - [Using Lanes](UsingLanes.md)
+- [Link Events](linkEvents.md)
 
 ### Using the Flows for APEX PL/SQL API
 

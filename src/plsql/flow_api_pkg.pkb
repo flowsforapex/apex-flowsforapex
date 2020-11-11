@@ -20,7 +20,7 @@ as
     return l_dgrm_name;
   end get_dgrm_name;
   
-  function get_dgrm_id    --- currently also exists in flow_engine - fix FFA41
+  function get_dgrm_id    --- FFA50 currently also exists in flow_engine - delete once function next_multistep_exists deleted
   (
     p_prcs_id in flow_processes.prcs_id%type
   ) return flow_processes.prcs_dgrm_id%type
@@ -54,10 +54,10 @@ as
     ;
   
     return
-      flow_create
+      flow_engine.flow_create
       (
-        pi_dgrm_id   => l_dgrm_id
-      , pi_prcs_name => pi_prcs_name
+        p_dgrm_id   => l_dgrm_id
+      , p_prcs_name => pi_prcs_name
       )
     ;
   
@@ -71,27 +71,11 @@ as
   is
     l_ret flow_processes.prcs_id%type;
   begin
-    apex_debug.message(p_message => 'Begin flow_create', p_level => 3) ;
-    insert 
-      into  flow_processes prcs
-          ( prcs.prcs_name
-          , prcs.prcs_dgrm_id
-          , prcs.prcs_status
-          , prcs.prcs_init_ts
-          , prcs.prcs_last_update
-          )
-    values
-          ( pi_prcs_name
-          , pi_dgrm_id
-          , 'created'
-          , systimestamp
-          , systimestamp
-          )
-      returning prcs.prcs_id into l_ret
+    return flow_engine.flow_create
+           ( p_dgrm_id => pi_dgrm_id
+           , p_prcs_name => pi_prcs_name
+           )
     ;
-    apex_debug.message(p_message => 'End flow_create', p_level => 3) ;
-
-    return l_ret;
   end flow_create;
 
   procedure flow_create
@@ -119,72 +103,12 @@ as
     l_prcs_id flow_processes.prcs_id%type;
   begin
     l_prcs_id :=
-      flow_create
+      flow_engine.flow_create
       (
-        pi_dgrm_id   => pi_dgrm_id
-      , pi_prcs_name => pi_prcs_name
+        p_dgrm_id   => pi_dgrm_id
+      , p_prcs_name => pi_prcs_name
       );
   end flow_create;
-
-  /*function next_step_exists -- not using this now.  Needs checking. FFA41 remove PROCESS
-  ( p_process_id in flow_processes.prcs_id%type
-  ,  p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean
-  is
-    l_next_count number;
-    l_dgrm_id    flow_diagrams.dgrm_id%type;
-    l_return     boolean;
-  begin
-    apex_debug.message(p_message => 'Begin next_step_exists', p_level => 3) ;
-    l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
-
-    if p_subflow_id is not null then
-      select count(*)                        
-        into l_next_count
-        from flow_subflows sbfl
-           , flow_objects   objt
-      where sbfl.sbfl_prcs_id = p_process_id
-        and sbfl.sbfl_id = p_subflow_id
-        and  objt.objt_dgrm_id = l_dgrm_id
-        and  objt.objt_bpmn_id = sbfl.sbfl_current
-        and (  objt.objt_tag_name != 'bpmn:endEvent'
-            or (    objt.objt_tag_name = 'bpmn:endEvent'
-                and objt.objt_type != 'PROCESS'
-               )
-            or objt.objt_tag_name = 'bpmn:startEvent'
-            )
-      ;
-      
-      l_return := ( l_next_count > 0 );
-    else 
-      l_return := false;
-    end if;
-    
-    return l_return;
-  exception
-    when others
-    then
-      raise;
-  end next_step_exists; 
-
-  function next_step_exists_yn 
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2
-  is
-      l_ret boolean;
-  begin
-      l_ret := next_step_exists
-              ( p_process_id => p_process_id
-              , p_subflow_id => p_subflow_id
-              );
-      if l_ret = true
-      then
-          return 'y';
-      else 
-          return 'n';
-      end if;
-  end;*/
 
   function next_multistep_exists 
   ( p_process_id in flow_processes.prcs_id%type
@@ -209,7 +133,7 @@ as
         from flow_connections conn
         join flow_objects objt
           on objt.objt_id = conn.conn_src_objt_id
-         and conn.conn_tag_name = 'bpmn:sequenceFlow'
+         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        where conn.conn_dgrm_id = l_dgrm_id
          and objt.objt_bpmn_id = ( select sbfl.sbfl_current
                                      from flow_subflows sbfl
@@ -267,7 +191,7 @@ as
          and objt.objt_bpmn_id = sbfl.sbfl_current
         join flow_connections conn
           on conn.conn_src_objt_id = objt.objt_id
-         and conn.conn_tag_name = 'bpmn:sequenceFlow'
+         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        where sbfl.sbfl_id = p_sbfl_id
     group by objt.objt_tag_name
     ;
@@ -280,8 +204,8 @@ as
 --            FFA50 remove this procedure once UI apps adapted.
 --            when 'bpmn:exclusiveGateway' then gc_single_choice
 --            when 'bpmn:inclusiveGateway' then gc_multi_choice
-              when 'bpmn:exclusiveGateway' then gc_step
-              when 'bpmn:inclusiveGateway' then gc_step
+              when flow_constants_pkg.gc_bpmn_gateway_exclusive then gc_step
+              when flow_constants_pkg.gc_bpmn_gateway_inclusive then gc_step
             else 'unknown'
           end
         ;
@@ -295,64 +219,12 @@ as
       return null;
   end next_step_type;
 
-function get_current_progress -- creates the markings for the bpmn viewer to show current progress
-( p_process_id in flow_processes.prcs_id%type
-) return varchar2
-is 
-    l_marker_json varchar2(2000);
-begin
-    apex_debug.message(p_message => 'Begin get_current_progress', p_level => 3) ;
-    WITH markings AS 
-    (
-    select 
-          sflg.sflg_objt_id bpmnObject
-         ,'completed-node-bpmn' marking
-         ,'1' layer
-      from flow_subflow_log sflg 
-     where sflg.sflg_prcs_id = p_process_id
-    UNION
-    select distinct 
-          sbfl.sbfl_last_completed bpmnObject 
-        ,'last-completed-node-bpmn'  marking
-        , '2' layer
-     from flow_subflows sbfl
-    where sbfl.sbfl_last_completed is not null
-      and sbfl.sbfl_prcs_id = p_process_id
-    UNION
-    select distinct 
-          sbfl.sbfl_current bpmnObject 
-        ,'current-node-bpmn'  marking
-        , '3' layer
-     from flow_subflows sbfl
-    where sbfl.sbfl_current is not null
-      and sbfl.sbfl_prcs_id = p_process_id
-    )
-    select JSON_ARRAYAGG
-            ( JSON_OBJECT
-                ( KEY 'bpmnObject' VALUE m.bpmnObject
-                , KEY 'marking' VALUE m.marking
-                ) order by m.layer asc
-            )
-      into l_marker_json  
-      from markings m
-    ;
-    return l_marker_json;
-exception
-  when others
-  then
-    raise;
-end get_current_progress;
-
-
 procedure flow_start
   ( p_process_id in flow_processes.prcs_id%type
   )
   is
-    l_dgrm_id         flow_diagrams.dgrm_id%type;
     l_process_status  flow_processes.prcs_status%type;
-  begin
-      l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
-    
+  begin  
       apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
       -- check the process isn't already running and return error if it is
       begin
@@ -384,13 +256,55 @@ procedure flow_start
         );
 end flow_start;
 
-procedure flow_next_step
+procedure flow_reserve_step
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in varchar2 default null -- FFA 41 remove this and only pass null once next_branch removed
+, p_reservation   in flow_subflows.sbfl_reservation%type
 )
 is 
 begin
+
+  flow_engine.flow_reserve_step
+  ( p_process_id  => p_process_id
+  , p_subflow_id  => p_subflow_id
+  , p_reservation => p_reservation
+  );
+end flow_reserve_step;
+
+procedure flow_release_step
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+)
+is 
+begin
+
+  flow_engine.flow_release_step
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  );
+end flow_release_step;
+
+procedure flow_complete_step
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+)
+is 
+begin
+
+  flow_engine.flow_complete_step
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  );
+end flow_complete_step;
+
+procedure flow_next_step
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_forward_route in varchar2 default null 
+)
+is 
+begin
+-- FFA50 Remove from here...
   if p_forward_route is not null 
   then
         apex_error.add_error
@@ -399,10 +313,18 @@ begin
           );
   end if;
 
-  flow_engine.flow_next_step
+  flow_engine.flow_complete_step
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   , p_forward_route => null);   -- FFA 41 remove this and only pass null once next_branch removed
+-- FFA50 ....to here
+/* FFA50  replace procedure with this before release
+          apex_error.add_error
+          ( p_message => 'Flow_next_step replaced by flow_complete_step for Flows for Apex V5.  See Documentation '
+          , p_display_location => apex_error.c_on_error_page
+          );
+
+*/
 end flow_next_step;
 
 
