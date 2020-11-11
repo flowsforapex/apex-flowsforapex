@@ -21,12 +21,12 @@ PROMPT >> Installing Package Specifications
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
-@views/flow_instance_details_vw.sql
-@views/flow_instance_inbox_vw.sql
-@views/flow_instane_variables_vw.sql
 @views/flow_subflows_vw.sql
 @views/flow_diagrams_lov.sql
 @views/flow_diagrams_parsed_lov.sql
+@views/flow_instance_details_vw.sql
+@views/flow_instance_inbox_vw.sql
+@views/flow_instance_variables_vw.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_process_vars.pkb
@@ -38,7 +38,7 @@ PROMPT >> Installing Package Bodies
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
 PROMPT >> Page API Specifications
-@plsql/engine-app/flow_p0010_api.pkb
+@plsql/engine-app/flow_p0010_api.pks
 
 PROMPT >> Page Views
 @views/engine-app/flow_p0010_vw.sql
@@ -49,7 +49,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0010_variables_vw.sql
 
 PROMPT >> Page API Bodies
-@plsql/engine-app/flow_p0010_api.pks
+@plsql/engine-app/flow_p0010_api.pkb
 
 PROMPT >> =====================
 PROMPT >> Installation Finished
