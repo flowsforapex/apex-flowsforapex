@@ -52,7 +52,7 @@ CREATE TABLE flow_object_attributes (
     CONSTRAINT obat_pk PRIMARY KEY ( obat_objt_id,
                                      obat_key )
 )
-ORGANIZATION INDEX;
+ORGANIZATION INDEX OVERFLOW;
 
 ALTER TABLE flow_object_attributes
     ADD CONSTRAINT obat_ck CHECK ( ( obat_num_value IS NOT NULL
