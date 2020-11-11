@@ -38,7 +38,7 @@ PROMPT >> Installing Package Bodies
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
 PROMPT >> Page API Specifications
-@plsql/engine-app/flow_p0010_api.pkb
+@plsql/engine-app/flow_p0010_api.pks
 
 PROMPT >> Page Views
 @views/engine-app/flow_p0010_vw.sql
@@ -49,7 +49,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0010_variables_vw.sql
 
 PROMPT >> Page API Bodies
-@plsql/engine-app/flow_p0010_api.pks
+@plsql/engine-app/flow_p0010_api.pkb
 
 PROMPT >> =====================
 PROMPT >> Installation Finished
