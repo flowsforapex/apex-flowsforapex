@@ -34,7 +34,7 @@ as
 
   gc_bpmn_servicetask_insertemail     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertEmail';
 
-  gc_bpmn_scripttask_insertscript     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertScript';
+  gc_bpmn_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
