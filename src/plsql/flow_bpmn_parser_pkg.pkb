@@ -869,6 +869,13 @@ as
         , pi_objt_parent_bpmn_id => pi_parent_id
         );
 
+        -- Register Object on Lane if parent belongs to a lane
+        -- Those connections are not directly visible in the XML
+        -- but BPMN defines inheritance for these.
+        if g_lane_refs.exists( pi_parent_id ) and rec.proc_id is not null then
+          g_lane_refs( rec.proc_id ) := g_lane_refs( pi_parent_id );
+        end if;
+
         -- parse any immediate steps
         parse_steps
         ( 

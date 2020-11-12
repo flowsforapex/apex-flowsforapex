@@ -15,4 +15,5 @@ as
     join flow_subflows sbfl
       on sbfl.sbfl_prcs_id = prcs.prcs_id
    where conn.conn_tag_name = 'bpmn:sequenceFlow'
+     and objt.objt_tag_name in ('bpmn:exclusiveGateway', 'bpmn:inclusiveGateway')
 with read only;
