@@ -109,5 +109,11 @@ as
     p_sbfl_id in flow_subflows.sbfl_id%type
   ) return varchar2;
 
+  function get_current_usertask_url
+  (
+    p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return varchar2;
+
 end flow_api_pkg;
 /

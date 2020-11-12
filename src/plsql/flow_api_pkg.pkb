@@ -359,5 +359,33 @@ procedure flow_next_branch
     flow_engine.flow_delete (p_process_id => p_process_id);
   end flow_delete;
 
+  function get_current_usertask_url
+  (
+    p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return varchar2
+  as
+    l_objt_id flow_objects.objt_id%type;
+  begin
+    apex_debug.trace( p_message => 'Entering GET_CURRENT_USERTASK_URL' );
+
+    select objt.objt_id
+      into l_objt_id
+      from flow_subflows sbfl
+      join flow_processes prcs
+        on prcs.prcs_id = sbfl.sbfl_prcs_id
+      join flow_objects objt
+        on objt.objt_dgrm_id = prcs.prcs_dgrm_id
+       and objt.objt_bpmn_id = sbfl.sbfl_current
+     where sbfl.sbfl_prcs_id = p_process_id
+       and sbfl.sbfl_id = p_subflow_id
+       and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_usertask
+    ;
+
+    apex_debug.trace( p_message => 'Found OBJT_ID %s', p0 => l_objt_id );
+
+    return flow_usertask_pkg.get_url( pi_objt_id => l_objt_id );
+  end get_current_usertask_url;
+
 end flow_api_pkg;
 /

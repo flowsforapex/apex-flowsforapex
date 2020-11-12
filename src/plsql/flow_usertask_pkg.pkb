@@ -18,27 +18,27 @@ as
            , obat.obat_vc_value
         from flow_object_attributes obat
        where obat.obat_objt_id = pi_objt_id
-         and obat.obat_key in ( flow_constants_pkg.gc_bpmn_usertask_apex_application
-                              , flow_constants_pkg.gc_bpmn_usertask_apex_page
-                              , flow_constants_pkg.gc_bpmn_usertask_apex_request
-                              , flow_constants_pkg.gc_bpmn_usertask_apex_cache
-                              , flow_constants_pkg.gc_bpmn_usertask_apex_item
-                              , flow_constants_pkg.gc_bpmn_usertask_apex_value
+         and obat.obat_key in ( flow_constants_pkg.gc_apex_usertask_application
+                              , flow_constants_pkg.gc_apex_usertask_page
+                              , flow_constants_pkg.gc_apex_usertask_request
+                              , flow_constants_pkg.gc_apex_usertask_cache
+                              , flow_constants_pkg.gc_apex_usertask_item
+                              , flow_constants_pkg.gc_apex_usertask_value
                               )
     )
     loop
       case rec.obat_key
-        when flow_constants_pkg.gc_bpmn_usertask_apex_application then
+        when flow_constants_pkg.gc_apex_usertask_application then
           l_application := rec.obat_vc_value;
-        when flow_constants_pkg.gc_bpmn_usertask_apex_page then
+        when flow_constants_pkg.gc_apex_usertask_page then
           l_page := rec.obat_vc_value;
-        when flow_constants_pkg.gc_bpmn_usertask_apex_request then
+        when flow_constants_pkg.gc_apex_usertask_request then
           l_request := rec.obat_vc_value;
-        when flow_constants_pkg.gc_bpmn_usertask_apex_cache then
+        when flow_constants_pkg.gc_apex_usertask_cache then
           l_clear_cache := rec.obat_vc_value;
-        when flow_constants_pkg.gc_bpmn_usertask_apex_item then
+        when flow_constants_pkg.gc_apex_usertask_item then
           l_items := rec.obat_vc_value;
-        when flow_constants_pkg.gc_bpmn_usertask_apex_value then
+        when flow_constants_pkg.gc_apex_usertask_value then
           l_values := rec.obat_vc_value;
         else
           null;

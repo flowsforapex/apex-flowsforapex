@@ -22,19 +22,23 @@ as
   gc_bpmn_gateway_exclusive           constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'exclusiveGateway';
   gc_bpmn_gateway_inclusive           constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'inclusiveGateway';
   gc_bpmn_sequence_flow               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sequenceFlow';
+  gc_bpmn_usertask                    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'userTask';
 
   -- APEX Extensions to BPMN
-  gc_bpmn_usertask_apex_application   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-application';
-  gc_bpmn_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-page';
-  gc_bpmn_usertask_apex_request       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-request';
-  gc_bpmn_usertask_apex_cache         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-cache';
-  gc_bpmn_usertask_apex_item          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-item';
-  gc_bpmn_usertask_apex_value         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-value';
-  gc_bpmn_usertask_apex_inserturl     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-insertUrl';
+  -- userTask
+  gc_apex_usertask_application        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-application';
+  gc_apex_usertask_page               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-page';
+  gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-request';
+  gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-cache';
+  gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-item';
+  gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-value';
+  gc_apex_usertask_inserturl          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-insertUrl';
 
-  gc_bpmn_servicetask_insertemail     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertEmail';
+  --serviceTask
+  --gc_apex_servicetask_insertemail     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertEmail';
 
-  gc_bpmn_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
+  --scriptTask
+  gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
