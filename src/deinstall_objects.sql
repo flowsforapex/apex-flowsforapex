@@ -4,6 +4,7 @@ PROMPT >> ====================================
 PROMPT >> Packages
 drop package flow_p0003_api;
 drop package flow_p0010_api;
+drop package flow_usertask_pkg;
 drop package flow_bpmn_parser_pkg;
 drop package flow_process_vars;
 drop package flow_engine;

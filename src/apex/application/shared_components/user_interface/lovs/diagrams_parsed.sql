@@ -20,6 +20,7 @@ wwv_flow_api.create_list_of_values(
 ,p_return_column_name=>'DGRM_NAME'
 ,p_display_column_name=>'DGRM_NAME'
 ,p_group_sort_direction=>'ASC'
+,p_default_sort_column_name=>'DGRM_NAME'
 ,p_default_sort_direction=>'ASC'
 );
 wwv_flow_api.component_end;
