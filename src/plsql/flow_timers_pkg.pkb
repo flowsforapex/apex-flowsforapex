@@ -90,48 +90,60 @@ as
       select *
         from flow_timers
         where timr_status in (c_created, c_active)
+     order by timr_created_on
           for update of timr_last_run
                       , timr_run_count
                       , timr_status
     ;
+
+    e_timer_already_removed exception;
+    pragma exception_init( e_timer_already_removed, -8006 );
   begin
     for rec in timr_cur
     loop
-      case rec.timr_type
-        when flow_constants_pkg.gc_timer_type_cycle then
-          if (   rec.timr_start_on
-               + ( rec.timr_interval_ym * coalesce( rec.timr_run_count, 1) )
-               + ( rec.timr_interval_ds * coalesce(rec.timr_run_count, 1) )
-             ) <= systimestamp
-          then
-            update flow_timers
-               set timr_last_run = systimestamp
-                 , timr_run_count = timr_run_count + 1
-                 , timr_status = case when timr_run_count + 1 = timr_repeat_times then c_ended else c_active end
-             where current of timr_cur
-            ;
-            -- return timer event to flow_api_pkg
-            flow_engine.flow_handle_event
-            (
-              p_process_id => rec.timr_prcs_id
-            , p_subflow_id => rec.timr_sbfl_id
-            );
-          end if;
-        else
-          if rec.timr_start_on <= systimestamp then
-            update flow_timers
-               set timr_last_run = systimestamp
-                 , timr_run_count = timr_run_count + 1
-                 , timr_status = c_ended
-             where current of timr_cur
-            ;
-            flow_engine.flow_handle_event
-            (
-              p_process_id => rec.timr_prcs_id
-            , p_subflow_id => rec.timr_sbfl_id
-            );
-          end if;
-      end case;  
+      begin
+        case rec.timr_type
+          when flow_constants_pkg.gc_timer_type_cycle then
+            if (   rec.timr_start_on
+                 + ( rec.timr_interval_ym * coalesce( rec.timr_run_count, 1) )
+                 + ( rec.timr_interval_ds * coalesce(rec.timr_run_count, 1) )
+               ) <= systimestamp
+            then
+              update flow_timers
+                 set timr_last_run = systimestamp
+                   , timr_run_count = timr_run_count + 1
+                   , timr_status = case when timr_run_count + 1 = timr_repeat_times then c_ended else c_active end
+               where current of timr_cur
+              ;
+              -- return timer event to flow_api_pkg
+              flow_engine.flow_handle_event
+              (
+                p_process_id => rec.timr_prcs_id
+              , p_subflow_id => rec.timr_sbfl_id
+              );
+            end if;
+          else
+            if rec.timr_start_on <= systimestamp then
+              update flow_timers
+                 set timr_last_run = systimestamp
+                   , timr_run_count = timr_run_count + 1
+                   , timr_status = c_ended
+               where current of timr_cur
+              ;
+              flow_engine.flow_handle_event
+              (
+                p_process_id => rec.timr_prcs_id
+              , p_subflow_id => rec.timr_sbfl_id
+              );
+            end if;
+        end case;
+      exception
+        when e_timer_already_removed then
+          -- Timers can disappear while we're processing a list of timers.
+          -- This is in the nature of timers as one might fire,
+          -- cleans up a whole subflow including any timers on that subflow.
+          null;
+      end;
     end loop;
   end step_timers;
 
