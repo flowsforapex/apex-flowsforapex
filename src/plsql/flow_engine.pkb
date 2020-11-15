@@ -895,7 +895,6 @@ begin
             when 'process_var_vc2' then flow_process_vars.get_var_vc2(pi_prcs_id => p_process_id, pi_var_name => scrv_value)
             when 'process_var_num' then to_char(flow_process_vars.get_var_num(pi_prcs_id => p_process_id, pi_var_name => scrv_value))
             when 'process_var_date' then ''''||to_char(flow_process_vars.get_var_date(pi_prcs_id => p_process_id, pi_var_name => scrv_value))||''''
-            when 'PK' then to_char(l_prcs_rec.prcs_ref_obj_id)
             end   ,',') within group (order by scrv_scrp_id)
         into l_arg1
         from flow_script_parameters scrv
