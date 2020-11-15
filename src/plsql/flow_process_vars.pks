@@ -63,5 +63,12 @@ procedure delete_all_for_process
 ( pi_prcs_id in flow_processes.prcs_id%type
 );
 
+procedure do_substitution
+(
+  pi_prcs_id in flow_processes.prcs_id%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pio_string in out nocopy varchar2
+);
+
 end flow_process_vars;
 /

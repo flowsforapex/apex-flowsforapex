@@ -384,7 +384,13 @@ procedure flow_next_branch
 
     apex_debug.trace( p_message => 'Found OBJT_ID %s', p0 => l_objt_id );
 
-    return flow_usertask_pkg.get_url( pi_objt_id => l_objt_id );
+    return 
+      flow_usertask_pkg.get_url
+      (
+        pi_prcs_id => p_process_id
+      , pi_sbfl_id => p_subflow_id
+      , pi_objt_id => l_objt_id
+      );
   end get_current_usertask_url;
 
 end flow_api_pkg;

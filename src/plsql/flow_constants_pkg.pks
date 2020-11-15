@@ -2,9 +2,14 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
+  gc_vcbool_true   constant varchar2(10 char) := 'true';
+  gc_vcbool_false  constant varchar2(10 char) := 'false';
+  gc_numbool_true  constant number            := 1;
+  gc_numbool_false constant number            := 0;
+
   gc_nsmap       constant varchar2(200 char) := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
-  gc_bpmn_prefix constant varchar2(10 char) := 'bpmn:';
-  gc_apex_prefix constant varchar2(10 char) := 'apex:';
+  gc_bpmn_prefix constant varchar2(10 char)  := 'bpmn:';
+  gc_apex_prefix constant varchar2(10 char)  := 'apex:';
 
   -- BPMN Keys
   gc_bpmn_terminate_event_definition  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'terminateEventDefinition';
@@ -39,10 +44,19 @@ as
 
   --scriptTask
   gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
+  gc_apex_scripttask_auto_binds       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
+
+  -- Flows 4 APEX Substitution Strings
+  gc_substitution_flow_identifier     constant varchar2(10 char)                    := 'F4A$';
+  gc_substitution_prefix              constant flow_types_pkg.t_single_vc2          := '&';
+  gc_substitution_postfix             constant flow_types_pkg.t_single_vc2          := '.';
+  gc_substitution_process_id          constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_ID';
+  gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
+  gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$(\w*)\.';
 
 end flow_constants_pkg;
 /
