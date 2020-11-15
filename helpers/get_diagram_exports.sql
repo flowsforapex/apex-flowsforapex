@@ -3,44 +3,51 @@
   Enable serveroutput before running this script.
 */
 
+set serveroutput on size unlimited
+
 declare
   l_split   apex_t_varchar2;
 begin
 
-  for rec in (
-  select dgrm_name
-       , dgrm_content
-    from flow_diagrams
-  ) loop
-  
-    -- Splits at Linefeed or when max varchar2 size reached
-    l_split := apex_string.split( p_str => rec.dgrm_content );
+  for rec in ( select dgrm_name
+                    , dgrm_content
+                 from flow_diagrams
+                where dgrm_content is not null
+             )
+  loop
+    begin
+      -- Splits at Linefeed or when max varchar2 size reached
+      l_split := apex_string.split( p_str => rec.dgrm_content );
 
-    dbms_output.put_line('PROMPT >> Loading Example "' || rec.dgrm_name || '"');    
-    dbms_output.put_line('begin');
+      sys.dbms_output.put_line('PROMPT >> Loading Example "' || rec.dgrm_name || '"');    
+      sys.dbms_output.put_line('begin');
+      
+      sys.dbms_output.put_line('insert into flow_diagrams( dgrm_name, dgrm_content)');
+      sys.dbms_output.put_line(' values (');
+      sys.dbms_output.put_line('''' || rec.dgrm_name || ''',');
+      sys.dbms_output.put_line('apex_string.join_clob(');
+      sys.dbms_output.put_line('  apex_t_varchar2(');
     
-    dbms_output.put_line('insert into flow_diagrams( dgrm_name, dgrm_content)');
-    dbms_output.put_line(' values (');
-    dbms_output.put_line('''' || rec.dgrm_name || ''',');
-    dbms_output.put_line('apex_string.join_clob(');
-    dbms_output.put_line('  apex_t_varchar2(');
-    
-    for i in 1..l_split.count loop
-      if i = 1 then
-        dbms_output.put_line('  ''' || l_split(i) || '''');
-      else
-        dbms_output.put_line('  , ''' || l_split(i) || '''');
-      end if;
-    end loop;
-    dbms_output.put_line('  )');
-    dbms_output.put_line('));');
-    dbms_output.put_line('commit;');
-    dbms_output.put_line('end;');
-    dbms_output.put_line('/');
-    dbms_output.put_line( ' ' );
-    dbms_output.put_line('PROMPT >> Example "' || rec.dgrm_name ||'" loaded.');
-    dbms_output.put_line('PROMPT >> ========================================================');
-    dbms_output.put_line( ' ' );
+      for i in 1..l_split.count loop
+        if i = 1 then
+          sys.dbms_output.put_line('  q''[' || l_split(i) || ']''');
+        else
+          sys.dbms_output.put_line('  , q''[' || l_split(i) || ']''');
+        end if;
+      end loop;
+      sys.dbms_output.put_line('  )');
+      sys.dbms_output.put_line('));');
+      sys.dbms_output.put_line('commit;');
+      sys.dbms_output.put_line('end;');
+      sys.dbms_output.put_line('/');
+      sys.dbms_output.put_line( ' ' );
+      sys.dbms_output.put_line('PROMPT >> Example "' || rec.dgrm_name ||'" loaded.');
+      sys.dbms_output.put_line('PROMPT >> ========================================================');
+      sys.dbms_output.put_line( ' ' );
+    exception
+      when value_error then
+        sys.dbms_output.put_line( 'WARNING >> Export of Diagram ' || rec.dgrm_name || ' failed. Export manually.' );
+    end;
   end loop;
 
 end;
