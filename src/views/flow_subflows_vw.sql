@@ -25,6 +25,7 @@ as
         , sbfl.sbfl_process_level
         , sbfl.sbfl_reservation 
         , null as sbfl_link
+        , objt_curr.objt_id as sbfl_current_objt_id
      from flow_subflows sbfl
      join flow_processes prcs
        on prcs.prcs_id = sbfl.sbfl_prcs_id

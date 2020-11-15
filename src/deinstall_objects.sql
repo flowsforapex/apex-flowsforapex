@@ -21,7 +21,7 @@ drop view flow_p0010_branches_vw;
 drop view flow_p0010_instances_vw;
 drop view flow_p0010_subflows_vw;
 drop view flow_p0010_routes_vw;
-drop view flow_instance_inbox_vw;
+drop view flow_task_inbox_vw;
 drop view flow_instance_details_vw;
 drop view flow_instance_variables_vw;
 drop view flow_instances_vw;
