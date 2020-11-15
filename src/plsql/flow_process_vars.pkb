@@ -281,5 +281,69 @@ begin
   where prov.prov_prcs_id = pi_prcs_id;
 end delete_all_for_process;
 
+procedure do_substitution
+(
+  pi_prcs_id in flow_processes.prcs_id%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pio_string in out nocopy varchar2
+)
+as
+  l_f4a_substitutions apex_t_varchar2;
+  l_replacement_value flow_types_pkg.t_bpmn_attribute_vc2;
+
+  function get_replacement_pattern
+  (
+    pi_substitution_variable in varchar2
+  ) return varchar2
+  as
+  begin
+    return
+      flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier || 
+      pi_substitution_variable || flow_constants_pkg.gc_substitution_postfix
+    ;
+  end get_replacement_pattern;
+begin
+  l_f4a_substitutions :=
+    apex_string.grep
+    (
+      p_str           => pio_string
+    , p_pattern       => flow_constants_pkg.gc_substitution_pattern
+    , p_modifier      => 'i'
+    , p_subexpression => '1'
+    )
+  ;
+  dbms_output.put_line( 'Input:' || pio_string );
+  for i in 1..l_f4a_substitutions.count
+  loop
+    dbms_output.put_line( 'Current Sub: ' || l_f4a_substitutions(i) );
+    dbms_output.put_line( 'Using Pattern: ' || get_replacement_pattern( l_f4a_substitutions(i) ) );
+    case upper(l_f4a_substitutions(i))
+      when flow_constants_pkg.gc_substitution_process_id then
+        pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_prcs_id );
+      when flow_constants_pkg.gc_substitution_subflow_id then
+        pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
+      else
+        -- own implementation of get_vc_var
+        -- Reason:
+        -- The general implementation immediately adds to APEX error stack
+        begin
+          select prov.prov_var_vc2
+            into l_replacement_value
+            from flow_process_variables prov
+           where prov.prov_prcs_id  = pi_prcs_id
+             and upper(prov.prov_var_name) = upper(l_f4a_substitutions(i))
+          ;
+          pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), l_replacement_value );
+        exception
+          when no_data_found then
+            -- no data found will be ignored
+            -- do like APEX and leave original in place
+            null;
+        end;
+    end case;
+  end loop;
+  dbms_output.put_line( 'Output: ' || pio_string );
+end do_substitution;
+
 end flow_process_vars;
 /

@@ -3,7 +3,9 @@ as
 
   function get_url
   (
-    pi_objt_id in flow_objects.objt_id%type
+    pi_prcs_id in flow_processes.prcs_id%type
+  , pi_sbfl_id in flow_subflows.sbfl_id%type
+  , pi_objt_id in flow_objects.objt_id%type
   ) return varchar2
   as
     l_application flow_object_attributes.obat_vc_value%type;
@@ -40,6 +42,7 @@ as
           l_items := rec.obat_vc_value;
         when flow_constants_pkg.gc_apex_usertask_value then
           l_values := rec.obat_vc_value;
+          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_values );
         else
           null;
       end case;
