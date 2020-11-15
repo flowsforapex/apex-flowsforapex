@@ -19,7 +19,7 @@ as
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_last_update
         , sbfl.sbfl_status
-        , flow_api_pkg.next_step_type( p_sbfl_id => sbfl_id ) as sbfl_next_step_type
+        , flow_api_pkg.next_step_type( p_sbfl_id => sbfl_id ) as sbfl_next_step_type -- REMOVE FFA50
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
         , sbfl.sbfl_process_level
