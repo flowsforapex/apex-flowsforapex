@@ -128,11 +128,45 @@ function get_gateway_route
     ) return varchar2
 is
     l_forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
+    l_bad_routes        apex_application_global.vc_arr2;
+    l_bad_route_string  varchar2(2000) := '';
+    l_num_bad_routes    number := 0;
 begin
     -- check if route is in process variable
     l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, pi_objt_bpmn_id||':route');
-    if l_forward_route is null
+    if l_forward_route is not null
     then
+       begin
+        -- test routes are all valid connections before returning
+        l_num_bad_routes := 0;
+        for bad_routes in (
+            select column_value as bad_route 
+              from table(apex_string.split(l_forward_route,':'))
+            minus 
+            select conn.conn_bpmn_id
+              from flow_connections conn
+              join flow_objects objt 
+                on objt.objt_id = conn.conn_src_objt_id
+              and conn.conn_dgrm_id = objt.objt_dgrm_id
+              join flow_processes prcs
+                on prcs.prcs_dgrm_id = conn.conn_dgrm_id
+            where prcs.prcs_id = pi_process_id
+              and objt.objt_bpmn_id = pi_objt_bpmn_id
+            )
+        loop
+           l_num_bad_routes := l_num_bad_routes +1;
+           l_bad_route_string := l_bad_route_string||bad_routes.bad_route||', ';
+        end loop;
+        if l_num_bad_routes > 0 then
+            apex_error.add_error( p_message => 'Error routing process flow at '||pi_objt_bpmn_id||'. Supplied variable '||pi_objt_bpmn_id||':route contains invalid route: '||l_bad_route_string
+                         , p_display_location => apex_error.c_on_error_page) ;
+        end if;
+      exception
+        when no_data_found then -- all routes good
+          return l_forward_route
+          ;
+      end;
+    else -- forward route is null -- look for default routing
         begin
             -- check default route 
             select conn_bpmn_id
@@ -147,12 +181,12 @@ begin
         exception
             when no_data_found then
                 apex_error.add_error
-                ( p_message => 'No route supplied in process variables and no default route specified on Gateway '||pi_objt_bpmn_id
+                ( p_message => 'Please specify the connection ID for process variable '||pi_objt_bpmn_id||':route or specify a default route for the gateway.'
                 , p_display_location => apex_error.c_on_error_page
                 );
             when too_many_rows then
                 apex_error.add_error
-                ( p_message => 'More than one default route specified onGateway '||pi_objt_bpmn_id
+                ( p_message => 'More than one default route specified on Gateway '||pi_objt_bpmn_id
                 , p_display_location => apex_error.c_on_error_page
                 );
         end;
