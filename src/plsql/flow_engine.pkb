@@ -858,6 +858,7 @@ begin
     end if;
 end flow_process_boundary_event;
 
+/*
 procedure flow_run_sync_plsql
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -931,6 +932,7 @@ begin
   end;
 
 end flow_run_sync_plsql;
+*/
 
 /*
 ============================================================================================
@@ -1740,15 +1742,20 @@ begin
     );  
 end process_userTask;
 
-procedure process_scriptTask
+  procedure process_scriptTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_step_info
   )
-is 
-begin
-    apex_debug.message(p_message => 'Begin process_scriptTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+  is 
+  begin
+    apex_debug.message
+    (
+      p_message => 'Begin process_scriptTask for object: %s'
+    , p0        => p_step_info.target_objt_tag
+    , p_level   => apex_debug.c_log_level_app_enter
+    );
     -- current implementation is limited to one scriptTask type, which is to run a user defined PL/SQL script
     -- future scriptTask types could include standarised template scripts ??
     -- current implementation is limited to synchronous script execution (i.e., script is run as part of Flows for APEX process)
@@ -1761,23 +1768,32 @@ begin
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
-    flow_run_sync_plsql 
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
-        , p_current => p_step_info.target_objt_ref
-        )
-    ;
-end process_scriptTask;
 
-procedure process_serviceTask
+    flow_plsql_runner_pkg.run_task_script(
+      pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    , pi_objt_id => p_step_info.target_objt_id
+    );
+
+    flow_complete_step ( p_process_id => p_process_id, p_subflow_id => p_subflow_id );
+
+  end process_scriptTask;
+
+  procedure process_serviceTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_step_info
   )
-is 
-begin
-     apex_debug.message(p_message => 'Begin process_serviceTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+  is 
+  begin
+    apex_debug.message
+    (
+      p_message => 'Begin process_serviceTask for object: %s'
+    , p0        => p_step_info.target_objt_tag
+    , p_level   => apex_debug.c_log_level_app_enter
+    );
+
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -1791,22 +1807,23 @@ begin
     -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).
     -- future implementations could include async serviceTask, where message generation is queued, or non-email services
 
-    flow_run_sync_plsql 
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
-        , p_current =>  p_step_info.target_objt_ref
-        )
-    ;
-end process_serviceTask;
+    flow_plsql_runner_pkg.run_task_script(
+      pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    , pi_objt_id => p_step_info.target_objt_id
+    );
 
-procedure process_manualTask
+    flow_complete_step ( p_process_id => p_process_id, p_subflow_id => p_subflow_id );
+  end process_serviceTask;
+
+  procedure process_manualTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_step_info
   )
-is 
-begin
+  is 
+  begin
     apex_debug.message(p_message => 'Begin process_manualTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
     update flow_subflows sbfl
      set   sbfl.sbfl_current = p_step_info.target_objt_ref
@@ -1821,7 +1838,7 @@ begin
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );  
-end process_manualTask;
+  end process_manualTask;
 
 /* 
 ================================================================================

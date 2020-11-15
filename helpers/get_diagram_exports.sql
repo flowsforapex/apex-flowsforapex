@@ -8,7 +8,8 @@ set serveroutput on size unlimited
 declare
   l_split   apex_t_varchar2;
 begin
-
+  sys.dbms_output.put_line('set define off');
+  sys.dbms_output.put_line('PROMPT >> Loading Exported Diagrams');
   for rec in ( select dgrm_name
                     , dgrm_content
                  from flow_diagrams
