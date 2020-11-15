@@ -6,8 +6,6 @@ as
         , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- should be instance ref
         , prcs.prcs_dgrm_id as sbfl_dgrm_id
         , dgrm.dgrm_name as sbfl_dgrm_name  -- should be process name
-        , prcs_ref_obj_type as sbfl_ref_obj_type
-        , prcs_ref_obj_id as sbfl_ref_obj_id
         , sbfl.sbfl_starting_object
         , coalesce( objt_start.objt_name, sbfl.sbfl_starting_object ) as sbfl_starting_object_name
         , sbfl.sbfl_route

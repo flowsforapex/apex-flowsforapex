@@ -53,6 +53,14 @@ PROMPT >> Page Views
 PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0010_api.pkb
 
+PROMPT >> Checking for invalid Objects
+  select object_type || ': ' || object_name as invalid_object
+    from user_objects
+   where status = 'INVALID'
+order by object_type
+       , object_name
+;
+
 PROMPT >> =====================
 PROMPT >> Installation Finished
 PROMPT >> =====================
