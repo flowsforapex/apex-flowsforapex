@@ -2129,7 +2129,13 @@ is
   l_dgrm_id               flow_diagrams.dgrm_id%type;
   l_prcs_check_id         flow_processes.prcs_id%type;
 begin
-  apex_debug.message(p_message => 'Begin flow_complete_step', p_level => 3) ;
+  apex_debug.message
+  (
+    p_message => 'Begin flow_complete_step using Process ID %s and Subflow ID %s'
+  , p0        => p_process_id
+  , p1        => p_subflow_id
+  , p_level   => 3
+  );
   l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info
   begin

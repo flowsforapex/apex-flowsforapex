@@ -21,8 +21,7 @@ as
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
         , sbfl.sbfl_process_level
-        , sbfl.sbfl_reservation 
-        , null as sbfl_link
+        , sbfl.sbfl_reservation
         , objt_curr.objt_id as sbfl_current_objt_id
      from flow_subflows sbfl
      join flow_processes prcs
