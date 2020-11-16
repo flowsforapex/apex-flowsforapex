@@ -7,9 +7,6 @@ PROMPT >> =============================
 PROMPT >> Installing Tables
 @ddl/install_tables.sql
 
--- Probably not needed anymore
--- @ddl/install_extra_ddl_for_userTasks.sql
-
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
 PROMPT >> Installing Package Specifications
