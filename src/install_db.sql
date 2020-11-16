@@ -6,7 +6,6 @@ PROMPT >> =============================
 
 PROMPT >> Installing Tables
 @ddl/install_tables.sql
-@ddl/install_extra_ddl_for_userTasks.sql
 
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
@@ -19,6 +18,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_engine.pks
 @plsql/flow_process_vars.pks
 @plsql/flow_usertask_pkg.pks
+@plsql/flow_plsql_runner_pkg.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -36,6 +36,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_bpmn_parser_pkg.pkb
 @plsql/flow_timers_pkg.pkb
 @plsql/flow_usertask_pkg.pkb
+@plsql/flow_plsql_runner_pkg.pkb
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
@@ -52,6 +53,14 @@ PROMPT >> Page Views
 
 PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0010_api.pkb
+
+PROMPT >> Checking for invalid Objects
+  select object_type || ': ' || object_name as invalid_object
+    from user_objects
+   where status = 'INVALID'
+order by object_type
+       , object_name
+;
 
 PROMPT >> =====================
 PROMPT >> Installation Finished

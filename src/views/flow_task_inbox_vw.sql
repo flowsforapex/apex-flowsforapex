@@ -15,7 +15,7 @@ as
         , sbfl_current
         , sbfl_current_name
         , case sbfl_current_tag_name
-            when 'bpmn:usertask' then
+            when 'bpmn:userTask' then
               flow_usertask_pkg.get_url
               (
                 pi_prcs_id => sbfl_prcs_id
@@ -31,7 +31,6 @@ as
         , sbfl_current_lane
         , sbfl_current_lane_name
         , sbfl_reservation
-        , sbfl_link
      from flow_subflows_vw sbfl
     where sbfl_status = 'running'
 with read only

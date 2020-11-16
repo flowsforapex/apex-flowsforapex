@@ -858,80 +858,6 @@ begin
     end if;
 end flow_process_boundary_event;
 
-procedure flow_run_sync_plsql
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-, p_current       in flow_subflows.sbfl_current%type
-)
-is  
-  l_scrp_rec flow_scripts%rowtype;
-  l_prcs_rec flow_processes%rowtype;
-  l_args_list varchar2(2000);
-  l_arg1 varchar2(200);
-  l_arg2 varchar2(200);
-  l_arg3 varchar2(200);
-  l_proc varchar2(200);
-  l_call varchar2(2000);
-begin
-  apex_debug.message(p_message => 'Begin flow_run_sync_plsql', p_level => 3) ;
-  select *
-    into l_scrp_rec
-    from flow_scripts scrp
-   where scrp.scrp_objt_bpmn_id = p_current
-    ;
-  select * 
-    into l_prcs_rec
-    from flow_processes proc 
-   where proc.prcs_id = p_process_id
-   ;
-  -- build procedure call
-  begin
-    l_args_list := '(pi_process_id => '||p_process_id||','||'pi_subflow_id =>'||p_subflow_id;
-    apex_debug.message(p_message => 'args_list_phase1'|| l_args_list, p_level => 4) ;
-
-        select ','||listagg( scrv_parameter_name || ' => ' ||
-            case scrv_value_type 
-            when 'literal' then ''''||scrv_value ||''''
-            when 'process_var_vc2' then flow_process_vars.get_var_vc2(pi_prcs_id => p_process_id, pi_var_name => scrv_value)
-            when 'process_var_num' then to_char(flow_process_vars.get_var_num(pi_prcs_id => p_process_id, pi_var_name => scrv_value))
-            when 'process_var_date' then ''''||to_char(flow_process_vars.get_var_date(pi_prcs_id => p_process_id, pi_var_name => scrv_value))||''''
-            end   ,',') within group (order by scrv_scrp_id)
-        into l_arg1
-        from flow_script_parameters scrv
-        where scrv_scrp_id = l_scrp_rec.scrp_id;
-
-    l_args_list := l_args_list || l_arg1 ||'); ';
-        apex_debug.message(p_message => 'args_list_phase2'|| l_args_list, p_level => 4) ;
-    if l_scrp_rec.scrp_package is not null
-    then 
-        l_proc := l_scrp_rec.scrp_package||'.'||l_scrp_rec.scrp_procedure;
-    else 
-        l_proc := l_scrp_rec.scrp_procedure;
-    end if;
-    l_call := 'begin '||l_proc||l_args_list||' end;';
-  exception
-    when others then
-            apex_error.add_error
-            ( p_message => 'Error building PL/SQL script arguments.'
-            , p_display_location => apex_error.c_on_error_page
-            );
-  end;
-  begin
-    apex_debug.message(p_message => 'Assembled procedure call in flow_run_sync_plsql : '|| l_call, p_level => 3) ;
-    execute immediate l_call;
-  exception
-    when others then
-        apex_error.add_error
-            ( p_message => 'Error running application  PL/SQL script; '||l_proc||' .'
-            , p_display_location => apex_error.c_on_error_page
-            );
-  end;
-  begin
-    flow_complete_step (p_process_id => p_process_id, p_subflow_id => p_subflow_id);
-  end;
-
-end flow_run_sync_plsql;
-
 /*
 ============================================================================================
   B P M N   O B J E C T   P R O C E S S O R S 
@@ -1471,81 +1397,86 @@ begin
 
 end process_exclusiveGateway;
 
-procedure process_subProcess
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
-  )
-is
-   l_target_objt_sub        flow_objects.objt_bpmn_id%type; --target object in subprocess
-   l_sbfl_id_sub            flow_subflows.sbfl_id%type;   
-begin
-     apex_debug.message(p_message => 'Begin process_subprocess for object: '||p_step_info.target_objt_tag, p_level => 3) ;
-     begin
-        select objt.objt_bpmn_id
-          into l_target_objt_sub
-          from flow_objects objt
-         where objt.objt_objt_id  = p_step_info.target_objt_id
-           and objt.objt_tag_name = 'bpmn:startEvent'
-           and objt.objt_dgrm_id  = p_step_info.dgrm_id
-        ;
-     exception
-          when NO_DATA_FOUND  
-          then
-              apex_error.add_error
-              ( p_message => 'Unable to find Sub-Process Start Event.'
-              , p_display_location => apex_error.c_on_error_page
-              );
-          when TOO_MANY_ROWS
-          then
-              apex_error.add_error
-              ( p_message => 'More than one Sub-Process Start found..'
-              , p_display_location => apex_error.c_on_error_page
-              );
-      end;
-      -- start subflow for the sub-process
-      l_sbfl_id_sub :=  subflow_start
-              ( p_process_id => p_process_id
-              , p_parent_subflow => p_subflow_id
-              , p_starting_object => p_step_info.target_objt_ref -- parent subProc activity
-              , p_current_object => l_target_objt_sub -- subProc startEvent
-              , p_route => 'sub main'
-              , p_last_completed => p_sbfl_info.sbfl_last_completed -- previous activity on parent proc
-              , p_parent_sbfl_proc_level => null
-              , p_new_proc_level => true
-              );
-      -- step into sub_process
-      flow_complete_step   
-            ( p_process_id => p_process_id
-            , p_subflow_id => l_sbfl_id_sub
-            , p_forward_route => null
-            );
-      -- update parent subflow
-      update flow_subflows sbfl
-      set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
-          , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-          , sbfl.sbfl_last_update = sysdate
-          , sbfl.sbfl_status = 'in subprocess'
-      where sbfl.sbfl_id = p_subflow_id
-        and sbfl.sbfl_prcs_id = p_process_id
-      ;  
-      -- set boundaryEvent Timers, if any
-      flow_set_boundary_timers 
-            ( p_process_id => p_process_id
-            , p_subflow_id => p_subflow_id
-            );     
- end process_subProcess; 
+  procedure process_subProcess
+    ( p_process_id    in flow_processes.prcs_id%type
+    , p_subflow_id    in flow_subflows.sbfl_id%type
+    , p_sbfl_info     in flow_subflows%rowtype
+    , p_step_info     in flow_step_info
+    )
+  is
+     l_target_objt_sub        flow_objects.objt_bpmn_id%type; --target object in subprocess
+     l_sbfl_id_sub            flow_subflows.sbfl_id%type;   
+  begin
+    apex_debug.message(p_message => 'Begin process_subprocess for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+    begin
+       select objt.objt_bpmn_id
+         into l_target_objt_sub
+         from flow_objects objt
+        where objt.objt_objt_id  = p_step_info.target_objt_id
+          and objt.objt_tag_name = 'bpmn:startEvent'
+          and objt.objt_dgrm_id  = p_step_info.dgrm_id
+       ;
+    exception
+         when NO_DATA_FOUND  
+         then
+             apex_error.add_error
+             ( p_message => 'Unable to find Sub-Process Start Event.'
+             , p_display_location => apex_error.c_on_error_page
+             );
+         when TOO_MANY_ROWS
+         then
+             apex_error.add_error
+             ( p_message => 'More than one Sub-Process Start found..'
+             , p_display_location => apex_error.c_on_error_page
+             );
+    end;
+    -- start subflow for the sub-process
+    l_sbfl_id_sub := 
+      subflow_start
+      ( p_process_id => p_process_id
+      , p_parent_subflow => p_subflow_id
+      , p_starting_object => p_step_info.target_objt_ref -- parent subProc activity
+      , p_current_object => l_target_objt_sub -- subProc startEvent
+      , p_route => 'sub main'
+      , p_last_completed => p_sbfl_info.sbfl_last_completed -- previous activity on parent proc
+      , p_parent_sbfl_proc_level => null
+      , p_new_proc_level => true
+      );
+
+    -- Always do all updates to data first before performing any next step.
+    -- Reason: A subflow could immediately disappear if we're stepping through it completly.
+    -- update parent subflow
+    update flow_subflows sbfl
+    set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
+        , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+        , sbfl.sbfl_last_update = sysdate
+        , sbfl.sbfl_status = 'in subprocess'
+    where sbfl.sbfl_id = p_subflow_id
+      and sbfl.sbfl_prcs_id = p_process_id
+    ;  
+    -- set boundaryEvent Timers, if any
+    flow_set_boundary_timers 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );     
+
+    -- step into sub_process
+    flow_complete_step   
+    ( p_process_id => p_process_id
+    , p_subflow_id => l_sbfl_id_sub
+    , p_forward_route => null
+    );
+  end process_subProcess; 
   
-procedure process_eventBasedGateway
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
-  )
-is 
-  l_sbfl_id_sub          flow_subflows.sbfl_id%type;
-begin
+  procedure process_eventBasedGateway
+    ( p_process_id    in flow_processes.prcs_id%type
+    , p_subflow_id    in flow_subflows.sbfl_id%type
+    , p_sbfl_info     in flow_subflows%rowtype
+    , p_step_info     in flow_step_info
+    )
+  is 
+    l_sbfl_id_sub          flow_subflows.sbfl_id%type;
+  begin
     -- eventGateway can have multiple inputs and outputs, but there is no waiting, etc.
     -- incoming subflow continues on the first output path.
     -- additional output paths create new subflows
@@ -1740,15 +1671,20 @@ begin
     );  
 end process_userTask;
 
-procedure process_scriptTask
+  procedure process_scriptTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_step_info
   )
-is 
-begin
-    apex_debug.message(p_message => 'Begin process_scriptTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+  is 
+  begin
+    apex_debug.message
+    (
+      p_message => 'Begin process_scriptTask for object: %s'
+    , p0        => p_step_info.target_objt_tag
+    , p_level   => apex_debug.c_log_level_app_enter
+    );
     -- current implementation is limited to one scriptTask type, which is to run a user defined PL/SQL script
     -- future scriptTask types could include standarised template scripts ??
     -- current implementation is limited to synchronous script execution (i.e., script is run as part of Flows for APEX process)
@@ -1761,23 +1697,32 @@ begin
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
-    flow_run_sync_plsql 
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
-        , p_current => p_step_info.target_objt_ref
-        )
-    ;
-end process_scriptTask;
 
-procedure process_serviceTask
+    flow_plsql_runner_pkg.run_task_script(
+      pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    , pi_objt_id => p_step_info.target_objt_id
+    );
+
+    flow_complete_step ( p_process_id => p_process_id, p_subflow_id => p_subflow_id );
+
+  end process_scriptTask;
+
+  procedure process_serviceTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_step_info
   )
-is 
-begin
-     apex_debug.message(p_message => 'Begin process_serviceTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+  is 
+  begin
+    apex_debug.message
+    (
+      p_message => 'Begin process_serviceTask for object: %s'
+    , p0        => p_step_info.target_objt_tag
+    , p_level   => apex_debug.c_log_level_app_enter
+    );
+
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -1791,22 +1736,23 @@ begin
     -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).
     -- future implementations could include async serviceTask, where message generation is queued, or non-email services
 
-    flow_run_sync_plsql 
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
-        , p_current =>  p_step_info.target_objt_ref
-        )
-    ;
-end process_serviceTask;
+    flow_plsql_runner_pkg.run_task_script(
+      pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    , pi_objt_id => p_step_info.target_objt_id
+    );
 
-procedure process_manualTask
+    flow_complete_step ( p_process_id => p_process_id, p_subflow_id => p_subflow_id );
+  end process_serviceTask;
+
+  procedure process_manualTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_step_info
   )
-is 
-begin
+  is 
+  begin
     apex_debug.message(p_message => 'Begin process_manualTask for object: '||p_step_info.target_objt_tag, p_level => 3) ;
     update flow_subflows sbfl
      set   sbfl.sbfl_current = p_step_info.target_objt_ref
@@ -1821,7 +1767,7 @@ begin
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );  
-end process_manualTask;
+  end process_manualTask;
 
 /* 
 ================================================================================
@@ -2112,7 +2058,13 @@ is
   l_dgrm_id               flow_diagrams.dgrm_id%type;
   l_prcs_check_id         flow_processes.prcs_id%type;
 begin
-  apex_debug.message(p_message => 'Begin flow_complete_step', p_level => 3) ;
+  apex_debug.message
+  (
+    p_message => 'Begin flow_complete_step using Process ID %s and Subflow ID %s'
+  , p0        => p_process_id
+  , p1        => p_subflow_id
+  , p_level   => 3
+  );
   l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info
   begin
@@ -2200,7 +2152,7 @@ begin
   );
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
 
-    apex_debug.message(p_message => 'Before CASE ' || coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3) ;
+    apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
     apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;
     apex_debug.message(p_message => 'Before CASE : l_step_info.source_objt_tag : ' || l_step_info.source_objt_tag, p_level => 4) ;
     apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_id : ' || l_step_info.target_objt_id, p_level => 4) ;

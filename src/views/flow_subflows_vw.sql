@@ -6,8 +6,6 @@ as
         , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- should be instance ref
         , prcs.prcs_dgrm_id as sbfl_dgrm_id
         , dgrm.dgrm_name as sbfl_dgrm_name  -- should be process name
-        , prcs_ref_obj_type as sbfl_ref_obj_type
-        , prcs_ref_obj_id as sbfl_ref_obj_id
         , sbfl.sbfl_starting_object
         , coalesce( objt_start.objt_name, sbfl.sbfl_starting_object ) as sbfl_starting_object_name
         , sbfl.sbfl_route
@@ -23,8 +21,7 @@ as
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
         , sbfl.sbfl_process_level
-        , sbfl.sbfl_reservation 
-        , null as sbfl_link
+        , sbfl.sbfl_reservation
         , objt_curr.objt_id as sbfl_current_objt_id
      from flow_subflows sbfl
      join flow_processes prcs

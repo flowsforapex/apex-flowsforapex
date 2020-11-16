@@ -4,6 +4,7 @@ PROMPT >> ====================================
 PROMPT >> Packages
 drop package flow_p0003_api;
 drop package flow_p0010_api;
+drop package flow_plsql_runner_pkg;
 drop package flow_usertask_pkg;
 drop package flow_bpmn_parser_pkg;
 drop package flow_process_vars;
@@ -38,9 +39,6 @@ drop table flow_subflow_log cascade constraints;
 drop table flow_diagrams cascade constraints;
 drop table flow_timers cascade constraints;
 drop table flow_object_attributes cascade constraints;
-drop table flow_tasks cascade constraints;
-drop table flow_scripts cascade constraints;
-drop table flow_script_parameters cascade constraints;
 drop table flow_process_variables cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
