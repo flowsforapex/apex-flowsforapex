@@ -6,6 +6,8 @@ BPMN allows encapsulation and detail hiding through the use of Sub Processes.  T
 
 Flows for APEX allows you to create sub processes within your process.  Sub processes can contain other sub processes, and so a deep hierarchy of processes and sub processes can be built.  There is no arbitrary limit to how deep sub processes can be stacked -- although everything must be contained in a single BPMN diagram currently.
 
+All sub processes currently are embedded sub processes.  Global sub processes, which can be called from a different diagram, are not yet supported.
+
 ![Nested Sub Processes](images/nestedSubProcesses.png "Nested Sub Processes")
 
 ### Creating Sub Processes
@@ -14,7 +16,7 @@ Sub Processes are created using the modeller, as usual.
 
 ### Boundary Events on Sub Processes
 
-Starting with Flows for APEX V5.0, Sub Processes can have Timer, Error ad Escalation Boundary Events added to them.  See [behaviour Of Boundary Events in SubProcesses](behaviourOfBoundaryEventsinSubProcesses.md)
+Starting with Flows for APEX V5.0, Sub Processes can have Timer, Error ad Escalation Boundary Events added to them.  See [Behaviour Of Boundary Events in SubProcesses](behaviourOfBoundaryEventsinSubProcesses.md)
 
 ### Terminate End Events in Sub Processes
 
