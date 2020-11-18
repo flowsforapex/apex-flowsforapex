@@ -1663,11 +1663,10 @@ end process_userTask;
   )
   is 
   begin
-    apex_debug.message
+    apex_debug.info
     (
       p_message => 'Begin process_scriptTask for object: %s'
     , p0        => p_step_info.target_objt_tag
-    , p_level   => apex_debug.c_log_level_app_enter
     );
     -- current implementation is limited to one scriptTask type, which is to run a user defined PL/SQL script
     -- future scriptTask types could include standarised template scripts ??
@@ -1690,6 +1689,10 @@ end process_userTask;
 
     flow_complete_step ( p_process_id => p_process_id, p_subflow_id => p_subflow_id );
 
+  exception
+    when flow_plsql_runner_pkg.e_plsql_call_failed then
+      rollback;
+      raise flow_plsql_runner_pkg.e_plsql_call_failed;
   end process_scriptTask;
 
   procedure process_serviceTask
@@ -1727,6 +1730,11 @@ end process_userTask;
     );
 
     flow_complete_step ( p_process_id => p_process_id, p_subflow_id => p_subflow_id );
+
+  exception
+    when others then
+      rollback;
+      raise flow_plsql_runner_pkg.e_plsql_call_failed;
   end process_serviceTask;
 
   procedure process_manualTask
@@ -2263,6 +2271,12 @@ exception
     then
       apex_error.add_error
       ( p_message => 'Next step does not exist.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    when flow_plsql_runner_pkg.e_plsql_call_failed then
+      apex_error.add_error
+      (
+        p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute sucessfully.'
       , p_display_location => apex_error.c_on_error_page
       );
 end flow_complete_step;
