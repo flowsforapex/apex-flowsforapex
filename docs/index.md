@@ -8,6 +8,10 @@ This application enables every APEX developer to create and run process flows fo
 
 ## Flows for APEX documentation
 
+### Latest Documentation
+
+The most updated version of this documentation is maintained online using Github Pages and can be read at the [APEX-FlowsforAPEX doc site.]((https://mt-ag.github.io/apex-flowsforapex/)
+
 ### How to use BPMN features when building BPMN Processes:
 
 - [Starting and Stopping Flows](StartingAndStoppingFlows.md)
@@ -16,6 +20,7 @@ This application enables every APEX developer to create and run process flows fo
 - [Boundary Events in Sub Processes](behaviourOfBoundaryEventsInSubProcesses.md)
 - [Using Timer Events](UsingTimerEvents.md)
 - [Using Lanes](UsingLanes.md)
+- [Task Reservation](reservations.md)
 - [Link Events](linkEvents.md)
 
 ### Using the Flows for APEX PL/SQL API
