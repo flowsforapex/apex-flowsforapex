@@ -1,6 +1,8 @@
 ## The Process Variable System
 
-A business process instance typically runs over some extended period of time, and might require multiple users to perform many individual tasks, often across different application sessions.  The process typically requires its own variable system that persists over the life of the business process instance, and which is separate from the underlying objects that the process acts on.  Flows for APEX includes a flexible, persistant process variable system for you use across your process.
+A business process instance typically runs over some extended period of time, and might require multiple users to perform many individual tasks, often across different application sessions.  
+The process typically requires its own variable system that persists over the life of the business process instance, and which is separate from the underlying objects that the process acts on.  
+Flows for APEX includes a flexible, persistant process variable system for you use across your process.
 
 A process instance would typically need to know the identity of its subject - typically the primary key of the main object this process works on.
 
@@ -14,7 +16,7 @@ Each process variable can hold one value, which can be of type `varchar2`, `numb
 
 A variable is created and set using the set_var procedures.
 
-```
+```sql
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
@@ -42,7 +44,7 @@ procedure set_var
 
 Process variables are retrieved using the appropriate getter functions.
 
-```
+```sql
 function get_var_vc2
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type)
@@ -70,8 +72,11 @@ Process variables are persistent, and exist until the process is deleted with a 
 
 #### Accessing Process Variables in userTask APEX pages and in scriptTasks
 
-Process variables can be substituted into the APEX page call of a userTask. [See doc](usingTasksToImplementYourProcess.md)
+Process variables can be substituted into the APEX page call of a userTask.  
+[See doc](usingTasksToImplementYourProcess.md)
 
-Process variables can be set or got inside a PL/SQL scriptTask  or serviceTask procedure using the setters and getters above.  [See doc](usingTasksToImplementYourProcess.md)
+Process variables can be set or got inside a PL/SQL scriptTask  
+or serviceTask procedure using the setters and getters above.  
+[See doc](usingTasksToImplementYourProcess.md)
 
 Your application can set and get process variables by calling the appropriate setters and getters, as required.
