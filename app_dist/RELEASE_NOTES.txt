@@ -1,25 +1,44 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v4.0.0                *
+*            Flows for APEX v5.0.0                *
 *          Installation instructions              *
 *                                                 *
 *                                                 *
 ***************************************************
 
+DOCUMENTATION / SOURCE CODE / FURTHER INFORMATION
+- Have a look here: https://github.com/mt-ag/apex-flowsforapex
+
 PREREQUISITES
-- Oracle Database 12c or higher (all editions supported)
+- Oracle Database 12.2 or higher (all editions supported)
 - Oracle Application Express 20.1 or higher
-- APEX workspace with at least 10 MB space
+- APEX workspace with at least 50 MB space
 
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "FLOWSFORAPEX_EN_APEX201_984339_UTF8_V4.0.0.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "FLOWSFORAPEX_EN_APEX201_984337_UTF8_V5.0.0.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
-- Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEXDEMO_EN_APEX201_984340_UTF8_V1.0.sql"
+- Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEXDEMO_EN_APEX201_984340_UTF8_V2.0.sql"
+- Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
 
 HISTORY
+* v5.0.0
+  - Live validation checks during modelling provided by bpmnlint.
+  - Support for user tasks: call an APEX page as specified in the properties panel (page ID, app ID, etc.).
+  - Support for script tasks: call a PL/SQL procedure as specified in the properties panel.
+  - Support for service tasks: send out an e-mail by calling apex_mail as specified in the properties panel.
+  - Support for timers (requires a grant on create dbms_job).
+  - BPMN Modeler is now wrapped in a plugin. This also removes the limitation of modelling flows that are larger than 32kB.
+  - Process variables that live within the scope of a process instance.
+  - Updated Demo App “Shipment Processes” that utilizes process variables at gateways.
+  - Support for escalation & error boundary events on sub processes and timer boundary events on tasks and user tasks. Timers and escalations can be interrupting or non-interrupting.
+  - A new view "flow_processes_vw" that can be used as source for the BPMN viewer plugin.
+  - Improved API package: moved internal procedures to a new package ‘flow_engine.pkg’. Flow control now designed for automatic flow between tasks using only a complete_step procedure to replace flow_next_step. The V4.0 syntax of flow_next_step and flow_next_branch now desupported.
+  - Gateway routing decision is now automatically made based on a specific process variable.
+  - Support for process inbox-style applications through enhanced inbox views, along with optional task reservation. (reserve_task, release_task).
+
 * v4.0.0
   - New Subflow architecture to support Parallel Gateways, Sub Processes
   - Support for subprocesses (n levels deep)
