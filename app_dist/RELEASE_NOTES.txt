@@ -28,7 +28,7 @@ HISTORY
   - Live validation checks during modelling provided by bpmnlint.
   - Support for user tasks: call an APEX page as specified in the properties panel (page ID, app ID, etc.).
   - Support for script tasks: call a PL/SQL procedure as specified in the properties panel.
-  - Support for service tasks: send out an e-mail by calling apex_mail as specified in the properties panel.
+  - Support for service tasks: call a PL/SQL procedure as specified in the properties panel.
   - Support for timers (requires a grant on create dbms_job).
   - BPMN Modeler is now wrapped in a plugin. This also removes the limitation of modelling flows that are larger than 32kB.
   - Process variables that live within the scope of a process instance.
