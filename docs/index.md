@@ -10,7 +10,7 @@ This application enables every APEX developer to create and run process flows fo
 
 ### Latest Documentation
 
-The most updated version of this documentation is maintained online using Github Pages and can be read at the [APEX-FlowsforAPEX doc site.]((https://mt-ag.github.io/apex-flowsforapex/)
+The most updated version of this documentation is maintained online using Github Pages and can be read at the [APEX-FlowsforAPEX doc site.](https://mt-ag.github.io/apex-flowsforapex/)
 
 ### How to use BPMN features when building BPMN Processes:
 
@@ -25,7 +25,7 @@ The most updated version of this documentation is maintained online using Github
 
 ### Using the Flows for APEX PL/SQL API
 
-tbd
+- [The Process Variable System](processVariables.md)
 
 ### Understanding the Subflow Architecture
 
