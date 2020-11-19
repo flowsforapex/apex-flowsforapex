@@ -26,6 +26,11 @@
 <createdTime>2020-07-10 15:48:08 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
 </ColumnProxy>
+<ColumnProxy name="OBAT_CLOB_VALUE" id="BE2858FA-04FA-AF8D-9E0A-73753FF572C2">
+<createdBy>moklein</createdBy>
+<createdTime>2020-09-29 08:41:12 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
 <ColumnProxy name="OBAT_NUM_VALUE" id="CEB6E062-58FE-E302-8D76-20AB837023FE">
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 15:48:08 UTC</createdTime>
@@ -42,8 +47,6 @@
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 15:48:14 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
-<deferrable>YES</deferrable>
-<initially>DEFERRED</initially>
 </ForeignKey>
 </foreignKeys>
 <primaryKeys>

@@ -20,7 +20,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12495489400303879863)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'Workflow Editor'
-,p_list_item_link_target=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
+,p_list_item_link_target=>'f?p=&APP_ID.:4:&SESSION.::&DEBUG.::::'
 ,p_list_item_icon=>'fa-apex'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );

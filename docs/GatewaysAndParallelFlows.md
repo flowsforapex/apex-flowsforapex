@@ -29,6 +29,10 @@ With an Exclusive Gateway, a decision made by the process or by a user allows on
 
 As there is only one route taken forward from an Exclusive Gateway, a split section can recombine without requiring a closing Exclusive Gateway.  However, it is generally better style and clearer if a closing Exclusive Gateway is used to end the optional sections of your diagram.
 
+#### Default Paths on Exclusive Gateways (New in V5.0)
+
+Note that the diagram above contains a small tick mark on the path from the exclusive gateway to task C1.  This denotes that this is the default path.  If the conditions for path A ( sales > 2000 ) and path B ( sales < 50 ) are not met, the gateway will choose the default path.  Processing continues on task C1 on path C.
+
 ### Parallel Gateways (AND)
 
 At a Parallel Gateway, all forward paths proceed in parallel with their own subflow.  The incoming subflow is halted with status of 'split'.
@@ -81,3 +85,7 @@ If no closing gateway is incuded, all routes must proceed to their own end event
 An Inclusive Gateway cannot act, simultaneosly, as both a Merging / Closing gateway and an Opening Gateway.
 
 ![Inclusive Gateway can't Merge and Split](images/inclusiveMergeSplit.png "Inclusive Gateway can't Merge and Split")
+
+#### Default Paths on Inclusive Gateways (New in V5.0)
+
+Like Exclusive Gateways, Inclusive Gateways can also have a single default path which is enabled if no other path is chosen.
