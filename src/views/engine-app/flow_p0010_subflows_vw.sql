@@ -6,7 +6,7 @@ as
        , sbfl.sbfl_starting_object_name as sbfl_starting_object
        , sbfl.sbfl_last_update
        , sbfl.sbfl_status
-       , sbfl.sbfl_current_lane
+       , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
        , case
           when sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event', 'waiting for timer') then

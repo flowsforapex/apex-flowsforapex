@@ -1,5 +1,29 @@
 # Flows for APEX - Changelog
 
+## v5.0.0
+
+- Support for userTask objects that can now run an APEX page, defined inside modeler
+- Support for scriptTask objects that can run a PL/SQL script, defined inside modeler
+- Support for serviceTask objects that can run a PL/SQL script, defined inside modeler
+- Support for Timer Boundary Events on Tasks, User Tasks, and Sub Processes (interrupting and non-interrupting)
+- Support for Escalation Boundary Events on Sub Processes (interrupting and non-interrupting), along with Escalation Throw Events and Escalation End Events.
+- Support for Error Boundary Events on Sub Processes, along with Error End Events.
+- Support for Timer Events on startEvents, intermediate Catch Events, and Boundary Events.
+- Support for Sub Processes with multiple end events.
+- Support for Terminate End Event inside a Sub Process.
+- Support for Link Events.
+- New plugin for BPMN Modeler removes size limits for models and eases modeler integration.
+- Model Linting in the Modeler
+- Process Variable System providing persistent process variables.
+- Task Inbox view
+- Task Reservation System to support multi-user lanes.
+- PL/SQL API Changes to support reservation.
+- Processes now flow through automatically, using process variables to decide on gateway routing.
+- Enhanced "Order Shipment" demo.
+- Enhanced Flows for APEX Mnitoring app.
+- Enhanced documentation.
+- Cleaner flow_api_pkg by separation of engine components into flow_engine
+
 ## v4.0.0
 
 - New Subflow architecture to support Parallel Gateways, Sub Processes

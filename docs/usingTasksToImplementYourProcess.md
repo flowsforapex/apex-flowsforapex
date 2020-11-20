@@ -20,8 +20,13 @@ Page Items contains a comma-separated list of items to be set in the calling pag
 
 Item Values contains a comma-separated list of values to be supplied.  The following items are available to be substituted into the Item Values string at runtime:
 
-- Flows for APEX Process Variables.  These are specified using the syntax`&F4A$<variable_name>.`  &F4A$ is required to be upper case.  Note the trailing period '.'.
-- Flows for APEX Pseudo Variables.  The current Process ID and Subflow ID are also available as pseudo variables.  These are specified as`&F4A\$PROCESS_ID.` and`&F4A\$SUBFLOW_ID.` respectively.
+- Flows for APEX Process Variables.  
+  These are specified using the syntax `&F4A$<variable_name>.`  
+  &F4A$ is required to be upper case.
+  Note the trailing period '.'.
+- Flows for APEX Pseudo Variables.  
+  The current Process ID and Subflow ID are also available as pseudo variables.  
+  These are specified as `&F4A$PROCESS_ID.` and `&F4A$SUBFLOW_ID.` respectively.
 
 Note that you will need to pass the Process_ID and Subflow_ID to a page if you want the page to initiate a flow_step_complete when it is processed.
 
@@ -33,16 +38,19 @@ scriptTask runs a user supplied PL/SQL function.  Good practice would be to have
 
 Process variables and pseudo variables are available inside your PL/SQL procedure as follows:
 
-- Flows for APEX Process Variables.  Process variables can be retrieved and used inside your procedure, using the flow_process_vars setters and getters.
-- Flows for APEX Pseudo Variables.  Process ID and Subflow ID are available inside your procedure using the variables
-- ```
+- Flows for APEX Process Variables.  
+  Process variables can be retrieved and used inside your procedure, using the flow_process_vars setters and getters.
+- Flows for APEX Pseudo Variables.  
+  Process ID and Subflow ID are available inside your procedure using following function calls  
+
+  ```sql
   flow_plsql_runner_pkg.get_current_prcs_id
   flow_plsql_runner_pkg.get_current_sbfl_id
   ```
 
 For example, where we have a process variable ordr_id that is used to link our business process to its subject order, we can retrieve the order ID inside our procedure using the following code snippet:
 
-```
+```sql
 l_process_id := flow_plsql_runner_pkg.get_current_prcs_id;
 l_order_id   := flow_process_vars.get_var_vc2(pi_prcs_id => l_process_id, pi_var_name => 'ordr_id');
 ```
@@ -55,7 +63,6 @@ Note that, depending upon your process, a scriptTask might not be executed from 
 
 Currently serviceTask is used to send email using the same mechanism as scriptTask.  You should supply a PL/SQL procedure call that sets up and calls the APEX Mail Templates features of APEX.
 
-###### 5. bpmn:manualTasks - for non-IT tasks.
+###### 5. bpmn:manualTasks - for non-IT tasks
 
 manualTasks do not currently have any special functionality and currently behave like a standard bpmn:task objects.
-

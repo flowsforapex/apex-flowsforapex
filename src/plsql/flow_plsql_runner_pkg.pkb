@@ -67,6 +67,19 @@ as
     , p_sql_parameters  => l_sql_parameters
     );
 
+  exception
+    when others then
+      apex_debug.error
+      (
+        p_message => 'Error during flow_plsql_runner_pkg.run_task_script. SQLERRM: %s'
+      , p0        => sqlerrm
+      );
+      apex_error.add_error
+      (
+        p_message          => 'An error occured while processing defined PL/SQL. This is typically caused by an error in the given code.'
+      , p_display_location => apex_error.c_inline_in_notification
+      );
+      raise e_plsql_call_failed;
   end run_task_script;
 
 end flow_plsql_runner_pkg;
