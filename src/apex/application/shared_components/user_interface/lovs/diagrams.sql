@@ -17,7 +17,7 @@ wwv_flow_api.create_list_of_values(
 ,p_source_type=>'TABLE'
 ,p_location=>'LOCAL'
 ,p_query_table=>'FLOW_DIAGRAMS_LOV'
-,p_return_column_name=>'DGRM_NAME'
+,p_return_column_name=>'DGRM_ID'
 ,p_display_column_name=>'DGRM_NAME'
 ,p_group_sort_direction=>'ASC'
 ,p_default_sort_column_name=>'DGRM_NAME'

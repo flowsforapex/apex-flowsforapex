@@ -50,6 +50,16 @@
 <colAssociation fkAssociation="3C73092B-563A-521C-C8DD-C526A34EBCC2" referredColumn="66B25764-E27E-B4EF-B778-328ECCBAA58C"/>
 </associations>
 </Column>
+<Column name="TIMR_TYPE" id="69378FB0-11A0-BA19-48AD-9CF552636FDC">
+<createdBy>moklein</createdBy>
+<createdTime>2020-09-20 12:58:23 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>8732CECF-08AF-1F89-6BC9-9DCCD088AD31</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 <Column name="TIMR_LAST_RUN" id="3A988AFA-5772-E316-662B-554ABFDA7115">
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 16:20:40 UTC</createdTime>
@@ -94,51 +104,6 @@
 <logicalDatatype>LOGDT024</logicalDatatype>
 <dataTypeSize>1 CHAR</dataTypeSize>
 <ownDataTypeParameters>1 CHAR,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="TIMR_DATE_STRING" id="8AA0C917-3A14-1F80-6D90-479199A51C5D">
-<sourceDDLFile>install_tables.sql</sourceDDLFile>
-<createdBy>moklein</createdBy>
-<createdTime>2020-08-05 17:13:01 UTC</createdTime>
-<commentInRDBMS><![CDATA[Temporary column for testing. It will be removed when the new model from Moritz is available.]]></commentInRDBMS>
-<ownerDesignName>flows4apex</ownerDesignName>
-<importedID>5EAFEE6C-9B8A-D04E-7379-49599E84EF02</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>50 CHAR</dataTypeSize>
-<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="TIMR_DURATION_STRING" id="945D6512-E14C-82DD-8902-3577860E9C4C">
-<sourceDDLFile>install_tables.sql</sourceDDLFile>
-<createdBy>moklein</createdBy>
-<createdTime>2020-08-05 17:13:01 UTC</createdTime>
-<commentInRDBMS><![CDATA[Temporary column for testing. It will be removed when the new model from Moritz is available.]]></commentInRDBMS>
-<ownerDesignName>flows4apex</ownerDesignName>
-<importedID>6CB94317-9006-6EE3-2736-FB19CC391D05</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>50 CHAR</dataTypeSize>
-<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="TIMR_CYCLE_STRING" id="37BF82A4-39C4-473E-B5F3-942F331D6E03">
-<sourceDDLFile>install_tables.sql</sourceDDLFile>
-<createdBy>moklein</createdBy>
-<createdTime>2020-08-05 17:13:01 UTC</createdTime>
-<commentInRDBMS><![CDATA[Temporary column for testing. It will be removed when the new model from Moritz is available.]]></commentInRDBMS>
-<ownerDesignName>flows4apex</ownerDesignName>
-<importedID>54651B08-9B95-D1EB-19F2-A90C114682BA</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>50 CHAR</dataTypeSize>
-<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 <Column name="TIMR_START_ON" id="117D348E-F470-A22C-E9BF-CE37B16A48DB">

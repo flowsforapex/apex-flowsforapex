@@ -15,9 +15,9 @@ Flows for APEX does not currently support the BPMN Complex Gateway type.
 
 #### Explicit Gateway Definitions Only
 
-Except for certain exeptions decribed below, sequence flows that cause flows to split or change direction must be implicitly modelled with Gateway objects.
+Except for certain exceptions decribed below, sequence flows that cause flows to split or change direction must be implicitly modelled with Gateway objects.
 
-Implied process flow splits, or flow control decisions using flow conditions, are not supported.  These process structures can easily be modelled using the gateway types that are available.
+Implicit process flow splits, or flow control decisions using flow conditions, are not supported.  These process structures can easily be modelled using the gateway types that are available.
 
 ![No Implicit Gateways](images/noImplicitGateways.png "No Implicit Gateways")
 
@@ -27,7 +27,11 @@ With an Exclusive Gateway, a decision made by the process or by a user allows on
 
 ![Basic Exclusive Gateway](images/exclusiveGateway.png "Basic Exclusive Gateway example")
 
-As there is only one route taken forward from an Exclusive Gateway, a split section can recombine without requiring a closing Exclusive Gateway.  However, it is geneally better style and clearer if a closing Exclusive Gateway is used to end the optional sections of your diagram.
+As there is only one route taken forward from an Exclusive Gateway, a split section can recombine without requiring a closing Exclusive Gateway.  However, it is generally better style and clearer if a closing Exclusive Gateway is used to end the optional sections of your diagram.
+
+#### Default Paths on Exclusive Gateways (New in V5.0)
+
+Note that the diagram above contains a small tick mark on the path from the exclusive gateway to task C1.  This denotes that this is the default path.  If the conditions for path A ( sales > 2000 ) and path B ( sales < 50 ) are not met, the gateway will choose the default path.  Processing continues on task C1 on path C.
 
 ### Parallel Gateways (AND)
 
@@ -49,11 +53,11 @@ A parallel workflow that merges should usually be merged with an explicit merge 
 
 ![Implicit Mergers](images/parallelNoClosureA.png "Implicit Merger")
 
-It's usually fairly easy to re-write process structure to create balanced gateway pairs, without impact on the actal business process.  The following example takes a nested pair of gateways that areunbalanced, and rewrites them as two balanced pairs of Parallel Gateways to achieve the same process workflow that can be handled by Flows for APEX.
+It's usually fairly easy to re-write process structure to create balanced gateway pairs, without impact on the actual business process.  The following example takes a nested pair of gateways that are unbalanced, and rewrites them as two balanced pairs of Parallel Gateways to achieve the same process workflow that can be handled by Flows for APEX.
 
 ![ReWriting Parallel Processes to make them Balanced](images/parallelRewriteLogic.png "ReWriting Processes with Balanced Pairs of Parallel Gateways")
 
-A merging Parallel Gateway can also be used to merge, syncronise, and then re-split the flow -- as in thefollowing diagram.
+A merging Parallel Gateway can also be used to merge, syncronise, and then re-split the flow -- as in the following diagram.
 
 ![Parallel Gateway Merge and Resplit](images/parallelMergeSplit.png "Parallel Gateway Merge and Resplit")
 
@@ -80,4 +84,8 @@ If no closing gateway is incuded, all routes must proceed to their own end event
 
 An Inclusive Gateway cannot act, simultaneosly, as both a Merging / Closing gateway and an Opening Gateway.
 
-![Inclusive Gateway Can't Merge and Split](images/inclusiveMergeSplit.png "Inclusive Gateway Can't Merge and Split")
+![Inclusive Gateway can't Merge and Split](images/inclusiveMergeSplit.png "Inclusive Gateway can't Merge and Split")
+
+#### Default Paths on Inclusive Gateways (New in V5.0)
+
+Like Exclusive Gateways, Inclusive Gateways can also have a single default path which is enabled if no other path is chosen.

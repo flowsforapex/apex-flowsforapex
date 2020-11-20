@@ -1,12 +1,13 @@
-# Flows for APEX - Model and run workflows all within APEX
+# Flows for APEX - Model and run process flows all within Oracle APEX
 
 This github repository is for developers willing to contribute to the upcoming version of Flows for APEX.
 
 ## Resources you might find useful
 
 - [Demo and Packaged App](https://apex.mt-ag.com/flowsforapex)
-- [Introductory Slides](https://knowledgebase.mt-ag.com/q/flowsforapex)
-- [Introductory Blog Post](https://nielsdebr.blogspot.com/2020/06/flows-for-apex.html)
+- [Introductory video](https://www.youtube.com/watch?v=lMDMVXPy0Jk&list=PL3S33P01ea06WdgNtuFvGd-f8PvP54-g0)
+- [Introductory slides](https://knowledgebase.mt-ag.com/q/flowsforapex)
+- [Introductory blog post](https://nielsdebr.blogspot.com/2020/06/flows-for-apex.html)
 - [Documentation](https://mt-ag.github.io/apex-flowsforapex/)
 
 ## How to contribute as a developer to this project

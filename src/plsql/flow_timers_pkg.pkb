@@ -1,94 +1,149 @@
 
-create or replace package body flow_timers_pkg as
+create or replace package body flow_timers_pkg
+as
 
- 
+  procedure get_timer_definition
+  (
+    pi_prcs_id    in         flow_processes.prcs_id%type
+  , pi_sbfl_id    in         flow_subflows.sbfl_id%type
+  , po_timer_type out nocopy flow_object_attributes.obat_vc_value%type
+  , po_timer_def  out nocopy flow_object_attributes.obat_vc_value%type
+  )
+  is
+    l_objt_with_timer     flow_objects.objt_id%type;
+  begin
+    -- get objt that timers are attached to (object or attached boundaryEvent)
+    begin 
+      select objt.objt_id
+        into l_objt_with_timer
+        from flow_subflows sbfl
+        join flow_processes prcs
+          on prcs.prcs_id = sbfl.sbfl_prcs_id
+        join flow_objects objt
+          on objt.objt_bpmn_id = sbfl.sbfl_current
+         and objt.objt_dgrm_id = prcs.prcs_dgrm_id
+       where sbfl.sbfl_id = pi_sbfl_id
+         and sbfl.sbfl_prcs_id = pi_prcs_id
+         and objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+         ;
+    exception
+      when no_data_found then
+        -- check for an interupting timer boundary event attached
+        begin
+          select boundary_objt.objt_id
+            into l_objt_with_timer
+            from flow_subflows sbfl
+            join flow_processes prcs
+              on prcs.prcs_id = sbfl.sbfl_prcs_id
+            join flow_objects main_objt
+              on main_objt.objt_bpmn_id = sbfl.sbfl_current
+             and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
+            join flow_objects boundary_objt
+              on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
+           where sbfl.sbfl_id = pi_sbfl_id
+             and sbfl.sbfl_prcs_id = pi_prcs_id
+             and boundary_objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+             and boundary_objt.objt_interrupting = 1
+             ;
+        exception
+          when no_data_found then
+            apex_error.add_error
+            ( p_message => 'Error finding object with timer in get_timer_definition. Subflow '||pi_sbfl_id||' .'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end;
+    end;
+    apex_debug.message(p_message => 'get_timer_definition.  Getting timer definition for object '||l_objt_with_timer||
+                       ' on subflow '|| pi_sbfl_id, p_level => 4) ;
+    begin 
+      for rec in (
+                  select obat.obat_key
+                        , obat.obat_vc_value
+                    from flow_object_attributes obat
+                    where obat.obat_objt_id = l_objt_with_timer
+                  )
+      loop
+        case rec.obat_key
+          when flow_constants_pkg.gc_timer_type_key then
+            po_timer_type := rec.obat_vc_value;
+          when flow_constants_pkg.gc_timer_def_key then
+            po_timer_def := rec.obat_vc_value;
+          else
+            null;
+        end case;
+      end loop;
+    exception
+      when no_data_found then
+            apex_error.add_error
+            ( p_message => 'No timer definitions found in get_timer_definition for object '||l_objt_with_timer||' .'
+            , p_display_location => apex_error.c_on_error_page
+            );
+    end;
+  end get_timer_definition;
+
 /******************************************************************************
   STEP_TIMERS
 ******************************************************************************/
-  procedure step_timers is
-
-    -- Cycle timers
-    cursor c1 is
-    select *
-      from flow_timers
-     where timr_status in (c_created, c_active)
-       and timr_cycle_string is not null
-    for update of timr_last_run
-                , timr_run_count
-                , timr_status;
-
-    -- duration timers
-    cursor c2 is
-    select *
-      from flow_timers
-     where timr_status = c_created
-       and timr_duration_string is not null
-    for update of timr_last_run
-                , timr_run_count
-                , timr_status;
-
-    -- date timers
-    cursor c3 is
+  procedure step_timers
+  is
+    cursor timr_cur is
       select *
         from flow_timers
-       where timr_status = c_created
-         and timr_date_string is not null
-    for update of timr_last_run
-                , timr_run_count
-                , timr_status;
+        where timr_status in (c_created, c_active)
+     order by timr_created_on
+          for update of timr_last_run
+                      , timr_run_count
+                      , timr_status
+    ;
 
+    e_timer_already_removed exception;
+    pragma exception_init( e_timer_already_removed, -8006 );
   begin
-    -- get/set the timers (cycle)
-    for c1_row in c1 loop
-      if c1_row.timr_start_on + (c1_row.timr_interval_ym * nvl(c1_row.timr_run_count, 1))
-                              + (c1_row.timr_interval_ds * nvl(c1_row.timr_run_count, 1)) <= systimestamp then
-        update flow_timers
-        set timr_last_run = systimestamp
-          , timr_run_count = timr_run_count + 1
-          , timr_status = case when (timr_run_count + 1) = timr_repeat_times then c_ended
-                          else c_active end
-        where current of c1;
-
-        -- return timer event to flow_api_pkg
-        flow_api_pkg.flow_handle_event (
-          p_process_id => c1_row.timr_prcs_id
-        , p_subflow_id => c1_row.timr_sbfl_id
-        );
-      end if;
-    end loop;
-
-  -- Get/set timers (duration)
-    for c2_row in c2 loop
-      if c2_row.timr_start_on <= systimestamp then
-        update flow_timers
-        set timr_last_run = systimestamp
-          , timr_run_count = timr_run_count + 1
-          , timr_status = c_ended
-        where current of c2;
-
-        -- return timer event to flow_api_pkg
-        flow_api_pkg.flow_handle_event (
-          p_process_id => c2_row.timr_prcs_id
-        , p_subflow_id => c2_row.timr_sbfl_id
-        );
-      end if;
-    end loop;
-
-  -- get/set timers (date)
-    for c3_row in c3 loop
-      if c3_row.timr_start_on <= systimestamp then
-        update flow_timers
-        set timr_last_run = systimestamp
-          , timr_run_count = timr_run_count + 1
-          , timr_status = c_ended
-        where current of c3;
-
-        -- return timer event to flow_api_pkg
-        flow_api_pkg.flow_handle_event (
-          p_process_id => c3_row.timr_prcs_id
-        , p_subflow_id => c3_row.timr_sbfl_id
-        );
-      end if;
+    for rec in timr_cur
+    loop
+      begin
+        case rec.timr_type
+          when flow_constants_pkg.gc_timer_type_cycle then
+            if (   rec.timr_start_on
+                 + ( rec.timr_interval_ym * coalesce( rec.timr_run_count, 1) )
+                 + ( rec.timr_interval_ds * coalesce(rec.timr_run_count, 1) )
+               ) <= systimestamp
+            then
+              update flow_timers
+                 set timr_last_run = systimestamp
+                   , timr_run_count = timr_run_count + 1
+                   , timr_status = case when timr_run_count + 1 = timr_repeat_times then c_ended else c_active end
+               where current of timr_cur
+              ;
+              -- return timer event to flow_api_pkg
+              flow_engine.flow_handle_event
+              (
+                p_process_id => rec.timr_prcs_id
+              , p_subflow_id => rec.timr_sbfl_id
+              );
+            end if;
+          else
+            if rec.timr_start_on <= systimestamp then
+              update flow_timers
+                 set timr_last_run = systimestamp
+                   , timr_run_count = timr_run_count + 1
+                   , timr_status = c_ended
+               where current of timr_cur
+              ;
+              flow_engine.flow_handle_event
+              (
+                p_process_id => rec.timr_prcs_id
+              , p_subflow_id => rec.timr_sbfl_id
+              );
+            end if;
+        end case;
+      exception
+        when e_timer_already_removed then
+          -- Timers can disappear while we're processing a list of timers.
+          -- This is in the nature of timers as one might fire,
+          -- cleans up a whole subflow including any timers on that subflow.
+          null;
+      end;
     end loop;
   end step_timers;
 
@@ -142,132 +197,101 @@ create or replace package body flow_timers_pkg as
   START_TIMER
 ******************************************************************************/
 
-  procedure start_timer (
-    p_process_id  in  flow_processes.prcs_id%type
-  , p_subflow_id  in  flow_subflows.sbfl_id%type
-  ) is
+  procedure start_timer
+  (
+    pi_prcs_id in flow_processes.prcs_id%type
+  , pi_sbfl_id in flow_subflows.sbfl_id%type
+  )
+  is
+    l_parsed_ts           flow_timers.timr_start_on%type;
+    l_parsed_duration_ym  flow_timers.timr_interval_ym%type;
+    l_parsed_duration_ds  flow_timers.timr_interval_ds%type;
+    l_repeat_times        flow_timers.timr_repeat_times%type;
 
-    l_time_date           flow_timers.timr_date_string%type;
-    l_time_duration       flow_timers.timr_duration_string%type;
-    l_time_cycle          flow_timers.timr_cycle_string%type;
-    l_parsed_ts           timestamp with time zone;
-    l_parsed_duration_ym  interval year to month;
-    l_parsed_duration_ds  interval day to second;
-    l_scheduler_string    varchar2(256);
-    l_repeat_n_times      number;
+    l_timer_type flow_object_attributes.obat_vc_value%type;
+    l_timer_def  flow_object_attributes.obat_vc_value%type;
   begin
-    select objt_timer_date
-         , objt_timer_duration
-         , objt_timer_cycle
-    into   l_time_date
-         , l_time_duration
-         , l_time_cycle
-    from flow_objects objt
-    join flow_subflows sbfl on sbfl.sbfl_current = objt.objt_bpmn_id
-    where sbfl.sbfl_id = p_subflow_id
-      and sbfl.sbfl_prcs_id = p_process_id
-        ;
-
-    -- date timers
-    if l_time_date is not null then
-      l_parsed_ts := to_timestamp_tz (replace (l_time_date, 'T', ' '), 'YYYY-MM-DD HH24:MI:SS TZR');
-
-      insert into flow_timers (
-          timr_prcs_id
-        , timr_sbfl_id
-        , timr_created_on
-        , timr_status
-        , timr_date_string
-        , timr_start_on
-      ) values ( 
-        p_process_id
-      , p_subflow_id
-      , systimestamp
-      , c_created
-      , l_time_date
-      , l_parsed_ts
-      );      
-
-    -- duration timers
-    elsif l_time_duration is not null then
-      get_duration (in_string            => l_time_duration
-                  , in_start_ts          => systimestamp
-                  , out_start_ts         => l_parsed_ts
-                  , out_interv_ym        => l_parsed_duration_ym
-                  , out_interv_ds        => l_parsed_duration_ds
-                  );
-
-      insert into flow_timers (
-          timr_prcs_id
-        , timr_sbfl_id
-        , timr_created_on
-        , timr_status
-        , timr_duration_string
-        , timr_start_on
-      ) values (
-        p_process_id
-      , p_subflow_id
-      , systimestamp
-      , c_created
-      , l_time_duration
-      , l_parsed_ts
-      );
-
-    -- cycle timers
-    elsif l_time_cycle is not null then
-      l_repeat_n_times := substr(l_time_cycle,
-                                 2,
-                                 instr(l_time_cycle, '/', 1, 1) - 2);
-
-      l_time_duration := substr(l_time_cycle,
-                                instr(l_time_cycle, '/', 1, 1) + 1);
-
-      get_duration (in_string            => l_time_duration
-                  , in_start_ts          => systimestamp
-                  , out_start_ts         => l_parsed_ts
-                  , out_interv_ym        => l_parsed_duration_ym
-                  , out_interv_ds        => l_parsed_duration_ds
-                  );
-
-      insert into flow_timers 
-        ( timr_prcs_id
-        , timr_sbfl_id
-        , timr_created_on
-        , timr_status
-        , timr_cycle_string
-        , timr_start_on
-        , timr_interval_ym
-        , timr_interval_ds
-        , timr_repeat_times
-      ) values 
-        ( p_process_id
-        , p_subflow_id
-        , systimestamp
-        , c_created
-        , l_time_cycle
-        , l_parsed_ts
-        , l_parsed_duration_ym
-        , l_parsed_duration_ds
-        , l_repeat_n_times
+    get_timer_definition
+    (
+      pi_prcs_id    => pi_prcs_id
+    , pi_sbfl_id    => pi_sbfl_id
+    , po_timer_type => l_timer_type
+    , po_timer_def  => l_timer_def
+    );
+    apex_debug.message(p_message => 'starting timer on subflow '||pi_sbfl_id||' type '||l_timer_type||' def '||l_timer_def, p_level => 4) ;
+    case l_timer_type
+      when flow_constants_pkg.gc_timer_type_date then
+        l_parsed_ts := to_timestamp_tz( replace ( l_timer_def, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
+      when flow_constants_pkg.gc_timer_type_duration then
+        get_duration
+        (
+          in_string     => l_timer_def
+        , in_start_ts   => systimestamp
+        , out_start_ts  => l_parsed_ts
+        , out_interv_ym => l_parsed_duration_ym
+        , out_interv_ds => l_parsed_duration_ds
         );
+      when flow_constants_pkg.gc_timer_type_cycle then
+        l_repeat_times := substr( l_timer_def, 2, instr( l_timer_def, '/', 1, 1 ) - 2 );
+        l_timer_def    := substr( l_timer_def, instr( l_timer_def, '/', 1, 1 ) + 1 );
+        get_duration
+        (
+          in_string     => l_timer_def
+        , in_start_ts   => systimestamp
+        , out_start_ts  => l_parsed_ts
+        , out_interv_ym => l_parsed_duration_ym
+        , out_interv_ds => l_parsed_duration_ds
+        );
+      else
+            apex_error.add_error
+            ( p_message => 'No timer definitions found in start_timer on subflow '||pi_sbfl_id||' type '||l_timer_type||' def '||l_timer_def
+            , p_display_location => apex_error.c_on_error_page
+            );
 
-    end if;
+    end case;
 
+    insert into flow_timers
+      (
+        timr_prcs_id
+      , timr_sbfl_id
+      , timr_type
+      , timr_created_on
+      , timr_status
+      , timr_start_on
+      , timr_interval_ym
+      , timr_interval_ds
+      , timr_repeat_times
+      )
+      values
+      (
+        pi_prcs_id
+      , pi_sbfl_id
+      , l_timer_type
+      , systimestamp
+      , c_created
+      , l_parsed_ts
+      , l_parsed_duration_ym
+      , l_parsed_duration_ds
+      , l_repeat_times
+      )
+    ;
   end start_timer;
 
 /******************************************************************************
   EXPIRE_TIMER
 ******************************************************************************/
 
-  procedure expire_timer (
-    p_process_id  in  flow_processes.prcs_id%type
-  , p_subflow_id  in  flow_subflows.sbfl_id%type 
-  ) is
+  procedure expire_timer
+  (
+    pi_prcs_id in flow_processes.prcs_id%type
+  , pi_sbfl_id in flow_subflows.sbfl_id%type 
+  )
+  is
   begin
     update flow_timers
     set timr_status = c_expired
-    where timr_prcs_id = p_process_id
-      and timr_sbfl_id = p_subflow_id
+    where timr_prcs_id = pi_prcs_id
+      and timr_sbfl_id = pi_sbfl_id
       and timr_status not in (c_ended, c_expired, c_terminated);
   end expire_timer;
 
@@ -275,16 +299,18 @@ create or replace package body flow_timers_pkg as
   TERMINATE_TIMER
 ******************************************************************************/
 
-  procedure terminate_timer (
-      p_process_id    in   flow_processes.prcs_id%type
-    , p_subflow_id    in   flow_subflows.sbfl_id%type
-    , p_return_code   out  number
-    ) is
+  procedure terminate_timer
+  (
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type
+  , po_return_code out number
+  )
+  is
   begin
     update flow_timers
        set timr_status = c_terminated
-     where timr_prcs_id = p_process_id
-       and timr_sbfl_id = p_subflow_id
+     where timr_prcs_id = pi_prcs_id
+       and timr_sbfl_id = pi_sbfl_id
        and timr_status not in (c_ended, c_expired, c_terminated);
   end terminate_timer;
 
@@ -292,14 +318,16 @@ create or replace package body flow_timers_pkg as
   TERMINATE_PROCESS_TIMERS
 ******************************************************************************/
 
-  procedure terminate_process_timers (
-      p_process_id    in   flow_processes.prcs_id%type
-    , p_return_code   out  number
-    ) is
+  procedure terminate_process_timers
+  (
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , po_return_code out number
+  )
+  is
   begin
     update flow_timers
     set timr_status = c_terminated
-    where timr_prcs_id = p_process_id
+    where timr_prcs_id = pi_prcs_id
       and timr_status not in (c_ended, c_expired, c_terminated);
   end terminate_process_timers;
 
@@ -307,13 +335,16 @@ create or replace package body flow_timers_pkg as
   TERMINATE_ALL_TIMERS
 ******************************************************************************/
 
-  procedure terminate_all_timers (
-    p_return_code  out  number
-  ) is
+  procedure terminate_all_timers
+  (
+    po_return_code  out  number
+  )
+  is
   begin
     update flow_timers
-    set timr_status = c_terminated
-    where timr_status not in (c_ended, c_expired, c_terminated);
+       set timr_status = c_terminated
+     where timr_status not in (c_ended, c_expired, c_terminated)
+    ;
   end terminate_all_timers;
 
 /******************************************************************************
@@ -321,13 +352,17 @@ create or replace package body flow_timers_pkg as
     delete all the timers of a process.
 ******************************************************************************/
 
-  procedure delete_process_timers (
-    p_process_id    in   flow_processes.prcs_id%type
-  , p_return_code  out  number
-  ) is 
+  procedure delete_process_timers
+  (
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , po_return_code out number
+  )
+  is 
   begin
-    delete from flow_timers
-    where timr_prcs_id = p_process_id;
+    delete
+      from flow_timers
+     where timr_prcs_id = pi_prcs_id
+    ;
   end delete_process_timers;
 
 

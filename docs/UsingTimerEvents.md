@@ -40,9 +40,9 @@ Let's assume that the first event to fire is the 60 second timer on route B.  Wh
 
 ## Setting Up the Timer System
 
-Use of the Timer sub-system relies on the DBS_SCHEDULER feature of the Oracle server.
+Use of the Timer sub-system relies on the DBMS_SCHEDULER feature of the Oracle server.
 
-The timer subsystem requires the parsing schema to have been granted the CREATE  JOB system privilege.
+The timer subsystem requires the parsing schema to have been granted the CREATE JOB system privilege.
 
 In addition, the schema needs to set up a program and a job in the DBMS_SCHEDULER system.
 
@@ -68,7 +68,7 @@ To define a Timer Event, first drag the Event onto your new process canvas.   Se
 - Cycle Timer: for an initial run and then repeats an definied intervals, using a [ISO 8601 Repeating Interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals) specifier.  The alternate BPMN syntax for repeating intervals using CRON syntax is not currently supported.  For example:
   
   ```
-  R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M
+  R5/P1Y2M10DT2H30M
   ```
 
 ![Timer Event Start](images/timerStartEvent.png "Timer Start Event")
@@ -79,12 +79,12 @@ To define a Timer Event, first drag the Event onto your new process canvas.   Se
 2) Using SQLDeveloper or the APEX SQL Workshop Object Browser:
    1. examine FLOW_DIAGRAMS to get the DGRM_ID for your BPMN diagram.
    2. query the FLOW_OBJECTS table to show all of the objects where OBJT_DGRM_ID is from your diagram.
-   3. From this, find the bpmn:startEvent or bpmn:intermediateCatchEvent events that you want to add a timer to.
-   4. For that event record, insert ‘bpmn:timerEventDefinition’ (without the quote marks) into the OBJT_SUB_TAG_NAME column.
-   5. Add either:
+   3. from this, find the bpmn:startEvent or bpmn:intermediateCatchEvent events that you want to add a timer to.
+   4. for that event record, insert ‘bpmn:timerEventDefinition’ (without the quote marks) into the OBJT_SUB_TAG_NAME column.
+   5. add either:
       1. An ISO 8601 Date/time string (e.g., ‘2007-04-05T14:30’) into the OBJT_TIMER_DATE column; or
       2. An ISO 8601 Duration string (e.g., ‘PT30S’ for a 30 sec delay) into the OBJT_TIMER_DURATION column; or
-      3. An ISO 8601 Cycle string (e.g., ‘R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M’) onto the OBJT_TIMER_CYCLE column.
+      3. An ISO 8601 Cycle string (e.g., ‘R5/P1Y2M10DT2H30M’) onto the OBJT_TIMER_CYCLE column.
    6. Save / Commit the change.
 
 For example, to add the two 60 second timers (both Duration timers with string ‘PT60S’) onto the following BPMN diagram:![Temporary Example - Adding Timers Manually](images/tempEditTimerDefinitions1.png)

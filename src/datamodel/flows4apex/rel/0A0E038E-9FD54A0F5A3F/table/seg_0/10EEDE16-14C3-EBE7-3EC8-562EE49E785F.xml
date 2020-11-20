@@ -68,6 +68,17 @@
 <ownDataTypeParameters>4000 CHAR,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
+<Column name="OBAT_CLOB_VALUE" id="BE2858FA-04FA-AF8D-9E0A-73753FF572C2">
+<createdBy>moklein</createdBy>
+<createdTime>2020-09-10 09:25:19 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 </columns>
 <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
 <ind_PK_UK id="79639E21-DDC4-7F1F-6281-FA69583082EA" name="OBAT_PK">
@@ -98,9 +109,10 @@
 <createdBy>moklein</createdBy>
 <createdTime>2020-07-10 15:48:08 UTC</createdTime>
 <ownerDesignName>flows4apex</ownerDesignName>
-<rule><![CDATA[( obat_num_value is not null and obat_date_value is     null and obat_vc_value is     null ) or
-( obat_num_value is     null and obat_date_value is not null and obat_vc_value is     null ) or
-( obat_num_value is     null and obat_date_value is     null and obat_vc_value is not null )]]></rule>
+<rule><![CDATA[( obat_num_value is not null and obat_date_value is     null and obat_vc_value is     null and obat_clob_value is     null ) or
+( obat_num_value is     null and obat_date_value is not null and obat_vc_value is     null and obat_clob_value is     null ) or
+( obat_num_value is     null and obat_date_value is     null and obat_vc_value is not null and obat_clob_value is     null ) or
+( obat_num_value is     null and obat_date_value is     null and obat_vc_value is     null and obat_clob_value is not null )]]></rule>
 </tableCheckConstraint>
 </tableCheckConstraints>
 </Table>

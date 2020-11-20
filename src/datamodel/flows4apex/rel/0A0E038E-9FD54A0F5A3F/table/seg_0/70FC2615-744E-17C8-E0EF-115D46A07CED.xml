@@ -102,21 +102,6 @@
 <colAssociation fkAssociation="F952E283-C13E-ABFA-2799-D38AA8644DA3" referredColumn="77DFA2C9-30EE-A990-25FC-9E43C7A6B616"/>
 </associations>
 </Column>
-<Column name="CONN_TYPE" id="A24E6996-4A87-7D4B-082B-B5059451EB47">
-<sourceConnName>vm_apex201.flows4apex</sourceConnName>
-<sourceObjSchema>FLOW_CONNECTIONS</sourceObjSchema>
-<sourceObjName>CONN_TYPE</sourceObjName>
-<createdBy>moklein</createdBy>
-<createdTime>2020-06-16 21:20:28 UTC</createdTime>
-<ownerDesignName>flows4apex</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>50 CHAR</dataTypeSize>
-<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
 <Column name="CONN_TAG_NAME" id="3E02F622-7920-79BD-3F9F-E1B2DF1BE708">
 <sourceConnName>vm_apex201.flows4apex</sourceConnName>
 <sourceObjSchema>FLOW_CONNECTIONS</sourceObjSchema>
@@ -145,6 +130,21 @@
 <logicalDatatype>LOGDT024</logicalDatatype>
 <dataTypeSize>50 CHAR</dataTypeSize>
 <ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="CONN_IS_DEFAULT" id="DF59B66D-A9B5-CBEC-0246-DEBCC2D44F3A">
+<createdBy>moklein</createdBy>
+<createdTime>2020-10-01 17:07:55 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<listOfValues>
+<valueDef value="0" description="No"/>
+<valueDef value="1" description="Yes"/>
+</listOfValues>
+<defaultValue>0</defaultValue>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 </columns>
