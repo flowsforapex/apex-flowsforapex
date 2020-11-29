@@ -15,6 +15,7 @@ The most updated version of this documentation is maintained online using Github
 ### How to use BPMN features when building BPMN Processes:
 
 - [Starting and Stopping Flows](StartingAndStoppingFlows.md)
+- [Tasks Implement Your Process](usingTasksToImplementYourProcess.md)
 - [Gateways and Parallel Flows](GatewaysAndParallelFlows.md)
 - [Using Sub Processes](SubProcesses.md)
 - [Boundary Events in Sub Processes](behaviourOfBoundaryEventsInSubProcesses.md)
@@ -30,3 +31,4 @@ The most updated version of this documentation is maintained online using Github
 ### Understanding the Subflow Architecture
 
 - [About Subflows](AboutSubflows.md)
+

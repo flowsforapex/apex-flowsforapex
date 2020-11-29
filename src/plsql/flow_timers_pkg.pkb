@@ -40,8 +40,9 @@ as
              and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
             join flow_objects boundary_objt
               on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
+             and boundary_objt.objt_dgrm_id = prcs.prcs_dgrm_id
            where sbfl.sbfl_id = pi_sbfl_id
-             and sbfl.sbfl_prcs_id = pi_prcs_id
+             and prcs.prcs_id = pi_prcs_id
              and boundary_objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
              and boundary_objt.objt_interrupting = 1
              ;
