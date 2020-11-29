@@ -29,6 +29,35 @@ With an Exclusive Gateway, a decision made by the process or by a user allows on
 
 As there is only one route taken forward from an Exclusive Gateway, a split section can recombine without requiring a closing Exclusive Gateway.  However, it is generally better style and clearer if a closing Exclusive Gateway is used to end the optional sections of your diagram.
 
+#### Controlling the Forward Path at an Exclusive Gateway (Changed in V5.0).
+
+When a subflow reaches an exclusive gateway, the flow engine chooses the forward path as follows:
+
+1. If a routing instruction is provided, it will take that path.  See 'Specifying a Routing Instruction Below'.
+2. Failing that, the Default Path is chosen.  See 'Default Paths on Exclusive Gateways' below.
+3. If no routing is provided, and no default is specified, an error is signalled.
+
+#### Specifying Routing Instructions for an Exclusive Gateway (New in V5.0)
+
+An exclusive gateway will look for its routing instruction in a process variable named <gateway_bpmn_id>||':route'.
+
+The routing instruction should be the bpmn_id  of the required forward path (sequenceFlow).
+
+For example, in the progress diagram below, the exclusive gateway 'Choose B or C?' has a bpmn_id of `Gateway_0j0mpc0`. So in a process step before reaching the gateway, your application would need to set the process variable `Gateway_0j0mpc0:route`.
+
+![Setting up Gateway Routing Example - Step 1](images/gatewayRoutingEx1.png "Setting up Gateway Routing Example - Step 1")
+
+Assuming for the sale of this example that you want to take 'B Route' so that the process goes next to task B, the variable needs to have a varchar2 value set to the bpmn_id of 'B Route', which is 'Flow_B'.  You can set these variables using the `set_var` procedure in flow_process_vars package.
+
+![Setting up Gateway Routing Example - Step 2](images/gatewayRoutingEx2.png "Setting up Gateway Routing Example - Step 2")
+
+```
+Variable  :  Gateway_0j0mpc0:route
+Value     :  Flow_B   ----(varchar2)
+```
+
+Typically you would set these routing instructions into a variable as part of a Task step, or you might have a scriptTask that sets it based on a database query.  If it is a user decision, you would create an APEX Page for the user to review some information and make a decision.  If the routing can be looked up or calculated, a scriptTask could run a PL/SQL procedure that does the appropriate query and processing to make the decision.
+
 #### Default Paths on Exclusive Gateways (New in V5.0)
 
 Note that the diagram above contains a small tick mark on the path from the exclusive gateway to task C1.  This denotes that this is the default path.  If the conditions for path A ( sales > 2000 ) and path B ( sales < 50 ) are not met, the gateway will choose the default path.  Processing continues on task C1 on path C.
@@ -86,6 +115,38 @@ An Inclusive Gateway cannot act, simultaneosly, as both a Merging / Closing gate
 
 ![Inclusive Gateway can't Merge and Split](images/inclusiveMergeSplit.png "Inclusive Gateway can't Merge and Split")
 
+#### Controlling the Forward Path at an Inclusive Gateway (Changed in V5.0).
+
+When a subflow reaches an exclusive gateway, the flow engine chooses the forward path as follows:
+
+1. If a routing instruction is provided, it will take those paths.  See 'Specifying a Routing Instruction Below'.
+2. Failing that, the Default Path is chosen.  See 'Default Paths on Exclusive Gateways' below.
+3. If no routing is provided, and no default is specified, an error is signalled.
+
+#### Specifying Routing Instructions for an Inclusive Gateway (New in V5.0)
+
+An exclusive gateway will look for its routing instruction in a process variable named <gateway_bpmn_id>||':route'.
+
+The routing instruction should be the bpmn_id  of the required forward path (sequenceFlow).  If more than one paths are required, these should be colon `:` separated.
+
+For example, in the progress diagram below, the exclusive gateway 'Choose B or C?' has a bpmn_id of `Gateway_0tkydca`. So in a process step before reaching the gateway, your application would need to set the process variable `Gateway_0tkydca:route`.
+
+![Setting up Gateway Routing Example - Step 1](images/gatewayRoutingEx3.png "Setting up Gateway Routing Example - Step 1")
+
+Assuming for the sale of this example that you want to take routes B and D, so that the process starts 2 parallel forward routes going next to tasks B and D, the variable needs to have a varchar2 value set to the bpmn_id of 'B Route' and 'D Route', which is `Flow_05d0ha9:Flow_0zhby4b`.  You can set these variables using the `set_var` procedure in flow_process_vars package.
+
+![Setting up Gateway Routing Example - Step 2](images/gatewayRoutingEx4.png "Setting up Gateway Routing Example - Step 2")
+![Setting up Gateway Routing Example - Step 3](images/gatewayRoutingEx5.png "Setting up Gateway Routing Example - Step 3")
+
+```
+Variable  :  Gateway_0tkydca:route
+Value     :  Flow_05d0ha9:Flow_0zhby4b   ----(varchar2)
+```
+
+Typically you would set these routing instructions into a variable as part of a Task step, or you might have a scriptTask that sets it based on a database query.  If it is a user decision, you would create an APEX Page for the user to review some information and make a decision.  If the routing can be looked up or calculated, a scriptTask could run a PL/SQL procedure that does the appropriate query and processing to make the decision.
+
+
 #### Default Paths on Inclusive Gateways (New in V5.0)
 
 Like Exclusive Gateways, Inclusive Gateways can also have a single default path which is enabled if no other path is chosen.
+
