@@ -807,6 +807,12 @@ begin
       , po_boundary_objt => l_next_objt
       , po_interrupting => l_interrupting
       );
+    If l_next_objt is null then
+        apex_error.add_error
+            ( p_message => 'No boundaryEvent of type '||p_step_info.target_objt_subtag||' found to catch event.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+    end if;
     if l_interrupting = 1 then
         -- first remove any non-interrupting timers that are on the parent event
         flow_unset_boundary_timers (p_process_id, p_par_sbfl);
