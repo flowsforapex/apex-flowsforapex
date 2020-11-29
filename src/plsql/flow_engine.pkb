@@ -175,8 +175,11 @@ begin
               join flow_objects objt 
                 on objt.objt_id = conn.conn_src_objt_id
                and conn.conn_dgrm_id = objt.objt_dgrm_id
+              join flow_processes prcs 
+                on prcs.prcs_dgrm_id = conn.conn_dgrm_id
              where conn.conn_is_default = 1
                and objt.objt_bpmn_id = pi_objt_bpmn_id
+               and prcs.prcs_id = pi_process_id
                 ;
         exception
             when no_data_found then
@@ -564,10 +567,13 @@ begin
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
+          join flow_processes prcs 
+            on prcs.prcs_id = sbfl.sbfl_prcs_id
+           and prcs.prcs_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = 'bpmn:boundaryEvent'
            and objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
            and sbfl.sbfl_id = p_subflow_id
-           and sbfl.sbfl_prcs_id = p_process_id
+           and prcs.prcs_id = p_process_id
     )
     loop
         case boundary_timers.objt_interrupting
@@ -629,10 +635,13 @@ begin
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
+          join flow_processes prcs 
+            on prcs.prcs_id = sbfl.sbfl_prcs_id
+           and prcs.prcs_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = 'bpmn:boundaryEvent'
            and objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
            and sbfl.sbfl_id = p_subflow_id
-           and sbfl.sbfl_prcs_id = p_process_id
+           and prcs.prcs_id = p_process_id
     )
     loop
         case boundary_timers.objt_interrupting
@@ -747,6 +756,9 @@ begin
       from flow_objects boundary_objt
       join flow_subflows parent_sbfl
         on parent_sbfl.sbfl_current = boundary_objt.objt_attached_to
+      join flow_processes prcs
+        on prcs.prcs_id = parent_sbfl.sbfl_prcs_id
+       and prcs.prcs_dgrm_id = boundary_objt.objt_dgrm_id
      where parent_sbfl.sbfl_id = pi_par_sbfl
        and boundary_objt.objt_sub_tag_name = pi_sub_tag_name
        and boundary_objt.objt_dgrm_id = pi_dgrm_id
@@ -796,6 +808,8 @@ begin
       , po_interrupting => l_interrupting
       );
     if l_interrupting = 1 then
+        -- first remove any non-interrupting timers that are on the parent event
+        flow_unset_boundary_timers (p_process_id, p_par_sbfl);
         -- set parent subflow to boundary event and do flow_complete_step
         update flow_subflows sbfl
           set sbfl.sbfl_current = l_next_objt
@@ -971,10 +985,16 @@ begin
                   on subproc_objt.objt_bpmn_id = boundary_objt.objt_attached_to
                 join flow_subflows par_sbfl
                   on par_sbfl.sbfl_current = subproc_objt.objt_bpmn_id
+                join flow_processes prcs 
+                  on par_sbfl.sbfl_prcs_id = prcs.prcs_id
+                 and prcs.prcs_dgrm_id = boundary_objt.objt_dgrm_id
+                 and prcs.prcs_dgrm_id = subproc_objt.objt_dgrm_id
                where par_sbfl.sbfl_id = l_sbfl_id_par
                  and par_sbfl.sbfl_prcs_id = p_process_id
                  and boundary_objt.objt_sub_tag_name = 'bpmn:errorEventDefinition'
                ;
+              -- first remove any non-interrupting timers that are on the parent event
+              flow_unset_boundary_timers (p_process_id, l_sbfl_id_par);
               -- set current event on parent process to the error Boundary Event
               update flow_subflows sbfl
               set sbfl.sbfl_current = l_boundary_event
@@ -1147,6 +1167,7 @@ end process_endEvent;
                             from flow_connections conn
                             join flow_objects objt
                               on objt.objt_id = conn.conn_tgt_objt_id
+                             and conn.conn_dgrm_id = objt.objt_dgrm_id
                            where conn.conn_dgrm_id = p_step_info.dgrm_id
                              and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
                              and conn.conn_src_objt_id = p_step_info.target_objt_id
@@ -1236,6 +1257,7 @@ end process_endEvent;
                           from flow_connections conn
                           join flow_objects ultimate_tgt_objt
                             on ultimate_tgt_objt.objt_id = conn.conn_tgt_objt_id
+                           and conn.conn_dgrm_id = ultimate_tgt_objt.objt_dgrm_id
                          where conn.conn_dgrm_id = p_step_info.dgrm_id
                            and conn.conn_src_objt_id = p_step_info.target_objt_id
                            and conn.conn_bpmn_id member of apex_string.split( l_forward_routes, ':' ) -- verify if this works
@@ -1482,6 +1504,7 @@ end process_exclusiveGateway;
                         from flow_connections conn
                         join flow_objects objt
                           on objt.objt_id = conn.conn_tgt_objt_id
+                         and conn.conn_dgrm_id = objt.objt_dgrm_id
                        where conn.conn_dgrm_id = p_step_info.dgrm_id
                          and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
                          and conn.conn_src_objt_id = p_step_info.target_objt_id
@@ -1754,6 +1777,9 @@ end process_userTask;
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+    -- current implementation of manualTask performs exactly like a standard Task, without attached boundary timers
+    -- future implementation could include auto-call of an APEX page telling you what the manual task is & providing information about it?
+
     -- set boundaryEvent Timers, if any
     flow_set_boundary_timers 
     ( p_process_id => p_process_id
@@ -1810,12 +1836,16 @@ begin
           , l_current_object
           , l_child_starting_object
        from flow_objects objt
-       join flow_subflows sbfl on sbfl.sbfl_current = objt.objt_bpmn_id
-       join flow_connections conn on conn.conn_src_objt_id = objt.objt_id
+       join flow_subflows sbfl 
+         on sbfl.sbfl_current = objt.objt_bpmn_id
+       join flow_processes prcs
+         on sbfl.sbfl_prcs_id = prcs.prcs_id
+        and prcs.prcs_dgrm_id = objt.objt_dgrm_id
+       join flow_connections conn 
+         on conn.conn_src_objt_id = objt.objt_id
+        and conn.conn_dgrm_id = prcs.prcs_dgrm_id
       where sbfl.sbfl_id = p_cleared_subflow_id
-        and sbfl.sbfl_prcs_id = p_process_id
-        and objt.objt_dgrm_id = l_dgrm_id
-        and conn.conn_dgrm_id = l_dgrm_id
+        and prcs.prcs_id = p_process_id
         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
           ;
      update flow_subflows sbfl
@@ -1838,7 +1868,11 @@ begin
              , sbfl.sbfl_current
              , objt.objt_sub_tag_name
           from flow_subflows sbfl
-          join flow_objects objt on sbfl.sbfl_current = objt.objt_bpmn_id
+          join flow_objects objt 
+            on sbfl.sbfl_current = objt.objt_bpmn_id
+          join flow_processes prcs
+            on sbfl.sbfl_prcs_id = prcs.prcs_id
+           and objt.objt_dgrm_id = prcs.prcs_dgrm_id
          where sbfl.sbfl_sbfl_id = p_parent_subflow_id
            and sbfl.sbfl_starting_object = l_child_starting_object
            and objt.objt_dgrm_id = l_dgrm_id
@@ -1906,22 +1940,23 @@ begin
         on prcs.prcs_id = sbfl.sbfl_prcs_id
       join flow_objects main_objt
         on main_objt.objt_bpmn_id = sbfl.sbfl_current
-        and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
+       and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
       join flow_objects boundary_objt
         on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
-      where sbfl.sbfl_id = p_subflow_id
-        and sbfl.sbfl_prcs_id = p_process_id
-        and boundary_objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
-        and boundary_objt.objt_interrupting = 1
+       and boundary_objt.objt_dgrm_id = prcs.prcs_dgrm_id
+     where sbfl.sbfl_id = p_subflow_id
+       and prcs.prcs_id = p_process_id
+       and boundary_objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+       and boundary_objt.objt_interrupting = 1
         ;
     if l_parent_objt_tag = 'bpmn:subProcess'
     then
        -- find a child subprocess and then stop all processing at that level and below
-       select sbfl.sbfl_id
-       into   l_child_sbfl
-       from flow_subflows sbfl
+      select sbfl.sbfl_id
+        into l_child_sbfl
+        from flow_subflows sbfl
        where sbfl.sbfl_sbfl_id = p_subflow_id
-       and rownum = 1
+         and rownum = 1
        ;
        if l_child_sbfl is not null 
        then 
@@ -1965,17 +2000,20 @@ begin
     -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
     l_dgrm_id := get_dgrm_id (p_prcs_id => p_process_id);
 
-      select curr_objt.objt_tag_name
-           , sbfl.sbfl_sbfl_id
-           , sbfl.sbfl_current
-        into l_curr_objt_tag_name
-           , l_parent_subflow
-           , l_sbfl_current
+    select curr_objt.objt_tag_name
+         , sbfl.sbfl_sbfl_id
+         , sbfl.sbfl_current
+      into l_curr_objt_tag_name
+         , l_parent_subflow
+         , l_sbfl_current
       from flow_objects curr_objt 
-      join flow_subflows sbfl on sbfl.sbfl_current = curr_objt.objt_bpmn_id
-      where sbfl.sbfl_id = p_subflow_id
-      and   sbfl.sbfl_prcs_id = p_process_id
-      and   curr_objt.objt_dgrm_id = l_dgrm_id
+      join flow_subflows sbfl 
+        on sbfl.sbfl_current = curr_objt.objt_bpmn_id
+      join flow_processes prcs
+        on prcs.prcs_id = sbfl.sbfl_prcs_id
+       and prcs_dgrm_id = curr_objt.objt_dgrm_id
+     where sbfl.sbfl_id = p_subflow_id
+       and prcs.prcs_id = p_process_id
         ;
 
     if l_curr_objt_tag_name in ( 'bpmn:startEvent' -- startEvent with associated event.
@@ -2001,12 +2039,14 @@ begin
         select prev_objt.objt_tag_name
           into l_prev_objt_tag_name
           from flow_connections conn 
-          join flow_objects curr_objt on conn.conn_tgt_objt_id = curr_objt.objt_id 
-          join flow_objects prev_objt on conn.conn_src_objt_id = prev_objt.objt_id
+          join flow_objects curr_objt 
+            on conn.conn_tgt_objt_id = curr_objt.objt_id 
+           and conn.conn_dgrm_id = curr_objt.objt_dgrm_id
+          join flow_objects prev_objt 
+            on conn.conn_src_objt_id = prev_objt.objt_id
+           and conn.conn_dgrm_id = prev_objt.objt_dgrm_id
          where conn.conn_dgrm_id = l_dgrm_id
-           and   curr_objt.objt_bpmn_id = l_sbfl_current
-           and   curr_objt.objt_dgrm_id = l_dgrm_id
-           and   prev_objt.objt_dgrm_id = l_dgrm_id
+           and curr_objt.objt_bpmn_id = l_sbfl_current
             ;
       exception
         when too_many_rows then
@@ -2102,15 +2142,20 @@ begin
       from flow_connections conn
       join flow_objects objt_source
         on conn.conn_src_objt_id = objt_source.objt_id
+       and conn.conn_dgrm_id = objt_source.objt_dgrm_id
       join flow_objects objt_target
         on conn.conn_tgt_objt_id = objt_target.objt_id
+       and conn.conn_dgrm_id = objt_target.objt_dgrm_id
+      join flow_processes prcs
+        on prcs.prcs_dgrm_id = conn.conn_dgrm_id
       join flow_subflows sbfl
         on sbfl.sbfl_current = objt_source.objt_bpmn_id 
+       and sbfl.sbfl_prcs_id = prcs.prcs_id
      where conn.conn_dgrm_id = l_dgrm_id
        and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        and conn.conn_bpmn_id like nvl2( p_forward_route, p_forward_route, '%' )
-       and sbfl.sbfl_prcs_id = p_process_id
-      and sbfl.sbfl_id = p_subflow_id
+       and prcs.prcs_id = p_process_id
+       and sbfl.sbfl_id = p_subflow_id
     ;
   exception
   when no_data_found then
