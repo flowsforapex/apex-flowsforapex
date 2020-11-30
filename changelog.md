@@ -1,5 +1,10 @@
 # Flows for APEX - Changelog
 
+## v5.0.1
+
+* Enables process variables to be used when specifying timer definitions
+* Minor bug fixes
+
 ## v5.0.0
 
 - Support for userTask objects that can now run an APEX page, defined inside modeler

@@ -27,6 +27,20 @@ A Timer Intermediate Catch Event will cause the sequence flow to wait until the 
 
 ![Simple Timer Intermediate Catch Event](images/simpleTimerICEsequence.png "Simple Timer Intermediate Catch Event")
 
+## Interrupting Timer Boundary Event
+
+These can be set on a task, a userTask, or a subProcess.  When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task is terminated, and the timer boundary event becomes the current object.  It performs a task_complete on the boundary event, moving the process on to the next step.
+These are used to perform a business process timeout -- the usual forward path is suspended, and replaced by the timeout process path.  This can also be used to move a process on after a period closes or a review period has completed.
+In the example below, task C has an attached interrupting timer.  If task C is completed before the timer fires, the timer is removed.  If the timer fires before C has completed, processing switches from the normal path and instead continues with C Timeout as the next task.
+
+![Timer Boundary Events](images/timerBoundaryEvents.png "Timer Boundary Events")
+
+## Non Interrupting Timer Boundary Events
+
+These can be set on a task, a userTask, or a subProcess.  When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task continues, and a new subflow starts to operate in parallel to execute the 'reminder' path.  The new 'reminder path' performs a task_complete on the boundary event, moving the process on to the first task on that path.
+Non-Interupting Timer Boundary Events are used to implement reminder processes, or to start time-delayed parallel process paths.  If the underlying task completes before the timer fires, the 'reminder path' timer and associated subflow are deleted.
+In the example above, task A has a non-interrupting boundary timer attached to it.  If task A is not completed in the given 20 seconds, the timer fires - which starts task 'A Reminder' on a parallel subflow to the main subflow.
+
 ## Event Based Gateway with Timer
 
 An Event Based Gateway is followed by one or more event-based Intermediate Catch Events.  When the process flow gets to the Event Based Gateway, all of its following catch events wait for their respective event to occur.  When the event occurs, the process proceeds along that path.   All other paths forward from the Event Based Gateway are terminated.
@@ -51,15 +65,22 @@ For details, please see the setup file included with the Flows for APEX distribu
 
 ## Timer Syntax
 
-To define a Timer Event, first drag the Event onto your new process canvas.   Select the 'Change Type' spanner icon on the pop-up menu, and select Timer version of that from the menu.  To then specify the Timer Configuration, use the Properties Panel on the right of the screen.  Under Timer, select the type of timer you want.  Under Timer Definition, specific the required time or interval, as below.
+To define a Timer Event, first drag the Event onto your new process canvas.   Select the 'Change Type' spanner icon on the pop-up menu, and select Timer version of that from the menu.  To then specify the Timer Configuration, use the Properties Panel on the right of the screen.
+
+Timer definitions can be specified in the properties panel as a literal value, or can be specified using a process variable substitution.
+
+Under Timer, select the type of timer you want.  Under Timer Definition, specific the required time or interval, as below.
 
 - Date:  specifies a date and time for the process to start, using an [ISO 8601 date/time string](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations).  For example:
-
+  
   ```
   2007-04-05T14:30
   ```
+  
+  You can also specify a date value by creating a Flows for APEX process variable of data datatype, and substituting that.  See below for syntax.
+  
 - Duration:  specifies a delay from the current time or the process to start, using an [ISO 8601 duration](https://en.wikipedia.com/wiki/ISO_8601#Durations) string.  For example:
-
+  
   ```
   P3Y6M4DT12H30M5S" represents a duration of "three years, six months, four days, twelve hours, thirty minutes, and five seconds".
   P3M represents 3 months.
@@ -67,7 +88,7 @@ To define a Timer Event, first drag the Event onto your new process canvas.   Se
   PT30S represents 30 seconds.
   ```
 - Cycle Timer: for an initial run and then repeats an definied intervals, using a [ISO 8601 Repeating Interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals) specifier.  The alternate BPMN syntax for repeating intervals using CRON syntax is not currently supported.  For example:
-
+  
   ```
   R5/P1Y2M10DT2H30M
   ```
@@ -88,4 +109,9 @@ For a Timer Definition Type 'Date', the process variable should be of type DATE.
 
 For a Timer Definition Type of 'Duration' or 'Cycle', the process variable should be of type VARCHAR2.
 
-![Using Process Variables in Timer Event](images/procVarsInTimerDef.png "Using Process Variables for Timer Event")
+In the following example, a scriptTask is used to calculate a process variable, `nextClosePlus2D`, which contains the date of the company's next finacial close plus 2 days.  This variable is then used to set an Intermediate Timer Catch Event.  The Timer on this event is set to fire at `nextClosePlus2D`.  You can see how this has been specified on the Timer Definition, using the Flows for APEX process variable substitution syntax.
+
+![Using Process Variables in Timer Event](images/usingProcessVarsInTimerDefs.png "Using Process Variables for Timer Event")
+
+Just to keep the example going, our Review process, which is triggered by the Intermediate Timer Catch Event, itself has a non-interrupting timer boundary event set on it.  This acts as a reminder, and is set to fire after a Duration has elapsed after the Review Event became the current task in the process.  This has also been specified using a substitution variable - this time using the variable `managerReminderPeriod`.  If this was, say, 2 days, the process variable `managerReminderPeriod` would be a `varchar2` variable having the value `P2D`.
+
