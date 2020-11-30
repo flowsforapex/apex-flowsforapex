@@ -18,6 +18,8 @@ prompt --install
 @@application/shared_components/navigation/tabs/parent.sql
 @@application/shared_components/user_interface/lovs/diagrams.sql
 @@application/shared_components/user_interface/lovs/diagrams_parsed.sql
+@@application/shared_components/user_interface/lovs/instance_connections.sql
+@@application/shared_components/user_interface/lovs/instance_gateways.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/pages/page_groups.sql
 @@application/comments.sql
