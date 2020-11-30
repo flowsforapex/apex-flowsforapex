@@ -1,7 +1,7 @@
 ## The Process Variable System
 
-A business process instance typically runs over some extended period of time, and might require multiple users to perform many individual tasks, often across different application sessions.  
-The process typically requires its own variable system that persists over the life of the business process instance, and which is separate from the underlying objects that the process acts on.  
+A business process instance typically runs over some extended period of time, and might require multiple users to perform many individual tasks, often across different application sessions.
+The process typically requires its own variable system that persists over the life of the business process instance, and which is separate from the underlying objects that the process acts on.
 Flows for APEX includes a flexible, persistant process variable system for you use across your process.
 
 A process instance would typically need to know the identity of its subject - typically the primary key of the main object this process works on.
@@ -72,11 +72,13 @@ Process variables are persistent, and exist until the process is deleted with a 
 
 #### Accessing Process Variables in userTask APEX pages and in scriptTasks
 
-Process variables can be substituted into the APEX page call of a userTask.  
+Process variables can be substituted into the APEX page call of a userTask.
 [See doc](usingTasksToImplementYourProcess.md)
 
-Process variables can be set or got inside a PL/SQL scriptTask  
-or serviceTask procedure using the setters and getters above.  
+Process variables can be set or got inside a PL/SQL scriptTask
+or serviceTask procedure using the setters and getters above.
 [See doc](usingTasksToImplementYourProcess.md)
+
+Process variables can be substituted into the definition string for Timers.  [See doc](usingTimerEvents.md)
 
 Your application can set and get process variables by calling the appropriate setters and getters, as required.
