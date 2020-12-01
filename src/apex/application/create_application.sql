@@ -7,13 +7,13 @@ wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>984337
+,p_default_application_id=>100
 ,p_default_id_offset=>0
-,p_default_owner=>'MT_NDBRUIJN'
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_flow(
  p_id=>wwv_flow.g_flow_id
-,p_owner=>nvl(wwv_flow_application_install.get_schema,'MT_NDBRUIJN')
+,p_owner=>nvl(wwv_flow_application_install.get_schema,'FLOWS4APEX')
 ,p_name=>nvl(wwv_flow_application_install.get_application_name,'Flows for APEX')
 ,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'FLOWS4APEX')
 ,p_page_view_logging=>'YES'
@@ -38,7 +38,7 @@ wwv_flow_api.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Release 4.0.0'
+,p_flow_version=>'Release 5.0.1'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -50,8 +50,8 @@ wwv_flow_api.create_flow(
 ,p_auto_time_zone=>'N'
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Workflow'
-,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20201115165220'
+,p_last_updated_by=>'MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20201201083738'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>19
 ,p_ui_type_name => null

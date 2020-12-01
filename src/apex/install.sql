@@ -19,6 +19,8 @@ prompt --install
 @@application/shared_components/user_interface/lovs/diagrams.sql
 @@application/shared_components/user_interface/lovs/diagrams_parsed.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
+@@application/shared_components/user_interface/lovs/p10_instance_connections_lov.sql
+@@application/shared_components/user_interface/lovs/p10_instance_gateways_lov.sql
 @@application/pages/page_groups.sql
 @@application/comments.sql
 @@application/shared_components/navigation/breadcrumbs/breadcrumb.sql
