@@ -222,8 +222,23 @@ as
     apex_debug.message(p_message => 'starting timer on subflow '||pi_sbfl_id||' type '||l_timer_type||' def '||l_timer_def, p_level => 4) ;
     case l_timer_type
       when flow_constants_pkg.gc_timer_type_date then
-        l_parsed_ts := to_timestamp_tz( replace ( l_timer_def, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
+        -- check for substitution of process variable
+        if upper(substr(l_timer_def,1,5)) = '&F4A$' then
+          l_parsed_ts := flow_process_vars.get_var_date
+            ( pi_prcs_id => pi_prcs_id
+            , pi_var_name => substr(l_timer_def,6,length(l_timer_def)-6)
+            );
+        else
+          l_parsed_ts := to_timestamp_tz( replace ( l_timer_def, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
+        end if;
       when flow_constants_pkg.gc_timer_type_duration then
+         -- check for substitution of process variable
+        if upper(substr(l_timer_def,1,5)) = '&F4A$' then
+            l_timer_def := flow_process_vars.get_var_vc2
+            ( pi_prcs_id => pi_prcs_id
+            , pi_var_name => substr(l_timer_def,6,length(l_timer_def)-6)
+            );
+        end if;     
         get_duration
         (
           in_string     => l_timer_def
@@ -233,6 +248,12 @@ as
         , out_interv_ds => l_parsed_duration_ds
         );
       when flow_constants_pkg.gc_timer_type_cycle then
+        if upper(substr(l_timer_def,1,5)) = '&F4A$' then
+            l_timer_def := flow_process_vars.get_var_vc2
+            ( pi_prcs_id => pi_prcs_id
+            , pi_var_name => substr(l_timer_def,6,length(l_timer_def)-6)
+            );
+        end if; 
         l_repeat_times := substr( l_timer_def, 2, instr( l_timer_def, '/', 1, 1 ) - 2 );
         l_timer_def    := substr( l_timer_def, instr( l_timer_def, '/', 1, 1 ) + 1 );
         get_duration
