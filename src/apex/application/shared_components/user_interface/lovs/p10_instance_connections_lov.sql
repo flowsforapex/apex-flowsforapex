@@ -1,7 +1,7 @@
-prompt --application/shared_components/user_interface/lovs/instance_connections
+prompt --application/shared_components/user_interface/lovs/p10_instance_connections_lov
 begin
 --   Manifest
---     INSTANCE_CONNECTIONS
+--     P10_INSTANCE_CONNECTIONS_LOV
 --   Manifest End
 wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
@@ -13,12 +13,12 @@ wwv_flow_api.component_begin (
 );
 wwv_flow_api.create_list_of_values(
  p_id=>wwv_flow_api.id(3000126357622364)
-,p_lov_name=>'INSTANCE_CONNECTIONS'
+,p_lov_name=>'P10_INSTANCE_CONNECTIONS_LOV'
 ,p_source_type=>'TABLE'
 ,p_location=>'LOCAL'
 ,p_query_table=>'FLOW_INSTANCE_CONNECTIONS_LOV'
 ,p_query_where=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'conn_src_objt_id = :p10_gateway_id',
+'src_objt_bpmn_id = :p10_gateway',
 'and prcs_id = :p10_prcs_id'))
 ,p_return_column_name=>'CONN_BPMN_ID'
 ,p_display_column_name=>'CONN_NAME'

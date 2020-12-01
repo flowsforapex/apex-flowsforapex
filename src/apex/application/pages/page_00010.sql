@@ -18,7 +18,6 @@ wwv_flow_api.create_page(
 ,p_alias=>'FLOW-MONITOR'
 ,p_step_title=>'Flow Monitor'
 ,p_autocomplete_on_off=>'OFF'
-,p_javascript_code=>'var $widget, $grid, $model;'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.clickable-action {',
 '  cursor: pointer;',
@@ -33,8 +32,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20201129220451'
+,p_last_updated_by=>'MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20201201075341'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -350,37 +349,34 @@ wwv_flow_api.create_interactive_grid(
 ,p_show_detail_view=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function (config) {',
-'    var $ = apex.jQuery,',
-'    toolbarData = $.apex.interactiveGrid.copyDefaultToolbar(),',
-'    toolbarGroup = toolbarData.toolbarFind( "actions3" );',
+'  var $            = apex.jQuery,',
+'      toolbarData  = $.apex.interactiveGrid.copyDefaultToolbar(),',
+'      toolbarGroup = toolbarData.toolbarFind( "actions3" );',
 '',
-'    toolbarGroup.controls.push(',
-'        {',
-'            type: "BUTTON",',
-'            action: "gateway-selector",',
-'            iconBeforeLabel: false,',
-'            hot: false,',
-'        }',
-'    );',
+'  toolbarGroup.controls.push({',
+'    type: "BUTTON",',
+'    action: "gateway-selector",',
+'    iconBeforeLabel: false,',
+'    hot: false',
+'  });',
 '',
-'    config.toolbarData = toolbarData;',
+'  config.toolbarData = toolbarData;',
 '',
-'    config.initActions = function (actions) {',
-'        actions.add(',
-'            {',
-'                name: "gateway-selector",',
-'                label: "Gateway Selector",',
-'                action: gatewaySelector',
-'            }',
-'        );',
-'    }',
-'    function gatewaySelector(event, focusElement) {',
-'        apex.item("P10_GATEWAY_ID").setValue("");',
-'        apex.item("P10_CONNECTION_ID").setValue("");',
-'        apex.theme.openRegion("gateway_selector");',
-'    }',
-'  ',
-'    return config;',
+'  config.initActions = function (actions) {',
+'    actions.add({',
+'      name: "gateway-selector",',
+'      label: "Add Gateway Route",',
+'      action: gatewaySelector',
+'    });',
+'  }',
+'',
+'  function gatewaySelector( event, focusElement ) {',
+'    apex.item( "P10_GATEWAY" ).setValue( "" );',
+'    apex.item( "P10_CONNECTION" ).setValue( "" );',
+'    apex.theme.openRegion( "gateway_selector" );',
+'  }',
+'',
+'  return config;',
 '}'))
 );
 wwv_flow_api.create_ig_report(
@@ -788,48 +784,42 @@ wwv_flow_api.create_page_button(
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(2401646511481905)
-,p_name=>'P10_GATEWAY_ID'
+,p_name=>'P10_GATEWAY'
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(2401245095481901)
-,p_prompt=>'Gateway Id'
+,p_prompt=>'Gateway'
 ,p_display_as=>'NATIVE_SELECT_LIST'
-,p_named_lov=>'INSTANCE_GATEWAYS'
+,p_named_lov=>'P10_INSTANCE_GATEWAYS_LOV'
 ,p_lov_display_null=>'YES'
 ,p_lov_cascade_parent_items=>'P10_PRCS_ID'
 ,p_ajax_optimize_refresh=>'Y'
 ,p_cHeight=>1
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
 ,p_lov_display_extra=>'NO'
 ,p_attribute_01=>'NONE'
 ,p_attribute_02=>'N'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(2401774955481906)
-,p_name=>'P10_CONNECTION_ID'
+,p_name=>'P10_CONNECTION'
 ,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_api.id(2401245095481901)
-,p_prompt=>'Connection Id'
+,p_prompt=>'Connection'
 ,p_display_as=>'NATIVE_SELECT_LIST'
-,p_named_lov=>'INSTANCE_CONNECTIONS'
+,p_named_lov=>'P10_INSTANCE_CONNECTIONS_LOV'
 ,p_lov_display_null=>'YES'
-,p_lov_cascade_parent_items=>'P10_GATEWAY_ID'
+,p_lov_cascade_parent_items=>'P10_GATEWAY'
 ,p_ajax_items_to_submit=>'P10_PRCS_ID'
 ,p_ajax_optimize_refresh=>'Y'
 ,p_cHeight=>1
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
 ,p_lov_display_extra=>'YES'
 ,p_attribute_01=>'NONE'
 ,p_attribute_02=>'N'
-);
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(5804931186730042)
-,p_name=>'P10_GATEWAY_BPMN_ID'
-,p_item_sequence=>40
-,p_item_plug_id=>wwv_flow_api.id(2401245095481901)
-,p_display_as=>'NATIVE_HIDDEN'
-,p_attribute_01=>'Y'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(6600306983290124)
@@ -1029,6 +1019,25 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'click'
 );
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(24417723208878736)
+,p_event_id=>wwv_flow_api.id(24417684477878735)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'JQUERY_SELECTOR'
+,p_affected_elements=>'.js-react-on-prcs'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(2402362161481912)
+,p_name=>'Add clicked - add row to variables grid'
+,p_event_sequence=>210
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(2402252879481911)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
 wwv_flow_api.component_end;
 end;
 /
@@ -1042,25 +1051,6 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(24417723208878736)
-,p_event_id=>wwv_flow_api.id(24417684477878735)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'JQUERY_SELECTOR'
-,p_affected_elements=>'.js-react-on-prcs'
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(2402362161481912)
-,p_name=>'Click on Add'
-,p_event_sequence=>210
-,p_triggering_element_type=>'BUTTON'
-,p_triggering_button_id=>wwv_flow_api.id(2402252879481911)
-,p_bind_type=>'bind'
-,p_bind_event_type=>'click'
-);
-wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(2402433976481913)
 ,p_event_id=>wwv_flow_api.id(2402362161481912)
 ,p_event_result=>'TRUE'
@@ -1068,14 +1058,15 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var model, view = apex.region("variables_ig").widget().interactiveGrid("getCurrentView");',
-'model = view.model;',
+'var view = apex.region( "variables_ig" ).widget().interactiveGrid( "getCurrentView" );',
+'var model = view.model;',
 'var newRecordId = model.insertNewRecord();',
-'var $newRecord = model.getRecord(newRecordId);',
-'setTimeout(function(){ ',
-'    model.setValue($newRecord, "PROV_VAR_TYPE", "VARCHAR2");',
-'    model.setValue($newRecord, "PROV_VAR_NAME", apex.item("P10_GATEWAY_BPMN_ID").getValue()+ ":route");',
-'   model.setValue($newRecord, "PROV_VAR_VC2", apex.item("P10_CONNECTION_ID").getValue());',
+'var $newRecord = model.getRecord( newRecordId );',
+'',
+'setTimeout( function(){ ',
+'  model.setValue( $newRecord, "PROV_VAR_TYPE", "VARCHAR2" );',
+'  model.setValue( $newRecord, "PROV_VAR_NAME", apex.item("P10_GATEWAY").getValue() + ":route" );',
+'  model.setValue( $newRecord, "PROV_VAR_VC2", apex.item("P10_CONNECTION").getValue() );',
 '}, 5);',
 '',
 '',
@@ -1091,37 +1082,6 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_CLOSE_REGION'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(2401245095481901)
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(5805017198730043)
-,p_name=>'On change Gateway Id'
-,p_event_sequence=>220
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P10_GATEWAY_ID'
-,p_condition_element=>'P10_GATEWAY_ID'
-,p_triggering_condition_type=>'NOT_NULL'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'change'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(5805191561730044)
-,p_event_id=>wwv_flow_api.id(5805017198730043)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P10_GATEWAY_BPMN_ID'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select objt_bpmn_id',
-'from flow_instance_gateways_lov',
-'where objt_id = :p10_gateway_id',
-'and prcs_id = :p10_prcs_id'))
-,p_attribute_07=>'P10_GATEWAY_ID,P10_PRCS_ID'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5805334319730046)
@@ -1140,7 +1100,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P10_GATEWAY_ID'
+,p_affected_elements=>'P10_GATEWAY'
 ,p_attribute_01=>'SQL_STATEMENT'
 ,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select objt_id ',
