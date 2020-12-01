@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20201201075341'
+,p_last_upd_yyyymmddhh24miss=>'20201201083738'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -479,7 +479,7 @@ wwv_flow_api.create_report_region(
 ,p_ajax_enabled=>'Y'
 ,p_ajax_items_to_submit=>'P10_PRCS_ID'
 ,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
-,p_query_num_rows=>15
+,p_query_num_rows=>10
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_query_no_data_found=>'No subflows found for selected process.'
 ,p_query_num_rows_type=>'ROW_RANGES_WITH_LINKS'
@@ -611,11 +611,12 @@ wwv_flow_api.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'TABLE'
 ,p_query_table=>'FLOW_P0010_INSTANCES_VW'
-,p_query_order_by=>'prcs_name'
+,p_query_order_by=>'case when prcs_id = :p10_prcs_id then 1 else 0 end desc, prcs_last_update desc'
 ,p_include_rowid_column=>false
 ,p_ajax_enabled=>'Y'
+,p_ajax_items_to_submit=>'P10_PRCS_ID'
 ,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
-,p_query_num_rows=>100
+,p_query_num_rows=>10
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_query_no_data_found=>'No current flow instances found.'
 ,p_query_num_rows_type=>'ROW_RANGES_WITH_LINKS'
@@ -640,7 +641,6 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>3
 ,p_column_heading=>'Name'
 ,p_use_as_row_header=>'N'
-,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
@@ -651,7 +651,6 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>4
 ,p_column_heading=>'Flow'
 ,p_use_as_row_header=>'N'
-,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
@@ -662,7 +661,6 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>5
 ,p_column_heading=>'Status'
 ,p_use_as_row_header=>'N'
-,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
@@ -675,7 +673,6 @@ wwv_flow_api.create_report_columns(
 ,p_use_as_row_header=>'N'
 ,p_column_format=>'&APP_DATE_TIME_FORMAT.'
 ,p_column_alignment=>'CENTER'
-,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
@@ -688,7 +685,6 @@ wwv_flow_api.create_report_columns(
 ,p_use_as_row_header=>'N'
 ,p_column_format=>'&APP_DATE_TIME_FORMAT.'
 ,p_column_alignment=>'CENTER'
-,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
