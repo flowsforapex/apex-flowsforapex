@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20201201083738'
+,p_last_upd_yyyymmddhh24miss=>'20201201165359'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -266,6 +266,7 @@ wwv_flow_api.create_region_column(
 ,p_attribute_04=>'button'
 ,p_attribute_05=>'N'
 ,p_attribute_07=>'NONE'
+,p_format_mask=>'&APP_DATE_TIME_FORMAT.'
 ,p_is_required=>false
 ,p_enable_filter=>true
 ,p_filter_is_required=>false
@@ -1125,7 +1126,7 @@ wwv_flow_api.create_page_process(
 ', pi_prov_var_type => :prov_var_type',
 ', pi_prov_var_vc2  => :prov_var_vc2',
 ', pi_prov_var_num  => :prov_var_num',
-', pi_prov_var_date => :prov_var_date',
+', pi_prov_var_date => to_date( :prov_var_date, v(''APP_DATE_TIME_FORMAT'') )',
 ', pi_prov_var_clob => :prov_var_clob',
 ');'))
 ,p_attribute_05=>'Y'
