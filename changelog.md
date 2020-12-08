@@ -2,8 +2,11 @@
 
 ## v5.0.1
 
-* Enables process variables to be used when specifying timer definitions
-* Minor bug fixes
+- Enables process variables to be used when specifying timer definitions
+- Fixed bug that rises when reusing an ID across flows
+- Added tutorial Flows for beginners in BPMN 2.0
+- Added pagination on the flow control page
+- Added a start page
 
 ## v5.0.0
 
