@@ -17,17 +17,26 @@ wwv_flow_api.create_list(
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(12495489400303879863)
+ p_id=>wwv_flow_api.id(22120966887617321)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Workflow Editor'
+,p_list_item_link_text=>'Getting Started'
+,p_list_item_link_target=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-info-square-o'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'1'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(12495489400303879863)
+,p_list_item_display_sequence=>20
+,p_list_item_link_text=>'Flow Modeler'
 ,p_list_item_link_target=>'f?p=&APP_ID.:4:&SESSION.::&DEBUG.::::'
 ,p_list_item_icon=>'fa-apex'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12493524976121117621)
-,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Process Instances'
+,p_list_item_display_sequence=>30
+,p_list_item_link_text=>'Flow Monitor'
 ,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.::::'
 ,p_list_item_icon=>'fa-sequence'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
