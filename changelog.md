@@ -6,7 +6,8 @@
 - Fixed bug that rises when reusing an ID across flows
 - Added tutorial Flows for beginners in BPMN 2.0
 - Added pagination on the flow control page
-- Added a start page
+- Added a Getting Started page
+- When processing timers errors that occur mark respective timer as broken but don't break job anymore
 
 ## v5.0.0
 
@@ -28,7 +29,7 @@
 - PL/SQL API Changes to support reservation.
 - Processes now flow through automatically, using process variables to decide on gateway routing.
 - Enhanced "Order Shipment" demo.
-- Enhanced Flows for APEX Mnitoring app.
+- Enhanced Flows for APEX Monitoring app.
 - Enhanced documentation.
 - Cleaner flow_api_pkg by separation of engine components into flow_engine
 
