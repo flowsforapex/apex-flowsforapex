@@ -7,9 +7,9 @@ wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>984337
+,p_default_application_id=>100
 ,p_default_id_offset=>0
-,p_default_owner=>'MT_NDBRUIJN'
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
 wwv_flow_api.g_varchar2_table(1) := '2F2A2A0A202A20636F6C6F7220646566696E6974696F6E730A202A2F0A2E646A732D636F6E7461696E6572207B0A20202D2D626C75652D626173652D36353A20233464393066663B0A20202D2D626C75652D626173652D36352D6F7061636974792D3330';
@@ -186,9 +186,9 @@ wwv_flow_api.component_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>984337
+,p_default_application_id=>100
 ,p_default_id_offset=>0
-,p_default_owner=>'MT_NDBRUIJN'
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_app_static_file(
  p_id=>wwv_flow_api.id(4928576000546759)

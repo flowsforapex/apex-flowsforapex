@@ -32,6 +32,9 @@ create or replace package flow_timers_pkg as
                                    -- natural end.
   c_terminated varchar2(1) := 'T'; -- Abnormal termination by manual
                                    -- intervention.
+  c_broken     varchar2(1) := 'B'; -- Error occured in timer flow.
+                                   -- Timer will be ignored until manually
+                                   -- reset to created or active.
 
 
 /******************************************************************************
