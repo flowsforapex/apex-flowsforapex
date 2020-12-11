@@ -20,7 +20,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20201209080453'
+,p_last_upd_yyyymmddhh24miss=>'20201211104141'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603774502745437)
@@ -36,23 +36,23 @@ wwv_flow_api.create_page_plug(
 '<h4> Features</h4>',
 '<ul>',
 '<li>Flows for APEX enables APEX developers to model and run process flows in APEX using a combination of visual process design and low-code techniques.</li>',
-'<li>Designed primarily for APEX developers, Flows for APEX uses the technologies that you are already familiar with - APEX, PL/SQL, and SQL - to create powerful and flexible process flows in your APEX environmemnt.</li>',
+'<li>Designed primarily for APEX developers, Flows for APEX uses the technologies that you are already familiar with - APEX, PL/SQL, and SQL - to create powerful and flexible process flows in your APEX environment.</li>',
 '<li>Used to create and execute a process flow of APEX pages, PL/SQL scripts, send email.</li>',
 '<li> The low-code diagrammatic process definition can also be understood and edited by business users to increase business flexibility.  Diagrams use the Business Process Modeling Notation (BPMN) V2 style</li>',
 '<li> Built as an APEX community project, and released on an open source, MIT licence.</li>',
 '</ul>',
 '<p>',
 '<h4> Download</h4>',
-'<a href="https://apex.mt-ag.com/flowsforapex">apex.mt-ag.com/flowsforapex</a>',
+'<a href="https://apex.mt-ag.com/en/flowsforapex">apex.mt-ag.com/en/flowsforapex</a>',
 '<p>',
 '<h4> Documentation</h4>',
 '<a href="https://mt-ag.github.io/apex-flowsforapex">Latest Documentation Online</a>',
 '<p>',
-'<h4> Tutorial</h4>',
-'To get started, try <a href="https://mt-ag.github.io/apex-flowsforapex/tutorial.html">our latest tutorial</a>, which teaches how to model and execute business processes with <b><i>Flows for APEX</i></b>.',
+'<h4> BPMN Tutorials</h4>',
+'To get you started with modelling flows, try out the preinstalled tutorial flows. For further information on the tutorials have a look <a href="https://mt-ag.github.io/apex-flowsforapex/tutorial.html">here</a>.',
 '<p>',
-'<h4>Demo App</h4>',
-'<p>Take a look at our <a href="https://apex.oracle.com/pls/apex/mt_flows/r/flowsforapexdemo">demo application</a> to see how this might look as an APEX app.<br />',
+'<h4> Demo App</h4>',
+'<p>Take a look at our <a href="https://apex.oracle.com/pls/apex/mt_flows/r/flowsforapexdemo">demo application</a> to see how the integration of a flow can be done.<br />',
 'This uses an example Business Process of the ordering and fulfillment process for a webstore selling T Shirts.'))
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'

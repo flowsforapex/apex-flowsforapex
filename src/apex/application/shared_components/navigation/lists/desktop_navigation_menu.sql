@@ -36,7 +36,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12493524976121117621)
 ,p_list_item_display_sequence=>30
-,p_list_item_link_text=>'Flow Monitor'
+,p_list_item_link_text=>'Flow Control'
 ,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.::::'
 ,p_list_item_icon=>'fa-sequence'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'

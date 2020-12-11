@@ -14,9 +14,9 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>10
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Flow Monitor'
-,p_alias=>'FLOW-MONITOR'
-,p_step_title=>'Flow Monitor'
+,p_name=>'Flow Control'
+,p_alias=>'FLOW-CONTROL'
+,p_step_title=>'Flow Control'
 ,p_autocomplete_on_off=>'OFF'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.clickable-action {',
@@ -33,14 +33,14 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20201201165359'
+,p_last_upd_yyyymmddhh24miss=>'20201211103532'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
-,p_plug_name=>'Gateway'
+,p_plug_name=>'Add Gateway Route'
 ,p_region_name=>'gateway_selector'
 ,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size600x400'
-,p_plug_template=>wwv_flow_api.id(12495587659835880238)
+,p_plug_template=>wwv_flow_api.id(12495608896288880263)
 ,p_plug_display_sequence=>50
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_04'
@@ -747,11 +747,13 @@ wwv_flow_api.create_page_button(
 ,p_button_plug_id=>wwv_flow_api.id(2401245095481901)
 ,p_button_name=>'ADD'
 ,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#'
-,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Add'
 ,p_button_position=>'REGION_TEMPLATE_CREATE'
 ,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'fa-plus'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(12491866636991262848)
@@ -759,7 +761,7 @@ wwv_flow_api.create_page_button(
 ,p_button_plug_id=>wwv_flow_api.id(173008747142503554)
 ,p_button_name=>'CREATE'
 ,p_button_action=>'REDIRECT_PAGE'
-,p_button_template_options=>'#DEFAULT#:t-Button--mobileHideLabel:t-Button--iconLeft'
+,p_button_template_options=>'#DEFAULT#:t-Button--mobileHideLabel:t-Button--iconLeft:t-Button--padRight'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_image_alt=>'Create new Instance'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
@@ -772,7 +774,7 @@ wwv_flow_api.create_page_button(
 ,p_button_plug_id=>wwv_flow_api.id(173008747142503554)
 ,p_button_name=>'REFRESH'
 ,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--pillEnd'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_image_alt=>'Refresh'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
@@ -1026,15 +1028,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'JQUERY_SELECTOR'
 ,p_affected_elements=>'.js-react-on-prcs'
 );
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(2402362161481912)
-,p_name=>'Add clicked - add row to variables grid'
-,p_event_sequence=>210
-,p_triggering_element_type=>'BUTTON'
-,p_triggering_button_id=>wwv_flow_api.id(2402252879481911)
-,p_bind_type=>'bind'
-,p_bind_event_type=>'click'
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -1046,6 +1039,15 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(2402362161481912)
+,p_name=>'Add clicked - add row to variables grid'
+,p_event_sequence=>210
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(2402252879481911)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(2402433976481913)

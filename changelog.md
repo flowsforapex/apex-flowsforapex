@@ -8,6 +8,7 @@
 - Added pagination on the flow control page
 - Added a Getting Started page
 - When processing timers errors that occur mark respective timer as broken but don't break job anymore
+- Added "Add Gateway Route" to Flow Control for convenience when adding a process variable for a gateway
 
 ## v5.0.0
 
