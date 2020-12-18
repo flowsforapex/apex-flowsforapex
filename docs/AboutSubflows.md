@@ -48,7 +48,7 @@ As it progresses, the subflow's current object and last completed object are upd
 
 An opening Exclusive Gateway acts as a decision point, from which the process continues on just one forward path.
 
-When a subflow reaches an Exclusive Gateway, it just continues along on the chosen path.  No additional subflows are created.
+When a subflow reaches an Exclusive Gateway, it just continues along on the chosen path.  No additional subflows are created.  Routing instructions are provided for the gateway by setting a process variable named `<bpmn_id_of_gateway>:route` containing the bpmn_id of the required forward paths to be taken.  ([See Gateways And Parallel Flows](GatewaysAndParaaalelFlows.md) for more details and an example.)  If a Process Variable is not found with the  routing instructions, the marked default path is taken.
 
 #### Action at a Parallel Gateway
 
@@ -77,7 +77,7 @@ The basic subflow mechanism is similar to that for a parallel gateway, described
 
 Like a Parallel Gateway, the incoming subflow is paused with a status of `split`.
 
-A child subflow is created for each forward path that is chosen.  Routes that do not meet the Inclusive Gateway criteria are not instantiated.
+A child subflow is created for each forward path that is chosen.  Routes that do not meet the Inclusive Gateway criteria are not instantiated.  Routing instructions are provided for the gateway by setting a process variable named `<bpmn_id_of_gateway>:route` with a colon separated list of the bpmn_id's of the paths to be taken.  ([See Gateways And Parallel Flows](GatewaysAndParaaalelFlows.md) for more details and an example.)  If a Process Variable is not found with the  routing instructions, the marked default path is taken.
 
 As each parallel child subflow reaches its merging / closing Inclusive Gateway object, they are set to status `waiting at gateway`.
 
@@ -168,4 +168,3 @@ When a process is deleted:
 The Subflow architecture implemented in V4 is designed to be performant and the working tables holding Process Instances, Subflows, Timers, and Subflow Progress have been designed with the intention that they should stay small, un-cluttered, and hopefully cached!
 
 A subsequent inplementation project should move relevant performance and audit data from these working tables into audit trails, with process performance statistics, etc., being captured.  If anybody needs to build these functions into their project, please contact the Flows For APEX team to coordinate and contribute to the further development of the project.
-

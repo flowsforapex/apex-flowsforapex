@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v5.0.0                *
+*            Flows for APEX v5.0.1                *
 *          Installation instructions              *
 *                                                 *
 *                                                 *
@@ -17,18 +17,27 @@ PREREQUISITES
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "FLOWSFORAPEX_EN_APEX201_984337_UTF8_V5.0.0.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "FLOWSFORAPEX_EN_APEX201_984339_UTF8_V5.0.1.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
 - Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEXDEMO_EN_APEX201_984340_UTF8_V2.0.sql"
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
 
 HISTORY
+* v5.0.1
+  - Enables process variables to be used when specifying timer definitions
+  - Fixed bug that rises when reusing an ID across flows
+  - Added tutorial Flows for beginners in BPMN 2.0
+  - Added pagination on the flow control page
+  - Added a Getting Started page
+  - When processing timers errors that occur mark respective timer as broken but don't break job anymore
+  - Added "Add Gateway Route" to Flow Control for convenience when adding a process variable for a gateway
+
 * v5.0.0
   - Live validation checks during modelling provided by bpmnlint.
   - Support for user tasks: call an APEX page as specified in the properties panel (page ID, app ID, etc.).
   - Support for script tasks: call a PL/SQL procedure as specified in the properties panel.
-  - Support for service tasks: call a PL/SQL procedure as specified in the properties panel.
+  - Support for service tasks: send out an e-mail by calling apex_mail as specified in the properties panel.
   - Support for timers (requires a grant on create dbms_job).
   - BPMN Modeler is now wrapped in a plugin. This also removes the limitation of modelling flows that are larger than 32kB.
   - Process variables that live within the scope of a process instance.
