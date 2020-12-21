@@ -36,7 +36,7 @@ CREATE TABLE flow_diagrams (
     NOT NULL,
     dgrm_name     VARCHAR2(150 CHAR) NOT NULL,
     dgrm_version  NUMBER,
-    dgrm_status   VARCHAR2(10 CHAR) NOT NULL DEFAULT 'draft',
+    dgrm_status   VARCHAR2(10 CHAR) DEFAULT 'draft' NOT NULL,
     dgrm_category VARCHAR2(30 CHAR),
     dgrm_last_update TIMESTAMP WITH TIME ZONE NOT NULL,
     dgrm_content  CLOB

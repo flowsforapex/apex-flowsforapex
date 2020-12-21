@@ -5,7 +5,7 @@ as
        , dgrm.dgrm_id
        , dgrm.dgrm_name
        , dgrm.dgrm_version
-       , dgrm.dgrm_status,
+       , dgrm.dgrm_status
        , dgrm.dgrm_category
        , prcs.prcs_status
        , prcs.prcs_init_ts
