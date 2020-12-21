@@ -3,6 +3,9 @@ as
    select prcs_id
         , prcs_name
         , prcs_dgrm_name
+        , prcs_dgrm_version
+        , prcs_dgrm_status
+        , prcs_dgrm_category
         , prcs_status
         , prcs_init_date
         , prcs_last_update
@@ -18,6 +21,9 @@ as
      from ( select prcs_id
                  , prcs_name
                  , dgrm_name as prcs_dgrm_name
+                 , dgrm_version as prcs_dgrm_version
+                 , dgrm_status as prcs_dgrm_status
+                 , dgrm_category as prcs_dgrm_category
                  , prcs_status
                  , prcs_init_ts as prcs_init_date
                  , prcs_last_update
