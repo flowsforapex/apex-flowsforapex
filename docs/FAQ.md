@@ -12,7 +12,7 @@ Flows for APEX is based on version 2.0 of BPMN, released in January 2011.  BPMN 
 
 #### How do I learn more about BPMN?
 
-Working through the Flows for APEX tutorial worflows is one way to get started.  They are included in the distributed product, and also hosted on apex.oracle.com.
+Working through the Flows for APEX tutorial worflows is one way to get started.  They are included in the distributed product, and also hosted on apex.oracle.com (see: https://bit.ly/flowsforapex).
 
 For deeper understanding of BPMN, we'd recommend *Real-Life BPMN (4th ed): Includes an Introduction to DMN* by Jakob Freund and Bernd Rücker.  available is hardcopy or on kindle from Amazon.  (English and German versions available).
 
@@ -30,7 +30,7 @@ Probably.  However, we haven't done any feature comparison with Oracle Workflow.
 
 #### What kind of approval mechanisms can be built into a process flow?
 
-The Flows for APEX modeller allows you to create any sort of approval mechanism or hierarchy, using the gaphical process designer.  The limit here is your ability to model in BPMN.
+The Flows for APEX modeler allows you to create any sort of approval mechanism or hierarchy, using the gaphical process designer.  The limit here is your ability to model in BPMN.
 
 #### Can I have a loop in my process?
 
@@ -56,7 +56,7 @@ The Flows for APEX BPMN Flow Viewer displays a BPMN diagram that was created by 
 
 #### Would you normally make this application available to all your end users?
 
-Typicaly the flow monitor app would be used for process designers / developers and for the process administrators.  Users only need to see their normal application, and you wouldn't want them to be modifying the process model or controlling execution of process instances outside of an applicartion.  You could give them visibility of the process map showing them where they are in the process, and which steps are completed or not, by including the Flows for APEX BPMN Viewer plugin into your end application(s).
+The Flow for APEX app, containing the flow modeler and a control page for flow instances, would be used for process designers / developers and for the process administrators.  Users only need to see their normal application, and you wouldn't want them to be modifying the process model or controlling execution of process instances outside of an applicartion.  You could give them visibility of the process map showing them where they are in the process, and which steps are completed or not, by including the Flows for APEX BPMN Viewer plugin into your end application(s).
 
 #### Is it possible to support other diagramming tools?
 
