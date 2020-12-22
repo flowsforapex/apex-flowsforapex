@@ -442,8 +442,10 @@ as
 
   function upload_diagram
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   )
     return flow_diagrams.dgrm_id%type
   as
@@ -456,6 +458,7 @@ as
         into l_dgrm_id
         from flow_diagrams
        where dgrm_name = pi_dgrm_name
+         and dgrm_version = pi_dgrm_version
       ;
     exception
       when no_data_found then
@@ -464,13 +467,15 @@ as
 
     if l_dgrm_id is null then
       insert
-        into flow_diagrams ( dgrm_name, dgrm_content )
-        values ( pi_dgrm_name, pi_dgrm_content )
+        into flow_diagrams ( dgrm_name, dgrm_version, dgrm_category, dgrm_status, dgrm_content )
+        values ( pi_dgrm_name, pi_dgrm_version, pi_dgrm_category, 
+                 flow_constants_pkg.gc_dgrm_status_draft,  pi_dgrm_content )
       returning dgrm_id into l_dgrm_id
       ;
     else
       update flow_diagrams
          set dgrm_content = pi_dgrm_content
+           , dgrm_status  = flow_constants_pkg.gc_dgrm_status_draft
        where dgrm_id = l_dgrm_id
       ;
     end if;
@@ -481,12 +486,15 @@ as
 
   procedure upload_diagram
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   )
   as
   begin
-    g_dgrm_id := upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
+    g_dgrm_id := upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                                 pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content );
   end upload_diagram;
 
   procedure cleanup_parsing_tables
@@ -995,6 +1003,7 @@ as
   procedure parse
   (
     pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   )
   as
   begin
@@ -1003,20 +1012,24 @@ as
       into g_dgrm_id
       from flow_diagrams
      where dgrm_name = pi_dgrm_name
+       and dgrm_version = pi_dgrm_version
     ;
     parse;
   end parse;
 
   procedure upload_and_parse
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   )
   as
   begin
     reset;
 
-    upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
+    upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                    pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content );
     parse;
 
   end upload_and_parse;
