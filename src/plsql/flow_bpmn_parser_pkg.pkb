@@ -467,14 +467,15 @@ as
 
     if l_dgrm_id is null then
       insert
-        into flow_diagrams ( dgrm_name, dgrm_version, dgrm_category, dgrm_status, dgrm_content )
+        into flow_diagrams ( dgrm_name, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
         values ( pi_dgrm_name, pi_dgrm_version, pi_dgrm_category, 
-                 flow_constants_pkg.gc_dgrm_status_draft,  pi_dgrm_content )
+                 flow_constants_pkg.gc_dgrm_status_draft,  systimestamp, pi_dgrm_content )
       returning dgrm_id into l_dgrm_id
       ;
     else
       update flow_diagrams
          set dgrm_content = pi_dgrm_content
+           , dgrm_last_update = systimestamp
            , dgrm_status  = flow_constants_pkg.gc_dgrm_status_draft
        where dgrm_id = l_dgrm_id
       ;

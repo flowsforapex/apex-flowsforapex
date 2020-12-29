@@ -11,5 +11,6 @@ as
              from flow_objects objt
             where objt.objt_dgrm_id = dgrm.dgrm_id
          )
+    and dgrm_status in ('draft','released')
   with read only
   ;
