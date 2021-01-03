@@ -23,6 +23,42 @@ wwv_flow_api.create_list_of_values(
 ,p_default_sort_column_name=>'DGRM_NAME'
 ,p_default_sort_direction=>'ASC'
 );
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(10700420735842431)
+,p_query_column_name=>'DGRM_ID'
+,p_display_sequence=>10
+,p_data_type=>'NUMBER'
+,p_is_visible=>'N'
+,p_is_searchable=>'N'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(10700851474842432)
+,p_query_column_name=>'DGRM_NAME'
+,p_heading=>'Name'
+,p_display_sequence=>20
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(10701225023842432)
+,p_query_column_name=>'DGRM_VERSION'
+,p_heading=>'Version'
+,p_display_sequence=>30
+,p_data_type=>'NUMBER'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(10701682370842432)
+,p_query_column_name=>'DGRM_STATUS'
+,p_heading=>'Status'
+,p_display_sequence=>40
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(10702030297842432)
+,p_query_column_name=>'DGRM_CATEGORY'
+,p_heading=>'Category'
+,p_display_sequence=>50
+,p_data_type=>'VARCHAR2'
+);
 wwv_flow_api.component_end;
 end;
 /

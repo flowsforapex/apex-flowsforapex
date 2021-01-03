@@ -19,8 +19,8 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flows for APEX Modeler'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20201115165220'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210102161317'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(15681684881738607)
@@ -165,6 +165,27 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-cloud-download'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(2403426392481923)
+,p_name=>'P4_DRGM_CATEGORY'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(15684416507738635)
+,p_prompt=>'Diagram Category'
+,p_display_as=>'NATIVE_POPUP_LOV'
+,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select distinct dgrm_category d, dgrm_category r',
+'from flow_diagrams_lov'))
+,p_lov_display_null=>'YES'
+,p_cSize=>30
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'POPUP'
+,p_attribute_02=>'FIRST_ROWSET'
+,p_attribute_03=>'N'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'N'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(15681777930738608)
