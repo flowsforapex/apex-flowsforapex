@@ -104,6 +104,7 @@ prompt --install
 @@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00001.sql
+@@application/pages/page_00002.sql
 @@application/pages/page_00003.sql
 @@application/pages/page_00004.sql
 @@application/pages/page_00010.sql
