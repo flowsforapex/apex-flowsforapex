@@ -4,14 +4,18 @@ as
 
   procedure upload_diagram
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   );
 
   procedure upload_and_parse
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   );
 
   procedure parse
@@ -21,7 +25,8 @@ as
 
   procedure parse
   (
-    pi_dgrm_name in flow_diagrams.dgrm_name%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   );
 
 end flow_bpmn_parser_pkg;

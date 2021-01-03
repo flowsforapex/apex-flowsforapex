@@ -58,5 +58,11 @@ as
   gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
   gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$(\w*)\.';
 
+  -- Diagram Versioning Status
+  gc_dgrm_status_draft                constant  varchar2(10 char) := 'draft';
+  gc_dgrm_status_released             constant  varchar2(10 char) := 'released';
+  gc_dgrm_status_deprecated           constant  varchar2(10 char) := 'deprecated';
+  gc_dgrm_status_archived             constant  varchar2(10 char) := 'archived';
+
 end flow_constants_pkg;
 /
