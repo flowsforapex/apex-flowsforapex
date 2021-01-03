@@ -41,18 +41,53 @@ as
   function flow_create
   (
     pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
   , pi_prcs_name in flow_processes.prcs_name%type default null
   ) return flow_processes.prcs_id%type
   as
     l_dgrm_id flow_diagrams.dgrm_id%type;
+    l_dgrm_version flow_diagrams.dgrm_version%type;
   begin
   
-    select dgrm_id
-      into l_dgrm_id
-      from flow_diagrams
-     where dgrm_name = pi_dgrm_name
-    ;
-  
+    if pi_dgrm_version is null then
+      -- look for the 'released' version of the diagram
+      begin
+          select dgrm_id 
+            into l_dgrm_id
+            from flow_diagrams
+          where dgrm_name = pi_dgrm_name
+            and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
+          ;
+      exception
+        when no_data_found then
+          -- look for the highest version 'draft' of the diagram
+          begin
+              select dgrm_id
+                into l_dgrm_id
+                from flow_diagrams
+              where dgrm_name = pi_dgrm_name
+                and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
+                and dgrm_version = ( select max(dgrm_version)
+                                        from flow_diagrams
+                                      where dgrm_name = pi_dgrm_name
+                                        and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft )
+              ;
+          exception
+            when no_data_found then
+                apex_error.add_error
+                ( p_message => 'Cannot find diagram - please specify a version or diagram_id'
+                , p_display_location => apex_error.c_on_error_page
+                );  
+          end;
+      end;            
+    else -- dgrm_version was specified
+      select dgrm_id
+        into l_dgrm_id
+        from flow_diagrams
+        where dgrm_name = pi_dgrm_name
+      ;
+    end if;
+
     return
       flow_engine.flow_create
       (
@@ -81,6 +116,7 @@ as
   procedure flow_create
   (
     pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
   , pi_prcs_name in flow_processes.prcs_name%type
   )
   as
@@ -90,6 +126,7 @@ as
       flow_create
       (
         pi_dgrm_name => pi_dgrm_name
+      , pi_dgrm_version => pi_dgrm_version
       , pi_prcs_name => pi_prcs_name
       );
   end flow_create;

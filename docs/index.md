@@ -35,3 +35,7 @@ Here is a Tutorial and Demo to help you get started.
 ### Understanding the Subflow Architecture
 
 - [About Subflows](AboutSubflows.md)
+
+## Frequently Asked Questions (FAQ)
+
+See the [FAQ](FAQ.md)

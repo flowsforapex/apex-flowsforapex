@@ -6,6 +6,9 @@ as
         , sbfl_process_name
         , sbfl_dgrm_id
         , sbfl_dgrm_name
+        , sbfl_dgrm_version
+        , sbfl_dgrm_status
+        , sbfl_dgrm_category
         , sbfl_starting_object
         , sbfl_starting_object_name
         , sbfl_route
