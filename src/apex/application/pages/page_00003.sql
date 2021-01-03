@@ -20,8 +20,9 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Open Diagram'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'F4A'
-,p_last_upd_yyyymmddhh24miss=>'20201109104913'
+,p_dialog_height=>'300'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210103164134'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(15685887570738649)
@@ -67,17 +68,20 @@ wwv_flow_api.create_page_item(
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(12494270788368128245)
 ,p_prompt=>'Diagram'
-,p_display_as=>'NATIVE_SELECT_LIST'
+,p_display_as=>'NATIVE_POPUP_LOV'
 ,p_named_lov=>'DIAGRAMS'
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'- select -'
-,p_cHeight=>1
+,p_cSize=>30
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
 ,p_lov_display_extra=>'NO'
-,p_attribute_01=>'NONE'
-,p_attribute_02=>'N'
+,p_attribute_01=>'POPUP'
+,p_attribute_02=>'FIRST_ROWSET'
+,p_attribute_03=>'N'
+,p_attribute_04=>'N'
+,p_attribute_05=>'N'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(12493547841507486141)
