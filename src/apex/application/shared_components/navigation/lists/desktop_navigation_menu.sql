@@ -26,6 +26,15 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_for_pages=>'1'
 );
 wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(9900462312126995)
+,p_list_item_display_sequence=>15
+,p_list_item_link_text=>'Flow Diagrams'
+,p_list_item_link_target=>'f?p=&APP_ID.:2:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-sitemap-horizontal'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'2'
+);
+wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12495489400303879863)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'Flow Modeler'

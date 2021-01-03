@@ -32,8 +32,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20201211103532'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210103160119'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -1084,7 +1084,7 @@ wwv_flow_api.create_page_da_action(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5805334319730046)
-,p_name=>'New'
+,p_name=>'Gateway changed'
 ,p_event_sequence=>230
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_GATEWAY_GRID'
