@@ -1,0 +1,32 @@
+{
+  "name": "apex-flowsforapex",
+  "version": "1.0.0",
+  "description": "Nothing to install! Please take a look at the section 'Managing package.json for Dependabot' for instructions.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "update": "npm install --package-lock-only"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mt-ag/apex-flowsforapex.git"
+  },
+  "author": "MT AG",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mt-ag/apex-flowsforapex/issues"
+  },
+  "homepage": "https://github.com/mt-ag/apex-flowsforapex#readme",
+  "dependencies": {
+    "bpmn-js": "^7.5.0",
+    "bpmn-js-bpmnlint": "^0.15.0",
+    "bpmn-js-properties-panel": "0.38.0",
+    "bpmnlint": "^6.4.0",
+    "bpmnlint-loader": "^0.1.4",
+    "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
+    "camunda-bpmn-moddle": "^4.4.1",
+    "diagram-js": "^5.0.0"
+  }
+}

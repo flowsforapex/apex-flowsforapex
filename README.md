@@ -36,3 +36,13 @@ This github repository is for developers willing to contribute to the upcoming v
 
 Communication for this project is done using [Slack](http://flowsforapex.slack.com).  
 Send a DM on Twitter to [Niels de Bruijn (@nielsdb)](https://twitter.com/nielsdb?s=20) to get involved.
+
+## Managing package.json for Dependabot
+
+There is nothing to install, the package.json is only used for Dependabot security advisories, triggered by GitHub. 
+Please adjust this file manually, when a new build of  [BPMN Modeler](https://github.com/mt-ag/bpmn-modeler) has been
+integrated into this project. After updating versions of any dependancy/package in this project's package.json, please run ```npm run update``` to generate 
+a new package-lock.json, because this file is the preferred one, that is used by GitHub/Depandabot. 
+When building the BPMN Modeler for this project, please make sure, that the 'dependencies' section of the [BPMN Modeler package.json](https://github.com/mt-ag/bpmn-modeler/blob/development/package-lock.json) is synchronized with this project.
+
+Please note, that the current version of the package.json does not contain the use versions, but the versions from the delopment branch!
