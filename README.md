@@ -45,4 +45,4 @@ integrated into this project. After updating versions of any dependancy/package 
 a new package-lock.json, because this file is the preferred one, that is used by GitHub/Depandabot. 
 When building the BPMN Modeler for this project, please make sure, that the 'dependencies' section of the [BPMN Modeler package.json](https://github.com/mt-ag/bpmn-modeler/blob/development/package-lock.json) is synchronized with this project.
 
-Please note, that the current version of the package.json does not contain the use versions, but the versions from the delopment branch!
+Please note, that the current version of the package.json does not contain the used versions, but the versions from the BPMN Modeler delopment branch!
