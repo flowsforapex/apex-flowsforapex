@@ -385,7 +385,6 @@ end flow_terminate_level;
 procedure subflow_complete
   ( p_process_id        in flow_processes.prcs_id%type
   , p_subflow_id        in flow_subflows.sbfl_id%type
-  , p_is_subprocess_end in boolean default false
   )
   is
     l_remaining_subflows              number;
@@ -428,18 +427,15 @@ procedure subflow_complete
      where sbfl_id = p_subflow_id
        and sbfl_prcs_id = p_process_id
     ;
-    -- log current step as completed
-    log_step_completion
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_completed_object => l_current_object
-    );
-    -- handle parallel flows with their own end events.  Last one completing needs to clear up the paret 'split' sbfl.
+
+    -- handle parallel flows with their own end events.  Last one completing needs to clear up the parent 'split' sbfl.
     -- if subflow has parent with   
     -- a)  status 'split' 
     -- b)  no other children, AND
     -- c)  is not a merging gateway
     -- then we have an ophan parent process to clean up (all opening gateway paths have run to conclusion)
+    -- need to call this recursively in case you have nested open parallel gateways
+
     if l_parent_subflow_id is not null then   
         
       select count(*)
@@ -454,12 +450,10 @@ procedure subflow_complete
          and l_current_subflow_status != 'waiting at gateway'
          )
       then
-        
-        delete
-          from flow_subflows sbfl
-         where sbfl.sbfl_prcs_id = p_process_id
-          and sbfl.sbfl_id = l_parent_subflow_id
-        ;       
+        -- call subflow_complete again recursively in case it has orphan grandparent
+        subflow_complete ( p_process_id => p_process_id
+                         , p_subflow_id => l_parent_subflow_id
+                         );
       end if;  
     end if;
 end subflow_complete;
@@ -872,7 +866,6 @@ begin
             subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
-            , p_is_subprocess_end => true
             );
         end if;
     end if;
@@ -951,7 +944,6 @@ begin
             subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
-            , p_is_subprocess_end => false
             );
         end if;
         -- check if there are ANY remaining subflows.  If not, close process
@@ -1047,7 +1039,6 @@ begin
             subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
-            , p_is_subprocess_end => true
             );
 
         end if;
@@ -1132,7 +1123,6 @@ end process_endEvent;
           subflow_complete
           ( p_process_id => p_process_id
           , p_subflow_id => completed_subflows.sbfl_id
-          , p_is_subprocess_end => false
           );
         end loop;
         
@@ -1336,7 +1326,6 @@ end process_endEvent;
           subflow_complete
           ( p_process_id        => p_process_id
           , p_subflow_id        => completed_subflows.sbfl_id
-          , p_is_subprocess_end => false
           );
         end loop;
         -- switch to parent subflow
