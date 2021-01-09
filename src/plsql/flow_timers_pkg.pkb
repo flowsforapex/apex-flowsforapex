@@ -24,7 +24,7 @@ as
          and objt.objt_dgrm_id = prcs.prcs_dgrm_id
        where sbfl.sbfl_id = pi_sbfl_id
          and sbfl.sbfl_prcs_id = pi_prcs_id
-         and objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+         and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
       ;
     exception
       when no_data_found then
@@ -43,7 +43,7 @@ as
              and boundary_objt.objt_dgrm_id = prcs.prcs_dgrm_id
            where sbfl.sbfl_id = pi_sbfl_id
              and prcs.prcs_id = pi_prcs_id
-             and boundary_objt.objt_sub_tag_name = 'bpmn:timerEventDefinition'
+             and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
              and boundary_objt.objt_interrupting = 1
           ;
         exception
