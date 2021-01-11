@@ -1158,6 +1158,8 @@ end process_endEvent;
         ;
         -- get all forward parallel paths and create subflows for them
         -- these are paths forward of p_step_info.target_objt_ref as we are doing double step
+        -- create subflows in one loop then step through them again in second loop
+        -- to prevent some subflows getting to following merge gateway before all subflows are created (causes race condition)
         for new_path in ( select conn.conn_bpmn_id route
                                , objt.objt_bpmn_id target
                             from flow_connections conn
@@ -1181,11 +1183,21 @@ end process_endEvent;
             , p_new_proc_level         => false
             )
           ;
+        end loop;
+        for new_subflow in ( select sbfl.sbfl_id subflow_id
+                                  , sbfl.sbfl_route route
+                               from flow_subflows sbfl
+                              where sbfl.sbfl_prcs_id = p_process_id
+                                and sbfl.sbfl_sbfl_id = l_sbfl_id 
+                                and sbfl.sbfl_current = p_step_info.target_objt_ref 
+                                and sbfl.sbfl_starting_object = p_step_info.target_objt_ref 
+        )
+        loop
           -- step into first step on the new path
           flow_complete_step    
           ( p_process_id    => p_process_id
-          , p_subflow_id    => l_sbfl_id_sub
-          , p_forward_route => new_path.route
+          , p_subflow_id    => new_subflow.subflow_id
+          , p_forward_route => new_subflow.route
           );
         end loop;
       elsif l_num_forward_connections = 1 then
@@ -1273,12 +1285,23 @@ end process_endEvent;
           , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
           , p_new_proc_level         => false      
           );
+      end loop;
+      for new_subflow in ( select sbfl.sbfl_id subflow_id
+                                , sbfl.sbfl_route route
+                             from flow_subflows sbfl
+                            where sbfl.sbfl_prcs_id = p_process_id
+                              and sbfl.sbfl_sbfl_id = p_subflow_id
+                              and sbfl.sbfl_current = p_step_info.target_objt_ref 
+                              and sbfl.sbfl_starting_object = p_step_info.target_objt_ref 
+        )
+      loop
+        -- step over new subflows to start them (separate loop from avove loop to avoid race condition with scriptTasks)
         -- step into first step on the new path
         flow_complete_step 
         ( 
           p_process_id    => p_process_id
-        , p_subflow_id    => l_new_subflow
-        , p_forward_route => new_path.route
+        , p_subflow_id    => new_subflow.subflow_id
+        , p_forward_route => new_subflow.route
         );
       end loop;
     elsif ( l_num_back_connections > 1 AND l_num_forward_connections >1 ) then
