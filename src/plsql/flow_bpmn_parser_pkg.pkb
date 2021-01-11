@@ -581,8 +581,8 @@ as
       l_return := flow_constants_pkg.gc_timer_type_duration;
     elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1 then
       l_return := flow_constants_pkg.gc_timer_type_cycle;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definitition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_error_event_definitition;
+    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1 then
+      l_return := flow_constants_pkg.gc_bpmn_error_event_definition;
     elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1 then
       l_return := flow_constants_pkg.gc_bpmn_escalation_event_definition;
     elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1 then
