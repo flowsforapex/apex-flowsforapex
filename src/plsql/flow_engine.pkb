@@ -9,6 +9,12 @@ type flow_step_info is record
 , target_objt_tag   flow_objects.objt_tag_name%type
 , target_objt_subtag flow_objects.objt_sub_tag_name%type
 );
+type t_new_sbfl_rec is record
+( sbfl_id   flow_subflows.sbfl_id%type
+, route     flow_subflows.sbfl_route%type
+);
+
+type t_new_sbfls is table of t_new_sbfl_rec;
 
 function get_dgrm_id
   (
@@ -1076,6 +1082,8 @@ end process_endEvent;
     l_num_back_connections      number;   -- number of connections leading into object
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_unfinished_subflows   number;
+    l_new_subflows              t_new_sbfls := t_new_sbfls();
+    l_new_subflow               t_new_sbfl_rec;
   begin
     apex_debug.message(p_message => 'Next Step is parallelGateway '||p_step_info.target_objt_ref, p_level => 4) ;
     -- test if this is splitting or merging (or both) gateway
@@ -1160,6 +1168,7 @@ end process_endEvent;
         -- these are paths forward of p_step_info.target_objt_ref as we are doing double step
         -- create subflows in one loop then step through them again in second loop
         -- to prevent some subflows getting to following merge gateway before all subflows are created (causes race condition)
+
         for new_path in ( select conn.conn_bpmn_id route
                                , objt.objt_bpmn_id target
                             from flow_connections conn
@@ -1171,7 +1180,7 @@ end process_endEvent;
                              and conn.conn_src_objt_id = p_step_info.target_objt_id
                         )
         loop
-          l_sbfl_id_sub :=
+          l_new_subflow.sbfl_id :=
             subflow_start
             ( p_process_id             => p_process_id         
             , p_parent_subflow         => l_sbfl_id        
@@ -1183,21 +1192,18 @@ end process_endEvent;
             , p_new_proc_level         => false
             )
           ;
+          l_new_subflow.route   := new_path.route;
+          l_new_subflows.extend;
+          l_new_subflows (l_new_subflows.last) := l_new_subflow;
         end loop;
-        for new_subflow in ( select sbfl.sbfl_id subflow_id
-                                  , sbfl.sbfl_route route
-                               from flow_subflows sbfl
-                              where sbfl.sbfl_prcs_id = p_process_id
-                                and sbfl.sbfl_sbfl_id = l_sbfl_id 
-                                and sbfl.sbfl_current = p_step_info.target_objt_ref 
-                                and sbfl.sbfl_starting_object = p_step_info.target_objt_ref 
-        )
+       
+        for new_subflow in 1.. l_new_subflows.count
         loop
           -- step into first step on the new path
           flow_complete_step    
           ( p_process_id    => p_process_id
-          , p_subflow_id    => new_subflow.subflow_id
-          , p_forward_route => new_subflow.route
+          , p_subflow_id    => l_new_subflows(new_subflow).sbfl_id
+          , p_forward_route => l_new_subflows(new_subflow).route
           );
         end loop;
       elsif l_num_forward_connections = 1 then
@@ -1234,7 +1240,8 @@ end process_endEvent;
     l_num_forward_connections number;   -- number of connections forward from object
     l_num_unfinished_subflows number;
     l_forward_routes          varchar2(2000);
-    l_new_subflow             flow_subflows.sbfl_id%type;
+    l_new_subflows            t_new_sbfls := t_new_sbfls();
+    l_new_subflow             t_new_sbfl_rec;
   begin
     -- handles opening and closing but not closing and reopening  --FFA41
     apex_debug.message(p_message => 'Next Step is inclusiveGateway '||p_step_info.target_objt_ref, p_level => 4) ;
@@ -1273,7 +1280,7 @@ end process_endEvent;
       loop
         -- path is included in list of chosen forward paths.
         apex_debug.message(p_message => 'starting parallel flow for inclusiveGateway', p_level => 3) ;
-        l_new_subflow :=
+        l_new_subflow.sbfl_id :=
           flow_engine.subflow_start
           ( 
             p_process_id             => p_process_id         
@@ -1285,25 +1292,20 @@ end process_endEvent;
           , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
           , p_new_proc_level         => false      
           );
+        l_new_subflow.route   := new_path.route;
+        l_new_subflows.extend;
+        l_new_subflows (l_new_subflows.last) := l_new_subflow;
       end loop;
-      for new_subflow in ( select sbfl.sbfl_id subflow_id
-                                , sbfl.sbfl_route route
-                             from flow_subflows sbfl
-                            where sbfl.sbfl_prcs_id = p_process_id
-                              and sbfl.sbfl_sbfl_id = p_subflow_id
-                              and sbfl.sbfl_current = p_step_info.target_objt_ref 
-                              and sbfl.sbfl_starting_object = p_step_info.target_objt_ref 
-        )
-      loop
-        -- step over new subflows to start them (separate loop from avove loop to avoid race condition with scriptTasks)
-        -- step into first step on the new path
-        flow_complete_step 
-        ( 
-          p_process_id    => p_process_id
-        , p_subflow_id    => new_subflow.subflow_id
-        , p_forward_route => new_subflow.route
-        );
-      end loop;
+      -- now step the new sub flows forward into their first tasks
+      for new_subflow in 1.. l_new_subflows.count
+        loop
+          -- step into first step on the new path
+          flow_complete_step    
+          ( p_process_id    => p_process_id
+          , p_subflow_id    => l_new_subflows(new_subflow).sbfl_id
+          , p_forward_route => l_new_subflows(new_subflow).route
+          );
+        end loop;
     elsif ( l_num_back_connections > 1 AND l_num_forward_connections >1 ) then
       -- diagram has closing and re-opening inclusiveGateway which is not supported
       apex_error.add_error
