@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210103160119'
+,p_last_upd_yyyymmddhh24miss=>'20210119213251'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -374,6 +374,9 @@ wwv_flow_api.create_interactive_grid(
 '  function gatewaySelector( event, focusElement ) {',
 '    apex.item( "P10_GATEWAY" ).setValue( "" );',
 '    apex.item( "P10_CONNECTION" ).setValue( "" );',
+'    $("#unselect_btn").hide();',
+'    $("#select_btn").hide();',
+'    apex.message.clearErrors();',
 '    apex.theme.openRegion( "gateway_selector" );',
 '  }',
 '',
@@ -742,6 +745,34 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_11=>'N'
 );
 wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(10428749558468021)
+,p_button_sequence=>40
+,p_button_plug_id=>wwv_flow_api.id(2401245095481901)
+,p_button_name=>'UNSELECT'
+,p_button_static_id=>'unselect_btn'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--gapTop'
+,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_image_alt=>'Unselect all'
+,p_button_position=>'BODY'
+,p_warn_on_unsaved_changes=>null
+,p_grid_new_row=>'Y'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(10428265504468016)
+,p_button_sequence=>50
+,p_button_plug_id=>wwv_flow_api.id(2401245095481901)
+,p_button_name=>'SELECT'
+,p_button_static_id=>'select_btn'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--gapTop'
+,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_image_alt=>'Select all'
+,p_button_position=>'BODY'
+,p_warn_on_unsaved_changes=>null
+,p_grid_new_row=>'Y'
+);
+wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(2402252879481911)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(2401245095481901)
@@ -801,26 +832,6 @@ wwv_flow_api.create_page_item(
 ,p_attribute_02=>'N'
 );
 wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(2401774955481906)
-,p_name=>'P10_CONNECTION'
-,p_item_sequence=>50
-,p_item_plug_id=>wwv_flow_api.id(2401245095481901)
-,p_prompt=>'Connection'
-,p_display_as=>'NATIVE_SELECT_LIST'
-,p_named_lov=>'P10_INSTANCE_CONNECTIONS_LOV'
-,p_lov_display_null=>'YES'
-,p_lov_cascade_parent_items=>'P10_GATEWAY'
-,p_ajax_items_to_submit=>'P10_PRCS_ID'
-,p_ajax_optimize_refresh=>'Y'
-,p_cHeight=>1
-,p_field_template=>wwv_flow_api.id(12495522847445880132)
-,p_item_template_options=>'#DEFAULT#'
-,p_warn_on_unsaved_changes=>'I'
-,p_lov_display_extra=>'YES'
-,p_attribute_01=>'NONE'
-,p_attribute_02=>'N'
-);
-wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(6600306983290124)
 ,p_name=>'P10_SBFL_ID'
 ,p_item_sequence=>20
@@ -829,6 +840,29 @@ wwv_flow_api.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(10426938547468003)
+,p_name=>'P10_SELECT_OPTION'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(2401245095481901)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(10428066395468014)
+,p_name=>'P10_CONNECTION'
+,p_item_sequence=>60
+,p_item_plug_id=>wwv_flow_api.id(2401245095481901)
+,p_prompt=>'Connection'
+,p_display_as=>'NATIVE_CHECKBOX'
+,p_named_lov=>'P10_INSTANCE_CONNECTIONS_LOV'
+,p_lov_cascade_parent_items=>'P10_PRCS_ID,P10_GATEWAY'
+,p_ajax_optimize_refresh=>'Y'
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'2'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(12491864731021262829)
@@ -1009,6 +1043,18 @@ wwv_flow_api.create_page_da_action(
 '  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("Flow Monitor (" + currentName +")" );',
 '}'))
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(24417684477878735)
 ,p_name=>'Refresh Clicked'
@@ -1028,18 +1074,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'JQUERY_SELECTOR'
 ,p_affected_elements=>'.js-react-on-prcs'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(2402362161481912)
 ,p_name=>'Add clicked - add row to variables grid'
@@ -1057,30 +1091,52 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var view = apex.region( "variables_ig" ).widget().interactiveGrid( "getCurrentView" );',
-'var model = view.model;',
-'var newRecordId = model.insertNewRecord();',
-'var $newRecord = model.getRecord( newRecordId );',
+'apex.message.clearErrors();',
+'var errors = [];',
 '',
-'setTimeout( function(){ ',
-'  model.setValue( $newRecord, "PROV_VAR_TYPE", "VARCHAR2" );',
-'  model.setValue( $newRecord, "PROV_VAR_NAME", apex.item("P10_GATEWAY").getValue() + ":route" );',
-'  model.setValue( $newRecord, "PROV_VAR_VC2", apex.item("P10_CONNECTION").getValue() );',
-'}, 5);',
+'if (apex.item("P10_SELECT_OPTION").getValue() === "single" && apex.item("P10_CONNECTION").getValue().length > 1) {',
+'    errors = [',
+'        {',
+'            type:       "error",',
+'            location:   [ "inline" ],',
+'            pageItem:   "P10_CONNECTION",',
+'            message:    "Please select only one connection.",',
+'            unsafe:     false',
+'        }',
+'    ];',
+'}',
+'if (apex.item("P10_CONNECTION").getValue().length === 0) {',
+'    errors = [',
+'        {',
+'            type:       "error",',
+'            location:   [ "inline" ],',
+'            pageItem:   "P10_CONNECTION",',
+'            message:    "Please select a connection.",',
+'            unsafe:     false',
+'        }',
+'    ];',
+'}',
+'',
+'if (errors.length > 0) {',
+'    apex.message.showErrors(errors);',
+'} else {',
+'    var view = apex.region( "variables_ig" ).widget().interactiveGrid( "getCurrentView" );',
+'    var model = view.model;',
+'    var newRecordId = model.insertNewRecord();',
+'    var $newRecord = model.getRecord( newRecordId );',
+'',
+'    setTimeout( function(){ ',
+'      model.setValue( $newRecord, "PROV_VAR_TYPE", "VARCHAR2" );',
+'      model.setValue( $newRecord, "PROV_VAR_NAME", apex.item("P10_GATEWAY").getValue() + ":route" );',
+'      model.setValue( $newRecord, "PROV_VAR_VC2",  apex.item("P10_CONNECTION").getValue().join(":"));',
+'    }, 5);',
+'    apex.theme.closeRegion("gateway_selector");',
+'}',
+'',
 '',
 '',
 '',
 ''))
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(2402521240481914)
-,p_event_id=>wwv_flow_api.id(2402362161481912)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_CLOSE_REGION'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(2401245095481901)
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5805334319730046)
@@ -1110,6 +1166,149 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(10427083703468004)
+,p_name=>'Set Connection Select Option '
+,p_event_sequence=>240
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P10_GATEWAY'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10427118909468005)
+,p_event_id=>wwv_flow_api.id(10427083703468004)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P10_SELECT_OPTION'
+,p_attribute_01=>'SQL_STATEMENT'
+,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select select_option',
+'from flow_instance_gateways_lov',
+'where objt_bpmn_id = :P10_GATEWAY',
+'and prcs_id = :P10_PRCS_ID'))
+,p_attribute_07=>'P10_GATEWAY,P10_PRCS_ID,P10_SELECT_OPTION'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(10428376023468017)
+,p_name=>'Select all connection'
+,p_event_sequence=>250
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(10428265504468016)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10428413100468018)
+,p_event_id=>wwv_flow_api.id(10428376023468017)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$("#P10_CONNECTION").find(''input[type="checkbox"]'').toArray().forEach(function(e) {',
+'  e.checked = true;',
+'});'))
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10428545869468019)
+,p_event_id=>wwv_flow_api.id(10428376023468017)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(10428265504468016)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10428624364468020)
+,p_event_id=>wwv_flow_api.id(10428376023468017)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(10428749558468021)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(10428830923468022)
+,p_name=>'Unselect all connection'
+,p_event_sequence=>260
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(10428749558468021)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10428957553468023)
+,p_event_id=>wwv_flow_api.id(10428830923468022)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$("#P10_CONNECTION").find(''input[type="checkbox"]'').toArray().forEach(function(e) {',
+'  e.checked = false;',
+'});'))
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10429048123468024)
+,p_event_id=>wwv_flow_api.id(10428830923468022)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(10428749558468021)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10429160835468025)
+,p_event_id=>wwv_flow_api.id(10428830923468022)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(10428265504468016)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(10429447518468028)
+,p_name=>'Display Button Based on Gateway Type'
+,p_event_sequence=>280
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P10_SELECT_OPTION'
+,p_condition_element=>'P10_SELECT_OPTION'
+,p_triggering_condition_type=>'EQUALS'
+,p_triggering_expression=>'multi'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10429500342468029)
+,p_event_id=>wwv_flow_api.id(10429447518468028)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(10428265504468016)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(10429676592468030)
+,p_event_id=>wwv_flow_api.id(10429447518468028)
+,p_event_result=>'FALSE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(10428265504468016)
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(24417245693878731)
