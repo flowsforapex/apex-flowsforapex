@@ -60,22 +60,19 @@ as
           ;
       exception
         when no_data_found then
-          -- look for the highest version 'draft' of the diagram
+          -- look for the version 0 (default) of 'draft' of the diagram
           begin
               select dgrm_id
                 into l_dgrm_id
                 from flow_diagrams
               where dgrm_name = pi_dgrm_name
                 and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
-                and dgrm_version = ( select max(dgrm_version)
-                                        from flow_diagrams
-                                      where dgrm_name = pi_dgrm_name
-                                        and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft )
+                and dgrm_version = '0'
               ;
           exception
             when no_data_found then
                 apex_error.add_error
-                ( p_message => 'Cannot find diagram - please specify a version or diagram_id'
+                ( p_message => 'Cannot find released diagram or draft version 0 of diagram- please specify a version or diagram_id'
                 , p_display_location => apex_error.c_on_error_page
                 );  
           end;
