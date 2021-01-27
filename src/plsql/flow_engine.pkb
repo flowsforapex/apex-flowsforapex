@@ -2179,7 +2179,10 @@ begin
     ;
   exception
   when no_data_found then
-    null;
+    apex_error.add_error
+    ( p_message => 'No Next Step Found.  Check your process diagram.'
+    , p_display_location => apex_error.c_on_error_page
+    );
   when too_many_rows then
     apex_error.add_error
     ( p_message => 'More than 1 forward path found when only 1 allowed'
@@ -2335,7 +2338,7 @@ exception
     when NO_DATA_FOUND
     then
       apex_error.add_error
-      ( p_message => 'Next step does not exist.'
+      ( p_message => 'Next step does not exist. Please check your process diagram.'
       , p_display_location => apex_error.c_on_error_page
       );
     when flow_plsql_runner_pkg.e_plsql_call_failed then
