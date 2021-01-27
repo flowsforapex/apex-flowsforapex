@@ -14,9 +14,10 @@ as
 /***
 Function flow_create
 creates a new process instance based on a diagram name and version (process specification)
-if the version is not specified, it first looks for a copy of the diagram having dgrm_status = 'released'
-if there is not a released version, it will then select a default diagram taking the diagram having dgrm_status = 'draft'
-and having the highest version number.
+If the version is not specified,
+  first lookup is to use dgrm_status = 'released'
+  second lookup is to use dgrm_version = '0' and dgrm_status = 'draft'
+If nothing is found based on above rules an exception will be raised.
 For accuracy, it's recommended that you specify a version or use the form of flow_create specifying dgrm_id directly.
 Returns: Process ID of the newly created process
 */
@@ -24,7 +25,7 @@ Returns: Process ID of the newly created process
   ( 
     pi_dgrm_name in flow_diagrams.dgrm_name%type
   , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
-  , pi_prcs_name in flow_processes.prcs_name%type default null
+  , pi_prcs_name in flow_processes.prcs_name%type
   ) return flow_processes.prcs_id%type;
 
 /***
@@ -35,15 +36,13 @@ Returns: Process ID of the newly created process
   function flow_create
   (
     pi_dgrm_id   in flow_diagrams.dgrm_id%type
-  , pi_prcs_name in flow_processes.prcs_name%type default null
+  , pi_prcs_name in flow_processes.prcs_name%type
   ) return flow_processes.prcs_id%type;
 
 /***
 Procedure  flow_create
 creates a new process instance based on a diagram name and version (process specification)
-if the version is not specified, it first looks for a copy of the diagram having dgrm_status = 'released'
-if there is not a released version, it will then select a default diagram taking the diagram having dgrm_status = 'draft'
-and having the highest version number.
+if the version is not specified, it looks for a copy of the diagram having dgrm_status = 'released'
 For accuracy, it's recommended that you specify a version or use the form of flow_create specifying dgrm_id directly.
 */
   procedure flow_create
