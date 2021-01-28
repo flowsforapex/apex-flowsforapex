@@ -42,7 +42,7 @@ as
   (
     pi_dgrm_name in flow_diagrams.dgrm_name%type
   , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
-  , pi_prcs_name in flow_processes.prcs_name%type default null
+  , pi_prcs_name in flow_processes.prcs_name%type
   ) return flow_processes.prcs_id%type
   as
     l_dgrm_id flow_diagrams.dgrm_id%type;
@@ -101,7 +101,7 @@ as
   function flow_create
   (
     pi_dgrm_id   in flow_diagrams.dgrm_id%type
-  , pi_prcs_name in flow_processes.prcs_name%type default null
+  , pi_prcs_name in flow_processes.prcs_name%type
   ) return flow_processes.prcs_id%type
   is
     l_ret flow_processes.prcs_id%type;

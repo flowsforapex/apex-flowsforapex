@@ -28,6 +28,10 @@ Here is a Tutorial and Demo to help you get started.
 - [Task Reservation](reservations.md)
 - [Link Events](linkEvents.md)
 
+The diagram below gives a full definition of the BPMN syntax supported in the current release of Flows for APEX.  The diagram is reasonably self-documenting, explaining how each symbol can be used.  The diagram and associated BPMN/XML is included in the shipped BPMN examples.
+
+![Full syntax Supported](images/FlowsForAPEXv50FullSyntax.png)
+
 ### Using the Flows for APEX PL/SQL API
 
 - [The Process Variable System](processVariables.md)
@@ -39,3 +43,4 @@ Here is a Tutorial and Demo to help you get started.
 ## Frequently Asked Questions (FAQ)
 
 See the [FAQ](FAQ.md)
+
