@@ -55,6 +55,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0010_routes_vw.sql
 @views/engine-app/flow_p0010_variables_vw.sql
 @views/engine-app/flow_p0002_diagrams_vw.sql
+@views/engine-app/flow_p0002_instances_counter_vw.sql
 
 PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0010_api.pkb
