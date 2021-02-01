@@ -1,7 +1,7 @@
 
 create or replace view flow_p0002_diagrams_vw
 as
-  select distinct
+  select
     d.dgrm_id
     , d.dgrm_name
     , d.dgrm_version
@@ -15,8 +15,7 @@ as
       case d.dgrm_status when 'released' then '<button type="button" title="Deprecate" aria-label="Deprecate" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-dgrm="' || d.dgrm_id || '" data-action="dgrm_deprecate"><span aria-hidden="true" class="t-Icon fa fa-ban"></span></button>' end||
       case d.dgrm_status when 'deprecated' then '<button type="button" title="Archive" aria-label="Archive" class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-dgrm="' || d.dgrm_id || '" data-action="dgrm_archive"><span aria-hidden="true" class="t-Icon fa fa-archive"></span></button>' end
     as btn,
-    count(i.prcs_id) over (partition by d.dgrm_id) as instances 
+    coalesce( (select count(*) from flow_instances_vw i where i.dgrm_id = d.dgrm_id), 0 ) as instances 
   from flow_diagrams_vw d
-  left join flow_instances_vw i on i.dgrm_id = d.dgrm_id
 with read only
 ;
