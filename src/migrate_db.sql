@@ -4,8 +4,8 @@ set concat '.'
 PROMPT >> Database Objects Installation
 PROMPT >> =============================
 
-PROMPT >> Installing Tables
-@ddl/install_scratch.sql
+PROMPT >> Updating Tables
+@ddl/migrate.sql
 
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
