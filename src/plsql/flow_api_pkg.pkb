@@ -60,22 +60,19 @@ as
           ;
       exception
         when no_data_found then
-          -- look for the highest version 'draft' of the diagram
+          -- look for the version 0 (default) of 'draft' of the diagram
           begin
               select dgrm_id
                 into l_dgrm_id
                 from flow_diagrams
               where dgrm_name = pi_dgrm_name
                 and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
-                and dgrm_version = ( select max(dgrm_version)
-                                        from flow_diagrams
-                                      where dgrm_name = pi_dgrm_name
-                                        and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft )
+                and dgrm_version = '0'
               ;
           exception
             when no_data_found then
                 apex_error.add_error
-                ( p_message => 'Cannot find diagram - please specify a version or diagram_id'
+                ( p_message => 'Cannot find released diagram or draft version 0 of diagram- please specify a version or diagram_id'
                 , p_display_location => apex_error.c_on_error_page
                 );  
           end;
@@ -211,51 +208,16 @@ as
   (
     p_sbfl_id in flow_subflows.sbfl_id%type
   ) return varchar2
+  /*
+  This function was required in F4A V4.x only, and is included in V5.x only to prevent any apps breaking.
+  It was required to tell the UI whether the next step was a normal step, single choiuce, or multi choice.
+  As Inclusive and Exclusive Gateways do not stop for user input in V5, this is unnecessary.
+  This now always returns gc-step = 'simple-step'
+  For removal in F4A V6.0
+  */
   as
-    l_objt_tag_name flow_objects.objt_tag_name%type;
-    l_out_conns     number;
-
-    l_return varchar2(50 char);
   begin
-      select objt.objt_tag_name
-           , count(*)
-        into l_objt_tag_name
-           , l_out_conns
-        from flow_subflows sbfl
-        join flow_processes prcs
-          on prcs.prcs_id = sbfl.sbfl_prcs_id
-        join flow_objects objt
-          on objt.objt_dgrm_id = prcs.prcs_dgrm_id
-         and objt.objt_bpmn_id = sbfl.sbfl_current
-        join flow_connections conn
-          on conn.conn_src_objt_id = objt.objt_id
-         and conn.conn_dgrm_id = prcs.prcs_dgrm_id
-         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
-       where sbfl.sbfl_id = p_sbfl_id
-    group by objt.objt_tag_name
-    ;
-
-    case 
-      when l_out_conns > 1 then
-        l_return :=
-          case l_objt_tag_name
---            flow_next_branch now removed so everything uses next_step. 
---            FFA50 remove this procedure once UI apps adapted.
---            when 'bpmn:exclusiveGateway' then gc_single_choice
---            when 'bpmn:inclusiveGateway' then gc_multi_choice
-              when flow_constants_pkg.gc_bpmn_gateway_exclusive then gc_step
-              when flow_constants_pkg.gc_bpmn_gateway_inclusive then gc_step
-            else 'unknown'
-          end
-        ;
-      else
-        l_return := gc_step;
-    end case;
-
-    return l_return;
-  exception
-    when no_data_found then
-      return null;
+    return gc_step;
   end next_step_type;
 
 procedure flow_start

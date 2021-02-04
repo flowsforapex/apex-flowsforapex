@@ -204,6 +204,7 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
 
  -- used to handle gateway objects when the app had to decide whether to call flow_next_step
  -- or flow_next_branch.  No longer required in V5.0 and later.  
+ -- in V5.x, always returns 'simple-step'
  -- To be deleted in v6.0
   function next_step_type
   (
