@@ -2,9 +2,9 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA8 - Tutorial - Lanes and Reservations"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA8 - Tutorial - Lanes and Reservations',
+'AA8 - Tutorial - Lanes and Reservations', 'Tutorials',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -156,13 +156,13 @@ apex_string.join_clob(
   , q'[    <bpmn:textAnnotation id='TextAnnotation_0l49ruu'>]'
   , q'[      <bpmn:text>Tutorial 8: Keep in Your Lane]'
   , q'[]'
-  , q'[We're now added Lanes to our model to show who does what.Â  When you run the process, you can see the task information in the Process Monitor shows which Lane each current task is in.]'
+  , q'[We're now added Lanes to our model to show who does what.  When you run the process, you can see the task information in the Process Monitor shows which Lane each current task is in.]'
   , q'[]'
   , q'[To prevent 2 users in the same lane working on the same task by accident, you can make a task reservation.Â  In Flow Monitor, try clicking the Padlock icon to reserve a task, and again to release it if you change your mind &amp; want someone else to do it!</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_024tpq3' sourceRef='Activity_1fb79se' targetRef='TextAnnotation_0l49ruu' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1q7qdra'>]'
-  , q'[      <bpmn:text>This is a Terminate End -- which immediately ends the process]'
+  , q'[      <bpmn:text>This is a Terminate End - which immediately ends the process]'
   , q'[]'
   , q'[If inside a Sub-Process, it ends the sub Process and any embedded processes &amp; returns control to the parent process</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
@@ -171,7 +171,7 @@ apex_string.join_clob(
   , q'[      <bpmn:documentation>Tutorials by Richard Allen.]'
   , q'[Flowquest Consulting.]'
   , q'[twitter: @FlowquestR</bpmn:documentation>]'
-  , q'[      <bpmn:text>Congratulations!Â  You've reached the current end of the tutorials!Â Â ]'
+  , q'[      <bpmn:text>Congratulations!  You've reached the current end of the tutorials! ]'
   , q'[Let us know if you need further help or support.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_1lsw1mc' sourceRef='Event_0052vug' targetRef='TextAnnotation_1gr1e8a' />]'

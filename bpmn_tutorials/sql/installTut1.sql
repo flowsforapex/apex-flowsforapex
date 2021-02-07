@@ -2,9 +2,9 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA1 - Gateway Tutorial"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA1 - Gateway Tutorial',
+'AA1 - Gateway Tutorial', 'Tutorials',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -77,9 +77,9 @@ apex_string.join_clob(
   , q'[    </bpmn:task>]'
   , q'[    <bpmn:sequenceFlow id='Flow_05v09nk' sourceRef='Activity_1qvl818' targetRef='Gateway_Two' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1fvohcn'>]'
-  , q'[      <bpmn:text>How to Navigate through a Gateway for a Demo Model:Â ]'
+  , q'[      <bpmn:text>How to Navigate through a Gateway for a Demo Model: ]'
   , q'[Method 1: Default Routing.]'
-  , q'[Note that the Lower Route has a '/' mark across the flow.Â  This demotes it is the default path.]'
+  , q'[Note that the Lower Route has a '/' mark across the flow.  This denotes it as the default path.]'
   , q'[To add default path:]'
   , q'[Â - select the Flow between the Gateway and the next object.]'
   , q'[- click on the 'morph' tool (the spanner)]'
@@ -89,9 +89,9 @@ apex_string.join_clob(
   , q'[    <bpmn:textAnnotation id='TextAnnotation_0qhtqn5'>]'
   , q'[      <bpmn:text>This is a mini-tutorial on Gateways that will help you create a test model here and execute it.]'
   , q'[]'
-  , q'[When you add Flows for APEX into your application, you would have some application logic helping to steer you through the gateways.Â  In this demo environment, we have to cheat a little.]'
+  , q'[When you add Flows for APEX into your application, you would have some application logic helping to steer you through the gateways.  In this demo environment, we have to cheat a little.]'
   , q'[]'
-  , q'[The first gateway uses default routing to force your model to always go on one path.Â  Obviously, to test your model you can edit the model to move the default from one path to another....]'
+  , q'[The first gateway uses default routing to force your model to always go on one path.  Obviously, to test your model you can edit the model to move the default from one path to another....]'
   , q'[]'
   , q'[The second gateway shows you how Flows for APEX process variables can be used to instruct the gateway which route to take.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
@@ -105,13 +105,13 @@ apex_string.join_clob(
   , q'[]'
   , q'[To instruct our gateway 'Gateway_Two' which way to go, you would set up a Process Variable with the routing instructions somewhere in your application before you get to the Gateway.Â ]'
   , q'[]'
-  , q'[You need to set a process variable with name = &lt;gateway_ID&gt;&lt;:route&gt;.Â  It's content needs to be the ID of the route you want it to take.]'
+  , q'[You need to set a process variable with name = &lt;gateway_ID&gt;&lt;:route&gt;.  It's content needs to be the ID of the route you want it to take.]'
   , q'[]'
   , q'[So in our example, we need to set process variable 'Gateway_Two:route' with a varchar2 value of 'Flow_2_Yes' to go down the 2_Yes route, and 'Flow_2_No' to go down the 2_No route.]'
   , q'[]'
-  , q'[In the Flow Monitor, you can set this manually.Â  So run a copy of this model.Â  Before you get to Gateway Two, Click on the Variables Tab.Â  Add a row into the Interactive Grid for our variable 'Gateway_Two:route' , type VARCHAR2, Value 'Flow_2_No'.]'
+  , q'[In the Flow Monitor, you can set this manually.  So run a copy of this model.  Before you get to Gateway Two, Click on the Variables Tab.  Add a row into the Interactive Grid for our variable 'Gateway_Two:route' , type VARCHAR2, Value 'Flow_2_No'.]'
   , q'[]'
-  , q'[Obviously, in your application you wouldn't do this through the Monitor console.Â  Somewhere in your application you would set the routing based on your data.Â  This could be a variable set call in any previous step, or you could have a scriptTask in the step immediately before that runs a PL/SQL script to set it based on some query or whatever your imagination can create!</bpmn:text>]'
+  , q'[Obviously, in your application you wouldn't do this through the Monitor console.  Somewhere in your application you would set the routing based on your data.  This could be a variable set call in any previous step, or you could have a scriptTask in the step immediately before that runs a PL/SQL script to set it based on some query or whatever your imagination can create!</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_0hx891w' sourceRef='Activity_1qvl818' targetRef='TextAnnotation_1vzs22f' />]'
   , q'[  </bpmn:process>]'

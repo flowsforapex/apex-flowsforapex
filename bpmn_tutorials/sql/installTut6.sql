@@ -2,9 +2,9 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA6 - Errors and Escalations"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA6 - Errors and Escalations',
+'AA6 - Errors and Escalations', 'Tutorials',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -170,9 +170,9 @@ apex_string.join_clob(
   , q'[]'
   , q'[Let's build on our Sub Process Model.]'
   , q'[]'
-  , q'[Escalations are used when a process has a warning, or something happens when you need to bring in an extra process to help.Â ]'
+  , q'[Escalations are used when a process has a warning, or something happens when you need to bring in an extra process to help. ]'
   , q'[]'
-  , q'[We use an Escalation Intermediate Throw Event between B3 and B6 to signal that we have an escalation.Â  Â The escalation is caught by the Non-Interrupting Escalation Boundary Event on the sub process boundary, where our escalation handling process is defined.Â  Â This is non -interrupting -- so the main process continues.Â ]'
+  , q'[We use an Escalation Intermediate Throw Event between B3 and B6 to signal that we have an escalation. The escalation is caught by the Non-Interrupting Escalation Boundary Event on the sub process boundary, where our escalation handling process is defined. This is non-interrupting - so the main process continues. ]'
   , q'[]'
   , q'[Escalations can be non-interrupting (usual) or can interrupt the process.]'
   , q'[]'

@@ -2,9 +2,9 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA3 - Inclusive Gateways"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA3 - Inclusive Gateways',
+'AA3 - Inclusive Gateways', 'Tutorials' ,
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -76,17 +76,17 @@ apex_string.join_clob(
   , q'[]'
   , q'[Routes selected are listed in the variable, colon separated]'
   , q'[]'
-  , q'[In our Example, the Gateway ID is 'Gateway_Inclusive_Opening', routes have IDs 'Flow_A', 'Flow_B', and 'Flow_C'.Â  So to choose A and C only, set the variable]'
+  , q'[In our Example, the Gateway ID is 'Gateway_Inclusive_Opening', routes have IDs 'Flow_A', 'Flow_B', and 'Flow_C'.  So to choose A and C only, set the variable]'
   , q'[]'
   , q'['Gateway_Inclusive_Opening:route' with varchar2 value 'Flow_A:Flow_C'.]'
   , q'[]'
-  , q'[In this example, we ran a scriptTask as the first task in the flow which set this variable for you.Â  If you look at the variables tab above, you can see the variable and it's value.Â ]'
+  , q'[In this example, we ran a scriptTask as the first task in the flow which set this variable for you.  If you look at the variables tab above, you can see the variable and it's value. ]'
   , q'[]'
   , q'[Step forward &amp; see routes A &amp; C become the current task.]'
   , q'[]'
   , q'[You can restart the model, and manually change the routing variable if you want.]'
   , q'[]'
-  , q'[This is a tutorial, and we've set the variable using a script that's pretty dumb.Â  Obviously in your app, your pl/sql script could look at process variables, or use the process variables to go off into the database &amp; do some query or whatever to create the routing that makes sense for your app.]'
+  , q'[This is a tutorial, and we've set the variable using a script that's pretty dumb.  Obviously in your app, your pl/sql script could look at process variables, or use the process variables to go off into the database &amp; do some query or whatever to create the routing that makes sense for your app.]'
   , q'[]'
   , q'[Note that an Inclusive Gateway also can have a default path - on Flow C in our example.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
@@ -100,7 +100,7 @@ apex_string.join_clob(
   , q'[Your application could include a PL/SQL procedure that performs a query in the database &amp; which determines the route through your process.  That makes this very powerful!]'
   , q'[]'
   , q'[]'
-  , q'[In your own copy of the model, you can hard code the routing to anything as there are tutorial-helper procedures supplied for all combinations. Select this scriptTask, then look at the APEX tab in the Properties Panel.Â  Routines are tutorial.AA3_set_route_AÂ  (or _B or C or AB or AC or BC or ABC).</bpmn:text>]'
+  , q'[In your own copy of the model, you can hard code the routing to anything as there are tutorial-helper procedures supplied for all combinations. Select this scriptTask, then look at the APEX tab in the Properties Panel.  Routines are tutorial.AA3_set_route_A  (or _B or C or AB or AC or BC or ABC).</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_0oa2eg1' sourceRef='Activity_0buimbx' targetRef='TextAnnotation_0v50lx0' />]'
   , q'[  </bpmn:process>]'

@@ -2,9 +2,9 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA4 - Tutorial - Tasks Get Your Work Done!"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA4 - Tutorial - Tasks Get Your Work Done!',
+'AA4 - Tutorial - Tasks Get Your Work Done!', 'Tutorials',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -50,9 +50,9 @@ apex_string.join_clob(
   , q'[    <bpmn:textAnnotation id='TextAnnotation_0xw8y26'>]'
   , q'[      <bpmn:text>Tutorial AA4 - Tasks - Getting your Work Done!]'
   , q'[]'
-  , q'[So much for steering your process through gateways, etc.Â  How do we actually get things done?]'
+  , q'[So much for steering your process through gateways, etc.  How do we actually get things done?]'
   , q'[]'
-  , q'[Flows for APEX V5 can now direct steps in your process.Â  This step introduces the task types, and how to configure them.</bpmn:text>]'
+  , q'[Flows for APEX V5 can now direct steps in your process.  This step introduces the task types, and how to configure them.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_00jab7b' sourceRef='Event_0etkrt2' targetRef='TextAnnotation_0xw8y26' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1vygfet'>]'
@@ -62,17 +62,17 @@ apex_string.join_clob(
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_1r0p5lj' sourceRef='Activity_0srf4in' targetRef='TextAnnotation_1vygfet' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1egb903'>]'
-  , q'[      <bpmn:text>Service Tasks call various services, such as messaging, email, etc.Â Â ]'
+  , q'[      <bpmn:text>Service Tasks call various services, such as messaging, email, etc.  ]'
   , q'[]'
-  , q'[In V5.0, we use these for sending Email using the APEX Mail Template features.Â  Other services could be added here in future releases.]'
+  , q'[In V5.x, we use these for sending Email using the APEX Mail Template features.  Other services could be added here in future releases.]'
   , q'[]'
-  , q'[In V5.0, this works in the same way as do ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>]'
+  , q'[In V5.x, this works in the same way as do ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_061ntp9' sourceRef='Activity_1sk9zqj' targetRef='TextAnnotation_1egb903' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1rkmr7t'>]'
   , q'[      <bpmn:text>Manual Tasks are used to model non-computer steps in your process.]'
   , q'[]'
-  , q'[In V5.0, they behave like a standard Task.</bpmn:text>]'
+  , q'[In V5.x, they behave like a standard Task.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_1crb5iq' sourceRef='Activity_0t8licd' targetRef='TextAnnotation_1rkmr7t' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_02mhmae'>]'

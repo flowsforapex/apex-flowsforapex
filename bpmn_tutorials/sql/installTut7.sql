@@ -2,9 +2,9 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA7 - Tutorial - It's about time"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA7 - Tutorial - It's about time',
+'AA7 - Tutorial - Its about time', 'Tutorials',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -80,18 +80,18 @@ apex_string.join_clob(
   , q'[]'
   , q'[Task A has a Timer Boundary Event attached to it.Â  Notice the circles on the boundary event are dashed, not solid.Â  This means it is a non-interrupting timer.Â  Use this to send someone a reminder when they haven't completed a task after 2 days...]'
   , q'[]'
-  , q'[Step C is a Timer Event.Â  This just stops the process until the timer fires.]'
+  , q'[Step C is a Timer Event.  This just stops the process until the timer fires.]'
   , q'[]'
-  , q'[Step D has an Interrupting Timer Boundary Event attached.Â  An interrupting Boundary Event has a solid line.Â  When the timer fires, D is terminated &amp; the process moves forward from the Timer -- to our Timeout Process.Â  Use this to implement processes that close input periods, etc.]'
+  , q'[Step D has an Interrupting Timer Boundary Event attached.  An interrupting Boundary Event has a solid line.  When the timer fires, D is terminated &amp; the process moves forward from the Timer - to our Timeout Process.  Use this to implement processes that close input periods, etc.]'
   , q'[]'
-  , q'[In the tutorial, all of the timers are set to 20 seconds.Â  Try going straight through the process A-&gt; B -&gt; C -&gt; D &amp; see what happens to the timers.Â  Then try going through it again slowly, waiting 30 seconds between steps so that the timers fire.Â ]'
+  , q'[In the tutorial, all of the timers are set to 20 seconds.  Try going straight through the process A-&gt; B -&gt; C -&gt; D &amp; see what happens to the timers.  Then try going through it again slowly, waiting 30 seconds between steps so that the timers fire. ]'
   , q'[Use the Refresh button to see what's happened to the model.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_1ilv47z' sourceRef='Activity_1o7iby2' targetRef='TextAnnotation_1wdez7y' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1lvcb8y'>]'
   , q'[      <bpmn:text>Boundary Event Timers can be set on Tasks, userTasks, and SubProcesses.]'
   , q'[]'
-  , q'[Timers can be set to a specific date/time, to a duration, or to cycle.Â Â ]'
+  , q'[Timers can be set to a specific date/time, to a duration, or to cycle. ]'
   , q'[]'
   , q'[The specific date timers are easiest used if you substitute a Date process variable into the Timer Definition string, starting with release 5.0.1.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
@@ -99,7 +99,7 @@ apex_string.join_clob(
   , q'[    <bpmn:textAnnotation id='TextAnnotation_0ijxguz'>]'
   , q'[      <bpmn:text>Timers use the DBMS_SCHEDULER features of the database, and require the schema owner to have the CREATE JOB privilege in the database.]'
   , q'[]'
-  , q'[The scheduler is not set up for you when you install Flows for APEX.Â  It's simple to do this, however - once you have a user with CREATE JOB, you have to execute 2 pl/sql procedures that are included in the F4A distribution - see this file in the distribution.Â  setup/DBMS_SCHEDULER_setup_for_timers.txt</bpmn:text>]'
+  , q'[The scheduler is not set up for you when you install Flows for APEX.  It's simple to do this, however - once you have a user with CREATE JOB, you have to execute 2 pl/sql procedures that are included in the F4A distribution - see this file in the distribution.  setup/DBMS_SCHEDULER_setup_for_timers.txt</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_0y95ijj' sourceRef='Timer_BE_1' targetRef='TextAnnotation_0ijxguz' />]'
   , q'[  </bpmn:process>]'

@@ -2,9 +2,9 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA2 - Tutorial - Parallel Gateways"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA2 - Tutorial - Parallel Gateways',
+'AA2 - Tutorial - Parallel Gateways', 'Tutorials'
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -152,9 +152,9 @@ apex_string.join_clob(
   , q'[]'
   , q'[When you use a Parallel Gateway, ALL of the forward paths are taken - so tasks B1, B2, and B3 become the current task on their own subflows.]'
   , q'[]'
-  , q'[At the end of our parallel section, we have another Parallel Gateway.Â  This acts as a merge and synchronize gateway to bring all of the sections together again.Â  Task C only becomes the current tasks when all 3 of B1, B2, and B3 have completed.]'
+  , q'[At the end of our parallel section, we have another Parallel Gateway.  This acts as a merge and synchronize gateway to bring all of the sections together again.  Task C only becomes the current tasks when all 3 of B1, B2, and B3 have completed.]'
   , q'[]'
-  , q'[Flows for APEX requires that Parallel Gateway areas are balanced if you want to merge them together.Â  If you want to merge with a closing parallel gateway, all of the paths that start at B Split must go to B Merge.</bpmn:text>]'
+  , q'[Flows for APEX requires that Parallel Gateway areas are balanced if you want to merge them together.  If you want to merge with a closing parallel gateway, all of the paths that start at B Split must go to B Merge.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_01fj9ha' sourceRef='Activity_1xxuo52' targetRef='TextAnnotation_1elusm3' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1g5plgd'>]'
