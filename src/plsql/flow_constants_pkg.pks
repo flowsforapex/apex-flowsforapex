@@ -60,6 +60,7 @@ as
   --gc_apex_servicetask_insertemail     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertEmail';
 
   --scriptTask
+  gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
   gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
   gc_apex_scripttask_auto_binds       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
 

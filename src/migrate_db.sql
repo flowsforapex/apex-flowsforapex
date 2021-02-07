@@ -1,11 +1,14 @@
 set define '^'
 set concat '.'
 
+define from_version = ^1.
+define to_version   = ^2.
+
 PROMPT >> Database Objects Installation
 PROMPT >> =============================
 
 PROMPT >> Updating Tables
-@ddl/migrate.sql
+@ddl/migrate_^from_version._to_^to_version..sql
 
 PROMPT >> Installing Engine Objects
 PROMPT >> =================

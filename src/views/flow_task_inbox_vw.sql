@@ -4,6 +4,7 @@ as
         , sbfl_sbfl_id
         , sbfl_prcs_id
         , sbfl_process_name
+        , sbfl_prcs_init_ts
         , sbfl_dgrm_id
         , sbfl_dgrm_name
         , sbfl_dgrm_version

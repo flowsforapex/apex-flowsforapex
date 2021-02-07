@@ -1,15 +1,15 @@
 PROMPT >> Installing Tutorial Diagrams
 PROMPT >> ===========================
 
-@sql/f4ATutorial0.sql
-@sql/f4ATutorial1.sql
-@sql/f4ATutorial2.sql
-@sql/f4ATutorial3.sql
-@sql/f4ATutorial4.sql
-@sql/f4ATutorial5.sql
-@sql/f4ATutorial6.sql
-@sql/f4ATutorial7.sql
-@sql/f4ATutorial8.sql
+@sql/installTut0.sql
+@sql/installTut1.sql
+@sql/installTut2.sql
+@sql/installTut3.sql
+@sql/installTut4.sql
+@sql/installTut5.sql
+@sql/installTut6.sql
+@sql/installTut7.sql
+@sql/installTut8.sql
 
 
 PROMPT >> Tutorial Diagrams Installation finished

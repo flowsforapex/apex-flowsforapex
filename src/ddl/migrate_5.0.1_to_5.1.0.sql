@@ -1,3 +1,7 @@
+/*
+  Migration Script for Release 5.0.1 to 5.1.0
+*/
+
 ALTER TABLE flow_diagrams add dgrm_version  VARCHAR2(10 CHAR) DEFAULT '0' NOT NULL;
 ALTER TABLE flow_diagrams add dgrm_status   VARCHAR2(10 CHAR) DEFAULT 'draft' NOT NULL;
 ALTER TABLE flow_diagrams add dgrm_category VARCHAR2(30 CHAR);
