@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495635610083880376)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210130170404'
+,p_last_upd_yyyymmddhh24miss=>'20210208230928'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2405357256481942)
@@ -55,7 +55,7 @@ wwv_flow_api.create_report_region(
 ,p_include_rowid_column=>false
 ,p_ajax_enabled=>'Y'
 ,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
-,p_query_num_rows=>15
+,p_query_num_rows=>10
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_query_break_cols=>'1:2'
 ,p_query_num_rows_type=>'NEXT_PREVIOUS_LINKS'
@@ -250,6 +250,19 @@ wwv_flow_api.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(10431451245468048)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(9900826057126998)
+,p_button_name=>'IMPORT_DIAGRAM'
+,p_button_action=>'REDIRECT_PAGE'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_image_alt=>'Import Diagram'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
+,p_button_redirect_url=>'f?p=&APP_ID.:6:&SESSION.::&DEBUG.:6::'
+,p_icon_css_classes=>'fa-upload'
+);
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(2404877025481937)
 ,p_name=>'P2_DGRM_ID'
@@ -417,6 +430,25 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(10430346540468037)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(19019347638332911)
+,p_name=>'Diagram Imported - Refresh Report'
+,p_event_sequence=>30
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(10431451245468048)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'apexafterclosedialog'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19019481478332912)
+,p_event_id=>wwv_flow_api.id(19019347638332911)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(9900826057126998)
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(2405147513481940)
