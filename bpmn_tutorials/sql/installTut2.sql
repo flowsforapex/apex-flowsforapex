@@ -4,7 +4,7 @@ PROMPT >> Loading Example "AA2 - Tutorial - Parallel Gateways"
 begin
 insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
  values (
-'AA2 - Tutorial - Parallel Gateways', 'Tutorials'
+'AA2 - Tutorial - Parallel Gateways', 'Tutorials',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'

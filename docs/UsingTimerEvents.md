@@ -31,6 +31,7 @@ A Timer Intermediate Catch Event will cause the sequence flow to wait until the 
 
 These can be set on a task, a userTask, or a subProcess.  When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task is terminated, and the timer boundary event becomes the current object.  It performs a task_complete on the boundary event, moving the process on to the next step.
 These are used to perform a business process timeout -- the usual forward path is suspended, and replaced by the timeout process path.  This can also be used to move a process on after a period closes or a review period has completed.
+Only one interrupting timer can be set on a single object.
 In the example below, task C has an attached interrupting timer.  If task C is completed before the timer fires, the timer is removed.  If the timer fires before C has completed, processing switches from the normal path and instead continues with C Timeout as the next task.
 
 ![Timer Boundary Events](images/timerBoundaryEvents.png "Timer Boundary Events")
@@ -39,7 +40,8 @@ In the example below, task C has an attached interrupting timer.  If task C is c
 
 These can be set on a task, a userTask, or a subProcess.  When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task continues, and a new subflow starts to operate in parallel to execute the 'reminder' path.  The new 'reminder path' performs a task_complete on the boundary event, moving the process on to the first task on that path.
 Non-Interupting Timer Boundary Events are used to implement reminder processes, or to start time-delayed parallel process paths.  If the underlying task completes before the timer fires, the 'reminder path' timer and associated subflow are deleted.
-In the example above, task A has a non-interrupting boundary timer attached to it.  If task A is not completed in the given 20 seconds, the timer fires - which starts task 'A Reminder' on a parallel subflow to the main subflow.
+Multiple non-interrupting timer events can be set on a single task, userTask, or subProcess.
+In the example above, task A has one non-interrupting boundary timer attached to it.  If task A is not completed in the given 20 seconds, the timer fires - which starts task 'A Reminder' on a parallel subflow to the main subflow.
 
 ## Event Based Gateway with Timer
 
@@ -78,7 +80,6 @@ Under Timer, select the type of timer you want.  Under Timer Definition, specifi
   ```
   
   You can also specify a date value by creating a Flows for APEX process variable of data datatype, and substituting that.  See below for syntax.
-  
 - Duration:  specifies a delay from the current time or the process to start, using an [ISO 8601 duration](https://en.wikipedia.com/wiki/ISO_8601#Durations) string.  For example:
   
   ```
