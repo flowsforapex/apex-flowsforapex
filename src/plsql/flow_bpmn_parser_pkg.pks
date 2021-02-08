@@ -8,6 +8,7 @@ as
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   );
 
   procedure upload_and_parse
@@ -16,6 +17,7 @@ as
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   );
 
   procedure parse

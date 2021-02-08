@@ -446,6 +446,7 @@ as
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   )
     return flow_diagrams.dgrm_id%type
   as
@@ -469,14 +470,14 @@ as
       insert
         into flow_diagrams ( dgrm_name, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
         values ( pi_dgrm_name, pi_dgrm_version, pi_dgrm_category, 
-                 flow_constants_pkg.gc_dgrm_status_draft,  systimestamp, pi_dgrm_content )
+                 pi_dgrm_status,  systimestamp, pi_dgrm_content )
       returning dgrm_id into l_dgrm_id
       ;
     else
       update flow_diagrams
          set dgrm_content = pi_dgrm_content
            , dgrm_last_update = systimestamp
-           , dgrm_status  = flow_constants_pkg.gc_dgrm_status_draft
+           , dgrm_status  = pi_dgrm_status
        where dgrm_id = l_dgrm_id
       ;
     end if;
@@ -491,11 +492,14 @@ as
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   )
   as
   begin
     g_dgrm_id := upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
-                                 pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content );
+                                 pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
+                                 pi_dgrm_status => pi_dgrm_status
+                                  );
   end upload_diagram;
 
   procedure cleanup_parsing_tables
@@ -1024,13 +1028,16 @@ as
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   )
   as
   begin
     reset;
 
     upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
-                    pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content );
+                    pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
+                    pi_dgrm_status => pi_dgrm_status
+                  );
     parse;
 
   end upload_and_parse;
