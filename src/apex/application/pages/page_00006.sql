@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210208231424'
+,p_last_upd_yyyymmddhh24miss=>'20210210004634'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -37,8 +37,31 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(19019657971332914)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(19000369704190884)
+,p_button_name=>'IMPORT_AND_IMPORT_ANOTHER'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#:t-Button--gapTop'
+,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_image_alt=>'Import And Import Another'
+,p_button_position=>'BELOW_BOX'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(19019773259332915)
+,p_button_sequence=>20
+,p_button_plug_id=>wwv_flow_api.id(19000369704190884)
+,p_button_name=>'IMPORT_AND_EDIT'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--gapTop'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_image_alt=>'Import And Edit'
+,p_button_position=>'BELOW_BOX'
+,p_icon_css_classes=>'fa-edit'
+);
+wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(19018929080332907)
-,p_button_sequence=>110
+,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(19000369704190884)
 ,p_button_name=>'IMPORT'
 ,p_button_action=>'SUBMIT'
@@ -48,6 +71,15 @@ wwv_flow_api.create_page_button(
 ,p_button_image_alt=>'Import'
 ,p_button_position=>'BELOW_BOX'
 ,p_icon_css_classes=>'fa-upload'
+);
+wwv_flow_api.create_page_branch(
+ p_id=>wwv_flow_api.id(19019818946332916)
+,p_branch_action=>'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4:P4_DGRM_ID:&P6_DGRM_ID.&success_msg=#SUCCESS_MSG#'
+,p_branch_point=>'AFTER_PROCESSING'
+,p_branch_type=>'REDIRECT_URL'
+,p_branch_sequence=>10
+,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_branch_condition=>'IMPORT_AND_EDIT'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(10431588640468049)
@@ -268,6 +300,7 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'Upload & Parse'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
+'    l_dgrm_id flow_diagrams.dgrm_id%type;',
 '    l_dgrm_name flow_diagrams.dgrm_name%type;',
 '    l_dgrm_category flow_diagrams.dgrm_category%type;',
 '    l_dgrm_version flow_diagrams.dgrm_version%type;',
@@ -287,19 +320,45 @@ wwv_flow_api.create_page_process(
 '        from apex_application_temp_files',
 '        where name = :P6_BPMN_FILE;',
 '    end if;',
-'    flow_bpmn_parser_pkg.upload_and_parse(',
-'        pi_dgrm_name => l_dgrm_name',
-'        , pi_dgrm_version => l_dgrm_version',
-'        , pi_dgrm_category => l_dgrm_category',
-'        , pi_dgrm_content => l_dgrm_content',
-'        , pi_dgrm_status => l_dgrm_status',
-'    );',
+'    ',
+'    if (:request in (''IMPORT'', ''IMPORT_AND_IMPORT_ANOTHER'')) then',
+'        flow_bpmn_parser_pkg.upload_and_parse(',
+'            pi_dgrm_name => l_dgrm_name',
+'            , pi_dgrm_version => l_dgrm_version',
+'            , pi_dgrm_category => l_dgrm_category',
+'            , pi_dgrm_content => l_dgrm_content',
+'            , pi_dgrm_status => l_dgrm_status',
+'        );',
+'    end if;',
+'    ',
+'    if (:request = ''IMPORT_AND_EDIT'') then',
+'        l_dgrm_id := flow_bpmn_parser_pkg.upload_diagram(',
+'            pi_dgrm_name => l_dgrm_name',
+'            , pi_dgrm_version => l_dgrm_version',
+'            , pi_dgrm_category => l_dgrm_category',
+'            , pi_dgrm_content => l_dgrm_content',
+'            , pi_dgrm_status => l_dgrm_status',
+'        );',
+'        flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id);',
+'        :P6_DGRM_ID := l_dgrm_id;',
+'    end if;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(19008825550190910)
+ p_id=>wwv_flow_api.id(19019994508332917)
 ,p_process_sequence=>20
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_SESSION_STATE'
+,p_process_name=>'Clear Page'
+,p_attribute_01=>'CLEAR_CACHE_CURRENT_PAGE'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'IMPORT_AND_IMPORT_ANOTHER'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(19008825550190910)
+,p_process_sequence=>30
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'

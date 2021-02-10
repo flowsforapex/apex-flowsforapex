@@ -14,22 +14,21 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>5
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Download Diagram'
-,p_alias=>'DOWNLOAD-DIAGRAM'
+,p_name=>'Export Diagram'
+,p_alias=>'EXPORT-DIAGRAM'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Download Diagram'
+,p_step_title=>'Export Diagram'
 ,p_reload_on_submit=>'A'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210207230630'
+,p_last_upd_yyyymmddhh24miss=>'20210210005935'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(17600327473220601)
 ,p_plug_name=>'Options'
-,p_icon_css_classes=>'fa-download'
-,p_region_template_options=>'#DEFAULT#:t-Alert--wizard:t-Alert--customIcons:t-Alert--info'
-,p_plug_template=>wwv_flow_api.id(12495613507239880288)
+,p_region_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_api.id(12495609856182880263)
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'BODY'
@@ -41,13 +40,14 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(17601866805220616)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(17600327473220601)
-,p_button_name=>'DOWNLOAD'
+,p_button_name=>'EXPORT'
 ,p_button_action=>'SUBMIT'
-,p_button_template_options=>'#DEFAULT#'
-,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--gapTop'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Download'
+,p_button_image_alt=>'Export'
 ,p_button_position=>'BELOW_BOX'
+,p_icon_css_classes=>'fa-download'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17600676567220604)
@@ -89,12 +89,11 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17601505679220613)
 ,p_name=>'P5_INCLUDE_CATEGORY'
-,p_item_sequence=>90
+,p_item_sequence=>100
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_prompt=>'Include Category'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_tag_css_classes=>'filename-changer'
-,p_begin_on_new_line=>'N'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'APPLICATION'
@@ -122,7 +121,7 @@ wwv_flow_api.create_page_item(
 ,p_lov=>'STATIC:BPMN File;BPMN,SQL Script;SQL'
 ,p_tag_css_classes=>'filename-changer'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
-,p_item_template_options=>'#DEFAULT#'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--radioButtonGroup'
 ,p_lov_display_extra=>'NO'
 ,p_attribute_01=>'2'
 ,p_attribute_02=>'NONE'
@@ -130,7 +129,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17602168797220619)
 ,p_name=>'P5_INCLUDE_STATUS'
-,p_item_sequence=>100
+,p_item_sequence=>90
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_prompt=>'Include Status'
 ,p_display_as=>'NATIVE_YES_NO'

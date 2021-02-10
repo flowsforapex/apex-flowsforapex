@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495635610083880376)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210208230928'
+,p_last_upd_yyyymmddhh24miss=>'20210210010102'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2405357256481942)
@@ -483,19 +483,6 @@ wwv_flow_api.create_page_process(
 '    ',
 '    if (apex_application.g_x01 = ''dgrm_deprecate'') then',
 '        update flow_diagrams set dgrm_status = ''deprecated'' where dgrm_id = apex_application.g_x02;',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_new_version'') then',
-'        insert into flow_diagrams (dgrm_name, dgrm_version, dgrm_status, dgrm_category, dgrm_last_update, dgrm_content)',
-'        select ',
-'            dgrm.dgrm_name, ',
-'            (select max(dgrm_version) from flow_diagrams d where d.dgrm_name = dgrm.dgrm_name) + 1,',
-'            ''draft'',',
-'            dgrm.dgrm_category,',
-'            systimestamp,',
-'            dgrm.dgrm_content',
-'        from flow_diagrams dgrm',
-'        where dgrm.dgrm_id = apex_application.g_x02;',
 '    end if;',
 '',
 '    apex_json.open_object;',
