@@ -223,8 +223,7 @@ ALTER TABLE flow_objects
 
 ALTER TABLE flow_processes
     ADD CONSTRAINT prcs_dgrm_fk FOREIGN KEY ( prcs_dgrm_id )
-        REFERENCES flow_diagrams ( dgrm_id )
-            ON DELETE CASCADE;
+        REFERENCES flow_diagrams ( dgrm_id );
 
 ALTER TABLE flow_subflows
     ADD CONSTRAINT sbfl_parent_sbfl_fk FOREIGN KEY ( sbfl_sbfl_id )
