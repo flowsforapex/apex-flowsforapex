@@ -2,7 +2,7 @@
 
 In your BPMN process, it is the Task objects that actually do the work!  Starting with Flows for APEX V5.0, tasks can be modelled with specialty task objects that call  APEX pages, run scripts, and send messages.  This section describes those tasks and how to use and configure them.
 
-![task types](images/tasktypes.png "Task types")
+![task types](images/taskTypes.png "Task types")
 
 #### Supported Task Types
 
