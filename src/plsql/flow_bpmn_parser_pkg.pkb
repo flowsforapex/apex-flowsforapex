@@ -447,7 +447,7 @@ as
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
-  , pi_force_overwrite in boolean default true
+  , pi_force_overwrite in boolean default false
   )
     return flow_diagrams.dgrm_id%type
   as
@@ -498,12 +498,13 @@ as
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
   as
   begin
     g_dgrm_id := upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
                                  pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
-                                 pi_dgrm_status => pi_dgrm_status
+                                 pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
                                   );
   end upload_diagram;
 
@@ -1034,6 +1035,7 @@ as
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
   as
   begin
@@ -1041,7 +1043,7 @@ as
 
     upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
                     pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
-                    pi_dgrm_status => pi_dgrm_status
+                    pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
                   );
     parse;
 
