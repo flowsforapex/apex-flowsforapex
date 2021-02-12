@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210210004634'
+,p_last_upd_yyyymmddhh24miss=>'20210211235544'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -44,7 +44,7 @@ wwv_flow_api.create_page_button(
 ,p_button_action=>'SUBMIT'
 ,p_button_template_options=>'#DEFAULT#:t-Button--gapTop'
 ,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
-,p_button_image_alt=>'Import And Import Another'
+,p_button_image_alt=>'Import and import another'
 ,p_button_position=>'BELOW_BOX'
 );
 wwv_flow_api.create_page_button(
@@ -55,7 +55,7 @@ wwv_flow_api.create_page_button(
 ,p_button_action=>'SUBMIT'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--gapTop'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
-,p_button_image_alt=>'Import And Edit'
+,p_button_image_alt=>'Import and edit'
 ,p_button_position=>'BELOW_BOX'
 ,p_icon_css_classes=>'fa-edit'
 );

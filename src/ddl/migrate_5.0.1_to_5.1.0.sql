@@ -14,3 +14,7 @@ ALTER TABLE flow_diagrams ADD CONSTRAINT dgrm_uk UNIQUE ( dgrm_name , dgrm_versi
 ALTER TABLE flow_diagrams ADD CONSTRAINT dgrm_status_ck CHECK ( dgrm_status in ('draft','released','deprecated','archived'));
 
 CREATE UNIQUE INDEX dgrm_uk2 ON FLOW_DIAGRAMS ( DGRM_NAME, case DGRM_STATUS when 'released' then null else dgrm_version end );
+
+ALTER TABLE flow_processes DROP CONSTRAINT prcs_dgrm_fk;
+
+ALTER TABLE flow_processes ADD CONSTRAINT prcs_dgrm_fk FOREIGN KEY (prcs_dgrm_id) REFERENCES flow_diagrams (dgrm_id) ENABLE;
