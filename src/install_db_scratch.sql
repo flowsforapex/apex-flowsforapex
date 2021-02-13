@@ -48,6 +48,9 @@ PROMPT >> Page API Specifications
 @plsql/engine-app/flow_p0010_api.pks
 @plsql/engine-app/flow_p0005_api.pks
 @plsql/engine-app/flow_p0002_api.pks
+@plsql/engine-app/flow_p0006_api.pks
+PROMPT >> Global Error Function
+@plsql/engine-app/apex_error_handling.sql;
 
 PROMPT >> Page Views
 @views/engine-app/flow_p0010_vw.sql
@@ -63,6 +66,7 @@ PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0010_api.pkb
 @plsql/engine-app/flow_p0005_api.pkb
 @plsql/engine-app/flow_p0002_api.pkb
+@plsql/engine-app/flow_p0006_api.pkb
 
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object

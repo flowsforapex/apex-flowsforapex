@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210211235544'
+,p_last_upd_yyyymmddhh24miss=>'20210213083114'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -32,6 +32,19 @@ wwv_flow_api.create_page_plug(
 ,p_plug_template=>wwv_flow_api.id(12495609856182880263)
 ,p_plug_display_sequence=>10
 ,p_plug_display_point=>'BODY'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(24211779219956101)
+,p_plug_name=>'Import Warning'
+,p_region_template_options=>'#DEFAULT#:t-Alert--colorBG:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--info:t-Alert--accessibleHeading'
+,p_plug_template=>wwv_flow_api.id(12495613507239880288)
+,p_plug_display_sequence=>10
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_01'
+,p_plug_source=>'We encourage you to import diagrams that were built using Flows for APEX to make sure that they can be run by the engine.'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
@@ -132,7 +145,7 @@ wwv_flow_api.create_page_item(
 ,p_cSize=>60
 ,p_cMaxlength=>30000
 ,p_cHeight=>10
-,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'Y'
 ,p_attribute_02=>'N'
@@ -156,22 +169,6 @@ wwv_flow_api.create_page_item(
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'NONE'
-);
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(19002242138190900)
-,p_name=>'P6_DGRM_STATUS'
-,p_is_required=>true
-,p_item_sequence=>50
-,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
-,p_item_default=>'draft'
-,p_prompt=>'Status'
-,p_display_as=>'NATIVE_RADIOGROUP'
-,p_lov=>'STATIC2:draft;draft,released;released,deprecated;deprecated,archived;archived'
-,p_field_template=>wwv_flow_api.id(12495522548744880132)
-,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--radioButtonGroup'
-,p_lov_display_extra=>'NO'
-,p_attribute_01=>'4'
-,p_attribute_02=>'NONE'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(19002654728190900)
@@ -203,41 +200,63 @@ wwv_flow_api.create_page_item(
 ,p_prompt=>'BPMN File'
 ,p_display_as=>'NATIVE_FILE'
 ,p_cSize=>30
-,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--large'
 ,p_attribute_01=>'APEX_APPLICATION_TEMP_FILES'
 ,p_attribute_09=>'REQUEST'
 ,p_attribute_10=>'N'
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(24211819068956102)
+,p_name=>'P6_FORCE_OVERWRITE'
+,p_item_sequence=>90
+,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
+,p_item_default=>'N'
+,p_prompt=>'Force Overwrite'
+,p_display_as=>'NATIVE_YES_NO'
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_01=>'APPLICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(19023151364332949)
+,p_validation_name=>'DGRM_CONTENT is not null'
+,p_validation_sequence=>10
+,p_validation=>'P6_DGRM_CONTENT'
+,p_validation_type=>'ITEM_NOT_NULL'
+,p_error_message=>'Please paste BPMN file content'
+,p_validation_condition=>'P6_IMPORT_FROM'
+,p_validation_condition2=>'text'
+,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_associated_item=>wwv_flow_api.id(19001433995190900)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(19023037485332948)
+,p_validation_name=>'File is not null'
+,p_validation_sequence=>20
+,p_validation=>'return flow_p0006_api.is_file_uploaded(pi_file_name => :P6_BPMN_FILE);'
+,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
+,p_error_message=>'Please select a #LABEL#.'
+,p_validation_condition=>'P6_IMPORT_FROM'
+,p_validation_condition2=>'file'
+,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_associated_item=>wwv_flow_api.id(19018652597332904)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(19019544229332913)
 ,p_validation_name=>'Validate XML'
-,p_validation_sequence=>10
+,p_validation_sequence=>30
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare ',
-'    l_dgrm_content flow_diagrams.dgrm_content%type;',
-'    l_import_from varchar2(5) := :P6_IMPORT_FROM;',
-'    l_xmltype xmltype;',
-'    l_err boolean := true;',
-'begin',
-'    if (l_import_from = ''text'') then',
-'        l_dgrm_content := :P6_DGRM_CONTENT;',
-'    else',
-'        select to_clob(blob_content)',
-'        into l_dgrm_content',
-'        from apex_application_temp_files',
-'        where name = :P6_BPMN_FILE;',
-'    end if;',
-'    begin',
-'        l_xmltype := xmltype.createXML(l_dgrm_content);',
-'    exception when others then',
-'        l_err := false;',
-'    end;',
-'    return l_err;',
-'end;'))
+'return flow_p0006_api.is_valid_xml(',
+'        pi_import_from => :P6_IMPORT_FROM,',
+'        pi_dgrm_content => :P6_DGRM_CONTENT,',
+'        pi_file_name => :P6_BPMN_FILE',
+'    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please check the diagram provided.'
-,p_when_button_pressed=>wwv_flow_api.id(19018929080332907)
+,p_validation_condition_type=>'NOT_DISPLAYING_INLINE_VALIDATION_ERRORS'
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
 wwv_flow_api.create_page_da_event(
@@ -292,6 +311,33 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P6_BPMN_FILE'
 );
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(24211903521956103)
+,p_name=>'Ask for confirmation'
+,p_event_sequence=>20
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P6_FORCE_OVERWRITE'
+,p_condition_element=>'P6_FORCE_OVERWRITE'
+,p_triggering_condition_type=>'EQUALS'
+,p_triggering_expression=>'Y'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(24212041561956104)
+,p_event_id=>wwv_flow_api.id(24211903521956103)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.message.confirm( "If there are process instances associated to this model, they should not works. Are you sure to continue?", function( okPressed ) {',
+'    if( !okPressed ) {',
+'        apex.item("P6_FORCE_OVERWRITE").setValue("N");',
+'    }',
+'});',
+''))
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(19018865821332906)
 ,p_process_sequence=>10
@@ -301,49 +347,21 @@ wwv_flow_api.create_page_process(
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_dgrm_id flow_diagrams.dgrm_id%type;',
-'    l_dgrm_name flow_diagrams.dgrm_name%type;',
-'    l_dgrm_category flow_diagrams.dgrm_category%type;',
-'    l_dgrm_version flow_diagrams.dgrm_version%type;',
-'    l_dgrm_status flow_diagrams.dgrm_status%type;',
-'    l_dgrm_content flow_diagrams.dgrm_content%type;',
-'    l_import_from varchar2(5) := :P6_IMPORT_FROM;',
-'begin    ',
-'    l_dgrm_name := :P6_DGRM_NAME;',
-'    l_dgrm_category := :P6_DGRM_CATEGORY;',
-'    l_dgrm_version := :P6_DGRM_VERSION;',
-'    l_dgrm_status := :P6_DGRM_STATUS;',
-'    if (l_import_from = ''text'') then',
-'        l_dgrm_content := :P6_DGRM_CONTENT;',
-'    else',
-'        select to_clob(blob_content)',
-'        into l_dgrm_content',
-'        from apex_application_temp_files',
-'        where name = :P6_BPMN_FILE;',
-'    end if;',
-'    ',
-'    if (:request in (''IMPORT'', ''IMPORT_AND_IMPORT_ANOTHER'')) then',
-'        flow_bpmn_parser_pkg.upload_and_parse(',
-'            pi_dgrm_name => l_dgrm_name',
-'            , pi_dgrm_version => l_dgrm_version',
-'            , pi_dgrm_category => l_dgrm_category',
-'            , pi_dgrm_content => l_dgrm_content',
-'            , pi_dgrm_status => l_dgrm_status',
-'        );',
-'    end if;',
-'    ',
-'    if (:request = ''IMPORT_AND_EDIT'') then',
-'        l_dgrm_id := flow_bpmn_parser_pkg.upload_diagram(',
-'            pi_dgrm_name => l_dgrm_name',
-'            , pi_dgrm_version => l_dgrm_version',
-'            , pi_dgrm_category => l_dgrm_category',
-'            , pi_dgrm_content => l_dgrm_content',
-'            , pi_dgrm_status => l_dgrm_status',
-'        );',
-'        flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id);',
-'        :P6_DGRM_ID := l_dgrm_id;',
-'    end if;',
-'end;'))
+'begin',
+'    l_dgrm_id := flow_p0006_api.upload_and_parse(',
+'        pi_import_from => :P6_IMPORT_FROM,',
+'        pi_dgrm_name => :P6_DGRM_NAME,',
+'        pi_dgrm_category => :P6_DGRM_CATEGORY,',
+'        pi_dgrm_content => :P6_DGRM_CONTENT,',
+'        pi_file_name => :P6_BPMN_FILE,',
+'        pi_force_overwrite => :P6_FORCE_OVERWRITE',
+'    );',
+'    :P6_DGRM_ID := l_dgrm_id;',
+'end;',
+''))
+,p_process_error_message=>'Model already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_success_message=>'Diagram imported.'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(19019994508332917)
@@ -362,6 +380,7 @@ wwv_flow_api.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
+,p_attribute_01=>'P6_DGRM_ID'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'IMPORT'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'

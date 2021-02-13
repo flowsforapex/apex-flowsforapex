@@ -482,8 +482,6 @@ as
             , dgrm_status  = pi_dgrm_status
         where dgrm_id = l_dgrm_id
         ;
-      else
-        raise_application_error(-20000, 'No change on existing model. Use force orverwrite parameter.');
       end if;
     end if;
 

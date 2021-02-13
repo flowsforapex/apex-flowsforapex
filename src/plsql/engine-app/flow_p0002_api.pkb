@@ -78,15 +78,24 @@ as
         end if;
         
         if (pi_action = 'dgrm_release') then
-            update flow_diagrams set dgrm_status = 'released' where dgrm_id = pi_dgrm_id;
+            update_diagram_status(
+                pi_dgrm_id => pi_dgrm_id,
+                pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_released
+            );
         end if;
         
         if (pi_action = 'dgrm_archive') then
-            update flow_diagrams set dgrm_status = 'archived' where dgrm_id = pi_dgrm_id;
+            update_diagram_status(
+                pi_dgrm_id => pi_dgrm_id,
+                pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_archived
+            );
         end if;
         
         if (pi_action = 'dgrm_deprecate') then
-            update flow_diagrams set dgrm_status = 'deprecated' where dgrm_id = pi_dgrm_id;
+            update_diagram_status(
+                pi_dgrm_id => pi_dgrm_id,
+                pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_deprecated
+            );
         end if;
 
         apex_json.open_object;
