@@ -18,7 +18,6 @@ drop package flow_api_pkg;
 drop package flow_timers_pkg;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
-drop package flow_usertask_pkg;
 
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;

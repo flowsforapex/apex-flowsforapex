@@ -17,6 +17,7 @@ wwv_flow_api.create_page(
 ,p_name=>'Flow Management'
 ,p_alias=>'FLOW-MANAGEMENT'
 ,p_step_title=>'Flow Management'
+,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'td[headers="NB_INSTANCES"]{',
@@ -25,7 +26,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495635610083880376)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210212193137'
+,p_last_upd_yyyymmddhh24miss=>'20210213085108'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2405357256481942)
