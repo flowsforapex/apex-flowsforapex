@@ -29,6 +29,22 @@ as
     return g_current_sbfl_id;
   end get_current_sbfl_id;
 
+  procedure execute_plsql
+  (
+    p_plsql_code in varchar2
+  )
+  as
+  begin
+    -- Always wrap code into begin..end
+    -- Developers are allowed to omit those if no declaration section needed
+
+    execute immediate
+      'begin' || apex_application.lf ||
+      p_plsql_code || apex_application.lf ||
+      'end;'
+    ;
+  end execute_plsql;
+
   procedure run_task_script
   (
     pi_prcs_id in flow_processes.prcs_id%type
@@ -36,8 +52,9 @@ as
   , pi_objt_id in flow_objects.objt_id%type
   )
   as
-    l_plsql_code  flow_object_attributes.obat_vc_value%type;
-    l_do_autobind boolean;
+    l_use_apex_exec boolean := false;
+    l_plsql_code    flow_object_attributes.obat_vc_value%type;
+    l_do_autobind   boolean := false;
 
     l_sql_parameters apex_exec.t_parameters;
   begin
@@ -47,10 +64,15 @@ as
                       , obat.obat_vc_value
                    from flow_object_attributes obat
                   where obat.obat_objt_id = pi_objt_id
-                    and obat.obat_key in ( flow_constants_pkg.gc_apex_scripttask_plsql_code, flow_constants_pkg.gc_apex_scripttask_auto_binds )
+                    and obat.obat_key in ( flow_constants_pkg.gc_apex_scripttask_engine
+                                         , flow_constants_pkg.gc_apex_scripttask_plsql_code
+                                         , flow_constants_pkg.gc_apex_scripttask_auto_binds
+                                         )
                )
     loop
       case rec.obat_key
+        when flow_constants_pkg.gc_apex_scripttask_engine then
+          l_use_apex_exec := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
         when flow_constants_pkg.gc_apex_scripttask_plsql_code then
           l_plsql_code := rec.obat_vc_value;
         when flow_constants_pkg.gc_apex_scripttask_auto_binds then
@@ -60,12 +82,19 @@ as
       end case;
     end loop;
 
-    apex_exec.execute_plsql
-    (
-      p_plsql_code      => l_plsql_code
-    , p_auto_bind_items => l_do_autobind
-    , p_sql_parameters  => l_sql_parameters
-    );
+    if l_use_apex_exec then
+      apex_exec.execute_plsql
+      (
+        p_plsql_code      => l_plsql_code
+      , p_auto_bind_items => l_do_autobind
+      , p_sql_parameters  => l_sql_parameters
+      );
+    else
+      execute_plsql
+      (
+        p_plsql_code => l_plsql_code
+      );
+    end if;
 
   exception
     when others then

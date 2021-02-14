@@ -14,14 +14,18 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>2
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Parsed Diagrams'
-,p_alias=>'PARSED-DIAGRAMS'
-,p_step_title=>'Parsed Diagrams'
+,p_name=>'Flow Management'
+,p_alias=>'FLOW-MANAGEMENT'
+,p_step_title=>'Flow Management'
 ,p_autocomplete_on_off=>'OFF'
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'td[headers="NB_INSTANCES"]{',
+'   padding-left:0px;',
+'}'))
 ,p_step_template=>wwv_flow_api.id(12495635610083880376)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210130170404'
+,p_last_upd_yyyymmddhh24miss=>'20210212193137'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2405357256481942)
@@ -42,7 +46,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(9900826057126998)
-,p_name=>'Parsed Diagrams'
+,p_name=>'Flow Management'
 ,p_region_name=>'parsed_drgm'
 ,p_template=>wwv_flow_api.id(12495582446800880234)
 ,p_display_sequence=>20
@@ -55,7 +59,7 @@ wwv_flow_api.create_report_region(
 ,p_include_rowid_column=>false
 ,p_ajax_enabled=>'Y'
 ,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
-,p_query_num_rows=>15
+,p_query_num_rows=>10
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_query_break_cols=>'1:2'
 ,p_query_num_rows_type=>'NEXT_PREVIOUS_LINKS'
@@ -154,6 +158,7 @@ wwv_flow_api.create_report_columns(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10431199676468045)
 ,p_plug_name=>'Diagram'
+,p_region_name=>'diagram_reg'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>30
@@ -250,13 +255,135 @@ wwv_flow_api.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(19020002791332918)
+,p_plug_name=>'New Version'
+,p_region_name=>'new_version_reg'
+,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
+,p_plug_template=>wwv_flow_api.id(12495608896288880263)
+,p_plug_display_sequence=>40
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(19020645519332924)
+,p_plug_name=>'Delete Diagram'
+,p_region_name=>'delete_reg'
+,p_region_template_options=>'#DEFAULT#:js-dialog-size600x400'
+,p_plug_template=>wwv_flow_api.id(12495608896288880263)
+,p_plug_display_sequence=>50
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_report_region(
+ p_id=>wwv_flow_api.id(19020793614332925)
+,p_name=>'Associated process instances'
+,p_parent_plug_id=>wwv_flow_api.id(19020645519332924)
+,p_template=>wwv_flow_api.id(12495613507239880288)
+,p_display_sequence=>10
+,p_region_template_options=>'#DEFAULT#:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--danger'
+,p_component_template_options=>'#DEFAULT#:t-Report--stretch:t-Report--staticRowColors:t-Report--rowHighlightOff:t-Report--noBorders:t-Report--hideNoPagination'
+,p_display_point=>'BODY'
+,p_source_type=>'NATIVE_SQL_REPORT'
+,p_query_type=>'SQL'
+,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select count(*) as nb_instances',
+'from flow_processes',
+'where prcs_dgrm_id = :P2_DGRM_ID'))
+,p_ajax_enabled=>'Y'
+,p_ajax_items_to_submit=>'P2_DGRM_ID'
+,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
+,p_query_headings_type=>'NO_HEADINGS'
+,p_query_num_rows=>15
+,p_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_csv_output=>'N'
+,p_prn_output=>'N'
+,p_sort_null=>'L'
+,p_plug_query_strip_html=>'N'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(19021169014332929)
+,p_query_column_id=>1
+,p_column_alias=>'NB_INSTANCES'
+,p_column_display_sequence=>1
+,p_column_heading=>'Nb Instances'
+,p_use_as_row_header=>'N'
+,p_column_html_expression=>'<span>There are #NB_INSTANCES# process instances associated to this diagram.</span>'
+,p_derived_column=>'N'
+,p_include_in_export=>'N'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(19021487952332932)
+,p_plug_name=>'Form'
+,p_parent_plug_id=>wwv_flow_api.id(19020645519332924)
+,p_region_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_api.id(12495609856182880263)
+,p_plug_display_sequence=>20
+,p_plug_display_point=>'BODY'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(19020317359332921)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(19020002791332918)
+,p_button_name=>'ADD_VERSION'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_is_hot=>'Y'
+,p_button_image_alt=>'Add Version'
+,p_button_position=>'BELOW_BOX'
+,p_icon_css_classes=>'fa-chevron-circle-up'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(19020813372332926)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(19020645519332924)
+,p_button_name=>'DELETE'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#:t-Button--danger:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_image_alt=>'Delete'
+,p_button_position=>'REGION_TEMPLATE_DELETE'
+,p_icon_css_classes=>'fa-trash-o'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(10431451245468048)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(9900826057126998)
+,p_button_name=>'IMPORT_DIAGRAM'
+,p_button_action=>'REDIRECT_PAGE'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_image_alt=>'Import Diagram'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
+,p_button_redirect_url=>'f?p=&APP_ID.:6:&SESSION.::&DEBUG.:6:P6_FORCE_OVERWRITE:N'
+,p_icon_css_classes=>'fa-upload'
+);
+wwv_flow_api.create_page_branch(
+ p_id=>wwv_flow_api.id(19022220444332940)
+,p_branch_name=>'Go To Page 2'
+,p_branch_action=>'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:2:P2_DGRM_ID:&P2_DGRM_ID.&success_msg=#SUCCESS_MSG#'
+,p_branch_point=>'AFTER_PROCESSING'
+,p_branch_type=>'REDIRECT_URL'
+,p_branch_sequence=>10
+,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_branch_condition=>'ADD_VERSION'
+);
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(2404877025481937)
 ,p_name=>'P2_DGRM_ID'
 ,p_item_sequence=>10
-,p_item_plug_id=>wwv_flow_api.id(2404737406481936)
+,p_item_plug_id=>wwv_flow_api.id(10431199676468045)
 ,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 );
 wwv_flow_api.create_page_item(
@@ -312,6 +439,55 @@ wwv_flow_api.create_page_item(
 ,p_fc_sort_by_top_counts=>true
 ,p_fc_show_selected_first=>false
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(19020229312332920)
+,p_name=>'P2_VERSION'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(19020002791332918)
+,p_prompt=>'Version'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>10
+,p_field_template=>wwv_flow_api.id(12495522548744880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(19021519028332933)
+,p_name=>'P2_CASCADE'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(19021487952332932)
+,p_prompt=>'Cascade'
+,p_display_as=>'NATIVE_YES_NO'
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'Delete associated process instances'
+,p_attribute_01=>'APPLICATION'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(19022356671332941)
+,p_name=>'P2_DGRM_TITLE'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(10431199676468045)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(19022882139332946)
+,p_validation_name=>'Version is not null'
+,p_validation_sequence=>10
+,p_validation=>'P2_VERSION'
+,p_validation_type=>'ITEM_NOT_NULL'
+,p_error_message=>'#LABEL# must have a value'
+,p_validation_condition=>'ADD_VERSION'
+,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_associated_item=>wwv_flow_api.id(19020229312332920)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10204710359465896)
 ,p_name=>'Clickable Action clicked'
@@ -333,11 +509,17 @@ wwv_flow_api.create_page_da_action(
 'var myAction  = myElement.data( "action" );',
 'var myDiagram = myElement.data( "dgrm" );',
 '',
-'console.log(myAction);',
-'console.log(myDiagram );',
 '',
-'if ( myAction === "dgrm_view" ) {',
+'if ( myAction === "dgrm_view" || myAction === "dgrm_new_version" || myAction === "dgrm_delete") {',
 '  apex.item( "P2_DGRM_ID" ).setValue( myDiagram );',
+'  if (myAction === "dgrm_new_version"){',
+'      apex.theme.openRegion( "new_version_reg" );',
+'      apex.item("P2_VERSION").setValue(myElement.data( "version" ));',
+'  }',
+'  if (myAction === "dgrm_delete"){',
+'      apex.item("P2_CASCADE").setValue("N");',
+'      apex.theme.openRegion( "delete_reg" );',
+'  }',
 '} else {',
 '     apex.server.process(',
 '        "PAGE2_AJAX", ',
@@ -356,6 +538,16 @@ wwv_flow_api.create_page_da_action(
 '                        apex.message.showPageSuccess( "Successful action!" );',
 '                    }',
 '                    ',
+'                } else {',
+'                    apex.message.clearErrors();',
+'                    apex.message.showErrors([',
+'                        {',
+'                            type:       "error",',
+'                            location:   "page",',
+'                            message:    pData.message,',
+'                            unsafe:     false',
+'                        }',
+'                    ]);',
 '                }',
 '            },',
 '            error: function( jqXHR, textStatus, errorThrown ) {',
@@ -379,16 +571,6 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_event_type=>'change'
 );
 wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(2405876514481947)
-,p_event_id=>wwv_flow_api.id(2404980723481938)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SHOW'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(10431199676468045)
-);
-wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(2405950709481948)
 ,p_event_id=>wwv_flow_api.id(2404980723481938)
 ,p_event_result=>'FALSE'
@@ -399,11 +581,40 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_api.id(10431199676468045)
 );
 wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19022426605332942)
+,p_event_id=>wwv_flow_api.id(2404980723481938)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P2_DGRM_TITLE'
+,p_attribute_01=>'SQL_STATEMENT'
+,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select dgrm_name||'' - Version ''||dgrm_version',
+'from flow_diagrams',
+'where dgrm_id = :P2_DGRM_ID'))
+,p_attribute_07=>'P2_DGRM_ID'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(2405876514481947)
+,p_event_id=>wwv_flow_api.id(2404980723481938)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(10431199676468045)
+);
+wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(2405013624481939)
 ,p_event_id=>wwv_flow_api.id(2404980723481938)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>30
-,p_execute_on_page_init=>'N'
+,p_execute_on_page_init=>'Y'
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(2404737406481936)
@@ -413,10 +624,139 @@ wwv_flow_api.create_page_da_action(
 ,p_event_id=>wwv_flow_api.id(2404980723481938)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>40
-,p_execute_on_page_init=>'N'
+,p_execute_on_page_init=>'Y'
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(10430346540468037)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19021294517332930)
+,p_event_id=>wwv_flow_api.id(2404980723481938)
+,p_event_result=>'TRUE'
+,p_action_sequence=>50
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(19020793614332925)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(19019347638332911)
+,p_name=>'Imported - Refresh Report'
+,p_event_sequence=>30
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(10431451245468048)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'apexafterclosedialog'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(24212156552956105)
+,p_event_id=>wwv_flow_api.id(19019347638332911)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P2_DGRM_ID'
+,p_attribute_01=>'DIALOG_RETURN_ITEM'
+,p_attribute_09=>'N'
+,p_attribute_10=>'P6_DGRM_ID'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19019481478332912)
+,p_event_id=>wwv_flow_api.id(19019347638332911)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(9900826057126998)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19023277699332950)
+,p_event_id=>wwv_flow_api.id(19019347638332911)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'apex.message.showPageSuccess("Diagram imported.");'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(19021914580332937)
+,p_name=>'Add Instance'
+,p_event_sequence=>50
+,p_triggering_element_type=>'REGION'
+,p_triggering_region_id=>wwv_flow_api.id(9900826057126998)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'apexafterclosedialog'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19022044667332938)
+,p_event_id=>wwv_flow_api.id(19021914580332937)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(9900826057126998)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(19022578329332943)
+,p_name=>'Refresh Title'
+,p_event_sequence=>60
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P2_DGRM_TITLE'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19022673655332944)
+,p_event_id=>wwv_flow_api.id(19022578329332943)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'$("#diagram_reg_heading").text(apex.item("P2_DGRM_TITLE").getValue());'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(19021866608332936)
+,p_process_sequence=>10
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'Delete Diagram'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'begin',
+'    flow_p0002_api.delete_diagram(',
+'        pi_dgrm_id => :P2_DGRM_ID,',
+'        pi_cascade => :P2_CASCADE',
+'    );',
+'end;'))
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'DELETE'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_process_success_message=>'Diagram deleted.'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(19022181968332939)
+,p_process_sequence=>20
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'New Version'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'declare',
+'    l_dgrm_id flow_diagrams.dgrm_id%type;',
+'begin',
+'    l_dgrm_id := flow_p0002_api.add_diagram_version(',
+'        pi_dgrm_id => :P2_DGRM_ID,',
+'        pi_dgrm_version => :P2_VERSION',
+'    );',
+'    :P2_DGRM_ID := l_dgrm_id;',
+'end;'))
+,p_process_error_message=>'Version already exists.'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'ADD_VERSION'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_process_success_message=>'New version added.'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(2405147513481940)
@@ -425,59 +765,11 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'PAGE2_AJAX'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_ret varchar2(4000);',
 'begin',
-'    if (apex_application.g_x01 = ''dgrm_edit'') then',
-'        l_ret := apex_page.get_url(',
-'            p_page => 4,',
-'            p_clear_cache => 4,',
-'            p_items => ''P4_DGRM_ID'',',
-'            p_values => apex_application.g_x02',
-'        );',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_release'') then',
-'        update flow_diagrams set dgrm_status = ''released'' where dgrm_id = apex_application.g_x02;',
-'        update flow_diagrams set dgrm_status = ''deprecated'' ',
-'        where dgrm_id != apex_application.g_x02 ',
-'        and dgrm_name = (select dgrm_name from flow_diagrams where dgrm_id = apex_application.g_x02)',
-'        and dgrm_status = ''released'' or (dgrm_status = ''draft'' and dgrm_version < (select dgrm_version from flow_diagrams where dgrm_id = apex_application.g_x02));',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_archive'') then',
-'        update flow_diagrams set dgrm_status = ''archived'' where dgrm_id = apex_application.g_x02;',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_deprecate'') then',
-'        update flow_diagrams set dgrm_status = ''deprecated'' where dgrm_id = apex_application.g_x02;',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_new_version'') then',
-'        insert into flow_diagrams (dgrm_name, dgrm_version, dgrm_status, dgrm_category, dgrm_last_update, dgrm_content)',
-'        select ',
-'            dgrm.dgrm_name, ',
-'            (select max(dgrm_version) from flow_diagrams d where d.dgrm_name = dgrm.dgrm_name) + 1,',
-'            ''draft'',',
-'            dgrm.dgrm_category,',
-'            systimestamp,',
-'            dgrm.dgrm_content',
-'        from flow_diagrams dgrm',
-'        where dgrm.dgrm_id = apex_application.g_x02;',
-'    end if;',
-'',
-'    apex_json.open_object;',
-'    apex_json.write(''success'', true);',
-'    apex_json.open_object(''data'');',
-'    if (apex_application.g_x01 = ''dgrm_edit'') then apex_json.write(''url'', l_ret); end if;',
-'    apex_json.close_object;',
-'    apex_json.close_object;',
-'exception',
-'    when others then',
-'        apex_json.open_object;',
-'        apex_json.write(''success'', false);',
-'        apex_json.write(''message'', sqlerrm);',
-'        apex_json.close_object;',
+'    flow_p0002_api.handle_ajax(',
+'        pi_dgrm_id => apex_application.g_x02,',
+'        pi_action => apex_application.g_x01',
+'    );',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
