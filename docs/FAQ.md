@@ -12,9 +12,11 @@ Flows for APEX is based on version 2.0 of BPMN, released in January 2011.  BPMN 
 
 #### How do I learn more about BPMN?
 
-Working through the Flows for APEX tutorial worflows is one way to get started.  They are included in the distributed product, and also hosted on apex.oracle.com (see: https://bit.ly/flowsforapex).
+Working through the Flows for APEX tutorial workflows is one way to get started.  They are included in the distributed product, and also hosted on apex.oracle.com (see: https://bit.ly/flowsforapex).
 
 For deeper understanding of BPMN, we'd recommend *Real-Life BPMN (4th ed): Includes an Introduction to DMN* by Jakob Freund and Bernd Rücker.  available is hardcopy or on kindle from Amazon.  (English and German versions available).
+
+Contact the Flows for APEX team if you want to arrange training or consulting support for your Flows for APEX development project.  These can be arranged online or, once the pandemic situation permits, on-site.
 
 #### What versions of Oracle and Oracle APEX do you support?
 
@@ -56,15 +58,27 @@ The Flows for APEX BPMN Flow Viewer displays a BPMN diagram that was created by 
 
 #### Would you normally make this application available to all your end users?
 
-The Flow for APEX app, containing the flow modeler and a control page for flow instances, would be used for process designers / developers and for the process administrators.  Users only need to see their normal application, and you wouldn't want them to be modifying the process model or controlling execution of process instances outside of an applicartion.  You could give them visibility of the process map showing them where they are in the process, and which steps are completed or not, by including the Flows for APEX BPMN Viewer plugin into your end application(s).
+The Flow for APEX app, containing the flow manager (managing diagram versioning and version release control), flow modeler (diagram creating & editing tool), and flow control page for flow instances, would be used for process designers / developers and for the process administrators.  Users only need to see their normal application, and you wouldn't want them to be modifying the process models or controlling execution of process instances outside of an application.  You could give them visibility of the process map showing them where they are in the process, and which steps are completed or not, by including the Flows for APEX BPMN Viewer plugin into your end application(s).
 
 #### Is it possible to support other diagramming tools?
 
-If the tools provide a BPMN-conformant XML most things should work.  However you would be missing out on the APEX-specific things we put on top of bpmn.io.
+If the tools provide a BPMN-conformant XML most things should work.  However you would be missing out on the APEX-specific things we put on top of bpmn.io.  And a process model of any real complexity is likely to use process variables, which are implemented differently in any run time environment, and APEX-specific syntax -- so we strongly recommend building your process diagrams using the Flows for APEX Modeler.
 
-#### Process versioning is a big factor in our workflow process. I understand that this is open source but are there any official plans to include this?
+#### Process versioning is a big factor in our workflow process. How does Flows for APEX support this?
 
-Versioning of process diagrams is important as users start to move into production usage.  Currently you can use diagram naming for versioning your workflows, which would allow currently running process instances to continue on the diagram they started on, while users start new processes on the latest version.  Getting a more robust versioning mechanism is definitely on our near term development path (and like all community projects, if you want to add a feature, you are very welcome to support it by either donating time to develop it, or by sponsoring development of the feature by some of the existing team).
+Versioning of process diagrams is important as users start to move into production usage.  Business processes evolve, and a process engine needs to support that. Flows for APEX V5.1 introduces process versioning for those who need it.
+
+- Process diagrams are initially saved with a status of 'draft' and a version of '0'.
+- A 'draft' diagram can be edited and re-saved.  It can be run.
+- If you are using versioning, you can promote a diagram to a status of 'released'.  Only one version of a model can have released status at any one time.  By default, running a model specifying its name only, will run the 'released' version of a model.
+- If a previous 'released' version of the model exists when a new version is promoted to 'released' status, the older version changes its status to 'deprecated'.  Any process instances that were started with the now deprecated version, will continue to execute using the deprecated version that they were started with.
+- New process instances can only be started using a model in 'draft' status (for testing, or if you're not using versioning) or in 'released' status.  'deprecated' or 'archived' status models cannot be used to start new process instances.
+- A copy of any version can be made, which can be edited and form the basis of a new version of a model.
+- The Flow Management page of the Flows for APEX app is used to create, release, and manage the various versions of a process diagram that might exist.
+
+#### How does the Version Numbering work?
+
+Version numbers are a free-text tag, so that users can create whatever versioning naming / numbering scheme. they need.
 
 ## Flows for APEX API
 
@@ -92,3 +106,4 @@ in the distribution, look at the flow_api_pkg spec to see how to call the API.  
 #### Is there a way to do a 'flow_previous_step' or undo a step?
 
 We don't currently provide an undo function in the API, and as a step could have performed and committed a transaction in the database, it would be hard to do that.  One way to meet a requirement like this would be to support what are called Compensation Events in a BPMN model - which allows you to specify a process flow for cancelling or rolling back a previously-executed process flow.   We don't have concrete plans to implement compensation events at present, but it could be done without too much difficulty ( - and like all community projects, if you want to add a feature, you are very welcome to support it by either donating time to develop it, or by sponsoring development of the feature by some of the existing team).
+
