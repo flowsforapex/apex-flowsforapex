@@ -2,9 +2,12 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA2 - Tutorial - Parallel Gateways"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
-'AA2 - Tutorial - Parallel Gateways', 'Tutorials',
+'AA2 - Tutorial - Parallel Gateways',
+0,
+'Tutorials',
+to_timestamp_tz( '07.02.2021 16:05:54.595914000 +00:00', 'dd.mm.yyyy hh24:mi:ssxff TZH:TZM'),
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -138,7 +141,7 @@ apex_string.join_clob(
   , q'[    <bpmn:sequenceFlow id='Flow_0eg3kjl' sourceRef='Activity_0vesmoj' targetRef='Event_0zsiv0z' />]'
   , q'[    <bpmn:sequenceFlow id='Flow_0lud504' sourceRef='Activity_0nuq9gg' targetRef='Gateway_0cco76x' />]'
   , q'[    <bpmn:sequenceFlow id='Flow_135t0ky' sourceRef='Activity_04sg1f1' targetRef='Gateway_0cco76x' />]'
-  , q'[    <bpmn:task id='Activity_1po2k4u' name='That&#39;s EnoughÂ &#10;about&#10;Parallel&#10;Gateways'>]'
+  , q'[    <bpmn:task id='Activity_1po2k4u' name='That&#39;s Enough&#10;about&#10;Parallel&#10;Gateways'>]'
   , q'[      <bpmn:incoming>Flow_1k49en2</bpmn:incoming>]'
   , q'[      <bpmn:outgoing>Flow_1x47nfa</bpmn:outgoing>]'
   , q'[    </bpmn:task>]'
@@ -151,6 +154,8 @@ apex_string.join_clob(
   , q'[      <bpmn:text>The first section here uses a PARALLEL GATEWAY.]'
   , q'[]'
   , q'[When you use a Parallel Gateway, ALL of the forward paths are taken - so tasks B1, B2, and B3 become the current task on their own subflows.]'
+  , q'[]'
+  , q'[As ALL paths are taken, there are no default paths or process variables required to instruct the gateway.  All paths are taken...]'
   , q'[]'
   , q'[At the end of our parallel section, we have another Parallel Gateway.  This acts as a merge and synchronize gateway to bring all of the sections together again.  Task C only becomes the current tasks when all 3 of B1, B2, and B3 have completed.]'
   , q'[]'
@@ -174,7 +179,7 @@ apex_string.join_clob(
   , q'[]'
   , q'[How many times does J get executed?</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
-  , q'[    <bpmn:association id='Association_0flsrlo' sourceRef='Activity_0nuq9gg' targetRef='TextAnnotation_0d1c0wm' />]'
+  , q'[    <bpmn:association id='Association_0flsrlo' sourceRef='Gateway_0cco76x' targetRef='TextAnnotation_0d1c0wm' />]'
   , q'[  </bpmn:process>]'
   , q'[  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>]'
   , q'[    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_Tutorial_2'>]'
@@ -399,7 +404,7 @@ apex_string.join_clob(
   , q'[        </bpmndi:BPMNLabel>]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_1elusm3_di' bpmnElement='TextAnnotation_1elusm3'>]'
-  , q'[        <dc:Bounds x='450' y='100' width='440' height='194' />]'
+  , q'[        <dc:Bounds x='440' y='100' width='580' height='222' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_1g5plgd_di' bpmnElement='TextAnnotation_1g5plgd'>]'
   , q'[        <dc:Bounds x='1130' y='390' width='100' height='96' />]'
@@ -408,11 +413,11 @@ apex_string.join_clob(
   , q'[        <dc:Bounds x='1330' y='100' width='407' height='130' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_0d1c0wm_di' bpmnElement='TextAnnotation_0d1c0wm'>]'
-  , q'[        <dc:Bounds x='1319' y='510' width='491' height='100' />]'
+  , q'[        <dc:Bounds x='1319' y='510' width='501' height='100' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Association_01fj9ha_di' bpmnElement='Association_01fj9ha'>]'
   , q'[        <di:waypoint x='403' y='460' />]'
-  , q'[        <di:waypoint x='457' y='294' />]'
+  , q'[        <di:waypoint x='448' y='322' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[      <bpmndi:BPMNEdge id='Association_0vub955_di' bpmnElement='Association_0vub955'>]'
   , q'[        <di:waypoint x='1111' y='486' />]'
@@ -423,8 +428,8 @@ apex_string.join_clob(
   , q'[        <di:waypoint x='1340' y='230' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[      <bpmndi:BPMNEdge id='Association_0flsrlo_di' bpmnElement='Association_0flsrlo'>]'
-  , q'[        <di:waypoint x='1362' y='644' />]'
-  , q'[        <di:waypoint x='1330' y='620' />]'
+  , q'[        <di:waypoint x='1569' y='784' />]'
+  , q'[        <di:waypoint x='1623' y='610' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[    </bpmndi:BPMNPlane>]'
   , q'[  </bpmndi:BPMNDiagram>]'
@@ -436,5 +441,10 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA2 - Tutorial - Parallel Gateways" loaded.
+PROMPT >> Example "AA2 - Tutorial - Parallel Gateways - v0" loaded.
 PROMPT >> ========================================================
+ 
+
+
+PL/SQL procedure successfully completed.
+

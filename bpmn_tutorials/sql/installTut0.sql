@@ -2,9 +2,12 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA0 - Tutorial - Getting Started"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
-'AA0 - Tutorial - Getting Started', 'Tutorials',
+'AA0 - Tutorial - Getting Started',
+0,
+'Tutorials',
+to_timestamp_tz( '07.02.2021 16:01:30.336804000 +00:00', 'dd.mm.yyyy hh24:mi:ssxff TZH:TZM'),
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -12,9 +15,7 @@ apex_string.join_clob(
   , q'[  <bpmn:process id='Process_Get_Started' name='Getting Started' isExecutable='false'>]'
   , q'[    <bpmn:documentation>Tutorials by Richard Allen.]'
   , q'[Flowquest Consulting.]'
-  , q'[twitter: @FlowquestR]'
-  , q'[]'
-  , q'[</bpmn:documentation>]'
+  , q'[twitter: @FlowquestR</bpmn:documentation>]'
   , q'[    <bpmn:startEvent id='Event_1h6hi8k' name='Process Start'>]'
   , q'[      <bpmn:outgoing>Flow_16vwtz6</bpmn:outgoing>]'
   , q'[    </bpmn:startEvent>]'
@@ -61,15 +62,15 @@ apex_string.join_clob(
   , q'[]'
   , q'[We've left a few tutorial and demo models here for you to get started!]'
   , q'[]'
-  , q'[To create a model, use the Workflow Editor to create or edit a model.  If you edit the tutorials, please save them into your own model so that others can start from a clean model!]'
+  , q'[To create a model, use the Flow Modeler to create or edit a model.  If you edit the tutorials, please save them into your own model so that others can start from a clean model!]'
   , q'[]'
-  , q'[To execute a model, use the Process Instances tab to get the Flow Monitor.]'
+  , q'[To execute a model, go to Flow Control, and then select the Process Instances.]'
   , q'[]'
   , q'[Using Create Instance, select the Process Diagram that you want to execute an Instance of.  Give it a Name.]'
   , q'[]'
-  , q'[The Process Instances tab shows you all of the current process instances.  Find your process instance &amp;click on the Play button to Start your Process executing.]'
+  , q'[In Flow Control, the Process Instances tab shows you all of the current process instances.  Find your process instance and then click on the Play button to Start executing your process.]'
   , q'[]'
-  , q'[Then move to the Subflows tab to see the individual routes (subflows) through your process.Â  Use the Forward Icons to move the subflow forwards.]'
+  , q'[Then move to the Subflows tab to see the individual routes (subflows) through your process.  Use the Forward Icons to move the subflow forwards.]'
   , q'[]'
   , q'[The third tab is Variables - we'll explore that in the Gateway Tutorial model...]'
   , q'[]'
@@ -158,7 +159,7 @@ apex_string.join_clob(
   , q'[        <dc:Bounds x='840' y='520' width='100' height='80' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_0s1apks_di' bpmnElement='TextAnnotation_0s1apks'>]'
-  , q'[        <dc:Bounds x='480' y='-10' width='740' height='334' />]'
+  , q'[        <dc:Bounds x='480' y='-10' width='740' height='333.99456787109375' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_1ooxxc0_di' bpmnElement='TextAnnotation_1ooxxc0'>]'
   , q'[        <dc:Bounds x='1160' y='560' width='250' height='82' />]'
@@ -181,5 +182,10 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA0 - Tutorial - Getting Started" loaded.
+PROMPT >> Example "AA0 - Tutorial - Getting Started - v0" loaded.
 PROMPT >> ========================================================
+ 
+
+
+PL/SQL procedure successfully completed.
+

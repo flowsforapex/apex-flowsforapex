@@ -2,14 +2,17 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA6 - Errors and Escalations"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
-'AA6 - Errors and Escalations', 'Tutorials',
+'AA6 - Errors and Escalations',
+0,
+'Tutorials',
+to_timestamp_tz( '07.02.2021 16:01:30.529873000 +00:00', 'dd.mm.yyyy hh24:mi:ssxff TZH:TZM'),
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
   , q'[<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/bpmn' exporter='bpmn-js (https://demo.bpmn.io)' exporterVersion='7.2.0'>]'
-  , q'[  <bpmn:process id='Tutorial_AA6' name='Tutorial - Errors and Escalations' isExecutable='false'>]'
+  , q'[  <bpmn:process id='Tutorial_AA6' name='Tutorial 6 - Errors and Escalations' isExecutable='false'>]'
   , q'[    <bpmn:documentation>Tutorials by Richard Allen.]'
   , q'[Flowquest Consulting.]'
   , q'[twitter: @FlowquestR</bpmn:documentation>]'
@@ -178,15 +181,15 @@ apex_string.join_clob(
   , q'[]'
   , q'[Sub process B4 has an Error End Event - so in this tutorial it always ends with an error - which interrupts the sub-process, and passes control to the error handler if you have one defined.]'
   , q'[]'
-  , q'[]'
-  , q'[]'
-  , q'[]'
   , q'[Note that we're talking about business process Escalations (and Errors) here - not technical escalations (or errors!).</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_0ccwauj' sourceRef='Activity_1lt3f7j' targetRef='TextAnnotation_0m1p9cx' />]'
   , q'[  </bpmn:process>]'
   , q'[  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>]'
   , q'[    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Tutorial_AA6'>]'
+  , q'[      <bpmndi:BPMNShape id='TextAnnotation_0m1p9cx_di' bpmnElement='TextAnnotation_0m1p9cx'>]'
+  , q'[        <dc:Bounds x='550' y='-120' width='929.9997728924418' height='220.31823745410037' />]'
+  , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Flow_1wddzwq_di' bpmnElement='Flow_1wddzwq'>]'
   , q'[        <di:waypoint x='1430' y='890' />]'
   , q'[        <di:waypoint x='1460' y='890' />]'
@@ -448,19 +451,16 @@ apex_string.join_clob(
   , q'[      <bpmndi:BPMNShape id='Activity_1mbzten_di' bpmnElement='Activity_1mbzten'>]'
   , q'[        <dc:Bounds x='1330' y='850' width='100' height='80' />]'
   , q'[      </bpmndi:BPMNShape>]'
-  , q'[      <bpmndi:BPMNShape id='TextAnnotation_0m1p9cx_di' bpmnElement='TextAnnotation_0m1p9cx'>]'
-  , q'[        <dc:Bounds x='580' y='-180' width='930' height='264' />]'
-  , q'[      </bpmndi:BPMNShape>]'
+  , q'[      <bpmndi:BPMNEdge id='Association_0ccwauj_di' bpmnElement='Association_0ccwauj'>]'
+  , q'[        <di:waypoint x='875' y='210' />]'
+  , q'[        <di:waypoint x='771' y='100' />]'
+  , q'[      </bpmndi:BPMNEdge>]'
   , q'[      <bpmndi:BPMNShape id='Event_170xafm_di' bpmnElement='Event_05m9taf'>]'
   , q'[        <dc:Bounds x='1272' y='792' width='36' height='36' />]'
   , q'[        <bpmndi:BPMNLabel>]'
   , q'[          <dc:Bounds x='1178' y='835' width='83' height='40' />]'
   , q'[        </bpmndi:BPMNLabel>]'
   , q'[      </bpmndi:BPMNShape>]'
-  , q'[      <bpmndi:BPMNEdge id='Association_0ccwauj_di' bpmnElement='Association_0ccwauj'>]'
-  , q'[        <di:waypoint x='922' y='210' />]'
-  , q'[        <di:waypoint x='822' y='84' />]'
-  , q'[      </bpmndi:BPMNEdge>]'
   , q'[    </bpmndi:BPMNPlane>]'
   , q'[  </bpmndi:BPMNDiagram>]'
   , q'[</bpmn:definitions>]'
@@ -471,5 +471,10 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA6 - Errors and Escalations" loaded.
+PROMPT >> Example "AA6 - Errors and Escalations - v0" loaded.
 PROMPT >> ========================================================
+ 
+
+
+PL/SQL procedure successfully completed.
+

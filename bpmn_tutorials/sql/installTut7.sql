@@ -1,10 +1,13 @@
 set define off
 PROMPT >> Loading Exported Diagrams
-PROMPT >> Loading Example "AA7 - Tutorial - It's about time"
+PROMPT >> Loading Example "AA7 - Tutorial - Its about time"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_category, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
-'AA7 - Tutorial - Its about time', 'Tutorials',
+'AA7 - Tutorial - Its about time',
+0,
+'Tutorials',
+to_timestamp_tz( '07.02.2021 16:01:30.553488000 +00:00', 'dd.mm.yyyy hh24:mi:ssxff TZH:TZM'),
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -78,7 +81,7 @@ apex_string.join_clob(
   , q'[]'
   , q'[We can add timers to our models to add a delay, create a reminder, cause a time period to end, or force a process timeout.]'
   , q'[]'
-  , q'[Task A has a Timer Boundary Event attached to it.Â  Notice the circles on the boundary event are dashed, not solid.Â  This means it is a non-interrupting timer.Â  Use this to send someone a reminder when they haven't completed a task after 2 days...]'
+  , q'[Task A has a Timer Boundary Event attached to it.  Notice the circles on the boundary event are dashed, not solid.  This means it is a non-interrupting timer.  Use this to send someone a reminder when they haven't completed a task after 2 days...]'
   , q'[]'
   , q'[Step C is a Timer Event.  This just stops the process until the timer fires.]'
   , q'[]'
@@ -105,9 +108,6 @@ apex_string.join_clob(
   , q'[  </bpmn:process>]'
   , q'[  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>]'
   , q'[    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_AA7_Timers'>]'
-  , q'[      <bpmndi:BPMNShape id='TextAnnotation_0ijxguz_di' bpmnElement='TextAnnotation_0ijxguz'>]'
-  , q'[        <dc:Bounds x='240' y='530' width='310' height='194' />]'
-  , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Flow_1mm3pdn_di' bpmnElement='Flow_1mm3pdn'>]'
   , q'[        <di:waypoint x='1000' y='190' />]'
   , q'[        <di:waypoint x='1052' y='190' />]'
@@ -189,15 +189,14 @@ apex_string.join_clob(
   , q'[        </bpmndi:BPMNLabel>]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_1wdez7y_di' bpmnElement='TextAnnotation_1wdez7y'>]'
-  , q'[        <dc:Bounds x='220' y='-120' width='1030' height='260' />]'
+  , q'[        <dc:Bounds x='200' y='-120' width='1050' height='270' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_1lvcb8y_di' bpmnElement='TextAnnotation_1lvcb8y'>]'
   , q'[        <dc:Bounds x='890' y='410' width='350' height='138' />]'
   , q'[      </bpmndi:BPMNShape>]'
-  , q'[      <bpmndi:BPMNEdge id='Association_0y95ijj_di' bpmnElement='Association_0y95ijj'>]'
-  , q'[        <di:waypoint x='389' y='368' />]'
-  , q'[        <di:waypoint x='380' y='530' />]'
-  , q'[      </bpmndi:BPMNEdge>]'
+  , q'[      <bpmndi:BPMNShape id='TextAnnotation_0ijxguz_di' bpmnElement='TextAnnotation_0ijxguz'>]'
+  , q'[        <dc:Bounds x='240' y='530' width='320' height='194' />]'
+  , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='Event_1jj5rvr_di' bpmnElement='Event_100vuz3'>]'
   , q'[        <dc:Bounds x='812' y='252' width='36' height='36' />]'
   , q'[        <bpmndi:BPMNLabel>]'
@@ -212,11 +211,15 @@ apex_string.join_clob(
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Association_1ilv47z_di' bpmnElement='Association_1ilv47z'>]'
   , q'[        <di:waypoint x='392' y='270' />]'
-  , q'[        <di:waypoint x='426' y='140' />]'
+  , q'[        <di:waypoint x='424' y='150' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[      <bpmndi:BPMNEdge id='Association_0dpxqu1_di' bpmnElement='Association_0dpxqu1'>]'
   , q'[        <di:waypoint x='861' y='350' />]'
   , q'[        <di:waypoint x='924' y='410' />]'
+  , q'[      </bpmndi:BPMNEdge>]'
+  , q'[      <bpmndi:BPMNEdge id='Association_0y95ijj_di' bpmnElement='Association_0y95ijj'>]'
+  , q'[        <di:waypoint x='389' y='368' />]'
+  , q'[        <di:waypoint x='380' y='530' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[    </bpmndi:BPMNPlane>]'
   , q'[  </bpmndi:BPMNDiagram>]'
@@ -228,6 +231,10 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA7 - Tutorial - It's about time" loaded.
+PROMPT >> Example "AA7 - Tutorial - Its about time - v0" loaded.
 PROMPT >> ========================================================
  
+
+
+PL/SQL procedure successfully completed.
+
