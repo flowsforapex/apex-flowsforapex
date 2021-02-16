@@ -1,5 +1,29 @@
 create or replace package body flow_p0002_api
 as
+    function get_error_message(
+        pi_sqlcode in number,
+        pi_sqlerrm in varchar2)
+    return varchar2
+    is
+    l_constraint_name varchar2(255);
+    l_constraint_message varchar2(32767);
+    l_error_message varchar2(32767);
+    begin
+    if pi_sqlcode in (-1, -2091, -2290, -2291, -2292) then
+        l_constraint_name := substr(pi_sqlerrm, instr(pi_sqlerrm, '(')+1, instr( pi_sqlerrm, ')') - instr( pi_sqlerrm,'(') -1);
+        l_constraint_name := substr(l_constraint_name, instr(l_constraint_name, '.')+1);
+        l_constraint_message := apex_lang.message(p_name => l_constraint_name);
+        if (l_constraint_message != l_constraint_name) then
+            l_error_message := l_constraint_message;
+        end if;
+    end if;
+    if (l_error_message is null) then
+        l_error_message := pi_sqlerrm;
+    end if;
+
+    return l_error_message;
+    end get_error_message;
+
     procedure delete_diagram(
         pi_dgrm_id in flow_diagrams.dgrm_id%type,
         pi_cascade in varchar2
@@ -109,7 +133,7 @@ as
         when others then
             apex_json.open_object;
             apex_json.write('success', false);
-            apex_json.write('message', sqlerrm);
+            apex_json.write('message', get_error_message(pi_sqlcode => sqlcode, pi_sqlerrm => sqlerrm));
             apex_json.close_object;
     end handle_ajax;
 

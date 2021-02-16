@@ -52,6 +52,7 @@ as
         pi_import_from in varchar2,
         pi_dgrm_name in flow_diagrams.dgrm_name%type,
         pi_dgrm_category in flow_diagrams.dgrm_category%type,
+        pi_dgrm_version in flow_diagrams.dgrm_version%type,
         pi_dgrm_content in flow_diagrams.dgrm_content%type,
         pi_file_name in varchar2,
         pi_force_overwrite in varchar2
@@ -68,10 +69,6 @@ as
         where dgrm_name = pi_dgrm_name
         and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft;
 
-        apex_debug.message(
-              p_message => 'l_dgrm_exists '||l_dgrm_exists
-        );
-
         if (l_dgrm_exists = 0 or pi_force_overwrite = 'Y') then
             if (pi_import_from = 'text') then
                 l_dgrm_content := pi_dgrm_content;
@@ -84,7 +81,7 @@ as
         
             l_dgrm_id := flow_bpmn_parser_pkg.upload_diagram(
                 pi_dgrm_name => pi_dgrm_name
-                , pi_dgrm_version => flow_constants_pkg.gc_dgrm_status_draft
+                , pi_dgrm_version => pi_dgrm_version
                 , pi_dgrm_category => pi_dgrm_category
                 , pi_dgrm_content => l_dgrm_content
                 , pi_force_overwrite => case pi_force_overwrite when 'Y' then true else false end
