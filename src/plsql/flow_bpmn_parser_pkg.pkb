@@ -447,6 +447,7 @@ as
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
     return flow_diagrams.dgrm_id%type
   as
@@ -474,12 +475,14 @@ as
       returning dgrm_id into l_dgrm_id
       ;
     else
-      update flow_diagrams
-         set dgrm_content = pi_dgrm_content
-           , dgrm_last_update = systimestamp
-           , dgrm_status  = pi_dgrm_status
-       where dgrm_id = l_dgrm_id
-      ;
+      if (pi_force_overwrite) then
+        update flow_diagrams
+          set dgrm_content = pi_dgrm_content
+            , dgrm_last_update = systimestamp
+            , dgrm_status  = pi_dgrm_status
+        where dgrm_id = l_dgrm_id
+        ;
+      end if;
     end if;
 
     return l_dgrm_id;
@@ -493,12 +496,13 @@ as
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
   as
   begin
     g_dgrm_id := upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
                                  pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
-                                 pi_dgrm_status => pi_dgrm_status
+                                 pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
                                   );
   end upload_diagram;
 
@@ -1029,6 +1033,7 @@ as
   , pi_dgrm_category in flow_diagrams.dgrm_category%type
   , pi_dgrm_content  in flow_diagrams.dgrm_content%type
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
   as
   begin
@@ -1036,7 +1041,7 @@ as
 
     upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
                     pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
-                    pi_dgrm_status => pi_dgrm_status
+                    pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
                   );
     parse;
 

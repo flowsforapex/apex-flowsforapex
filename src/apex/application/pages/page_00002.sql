@@ -25,7 +25,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495635610083880376)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210212001239'
+,p_last_upd_yyyymmddhh24miss=>'20210212193137'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2405357256481942)
@@ -365,7 +365,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_image_alt=>'Import Diagram'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
-,p_button_redirect_url=>'f?p=&APP_ID.:6:&SESSION.::&DEBUG.:6::'
+,p_button_redirect_url=>'f?p=&APP_ID.:6:&SESSION.::&DEBUG.:6:P6_FORCE_OVERWRITE:N'
 ,p_icon_css_classes=>'fa-upload'
 );
 wwv_flow_api.create_page_branch(
@@ -649,14 +649,37 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_event_type=>'apexafterclosedialog'
 );
 wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(19019481478332912)
+ p_id=>wwv_flow_api.id(24212156552956105)
 ,p_event_id=>wwv_flow_api.id(19019347638332911)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P2_DGRM_ID'
+,p_attribute_01=>'DIALOG_RETURN_ITEM'
+,p_attribute_09=>'N'
+,p_attribute_10=>'P6_DGRM_ID'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19019481478332912)
+,p_event_id=>wwv_flow_api.id(19019347638332911)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(9900826057126998)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(19023277699332950)
+,p_event_id=>wwv_flow_api.id(19019347638332911)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'apex.message.showPageSuccess("Diagram imported.");'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(19021914580332937)
@@ -742,48 +765,11 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'PAGE2_AJAX'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_ret varchar2(4000);',
-'    l_success boolean := true;',
-'    l_message varchar2(4000);',
-'    l_dgrm_id flow_diagrams.dgrm_id%type;',
-'    r_diagrams flow_diagrams%rowtype;',
-'    l_dgrm_exist number;',
 'begin',
-'    if (apex_application.g_x01 = ''dgrm_edit'') then',
-'        l_ret := apex_page.get_url(',
-'            p_page => 4,',
-'            p_clear_cache => 4,',
-'            p_items => ''P4_DGRM_ID'',',
-'            p_values => apex_application.g_x02',
-'        );',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_release'') then',
-'        update flow_diagrams set dgrm_status = ''released'' where dgrm_id = apex_application.g_x02;',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_archive'') then',
-'        update flow_diagrams set dgrm_status = ''archived'' where dgrm_id = apex_application.g_x02;',
-'    end if;',
-'    ',
-'    if (apex_application.g_x01 = ''dgrm_deprecate'') then',
-'        update flow_diagrams set dgrm_status = ''deprecated'' where dgrm_id = apex_application.g_x02;',
-'    end if;',
-'',
-'    apex_json.open_object;',
-'    apex_json.write(''success'', l_success);',
-'    apex_json.write(''message'', l_message);',
-'    apex_json.open_object(''data'');',
-'    if (apex_application.g_x01 = ''dgrm_edit'') then apex_json.write(''url'', l_ret); end if;',
-'    apex_json.close_object;',
-'    apex_json.close_object;',
-'exception',
-'    when others then',
-'        apex_json.open_object;',
-'        apex_json.write(''success'', false);',
-'        apex_json.write(''message'', sqlerrm);',
-'        apex_json.close_object;',
+'    flow_p0002_api.handle_ajax(',
+'        pi_dgrm_id => apex_application.g_x02,',
+'        pi_action => apex_application.g_x01',
+'    );',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
