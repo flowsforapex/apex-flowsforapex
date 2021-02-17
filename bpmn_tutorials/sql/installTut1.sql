@@ -289,8 +289,3 @@ end;
  
 PROMPT >> Example "AA1 - Gateway Tutorial - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-

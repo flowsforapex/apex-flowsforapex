@@ -188,8 +188,3 @@ end;
  
 PROMPT >> Example "AA4 - Tutorial - Tasks Get Your Work Done! - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-

@@ -285,8 +285,3 @@ end;
  
 PROMPT >> Example "AA5 - Introducing Sub Processes - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-

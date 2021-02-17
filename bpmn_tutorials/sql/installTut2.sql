@@ -443,8 +443,3 @@ end;
  
 PROMPT >> Example "AA2 - Tutorial - Parallel Gateways - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-
