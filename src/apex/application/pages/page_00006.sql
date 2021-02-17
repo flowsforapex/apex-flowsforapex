@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210213083114'
+,p_last_upd_yyyymmddhh24miss=>'20210216144739'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -352,6 +352,7 @@ wwv_flow_api.create_page_process(
 '        pi_import_from => :P6_IMPORT_FROM,',
 '        pi_dgrm_name => :P6_DGRM_NAME,',
 '        pi_dgrm_category => :P6_DGRM_CATEGORY,',
+'        pi_dgrm_version => :P6_DGRM_VERSION,',
 '        pi_dgrm_content => :P6_DGRM_CONTENT,',
 '        pi_file_name => :P6_BPMN_FILE,',
 '        pi_force_overwrite => :P6_FORCE_OVERWRITE',

@@ -18,6 +18,7 @@ as
         pi_import_from in varchar2,
         pi_dgrm_name in flow_diagrams.dgrm_name%type,
         pi_dgrm_category in flow_diagrams.dgrm_category%type,
+        pi_dgrm_version in flow_diagrams.dgrm_version%type,
         pi_dgrm_content in flow_diagrams.dgrm_content%type,
         pi_file_name in varchar2,
         pi_force_overwrite in varchar2
