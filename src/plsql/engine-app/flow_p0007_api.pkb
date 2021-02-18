@@ -73,5 +73,35 @@ as
         end if;
     end add_diagram_version;
 
+    procedure add_default_xml(
+        pi_dgrm_id in flow_diagrams.dgrm_id%type
+    )
+    is
+        l_default_xml clob := '<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.2.0">
+<bpmn:process id="Process_0rxermh" isExecutable="false" />
+<bpmndi:BPMNDiagram id="BPMNDiagram_1">
+<bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh" />
+</bpmndi:BPMNDiagram>
+</bpmn:definitions>
+';
+    begin
+        update flow_diagrams set dgrm_content = l_default_xml where dgrm_id = pi_dgrm_id;
+    end add_default_xml;
+
+    procedure update_diagram_category(
+        pi_dgrm_id in flow_diagrams.dgrm_id%type,
+        pi_dgrm_category in flow_diagrams.dgrm_category%type
+    )
+    is
+    begin
+        update flow_diagrams d
+        set d.dgrm_category = pi_dgrm_category,
+            d.dgrm_last_update = systimestamp
+        where d.dgrm_name = (select dgrm_name from flow_diagrams where dgrm_id = pi_dgrm_id)
+        and (d.dgrm_category != pi_dgrm_category or (d.dgrm_category is null and pi_dgrm_category is not null) or (pi_dgrm_category is null and d.dgrm_category is not null))
+        and d.dgrm_id != pi_dgrm_id;
+    end update_diagram_category;
+
 end flow_p0007_api;
 /
