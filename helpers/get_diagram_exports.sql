@@ -48,7 +48,7 @@ begin
       sys.dbms_output.put_line('end;');
       sys.dbms_output.put_line('/');
       sys.dbms_output.put_line( ' ' );
-      sys.dbms_output.put_line('PROMPT >> Example "' || rec.dgrm_name || ' - v' || to_char( rec.dgrm_version, 'FM9999' ) || '" loaded.');
+      sys.dbms_output.put_line('PROMPT >> Example "' || rec.dgrm_name || ' - v' || rec.dgrm_version || '" loaded.');
       sys.dbms_output.put_line('PROMPT >> ========================================================');
       sys.dbms_output.put_line( ' ' );
     exception
