@@ -25,12 +25,17 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(26017638645989579)
+,p_name=>'DGRM_UK'
+,p_message_text=>'A diagram already exists with the same name and status.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(24219258023169431)
 ,p_name=>'DGRM_UK2'
 ,p_message_text=>'A diagram with this name and having a status of ''release'' already exists.  Change the existing diagram status to deprecate or archived and re-import.'
 ,p_is_js_message=>true
 );
-null;
 wwv_flow_api.component_end;
 end;
 /

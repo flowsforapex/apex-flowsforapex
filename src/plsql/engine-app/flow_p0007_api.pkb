@@ -1,4 +1,4 @@
-create or replace package body flow_p0002_api
+create or replace package body flow_p0007_api
 as
     function get_error_message(
         pi_sqlcode in number,
@@ -73,69 +73,35 @@ as
         end if;
     end add_diagram_version;
 
-    procedure update_diagram_status(
+    procedure add_default_xml(
+        pi_dgrm_id in flow_diagrams.dgrm_id%type
+    )
+    is
+        l_default_xml clob := '<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.2.0">
+<bpmn:process id="Process_0rxermh" isExecutable="false" />
+<bpmndi:BPMNDiagram id="BPMNDiagram_1">
+<bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh" />
+</bpmndi:BPMNDiagram>
+</bpmn:definitions>
+';
+    begin
+        update flow_diagrams set dgrm_content = l_default_xml where dgrm_id = pi_dgrm_id;
+    end add_default_xml;
+
+    procedure update_diagram_category(
         pi_dgrm_id in flow_diagrams.dgrm_id%type,
-        pi_dgrm_status in flow_diagrams.dgrm_version%type
+        pi_dgrm_category in flow_diagrams.dgrm_category%type
     )
     is
     begin
-        update flow_diagrams set dgrm_status = pi_dgrm_status where dgrm_id = pi_dgrm_id;
-    end update_diagram_status;
+        update flow_diagrams d
+        set d.dgrm_category = pi_dgrm_category,
+            d.dgrm_last_update = systimestamp
+        where d.dgrm_name = (select dgrm_name from flow_diagrams where dgrm_id = pi_dgrm_id)
+        and (d.dgrm_category != pi_dgrm_category or (d.dgrm_category is null and pi_dgrm_category is not null) or (pi_dgrm_category is null and d.dgrm_category is not null))
+        and d.dgrm_id != pi_dgrm_id;
+    end update_diagram_category;
 
-    procedure handle_ajax(
-        pi_dgrm_id in flow_diagrams.dgrm_id%type,
-        pi_action in varchar2
-    ) 
-    is
-        l_ret varchar2(4000);
-        l_success boolean := true;
-        l_message varchar2(4000);
-        l_dgrm_id flow_diagrams.dgrm_id%type;
-    begin
-        if (pi_action = 'dgrm_edit') then
-            l_ret := apex_page.get_url(
-                p_page => 4,
-                p_clear_cache => 4,
-                p_items => 'P4_DGRM_ID',
-                p_values => pi_dgrm_id
-            );
-        end if;
-        
-        if (pi_action = 'dgrm_release') then
-            update_diagram_status(
-                pi_dgrm_id => pi_dgrm_id,
-                pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_released
-            );
-        end if;
-        
-        if (pi_action = 'dgrm_archive') then
-            update_diagram_status(
-                pi_dgrm_id => pi_dgrm_id,
-                pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_archived
-            );
-        end if;
-        
-        if (pi_action = 'dgrm_deprecate') then
-            update_diagram_status(
-                pi_dgrm_id => pi_dgrm_id,
-                pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_deprecated
-            );
-        end if;
-
-        apex_json.open_object;
-        apex_json.write('success', l_success);
-        apex_json.write('message', l_message);
-        apex_json.open_object('data');
-        if (apex_application.g_x01 = 'dgrm_edit') then apex_json.write('url', l_ret); end if;
-        apex_json.close_object;
-        apex_json.close_object;
-    exception
-        when others then
-            apex_json.open_object;
-            apex_json.write('success', false);
-            apex_json.write('message', get_error_message(pi_sqlcode => sqlcode, pi_sqlerrm => sqlerrm));
-            apex_json.close_object;
-    end handle_ajax;
-
-end flow_p0002_api;
+end flow_p0007_api;
 /

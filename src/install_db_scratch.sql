@@ -45,10 +45,11 @@ PROMPT >> Installing Package Bodies
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
 PROMPT >> Page API Specifications
-@plsql/engine-app/flow_p0010_api.pks
 @plsql/engine-app/flow_p0005_api.pks
-@plsql/engine-app/flow_p0002_api.pks
 @plsql/engine-app/flow_p0006_api.pks
+@plsql/engine-app/flow_p0007_api.pks
+@plsql/engine-app/flow_p0010_api.pks
+
 PROMPT >> Global Error Function
 @plsql/engine-app/apex_error_handling.sql;
 
@@ -63,10 +64,10 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0002_instances_counter_vw.sql
 
 PROMPT >> Page API Bodies
-@plsql/engine-app/flow_p0010_api.pkb
 @plsql/engine-app/flow_p0005_api.pkb
-@plsql/engine-app/flow_p0002_api.pkb
 @plsql/engine-app/flow_p0006_api.pkb
+@plsql/engine-app/flow_p0007_api.pkb
+@plsql/engine-app/flow_p0010_api.pkb
 
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object
