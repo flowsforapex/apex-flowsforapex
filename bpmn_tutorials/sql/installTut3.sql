@@ -237,8 +237,3 @@ end;
  
 PROMPT >> Example "AA3 - Inclusive Gateways - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-

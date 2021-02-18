@@ -473,8 +473,3 @@ end;
  
 PROMPT >> Example "AA6 - Errors and Escalations - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-
