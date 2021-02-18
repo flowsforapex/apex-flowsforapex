@@ -28,10 +28,10 @@ begin
       
       sys.dbms_output.put_line( 'insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )' );
       sys.dbms_output.put_line( ' values (' );
-      sys.dbms_output.put_line( '''' || rec.dgrm_name || ''',' );
-      sys.dbms_output.put_line( to_char( rec.dgrm_version, 'FM9999' ) || ',' );
-      sys.dbms_output.put_line( '''' || rec.dgrm_category || ''',' );
-      sys.dbms_output.put_line( 'TIMESTAMP ''' || to_char( rec.dgrm_last_update, 'yyyy-mm-dd hh24:mi:ssxff TZH:TZM', 'NLS_NUMERIC_CHARACTERS = ''.,''' ) || ''',' );
+      sys.dbms_output.put_line( dbms_assert.enquote_literal(rec.dgrm_name) || ',' );
+      sys.dbms_output.put_line( dbms_assert.enquote_literal(rec.dgrm_version) || ',' );
+      sys.dbms_output.put_line( dbms_assert.enquote_literal(rec.dgrm_category) || ',' );
+      sys.dbms_output.put_line( 'TIMESTAMP ' || dbms_assert.enquote_literal(to_char( rec.dgrm_last_update, 'yyyy-mm-dd hh24:mi:ssxff TZH:TZM', 'NLS_NUMERIC_CHARACTERS = ''.,''' )) || ',' );
       sys.dbms_output.put_line( 'apex_string.join_clob(' );
       sys.dbms_output.put_line( '  apex_t_varchar2(' );
     
