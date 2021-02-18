@@ -139,17 +139,17 @@ Timer Non-Interrupting Boundary Event.  When an object has an attached non-inter
 - If the parent object completes before the timer fires, the timer and its subflow is deleted before the next object on the subflow becomes current.
 - If the timer fires while the parent is still the current object on its subflow, the forked subflow proceeds to its next object.  If the parent then proceeds on its subflow, the forked boundary event subflow continues until it completes.
 
-Non-Timer Non-Interrupting Boundary Events.  For example, a non-interrupting escalation boundary event.  These boundary events only form off a new subflow if the relevant event event fires.  For example, if a sub process had an attached Non-Interrupting Boundary Event, the escalation subflow is only created if an escalation event is fired from inside the sub process, which is then caught by the matching boundary event.
+Non-Timer Non-Interrupting Boundary Events.  For example, a non-interrupting escalation boundary event.  These boundary events only fork off a new subflow if the relevant event event fires.  For example, if a sub process had an attached Non-Interrupting Escalation Boundary Event, the escalation subflow is only created if an escalation event is fired from inside the sub process, which is then caught by the matching boundary event.
 
 #### Action when a Process is Reset
 
-***Note that resetting a process is not intended to be a common operation, and is included as an administrator function.  A process should be re-run by creating a new process instance in most normal operational cases.***
+***Note that resetting a process is not intended to be a common, day-to-day operation, and is included as an administrator function.  A process should be re-run by creating a new process instance in most normal operational cases.***
 
 When a process is reset:
 
 - any event handlers, such as timers, are terminated.
 - any current subflows are removed.
-- process progress remains, showing which objects were completed when the process ran.
+- process progress is reset to the begining, showing which objects were completed when the process ran.
 - any process variables attached to the instance ARE RETAINED.  If you wish to restart the process instance with a clean set of process variables, you should delete and recreate the process instance, ratherthan resetting it.
 - the process status is reset to `created`.
 

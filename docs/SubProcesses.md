@@ -32,7 +32,7 @@ A Sub Process must start with a single Start Event, which should be a simple Sta
 
 A sub process must have at least one End Event.  If more than 1 end events are specified, the sub Process waits for all active subflows to complete before returning to its parent process.  (It may have additional non-standard end events, such as error end events, etc.).
 
-#### 3. All Sub Processes are currently Embedded Sub Processes and Opeate in a Single Lane.
+#### 3. All Sub Processes are currently Embedded Sub Processes and Operate in a Single Lane.
 
 As is correct for an embedded BPMN sub process, a sub process must operate in a single lane.  All sub processes are currently embedded sub processes - callable sub processes are not yet supported.
 

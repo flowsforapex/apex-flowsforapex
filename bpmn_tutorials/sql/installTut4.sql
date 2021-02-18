@@ -2,21 +2,24 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA4 - Tutorial - Tasks Get Your Work Done!"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
 'AA4 - Tutorial - Tasks Get Your Work Done!',
+0,
+'Tutorials',
+to_timestamp_tz( '07.02.2021 16:01:30.466812000 +00:00', 'dd.mm.yyyy hh24:mi:ssxff TZH:TZM'),
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
   , q'[<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/bpmn' exporter='bpmn-js (https://demo.bpmn.io)' exporterVersion='7.2.0'>]'
-  , q'[  <bpmn:process id='Tutoria' name='Task Types Tutorial' isExecutable='false'>]'
+  , q'[  <bpmn:process id='Tutorial4' name='Task Types Tutorial' isExecutable='false'>]'
   , q'[    <bpmn:documentation>Tutorials by Richard Allen.]'
   , q'[Flowquest Consulting.]'
   , q'[twitter: @FlowquestR</bpmn:documentation>]'
   , q'[    <bpmn:startEvent id='Event_0etkrt2'>]'
   , q'[      <bpmn:outgoing>Flow_1nctu2s</bpmn:outgoing>]'
   , q'[    </bpmn:startEvent>]'
-  , q'[    <bpmn:task id='Activity_0byebb7' name='This is a Task'>]'
+  , q'[    <bpmn:task id='Activity_0byebb7' name='This is a standard Task'>]'
   , q'[      <bpmn:incoming>Flow_1nctu2s</bpmn:incoming>]'
   , q'[      <bpmn:outgoing>Flow_0pijurl</bpmn:outgoing>]'
   , q'[    </bpmn:task>]'
@@ -50,9 +53,11 @@ apex_string.join_clob(
   , q'[    <bpmn:textAnnotation id='TextAnnotation_0xw8y26'>]'
   , q'[      <bpmn:text>Tutorial AA4 - Tasks - Getting your Work Done!]'
   , q'[]'
-  , q'[So much for steering your process through gateways, etc.Â  How do we actually get things done?]'
+  , q'[So much for steering your process through gateways, etc.  How do we actually get things done?]'
   , q'[]'
-  , q'[Flows for APEX V5 can now direct steps in your process.Â  This step introduces the task types, and how to configure them.</bpmn:text>]'
+  , q'[Flows for APEX V5 can now direct steps in your process.  This step introduces the task types, and how to configure them.]'
+  , q'[]'
+  , q'[This tutorial is one to look at in Flow Modeller, but not run in your system</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_00jab7b' sourceRef='Event_0etkrt2' targetRef='TextAnnotation_0xw8y26' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1vygfet'>]'
@@ -62,17 +67,17 @@ apex_string.join_clob(
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_1r0p5lj' sourceRef='Activity_0srf4in' targetRef='TextAnnotation_1vygfet' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1egb903'>]'
-  , q'[      <bpmn:text>Service Tasks call various services, such as messaging, email, etc.Â Â ]'
+  , q'[      <bpmn:text>Service Tasks call various services, such as messaging, email, etc.  ]'
   , q'[]'
-  , q'[In V5.0, we use these for sending Email using the APEX Mail Template features.Â  Other services could be added here in future releases.]'
+  , q'[In V5.x, we use these for sending Email using the APEX Mail Template features.  Other services could be added here in future releases.]'
   , q'[]'
-  , q'[In V5.0, this works in the same way as do ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>]'
+  , q'[In V5.x, this works in the same way as do ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_061ntp9' sourceRef='Activity_1sk9zqj' targetRef='TextAnnotation_1egb903' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1rkmr7t'>]'
   , q'[      <bpmn:text>Manual Tasks are used to model non-computer steps in your process.]'
   , q'[]'
-  , q'[In V5.0, they behave like a standard Task.</bpmn:text>]'
+  , q'[In V5.x, they behave like a standard Task.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_1crb5iq' sourceRef='Activity_0t8licd' targetRef='TextAnnotation_1rkmr7t' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_02mhmae'>]'
@@ -90,7 +95,10 @@ apex_string.join_clob(
   , q'[    <bpmn:association id='Association_1w56n8r' sourceRef='Activity_0w0fi2i' targetRef='TextAnnotation_02mhmae' />]'
   , q'[  </bpmn:process>]'
   , q'[  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>]'
-  , q'[    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Tutoria'>]'
+  , q'[    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Tutorial4'>]'
+  , q'[      <bpmndi:BPMNShape id='TextAnnotation_0xw8y26_di' bpmnElement='TextAnnotation_0xw8y26'>]'
+  , q'[        <dc:Bounds x='410' y='40' width='620' height='123.99456787109375' />]'
+  , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Flow_07uwsw9_di' bpmnElement='Flow_07uwsw9'>]'
   , q'[        <di:waypoint x='1090' y='380' />]'
   , q'[        <di:waypoint x='1152' y='380' />]'
@@ -136,9 +144,6 @@ apex_string.join_clob(
   , q'[      <bpmndi:BPMNShape id='Event_1da6vg3_di' bpmnElement='Event_1da6vg3'>]'
   , q'[        <dc:Bounds x='1152' y='362' width='36' height='36' />]'
   , q'[      </bpmndi:BPMNShape>]'
-  , q'[      <bpmndi:BPMNShape id='TextAnnotation_0xw8y26_di' bpmnElement='TextAnnotation_0xw8y26'>]'
-  , q'[        <dc:Bounds x='410' y='50' width='620' height='100' />]'
-  , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_1vygfet_di' bpmnElement='TextAnnotation_1vygfet'>]'
   , q'[        <dc:Bounds x='560' y='178' width='370' height='120' />]'
   , q'[      </bpmndi:BPMNShape>]'
@@ -151,10 +156,6 @@ apex_string.join_clob(
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_02mhmae_di' bpmnElement='TextAnnotation_02mhmae'>]'
   , q'[        <dc:Bounds x='450' y='490' width='430' height='240' />]'
   , q'[      </bpmndi:BPMNShape>]'
-  , q'[      <bpmndi:BPMNEdge id='Association_00jab7b_di' bpmnElement='Association_00jab7b'>]'
-  , q'[        <di:waypoint x='287' y='364' />]'
-  , q'[        <di:waypoint x='410' y='80' />]'
-  , q'[      </bpmndi:BPMNEdge>]'
   , q'[      <bpmndi:BPMNEdge id='Association_1r0p5lj_di' bpmnElement='Association_1r0p5lj'>]'
   , q'[        <di:waypoint x='573' y='340' />]'
   , q'[        <di:waypoint x='585' y='298' />]'
@@ -171,6 +172,10 @@ apex_string.join_clob(
   , q'[        <di:waypoint x='670' y='408' />]'
   , q'[        <di:waypoint x='526' y='490' />]'
   , q'[      </bpmndi:BPMNEdge>]'
+  , q'[      <bpmndi:BPMNEdge id='Association_00jab7b_di' bpmnElement='Association_00jab7b'>]'
+  , q'[        <di:waypoint x='287' y='364' />]'
+  , q'[        <di:waypoint x='401' y='102' />]'
+  , q'[      </bpmndi:BPMNEdge>]'
   , q'[    </bpmndi:BPMNPlane>]'
   , q'[  </bpmndi:BPMNDiagram>]'
   , q'[</bpmn:definitions>]'
@@ -181,5 +186,10 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA4 - Tutorial - Tasks Get Your Work Done!" loaded.
+PROMPT >> Example "AA4 - Tutorial - Tasks Get Your Work Done! - v0" loaded.
 PROMPT >> ========================================================
+ 
+
+
+PL/SQL procedure successfully completed.
+

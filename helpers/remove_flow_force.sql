@@ -3,7 +3,7 @@
   !! USE WITH CAUTION !!
 */
 
-PROMPT >> Removing Views
+PROMPT >> Removing Packages
 
 begin
 
@@ -16,7 +16,7 @@ end;
 /
 
 
-PROMPT >> Removing Packages
+PROMPT >> Removing Views
 begin
   for rec in ( select view_name from user_views where view_name like 'FLOW\_%' escape '\' )
   loop
