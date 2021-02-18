@@ -79,23 +79,27 @@ as
     l_buffer := l_buffer||'begin'||utl_tcp.crlf;
     dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
 
-    l_split_content := apex_string.split(r_diagrams.dgrm_content);
+    l_split_content := apex_string.split(p_str => replace(r_diagrams.dgrm_content,  apex_application.CRLF,  apex_application.LF));
+    l_buffer := '  l_dgrm_content := apex_string.join_clob('||utl_tcp.crlf;
+    l_buffer := l_buffer||'    apex_t_varchar2('||utl_tcp.crlf;
+    dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
+
     for i in l_split_content.first..l_split_content.last
     loop
       if (i = l_split_content.first) then
-        l_buffer := '  l_dgrm_content := q''['||l_split_content(i)||']'';'||utl_tcp.crlf;
+        l_buffer := '      q''['||l_split_content(i)||']'''||utl_tcp.crlf;
       else
-        l_buffer := '  l_dgrm_content := l_dgrm_content||q''['||l_split_content(i)||']'';'||utl_tcp.crlf;
+        l_buffer := '      ,q''['||l_split_content(i)||']'''||utl_tcp.crlf;
       end if;
       dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
     end loop;
-
+    l_buffer := '  ));';
     l_buffer := l_buffer||utl_tcp.crlf;
     l_buffer := l_buffer||'  insert into flow_diagrams (dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content) values (';
     l_buffer := l_buffer||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||', ';
     l_buffer := l_buffer||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||', ';
     l_buffer := l_buffer||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||', ';
-    l_buffer := l_buffer||'TIMESTAMP '||dbms_assert.enquote_literal(to_char(r_diagrams.dgrm_last_update, 'YYYY-MM-DD HH24:MI:SS TZR'))||', ';
+    l_buffer := l_buffer||'TIMESTAMP '||dbms_assert.enquote_literal(to_char(r_diagrams.dgrm_last_update, 'yyyy-mm-dd hh24:mi:ssxff TZH:TZM', 'NLS_NUMERIC_CHARACTERS = ''.,'''))||', ';
     l_buffer := l_buffer||'l_dgrm_content);'||utl_tcp.crlf;
     l_buffer := l_buffer||'end;'||utl_tcp.crlf||'/'||utl_tcp.crlf;
     dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
