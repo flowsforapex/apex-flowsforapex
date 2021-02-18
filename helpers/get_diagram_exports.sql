@@ -31,7 +31,7 @@ begin
       sys.dbms_output.put_line( '''' || rec.dgrm_name || ''',' );
       sys.dbms_output.put_line( to_char( rec.dgrm_version, 'FM9999' ) || ',' );
       sys.dbms_output.put_line( '''' || rec.dgrm_category || ''',' );
-      sys.dbms_output.put_line( 'to_timestamp_tz( ''' || to_char( rec.dgrm_last_update, 'dd.mm.yyyy hh24:mi:ssxff TZH:TZM' ) || ''', ''dd.mm.yyyy hh24:mi:ssxff TZH:TZM''),' );
+      sys.dbms_output.put_line( 'TIMESTAMP ''' || to_char( rec.dgrm_last_update, 'yyyy-mm-dd hh24:mi:ssxff TZH:TZM', 'NLS_NUMERIC_CHARACTERS = ''.,''' ) || ''',' );
       sys.dbms_output.put_line( 'apex_string.join_clob(' );
       sys.dbms_output.put_line( '  apex_t_varchar2(' );
     
