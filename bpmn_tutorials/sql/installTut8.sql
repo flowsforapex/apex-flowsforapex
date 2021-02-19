@@ -407,8 +407,3 @@ end;
  
 PROMPT >> Example "AA8 - Tutorial - Lanes and Reservations - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-

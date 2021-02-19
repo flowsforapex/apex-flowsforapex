@@ -233,8 +233,3 @@ end;
  
 PROMPT >> Example "AA7 - Tutorial - Its about time - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-

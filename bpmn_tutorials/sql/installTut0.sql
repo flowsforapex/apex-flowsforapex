@@ -184,8 +184,3 @@ end;
  
 PROMPT >> Example "AA0 - Tutorial - Getting Started - v0" loaded.
 PROMPT >> ========================================================
- 
-
-
-PL/SQL procedure successfully completed.
-

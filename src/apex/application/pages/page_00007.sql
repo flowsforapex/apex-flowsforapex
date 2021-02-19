@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210218171929'
+,p_last_updated_by=>'MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20210218190846'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24215396220956137)
@@ -393,14 +393,6 @@ wwv_flow_api.create_page_branch(
 ,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
 ,p_branch_condition=>'DELETE'
 );
-wwv_flow_api.create_page_branch(
- p_id=>wwv_flow_api.id(24216354721956147)
-,p_branch_name=>'Go To Page 7'
-,p_branch_action=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:&P7_DGRM_ID.&success_msg=#SUCCESS_MSG#'
-,p_branch_point=>'AFTER_PROCESSING'
-,p_branch_type=>'REDIRECT_URL'
-,p_branch_sequence=>20
-);
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(24212748636956111)
 ,p_name=>'P7_DGRM_LAST_UPDATE'
@@ -530,10 +522,10 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(26068279548227242)
-,p_name=>'P7_VERSION'
+,p_name=>'P7_NEW_VERSION'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(45087523137560136)
-,p_prompt=>'Version'
+,p_prompt=>'New Version'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>10
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
@@ -556,44 +548,11 @@ wwv_flow_api.create_page_item(
 ,p_inline_help_text=>'Delete associated process instances'
 ,p_attribute_01=>'APPLICATION'
 );
-wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(26091919485304606)
-,p_computation_sequence=>10
-,p_computation_item=>'P7_DGRM_LAST_UPDATE'
-,p_computation=>'systimestamp'
-);
-wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(24215812796956142)
-,p_computation_sequence=>20
-,p_computation_item=>'P7_DGRM_STATUS'
-,p_computation_type=>'PLSQL_EXPRESSION'
-,p_computation=>'flow_constants_pkg.gc_dgrm_status_released'
-,p_compute_when=>'RELEASE'
-,p_compute_when_type=>'REQUEST_EQUALS_CONDITION'
-);
-wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(24215900975956143)
-,p_computation_sequence=>30
-,p_computation_item=>'P7_DGRM_STATUS'
-,p_computation_type=>'PLSQL_EXPRESSION'
-,p_computation=>'flow_constants_pkg.gc_dgrm_status_deprecated'
-,p_compute_when=>'DEPRECATE'
-,p_compute_when_type=>'REQUEST_EQUALS_CONDITION'
-);
-wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(24216036264956144)
-,p_computation_sequence=>40
-,p_computation_item=>'P7_DGRM_STATUS'
-,p_computation_type=>'PLSQL_EXPRESSION'
-,p_computation=>'flow_constants_pkg.gc_dgrm_status_archived'
-,p_compute_when=>'ARCHIVE'
-,p_compute_when_type=>'REQUEST_EQUALS_CONDITION'
-);
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(26070917515229845)
 ,p_validation_name=>'Version is not null'
 ,p_validation_sequence=>10
-,p_validation=>'P7_VERSION'
+,p_validation=>'P7_NEW_VERSION'
 ,p_validation_type=>'ITEM_NOT_NULL'
 ,p_error_message=>'#LABEL# must have a value'
 ,p_validation_condition=>'ADD_VERSION'
@@ -640,7 +599,7 @@ wwv_flow_api.create_page_da_action(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(26092435802304611)
-,p_name=>'Refresh counter'
+,p_name=>'On Dialog Close Refresh Counter'
 ,p_event_sequence=>30
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(26092342295304610)
@@ -658,105 +617,35 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_api.id(36450747308745933)
 );
 wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(26010412454877981)
+ p_id=>wwv_flow_api.id(22799930478488038)
 ,p_process_sequence=>10
 ,p_process_point=>'AFTER_SUBMIT'
-,p_region_id=>wwv_flow_api.id(26003019626877931)
-,p_process_type=>'NATIVE_FORM_DML'
-,p_process_name=>'Process form Edit Diagram'
-,p_attribute_01=>'REGION_SOURCE'
-,p_attribute_05=>'Y'
-,p_attribute_06=>'Y'
-,p_attribute_08=>'Y'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'PROCESS_PAGE'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_p0007_api.process_page',
+'(',
+'  pio_dgrm_id      => :p7_dgrm_id',
+', pi_dgrm_name     => :p7_dgrm_name',
+', pi_dgrm_version  => :p7_dgrm_version',
+', pi_dgrm_category => :p7_dgrm_category',
+', pi_new_version   => :p7_new_version',
+', pi_cascade       => :p7_cascade',
+', pi_request       => :request',
+');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'CREATE,SAVE,RELEASE,DEPRECATE,ARCHIVE'
-,p_process_when_type=>'REQUEST_IN_CONDITION'
+,p_process_success_message=>'Action processed.'
 );
 wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(26092180575304608)
+ p_id=>wwv_flow_api.id(22800039236488039)
 ,p_process_sequence=>20
 ,p_process_point=>'AFTER_SUBMIT'
-,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Set default dgrm_content'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'begin',
-'    flow_p0007_api.add_default_xml(',
-'        pi_dgrm_id => :P7_DGRM_ID',
-'    );',
-'end;'))
-,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'CREATE'
-,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
-);
-wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(26092236965304609)
-,p_process_sequence=>30
-,p_process_point=>'AFTER_SUBMIT'
-,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Update Diagram Category'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'begin',
-'    flow_p0007_api.update_diagram_category(',
-'        pi_dgrm_id => :P7_DGRM_ID,',
-'        pi_dgrm_category => :P7_DGRM_CATEGORY',
-'    );',
-'end;'))
-,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'SAVE,RELEASE,DEPRECATE,ARCHIVE'
-,p_process_when_type=>'REQUEST_IN_CONDITION'
-);
-wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(24212991941956113)
-,p_process_sequence=>40
-,p_process_point=>'AFTER_SUBMIT'
-,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Parse'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'begin',
-'    flow_bpmn_parser_pkg.parse(pi_dgrm_id => :P7_DGRM_ID);',
-'end;'))
-,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when_button_id=>wwv_flow_api.id(26009611434877978)
-);
-wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(26071202145230898)
-,p_process_sequence=>50
-,p_process_point=>'AFTER_SUBMIT'
-,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Delete Diagram'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'begin',
-'    flow_p0007_api.delete_diagram(',
-'        pi_dgrm_id => :P7_DGRM_ID,',
-'        pi_cascade => :P7_CASCADE',
-'    );',
-'end;'))
+,p_process_type=>'NATIVE_SESSION_STATE'
+,p_process_name=>'Clear Session State on Delete'
+,p_attribute_01=>'CLEAR_CACHE_CURRENT_PAGE'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'DELETE'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
-,p_process_success_message=>'Diagram deleted.'
-);
-wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(26071543026231665)
-,p_process_sequence=>60
-,p_process_point=>'AFTER_SUBMIT'
-,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'New Version'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_dgrm_id flow_diagrams.dgrm_id%type;',
-'begin',
-'    l_dgrm_id := flow_p0007_api.add_diagram_version(',
-'        pi_dgrm_id => :P7_DGRM_ID,',
-'        pi_dgrm_version => :P7_VERSION',
-'    );',
-'    :P7_DGRM_ID := l_dgrm_id;',
-'end;'))
-,p_process_error_message=>'Version already exists.'
-,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'ADD_VERSION'
-,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
-,p_process_success_message=>'New version added.'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(26010056924877981)
