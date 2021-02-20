@@ -1,5 +1,5 @@
 
-create or replace view flow_p0002_instances_counter_vw
+create or replace view flow_p0007_instances_counter_vw
 as
   select distinct d.dgrm_id,
     sum(case when i.prcs_status = 'created' then 1 else 0 end) over (partition by d.dgrm_id)  as created_instances,
