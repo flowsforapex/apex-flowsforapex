@@ -34,7 +34,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210221180103'
+,p_last_upd_yyyymmddhh24miss=>'20210221184649'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24215396220956137)
@@ -272,7 +272,7 @@ wwv_flow_api.create_page_button(
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24215607769956140)
-,p_button_sequence=>60
+,p_button_sequence=>70
 ,p_button_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_button_name=>'DEPRECATE'
 ,p_button_static_id=>'deprecate_btn'
@@ -281,6 +281,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_image_alt=>'Deprecate'
 ,p_button_position=>'BODY'
+,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_released'
 ,p_button_condition_type=>'PLSQL_EXPRESSION'
 ,p_icon_css_classes=>'fa-ban'
@@ -291,7 +292,7 @@ wwv_flow_api.create_page_button(
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24215581832956139)
-,p_button_sequence=>70
+,p_button_sequence=>80
 ,p_button_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_button_name=>'RELEASE'
 ,p_button_static_id=>'release_btn'
@@ -300,6 +301,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_image_alt=>'Release'
 ,p_button_position=>'BODY'
+,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>':P7_DGRM_ID is not null and :P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_draft'
 ,p_button_condition_type=>'PLSQL_EXPRESSION'
 ,p_icon_css_classes=>'fa-check'
@@ -310,7 +312,7 @@ wwv_flow_api.create_page_button(
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24215790121956141)
-,p_button_sequence=>80
+,p_button_sequence=>90
 ,p_button_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_button_name=>'ARCHIVE'
 ,p_button_static_id=>'archive_btn'
@@ -319,6 +321,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_image_alt=>'Archive'
 ,p_button_position=>'BODY'
+,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_deprecated'
 ,p_button_condition_type=>'PLSQL_EXPRESSION'
 ,p_icon_css_classes=>'fa-archive'
@@ -354,21 +357,6 @@ wwv_flow_api.create_page_button(
 ,p_button_condition=>':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_draft'
 ,p_button_condition_type=>'PLSQL_EXPRESSION'
 ,p_icon_css_classes=>'fa-apex'
-);
-wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(26092342295304610)
-,p_button_sequence=>10
-,p_button_plug_id=>wwv_flow_api.id(36450747308745933)
-,p_button_name=>'CREATE_TEST_INSTANCE'
-,p_button_action=>'REDIRECT_PAGE'
-,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
-,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
-,p_button_image_alt=>'Create Test Instance'
-,p_button_position=>'REGION_TEMPLATE_EDIT'
-,p_button_redirect_url=>'f?p=&APP_ID.:11:&SESSION.::&DEBUG.:11:P11_DGRM_ID:&P7_DGRM_ID.'
-,p_button_condition=>':P7_DGRM_STATUS in (flow_constants_pkg.gc_dgrm_status_draft, flow_constants_pkg.gc_dgrm_status_released)'
-,p_button_condition_type=>'PLSQL_EXPRESSION'
-,p_icon_css_classes=>'fa-plus'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(26093028843304617)
@@ -488,7 +476,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P7_DGRM_NAME'
 ,p_source_data_type=>'VARCHAR2'
 ,p_is_required=>true
-,p_item_sequence=>20
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_source_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_prompt=>'Name'
@@ -513,7 +501,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P7_DGRM_VERSION'
 ,p_source_data_type=>'VARCHAR2'
 ,p_is_required=>true
-,p_item_sequence=>30
+,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_source_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_default=>'0'
@@ -538,7 +526,7 @@ wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(26004547057877957)
 ,p_name=>'P7_DGRM_STATUS'
 ,p_source_data_type=>'VARCHAR2'
-,p_item_sequence=>50
+,p_item_sequence=>60
 ,p_item_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_source_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_default=>'flow_constants_pkg.gc_dgrm_status_draft'
@@ -547,6 +535,7 @@ wwv_flow_api.create_page_item(
 ,p_source=>'DGRM_STATUS'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_colspan=>10
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
@@ -558,7 +547,7 @@ wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(26004901378877959)
 ,p_name=>'P7_DGRM_CATEGORY'
 ,p_source_data_type=>'VARCHAR2'
-,p_item_sequence=>90
+,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_source_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_prompt=>'Category'
@@ -710,36 +699,6 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_OPEN_REGION'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(45089270532561391)
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(26092435802304611)
-,p_name=>'On Dialog Close Refresh Counter'
-,p_event_sequence=>30
-,p_triggering_element_type=>'BUTTON'
-,p_triggering_button_id=>wwv_flow_api.id(26092342295304610)
-,p_bind_type=>'bind'
-,p_bind_event_type=>'apexafterclosedialog'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(26092579501304612)
-,p_event_id=>wwv_flow_api.id(26092435802304611)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(36450747308745933)
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(26093140461304618)
-,p_event_id=>wwv_flow_api.id(26092435802304611)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.message.showPageSuccess( "Instance created." );',
-''))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(26096043786304647)

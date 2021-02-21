@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210221094925'
+,p_last_upd_yyyymmddhh24miss=>'20210221183848'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24213241311956116)
@@ -83,7 +83,7 @@ wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(24214476360956128)
 ,p_max_row_count=>'1000000'
 ,p_pagination_type=>'ROWS_X_TO_Y'
-,p_pagination_display_pos=>'BOTTOM_RIGHT'
+,p_pagination_display_pos=>'BOTTOM_LEFT'
 ,p_show_display_row_count=>'Y'
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
@@ -327,7 +327,7 @@ wwv_flow_api.create_page_button(
 ,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--padRight'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
-,p_button_image_alt=>'Create Diagram'
+,p_button_image_alt=>'Create Flow'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_button_redirect_url=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7::'
 ,p_icon_css_classes=>'fa-plus'
@@ -340,7 +340,7 @@ wwv_flow_api.create_page_button(
 ,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
-,p_button_image_alt=>'Import Diagram'
+,p_button_image_alt=>'Import Flow'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_button_redirect_url=>'f?p=&APP_ID.:6:&SESSION.::&DEBUG.:6:P6_FORCE_OVERWRITE:N'
 ,p_icon_css_classes=>'fa-upload'
