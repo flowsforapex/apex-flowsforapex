@@ -27,11 +27,14 @@ wwv_flow_api.create_page(
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '#deprecate_btn,#release_btn,#archive_btn,#new_version_btn{',
 '  margin-top:8px;',
+'}',
+'.instance-counter-link{',
+'    cursor:pointer;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210220153145'
+,p_last_upd_yyyymmddhh24miss=>'20210221104306'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24215396220956137)
@@ -106,6 +109,9 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>1
 ,p_column_heading=>'Created Instances'
 ,p_use_as_row_header=>'N'
+,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<span class="instance-counter-link" data-status="created">#CREATED_INSTANCES#</a>',
+''))
 ,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
@@ -117,6 +123,7 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>2
 ,p_column_heading=>'Running Instances'
 ,p_use_as_row_header=>'N'
+,p_column_html_expression=>'<span class="instance-counter-link" data-status="running">#RUNNING_INSTANCES#</a>'
 ,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
@@ -128,6 +135,7 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>3
 ,p_column_heading=>'Completed Instances'
 ,p_use_as_row_header=>'N'
+,p_column_html_expression=>'<span class="instance-counter-link" data-status="completed">#COMPLETED_INSTANCES#</a>'
 ,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
@@ -732,6 +740,31 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'apex.message.showPageSuccess( "Instance created." );',
 ''))
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(26096043786304647)
+,p_name=>'Click on instances counter'
+,p_event_sequence=>40
+,p_triggering_element_type=>'JQUERY_SELECTOR'
+,p_triggering_element=>'.instance-counter-link'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(26096178250304648)
+,p_event_id=>wwv_flow_api.id(26096043786304647)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'var myElement = apex.jQuery( this.triggeringElement );',
+'var prcsStatus  = myElement.data( "status" );',
+'var dgrmName = apex.item("P7_DGRM_NAME").getValue();',
+'var dgrmVersion = apex.item("P7_DGRM_VERSION").getValue();',
+'',
+'apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + "::" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS:" + dgrmName + "," + dgrmVer'
+||'sion + "," + prcsStatus);'))
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(22799930478488038)

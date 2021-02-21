@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210220160916'
+,p_last_upd_yyyymmddhh24miss=>'20210221094925'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24213241311956116)
@@ -173,6 +173,8 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>80
 ,p_column_identifier=>'H'
 ,p_column_label=>'Instances'
+,p_column_link=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION:#DGRM_NAME#,#DGRM_VERSION#'
+,p_column_linktext=>'#INSTANCES#'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'RIGHT'
 );
