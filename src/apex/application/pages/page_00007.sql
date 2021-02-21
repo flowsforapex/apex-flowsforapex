@@ -34,7 +34,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210221104306'
+,p_last_upd_yyyymmddhh24miss=>'20210221180103'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24215396220956137)
@@ -747,7 +747,7 @@ wwv_flow_api.create_page_da_event(
 ,p_event_sequence=>40
 ,p_triggering_element_type=>'JQUERY_SELECTOR'
 ,p_triggering_element=>'.instance-counter-link'
-,p_bind_type=>'bind'
+,p_bind_type=>'live'
 ,p_bind_event_type=>'click'
 );
 wwv_flow_api.create_page_da_action(
