@@ -32,7 +32,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_link_target=>'f?p=&APP_ID.:2:&SESSION.::&DEBUG.::::'
 ,p_list_item_icon=>'fa-sitemap-horizontal'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
-,p_list_item_current_for_pages=>'2'
+,p_list_item_current_for_pages=>'2,7'
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12495489400303879863)

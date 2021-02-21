@@ -21,7 +21,7 @@ drop package flow_constants_pkg;
 
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;
-drop view flow_p0002_instances_counter_vw;
+drop view flow_p0007_instances_counter_vw;
 drop view flow_p0010_vw;
 drop view flow_p0010_branches_vw;
 drop view flow_p0010_instances_vw;
