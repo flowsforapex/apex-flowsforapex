@@ -53,6 +53,8 @@
         widgetName: "bpmnmodeler",
         type: "mtag.bpmnmodeler"
       });
+
+      this.refresh();
     },
     loadDiagram: async function() {
       var that = this;
@@ -125,7 +127,7 @@
             "id": this.regionId,
             "data": {
               "id"       : this.diagramId,
-              "diagram"  : xml.replaceAll( '"', "'" )
+              "content"  : xml.replaceAll( '"', "'" )
             }
           }
         ],
@@ -140,7 +142,7 @@
             {
               type:       "error",
               location:   [ "page" ],
-              message:    pData.data.message,
+              message:    pData.message,
               unsafe:     false
             }
           ]);
