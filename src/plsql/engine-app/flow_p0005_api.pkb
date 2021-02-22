@@ -95,12 +95,11 @@ as
     end loop;
     l_buffer := '  ));';
     l_buffer := l_buffer||utl_tcp.crlf;
-    l_buffer := l_buffer||'  insert into flow_diagrams (dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content) values (';
-    l_buffer := l_buffer||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||', ';
-    l_buffer := l_buffer||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||', ';
-    l_buffer := l_buffer||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||', ';
-    l_buffer := l_buffer||'TIMESTAMP '||dbms_assert.enquote_literal(to_char(r_diagrams.dgrm_last_update, 'yyyy-mm-dd hh24:mi:ssxff TZH:TZM', 'NLS_NUMERIC_CHARACTERS = ''.,'''))||', ';
-    l_buffer := l_buffer||'l_dgrm_content);'||utl_tcp.crlf;
+    l_buffer := l_buffer||'  flow_bpmn_parser_pkg.upload_and_parse('||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_content => l_dgrm_content'||utl_tcp.crlf||');'||utl_tcp.crlf;
     l_buffer := l_buffer||'end;'||utl_tcp.crlf||'/'||utl_tcp.crlf;
     dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
     

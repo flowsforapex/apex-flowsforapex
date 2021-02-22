@@ -61,13 +61,17 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0010_routes_vw.sql
 @views/engine-app/flow_p0010_variables_vw.sql
 @views/engine-app/flow_p0002_diagrams_vw.sql
-@views/engine-app/flow_p0002_instances_counter_vw.sql
+@views/engine-app/flow_p0007_instances_counter_vw.sql
 
 PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0005_api.pkb
 @plsql/engine-app/flow_p0006_api.pkb
 @plsql/engine-app/flow_p0007_api.pkb
 @plsql/engine-app/flow_p0010_api.pkb
+
+PROMPT >> Modeler Plugin Objects
+@plugins/modeler/plsql/flow_bpmn_modeler.pks
+@plugins/modeler/plsql/flow_bpmn_modeler.pkb
 
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object
