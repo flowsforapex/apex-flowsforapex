@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210221105626'
+,p_last_upd_yyyymmddhh24miss=>'20210221183736'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -652,7 +652,7 @@ wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(26094211779304629)
 ,p_max_row_count=>'1000000'
 ,p_pagination_type=>'ROWS_X_TO_Y'
-,p_pagination_display_pos=>'BOTTOM_RIGHT'
+,p_pagination_display_pos=>'BOTTOM_LEFT'
 ,p_show_display_row_count=>'Y'
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
@@ -686,7 +686,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_NAME'
 ,p_display_order=>20
 ,p_column_identifier=>'B'
-,p_column_label=>'Name'
+,p_column_label=>'Instance'
 ,p_column_type=>'STRING'
 ,p_static_id=>'PRCS_NAME'
 );
@@ -695,7 +695,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_DGRM_NAME'
 ,p_display_order=>30
 ,p_column_identifier=>'C'
-,p_column_label=>'Flow Name'
+,p_column_label=>'Name'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
@@ -703,7 +703,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_DGRM_VERSION'
 ,p_display_order=>40
 ,p_column_identifier=>'D'
-,p_column_label=>'Flow Version'
+,p_column_label=>'Version'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
@@ -779,6 +779,18 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_report_columns=>'PRCS_DGRM_CATEGORY:PRCS_ID:PRCS_NAME:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:BTN:'
+,p_sort_column_1=>'PRCS_DGRM_CATEGORY'
+,p_sort_direction_1=>'ASC'
+,p_sort_column_2=>'PRCS_NAME'
+,p_sort_direction_2=>'ASC'
+,p_sort_column_3=>'PRCS_DGRM_VERSION'
+,p_sort_direction_3=>'DESC'
+,p_sort_column_4=>'0'
+,p_sort_direction_4=>'ASC'
+,p_sort_column_5=>'0'
+,p_sort_direction_5=>'ASC'
+,p_sort_column_6=>'0'
+,p_sort_direction_6=>'ASC'
 ,p_break_on=>'PRCS_DGRM_CATEGORY:0:0:0:0:0'
 ,p_break_enabled_on=>'PRCS_DGRM_CATEGORY:0:0:0:0:0'
 );
