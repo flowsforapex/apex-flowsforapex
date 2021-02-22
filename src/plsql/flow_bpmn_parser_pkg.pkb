@@ -1047,5 +1047,24 @@ as
 
   end upload_and_parse;
 
+  procedure update_diagram
+  (
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type
+  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+  )
+  as
+  begin
+    reset;
+    g_dgrm_id := pi_dgrm_id;
+
+    update flow_diagrams
+       set dgrm_content = pi_dgrm_content
+         , dgrm_last_update = systimestamp
+     where dgrm_id = g_dgrm_id
+    ;
+
+    parse;
+  end update_diagram;
+
 end flow_bpmn_parser_pkg;
 / 

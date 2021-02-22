@@ -1,0 +1,167 @@
+.bjsl-overlay {
+  z-index: 500;
+}
+
+.bjsl-overlay:hover {
+  z-index: 1000;
+}
+
+.bjsl-dropdown {
+  display: none;
+}
+
+.bjsl-overlay:hover .bjsl-dropdown,
+.bjsl-dropdown.open {
+  display: block;
+}
+
+.bjsl-issues {
+  padding: 8px;
+  color: #444;
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  background: #FAFAFA;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+}
+
+.bjsl-icon {
+  background: white;
+  border-radius: 100%;
+  display: inline-block;
+  height: 20px;
+  line-height: 23px;
+  text-align: center;
+  width: 20px;
+}
+
+.bjsl-icon-error {
+  background-color: #cc3300;
+  color: white;
+
+  /* color: #cc3300; */
+}
+
+.bjsl-icon-warning {
+  background-color: #f7c71a;
+  color: white;
+
+  /* color: #f7c71a; */
+}
+
+.bjsl-overlay {
+  position: relative;
+}
+
+.bjsl-issues-top-right .bjsl-dropdown,
+.bjsl-issues-bottom-right .bjsl-dropdown-content {
+  top: 0;
+  left: 0;
+}
+
+.bjsl-issues-bottom-right .bjsl-dropdown,
+.bjsl-issues-top-right .bjsl-dropdown-content {
+  bottom: 0;
+  left: 0;
+}
+
+.bjsl-issues-top-right .bjsl-dropdown-content {
+  padding-bottom: 5px;
+}
+
+.bjsl-issues-bottom-right .bjsl-dropdown-content {
+  padding-top: 5px;
+}
+
+.bjsl-dropdown-content {
+  min-width: 260px;
+  position:  absolute;
+  height: fit-content;
+}
+
+.bjsl-dropdown {
+  position: absolute;
+}
+
+.bjsl-issues {
+  list-style: none;
+  margin: 0;
+}
+
+.bjsl-issues ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bjsl-issues li {
+  display: flex;
+  flex-direction: row;
+}
+
+.bjsl-issues li:not(:first-child) {
+  margin-top: 7px;
+}
+
+.bjsl-issues .error svg {
+  color: #cc3300;
+}
+
+.bjsl-issues .warning svg {
+  color: #f7c71a;
+}
+
+.bjsl-issues a {
+  color: #444;
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+.bjsl-issues a:hover {
+  text-decoration: none;
+}
+
+
+/**
+ * Summary button styles
+ */
+
+.bjsl-button {
+  border-radius: 100px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%);
+  background-color: #fafafa;
+  padding: 5px 10px;
+  border: none;
+  color: #ddd;
+  display: flex;
+  align-items: center;
+  outline: none;
+  font-weight: bold;
+}
+
+.bjsl-button-inactive:hover {
+  color: #444;
+}
+
+.bjsl-button svg {
+  margin-top: -1px;
+  margin-right: 10px;
+}
+
+.bjsl-button-success {
+  background-color: #52b415;
+  color: white;
+}
+
+.bjsl-button-error {
+  background-color: #cc3300;
+  color: white;
+}
+
+.bjsl-button-warning {
+  background-color: #f7c71a;
+  color: white;
+}

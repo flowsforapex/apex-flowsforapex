@@ -43,5 +43,11 @@ as
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   );
 
+  procedure update_diagram
+  (
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type
+  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+  );
+
 end flow_bpmn_parser_pkg;
 /
