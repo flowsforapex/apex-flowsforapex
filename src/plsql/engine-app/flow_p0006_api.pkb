@@ -62,15 +62,17 @@ as
         l_dgrm_id flow_diagrams.dgrm_id%type;
         l_dgrm_content flow_diagrams.dgrm_content%type;
         l_dgrm_exists number;
+        l_dgrm_status flow_diagrams.dgrm_status%type;
     begin
-        select count(*)
-          into l_dgrm_exists
+        select dgrm_status, count(*)
+          into l_dgrm_status, l_dgrm_exists
           from flow_diagrams
          where dgrm_name = pi_dgrm_name
            and dgrm_version = pi_dgrm_version
+         group by dgrm_status
         ;
 
-        if (l_dgrm_exists = 0 or pi_force_overwrite = 'Y') then
+        if (l_dgrm_exists = 0 or pi_force_overwrite = 'Y' and l_dgrm_status = flow_constants_pkg.gc_dgrm_status_draft) then
             if (pi_import_from = 'text') then
                 l_dgrm_content := pi_dgrm_content;
             else
@@ -90,7 +92,17 @@ as
 
             flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id);
         else
-            raise_application_error(-20000, '');
+            if (l_dgrm_status = flow_constants_pkg.gc_dgrm_status_draft) then
+                apex_error.add_error(
+                    p_message => 'Model already exists. Use force overwrite.'
+                    , p_display_location => apex_error.c_on_error_page
+                );
+            else
+                apex_error.add_error(
+                    p_message => 'Overwrite only possible for draft models.'
+                    , p_display_location => apex_error.c_on_error_page
+                );
+            end if;
         end if;
         return l_dgrm_id;
     end upload_and_parse;
