@@ -64,10 +64,12 @@ as
         l_dgrm_exists number;
     begin
         select count(*)
-        into l_dgrm_exists
-        from flow_diagrams
-        where dgrm_name = pi_dgrm_name
-        and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft;
+          into l_dgrm_exists
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_version = pi_dgrm_version
+           and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
+        ;
 
         if (l_dgrm_exists = 0 or pi_force_overwrite = 'Y') then
             if (pi_import_from = 'text') then
