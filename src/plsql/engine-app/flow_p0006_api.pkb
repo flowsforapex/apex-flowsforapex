@@ -68,7 +68,6 @@ as
           from flow_diagrams
          where dgrm_name = pi_dgrm_name
            and dgrm_version = pi_dgrm_version
-           and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
         ;
 
         if (l_dgrm_exists = 0 or pi_force_overwrite = 'Y') then
