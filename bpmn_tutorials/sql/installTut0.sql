@@ -7,7 +7,7 @@ insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_upd
 'AA0 - Tutorial - Getting Started',
 0,
 'Tutorials',
-to_timestamp_tz( '07.02.2021 16:01:30.336804000 +00:00', 'dd.mm.yyyy hh24:mi:ssxff TZH:TZM'),
+timestamp '2021-02-07 16:01:30.336804000 +00:00',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
