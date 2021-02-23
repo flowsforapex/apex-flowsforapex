@@ -32,8 +32,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210221183736'
+,p_last_updated_by=>'MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20210222182655'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -1131,6 +1131,8 @@ wwv_flow_api.create_page_da_action(
 '  var currentName = apex.jQuery( currentSelector ).data("name");',
 '  currentRow.parent().children().addClass( "current-process" );',
 '  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("Flow Monitor (" + currentName +")" );',
+'} else {',
+'  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("No process selected" );',
 '}'))
 );
 wwv_flow_api.create_page_da_event(
