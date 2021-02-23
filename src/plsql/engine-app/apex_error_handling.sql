@@ -33,20 +33,9 @@ begin
             l_result.additional_info := null;
         end if;
     else
-        -- Always show the error as inline error
-        -- Note: If you have created manual tabular forms (using the package
-        --       apex_item/htmldb_item in the SQL statement) you should still
-        --       use "On error page" on that pages to avoid loosing entered data
-        l_result.display_location := case
-                                       when l_result.display_location = apex_error.c_on_error_page then apex_error.c_inline_in_notification
-                                       else l_result.display_location
-                                     end;
-
-        --
         -- Note: If you want to have friendlier ORA error messages, you can also define
         --       a text message with the name pattern APEX.ERROR.ORA-number
         --       There is no need to implement custom code for that.
-        --
 
         -- If it's a constraint violation like
         --
@@ -64,15 +53,6 @@ begin
 
             l_result.message := apex_lang.message( l_constraint_name );
             
-        end if;
-
-        -- If an ORA error has been raised, for example a raise_application_error(-20xxx, '...')
-        -- in a table trigger or in a PL/SQL package called by a process and we
-        -- haven't found the error in our lookup table, then we just want to see
-        -- the actual error text and not the full error stack with all the ORA error numbers.
-        if p_error.ora_sqlcode is not null and l_result.message = p_error.message then
-            l_result.message := apex_error.get_first_ora_error_text (
-                                    p_error => p_error );
         end if;
 
         -- If no associated page item/tabular form column has been set, we can use
