@@ -14,9 +14,9 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>10
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Flow Control'
-,p_alias=>'FLOW-CONTROL'
-,p_step_title=>'Flow Control'
+,p_name=>'Flow Monitor'
+,p_alias=>'FLOW-MONITOR'
+,p_step_title=>'Flow Monitor'
 ,p_autocomplete_on_off=>'OFF'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.clickable-action {',
@@ -32,8 +32,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210222182655'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210223190755'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -50,7 +50,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(173008747142503554)
-,p_plug_name=>'Flow Control'
+,p_plug_name=>'Flow Monitor'
 ,p_region_template_options=>'#DEFAULT#:js-useLocalStorage:is-expanded:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495604368136880259)
 ,p_plug_display_sequence=>10

@@ -19,8 +19,8 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flows for APEX Modeler'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210222182205'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210223190859'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(22800510543488044)
@@ -53,8 +53,20 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(15683484308738625)
+ p_id=>wwv_flow_api.id(25019945215509603)
 ,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(22800510543488044)
+,p_button_name=>'CANCEL'
+,p_button_action=>'REDIRECT_PAGE'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_image_alt=>'Cancel'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
+,p_button_redirect_url=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:::'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(15683484308738625)
+,p_button_sequence=>20
 ,p_button_plug_id=>wwv_flow_api.id(22800510543488044)
 ,p_button_name=>'SAVE_DIAGRAM'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -68,7 +80,7 @@ wwv_flow_api.create_page_button(
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24418161449878740)
-,p_button_sequence=>20
+,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(22800510543488044)
 ,p_button_name=>'DOWNLOAD_DIAGRAM'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -79,18 +91,6 @@ wwv_flow_api.create_page_button(
 ,p_button_execute_validations=>'N'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-cloud-download'
-);
-wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(25019945215509603)
-,p_button_sequence=>50
-,p_button_plug_id=>wwv_flow_api.id(22800510543488044)
-,p_button_name=>'CANCEL'
-,p_button_action=>'REDIRECT_PAGE'
-,p_button_template_options=>'#DEFAULT#'
-,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
-,p_button_image_alt=>'Cancel'
-,p_button_position=>'REGION_TEMPLATE_EDIT'
-,p_button_redirect_url=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:::'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(15681777930738608)

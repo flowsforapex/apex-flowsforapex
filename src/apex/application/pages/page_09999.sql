@@ -20,16 +20,23 @@ wwv_flow_api.create_page(
 ,p_warn_on_unsaved_changes=>'N'
 ,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.login-page-logo {',
+'    background-image: url(#APP_IMAGES#workflow_black.svg);',
+'    background-repeat: no-repeat;',
+'    background-size: cover;',
+'}',
+''))
 ,p_step_template=>wwv_flow_api.id(12495629732925880320)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_is_public_y_n=>'Y'
-,p_last_updated_by=>'NDBRUIJN'
-,p_last_upd_yyyymmddhh24miss=>'20200518235225'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210223193311'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12495495236065879932)
 ,p_plug_name=>'Flows for APEX'
-,p_icon_css_classes=>'fa-send-o'
+,p_icon_css_classes=>'login-page-logo'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495583796584880235)
 ,p_plug_display_sequence=>10
