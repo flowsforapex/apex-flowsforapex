@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210221183848'
+,p_last_upd_yyyymmddhh24miss=>'20210224121521'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24213241311956116)
@@ -183,7 +183,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'DIAGRAM_PARSED'
 ,p_display_order=>90
 ,p_column_identifier=>'J'
-,p_column_label=>'Diagram Parsed'
+,p_column_label=>'Flow Parsed'
 ,p_column_html_expression=>'<span aria-hidden="true" class="fa #DIAGRAM_PARSED_ICON#"></span>'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
@@ -323,7 +323,7 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24212654778956110)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(24213241311956116)
-,p_button_name=>'CREATE_DIAGRAM'
+,p_button_name=>'CREATE_FLOW'
 ,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--padRight'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
@@ -336,7 +336,7 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(10431451245468048)
 ,p_button_sequence=>20
 ,p_button_plug_id=>wwv_flow_api.id(24213241311956116)
-,p_button_name=>'IMPORT_DIAGRAM'
+,p_button_name=>'IMPORT_FLOW'
 ,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
@@ -428,7 +428,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'apex.message.showPageSuccess("Diagram imported.");'
+,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("FLOW_IMPORTED"));'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(26091408686304601)
@@ -465,7 +465,7 @@ wwv_flow_api.create_page_da_event(
 ,p_event_sequence=>80
 ,p_triggering_element_type=>'JQUERY_SELECTOR'
 ,p_triggering_element=>'.clickable-action'
-,p_bind_type=>'bind'
+,p_bind_type=>'live'
 ,p_bind_event_type=>'click'
 );
 wwv_flow_api.create_page_da_action(

@@ -14,9 +14,9 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>10
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Flow Control'
-,p_alias=>'FLOW-CONTROL'
-,p_step_title=>'Flow Control'
+,p_name=>'Flow Monitor'
+,p_alias=>'FLOW-MONITOR'
+,p_step_title=>'Flow Monitor'
 ,p_autocomplete_on_off=>'OFF'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.clickable-action {',
@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210222182655'
+,p_last_upd_yyyymmddhh24miss=>'20210223211052'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -50,7 +50,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(173008747142503554)
-,p_plug_name=>'Flow Control'
+,p_plug_name=>'Flow Monitor'
 ,p_region_template_options=>'#DEFAULT#:js-useLocalStorage:is-expanded:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495604368136880259)
 ,p_plug_display_sequence=>10
@@ -205,14 +205,17 @@ wwv_flow_api.create_region_column(
 ,p_source_expression=>'PROV_VAR_VC2'
 ,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_item_type=>'NATIVE_TEXTAREA'
 ,p_heading=>'Varchar2 Value'
 ,p_heading_alignment=>'LEFT'
 ,p_display_sequence=>60
 ,p_value_alignment=>'LEFT'
-,p_attribute_05=>'BOTH'
+,p_attribute_01=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_03=>'N'
+,p_attribute_04=>'BOTH'
 ,p_is_required=>false
-,p_max_length=>200
+,p_max_length=>4000
 ,p_enable_filter=>true
 ,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
@@ -662,10 +665,10 @@ wwv_flow_api.create_worksheet(
 ,p_internal_uid=>26094211779304629
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(26094328735304630)
-,p_db_column_name=>'PRCS_ID'
+ p_id=>wwv_flow_api.id(25020107643509605)
+,p_db_column_name=>'VIEW_PROCESS'
 ,p_display_order=>10
-,p_column_identifier=>'A'
+,p_column_identifier=>'K'
 ,p_column_label=>'<span class="fa fa-eye" title="View Process Instance"></span>'
 ,p_column_html_expression=>'<span class="clickable-action id-ref fa fa-eye" data-prcs="#PRCS_ID#" data-action="view" data-name="#PRCS_NAME#" title="View Process Instance"></span>'
 ,p_allow_sorting=>'N'
@@ -678,13 +681,14 @@ wwv_flow_api.create_worksheet_column(
 ,p_allow_group_by=>'N'
 ,p_allow_pivot=>'N'
 ,p_allow_hide=>'N'
-,p_column_type=>'NUMBER'
+,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
+,p_rpt_show_filter_lov=>'N'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094452210304631)
 ,p_db_column_name=>'PRCS_NAME'
-,p_display_order=>20
+,p_display_order=>30
 ,p_column_identifier=>'B'
 ,p_column_label=>'Instance'
 ,p_column_type=>'STRING'
@@ -693,7 +697,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094567431304632)
 ,p_db_column_name=>'PRCS_DGRM_NAME'
-,p_display_order=>30
+,p_display_order=>40
 ,p_column_identifier=>'C'
 ,p_column_label=>'Name'
 ,p_column_type=>'STRING'
@@ -701,7 +705,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094640100304633)
 ,p_db_column_name=>'PRCS_DGRM_VERSION'
-,p_display_order=>40
+,p_display_order=>50
 ,p_column_identifier=>'D'
 ,p_column_label=>'Version'
 ,p_column_type=>'STRING'
@@ -709,7 +713,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094739199304634)
 ,p_db_column_name=>'PRCS_DGRM_STATUS'
-,p_display_order=>50
+,p_display_order=>60
 ,p_column_identifier=>'E'
 ,p_column_label=>'Flow Status'
 ,p_column_type=>'STRING'
@@ -717,7 +721,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094816603304635)
 ,p_db_column_name=>'PRCS_DGRM_CATEGORY'
-,p_display_order=>60
+,p_display_order=>70
 ,p_column_identifier=>'F'
 ,p_column_label=>'Flow Category'
 ,p_column_type=>'STRING'
@@ -725,7 +729,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094928056304636)
 ,p_db_column_name=>'PRCS_STATUS'
-,p_display_order=>70
+,p_display_order=>80
 ,p_column_identifier=>'G'
 ,p_column_label=>'Status'
 ,p_column_type=>'STRING'
@@ -733,7 +737,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26095045075304637)
 ,p_db_column_name=>'PRCS_INIT_DATE'
-,p_display_order=>80
+,p_display_order=>90
 ,p_column_identifier=>'H'
 ,p_column_label=>'Creation Date'
 ,p_column_type=>'DATE'
@@ -744,7 +748,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26095177493304638)
 ,p_db_column_name=>'PRCS_LAST_UPDATE'
-,p_display_order=>90
+,p_display_order=>100
 ,p_column_identifier=>'I'
 ,p_column_label=>'Last Update'
 ,p_column_type=>'DATE'
@@ -755,7 +759,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26095284298304639)
 ,p_db_column_name=>'BTN'
-,p_display_order=>100
+,p_display_order=>110
 ,p_column_identifier=>'J'
 ,p_column_label=>'Actions'
 ,p_allow_sorting=>'N'
@@ -771,6 +775,15 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(26094328735304630)
+,p_db_column_name=>'PRCS_ID'
+,p_display_order=>120
+,p_column_identifier=>'A'
+,p_column_label=>'Process ID'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'CENTER'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(26608389028834346)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -778,7 +791,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'266084'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'PRCS_DGRM_CATEGORY:PRCS_ID:PRCS_NAME:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:BTN:'
+,p_report_columns=>'VIEW_PROCESS:PRCS_DGRM_CATEGORY:PRCS_NAME:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:BTN:'
 ,p_sort_column_1=>'PRCS_DGRM_CATEGORY'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'PRCS_NAME'
@@ -972,9 +985,28 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_api.id(12493545854579486121)
 );
 wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(25020236512509606)
+,p_name=>'Create Process Dialog (Report) closed - refresh Instances'
+,p_event_sequence=>110
+,p_triggering_element_type=>'REGION'
+,p_triggering_region_id=>wwv_flow_api.id(12493545854579486121)
+,p_bind_type=>'live'
+,p_bind_event_type=>'apexafterclosedialog'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(25020304399509607)
+,p_event_id=>wwv_flow_api.id(25020236512509606)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(12493545854579486121)
+);
+wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(160797616307501979)
 ,p_name=>'Process Instance changed - Refresh Dependant Regions'
-,p_event_sequence=>110
+,p_event_sequence=>120
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_PRCS_ID'
 ,p_condition_element=>'P10_PRCS_ID'
@@ -1011,6 +1043,18 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'JQUERY_SELECTOR'
 ,p_affected_elements=>'.js-react-on-prcs'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(24417860255878737)
@@ -1067,22 +1111,10 @@ wwv_flow_api.create_page_da_action(
 '  apex.item( "P10_PRCS_ID" ).setValue( myProcess );',
 '}'))
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(7695828836745145)
 ,p_name=>'Subflows Report refreshed - Mark currently running'
-,p_event_sequence=>150
+,p_event_sequence=>140
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(160799453422501997)
 ,p_bind_type=>'bind'
@@ -1105,7 +1137,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(24414763832878706)
 ,p_name=>'Instances Report Refreshed'
-,p_event_sequence=>160
+,p_event_sequence=>150
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(12493545854579486121)
 ,p_bind_type=>'bind'
@@ -1138,7 +1170,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(24417684477878735)
 ,p_name=>'Refresh Clicked'
-,p_event_sequence=>170
+,p_event_sequence=>160
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(24417575788878734)
 ,p_bind_type=>'bind'
@@ -1157,7 +1189,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(2402362161481912)
 ,p_name=>'Add clicked - add row to variables grid'
-,p_event_sequence=>210
+,p_event_sequence=>170
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(2402252879481911)
 ,p_bind_type=>'bind'
@@ -1221,7 +1253,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5805334319730046)
 ,p_name=>'Gateway changed'
-,p_event_sequence=>230
+,p_event_sequence=>180
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_GATEWAY_GRID'
 ,p_bind_type=>'bind'
@@ -1250,7 +1282,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10427083703468004)
 ,p_name=>'Set Connection Select Option '
-,p_event_sequence=>240
+,p_event_sequence=>190
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_GATEWAY'
 ,p_bind_type=>'bind'
@@ -1279,7 +1311,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10428376023468017)
 ,p_name=>'Select all connection'
-,p_event_sequence=>250
+,p_event_sequence=>200
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(10428265504468016)
 ,p_bind_type=>'bind'
@@ -1320,7 +1352,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10428830923468022)
 ,p_name=>'Unselect all connection'
-,p_event_sequence=>260
+,p_event_sequence=>210
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(10428749558468021)
 ,p_bind_type=>'bind'
@@ -1361,7 +1393,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10429447518468028)
 ,p_name=>'Display Button Based on Gateway Type'
-,p_event_sequence=>280
+,p_event_sequence=>220
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_SELECT_OPTION'
 ,p_condition_element=>'P10_SELECT_OPTION'

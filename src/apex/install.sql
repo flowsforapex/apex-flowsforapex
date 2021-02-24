@@ -10,13 +10,16 @@ prompt --install
 @@application/shared_components/files/css_mtag_bpmnmodeler_css.sql
 @@application/shared_components/files/css_mtag_bpmnmodeler_font_css.sql
 @@application/shared_components/files/css_mtag_bpmnmodeler_properties_panel_css.sql
+@@application/shared_components/files/app_100_logo_png.sql
+@@application/shared_components/files/workflow_black_svg.sql
+@@application/shared_components/files/app_100_logo_svg.sql
+@@application/shared_components/files/workflow_white_svg.sql
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
 @@application/shared_components/logic/application_settings.sql
 @@application/shared_components/navigation/tabs/standard.sql
 @@application/shared_components/navigation/tabs/parent.sql
-@@application/shared_components/user_interface/lovs/diagrams.sql
 @@application/shared_components/user_interface/lovs/diagrams_parsed.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p10_instance_connections_lov.sql
@@ -105,7 +108,6 @@ prompt --install
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00001.sql
 @@application/pages/page_00002.sql
-@@application/pages/page_00003.sql
 @@application/pages/page_00004.sql
 @@application/pages/page_00005.sql
 @@application/pages/page_00006.sql

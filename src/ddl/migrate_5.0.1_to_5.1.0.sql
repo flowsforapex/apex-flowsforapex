@@ -18,3 +18,7 @@ CREATE UNIQUE INDEX dgrm_uk2 ON FLOW_DIAGRAMS ( DGRM_NAME, case DGRM_STATUS when
 ALTER TABLE flow_processes DROP CONSTRAINT prcs_dgrm_fk;
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_dgrm_fk FOREIGN KEY (prcs_dgrm_id) REFERENCES flow_diagrams (dgrm_id) ENABLE;
+
+alter table flow_process_variables modify ( prov_var_vc2 varchar2(4000 char) );
+
+drop view flow_diagrams_lov;
