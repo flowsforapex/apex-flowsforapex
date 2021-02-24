@@ -14,20 +14,20 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>6
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Import Diagram'
-,p_alias=>'IMPORT-DIAGRAM'
+,p_name=>'Import Flow'
+,p_alias=>'IMPORT-FLOW'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Import Diagram'
+,p_step_title=>'Import Flow'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210216144739'
+,p_last_upd_yyyymmddhh24miss=>'20210224122726'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
-,p_plug_name=>'Import Diagram'
+,p_plug_name=>'Import Flow'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495609856182880263)
 ,p_plug_display_sequence=>10
@@ -44,7 +44,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_01'
-,p_plug_source=>'We encourage you to import diagrams that were built using Flows for APEX to make sure that they can be run by the engine.'
+,p_plug_source=>'We encourage you to import flow that were built using Flows for APEX to make sure that they can be run by the engine.'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
@@ -255,7 +255,7 @@ wwv_flow_api.create_page_validation(
 '        pi_file_name => :P6_BPMN_FILE',
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
-,p_error_message=>'Please check the diagram provided.'
+,p_error_message=>'Please check the flow provided.'
 ,p_validation_condition_type=>'NOT_DISPLAYING_INLINE_VALIDATION_ERRORS'
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
@@ -331,7 +331,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.message.confirm( "If there are process instances associated to this model, they should not works. Are you sure to continue?", function( okPressed ) {',
+'apex.message.confirm( apex.lang.getMessage("FLOW_OVERWRITE_WARN"), function( okPressed ) {',
 '    if( !okPressed ) {',
 '        apex.item("P6_FORCE_OVERWRITE").setValue("N");',
 '    }',
@@ -360,9 +360,9 @@ wwv_flow_api.create_page_process(
 '    :P6_DGRM_ID := l_dgrm_id;',
 'end;',
 ''))
-,p_process_error_message=>'Model already exists. Use force orverwrite.'
+,p_process_error_message=>'Flow already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_success_message=>'Diagram imported.'
+,p_process_success_message=>'Flow imported.'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(19019994508332917)

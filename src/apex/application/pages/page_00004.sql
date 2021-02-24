@@ -14,13 +14,14 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>4
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Flows for APEX Modeler'
+,p_name=>'Flow Modeler'
 ,p_alias=>'MODELER'
-,p_step_title=>'Flows for APEX Modeler'
+,p_step_title=>'Flow Modeler'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
+,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210223190859'
+,p_last_upd_yyyymmddhh24miss=>'20210224124441'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(22800510543488044)
@@ -41,7 +42,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24418438259878743)
-,p_plug_name=>'Diagram XML'
+,p_plug_name=>'Flow XML'
 ,p_region_name=>'diagram_xml_region'
 ,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size600x400'
 ,p_plug_template=>wwv_flow_api.id(12495608896288880263)
@@ -68,12 +69,12 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(15683484308738625)
 ,p_button_sequence=>20
 ,p_button_plug_id=>wwv_flow_api.id(22800510543488044)
-,p_button_name=>'SAVE_DIAGRAM'
+,p_button_name=>'SAVE_FLOW'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--padRight'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Save Diagram'
+,p_button_image_alt=>'Save Flow'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-save'
@@ -82,7 +83,7 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24418161449878740)
 ,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(22800510543488044)
-,p_button_name=>'DOWNLOAD_DIAGRAM'
+,p_button_name=>'DOWNLOAD_FLOW'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
@@ -99,14 +100,14 @@ wwv_flow_api.create_page_item(
 ,p_item_plug_id=>wwv_flow_api.id(22800510543488044)
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_warn_on_unsaved_changes=>'I'
-,p_attribute_01=>'N'
+,p_attribute_01=>'Y'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(22800638443488045)
 ,p_name=>'P4_REGION_TITLE'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(22800510543488044)
-,p_source=>'No valid Diagram selected.'
+,p_source=>'No valid Flow selected.'
 ,p_source_type=>'STATIC'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_warn_on_unsaved_changes=>'I'
@@ -145,7 +146,7 @@ wwv_flow_api.create_page_computation(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(15683695432738627)
-,p_name=>'Save Diagram Clicked'
+,p_name=>'Save Flow Clicked'
 ,p_event_sequence=>50
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(15683484308738625)
@@ -162,27 +163,8 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>'apex.region(''modeler'').save();'
 );
 wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(22800892788488047)
-,p_name=>'Diagram selected'
-,p_event_sequence=>60
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P4_DGRM_ID'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'change'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(22800966766488048)
-,p_event_id=>wwv_flow_api.id(22800892788488047)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(22800510543488044)
-);
-wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(22801184516488050)
-,p_name=>'Download Diagram clicked'
+,p_name=>'Download Flow clicked'
 ,p_event_sequence=>70
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(24418161449878740)

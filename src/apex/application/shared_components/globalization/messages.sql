@@ -27,13 +27,13 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(26017638645989579)
 ,p_name=>'DGRM_UK'
-,p_message_text=>'A diagram already exists with the same name and status.'
+,p_message_text=>'A flow already exists with the same name and status.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(24219258023169431)
 ,p_name=>'DGRM_UK2'
-,p_message_text=>'A diagram with this name and having a status of ''release'' already exists.  Change the existing diagram status to deprecate or archived and re-import.'
+,p_message_text=>'A flow with this name and having a status of ''release'' already exists.  Change the existing flow status to deprecate or archived and re-import.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.component_end;
@@ -49,12 +49,17 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(26216104719078517)
-,p_name=>'M_VERSION_EXISTS'
-,p_message_text=>'Version already exists'
+ p_id=>wwv_flow_api.id(28300791809214356)
+,p_name=>'FLOW_IMPORTED'
+,p_message_text=>'Flow imported.'
 ,p_is_js_message=>true
 );
-null;
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(28202305228139790)
+,p_name=>'FLOW_OVERWRITE_WARN'
+,p_message_text=>'If there are process instances associated to this model, they should not works. Are you sure to continue?'
+,p_is_js_message=>true
+);
 wwv_flow_api.component_end;
 end;
 /
@@ -70,7 +75,7 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(24202863069473923)
 ,p_name=>'PRCS_DGRM_FK'
-,p_message_text=>'Process instances using this diagram exist.  Use cascade option to remove diagram and process instances.'
+,p_message_text=>'Process instances using this flow exist. Use cascade option to remove flow and process instances.'
 ,p_is_js_message=>true
 );
 null;

@@ -64,15 +64,23 @@ as
         l_dgrm_exists number;
         l_dgrm_status flow_diagrams.dgrm_status%type;
     begin
-        select dgrm_status, count(*)
-          into l_dgrm_status, l_dgrm_exists
+        select count(*)
+          into l_dgrm_exists
           from flow_diagrams
          where dgrm_name = pi_dgrm_name
            and dgrm_version = pi_dgrm_version
-         group by dgrm_status
         ;
 
-        if (l_dgrm_exists = 0 or pi_force_overwrite = 'Y' and l_dgrm_status = flow_constants_pkg.gc_dgrm_status_draft) then
+        if (l_dgrm_exists > 0) then
+            select dgrm_status
+            into l_dgrm_status
+            from flow_diagrams
+            where dgrm_name = pi_dgrm_name
+            and dgrm_version = pi_dgrm_version
+            ;
+        end if;
+
+        if (l_dgrm_exists = 0 or (l_dgrm_exists > 0 and pi_force_overwrite = 'Y' and l_dgrm_status = flow_constants_pkg.gc_dgrm_status_draft)) then
             if (pi_import_from = 'text') then
                 l_dgrm_content := pi_dgrm_content;
             else
