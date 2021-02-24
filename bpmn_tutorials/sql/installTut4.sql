@@ -57,7 +57,7 @@ apex_string.join_clob(
   , q'[]'
   , q'[Flows for APEX V5 can now direct steps in your process.  This step introduces the task types, and how to configure them.]'
   , q'[]'
-  , q'[This tutorial is one to look at in Flow Modeller, but not run in your system</bpmn:text>]'
+  , q'[This tutorial is one to look at in Flow Management / Flow Modeler, but not run in your system.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_00jab7b' sourceRef='Event_0etkrt2' targetRef='TextAnnotation_0xw8y26' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1vygfet'>]'
