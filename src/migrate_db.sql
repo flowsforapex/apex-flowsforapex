@@ -31,9 +31,10 @@ PROMPT >> Installing Views
 @views/flow_instance_details_vw.sql
 @views/flow_instance_variables_vw.sql
 @views/flow_task_inbox_vw.sql
-@views/flow_instance_connections_lov.sql;
-@views/flow_instance_gateways_lov.sql;
+@views/flow_instance_connections_lov.sql
+@views/flow_instance_gateways_lov.sql
 @views/flow_diagrams_vw.sql
+@views/flow_diagram_categories_lov.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_process_vars.pkb
