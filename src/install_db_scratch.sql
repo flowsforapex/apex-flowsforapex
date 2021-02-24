@@ -23,7 +23,6 @@ PROMPT >> Installing Package Specifications
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
 @views/flow_subflows_vw.sql
-@views/flow_diagrams_lov.sql
 @views/flow_diagrams_parsed_lov.sql
 @views/flow_diagram_categories_lov.sql
 @views/flow_instance_details_vw.sql
