@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_reload_on_submit=>'A'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210224122420'
+,p_last_updated_by=>'MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20210224143615'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(17600327473220601)
@@ -62,8 +62,6 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P5_FILENAME'
 ,p_item_sequence=>130
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
-,p_item_default=>'to_char(sysdate, ''YYYY-MON-DD_HH24-MI'')||''_''||:P5_DGRM_NAME'
-,p_item_default_type=>'PLSQL_EXPRESSION'
 ,p_prompt=>'File Name'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30

@@ -442,15 +442,9 @@ __webpack_require__.r(__webpack_exports__);
       return Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element).id;
     },
     setProperty: function (element, properties) {
-      const bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element);
-      const initialId = bo.$attrs.initialId || bo.id;
       const updatedElement = element.labelTarget || element;
-      const updatedProperties = {
-        initialId,
-        ...properties
-      };
 
-      return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_3___default.a.updateProperties(updatedElement, updatedProperties);
+      return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_3___default.a.updateProperties(updatedElement, properties);
     },
     validate: function (element, values) {
       var idValue = values.id;
@@ -816,17 +810,24 @@ module.exports = function () {
       'bpmndi:BPMNPlane',
       'bpmndi:BPMNShape',
       'bpmndi:BPMNEdge',
-      'bpmn:Definitions'
+      'bpmn:Definitions',
+      'bpmn:Association',
+      'bpmn:TextAnnotation'
     ];
-    const { id } = businessObject;
+    const { id, $type, name } = businessObject;
     const isBoAccessableInUi = id && notChangeableTypes.indexOf(businessObject.$type) < 0;
-    const { initialId } = businessObject.$attrs;
 
     if (isBoAccessableInUi) {
-      const isIdUnchanged = !initialId || initialId === id;
+      const stringAfterUnderscore = id.substr(id.indexOf('_') + 1);
+      const patternUnchangedId = /^[0,1]{1}[\da-z]{6}$/;
+      const isIdUnchanged = patternUnchangedId.test(stringAfterUnderscore);
 
       if (isIdUnchanged) {
-        reporter.report(businessObject.id, 'Element ID was not changed yet');
+        const isSequenceFlowWithoutName = $type === 'bpmn:SequenceFlow' && (!name || !name.length);
+
+        if (!isSequenceFlowWithoutName) {
+          reporter.report(businessObject.id, 'Element ID was not changed yet');
+        }
       }
     }
   }

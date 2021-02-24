@@ -20,7 +20,8 @@ prompt --install
 @@application/shared_components/logic/application_settings.sql
 @@application/shared_components/navigation/tabs/standard.sql
 @@application/shared_components/navigation/tabs/parent.sql
-@@application/shared_components/user_interface/lovs/diagrams_parsed.sql
+@@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
+@@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p10_instance_connections_lov.sql
 @@application/shared_components/user_interface/lovs/p10_instance_gateways_lov.sql

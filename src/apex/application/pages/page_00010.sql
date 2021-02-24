@@ -33,7 +33,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210223211052'
+,p_last_upd_yyyymmddhh24miss=>'20210224144207'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -1251,35 +1251,6 @@ wwv_flow_api.create_page_da_action(
 ''))
 );
 wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(5805334319730046)
-,p_name=>'Gateway changed'
-,p_event_sequence=>180
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P10_GATEWAY_GRID'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'change'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(5805447668730047)
-,p_event_id=>wwv_flow_api.id(5805334319730046)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P10_GATEWAY'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select objt_id ',
-'from flow_instance_gateways_lov',
-'where objt_bpmn_id= :P10_GATEWAY_GRID',
-'and prcs_id = :p10_prcs_id'))
-,p_attribute_07=>'P10_PRCS_ID,P10_GATEWAY_GRID,P10_CONNECTION_GRID'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10427083703468004)
 ,p_name=>'Set Connection Select Option '
 ,p_event_sequence=>190
@@ -1303,7 +1274,7 @@ wwv_flow_api.create_page_da_action(
 'from flow_instance_gateways_lov',
 'where objt_bpmn_id = :P10_GATEWAY',
 'and prcs_id = :P10_PRCS_ID'))
-,p_attribute_07=>'P10_GATEWAY,P10_PRCS_ID,P10_SELECT_OPTION'
+,p_attribute_07=>'P10_GATEWAY,P10_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'

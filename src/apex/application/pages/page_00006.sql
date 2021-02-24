@@ -22,8 +22,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210224122726'
+,p_last_updated_by=>'MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20210224143445'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -177,15 +177,13 @@ wwv_flow_api.create_page_item(
 ,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
 ,p_prompt=>'Category'
 ,p_display_as=>'NATIVE_POPUP_LOV'
-,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct dgrm_category d, dgrm_category r',
-'from flow_diagrams_lov'))
+,p_named_lov=>'DIAGRAM_CATEGORIES_LOV'
 ,p_lov_display_null=>'YES'
 ,p_cSize=>60
 ,p_cMaxlength=>120
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
-,p_lov_display_extra=>'YES'
+,p_lov_display_extra=>'NO'
 ,p_attribute_01=>'POPUP'
 ,p_attribute_02=>'FIRST_ROWSET'
 ,p_attribute_03=>'N'
@@ -257,7 +255,7 @@ wwv_flow_api.create_page_validation(
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please check the flow provided.'
 ,p_validation_condition_type=>'NOT_DISPLAYING_INLINE_VALIDATION_ERRORS'
-,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10431642957468050)

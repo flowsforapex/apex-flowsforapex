@@ -33,8 +33,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210224124007'
+,p_last_updated_by=>'MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20210224143129'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24215396220956137)
@@ -557,9 +557,7 @@ wwv_flow_api.create_page_item(
 ,p_source=>'DGRM_CATEGORY'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_POPUP_LOV'
-,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct dgrm_category d, dgrm_category r',
-'from flow_diagrams_lov'))
+,p_named_lov=>'DIAGRAM_CATEGORIES_LOV'
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'No Category'
 ,p_cSize=>60
