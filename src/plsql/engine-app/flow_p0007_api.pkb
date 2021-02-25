@@ -61,19 +61,32 @@ as
   begin
     case pi_request
       when 'CREATE' then
-        pio_dgrm_id :=
-          flow_bpmn_parser_pkg.upload_diagram
-          (
-            pi_dgrm_name     => pi_dgrm_name
-          , pi_dgrm_version  => pi_dgrm_version
-          , pi_dgrm_category => pi_dgrm_category
-          , pi_dgrm_content  => flow_constants_pkg.gc_default_xml
-          , pi_dgrm_status   => flow_constants_pkg.gc_dgrm_status_draft
+        begin
+          select dgrm_id
+          into pio_dgrm_id
+          from flow_diagrams
+          where dgrm_name = pi_dgrm_name
+          and dgrm_version = pi_dgrm_version;
+
+          apex_error.add_error(
+              p_message => apex_lang.message(p_name => 'DGRM_UK')
+            , p_display_location => apex_error.c_on_error_page
           );
-        flow_bpmn_parser_pkg.parse
-        (
-          pi_dgrm_id => pio_dgrm_id
-        );
+        exception when no_data_found then
+          pio_dgrm_id :=
+            flow_bpmn_parser_pkg.upload_diagram
+            (
+              pi_dgrm_name     => pi_dgrm_name
+            , pi_dgrm_version  => pi_dgrm_version
+            , pi_dgrm_category => pi_dgrm_category
+            , pi_dgrm_content  => flow_constants_pkg.gc_default_xml
+            , pi_dgrm_status   => flow_constants_pkg.gc_dgrm_status_draft
+            );
+          flow_bpmn_parser_pkg.parse
+          (
+            pi_dgrm_id => pio_dgrm_id
+          );
+        end;
       when 'SAVE' then
         select dgrm_category
           into l_dgrm_category
