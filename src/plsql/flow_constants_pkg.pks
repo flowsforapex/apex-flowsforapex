@@ -93,6 +93,11 @@ as
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
 
+  -- Process Instance Status
+  gc_prcs_status_created             constant  varchar2(20 char) := 'created';
+  gc_prcs_status_running             constant  varchar2(20 char) := 'running';
+  gc_prcs_status_completed           constant  varchar2(20 char) := 'completed';
+
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="' || gc_version || '">

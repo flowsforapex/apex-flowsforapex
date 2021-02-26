@@ -103,7 +103,7 @@ apex_string.join_clob(
   , q'[]'
   , q'[We've used a scriptTask that runs a simple PL/SQL procedure that sets the routing to 'Flow_A:Flow_C'. ]'
   , q'[]'
-  , q'[In the Properties Panel on the right side of the Flow Modeller, select the ScriptTask and select the APEX tab to see how we get the process id and then set the process variable.]'
+  , q'[In the Properties Panel on the right side of the Flow Modeler, select the ScriptTask and select the APEX tab to see how we get the process id and then set the process variable.]'
   , q'[]'
   , q'[Your application could include a PL/SQL procedure that performs a query in the database &amp; which determines the route through your process. That makes this very powerful!</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'

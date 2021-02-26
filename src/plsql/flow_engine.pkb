@@ -545,7 +545,7 @@ begin
     end if;
     -- update process status
     update flow_processes prcs
-       set prcs.prcs_status = flow_constants_pkg.gc_sbfl_status_running
+       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
          , prcs.prcs_last_update = sysdate
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
@@ -962,7 +962,7 @@ begin
         then 
             -- No remaining subflows so process has completed
             update flow_processes prcs 
-               set prcs.prcs_status = 'completed'
+               set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_completed
                  , prcs.prcs_last_update = sysdate
              where prcs.prcs_id = p_process_id;
 
@@ -2374,7 +2374,7 @@ begin
     values
           ( p_prcs_name
           , p_dgrm_id
-          , 'created'
+          , flow_constants_pkg.gc_prcs_status_created
           , systimestamp
           , systimestamp
           )
@@ -2422,7 +2422,7 @@ begin
 
     update flow_processes prcs
        set prcs.prcs_last_update = sysdate
-         , prcs.prcs_status = 'created'
+         , prcs.prcs_status = flow_constants_pkg.gc_prcs_status_created
      where prcs.prcs_id = p_process_id
     ;
 end flow_reset;
