@@ -160,39 +160,55 @@ as
 
   procedure get_duration
   (
-    in_string     in      varchar2
+    in_string     in     varchar2
   , in_start_ts   in     timestamp with time zone default null
   , out_start_ts     out timestamp with time zone
   , out_interv_ym in out interval year to month
   , out_interv_ds in out interval day to second
   )
   as
-    l_int_years     number;
-    l_int_months    number;
-    l_int_days      number;
-    l_int_contains  varchar2 (2);
+    type t_duration_components is table of number index by varchar2(1 char);
+
+    l_start_pos_time  pls_integer;
+    l_token_count     pls_integer;
+    l_before_t        varchar2(200 char);
+    l_after_t         varchar2(200 char);
+    l_ym_part         varchar2(200 char);
+    l_ds_part         varchar2(200 char);
+
+    l_cur_component   varchar2(200 char);    
   begin
-    if regexp_replace ( in_string, '[0-9]', '' ) like 'PYM%' then
-      l_int_contains  := 'M';
-      l_int_years     := substr( in_string, 2, instr( in_string, 'Y', 1 ) - 2 );
-      l_int_months    := substr( in_string, instr( in_string, 'Y', 1 ) + 1, instr( in_string, 'M', 1 ) - instr( in_string, 'Y', 1 ) - 1 );
-    elsif regexp_replace ( in_string, '[0-9]', '' ) like 'PY%' then
-      l_int_contains  := 'Y';
-      l_int_years     := substr( in_string, 2, instr( in_string, 'Y', 1 ) - 2 );
-    elsif regexp_replace ( in_string, '[0-9]', '' ) like 'PM%' then
-      l_int_contains  := 'M';
-      l_int_months    := substr( in_string, 2, instr( in_string, 'M', 1 ) - 2 );
+    -- first split the string to year-month and day-second parts
+    -- afterwards operate on both separately
+    -- because M before T means months and M after T means minutes
+
+    l_start_pos_time := instr( in_string, 'T' );
+    if l_start_pos_time = 0 then
+      l_before_t := in_string;
+    else
+      l_before_t       := substr( in_string, 1, l_start_pos_time - 1 );
+      l_after_t        := substr( in_string, l_start_pos_time);
     end if;
 
-    if regexp_replace (in_string, '[0-9]', '') like 'PT%' then
-      l_int_contains := 'PT';
-      out_interv_ds  := coalesce( to_dsinterval( substr( in_string, instr( in_string, l_int_contains, 1 ) ) ), INTERVAL '0' HOUR );
-    else 
-      l_int_contains := 'T';
-      out_interv_ds  := coalesce( to_dsinterval( substr( in_string, instr( in_string, l_int_contains, 1 ) ) ), INTERVAL '0' HOUR );
-    end if;
+    -- The day indicator comes before the "T"
+    -- however day needs to be handle with ds_interval
+    l_token_count := regexp_count( l_before_t, '\d+\w' );
+    for i in 1..l_token_count loop
+      l_cur_component := regexp_substr(l_before_t, '\d+\w', 1, i);
 
-    out_interv_ym := numtoyminterval( coalesce( l_int_years, 0 ), 'YEAR' ) + numtoyminterval( coalesce( l_int_months, 0 ), 'MONTH' );
+      case substr(l_cur_component, -1)
+        when 'Y' then l_ym_part := l_ym_part || l_cur_component;
+        when 'M' then l_ym_part := l_ym_part || l_cur_component;
+        when 'D' then l_ds_part := l_ds_part || l_cur_component;
+        else null;
+      end case;
+    end loop;
+
+    l_ds_part := l_ds_part || l_after_t;
+
+    out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
+    out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
+
     out_start_ts  := coalesce( in_start_ts, systimestamp ) + out_interv_ym + out_interv_ds;
 
   end get_duration;
