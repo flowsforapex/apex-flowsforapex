@@ -30,11 +30,14 @@ wwv_flow_api.create_page(
 '}',
 '.instance-counter-link{',
 '    cursor:pointer;',
+'}',
+'td[headers="NB_INSTANCES"] {',
+'    padding-left: 0px;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210224143129'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210226163506'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24215396220956137)

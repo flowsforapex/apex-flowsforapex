@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210224121521'
+,p_last_upd_yyyymmddhh24miss=>'20210226163106'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24213241311956116)
@@ -520,6 +520,7 @@ wwv_flow_api.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'ADD_VERSION'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_process_success_message=>'New version added.'
 );
 wwv_flow_api.component_end;
 end;
