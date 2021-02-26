@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_step_template=>wwv_flow_api.id(12495624331342880306)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210224143048'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210226164311'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603847781745438)
@@ -120,6 +120,7 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_success_message=>'Instance created.'
 );
 wwv_flow_api.component_end;
 end;

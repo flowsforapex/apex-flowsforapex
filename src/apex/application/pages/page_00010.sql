@@ -32,8 +32,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210224144207'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210226164441'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -984,6 +984,15 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(12493545854579486121)
 );
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(29602959246125302)
+,p_event_id=>wwv_flow_api.id(160797771746501981)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("INSTANCE_CREATED"));'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(25020236512509606)
 ,p_name=>'Create Process Dialog (Report) closed - refresh Instances'
@@ -1034,16 +1043,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'JQUERY_SELECTOR'
 ,p_affected_elements=>'.js-react-on-prcs'
 );
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(160797554131501978)
-,p_event_id=>wwv_flow_api.id(160797616307501979)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'JQUERY_SELECTOR'
-,p_affected_elements=>'.js-react-on-prcs'
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -1055,6 +1054,16 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(160797554131501978)
+,p_event_id=>wwv_flow_api.id(160797616307501979)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'JQUERY_SELECTOR'
+,p_affected_elements=>'.js-react-on-prcs'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(24417860255878737)
