@@ -12,7 +12,7 @@
 - Added bpmn lint rule to warn when original, default object names used.
 - Updated bpmn.io libraries.
 - Added upgrade support to installation process.
-
+- Hey, we even have our own logo now!
 
 ## v5.0.1
 
