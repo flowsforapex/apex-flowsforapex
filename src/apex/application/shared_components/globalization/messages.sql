@@ -57,7 +57,7 @@ wwv_flow_api.create_message(
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(28202305228139790)
 ,p_name=>'FLOW_OVERWRITE_WARN'
-,p_message_text=>'If there are process instances associated to this model, they should not works. Are you sure to continue?'
+,p_message_text=>'If there are running instances associated to the existing model, then these might cause errors. Are you sure to continue?'
 ,p_is_js_message=>true
 );
 wwv_flow_api.component_end;
