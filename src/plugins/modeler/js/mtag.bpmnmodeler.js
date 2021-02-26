@@ -128,8 +128,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmnlint_rules_superfluous_gateway__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_rules_superfluous_gateway__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! bpmnlint-plugin-apex/rules/max-id-length */ "./bpmnlint-plugin-apex/rules/max-id-length.js");
 /* harmony import */ var bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var bpmnlint_plugin_apex_rules_id_was_changed__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! bpmnlint-plugin-apex/rules/id-was-changed */ "./bpmnlint-plugin-apex/rules/id-was-changed.js");
-/* harmony import */ var bpmnlint_plugin_apex_rules_id_was_changed__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_plugin_apex_rules_id_was_changed__WEBPACK_IMPORTED_MODULE_15__);
 
 const cache = {};
 
@@ -175,8 +173,7 @@ const rules = {
   "start-event-required": "error",
   "sub-process-blank-start-event": "error",
   "superfluous-gateway": "warning",
-  "apex/max-id-length": "error",
-  "apex/id-was-changed": "warn"
+  "apex/max-id-length": "error"
 };
 
 const config = {
@@ -238,9 +235,6 @@ cache['bpmnlint/superfluous-gateway'] = bpmnlint_rules_superfluous_gateway__WEBP
 
 
 cache['bpmnlint-plugin-apex/max-id-length'] = bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14___default.a;
-
-
-cache['bpmnlint-plugin-apex/id-was-changed'] = bpmnlint_plugin_apex_rules_id_was_changed__WEBPACK_IMPORTED_MODULE_15___default.a;
 
 /***/ }),
 
@@ -789,53 +783,6 @@ __webpack_require__.r(__webpack_exports__);
     );  
   }
 });
-
-
-/***/ }),
-
-/***/ "./bpmnlint-plugin-apex/rules/id-was-changed.js":
-/*!******************************************************!*\
-  !*** ./bpmnlint-plugin-apex/rules/id-was-changed.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/**
- * A rule that checks if a businessObject's ID was changed.
- */
-module.exports = function () {
-  function check(businessObject, reporter) {
-    const notChangeableTypes = [
-      'bpmndi:BPMNDiagram',
-      'bpmndi:BPMNPlane',
-      'bpmndi:BPMNShape',
-      'bpmndi:BPMNEdge',
-      'bpmn:Definitions',
-      'bpmn:Association',
-      'bpmn:TextAnnotation',
-      'bpmn:Process'
-    ];
-    const { id, $type, name } = businessObject;
-    const isBoAccessableInUi = id && notChangeableTypes.indexOf(businessObject.$type) < 0;
-
-    if (isBoAccessableInUi) {
-      const stringAfterUnderscore = id.substr(id.indexOf('_') + 1);
-      const patternUnchangedId = /^[0,1]{1}[\da-z]{6}$/;
-      const isIdUnchanged = patternUnchangedId.test(stringAfterUnderscore);
-
-      if (isIdUnchanged) {
-        const isSequenceFlowWithoutName = $type === 'bpmn:SequenceFlow' && (!name || !name.length);
-
-        if (!isSequenceFlowWithoutName) {
-          reporter.report(businessObject.id, 'Element ID was not changed yet');
-        }
-      }
-    }
-  }
-
-  return { check };
-};
-
 
 
 /***/ }),
