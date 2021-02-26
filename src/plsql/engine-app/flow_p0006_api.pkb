@@ -102,7 +102,7 @@ as
         else
             if (l_dgrm_status = flow_constants_pkg.gc_dgrm_status_draft) then
                 apex_error.add_error(
-                    p_message => 'Model already exists. Use force overwrite.'
+                    p_message => 'Model already exists.'
                     , p_display_location => apex_error.c_on_error_page
                 );
             else

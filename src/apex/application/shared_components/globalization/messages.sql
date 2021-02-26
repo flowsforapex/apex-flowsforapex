@@ -33,7 +33,7 @@ wwv_flow_api.create_message(
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(24219258023169431)
 ,p_name=>'DGRM_UK2'
-,p_message_text=>'A flow with this name and having a status of ''release'' already exists.  Change the existing flow status to deprecate or archived and re-import.'
+,p_message_text=>'A flow with this name and having a status of ''released'' already exists.  Change the existing flow status to deprecated or archived and re-import.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.component_end;
