@@ -73,25 +73,29 @@ Timer definitions can be specified in the properties panel as a literal value, o
 
 Under Timer, select the type of timer you want.  Under Timer Definition, specific the required time or interval, as below.
 
-- Date:  specifies a date and time for the process to start, using an [ISO 8601 date/time string](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations).  For example:
-  
+- Date:  specifies a specific date and time for the process to start, using an [ISO 8601 date/time string](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations).  For example:
+
   ```
   2007-04-05T14:30
   ```
-  
+
   You can also specify a date value by creating a Flows for APEX process variable of data datatype, and substituting that.  See below for syntax.
+
+
 - Duration:  specifies a delay from the current time or the process to start, using an [ISO 8601 duration](https://en.wikipedia.com/wiki/ISO_8601#Durations) string.  For example:
-  
+
   ```
   P3Y6M4DT12H30M5S" represents a duration of "three years, six months, four days, twelve hours, thirty minutes, and five seconds".
   P3M represents 3 months.
   PT5M represents 5 minutes.
   PT30S represents 30 seconds.
   ```
-- Cycle Timer: for an initial run and then repeats an definied intervals, using a [ISO 8601 Repeating Interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals) specifier.  The alternate BPMN syntax for repeating intervals using CRON syntax is not currently supported.  For example:
-  
+- Cycle Timer: specifies the date/time for an initial run and then definied intervals for repitition.  **__Although they can be specified in the Flow Modeler, Cycle Timers are not currently supported in Flows for APEX.__**
+
+  To start a process repetitively, use APEX Automations.
+
   ```
-  R5/P1Y2M10DT2H30M
+
   ```
 
 ![Timer Event Start](images/timerStartEvent.png "Timer Start Event")
@@ -115,4 +119,3 @@ In the following example, a scriptTask is used to calculate a process variable, 
 ![Using Process Variables in Timer Event](images/usingProcessVarsInTimerDefs.png "Using Process Variables for Timer Event")
 
 Just to keep the example going, our Review process, which is triggered by the Intermediate Timer Catch Event, itself has a non-interrupting timer boundary event set on it.  This acts as a reminder, and is set to fire after a Duration has elapsed after the Review Event became the current task in the process.  This has also been specified using a substitution variable - this time using the variable `managerReminderPeriod`.  If this was, say, 2 days, the process variable `managerReminderPeriod` would be a `varchar2` variable having the value `P2D`.
-

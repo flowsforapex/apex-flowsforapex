@@ -36,11 +36,11 @@ The diagram below gives a full definition of the BPMN syntax supported in the cu
 
 - [The Process Variable System](processVariables.md)
 
-### Understanding the Subflow Architecture
+### Understanding Flows for APEX Concepts
 
 - [About Subflows](AboutSubflows.md)
+- [Process Versioning](diagramVersioning.md) 🆕
 
 ## Frequently Asked Questions (FAQ)
 
 See the [FAQ](FAQ.md)
-
