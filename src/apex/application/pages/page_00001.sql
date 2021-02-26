@@ -19,8 +19,8 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Getting Started'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20201211124349'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210224115647'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603774502745437)
@@ -38,7 +38,7 @@ wwv_flow_api.create_page_plug(
 '<li>Flows for APEX enables APEX developers to model and run process flows in APEX using a combination of visual process design and low-code techniques.</li>',
 '<li>Designed primarily for APEX developers, Flows for APEX uses the technologies that you are already familiar with - APEX, PL/SQL, and SQL - to create powerful and flexible process flows in your APEX environment.</li>',
 '<li>Used to create and execute a process flow of APEX pages, PL/SQL scripts, send email.</li>',
-'<li> The low-code diagrammatic process definition can also be understood and edited by business users to increase business flexibility.  Diagrams use the Business Process Modeling Notation (BPMN) V2 style</li>',
+'<li> The low-code diagrammatic process definition can also be understood and edited by business users to increase business flexibility.  Flows use the Business Process Modeling Notation (BPMN) V2 style</li>',
 '<li>Built as an APEX community project, and released on an open source, MIT licence.</li>',
 '</ul>',
 '<p>',

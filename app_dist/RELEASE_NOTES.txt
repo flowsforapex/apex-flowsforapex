@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v5.0.1                *
+*            Flows for APEX v5.1.0                *
 *          Installation instructions              *
 *                                                 *
 *                                                 *
@@ -24,6 +24,18 @@ INSTALLING THE APPLICATION
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
 
 HISTORY
+* v5.1.0
+  - Introduces process diagram versioning and lifecycle management.
+  - Supports diagram import and export to XML or SQL files from the Flows for APEX application.
+  - Adds process categories to aid management of business processes.
+  - Enhanced user interface to support versioning and categories.
+  - Adds plain PL/SQL option for Script Tasks and Service Tasks to allow automated tasks to execute following a timer.
+  - Fixed bug preventing processes with nested open parallel gateways from completing.
+  - Fixed bug preventing long duration (months, years) timers from starting.
+  - Added bpmn lint rule to warn when original, default object names used.
+  - Updated bpmn.io libraries.
+  - Added upgrade support to installation process.
+
 * v5.0.1
   - Enables process variables to be used when specifying timer definitions
   - Fixed bug that rises when reusing an ID across flows

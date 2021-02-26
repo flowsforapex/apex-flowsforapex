@@ -2,9 +2,12 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA1 - Gateway Tutorial"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
 'AA1 - Gateway Tutorial',
+0,
+'Tutorials',
+timestamp '2021-02-07 16:01:30.361961000 +00:00',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -77,11 +80,11 @@ apex_string.join_clob(
   , q'[    </bpmn:task>]'
   , q'[    <bpmn:sequenceFlow id='Flow_05v09nk' sourceRef='Activity_1qvl818' targetRef='Gateway_Two' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1fvohcn'>]'
-  , q'[      <bpmn:text>How to Navigate through a Gateway for a Demo Model:Â ]'
+  , q'[      <bpmn:text>How to Navigate through a Gateway for a Demo Model: ]'
   , q'[Method 1: Default Routing.]'
-  , q'[Note that the Lower Route has a '/' mark across the flow.Â  This demotes it is the default path.]'
+  , q'[Note that the Lower Route has a '/' mark across the flow.  This denotes it as the default path.]'
   , q'[To add default path:]'
-  , q'[Â - select the Flow between the Gateway and the next object.]'
+  , q'[- select the Flow between the Gateway and the next object.]'
   , q'[- click on the 'morph' tool (the spanner)]'
   , q'[- select default path</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
@@ -89,34 +92,50 @@ apex_string.join_clob(
   , q'[    <bpmn:textAnnotation id='TextAnnotation_0qhtqn5'>]'
   , q'[      <bpmn:text>This is a mini-tutorial on Gateways that will help you create a test model here and execute it.]'
   , q'[]'
-  , q'[When you add Flows for APEX into your application, you would have some application logic helping to steer you through the gateways.Â  In this demo environment, we have to cheat a little.]'
+  , q'[When you add Flows for APEX into your application, you would have some application logic helping to steer you through the gateways.  In this demo environment, we have to cheat a little.]'
   , q'[]'
-  , q'[The first gateway uses default routing to force your model to always go on one path.Â  Obviously, to test your model you can edit the model to move the default from one path to another....]'
+  , q'[The first gateway uses default routing to force your model to always go on one path.  Obviously, to test your model you can edit the model to move the default from one path to another....]'
   , q'[]'
   , q'[The second gateway shows you how Flows for APEX process variables can be used to instruct the gateway which route to take.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_1y1u9dd' sourceRef='Activity_135jcwt' targetRef='TextAnnotation_0qhtqn5' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1vzs22f'>]'
-  , q'[      <bpmn:text>Method 2: Using Routing Variables]'
+  , q'[      <bpmn:text>Method 2: Instructing the Gateway using Routing Variables]'
   , q'[(This is far more useful!)]'
   , q'[]'
   , q'[Click on the Gateway &amp; see that it has an ID of 'Gateway_Two' in the properties panel on the right.]'
   , q'[Note that the two forward paths have ID's of 'Flow_2_Yes' and 'Flow_2_No']'
   , q'[]'
-  , q'[To instruct our gateway 'Gateway_Two' which way to go, you would set up a Process Variable with the routing instructions somewhere in your application before you get to the Gateway.Â ]'
+  , q'[To instruct our gateway 'Gateway_Two' which way to route the process, you would set up a Process Variable with the routing instructions somewhere in your application before you get to the Gateway. ]'
   , q'[]'
-  , q'[You need to set a process variable with name = &lt;gateway_ID&gt;&lt;:route&gt;.Â  It's content needs to be the ID of the route you want it to take.]'
+  , q'[You need to set a process variable with name = &lt;gateway_ID&gt;&lt;:route&gt;. The value needs to be the ID of the route you want it to take.]'
   , q'[]'
   , q'[So in our example, we need to set process variable 'Gateway_Two:route' with a varchar2 value of 'Flow_2_Yes' to go down the 2_Yes route, and 'Flow_2_No' to go down the 2_No route.]'
   , q'[]'
-  , q'[In the Flow Monitor, you can set this manually.Â  So run a copy of this model.Â  Before you get to Gateway Two, Click on the Variables Tab.Â  Add a row into the Interactive Grid for our variable 'Gateway_Two:route' , type VARCHAR2, Value 'Flow_2_No'.]'
+  , q'[In the Flow Monitor, you can set this manually or you can use the Gateway Route Tool. Run a copy of this model in Flow Control. Before you get to Gateway Two, Click on the Variables Tab. Add a row into the Interactive Grid to create our process variable named 'Gateway_Two:route' , give it a type of VARCHAR2, and set its value to 'Flow_2_No'. Don't forget to Save this. Then go to the Subflows tab, and step the process on through the gateway.]'
   , q'[]'
-  , q'[Obviously, in your application you wouldn't do this through the Monitor console.Â  Somewhere in your application you would set the routing based on your data.Â  This could be a variable set call in any previous step, or you could have a scriptTask in the step immediately before that runs a PL/SQL script to set it based on some query or whatever your imagination can create!</bpmn:text>]'
+  , q'[Using the Gateway Routing Tool makes this manual process easier. Once you have the process running, select the Variables tab. This gives you a pop-up list of opening gateways, and shows you the possible route options. Select the one or ones you want, and you will see the process variable has been created and set for you. Again, don't forget to save this, then go to the Subflows tab, and step the process on through the gateway.]'
+  , q'[]'
+  , q'[In a real application you wouldn't do this through the Flow Engine console. Somewhere in your application you would set the routing based on your data. This could be a variable set call in any previous step, or you could have a scriptTask in the step immediately before that runs a PL/SQL script to set it based on some query or whatever your imagination can create!</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_0hx891w' sourceRef='Activity_1qvl818' targetRef='TextAnnotation_1vzs22f' />]'
+  , q'[    <bpmn:textAnnotation id='TextAnnotation_0kv1ra3'>]'
+  , q'[      <bpmn:text>An Opening Gateway will first look for a process variable &lt;its name&gt;:route containing a route.  If not finds that, it uses that for its routing.]'
+  , q'[]'
+  , q'[if there is no process variable, it looks for default routing]'
+  , q'[]'
+  , q'[If there is no variable and no default routing, it will return an error to the user.</bpmn:text>]'
+  , q'[    </bpmn:textAnnotation>]'
+  , q'[    <bpmn:association id='Association_0jgd1xj' sourceRef='Gateway_0wcdym9' targetRef='TextAnnotation_0kv1ra3' />]'
   , q'[  </bpmn:process>]'
   , q'[  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>]'
   , q'[    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_Gateway_Tutorial'>]'
+  , q'[      <bpmndi:BPMNShape id='TextAnnotation_1vzs22f_di' bpmnElement='TextAnnotation_1vzs22f'>]'
+  , q'[        <dc:Bounds x='1140' y='-20' width='790' height='387.9891357421875' />]'
+  , q'[      </bpmndi:BPMNShape>]'
+  , q'[      <bpmndi:BPMNShape id='TextAnnotation_0kv1ra3_di' bpmnElement='TextAnnotation_0kv1ra3'>]'
+  , q'[        <dc:Bounds x='1400' y='520' width='470.0000305175781' height='95.99185180664062' />]'
+  , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Flow_05v09nk_di' bpmnElement='Flow_05v09nk'>]'
   , q'[        <di:waypoint x='930' y='390' />]'
   , q'[        <di:waypoint x='930' y='415' />]'
@@ -242,9 +261,6 @@ apex_string.join_clob(
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_0qhtqn5_di' bpmnElement='TextAnnotation_0qhtqn5'>]'
   , q'[        <dc:Bounds x='500' y='-50' width='515' height='190' />]'
   , q'[      </bpmndi:BPMNShape>]'
-  , q'[      <bpmndi:BPMNShape id='TextAnnotation_1vzs22f_di' bpmnElement='TextAnnotation_1vzs22f'>]'
-  , q'[        <dc:Bounds x='1130' y='20' width='790' height='350' />]'
-  , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Association_0jg4oqm_di' bpmnElement='Association_0jg4oqm'>]'
   , q'[        <di:waypoint x='510' y='365' />]'
   , q'[        <di:waypoint x='463' y='570' />]'
@@ -254,8 +270,12 @@ apex_string.join_clob(
   , q'[        <di:waypoint x='490' y='34' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[      <bpmndi:BPMNEdge id='Association_0hx891w_di' bpmnElement='Association_0hx891w'>]'
-  , q'[        <di:waypoint x='979' y='315' />]'
-  , q'[        <di:waypoint x='1130' y='207' />]'
+  , q'[        <di:waypoint x='977' y='313' />]'
+  , q'[        <di:waypoint x='1140' y='185' />]'
+  , q'[      </bpmndi:BPMNEdge>]'
+  , q'[      <bpmndi:BPMNEdge id='Association_0jgd1xj_di' bpmnElement='Association_0jgd1xj'>]'
+  , q'[        <di:waypoint x='1325' y='450' />]'
+  , q'[        <di:waypoint x='1428' y='520' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[    </bpmndi:BPMNPlane>]'
   , q'[  </bpmndi:BPMNDiagram>]'
@@ -267,5 +287,5 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA1 - Gateway Tutorial" loaded.
+PROMPT >> Example "AA1 - Gateway Tutorial - v0" loaded.
 PROMPT >> ========================================================

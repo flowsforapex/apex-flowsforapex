@@ -1,8 +1,8 @@
 # Behavior of Boundary Events in Sub-Processes (New in V5.0)
 
-This is where things get a little complex - but understanding and mastering boundary events will help you build powerful business processes without getting distracted by all of the painful details of handing process errors, escallation, and all of those other things that turn your simple process model into spagetti!
+This is where things get a little complex - but understanding and mastering boundary events will help you build powerful business processes without getting distracted by all of the painful details of handing process errors, escalation, and all of those other things that turn your simple process model into spagetti!
 
-One of the good practice modeling concepts  in BPMN is to focus the model on the usual, happy-case path.  So your model should flow, left to right, along the happy case scenario.  The mess of
+One of the good practice modeling concepts  in BPMN is to focus the model on the usual, happy-case path.  So your model should flow, left to right, along the happy case scenario.  The mess of error handling and special cases should be abstracted to the top and bottom of your model.
 
 Boundary Events come in several flavours, to handle:
 
@@ -18,14 +18,14 @@ Boundary Events can be attached to tasks (and task like activities) and to sub-p
 
 ![Error Boundary Events](images/ErrorBoundaryInSubProcess.png "Error Boundary Events")
 
-This process has a SubProcess A.  In the sub-process, there is an exclusive gateway which tests for a process error.  If there is a *process error*, the process ends at an Error End Event.
+This process has a SubProcess A.  In the sub-process, there is an exclusive gateway 'is error?' which tests for a process error.  If there is a *process error*, the process ends at an Error End Event.
 
 Note that an error in this context is a *process error*, not a technical error in the application -- which would be handled by the application technology.
 
 Behaviour is:
 
 - An Error End always interupts processing in the sub-process.  Processing in the sub-process, and any of its running child sub-processes, are terminated.
-- Terminated objects are not marked as having been completed.
+- Terminated objects are not marked as having been completed on the progress chart.
 - If the immediate parent process contains an Error Boundary Event, processing continues on that path in the immediate parent.
   - In the  example above, the path would be: Error A -> A error End -> Error Boundary Event -> Error Handler in Parent -> Error End.
 - If the immediate parent process doesn't contain an Error Boundary Event, processing continues on the normal path in the immediate parent.
@@ -37,8 +37,8 @@ Behaviour is:
 
 Timer Boundary Events can be *interrupting* or *non-interrupting*.
 
-- An *interrupting timer boundary event* can be used to create a "timeout" after a specified time period or at a specified time.  When the timer fires at the specified time, processing of the sub-process and any child sub-processes is interrupted.  The parent subflow continues along the route forward from the interrupting timer boundary event.
-- A *non-interrupting timer boundary event* can be used to create a reminder  after the process step has been started for a specified time period, or at a specified time.  When the timer fires, processing of the parent task continues.  In addition, a new subflow processes tasks on the reminder route.
+- An *interrupting timer boundary event* can be used to create a "timeout" after a specified time period or at a specified time.  When the timer fires at the specified time, processing of the sub-process and any child sub-processes is interrupted.  The parent subflow continues along the route forward from the interrupting timer boundary event.  You can only have one interrupting timer boundary event attached to an object.
+- A *non-interrupting timer boundary event* can be used to create a reminder  after the process step has been started for a specified time period, or at a specified time.  When the timer fires, processing of the parent task continues.  In addition, a new subflow processes tasks on the reminder route.  You can have one or more interrupting timer boundary events attached to an object, firing at different times or triggering different process tasks.
 
 A more complex example of how these can be used together is shown below.
 

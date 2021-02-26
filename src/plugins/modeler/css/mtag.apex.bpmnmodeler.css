@@ -1,0 +1,29 @@
+.mtbm-rendercanvas {
+  height: 80vh;
+  background-color: #f0f0f0;
+}
+
+.mtag-bpmn-modeler {
+  position: relative;
+}
+
+.properties-panel-parent {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 260px;
+  z-index: 10;
+  border-left: 1px solid #ccc;
+  overflow: auto;
+  display: block;
+  height: 100%;
+  background-color: #f0f0f0;
+}
+.properties-panel-parent:empty {
+  display: none;
+}
+.properties-panel-parent > .djs-properties-panel {
+  padding-bottom: 70px;
+  min-height:100%;
+}

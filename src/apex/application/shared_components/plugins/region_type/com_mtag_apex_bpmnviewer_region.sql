@@ -258,7 +258,7 @@ wwv_flow_api.create_plugin(
 ,p_standard_attributes=>'SOURCE_LOCATION:AJAX_ITEMS_TO_SUBMIT:NO_DATA_FOUND_MESSAGE:VALUE_ATTRIBUTE'
 ,p_substitute_attributes=>false
 ,p_subscribe_plugin_settings=>true
-,p_version_identifier=>'4.1.0'
+,p_version_identifier=>'5.1.0'
 ,p_about_url=>'https://github.com/mt-ag/apex-bpmnviewer'
 ,p_files_version=>89
 );

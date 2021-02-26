@@ -3,9 +3,12 @@ as
    select sbfl.sbfl_id
         , sbfl.sbfl_sbfl_id
         , sbfl.sbfl_prcs_id
-        , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- should be instance ref
+        , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- process instance ref
         , prcs.prcs_dgrm_id as sbfl_dgrm_id
-        , dgrm.dgrm_name as sbfl_dgrm_name  -- should be process name
+        , dgrm.dgrm_name as sbfl_dgrm_name  -- business process name
+        , dgrm.dgrm_version as sbfl_dgrm_version
+        , dgrm.dgrm_status as sbfl_dgrm_status
+        , dgrm.dgrm_category as sbfl_dgrm_category
         , sbfl.sbfl_starting_object
         , coalesce( objt_start.objt_name, sbfl.sbfl_starting_object ) as sbfl_starting_object_name
         , sbfl.sbfl_route
@@ -17,12 +20,13 @@ as
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_last_update
         , sbfl.sbfl_status
-        , flow_api_pkg.next_step_type( p_sbfl_id => sbfl_id ) as sbfl_next_step_type -- REMOVE FFA50
+        , 'simple-step' as sbfl_next_step_type -- FOR V4 Compatibility.  will be removed in V6
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
         , sbfl.sbfl_process_level
         , sbfl.sbfl_reservation
         , objt_curr.objt_id as sbfl_current_objt_id
+        , prcs.prcs_init_ts as sbfl_prcs_init_ts
      from flow_subflows sbfl
      join flow_processes prcs
        on prcs.prcs_id = sbfl.sbfl_prcs_id

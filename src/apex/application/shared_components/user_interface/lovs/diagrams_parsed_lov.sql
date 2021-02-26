@@ -1,0 +1,64 @@
+prompt --application/shared_components/user_interface/lovs/diagrams_parsed_lov
+begin
+--   Manifest
+--     DIAGRAMS_PARSED_LOV
+--   Manifest End
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_list_of_values(
+ p_id=>wwv_flow_api.id(599957119101802)
+,p_lov_name=>'DIAGRAMS_PARSED_LOV'
+,p_source_type=>'TABLE'
+,p_location=>'LOCAL'
+,p_query_table=>'FLOW_DIAGRAMS_PARSED_LOV'
+,p_return_column_name=>'DGRM_ID'
+,p_display_column_name=>'DGRM_NAME'
+,p_group_sort_direction=>'ASC'
+,p_default_sort_column_name=>'DGRM_NAME'
+,p_default_sort_direction=>'ASC'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(9100877958535115)
+,p_query_column_name=>'DGRM_NAME'
+,p_heading=>'Name'
+,p_display_sequence=>10
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(9604120679701834)
+,p_query_column_name=>'DGRM_ID'
+,p_display_sequence=>10
+,p_data_type=>'NUMBER'
+,p_is_visible=>'N'
+,p_is_searchable=>'N'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(9101106304535117)
+,p_query_column_name=>'DGRM_CATEGORY'
+,p_heading=>'Category'
+,p_display_sequence=>20
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(9101564040535117)
+,p_query_column_name=>'DGRM_STATUS'
+,p_heading=>'Status'
+,p_display_sequence=>30
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(9101910594535117)
+,p_query_column_name=>'DGRM_VERSION'
+,p_heading=>'Version'
+,p_display_sequence=>40
+,p_data_type=>'NUMBER'
+);
+wwv_flow_api.component_end;
+end;
+/

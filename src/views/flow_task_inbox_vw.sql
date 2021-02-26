@@ -4,8 +4,12 @@ as
         , sbfl_sbfl_id
         , sbfl_prcs_id
         , sbfl_process_name
+        , sbfl_prcs_init_ts
         , sbfl_dgrm_id
         , sbfl_dgrm_name
+        , sbfl_dgrm_version
+        , sbfl_dgrm_status
+        , sbfl_dgrm_category
         , sbfl_starting_object
         , sbfl_starting_object_name
         , sbfl_route

@@ -9,7 +9,7 @@ procedure flow_handle_event
 
 function flow_create
   ( p_dgrm_id   in flow_diagrams.dgrm_id%type
-  , p_prcs_name in flow_processes.prcs_name%type default null
+  , p_prcs_name in flow_processes.prcs_name%type
   ) return flow_processes.prcs_id%type;
 
 procedure flow_start_process
