@@ -17,7 +17,7 @@ PREREQUISITES
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "FLOWSFORAPEX_EN_APEX201_984339_UTF8_V5.0.1.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "FLOWSFORAPEX_EN_APEX201_984339_UTF8_V5.1.0.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
 - Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEXDEMO_EN_APEX201_984340_UTF8_V2.0.sql"
@@ -25,16 +25,16 @@ INSTALLING THE APPLICATION
 
 HISTORY
 * v5.1.0
-  - Introduces process diagram versioning and lifecycle management.
-  - Supports diagram import and export to XML or SQL files from the Flows for APEX application.
-  - Adds process categories to aid management of business processes.
-  - Enhanced user interface to support versioning and categories.
-  - Adds plain PL/SQL option for Script Tasks and Service Tasks to allow automated tasks to execute following a timer.
-  - Fixed bug preventing processes with nested open parallel gateways from completing.
-  - Fixed bug preventing long duration (months, years) timers from starting.
-  - Added bpmn lint rule to warn when original, default object names used.
-  - Updated bpmn.io libraries.
-  - Added upgrade support to installation process.
+  - Introduces process diagram versioning and lifecycle management
+  - Supports diagram import and export to XML or SQL files from the Flows for APEX application
+  - Adds process categories to aid management of business processes
+  - Enhanced user interface to support versioning and categories
+  - Adds plain PL/SQL option for Script Tasks and Service Tasks to allow automated tasks to execute following a timer
+  - Fixed bug preventing processes with nested open parallel gateways from completing
+  - Fixed bug preventing long duration (months, years) timers from starting
+  - Updated bpmn.io libraries
+  - Added upgrade support to installation process
+  - Hey, we even have our own logo now!
 
 * v5.0.1
   - Enables process variables to be used when specifying timer definitions
