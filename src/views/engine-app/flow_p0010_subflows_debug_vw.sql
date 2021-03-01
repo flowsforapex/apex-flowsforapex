@@ -7,6 +7,9 @@ as
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_process_name
        , sbfl.sbfl_dgrm_name
+       , sbfl.sbfl_dgrm_version
+       , sbfl.sbfl_dgrm_status
+       , sbfl.sbfl_dgrm_category
        , sbfl_ref_obj_type
        , sbfl_ref_obj_id
        , sbfl_route

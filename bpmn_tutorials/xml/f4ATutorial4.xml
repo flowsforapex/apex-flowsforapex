@@ -1,69 +1,74 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:apex="http://www.apex.mt-ag.com" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.2.0">
-  <bpmn:process id="Tutoria" name="Task Types Tutorial" isExecutable="false">
-    <bpmn:startEvent id="Event_0etkrt2">
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/bpmn' exporter='bpmn-js (https://demo.bpmn.io)' exporterVersion='7.2.0'>
+  <bpmn:process id='Tutorial4' name='Task Types Tutorial' isExecutable='false'>
+    <bpmn:documentation>Tutorials by Richard Allen.
+Flowquest Consulting.
+twitter: @FlowquestR</bpmn:documentation>
+    <bpmn:startEvent id='Event_0etkrt2'>
       <bpmn:outgoing>Flow_1nctu2s</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:task id="Activity_0byebb7" name="This is a Task">
+    <bpmn:task id='Activity_0byebb7' name='This is a standard Task'>
       <bpmn:incoming>Flow_1nctu2s</bpmn:incoming>
       <bpmn:outgoing>Flow_0pijurl</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_1nctu2s" sourceRef="Event_0etkrt2" targetRef="Activity_0byebb7" />
-    <bpmn:sequenceFlow id="Flow_0pijurl" sourceRef="Activity_0byebb7" targetRef="Activity_0srf4in" />
-    <bpmn:userTask id="Activity_0srf4in" name="This is a UserTask - I can call an APEX Page">
+    <bpmn:sequenceFlow id='Flow_1nctu2s' sourceRef='Event_0etkrt2' targetRef='Activity_0byebb7' />
+    <bpmn:sequenceFlow id='Flow_0pijurl' sourceRef='Activity_0byebb7' targetRef='Activity_0srf4in' />
+    <bpmn:userTask id='Activity_0srf4in' name='This is a UserTask - I can call an APEX Page'>
       <bpmn:incoming>Flow_0pijurl</bpmn:incoming>
       <bpmn:outgoing>Flow_199lc3i</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_199lc3i" sourceRef="Activity_0srf4in" targetRef="Activity_0w0fi2i" />
-    <bpmn:scriptTask id="Activity_0w0fi2i" name="This is a scriptTask&#10;- I can run a&#10;PL/SQL script">
+    <bpmn:sequenceFlow id='Flow_199lc3i' sourceRef='Activity_0srf4in' targetRef='Activity_0w0fi2i' />
+    <bpmn:scriptTask id='Activity_0w0fi2i' name='This is a scriptTask&#10;- I can run a&#10;PL/SQL script'>
       <bpmn:incoming>Flow_199lc3i</bpmn:incoming>
       <bpmn:outgoing>Flow_05hp9u3</bpmn:outgoing>
       <apex:plsqlCode>null;</apex:plsqlCode>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_05hp9u3" sourceRef="Activity_0w0fi2i" targetRef="Activity_1sk9zqj" />
-    <bpmn:serviceTask id="Activity_1sk9zqj" name="This is a&#10;Service Task&#10;- Use me to&#10;send an email">
+    <bpmn:sequenceFlow id='Flow_05hp9u3' sourceRef='Activity_0w0fi2i' targetRef='Activity_1sk9zqj' />
+    <bpmn:serviceTask id='Activity_1sk9zqj' name='This is a&#10;Service Task&#10;- Use me to&#10;send an email'>
       <bpmn:incoming>Flow_05hp9u3</bpmn:incoming>
       <bpmn:outgoing>Flow_0kd3kyt</bpmn:outgoing>
       <apex:plsqlCode>null;</apex:plsqlCode>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0kd3kyt" sourceRef="Activity_1sk9zqj" targetRef="Activity_0t8licd" />
-    <bpmn:manualTask id="Activity_0t8licd" name="This is a Manual Task">
+    <bpmn:sequenceFlow id='Flow_0kd3kyt' sourceRef='Activity_1sk9zqj' targetRef='Activity_0t8licd' />
+    <bpmn:manualTask id='Activity_0t8licd' name='This is a Manual Task'>
       <bpmn:incoming>Flow_0kd3kyt</bpmn:incoming>
       <bpmn:outgoing>Flow_07uwsw9</bpmn:outgoing>
     </bpmn:manualTask>
-    <bpmn:endEvent id="Event_1da6vg3">
+    <bpmn:endEvent id='Event_1da6vg3'>
       <bpmn:incoming>Flow_07uwsw9</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_07uwsw9" sourceRef="Activity_0t8licd" targetRef="Event_1da6vg3" />
-    <bpmn:textAnnotation id="TextAnnotation_0xw8y26">
+    <bpmn:sequenceFlow id='Flow_07uwsw9' sourceRef='Activity_0t8licd' targetRef='Event_1da6vg3' />
+    <bpmn:textAnnotation id='TextAnnotation_0xw8y26'>
       <bpmn:text>Tutorial AA4 - Tasks - Getting your Work Done!
 
 So much for steering your process through gateways, etc.  How do we actually get things done?
 
-Flows for APEX V5 can now direct steps in your process.  This step introduces the task types, and how to configure them.</bpmn:text>
+Flows for APEX V5 can now direct steps in your process.  This step introduces the task types, and how to configure them.
+
+This tutorial is one to look at in Flow Modeller, but not run in your system</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_00jab7b" sourceRef="Event_0etkrt2" targetRef="TextAnnotation_0xw8y26" />
-    <bpmn:textAnnotation id="TextAnnotation_1vygfet">
+    <bpmn:association id='Association_00jab7b' sourceRef='Event_0etkrt2' targetRef='TextAnnotation_0xw8y26' />
+    <bpmn:textAnnotation id='TextAnnotation_1vygfet'>
       <bpmn:text>A User Task can call an APEX page, pass variables into the page, etc -- just like an APEX menu does.
 
 Open the APEX tab in the Properties Panel (on the right) and you can see how you specify the application and page to call, provide instructions on what action to perform, what to do with the cache, and list items to set and values to use.</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_1r0p5lj" sourceRef="Activity_0srf4in" targetRef="TextAnnotation_1vygfet" />
-    <bpmn:textAnnotation id="TextAnnotation_1egb903">
+    <bpmn:association id='Association_1r0p5lj' sourceRef='Activity_0srf4in' targetRef='TextAnnotation_1vygfet' />
+    <bpmn:textAnnotation id='TextAnnotation_1egb903'>
       <bpmn:text>Service Tasks call various services, such as messaging, email, etc.  
 
-In V5.0, we use these for sending Email using the APEX Mail Template features.  Other services could be added here in future releases.
+In V5.x, we use these for sending Email using the APEX Mail Template features.  Other services could be added here in future releases.
 
-In V5.0, this works in the same way as do ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>
+In V5.x, this works in the same way as do ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_061ntp9" sourceRef="Activity_1sk9zqj" targetRef="TextAnnotation_1egb903" />
-    <bpmn:textAnnotation id="TextAnnotation_1rkmr7t">
+    <bpmn:association id='Association_061ntp9' sourceRef='Activity_1sk9zqj' targetRef='TextAnnotation_1egb903' />
+    <bpmn:textAnnotation id='TextAnnotation_1rkmr7t'>
       <bpmn:text>Manual Tasks are used to model non-computer steps in your process.
 
-In V5.0, they behave like a standard Task.</bpmn:text>
+In V5.x, they behave like a standard Task.</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_1crb5iq" sourceRef="Activity_0t8licd" targetRef="TextAnnotation_1rkmr7t" />
-    <bpmn:textAnnotation id="TextAnnotation_02mhmae">
+    <bpmn:association id='Association_1crb5iq' sourceRef='Activity_0t8licd' targetRef='TextAnnotation_1rkmr7t' />
+    <bpmn:textAnnotation id='TextAnnotation_02mhmae'>
       <bpmn:text>A Script Task can run a piece of PL/SQL that you supply in the model.
 
 
@@ -75,89 +80,89 @@ As the modeller is not a great editor, we usually write our PL/SQL as packages t
 
 Optionally you can bind your APEX page items into your scripts. Just be careful whether your script is going run when a page / session exists, or whether it could fire after a timer fires, for example, when you might not have page state.</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_1w56n8r" sourceRef="Activity_0w0fi2i" targetRef="TextAnnotation_02mhmae" />
+    <bpmn:association id='Association_1w56n8r' sourceRef='Activity_0w0fi2i' targetRef='TextAnnotation_02mhmae' />
   </bpmn:process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Tutoria">
-      <bpmndi:BPMNEdge id="Flow_07uwsw9_di" bpmnElement="Flow_07uwsw9">
-        <di:waypoint x="1090" y="380" />
-        <di:waypoint x="1152" y="380" />
+  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>
+    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Tutorial4'>
+      <bpmndi:BPMNShape id='TextAnnotation_0xw8y26_di' bpmnElement='TextAnnotation_0xw8y26'>
+        <dc:Bounds x='410' y='40' width='620' height='123.99456787109375' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Flow_07uwsw9_di' bpmnElement='Flow_07uwsw9'>
+        <di:waypoint x='1090' y='380' />
+        <di:waypoint x='1152' y='380' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0kd3kyt_di" bpmnElement="Flow_0kd3kyt">
-        <di:waypoint x="930" y="380" />
-        <di:waypoint x="990" y="380" />
+      <bpmndi:BPMNEdge id='Flow_0kd3kyt_di' bpmnElement='Flow_0kd3kyt'>
+        <di:waypoint x='930' y='380' />
+        <di:waypoint x='990' y='380' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_05hp9u3_di" bpmnElement="Flow_05hp9u3">
-        <di:waypoint x="770" y="380" />
-        <di:waypoint x="830" y="380" />
+      <bpmndi:BPMNEdge id='Flow_05hp9u3_di' bpmnElement='Flow_05hp9u3'>
+        <di:waypoint x='770' y='380' />
+        <di:waypoint x='830' y='380' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_199lc3i_di" bpmnElement="Flow_199lc3i">
-        <di:waypoint x="610" y="380" />
-        <di:waypoint x="670" y="380" />
+      <bpmndi:BPMNEdge id='Flow_199lc3i_di' bpmnElement='Flow_199lc3i'>
+        <di:waypoint x='610' y='380' />
+        <di:waypoint x='670' y='380' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0pijurl_di" bpmnElement="Flow_0pijurl">
-        <di:waypoint x="450" y="380" />
-        <di:waypoint x="510" y="380" />
+      <bpmndi:BPMNEdge id='Flow_0pijurl_di' bpmnElement='Flow_0pijurl'>
+        <di:waypoint x='450' y='380' />
+        <di:waypoint x='510' y='380' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1nctu2s_di" bpmnElement="Flow_1nctu2s">
-        <di:waypoint x="298" y="380" />
-        <di:waypoint x="350" y="380" />
+      <bpmndi:BPMNEdge id='Flow_1nctu2s_di' bpmnElement='Flow_1nctu2s'>
+        <di:waypoint x='298' y='380' />
+        <di:waypoint x='350' y='380' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_0etkrt2_di" bpmnElement="Event_0etkrt2">
-        <dc:Bounds x="262" y="362" width="36" height="36" />
+      <bpmndi:BPMNShape id='Event_0etkrt2_di' bpmnElement='Event_0etkrt2'>
+        <dc:Bounds x='262' y='362' width='36' height='36' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0byebb7_di" bpmnElement="Activity_0byebb7">
-        <dc:Bounds x="350" y="340" width="100" height="80" />
+      <bpmndi:BPMNShape id='Activity_0byebb7_di' bpmnElement='Activity_0byebb7'>
+        <dc:Bounds x='350' y='340' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ok42am_di" bpmnElement="Activity_0srf4in">
-        <dc:Bounds x="510" y="340" width="100" height="80" />
+      <bpmndi:BPMNShape id='Activity_0ok42am_di' bpmnElement='Activity_0srf4in'>
+        <dc:Bounds x='510' y='340' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1e92hqx_di" bpmnElement="Activity_0w0fi2i">
-        <dc:Bounds x="670" y="340" width="100" height="80" />
+      <bpmndi:BPMNShape id='Activity_1e92hqx_di' bpmnElement='Activity_0w0fi2i'>
+        <dc:Bounds x='670' y='340' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0yapt8d_di" bpmnElement="Activity_1sk9zqj">
-        <dc:Bounds x="830" y="340" width="100" height="80" />
+      <bpmndi:BPMNShape id='Activity_0yapt8d_di' bpmnElement='Activity_1sk9zqj'>
+        <dc:Bounds x='830' y='340' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1apqobn_di" bpmnElement="Activity_0t8licd">
-        <dc:Bounds x="990" y="340" width="100" height="80" />
+      <bpmndi:BPMNShape id='Activity_1apqobn_di' bpmnElement='Activity_0t8licd'>
+        <dc:Bounds x='990' y='340' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1da6vg3_di" bpmnElement="Event_1da6vg3">
-        <dc:Bounds x="1152" y="362" width="36" height="36" />
+      <bpmndi:BPMNShape id='Event_1da6vg3_di' bpmnElement='Event_1da6vg3'>
+        <dc:Bounds x='1152' y='362' width='36' height='36' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0xw8y26_di" bpmnElement="TextAnnotation_0xw8y26">
-        <dc:Bounds x="410" y="50" width="620" height="100" />
+      <bpmndi:BPMNShape id='TextAnnotation_1vygfet_di' bpmnElement='TextAnnotation_1vygfet'>
+        <dc:Bounds x='560' y='178' width='370' height='120' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1vygfet_di" bpmnElement="TextAnnotation_1vygfet">
-        <dc:Bounds x="560" y="178" width="370" height="120" />
+      <bpmndi:BPMNShape id='TextAnnotation_1egb903_di' bpmnElement='TextAnnotation_1egb903'>
+        <dc:Bounds x='950' y='490' width='390' height='140' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1egb903_di" bpmnElement="TextAnnotation_1egb903">
-        <dc:Bounds x="950" y="490" width="390" height="140" />
+      <bpmndi:BPMNShape id='TextAnnotation_1rkmr7t_di' bpmnElement='TextAnnotation_1rkmr7t'>
+        <dc:Bounds x='1080' y='190' width='199.9854819976771' height='95.23809523809524' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1rkmr7t_di" bpmnElement="TextAnnotation_1rkmr7t">
-        <dc:Bounds x="1080" y="190" width="199.9854819976771" height="95.23809523809524" />
+      <bpmndi:BPMNShape id='TextAnnotation_02mhmae_di' bpmnElement='TextAnnotation_02mhmae'>
+        <dc:Bounds x='450' y='490' width='430' height='240' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_02mhmae_di" bpmnElement="TextAnnotation_02mhmae">
-        <dc:Bounds x="450" y="490" width="430" height="240" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_00jab7b_di" bpmnElement="Association_00jab7b">
-        <di:waypoint x="287" y="364" />
-        <di:waypoint x="410" y="80" />
+      <bpmndi:BPMNEdge id='Association_1r0p5lj_di' bpmnElement='Association_1r0p5lj'>
+        <di:waypoint x='573' y='340' />
+        <di:waypoint x='585' y='298' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1r0p5lj_di" bpmnElement="Association_1r0p5lj">
-        <di:waypoint x="573" y="340" />
-        <di:waypoint x="585" y="298" />
+      <bpmndi:BPMNEdge id='Association_061ntp9_di' bpmnElement='Association_061ntp9'>
+        <di:waypoint x='918' y='420' />
+        <di:waypoint x='986' y='490' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_061ntp9_di" bpmnElement="Association_061ntp9">
-        <di:waypoint x="918" y="420" />
-        <di:waypoint x="986" y="490" />
+      <bpmndi:BPMNEdge id='Association_1crb5iq_di' bpmnElement='Association_1crb5iq'>
+        <di:waypoint x='1061' y='340' />
+        <di:waypoint x='1089' y='285' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1crb5iq_di" bpmnElement="Association_1crb5iq">
-        <di:waypoint x="1061" y="340" />
-        <di:waypoint x="1089" y="285" />
+      <bpmndi:BPMNEdge id='Association_1w56n8r_di' bpmnElement='Association_1w56n8r'>
+        <di:waypoint x='670' y='408' />
+        <di:waypoint x='526' y='490' />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1w56n8r_di" bpmnElement="Association_1w56n8r">
-        <di:waypoint x="670" y="408" />
-        <di:waypoint x="526" y="490" />
+      <bpmndi:BPMNEdge id='Association_00jab7b_di' bpmnElement='Association_00jab7b'>
+        <di:waypoint x='287' y='364' />
+        <di:waypoint x='401' y='102' />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

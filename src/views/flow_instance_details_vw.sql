@@ -31,6 +31,9 @@ group by sbfl_prcs_id
        , prcs.prcs_name
        , dgrm.dgrm_id
        , dgrm.dgrm_name
+       , dgrm.dgrm_version
+       , dgrm.dgrm_status
+       , dgrm.dgrm_category
        , dgrm.dgrm_content
        , ( select acomp.bpmn_ids
              from all_completed acomp

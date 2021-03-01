@@ -26,17 +26,18 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_for_pages=>'1'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(12495489400303879863)
-,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Flow Modeler'
-,p_list_item_link_target=>'f?p=&APP_ID.:4:&SESSION.::&DEBUG.::::'
-,p_list_item_icon=>'fa-apex'
-,p_list_item_current_type=>'TARGET_PAGE'
+ p_id=>wwv_flow_api.id(9900462312126995)
+,p_list_item_display_sequence=>15
+,p_list_item_link_text=>'Flow Management'
+,p_list_item_link_target=>'f?p=&APP_ID.:2:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-sitemap-horizontal'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'2,4,7'
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12493524976121117621)
 ,p_list_item_display_sequence=>30
-,p_list_item_link_text=>'Flow Control'
+,p_list_item_link_text=>'Flow Monitor'
 ,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.::::'
 ,p_list_item_icon=>'fa-sequence'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'

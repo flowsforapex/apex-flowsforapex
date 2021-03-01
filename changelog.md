@@ -1,5 +1,18 @@
 # Flows for APEX - Changelog
 
+## v5.1.0
+
+- Introduces process diagram versioning and lifecycle management.
+- Supports diagram import and export to XML or SQL files from the Flows for APEX application.
+- Adds process categories to aid management of business processes.
+- Enhanced user interface to support versioning and categories.
+- Adds plain PL/SQL option for Script Tasks and Service Tasks to allow automated tasks to execute following a timer.
+- Fixed bug preventing processes with nested open parallel gateways from completing.
+- Fixed bug preventing long duration (months, years) timers from starting.
+- Updated bpmn.io libraries.
+- Added upgrade support to installation process.
+- Hey, we even have our own logo now!
+
 ## v5.0.1
 
 - Enables process variables to be used when specifying timer definitions

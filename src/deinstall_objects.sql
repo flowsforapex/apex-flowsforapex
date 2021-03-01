@@ -1,8 +1,13 @@
 PROMPT >> Removing Flows4APEX Database Objects
 PROMPT >> ====================================
 
+PROMPT >> Functions
+drop function apex_error_handling;
+
 PROMPT >> Packages
-drop package flow_p0003_api;
+drop package flow_p0005_api;
+drop package flow_p0006_api;
+drop package flow_p0007_api;
 drop package flow_p0010_api;
 drop package flow_plsql_runner_pkg;
 drop package flow_usertask_pkg;
@@ -14,9 +19,12 @@ drop package flow_timers_pkg;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
 
+PROMPT >> Modeler Plugin Objects
+drop package flow_bpmn_modeler;
+
 PROMPT >> Views
-drop view flow_p0001_vw;
-drop view flow_p0003_vw;
+drop view flow_p0002_diagrams_vw;
+drop view flow_p0007_instances_counter_vw;
 drop view flow_p0010_vw;
 drop view flow_p0010_branches_vw;
 drop view flow_p0010_instances_vw;
@@ -30,8 +38,9 @@ drop view flow_instance_details_vw;
 drop view flow_instance_variables_vw;
 drop view flow_instances_vw;
 drop view flow_subflows_vw;
-drop view flow_diagrams_lov;
+drop view flow_diagram_categories_lov;
 drop view flow_diagrams_parsed_lov;
+drop view flow_diagrams_vw;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;

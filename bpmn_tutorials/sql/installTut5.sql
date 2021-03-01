@@ -2,9 +2,12 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA5 - Introducing Sub Processes"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
 'AA5 - Introducing Sub Processes',
+0,
+'Tutorials',
+timestamp '2021-07-02 16:01:30.498507000 +00:00',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -280,5 +283,5 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA5 - Introducing Sub Processes" loaded.
+PROMPT >> Example "AA5 - Introducing Sub Processes - v0" loaded.
 PROMPT >> ========================================================

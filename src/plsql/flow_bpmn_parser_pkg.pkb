@@ -442,8 +442,12 @@ as
 
   function upload_diagram
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
     return flow_diagrams.dgrm_id%type
   as
@@ -456,6 +460,7 @@ as
         into l_dgrm_id
         from flow_diagrams
        where dgrm_name = pi_dgrm_name
+         and dgrm_version = pi_dgrm_version
       ;
     exception
       when no_data_found then
@@ -464,15 +469,20 @@ as
 
     if l_dgrm_id is null then
       insert
-        into flow_diagrams ( dgrm_name, dgrm_content )
-        values ( pi_dgrm_name, pi_dgrm_content )
+        into flow_diagrams ( dgrm_name, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
+        values ( pi_dgrm_name, pi_dgrm_version, pi_dgrm_category, 
+                 pi_dgrm_status,  systimestamp, pi_dgrm_content )
       returning dgrm_id into l_dgrm_id
       ;
     else
-      update flow_diagrams
-         set dgrm_content = pi_dgrm_content
-       where dgrm_id = l_dgrm_id
-      ;
+      if (pi_force_overwrite) then
+        update flow_diagrams
+          set dgrm_content = pi_dgrm_content
+            , dgrm_last_update = systimestamp
+            , dgrm_status  = pi_dgrm_status
+        where dgrm_id = l_dgrm_id
+        ;
+      end if;
     end if;
 
     return l_dgrm_id;
@@ -481,12 +491,19 @@ as
 
   procedure upload_diagram
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
   as
   begin
-    g_dgrm_id := upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
+    g_dgrm_id := upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                                 pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
+                                 pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
+                                  );
   end upload_diagram;
 
   procedure cleanup_parsing_tables
@@ -572,8 +589,8 @@ as
       l_return := flow_constants_pkg.gc_timer_type_duration;
     elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1 then
       l_return := flow_constants_pkg.gc_timer_type_cycle;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definitition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_error_event_definitition;
+    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1 then
+      l_return := flow_constants_pkg.gc_bpmn_error_event_definition;
     elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1 then
       l_return := flow_constants_pkg.gc_bpmn_escalation_event_definition;
     elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1 then
@@ -995,6 +1012,7 @@ as
   procedure parse
   (
     pi_dgrm_name in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
   )
   as
   begin
@@ -1003,23 +1021,50 @@ as
       into g_dgrm_id
       from flow_diagrams
      where dgrm_name = pi_dgrm_name
+       and dgrm_version = pi_dgrm_version
     ;
     parse;
   end parse;
 
   procedure upload_and_parse
   (
-    pi_dgrm_name    in flow_diagrams.dgrm_name%type
-  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
   )
   as
   begin
     reset;
 
-    upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_content => pi_dgrm_content );
+    upload_diagram( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                    pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
+                    pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
+                  );
     parse;
 
   end upload_and_parse;
+
+  procedure update_diagram
+  (
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type
+  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+  )
+  as
+  begin
+    reset;
+    g_dgrm_id := pi_dgrm_id;
+
+    update flow_diagrams
+       set dgrm_content = pi_dgrm_content
+         , dgrm_last_update = systimestamp
+     where dgrm_id = g_dgrm_id
+    ;
+
+    parse;
+  end update_diagram;
 
 end flow_bpmn_parser_pkg;
 / 

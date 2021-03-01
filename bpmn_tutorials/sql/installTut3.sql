@@ -2,9 +2,12 @@ set define off
 PROMPT >> Loading Exported Diagrams
 PROMPT >> Loading Example "AA3 - Inclusive Gateways"
 begin
-insert into flow_diagrams( dgrm_name, dgrm_content)
+insert into flow_diagrams( dgrm_name, dgrm_version, dgrm_category, dgrm_last_update, dgrm_content )
  values (
 'AA3 - Inclusive Gateways',
+0,
+'Tutorials',
+timestamp '2021-07-02 16:01:30.440142000 +00:00',
 apex_string.join_clob(
   apex_t_varchar2(
   q'[<?xml version='1.0' encoding='UTF-8'?>]'
@@ -16,7 +19,7 @@ apex_string.join_clob(
   , q'[    <bpmn:startEvent id='Event_1warv4h' name='Start Tutorial 3'>]'
   , q'[      <bpmn:outgoing>Flow_166n1nj</bpmn:outgoing>]'
   , q'[    </bpmn:startEvent>]'
-  , q'[    <bpmn:task id='Activity_1ve7i3d' name='Set Up Your Gateway Variable'>]'
+  , q'[    <bpmn:task id='Activity_1ve7i3d' name='Inspect Your Gateway Variable'>]'
   , q'[      <bpmn:incoming>Flow_0mzxaxx</bpmn:incoming>]'
   , q'[      <bpmn:outgoing>Flow_1qhovsw</bpmn:outgoing>]'
   , q'[    </bpmn:task>]'
@@ -65,7 +68,10 @@ apex_string.join_clob(
   , q'[    <bpmn:scriptTask id='Activity_0buimbx' name='ScriptTask to Set Gateway Variable'>]'
   , q'[      <bpmn:incoming>Flow_166n1nj</bpmn:incoming>]'
   , q'[      <bpmn:outgoing>Flow_0mzxaxx</bpmn:outgoing>]'
-  , q'[      <apex:plsqlCode>tutorial.AA3_set_route_AC;</apex:plsqlCode>]'
+  , q'[      <apex:plsqlCode>flow_process_vars.set_var ]'
+  , q'[    ( pi_prcs_id =&gt; flow_plsql_runner_pkg.get_current_prcs_id]'
+  , q'[    , pi_var_name =&gt; 'Gateway_Inclusive_Opening:route']'
+  , q'[    , pi_vc2_value =&gt; 'Flow_A:Flow_C');</apex:plsqlCode>]'
   , q'[    </bpmn:scriptTask>]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_1w4hasz'>]'
   , q'[      <bpmn:text>An Inclusive Gateway is a cross between an Exclusive Gateway in Tutorial 1 and a Parallel Gateway in Tutorial 2.]'
@@ -76,31 +82,30 @@ apex_string.join_clob(
   , q'[]'
   , q'[Routes selected are listed in the variable, colon separated]'
   , q'[]'
-  , q'[In our Example, the Gateway ID is 'Gateway_Inclusive_Opening', routes have IDs 'Flow_A', 'Flow_B', and 'Flow_C'.Â  So to choose A and C only, set the variable]'
+  , q'[In our Example, the Gateway ID is 'Gateway_Inclusive_Opening', routes have IDs 'Flow_A', 'Flow_B', and 'Flow_C'.  So to choose A and C only, in the scriptTask we set the variable]'
   , q'[]'
   , q'['Gateway_Inclusive_Opening:route' with varchar2 value 'Flow_A:Flow_C'.]'
   , q'[]'
-  , q'[In this example, we ran a scriptTask as the first task in the flow which set this variable for you.Â  If you look at the variables tab above, you can see the variable and it's value.Â ]'
+  , q'[In this example, we ran a scriptTask as the first task in the flow which set this variable for you.  If you look at the variables tab above, you can see the variable and it's value. ]'
   , q'[]'
   , q'[Step forward &amp; see routes A &amp; C become the current task.]'
   , q'[]'
   , q'[You can restart the model, and manually change the routing variable if you want.]'
   , q'[]'
-  , q'[This is a tutorial, and we've set the variable using a script that's pretty dumb.Â  Obviously in your app, your pl/sql script could look at process variables, or use the process variables to go off into the database &amp; do some query or whatever to create the routing that makes sense for your app.]'
+  , q'[This is a tutorial, and we've set the variable using a simple script.  Obviously in your app, your pl/sql script could look at process variables, or could run a query in the database, or perform some other calculation or logic to determine and then set the routing that makes sense in your application.]'
   , q'[]'
-  , q'[Note that an Inclusive Gateway also can have a default path - on Flow C in our example.</bpmn:text>]'
+  , q'[Note that an Inclusive Gateway also can have a default path - on Flow C in our example.  Flows for APEX will first look for a process variable with the correct name; if that doesn't exist, it will look for default routing; and it that doesn't exist, it will show an error.</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_0k4787z' sourceRef='Activity_1ve7i3d' targetRef='TextAnnotation_1w4hasz' />]'
   , q'[    <bpmn:textAnnotation id='TextAnnotation_0v50lx0'>]'
-  , q'[      <bpmn:text>This sets the process variable for the Gateway.]'
+  , q'[      <bpmn:text>This scriptTask sets the process variable for the Gateway.]'
   , q'[]'
   , q'[]'
-  , q'[We've used a scriptTask that runs a simple PL/SQL procedure that sets the routing to 'Flow_A:Flow_C'.]'
+  , q'[We've used a scriptTask that runs a simple PL/SQL procedure that sets the routing to 'Flow_A:Flow_C'. ]'
   , q'[]'
-  , q'[Your application could include a PL/SQL procedure that performs a query in the database &amp; which determines the route through your process.  That makes this very powerful!]'
+  , q'[In the Properties Panel on the right side of the Flow Modeler, select the ScriptTask and select the APEX tab to see how we get the process id and then set the process variable.]'
   , q'[]'
-  , q'[]'
-  , q'[In your own copy of the model, you can hard code the routing to anything as there are tutorial-helper procedures supplied for all combinations. Select this scriptTask, then look at the APEX tab in the Properties Panel.Â  Routines are tutorial.AA3_set_route_AÂ  (or _B or C or AB or AC or BC or ABC).</bpmn:text>]'
+  , q'[Your application could include a PL/SQL procedure that performs a query in the database &amp; which determines the route through your process. That makes this very powerful!</bpmn:text>]'
   , q'[    </bpmn:textAnnotation>]'
   , q'[    <bpmn:association id='Association_0oa2eg1' sourceRef='Activity_0buimbx' targetRef='TextAnnotation_0v50lx0' />]'
   , q'[  </bpmn:process>]'
@@ -206,15 +211,15 @@ apex_string.join_clob(
   , q'[        <dc:Bounds x='500' y='450' width='100' height='80' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_1w4hasz_di' bpmnElement='TextAnnotation_1w4hasz'>]'
-  , q'[        <dc:Bounds x='610' y='-45' width='1000' height='345' />]'
+  , q'[        <dc:Bounds x='600' y='-45' width='1080' height='365' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNShape id='TextAnnotation_0v50lx0_di' bpmnElement='TextAnnotation_0v50lx0'>]'
-  , q'[        <dc:Bounds x='610' y='700' width='510' height='226' />]'
+  , q'[        <dc:Bounds x='610' y='700' width='509.9935521503016' height='164.36903499469778' />]'
   , q'[      </bpmndi:BPMNShape>]'
   , q'[      <bpmndi:BPMNEdge id='Association_0k4787z_di' bpmnElement='Association_0k4787z'>]'
   , q'[        <di:waypoint x='664' y='450' />]'
   , q'[        <di:waypoint x='420' y='80' />]'
-  , q'[        <di:waypoint x='610' y='80' />]'
+  , q'[        <di:waypoint x='600' y='80' />]'
   , q'[      </bpmndi:BPMNEdge>]'
   , q'[      <bpmndi:BPMNEdge id='Association_0oa2eg1_di' bpmnElement='Association_0oa2eg1'>]'
   , q'[        <di:waypoint x='574' y='530' />]'
@@ -230,6 +235,5 @@ commit;
 end;
 /
  
-PROMPT >> Example "AA3 - Inclusive Gateways" loaded.
+PROMPT >> Example "AA3 - Inclusive Gateways - v0" loaded.
 PROMPT >> ========================================================
- 
