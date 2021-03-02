@@ -128,7 +128,7 @@ as
   )
   return varchar2
   is
-    l_file_name varchar2(100);
+    l_file_name varchar2(300 char);
   begin
     l_file_name := p_file_name;
     l_file_name := replace(l_file_name, '/', '_');
