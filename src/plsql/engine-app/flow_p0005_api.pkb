@@ -1,57 +1,59 @@
 create or replace package body flow_p0005_api
 as
 
-  function get_file_name(
-      p_dgrm_id in number,
-      p_include_version in varchar2,
-      p_include_status in varchar2,
-      p_include_category in varchar2,
-      p_include_last_change_date in varchar2,
-      p_download_as in varchar2
+  function get_file_name
+  (
+    p_dgrm_id in number
+  , p_include_version in varchar2
+  , p_include_status in varchar2
+  , p_include_category in varchar2
+  , p_include_last_change_date in varchar2
+  , p_download_as in varchar2
   ) 
   return varchar2
   is
-    l_file_name varchar2(100);
-    l_dgrm_name flow_diagrams.dgrm_name%type;
-    l_dgrm_version flow_diagrams.dgrm_version%type;
-    l_dgrm_status flow_diagrams.dgrm_status%type;
-    l_dgrm_category flow_diagrams.dgrm_category%type;
+    l_file_name      varchar2(300 char);
+
+    l_dgrm_name        flow_diagrams.dgrm_name%type;
+    l_dgrm_version     flow_diagrams.dgrm_version%type;
+    l_dgrm_status      flow_diagrams.dgrm_status%type;
+    l_dgrm_category    flow_diagrams.dgrm_category%type;
     l_dgrm_last_update flow_diagrams.dgrm_last_update%type;
   begin
-    select 
-        dgrm_name,
-        dgrm_version,
-        dgrm_status,
-        dgrm_category,
-        dgrm_last_update
-    into 
-        l_dgrm_name,
-        l_dgrm_version,
-        l_dgrm_status,
-        l_dgrm_category,
-        l_dgrm_last_update
-    from flow_diagrams
-    where dgrm_id = p_dgrm_id;
+    select dgrm_name
+         , dgrm_version
+         , dgrm_status
+         , dgrm_category
+         , dgrm_last_update
+      into l_dgrm_name
+         , l_dgrm_version
+         , l_dgrm_status
+         , l_dgrm_category
+         , l_dgrm_last_update
+      from flow_diagrams
+     where dgrm_id = p_dgrm_id
+    ;
     
-    l_file_name := to_char(sysdate, 'YYYY-MON-DD_HH24-MI')||'_'||l_dgrm_name;
+    l_file_name := to_char(sysdate, 'YYYYMMDD-HH24MI') || '_' || l_dgrm_name;
     
     if (p_include_category = 'Y' and l_dgrm_category is not null) then
-        l_file_name := l_file_name||'_'||l_dgrm_category;
+      l_file_name := l_file_name || '_' || l_dgrm_category;
     end if;
     if (p_include_status = 'Y') then
-        l_file_name := l_file_name||'_'||l_dgrm_status;
+      l_file_name := l_file_name || '_' || l_dgrm_status;
     end if;
     if (p_include_version = 'Y') then
-        l_file_name := l_file_name||'_'||l_dgrm_version;
+      l_file_name := l_file_name || '_' || l_dgrm_version;
     end if;
     if (p_include_last_change_date = 'Y') then
-        l_file_name := l_file_name||'_'||to_char(l_dgrm_last_update, 'YYYY-MON-DD_HH24-MI');
+      l_file_name := l_file_name || '_' || to_char(l_dgrm_last_update, 'YYYYMMDD-HH24MI');
     end if;
+
     if (p_download_as = 'SQL') then
-        l_file_name := l_file_name||'.sql';
+      l_file_name := l_file_name || '.sql';
     end if;
     if (p_download_as = 'BPMN') then
-        l_file_name := l_file_name||'.bpmn';
+      l_file_name := l_file_name || '.bpmn';
     end if;
     return l_file_name;
   end get_file_name;
@@ -126,7 +128,7 @@ as
   )
   return varchar2
   is
-    l_file_name varchar2(100);
+    l_file_name varchar2(300 char);
   begin
     l_file_name := p_file_name;
     l_file_name := replace(l_file_name, '/', '_');
