@@ -502,6 +502,13 @@ begin
             , p_display_location => apex_error.c_on_error_page
             );
     end;
+    -- mark process as running
+    update flow_processes prcs
+       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
+         , prcs.prcs_last_update = systimestamp
+     where prcs.prcs_dgrm_id = l_dgrm_id
+       and prcs.prcs_id = p_process_id
+         ;    
     -- check if start has a timer?  
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
     then 
@@ -522,6 +529,7 @@ begin
       , p_new_proc_level => false
       );
 
+    -- check startEvent sub type for timer or (later releases) other sub types
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
     then 
       -- eventStart must be delayed with the timer 
@@ -543,13 +551,6 @@ begin
         , p_display_location => apex_error.c_on_error_page
         );
     end if;
-    -- update process status
-    update flow_processes prcs
-       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
-         , prcs.prcs_last_update = sysdate
-     where prcs.prcs_dgrm_id = l_dgrm_id
-       and prcs.prcs_id = p_process_id
-         ;
 end flow_start_process;
 
 procedure flow_set_boundary_timers
@@ -963,7 +964,7 @@ begin
             -- No remaining subflows so process has completed
             update flow_processes prcs 
                set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_completed
-                 , prcs.prcs_last_update = sysdate
+                 , prcs.prcs_last_update = systimestamp
              where prcs.prcs_id = p_process_id;
 
             apex_debug.message(p_message => 'Process Completed: Process '||p_process_id, p_level => 4) ;
@@ -2421,7 +2422,7 @@ begin
 --    process variables are NOT being cleared when the process is reset without this
 
     update flow_processes prcs
-       set prcs.prcs_last_update = sysdate
+       set prcs.prcs_last_update = systimestamp
          , prcs.prcs_status = flow_constants_pkg.gc_prcs_status_created
      where prcs.prcs_id = p_process_id
     ;
