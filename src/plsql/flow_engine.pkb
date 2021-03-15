@@ -728,7 +728,7 @@ begin
     update flow_subflows sbfl
     set   sbfl.sbfl_current = l_next_objt
         , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
-        , sbfl.sbfl_last_update = sysdate
+        , sbfl.sbfl_last_update = systimestamp
         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
     where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
@@ -896,7 +896,7 @@ begin
         update flow_subflows sbfl
         set   sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-            , sbfl.sbfl_last_update = sysdate
+            , sbfl.sbfl_last_update = systimestamp
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
@@ -1104,7 +1104,7 @@ end process_endEvent;
       -- set current subflow to status waiting,       
       update flow_subflows sbfl
          set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
-           , sbfl.sbfl_last_update = sysdate 
+           , sbfl.sbfl_last_update = systimestamp 
            , sbfl.sbfl_current = p_step_info.target_objt_ref
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
@@ -1144,7 +1144,7 @@ end process_endEvent;
         update flow_subflows sbfl
            set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_proceed_gateway
              , sbfl.sbfl_current = p_step_info.target_objt_ref
-             , sbfl.sbfl_last_update = sysdate
+             , sbfl.sbfl_last_update = systimestamp
          where sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
            and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
            and sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
@@ -1161,7 +1161,7 @@ end process_endEvent;
            set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
              , sbfl.sbfl_current = null
              , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-             , sbfl.sbfl_last_update = sysdate 
+             , sbfl.sbfl_last_update = systimestamp 
          where sbfl.sbfl_id = l_sbfl_id
            and sbfl.sbfl_prcs_id = p_process_id
         ;
@@ -1213,7 +1213,7 @@ end process_endEvent;
             set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
               , sbfl.sbfl_current = p_step_info.target_objt_ref
               , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-              , sbfl.sbfl_last_update = sysdate 
+              , sbfl.sbfl_last_update = systimestamp 
           where sbfl.sbfl_id = l_sbfl_id
             and sbfl.sbfl_prcs_id = p_process_id
         ;
@@ -1264,7 +1264,7 @@ end process_endEvent;
          set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
            , sbfl.sbfl_current = ''
            , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-           , sbfl.sbfl_last_update = sysdate 
+           , sbfl.sbfl_last_update = systimestamp 
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
       ;
@@ -1324,7 +1324,7 @@ end process_endEvent;
       -- set current subflow to status waiting,       
       update flow_subflows sbfl
          set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
-           , sbfl.sbfl_last_update = sysdate 
+           , sbfl.sbfl_last_update = systimestamp 
            , sbfl.sbfl_current = p_step_info.target_objt_ref
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
@@ -1361,7 +1361,7 @@ end process_endEvent;
           set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
             , sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-            , sbfl.sbfl_last_update = sysdate
+            , sbfl.sbfl_last_update = systimestamp
         where sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
           and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
           and sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
@@ -1406,7 +1406,7 @@ begin
     update flow_subflows sbfl
         set sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-            , sbfl.sbfl_last_update = sysdate
+            , sbfl.sbfl_last_update = systimestamp
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
@@ -1471,7 +1471,7 @@ end process_exclusiveGateway;
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-        , sbfl.sbfl_last_update = sysdate
+        , sbfl.sbfl_last_update = systimestamp
         , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
     where sbfl.sbfl_id = p_subflow_id
       and sbfl.sbfl_prcs_id = p_process_id
@@ -1514,7 +1514,7 @@ end process_exclusiveGateway;
        set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
          , sbfl.sbfl_current = p_step_info.target_objt_ref
          , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-         , sbfl.sbfl_last_update = sysdate 
+         , sbfl.sbfl_last_update = systimestamp 
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
@@ -1579,7 +1579,7 @@ end process_exclusiveGateway;
       update flow_subflows sbfl
          set sbfl.sbfl_current = p_step_info.target_objt_ref
            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-           , sbfl.sbfl_last_update = sysdate
+           , sbfl.sbfl_last_update = systimestamp
            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_timer
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
@@ -1595,7 +1595,7 @@ end process_exclusiveGateway;
       update flow_subflows sbfl
          set sbfl.sbfl_current = p_step_info.target_objt_ref
            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-           , sbfl.sbfl_last_update = sysdate
+           , sbfl.sbfl_last_update = systimestamp
            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
@@ -1623,7 +1623,7 @@ end process_exclusiveGateway;
         update flow_subflows sbfl
         set   sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-            , sbfl.sbfl_last_update = sysdate
+            , sbfl.sbfl_last_update = systimestamp
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
         where sbfl.sbfl_id = p_subflow_id
             and sbfl.sbfl_prcs_id = p_process_id
@@ -1645,7 +1645,7 @@ end process_exclusiveGateway;
         update flow_subflows sbfl
            set sbfl.sbfl_current = p_step_info.target_objt_ref
              , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-             , sbfl.sbfl_last_update = sysdate
+             , sbfl.sbfl_last_update = systimestamp
              , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
          where sbfl.sbfl_id = p_subflow_id
            and sbfl.sbfl_prcs_id = p_process_id
@@ -1687,7 +1687,7 @@ begin
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref
          , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-         , sbfl.sbfl_last_update = sysdate
+         , sbfl.sbfl_last_update = systimestamp
          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
@@ -1719,7 +1719,7 @@ end process_userTask;
     update flow_subflows sbfl
      set   sbfl.sbfl_current = p_step_info.target_objt_ref
          , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-         , sbfl.sbfl_last_update = sysdate
+         , sbfl.sbfl_last_update = systimestamp
          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
@@ -1757,7 +1757,7 @@ end process_userTask;
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-        , sbfl.sbfl_last_update = sysdate
+        , sbfl.sbfl_last_update = systimestamp
         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
     where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
@@ -1793,7 +1793,7 @@ end process_userTask;
     update flow_subflows sbfl
      set   sbfl.sbfl_current = p_step_info.target_objt_ref
          , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-         , sbfl.sbfl_last_update = sysdate
+         , sbfl.sbfl_last_update = systimestamp
          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
@@ -1872,7 +1872,7 @@ begin
      update flow_subflows sbfl
         set sbfl_status = flow_constants_pkg.gc_sbfl_status_running
           , sbfl_current = l_current_object
-          , sbfl_last_update = sysdate
+          , sbfl_last_update = systimestamp
       where sbfl.sbfl_prcs_id = p_process_id
         and sbfl.sbfl_id = p_parent_subflow_id
         and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
@@ -1929,7 +1929,7 @@ begin
       apex_debug.message(p_message => 'Begin handle_intermediate_catch_event', p_level => 3) ;
       update flow_subflows sbfl 
          set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-           , sbfl.sbfl_last_update = sysdate
+           , sbfl.sbfl_last_update = systimestamp
        where sbfl.sbfl_prcs_id = p_process_id
          and sbfl.sbfl_id = p_subflow_id
            ;
@@ -1994,7 +1994,7 @@ begin
        set sbfl.sbfl_current = l_boundary_objt_bpmn_id
          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
          , sbfl.sbfl_last_completed = l_parent_objt_bpmn_id
-         , sbfl.sbfl_last_update = sysdate 
+         , sbfl.sbfl_last_update = systimestamp 
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
          ;
