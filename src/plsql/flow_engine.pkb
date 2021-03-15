@@ -816,6 +816,11 @@ begin
     if l_interrupting = 1 then
         -- first remove any non-interrupting timers that are on the parent event
         flow_unset_boundary_timers (p_process_id, p_par_sbfl);
+        -- stop processing in sub process and all children
+        flow_terminate_level
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );        
         -- set parent subflow to boundary event and do flow_complete_step
         update flow_subflows sbfl
           set sbfl.sbfl_current = l_next_objt
@@ -824,15 +829,14 @@ begin
           where sbfl.sbfl_id = p_par_sbfl
             and sbfl.sbfl_prcs_id = p_process_id
             ;
-        flow_complete_step
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_par_sbfl
-        );
-        -- stop processing in sub process and all children
-        flow_terminate_level
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
-        ); 
+        if p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_intermediate_throw_event  
+        then 
+          flow_complete_step
+          ( p_process_id => p_process_id
+          , p_subflow_id => p_par_sbfl
+          ); 
+        end if;
+
     else 
         -- non interrupting.  
         select par_sbfl.sbfl_process_level
