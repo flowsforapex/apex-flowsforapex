@@ -65,6 +65,25 @@ procedure log_step_completion
       raise;
   end log_step_completion;
 
+function check_subflow_exists
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type)
+  return boolean
+  is
+    l_text varchar2(10);
+  begin
+    select 'x'
+      into l_text
+      from flow_subflows sbfl
+     where sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
+    ;
+    return true;
+  exception
+    when no_data_found then
+      return false;   
+  end;
+
 function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -1204,12 +1223,19 @@ end process_endEvent;
        
         for new_subflow in 1.. l_new_subflows.count
         loop
-          -- step into first step on the new path
-          flow_complete_step    
-          ( p_process_id    => p_process_id
-          , p_subflow_id    => l_new_subflows(new_subflow).sbfl_id
-          , p_forward_route => l_new_subflows(new_subflow).route
-          );
+          -- check subflow still exists (in case earlier loop terminated everything in level)
+          if check_subflow_exists
+            ( p_process_id => p_process_id
+            , p_subflow_id => l_new_subflows(new_subflow).sbfl_id
+            )
+          then
+            -- step into first step on the new path
+            flow_complete_step    
+            ( p_process_id    => p_process_id
+            , p_subflow_id    => l_new_subflows(new_subflow).sbfl_id
+            , p_forward_route => l_new_subflows(new_subflow).route
+            );
+          end if;
         end loop;
       elsif l_num_forward_connections = 1 then
         -- only single path going forward
@@ -1304,12 +1330,19 @@ end process_endEvent;
       -- now step the new sub flows forward into their first tasks
       for new_subflow in 1.. l_new_subflows.count
         loop
-          -- step into first step on the new path
-          flow_complete_step    
-          ( p_process_id    => p_process_id
-          , p_subflow_id    => l_new_subflows(new_subflow).sbfl_id
-          , p_forward_route => l_new_subflows(new_subflow).route
-          );
+          -- check subflow still exists (in case earlier loop terminated everything in level)
+          if check_subflow_exists
+            ( p_process_id => p_process_id
+            , p_subflow_id => l_new_subflows(new_subflow).sbfl_id
+            )
+          then
+            -- step into first step on the new path
+            flow_complete_step    
+            ( p_process_id    => p_process_id
+            , p_subflow_id    => l_new_subflows(new_subflow).sbfl_id
+            , p_forward_route => l_new_subflows(new_subflow).route
+            );
+          end if;
         end loop;
     elsif ( l_num_back_connections > 1 AND l_num_forward_connections >1 ) then
       -- diagram has closing and re-opening inclusiveGateway which is not supported
@@ -1881,11 +1914,6 @@ begin
         and sbfl.sbfl_id = p_parent_subflow_id
         and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
           ;
-       flow_complete_step           
-          ( p_process_id => p_process_id
-          , p_subflow_id => p_parent_subflow_id
-          , p_forward_route => null
-          );
     -- now clear up all of the sibling subflows
     begin
       for child_subflows in (
@@ -1922,6 +1950,12 @@ begin
           -- logging - tbd
       end loop;
     end;  -- cleanup block
+    -- now step forward on the forward path
+    flow_complete_step           
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_parent_subflow_id
+    , p_forward_route => null
+    );
 end handle_event_gateway_event;
 
 procedure handle_intermediate_catch_event
