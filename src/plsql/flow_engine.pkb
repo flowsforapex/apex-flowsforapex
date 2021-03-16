@@ -65,24 +65,22 @@ procedure log_step_completion
       raise;
   end log_step_completion;
 
-function check_subflow_exists
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type)
-  return boolean
+  function check_subflow_exists
+  ( 
+    p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return boolean
   is
-    l_text varchar2(10);
+    l_cnt number;
   begin
-    select 'x'
-      into l_text
+    select count(*)
+      into l_cnt
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
-    return true;
-  exception
-    when no_data_found then
-      return false;   
-  end;
+    return ( l_cnt = 1 );
+  end check_subflow_exists;
 
 function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
@@ -1836,7 +1834,7 @@ end process_userTask;
        and sbfl.sbfl_prcs_id = p_process_id
     ;
     -- current implementation of manualTask performs exactly like a standard Task, without attached boundary timers
-    -- future implementation could include auto-call of an APEX page telling you what the manual task is & providing information about it?
+    -- future implementation could include auto-call of an APEX page telling you what the manual task is and providing information about it?
 
     -- set boundaryEvent Timers, if any
     flow_set_boundary_timers 

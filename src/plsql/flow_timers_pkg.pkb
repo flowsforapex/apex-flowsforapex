@@ -2,6 +2,21 @@
 create or replace package body flow_timers_pkg
 as
 
+  function timer_exists
+  (
+    pi_timr_id in flow_timers.timr_id%type
+  ) return boolean
+  as
+    l_cnt number;
+  begin
+    select count(*)
+      into l_cnt
+      from flow_timers
+     where timr_id = pi_timr_id
+    ;
+    return ( l_cnt = 1 );
+  end timer_exists;
+
   procedure get_timer_definition
   (
     pi_prcs_id    in         flow_processes.prcs_id%type
@@ -98,18 +113,7 @@ as
   as
     type t_timer_tab is table of flow_timers%rowtype;
     l_timers t_timer_tab;
-    cursor timr_cur is
-      select *
-        from flow_timers
-       where timr_status in ( c_created, c_active )
-     order by timr_created_on
-          for update of timr_last_run
-                      , timr_run_count
-                      , timr_status
-    ;
-
-    e_timer_already_removed exception;
-    pragma exception_init( e_timer_already_removed, -8006 );
+    l_run_now boolean;
   begin
     select *
       bulk collect into l_timers
@@ -118,7 +122,10 @@ as
      order by timr_created_on
     ;
     for i in 1..l_timers.count loop
+      l_run_now := false;
       begin
+        -- first part is deciding if timer should run now
+        -- and updates status on respective timer
         case l_timers(i).timr_type
           when flow_constants_pkg.gc_timer_type_cycle then
             if (   l_timers(i).timr_start_on
@@ -126,34 +133,60 @@ as
                  + ( l_timers(i).timr_interval_ds * coalesce( l_timers(i).timr_run_count, 1 ) )
                ) <= systimestamp
             then
+              l_run_now := true;
               update flow_timers
                  set timr_last_run = systimestamp
                    , timr_run_count = timr_run_count + 1
                    , timr_status = case when timr_run_count + 1 = timr_repeat_times then c_ended else c_active end
                where timr_id = l_timers(i).timr_id
               ;
-              -- return timer event to flow_api_pkg
-              flow_engine.flow_handle_event
-              (
-                p_process_id => l_timers(i).timr_prcs_id
-              , p_subflow_id => l_timers(i).timr_sbfl_id
-              );
             end if;
           else
             if l_timers(i).timr_start_on <= systimestamp then
+              l_run_now := true;
               update flow_timers
                  set timr_last_run = systimestamp
                    , timr_run_count = timr_run_count + 1
                    , timr_status = c_ended
                where timr_id = l_timers(i).timr_id
               ;
+            end if;
+        end case;
+
+        -- Timer should run now
+        -- We apply couple of safeguards here
+        -- Verifying if timer still in flow_timers table
+        -- and checking if the connected subflow is still there
+        if l_run_now then
+          if timer_exists( pi_timr_id => l_timers(i).timr_id ) then
+            if flow_engine.check_subflow_exists
+                ( 
+                  p_process_id => l_timers(i).timr_prcs_id
+                , p_subflow_id => l_timers(i).timr_sbfl_id
+                ) 
+            then
               flow_engine.flow_handle_event
               (
                 p_process_id => l_timers(i).timr_prcs_id
               , p_subflow_id => l_timers(i).timr_sbfl_id
               );
+            else
+              apex_debug.warn
+              (
+                p_message => 'Timer with ID %s tried to trigger non existing subflow. Process: %s; Subflow: %s'
+              , p0        => l_timers(i).timr_id
+              , p1        => l_timers(i).timr_prcs_id
+              , p2        => l_timers(i).timr_sbfl_id
+              );
             end if;
-        end case;
+          else
+            apex_debug.info
+            (
+              p_message => 'Timer with ID %s does not exist anymore, skipping.'
+            , p0        => l_timers(i).timr_id
+            );
+          end if;
+        end if;
       exception
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
