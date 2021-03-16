@@ -62,35 +62,42 @@ as
     , p1        => pi_sbfl_id
     );
 
-    begin
-      for rec in (
-                   select obat.obat_key
-                        , obat.obat_vc_value
-                     from flow_object_attributes obat
-                    where obat.obat_objt_id = l_objt_with_timer
-                      and obat.obat_key in ( flow_constants_pkg.gc_timer_type_key, flow_constants_pkg.gc_timer_def_key )
-                 )
-      loop
-        case rec.obat_key
-          when flow_constants_pkg.gc_timer_type_key then
-            po_timer_type := rec.obat_vc_value;
-          when flow_constants_pkg.gc_timer_def_key then
-            po_timer_def := rec.obat_vc_value;
-          else
-            null;
-        end case;
-      end loop;
-    exception
-      when no_data_found then
-            apex_error.add_error
-            ( p_message => 'No timer definitions found in get_timer_definition for object '||l_objt_with_timer||' .'
-            , p_display_location => apex_error.c_on_error_page
-            );
-    end;
+    for rec in (
+                select obat.obat_key
+                     , obat.obat_vc_value
+                  from flow_object_attributes obat
+                 where obat.obat_objt_id = l_objt_with_timer
+                   and obat.obat_key in ( flow_constants_pkg.gc_timer_type_key, flow_constants_pkg.gc_timer_def_key )
+               )
+    loop
+      case rec.obat_key
+        when flow_constants_pkg.gc_timer_type_key then
+          po_timer_type := rec.obat_vc_value;
+        when flow_constants_pkg.gc_timer_def_key then
+          po_timer_def := rec.obat_vc_value;
+        else
+          null;
+      end case;
+    end loop;
+
+    if po_timer_type is null or po_timer_def is null then
+      apex_error.add_error
+      ( p_message          => apex_string.format
+                              ( 
+                                p_message =>'Incomplete timer definitions for object %s. Type: %s; Value: %s'
+                              , p0        => l_objt_with_timer
+                              , p1        => coalesce(po_timer_type, '!NULL!')
+                              , p2        => coalesce(po_timer_def, '!NULL!')
+                              )
+      , p_display_location => apex_error.c_on_error_page
+      );
+    end if;
   end get_timer_definition;
 
   procedure step_timers
-  is
+  as
+    type t_timer_tab is table of flow_timers%rowtype;
+    l_timers t_timer_tab;
     cursor timr_cur is
       select *
         from flow_timers
@@ -104,55 +111,61 @@ as
     e_timer_already_removed exception;
     pragma exception_init( e_timer_already_removed, -8006 );
   begin
-    for rec in timr_cur loop
+    select *
+      bulk collect into l_timers
+      from flow_timers
+     where timr_status in ( c_created, c_active )
+     order by timr_created_on
+    ;
+    for i in 1..l_timers.count loop
       begin
-        case rec.timr_type
+        case l_timers(i).timr_type
           when flow_constants_pkg.gc_timer_type_cycle then
-            if (   rec.timr_start_on
-                 + ( rec.timr_interval_ym * coalesce( rec.timr_run_count, 1 ) )
-                 + ( rec.timr_interval_ds * coalesce( rec.timr_run_count, 1 ) )
+            if (   l_timers(i).timr_start_on
+                 + ( l_timers(i).timr_interval_ym * coalesce( l_timers(i).timr_run_count, 1 ) )
+                 + ( l_timers(i).timr_interval_ds * coalesce( l_timers(i).timr_run_count, 1 ) )
                ) <= systimestamp
             then
               update flow_timers
                  set timr_last_run = systimestamp
                    , timr_run_count = timr_run_count + 1
                    , timr_status = case when timr_run_count + 1 = timr_repeat_times then c_ended else c_active end
-               where current of timr_cur
+               where timr_id = l_timers(i).timr_id
               ;
               -- return timer event to flow_api_pkg
               flow_engine.flow_handle_event
               (
-                p_process_id => rec.timr_prcs_id
-              , p_subflow_id => rec.timr_sbfl_id
+                p_process_id => l_timers(i).timr_prcs_id
+              , p_subflow_id => l_timers(i).timr_sbfl_id
               );
             end if;
           else
-            if rec.timr_start_on <= systimestamp then
+            if l_timers(i).timr_start_on <= systimestamp then
               update flow_timers
                  set timr_last_run = systimestamp
                    , timr_run_count = timr_run_count + 1
                    , timr_status = c_ended
-               where current of timr_cur
+               where timr_id = l_timers(i).timr_id
               ;
               flow_engine.flow_handle_event
               (
-                p_process_id => rec.timr_prcs_id
-              , p_subflow_id => rec.timr_sbfl_id
+                p_process_id => l_timers(i).timr_prcs_id
+              , p_subflow_id => l_timers(i).timr_sbfl_id
               );
             end if;
         end case;
       exception
-        when e_timer_already_removed then
-          -- Timers can disappear while we're processing a list of timers.
-          -- This is in the nature of timers as one might fire,
-          -- cleans up a whole subflow including any timers on that subflow.
-          null;
+        -- Some exception happened during processing the timer
+        -- We trap it here and mark respective timer as broken.
         when others then
-          -- Some exception happened during processing the timer
-          -- We trap it here and mark respective timer as broken.
+          apex_debug.error
+          (
+            p_message => 'Timer with ID %s did not work. Check logs.'
+          , p0        => l_timers(i).timr_id
+          );
           update flow_timers
              set timr_status = c_broken
-           where current of timr_cur
+           where timr_id = l_timers(i).timr_id
           ;
       end;
     end loop;
@@ -428,7 +441,7 @@ as
   begin
     execute immediate
     q'[begin
-    dbms_scheduler.disable( name => 'apex_flow_step_timers_j' );
+    sys.dbms_scheduler.disable( name => 'apex_flow_step_timers_j' );
     end;
     /]';
   end;
@@ -438,7 +451,7 @@ as
   begin
     execute immediate
     q'[begin
-    dbms_scheduler.enable( name => 'apex_flow_step_timers_j' );
+    sys.dbms_scheduler.enable( name => 'apex_flow_step_timers_j' );
     end;
     /]';
   end;
