@@ -1,19 +1,22 @@
 create or replace view flow_instance_details_vw
 as
-with all_completed as (
-  select sflg.sflg_prcs_id as prcs_id
-       , listagg(sflg.sflg_objt_id, ':') within group (order by sflg.sflg_objt_id) as bpmn_ids
-    from flow_subflow_log sflg
-   where sflg.sflg_objt_id not in ( select sbfl.sbfl_last_completed
-                                      from flow_subflows sbfl
-                                     where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
-                                     union
-                                    select sbfl.sbfl_current
-                                      from flow_subflows sbfl
-                                     where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
-                                       and sbfl.sbfl_current is not null
-                                  )
-group by sflg.sflg_prcs_id
+with completed_objects as (
+        select distinct sflg.sflg_prcs_id as prcs_id, sflg.sflg_objt_id as objt_id
+          from flow_subflow_log sflg
+         where sflg.sflg_objt_id not in ( select sbfl.sbfl_last_completed
+                                              from flow_subflows sbfl
+                                             where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
+                                             union
+                                            select sbfl.sbfl_current
+                                              from flow_subflows sbfl
+                                             where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
+                                               and sbfl.sbfl_current is not null
+                                          )
+), all_completed as ( 
+    select prcs_id, 
+           listagg( objt_id, ':') within group (order by objt_id) as bpmn_ids
+    from completed_objects
+    group by prcs_id
 ), last_completed as (
   select sbfl_prcs_id as prcs_id
        , listagg(sbfl_last_completed, ':') within group ( order by sbfl_last_completed ) as bpmn_ids

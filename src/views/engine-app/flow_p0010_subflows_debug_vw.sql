@@ -10,8 +10,6 @@ as
        , sbfl.sbfl_dgrm_version
        , sbfl.sbfl_dgrm_status
        , sbfl.sbfl_dgrm_category
-       , sbfl_ref_obj_type
-       , sbfl_ref_obj_id
        , sbfl_route
        , sbfl_route_name
        , sbfl_last_completed
