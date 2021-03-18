@@ -332,21 +332,23 @@ function createApexTabGroups(element, translate) {
   var apexPageGroup = {
     id: 'apex-page-call',
     label: 'Call APEX Page',
-    entries: []
+    entries: Object(_parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_8__["default"])(element, translate)
   };
   var apexScriptGroup = {
     id: 'apex-script-group',
-    label: 'PL/SQL Script',
-    entries: []
+    label: 'Script Task',
+    entries: Object(_parts_scriptTaskProps_js__WEBPACK_IMPORTED_MODULE_9__["default"])(element, translate)
   };
-
-  Object(_parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_8__["default"])(apexPageGroup, element, translate);
-  Object(_parts_scriptTaskProps_js__WEBPACK_IMPORTED_MODULE_9__["default"])(apexScriptGroup, element, translate);
-  Object(_parts_serviceTaskProps_js__WEBPACK_IMPORTED_MODULE_10__["default"])(apexScriptGroup, element, translate);
+  var apexServiceGroup = {
+    id: 'apex-service-group',
+    label: 'Service Task',
+    entries: Object(_parts_serviceTaskProps_js__WEBPACK_IMPORTED_MODULE_10__["default"])(element, translate)
+  };
 
   return [
     apexPageGroup,
-    apexScriptGroup
+    apexScriptGroup,
+    apexServiceGroup
   ];
 }
 
@@ -464,24 +466,25 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js");
 /* harmony import */ var bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-/* harmony import */ var _lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../lib/formsHelper */ "./lib/formsHelper.js");
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../lib/formsHelper */ "./lib/formsHelper.js");
 
 
 
 
-
-/* harmony default export */ __webpack_exports__["default"] = (function (group, element, translate) {
-  const scriptTaskElementSelector = '[name="engine"]';
+/* harmony default export */ __webpack_exports__["default"] = (function (element, translate) {
+  const scriptTaskEngine = '[name="engine"]';
+  const engineNo = 0;
+  const scriptTaskProps = [];
   
-  if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["is"])(element, 'bpmn:ScriptTask')) {
-    group.entries.push(
+  if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(element, 'bpmn:ScriptTask')) {
+    // if 'yes' then add 'autoBinds' 
+    scriptTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'engine',
         description: 'Use APEX_EXEC',
         modelProperty: 'engine',
+        label: 'Engine',
         selectOptions: [
           { name: 'No', value: 'false' },
           { name: 'Yes', value: 'true' }
@@ -490,7 +493,7 @@ __webpack_require__.r(__webpack_exports__);
     );
 
     // Run PL/SQL Code
-    group.entries.push(
+    scriptTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
@@ -500,7 +503,7 @@ __webpack_require__.r(__webpack_exports__);
     );
 
     // only shown, when APEX_EXEC is used
-    group.entries.push(
+    scriptTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'autoBinds',
         description: 'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.',
@@ -511,12 +514,14 @@ __webpack_require__.r(__webpack_exports__);
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(scriptTaskElementSelector, 0);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__["isOptionSelected"])(scriptTaskEngine, engineNo);
         }
       }
       )
     );
   }
+
+  return scriptTaskProps;
 });
 
 
@@ -542,11 +547,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ __webpack_exports__["default"] = (function (group, element, translate) {
-  const serviceTaskElementSelector = '[name="serviceTaskType"]';
+/* harmony default export */ __webpack_exports__["default"] = (function (element, translate) {
+  const serviceTaskEngine = '[name="engine"]';
+  const engineNo = 0;
+  const serviceTaskType = '[name="serviceTaskType"]';
+  const typePlsql = 0;
+  const typeEmail = 1;
+  const serviceTaskProps = [];
 
   if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["is"])(element, 'bpmn:ServiceTask')) {
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'serviceTaskType',
         description: 'choose the Type of the Service Task',
@@ -564,8 +574,25 @@ __webpack_require__.r(__webpack_exports__);
       })
     );
 
+    // engine: if 'yes' then add 'autoBinds' 
+    serviceTaskProps.push(
+      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
+        id: 'engine',
+        description: 'Use APEX_EXEC',
+        modelProperty: 'engine',
+        label: 'Engine',
+        selectOptions: [
+          { name: 'No', value: 'false' },
+          { name: 'Yes', value: 'true' }
+        ],
+        hidden: function () {
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
+        }
+      })
+    );
+
     // Run PL/SQL Code
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
@@ -578,12 +605,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 0);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typePlsql);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'autoBinds',
         description: 'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.',
@@ -594,13 +621,14 @@ __webpack_require__.r(__webpack_exports__);
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 1);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail)
+            || Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskEngine, engineNo);
         }
       })
     );
 
     // Send Mail Using Template
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'applicationId',
         description: 'Enter the Application ID.',
@@ -613,12 +641,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 1);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'pageId',
         description: 'Enter the Page ID.',
@@ -631,12 +659,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 1);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'username',
         description: 'Enter the Username.',
@@ -649,12 +677,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 1);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'templateIdentifier',
         description: 'Enter the Template Identifier.',
@@ -667,12 +695,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 1);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'emailFrom',
         description: 'Enter the email sender.',
@@ -685,12 +713,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 1);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'emailTo',
         description: 'Enter the email recipient.',
@@ -703,11 +731,13 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskElementSelector, 1);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
         }
       })
     );
   }
+
+  return serviceTaskProps;
 });
 
 
@@ -728,60 +758,63 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ __webpack_exports__["default"] = (function(group, element, translate) {
+/* harmony default export */ __webpack_exports__["default"] = (function (element, translate) {
   // Only return an entry, if the currently selected
   // element is a UserTask.
+  const userTaskProps = [];
 
   if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(element, 'bpmn:UserTask')) {
-    group.entries.push(
+    userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
-        id : 'apex-application',
-        description : 'Application ID or Alias',
-        label : 'Application',
-        modelProperty : 'apex-application'
+        id: 'apex-application',
+        description: 'Application ID or Alias',
+        label: 'Application',
+        modelProperty: 'apex-application'
       })
     );
-    group.entries.push(
+    userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
-        id : 'apex-page',
-        description : 'Page ID or Alias',
-        label : 'Page',
-        modelProperty : 'apex-page'
+        id: 'apex-page',
+        description: 'Page ID or Alias',
+        label: 'Page',
+        modelProperty: 'apex-page'
       })
     );
-    group.entries.push(
+    userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
-        id : 'apex-request',
-        description : 'Request Value for Page Call',
-        label : 'Request',
-        modelProperty : 'apex-request'
+        id: 'apex-request',
+        description: 'Request Value for Page Call',
+        label: 'Request',
+        modelProperty: 'apex-request'
       })
     );
-    group.entries.push(
+    userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
-        id : 'apex-cache',
-        description : 'Clear Cache Value for Page Call',
-        label : 'Clear Cache',
-        modelProperty : 'apex-cache'
+        id: 'apex-cache',
+        description: 'Clear Cache Value for Page Call',
+        label: 'Clear Cache',
+        modelProperty: 'apex-cache'
       })
-    );  
-    group.entries.push(
+    );
+    userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id : 'apex-item',
-        description : 'Page Items to set',
-        label : 'Page Items',
-        modelProperty : 'apex-item'
+        id: 'apex-item',
+        description: 'Page Items to set',
+        label: 'Page Items',
+        modelProperty: 'apex-item'
       })
-    );  
-    group.entries.push(
+    );
+    userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id : 'apex-value',
-        description : 'Page Item Values',
-        label : 'Item Values',
-        modelProperty : 'apex-value'
+        id: 'apex-value',
+        description: 'Page Item Values',
+        label: 'Item Values',
+        modelProperty: 'apex-value'
       })
-    );  
+    );
   }
+
+  return userTaskProps;
 });
 
 
@@ -38604,6 +38637,10 @@ AlignElements.prototype.trigger = function(elements, type) {
     return !(element.waypoints || element.host || element.labelTarget);
   });
 
+  if (filteredElements.length < 2) {
+    return;
+  }
+
   var sortFn = ALIGNMENT_SORTING[type];
 
   var sortedElements = Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["sortBy"])(filteredElements, sortFn);
@@ -40129,13 +40166,16 @@ function BendpointMove(injector, eventBus, canvas, dragging, rules, modeling) {
   });
 
   eventBus.on([ 'bendpoint.move.out', 'bendpoint.move.cleanup' ], function(event) {
-    var context = event.context;
+    var context = event.context,
+        type = context.type;
 
     context.hover = null;
     context.source = null;
     context.target = null;
 
-    context.allowed = false;
+    if (type !== UPDATE_WAYPOINTS) {
+      context.allowed = false;
+    }
   });
 
   eventBus.on('bendpoint.move.end', function(event) {
@@ -42756,7 +42796,7 @@ ContextPad.prototype.open = function(element, force) {
   this._updateAndOpen(element);
 };
 
-ContextPad.prototype._getProviders = function(id) {
+ContextPad.prototype._getProviders = function() {
 
   var event = this._eventBus.createEvent({
     type: 'contextPad.getProviders',
