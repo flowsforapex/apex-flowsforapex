@@ -202,7 +202,7 @@ as
       apex_json.write
       (
         p_name  => 'message'
-      , p_value => 'Unexpected error, please contact your administrator.'
+      , p_value => 'Diagram could not be parsed.<br />Please review your diagram to ensure that it is supported.'
       );
       apex_json.close_all;
   end save;
