@@ -2,7 +2,14 @@ create or replace package flow_engine
 accessible by (flow_api_pkg, flow_timers_pkg)
 as 
 
-procedure flow_handle_event
+  function check_subflow_exists
+  ( 
+    p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) return boolean
+  ;
+
+  procedure flow_handle_event
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   ); 

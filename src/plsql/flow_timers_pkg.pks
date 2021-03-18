@@ -8,17 +8,6 @@ create or replace package flow_timers_pkg as
    CREATE JOB
 ******************************************************************************/
 
- -- TEST ONLY!!! Remov before merge.... --
-  procedure get_duration
-  (
-    in_string            in     varchar2
-  , in_start_ts          in     timestamp with time zone default null
-  , out_start_ts            out timestamp with time zone
-  , out_interv_ym        in out interval year to month
-  , out_interv_ds        in out interval day to second
-  );
--- END TEST ONLY --
-
 /******************************************************************************
   CONSTANTS
 ******************************************************************************/
