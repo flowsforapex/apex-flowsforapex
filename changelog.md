@@ -1,5 +1,12 @@
 # Flows for APEX - Changelog
 
+## v5.1.1
+
+- Fixed several bugs occuring when all of the objects after an event object or a gateway are scriptTasks or serviceTasks, causing process not to be marked as Completed when finished.
+- Fixed a bug causing the first task after an Interrupting Escalation Boundary Event to be skipped
+- Fixed bug preventing flow monitor showing process progress in extremely large and repetitive models
+- Fixed a problem with diagram export file names being too long
+
 ## v5.1.0
 
 - Introduces process diagram versioning and lifecycle management.
