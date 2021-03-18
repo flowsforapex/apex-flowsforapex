@@ -29,6 +29,7 @@ HISTORY
   - Fixed a bug causing the first task after an Interrupting Escalation Boundary Event to be skipped
   - Fixed bug preventing flow monitor showing process progress in extremely large and repetitive models
   - Fixed a problem with diagram export file names being too long
+  - Fixed serviceTask missing engine option for type "Run PL/SQL code"
 
 * v5.1.0
   - Introduces process diagram versioning and lifecycle management
