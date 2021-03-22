@@ -487,6 +487,7 @@ procedure flow_start_process
 is
     l_dgrm_id               flow_diagrams.dgrm_id%type;
     l_objt_bpmn_id          flow_objects.objt_bpmn_id%type;
+    l_objt_id               flow_objects.objt_id%type;
     l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
     l_main_subflow_id       flow_subflows.sbfl_id%type;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
@@ -496,8 +497,10 @@ begin
         -- called from flow_api_pkg.flow_start (only)
         -- get the object to start with
         select objt.objt_bpmn_id
+             , objt.objt_id 
              , objt.objt_sub_tag_name
           into l_objt_bpmn_id
+             , l_objt_id
              , l_objt_sub_tag_name
           from flow_objects objt
           join flow_objects parent
@@ -545,6 +548,13 @@ begin
       , p_parent_sbfl_proc_level => 0 
       , p_new_proc_level => false
       );
+      
+    -- evaluate and set any variable expressions on the start object
+    flow_var_expressions.process_expressions
+      ( pi_objt_id     => l_objt_id
+      , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
+      , pi_prcs_id     => p_process_id
+    );
 
     -- check startEvent sub type for timer or (later releases) other sub types
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
@@ -2248,6 +2258,13 @@ begin
   , p_completed_object => l_sbfl_rec.sbfl_current
   );
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
+        
+    -- evaluate and set any pre-step variable expressions on the next object
+    flow_var_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.target_objt_id
+      , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
+      , pi_prcs_id     => p_process_id
+    );
 
     apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
     apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;

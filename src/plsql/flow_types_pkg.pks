@@ -8,5 +8,8 @@ as
 
   subtype t_single_vc2         is varchar2(1 char);
 
+  subtype t_expr_type          is varchar2(130 char);
+  subtype t_expr_phase         is varchar2(4 char);
+
 end flow_types_pkg;
 /
