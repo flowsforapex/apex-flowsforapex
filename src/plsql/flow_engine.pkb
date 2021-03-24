@@ -554,6 +554,7 @@ begin
       ( pi_objt_id     => l_objt_id
       , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
       , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_main_subflow_id
     );
 
     -- check startEvent sub type for timer or (later releases) other sub types
@@ -2264,6 +2265,7 @@ begin
       ( pi_objt_id     => l_step_info.target_objt_id
       , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
       , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
     );
 
     apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);

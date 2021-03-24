@@ -14,7 +14,7 @@ as
   begin
     select *
     bulk collect into l_expressions
-      from flow_objects_expressions expr
+      from flow_object_expressions expr
      where expr.expr_objt_id = pi_objt_id
        and expr.expr_phase = pi_phase
      order by expr.expr_order asc
@@ -75,7 +75,7 @@ as
         flow_process_vars.set_var 
         ( pi_prcs_id   => pi_prcs_id
         , pi_var_name  => pi_expression.expr_var_name
-        , pi_vc2_value => get_var_vc2 
+        , pi_vc2_value => flow_process_vars.get_var_vc2 
                           ( pi_prcs_id => pi_prcs_id
                           , pi_var_name => pi_expression.expr_expression
                           )
@@ -84,7 +84,7 @@ as
         flow_process_vars.set_var 
         ( pi_prcs_id    => pi_prcs_id
         , pi_var_name   => pi_expression.expr_var_name
-        , pi_date_value => get_var_date 
+        , pi_date_value => flow_process_vars.get_var_date 
                            ( pi_prcs_id  => pi_prcs_id
                            , pi_var_name => pi_expression.expr_expression
                            )
@@ -93,7 +93,7 @@ as
         flow_process_vars.set_var 
         ( pi_prcs_id      => pi_prcs_id
         , pi_var_name     => pi_expression.expr_var_name
-        , pi_number_value => get_var_number
+        , pi_num_value    => flow_process_vars.get_var_num
                              ( pi_prcs_id  => pi_prcs_id
                              , pi_var_name => pi_expression.expr_expression
                              )
@@ -102,21 +102,184 @@ as
         flow_process_vars.set_var 
         ( pi_prcs_id    => pi_prcs_id
         , pi_var_name   => pi_expression.expr_var_name
-        , pi_clob_value => get_var_clob 
+        , pi_clob_value => flow_process_vars.get_var_clob 
                           ( pi_prcs_id  => pi_prcs_id
                           , pi_var_name => pi_expression.expr_expression
                           )
-        );             
+        );    
+    end case;         
   end set_proc_var;
 
   procedure set_sql
   ( pi_prcs_id      flow_processes.prcs_id%type
   , pi_expression   flow_object_expressions%rowtype
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
   )
   as 
+    l_sql_text      flow_object_expressions.expr_expression%type;
+    l_result_vc2    flow_process_variables.prov_var_vc2%type;
+    l_result_date   flow_process_variables.prov_var_date%type;
+    l_result_num    flow_process_variables.prov_var_num%type;
   begin
-    null;
+    l_sql_text := pi_expression.expr_expression;
+    -- substitute any F4A Process Variables
+    flow_process_vars.do_substitution
+    ( pi_prcs_id => pi_prcs_id
+    , pi_sbfl_id => null
+    , pio_string => l_sql_text
+    );
+    case pi_expression.expr_var_type 
+    when flow_constants_pkg.gc_prov_var_type_varchar2 then
+        begin
+        execute immediate l_sql_text 
+                    into l_result_vc2;
+        exception
+        when no_data_found then
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        when too_many_rows then
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        when others then
+            apex_debug.error
+            ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
+            , p0        => pi_expression.expr_var_name
+            , p1        => pi_prcs_id
+            , p2        => sqlerrm
+            );
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end;
+        flow_process_vars.set_var 
+        ( pi_prcs_id   => pi_prcs_id
+        , pi_var_name  => pi_expression.expr_var_name
+        , pi_vc2_value => l_result_vc2
+        );
+    when flow_constants_pkg.gc_prov_var_type_date then
+        begin
+        execute immediate l_sql_text 
+                    into l_result_date;
+        exception
+        when no_data_found then
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        when too_many_rows then
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        when others then
+            apex_debug.error
+            ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
+            , p0        => pi_expression.expr_var_name
+            , p1        => pi_prcs_id
+            , p2        => sqlerrm
+            );
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end;
+        flow_process_vars.set_var 
+        ( pi_prcs_id   => pi_prcs_id
+        , pi_var_name  => pi_expression.expr_var_name
+        , pi_date_value => l_result_date
+        );
+    when flow_constants_pkg.gc_prov_var_type_number then
+        begin
+        execute immediate l_sql_text 
+                    into l_result_num;
+        exception
+        when no_data_found then
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        when too_many_rows then
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        when others then
+            apex_debug.error
+            ( p_message => 'Error setting process variable %0 for process id %1. SQLERRM: %2'
+            , p0        => pi_expression.expr_var_name
+            , p1        => pi_prcs_id
+            , p2        => sqlerrm
+            );
+            apex_error.add_error
+            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end;
+        flow_process_vars.set_var 
+        ( pi_prcs_id   => pi_prcs_id
+        , pi_var_name  => pi_expression.expr_var_name
+        , pi_num_value => l_result_num
+        );
+    end case;
   end set_sql;
+
+  procedure set_sql_delimited
+  ( pi_prcs_id      flow_processes.prcs_id%type
+  , pi_expression   flow_object_expressions%rowtype
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
+  )
+  as 
+    l_sql_text        flow_object_expressions.expr_expression%type;
+    l_result_set_vc2  apex_t_varchar2;
+    l_result          flow_process_variables.prov_var_vc2%type;
+  begin
+    l_sql_text := pi_expression.expr_expression;
+    -- substitute any F4A Process Variables
+    flow_process_vars.do_substitution
+    ( pi_prcs_id => pi_prcs_id
+    , pi_sbfl_id => pi_sbfl_id
+    , pio_string => l_sql_text
+    );
+    begin
+        execute immediate l_sql_text 
+        bulk collect into  l_result_set_vc2;
+    exception
+    when no_data_found then
+        apex_error.add_error
+        ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'s.  No data found in query.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+    when others then
+        apex_debug.error
+        ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
+        , p0        => pi_expression.expr_var_name
+        , p1        => pi_prcs_id
+        , p2        => sqlerrm
+        );
+        apex_error.add_error
+        ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+    end;
+    -- test for overload?
+    -- create delimited string
+    l_result := apex_string.join
+    (  p_table => l_result_set_vc2
+       , p_sep => ':'
+    );
+    apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result, p_level => 3);
+    -- set proc variable
+    flow_process_vars.set_var 
+    ( pi_prcs_id   => pi_prcs_id
+    , pi_var_name  => pi_expression.expr_var_name
+    , pi_vc2_value => l_result
+    );
+  end set_sql_delimited;
 
   /**********************************************************************
   **
@@ -129,6 +292,7 @@ as
   ( pi_objt_id      flow_objects.objt_id%type
   , pi_phase        flow_object_expressions.expr_phase%type
   , pi_prcs_id      flow_processes.prcs_id%type
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
   )
   as
     l_expressions   t_expr_set;
@@ -152,7 +316,13 @@ as
         when flow_constants_pkg.gc_expr_type_sql  then
           set_sql
           ( pi_prcs_id => pi_prcs_id
-          , pi_expression => l_expressions(i));
+          , pi_expression => l_expressions(i)
+          , pi_sbfl_id => pi_sbfl_id);
+        when flow_constants_pkg.gc_expr_type_sql_delimited_list  then
+          set_sql_delimited
+          ( pi_prcs_id => pi_prcs_id
+          , pi_expression => l_expressions(i)
+          , pi_sbfl_id => pi_sbfl_id);         
         else
             null;
       end case;
