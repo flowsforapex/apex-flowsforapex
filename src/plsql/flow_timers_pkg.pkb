@@ -475,8 +475,7 @@ as
     execute immediate
     q'[begin
     sys.dbms_scheduler.disable( name => 'apex_flow_step_timers_j' );
-    end;
-    /]';
+    end;]';
   end;
 
   procedure enable_scheduled_job
@@ -485,8 +484,7 @@ as
     execute immediate
     q'[begin
     sys.dbms_scheduler.enable( name => 'apex_flow_step_timers_j' );
-    end;
-    /]';
+    end;]';
   end;
 
 end flow_timers_pkg;
