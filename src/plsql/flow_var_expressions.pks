@@ -1,6 +1,6 @@
 create or replace package flow_var_expressions
   authid current_user
-  -- assissible by flow_engine, flow_process_vars ??
+  -- accessible by flow_engine, flow_process_vars ??
 as 
 
   procedure process_expressions

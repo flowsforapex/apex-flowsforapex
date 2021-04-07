@@ -31,35 +31,44 @@ as
 
   procedure set_static
   ( pi_prcs_id      flow_processes.prcs_id%type
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
   , pi_expression   flow_object_expressions%rowtype
   )
   as 
+    l_expression_text   flow_object_expressions.expr_expression%type;
   begin
+    l_expression_text := pi_expression.expr_expression;
+    -- substitute any F4A Process Variables
+    flow_process_vars.do_substitution
+    ( pi_prcs_id => pi_prcs_id
+    , pi_sbfl_id => pi_sbfl_id
+    , pio_string => l_expression_text
+    );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
         flow_process_vars.set_var 
         ( pi_prcs_id   => pi_prcs_id
         , pi_var_name  => pi_expression.expr_var_name
-        , pi_vc2_value => pi_expression.expr_expression
+        , pi_vc2_value => l_expression_text
         );
     when flow_constants_pkg.gc_prov_var_type_number then
         flow_process_vars.set_var 
         ( pi_prcs_id   => pi_prcs_id
         , pi_var_name  => pi_expression.expr_var_name
-        , pi_num_value => pi_expression.expr_expression
+        , pi_num_value => l_expression_text
         );
     when flow_constants_pkg.gc_prov_var_type_date then
         flow_process_vars.set_var 
         ( pi_prcs_id   => pi_prcs_id
         , pi_var_name  => pi_expression.expr_var_name
-        , pi_date_value => pi_expression.expr_expression
+        , pi_date_value => l_expression_text
         );
     when flow_constants_pkg.gc_prov_var_type_clob then
         -- does this one make sense?
         flow_process_vars.set_var 
         ( pi_prcs_id   => pi_prcs_id
         , pi_var_name  => pi_expression.expr_var_name
-        , pi_clob_value => pi_expression.expr_expression
+        , pi_clob_value => l_expression_text
         );  
     end case;
   end set_static;
@@ -266,12 +275,25 @@ as
         , p_display_location => apex_error.c_on_error_page
         );
     end;
-    -- test for overload?
-    -- create delimited string
-    l_result := apex_string.join
-    (  p_table => l_result_set_vc2
-       , p_sep => ':'
-    );
+    -- create delimited string output
+    begin 
+        l_result := apex_string.join
+        ( p_table => l_result_set_vc2
+        , p_sep => ':'
+        );
+    exception
+    when others then
+        apex_debug.error
+        ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
+        , p0        => pi_expression.expr_var_name
+        , p1        => pi_prcs_id
+        , p2        => sqlerrm
+        );
+        apex_error.add_error
+        ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+    end;
     apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result, p_level => 3);
     -- set proc variable
     flow_process_vars.set_var 
@@ -308,6 +330,7 @@ as
         when flow_constants_pkg.gc_expr_type_static then
           set_static 
           ( pi_prcs_id => pi_prcs_id
+          , pi_sbfl_id => pi_sbfl_id
           , pi_expression => l_expressions(i));
         when flow_constants_pkg.gc_expr_type_proc_var then
           set_proc_var
