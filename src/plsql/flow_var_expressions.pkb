@@ -303,6 +303,100 @@ as
     );
   end set_sql_delimited;
 
+  procedure set_plsql_expression         
+  ( pi_prcs_id      flow_processes.prcs_id%type
+  , pi_expression   flow_object_expressions%rowtype
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
+  )
+  as 
+    l_result_vc2    flow_process_variables.prov_var_vc2%type;
+    l_result_date   flow_process_variables.prov_var_date%type;
+    l_result_num    flow_process_variables.prov_var_num%type;
+  begin
+    case pi_expression.expr_var_type 
+    when flow_constants_pkg.gc_prov_var_type_varchar2 then
+      l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
+                      ( p_plsql_expression => pi_expression.expr_expression
+                      );
+      flow_process_vars.set_var 
+      ( pi_prcs_id   => pi_prcs_id
+      , pi_var_name  => pi_expression.expr_var_name
+      , pi_vc2_value => l_result_vc2
+      );
+    when flow_constants_pkg.gc_prov_var_type_date then
+      l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
+                      ( p_plsql_expression => pi_expression.expr_expression
+                      );
+      -- a date value must be returned using our specified format
+      flow_process_vars.set_var 
+      ( pi_prcs_id   => pi_prcs_id
+      , pi_var_name  => pi_expression.expr_var_name
+      , pi_date_value => to_date(l_result_vc2,'DD-MON-YYYY HH24:MI:SS')
+      );
+    when flow_constants_pkg.gc_prov_var_type_number then
+      l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
+                      ( p_plsql_expression => pi_expression.expr_expression
+                      );
+      flow_process_vars.set_var 
+      ( pi_prcs_id   => pi_prcs_id
+      , pi_var_name  => pi_expression.expr_var_name
+      , pi_num_value => to_number(l_result_vc2)
+      ); 
+    else
+      apex_error.add_error
+      ( p_message          => 'Error setting process variable.  Incorrect datatype for variable '||pi_expression.expr_var_name||'.  SQL error shown in debug output.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    end case;
+  end set_plsql_expression;  
+
+  procedure set_plsql_function        
+  ( pi_prcs_id      flow_processes.prcs_id%type
+  , pi_expression   flow_object_expressions%rowtype
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
+  )
+  as 
+    l_result_vc2    flow_process_variables.prov_var_vc2%type;
+    l_result_date   flow_process_variables.prov_var_date%type;
+    l_result_num    flow_process_variables.prov_var_num%type;
+  begin
+    case pi_expression.expr_var_type 
+    when flow_constants_pkg.gc_prov_var_type_varchar2 then
+      l_result_vc2 := apex_plugin_util.get_plsql_function_result 
+                      ( p_plsql_function => pi_expression.expr_expression
+                      );
+      flow_process_vars.set_var 
+      ( pi_prcs_id   => pi_prcs_id
+      , pi_var_name  => pi_expression.expr_var_name
+      , pi_vc2_value => l_result_vc2
+      );
+    when flow_constants_pkg.gc_prov_var_type_date then
+      l_result_vc2 := apex_plugin_util.get_plsql_function_result 
+                      ( p_plsql_function => pi_expression.expr_expression
+                      );
+      -- a date value must be returned using our specified format
+      flow_process_vars.set_var 
+      ( pi_prcs_id   => pi_prcs_id
+      , pi_var_name  => pi_expression.expr_var_name
+      , pi_date_value => to_date(l_result_vc2,'DD-MON-YYYY HH24:MI:SS')
+      );
+    when flow_constants_pkg.gc_prov_var_type_number then
+      l_result_vc2 := apex_plugin_util.get_plsql_function_result 
+                      ( p_plsql_function => pi_expression.expr_expression
+                      );
+      flow_process_vars.set_var 
+      ( pi_prcs_id   => pi_prcs_id
+      , pi_var_name  => pi_expression.expr_var_name
+      , pi_num_value => to_number(l_result_vc2)
+      ); 
+    else
+      apex_error.add_error
+      ( p_message          => 'Error setting process variable.  Incorrect datatype for variable '||pi_expression.expr_var_name||'.  SQL error shown in debug output.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    end case;
+
+
   /**********************************************************************
   **
   ** Main Procedure
@@ -345,7 +439,17 @@ as
           set_sql_delimited
           ( pi_prcs_id => pi_prcs_id
           , pi_expression => l_expressions(i)
-          , pi_sbfl_id => pi_sbfl_id);         
+          , pi_sbfl_id => pi_sbfl_id);     
+        when flow_constants_pkg.gc_expr_type_plsql_expression then
+          set_plsql_expression
+          ( pi_prcs_id => pi_prcs_id
+          , pi_expression => l_expressions(i)
+          , pi_sbfl_id => pi_sbfl_id); 
+        when flow_constants_pkg.gc_expr_type_plsql_function_body then
+          set_plsql_function
+          ( pi_prcs_id => pi_prcs_id
+          , pi_expression => l_expressions(i)
+          , pi_sbfl_id => pi_sbfl_id);  
         else
             null;
       end case;

@@ -4,6 +4,7 @@ as
 type flow_step_info is record
 ( dgrm_id           flow_diagrams.dgrm_id%type
 , source_objt_tag   flow_objects.objt_tag_name%type
+, source_objt_id    flow_objects.objt_id%type
 , target_objt_id    flow_objects.objt_id%type
 , target_objt_ref   flow_objects.objt_bpmn_id%type
 , target_objt_tag   flow_objects.objt_tag_name%type
@@ -2194,7 +2195,7 @@ begin
   exception
     when no_data_found then
             apex_error.add_error
-            ( p_message => 'Application Error: Subflow ID supplied ( '||p_subflow_id||' ) not found .'
+            ( p_message => 'Subflow ID supplied ( '||p_subflow_id||' ) not found. Check for process events that changed process flow (timeouts, errors, escalations). '
             , p_display_location => apex_error.c_on_error_page
             );
   end;
@@ -2202,6 +2203,7 @@ begin
   begin
     select l_dgrm_id
          , objt_source.objt_tag_name
+         , objt_source.objt_id
          , conn.conn_tgt_objt_id
          , objt_target.objt_bpmn_id
          , objt_target.objt_tag_name    
@@ -2237,6 +2239,14 @@ begin
     , p_display_location => apex_error.c_on_error_page
     );
   end;
+  -- evaluate and set any post-step variable expressions on the last object
+  flow_var_expressions.process_expressions
+    ( pi_objt_id     => l_step_info.source_objt_id
+    , pi_phase       => flow_constants_pkg.gc_expr_phase_post
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+  );
+
   -- clean up any boundary events left over from the previous activity
   if (l_step_info.source_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
                                      , flow_constants_pkg.gc_bpmn_task
@@ -2258,28 +2268,29 @@ begin
   , p_subflow_id => p_subflow_id
   , p_completed_object => l_sbfl_rec.sbfl_current
   );
+  -- previous step is now complete.  Move forward...
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
         
-    -- evaluate and set any pre-step variable expressions on the next object
-    flow_var_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.target_objt_id
-      , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
-    );
+  -- evaluate and set any pre-step variable expressions on the next object
+  flow_var_expressions.process_expressions
+    ( pi_objt_id     => l_step_info.target_objt_id
+    , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+  );
 
-    apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
-    apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.source_objt_tag : ' || l_step_info.source_objt_tag, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_id : ' || l_step_info.target_objt_id, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_ref : ' || l_step_info.target_objt_ref, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_tag : ' || l_step_info.target_objt_tag, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_subtag : ' || l_step_info.target_objt_subtag, p_level => 4) ;
-    
-    apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_id : ' || l_sbfl_rec.sbfl_id, p_level => 4) ;    
-    apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_last_completed : ' || l_sbfl_rec.sbfl_last_completed, p_level => 4) ;    
-    apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_prcs_id : ' || l_sbfl_rec.sbfl_prcs_id, p_level => 4) ;    
-   
+  apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
+  apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.source_objt_tag : ' || l_step_info.source_objt_tag, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_id : ' || l_step_info.target_objt_id, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_ref : ' || l_step_info.target_objt_ref, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_tag : ' || l_step_info.target_objt_tag, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_subtag : ' || l_step_info.target_objt_subtag, p_level => 4) ;
+  
+  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_id : ' || l_sbfl_rec.sbfl_id, p_level => 4) ;    
+  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_last_completed : ' || l_sbfl_rec.sbfl_last_completed, p_level => 4) ;    
+  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_prcs_id : ' || l_sbfl_rec.sbfl_prcs_id, p_level => 4) ;    
+  
   case (l_step_info.target_objt_tag)
     when flow_constants_pkg.gc_bpmn_end_event    --next step is either end of process or sub-process returning to its parent
     then
