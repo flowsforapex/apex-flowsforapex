@@ -2381,7 +2381,7 @@ exception
     when flow_plsql_runner_pkg.e_plsql_call_failed then
       apex_error.add_error
       (
-        p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute sucessfully.'
+        p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute successfully.'
       , p_display_location => apex_error.c_on_error_page
       );
 end flow_complete_step;
