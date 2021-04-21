@@ -1,5 +1,14 @@
 # Flows for APEX - Changelog
 
+## 5.1.2
+
+- Added business reference to views
+  - flow_task_inbox_vw
+  - flow_instances_vw
+  - flow_instance_details_vw
+- Introduced the demo app "Holiday Approval"
+- The demo app "Order Shipment" is now deprecated
+
 ## v5.1.1
 
 - Fixed several bugs occuring when all of the objects after an event object or a gateway are scriptTasks or serviceTasks, causing process not to be marked as Completed when finished.
