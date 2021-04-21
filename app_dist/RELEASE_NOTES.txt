@@ -25,7 +25,10 @@ INSTALLING THE APPLICATION
 
 HISTORY
 * v5.1.2
-  - Added business reference to view flow_task_inbox_vw
+  - Added business reference to views
+    - flow_task_inbox_vw
+    - flow_instances_vw
+    - flow_instance_details_vw
   - Introduced the demo app "Holiday Approval"
   - The demo app "Order Shipment" is now deprecated
 
