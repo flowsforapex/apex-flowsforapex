@@ -1210,6 +1210,7 @@ end process_endEvent;
             , p_current_object         => p_step_info.target_objt_ref          
             , p_route                  => new_path.route         
             , p_last_completed         => p_step_info.target_objt_ref  
+            , p_status                 => flow_constants_pkg.gc_sbfl_status_created
             , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
             , p_new_proc_level         => false
             )
@@ -1317,7 +1318,8 @@ end process_endEvent;
           , p_starting_object        => p_step_info.target_objt_ref        
           , p_current_object         => p_step_info.target_objt_ref          
           , p_route                  => new_path.route         
-          , p_last_completed         => p_step_info.target_objt_ref  
+          , p_last_completed         => p_step_info.target_objt_ref 
+          , p_status                 => flow_constants_pkg.gc_sbfl_status_created 
           , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
           , p_new_proc_level         => false      
           );
