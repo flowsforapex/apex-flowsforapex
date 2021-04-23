@@ -16,7 +16,7 @@ type t_new_sbfl_rec is record
 
 type t_new_sbfls is table of t_new_sbfl_rec;
 
-function get_dgrm_id
+/*function get_dgrm_id
   (
     p_prcs_id in flow_processes.prcs_id%type
   ) return flow_processes.prcs_dgrm_id%type
@@ -32,9 +32,9 @@ function get_dgrm_id
     
     return l_prcs_dgrm_id;
     
-end get_dgrm_id;
+end get_dgrm_id;*/
 
-procedure log_step_completion
+/*procedure log_step_completion
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
@@ -63,9 +63,9 @@ procedure log_step_completion
       , p_display_location => apex_error.c_on_error_page
       );
       raise;
-  end log_step_completion;
+  end log_step_completion;*/
 
-  function check_subflow_exists
+  /*function check_subflow_exists
   ( 
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -80,9 +80,9 @@ procedure log_step_completion
        and sbfl.sbfl_prcs_id = p_process_id
     ;
     return ( l_cnt = 1 );
-  end check_subflow_exists;
+  end check_subflow_exists;*/
 
-function get_subprocess_parent_subflow
+/*function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_current    in flow_objects.objt_bpmn_id%type -- an object in the subprocess
@@ -93,7 +93,7 @@ function get_subprocess_parent_subflow
     l_dgrm_id                 flow_diagrams.dgrm_id%type;
   begin
 
-    l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );  
+    l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );  
 
     -- get parent bpmn:subProcess object
     select par_objt.objt_bpmn_id
@@ -119,9 +119,9 @@ function get_subprocess_parent_subflow
         l_parent_subflow := null;
     end;
     return l_parent_subflow;
-end get_subprocess_parent_subflow;
+end get_subprocess_parent_subflow;*/
 
-procedure get_number_of_connections
+/*procedure get_number_of_connections
     ( pi_dgrm_id in flow_diagrams.dgrm_id%type
     , pi_target_objt_id flow_connections.conn_tgt_objt_id%type
     , po_num_forward_connections out number
@@ -143,9 +143,9 @@ begin
        and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        and conn.conn_dgrm_id = pi_dgrm_id
     ;
-end get_number_of_connections;
+end get_number_of_connections;*/
 
-function get_gateway_route
+/*function get_gateway_route
     ( pi_process_id     in flow_processes.prcs_id%type
     , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
     ) return varchar2
@@ -218,7 +218,7 @@ begin
         end;
     end if; 
     return l_forward_route;
-end get_gateway_route;
+end get_gateway_route;*/
 
 function subflow_start
   ( 
@@ -490,8 +490,13 @@ is
     l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
     l_main_subflow_id       flow_subflows.sbfl_id%type;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
+    cursor c_prcs_lock is 
+      select prcs.prcs_id
+        from flow_processes prcs
+       where prcs.prcs_id = p_process_id
+      for update of prcs.prcs_id;
 begin
-    l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
+    l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
     begin
         -- called from flow_api_pkg.flow_start (only)
         -- get the object to start with
@@ -519,6 +524,8 @@ begin
             , p_display_location => apex_error.c_on_error_page
             );
     end;
+    -- lock the process
+    open c_prcs_lock;
     -- mark process as running
     update flow_processes prcs
        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
@@ -736,7 +743,7 @@ begin
       , pi_link_bpmn_id => p_step_info.target_objt_ref
       );
     -- log throw event as complete
-    log_step_completion   
+   flow_engine_util.log_step_completion   
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_completed_object => p_step_info.target_objt_ref
@@ -811,7 +818,7 @@ is
     l_parent_processs_level flow_subflows.sbfl_process_level%type;
 begin 
     -- set the throwing event to completed
-    log_step_completion   
+   flow_engine_util.log_step_completion   
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_completed_object => p_step_info.target_objt_ref
@@ -946,13 +953,13 @@ is
 begin
     --next step can be either end of process or sub-process returning to its parent
     -- get parent subflow
-    l_sbfl_id_par := get_subprocess_parent_subflow
+    l_sbfl_id_par := flow_engine_util.get_subprocess_parent_subflow
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             , p_current    => p_sbfl_info.sbfl_current
             );
     -- log the current endEvent as completed
-    log_step_completion
+   flow_engine_util.log_step_completion
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             , p_completed_object => p_step_info.target_objt_ref
@@ -1109,7 +1116,7 @@ end process_endEvent;
   begin
     apex_debug.message(p_message => 'Next Step is parallelGateway '||p_step_info.target_objt_ref, p_level => 4) ;
     -- test if this is splitting or merging (or both) gateway
-    get_number_of_connections
+    flow_engine_util.get_number_of_connections
     ( pi_dgrm_id => p_step_info.dgrm_id
     , pi_target_objt_id => p_step_info.target_objt_id
     , po_num_back_connections => l_num_back_connections
@@ -1223,7 +1230,7 @@ end process_endEvent;
         for new_subflow in 1.. l_new_subflows.count
         loop
           -- check subflow still exists (in case earlier loop terminated everything in level)
-          if check_subflow_exists
+          if flow_engine_util.check_subflow_exists
             ( p_process_id => p_process_id
             , p_subflow_id => l_new_subflows(new_subflow).sbfl_id
             )
@@ -1276,7 +1283,7 @@ end process_endEvent;
     -- handles opening and closing but not closing and reopening  --FFA41
     apex_debug.message(p_message => 'Next Step is inclusiveGateway '||p_step_info.target_objt_ref, p_level => 4) ;
     -- test if this is splitting or merging (or both) gateway
-    get_number_of_connections
+    flow_engine_util.get_number_of_connections
     ( pi_dgrm_id => p_step_info.dgrm_id
     , pi_target_objt_id => p_step_info.target_objt_id
     , po_num_back_connections => l_num_back_connections
@@ -1286,7 +1293,7 @@ end process_endEvent;
       -- this is opening inclusiveGateway.  Step into it.  Forward paths will get opened by flow_complete_step
       -- after user decision.
       -- l_forward_routes := flow_process_vars.get_var_vc2(p_process_id, 'Route:'||p_step_info.target_objt_ref);
-      l_forward_routes := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
+      l_forward_routes := flow_engine_util.get_gateway_route(p_process_id, p_step_info.target_objt_ref);
       apex_debug.message(p_message => 'Forward routes for inclusiveGateway '||p_step_info.target_objt_ref ||' :'||l_forward_routes, p_level => 4) ;
       -- set current subflow to status split, current = null       
       update flow_subflows sbfl
@@ -1331,7 +1338,7 @@ end process_endEvent;
       for new_subflow in 1.. l_new_subflows.count
         loop
           -- check subflow still exists (in case earlier loop terminated everything in level)
-          if check_subflow_exists
+          if flow_engine_util.check_subflow_exists
             ( p_process_id => p_process_id
             , p_subflow_id => l_new_subflows(new_subflow).sbfl_id
             )
@@ -1427,7 +1434,7 @@ is
 begin
     -- handles opening and closing and closing and reopening
     apex_debug.message(p_message => 'Begin process_exclusiveGateway for object: '||p_step_info.target_objt_tag, p_level => 3) ;
-    get_number_of_connections
+    flow_engine_util.get_number_of_connections
     ( pi_dgrm_id => p_step_info.dgrm_id
     , pi_target_objt_id => p_step_info.target_objt_id
     , po_num_back_connections => l_num_back_connections
@@ -1435,7 +1442,7 @@ begin
     );
     if l_num_forward_connections > 1
     then -- opening gateway - get choice
-        l_forward_route := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
+        l_forward_route := flow_engine_util.get_gateway_route(p_process_id, p_step_info.target_objt_ref);
     else -- closing gateway - keep going
         l_forward_route := null;
     end if;  
@@ -1688,7 +1695,7 @@ end process_exclusiveGateway;
            and sbfl.sbfl_prcs_id = p_process_id
         ;
         -- get the subProcess event in the parent level
-        l_par_sbfl := get_subprocess_parent_subflow
+        l_par_sbfl := flow_engine_util.get_subprocess_parent_subflow
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         , p_current => p_step_info.target_objt_ref
@@ -1886,7 +1893,7 @@ begin
          raise; 
      end;
      -- make the incoming (main) (split) parent subflow proceed along the path of the cleared event.clear(
-    l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
+    l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
      select conn.conn_id
           , sbfl.sbfl_current
           , sbfl.sbfl_starting_object
@@ -2057,7 +2064,7 @@ begin
     -- an intermediateCatchEvent (iCE) following an eBG will always have exactly 1 input (from the eBG)
     -- an independant iCE (not following an eBG) can have >1 inputs
     -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
-    l_dgrm_id := get_dgrm_id (p_prcs_id => p_process_id);
+    l_dgrm_id := flow_engine_util.get_dgrm_id (p_prcs_id => p_process_id);
 
     select curr_objt.objt_tag_name
          , sbfl.sbfl_sbfl_id
@@ -2156,7 +2163,7 @@ begin
   , p1        => p_subflow_id
   , p_level   => 3
   );
-  l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
+  l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info and lock it
   begin
     begin
@@ -2248,7 +2255,7 @@ begin
   flow_release_step(p_process_id, p_subflow_id);
 
   -- log current step as completed
-  log_step_completion   
+ flow_engine_util.log_step_completion   
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   , p_completed_object => l_sbfl_rec.sbfl_current
@@ -2258,6 +2265,7 @@ begin
   -- end of post- phase for previous step
 
   commit;
+  apex_debug.message(p_message => 'End of -post phase (committed) on subflow '||p_subflow_id||'. Moving onto Next Step Pre-Phase', p_level => 4) ;
 
   -- start of pre-phase for next step
 

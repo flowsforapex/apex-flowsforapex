@@ -17,6 +17,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_constants_pkg.pks
 @plsql/flow_bpmn_parser_pkg.pks
 @plsql/flow_api_pkg.pks
+@plsql/flow_engine_util.pks
 @plsql/flow_timers_pkg.pks
 @plsql/flow_engine.pks
 @plsql/flow_process_vars.pks
@@ -38,6 +39,7 @@ PROMPT >> Installing Views
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_process_vars.pkb
+@plsql/flow_engine_util.pkb
 @plsql/flow_engine.pkb
 @plsql/flow_api_pkg.pkb
 @plsql/flow_bpmn_parser_pkg.pkb

@@ -189,7 +189,7 @@ as
         -- and checking if the connected subflow is still there
         if l_run_now then
           if timer_exists( pi_timr_id => l_timers(i).timr_id ) then
-            if flow_engine.check_subflow_exists
+            if flow_engine_util.check_subflow_exists
                 ( 
                   p_process_id => l_timers(i).timr_prcs_id
                 , p_subflow_id => l_timers(i).timr_sbfl_id
