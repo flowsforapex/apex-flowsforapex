@@ -17,6 +17,36 @@ as
     return ( l_cnt = 1 );
   end timer_exists;
 
+  procedure lock_timer
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  )
+  as
+    cursor c_lock is 
+      select timr.timr_id 
+        from flow_timers timr
+       where timr.timr_prcs_id = pi_prcs_id
+         and timr.timr_sbfl_id = pi_sbfl_id
+      for update of timr.timr_id;
+  begin
+    open c_lock;
+  end lock_timer;
+
+  procedure lock_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  as
+    cursor c_lock is 
+      select timr.timr_id 
+        from flow_timers timr
+       where timr.timr_prcs_id = pi_prcs_id
+      for update of timr.timr_id;
+  begin
+    open c_lock;
+  end lock_process_timers;
+
   procedure get_timer_definition
   (
     pi_prcs_id    in         flow_processes.prcs_id%type

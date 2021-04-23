@@ -2157,7 +2157,7 @@ begin
   , p_level   => 3
   );
   l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
-  -- Get current object and current subflow info
+  -- Get current object and current subflow info and lock it
   begin
     begin
         select *
@@ -2165,7 +2165,11 @@ begin
         from flow_subflows sbfl
         where sbfl.sbfl_prcs_id = p_process_id
         and sbfl.sbfl_id = p_subflow_id
-            ;
+        for update of sbfl.sbfl_current
+                    , sbfl.sbfl_last_completed
+                    , sbfl.sbfl_reservation
+                    , sbfl.sbfl_last_update
+        ;
     exception
         when no_data_found then
         -- check if subflow valid in process
@@ -2250,6 +2254,15 @@ begin
   , p_completed_object => l_sbfl_rec.sbfl_current
   );
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
+
+  -- end of post- phase for previous step
+
+  commit;
+
+  -- start of pre-phase for next step
+
+  -- lock subflow
+
 
     apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
     apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;
@@ -2419,6 +2432,8 @@ begin
           )
       returning prcs.prcs_id into l_ret
     ;
+    commit;
+
     apex_debug.message(p_message => 'End flow_create', p_level => 3) ;
 
     return l_ret;
@@ -2430,25 +2445,39 @@ procedure flow_reset
   )
 is
         l_return_code   number;
+        cursor c_lock_all is 
+            select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated
+              from flow_subflows sbfl
+              join flow_processes prcs
+                on prcs.prcs_id = sbfl.sbfl_prcs_id 
+              join flow_subflow_log sflg 
+                on prcs.prcs_id = sflg.sflg_prcs_id
+             where prcs.prcs_id = p_process_id
+               for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated
+        ;
 begin
     apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
   
-    -- clear out run-time object_log
-    -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
-    -- into log audit trail  (not yet planned feature!)
+    -- lock all objects
+    flow_timers_pkg.lock_process_timers
+    ( pi_prcs_id => p_process_id
+    );  
+    open c_lock_all;
 
-        
     -- kill any timers sill running in the process
     flow_timers_pkg.terminate_process_timers(
         pi_prcs_id => p_process_id
       , po_return_code => l_return_code
     );  
-    
+
+    -- clear out run-time object_log
+
     delete
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
     ;
     
+    -- delete the subflows
     delete
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
@@ -2464,6 +2493,7 @@ begin
          , prcs.prcs_status = flow_constants_pkg.gc_prcs_status_created
      where prcs.prcs_id = p_process_id
     ;
+    commit;
 end flow_reset;
 
 procedure flow_delete
@@ -2472,17 +2502,29 @@ procedure flow_delete
   )
 is
     l_return_code   number;
+    cursor c_lock_all is 
+      select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated
+        from flow_subflows sbfl
+        join flow_processes prcs
+          on prcs.prcs_id = sbfl.sbfl_prcs_id 
+        join flow_subflow_log sflg 
+          on prcs.prcs_id = sflg.sflg_prcs_id
+       where prcs.prcs_id = p_process_id
+         for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated;
 begin
     apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
-    -- clear out run-time object_log
-    -- if log retention enabled, maybe write existing logs out for the process with notes = 'RESET- '||notes
-    -- into log audit trail  (not yet planned feature!)
+    -- lock all timers, logs, subflows and the process
+    flow_timers_pkg.lock_process_timers
+    ( pi_prcs_id => p_process_id
+    );  
+    open c_lock_all;
 
     -- kill any timers sill running in the process
     flow_timers_pkg.delete_process_timers(
         pi_prcs_id => p_process_id
       , po_return_code => l_return_code
     );  
+    -- clear out run-time object_log
 
     delete
       from flow_subflow_log sflg 
@@ -2500,6 +2542,7 @@ begin
       from flow_processes prcs
      where prcs.prcs_id = p_process_id
     ;
+    commit;
 end flow_delete;
 
 end flow_engine;

@@ -85,7 +85,7 @@ as
   gc_dgrm_status_archived             constant  varchar2(10 char) := 'archived';
 
   -- Subflow status
-  gc_sbfl_status_created              constant  varchar2(20 char) := 'created'
+  gc_sbfl_status_created              constant  varchar2(20 char) := 'created';
   gc_sbfl_status_running              constant  varchar2(20 char) := 'running';
   gc_sbfl_status_waiting_timer        constant  varchar2(20 char) := 'waiting for timer';
   gc_sbfl_status_waiting_gateway      constant  varchar2(20 char) := 'waiting at gateway';
