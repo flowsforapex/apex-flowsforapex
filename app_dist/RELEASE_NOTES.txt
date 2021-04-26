@@ -20,7 +20,7 @@ INSTALLING THE APPLICATION
 - Import the application file "FLOWSFORAPEX_EN_APEX201_984339_UTF8_V5.1.2.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
-- Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEX512_INTEGRATION_DEMO_EN_APEX201_984341_UTF8_V2.0.sql"
+- Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEX512_INTEGRATION_DEMO_EN_APEX201_984341_UTF8_V2.1.sql"
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
 
 HISTORY
