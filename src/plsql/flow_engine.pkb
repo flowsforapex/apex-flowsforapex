@@ -552,7 +552,8 @@ begin
       , p_parent_sbfl_proc_level => 0 
       , p_new_proc_level => false
       );
-
+    -- commit the subflow creation
+    commit;
     -- check startEvent sub type for timer or (later releases) other sub types
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
     then 
@@ -2154,7 +2155,7 @@ is
   l_sbfl_rec              flow_subflows%rowtype;
   l_step_info             flow_engine.flow_step_info;
   l_dgrm_id               flow_diagrams.dgrm_id%type;
-  l_prcs_check_id         flow_processes.prcs_id%type;
+ -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
   apex_debug.message
   (
@@ -2165,41 +2166,11 @@ begin
   );
   l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info and lock it
-  begin
-    begin
-        select *
-        into l_sbfl_rec
-        from flow_subflows sbfl
-        where sbfl.sbfl_prcs_id = p_process_id
-        and sbfl.sbfl_id = p_subflow_id
-        for update of sbfl.sbfl_current
-                    , sbfl.sbfl_last_completed
-                    , sbfl.sbfl_reservation
-                    , sbfl.sbfl_last_update
-        ;
-    exception
-        when no_data_found then
-        -- check if subflow valid in process
-        select sbfl.sbfl_prcs_id
-          into l_prcs_check_id
-          from flow_subflows sbfl
-         where sbfl.sbfl_id = p_subflow_id
-         ;
-        if l_prcs_check_id != p_process_id
-        then
-            apex_error.add_error
-            ( p_message => 'Application Error: Subflow ID supplied ( '||p_subflow_id||' ) exists but is not child of Process ID Supplied ( '||p_process_id||' ).'
-            , p_display_location => apex_error.c_on_error_page
-            );
-        end if;
-    end;
-  exception
-    when no_data_found then
-            apex_error.add_error
-            ( p_message => 'Application Error: Subflow ID supplied ( '||p_subflow_id||' ) not found .'
-            , p_display_location => apex_error.c_on_error_page
-            );
-  end;
+  l_sbfl_rec := flow_engine_util.get_and_lock_subflow_info 
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  );
+
   -- Find next subflow step
   begin
     select l_dgrm_id
@@ -2239,6 +2210,8 @@ begin
     , p_display_location => apex_error.c_on_error_page
     );
   end;
+
+
   -- clean up any boundary events left over from the previous activity
   if (l_step_info.source_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
                                      , flow_constants_pkg.gc_bpmn_task
@@ -2260,29 +2233,31 @@ begin
   , p_subflow_id => p_subflow_id
   , p_completed_object => l_sbfl_rec.sbfl_current
   );
-  l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
-
+  
   -- end of post- phase for previous step
-
   commit;
   apex_debug.message(p_message => 'End of -post phase (committed) on subflow '||p_subflow_id||'. Moving onto Next Step Pre-Phase', p_level => 4) ;
 
   -- start of pre-phase for next step
 
-  -- lock subflow
+  -- relock subflow
+  l_sbfl_rec := flow_engine_util.get_and_lock_subflow_info 
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  );
+  l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
 
-
-    apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
-    apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.source_objt_tag : ' || l_step_info.source_objt_tag, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_id : ' || l_step_info.target_objt_id, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_ref : ' || l_step_info.target_objt_ref, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_tag : ' || l_step_info.target_objt_tag, p_level => 4) ;
-    apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_subtag : ' || l_step_info.target_objt_subtag, p_level => 4) ;
-    
-    apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_id : ' || l_sbfl_rec.sbfl_id, p_level => 4) ;    
-    apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_last_completed : ' || l_sbfl_rec.sbfl_last_completed, p_level => 4) ;    
-    apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_prcs_id : ' || l_sbfl_rec.sbfl_prcs_id, p_level => 4) ;    
+  apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
+  apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.source_objt_tag : ' || l_step_info.source_objt_tag, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_id : ' || l_step_info.target_objt_id, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_ref : ' || l_step_info.target_objt_ref, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_tag : ' || l_step_info.target_objt_tag, p_level => 4) ;
+  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_subtag : ' || l_step_info.target_objt_subtag, p_level => 4) ;
+  
+  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_id : ' || l_sbfl_rec.sbfl_id, p_level => 4) ;    
+  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_last_completed : ' || l_sbfl_rec.sbfl_last_completed, p_level => 4) ;    
+  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_prcs_id : ' || l_sbfl_rec.sbfl_prcs_id, p_level => 4) ;    
    
   case (l_step_info.target_objt_tag)
     when flow_constants_pkg.gc_bpmn_end_event    --next step is either end of process or sub-process returning to its parent
@@ -2388,6 +2363,8 @@ begin
          , p_step_info => l_step_info
          );
     end case;
+    -- Commit transaction before returning
+    commit;
 exception
     when CASE_NOT_FOUND
     then

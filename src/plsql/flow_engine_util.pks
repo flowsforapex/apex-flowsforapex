@@ -38,4 +38,9 @@ as
   , po_num_back_connections out number
   );
   
+  function get_and_lock_subflow_info
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  ) return flow_subflows%rowtype;
+
 end flow_engine_util;

@@ -205,4 +205,48 @@ procedure get_number_of_connections
     ;
   end get_number_of_connections;
 
+  function get_and_lock_subflow_info
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  ) return flow_subflows%rowtype
+  is 
+    l_sbfl_rec  flow_subflows%rowtype;
+    l_prcs_check_id         flow_processes.prcs_id%type;
+  begin
+    begin 
+        select *
+        into l_sbfl_rec
+        from flow_subflows sbfl
+        where sbfl.sbfl_prcs_id = p_process_id
+        and sbfl.sbfl_id = p_subflow_id
+        for update of sbfl.sbfl_current
+                    , sbfl.sbfl_last_completed
+                    , sbfl.sbfl_reservation
+                    , sbfl.sbfl_last_update
+        ;
+    exception
+        when no_data_found then
+        -- check if subflow valid in process
+        select sbfl.sbfl_prcs_id
+          into l_prcs_check_id
+          from flow_subflows sbfl
+         where sbfl.sbfl_id = p_subflow_id
+         ;
+        if l_prcs_check_id != p_process_id
+        then
+            apex_error.add_error
+            ( p_message => 'Application Error: Subflow ID supplied ( '||p_subflow_id||' ) exists but is not child of Process ID Supplied ( '||p_process_id||' ).'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end if;
+    end;
+    return l_sbfl_rec;
+  exception
+    when no_data_found then
+            apex_error.add_error
+            ( p_message => 'Subflow ID supplied ( '||p_subflow_id||' ) not found. Check for process events that changed process flow (timeouts, errors, escalations). '
+            , p_display_location => apex_error.c_on_error_page
+            );
+  end get_and_lock_subflow_info;
+
 end flow_engine_util;
