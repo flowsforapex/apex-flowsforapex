@@ -2225,7 +2225,11 @@ begin
       flow_unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
   -- release subflow reservation
-  flow_reservations.release_step(p_process_id, p_subflow_id);
+  flow_reservations.release_step
+    ( p_process_id        => p_process_id
+    , p_subflow_id        => p_subflow_id
+    , p_called_internally => true
+    );
 
   -- log current step as completed
  flow_engine_util.log_step_completion   

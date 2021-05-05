@@ -1,5 +1,7 @@
 create or replace package body flow_reservations
 as 
+  lock_timeout exception;
+  pragma exception_init (lock_timeout, -3006);
 
   procedure reserve_step
     ( p_process_id         in flow_processes.prcs_id%type
@@ -19,6 +21,7 @@ as
       from flow_subflows sbfl 
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
+       for update of sbfl_reservation 
     ;
     if l_existing_reservation is not null then
       if p_reservation = l_existing_reservation then 
@@ -34,6 +37,10 @@ as
      where sbfl_prcs_id = p_process_id
        and sbfl_id = p_subflow_id
     ;
+    -- commit reservation if this is an external call
+    if not p_called_internally then 
+      commit;
+    end if;
 
   exception
     when no_data_found then
@@ -49,6 +56,11 @@ as
     when e_reserved_by_same then
         apex_error.add_error
         ( p_message => 'Reservation already placed on next task.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+    when lock_timeout then
+        apex_error.add_error
+        ( p_message => 'Subflow '||p_subflow_id||' currently locked by another user.  Try your reservation again later.'
         , p_display_location => apex_error.c_on_error_page
         );
   end reserve_step;
@@ -68,6 +80,7 @@ as
       from flow_subflows sbfl 
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
+       for update of sbfl_reservation wait 2
     ;
     -- place the reservation
     update flow_subflows sbfl
@@ -75,12 +88,22 @@ as
      where sbfl_prcs_id = p_process_id
        and sbfl_id = p_subflow_id
     ;
+    -- commit reservation if this is an external call
+    if not p_called_internally then 
+      commit;
+    end if;
+
   exception
     when no_data_found then
       apex_error.add_error
       ( p_message => 'Reservation unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
       );
+    when lock_timeout then
+        apex_error.add_error
+        ( p_message => 'Subflow '||p_subflow_id||' currently locked by another user.  Try to release your reservation later.'
+        , p_display_location => apex_error.c_on_error_page
+        );
   end release_step;
 
 end flow_reservations;
