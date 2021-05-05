@@ -265,7 +265,7 @@ procedure flow_reserve_step
 is 
 begin
 
-  flow_engine.flow_reserve_step
+  flow_reservations.reserve_step
   ( p_process_id  => p_process_id
   , p_subflow_id  => p_subflow_id
   , p_reservation => p_reservation
@@ -279,7 +279,7 @@ procedure flow_release_step
 is 
 begin
 
-  flow_engine.flow_release_step
+  flow_reservations.release_step
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   );

@@ -272,7 +272,7 @@ function subflow_start
     return l_ret;
 end subflow_start;
 
-procedure flow_reserve_step
+/*procedure flow_reserve_step
 ( p_process_id   in flow_processes.prcs_id%type
 , p_subflow_id   in flow_subflows.sbfl_id%type
 , p_reservation  in flow_subflows.sbfl_reservation%type
@@ -356,7 +356,7 @@ exception
       ( p_message => 'Reservation unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
       );
-end flow_release_step;
+end flow_release_step;*/
 
 procedure flow_terminate_level
 ( p_process_id   in flow_processes.prcs_id%type
@@ -2225,7 +2225,7 @@ begin
       flow_unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
   -- release subflow reservation
-  flow_release_step(p_process_id, p_subflow_id);
+  flow_reservations.release_step(p_process_id, p_subflow_id);
 
   -- log current step as completed
  flow_engine_util.log_step_completion   
