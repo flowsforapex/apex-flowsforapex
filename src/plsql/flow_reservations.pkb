@@ -21,7 +21,7 @@ as
       from flow_subflows sbfl 
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
-       for update of sbfl_reservation 
+       for update of sbfl_reservation wait 2
     ;
     if l_existing_reservation is not null then
       if p_reservation = l_existing_reservation then 
