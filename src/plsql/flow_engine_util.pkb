@@ -249,4 +249,179 @@ procedure get_number_of_connections
             );
   end get_and_lock_subflow_info;
 
+  function subflow_start
+    ( 
+      p_process_id                in flow_processes.prcs_id%type
+    , p_parent_subflow            in flow_subflows.sbfl_id%type
+    , p_starting_object           in flow_objects.objt_bpmn_id%type
+    , p_current_object            in flow_objects.objt_bpmn_id%type
+    , p_route                     in flow_subflows.sbfl_route%type
+    , p_last_completed            in flow_objects.objt_bpmn_id%type
+    , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
+    , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
+    , p_new_proc_level            in boolean default false
+    ) return flow_subflows.sbfl_id%type
+  is 
+    l_ret flow_subflows.sbfl_id%type;
+  begin
+    apex_debug.message(p_message => 'Begin subflow_start', p_level => 3) ;
+    insert
+      into flow_subflows
+         ( sbfl_prcs_id
+         , sbfl_sbfl_id
+         , sbfl_process_level
+         , sbfl_starting_object
+         , sbfl_route
+         , sbfl_last_completed
+         , sbfl_current
+         , sbfl_status
+         , sbfl_last_update
+         )
+    values
+         ( p_process_id
+         , p_parent_subflow
+         , p_parent_sbfl_proc_level
+         , p_starting_object
+         , p_route
+         , p_last_completed
+         , p_current_object
+         , p_status
+         , systimestamp
+         )
+    returning sbfl_id into l_ret
+    ;
+    if p_new_proc_level then
+        -- starting new process or new subprocess.  Set sbfl_process_level to new sbfl_id
+        update flow_subflows
+           set sbfl_process_level = l_ret
+         where sbfl_id = l_ret
+        ;
+    end if;
+    apex_debug.message(p_message => 'Subflow '||l_ret||' started', p_level => 3) ;
+    return l_ret;
+  end subflow_start;
+
+  procedure flow_terminate_level
+    ( p_process_id   in flow_processes.prcs_id%type
+    , p_subflow_id   in flow_subflows.sbfl_id%type
+    )
+  is
+    l_process_level   flow_subflows.sbfl_process_level%type;
+  begin
+    apex_debug.message(p_message => 'Begin flow_terminate_level for prcs '||p_process_id||' subflow '||p_subflow_id, p_level => 3) ;
+    --
+    begin
+      select sbfl.sbfl_process_level
+        into l_process_level 
+        from flow_subflows sbfl
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+      ;
+    exception
+      when no_data_found 
+      then
+        return;
+    end;
+    -- find any running subprocesses with parent at this level
+    begin
+      for running_subprocs in (
+        select child_sbfl.sbfl_id
+          from flow_subflows parent_sbfl
+          join flow_subflows child_sbfl
+            on parent_sbfl.sbfl_current = child_sbfl.sbfl_starting_object
+         where parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
+           and parent_sbfl.sbfl_process_level = l_process_level
+      )
+      loop
+        flow_terminate_level
+        ( p_process_id => p_process_id
+        , p_subflow_id => running_subprocs.sbfl_id);
+      end loop;
+    exception
+      when no_data_found then
+        null;
+    end;
+    -- end all subflows in the level
+    delete from flow_subflows
+    where sbfl_process_level = l_process_level 
+      and sbfl_prcs_id = p_process_id
+      ;
+  end flow_terminate_level;
+
+  procedure subflow_complete
+    ( p_process_id        in flow_processes.prcs_id%type
+    , p_subflow_id        in flow_subflows.sbfl_id%type
+    )
+  is
+    l_remaining_subflows              number;
+    l_remaining_siblings              number;
+    l_current_object                  flow_subflows.sbfl_current%type;
+    l_current_subflow_status          flow_subflows.sbfl_status%type;
+    l_parent_subflow_id               flow_subflows.sbfl_sbfl_id%type;
+    l_parent_subflow_status           flow_subflows.sbfl_status%type;
+    l_parent_subflow_last_completed   flow_subflows.sbfl_last_completed%type;
+    l_parent_subflow_current          flow_subflows.sbfl_current%type;
+  begin
+    apex_debug.message(p_message => 'Begin subflow_complete', p_level => 3) ;
+    
+    select sbfl.sbfl_sbfl_id
+         , sbfl.sbfl_current
+         , sbfl.sbfl_status
+      into l_parent_subflow_id
+         , l_current_object
+         , l_current_subflow_status
+      from flow_subflows sbfl
+     where sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
+    ; 
+    
+    if l_parent_subflow_id is not null then   
+      -- get parent subflow info
+      select sbfl.sbfl_status
+           , sbfl.sbfl_last_completed
+           , sbfl.sbfl_current
+        into l_parent_subflow_status
+           , l_parent_subflow_last_completed
+           , l_parent_subflow_current
+        from flow_subflows sbfl
+       where sbfl.sbfl_id = l_parent_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+      ;
+    end if;
+    -- delete the subflow
+    delete from flow_subflows
+     where sbfl_id = p_subflow_id
+       and sbfl_prcs_id = p_process_id
+    ;
+
+    -- handle parallel flows with their own end events.  Last one completing needs to clear up the parent 'split' sbfl.
+    -- if subflow has parent with   
+    -- a)  status 'split'  (flow_constants_pkg.gc_sbfl_status_split)
+    -- b)  no other children, AND
+    -- c)  is not a merging gateway
+    -- then we have an ophan parent process to clean up (all opening gateway paths have run to conclusion)
+    -- need to call this recursively in case you have nested open parallel gateways
+
+    if l_parent_subflow_id is not null then   
+        
+      select count(*)
+        into l_remaining_siblings
+        from flow_subflows sbfl
+       where sbfl.sbfl_prcs_id = p_process_id
+         and sbfl.sbfl_starting_object = l_parent_subflow_last_completed
+      ;
+      
+      if (   l_remaining_siblings = 0
+         and l_parent_subflow_status =  flow_constants_pkg.gc_sbfl_status_split    
+         and l_current_subflow_status != flow_constants_pkg.gc_sbfl_status_waiting_gateway
+         )
+      then
+        -- call subflow_complete again recursively in case it has orphan grandparent
+        subflow_complete ( p_process_id => p_process_id
+                         , p_subflow_id => l_parent_subflow_id
+                         );
+      end if;  
+    end if;
+  end subflow_complete;
+
 end flow_engine_util;

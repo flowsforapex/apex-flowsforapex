@@ -1,6 +1,7 @@
 create or replace package body flow_engine
 as 
 
+  /* moved to flow_types
   type flow_step_info is record
   ( dgrm_id           flow_diagrams.dgrm_id%type
   , source_objt_tag   flow_objects.objt_tag_name%type
@@ -8,17 +9,19 @@ as
   , target_objt_ref   flow_objects.objt_bpmn_id%type
   , target_objt_tag   flow_objects.objt_tag_name%type
   , target_objt_subtag flow_objects.objt_sub_tag_name%type
-  );
+  );*/
+  /*  moved to flow_gateways
   type t_new_sbfl_rec is record
   ( sbfl_id   flow_subflows.sbfl_id%type
   , route     flow_subflows.sbfl_route%type
   );
 
   type t_new_sbfls is table of t_new_sbfl_rec;
+  */
 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
-
+/*
 function subflow_start
   ( 
     p_process_id                in flow_processes.prcs_id%type
@@ -192,7 +195,7 @@ procedure subflow_complete
                          );
       end if;  
     end if;
-end subflow_complete;
+end subflow_complete;*/
 
 procedure flow_start_process
 ( p_process_id    in flow_processes.prcs_id%type
@@ -254,7 +257,7 @@ begin
         l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_running;
     end if;
 
-    l_main_subflow_id := flow_engine.subflow_start 
+    l_main_subflow_id := flow_engine_util.subflow_start 
       ( p_process_id => p_process_id
       , p_parent_subflow => null
       , p_starting_object => l_objt_bpmn_id
@@ -324,7 +327,7 @@ begin
             );
         when 0 then
             -- non-interupting timer.  create child subflow starting at boundary event and start timer
-            l_new_non_int_timer_sbfl := subflow_start
+            l_new_non_int_timer_sbfl := flow_engine_util.subflow_start
             ( p_process_id => p_process_id
             , p_parent_subflow => p_subflow_id
             , p_starting_object => boundary_timers.objt_bpmn_id
@@ -446,7 +449,7 @@ end flow_get_matching_link_object;
 procedure flow_process_link_event
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
 is 
     l_next_objt      flow_objects.objt_bpmn_id%type;
@@ -522,7 +525,7 @@ end flow_get_boundary_event;
 procedure flow_process_boundary_event
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   , p_par_sbfl      in flow_subflows.sbfl_id%type
   )
 is 
@@ -556,7 +559,7 @@ begin
         -- first remove any non-interrupting timers that are on the parent event
         flow_unset_boundary_timers (p_process_id, p_par_sbfl);
         -- stop processing in sub process and all children
-        flow_terminate_level
+        flow_engine_util.flow_terminate_level
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );        
@@ -585,7 +588,7 @@ begin
            and par_sbfl.sbfl_prcs_id = p_process_id
            ;
         -- start new subflow starting at the boundary event and step to next task
-        l_new_sbfl := subflow_start
+        l_new_sbfl := flow_engine_util.subflow_start
         ( p_process_id => p_process_id
         , p_parent_subflow => p_par_sbfl
         , p_starting_object => l_next_objt
@@ -612,7 +615,7 @@ begin
         elsif p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_end_event  
         then
             -- normal end event
-            subflow_complete
+            flow_engine_util.subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             );
@@ -630,7 +633,7 @@ procedure process_task
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
 is
 begin
@@ -656,7 +659,7 @@ procedure process_endEvent
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
 is
   l_sbfl_id_par           flow_subflows.sbfl_id%type;  
@@ -686,11 +689,11 @@ begin
         -- check for Terminate sub-Event
         if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition
         then
-              flow_terminate_level(p_process_id, p_subflow_id);
+              flow_engine_util.flow_terminate_level(p_process_id, p_subflow_id);
 
         elsif p_step_info.target_objt_subtag is null
         then
-            subflow_complete
+            flow_engine_util.subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             );
@@ -761,7 +764,7 @@ begin
                   );
             end;
             -- stop processing in sub process and all children
-            flow_terminate_level
+            flow_engine_util.flow_terminate_level
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             );
@@ -769,7 +772,7 @@ begin
         elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition
         then
             -- stop processing in sub process and all children
-            flow_terminate_level
+            flow_engine_util.flow_terminate_level
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             ); 
@@ -785,7 +788,7 @@ begin
         elsif p_step_info.target_objt_subtag is null -- Normal End
         then 
             -- normal end event
-            subflow_complete
+            flow_engine_util.subflow_complete
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             );
@@ -811,7 +814,7 @@ begin
     end if; 
 end process_endEvent;
 
-  procedure process_parallelGateway
+/*  procedure process_parallelGateway
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
@@ -1175,13 +1178,13 @@ begin
     , p_forward_route => l_forward_route
     );
 
-end process_exclusiveGateway;
+end process_exclusiveGateway; */
 
   procedure process_subProcess
     ( p_process_id    in flow_processes.prcs_id%type
     , p_subflow_id    in flow_subflows.sbfl_id%type
     , p_sbfl_info     in flow_subflows%rowtype
-    , p_step_info     in flow_step_info
+    , p_step_info     in flow_types_pkg.flow_step_info
     )
   is
      l_target_objt_sub        flow_objects.objt_bpmn_id%type; --target object in subprocess
@@ -1212,7 +1215,7 @@ end process_exclusiveGateway;
     end;
     -- start subflow for the sub-process
     l_sbfl_id_sub := 
-      subflow_start
+      flow_engine_util.subflow_start
       ( p_process_id => p_process_id
       , p_parent_subflow => p_subflow_id
       , p_starting_object => p_step_info.target_objt_ref -- parent subProc activity
@@ -1247,7 +1250,7 @@ end process_exclusiveGateway;
     , p_forward_route => null
     );
   end process_subProcess; 
-  
+  /*
   procedure process_eventBasedGateway
   ( 
     p_process_id in flow_processes.prcs_id%type
@@ -1312,14 +1315,14 @@ end process_exclusiveGateway;
       , p_forward_route => new_path.route
       );
     end loop;
-  end process_eventBasedGateway;
+  end process_eventBasedGateway;*/
 
   procedure process_intermediateCatchEvent
   ( 
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_sbfl_info  in flow_subflows%rowtype
-  , p_step_info  in flow_step_info
+  , p_step_info  in flow_types_pkg.flow_step_info
   )
   is 
   begin
@@ -1366,7 +1369,7 @@ end process_exclusiveGateway;
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
     l_par_sbfl    flow_subflows.sbfl_id%type;
@@ -1434,7 +1437,7 @@ procedure process_userTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
 is 
 begin
@@ -1461,7 +1464,7 @@ end process_userTask;
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
   begin
@@ -1501,7 +1504,7 @@ end process_userTask;
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
   begin
@@ -1543,7 +1546,7 @@ end process_userTask;
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
-  , p_step_info     in flow_step_info
+  , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
   begin
@@ -1740,7 +1743,7 @@ begin
        ;
        if l_child_sbfl is not null 
        then 
-          flow_terminate_level
+          flow_engine_util.flow_terminate_level
           ( p_process_id => p_process_id
           , p_subflow_id => l_child_sbfl
           );
@@ -1866,7 +1869,7 @@ procedure flow_complete_step
 )
 is
   l_sbfl_rec              flow_subflows%rowtype;
-  l_step_info             flow_engine.flow_step_info;
+  l_step_info             flow_types_pkg.flow_step_info;
   l_dgrm_id               flow_diagrams.dgrm_id%type;
  -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
@@ -1987,7 +1990,7 @@ begin
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_exclusive
     then
-      flow_engine.process_exclusiveGateway
+      flow_gateways.process_exclusiveGateway
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -1995,7 +1998,7 @@ begin
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_inclusive
     then
-      flow_engine.process_inclusiveGateway
+      flow_gateways.process_inclusiveGateway
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -2003,7 +2006,7 @@ begin
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_parallel 
     then
-      flow_engine.process_parallelGateway
+      flow_gateways.process_parallelGateway
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -2018,7 +2021,7 @@ begin
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_event_based
     then
-        flow_engine.process_eventBasedGateway
+        flow_gateways.process_eventBasedGateway
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec

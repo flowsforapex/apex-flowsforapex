@@ -17,6 +17,7 @@ drop package flow_engine;
 drop package flow_api_pkg;
 drop package flow_timers_pkg;
 drop package flow_reservations;
+drop package flow_gateways;
 drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;

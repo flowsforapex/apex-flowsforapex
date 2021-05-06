@@ -1,5 +1,5 @@
 create or replace package flow_engine_util
-accessible by (flow_engine, flow_timers_pkg)
+accessible by (flow_engine, flow_gateways, flow_timers_pkg)
 as 
 
   function get_dgrm_id
@@ -43,4 +43,27 @@ as
   , p_subflow_id    in flow_subflows.sbfl_id%type
   ) return flow_subflows%rowtype;
 
+  procedure subflow_complete
+  ( p_process_id        in flow_processes.prcs_id%type
+  , p_subflow_id        in flow_subflows.sbfl_id%type
+  );
+
+  procedure flow_terminate_level
+  ( p_process_id   in flow_processes.prcs_id%type
+  , p_subflow_id   in flow_subflows.sbfl_id%type
+  );
+
+  function subflow_start
+    ( 
+      p_process_id                in flow_processes.prcs_id%type
+    , p_parent_subflow            in flow_subflows.sbfl_id%type
+    , p_starting_object           in flow_objects.objt_bpmn_id%type
+    , p_current_object            in flow_objects.objt_bpmn_id%type
+    , p_route                     in flow_subflows.sbfl_route%type
+    , p_last_completed            in flow_objects.objt_bpmn_id%type
+    , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
+    , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
+    , p_new_proc_level            in boolean default false
+    ) return flow_subflows.sbfl_id%type;
+    
 end flow_engine_util;
