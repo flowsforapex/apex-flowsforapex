@@ -111,10 +111,11 @@ function get_subprocess_parent_subflow
   end get_subprocess_parent_subflow;
 
 procedure get_number_of_connections 
-    ( pi_dgrm_id in flow_diagrams.dgrm_id%type
-    , pi_target_objt_id flow_connections.conn_tgt_objt_id%type
-    , po_num_forward_connections out number
-    , po_num_back_connections out number
+    ( pi_dgrm_id                  in flow_diagrams.dgrm_id%type
+    , pi_target_objt_id           in flow_connections.conn_tgt_objt_id%type
+    , pi_conn_type                in flow_connections.conn_tag_name%type  
+    , po_num_forward_connections  out number
+    , po_num_back_connections     out number
     )
   is 
   begin   
@@ -122,14 +123,14 @@ procedure get_number_of_connections
       into po_num_back_connections
       from flow_connections conn 
      where conn.conn_tgt_objt_id = pi_target_objt_id
-       and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
+       and conn.conn_tag_name = pi_conn_type
        and conn.conn_dgrm_id = pi_dgrm_id
     ;
     select count(*)
       into po_num_forward_connections
       from flow_connections conn 
      where conn.conn_src_objt_id = pi_target_objt_id
-       and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
+       and conn.conn_tag_name = pi_conn_type
        and conn.conn_dgrm_id = pi_dgrm_id
     ;
   end get_number_of_connections;

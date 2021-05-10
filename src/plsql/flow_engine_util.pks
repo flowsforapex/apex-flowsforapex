@@ -27,10 +27,11 @@ as
   ) return number;
 
   procedure get_number_of_connections
-  ( pi_dgrm_id in flow_diagrams.dgrm_id%type
-  , pi_target_objt_id flow_connections.conn_tgt_objt_id%type
-  , po_num_forward_connections out number
-  , po_num_back_connections out number
+  ( pi_dgrm_id                  in flow_diagrams.dgrm_id%type
+  , pi_target_objt_id           in flow_connections.conn_tgt_objt_id%type
+  , pi_conn_type                in flow_connections.conn_tag_name%type 
+  , po_num_forward_connections  out number
+  , po_num_back_connections     out number
   );
   
   function get_and_lock_subflow_info

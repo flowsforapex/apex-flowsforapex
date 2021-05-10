@@ -13,5 +13,5 @@ as
     join flow_objects obj
       on obj.objt_dgrm_id = ins.dgrm_id
    where obj.objt_tag_name in ('bpmn:exclusiveGateway', 'bpmn:inclusiveGateway')
-     and ( select count(*) from flow_connections conn where conn.conn_tgt_objt_id = obj.objt_id ) = 1
+     and ( select count(*) from flow_connections conn where conn.conn_src_objt_id = obj.objt_id ) > 1
 with read only;
