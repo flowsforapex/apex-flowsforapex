@@ -95,9 +95,15 @@ as
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
 
   -- Process Instance Status
-  gc_prcs_status_created             constant  varchar2(20 char) := 'created';
-  gc_prcs_status_running             constant  varchar2(20 char) := 'running';
-  gc_prcs_status_completed           constant  varchar2(20 char) := 'completed';
+  gc_prcs_status_created              constant  varchar2(20 char) := 'created';
+  gc_prcs_status_running              constant  varchar2(20 char) := 'running';
+  gc_prcs_status_completed            constant  varchar2(20 char) := 'completed';
+
+  -- Gateway Function Types
+  gc_gateway_splitting                constant  varchar2(10 char) := 'splitting'; 
+  gc_gateway_merging                  constant  varchar2(10 char) := 'merging'; 
+  gc_gateway_both                     constant  varchar2(10 char) := 'both'; 
+
 
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>

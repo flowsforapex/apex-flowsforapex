@@ -20,11 +20,6 @@ as
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean;
 
-  function get_gateway_route
-  ( pi_process_id     in flow_processes.prcs_id%type
-  , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
-  ) return varchar2;
-
   function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -64,6 +59,11 @@ as
     , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
-    ) return flow_subflows.sbfl_id%type;
-    
+    ) return flow_subflows.sbfl_id%type
+    ;
+
+  procedure lock_subflow
+  ( p_subflow_id    in flow_subflows.sbfl_id%type
+  );
+
 end flow_engine_util;

@@ -210,7 +210,7 @@ is
       select prcs.prcs_id
         from flow_processes prcs
        where prcs.prcs_id = p_process_id
-      for update of prcs.prcs_id;
+      for update of prcs.prcs_id wait 2;
 begin
     l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
     begin
@@ -2158,7 +2158,7 @@ is
               join flow_subflow_log sflg 
                 on prcs.prcs_id = sflg.sflg_prcs_id
              where prcs.prcs_id = p_process_id
-               for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated
+               for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2
         ;
 begin
     apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
@@ -2215,7 +2215,7 @@ is
         join flow_subflow_log sflg 
           on prcs.prcs_id = sflg.sflg_prcs_id
        where prcs.prcs_id = p_process_id
-         for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated;
+         for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2;
 begin
     apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
     -- lock all timers, logs, subflows and the process
