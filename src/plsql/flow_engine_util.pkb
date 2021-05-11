@@ -354,21 +354,25 @@ procedure get_number_of_connections
     end if;
   end subflow_complete;
 
-  procedure lock_subflow
+  function lock_subflow
   ( p_subflow_id    in flow_subflows.sbfl_id%type
-  )
+  ) return boolean
   is 
-    cursor c_sbfl_lock is 
-      select sbfl.sbfl_id
-        from flow_subflows sbfl
-       where sbfl.sbfl_id = p_subflow_id
-      for update of sbfl.sbfl_id;
+    l_sbfl_id   flow_subflows.sbfl_id%type;
   begin 
-    open c_sbfl_lock;
+    select sbfl.sbfl_id
+      into l_sbfl_id
+      from flow_subflows sbfl
+     where sbfl.sbfl_id = p_subflow_id
+    for update of sbfl.sbfl_id wait 2
+    ;
+    return true;
   exception
+    when no_data_found then
+      return false;
     when lock_timeout then
       apex_error.add_error
-      ( p_message => 'Unable to lock subflow '||p_subflow_id||'.  SElect for update timed out'
+      ( p_message => 'Unable to lock subflow '||p_subflow_id||'.  Select for update timed out'
       , p_display_location => apex_error.c_on_error_page
       );
   end lock_subflow;

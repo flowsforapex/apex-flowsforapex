@@ -1,5 +1,5 @@
 create or replace package flow_engine_util
-accessible by (flow_engine, flow_gateways, flow_timers_pkg)
+-- accessible by (flow_engine, flow_gateways, flow_timers_pkg)
 as 
 
   function get_dgrm_id
@@ -63,8 +63,8 @@ as
     ) return flow_subflows.sbfl_id%type
     ;
 
-  procedure lock_subflow
+  function lock_subflow
   ( p_subflow_id    in flow_subflows.sbfl_id%type
-  );
+  ) return boolean;
 
 end flow_engine_util;

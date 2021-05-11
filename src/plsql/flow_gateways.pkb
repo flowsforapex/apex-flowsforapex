@@ -117,36 +117,51 @@ as
     if l_num_unfinished_subflows = 0 then
       -- all task to be merged have completed.  So we do the merge... 
       -- lock parent subflow first
-      flow_engine_util.lock_subflow(p_sbfl_info.sbfl_sbfl_id);
-      -- proceed from gateway, locking child subflows
-      for completed_subflows in ( select sbfl.sbfl_id
-                                    from flow_subflows sbfl 
-                                    where sbfl.sbfl_prcs_id = p_process_id
-                                      and sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
-                                      and sbfl.sbfl_current = p_step_info.target_objt_ref 
-                                      and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
-                                      for update wait 2
-                                )
-      loop
-        flow_engine_util.subflow_complete
-        ( p_process_id => p_process_id
-        , p_subflow_id => completed_subflows.sbfl_id
+      if flow_engine_util.lock_subflow(p_sbfl_info.sbfl_sbfl_id) then
+        -- proceed from gateway, locking child subflows
+        for completed_subflows in ( select sbfl.sbfl_id
+                                      from flow_subflows sbfl 
+                                      where sbfl.sbfl_prcs_id = p_process_id
+                                        and sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
+                                        and sbfl.sbfl_current = p_step_info.target_objt_ref 
+                                        and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
+                                        for update wait 2
+                                  )
+        loop
+          flow_engine_util.subflow_complete
+          ( p_process_id => p_process_id
+          , p_subflow_id => completed_subflows.sbfl_id
+          );
+        end loop;
+        -- execute post-merge variable expressions here (note for next feature)
+      
+        --mark parent split subflow ready to restart
+        update flow_subflows sbfl
+            set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_proceed_gateway
+              , sbfl.sbfl_current = p_step_info.target_objt_ref
+              , sbfl.sbfl_last_update = systimestamp
+          where sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
+            and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
+            and sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
+        ;
+        -- commit tx
+        commit;
+        l_gateway_forward_status := 'proceed';
+      else 
+        -- unable to lock parent 'split' subflow.
+        apex_error.add_error
+        ( p_message => 'Unable to lock split parent subflow '||p_subflow_id||' before merge.  Select for update timed out'
+        , p_display_location => apex_error.c_on_error_page
         );
-      end loop;
-      -- execute post-merge variable expressions here (note for next feature)
-    
-      --mark parent split subflow ready to restart
-      update flow_subflows sbfl
-          set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_proceed_gateway
-            , sbfl.sbfl_current = p_step_info.target_objt_ref
-            , sbfl.sbfl_last_update = systimestamp
-        where sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
-          and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-          and sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
-      ;
-      -- commit tx
-      commit;
-      l_gateway_forward_status := 'proceed';
+      end if;
+      -- start new tx by locking parent subflow
+      if not flow_engine_util.lock_subflow(p_sbfl_info.sbfl_sbfl_id) then
+        -- unable to lock parent 'split' subflow.
+        apex_error.add_error
+        ( p_message => 'Unable to lock split parent subflow '||p_subflow_id||' after merge.  Select for update timed out'
+        , p_display_location => apex_error.c_on_error_page
+        );
+      end if;
     end if; 
     return l_gateway_forward_status;
   end gateway_merge;
@@ -217,13 +232,15 @@ as
       l_new_subflows.extend;
       l_new_subflows (l_new_subflows.last) := l_new_subflow;
     end loop;
+
+    -- commit the transaction
+    commit;
     
     for new_subflow in 1.. l_new_subflows.count
     loop
-      -- check subflow still exists (in case earlier loop terminated everything in level)
-      if flow_engine_util.check_subflow_exists
-        ( p_process_id => p_process_id
-        , p_subflow_id => l_new_subflows(new_subflow).sbfl_id
+      -- check subflow still exists and lock it(in case earlier loop terminated everything in level)
+      if flow_engine_util.lock_subflow
+        ( p_subflow_id => l_new_subflows(new_subflow).sbfl_id
         )
       then
         -- step into first step on the new path
@@ -272,7 +289,7 @@ as
       -- we have merging gateway.  do the merge. returns 'wait' if flow is waiting at gateway, 'proceed' if merged
       l_gateway_forward_status := gateway_merge (p_process_id, p_subflow_id, p_sbfl_info, p_step_info);
 
-      -- switch to parent subflow
+      -- switch to parent subflow 
       l_sbfl_id := p_sbfl_info.sbfl_sbfl_id;
     end if;
     
