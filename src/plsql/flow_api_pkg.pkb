@@ -72,7 +72,7 @@ as
           exception
             when no_data_found then
                 apex_error.add_error
-                ( p_message => 'Cannot find released diagram or draft version 0 of diagram- please specify a version or diagram_id'
+                ( p_message => 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
                 , p_display_location => apex_error.c_on_error_page
                 );  
           end;
@@ -81,7 +81,8 @@ as
       select dgrm_id
         into l_dgrm_id
         from flow_diagrams
-        where dgrm_name = pi_dgrm_name
+       where dgrm_name = pi_dgrm_name
+         and dgrm_version = pi_dgrm_version
       ;
     end if;
 
