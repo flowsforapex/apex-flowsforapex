@@ -28,9 +28,17 @@ as
         from flow_timers timr
        where timr.timr_prcs_id = pi_prcs_id
          and timr.timr_sbfl_id = pi_sbfl_id
+       order by timr.timr_id
       for update of timr.timr_id;
   begin
     open c_lock;
+    close c_lock;
+  exception
+    when lock_timeout then
+      apex_error.add_error
+      ( p_message => 'Timer for subflow '||p_subflow_id||' currently locked by another user.  Try again later.'
+      , p_display_location => apex_error.c_on_error_page
+      );
   end lock_timer;
 
   procedure lock_process_timers
@@ -42,9 +50,17 @@ as
       select timr.timr_id 
         from flow_timers timr
        where timr.timr_prcs_id = pi_prcs_id
+       order by timr.timr_id
       for update of timr.timr_id;
   begin
     open c_lock;
+    close c_lock;
+  exception
+  when lock_timeout then
+    apex_error.add_error
+    ( p_message => 'Timers for process '||p_process_id||' currently locked by another user.  Try again later.'
+    , p_display_location => apex_error.c_on_error_page
+    );
   end lock_process_timers;
 
   procedure get_timer_definition

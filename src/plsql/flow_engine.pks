@@ -1,5 +1,5 @@
 create or replace package flow_engine
-accessible by (flow_api_pkg, flow_gateways, flow_timers_pkg)
+accessible by (flow_api_pkg, flow_gateways, flow_tasks, flow_timers_pkg)
 as 
 
   /*function check_subflow_exists

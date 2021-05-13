@@ -14,7 +14,7 @@ as
     e_reserved_by_other     exception;
     e_reserved_by_same      exception;
   begin
-    apex_debug.message(p_message => 'Begin flow_reserve_step. Subflow '||p_subflow_id||' in Process '||p_process_id||' Reservation:'||p_reservation, p_level => 3) ;
+    apex_debug.message(p_message => 'Begin reserve_step. Subflow '||p_subflow_id||' in Process '||p_process_id||' Reservation:'||p_reservation, p_level => 3) ;
     -- check step is not already reserved
     select sbfl_reservation
       into l_existing_reservation
@@ -73,20 +73,23 @@ as
   is
     l_existing_reservation  flow_subflows.sbfl_reservation%type;
   begin
-    apex_debug.message(p_message => 'Begin flow_release_step. Subflow '||p_subflow_id||' in Process '||p_process_id, p_level => 3) ;
-    -- check step is not already reserved
-    select sbfl_reservation
-      into l_existing_reservation
-      from flow_subflows sbfl 
-     where sbfl.sbfl_id = p_subflow_id
-       and sbfl.sbfl_prcs_id = p_process_id
-       for update of sbfl_reservation wait 2
-    ;
-    -- place the reservation
+    apex_debug.message(p_message => 'Begin release_step. Subflow '||p_subflow_id||' in Process '||p_process_id, p_level => 3) ;
+    -- subflow should already be locked when calling internally
+    if not p_called_internally then 
+      -- lock  subflow if called externally
+      select sbfl_reservation
+        into l_existing_reservation
+        from flow_subflows sbfl 
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+         for update of sbfl_reservation wait 2
+      ;
+    end if;
+    -- release the reservation
     update flow_subflows sbfl
-       set sbfl_reservation = null
-     where sbfl_prcs_id = p_process_id
-       and sbfl_id = p_subflow_id
+      set sbfl_reservation = null
+    where sbfl_prcs_id = p_process_id
+      and sbfl_id = p_subflow_id
     ;
     -- commit reservation if this is an external call
     if not p_called_internally then 
@@ -96,7 +99,7 @@ as
   exception
     when no_data_found then
       apex_error.add_error
-      ( p_message => 'Reservation unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
+      ( p_message => 'Reservation release unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
       );
     when lock_timeout then

@@ -101,7 +101,7 @@ begin
     end if;
 end flow_start_process;
 
-procedure flow_set_boundary_timers
+/*procedure flow_set_boundary_timers
 ( p_process_id    in flow_processes.prcs_id%type
 , p_subflow_id    in flow_subflows.sbfl_id%type
 )
@@ -216,7 +216,7 @@ begin
     when no_data_found then
       return;
   end;
-end flow_unset_boundary_timers;
+end flow_unset_boundary_timers;*/
 
 function flow_get_matching_link_object
 ( pi_dgrm_id     in flow_diagrams.dgrm_id%type 
@@ -436,7 +436,7 @@ end flow_process_boundary_event;
 ============================================================================================
 */
 
-procedure process_task
+/*procedure process_task
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
@@ -459,7 +459,7 @@ begin
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             );  
-end process_task;
+end process_task;*/
 
 
 procedure process_endEvent
@@ -808,7 +808,7 @@ end process_endEvent;
     end if;
 end process_intermediateThrowEvent;
 
-procedure process_userTask
+/*procedure process_userTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
@@ -942,7 +942,7 @@ end process_userTask;
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );  
-  end process_manualTask;
+  end process_manualTask;*/
 
 /* 
 ================================================================================
@@ -1125,7 +1125,7 @@ begin
        end if;
     end if;
     -- clean up any other boundary timers on the object
-    flow_unset_boundary_timers (p_process_id, p_subflow_id);
+    flow_boundary_events.unset_boundary_timers (p_process_id, p_subflow_id);
     -- switch processing onto boundaryEvent path and do next step
     update flow_subflows sbfl
        set sbfl.sbfl_current = l_boundary_objt_bpmn_id
@@ -1261,7 +1261,17 @@ begin
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   );
+  -- if subflow has a non-interrupting timer on current object, lock its subflow
+  if l_sbfl_rec.sbfl_has_events like '%:CNT%' then 
+    flow_boundary_events.lock_child_boundary_timer_subflows
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_parent_objt_bpmn_id => l_sbfl_rec.sbfl_current 
+    ); 
+  end if;
+  -- lock associated timers
 
+  
   -- Find next subflow step
   begin
     select l_dgrm_id
@@ -1313,14 +1323,16 @@ begin
   then
       -- 
       apex_debug.message(p_message => 'boundary event cleanup triggered for subflow '||p_subflow_id, p_level => 4) ;
-      flow_unset_boundary_timers (p_process_id, p_subflow_id);
+      flow_boundary_events.unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
   -- release subflow reservation
-  flow_reservations.release_step
+  if l_sbfl_rec.sbfl_reservation is not null then
+    flow_reservations.release_step
     ( p_process_id        => p_process_id
     , p_subflow_id        => p_subflow_id
     , p_called_internally => true
     );
+  end if;
 
   -- log current step as completed
  flow_engine_util.log_step_completion   
@@ -1420,7 +1432,7 @@ begin
          ); 
     when  flow_constants_pkg.gc_bpmn_task 
     then 
-        flow_engine.process_task
+        flow_tasks.process_task
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -1428,7 +1440,7 @@ begin
          );
     when  flow_constants_pkg.gc_bpmn_usertask 
     then
-        flow_engine.process_userTask
+        flow_tasks.process_userTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -1436,7 +1448,7 @@ begin
          );
     when  flow_constants_pkg.gc_bpmn_scripttask 
     then 
-        flow_engine.process_scriptTask
+        flow_tasks.process_scriptTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -1444,14 +1456,14 @@ begin
          );
     when  flow_constants_pkg.gc_bpmn_manualtask 
     then 
-        flow_engine.process_manualTask
+        flow_tasks.process_manualTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
          , p_step_info => l_step_info
          );
     when  flow_constants_pkg.gc_bpmn_servicetask 
-    then flow_engine.process_serviceTask
+    then flow_tasks.process_serviceTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -1533,16 +1545,26 @@ is
               join flow_subflow_log sflg 
                 on prcs.prcs_id = sflg.sflg_prcs_id
              where prcs.prcs_id = p_process_id
+             order by sbfl.sbfl_process_level, sbfl.sbfl_id
                for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2
         ;
 begin
     apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
   
     -- lock all objects
-    flow_timers_pkg.lock_process_timers
-    ( pi_prcs_id => p_process_id
-    );  
-    open c_lock_all;
+    begin
+      flow_timers_pkg.lock_process_timers
+      ( pi_prcs_id => p_process_id
+      );  
+      open c_lock_all;
+      close c_lock_all;
+    exception 
+      when lock_timeout then
+      apex_error.add_error
+      ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try your reservation again later.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    end;
 
     -- kill any timers sill running in the process
     flow_timers_pkg.terminate_process_timers(
@@ -1590,14 +1612,24 @@ is
         join flow_subflow_log sflg 
           on prcs.prcs_id = sflg.sflg_prcs_id
        where prcs.prcs_id = p_process_id
+       order by sbfl.sbfl_process_level, sbfl.sbfl_id
          for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2;
 begin
     apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
-    -- lock all timers, logs, subflows and the process
-    flow_timers_pkg.lock_process_timers
-    ( pi_prcs_id => p_process_id
-    );  
-    open c_lock_all;
+    begin 
+      -- lock all timers, logs, subflows and the process
+      flow_timers_pkg.lock_process_timers
+      ( pi_prcs_id => p_process_id
+      );  
+      open c_lock_all;
+      close c_lock_all;
+    exception 
+      when lock_timeout then
+        apex_error.add_error
+        ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try again later.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+    end;
 
     -- kill any timers sill running in the process
     flow_timers_pkg.delete_process_timers(
