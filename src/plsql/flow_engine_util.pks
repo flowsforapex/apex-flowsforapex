@@ -1,5 +1,5 @@
 create or replace package flow_engine_util
--- accessible by (flow_engine, flow_gateways, flow_timers_pkg)
+-- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg)
 as 
 
   function get_dgrm_id

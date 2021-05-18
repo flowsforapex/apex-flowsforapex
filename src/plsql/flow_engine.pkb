@@ -287,7 +287,7 @@ begin
     );  
 end flow_process_link_event;
 
-procedure flow_get_boundary_event
+/*procedure flow_get_boundary_event
   ( pi_dgrm_id                  in  flow_diagrams.dgrm_id%type
   , pi_throw_objt_bpmn_id       in  flow_objects.objt_bpmn_id%type
   , pi_par_sbfl                 in  flow_subflows.sbfl_id%type
@@ -428,7 +428,7 @@ begin
             );
         end if;
     end if;
-end flow_process_boundary_event;
+end flow_process_boundary_event;*/
 
 /*
 ============================================================================================
@@ -551,7 +551,7 @@ begin
                  and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_error_event_definition
                ;
               -- first remove any non-interrupting timers that are on the parent event
-              flow_unset_boundary_timers (p_process_id, l_sbfl_id_par);
+              flow_boundary_events.unset_boundary_timers (p_process_id, l_sbfl_id_par);
               -- set current event on parent process to the error Boundary Event
               update flow_subflows sbfl
               set sbfl.sbfl_current = l_boundary_event
@@ -586,7 +586,7 @@ begin
         elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition
         then
             -- this can be interrupting or non-interupting
-            flow_process_boundary_event
+            flow_boundary_events.flow_process_boundary_event
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             , p_step_info => p_step_info
@@ -679,7 +679,7 @@ end process_endEvent;
       and sbfl.sbfl_prcs_id = p_process_id
     ;  
     -- set boundaryEvent Timers, if any
-    flow_set_boundary_timers 
+    flow_boundary_events.set_boundary_timers 
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );     
@@ -793,7 +793,7 @@ end process_endEvent;
         , p_current => p_step_info.target_objt_ref
         );
         -- escalate it to the boundary Event
-        flow_process_boundary_event
+        flow_boundary_events.flow_process_boundary_event
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         , p_step_info => p_step_info
@@ -1077,7 +1077,7 @@ begin
       );
 end handle_intermediate_catch_event;
 
-procedure handle_interrupting_boundary_event
+/*procedure handle_interrupting_boundary_event
      ( p_process_id in flow_processes.prcs_id%type
      , p_subflow_id in flow_subflows.sbfl_id%type
     ) 
@@ -1137,27 +1137,30 @@ begin
          ;
      flow_complete_step (p_process_id, p_subflow_id);
 
-end handle_interrupting_boundary_event;
+end handle_interrupting_boundary_event;*/
 
 procedure flow_handle_event
-     ( p_process_id in flow_processes.prcs_id%type
-     , p_subflow_id in flow_subflows.sbfl_id%type
-    ) 
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_subflow_id in flow_subflows.sbfl_id%type
+  ) 
 is
-    l_parent_subflow        flow_subflows.sbfl_id%type;
-    l_prev_objt_tag_name    flow_objects.objt_tag_name%type;
-    l_curr_objt_tag_name    flow_objects.objt_tag_name%type;
-    l_dgrm_id               flow_diagrams.dgrm_id%type;
-    l_sbfl_current          flow_subflows.sbfl_current%type;
+  l_parent_subflow        flow_subflows.sbfl_id%type;
+  l_prev_objt_tag_name    flow_objects.objt_tag_name%type;
+  l_curr_objt_tag_name    flow_objects.objt_tag_name%type;
+  l_dgrm_id               flow_diagrams.dgrm_id%type;
+  l_sbfl_current          flow_subflows.sbfl_current%type;
 begin
-    apex_debug.message(p_message => 'Begin flow_handle_event', p_level => 3) ;
-    -- look at current event to check if it is a startEvent.  (this also has no previous event!)
-    -- if not, examine previous event on the subflow to determine if it was eventBasedGateway (eBG)
-    -- an intermediateCatchEvent (iCE) following an eBG will always have exactly 1 input (from the eBG)
-    -- an independant iCE (not following an eBG) can have >1 inputs
-    -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
-    l_dgrm_id := flow_engine_util.get_dgrm_id (p_prcs_id => p_process_id);
+  apex_debug.message(p_message => 'Begin flow_handle_event', p_level => 3) ;
+  -- look at current event to check if it is a startEvent.  (this also has no previous event!)
+  -- if not, examine previous event on the subflow to determine if it was eventBasedGateway (eBG)
+  -- an intermediateCatchEvent (iCE) following an eBG will always have exactly 1 input (from the eBG)
+  -- an independant iCE (not following an eBG) can have >1 inputs
+  -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
+  l_dgrm_id := flow_engine_util.get_dgrm_id (p_prcs_id => p_process_id);
 
+  -- lock subflow containing event
+  if flow_engine_util.lock_subflow(p_subflow_id) then
+    -- subflow_locked
     select curr_objt.objt_tag_name
          , sbfl.sbfl_sbfl_id
          , sbfl.sbfl_current
@@ -1175,20 +1178,20 @@ begin
         ;
 
     if l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_start_event   -- startEvent with associated event.
-                               , flow_constants_pkg.gc_bpmn_boundary_event  )
-    then
-        -- required functionality same as iCE currently
-        handle_intermediate_catch_event (
-          p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
-        );
+                               , flow_constants_pkg.gc_bpmn_boundary_event  ) then
+      -- required functionality same as iCE currently
+      handle_intermediate_catch_event 
+      (
+        p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      );
     elsif l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_subprocess
                                   , flow_constants_pkg.gc_bpmn_task 
                                   , flow_constants_pkg.gc_bpmn_usertask
                                   , flow_constants_pkg.gc_bpmn_manualtask
                                   )   -- add any objects that can support timer boundary events here
     then
-        handle_interrupting_boundary_event 
+        flow_boundary_events.handle_interrupting_boundary_event 
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
@@ -1210,24 +1213,26 @@ begin
         when too_many_rows then
             l_prev_objt_tag_name := 'other';
       end;
-      if  l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event   and 
-            l_prev_objt_tag_name = flow_constants_pkg.gc_bpmn_gateway_event_based  -- we have an eventBasedGateway
-      then 
-          handle_event_gateway_event (
-            p_process_id => p_process_id
-          , p_parent_subflow_id => l_parent_subflow
-          , p_cleared_subflow_id => p_subflow_id
-          );
-      elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event  
-      then
-          -- independant iCE not following an eBG
-          -- set subflow status to running and call flow_complete_step
-          handle_intermediate_catch_event (
-            p_process_id => p_process_id
-          , p_subflow_id => p_subflow_id
-          );
+      if  l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event   
+          and l_prev_objt_tag_name = flow_constants_pkg.gc_bpmn_gateway_event_based then
+        -- we have an eventBasedGateway
+        handle_event_gateway_event 
+        (
+          p_process_id => p_process_id
+        , p_parent_subflow_id => l_parent_subflow
+        , p_cleared_subflow_id => p_subflow_id
+        );
+      elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event then
+        -- independant iCE not following an eBG
+        -- set subflow status to running and call flow_complete_step
+        handle_intermediate_catch_event 
+        (
+          p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );
       end if;
     end if;
+  end if; -- sbfl locked
 end flow_handle_event;
 
 /************************************************************************************************************
@@ -1261,16 +1266,19 @@ begin
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   );
-  -- if subflow has a non-interrupting timer on current object, lock its subflow
+  -- if subflow has any associated non-interrupting timers on current object, lock the subflows and timers
+  -- (other boundary event types only create a subflow when they fire)
   if l_sbfl_rec.sbfl_has_events like '%:CNT%' then 
-    flow_boundary_events.lock_child_boundary_timer_subflows
+    flow_boundary_events.lock_child_boundary_timers
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_parent_objt_bpmn_id => l_sbfl_rec.sbfl_current 
     ); 
   end if;
-  -- lock associated timers
-
+  -- lock associated timers for interrupting boundary events
+  if l_sbfl_rec.sbfl_has_events like '%:S_T%' then 
+    flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
+  end if;
   
   -- Find next subflow step
   begin
