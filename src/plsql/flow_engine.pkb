@@ -586,7 +586,7 @@ begin
         elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition
         then
             -- this can be interrupting or non-interupting
-            flow_boundary_events.flow_process_boundary_event
+            flow_boundary_events.process_boundary_event
             ( p_process_id => p_process_id
             , p_subflow_id => p_subflow_id
             , p_step_info => p_step_info
@@ -793,7 +793,7 @@ end process_endEvent;
         , p_current => p_step_info.target_objt_ref
         );
         -- escalate it to the boundary Event
-        flow_boundary_events.flow_process_boundary_event
+        flow_boundary_events.process_boundary_event
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         , p_step_info => p_step_info

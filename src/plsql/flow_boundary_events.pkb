@@ -224,7 +224,7 @@ is
 
   end handle_interrupting_boundary_event;
 
-  procedure flow_get_boundary_event
+  procedure get_boundary_event
   ( pi_dgrm_id                  in  flow_diagrams.dgrm_id%type
   , pi_throw_objt_bpmn_id       in  flow_objects.objt_bpmn_id%type
   , pi_par_sbfl                 in  flow_subflows.sbfl_id%type
@@ -263,10 +263,10 @@ exception
       ( p_message => 'More than one '||pi_sub_tag_name||' boundaryEvent found on sub process.'
       , p_display_location => apex_error.c_on_error_page
       );
-end flow_get_boundary_event;
+end get_boundary_event;
 
 
-procedure flow_process_boundary_event
+procedure process_boundary_event
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_step_info     in flow_types_pkg.flow_step_info
@@ -285,7 +285,7 @@ begin
   , p_completed_object => p_step_info.target_objt_ref
   );
   -- find matching boundary event of its type
-  flow_get_boundary_event
+  get_boundary_event
   ( pi_dgrm_id => p_step_info.dgrm_id
   , pi_throw_objt_bpmn_id => p_step_info.target_objt_ref
   , pi_par_sbfl => p_par_sbfl
@@ -365,7 +365,7 @@ begin
           );
       end if;
     end if;
-  end flow_process_boundary_event;
+  end process_boundary_event;
 
 
 end flow_boundary_events;
