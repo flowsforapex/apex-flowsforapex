@@ -29,17 +29,6 @@ procedure flow_complete_step
   , p_forward_route in flow_connections.conn_bpmn_id%type default null   
   );
 
-/*procedure flow_reserve_step
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_reservation   in flow_subflows.sbfl_reservation%type
-  );  
-
-procedure flow_release_step
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  ); */
-
 procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
   );
