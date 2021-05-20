@@ -2240,7 +2240,7 @@ begin
     );
   end;
   -- evaluate and set any post-step variable expressions on the last object
-  flow_var_expressions.process_expressions
+  flow_expressions.process_expressions
     ( pi_objt_id     => l_step_info.source_objt_id
     , pi_phase       => flow_constants_pkg.gc_expr_phase_post
     , pi_prcs_id     => p_process_id
@@ -2272,7 +2272,7 @@ begin
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
         
   -- evaluate and set any pre-step variable expressions on the next object
-  flow_var_expressions.process_expressions
+  flow_expressions.process_expressions
     ( pi_objt_id     => l_step_info.target_objt_id
     , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
     , pi_prcs_id     => p_process_id
@@ -2482,10 +2482,7 @@ begin
      where sbfl.sbfl_prcs_id = p_process_id
     ;
     
---    flow_process_vars.delete_all_for_process (pi_prcs_id => p_process_id);
---    commented out during testing of inc/exclusive gateways and before run scriptTask is working
---    put this back in before FFA50
---    process variables are NOT being cleared when the process is reset without this
+   flow_process_vars.delete_all_for_process (pi_prcs_id => p_process_id);
 
     update flow_processes prcs
        set prcs.prcs_last_update = systimestamp

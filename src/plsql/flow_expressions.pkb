@@ -1,4 +1,4 @@
-create or replace package body flow_var_expressions
+create or replace package body flow_expressions
 as 
   
 
@@ -456,5 +456,5 @@ as
     end loop;
   end process_expressions;
   
-end flow_var_expressions;
+end flow_expressions;
 /

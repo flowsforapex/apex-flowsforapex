@@ -1,4 +1,4 @@
-create or replace package flow_var_expressions
+create or replace package flow_expressions
   authid current_user
   -- accessible by flow_engine, flow_process_vars ??
 as 
@@ -10,5 +10,5 @@ as
   , pi_sbfl_id      flow_subflows.sbfl_id%type
   );
 
-end flow_var_expressions;
+end flow_expressions;
 /

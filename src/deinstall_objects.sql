@@ -12,7 +12,7 @@ drop package flow_p0010_api;
 drop package flow_plsql_runner_pkg;
 drop package flow_usertask_pkg;
 drop package flow_bpmn_parser_pkg;
-drop package flow_var_expressions;
+drop package flow_expressions;
 drop package flow_process_vars;
 drop package flow_engine;
 drop package flow_api_pkg;
