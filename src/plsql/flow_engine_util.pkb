@@ -153,6 +153,7 @@ procedure get_number_of_connections
                     , sbfl.sbfl_last_completed
                     , sbfl.sbfl_reservation
                     , sbfl.sbfl_last_update
+                    wait 2
         ;
     exception
         when no_data_found then
