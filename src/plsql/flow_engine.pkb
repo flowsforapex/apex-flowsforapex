@@ -20,6 +20,7 @@ is
     for update of prcs.prcs_id wait 2;
 begin
     l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
+    apex_debug.message(p_message => 'Starting Process '||p_process_id, p_level => 4) ;
     begin
       -- called from flow_api_pkg.flow_start (only)
       -- get the object to start with
@@ -47,6 +48,7 @@ begin
         , p_display_location => apex_error.c_on_error_page
         );
     end;
+    apex_debug.message(p_message => 'Found starting object '||l_objt_bpmn_id, p_level => 4) ;
     -- lock the process
     open c_prcs_lock;
     -- mark process as running
@@ -73,7 +75,11 @@ begin
       , p_status => l_new_subflow_status 
       , p_parent_sbfl_proc_level => 0 
       , p_new_proc_level => false
+      , p_dgrm_id => l_dgrm_id
       );
+
+    apex_debug.message(p_message => 'Initial Subflow created '||l_main_subflow_id, p_level => 4) ;
+
     -- commit the subflow creation
     commit;
     -- check startEvent sub type for timer or (later releases) other sub types
@@ -368,6 +374,7 @@ end flow_process_link_event;
       , p_last_completed => p_sbfl_info.sbfl_last_completed -- previous activity on parent proc
       , p_parent_sbfl_proc_level => null
       , p_new_proc_level => true
+      , p_dgrm_id => p_sbfl_info.sbfl_dgrm_id
       );
 
     -- Always do all updates to data first before performing any next step.

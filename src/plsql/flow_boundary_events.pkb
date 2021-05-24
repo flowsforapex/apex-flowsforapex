@@ -18,6 +18,7 @@ is
         select objt.objt_bpmn_id as objt_bpmn_id 
              , objt.objt_interrupting as objt_interrupting
              , sbfl.sbfl_process_level as sbfl_process_level
+             , sbfl.sbfl_dgrm_id as sbfl_dgrm_id
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
@@ -50,6 +51,7 @@ is
           , p_status => flow_constants_pkg.gc_sbfl_status_waiting_timer
           , p_parent_sbfl_proc_level => boundary_timers.sbfl_process_level
           , p_new_proc_level => false
+          , p_dgrm_id => boundary_timers.sbfl_dgrm_id
           );
 
           flow_timers_pkg.start_timer
@@ -277,6 +279,7 @@ is
   l_interrupting          flow_objects.objt_interrupting%type;
   l_new_sbfl              flow_subflows.sbfl_id%type;
   l_parent_processs_level flow_subflows.sbfl_process_level%type;
+  l_parent_dgrm_id        flow_diagrams.dgrm_id%type;
 begin 
   -- set the throwing event to completed
   flow_engine_util.log_step_completion   
@@ -326,7 +329,9 @@ begin
   else 
       -- non interrupting.  
       select par_sbfl.sbfl_process_level
+           , par_sbfl.sbfl_dgrm_id
         into l_parent_processs_level 
+           , l_parent_dgrm_id
         from flow_subflows par_sbfl
         where par_sbfl.sbfl_id = p_par_sbfl
           and par_sbfl.sbfl_prcs_id = p_process_id
@@ -342,6 +347,7 @@ begin
       , p_status => flow_constants_pkg.gc_sbfl_status_running
       , p_parent_sbfl_proc_level => l_parent_processs_level
       , p_new_proc_level => false
+      , p_dgrm_id => l_parent_dgrm_id
       );
       flow_engine.flow_complete_step 
       ( p_process_id => p_process_id

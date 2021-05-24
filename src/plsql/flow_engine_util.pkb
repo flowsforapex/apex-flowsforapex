@@ -191,11 +191,13 @@ procedure get_number_of_connections
     , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
+    , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_subflows.sbfl_id%type
   is 
     l_ret flow_subflows.sbfl_id%type;
   begin
     apex_debug.message(p_message => 'Begin subflow_start', p_level => 3) ;
+    apex_debug.message(p_message => 'sbfl_dgrm_id: '||p_dgrm_id, p_level => 3) ;
     insert
       into flow_subflows
          ( sbfl_prcs_id
@@ -207,6 +209,7 @@ procedure get_number_of_connections
          , sbfl_current
          , sbfl_status
          , sbfl_last_update
+         , sbfl_dgrm_id
          )
     values
          ( p_process_id
@@ -218,11 +221,13 @@ procedure get_number_of_connections
          , p_current_object
          , p_status
          , systimestamp
+         , p_dgrm_id
          )
     returning sbfl_id into l_ret
     ;
+    apex_debug.message(p_message => 'Subflow '||l_ret||' inserted', p_level => 3) ;
     if p_new_proc_level then
-        -- starting new process or new subprocess.  Set sbfl_process_level to new sbfl_id
+        -- starting new subprocess.  Set sbfl_process_level to new sbfl_id
         update flow_subflows
            set sbfl_process_level = l_ret
          where sbfl_id = l_ret

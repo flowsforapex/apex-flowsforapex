@@ -226,6 +226,7 @@ as
         , p_status                 => flow_constants_pkg.gc_sbfl_status_created
         , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
         , p_new_proc_level         => false
+        , p_dgrm_id                => p_sbfl_info.sbfl_dgrm_id
         )
       ;
       l_new_subflow.route   := new_path.route;
@@ -432,6 +433,7 @@ as
         , p_status                 => flow_constants_pkg.gc_sbfl_status_waiting_event   
         , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
         , p_new_proc_level         => false    
+        , p_dgrm_id                => p_sbfl_info.sbfl_dgrm_id
         )
       ;
       -- step into first step on the new path

@@ -60,6 +60,7 @@ as
     , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
+    , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_subflows.sbfl_id%type
     ;
 
