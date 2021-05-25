@@ -5,6 +5,10 @@ as
   gc_single_choice constant varchar2(50 char) := 'single-choice';
   gc_multi_choice  constant varchar2(50 char) := 'multi-choice';
 
+  pragma deprecate (gc_step ,'gc_step not required in v5.  Will be removed in v21');
+  pragma deprecate (gc_single_choice ,'gc_single_choice not required in v5.  Will be removed in v21');
+  pragma deprecate (gc_multi_choice ,'gc_multi_choice not required in v5.  Will be removed in v21');
+
 /********************************************************************************
 **
 **        FLOW OPERATIONS (Create, Start, Next_step, Reset, Stop, Delete)
@@ -167,7 +171,8 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   , p_subflow_id  in flow_subflows.sbfl_id%type
   , p_branch_name in varchar2
   );
-  
+  pragma deprecate (flow_next_branch,'Flow_next_branch not required in v5.  Will be removed in v21');
+
   -- flow_next_step
   -- Deprecated in V5.0.  Returns an Error Message in V5.0.  
   -- To be Removed in V6.0
@@ -180,6 +185,7 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   , p_forward_route in varchar2 default null
   );
 
+  pragma deprecate (flow_next_step,'Flow_next_step replaced by flow_complete_step in v5.  Will be removed in v21');
  /********************************************************************************
 **
 **        DEPRECATED APPLICATION HELPERS (Progress, Next Step needs Decisions, etc.)
@@ -194,6 +200,7 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean;
 
+  pragma deprecate (next_multistep_exists,'next_multistep_exists not required in v5.  Will be removed in v21');
  -- used to handle gateway objects when the app had to decide whether to call flow_next_step
  -- or flow_next_branch.  No longer required in V5.0 and later.  
  -- To be deleted in v6.0
@@ -202,6 +209,7 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return varchar2;
 
+  pragma deprecate (next_multistep_exists_yn,'next_multistep_exists_yn not required in v5.  Will be removed in v21');
  -- used to handle gateway objects when the app had to decide whether to call flow_next_step
  -- or flow_next_branch.  No longer required in V5.0 and later.  
  -- in V5.x, always returns 'simple-step'
@@ -210,6 +218,8 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   (
     p_sbfl_id in flow_subflows.sbfl_id%type
   ) return varchar2;
+
+    pragma deprecate (next_step_type,'next_step_type not required in v5.  Will be removed in v21');
 
 end flow_api_pkg;
 /

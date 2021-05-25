@@ -156,7 +156,7 @@ as
     l_dgrm_id    flow_diagrams.dgrm_id%type;
     l_return     boolean;
   begin
-    apex_debug.message(p_message => 'Begin next_multistep_exists', p_level => 3) ;
+  /*  apex_debug.message(p_message => 'Begin next_multistep_exists', p_level => 3) ;
     
     if (p_subflow_id is not null and p_process_id is not null) then
 
@@ -178,9 +178,9 @@ as
       ;
       
       l_return := ( l_next_count > 1 );
-    else
+    else*/
       l_return := false;
-    end if;
+    --end if;
     
     return l_return;
   end next_multistep_exists;
