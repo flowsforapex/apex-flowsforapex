@@ -19,6 +19,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_boundary_events.pks
 @plsql/flow_tasks.pks
 @plsql/flow_timers_pkg.pks
+@plsql/flow_instances.pks
 @plsql/flow_engine.pks
 @plsql/flow_reservations.pks
 @plsql/flow_process_vars.pks
@@ -45,6 +46,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_gateways.pkb
 @plsql/flow_boundary_events.pkb
 @plsql/flow_tasks.pkb
+@plsql/flow_instances.pkb
 @plsql/flow_engine.pkb
 @plsql/flow_api_pkg.pkb
 @plsql/flow_bpmn_parser_pkg.pkb

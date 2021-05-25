@@ -15,6 +15,7 @@ drop package flow_tasks;
 drop package flow_boundary_events;
 drop package flow_bpmn_parser_pkg;
 drop package flow_process_vars;
+drop package flow_instances;
 drop package flow_engine;
 drop package flow_api_pkg;
 drop package flow_timers_pkg;

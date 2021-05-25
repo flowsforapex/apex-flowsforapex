@@ -86,7 +86,7 @@ as
     end if;
 
     return
-      flow_engine.flow_create
+      flow_instances.create_process
       (
         p_dgrm_id   => l_dgrm_id
       , p_prcs_name => pi_prcs_name
@@ -103,7 +103,7 @@ as
   is
     l_ret flow_processes.prcs_id%type;
   begin
-    return flow_engine.flow_create
+    return flow_instances.create_process
            ( p_dgrm_id => pi_dgrm_id
            , p_prcs_name => pi_prcs_name
            )
@@ -137,7 +137,7 @@ as
     l_prcs_id flow_processes.prcs_id%type;
   begin
     l_prcs_id :=
-      flow_engine.flow_create
+      flow_instances.create_process
       (
         p_dgrm_id   => pi_dgrm_id
       , p_prcs_name => pi_prcs_name
@@ -224,35 +224,10 @@ procedure flow_start
   ( p_process_id in flow_processes.prcs_id%type
   )
   is
-    l_process_status  flow_processes.prcs_status%type;
   begin  
       apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
-      -- check the process isn't already running and return error if it is
-      begin
-        select prcs.prcs_status
-          into l_process_status
-          from flow_processes prcs 
-        where prcs.prcs_id = p_process_id
-        ;
-        if l_process_status != 'created' then
-          apex_error.add_error
-          ( p_message => 'You tried to start a process that is already running'
-          , p_display_location => apex_error.c_on_error_page
-          );  
-        end if;
-      exception
-        when no_data_found then
-          apex_error.add_error
-          ( p_message => 'You tried to start a non-existant process.'
-          , p_display_location => apex_error.c_on_error_page
-          );  
-        when too_many_rows then
-          apex_error.add_error
-          ( p_message => 'Multiple copies of the process already running'
-          , p_display_location => apex_error.c_on_error_page
-          );  
-      end;
-      flow_engine.flow_start_process 
+ 
+      flow_instances.start_process 
         ( p_process_id => p_process_id
         );
 end flow_start;
@@ -348,7 +323,7 @@ procedure flow_next_branch
   is
   begin
     apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
-    flow_engine.flow_reset (p_process_id => p_process_id);
+    flow_instances.reset_process (p_process_id => p_process_id);
   end flow_reset;
 
   procedure flow_delete
@@ -357,7 +332,7 @@ procedure flow_next_branch
   is
   begin
     apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
-    flow_engine.flow_delete (p_process_id => p_process_id);
+    flow_instances.delete_process (p_process_id => p_process_id);
   end flow_delete;
 
   function get_current_usertask_url
