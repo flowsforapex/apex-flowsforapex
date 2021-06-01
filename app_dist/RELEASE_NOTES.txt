@@ -13,6 +13,7 @@ PREREQUISITES
 - Oracle Database 12.2 or higher (all editions supported)
 - Oracle Application Express 20.1 or higher
 - APEX workspace with at least 50 MB space
+- Google Chrome / Firefox 77+ / Edge (with chromium engine)
 
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
