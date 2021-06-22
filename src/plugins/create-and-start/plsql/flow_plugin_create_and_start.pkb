@@ -171,7 +171,7 @@ create or replace package body flow_plugin_create_and_start as
          apex_util.set_session_state(l_attribute12, l_prcs_id);
       end if;
 
-      --Get JSON fro process variables
+      --Get JSON for process variables
       if ( l_attribute6 = 'json' ) then
          l_json := l_attribute8;
       elsif ( l_attribute6 = 'sql' ) then
@@ -186,6 +186,7 @@ create or replace package body flow_plugin_create_and_start as
          apex_exec.close(l_context);
       end if;
 
+      --Set process variables
       if ( l_attribute6 in (
                 'json', 'sql'
              ) ) then
@@ -233,6 +234,7 @@ create or replace package body flow_plugin_create_and_start as
        , pi_vc2_value  => apex_util.get_session_state(l_attribute10)
       );
 
+      --Start flow instance
       if ( l_attribute5 = 'Y' ) then
          flow_api_pkg.flow_start(p_process_id => l_prcs_id);
       end if;
