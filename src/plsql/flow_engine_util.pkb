@@ -149,27 +149,27 @@ procedure get_number_of_connections
         from flow_subflows sbfl
         where sbfl.sbfl_prcs_id = p_process_id
         and sbfl.sbfl_id = p_subflow_id
-        for update of sbfl.sbfl_current
-                    , sbfl.sbfl_last_completed
-                    , sbfl.sbfl_reservation
-                    , sbfl.sbfl_last_update
-                    wait 2
+        for update wait 2
         ;
     exception
-        when no_data_found then
+      when no_data_found then
         -- check if subflow valid in process
         select sbfl.sbfl_prcs_id
           into l_prcs_check_id
           from flow_subflows sbfl
          where sbfl.sbfl_id = p_subflow_id
          ;
-        if l_prcs_check_id != p_process_id
-        then
+        if l_prcs_check_id != p_process_id then
             apex_error.add_error
             ( p_message => 'Application Error: Subflow ID supplied ( '||p_subflow_id||' ) exists but is not child of Process ID Supplied ( '||p_process_id||' ).'
             , p_display_location => apex_error.c_on_error_page
             );
         end if;
+      when lock_timeout then
+        apex_error.add_error
+        ( p_message => 'Unable to lock subflow '||p_subflow_id||' as another user is modifying.  Try again later.'
+        , p_display_location => apex_error.c_on_error_page
+        );
     end;
     return l_sbfl_rec;
   exception

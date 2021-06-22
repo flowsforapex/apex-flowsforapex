@@ -251,12 +251,12 @@ end flow_process_link_event;
           and objt.objt_dgrm_id  = p_step_info.dgrm_id
        ;
     exception
-      when NO_DATA_FOUND then
+      when no_data_found then
         apex_error.add_error
         ( p_message => 'Unable to find Sub-Process Start Event.'
         , p_display_location => apex_error.c_on_error_page
         );
-      when TOO_MANY_ROWS then
+      when too_many_rows then
         apex_error.add_error
         ( p_message => 'More than one Sub-Process Start found..'
         , p_display_location => apex_error.c_on_error_page
@@ -668,7 +668,7 @@ begin
   , p1        => p_subflow_id
   , p_level   => 3
   );
-  l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
+  --l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info and lock it
   l_sbfl_rec := flow_engine_util.get_and_lock_subflow_info 
   ( p_process_id => p_process_id
@@ -690,7 +690,7 @@ begin
   
   -- Find next subflow step
   begin
-    select l_dgrm_id
+    select sbfl.sbfl_dgrm_id
          , objt_source.objt_tag_name
          , conn.conn_tgt_objt_id
          , objt_target.objt_bpmn_id
@@ -704,15 +704,16 @@ begin
       join flow_objects objt_target
         on conn.conn_tgt_objt_id = objt_target.objt_id
        and conn.conn_dgrm_id = objt_target.objt_dgrm_id
-      join flow_processes prcs
-        on prcs.prcs_dgrm_id = conn.conn_dgrm_id
+--      join flow_processes prcs
+--        on prcs.prcs_dgrm_id = conn.conn_dgrm_id
       join flow_subflows sbfl
         on sbfl.sbfl_current = objt_source.objt_bpmn_id 
-       and sbfl.sbfl_prcs_id = prcs.prcs_id
-     where conn.conn_dgrm_id = l_dgrm_id
-       and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
+       and sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
+--       and sbfl.sbfl_prcs_id = prcs.prcs_id
+     where /*conn.conn_dgrm_id = l_dgrm_id
+       and */conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        and conn.conn_bpmn_id like nvl2( p_forward_route, p_forward_route, '%' )
-       and prcs.prcs_id = p_process_id
+       and sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
     ;
   exception
@@ -877,12 +878,12 @@ begin
     -- Commit transaction before returning
     commit;
 exception
-    when CASE_NOT_FOUND then
+    when case_not_found then
       apex_error.add_error
       ( p_message => 'Process Model Error: Process BPMN model next step uses unsupported object: '||l_step_info.target_objt_tag
       , p_display_location => apex_error.c_on_error_page
       );
-    when NO_DATA_FOUND then
+    when no_data_found then
       apex_error.add_error
       ( p_message => 'Next step does not exist. Please check your process diagram.'
       , p_display_location => apex_error.c_on_error_page
