@@ -60,8 +60,7 @@ create or replace package body flow_plugin_complete_step as
          );
          l_idx_process_id  := apex_exec.get_column_position(l_context, 'PROCESS_ID');
          l_idx_subflow_id  := apex_exec.get_column_position(l_context, 'SUBFLOW_ID');
-         apex_debug.message('l_idx_process_id ' || l_idx_process_id);
-         apex_debug.message('l_idx_subflow_id ' || l_idx_subflow_id);
+
          while apex_exec.next_row(l_context) loop
             l_process_id  := apex_exec.get_number(l_context, l_idx_process_id);
             l_subflow_id  := apex_exec.get_number(l_context, l_idx_subflow_id);
