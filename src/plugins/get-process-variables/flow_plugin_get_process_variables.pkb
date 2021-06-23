@@ -8,6 +8,7 @@ create or replace package body flow_plugin_get_process_variables as
       l_result                   apex_plugin.t_process_exec_result;
 
       e_var_config     exception;
+      e_var_name       exception;
 
     --attributes
       l_attribute1      p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
@@ -84,10 +85,17 @@ create or replace package body flow_plugin_get_process_variables as
          l_prcs_var(rec.prov_var_name) := rec.prov_var_type;
       end loop;
 
+      --Raise exception when process variable is not define
+      if ( l_prcs_var.count != l_split_prcs_var.count ) then
+         raise e_var_name;
+      end if;
+
       -- Loop through variables
       for i in l_split_prcs_var.first..l_split_prcs_var.last
       loop
+         -- Get process variable type
          l_prcs_var_type := l_prcs_var( l_split_prcs_var( i ) );
+
          if ( l_prcs_var_type = 'VARCHAR2' ) then
             apex_util.set_session_state( 
                  p_name  => l_split_items( i )
@@ -96,6 +104,7 @@ create or replace package body flow_plugin_get_process_variables as
                                , pi_var_name => l_split_prcs_var( i )
                             ) 
             );
+
          elsif ( l_prcs_var_type = 'NUMBER' ) then
             apex_util.set_session_state( 
                  p_name  => l_split_items( i )
@@ -104,14 +113,39 @@ create or replace package body flow_plugin_get_process_variables as
                                , pi_var_name => l_split_prcs_var( i )
                             ) 
             );
+
          elsif ( l_prcs_var_type = 'DATE' ) then
+            --Get format mask for page item
+            begin
+              select format_mask
+              into l_format_mask
+              from apex_application_page_items
+              where application_id = v('APP_ID')
+              and item_name = l_split_items( i );
+
+            exception 
+               --Handle no_data_found exception for application items
+               when no_data_found then
+                  l_format_mask := null;
+            end;
+
+            -- Use application globalization
+            if ( l_format_mask is null ) then
+               l_format_mask := v('APP_DATE_TIME_FORMAT');
+            end if;
+            --Use fixed format if globalization not set
+            if ( l_format_mask is null ) then
+               l_format_mask := 'dd.mm.yyyy hh24:mi:ss';
+            end if;
+
             apex_util.set_session_state( 
                  p_name  => l_split_items( i )
-               , p_value => flow_process_vars.get_var_date(
+               , p_value => to_char(flow_process_vars.get_var_date(
                                  pi_prcs_id  => l_process_id
                                , pi_var_name => l_split_prcs_var( i )
-                            ) 
+                            ), l_format_mask)
             );
+
          elsif ( l_prcs_var_type = 'CLOB' ) then
             apex_exec.execute_plsql('begin
             :'||l_split_items( i )||q'[ := ']' || flow_process_vars.get_var_clob(
@@ -126,7 +160,12 @@ create or replace package body flow_plugin_get_process_variables as
    exception 
       when e_var_config then
          apex_error.add_error( 
-              p_message => 'Wrong number of APEX items or process variables.'
+              p_message => 'Wrong number of APEX item(s) or process variable(s).'
+            , p_display_location => apex_error.c_on_error_page
+         );
+      when e_var_name then
+         apex_error.add_error( 
+              p_message => 'Wrong name of process variable(s).'
             , p_display_location => apex_error.c_on_error_page
          );
    end execution;
