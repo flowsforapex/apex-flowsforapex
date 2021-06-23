@@ -79,7 +79,10 @@ create or replace package body flow_plugin_get_process_variables as
          select prov_var_name, prov_var_type
          from flow_process_variables prov
         where prov.prov_prcs_id = l_process_id
-          and prov.prov_var_name member of apex_string.split(l_attribute5, ',')
+          and prov.prov_var_name in (
+             select trim(column_value)
+             from apex_string.split(l_attribute5, ',')
+          )
       )
       loop
          l_prcs_var(rec.prov_var_name) := rec.prov_var_type;
@@ -94,23 +97,23 @@ create or replace package body flow_plugin_get_process_variables as
       for i in l_split_prcs_var.first..l_split_prcs_var.last
       loop
          -- Get process variable type
-         l_prcs_var_type := l_prcs_var( l_split_prcs_var( i ) );
+         l_prcs_var_type := l_prcs_var( trim( l_split_prcs_var( i ) ) );
 
          if ( l_prcs_var_type = 'VARCHAR2' ) then
             apex_util.set_session_state( 
-                 p_name  => l_split_items( i )
+                 p_name  => trim( l_split_items( i ) )
                , p_value => flow_process_vars.get_var_vc2(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => l_split_prcs_var( i )
+                               , pi_var_name => trim( l_split_prcs_var( i ) )
                             ) 
             );
 
          elsif ( l_prcs_var_type = 'NUMBER' ) then
             apex_util.set_session_state( 
-                 p_name  => l_split_items( i )
+                 p_name  => trim( l_split_items( i ) )
                , p_value => flow_process_vars.get_var_num(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => l_split_prcs_var( i )
+                               , pi_var_name => trim( l_split_prcs_var( i ) )
                             ) 
             );
 
@@ -121,7 +124,7 @@ create or replace package body flow_plugin_get_process_variables as
               into l_format_mask
               from apex_application_page_items
               where application_id = v('APP_ID')
-              and item_name = l_split_items( i );
+              and item_name = trim( l_split_items( i ) );
 
             exception 
                --Handle no_data_found exception for application items
@@ -139,18 +142,18 @@ create or replace package body flow_plugin_get_process_variables as
             end if;
 
             apex_util.set_session_state( 
-                 p_name  => l_split_items( i )
+                 p_name  => trim( l_split_items( i ) )
                , p_value => to_char(flow_process_vars.get_var_date(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => l_split_prcs_var( i )
+                               , pi_var_name => trim( l_split_prcs_var( i ) )
                             ), l_format_mask)
             );
 
          elsif ( l_prcs_var_type = 'CLOB' ) then
             apex_exec.execute_plsql('begin
-            :'||l_split_items( i )||q'[ := ']' || flow_process_vars.get_var_clob(
+            :' || trim( l_split_items( i ) ) || q'[ := ']' || flow_process_vars.get_var_clob(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => l_split_prcs_var( i )
+                               , pi_var_name => trim( l_split_prcs_var( i ) )
                             ) || q'[';
             end;]');
          end if;
