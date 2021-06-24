@@ -32,6 +32,8 @@ create or replace package body flow_plugin_get_process_variables as
       type t_prcs_var is table of varchar2(50) index by varchar2(50);
       l_prcs_var t_prcs_var;
       l_prcs_var_type flow_process_variables.prov_var_type%type;
+      l_prcs_var_name flow_process_variables.prov_var_name%type;
+      l_item_name varchar2(100);
 
       l_format_mask apex_application_page_items.format_mask%type;
    begin
@@ -96,24 +98,28 @@ create or replace package body flow_plugin_get_process_variables as
       -- Loop through variables
       for i in l_split_prcs_var.first..l_split_prcs_var.last
       loop
-         -- Get process variable type
-         l_prcs_var_type := l_prcs_var( trim( l_split_prcs_var( i ) ) );
-
+         -- Get process variable name and type
+         l_prcs_var_name := trim( l_split_prcs_var( i ) );
+         l_prcs_var_type := l_prcs_var( l_prcs_var_name );
+         
+         --Get APEX item name
+         l_item_name := trim( l_split_items( i ) );
+        
          if ( l_prcs_var_type = 'VARCHAR2' ) then
             apex_util.set_session_state( 
-                 p_name  => trim( l_split_items( i ) )
+                 p_name  => l_item_name
                , p_value => flow_process_vars.get_var_vc2(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => trim( l_split_prcs_var( i ) )
+                               , pi_var_name => l_prcs_var_name
                             ) 
             );
 
          elsif ( l_prcs_var_type = 'NUMBER' ) then
             apex_util.set_session_state( 
-                 p_name  => trim( l_split_items( i ) )
+                 p_name  => l_item_name
                , p_value => flow_process_vars.get_var_num(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => trim( l_split_prcs_var( i ) )
+                               , pi_var_name => l_prcs_var_name
                             ) 
             );
 
@@ -142,18 +148,18 @@ create or replace package body flow_plugin_get_process_variables as
             end if;
 
             apex_util.set_session_state( 
-                 p_name  => trim( l_split_items( i ) )
+                 p_name  => l_item_name
                , p_value => to_char(flow_process_vars.get_var_date(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => trim( l_split_prcs_var( i ) )
+                               , pi_var_name => l_prcs_var_name
                             ), l_format_mask)
             );
 
          elsif ( l_prcs_var_type = 'CLOB' ) then
             apex_exec.execute_plsql('begin
-            :' || trim( l_split_items( i ) ) || q'[ := ']' || flow_process_vars.get_var_clob(
+            :' || l_item_name || q'[ := ']' || flow_process_vars.get_var_clob(
                                  pi_prcs_id  => l_process_id
-                               , pi_var_name => trim( l_split_prcs_var( i ) )
+                               , pi_var_name => l_prcs_var_name
                             ) || q'[';
             end;]');
          end if;
