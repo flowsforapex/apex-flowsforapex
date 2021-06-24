@@ -174,7 +174,7 @@ create or replace package body flow_plugin_get_process_variables as
          );
       when e_var_name then
          apex_error.add_error( 
-              p_message => 'Wrong name of process variable(s).'
+              p_message => 'One or more process variable(s) do not exists.'
             , p_display_location => apex_error.c_on_error_page
          );
    end execution;
