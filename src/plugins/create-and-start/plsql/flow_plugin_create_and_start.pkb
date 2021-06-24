@@ -155,8 +155,8 @@ create or replace package body flow_plugin_create_and_start as
              ) then
          l_prcs_id :=
             flow_api_pkg.flow_create(
-               pi_dgrm_name     => l_dgrm_name
-             , pi_dgrm_version  => l_dgrm_version
+               pi_dgrm_name     => trim( l_dgrm_name )
+             , pi_dgrm_version  => trim( l_dgrm_version )
              , pi_prcs_name     => l_prcs_name
             );
       else
