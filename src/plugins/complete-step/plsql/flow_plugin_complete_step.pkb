@@ -8,7 +8,8 @@ create or replace package body flow_plugin_complete_step as
       l_result          apex_plugin.t_process_exec_result;
 
       --exceptions
-      e_no_gateway     exception;
+      e_no_gateway         exception;
+      e_gateway_not_exists exception;
 
       --attributes
       l_attribute1      p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
@@ -24,21 +25,21 @@ create or replace package body flow_plugin_complete_step as
       l_subflow_id      flow_subflows.sbfl_id%type;
       l_dgrm_id         flow_processes.prcs_dgrm_id%type;
       l_gateway_name    flow_objects.objt_bpmn_id%type;
-      type flow_step_info is record (
-         dgrm_id             flow_diagrams.dgrm_id%type
-         , source_objt_tag     flow_objects.objt_tag_name%type
-         , source_lane_id      flow_objects.objt_objt_lane_id%type
-         , target_objt_id      flow_objects.objt_id%type
-         , target_objt_ref     flow_objects.objt_bpmn_id%type
-         , target_objt_tag     flow_objects.objt_tag_name%type
-         , target_objt_subtag  flow_objects.objt_sub_tag_name%type
-         , target_lane_id      flow_objects.objt_objt_lane_id%type
+      l_gateway_exists  number;
+      l_context         apex_exec.t_context;
+      l_url             varchar2(4000);
+
+       type flow_step_info is record (
+           dgrm_id            flow_diagrams.dgrm_id%type
+         , source_objt_tag    flow_objects.objt_tag_name%type
+         , source_lane_id     flow_objects.objt_objt_lane_id%type
+         , target_objt_id     flow_objects.objt_id%type
+         , target_objt_ref    flow_objects.objt_bpmn_id%type
+         , target_objt_tag    flow_objects.objt_tag_name%type
+         , target_objt_subtag flow_objects.objt_sub_tag_name%type
+         , target_lane_id     flow_objects.objt_objt_lane_id%type
       );
       l_step_info       flow_step_info;
-      l_context         apex_exec.t_context;
-      l_idx_process_id  pls_integer;
-      l_idx_subflow_id  pls_integer;
-      l_url             varchar2(4000);
    begin
 
     --debug
@@ -58,12 +59,10 @@ create or replace package body flow_plugin_complete_step as
             p_location   => apex_exec.c_location_local_db
           , p_sql_query  => l_attribute4
          );
-         l_idx_process_id  := apex_exec.get_column_position(l_context, 'PROCESS_ID');
-         l_idx_subflow_id  := apex_exec.get_column_position(l_context, 'SUBFLOW_ID');
 
          while apex_exec.next_row(l_context) loop
-            l_process_id  := apex_exec.get_number(l_context, l_idx_process_id);
-            l_subflow_id  := apex_exec.get_number(l_context, l_idx_subflow_id);
+            l_process_id  := apex_exec.get_number(l_context, 1);
+            l_subflow_id  := apex_exec.get_number(l_context, 2);
          end loop;
          apex_exec.close(l_context);
       end if;
@@ -97,6 +96,22 @@ create or replace package body flow_plugin_complete_step as
       --Set the gateway route
       if ( l_attribute5 = 'Y' ) then
          l_gateway_name := l_attribute6;
+
+         -- If attribute 6 is filled, check if gateway define exists
+         if ( l_gateway_name is not null ) then
+
+            select count(*)
+            into l_gateway_exists
+            from flow_processes prcs
+            join flow_objects obj on obj.objt_dgrm_id = prcs.prcs_dgrm_id
+            where prcs.prcs_id = l_process_id
+            and obj.objt_tag_name in (flow_constants_pkg.gc_bpmn_gateway_exclusive, flow_constants_pkg.gc_bpmn_gateway_inclusive)
+            and obj.objt_bpmn_id = l_gateway_name;
+
+            if ( l_gateway_exists = 0) then
+               raise e_gateway_not_exists;
+            end if;
+         end if;
          
          --Gateway attribute is not filled so we look at the next target object if it's exclusive or inclusive gateway
          if (
@@ -108,6 +123,7 @@ create or replace package body flow_plugin_complete_step as
          end if;
 
          if ( l_gateway_name is not null ) then
+
             flow_process_vars.set_var(
                pi_prcs_id    => l_process_id
              , pi_var_name   => l_gateway_name || ':route'
@@ -148,6 +164,11 @@ create or replace package body flow_plugin_complete_step as
       when e_no_gateway then
          apex_error.add_error( 
               p_message => 'Gateway is not define for routing.'
+            , p_display_location => apex_error.c_on_error_page
+         );
+      when e_gateway_not_exists then
+         apex_error.add_error( 
+              p_message => 'Gateway define does not exists for this flow.'
             , p_display_location => apex_error.c_on_error_page
          );
    end execution;
