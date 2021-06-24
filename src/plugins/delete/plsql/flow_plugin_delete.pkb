@@ -41,6 +41,7 @@ create or replace package body flow_plugin_delete as
       end if;
 
       -- Call API to delete the instance
+      apex_debug.message(p_message => 'Plug-in: start delete process id '||l_process_id);
       flow_api_pkg.flow_delete(
          p_process_id  => l_process_id
       );
