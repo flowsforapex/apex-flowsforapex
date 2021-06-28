@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   11:51 Thursday June 24, 2021
+--   Date and Time:   11:33 Monday June 28, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -123,8 +123,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_prompt=>'SQL Query'
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
-,p_sql_min_column_count=>2
-,p_sql_max_column_count=>2
+,p_sql_min_column_count=>1
+,p_sql_max_column_count=>1
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_api.id(11100915996544200)
 ,p_depending_on_has_to_exist=>true
