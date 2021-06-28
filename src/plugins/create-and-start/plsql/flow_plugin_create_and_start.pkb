@@ -166,7 +166,6 @@ create or replace package body flow_plugin_create_and_start as
       l_var_name                 varchar2(4000);
       l_var_type                 varchar2(4000);
       l_split_values             apex_t_varchar2;
-      l_sql_parameters           apex_exec.t_parameters;
    begin
 
     --debug
