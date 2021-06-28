@@ -7,8 +7,9 @@ create or replace package body flow_plugin_set_process_variables as
    as
       l_result                   apex_plugin.t_process_exec_result;
 
-      e_var_config     exception;
-      e_var_name       exception;
+      e_var_config               exception;
+      e_var_name                 exception;
+      e_incorrect_variable_type  exception;
 
     --attributes
       l_attribute1      p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
@@ -103,25 +104,25 @@ create or replace package body flow_plugin_set_process_variables as
             case l_var_type
                when 'varchar2' then
                   flow_process_vars.set_var(
-                     pi_prcs_id    => l_prcs_id
+                     pi_prcs_id    => l_process_id
                    , pi_var_name   => l_var_name
                    , pi_vc2_value  => l_process_variable.get_string('value')
                   );
                when 'number' then
                   flow_process_vars.set_var(
-                     pi_prcs_id    => l_prcs_id
+                     pi_prcs_id    => l_process_id
                    , pi_var_name   => l_var_name
                    , pi_num_value  => l_process_variable.get_number('value')
                   );
                when 'date' then
                   flow_process_vars.set_var(
-                     pi_prcs_id     => l_prcs_id
+                     pi_prcs_id     => l_process_id
                    , pi_var_name    => l_var_name
                    , pi_date_value  => l_process_variable.get_date('value')
                   );
                when 'clob' then
                   flow_process_vars.set_var(
-                     pi_prcs_id     => l_prcs_id
+                     pi_prcs_id     => l_process_id
                    , pi_var_name    => l_var_name
                    , pi_clob_value  => l_process_variable.get_clob('value')
                   );
@@ -154,11 +155,6 @@ create or replace package body flow_plugin_set_process_variables as
          loop
             l_prcs_var(rec.prov_var_name) := rec.prov_var_type;
          end loop;
-
-         --Raise exception when process variable is not define
-         if ( l_prcs_var.count != l_split_prcs_var.count ) then
-            raise e_var_name;
-         end if;
 
          -- Loop through variables
          for i in l_split_prcs_var.first..l_split_prcs_var.last
