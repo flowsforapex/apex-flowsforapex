@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   12:10 Monday June 28, 2021
+--   Date and Time:   12:16 Tuesday June 29, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -53,7 +53,7 @@ wwv_flow_api.create_plugin(
 ,p_display_name=>'Flows for APEX - Set Process Variables'
 ,p_supported_ui_types=>'DESKTOP'
 ,p_api_version=>2
-,p_execution_function=>'flow_plugin_get_process_variables.execution'
+,p_execution_function=>'flow_plugin_set_process_variables.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Getting <i>Flows for APEX</i> process variable(s) and storing it into APEX item(s).'
@@ -127,59 +127,29 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(14621255435961653)
+ p_id=>wwv_flow_api.id(14621687997961653)
 ,p_plugin_id=>wwv_flow_api.id(14619294648961651)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
-,p_prompt=>'Subflow ID Page item'
-,p_attribute_type=>'PAGE ITEM'
-,p_is_required=>true
-,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(14619461588961651)
-,p_depending_on_has_to_exist=>true
-,p_depending_on_condition_type=>'EQUALS'
-,p_depending_on_expression=>'item'
-,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>APEX Page Item that contains the Flow Instance subflow_id.</p>',
-'',
-'<p>This could typically be: </p>',
-'<ul>',
-'<li>An Application Item, often named SUBFLOW_ID.</li>',
-'<li>A Global Page Item, for example P0_SUBFLOW_ID.</li>',
-'<li>A Page Item on your page.</li>',
-'</ul>'))
-);
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(14621687997961653)
-,p_plugin_id=>wwv_flow_api.id(14619294648961651)
-,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>4
-,p_display_sequence=>40
 ,p_prompt=>'SQL Query'
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
-,p_sql_min_column_count=>2
-,p_sql_max_column_count=>2
+,p_sql_min_column_count=>1
+,p_sql_max_column_count=>1
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_api.id(14619461588961651)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
-,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>SQL Query which returns one row with two columns:</p>',
-'<ul>',
-'<li>PROCESS_ID</li>',
-'<li>SUBFLOW_ID</li>',
-'</ul>',
-'<p>Important: Column aliases must be <b>uppercase</b></p>'))
+,p_help_text=>'<p>SQL Query which returns one row with one column containing the flow process instance id.</p>'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(14623950584969039)
 ,p_plugin_id=>wwv_flow_api.id(14619294648961651)
 ,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>5
-,p_display_sequence=>50
+,p_attribute_sequence=>4
+,p_display_sequence=>40
 ,p_prompt=>'Set Process Variables using'
 ,p_attribute_type=>'SELECT LIST'
 ,p_is_required=>false
@@ -213,8 +183,8 @@ wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(14622024570961653)
 ,p_plugin_id=>wwv_flow_api.id(14619294648961651)
 ,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>6
-,p_display_sequence=>60
+,p_attribute_sequence=>5
+,p_display_sequence=>50
 ,p_prompt=>'Process Variable(s) Name(s)'
 ,p_attribute_type=>'TEXT'
 ,p_is_required=>true
@@ -233,8 +203,8 @@ wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(14622448889961653)
 ,p_plugin_id=>wwv_flow_api.id(14619294648961651)
 ,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>7
-,p_display_sequence=>70
+,p_attribute_sequence=>6
+,p_display_sequence=>60
 ,p_prompt=>'APEX item(s)'
 ,p_attribute_type=>'PAGE ITEMS'
 ,p_is_required=>true
@@ -258,8 +228,8 @@ wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(14626638126989851)
 ,p_plugin_id=>wwv_flow_api.id(14619294648961651)
 ,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>8
-,p_display_sequence=>80
+,p_attribute_sequence=>7
+,p_display_sequence=>70
 ,p_prompt=>'JSON'
 ,p_attribute_type=>'TEXTAREA'
 ,p_is_required=>true
@@ -274,8 +244,8 @@ wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(14626943719992548)
 ,p_plugin_id=>wwv_flow_api.id(14619294648961651)
 ,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>9
-,p_display_sequence=>90
+,p_attribute_sequence=>8
+,p_display_sequence=>80
 ,p_prompt=>'SQL Query'
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
