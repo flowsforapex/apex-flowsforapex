@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   12:27 Wednesday June 23, 2021
+--   Date and Time:   09:28 Wednesday June 30, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -127,59 +127,29 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(8703496778067859)
+ p_id=>wwv_flow_api.id(8703811413067859)
 ,p_plugin_id=>wwv_flow_api.id(8701480126067856)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
-,p_prompt=>'Subflow ID Page item'
-,p_attribute_type=>'PAGE ITEM'
-,p_is_required=>true
-,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(8701693088067857)
-,p_depending_on_has_to_exist=>true
-,p_depending_on_condition_type=>'EQUALS'
-,p_depending_on_expression=>'item'
-,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>APEX Page Item that contains the Flow Instance subflow_id.</p>',
-'',
-'<p>This could typically be: </p>',
-'<ul>',
-'<li>An Application Item, often named SUBFLOW_ID.</li>',
-'<li>A Global Page Item, for example P0_SUBFLOW_ID.</li>',
-'<li>A Page Item on your page.</li>',
-'</ul>'))
-);
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(8703811413067859)
-,p_plugin_id=>wwv_flow_api.id(8701480126067856)
-,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>4
-,p_display_sequence=>40
 ,p_prompt=>'SQL Query'
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
-,p_sql_min_column_count=>2
-,p_sql_max_column_count=>2
+,p_sql_min_column_count=>1
+,p_sql_max_column_count=>1
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_api.id(8701693088067857)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
-,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>SQL Query which returns one row with two columns:</p>',
-'<ul>',
-'<li>PROCESS_ID</li>',
-'<li>SUBFLOW_ID</li>',
-'</ul>',
-'<p>Important: Column aliases must be <b>uppercase</b></p>'))
+,p_help_text=>'<p>SQL Query which returns one row with one column containing the flow process instance id.</p>'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(8709282829075078)
 ,p_plugin_id=>wwv_flow_api.id(8701480126067856)
 ,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>5
-,p_display_sequence=>50
+,p_attribute_sequence=>4
+,p_display_sequence=>40
 ,p_prompt=>'Process Variable(s) Name(s)'
 ,p_attribute_type=>'TEXT'
 ,p_is_required=>true
@@ -194,8 +164,8 @@ wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(8709548266075981)
 ,p_plugin_id=>wwv_flow_api.id(8701480126067856)
 ,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>6
-,p_display_sequence=>60
+,p_attribute_sequence=>5
+,p_display_sequence=>50
 ,p_prompt=>'APEX item(s)'
 ,p_attribute_type=>'PAGE ITEMS'
 ,p_is_required=>true

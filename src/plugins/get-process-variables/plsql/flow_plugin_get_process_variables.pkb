@@ -13,18 +13,13 @@ create or replace package body flow_plugin_get_process_variables as
     --attributes
       l_attribute1      p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
       l_attribute2      p_process.attribute_02%type := p_process.attribute_02; -- Process ID (APEX item)
-      l_attribute3      p_process.attribute_03%type := p_process.attribute_03; -- Subflow ID (APEX item)
-      l_attribute4      p_process.attribute_04%type := p_process.attribute_04; -- SQL query (2 columns process id and subflow id)
-      l_attribute5      p_process.attribute_05%type := p_process.attribute_05; -- Process Variable(s) Name(s)
-      l_attribute6      p_process.attribute_06%type := p_process.attribute_06; -- APEX item(s)
-
+      l_attribute3      p_process.attribute_03%type := p_process.attribute_03; -- SQL query (2 columns process id and subflow id)
+      l_attribute4      p_process.attribute_04%type := p_process.attribute_04; -- Process Variable(s) Name(s)
+      l_attribute5      p_process.attribute_05%type := p_process.attribute_05; -- APEX item(s)
 
       l_process_id      flow_processes.prcs_id%type;
-      l_subflow_id      flow_subflows.sbfl_id%type;
 
       l_context         apex_exec.t_context;
-      l_idx_process_id  pls_integer;
-      l_idx_subflow_id  pls_integer;
 
       l_split_prcs_var apex_t_varchar2;
       l_split_items    apex_t_varchar2;
@@ -46,30 +41,26 @@ create or replace package body flow_plugin_get_process_variables as
          );
       end if;
 
-      -- Get process Id and subflow Id
+      -- Get process Id
       if ( l_attribute1 = 'item' ) then
          l_process_id  := apex_util.get_session_state(p_item => l_attribute2);
-         l_subflow_id  := apex_util.get_session_state(p_item => l_attribute3);
       elsif ( l_attribute1 = 'sql' ) then
          l_context         := apex_exec.open_query_context(
             p_location   => apex_exec.c_location_local_db
-          , p_sql_query  => l_attribute4
+          , p_sql_query  => l_attribute3
          );
-         l_idx_process_id  := apex_exec.get_column_position(l_context, 'PROCESS_ID');
-         l_idx_subflow_id  := apex_exec.get_column_position(l_context, 'SUBFLOW_ID');
 
          while apex_exec.next_row(l_context) loop
-            l_process_id  := apex_exec.get_number(l_context, l_idx_process_id);
-            l_subflow_id  := apex_exec.get_number(l_context, l_idx_subflow_id);
+            l_process_id  := apex_exec.get_number(l_context, 1);
          end loop;
          apex_exec.close(l_context);
       end if;
 
       -- Get process variable(s) name(s)
-      l_split_prcs_var := apex_string.split(l_attribute5, ',');
+      l_split_prcs_var := apex_string.split(l_attribute4, ',');
 
       -- Get APEX item(s) name(s)
-      l_split_items := apex_string.split(l_attribute6, ',');
+      l_split_items := apex_string.split(l_attribute5, ',');
 
       --Raise exception if number of process variables is not the same of APEX items
       if ( l_split_prcs_var.count() != l_split_items.count() ) then
@@ -83,7 +74,7 @@ create or replace package body flow_plugin_get_process_variables as
         where prov.prov_prcs_id = l_process_id
           and prov.prov_var_name in (
              select trim(column_value)
-             from apex_string.split(l_attribute5, ',')
+             from apex_string.split(l_attribute4, ',')
           )
       )
       loop
