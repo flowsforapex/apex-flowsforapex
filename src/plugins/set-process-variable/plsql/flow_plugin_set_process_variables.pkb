@@ -22,6 +22,8 @@ create or replace package body flow_plugin_set_process_variables as
       e_var_config              exception;
       e_incorrect_variable_type exception;
       e_types_different         exception;
+      e_invalid_number          exception;
+      e_invalid_date            exception;
 
       --types
       type t_prcs_var is table of varchar2(50) index by varchar2(50);
@@ -36,6 +38,7 @@ create or replace package body flow_plugin_set_process_variables as
       l_json              clob;
       l_process_variables json_array_t;
       l_process_variable  json_object_t;
+      l_json_element      json_element_t;
 
       --variables
       l_prcs_id         flow_processes.prcs_id%type;
@@ -125,12 +128,20 @@ create or replace package body flow_plugin_set_process_variables as
                    , pi_vc2_value  => l_process_variable.get_string('value')
                   );
                when 'number' then
+                  l_json_element := l_process_variable.get('value');
+                  if ( l_json_element.is_Number() = false ) then
+                     raise e_invalid_number;
+                  end if;
                   flow_process_vars.set_var(
                      pi_prcs_id    => l_prcs_id
                    , pi_var_name   => l_prcs_var_name
                    , pi_num_value  => l_process_variable.get_number('value')
                   );
                when 'date' then
+                  l_json_element := l_process_variable.get('value');
+                  if ( l_json_element.is_Date() = false ) then
+                     raise e_invalid_date;
+                  end if;
                   flow_process_vars.set_var(
                      pi_prcs_id     => l_prcs_id
                    , pi_var_name    => l_prcs_var_name
@@ -272,6 +283,16 @@ create or replace package body flow_plugin_set_process_variables as
       when e_types_different then
          apex_error.add_error(
               p_message           => 'One or more process variable(s) are a different type than the one defined in the JSON.'
+            , p_display_location  => apex_error.c_on_error_page
+         );
+      when e_invalid_number then
+         apex_error.add_error(
+              p_message           => apex_string.format( '%s is not a valid number.', l_json_element.stringify() )
+            , p_display_location  => apex_error.c_on_error_page
+         );
+      when e_invalid_date then
+         apex_error.add_error(
+              p_message           => apex_string.format( '%s is not a valid date.', l_json_element.stringify() )
             , p_display_location  => apex_error.c_on_error_page
          );
    end execution;
