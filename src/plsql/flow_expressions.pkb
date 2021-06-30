@@ -37,6 +37,12 @@ as
   as 
     l_expression_text   flow_object_expressions.expr_expression%type;
   begin
+    apex_debug.enter
+    ( 'flow_expressions.set_static'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'pi_expression_text' , l_expression_text
+    );
+
     l_expression_text := pi_expression.expr_expression;
     -- substitute any F4A Process Variables
     flow_process_vars.do_substitution
@@ -79,6 +85,11 @@ as
   )
   as 
   begin
+    apex_debug.enter
+    ( 'flow_expressions.set_proc_var'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'proc var' , pi_expression.expr_expression
+    );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
         flow_process_vars.set_var 
