@@ -1,4 +1,4 @@
-create or replace package body flow_plugin_create_and_start as
+create or replace package body flow_plugin_create_instance as
 
    procedure log_debug(
       p_process  in  apex_plugin.t_process
@@ -417,4 +417,4 @@ create or replace package body flow_plugin_create_and_start as
          );
    end execution;
 
-end flow_plugin_create_and_start;
+end flow_plugin_create_instance;

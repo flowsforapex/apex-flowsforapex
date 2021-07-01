@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   11:26 Thursday July 1, 2021
+--   Date and Time:   11:30 Thursday July 1, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -53,7 +53,7 @@ wwv_flow_api.create_plugin(
 ,p_display_name=>'Flows for APEX - Create Flow Instance'
 ,p_supported_ui_types=>'DESKTOP'
 ,p_api_version=>2
-,p_execution_function=>'flow_plugin_create_and_start.execution'
+,p_execution_function=>'flow_plugin_create_instance.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
