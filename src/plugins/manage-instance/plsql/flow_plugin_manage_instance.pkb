@@ -43,17 +43,29 @@ create or replace package body flow_plugin_manage_instance as
 
       if ( l_attribute4 = 'delete' ) then
          -- Call API to delete the instance
-         apex_debug.message(p_message => 'Plug-in: start delete process id '||l_process_id);
+         apex_debug.message(
+              p_message => 'Plug-in: delete process id %s'
+            , p0 => l_process_id
+         );
          flow_api_pkg.flow_delete(
             p_process_id  => l_process_id
          );
       elsif ( l_attribute4 = 'start' ) then
          -- Call API to start the instance
          apex_debug.message(
-            p_message => 'Plug-in: start process id %'
+              p_message => 'Plug-in: start process id %'
             , p0        => l_process_id 
          );
          flow_api_pkg.flow_start(
+            p_process_id  => l_process_id
+         );
+      elsif ( l_attribute4 = 'reset' ) then
+         -- Call API to start the instance
+         apex_debug.message(
+              p_message => 'Plug-in: reset process id %'
+            , p0        => l_process_id 
+         );
+         flow_api_pkg.flow_reset(
             p_process_id  => l_process_id
          );
       end if;

@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   10:24 Thursday July 1, 2021
+--   Date and Time:   11:08 Thursday July 1, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -133,7 +133,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>'<p>SQL Query which returns one row with one column containing the Flow Instance Process Id.</p>'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(16302076935152140)
+ p_id=>wwv_flow_api.id(16506697485622126)
 ,p_plugin_id=>wwv_flow_api.id(11100763771544189)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
@@ -146,18 +146,28 @@ wwv_flow_api.create_plugin_attribute(
 ,p_lov_type=>'STATIC'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(16302322487153129)
-,p_plugin_attribute_id=>wwv_flow_api.id(16302076935152140)
+ p_id=>wwv_flow_api.id(16507550748624009)
+,p_plugin_attribute_id=>wwv_flow_api.id(16506697485622126)
 ,p_display_sequence=>10
-,p_display_value=>'Start Instance'
+,p_display_value=>'Start Flow Instance'
 ,p_return_value=>'start'
+,p_help_text=>'This option is used to start a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(16302788609154628)
-,p_plugin_attribute_id=>wwv_flow_api.id(16302076935152140)
+ p_id=>wwv_flow_api.id(16507944750625212)
+,p_plugin_attribute_id=>wwv_flow_api.id(16506697485622126)
 ,p_display_sequence=>20
-,p_display_value=>'Delete Instance'
+,p_display_value=>'Delete Flow Instance'
 ,p_return_value=>'delete'
+,p_help_text=>'This option is used to delete a Flow Instance.'
+);
+wwv_flow_api.create_plugin_attr_value(
+ p_id=>wwv_flow_api.id(16508318063627228)
+,p_plugin_attribute_id=>wwv_flow_api.id(16506697485622126)
+,p_display_sequence=>30
+,p_display_value=>'Reset Flow Instance'
+,p_return_value=>'reset'
+,p_help_text=>'This option is used to reset a Flow Instance.'
 );
 end;
 /
