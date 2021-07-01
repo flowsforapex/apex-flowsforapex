@@ -1,4 +1,4 @@
-create or replace package body flow_plugin_delete as
+create or replace package body flow_plugin_manage_instance as
 
    function execution (
       p_process  in  apex_plugin.t_process
@@ -11,6 +11,7 @@ create or replace package body flow_plugin_delete as
       l_attribute1      p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
       l_attribute2      p_process.attribute_02%type := p_process.attribute_02; -- Process ID (APEX item)
       l_attribute3      p_process.attribute_03%type := p_process.attribute_03; -- SQL query (2 columns process id and subflow id)
+      l_attribute4      p_process.attribute_04%type := p_process.attribute_04; -- Action
 
       l_process_id      flow_processes.prcs_id%type;
       l_context         apex_exec.t_context;
@@ -40,13 +41,24 @@ create or replace package body flow_plugin_delete as
          apex_exec.close(l_context);
       end if;
 
-      -- Call API to delete the instance
-      apex_debug.message(p_message => 'Plug-in: start delete process id '||l_process_id);
-      flow_api_pkg.flow_delete(
-         p_process_id  => l_process_id
-      );
+      if ( l_attribute4 = 'delete' ) then
+         -- Call API to delete the instance
+         apex_debug.message(p_message => 'Plug-in: start delete process id '||l_process_id);
+         flow_api_pkg.flow_delete(
+            p_process_id  => l_process_id
+         );
+      elsif ( l_attribute4 = 'start' ) then
+         -- Call API to start the instance
+         apex_debug.message(
+            p_message => 'Plug-in: start process id %'
+            , p0        => l_process_id 
+         );
+         flow_api_pkg.flow_start(
+            p_process_id  => l_process_id
+         );
+      end if;
 
       return l_result;
    end execution;
    
-end flow_plugin_delete;
+end flow_plugin_manage_instance;

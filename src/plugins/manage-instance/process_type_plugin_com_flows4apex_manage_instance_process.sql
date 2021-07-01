@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   11:33 Monday June 28, 2021
+--   Date and Time:   10:24 Thursday July 1, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -44,16 +44,16 @@ begin
   wwv_flow_api.g_mode := 'REPLACE';
 end;
 /
-prompt --application/shared_components/plugins/process_type/com_flows4apex_delete_process
+prompt --application/shared_components/plugins/process_type/com_flows4apex_manage_instance_process
 begin
 wwv_flow_api.create_plugin(
  p_id=>wwv_flow_api.id(11100763771544189)
 ,p_plugin_type=>'PROCESS TYPE'
-,p_name=>'COM.FLOWS4APEX.DELETE.PROCESS'
-,p_display_name=>'Flows for APEX - Delete Flow'
+,p_name=>'COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'
+,p_display_name=>'Flows for APEX - Manage Flow Instance'
 ,p_supported_ui_types=>'DESKTOP'
 ,p_api_version=>2
-,p_execution_function=>'flow_plugin_delete.execution'
+,p_execution_function=>'flow_plugin_manage_instance.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Deleting a <i>Flows for APEX</i> Flow Instance Step.'
@@ -131,6 +131,33 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
 ,p_help_text=>'<p>SQL Query which returns one row with one column containing the Flow Instance Process Id.</p>'
+);
+wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(16302076935152140)
+,p_plugin_id=>wwv_flow_api.id(11100763771544189)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>4
+,p_display_sequence=>40
+,p_prompt=>'Action'
+,p_attribute_type=>'SELECT LIST'
+,p_is_required=>true
+,p_default_value=>'start'
+,p_is_translatable=>false
+,p_lov_type=>'STATIC'
+);
+wwv_flow_api.create_plugin_attr_value(
+ p_id=>wwv_flow_api.id(16302322487153129)
+,p_plugin_attribute_id=>wwv_flow_api.id(16302076935152140)
+,p_display_sequence=>10
+,p_display_value=>'Start Instance'
+,p_return_value=>'start'
+);
+wwv_flow_api.create_plugin_attr_value(
+ p_id=>wwv_flow_api.id(16302788609154628)
+,p_plugin_attribute_id=>wwv_flow_api.id(16302076935152140)
+,p_display_sequence=>20
+,p_display_value=>'Delete Instance'
+,p_return_value=>'delete'
 );
 end;
 /
