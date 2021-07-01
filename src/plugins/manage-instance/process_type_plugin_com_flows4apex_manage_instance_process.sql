@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   11:08 Thursday July 1, 2021
+--   Date and Time:   11:23 Thursday July 1, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -56,7 +56,7 @@ wwv_flow_api.create_plugin(
 ,p_execution_function=>'flow_plugin_manage_instance.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
-,p_help_text=>'Process used to Deleting a <i>Flows for APEX</i> Flow Instance Step.'
+,p_help_text=>'Process used to manage a <i>Flows for APEX</i> Flow Instance.'
 ,p_version_identifier=>'1.0'
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex'
 );
@@ -72,15 +72,15 @@ wwv_flow_api.create_plugin_attribute(
 ,p_default_value=>'item'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
-,p_help_text=>'<p>Define the way you want to retrieve the flow process instance Id you want to delete.</p>'
+,p_help_text=>'<p>Define the way you want to retrieve the Flow Instance Id.</p>'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(11101324418544201)
 ,p_plugin_attribute_id=>wwv_flow_api.id(11100915996544200)
 ,p_display_sequence=>10
-,p_display_value=>'In Page Items'
+,p_display_value=>'In Item'
 ,p_return_value=>'item'
-,p_help_text=>'Use this when the Flow Instance Process Id is stored in APEX Page Items.'
+,p_help_text=>'Use this when the Flow Instance Id is stored in an APEX Item.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(11101849441544201)
@@ -88,7 +88,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>20
 ,p_display_value=>'from SQL Query'
 ,p_return_value=>'sql'
-,p_help_text=>'Use this when the Flow Instance Process Id is to be returned by a SQL Query.'
+,p_help_text=>'Use this when the Flow Instance Id is to be returned by a SQL Query.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(11102336795544201)
@@ -96,7 +96,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
-,p_prompt=>'Process ID Page Item'
+,p_prompt=>'Process ID Item'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
 ,p_is_translatable=>false
@@ -105,7 +105,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>APEX Page Item that contains the Flow Instance process_id.</p>',
+'<p>APEX Item that contains the Flow Instance Id.</p>',
 '',
 '<p>This could typically be: </p>',
 '<ul>',
@@ -130,7 +130,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
-,p_help_text=>'<p>SQL Query which returns one row with one column containing the Flow Instance Process Id.</p>'
+,p_help_text=>'<p>SQL Query which returns one row with one column containing the Flow Instance Id.</p>'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(16506697485622126)
@@ -144,6 +144,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_default_value=>'start'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
+,p_help_text=>'<p>Use this attribute to specify the action you want to apply to the Flow Instance.</p>'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(16507550748624009)
