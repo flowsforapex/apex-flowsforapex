@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   09:43 Tuesday June 22, 2021
+--   Date and Time:   11:26 Thursday July 1, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -50,13 +50,13 @@ wwv_flow_api.create_plugin(
  p_id=>wwv_flow_api.id(401104185825644229)
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_name=>'COM.FLOWS4APEX.CREATE_FLOW.PROCESS'
-,p_display_name=>'Flows for APEX - Create and Start Flow'
+,p_display_name=>'Flows for APEX - Create Flow Instance'
 ,p_supported_ui_types=>'DESKTOP'
 ,p_api_version=>2
 ,p_execution_function=>'flow_plugin_create_and_start.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
-,p_help_text=>'Process used to Creating and Starting a <i>Flows for APEX</i> Flow Instance declaratively.'
+,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
 ,p_version_identifier=>'1.2'
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex	'
 );
@@ -175,7 +175,7 @@ wwv_flow_api.create_plugin_attribute(
 '</pre>',
 'SQL query to retrieve by Name and Version:',
 '<pre>',
-'select dgrm_name, dgrm_id',
+'select dgrm_name, dgrm_version',
 'from flow_diagrams',
 'where id = 1',
 '</pre>',
