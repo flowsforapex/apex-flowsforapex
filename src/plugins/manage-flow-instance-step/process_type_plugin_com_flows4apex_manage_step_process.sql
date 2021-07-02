@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   12:46 Thursday July 1, 2021
+--   Date and Time:   14:25 Friday July 2, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -56,8 +56,8 @@ wwv_flow_api.create_plugin(
 ,p_execution_function=>'flow_plugin_manage_instance_step.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
-,p_help_text=>'Process used to Completing a <i>Flows for APEX</i> Flow Instance Step.'
-,p_version_identifier=>'1.2'
+,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
+,p_version_identifier=>'1.0'
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -108,7 +108,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
-,p_prompt=>'Process ID Page Item'
+,p_prompt=>'Process ID Item'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
 ,p_is_translatable=>false
@@ -117,7 +117,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>APEX Page Item that contains the Flow Instance process_id.</p>',
+'<p>APEX Item that contains the Flow Instance process_id.</p>',
 '',
 '<p>This could typically be: </p>',
 '<ul>',
@@ -132,7 +132,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
-,p_prompt=>'Subflow ID Page item'
+,p_prompt=>'Subflow ID item'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
 ,p_is_translatable=>false
@@ -141,7 +141,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>APEX Page Item that contains the Flow Instance subflow_id.</p>',
+'<p>APEX Item that contains the Flow Instance subflow_id.</p>',
 '',
 '<p>This could typically be: </p>',
 '<ul>',

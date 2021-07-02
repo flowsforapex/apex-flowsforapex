@@ -102,8 +102,8 @@ create or replace package body flow_plugin_manage_instance_step as
             and sbfl.sbfl_id = l_subflow_id;
 
          --Set the gateway route
-         if ( l_attribute5 = 'Y' ) then
-            l_gateway_name := l_attribute6;
+         if ( l_attribute6 = 'Y' ) then
+            l_gateway_name := l_attribute7;
 
             -- If attribute 6 is filled, check if gateway define exists
             if ( l_gateway_name is not null ) then
@@ -123,7 +123,7 @@ create or replace package body flow_plugin_manage_instance_step as
             
             --Gateway attribute is not filled so we look at the next target object if it's exclusive or inclusive gateway
             if (
-               l_attribute6 is null and l_step_info.target_objt_tag in (
+               l_attribute7 is null and l_step_info.target_objt_tag in (
                         flow_constants_pkg.gc_bpmn_gateway_exclusive, flow_constants_pkg.gc_bpmn_gateway_inclusive
                      )
             ) then
@@ -135,7 +135,7 @@ create or replace package body flow_plugin_manage_instance_step as
                flow_process_vars.set_var(
                   pi_prcs_id    => l_process_id
                , pi_var_name   => l_gateway_name || ':route'
-               , pi_vc2_value  => l_attribute7
+               , pi_vc2_value  => l_attribute8
                );
             else
                raise e_no_gateway;
@@ -151,7 +151,7 @@ create or replace package body flow_plugin_manage_instance_step as
          -- Auto-branching
          -- Only if next object is a user task and it's on the same lane than the current step
          if (
-            l_attribute8 = 'Y' and l_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_usertask and ( ( l_step_info.source_lane_id =
+            l_attribute9 = 'Y' and l_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_usertask and ( ( l_step_info.source_lane_id =
             l_step_info.target_lane_id ) or (
                l_step_info.source_lane_id is null and l_step_info.target_lane_id is null
             ) )
