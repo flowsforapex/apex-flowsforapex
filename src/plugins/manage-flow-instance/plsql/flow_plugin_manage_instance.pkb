@@ -1,5 +1,55 @@
 create or replace package body flow_plugin_manage_instance as
 
+   procedure log_attributes(
+      p_process  in  apex_plugin.t_process
+    , p_plugin   in  apex_plugin.t_plugin
+   )
+   is
+   begin
+      apex_debug.info(
+           p_message => ' > Process plug-in attributes'
+      );
+      apex_debug.info(
+           p_message => '...Flow Instance define by: %s'
+         , p0        => p_process.attribute_01
+      );
+
+      if p_process.attribute_01 = 'item' then 
+         apex_debug.info(
+            p_message => '......Item used: %s - Session state value: %s'
+            , p0        => p_process.attribute_02
+            , p1        => apex_util.get_session_state(p_item => p_process.attribute_02)
+         );
+      elsif p_process.attribute_01 = 'sql'  then
+         apex_debug.info(
+            p_message => '......Query'
+         );
+         apex_debug.log_long_message(
+              p_message => p_process.attribute_03
+            , p_level   => apex_debug.c_log_level_info
+         );
+      elsif p_process.attribute_01 = 'static'  then
+         apex_debug.info(
+              p_message => '......Static value: %s'
+            , p0        => p_process.attribute_04
+         );
+      elsif p_process.attribute_01 = 'component' then
+        apex_debug.info(
+            p_message => '......Component Setting: %s'
+            , p0        => p_plugin.attribute_01
+         );
+      end if;
+
+      apex_debug.info(
+           p_message => '...Flow Instance action: %s'
+         , p0        => p_process.attribute_04
+      );
+
+      apex_debug.info(
+           p_message => ' < Process plug-in attributes'
+      );
+   end log_attributes;
+
    function execution (
       p_process  in  apex_plugin.t_process
     , p_plugin   in  apex_plugin.t_plugin
@@ -19,14 +69,15 @@ create or replace package body flow_plugin_manage_instance as
    begin
 
     --debug
-      if apex_application.g_debug then
-         apex_plugin_util.debug_process(
-            p_plugin   => p_plugin
-          , p_process  => p_process
-         );
-      end if;
+      log_attributes(
+           p_plugin   => p_plugin
+         , p_process  => p_process
+      );
 
-      -- Get process Id and subflow Id
+      apex_debug.info(
+           p_message => '...Retrieve FLow Instance Id'
+      );
+      -- Get Flow Instance Id
       if ( l_attribute1 = 'item' ) then
          l_process_id  := apex_util.get_session_state(p_item => l_attribute2);
       elsif ( l_attribute1 = 'sql' ) then
@@ -43,27 +94,27 @@ create or replace package body flow_plugin_manage_instance as
 
       if ( l_attribute4 = 'delete' ) then
          -- Call API to delete the instance
-         apex_debug.message(
-              p_message => 'Plug-in: delete process id %s'
-            , p0 => l_process_id
+         apex_debug.info(
+              p_message => '...Delete Flow Instance Id %s'
+            , p0        => l_process_id
          );
          flow_api_pkg.flow_delete(
             p_process_id  => l_process_id
          );
       elsif ( l_attribute4 = 'start' ) then
          -- Call API to start the instance
-         apex_debug.message(
-              p_message => 'Plug-in: start process id %'
-            , p0        => l_process_id 
+         apex_debug.info(
+              p_message => '...Start Flow Instance Id %s'
+            , p0        => l_process_id
          );
          flow_api_pkg.flow_start(
             p_process_id  => l_process_id
          );
       elsif ( l_attribute4 = 'reset' ) then
          -- Call API to start the instance
-         apex_debug.message(
-              p_message => 'Plug-in: reset process id %'
-            , p0        => l_process_id 
+         apex_debug.info(
+              p_message => '...Reset Flow Instance Id %s'
+            , p0        => l_process_id
          );
          flow_api_pkg.flow_reset(
             p_process_id  => l_process_id
