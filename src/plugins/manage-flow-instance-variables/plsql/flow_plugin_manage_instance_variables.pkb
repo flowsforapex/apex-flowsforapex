@@ -208,7 +208,6 @@ create or replace package body flow_plugin_manage_instance_variables as
             end case;
          end loop;
       elsif ( l_attribute5 = 'item' ) then
-         apex_debug.message('>>> item choose');
          -- Get process variable(s) name(s)
          l_split_prcs_var := apex_string.split(l_attribute6, ',');
 
@@ -245,7 +244,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                      else
                         'VARCHAR2'
                   end as item_type
-               , aapi.format_mask
+               , coalesce(aapi.format_mask, v('APP_NLS_DATE_FORMAT')) format_mask
             from table(apex_string.split(l_attribute7, ',')) items
             left outer join apex_application_page_items aapi
                on aapi.item_name = items.column_value
@@ -315,16 +314,17 @@ create or replace package body flow_plugin_manage_instance_variables as
                         flow_process_vars.set_var(
                            pi_prcs_id     => l_prcs_id
                            , pi_var_name    => l_prcs_var_name
-                           , pi_date_value  => to_date( apex_util.get_session_state( p_item => l_item_name ) , l_format_mask)
+                           , pi_date_value  => to_date( apex_util.get_session_state( p_item => l_item_name ) , l_items(l_item_name).format_mask )
                         );
                      when 'get' then
-                        apex_exec.execute_plsql('begin
-                        :' || dbms_assert.enquote_name(l_item_name) || q'[ := ']' || flow_process_vars.get_var_date(
+                        apex_util.set_session_state( 
+                             p_name  => l_item_name
+                           , p_value => to_char(
+                                          flow_process_vars.get_var_date(
                                              pi_prcs_id  => l_prcs_id
-                                          , pi_var_name => l_prcs_var_name
-                                       ) || q'[';
-                        end;]'
-                     );
+                                           , pi_var_name => l_prcs_var_name
+                                        ), l_items(l_item_name).format_mask )
+                        );
                   end case;
             when 'CLOB' then
                case l_attribute4
