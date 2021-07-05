@@ -1,130 +1,111 @@
 create or replace package body flow_plugin_create_instance as
 
-   procedure log_debug(
+   procedure log_attributes(
       p_process  in  apex_plugin.t_process
     , p_plugin   in  apex_plugin.t_plugin
    )
    is
    begin
-      apex_debug.message(
-           p_message => '--------------------------------------------------------------------------------------------'
-         , p_level => 3
+      apex_debug.info(
+           p_message => ' > Process plug-in attributes'
       );
-      apex_debug.message(
-           p_message => '-- Flows4apex - Create and Start Process Plug-in Debug'
-         , p_level => 3
-      );
-      apex_debug.message(
-           p_message => '-- Flow Diagram define by: %s'
+      apex_debug.info(
+           p_message => '......Flow Diagram define by: %s'
          , p0        => p_process.attribute_07
-         , p_level => 3
       );
-      apex_debug.message(
-           p_message => '-- Flow Diagram retrieve using: %s'
+      apex_debug.info(
+           p_message => '......Flow Diagram retrieve using: %s'
          , p0        => p_process.attribute_01
-         , p_level => 3
       );
 
       if p_process.attribute_01 = 'item' then 
          apex_debug.message(
-            p_message => '-- Item used: %s - Session state value: %s'
+            p_message => '......Item used: %s - Session state value: %s'
             , p0        => p_process.attribute_02
             , p1        => apex_util.get_session_state(p_item => p_process.attribute_02)
-            , p_level => 3
          );
       elsif p_process.attribute_01 = 'sql'  then
-        apex_debug.message(
-            p_message => '-- Query: '
-            , p_level => 3
+        apex_debug.info(
+            p_message => '......Query: '
          );
          apex_debug.log_long_message(
               p_message    => p_process.attribute_03
-            , p_level => 3
+            , p_level => 4
          );
       elsif p_process.attribute_01 = 'static'  then
-         apex_debug.message(
-              p_message => '-- Static value: %s'
+         apex_debug.info(
+              p_message => '......Static value: %s'
             , p0        => p_process.attribute_04
-            , p_level => 3
          );
       elsif p_process.attribute_01 = 'component' then
-        apex_debug.message(
-            p_message => '-- Component Setting: %s'
+        apex_debug.info(
+            p_message => '......Component Setting: %s'
             , p0        => p_plugin.attribute_01
-            , p_level => 3
          );
       end if;
 
-      apex_debug.message(
-           p_message => '-- Flow Name define by: %s'
+      apex_debug.info(
+           p_message => '......Flow Name define by: %s'
          , p0        => p_process.attribute_13
-         , p_level => 3
       );
 
       if ( p_process.attribute_13 = 'item' ) then
-         apex_debug.message(
-            p_message => '-- Item used: %s - Session state value: %s'
+         apex_debug.info(
+            p_message => '......Item used: %s - Session state value: %s'
             , p0      => p_process.attribute_11
             , p1      => apex_util.get_session_state(p_item => p_process.attribute_11)
-            , p_level => 3
          );
       elsif ( p_process.attribute_13 = 'sql' ) then
          apex_debug.log_long_message(
               p_message    => p_process.attribute_15
-            , p_level => 3
+            , p_level => 4
          );
       elsif ( p_process.attribute_13 = 'static' ) then
-         apex_debug.message(
-              p_message => '-- Static value: %s'
+         apex_debug.info(
+              p_message => '......Static value: %s'
             , p0        => p_process.attribute_14
-            , p_level => 3
          );
       end if;
 
       if ( p_process.attribute_12 is not null ) then
-         apex_debug.message(
-              p_message => '-- Return Instance ID into: %s'
+         apex_debug.info(
+              p_message => '......Return Instance ID into: %s'
             , p0        => p_process.attribute_12
-            , p_level => 3
          );
       end if;
 
       if ( p_process.attribute_10 is not null ) then
-         apex_debug.message(
-              p_message => '-- Process Variable BUSINESS_REF set with item: %s - Session State Value: %s'
+         apex_debug.info(
+              p_message => '......Process Variable BUSINESS_REF set with item: %s - Session State Value: %s'
             , p0        => p_process.attribute_10
             , p1        => apex_util.get_session_state( p_process.attribute_10 )
-            , p_level => 3
          );
       end if;
 
-      apex_debug.message(
-           p_message => '-- Set Process Variables: %s'
+      apex_debug.info(
+           p_message => '......Set Process Variables: %s'
          , p0        => p_process.attribute_06
-         , p_level   => 3
       );
       if ( p_process.attribute_06 = 'json' ) then
          apex_debug.log_long_message(
               p_message    => p_process.attribute_08
-            , p_level => 3
+            , p_level => 4
          );
       elsif ( p_process.attribute_06 = 'sql' ) then
          apex_debug.log_long_message(
               p_message    => p_process.attribute_09
-            , p_level => 3
+            , p_level => 4
          );
       end if;
 
-      apex_debug.message(
-           p_message => '-- Start Flow Instance: %s'
+      apex_debug.info(
+           p_message => '......Start Flow Instance: %s'
          , p0        => p_process.attribute_05
-         , p_level   => 3
       );
-      apex_debug.message(
-           p_message => '--------------------------------------------------------------------------------------------'
-         , p_level => 3
-      );      
-   end log_debug;
+      apex_debug.info(
+           p_message => ' < Process plug-in attributes'
+      );
+   end log_attributes;
 
    function execution (
       p_process  in  apex_plugin.t_process
@@ -168,16 +149,22 @@ create or replace package body flow_plugin_create_instance as
       l_split_values             apex_t_varchar2;
    begin
 
-    --debug
-      if apex_application.g_debug then
-         log_debug( 
-              p_process => p_process
-            , p_plugin  => p_plugin
-         );
-      end if;
+      --Debug attributes
+      log_attributes( 
+           p_process => p_process
+         , p_plugin  => p_plugin
+      );
 
+      apex_debug.info(
+         p_message => ' > Start creating instance.'
+      );
+
+      apex_debug.info(
+           p_message => '...Retrieve FLow Instance Name'
+      );
       -- Handle flow name instance
       if ( l_attribute13 = 'item' ) then
+
          l_prcs_name := apex_util.get_session_state(p_item => l_attribute11);
       elsif ( l_attribute13 = 'sql' ) then
          l_context := apex_exec.open_query_context(
@@ -188,9 +175,13 @@ create or replace package body flow_plugin_create_instance as
             l_prcs_name := apex_exec.get_varchar2(l_context, 1);
          end loop;
       elsif ( l_attribute13 = 'static' ) then
+
          l_prcs_name := l_attribute14;
       end if;
 
+      apex_debug.info(
+           p_message => '...Retrieve FLow (Diagram)'
+      );
       -- Retrieve flow to be created
       -- Flow is define by item (page or application)
       if ( l_attribute1 = 'item' ) then
@@ -281,14 +272,13 @@ create or replace package body flow_plugin_create_instance as
              ) then
             l_dgrm_name := trim( l_dgrm_name );
             l_dgrm_version := trim( l_dgrm_version );
-         if apex_application.g_debug then
-            apex_debug.message(
-                 p_message => '-- Create Flow instance "%s" with diagram: %s %s'
-               , p0        => l_prcs_name
-               , p1        => l_dgrm_name
-               , p2        => case when l_dgrm_version is not null then apex_string.format( p_message => '(version %s)', p0 => l_dgrm_version) end
-            );
-         end if;
+            
+         apex_debug.info(
+              p_message => '...Create Flow instance "%s" with diagram: %s %s'
+            , p0        => l_prcs_name
+            , p1        => l_dgrm_name
+            , p2        => case when l_dgrm_version is not null then apex_string.format( p_message => '(version %s)', p0 => l_dgrm_version) end
+         );
 
          l_prcs_id :=
             flow_api_pkg.flow_create(
@@ -297,13 +287,11 @@ create or replace package body flow_plugin_create_instance as
              , pi_prcs_name     => l_prcs_name
             );
       else
-         if apex_application.g_debug then
-            apex_debug.message(
-                 p_message => '-- Create Flow instance "%s" with diagram id: %s'
-               , p0      => l_prcs_name
-               , p1      => l_dgrm_id
-            );
-         end if;
+         apex_debug.info(
+              p_message => '...Create Flow instance "%s" with diagram id: %s'
+            , p0      => l_prcs_name
+            , p1      => l_dgrm_id
+         );
 
          l_prcs_id := flow_api_pkg.flow_create(
             pi_dgrm_id    => l_dgrm_id
@@ -311,15 +299,22 @@ create or replace package body flow_plugin_create_instance as
          );
       end if;
 
-      if apex_application.g_debug then
-         apex_debug.message(
-              p_message => '-- Flow instance %s created.'
-            , p0      => l_prcs_id
-         );
-      end if;
+      apex_debug.info(
+           p_message => ' < Flow instance %s created.'
+         , p0      => l_prcs_id
+      );
+
+      apex_debug.info(
+           p_message => ' > Additional actions.'
+         , p0      => l_prcs_id
+      );
 
       -- Return instance id in the APEX item provided
       if ( l_attribute12 is not null ) then
+         apex_debug.info(
+             p_message => '...Return Flow Instance Id into item "%s"'
+           , p0        => l_attribute12
+         );
          apex_util.set_session_state(l_attribute12, l_prcs_id);
       end if;
 
@@ -342,6 +337,9 @@ create or replace package body flow_plugin_create_instance as
       if ( l_attribute6 in (
                 'json', 'sql'
              ) ) then
+         apex_debug.info(
+             p_message => '...Start setting Flow Instance Variable(s)'
+         );
          l_process_variables        := json_array_t(l_json);
          l_process_variables_count  := l_process_variables.get_size();
          for object in 0..l_process_variables_count - 1 loop
@@ -350,24 +348,48 @@ create or replace package body flow_plugin_create_instance as
             l_var_type          := l_process_variable.get_string('type');
             case l_var_type
                when 'varchar2' then
+                  apex_debug.info(
+                     p_message => '.....Name: %s - Type: %s - Value %s'
+                     , p0 => l_var_name
+                     , p1 => l_var_type
+                     , p2 => l_process_variable.get_string('value')
+                  );
                   flow_process_vars.set_var(
                      pi_prcs_id    => l_prcs_id
                    , pi_var_name   => l_var_name
                    , pi_vc2_value  => l_process_variable.get_string('value')
                   );
                when 'number' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_var_name
+                     , p1 => l_var_type
+                     , p2 => l_process_variable.get_number('value')
+                  );
                   flow_process_vars.set_var(
                      pi_prcs_id    => l_prcs_id
                    , pi_var_name   => l_var_name
                    , pi_num_value  => l_process_variable.get_number('value')
                   );
                when 'date' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_var_name
+                     , p1 => l_var_type
+                     , p2 => l_process_variable.get_date('value')
+                  );
                   flow_process_vars.set_var(
                      pi_prcs_id     => l_prcs_id
                    , pi_var_name    => l_var_name
                    , pi_date_value  => l_process_variable.get_date('value')
                   );
                when 'clob' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_var_name
+                     , p1 => l_var_type
+                     , p2 => l_process_variable.get_clob('value')
+                  );
                   flow_process_vars.set_var(
                      pi_prcs_id     => l_prcs_id
                    , pi_var_name    => l_var_name
@@ -377,10 +399,16 @@ create or replace package body flow_plugin_create_instance as
                   raise e_incorrect_variable_type;
             end case;
          end loop;
-
+         apex_debug.info(
+            p_message => '...End setting Flow Instance Variable(s)'
+         );
       end if;
 
       if ( l_attribute10 is not null ) then 
+         apex_debug.info(
+             p_message => '...Setting BUSINESS_REF Variable: "%s"'
+           , p0        => apex_util.get_session_state(l_attribute10)
+         );
          flow_process_vars.set_var(
             pi_prcs_id    => l_prcs_id
          , pi_var_name   => 'BUSINESS_REF'
@@ -390,8 +418,17 @@ create or replace package body flow_plugin_create_instance as
 
       --Start flow instance
       if ( l_attribute5 = 'Y' ) then
+         apex_debug.info(
+             p_message => '...Starting Flow Instance %s'
+           , p0        => l_prcs_id
+         );
          flow_api_pkg.flow_start(p_process_id => l_prcs_id);
       end if;
+
+      apex_debug.info(
+           p_message => ' < Additional actions.'
+         , p0      => l_prcs_id
+      );
 
       return l_result;
    exception 
