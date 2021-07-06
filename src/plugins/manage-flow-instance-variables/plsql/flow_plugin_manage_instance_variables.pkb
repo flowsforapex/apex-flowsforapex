@@ -1,5 +1,77 @@
 create or replace package body flow_plugin_manage_instance_variables as
 
+   procedure log_attributes(
+      p_process  in  apex_plugin.t_process
+    , p_plugin   in  apex_plugin.t_plugin
+   )
+   is
+   begin
+      apex_debug.info(
+           p_message => ' > Process plug-in attributes'
+      );
+      apex_debug.info(
+           p_message => '...Flow Instance define by: %s'
+         , p0        => p_process.attribute_01
+      );
+
+      if p_process.attribute_01 = 'item' then 
+         apex_debug.info(
+            p_message => '......Flow Instance Item used: %s - Session state value: %s'
+            , p0        => p_process.attribute_02
+            , p1        => apex_util.get_session_state(p_item => p_process.attribute_02)
+         );
+      elsif p_process.attribute_01 = 'sql'  then
+         apex_debug.info(
+            p_message => '......Query'
+         );
+         apex_debug.log_long_message(
+              p_message => p_process.attribute_03
+            , p_level   => apex_debug.c_log_level_info
+         );
+      end if;
+
+      apex_debug.info(
+           p_message => '...Flow Instance Variables action: %s'
+         , p0        => p_process.attribute_04
+      );
+
+      apex_debug.info(
+           p_message => '...Manage Flow Instance Variables using: %s'
+         , p0        => p_process.attribute_05
+      );
+
+      if p_process.attribute_05 = 'item' then 
+         apex_debug.info(
+            p_message => '......Flow Instance Variable(s): %s'
+            , p0        => p_process.attribute_06
+         );
+         apex_debug.info(
+            p_message => '......APEX item(s): %s'
+            , p0        => p_process.attribute_07
+         );
+      elsif p_process.attribute_01 = 'sql'  then
+         apex_debug.info(
+            p_message => '......Query'
+         );
+         apex_debug.log_long_message(
+              p_message => p_process.attribute_08
+            , p_level   => apex_debug.c_log_level_info
+         );
+      elsif p_process.attribute_01 = 'json'  then
+         apex_debug.info(
+            p_message => '......JSON'
+         );
+         apex_debug.log_long_message(
+              p_message => p_process.attribute_09
+            , p_level   => apex_debug.c_log_level_info
+         );
+      end if;
+
+      apex_debug.info(
+           p_message => ' < Process plug-in attributes'
+      );
+   end log_attributes;
+   
    function execution (
       p_process  in  apex_plugin.t_process
     , p_plugin   in  apex_plugin.t_plugin
@@ -13,7 +85,7 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_attribute2 p_process.attribute_02%type := p_process.attribute_02; -- Process ID (APEX item)
       l_attribute3 p_process.attribute_03%type := p_process.attribute_03; -- SQL query (1 column process id)
       l_attribute4 p_process.attribute_04%type := p_process.attribute_04; -- Action (get/set)
-      l_attribute5 p_process.attribute_05%type := p_process.attribute_05; -- Set Process Variables using
+      l_attribute5 p_process.attribute_05%type := p_process.attribute_05; -- Manage Process Variables using
       l_attribute6 p_process.attribute_06%type := p_process.attribute_06; -- Process Variable(s) Name(s)
       l_attribute7 p_process.attribute_07%type := p_process.attribute_07; -- APEX item(s)
       l_attribute8 p_process.attribute_08%type := p_process.attribute_08; -- JSON
@@ -52,14 +124,16 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_types_different number;
    begin
 
-    --debug
-      if apex_application.g_debug then
-         apex_plugin_util.debug_process(
-            p_plugin   => p_plugin
-          , p_process  => p_process
-         );
-      end if;
+      --debug
+      log_attributes(
+         p_plugin   => p_plugin
+       , p_process  => p_process
+      );
 
+
+      apex_debug.info(
+         p_message => '...Retrieve FLow Instance Id'
+      );
       -- Get process Id and subflow Id
       if ( l_attribute1 = 'item' ) then
          l_prcs_id  := apex_util.get_session_state(p_item => l_attribute2);
@@ -75,8 +149,18 @@ create or replace package body flow_plugin_manage_instance_variables as
          apex_exec.close(l_context);
       end if;
 
-      apex_debug.message(p_message =>'Process id %s', p0=> l_prcs_id);
+      apex_debug.info(
+           p_message => '...Flow Instance Id is %s'
+         , p0        => l_prcs_id
+      );
 
+      apex_debug.info(
+           p_message => '...Start %s Flow Instance Variable(s)'
+         , p0        => case l_attribute4
+                           when 'set' then 'setting'
+                           when 'get' then 'getting'
+                        end
+      );
       --Set process variables
       if ( l_attribute5 in (
                 'json', 'sql'
@@ -97,6 +181,7 @@ create or replace package body flow_plugin_manage_instance_variables as
             apex_exec.close(l_context);
          end if;
 
+         
          if ( l_attribute4 = 'set' ) then
             --Check variables types
             select count(*)
@@ -128,6 +213,20 @@ create or replace package body flow_plugin_manage_instance_variables as
             l_item_name        := l_process_variable.get_string('item');
             case l_prcs_var_type
                when 'varchar2' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prcs_var_name
+                     , p1 => l_prcs_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_string('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_vc2(
+                                              pi_prcs_id  => l_prcs_id
+                                            , pi_var_name => l_prcs_var_name
+                                         )
+                             end 
+                  );
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
@@ -137,14 +236,28 @@ create or replace package body flow_plugin_manage_instance_variables as
                         );
                      when 'get' then
                         apex_util.set_session_state( 
-                           p_name  => l_item_name
+                             p_name  => l_item_name
                            , p_value => flow_process_vars.get_var_vc2(
-                                          pi_prcs_id  => l_prcs_id
-                                          , pi_var_name => l_prcs_var_name
-                                       ) 
+                                             pi_prcs_id  => l_prcs_id
+                                           , pi_var_name => l_prcs_var_name
+                                        ) 
                         );
                   end case;
                when 'number' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prcs_var_name
+                     , p1 => l_prcs_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_number('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_num(
+                                              pi_prcs_id  => l_prcs_id
+                                            , pi_var_name => l_prcs_var_name
+                                         )
+                             end 
+                  );
                   case l_attribute4
                      when 'set' then
                         l_json_element := l_process_variable.get('value');
@@ -152,20 +265,34 @@ create or replace package body flow_plugin_manage_instance_variables as
                            raise e_invalid_number;
                         end if;
                         flow_process_vars.set_var(
-                        pi_prcs_id   => l_prcs_id
-                        , pi_var_name  => l_prcs_var_name
-                        , pi_num_value => l_process_variable.get_number('value')
+                             pi_prcs_id   => l_prcs_id
+                           , pi_var_name  => l_prcs_var_name
+                           , pi_num_value => l_process_variable.get_number('value')
                         );
                      when 'get' then
                         apex_util.set_session_state( 
-                           p_name  => l_item_name
+                             p_name  => l_item_name
                            , p_value => flow_process_vars.get_var_num(
                                              pi_prcs_id  => l_prcs_id
-                                          , pi_var_name => l_prcs_var_name
-                                       ) 
+                                           , pi_var_name => l_prcs_var_name
+                                        ) 
                         );
                   end case;
                when 'date' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prcs_var_name
+                     , p1 => l_prcs_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_date('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_date(
+                                              pi_prcs_id  => l_prcs_id
+                                            , pi_var_name => l_prcs_var_name
+                                         )
+                             end 
+                  );
                   case l_attribute4
                      when 'set' then
                         l_json_element := l_process_variable.get('value');
@@ -173,20 +300,34 @@ create or replace package body flow_plugin_manage_instance_variables as
                            raise e_invalid_date;
                         end if;
                         flow_process_vars.set_var(
-                        pi_prcs_id    => l_prcs_id
+                          pi_prcs_id    => l_prcs_id
                         , pi_var_name   => l_prcs_var_name
                         , pi_date_value => l_process_variable.get_date('value')
                         );
                      when 'get' then
                          apex_exec.execute_plsql('begin
-                           :' || l_item_name || q'[ := ']' || flow_process_vars.get_var_date(
+                           :' || l_item_name || ' := ' || flow_process_vars.get_var_date(
                                                 pi_prcs_id  => l_prcs_id
                                              , pi_var_name => l_prcs_var_name
-                                          ) || q'[';
-                           end;]'
+                                          ) || ';
+                           end;'
                         );
                   end case;
                when 'clob' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prcs_var_name
+                     , p1 => l_prcs_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_clob('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_clob(
+                                              pi_prcs_id  => l_prcs_id
+                                            , pi_var_name => l_prcs_var_name
+                                         )
+                             end 
+                  );
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
@@ -274,6 +415,20 @@ create or replace package body flow_plugin_manage_instance_variables as
             
             case l_prcs_var_type 
                when 'VARCHAR2' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prcs_var_name
+                     , p1 => l_prcs_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then apex_util.get_session_state( p_item => l_item_name )
+                                 when 'get' 
+                                    then flow_process_vars.get_var_vc2(
+                                              pi_prcs_id  => l_prcs_id
+                                            , pi_var_name => l_prcs_var_name
+                                         )
+                             end 
+                  );
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
@@ -292,6 +447,20 @@ create or replace package body flow_plugin_manage_instance_variables as
                   end case;
 
                when 'NUMBER' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prcs_var_name
+                     , p1 => l_prcs_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                                 when 'get' 
+                                    then flow_process_vars.get_var_num(
+                                              pi_prcs_id  => l_prcs_id
+                                            , pi_var_name => l_prcs_var_name
+                                         )
+                             end 
+                  );
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
@@ -309,6 +478,22 @@ create or replace package body flow_plugin_manage_instance_variables as
                         );
                   end case;
                when 'DATE' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prcs_var_name
+                     , p1 => l_prcs_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then apex_util.get_session_state( p_item => l_item_name )
+                                 when 'get' 
+                                    then to_char(
+                                            flow_process_vars.get_var_date(
+                                               pi_prcs_id  => l_prcs_id
+                                             , pi_var_name => l_prcs_var_name
+                                            ), l_items(l_item_name).format_mask 
+                                          )
+                             end 
+                  );
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
@@ -327,6 +512,20 @@ create or replace package body flow_plugin_manage_instance_variables as
                         );
                   end case;
             when 'CLOB' then
+               apex_debug.info(
+                  p_message => '......Name: %s - Type: %s - Value %s'
+                  , p0 => l_prcs_var_name
+                  , p1 => l_prcs_var_type
+                  , p2 => case l_attribute4
+                             when 'set' 
+                                then apex_util.get_session_state( p_item => l_item_name )
+                              when 'get' 
+                                 then flow_process_vars.get_var_clob(
+                                           pi_prcs_id  => l_prcs_id
+                                         , pi_var_name => l_prcs_var_name
+                                      )
+                          end 
+               );
                case l_attribute4
                   when 'set' then
                      flow_process_vars.set_var(
@@ -346,6 +545,13 @@ create or replace package body flow_plugin_manage_instance_variables as
             end case;
          end loop;
       end if;
+      apex_debug.info(
+           p_message => '...End %s Flow Instance Variable(s)'
+         , p0        => case l_attribute4
+                           when 'set' then 'setting'
+                           when 'get' then 'getting'
+                        end 
+      );
 
       return l_result;
    exception 
