@@ -13,7 +13,7 @@ procedure set_var
 , pi_vc2_value in flow_process_variables.prov_var_vc2%type
 );
 
-opprocedure set_var
+procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_num_value in flow_process_variables.prov_var_num%type
