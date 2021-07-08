@@ -13,7 +13,11 @@ as
   is
     l_ret flow_processes.prcs_id%type;
   begin
-    apex_debug.message(p_message => 'Begin flow_create', p_level => 3) ;
+    apex_debug.enter
+    ('create_process'
+    , 'dgrm_id', p_dgrm_id
+    , 'p_prcs_name', p_prcs_name 
+    );
     insert into flow_processes prcs
           ( prcs.prcs_name
           , prcs.prcs_dgrm_id
@@ -32,8 +36,11 @@ as
     ;
     commit;
 
-    apex_debug.message(p_message => 'End flow_create', p_level => 3) ;
-
+    apex_debug.info
+    ( p_message => 'Flow Instance created.  DGRM_ID : %0, PRCS_ID : %1'
+    , p0 => p_dgrm_id
+    , p1 => l_ret 
+    );
     return l_ret;
   end create_process;
 
@@ -49,7 +56,10 @@ as
     l_new_subflow_status    flow_subflows.sbfl_status%type;
   begin
       -- l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
-    apex_debug.message(p_message => 'Starting Process '||p_process_id, p_level => 4) ;
+    apex_debug.enter
+    ('start_process'
+    , 'Process_ID', p_process_id 
+    );
     -- check process exists, is not running, and lock it
     begin
       select prcs.prcs_status
@@ -104,7 +114,10 @@ as
         , p_display_location => apex_error.c_on_error_page
         );
     end;
-    apex_debug.message(p_message => 'Found starting object '||l_objt_bpmn_id, p_level => 4) ;
+    apex_debug.info
+    ( p_message => 'Found starting object %0'
+    , p0 =>l_objt_bpmn_id
+    );
     -- mark process as running
     update flow_processes prcs
        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
@@ -132,7 +145,10 @@ as
       , p_dgrm_id => l_dgrm_id
       );
 
-    apex_debug.message(p_message => 'Initial Subflow created '||l_main_subflow_id, p_level => 4) ;
+    apex_debug.info
+    ( p_message => 'Initial Subflow created %0'
+    , p0 => l_main_subflow_id
+    );
 
     -- commit the subflow creation
     commit;
@@ -176,8 +192,10 @@ as
             for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2
     ;
   begin
-    apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
-  
+    apex_debug.enter
+    ( 'reset_process'
+    , 'process_id', p_process_id
+    );
     -- lock all objects
     begin
       open c_lock_all;
@@ -241,7 +259,10 @@ as
        order by sbfl.sbfl_process_level, sbfl.sbfl_id
          for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2;
   begin
-    apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
+    apex_debug.enter
+    ( 'delete_process'
+    , 'process_id', p_process_id
+    );
     begin 
       -- lock all timers, logs, subflows and the process
       open c_lock_all;

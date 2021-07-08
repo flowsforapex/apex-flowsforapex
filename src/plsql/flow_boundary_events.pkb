@@ -12,6 +12,10 @@ is
     l_new_non_int_timer_sbfl  flow_subflows.sbfl_id%type;
     l_parent_tag              varchar2(50);
   begin
+    apex_debug.enter 
+    ( 'set_boundary_timers'
+    , 'subflow', p_subflow_id
+    );
     begin
       for boundary_timers in 
         (
@@ -87,6 +91,10 @@ is
     l_non_int_timer_sbfl  flow_subflows.sbfl_id%type;
     l_return_code         number;
   begin
+    apex_debug.enter 
+    ( 'unset_boundary_timers'
+    , 'subflow', p_subflow_id
+    );
     begin
       for boundary_timers in 
         (
@@ -174,6 +182,11 @@ is
     l_parent_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
     l_child_sbfl             flow_subflows.sbfl_id%type;
   begin
+    apex_debug.enter 
+    ( 'handle_interrupting_boundary_event'
+    , 'subflow', p_subflow_id
+    );
+
     select boundary_objt.objt_bpmn_id
          , main_objt.objt_tag_name
          , main_objt.objt_bpmn_id
@@ -281,6 +294,10 @@ is
   l_parent_processs_level flow_subflows.sbfl_process_level%type;
   l_parent_dgrm_id        flow_diagrams.dgrm_id%type;
 begin 
+  apex_debug.enter 
+  ( 'process_boundary_event'
+  , 'subflow', p_subflow_id
+  );
   -- set the throwing event to completed
   flow_engine_util.log_step_completion   
   ( p_process_id => p_process_id
@@ -353,7 +370,11 @@ begin
       ( p_process_id => p_process_id
       , p_subflow_id => l_new_sbfl
       );
-      apex_debug.message(p_message => 'process_boundary_event.  target_objt_tag :'||p_step_info.target_objt_subtag, p_level => 3) ;
+      apex_debug.message
+      (
+        p_message => 'process_boundary_event.  target_objt_tag :'||p_step_info.target_objt_subtag
+      , p_level => 3
+      );
   
       if p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_intermediate_throw_event  
       then 

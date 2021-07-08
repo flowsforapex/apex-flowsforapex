@@ -196,8 +196,11 @@ procedure get_number_of_connections
   is 
     l_ret flow_subflows.sbfl_id%type;
   begin
-    apex_debug.message(p_message => 'Begin subflow_start', p_level => 3) ;
-    apex_debug.message(p_message => 'sbfl_dgrm_id: '||p_dgrm_id, p_level => 3) ;
+    apex_debug.enter 
+    ( 'subflow_start'
+    , 'Process', p_process_id
+    , 'Parent Subflow', p_parent_subflow 
+    );
     insert
       into flow_subflows
          ( sbfl_prcs_id
@@ -225,7 +228,6 @@ procedure get_number_of_connections
          )
     returning sbfl_id into l_ret
     ;
-    apex_debug.message(p_message => 'Subflow '||l_ret||' inserted', p_level => 3) ;
     if p_new_proc_level then
         -- starting new subprocess.  Set sbfl_process_level to new sbfl_id
         update flow_subflows
@@ -233,7 +235,11 @@ procedure get_number_of_connections
          where sbfl_id = l_ret
         ;
     end if;
-    apex_debug.message(p_message => 'Subflow '||l_ret||' started', p_level => 3) ;
+    apex_debug.info
+    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1'
+    , p0        => p_process_id
+    , p1        => l_ret 
+    );
     return l_ret;
   end subflow_start;
 
@@ -244,7 +250,11 @@ procedure get_number_of_connections
   is
     l_process_level   flow_subflows.sbfl_process_level%type;
   begin
-    apex_debug.message(p_message => 'Begin flow_terminate_level for prcs '||p_process_id||' subflow '||p_subflow_id, p_level => 3) ;
+    apex_debug.enter
+    ( 'flow_terminate_level'
+    , 'Process',  p_process_id
+    , 'Subflow ', p_subflow_id
+    );
     --
     begin
       select sbfl.sbfl_process_level
@@ -282,6 +292,7 @@ procedure get_number_of_connections
     where sbfl_process_level = l_process_level 
       and sbfl_prcs_id = p_process_id
       ;
+    apex_debug.info ( 'Process %0 : All subflows at process level %1 terminated', p_process_id, l_process_level);
   end flow_terminate_level;
 
   procedure subflow_complete
@@ -298,8 +309,10 @@ procedure get_number_of_connections
     l_parent_subflow_last_completed   flow_subflows.sbfl_last_completed%type;
     l_parent_subflow_current          flow_subflows.sbfl_current%type;
   begin
-    apex_debug.message(p_message => 'Begin subflow_complete', p_level => 3) ;
-    
+    apex_debug.enter
+    ( 'subflow_complete'
+    , 'Subflow' , p_subflow_id 
+    );
     select sbfl.sbfl_sbfl_id
          , sbfl.sbfl_current
          , sbfl.sbfl_status
@@ -366,6 +379,12 @@ procedure get_number_of_connections
   is 
     l_sbfl_id   flow_subflows.sbfl_id%type;
   begin 
+
+    apex_debug.enter 
+    ( 'lock_subflow'
+    , 'Subflow', p_subflow_id 
+    );
+
     select sbfl.sbfl_id
       into l_sbfl_id
       from flow_subflows sbfl

@@ -133,7 +133,7 @@ as
           , p_subflow_id => completed_subflows.sbfl_id
           );
         end loop;
-        -- execute post-merge variable expressions here (note for next feature)
+        -- execute post-merge variable expressions here (note for feature/variable-expressions )
       
         --mark parent split subflow ready to restart
         update flow_subflows sbfl
@@ -213,7 +213,10 @@ as
                     )
     loop
       -- path is included in list of chosen forward paths.
-      apex_debug.message(p_message => 'starting parallel flow for '||p_step_info.target_objt_tag, p_level => 3) ;
+      apex_debug.info
+      ( p_message => 'starting parallel flow for %0'
+      , p0        => p_step_info.target_objt_tag
+      );
 
       l_new_subflow.sbfl_id :=
         flow_engine_util.subflow_start
@@ -272,8 +275,12 @@ as
     l_new_subflows              t_new_sbfls := t_new_sbfls();
     l_new_subflow               t_new_sbfl_rec;
   begin
-    apex_debug.message(p_message => 'Next Step is '||p_step_info.target_objt_tag||' '||p_step_info.target_objt_ref, p_level => 4) ;
-    -- get numbrer of forward and backward connections
+    apex_debug.enter 
+    ( 'process_para_incl_Gateway'
+    , 'p_step_info.target_objt_tag' , p_step_info.target_objt_tag
+    , 'p_step_info.target_objt_ref' , p_step_info.target_objt_ref
+    );
+    -- get number of forward and backward connections
     flow_engine_util.get_number_of_connections
     ( pi_dgrm_id => p_step_info.dgrm_id
     , pi_target_objt_id => p_step_info.target_objt_id
@@ -286,7 +293,11 @@ as
     l_sbfl_id  := p_subflow_id;
 
     if l_num_back_connections > 1  then
-      apex_debug.message(p_message => 'Merging '||p_step_info.target_objt_tag||' '||p_step_info.target_objt_ref, p_level => 4) ;       
+      apex_debug.info
+      ( p_message => '%0 Gateway Merging %1'
+      , p0        => p_step_info.target_objt_tag
+      , p1        => p_step_info.target_objt_ref
+      );  
       -- we have merging gateway.  do the merge. returns 'wait' if flow is waiting at gateway, 'proceed' if merged
       l_gateway_forward_status := gateway_merge (p_process_id, p_subflow_id, p_sbfl_info, p_step_info);
 
@@ -298,11 +309,19 @@ as
     if l_gateway_forward_status = 'proceed' then 
       if l_num_forward_connections > 1 then
         -- we have splitting gateway going forward
-        apex_debug.message(p_message => 'Splitting '||p_step_info.target_objt_tag||' '||p_step_info.target_objt_ref, p_level => 4) ;       
+        apex_debug.info 
+        ( p_message => '%0 Gateway Splitting %1'
+        , p0 => p_step_info.target_objt_tag
+        , p1 => p_step_info.target_objt_ref
+        );       
         case p_step_info.target_objt_tag
         when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
           l_forward_routes := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
-          apex_debug.message(p_message => 'Forward routes for inclusiveGateway '||p_step_info.target_objt_ref ||' :'||l_forward_routes, p_level => 4) ;
+          apex_debug.info
+          ( p_message => 'Forward routes for inclusiveGateway %0 : %1'
+          , p0 => p_step_info.target_objt_ref
+          , p1 => l_forward_routes
+          );
         when flow_constants_pkg.gc_bpmn_gateway_parallel then 
           l_forward_routes := 'parallel';  -- just needs to be some not null string
         end case;
@@ -345,10 +364,12 @@ as
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_back_connections      number;   -- number of connections back from object
     l_forward_route             varchar2(2000);
-    -- l_gateway_op_type           varchar2(10);
   begin
     -- handles opening and closing and closing and reopening
-    apex_debug.message(p_message => 'Begin process_exclusiveGateway for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+    apex_debug.enter 
+    ( 'process_exclusiveGateway'
+    , 'p_step_info.target_objt_tag' , p_step_info.target_objt_tag
+    );
     flow_engine_util.get_number_of_connections
     ( pi_dgrm_id => p_step_info.dgrm_id
     , pi_target_objt_id => p_step_info.target_objt_id
@@ -392,11 +413,11 @@ as
     -- eventGateway can have multiple inputs and outputs, but there is no waiting, etc.
     -- incoming subflow continues on the first output path.
     -- additional output paths create new subflows
-    apex_debug.message
+    apex_debug.enter
     (
-      p_message => 'Begin process_EventBasedGateway for object %s'
-    , p0        => p_step_info.target_objt_ref
-    , p_level => 4
+      p_routine_name => 'process_EventBasedGateway'
+    , p_name01       => 'p_step_info.target_objt_ref'
+    , p_value01      => p_step_info.target_objt_ref
     );
     -- mark parent flow as split
     update flow_subflows sbfl

@@ -217,7 +217,7 @@ as
         when others then
         apex_debug.error
         (
-            p_message => 'Timer with ID %s did not work. Check logs.'
+          p_message => 'Timer with ID %s did not work. Check logs.'
         , p0        => l_timers.timr_id
         );
         update flow_timers
@@ -413,7 +413,7 @@ as
     );
     apex_debug.info
     (
-      p_message => 'starting timer on subflow %s, type %s, def %s'
+      p_message => 'starting timer on subflow %0, type %1, def %2'
     , p0        => pi_sbfl_id
     , p1        => l_timer_type
     , p2        => l_timer_def

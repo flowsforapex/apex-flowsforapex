@@ -25,10 +25,10 @@ as
     )
   is
   begin
-    apex_debug.message 
-    ( p_message => 'Begin process_task for object: '||p_step_info.target_objt_tag
-    , p_level => 3) 
-    ;
+    apex_debug.enter 
+    ( 'process_task'
+    , 'object: ', p_step_info.target_objt_tag 
+    );
     set_task_status_running
     ( p_sbfl_info => p_sbfl_info
     , p_sbfl_current => p_step_info.target_objt_ref
@@ -51,9 +51,9 @@ as
     -- current implementation is limited to one userTask type, which is to run a user defined APEX page
     -- future userTask types could include parameterised, standarised template pages , e.g., for approvals??  template scripts ??
     -- current implementation is implemented via the process inbox view.  
-    apex_debug.message
-    ( p_message => 'Begin process_userTask for object: '||p_step_info.target_objt_tag
-    , p_level => 3
+    apex_debug.enter 
+    ( 'process_userTask'
+    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
 
     set_task_status_running
@@ -75,9 +75,9 @@ as
   )
   is 
   begin
-    apex_debug.info
-    ( p_message => 'Begin process_scriptTask for object: %s'
-    , p0        => p_step_info.target_objt_tag
+    apex_debug.enter 
+    ( 'process_scriptTask'
+    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
     -- current implementation is limited to one scriptTask type, which is to run a user defined PL/SQL script
     -- future scriptTask types could include standarised template scripts ??
@@ -113,10 +113,9 @@ as
   )
   is 
   begin
-    apex_debug.message
-    ( p_message => 'Begin process_serviceTask for object: %s'
-    , p0        => p_step_info.target_objt_tag
-    , p_level   => apex_debug.c_log_level_app_enter
+    apex_debug.enter 
+    ( 'process_serviceTask'
+    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
 
     set_task_status_running
@@ -153,11 +152,10 @@ as
   )
   is 
   begin
-    apex_debug.message
-    (p_message => 'Begin process_manualTask for object: '||p_step_info.target_objt_tag
-    , p_level => 3
+    apex_debug.enter 
+    ('process_manualTask'
+    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
-
     set_task_status_running
     ( p_sbfl_info => p_sbfl_info
     , p_sbfl_current => p_step_info.target_objt_ref

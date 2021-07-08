@@ -93,6 +93,11 @@ end flow_process_link_event;
     l_exit_type             flow_objects.objt_sub_tag_name%type default null;
     l_remaining_subflows    number;
   begin
+    apex_debug.enter 
+    ( 'process_endEvent'
+    , 'Process', p_process_id
+    , 'Subflow', p_subflow_id
+    );
     --next step can be either end of process or sub-process returning to its parent
     -- get parent subflow
     l_sbfl_id_par := flow_engine_util.get_subprocess_parent_subflow
@@ -109,7 +114,10 @@ end flow_process_link_event;
 
     if p_sbfl_info.sbfl_process_level = 0 then   
       -- in a top level process
-      apex_debug.message(p_message => 'Next Step is Process End '||p_step_info.target_objt_ref, p_level => 4) ;
+      apex_debug.info 
+      ( p_message => 'Next Step is Process End %0'
+      , p0        => p_step_info.target_objt_ref 
+      );
       -- check for Terminate sub-Event
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
             flow_engine_util.flow_terminate_level(p_process_id, p_subflow_id);
@@ -133,17 +141,19 @@ end flow_process_link_event;
              , prcs.prcs_last_update = systimestamp
          where prcs.prcs_id = p_process_id
         ;
-
-        apex_debug.message(p_message => 'Process Completed: Process '||p_process_id, p_level => 4) ;
+        apex_debug.info 
+        ( p_message => 'Process Completed: Process %0'
+        , p0        => p_process_id 
+        );
       end if;
     else  
       -- in a sub-process
-      apex_debug.message
-      (p_message => 'Next Step is Sub-Process End '||p_step_info.target_objt_ref||
-                    ' of type '||p_step_info.target_objt_subtag||
-                    ' Resuming Parent Subflow : '||l_sbfl_id_par, p_level => 4
+      apex_debug.info
+      ( p_message => 'Next Step is Sub-Process End %0 of type %1 . Parent Subflow : %2'
+      , p0        => p_step_info.target_objt_ref
+      , p1        => p_step_info.target_objt_subtag
+      , p2        => l_sbfl_id_par
       ); 
-
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_error_event_definition then
         -- error exit event - return to errorBoundaryEvent if it exists and if not to normal exit
         begin
@@ -225,7 +235,7 @@ end flow_process_link_event;
         ( p_process_id => p_process_id
         , p_subflow_id => l_sbfl_id_par
         );  
-        apex_debug.message(p_message => 'SubProcess Completed: Process level '||p_sbfl_info.sbfl_process_level, p_level => 4) ;
+        apex_debug.info ('SubProcess Completed: Process level %0', p_sbfl_info.sbfl_process_level );
 
       end if;
     end if; 
@@ -241,7 +251,10 @@ end flow_process_link_event;
     l_target_objt_sub        flow_objects.objt_bpmn_id%type; --target object in subprocess
     l_sbfl_id_sub            flow_subflows.sbfl_id%type;   
   begin
-    apex_debug.message(p_message => 'Begin process_subprocess for object: '||p_step_info.target_objt_tag, p_level => 3) ;
+    apex_debug.enter 
+    ( 'process_subprocess'
+    , 'object', p_step_info.target_objt_tag 
+    );
     begin
        select objt.objt_bpmn_id
          into l_target_objt_sub
@@ -314,11 +327,11 @@ end flow_process_link_event;
     -- currently only supports timer and without checking its type is timer
     -- but this will have a case type = timer, emailReceive. ....
     -- this is currently just a stub.
-    apex_debug.info
-    (
-      p_message => 'Begin process_IntermediateCatchEvent %s'
-    , p0        => p_step_info.target_objt_ref
+    apex_debug.enter
+    ( 'process_IntermediateCatchEvent'
+    , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
     );
+
     if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
       -- we have a timer.  Set status to waiting and schedule the timer.
       update flow_subflows sbfl
@@ -360,7 +373,10 @@ end flow_process_link_event;
   begin
     -- currently only supports none Intermediate throw event (used as a process state marker)
     -- but this might later have a case type = timer, message, etc. ....
-    apex_debug.message(p_message => 'Begin process_IntermediateThrowEvent '||p_step_info.target_objt_ref, p_level => 4) ;
+    apex_debug.enter 
+    ('process_IntermediateThrowEvent'
+    , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
+    );
 
     if p_step_info.target_objt_subtag is null then
       -- a none event.  Make the ITE the current event then just call flow_complete_step.  
@@ -434,7 +450,6 @@ is
     l_parent_sbfl           flow_subflows.sbfl_id%type;
     l_return                varchar2(50);
 begin
-    apex_debug.message(p_message => 'Begin handle_event_gateway_event', p_level => 3) ;
     -- called from any event that has cleared (so expired timer, received message or signal, etc) to move eBG forwards
     -- procedure has to:
     -- - check that gateway has not already been cleared by another event
@@ -442,6 +457,13 @@ begin
     -- - stop / terminate all of the child subflows that were created to wait for other events
     -- - including making sure any timers, message receivers, etc., are cleared up.
 
+    -- note that if this is called from a timer, you might not be in an APEX session so might not get debug
+    apex_debug.enter
+    ( 'handle_event_gateway_event' 
+    , 'p_process_id', p_process_id
+    , 'parent_subflow', p_parent_subflow_id
+    , 'p_cleared_subflow_id', p_cleared_subflow_id
+    );
     begin
       select sbfl.sbfl_id
         into l_parent_sbfl
@@ -533,7 +555,7 @@ procedure handle_intermediate_catch_event
   ) 
 is
 begin
-  apex_debug.message(p_message => 'Begin handle_intermediate_catch_event', p_level => 3) ;
+  apex_debug.enter('handle_intermediate_catch_event', 'Subflow', p_subflow_id);
   update flow_subflows sbfl 
       set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
         , sbfl.sbfl_last_update = systimestamp
@@ -558,7 +580,10 @@ is
   l_dgrm_id               flow_diagrams.dgrm_id%type;
   l_sbfl_current          flow_subflows.sbfl_current%type;
 begin
-  apex_debug.message(p_message => 'Begin flow_handle_event', p_level => 3) ;
+  apex_debug.enter 
+  ( 'flow_handle_event'
+  , 'Subflow', p_subflow_id
+  );
   -- look at current event to check if it is a startEvent.  (this also has no previous event!)
   -- if not, examine previous event on the subflow to determine if it was eventBasedGateway (eBG)
   -- an intermediateCatchEvent (iCE) following an eBG will always have exactly 1 input (from the eBG)
@@ -661,12 +686,10 @@ is
   l_dgrm_id               flow_diagrams.dgrm_id%type;
  -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
-  apex_debug.message
-  (
-    p_message => 'Begin flow_complete_step using Process ID %s and Subflow ID %s'
-  , p0        => p_process_id
-  , p1        => p_subflow_id
-  , p_level   => 3
+  apex_debug.enter 
+  ( 'flow_complete_step'
+  , 'Process ID',  p_process_id
+  , 'Subflow ID', p_subflow_id
   );
   --l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info and lock it
@@ -739,7 +762,10 @@ begin
       and l_sbfl_rec.sbfl_has_events is not null )            -- subflow has events attached
   then
       -- 
-      apex_debug.message(p_message => 'boundary event cleanup triggered for subflow '||p_subflow_id, p_level => 4) ;
+      apex_debug.info 
+      ( p_message => 'boundary event cleanup triggered for subflow %0'
+      , p0        => p_subflow_id
+      );
       flow_boundary_events.unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
   -- release subflow reservation
@@ -760,7 +786,10 @@ begin
   
   -- end of post- phase for previous step
   commit;
-  apex_debug.message(p_message => 'End of -post phase (committed) on subflow '||p_subflow_id||'. Moving onto Next Step Pre-Phase', p_level => 4) ;
+  apex_debug.info
+  ( p_message => 'End of Post Phase (committed) on subflow %0. Moving onto Pre-Phase of Next Step '
+  , p0        => p_subflow_id
+  );
 
   -- start of pre-phase for next step
 
@@ -771,18 +800,29 @@ begin
   );
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
 
-  apex_debug.message(p_message => 'Before CASE %s', p0 => coalesce(l_step_info.target_objt_tag, '!NULL!'), p_level => 3);
-  apex_debug.message(p_message => 'Before CASE : l_step_info.dgrm_id : ' || l_step_info.dgrm_id, p_level => 4) ;
-  apex_debug.message(p_message => 'Before CASE : l_step_info.source_objt_tag : ' || l_step_info.source_objt_tag, p_level => 4) ;
-  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_id : ' || l_step_info.target_objt_id, p_level => 4) ;
-  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_ref : ' || l_step_info.target_objt_ref, p_level => 4) ;
-  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_tag : ' || l_step_info.target_objt_tag, p_level => 4) ;
-  apex_debug.message(p_message => 'Before CASE : l_step_info.target_objt_subtag : ' || l_step_info.target_objt_subtag, p_level => 4) ;
-  
-  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_id : ' || l_sbfl_rec.sbfl_id, p_level => 4) ;    
-  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_last_completed : ' || l_sbfl_rec.sbfl_last_completed, p_level => 4) ;    
-  apex_debug.message(p_message => 'Before CASE : l_sbfl_rec.sbfl_prcs_id : ' || l_sbfl_rec.sbfl_prcs_id, p_level => 4) ;    
-   
+  apex_debug.info 
+  ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
+  , p0        => coalesce(l_step_info.target_objt_tag, '!NULL!') 
+  );
+  apex_debug.trace
+  ( p_message => 'Next Step Info - dgrm_id : %0, source_objt_tag : %1, target_objt_id : %2, target_objt_ref : %3'
+  , p0  => l_step_info.dgrm_id
+  , p1  => l_step_info.source_objt_tag
+  , p2  => l_step_info.target_objt_id
+  , p3  => l_step_info.target_objt_ref
+  );
+  apex_debug.trace
+  ( p_message => 'Next Step Info - target_objt_tag : %0, target_objt_subtag : %1'
+  , p0 => l_step_info.target_objt_tag
+  , p1 => l_step_info.target_objt_subtag
+  );
+  apex_debug.trace
+  ( p_message => 'Next Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
+  , p0 => l_sbfl_rec.sbfl_id
+  , p1 => l_sbfl_rec.sbfl_last_completed
+  , p2 => l_sbfl_rec.sbfl_prcs_id
+  );    
+
   case (l_step_info.target_objt_tag)
     when flow_constants_pkg.gc_bpmn_end_event then  --next step is either end of process or sub-process returning to its parent
       flow_engine.process_endEvent

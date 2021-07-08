@@ -14,7 +14,12 @@ as
     e_reserved_by_other     exception;
     e_reserved_by_same      exception;
   begin
-    apex_debug.message(p_message => 'Begin reserve_step. Subflow '||p_subflow_id||' in Process '||p_process_id||' Reservation:'||p_reservation, p_level => 3) ;
+    apex_debug.enter
+    ('reserve_step'
+    , 'Subflow ', p_subflow_id
+    , 'Process ', p_process_id
+    , 'Reservation', p_reservation
+    );
     -- check step is not already reserved
     select sbfl_reservation
       into l_existing_reservation
@@ -73,7 +78,11 @@ as
   is
     l_existing_reservation  flow_subflows.sbfl_reservation%type;
   begin
-    apex_debug.message(p_message => 'Begin release_step. Subflow '||p_subflow_id||' in Process '||p_process_id, p_level => 3) ;
+    apex_debug.enter
+    ( 'release_step'
+    , 'Subflow ', p_subflow_id
+    , 'Process ', p_process_id 
+    );
     -- subflow should already be locked when calling internally
     if not p_called_internally then 
       -- lock  subflow if called externally
