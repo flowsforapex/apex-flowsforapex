@@ -3,9 +3,10 @@ as
    select sbfl.sbfl_id
         , sbfl.sbfl_sbfl_id
         , sbfl.sbfl_prcs_id
-        , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- process instance ref
+        , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- flow instance ref
         , prcs.prcs_dgrm_id as sbfl_dgrm_id
-        , dgrm.dgrm_name as sbfl_dgrm_name  -- business process name
+        , sbfl.sbfl_dgrm_id as sbfl_sbfl_dgrm_id -- sbfl level dgrm id
+        , dgrm.dgrm_name as sbfl_dgrm_name  -- flow name
         , dgrm.dgrm_version as sbfl_dgrm_version
         , dgrm.dgrm_status as sbfl_dgrm_status
         , dgrm.dgrm_category as sbfl_dgrm_category

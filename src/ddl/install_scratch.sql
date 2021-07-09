@@ -130,6 +130,7 @@ CREATE TABLE flow_subflows (
         GENERATED ALWAYS AS IDENTITY ( START WITH 1 NOCACHE )
     NOT NULL,
     sbfl_prcs_id          NUMBER NOT NULL,
+    sbfl_dgrm_id          NUMBER NOT NULL,
     sbfl_sbfl_id          NUMBER,
     sbfl_process_level    NUMBER,
     sbfl_starting_object  VARCHAR2(50 CHAR),
@@ -229,6 +230,10 @@ ALTER TABLE flow_subflows
     ADD CONSTRAINT sbfl_parent_sbfl_fk FOREIGN KEY ( sbfl_sbfl_id )
         REFERENCES flow_subflows ( sbfl_id )
             ON DELETE SET NULL;
+
+ALTER TABLE flow_subflows
+    ADD CONSTRAINT sbfl_dgrm_fk FOREIGN KEY ( sbfl_dgrm_id )
+        REFERENCES flow_diagrams ( dgrm_id );
 
 ALTER TABLE flow_subflows
     ADD CONSTRAINT sbfl_prcs_fk FOREIGN KEY ( sbfl_prcs_id )

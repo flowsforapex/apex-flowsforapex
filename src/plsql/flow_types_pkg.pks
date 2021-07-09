@@ -11,5 +11,14 @@ as
   subtype t_expr_type          is varchar2(130 char);
   subtype t_expr_phase         is varchar2(4 char);
 
+  type flow_step_info is record
+  ( dgrm_id            flow_diagrams.dgrm_id%type
+  , source_objt_tag    flow_objects.objt_tag_name%type
+  , target_objt_id     flow_objects.objt_id%type
+  , target_objt_ref    flow_objects.objt_bpmn_id%type
+  , target_objt_tag    flow_objects.objt_tag_name%type
+  , target_objt_subtag flow_objects.objt_sub_tag_name%type
+  );
+
 end flow_types_pkg;
 /

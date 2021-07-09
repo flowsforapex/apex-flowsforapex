@@ -2,7 +2,7 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '5.1.0';
+  gc_version constant varchar2(10 char) := '5.1.2';
 
   gc_vcbool_true   constant varchar2(10 char) := 'true';
   gc_vcbool_false  constant varchar2(10 char) := 'false';
@@ -85,6 +85,7 @@ as
   gc_dgrm_status_archived             constant  varchar2(10 char) := 'archived';
 
   -- Subflow status
+  gc_sbfl_status_created              constant  varchar2(20 char) := 'created';
   gc_sbfl_status_running              constant  varchar2(20 char) := 'running';
   gc_sbfl_status_waiting_timer        constant  varchar2(20 char) := 'waiting for timer';
   gc_sbfl_status_waiting_gateway      constant  varchar2(20 char) := 'waiting at gateway';
@@ -94,30 +95,29 @@ as
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
 
   -- Process Instance Status
-  gc_prcs_status_created             constant  varchar2(20 char) := 'created';
-  gc_prcs_status_running             constant  varchar2(20 char) := 'running';
-  gc_prcs_status_completed           constant  varchar2(20 char) := 'completed';  
+  gc_prcs_status_created              constant  varchar2(20 char) := 'created';
+  gc_prcs_status_running              constant  varchar2(20 char) := 'running';
+  gc_prcs_status_completed            constant  varchar2(20 char) := 'completed';  
 
   -- Process Variable Datatypes
 
-  gc_prov_var_type_varchar2          constant  varchar2(50 char) := 'VARCHAR2';
-  gc_prov_var_type_date              constant  varchar2(50 char) := 'DATE';
-  gc_prov_var_type_number            constant  varchar2(50 char) := 'NUMBER';
-  gc_prov_var_type_clob              constant  varchar2(50 char) := 'CLOB';
+  gc_prov_var_type_varchar2           constant  varchar2(50 char) := 'VARCHAR2';
+  gc_prov_var_type_date               constant  varchar2(50 char) := 'DATE';
+  gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
+  gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
 
   -- Process Variable Expression Types
-  gc_expr_type_static                constant flow_types_pkg.t_expr_type := 'STATIC';
-  gc_expr_type_proc_var              constant flow_types_pkg.t_expr_type := 'F4A_PROC_VAR';
-  gc_expr_type_item                  constant flow_types_pkg.t_expr_type := 'ITEM';
-  gc_expr_type_sql                   constant flow_types_pkg.t_expr_type := 'SQL';
-  gc_expr_type_sql_delimited_list    constant flow_types_pkg.t_expr_type := 'SQL_DELIMITED_LIST';
-  gc_expr_type_plsql_function_body   constant flow_types_pkg.t_expr_type := 'PLSQL_FUNCTION';
-  gc_expr_type_plsql_expression      constant flow_types_pkg.t_expr_type := 'PLSQL_EXPRESSION';
+  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'STATIC';
+  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'F4A_PROC_VAR';
+  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'ITEM';
+  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'SQL';
+  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'SQL_DELIMITED_LIST';
+  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'PLSQL_FUNCTION';
+  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'PLSQL_EXPRESSION';
 
 -- Process Variable Expression Phases
-  gc_expr_phase_pre                  constant flow_types_pkg.t_expr_phase := 'pre';
-  gc_expr_phase_post                 constant flow_types_pkg.t_expr_phase := 'post';
-
+  gc_expr_phase_pre                   constant flow_types_pkg.t_expr_phase := 'pre';
+  gc_expr_phase_post                  constant flow_types_pkg.t_expr_phase := 'post';
 
 
   -- Default XML for new diagrams

@@ -6,6 +6,8 @@ as
        , sbfl.sbfl_sbfl_id
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_process_name
+       , sbfl.sbfl_dgrm_id
+       , sbfl.sbfl_sbfl_dgrm_id
        , sbfl.sbfl_dgrm_name
        , sbfl.sbfl_dgrm_version
        , sbfl.sbfl_dgrm_status

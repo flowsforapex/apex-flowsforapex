@@ -35,6 +35,12 @@ as
         , sbfl_current_lane
         , sbfl_current_lane_name
         , sbfl_reservation
+        , ( select prov.prov_var_vc2
+              from flow_process_variables prov
+             where prov.prov_var_name = 'BUSINESS_REF'
+               and prov.prov_var_type = 'VARCHAR2'
+               and prov.prov_prcs_id = sbfl.sbfl_prcs_id
+          ) as sbfl_business_ref
      from flow_subflows_vw sbfl
     where sbfl_status = 'running'
 with read only
