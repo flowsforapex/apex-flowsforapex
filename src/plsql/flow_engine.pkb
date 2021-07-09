@@ -120,13 +120,16 @@ end flow_process_link_event;
       );
       -- check for Terminate sub-Event
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
-            flow_engine_util.flow_terminate_level(p_process_id, p_subflow_id);
-
+        flow_engine_util.flow_terminate_level
+        ( 
+          p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );
       elsif p_step_info.target_objt_subtag is null then
-          flow_engine_util.subflow_complete
-          ( p_process_id => p_process_id
-          , p_subflow_id => p_subflow_id
-          );
+        flow_engine_util.subflow_complete
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_subflow_id
+        );
       end if;
       -- check if there are ANY remaining subflows.  If not, close process
       select count(*)
@@ -670,7 +673,7 @@ end flow_handle_event;
 
 /************************************************************************************************************
 ****
-****                       SUBFLOW FUNCTIONS (START, NEXT_STEP, STOP,  DELETE)
+****                       SUBFLOW  NEXT_STEP
 ****
 *************************************************************************************************************/
 
@@ -787,8 +790,9 @@ begin
   -- end of post- phase for previous step
   commit;
   apex_debug.info
-  ( p_message => 'End of Post Phase (committed) on subflow %0. Moving onto Pre-Phase of Next Step '
+  ( p_message => 'End of Post Phase (committed) for current step %1 on subflow %0. Moving onto Pre-Phase of Next Step'
   , p0        => p_subflow_id
+  , p1        => l_sbfl_rec.sbfl_current
   );
 
   -- start of pre-phase for next step
@@ -908,7 +912,8 @@ begin
          , p_sbfl_info => l_sbfl_rec
          , p_step_info => l_step_info
          );
-    when  flow_constants_pkg.gc_bpmn_servicetask then flow_tasks.process_serviceTask
+    when  flow_constants_pkg.gc_bpmn_servicetask then 
+    flow_tasks.process_serviceTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
