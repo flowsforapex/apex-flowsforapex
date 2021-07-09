@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   14:25 Friday July 2, 2021
+--   Date and Time:   14:25 Friday July 9, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -179,7 +179,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_plugin_id=>wwv_flow_api.id(16800404467823826)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>5
-,p_display_sequence=>50
+,p_display_sequence=>5
 ,p_prompt=>'Action'
 ,p_attribute_type=>'SELECT LIST'
 ,p_is_required=>true
@@ -318,90 +318,19 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(16810232397081346)
+ p_id=>wwv_flow_api.id(26900255252418609)
 ,p_plugin_id=>wwv_flow_api.id(16800404467823826)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>10
 ,p_display_sequence=>100
 ,p_prompt=>'Reservation'
-,p_attribute_type=>'SELECT LIST'
+,p_attribute_type=>'TEXT'
 ,p_is_required=>true
-,p_default_value=>'static'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_api.id(16806822324830979)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'reserve'
-,p_lov_type=>'STATIC'
-);
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(16810506096082473)
-,p_plugin_attribute_id=>wwv_flow_api.id(16810232397081346)
-,p_display_sequence=>10
-,p_display_value=>'Static Value'
-,p_return_value=>'static'
-);
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(16810924476083473)
-,p_plugin_attribute_id=>wwv_flow_api.id(16810232397081346)
-,p_display_sequence=>20
-,p_display_value=>'Item'
-,p_return_value=>'item'
-);
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(16811350345084632)
-,p_plugin_attribute_id=>wwv_flow_api.id(16810232397081346)
-,p_display_sequence=>30
-,p_display_value=>'SQL Query'
-,p_return_value=>'sql'
-);
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(16811739976089514)
-,p_plugin_id=>wwv_flow_api.id(16800404467823826)
-,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>11
-,p_display_sequence=>110
-,p_prompt=>'Reservation Static Value'
-,p_attribute_type=>'TEXT'
-,p_is_required=>true
-,p_max_length=>255
-,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(16810232397081346)
-,p_depending_on_has_to_exist=>true
-,p_depending_on_condition_type=>'EQUALS'
-,p_depending_on_expression=>'static'
-);
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(16812077256092348)
-,p_plugin_id=>wwv_flow_api.id(16800404467823826)
-,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>12
-,p_display_sequence=>120
-,p_prompt=>'Reservation Item'
-,p_attribute_type=>'PAGE ITEM'
-,p_is_required=>true
-,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(16810232397081346)
-,p_depending_on_has_to_exist=>true
-,p_depending_on_condition_type=>'EQUALS'
-,p_depending_on_expression=>'item'
-);
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(16812329885096456)
-,p_plugin_id=>wwv_flow_api.id(16800404467823826)
-,p_attribute_scope=>'COMPONENT'
-,p_attribute_sequence=>13
-,p_display_sequence=>130
-,p_prompt=>'Reservation SQL Query'
-,p_attribute_type=>'SQL'
-,p_is_required=>true
-,p_sql_min_column_count=>1
-,p_sql_max_column_count=>1
-,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(16810232397081346)
-,p_depending_on_has_to_exist=>true
-,p_depending_on_condition_type=>'EQUALS'
-,p_depending_on_expression=>'sql'
 );
 end;
 /
