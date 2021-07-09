@@ -130,10 +130,7 @@ create or replace package body flow_plugin_manage_instance_step as
       l_attribute7      p_process.attribute_07%type := p_process.attribute_07; -- Gateway ID
       l_attribute8      p_process.attribute_08%type := p_process.attribute_08; -- Route ID
       l_attribute9      p_process.attribute_09%type := p_process.attribute_09; -- Auto branching (Y/N)
-      l_attribute10     p_process.attribute_10%type := p_process.attribute_10; -- Reservation mode (static/item/sql)
-      l_attribute11     p_process.attribute_11%type := p_process.attribute_11; -- Reservation text
-      l_attribute12     p_process.attribute_12%type := p_process.attribute_12; -- Reservation item
-      l_attribute13     p_process.attribute_13%type := p_process.attribute_13; -- Reservation sql
+      l_attribute10     p_process.attribute_10%type := p_process.attribute_10; -- Reservation 
 
       l_process_id      flow_processes.prcs_id%type;
       l_subflow_id      flow_subflows.sbfl_id%type;
@@ -293,22 +290,7 @@ create or replace package body flow_plugin_manage_instance_step as
          end if;
 
       elsif ( l_attribute5 = 'reserve' ) then
-
-         if ( l_attribute10 = 'static' ) then
-             l_reservation := l_attribute11;
-         elsif ( l_attribute10 = 'item' ) then
-            l_reservation := apex_util.get_session_state(l_attribute12);
-         elsif ( l_attribute10 = 'sql' ) then
-            l_context         := apex_exec.open_query_context(
-               p_location   => apex_exec.c_location_local_db
-             , p_sql_query  => l_attribute13
-            );
-
-            while apex_exec.next_row(l_context) loop
-               l_reservation  := apex_exec.get_varchar2(l_context, 1);
-            end loop;
-            apex_exec.close(l_context);
-         end if;
+         l_reservation := l_attribute10;
 
          apex_debug.info(
               p_message => '...Reserve Step - Flow Instance Id %s - Subflow Id %s'
