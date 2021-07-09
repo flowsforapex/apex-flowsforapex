@@ -8,6 +8,9 @@ as
 
   subtype t_single_vc2         is varchar2(1 char);
 
+  subtype t_expr_type          is varchar2(130 char);
+  subtype t_expr_phase         is varchar2(4 char);
+
   type flow_step_info is record
   ( dgrm_id            flow_diagrams.dgrm_id%type
   , source_objt_tag    flow_objects.objt_tag_name%type

@@ -694,6 +694,7 @@ begin
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
   );
+
   --l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info and lock it
   l_sbfl_rec := flow_engine_util.get_and_lock_subflow_info 
@@ -718,6 +719,7 @@ begin
   begin
     select sbfl.sbfl_dgrm_id
          , objt_source.objt_tag_name
+         , objt_source.objt_id
          , conn.conn_tgt_objt_id
          , objt_target.objt_bpmn_id
          , objt_target.objt_tag_name    
@@ -755,6 +757,13 @@ begin
     );
   end;
 
+  -- evaluate and set any post-step variable expressions on the last object
+  flow_expressions.process_expressions
+    ( pi_objt_id     => l_step_info.source_objt_id
+    , pi_phase       => flow_constants_pkg.gc_expr_phase_post
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+  );
 
   -- clean up any boundary events left over from the previous activity
   if (l_step_info.source_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
@@ -786,7 +795,7 @@ begin
   , p_subflow_id => p_subflow_id
   , p_completed_object => l_sbfl_rec.sbfl_current
   );
-  
+
   -- end of post- phase for previous step
   commit;
   apex_debug.info
@@ -802,7 +811,16 @@ begin
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   );
+
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
+        
+  -- evaluate and set any pre-step variable expressions on the next object
+  flow_expressions.process_expressions
+    ( pi_objt_id     => l_step_info.target_objt_id
+    , pi_phase       => flow_constants_pkg.gc_expr_phase_pre
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+  );
 
   apex_debug.info 
   ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
@@ -940,6 +958,7 @@ exception
       , p_display_location => apex_error.c_on_error_page
       );
 end flow_complete_step;
+
 
 end flow_engine;
 /
