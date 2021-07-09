@@ -11,11 +11,17 @@ drop package flow_p0007_api;
 drop package flow_p0010_api;
 drop package flow_plsql_runner_pkg;
 drop package flow_usertask_pkg;
+drop package flow_tasks;
+drop package flow_boundary_events;
 drop package flow_bpmn_parser_pkg;
 drop package flow_process_vars;
+drop package flow_instances;
 drop package flow_engine;
 drop package flow_api_pkg;
 drop package flow_timers_pkg;
+drop package flow_reservations;
+drop package flow_gateways;
+drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
 
