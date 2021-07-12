@@ -323,17 +323,38 @@ procedure flow_next_branch
   )
   is
   begin
-    apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
-    flow_instances.reset_process (p_process_id => p_process_id);
+    apex_debug.enter 
+    ( p_routine_name => 'flow_reset'
+    );
+    flow_instances.reset_process 
+    ( p_process_id => p_process_id
+    );
   end flow_reset;
+
+  procedure flow_terminate
+  ( p_process_id in flow_processes.prcs_id%type
+  )
+  is
+  begin
+    apex_debug.enter 
+    ( p_routine_name => 'flow_terminate'
+    );
+    flow_instances.terminate_process 
+    ( p_process_id => p_process_id
+    );
+  end flow_terminate;
 
   procedure flow_delete
   ( p_process_id in flow_processes.prcs_id%type
   )
   is
   begin
-    apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
-    flow_instances.delete_process (p_process_id => p_process_id);
+    apex_debug.enter
+    (p_routine_name => 'flow_delete'
+    );
+    flow_instances.delete_process 
+    ( p_process_id => p_process_id
+    );
   end flow_delete;
 
   function get_current_usertask_url
@@ -344,7 +365,7 @@ procedure flow_next_branch
   as
     l_objt_id flow_objects.objt_id%type;
   begin
-    apex_debug.trace( p_message => 'Entering GET_CURRENT_USERTASK_URL' );
+    apex_debug.trace ( p_message => 'Entering GET_CURRENT_USERTASK_URL' );
 
     select objt.objt_id
       into l_objt_id

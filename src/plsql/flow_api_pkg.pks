@@ -132,6 +132,15 @@ This is not meant for use in Production Systems.
     p_process_id in flow_processes.prcs_id%type
   );
   /***
+Procedure flow_terminate
+flow_delete ends all processing of a process instance, and has the same effect as processing a Terminating End Event inside a Flow Diagram.
+It ends all subflows, but retains the process definition and the subflow logs for the process.
+*/
+  procedure flow_terminate
+  ( 
+    p_process_id in flow_processes.prcs_id%type
+  );
+  /***
 Procedure flow_delete
 flow_delete ends all processing of a process instance.  It removes all subflows and subflow logs of the process.
 */

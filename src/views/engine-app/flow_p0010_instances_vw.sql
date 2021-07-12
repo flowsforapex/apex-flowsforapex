@@ -14,6 +14,7 @@ as
           ' class="clickable-action t-Button t-Button--noLabel t-Button--icon"' ||
           ' data-prcs="' || prcs_id || '" data-action="' || btn_action || '"' ||
           '><span aria-hidden="true" class="' || btn_icon_class || '"></span></button>' ||
+          term_btn ||
           '<button type="button" title="Delete Process Instance" aria-label="Delete Process Instance"' ||
           ' class="clickable-action t-Button t-Button--noLabel t-Button--icon"' ||
           ' data-prcs="' || prcs_id || '" data-action="delete"' ||
@@ -21,7 +22,7 @@ as
           '<button type="button" title="Create new Instance" aria-label="Create new Instance"' ||
           ' class="t-Button t-Button--noLabel t-Button--icon"' ||
           ' onclick="' || apex_page.get_url( p_page => '11', p_items => 'P11_DGRM_ID', p_values => dgrm_id ) || '">' ||
-          '<span class="t-Icon fa fa-plus" aria-hidden="true"></span></button>'
+          '<span class="t-Icon fa fa-plus" aria-hidden="true"></span></button>' 
           as btn
      from ( select prcs_id
                  , prcs_name
@@ -49,6 +50,15 @@ as
                      when 'created' then 'start'
                      when 'completed' then 'reset'
                    end as btn_action
+                 , case prcs_status
+                     when 'running' then 
+                      '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
+                      'title="Terminate Process" aria-label="Terminate Flow Instance" ' ||
+                      ' data-prcs="' || prcs_id || '" data-action="terminate"' ||
+                      '><span aria-hidden="true" class="t-Icon fa fa-stop-circle"></span></button>'  
+                     else
+                       null  
+                   end as term_btn 
               from flow_instances_vw
           )
 with read only

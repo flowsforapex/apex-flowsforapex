@@ -38,12 +38,15 @@ When the final End Event is met for a Process, the Process Instance is complete.
 
 ### Terminate End Event
 
-A Terminate End Event in the top level of a process (i.e., not in a sub process) will terminate all current branches running in the process, and cause the Process to complete.
+A Terminate End Event in the top level of a Flow (i.e., not in a sub process) will terminate all current branches running in the flow, and cause the flow instance to complete.
+Flow variables are maintained when the flow instance terminates.
+
+A Flow instance can also be terminated from the flows4APEX API using the flow_terminate() call, which has the same effect as processing a Terminate End Event in a flow model.
 
 ![Terminate End Event](images/terminateEnd.png "Terminate End Event")
 
-Terminate End Events in a Sub Process.  
-Starting with Flows for APEX V5.0, Terminate End Events may also be put into in any sub-process.  
-The behaviour of a Terminate End Event in a sub process is to immediately end processing in the sub process, and return control to the next object in the parent process.  
-Note that if the sub process has an error bounday event defined on it, the terminating sub process will NOT return to the error handler; it returns to the next event on the normal forward path.  
+Terminate End Events in a Sub Process.
+Terminate End Events may also be put into in any sub-process diagram.
+The behaviour of a Terminate End Event in a sub process is to immediately end processing in the sub process, and return control to the next object in the immediate parent process.
+Note that if the sub process has an error bounday event defined on it, the terminating sub process will NOT return to the error handler; it returns to the next event on the normal forward path.
 Any nested child sub processes that are running below the the sub process containing the terminate end event, are also terminated.
