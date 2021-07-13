@@ -7,7 +7,7 @@ as
 
   function get_expression_set
   ( pi_objt_id      flow_objects.objt_id%type
-  , pi_phase        flow_object_expressions.expr_phase%type
+  , pi_set          flow_object_expressions.expr_set%type
   ) return t_expr_set
   as
     l_expressions   t_expr_set;
@@ -16,7 +16,7 @@ as
     bulk collect into l_expressions
       from flow_object_expressions expr
      where expr.expr_objt_id = pi_objt_id
-       and expr.expr_phase = pi_phase
+       and expr.expr_set = pi_set
      order by expr.expr_order asc
     ;
     return l_expressions;
@@ -406,7 +406,7 @@ as
       , p_display_location => apex_error.c_on_error_page
       );
     end case;
-
+  end set_plsql_function;
 
   /**********************************************************************
   **
@@ -417,7 +417,7 @@ as
 
   procedure process_expressions
   ( pi_objt_id      flow_objects.objt_id%type
-  , pi_phase        flow_object_expressions.expr_phase%type
+  , pi_set          flow_object_expressions.expr_set%type
   , pi_prcs_id      flow_processes.prcs_id%type
   , pi_sbfl_id      flow_subflows.sbfl_id%type
   )
@@ -426,7 +426,7 @@ as
   begin
     l_expressions := get_expression_set
     ( pi_objt_id => pi_objt_id
-    , pi_phase => pi_phase
+    , pi_set     => pi_set
     );
     -- step through expressions
     for i in 1..l_expressions.count loop

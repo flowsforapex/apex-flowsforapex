@@ -115,9 +115,13 @@ as
   gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'PLSQL_FUNCTION';
   gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'PLSQL_EXPRESSION';
 
--- Process Variable Expression Phases
-  gc_expr_phase_pre                   constant flow_types_pkg.t_expr_phase := 'pre';
-  gc_expr_phase_post                  constant flow_types_pkg.t_expr_phase := 'post';
+-- Process Variable Expression set := 'BeforeTask';
+  gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'BeforeTask';
+  gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'AfterTask';
+  gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'BeforeSplit';
+  gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'AfterMerge';
+  gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'BeforeEvent';
+  gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'OnEvent';
 
 
   -- Default XML for new diagrams

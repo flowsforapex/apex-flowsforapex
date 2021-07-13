@@ -149,7 +149,13 @@ as
     ( p_message => 'Initial Subflow created %0'
     , p0 => l_main_subflow_id
     );
-
+    -- process any variable expressions on the starting object
+    flow_expressions.process_expressions
+    ( pi_objt_id     => l_objt_bpmn_id
+    , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => l_main_subflow_id
+    );
     -- commit the subflow creation
     commit;
     -- check startEvent sub type for timer or (later releases) other sub types
@@ -161,7 +167,15 @@ as
       , pi_sbfl_id => l_main_subflow_id
       );
     elsif l_objt_sub_tag_name is null then
-      -- plain startEvent, step into first step
+      -- plain startEvent
+      -- process any variable expressions on the starting object
+      flow_expressions.process_expressions
+      ( pi_objt_id     => l_objt_bpmn_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_on_event
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_main_subflow_id
+      );
+        -- step into first step
       flow_engine.flow_complete_step  
       ( p_process_id => p_process_id
       , p_subflow_id => l_main_subflow_id

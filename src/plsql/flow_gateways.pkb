@@ -133,8 +133,7 @@ as
           , p_subflow_id => completed_subflows.sbfl_id
           );
         end loop;
-        -- execute post-merge variable expressions here (note for feature/variable-expressions )
-      
+
         --mark parent split subflow ready to restart
         update flow_subflows sbfl
             set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_proceed_gateway
@@ -144,6 +143,13 @@ as
             and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
             and sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
         ;
+        -- process any after-merge expression set
+        flow_expressions.process_expressions
+        ( pi_objt_id     => p_step_info.target_objt_ref
+        , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
+        , pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => p_sbfl_info.sbfl_sbfl_id
+        );
         -- commit tx
         commit;
         l_gateway_forward_status := 'proceed';
@@ -310,10 +316,18 @@ as
       if l_num_forward_connections > 1 then
         -- we have splitting gateway going forward
         apex_debug.info 
-        ( p_message => '%0 Gateway Splitting %1'
+        ( p_message => '%0 Gateway Splitting %1 - %2 forward paths'
         , p0 => p_step_info.target_objt_tag
         , p1 => p_step_info.target_objt_ref
+        , p2 => l_num_forward_connections
         );       
+        -- process any before-split expression set
+        flow_expressions.process_expressions
+        ( pi_objt_id     => p_step_info.target_objt_ref
+        , pi_set         => flow_constants_pkg.gc_expr_set_before_split
+        , pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => p_subflow_id
+        );        
         case p_step_info.target_objt_tag
         when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
           l_forward_routes := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
@@ -379,9 +393,26 @@ as
     );
 
     if l_num_forward_connections > 1 then
-       -- opening gateway - get choice
+      -- opening gateway 
+      -- process any before-split expression set before gateway chooses route
+      flow_expressions.process_expressions
+      ( pi_objt_id     => p_sbfl_info.sbfl_current
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_split
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      );
+      -- get choice
       l_forward_route := get_gateway_route(p_process_id, p_step_info.target_objt_ref);
-    else -- closing gateway - keep going
+    else 
+      -- closing gateway 
+      -- process any after-merge expression set
+      flow_expressions.process_expressions
+      ( pi_objt_id     => p_sbfl_info.sbfl_current
+      , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      );      
+      -- keep going
       l_forward_route := null;
     end if;  
 
@@ -418,6 +449,13 @@ as
       p_routine_name => 'process_EventBasedGateway'
     , p_name01       => 'p_step_info.target_objt_ref'
     , p_value01      => p_step_info.target_objt_ref
+    );
+    -- process any before-split expression set
+    flow_expressions.process_expressions
+    ( pi_objt_id     => p_step_info.target_objt_ref
+    , pi_set         => flow_constants_pkg.gc_expr_set_before_split
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
     );
     -- mark parent flow as split
     update flow_subflows sbfl
