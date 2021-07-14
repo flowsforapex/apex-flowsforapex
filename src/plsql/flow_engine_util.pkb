@@ -243,20 +243,19 @@ procedure get_number_of_connections
     return l_ret;
   end subflow_start;
 
-  procedure flow_terminate_level
-    ( p_process_id   in flow_processes.prcs_id%type
-    , p_subflow_id   in flow_subflows.sbfl_id%type
+  procedure terminate_level
+    ( p_process_id    in flow_processes.prcs_id%type
+    , p_process_level in flow_subflows.sbfl_process_level%type
     )
   is
-    l_process_level   flow_subflows.sbfl_process_level%type;
   begin
     apex_debug.enter
-    ( 'flow_terminate_level'
+    ( 'terminate_level'
     , 'Process',  p_process_id
-    , 'Subflow ', p_subflow_id
+    , 'Process Level', p_process_level
     );
     --
-    begin
+    /*begin
       select sbfl.sbfl_process_level
         into l_process_level 
         from flow_subflows sbfl
@@ -267,33 +266,34 @@ procedure get_number_of_connections
       when no_data_found 
       then
         return;
-    end;
+    end;*/
     -- find any running subprocesses with parent at this level
     begin
-      for running_subprocs in (
-        select child_sbfl.sbfl_id
+      for child_proc_levels in (
+        select distinct child_sbfl.sbfl_process_level
           from flow_subflows parent_sbfl
           join flow_subflows child_sbfl
             on parent_sbfl.sbfl_current = child_sbfl.sbfl_starting_object
          where parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
-           and parent_sbfl.sbfl_process_level = l_process_level
+           and parent_sbfl.sbfl_process_level = p_process_level
       )
       loop
-        flow_terminate_level
-        ( p_process_id => p_process_id
-        , p_subflow_id => running_subprocs.sbfl_id);
+        terminate_level
+        ( p_process_id     => p_process_id
+        , p_process_level  => child_proc_levels.sbfl_process_level);
       end loop;
-    exception
-      when no_data_found then
-        null;
     end;
     -- end all subflows in the level
     delete from flow_subflows
-    where sbfl_process_level = l_process_level 
+    where sbfl_process_level = p_process_level 
       and sbfl_prcs_id = p_process_id
       ;
-    apex_debug.info ( 'Process %0 : All subflows at process level %1 terminated', p_process_id, l_process_level);
-  end flow_terminate_level;
+    apex_debug.info 
+    ( p_message => 'Process %0 : All subflows at process level %1 terminated'
+    , p0 => p_process_id
+    , p1 => p_process_level
+    );
+  end terminate_level;
 
   procedure subflow_complete
     ( p_process_id        in flow_processes.prcs_id%type

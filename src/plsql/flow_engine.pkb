@@ -120,10 +120,10 @@ end flow_process_link_event;
       );
       -- check for Terminate sub-Event
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
-        flow_engine_util.flow_terminate_level
+        flow_engine_util.terminate_level
         ( 
-          p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
+          p_process_id     => p_process_id
+        , p_process_level  => p_sbfl_info.sbfl_process_level
         );
       elsif p_step_info.target_objt_subtag is null then
         flow_engine_util.subflow_complete
@@ -198,24 +198,25 @@ end flow_process_link_event;
             );
         end;
         -- stop processing in sub process and all children
-        flow_engine_util.flow_terminate_level
+        flow_engine_util.terminate_level
         ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
+        , p_process_level => p_sbfl_info.sbfl_process_level
         );
 
       elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
         -- stop processing in sub process and all children
-        flow_engine_util.flow_terminate_level
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
+        flow_engine_util.terminate_level
+        ( p_process_id    => p_process_id
+        , p_process_level => p_sbfl_info.sbfl_process_level
         ); 
       elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
         -- this can be interrupting or non-interupting
         flow_boundary_events.process_boundary_event
-        ( p_process_id => p_process_id
-        , p_subflow_id => p_subflow_id
-        , p_step_info => p_step_info
-        , p_par_sbfl => l_sbfl_id_par
+        ( p_process_id    => p_process_id
+        , p_subflow_id    => p_subflow_id
+        , p_step_info     => p_step_info
+        , p_par_sbfl      => l_sbfl_id_par
+        , p_process_level => p_sbfl_info.sbfl_process_level
         );
       elsif p_step_info.target_objt_subtag is null then 
         -- normal end event
@@ -419,10 +420,11 @@ end flow_process_link_event;
       );
       -- escalate it to the boundary Event
       flow_boundary_events.process_boundary_event
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
-      , p_step_info => p_step_info
-      , p_par_sbfl => l_par_sbfl
+      ( p_process_id    => p_process_id
+      , p_subflow_id    => p_subflow_id
+      , p_step_info     => p_step_info
+      , p_par_sbfl      => l_par_sbfl
+      , p_process_level => p_sbfl_info.sbfl_process_level
       );  
     else 
       --- other type of intermediateThrowEvent that is not currently supported

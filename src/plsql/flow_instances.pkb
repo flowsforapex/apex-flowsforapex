@@ -242,6 +242,68 @@ as
     commit;
   end reset_process;
 
+  procedure terminate_process
+    (
+      p_process_id in flow_processes.prcs_id%type
+    )
+  is
+    l_return_code   number;
+    cursor c_lock_all is 
+      select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated
+        from flow_subflows sbfl
+        join flow_processes prcs
+          on prcs.prcs_id = sbfl.sbfl_prcs_id 
+        join flow_subflow_log sflg 
+          on prcs.prcs_id = sflg.sflg_prcs_id
+       where prcs.prcs_id = p_process_id
+       order by sbfl.sbfl_process_level, sbfl.sbfl_id
+         for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2;
+  begin
+    apex_debug.enter
+    ( 'terminate_process'
+    , 'process_id', p_process_id
+    );
+    begin 
+      -- lock all timers, logs, subflows and the process
+      open c_lock_all;
+      flow_timers_pkg.lock_process_timers
+      ( pi_prcs_id => p_process_id
+      ); 
+      close c_lock_all; 
+
+    exception 
+      when lock_timeout then
+        apex_error.add_error
+        ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try again later.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+    end;
+
+    -- kill any timers sill running in the process
+    flow_timers_pkg.delete_process_timers
+    (
+        pi_prcs_id => p_process_id
+      , po_return_code => l_return_code
+    );  
+    -- stop processing 
+    flow_engine_util.terminate_level
+    ( p_process_id => p_process_id
+    , p_process_level => 0
+    );
+    apex_debug.info
+    ( p_message => 'Flow Instance %0 terminated'
+    , p0        => p_process_id
+    );
+    -- mark process as completed
+    update flow_processes prcs
+       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_completed
+         , prcs.prcs_last_update = systimestamp
+     where prcs.prcs_id = p_process_id
+         ; 
+    -- finalize
+    commit;
+  end terminate_process;
+
   procedure delete_process
     (
       p_process_id in flow_processes.prcs_id%type
