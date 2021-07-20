@@ -1,17 +1,10 @@
 create or replace package flow_api_pkg
 as
 
-  gc_step          constant varchar2(50 char) := 'simple-step';
-  gc_single_choice constant varchar2(50 char) := 'single-choice';
-  gc_multi_choice  constant varchar2(50 char) := 'multi-choice';
-
-  pragma deprecate (gc_step ,'gc_step not required in v5.  Will be removed in v21');
-  pragma deprecate (gc_single_choice ,'gc_single_choice not required in v5.  Will be removed in v21');
-  pragma deprecate (gc_multi_choice ,'gc_multi_choice not required in v5.  Will be removed in v21');
-
 /********************************************************************************
 **
-**        FLOW OPERATIONS (Create, Start, Next_step, Reset, Stop, Delete)
+**        FLOW INSTANCE OPERATIONS (Create, Start, Reset, Terminate, Delete)
+**        STEP OPERATIONS (Reserve, Release, Complete)
 **
 ********************************************************************************/
 
@@ -164,71 +157,6 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return varchar2;
-
- /********************************************************************************
-**
-**        DEPRECATED API CALLS - 
-**
-********************************************************************************/ 
-  -- flow_next_branch.  
-  -- Deprecated in V5.0.  Returns an Error Message in V5.0.  
-  -- To be Removed in V6.0
-  -- Note: flow_next_branch no longer required or supported in V5.0.  Flow_complete_step is used 
-  -- to advance the process through gateways as well as task objects.
-  procedure flow_next_branch
-  ( p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id  in flow_subflows.sbfl_id%type
-  , p_branch_name in varchar2
-  );
-  pragma deprecate (flow_next_branch,'Flow_next_branch not required in v5.  Will be removed in v21');
-
-  -- flow_next_step
-  -- Deprecated in V5.0.  Returns an Error Message in V5.0.  
-  -- To be Removed in V6.0
-  -- Note: In V5.0, flow_next_step calls flow_complete_step.  See doc.
-  -- A Forward Route should also not be specified and will return an error message in V5.0+
-  procedure flow_next_step
-  (
-    p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_forward_route in varchar2 default null
-  );
-
-  pragma deprecate (flow_next_step,'Flow_next_step replaced by flow_complete_step in v5.  Will be removed in v21');
- /********************************************************************************
-**
-**        DEPRECATED APPLICATION HELPERS (Progress, Next Step needs Decisions, etc.)
-**
-********************************************************************************/ 
- 
- -- used to handle gateway objects when the app had to decide whether to call flow_next_step
- -- or flow_next_branch.  No longer required in V5.0 and later.  
- -- To be deleted in v6.0
-  function next_multistep_exists
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean;
-
-  pragma deprecate (next_multistep_exists,'next_multistep_exists not required in v5.  Will be removed in v21');
- -- used to handle gateway objects when the app had to decide whether to call flow_next_step
- -- or flow_next_branch.  No longer required in V5.0 and later.  
- -- To be deleted in v6.0
-  function next_multistep_exists_yn
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2;
-
-  pragma deprecate (next_multistep_exists_yn,'next_multistep_exists_yn not required in v5.  Will be removed in v21');
- -- used to handle gateway objects when the app had to decide whether to call flow_next_step
- -- or flow_next_branch.  No longer required in V5.0 and later.  
- -- in V5.x, always returns 'simple-step'
- -- To be deleted in v6.0
-  function next_step_type
-  (
-    p_sbfl_id in flow_subflows.sbfl_id%type
-  ) return varchar2;
-
-    pragma deprecate (next_step_type,'next_step_type not required in v5.  Will be removed in v21');
 
 end flow_api_pkg;
 /
