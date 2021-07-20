@@ -122,6 +122,7 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_item_name       varchar2(4000);
       l_format_mask     apex_application_page_items.format_mask%type;
       l_types_different number;
+      l_ts              timestamp;
    begin
 
       --debug
@@ -295,14 +296,19 @@ create or replace package body flow_plugin_manage_instance_variables as
                   );
                   case l_attribute4
                      when 'set' then
-                        l_json_element := l_process_variable.get('value');
-                        if ( l_json_element.is_Date() = false ) then
+                        begin
+                           if instr( l_process_variable.get_String('value'), 'T' ) > 0 then
+                              l_ts := to_timestamp_tz( replace ( l_process_variable.get_String('value'), 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' ); 
+                           else
+                              l_ts := to_timestamp_tz( l_process_variable.get_String('value'), 'YYYY-MM-DD TZR' ); 
+                           end if;
+                        exception when others then
                            raise e_invalid_date;
-                        end if;
+                        end;
                         flow_process_vars.set_var(
                           pi_prcs_id    => l_prcs_id
                         , pi_var_name   => l_prcs_var_name
-                        , pi_date_value => l_process_variable.get_date('value')
+                        , pi_date_value => l_process_variable.get_timestamp('value')
                         );
                      when 'get' then
                          apex_exec.execute_plsql('begin
