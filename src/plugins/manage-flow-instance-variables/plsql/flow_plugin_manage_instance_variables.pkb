@@ -296,6 +296,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                   );
                   case l_attribute4
                      when 'set' then
+                        l_json_element := l_process_variable.get('value');
                         begin
                            if instr( l_process_variable.get_String('value'), 'T' ) > 0 then
                               l_ts := to_timestamp_tz( replace ( l_process_variable.get_String('value'), 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' ); 
