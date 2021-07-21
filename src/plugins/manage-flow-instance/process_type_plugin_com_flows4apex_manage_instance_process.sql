@@ -16,24 +16,24 @@ wwv_flow_api.import_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
 ,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>101
-,p_default_id_offset=>8300483976062845
+,p_default_application_id=>100
+,p_default_id_offset=>1095703302393937156
 ,p_default_owner=>'FLOWS4APEX'
 );
 end;
 /
  
-prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flows for APEX)
+prompt APPLICATION 100 - Flows for APEX
 --
 -- Application Export:
---   Application:     101
---   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   09:51 Wednesday July 21, 2021
+--   Application:     100
+--   Name:            Flows for APEX
+--   Date and Time:   13:04 Wednesday July 21, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
 --   Manifest
---     PLUGIN: 25100283248373345
+--     PLUGIN: 58718400496324770
 --   Manifest End
 --   Version:         20.1.0.00.13
 --   Instance ID:     300193896399987
@@ -47,7 +47,7 @@ end;
 prompt --application/shared_components/plugins/process_type/com_flows4apex_manage_instance_process
 begin
 wwv_flow_api.create_plugin(
- p_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58718400496324770)
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_name=>'COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance'
@@ -61,8 +61,8 @@ wwv_flow_api.create_plugin(
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex	'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25100451504373356)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58718568752324781)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -86,8 +86,8 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25120740280389859)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58738857528341284)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -100,8 +100,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>'Use this attribute to define the action you want to process.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25121290549391648)
-,p_plugin_attribute_id=>wwv_flow_api.id(25120740280389859)
+ p_id=>wwv_flow_api.id(58739407797343073)
+,p_plugin_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_display_sequence=>10
 ,p_display_value=>'Create and Start'
 ,p_return_value=>'create_and_start'
@@ -109,8 +109,8 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_help_text=>'Use this option to create and start a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25121675435393240)
-,p_plugin_attribute_id=>wwv_flow_api.id(25120740280389859)
+ p_id=>wwv_flow_api.id(58739792683344665)
+,p_plugin_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_display_sequence=>20
 ,p_display_value=>'Create'
 ,p_return_value=>'create'
@@ -118,32 +118,32 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_help_text=>'Use this option to create a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25122062003393771)
-,p_plugin_attribute_id=>wwv_flow_api.id(25120740280389859)
+ p_id=>wwv_flow_api.id(58740179251345196)
+,p_plugin_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_display_sequence=>30
 ,p_display_value=>'Start'
 ,p_return_value=>'start'
 ,p_help_text=>'Use this option to start a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25122597355395212)
-,p_plugin_attribute_id=>wwv_flow_api.id(25120740280389859)
+ p_id=>wwv_flow_api.id(58740714603346637)
+,p_plugin_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_display_sequence=>40
 ,p_display_value=>'Delete'
 ,p_return_value=>'delete'
 ,p_help_text=>'Use this option to delete a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25123028547396253)
-,p_plugin_attribute_id=>wwv_flow_api.id(25120740280389859)
+ p_id=>wwv_flow_api.id(58741145795347678)
+,p_plugin_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_display_sequence=>50
 ,p_display_value=>'Reset'
 ,p_return_value=>'reset'
 ,p_help_text=>'Use this option to reset a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25112496497373360)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58730613745324785)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
@@ -152,15 +152,15 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>true
 ,p_max_length=>150
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25120740280389859)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'IN_LIST'
 ,p_depending_on_expression=>'create,create_and_start'
 ,p_help_text=>'Define the new Flow Instance name to be created.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25100708704373356)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58718825952324781)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
@@ -181,40 +181,40 @@ wwv_flow_api.create_plugin_attribute(
 ||'n, just specify the flow / diagram name - and let the system find the current released version for you.  If you want to test a <b>draft</b> diagram for testing, you will need to use a query to specify which flow / model to use.</p>'))
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25101154424373356)
-,p_plugin_attribute_id=>wwv_flow_api.id(25100708704373356)
+ p_id=>wwv_flow_api.id(58719271672324781)
+,p_plugin_attribute_id=>wwv_flow_api.id(58718825952324781)
 ,p_display_sequence=>10
 ,p_display_value=>'APEX item'
 ,p_return_value=>'item'
 ,p_help_text=>'Use this when the Flow (Diagram or Instance) is contained in APEX Item(s).'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25203290217468756)
-,p_plugin_attribute_id=>wwv_flow_api.id(25100708704373356)
+ p_id=>wwv_flow_api.id(58821407465420181)
+,p_plugin_attribute_id=>wwv_flow_api.id(58718825952324781)
 ,p_display_sequence=>20
 ,p_display_value=>'SQL Query'
 ,p_return_value=>'sql'
 ,p_help_text=>'Use this when you want to specify the Flow (Diagram or Instance) with a SQL Query.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25102185668373357)
-,p_plugin_attribute_id=>wwv_flow_api.id(25100708704373356)
+ p_id=>wwv_flow_api.id(58720302916324782)
+,p_plugin_attribute_id=>wwv_flow_api.id(58718825952324781)
 ,p_display_sequence=>30
 ,p_display_value=>'Static Text'
 ,p_return_value=>'static'
 ,p_help_text=>'Use this when you want to specify the Flow (Diagram or Instance) as text.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25102625162373357)
-,p_plugin_attribute_id=>wwv_flow_api.id(25100708704373356)
+ p_id=>wwv_flow_api.id(58720742410324782)
+,p_plugin_attribute_id=>wwv_flow_api.id(58718825952324781)
 ,p_display_sequence=>40
 ,p_display_value=>'Component Setting'
 ,p_return_value=>'component'
 ,p_help_text=>'Use this when you want to specify the Flow (Diagram or Instance) to be used as a global component setting.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25103158252373357)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58721275500324782)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>40
@@ -222,7 +222,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEMS'
 ,p_is_required=>true
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25100708704373356)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58718825952324781)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
@@ -235,8 +235,8 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25103916610373357)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58722033858324782)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>5
 ,p_display_sequence=>50
@@ -245,7 +245,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>true
 ,p_max_length=>150
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25100708704373356)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58718825952324781)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'static'
@@ -265,8 +265,8 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25202559271466793)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58820676519418218)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>6
 ,p_display_sequence=>60
@@ -276,7 +276,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_sql_min_column_count=>1
 ,p_sql_max_column_count=>2
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25100708704373356)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58718825952324781)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
@@ -315,8 +315,8 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25106601682373357)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58724718930324782)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>7
 ,p_display_sequence=>70
@@ -325,7 +325,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>true
 ,p_default_value=>'name'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25120740280389859)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'IN_LIST'
 ,p_depending_on_expression=>'create,create_and_start'
@@ -349,32 +349,32 @@ wwv_flow_api.create_plugin_attribute(
 '<p>For more information on the versioning system and its rules, see the <i>Flows for APEX</i> documentation.</p>'))
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25107038384373357)
-,p_plugin_attribute_id=>wwv_flow_api.id(25106601682373357)
+ p_id=>wwv_flow_api.id(58725155632324782)
+,p_plugin_attribute_id=>wwv_flow_api.id(58724718930324782)
 ,p_display_sequence=>10
 ,p_display_value=>'Name'
 ,p_return_value=>'name'
 ,p_help_text=>'Use this when you want to specify the Flow (diagram) giving just the Flow Name, letting <i>Flow for APEX</i> select the version. (see explanation for rules on which version will be used).'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25107516020373359)
-,p_plugin_attribute_id=>wwv_flow_api.id(25106601682373357)
+ p_id=>wwv_flow_api.id(58725633268324784)
+,p_plugin_attribute_id=>wwv_flow_api.id(58724718930324782)
 ,p_display_sequence=>20
 ,p_display_value=>'Name & Version'
 ,p_return_value=>'name_and_version'
 ,p_help_text=>'Use this when you want to specify a Flow (diagram) using the Flow Name and a specific Version of the Flow. (see explanation)'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25108036507373359)
-,p_plugin_attribute_id=>wwv_flow_api.id(25106601682373357)
+ p_id=>wwv_flow_api.id(58726153755324784)
+,p_plugin_attribute_id=>wwv_flow_api.id(58724718930324782)
 ,p_display_sequence=>30
 ,p_display_value=>'ID'
 ,p_return_value=>'id'
 ,p_help_text=>'Use this to specify the Flow (Diagram) to be used by giving a Flow (diagram) ID.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25109393267373359)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58727510515324784)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>8
 ,p_display_sequence=>80
@@ -382,7 +382,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>false
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25120740280389859)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'IN_LIST'
 ,p_depending_on_expression=>'create,create_and_start'
@@ -399,8 +399,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Select an APEX Page Item containing the business reference key that you want used to set the process variable PROCESS_REF.</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25110187814373359)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58728305062324784)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>9
 ,p_display_sequence=>90
@@ -408,15 +408,11 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>false
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25120740280389859)
-,p_depending_on_has_to_exist=>true
-,p_depending_on_condition_type=>'IN_LIST'
-,p_depending_on_expression=>'create,create_and_start'
-,p_help_text=>'Select an APEX Page Item to store the ID (process_id) of the new flow instance when it is created.'
+,p_help_text=>'Select an APEX Page Item to return the Flow Instance ID (process_id).'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25104760250373357)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58722877498324782)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>10
 ,p_display_sequence=>100
@@ -425,7 +421,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>true
 ,p_default_value=>'no'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25120740280389859)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58738857528341284)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'IN_LIST'
 ,p_depending_on_expression=>'create,create_and_start,start'
@@ -440,32 +436,32 @@ wwv_flow_api.create_plugin_attribute(
 '<p> Process Variables set from this process plugin are set after the new Flow has been <b>created</b>, but before it is <b>started</b>. </p>'))
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25105104339373357)
-,p_plugin_attribute_id=>wwv_flow_api.id(25104760250373357)
+ p_id=>wwv_flow_api.id(58723221587324782)
+,p_plugin_attribute_id=>wwv_flow_api.id(58722877498324782)
 ,p_display_sequence=>10
 ,p_display_value=>'No Process Variables'
 ,p_return_value=>'no'
 ,p_help_text=>'Use this option to indicate that no other process variables should to be set.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25105670604373357)
-,p_plugin_attribute_id=>wwv_flow_api.id(25104760250373357)
+ p_id=>wwv_flow_api.id(58723787852324782)
+,p_plugin_attribute_id=>wwv_flow_api.id(58722877498324782)
 ,p_display_sequence=>20
 ,p_display_value=>'Using JSON'
 ,p_return_value=>'json'
 ,p_help_text=>'Use this option to use a JSON array to specify your Process Variable(s), their types and initial values.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(25106128887373357)
-,p_plugin_attribute_id=>wwv_flow_api.id(25104760250373357)
+ p_id=>wwv_flow_api.id(58724246135324782)
+,p_plugin_attribute_id=>wwv_flow_api.id(58722877498324782)
 ,p_display_sequence=>30
 ,p_display_value=>'SQL Query'
 ,p_return_value=>'sql'
 ,p_help_text=>'Use this option to specify a SQL statement to return your process variable names, types, and initial values.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25108579063373359)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58726696311324784)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>11
 ,p_display_sequence=>110
@@ -473,7 +469,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'TEXTAREA'
 ,p_is_required=>true
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25104760250373357)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58722877498324782)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'json'
@@ -505,8 +501,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>'Enter a JSON array that contains one or more process variables, their types, and values.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(25108986805373359)
-,p_plugin_id=>wwv_flow_api.id(25100283248373345)
+ p_id=>wwv_flow_api.id(58727104053324784)
+,p_plugin_id=>wwv_flow_api.id(58718400496324770)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>12
 ,p_display_sequence=>120
@@ -516,7 +512,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_sql_min_column_count=>1
 ,p_sql_max_column_count=>1
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(25104760250373357)
+,p_depending_on_attribute_id=>wwv_flow_api.id(58722877498324782)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
