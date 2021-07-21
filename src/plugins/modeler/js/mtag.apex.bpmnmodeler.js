@@ -57,6 +57,7 @@
         getEventBus: () => { return this.bpmnModeler$.get( "eventBus" ); },
         save: () => { this.save(); },
         getDiagram: () => this.getDiagram(),
+        getSVG: () => this.getSVG(),
         widgetName: "bpmnmodeler",
         type: "mtag.bpmnmodeler"
       });
@@ -108,6 +109,18 @@
         return xml;
       } catch (err) {
         debug.error( "Get Diagram failed.", err );
+        throw err;
+      }
+    },
+    getSVG: async function() {
+      var that = this;
+      const bpmnModeler$ = that.bpmnModeler$;
+      try {
+        const result = await bpmnModeler$.saveSVG({ format: true });
+        const { svg } = result;
+        return svg;
+      } catch (err) {
+        debug.error( "Get SVG failed.", err );
         throw err;
       }
     },
