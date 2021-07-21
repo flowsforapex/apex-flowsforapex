@@ -52,13 +52,14 @@ create or replace package body flow_plugin_manage_instance as
          );
       end if;
 
+      if p_process.attribute_09 is not null then
+         apex_debug.info(
+            p_message => '...Return Instance ID into: %s'
+            , p0        => p_process.attribute_09
+         );
+      end if;
+
       if p_process.attribute_01 in ( 'create', 'create_and_start' ) then
-         if p_process.attribute_09 is not null then
-            apex_debug.info(
-               p_message => '...Return Instance ID into: %s'
-               , p0        => p_process.attribute_09
-            );
-         end if;
 
          if p_process.attribute_08 is not null then
             apex_debug.info(
@@ -320,22 +321,21 @@ create or replace package body flow_plugin_manage_instance as
          );
       end if;
 
-      if l_attribute1 in ( 'create', 'create_and_start', 'start' ) then
-         apex_debug.info(
-              p_message => ' > Additional actions.'
-            , p0        => l_prcs_id
-         );
+      apex_debug.info(
+           p_message => ' > Additional actions.'
+         , p0        => l_prcs_id
+      );
 
-         if l_attribute1 in ( 'create', 'create_and_start' ) then
-            -- Return instance id in the APEX item provided
-            if ( l_attribute9 is not null ) then
-               apex_debug.info(
-                  p_message => '...Return Flow Instance Id into item "%s"'
-               , p0        => l_attribute9
-               );
-               apex_util.set_session_state( l_attribute9, l_prcs_id );
-            end if;
-         end if;
+      -- Return instance id in the APEX item provided
+      if ( l_attribute9 is not null ) then
+         apex_debug.info(
+            p_message => '...Return Flow Instance Id into item "%s"'
+         , p0        => l_attribute9
+         );
+         apex_util.set_session_state( l_attribute9, l_prcs_id );
+      end if;
+
+      if l_attribute1 in ( 'create', 'create_and_start', 'start' ) then
 
          --Get JSON for process variables
          if ( l_attribute10 = 'json' ) then
@@ -444,11 +444,12 @@ create or replace package body flow_plugin_manage_instance as
             flow_api_pkg.flow_start(p_process_id => l_prcs_id);
          end if;
 
-         apex_debug.info(
+      end if;
+
+      apex_debug.info(
             p_message => ' < Additional actions.'
             , p0      => l_prcs_id
          );
-      end if;
 
       return l_result;
    exception 

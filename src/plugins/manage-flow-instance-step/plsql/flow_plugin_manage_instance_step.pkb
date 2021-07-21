@@ -104,6 +104,13 @@ create or replace package body flow_plugin_manage_instance_step as
          end if;
       end if;
 
+      if p_process.attribute_11 is not null then
+         apex_debug.info(
+            p_message => '...Return Flow Instance ID and Subflow ID into: %s'
+            , p0        => p_process.attribute_11
+         );
+      end if;
+
       apex_debug.info(
            p_message => ' < Process plug-in attributes'
       );
@@ -119,6 +126,7 @@ create or replace package body flow_plugin_manage_instance_step as
       --exceptions
       e_no_gateway         exception;
       e_gateway_not_exists exception;
+      e_no_flow            exception;
 
       --attributes
       l_attribute1      p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
@@ -131,6 +139,7 @@ create or replace package body flow_plugin_manage_instance_step as
       l_attribute8      p_process.attribute_08%type := p_process.attribute_08; -- Route ID
       l_attribute9      p_process.attribute_09%type := p_process.attribute_09; -- Auto branching (Y/N)
       l_attribute10     p_process.attribute_10%type := p_process.attribute_10; -- Reservation 
+      l_attribute11     p_process.attribute_11%type := p_process.attribute_11; -- Return Flow Instance and Subflow ID 
 
       l_process_id      flow_processes.prcs_id%type;
       l_subflow_id      flow_subflows.sbfl_id%type;
@@ -139,6 +148,7 @@ create or replace package body flow_plugin_manage_instance_step as
       l_gateway_exists  number;
       l_context         apex_exec.t_context;
       l_url             varchar2(4000);
+      l_split_items     apex_t_varchar2;
 
        type flow_step_info is record (
            dgrm_id            flow_diagrams.dgrm_id%type
@@ -179,6 +189,11 @@ create or replace package body flow_plugin_manage_instance_step as
             l_subflow_id  := apex_exec.get_number(l_context, 2);
          end loop;
          apex_exec.close(l_context);
+      end if;
+
+      --Raise error if unable to find process id or subflow id
+      if l_process_id is null or l_subflow_id is null then
+         raise e_no_flow;
       end if;
 
       if ( l_attribute5 = 'complete' ) then
@@ -316,6 +331,25 @@ create or replace package body flow_plugin_manage_instance_step as
             , p_subflow_id => l_subflow_id
          );
       end if;
+
+      -- Return Flow Instance Id and Subflow Id in the APEX items provided
+      if ( l_attribute11 is not null ) then
+         l_split_items := apex_string.split( l_attribute11, ',' );
+         apex_debug.info(
+            p_message => '...Return Flow Instance Id into item "%s"'
+         , p0        => l_split_items(1)
+         );
+         apex_util.set_session_state( l_split_items(1), l_process_id );
+
+         if l_split_items.count() = 2 then
+            apex_debug.info(
+               p_message => '...Return Subflow Id into item "%s"'
+            , p0        => l_split_items(2)
+            );
+            apex_util.set_session_state( l_split_items(2), l_subflow_id );
+         end if;
+      end if;
+
       return l_result;
    exception 
       when e_no_gateway then
@@ -326,6 +360,11 @@ create or replace package body flow_plugin_manage_instance_step as
       when e_gateway_not_exists then
          apex_error.add_error( 
               p_message => 'Gateway define does not exists for this flow.'
+            , p_display_location => apex_error.c_on_error_page
+         );
+      when e_no_flow then
+         apex_error.add_error( 
+              p_message => 'Unable to get Flow Instance Id and or subflow Id to manage the step.'
             , p_display_location => apex_error.c_on_error_page
          );
    end execution;
