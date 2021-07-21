@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   14:25 Friday July 9, 2021
+--   Date and Time:   10:07 Wednesday July 21, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -149,13 +149,14 @@ wwv_flow_api.create_plugin_attribute(
 ,p_plugin_id=>wwv_flow_api.id(17400427631150028)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
-,p_display_sequence=>40
+,p_display_sequence=>5
 ,p_prompt=>'Action'
 ,p_attribute_type=>'SELECT LIST'
 ,p_is_required=>true
 ,p_default_value=>'set'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
+,p_help_text=>'This attributes allows you to define if you want to set or to get the process variables.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(17501629393231328)
@@ -163,6 +164,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>10
 ,p_display_value=>'Set'
 ,p_return_value=>'set'
+,p_help_text=>'Use this when you want to set a process variable(s)'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(17502063636231923)
@@ -170,6 +172,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>20
 ,p_display_value=>'Get'
 ,p_return_value=>'get'
+,p_help_text=>'Use this when you want to get a process variable(s)'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(17402808529150031)
@@ -184,6 +187,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
+,p_help_text=>'This attribute allows you to define the way to manage the variables.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(17403239684150032)
@@ -191,6 +195,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>10
 ,p_display_value=>'APEX item(s)'
 ,p_return_value=>'item'
+,p_help_text=>'Use this when you want to manage a process variable(s) using APEX item(s)'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(17403727382150032)
@@ -198,6 +203,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>20
 ,p_display_value=>'JSON'
 ,p_return_value=>'json'
+,p_help_text=>'Use this when you want to manage a process variable(s) using JSON.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(17404220547150032)
@@ -205,6 +211,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>30
 ,p_display_value=>'SQL Query'
 ,p_return_value=>'sql'
+,p_help_text=>'Use this when you want to manage a process variable(s) using a SQL Query.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(17404713061150032)
@@ -224,7 +231,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<p>Comma-separated list of process variable(s) name(s)</p>',
 '',
-'<p>Note that process variable name is case sensitive and the order will have an impact on which APEX item will hold that value.</p>'))
+'<p>Note that process variable name is case sensitive and the order will have an impact on which APEX item will manage that value.</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(17405186898150032)
@@ -242,7 +249,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>APEX Items(s) that will hold the process variable value.</p>',
+'<p>APEX Items(s) that will be used to manage the process variable value.</p>',
 '',
 '<p>This could typically be: </p>',
 '<ul>',
@@ -267,6 +274,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'json'
 ,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>JSON when action is set</p>',
 '<pre>',
 '[',
 '	{',
@@ -290,8 +298,34 @@ wwv_flow_api.create_plugin_attribute(
 '		"value": "long text"',
 '	}',
 ']',
+'</pre>',
+'',
+'<p>JSON when action is get</p>',
+'<pre>',
+'[',
+'	{',
+'		"name": "Example_vc2_var",',
+'		"type": "varchar2",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_num_var",',
+'		"type": "number",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_date_var",',
+'		"type": "date",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_clob_var",',
+'		"type": "clob",',
+'		"item": "ITEM_NAME"',
+'	}',
+']',
 '</pre>'))
-,p_help_text=>'Enter a JSON array that contains one or more process variables, their types, and values.'
+,p_help_text=>'Enter a JSON array that contains one or more process variables, their types, and values (when action is set) or item (when action is get).'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(17405903434150034)
@@ -311,6 +345,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
 ,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>SQL Query when action is Set</p>',
 '<pre>',
 'select json_array(',
 '    json_object(',
@@ -333,7 +368,33 @@ wwv_flow_api.create_plugin_attribute(
 '        , key ''type'' value ''clob''',
 '        , key ''value'' value to_clob(''this is a clob'')',
 '        )',
-'returning clob)',
+'returning clob) as json',
+'from dual;',
+'</pre>',
+'<p>SQL Query when action is Get</p>',
+'<pre>',
+'select json_array(',
+'    json_object(',
+'          key ''name'' value ''example_vc2_var''',
+'        , key ''type'' value ''varchar2''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_num_var''',
+'        , key ''type'' value ''number''',
+'       , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_date_var''',
+'        , key ''type'' value ''date''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''examnple_clob_var''',
+'        , key ''type'' value ''clob''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        )',
+'returning clob) as json',
 'from dual;',
 '</pre>'))
 ,p_help_text=>'SQL query that returns the array containing the instance variables.'
