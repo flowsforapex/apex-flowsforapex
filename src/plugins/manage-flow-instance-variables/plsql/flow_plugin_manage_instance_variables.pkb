@@ -312,13 +312,12 @@ create or replace package body flow_plugin_manage_instance_variables as
                         , pi_date_value => l_process_variable.get_timestamp('value')
                         );
                      when 'get' then
-                         apex_exec.execute_plsql('begin
-                           :' || l_item_name || ' := ' || flow_process_vars.get_var_date(
-                                                pi_prcs_id  => l_prcs_id
-                                             , pi_var_name => l_prcs_var_name
-                                          ) || ';
-                           end;'
-                        );
+                        apex_exec.execute_plsql(   'begin
+                           :' || l_item_name || ' :=  flow_process_vars.get_var_date(
+                                                pi_prcs_id  => '||l_prcs_id||'
+                                             , pi_var_name => '''||l_prcs_var_name||'''
+                                          ); 
+                           end;');
                   end case;
                when 'clob' then
                   apex_debug.info(
@@ -344,11 +343,11 @@ create or replace package body flow_plugin_manage_instance_variables as
                         );
                      when 'get' then
                         apex_exec.execute_plsql('begin
-                           :' || l_item_name || q'[ := ']' || flow_process_vars.get_var_clob(
-                                                pi_prcs_id  => l_prcs_id
-                                             , pi_var_name => l_prcs_var_name
-                                          ) || q'[';
-                           end;]'
+                           :' || l_item_name || ' := flow_process_vars.get_var_clob(
+                                                pi_prcs_id  => '|| l_prcs_id ||'
+                                             , pi_var_name => '''|| l_prcs_var_name ||'''
+                                          );
+                           end;'
                         );
                   end case;                   
                else
