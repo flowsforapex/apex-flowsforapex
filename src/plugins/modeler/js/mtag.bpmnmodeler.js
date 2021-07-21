@@ -538,11 +538,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js");
 /* harmony import */ var bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-/* harmony import */ var _lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../lib/formsHelper */ "./lib/formsHelper.js");
-
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../lib/formsHelper */ "./lib/formsHelper.js");
 
 
 
@@ -550,31 +547,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (element, translate) {
   const serviceTaskEngine = '[name="engine"]';
   const engineNo = 0;
-  const serviceTaskType = '[name="serviceTaskType"]';
-  const typePlsql = 0;
-  const typeEmail = 1;
   const serviceTaskProps = [];
 
-  if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["is"])(element, 'bpmn:ServiceTask')) {
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
-        id: 'serviceTaskType',
-        description: 'choose the Type of the Service Task',
-        modelProperty: 'serviceTaskType',
-        selectOptions: [
-          { name: 'Run PL/SQL Code', value: 'PL/SQL' },
-          { name: 'Send Mail using APEX Template', value: 'Template' }
-        ],
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            'serviceTaskType': values.serviceTaskType
-          });
-        }
-      })
-    );
-
-    // engine: if 'yes' then add 'autoBinds' 
+  if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(element, 'bpmn:ServiceTask')) {
+    // if 'yes' then add 'autoBinds' 
     serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'engine',
@@ -584,10 +560,7 @@ __webpack_require__.r(__webpack_exports__);
         selectOptions: [
           { name: 'No', value: 'false' },
           { name: 'Yes', value: 'true' }
-        ],
-        hidden: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
+        ]
       })
     );
 
@@ -597,19 +570,11 @@ __webpack_require__.r(__webpack_exports__);
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
         label: 'PL/SQL Code',
-        modelProperty: 'plsqlCode',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            plsqlCode: values.plsqlCode
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typePlsql);
-        }
+        modelProperty: 'plsqlCode'
       })
     );
 
+    // only shown, when APEX_EXEC is used
     serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'autoBinds',
@@ -621,119 +586,10 @@ __webpack_require__.r(__webpack_exports__);
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail)
-            || Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskEngine, engineNo);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__["isOptionSelected"])(serviceTaskEngine, engineNo);
         }
-      })
-    );
-
-    // Send Mail Using Template
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'applicationId',
-        description: 'Enter the Application ID.',
-        label: 'Application ID',
-        modelProperty: 'applicationId',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            applicationId: values.applicationId
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'pageId',
-        description: 'Enter the Page ID.',
-        label: 'Page ID',
-        modelProperty: 'pageId',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            pageId: values.pageId
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'username',
-        description: 'Enter the Username.',
-        label: 'Username',
-        modelProperty: 'username',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            username: values.username
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'templateIdentifier',
-        description: 'Enter the Template Identifier.',
-        label: 'Template Identifier',
-        modelProperty: 'templateIdentifier',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            templateIdentifier: values.templateIdentifier
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'emailFrom',
-        description: 'Enter the email sender.',
-        label: 'Email From',
-        modelProperty: 'emailFrom',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            emailFrom: values.emailFrom
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'emailTo',
-        description: 'Enter the email recipient.',
-        label: 'Email To',
-        modelProperty: 'emailTo',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            emailTo: values.emailTo
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
+      }
+      )
     );
   }
 
@@ -846,6 +702,382 @@ module.exports = function () {
 
 /***/ }),
 
+/***/ "./custom/palette/PaletteProvider.js":
+/*!*******************************************!*\
+  !*** ./custom/palette/PaletteProvider.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PaletteProvider; });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll_ZoomScroll__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll/ZoomScroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/ZoomScroll.js");
+
+
+  
+/**
+ * A palette provider for BPMN 2.0 elements.
+ */
+function PaletteProvider(
+    palette, create, elementFactory,
+    spaceTool, lassoTool, handTool,
+    globalConnect, translate, commandStack,
+    eventBus, canvas) {
+
+  this._palette = palette;
+  this._create = create;
+  this._elementFactory = elementFactory;
+  this._spaceTool = spaceTool;
+  this._lassoTool = lassoTool;
+  this._handTool = handTool;
+  this._globalConnect = globalConnect;
+  this._translate = translate;
+  this._commandStack = commandStack;
+  this._eventBus = eventBus;
+  this._canvas = canvas;
+
+  palette.registerProvider(this);
+}
+
+PaletteProvider.$inject = [
+  'palette',
+  'create',
+  'elementFactory',
+  'spaceTool',
+  'lassoTool',
+  'handTool',
+  'globalConnect',
+  'translate',
+  'commandStack',
+  'eventBus',
+  'canvas'
+];
+
+
+PaletteProvider.prototype.getPaletteEntries = function(element) {
+
+  var actions = {},
+      create = this._create,
+      elementFactory = this._elementFactory,
+      spaceTool = this._spaceTool,
+      lassoTool = this._lassoTool,
+      handTool = this._handTool,
+      globalConnect = this._globalConnect,
+      translate = this._translate,
+      commandStack = this._commandStack,
+      eventBus = this._eventBus,
+      canvas = this._canvas;
+
+  var zoomScroll = new diagram_js_lib_navigation_zoomscroll_ZoomScroll__WEBPACK_IMPORTED_MODULE_1__["default"]({}, eventBus, canvas);
+
+  function createAction(type, group, className, title, options) {
+
+    function createListener(event) {
+      var shape = elementFactory.createShape(Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])({ type: type }, options));
+
+      if (options) {
+        shape.businessObject.di.isExpanded = options.isExpanded;
+      }
+
+      create.start(event, shape);
+    }
+
+    var shortType = type.replace(/^bpmn:/, '');
+
+    return {
+      group: group,
+      className: className,
+      title: title || translate('Create {type}', { type: shortType }),
+      action: {
+        dragstart: createListener,
+        click: createListener
+      }
+    };
+  }
+
+  function createSubprocess(event) {
+    var subProcess = elementFactory.createShape({
+      type: 'bpmn:SubProcess',
+      x: 0,
+      y: 0,
+      isExpanded: true
+    });
+
+    var startEvent = elementFactory.createShape({
+      type: 'bpmn:StartEvent',
+      x: 40,
+      y: 82,
+      parent: subProcess
+    });
+
+    create.start(event, [ subProcess, startEvent ], {
+      hints: {
+        autoSelect: [ startEvent ]
+      }
+    });
+  }
+
+  function createParticipant(event) {
+    create.start(event, elementFactory.createParticipantShape());
+  }
+
+  Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {    
+    'hand-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-hand-tool',
+      title: translate('Activate the hand tool'),
+      action: {
+        click: function(event) {
+          handTool.activateHand(event);
+        }
+      }
+    },
+    'lasso-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-lasso-tool',
+      title: translate('Activate the lasso tool'),
+      action: {
+        click: function(event) {
+          lassoTool.activateSelection(event);
+        }
+      }
+    },
+    'space-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-space-tool',
+      title: translate('Activate the create/remove space tool'),
+      action: {
+        click: function(event) {
+          spaceTool.activateSelection(event);
+        }
+      }
+    },
+    'global-connect-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-connection-multi',
+      title: translate('Activate the global connect tool'),
+      action: {
+        click: function(event) {
+          globalConnect.start(event);
+        }
+      }
+    },
+    'tool-separator': {
+      group: 'tools',
+      separator: true
+    },
+    'undo': {
+      group: 'controls',
+      className: 'bpmn-icon-undo',
+      title: translate('Undo'),
+      action: {
+        click: function(event) {
+          commandStack.undo();
+        }
+      }
+    },
+    'redo': {
+      group: 'controls',
+      className: 'bpmn-icon-redo',
+      title: translate('Redo'),
+      action: {
+        click: function(event) {
+          commandStack.redo();
+        }
+      }
+    },
+    'zoom-in': {
+      group: 'controls',
+      className: 'bpmn-icon-zoom-in',
+      title: translate('Zoom In'),
+      action: {
+        click: function(event) {
+          zoomScroll.zoom(1, 0);
+        }
+      }
+    },
+    'zoom-out': {
+      group: 'controls',
+      className: 'bpmn-icon-zoom-out',
+      title: translate('Zoom In'),
+      action: {
+        click: function(event) {
+          zoomScroll.zoom(-1, 0);
+        }
+      }
+    },
+    'controls-separator': {
+      group: 'controls',
+      separator: true
+    },
+    'create.start-event': createAction(
+      'bpmn:StartEvent', 'event', 'bpmn-icon-start-event-none',
+      translate('Create StartEvent')
+    ),
+    'create.intermediate-event': createAction(
+      'bpmn:IntermediateThrowEvent', 'event', 'bpmn-icon-intermediate-event-none',
+      translate('Create Intermediate/Boundary Event')
+    ),
+    'create.end-event': createAction(
+      'bpmn:EndEvent', 'event', 'bpmn-icon-end-event-none',
+      translate('Create EndEvent')
+    ),
+    'create.exclusive-gateway': createAction(
+      'bpmn:ExclusiveGateway', 'gateway', 'bpmn-icon-gateway-none',
+      translate('Create Gateway')
+    ),
+    'create.task': createAction(
+      'bpmn:Task', 'activity', 'bpmn-icon-task',
+      translate('Create Task')
+    ),
+    'create.data-object': createAction(
+      'bpmn:DataObjectReference', 'data-object', 'bpmn-icon-data-object',
+      translate('Create DataObjectReference')
+    ),
+    'create.data-store': createAction(
+      'bpmn:DataStoreReference', 'data-store', 'bpmn-icon-data-store',
+      translate('Create DataStoreReference')
+    ),
+    'create.subprocess-expanded': {
+      group: 'activity',
+      className: 'bpmn-icon-subprocess-expanded',
+      title: translate('Create expanded SubProcess'),
+      action: {
+        dragstart: createSubprocess,
+        click: createSubprocess
+      }
+    },
+    'create.participant-expanded': {
+      group: 'collaboration',
+      className: 'bpmn-icon-participant',
+      title: translate('Create Pool/Participant'),
+      action: {
+        dragstart: createParticipant,
+        click: createParticipant
+      }
+    },
+    'create.group': createAction(
+      'bpmn:Group', 'artifact', 'bpmn-icon-group',
+      translate('Create Group')
+    ),
+  });
+
+  return actions;
+};
+
+/***/ }),
+
+/***/ "./custom/palette/index.js":
+/*!*********************************!*\
+  !*** ./custom/palette/index.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PaletteProvider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PaletteProvider.js */ "./custom/palette/PaletteProvider.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  __init__: ['paletteProvider'],
+  paletteProvider: ['type', _PaletteProvider_js__WEBPACK_IMPORTED_MODULE_0__["default"]]
+});
+
+
+/***/ }),
+
+/***/ "./custom/properties-panel/PropertiesPanel.js":
+/*!****************************************************!*\
+  !*** ./custom/properties-panel/PropertiesPanel.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var PropertiesPanel = __webpack_require__(/*! bpmn-js-properties-panel/lib/PropertiesPanel */ "./node_modules/bpmn-js-properties-panel/lib/PropertiesPanel.js");
+
+var domQuery = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").query;
+PropertiesPanel.prototype.attachTo = function(parentNode) {
+  if (!parentNode) {
+    throw new Error('parentNode required');
+  }
+
+  // ensure we detach from the
+  // previous, old parent
+  this.detach();
+
+  // unwrap jQuery if provided
+  if (parentNode.get && parentNode.constructor.prototype.jquery) {
+    parentNode = parentNode.get(0);
+  }
+
+  if (typeof parentNode === 'string') {
+    parentNode = domQuery(parentNode);
+  }
+
+  var container = this._container;
+
+  parentNode.appendChild(container);
+
+  // custom part for resizable properties panel
+
+  var mouseX;
+  const BORDER_WIDTH = 5;
+
+  document.addEventListener('mousedown', function(event) {
+    if (event.offsetX < BORDER_WIDTH) {
+      mouseX = event.x;
+      document.addEventListener("mousemove", resize, false);
+    }
+  });
+
+  document.addEventListener('mouseup', function() {
+    document.removeEventListener("mousemove", resize, false);
+  });
+
+  const canvas = this._canvas._container;
+
+  function resize(event) {
+    var dx = mouseX - event.x;
+    mouseX = event.x;
+    var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
+    var maxWidth = (parseInt(getComputedStyle(canvas, '').width))/100 * parseInt(getComputedStyle(parentNode).maxWidth);
+    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && panelWidth < maxWidth) {
+      parentNode.style.width = panelWidth + "px";
+      parentNode.firstChild.style.width = panelWidth + "px";
+    }
+  }
+
+  // end custom part
+
+  this._emit('attach');
+}
+
+module.exports = PropertiesPanel;
+
+/***/ }),
+
+/***/ "./custom/properties-panel/index.js":
+/*!******************************************!*\
+  !*** ./custom/properties-panel/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = {
+  __depends__: [
+    __webpack_require__(/*! bpmn-js-properties-panel/lib/cmd */ "./node_modules/bpmn-js-properties-panel/lib/cmd/index.js"),
+    __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js").default
+  ],
+  __init__: [ 'propertiesPanel' ],
+  propertiesPanel: [ 'type', __webpack_require__(/*! ./PropertiesPanel */ "./custom/properties-panel/PropertiesPanel.js") ]
+};
+
+
+/***/ }),
+
 /***/ "./index.js":
 /*!******************!*\
   !*** ./index.js ***!
@@ -856,13 +1088,14 @@ module.exports = function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/Modeler */ "./node_modules/bpmn-js/lib/Modeler.js");
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/bpmn-js-properties-panel/index.js");
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./custom/properties-panel */ "./custom/properties-panel/index.js");
+/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_custom_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./apexPropertiesProvider/provider */ "./apexPropertiesProvider/provider/index.js");
 /* harmony import */ var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json");
 var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3___namespace = /*#__PURE__*/__webpack_require__.t(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json", 1);
 /* harmony import */ var bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js-bpmnlint */ "./node_modules/bpmn-js-bpmnlint/dist/index.esm.js");
 /* harmony import */ var _bpmnlintrc__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./.bpmnlintrc */ "./.bpmnlintrc");
+/* harmony import */ var _custom_palette__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./custom/palette */ "./custom/palette/index.js");
 
 
 
@@ -870,15 +1103,18 @@ var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3___na
 
 
 
- 
+
+
+
 
 var bpmnModeler = {
   Modeler: bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_0__["default"],
   linting: { apexLinting: _bpmnlintrc__WEBPACK_IMPORTED_MODULE_5__["default"] },
   customModules: {
-    propertiesPanelModule: (bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default()),
+    propertiesPanelModule: (_custom_properties_panel__WEBPACK_IMPORTED_MODULE_1___default()),
     propertiesProviderModule: _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_2__["default"],
-    lintModule: bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_4__["default"]
+    lintModule: bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_4__["default"],
+    customPaletteProviderModule: _custom_palette__WEBPACK_IMPORTED_MODULE_6__["default"]
   },
   moddleExtensions: {
     apexModdleDescriptor: _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__
@@ -1445,18 +1681,6 @@ function escapeHTML(str) {
 
 /***/ }),
 
-/***/ "./node_modules/bpmn-js-properties-panel/index.js":
-/*!********************************************************!*\
-  !*** ./node_modules/bpmn-js-properties-panel/index.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(/*! ./lib */ "./node_modules/bpmn-js-properties-panel/lib/index.js");
-
-
-/***/ }),
-
 /***/ "./node_modules/bpmn-js-properties-panel/lib/PropertiesActivator.js":
 /*!**************************************************************************!*\
   !*** ./node_modules/bpmn-js-properties-panel/lib/PropertiesActivator.js ***!
@@ -1597,6 +1821,7 @@ var getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ ".
 var HIDE_CLASS = 'bpp-hidden';
 var DEBOUNCE_DELAY = 300;
 
+var DEFAULT_PRIORITY = 1000;
 
 function isToggle(node) {
   return node.type === 'checkbox' || node.type === 'radio';
@@ -1783,34 +2008,56 @@ function extractGroups(tabs) {
  * @constructor
  *
  * @param {Object} config
+ * @param {didi.Injector} injector
  * @param {EventBus} eventBus
  * @param {Modeling} modeling
- * @param {PropertiesProvider} propertiesProvider
  * @param {Canvas} canvas
  * @param {CommandStack} commandStack
  */
-function PropertiesPanel(config, eventBus, modeling, propertiesProvider, commandStack, canvas) {
+function PropertiesPanel(config, injector, eventBus, modeling, commandStack, canvas) {
 
   this._eventBus = eventBus;
   this._modeling = modeling;
   this._commandStack = commandStack;
   this._canvas = canvas;
-  this._propertiesProvider = propertiesProvider;
+
+  var propertiesProvider = injector.get('propertiesProvider', false);
+
+  if (propertiesProvider) {
+    this.registerProvider(propertiesProvider);
+  }
 
   this._init(config);
 }
 
 PropertiesPanel.$inject = [
   'config.propertiesPanel',
+  'injector',
   'eventBus',
   'modeling',
-  'propertiesProvider',
   'commandStack',
   'canvas'
 ];
 
 module.exports = PropertiesPanel;
 
+/**
+ * @param {number} [priority]
+ * @param { { getTabs: any[] | (any) => (any[]) => any[]) } } provider
+ */
+PropertiesPanel.prototype.registerProvider = function(priority, provider) {
+
+  if (!provider) {
+    provider = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  this._eventBus.on('propertiesPanel.getProviders', priority, function(event) {
+    event.providers.push(provider);
+  });
+
+  this._eventBus.fire('propertiesPanel.providersChanged');
+};
 
 PropertiesPanel.prototype._init = function(config) {
 
@@ -1900,7 +2147,10 @@ PropertiesPanel.prototype._init = function(config) {
     }
   });
 
-  eventBus.on('elementTemplates.changed', function() {
+  eventBus.on([
+    'elementTemplates.changed',
+    'propertiesPanel.providersChanged'
+  ], function() {
     var current = self._current;
     var element = current && current.element;
 
@@ -2020,6 +2270,34 @@ PropertiesPanel.prototype.activateTab = function(tabId) {
   }
 };
 
+PropertiesPanel.prototype._getProviders = function() {
+
+  var event = this._eventBus.createEvent({
+    type: 'propertiesPanel.getProviders',
+    providers: []
+  });
+
+  this._eventBus.fire(event);
+
+  return event.providers;
+};
+
+PropertiesPanel.prototype._getTabs = function(element) {
+  var providers = this._getProviders();
+
+  // loop through all providers and their entries.
+  // group entries by id so that overriding an entry is possible
+  return reduce(providers, function(tabs, provider) {
+    var tabsOrUpdater = provider.getTabs(element);
+
+    if (isFunction(tabsOrUpdater)) {
+      return tabsOrUpdater(tabs);
+    } else {
+      return tabsOrUpdater;
+    }
+  }, []);
+};
+
 /**
  * Update properties panel to show properties of element. Create new properties panel if no previous
  * properties panel, element has changed or element has not changed but entries have.
@@ -2034,7 +2312,7 @@ PropertiesPanel.prototype.update = function(element) {
   }
 
   // (2) Get tabs
-  var tabs = this._propertiesProvider.getTabs(element);
+  var tabs = this._getTabs(element);
 
   var activeTabId,
       activeTabNode;
@@ -2998,6 +3276,20 @@ module.exports.addEmptyParameter = addEmptyParameter;
 
 
 /**
+ * returns a dropdown option label depending on the defined event attributes
+ */
+function getOptionLabel(obj) {
+  var label = obj.name || '';
+
+  if (obj.errorCode)
+    label += ' (code=' + obj.errorCode + ')';
+  if (obj.escalationCode)
+    label += ' (code=' + obj.escalationCode + ')';
+
+  return label;
+}
+
+/**
  * returns a list with all root elements for the given parameter 'referencedType'
  */
 function refreshOptionsModel(businessObject, referencedType) {
@@ -3005,7 +3297,7 @@ function refreshOptionsModel(businessObject, referencedType) {
   var referableObjects = findRootElementsByType(businessObject, referencedType);
   forEach(referableObjects, function(obj) {
     model.push({
-      label: (obj.name || '') + ' (id='+obj.id+')',
+      label: getOptionLabel(obj),
       value: obj.id,
       name: obj.name
     });
@@ -6092,25 +6384,6 @@ ParticipantHelper.getProcessBusinessObject = function(element, propertyName) {
 
 /***/ }),
 
-/***/ "./node_modules/bpmn-js-properties-panel/lib/index.js":
-/*!************************************************************!*\
-  !*** ./node_modules/bpmn-js-properties-panel/lib/index.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = {
-  __depends__: [
-    __webpack_require__(/*! ./cmd */ "./node_modules/bpmn-js-properties-panel/lib/cmd/index.js"),
-    __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js").default
-  ],
-  __init__: [ 'propertiesPanel' ],
-  propertiesPanel: [ 'type', __webpack_require__(/*! ./PropertiesPanel */ "./node_modules/bpmn-js-properties-panel/lib/PropertiesPanel.js") ]
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps.js":
 /*!*********************************************************************************************!*\
   !*** ./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps.js ***!
@@ -6833,11 +7106,14 @@ module.exports = function(element, definition, bpmnFactory, translate, options) 
   var referenceProperty = options.referenceProperty;
   var modelProperty = options.modelProperty || 'name';
   var shouldValidate = options.shouldValidate || false;
+  var description = options.description;
+  var canBeHidden = !!options.hidden && typeof options.hidden === 'function';
 
   var entry = entryFactory.textField(translate, {
     id: id,
     label: label,
     modelProperty: modelProperty,
+    description: description,
 
     get: function(element, node) {
       var reference = definition.get(referenceProperty);
@@ -6854,6 +7130,9 @@ module.exports = function(element, definition, bpmnFactory, translate, options) 
     },
 
     hidden: function(element, node) {
+      if (canBeHidden) {
+        return options.hidden.apply(definition, arguments) || !definition.get(referenceProperty);
+      }
       return !definition.get(referenceProperty);
     }
   });
@@ -6893,7 +7172,7 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
 
 
   group.entries = group.entries.concat(eventDefinitionReference(element, errorEventDefinition, bpmnFactory, {
-    label: translate('Error'),
+    label: translate('Global Error referenced'),
     elementName: 'error',
     elementType: 'bpmn:Error',
     referenceProperty: 'errorRef',
@@ -6904,7 +7183,7 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
   group.entries = group.entries.concat(
     elementReferenceProperty(element, errorEventDefinition, bpmnFactory, translate, {
       id: 'error-element-name',
-      label: translate('Error Name'),
+      label: translate('Name'),
       referenceProperty: 'errorRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -6915,7 +7194,7 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
   group.entries = group.entries.concat(
     elementReferenceProperty(element, errorEventDefinition, bpmnFactory, translate, {
       id: 'error-element-code',
-      label: translate('Error Code'),
+      label: translate('Code'),
       referenceProperty: 'errorRef',
       modelProperty: 'errorCode'
     })
@@ -6937,7 +7216,8 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
 
 
 var entryFactory = __webpack_require__(/*! ../../../../factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js"),
-    cmdHelper = __webpack_require__(/*! ../../../../helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+    cmdHelper = __webpack_require__(/*! ../../../../helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js"),
+    utils = __webpack_require__(/*! ../../../../Utils */ "./node_modules/bpmn-js-properties-panel/lib/Utils.js");
 
 var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReference */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/EventDefinitionReference.js"),
     elementReferenceProperty = __webpack_require__(/*! ./ElementReferenceProperty */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ElementReferenceProperty.js");
@@ -6946,7 +7226,7 @@ var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReferenc
 module.exports = function(group, element, bpmnFactory, escalationEventDefinition, showEscalationCodeVariable, translate) {
 
   group.entries = group.entries.concat(eventDefinitionReference(element, escalationEventDefinition, bpmnFactory, {
-    label: translate('Escalation'),
+    label: translate('Global Escalation referenced'),
     elementName: 'escalation',
     elementType: 'bpmn:Escalation',
     referenceProperty: 'escalationRef',
@@ -6957,7 +7237,7 @@ module.exports = function(group, element, bpmnFactory, escalationEventDefinition
   group.entries = group.entries.concat(
     elementReferenceProperty(element, escalationEventDefinition, bpmnFactory, translate, {
       id: 'escalation-element-name',
-      label: translate('Escalation Name'),
+      label: translate('Global Escalation Name'),
       referenceProperty: 'escalationRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -6968,7 +7248,7 @@ module.exports = function(group, element, bpmnFactory, escalationEventDefinition
   group.entries = group.entries.concat(
     elementReferenceProperty(element, escalationEventDefinition, bpmnFactory, translate, {
       id: 'escalation-element-code',
-      label: translate('Escalation Code'),
+      label: translate('Global Escalation Code'),
       referenceProperty: 'escalationRef',
       modelProperty: 'escalationCode'
     })
@@ -6976,22 +7256,34 @@ module.exports = function(group, element, bpmnFactory, escalationEventDefinition
 
 
   if (showEscalationCodeVariable) {
-    group.entries.push(entryFactory.textField(translate, {
+    group.entries.push(entryFactory.validationAwareTextField(translate, {
       id : 'escalationCodeVariable',
       label : translate('Escalation Code Variable'),
       modelProperty : 'escalationCodeVariable',
+      description: translate('Define the name of the variable that will contain the escalation code'),
 
-      get: function(element) {
+      getProperty: function(element) {
         var codeVariable = escalationEventDefinition.get('camunda:escalationCodeVariable');
-        return {
-          escalationCodeVariable: codeVariable
-        };
+
+        return codeVariable;
       },
 
-      set: function(element, values) {
-        return cmdHelper.updateBusinessObject(element, escalationEventDefinition, {
-          'camunda:escalationCodeVariable': values.escalationCodeVariable || undefined
-        });
+      setProperty: function(element, values) {
+        if (values.escalationCodeVariable === '')
+          values.escalationCodeVariable = undefined;
+
+        return cmdHelper.updateBusinessObject(element, escalationEventDefinition, values);
+      },
+
+      validate: function(element, values) {
+        var validation = {},
+            targetValue = values.escalationCodeVariable;
+
+        if (utils.containsSpace(targetValue)) {
+          validation.escalationCodeVariable = translate('Escalation code variable must not contain spaces.');
+        }
+
+        return validation;
       }
     }));
   }
@@ -7033,7 +7325,7 @@ var selector = 'select[name=selectedElement]';
  * @return {DOMElement} the select box
  */
 function getSelectBox(node) {
-  return domQuery(selector, node.parentElement);
+  return domQuery(selector, node);
 }
 
 /**
@@ -7080,11 +7372,19 @@ module.exports = function(element, definition, bpmnFactory, options) {
 
   var entries = [];
 
+  var canBeHidden = !!options.hidden && typeof options.hidden === 'function';
+
   entries.push({
 
-    id: 'event-definitions-' + elementName,
+    id: options.id || 'event-definitions-' + elementName,
     description: description,
-    html: '<div class="bpp-row bpp-select">' +
+    isShown: function() {
+      if (canBeHidden) {
+        return !options.hidden.apply(definition, arguments);
+      }
+      return !options.hidden;
+    },
+    html: '<div class="bpp-row bpp-select" data-show="isShown">' +
              '<label for="camunda-' + escapeHTML(elementName) + '">' + escapeHTML(label) + '</label>' +
              '<div class="bpp-field-wrapper">' +
                '<select id="camunda-' + escapeHTML(elementName) + '" name="selectedElement" data-value>' +
@@ -7181,7 +7481,7 @@ var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReferenc
 module.exports = function(group, element, bpmnFactory, messageEventDefinition, translate) {
 
   group.entries = group.entries.concat(eventDefinitionReference(element, messageEventDefinition, bpmnFactory, {
-    label: translate('Message'),
+    label: translate('Global Message referenced'),
     elementName: 'message',
     elementType: 'bpmn:Message',
     referenceProperty: 'messageRef',
@@ -7192,7 +7492,7 @@ module.exports = function(group, element, bpmnFactory, messageEventDefinition, t
   group.entries = group.entries.concat(
     elementReferenceProperty(element, messageEventDefinition, bpmnFactory, translate, {
       id: 'message-element-name',
-      label: translate('Message Name'),
+      label: translate('Global Message Name'),
       referenceProperty: 'messageRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -7266,7 +7566,7 @@ var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReferenc
 module.exports = function(group, element, bpmnFactory, signalEventDefinition, translate) {
 
   group.entries = group.entries.concat(eventDefinitionReference(element, signalEventDefinition, bpmnFactory, {
-    label: translate('Signal'),
+    label: translate('Global Signal referenced'),
     elementName: 'signal',
     elementType: 'bpmn:Signal',
     referenceProperty: 'signalRef',
@@ -7277,7 +7577,7 @@ module.exports = function(group, element, bpmnFactory, signalEventDefinition, tr
   group.entries = group.entries.concat(
     elementReferenceProperty(element, signalEventDefinition, bpmnFactory, translate, {
       id: 'signal-element-name',
-      label: translate('Signal Name'),
+      label: translate('Global Signal Name'),
       referenceProperty: 'signalRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -7944,12 +8244,12 @@ BaseViewer.prototype.saveXML = Object(_util_CompatibilityUtil__WEBPACK_IMPORTED_
 
   var definitions = this._definitions;
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
 
     if (!definitions) {
-      var err = new Error('no definitions loaded');
-
-      return reject(err);
+      return resolve({
+        error: new Error('no definitions loaded')
+      });
     }
 
     // allow to fiddle around with definitions
@@ -7961,25 +8261,27 @@ BaseViewer.prototype.saveXML = Object(_util_CompatibilityUtil__WEBPACK_IMPORTED_
 
       var xml = result.xml;
 
-      try {
-        xml = self._emit('saveXML.serialized', {
-          error: null,
-          xml: xml
-        }) || xml;
+      xml = self._emit('saveXML.serialized', {
+        xml: xml
+      }) || xml;
 
-        self._emit('saveXML.done', {
-          error: null,
-          xml: xml
-        });
-      } catch (e) {
-        console.error('error in saveXML life-cycle listener', e);
-      }
-
-      return resolve({ xml: xml });
-    }).catch(function(err) {
-
-      return reject(err);
+      return resolve({
+        xml: xml
+      });
     });
+  }).catch(function(error) {
+    return { error: error };
+  }).then(function(result) {
+
+    self._emit('saveXML.done', result);
+
+    var error = result.error;
+
+    if (error) {
+      return Promise.reject(error);
+    }
+
+    return result;
   });
 });
 
@@ -33822,7 +34124,8 @@ module.exports = disallowNodeType('bpmn:ComplexGateway');
 /***/ (function(module, exports, __webpack_require__) {
 
 const {
-  isAny
+  isAny,
+  is
 } = __webpack_require__(/*! bpmnlint-utils */ "./node_modules/bpmnlint-utils/dist/index.esm.js");
 
 
@@ -33844,6 +34147,13 @@ module.exports = function() {
       return;
     }
 
+    // compensation activity and boundary events are
+    // linked visually via associations. If these associations
+    // exist we are fine, too
+    if (isCompensationLinked(node)) {
+      return;
+    }
+
     const incoming = node.incoming || [];
     const outgoing = node.outgoing || [];
 
@@ -33855,9 +34165,37 @@ module.exports = function() {
   return {
     check
   };
-
 };
 
+
+// helpers /////////////////
+
+function isCompensationBoundary(node) {
+
+  var eventDefinitions = node.eventDefinitions;
+
+  if (!is(node, 'bpmn:BoundaryEvent')) {
+    return false;
+  }
+
+  if (!eventDefinitions || eventDefinitions.length !== 1) {
+    return false;
+  }
+
+  return is(eventDefinitions[0], 'bpmn:CompensateEventDefinition');
+}
+
+function isCompensationActivity(node) {
+  return node.isForCompensation;
+}
+
+function isCompensationLinked(node) {
+  var source = isCompensationBoundary(node);
+  var target = isCompensationActivity(node);
+
+  // TODO(nikku): check, whether compensation association exists
+  return source || target;
+}
 
 /***/ }),
 
@@ -79203,7 +79541,7 @@ var p2s = /,?([a-z]),?/gi,
     pow = math.pow,
     abs = math.abs,
     pathCommand = /([a-z])[\s,]*((-?\d*\.?\d*(?:e[-+]?\d+)?[\s]*,?[\s]*)+)/ig,
-    pathValues = /(-?\d*\.?\d*(?:e[-+]?\\d+)?)[\s]*,?[\s]*/ig;
+    pathValues = /(-?\d*\.?\d*(?:e[-+]?\d+)?)[\s]*,?[\s]*/ig;
 
 var isArray = Array.isArray || function(o) { return o instanceof Array; };
 
@@ -80001,13 +80339,17 @@ function pathToCurve(path) {
           break;
         case 'S':
           if (pathCommand == 'C' || pathCommand == 'S') {
+
             // In 'S' case we have to take into account, if the previous command is C/S.
             nx = d.x * 2 - d.bx;
+
             // And reflect the previous
             ny = d.y * 2 - d.by;
+
             // command's control point relative to the current point.
           }
           else {
+
             // or some else or nothing
             nx = d.x;
             ny = d.y;
@@ -80016,13 +80358,17 @@ function pathToCurve(path) {
           break;
         case 'T':
           if (pathCommand == 'Q' || pathCommand == 'T') {
+
             // In 'T' case we have to take into account, if the previous command is Q/T.
             d.qx = d.x * 2 - d.qx;
+
             // And make a reflection similar
             d.qy = d.y * 2 - d.qy;
+
             // to case 'S'.
           }
           else {
+
             // or something else or nothing
             d.qx = d.x;
             d.qy = d.y;
@@ -82698,7 +83044,7 @@ module.exports = function(module) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/moklein/Documents/git/github/bpmn-modeler/index.js */"./index.js");
+module.exports = __webpack_require__(/*! C:\Users\damthor\Desktop\dev\bpmn-modeler\index.js */"./index.js");
 
 
 /***/ })

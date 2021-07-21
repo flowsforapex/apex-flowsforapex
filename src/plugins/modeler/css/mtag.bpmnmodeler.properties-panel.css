@@ -512,3 +512,12 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
 .bpp-properties-tab.bpp-active {
   display: block;
 }
+.properties-panel-parent:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: w-resize;
+}
