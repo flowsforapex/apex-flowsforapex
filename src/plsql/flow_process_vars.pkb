@@ -270,6 +270,20 @@ exception
       );
 end get_var_clob;
 
+-- special cases / built-in standard variables
+
+  function get_business_ref
+  ( pi_prcs_id in flow_processes.prcs_id%type
+  )
+  return flow_process_variables.prov_var_vc2%type
+  is 
+  begin
+    return get_var_vc2 
+           ( pi_prcs_id => pi_prcs_id
+           , pi_var_name => flow_constants_pkg.gc_prov_builtin_business_ref
+           );
+  end get_business_ref;
+
 -- group delete for all vars in a process (used at process deletion, process reset)
 
   procedure delete_all_for_process

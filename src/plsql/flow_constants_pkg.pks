@@ -103,10 +103,33 @@ as
   gc_prcs_status_terminated           constant  varchar2(20 char) := 'terminated';
   gc_prcs_status_error                constant  varchar2(20 char) := 'error';
 
-  -- Gateway Function Types
-  gc_gateway_splitting                constant  varchar2(10 char) := 'splitting'; 
-  gc_gateway_merging                  constant  varchar2(10 char) := 'merging'; 
-  gc_gateway_both                     constant  varchar2(10 char) := 'both'; 
+  -- Process Variable Datatypes
+
+  gc_prov_var_type_varchar2           constant  varchar2(50 char) := 'VARCHAR2';
+  gc_prov_var_type_date               constant  varchar2(50 char) := 'DATE';
+  gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
+  gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
+
+  -- Standard Process Variables
+
+  gc_prov_builtin_business_ref        constant  varchar2(50 char) := 'BUSINESS_REF';
+
+  -- Process Variable Expression Types
+  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'STATIC';
+  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'F4A_PROC_VAR';
+  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'ITEM';
+  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'SQL';
+  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'SQL_DELIMITED_LIST';
+  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'PLSQL_FUNCTION';
+  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'PLSQL_EXPRESSION';
+
+-- Process Variable Expression set := 'BeforeTask';
+  gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'BeforeTask';
+  gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'AfterTask';
+  gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'BeforeSplit';
+  gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'AfterMerge';
+  gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'BeforeEvent';
+  gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'OnEvent';
 
 
   -- Default XML for new diagrams
