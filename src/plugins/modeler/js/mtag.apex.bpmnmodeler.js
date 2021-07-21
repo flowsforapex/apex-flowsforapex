@@ -125,7 +125,7 @@
       }
     },
     save: async function() {
-      this._saveCall( await this.getDiagram(), await this.getSVG() );
+      this._saveCall( await this.getDiagram() );
     },
     _refreshCall: function() {
       server.plugin( this.options.ajaxIdentifier, {
@@ -140,15 +140,14 @@
         this.loadDiagram();
       });
     },
-    _saveCall: function( xml, svg ) {
+    _saveCall: function( xml ) {
       server.plugin( this.options.ajaxIdentifier, {
         regions: [
           {
             "id": this.regionId,
             "data": {
               "id"       : this.diagramId,
-              "content"  : xml.replaceAll( '"', "'" ),
-              "svg"      : svg
+              "content"  : xml.replaceAll( '"', "'" )
             }
           }
         ],
