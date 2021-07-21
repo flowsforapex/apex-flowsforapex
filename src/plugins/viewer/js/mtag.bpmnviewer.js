@@ -99,14 +99,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
 /* harmony import */ var bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/NavigatedViewer */ "./node_modules/bpmn-js/lib/NavigatedViewer.js");
 /* harmony import */ var _lib_spViewModule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./lib/spViewModule */ "./lib/spViewModule/index.js");
+/* harmony import */ var _lib_styleModule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./lib/styleModule */ "./lib/styleModule/index.js");
 
 
 
 
-bpmnViewer = {
-  BpmnJS: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_0__["default"],
-  BpmnJSNavigated: bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_1__["default"],
-  customModules: { spViewModule: _lib_spViewModule__WEBPACK_IMPORTED_MODULE_2__["default"] }
+
+var bpmnViewer = {
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_0__["default"],
+  NavigatedViewer: bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_1__["default"],
+  customModules: { 
+    spViewModule: _lib_spViewModule__WEBPACK_IMPORTED_MODULE_2__["default"],
+    styleModule: _lib_styleModule__WEBPACK_IMPORTED_MODULE_3__["default"]
+  }
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (bpmnViewer);
@@ -463,6 +468,54 @@ __webpack_require__.r(__webpack_exports__);
 	}
 	
 	/* harmony default export */ __webpack_exports__["default"] = (spViewModule);
+
+
+/***/ }),
+
+/***/ "./lib/styleModule/StyleModule.js":
+/*!****************************************!*\
+  !*** ./lib/styleModule/StyleModule.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return StyleModule; });
+
+function StyleModule() {
+}
+
+StyleModule.prototype.addStylesToElements = function(elements, css) {
+
+    for (const e of elements) {
+        var rect = document.querySelector('g[data-element-id="' + e +'"]:not(.djs-connection) .djs-visual > :nth-child(1)');
+
+        for (const c in css) {
+            rect.style[c] = css[c];
+        }
+    }
+}
+
+
+/***/ }),
+
+/***/ "./lib/styleModule/index.js":
+/*!**********************************!*\
+  !*** ./lib/styleModule/index.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _StyleModule_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StyleModule.js */ "./lib/styleModule/StyleModule.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  __init__: ['styleModule'],
+  styleModule: ['type', _StyleModule_js__WEBPACK_IMPORTED_MODULE_0__["default"]]
+});
 
 
 /***/ }),
@@ -832,12 +885,12 @@ BaseViewer.prototype.saveXML = Object(_util_CompatibilityUtil__WEBPACK_IMPORTED_
 
   var definitions = this._definitions;
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
 
     if (!definitions) {
-      var err = new Error('no definitions loaded');
-
-      return reject(err);
+      return resolve({
+        error: new Error('no definitions loaded')
+      });
     }
 
     // allow to fiddle around with definitions
@@ -849,25 +902,27 @@ BaseViewer.prototype.saveXML = Object(_util_CompatibilityUtil__WEBPACK_IMPORTED_
 
       var xml = result.xml;
 
-      try {
-        xml = self._emit('saveXML.serialized', {
-          error: null,
-          xml: xml
-        }) || xml;
+      xml = self._emit('saveXML.serialized', {
+        xml: xml
+      }) || xml;
 
-        self._emit('saveXML.done', {
-          error: null,
-          xml: xml
-        });
-      } catch (e) {
-        console.error('error in saveXML life-cycle listener', e);
-      }
-
-      return resolve({ xml: xml });
-    }).catch(function(err) {
-
-      return reject(err);
+      return resolve({
+        xml: xml
+      });
     });
+  }).catch(function(error) {
+    return { error: error };
+  }).then(function(result) {
+
+    self._emit('saveXML.done', result);
+
+    var error = result.error;
+
+    if (error) {
+      return Promise.reject(error);
+    }
+
+    return result;
   });
 });
 
@@ -3224,7 +3279,7 @@ function BpmnRenderer(
       });
 
       drawMarker('participant-multiplicity', parentGfx, markerPath, {
-        strokeWidth: 1,
+        strokeWidth: 2,
         fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getFillColor"])(element, defaultFillColor),
         stroke: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getStrokeColor"])(element, defaultStrokeColor)
       });
@@ -3405,7 +3460,7 @@ function BpmnRenderer(
 
   function renderDataItemCollection(parentGfx, element) {
 
-    var yPosition = (element.height - 16) / element.height;
+    var yPosition = (element.height - 18) / element.height;
 
     var pathData = pathMap.getScaledPath('DATA_OBJECT_COLLECTION_PATH', {
       xScaleFactor: 1,
@@ -3413,7 +3468,7 @@ function BpmnRenderer(
       containerWidth: element.width,
       containerHeight: element.height,
       position: {
-        mx: 0.451,
+        mx: 0.33,
         my: yPosition
       }
     });
@@ -3665,14 +3720,11 @@ function PathMap() {
       widthElements: [10, 40, 50, 60]
     },
     'DATA_OBJECT_COLLECTION_PATH': {
-      d:'m {mx}, {my} ' +
-        'm  0 15  l 0 -15 ' +
-        'm  4 15  l 0 -15 ' +
-        'm  4 15  l 0 -15 ',
-      height: 61,
-      width:  51,
-      heightElements: [12],
-      widthElements: [1, 6, 12, 15]
+      d: 'm{mx},{my} m 3,2 l 0,10 m 3,-10 l 0,10 m 3,-10 l 0,10',
+      height: 10,
+      width: 10,
+      heightElements: [],
+      widthElements: []
     },
     'DATA_ARROW': {
       d:'m 5,9 9,0 0,-3 5,5 -5,5 0,-3 -9,0 z',
@@ -5283,7 +5335,7 @@ function isExpanded(element) {
   }
 
   if (Object(_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["is"])(element, 'bpmn:SubProcess')) {
-    return !!Object(_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element).di.isExpanded;
+    return Object(_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element).di && !!Object(_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element).di.isExpanded;
   }
 
   if (Object(_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["is"])(element, 'bpmn:Participant')) {
@@ -10853,6 +10905,29 @@ ElementRegistry.prototype.filter = function(fn) {
 };
 
 /**
+ * Return the first element that satisfies the provided testing function.
+ *
+ * @param {Function} fn
+ *
+ * @return {djs.model.Base}
+ */
+ElementRegistry.prototype.find = function(fn) {
+  var map = this._elements,
+      keys = Object.keys(map);
+
+  for (var i = 0; i < keys.length; i++) {
+    var id = keys[i],
+        container = map[id],
+        element = container.element,
+        gfx = container.gfx;
+
+    if (fn(element, gfx)) {
+      return element;
+    }
+  }
+};
+
+/**
  * Return all rendered model elements.
  *
  * @return {Array<djs.model.Base>}
@@ -11109,6 +11184,8 @@ EventBus.prototype.once = function(event, priority, callback, that) {
   }
 
   function wrappedCallback() {
+    wrappedCallback.__isTomb = true;
+
     var result = callback.apply(that, arguments);
 
     self.off(event, wrappedCallback);
@@ -11287,6 +11364,10 @@ EventBus.prototype._invokeListeners = function(event, args, listener) {
 EventBus.prototype._invokeListener = function(event, args, listener) {
 
   var returnValue;
+
+  if (listener.callback.__isTomb) {
+    return returnValue;
+  }
 
   try {
 
@@ -12088,7 +12169,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function allowAll(e) { return true; }
+function allowAll(event) { return true; }
+
+function allowPrimaryAndAuxiliary(event) {
+  return Object(_util_Mouse__WEBPACK_IMPORTED_MODULE_2__["isPrimaryButton"])(event) || Object(_util_Mouse__WEBPACK_IMPORTED_MODULE_2__["isAuxiliaryButton"])(event);
+}
 
 var LOW_PRIORITY = 500;
 
@@ -12190,7 +12275,11 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
   };
 
   var ignoredFilters = {
-    'element.contextmenu': allowAll
+    'element.contextmenu': allowAll,
+    'element.mousedown': allowPrimaryAndAuxiliary,
+    'element.mouseup': allowPrimaryAndAuxiliary,
+    'element.click': allowPrimaryAndAuxiliary,
+    'element.dblclick': allowPrimaryAndAuxiliary
   };
 
 
@@ -12909,7 +12998,9 @@ KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) 
 
     var event = context.keyEvent;
 
-    if (Object(_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__["isKey"])([ '+', 'Add' ], event) && Object(_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__["isCmd"])(event)) {
+    // quirk: it has to be triggered by `=` as well to work on international keyboard layout
+    // cf: https://github.com/bpmn-io/bpmn-js/issues/1362#issuecomment-722989754
+    if (Object(_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__["isKey"])([ '+', 'Add', '=' ], event) && Object(_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__["isCmd"])(event)) {
       editorActions.trigger('stepZoom', { value: 1 });
 
       return true;
@@ -12948,7 +13039,7 @@ KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) 
 
     var event = context.keyEvent;
 
-    if (Object(_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__["isKey"])([ 'Delete', 'Del' ], event)) {
+    if (Object(_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__["isKey"])(['Backspace', 'Delete', 'Del' ], event)) {
       editorActions.trigger('removeSelection');
 
       return true;
@@ -13981,23 +14072,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function SelectionBehavior(
-    eventBus, selection, canvas,
-    elementRegistry) {
+function SelectionBehavior(eventBus, selection, canvas, elementRegistry) {
 
-  eventBus.on('create.end', 500, function(e) {
-
-    var context = e.context,
+  // Select elements on create
+  eventBus.on('create.end', 500, function(event) {
+    var context = event.context,
         canExecute = context.canExecute,
         elements = context.elements,
         hints = context.hints || {},
         autoSelect = hints.autoSelect;
 
-    // select elements after they have been created
     if (canExecute) {
       if (autoSelect === false) {
 
-        // select no elements
+        // Select no elements
         return;
       }
 
@@ -14005,44 +14093,48 @@ function SelectionBehavior(
         selection.select(autoSelect);
       } else {
 
-        // select all elements by default
+        // Select all elements by default
         selection.select(elements.filter(isShown));
       }
     }
   });
 
-  eventBus.on('connect.end', 500, function(e) {
+  // Select connection targets on connect
+  eventBus.on('connect.end', 500, function(event) {
+    var context = event.context,
+        canExecute = context.canExecute,
+        hover = context.hover;
 
-    // select the connect end target
-    // after a connect operation
-    if (e.context.canExecute && e.context.hover) {
-      selection.select(e.context.hover);
+    if (canExecute && hover) {
+      selection.select(hover);
     }
   });
 
-  eventBus.on('shape.move.end', 500, function(e) {
-    var previousSelection = e.previousSelection || [];
+  // Select shapes on move
+  eventBus.on('shape.move.end', 500, function(event) {
+    var previousSelection = event.previousSelection || [];
 
-    var shape = elementRegistry.get(e.context.shape.id);
+    var shape = elementRegistry.get(event.context.shape.id);
 
-    // make sure at least the main moved element is being
-    // selected after a move operation
-    var inSelection = Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["find"])(previousSelection, function(selectedShape) {
+    // Always select main shape on move
+    var isSelected = Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["find"])(previousSelection, function(selectedShape) {
       return shape.id === selectedShape.id;
     });
 
-    if (!inSelection) {
+    if (!isSelected) {
       selection.select(shape);
     }
   });
 
-  // Shift + click selection
+  // Select elements on click
   eventBus.on('element.click', function(event) {
+
+    if (!Object(_util_Mouse__WEBPACK_IMPORTED_MODULE_0__["isPrimaryButton"])(event)) {
+      return;
+    }
 
     var element = event.element;
 
-    // do not select the root element
-    // or connections
     if (element === canvas.getRootElement()) {
       element = null;
     }
@@ -14050,20 +14142,26 @@ function SelectionBehavior(
     var isSelected = selection.isSelected(element),
         isMultiSelect = selection.get().length > 1;
 
-    // mouse-event: SELECTION_KEY
-    var add = Object(_util_Mouse__WEBPACK_IMPORTED_MODULE_0__["hasPrimaryModifier"])(event);
+    // Add to selection if CTRL or SHIFT pressed
+    var add = Object(_util_Mouse__WEBPACK_IMPORTED_MODULE_0__["hasPrimaryModifier"])(event) || Object(_util_Mouse__WEBPACK_IMPORTED_MODULE_0__["hasSecondaryModifier"])(event);
 
-    // select OR deselect element in multi selection
     if (isSelected && isMultiSelect) {
       if (add) {
+
+        // Deselect element
         return selection.deselect(element);
       } else {
+
+        // Select element only
         return selection.select(element);
       }
-    } else
-    if (!isSelected) {
+    } else if (!isSelected) {
+
+      // Select element
       selection.select(element, add);
     } else {
+
+      // Deselect element
       selection.deselect(element);
     }
   });
@@ -14962,13 +15060,16 @@ function MoveCanvas(eventBus, canvas) {
   function handleMove(event) {
 
     var start = context.start,
+        button = context.button,
         position = Object(_util_Event__WEBPACK_IMPORTED_MODULE_4__["toPoint"])(event),
         delta = Object(_util_PositionUtil__WEBPACK_IMPORTED_MODULE_2__["delta"])(position, start);
 
     if (!context.dragging && length(delta) > THRESHOLD) {
       context.dragging = true;
 
-      Object(_util_ClickTrap__WEBPACK_IMPORTED_MODULE_1__["install"])(eventBus);
+      if (button === 0) {
+        Object(_util_ClickTrap__WEBPACK_IMPORTED_MODULE_1__["install"])(eventBus);
+      }
 
       Object(_util_Cursor__WEBPACK_IMPORTED_MODULE_0__["set"])('grab');
     }
@@ -15008,13 +15109,15 @@ function MoveCanvas(eventBus, canvas) {
       return;
     }
 
+    var button = event.button;
 
-    // reject non-left left mouse button or modifier key
-    if (event.button || event.ctrlKey || event.shiftKey || event.altKey) {
+    // reject right mouse button or modifier key
+    if (button >= 2 || event.ctrlKey || event.shiftKey || event.altKey) {
       return;
     }
 
     context = {
+      button: button,
       start: Object(_util_Event__WEBPACK_IMPORTED_MODULE_4__["toPoint"])(event)
     };
 
@@ -15024,6 +15127,11 @@ function MoveCanvas(eventBus, canvas) {
     // we've handled the event
     return true;
   }
+
+  this.isActive = function() {
+    return !!context;
+  };
+
 }
 
 
@@ -16252,12 +16360,15 @@ function log10(x) {
 /*!***************************************************!*\
   !*** ./node_modules/diagram-js/lib/util/Mouse.js ***!
   \***************************************************/
-/*! exports provided: isMac, isPrimaryButton, hasPrimaryModifier, hasSecondaryModifier */
+/*! exports provided: isMac, isButton, isPrimaryButton, isAuxiliaryButton, isSecondaryButton, hasPrimaryModifier, hasSecondaryModifier */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isButton", function() { return isButton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isPrimaryButton", function() { return isPrimaryButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isAuxiliaryButton", function() { return isAuxiliaryButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSecondaryButton", function() { return isSecondaryButton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasPrimaryModifier", function() { return hasPrimaryModifier; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasSecondaryModifier", function() { return hasSecondaryModifier; });
 /* harmony import */ var _Event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Event */ "./node_modules/diagram-js/lib/util/Event.js");
@@ -16270,11 +16381,26 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function isButton(event, button) {
+  return (Object(_Event__WEBPACK_IMPORTED_MODULE_0__["getOriginal"])(event) || event).button === button;
+}
 
 function isPrimaryButton(event) {
 
   // button === 0 -> left áka primary mouse button
-  return !(Object(_Event__WEBPACK_IMPORTED_MODULE_0__["getOriginal"])(event) || event).button;
+  return isButton(event, 0);
+}
+
+function isAuxiliaryButton(event) {
+
+  // button === 1 -> auxiliary áka wheel button
+  return isButton(event, 1);
+}
+
+function isSecondaryButton(event) {
+
+  // button === 2 -> right áka secondary button
+  return isButton(event, 2);
 }
 
 function hasPrimaryModifier(event) {
@@ -16284,7 +16410,7 @@ function hasPrimaryModifier(event) {
     return false;
   }
 
-  // Use alt as primary modifier key for mac OS
+  // Use cmd as primary modifier key for mac OS
   if (Object(_Platform__WEBPACK_IMPORTED_MODULE_1__["isMac"])()) {
     return originalEvent.metaKey;
   } else {
@@ -16298,6 +16424,7 @@ function hasSecondaryModifier(event) {
 
   return isPrimaryButton(event) && originalEvent.shiftKey;
 }
+
 
 /***/ }),
 
@@ -16600,6 +16727,8 @@ function fit(lines, fitLine, originalLine, textBBox) {
   };
 }
 
+var SOFT_BREAK = '\u00AD';
+
 
 /**
  * Shortens a line based on spacing and hyphens.
@@ -16610,13 +16739,15 @@ function fit(lines, fitLine, originalLine, textBBox) {
  * @return {string} the shortened string
  */
 function semanticShorten(line, maxLength) {
-  var parts = line.split(/(\s|-)/g),
+
+  var parts = line.split(/(\s|-|\u00AD)/g),
       part,
       shortenedParts = [],
       length = 0;
 
-  // try to shorten via spaces + hyphens
+  // try to shorten via break chars
   if (parts.length > 1) {
+
     while ((part = parts.shift())) {
       if (part.length + length < maxLength) {
         shortenedParts.push(part);
@@ -16624,13 +16755,20 @@ function semanticShorten(line, maxLength) {
       } else {
 
         // remove previous part, too if hyphen does not fit anymore
-        if (part === '-') {
+        if (part === '-' || part === SOFT_BREAK) {
           shortenedParts.pop();
         }
 
         break;
       }
     }
+  }
+
+  var last = shortenedParts[shortenedParts.length - 1];
+
+  // translate trailing soft break to actual hyphen
+  if (last && last === SOFT_BREAK) {
+    shortenedParts[shortenedParts.length - 1] = '-';
   }
 
   return shortenedParts.join('');
@@ -16741,7 +16879,9 @@ Text.prototype.layoutText = function(text, options) {
 
   var lineHeight = getLineHeight(style);
 
-  var lines = text.split(/\r?\n/g),
+  // we split text by lines and normalize
+  // {soft break} + {line break} => { line break }
+  var lines = text.split(/\u00AD?\r?\n/),
       layouted = [];
 
   var maxWidth = box.width - padding.left - padding.right;
@@ -16845,12 +16985,13 @@ function getLineHeight(style) {
 /*!*********************************************!*\
   !*** ./node_modules/didi/dist/index.esm.js ***!
   \*********************************************/
-/*! exports provided: annotate, Module, Injector */
+/*! exports provided: annotate, parseAnnotations, Module, Injector */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "annotate", function() { return annotate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseAnnotations", function() { return parseAnnotations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Module", function() { return Module; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Injector", function() { return Injector; });
 var CLASS_PATTERN = /^class /;
@@ -16861,6 +17002,10 @@ function isClass(fn) {
 
 function isArray(obj) {
   return Object.prototype.toString.call(obj) === '[object Array]';
+}
+
+function hasOwnProp(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
 function annotate() {
@@ -16877,6 +17022,7 @@ function annotate() {
   return fn;
 }
 
+
 // Current limitations:
 // - can't put into "function arg" comments
 // function /* (no parenthesis like this) */ (){}
@@ -16891,10 +17037,10 @@ function annotate() {
 // of a nested class, too.
 
 var CONSTRUCTOR_ARGS = /constructor\s*[^(]*\(\s*([^)]*)\)/m;
-var FN_ARGS = /^function\s*[^(]*\(\s*([^)]*)\)/m;
+var FN_ARGS = /^(?:async )?(?:function\s*)?[^(]*\(\s*([^)]*)\)/m;
 var FN_ARG = /\/\*([^*]*)\*\//m;
 
-function parse(fn) {
+function parseAnnotations(fn) {
 
   if (typeof fn !== 'function') {
     throw new Error('Cannot annotate "' + fn + '". Expected a function!');
@@ -16907,7 +17053,7 @@ function parse(fn) {
     return [];
   }
 
-  return match[1] && match[1].split(',').map(function (arg) {
+  return match[1] && match[1].split(',').map(function(arg) {
     match = arg.match(FN_ARG);
     return match ? match[1].trim() : arg.trim();
   }) || [];
@@ -16916,33 +17062,30 @@ function parse(fn) {
 function Module() {
   var providers = [];
 
-  this.factory = function (name, factory) {
+  this.factory = function(name, factory) {
     providers.push([name, 'factory', factory]);
     return this;
   };
 
-  this.value = function (name, value) {
+  this.value = function(name, value) {
     providers.push([name, 'value', value]);
     return this;
   };
 
-  this.type = function (name, type) {
+  this.type = function(name, type) {
     providers.push([name, 'type', type]);
     return this;
   };
 
-  this.forEach = function (iterator) {
+  this.forEach = function(iterator) {
     providers.forEach(iterator);
   };
+
 }
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function Injector(modules, parent) {
   parent = parent || {
-    get: function get(name, strict) {
+    get: function(name, strict) {
       currentlyResolving.push(name);
 
       if (strict === false) {
@@ -16959,7 +17102,7 @@ function Injector(modules, parent) {
 
   var self = instances.injector = this;
 
-  var error = function error(msg) {
+  var error = function(msg) {
     var stack = currentlyResolving.join(' -> ');
     currentlyResolving.length = 0;
     return new Error(stack ? msg + ' (Resolving: ' + stack + ')' : msg);
@@ -16973,7 +17116,7 @@ function Injector(modules, parent) {
    *
    * @return {Object}
    */
-  var get = function get(name, strict) {
+  var get = function(name, strict) {
     if (!providers[name] && name.indexOf('.') !== -1) {
       var parts = name.split('.');
       var pivot = get(parts.shift());
@@ -16985,11 +17128,11 @@ function Injector(modules, parent) {
       return pivot;
     }
 
-    if (hasProp(instances, name)) {
+    if (hasOwnProp(instances, name)) {
       return instances[name];
     }
 
-    if (hasProp(providers, name)) {
+    if (hasOwnProp(providers, name)) {
       if (currentlyResolving.indexOf(name) !== -1) {
         currentlyResolving.push(name);
         throw error('Cannot resolve circular dependency!');
@@ -17005,8 +17148,11 @@ function Injector(modules, parent) {
     return parent.get(name, strict);
   };
 
-  var fnDef = function fnDef(fn) {
-    var locals = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var fnDef = function(fn, locals) {
+
+    if (typeof locals === 'undefined') {
+      locals = {};
+    }
 
     if (typeof fn !== 'function') {
       if (isArray(fn)) {
@@ -17016,9 +17162,9 @@ function Injector(modules, parent) {
       }
     }
 
-    var inject = fn.$inject || parse(fn);
-    var dependencies = inject.map(function (dep) {
-      if (hasProp(locals, dep)) {
+    var inject = fn.$inject || parseAnnotations(fn);
+    var dependencies = inject.map(function(dep) {
+      if (hasOwnProp(locals, dep)) {
         return locals[dep];
       } else {
         return get(dep);
@@ -17031,29 +17177,35 @@ function Injector(modules, parent) {
     };
   };
 
-  var instantiate = function instantiate(Type) {
-    var _fnDef = fnDef(Type),
-        dependencies = _fnDef.dependencies,
-        fn = _fnDef.fn;
+  var instantiate = function(Type) {
+    var def = fnDef(Type);
 
-    return new (Function.prototype.bind.apply(fn, [null].concat(_toConsumableArray(dependencies))))();
+    var fn = def.fn,
+        dependencies = def.dependencies;
+
+    // instantiate var args constructor
+    var Constructor = Function.prototype.bind.apply(fn, [ null ].concat(dependencies));
+
+    return new Constructor();
   };
 
-  var invoke = function invoke(func, context, locals) {
-    var _fnDef2 = fnDef(func, locals),
-        dependencies = _fnDef2.dependencies,
-        fn = _fnDef2.fn;
+  var invoke = function(func, context, locals) {
+    var def = fnDef(func, locals);
 
-    return fn.call.apply(fn, [context].concat(_toConsumableArray(dependencies)));
+    var fn = def.fn,
+        dependencies = def.dependencies;
+
+    return fn.apply(context, dependencies);
   };
 
-  var createPrivateInjectorFactory = function createPrivateInjectorFactory(privateChildInjector) {
-    return annotate(function (key) {
+
+  var createPrivateInjectorFactory = function(privateChildInjector) {
+    return annotate(function(key) {
       return privateChildInjector.get(key);
     });
   };
 
-  var createChild = function createChild(modules, forceNewInstances) {
+  var createChild = function(modules, forceNewInstances) {
     if (forceNewInstances && forceNewInstances.length) {
       var fromParentModule = Object.create(null);
       var matchedScopes = Object.create(null);
@@ -17090,7 +17242,7 @@ function Injector(modules, parent) {
 
         if ((provider[2] === 'factory' || provider[2] === 'type') && provider[1].$scope) {
           /* jshint -W083 */
-          forceNewInstances.forEach(function (scope) {
+          forceNewInstances.forEach(function(scope) {
             if (provider[1].$scope.indexOf(scope) !== -1) {
               fromParentModule[name] = [provider[2], provider[1]];
               matchedScopes[scope] = true;
@@ -17099,7 +17251,7 @@ function Injector(modules, parent) {
         }
       }
 
-      forceNewInstances.forEach(function (scope) {
+      forceNewInstances.forEach(function(scope) {
         if (!matchedScopes[scope]) {
           throw new Error('No provider for "' + scope + '". Cannot use provider from the parent!');
         }
@@ -17114,12 +17266,12 @@ function Injector(modules, parent) {
   var factoryMap = {
     factory: invoke,
     type: instantiate,
-    value: function value(_value) {
-      return _value;
+    value: function(value) {
+      return value;
     }
   };
 
-  modules.forEach(function (module) {
+  modules.forEach(function(module) {
 
     function arrayUnwrap(type, value) {
       if (type !== 'value' && isArray(value)) {
@@ -17131,16 +17283,16 @@ function Injector(modules, parent) {
 
     // TODO(vojta): handle wrong inputs (modules)
     if (module instanceof Module) {
-      module.forEach(function (provider) {
+      module.forEach(function(provider) {
         var name = provider[0];
         var type = provider[1];
         var value = provider[2];
 
         providers[name] = [factoryMap[type], arrayUnwrap(type, value), type];
       });
-    } else if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object') {
+    } else if (typeof module === 'object') {
       if (module.__exports__) {
-        var clonedModule = Object.keys(module).reduce(function (m, key) {
+        var clonedModule = Object.keys(module).reduce(function(m, key) {
           if (key.substring(0, 2) !== '__') {
             m[key] = module[key];
           }
@@ -17148,14 +17300,14 @@ function Injector(modules, parent) {
         }, Object.create(null));
 
         var privateInjector = new Injector((module.__modules__ || []).concat([clonedModule]), self);
-        var getFromPrivateInjector = annotate(function (key) {
+        var getFromPrivateInjector = annotate(function(key) {
           return privateInjector.get(key);
         });
-        module.__exports__.forEach(function (key) {
+        module.__exports__.forEach(function(key) {
           providers[key] = [getFromPrivateInjector, key, 'private', privateInjector];
         });
       } else {
-        Object.keys(module).forEach(function (name) {
+        Object.keys(module).forEach(function(name) {
           if (module[name][2] === 'private') {
             providers[name] = module[name];
             return;
@@ -17175,12 +17327,6 @@ function Injector(modules, parent) {
   this.invoke = invoke;
   this.instantiate = instantiate;
   this.createChild = createChild;
-}
-
-// helpers /////////////////
-
-function hasProp(obj, prop) {
-  return Object.hasOwnProperty.call(obj, prop);
 }
 
 
@@ -17408,46 +17554,47 @@ if (typeof Object.create === 'function') {
 /*!*************************************************!*\
   !*** ./node_modules/min-dash/dist/index.esm.js ***!
   \*************************************************/
-/*! exports provided: flatten, find, findIndex, filter, forEach, without, reduce, every, some, map, keys, size, values, groupBy, uniqueBy, unionBy, sortBy, matchPattern, debounce, throttle, bind, isUndefined, isDefined, isNil, isArray, isObject, isNumber, isFunction, isString, ensureArray, has, assign, pick, omit, merge */
+/*! exports provided: assign, bind, debounce, ensureArray, every, filter, find, findIndex, flatten, forEach, groupBy, has, isArray, isDefined, isFunction, isNil, isNumber, isObject, isString, isUndefined, keys, map, matchPattern, merge, omit, pick, reduce, set, size, some, sortBy, throttle, unionBy, uniqueBy, values, without */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flatten", function() { return flatten; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assign", function() { return assign; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bind", function() { return bind; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureArray", function() { return ensureArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "every", function() { return every; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "filter", function() { return filter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "find", function() { return find; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findIndex", function() { return findIndex; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "filter", function() { return filter; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flatten", function() { return flatten; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "forEach", function() { return forEach; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "without", function() { return without; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reduce", function() { return reduce; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "every", function() { return every; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "some", function() { return some; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "map", function() { return map; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "keys", function() { return keys; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "size", function() { return size; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "values", function() { return values; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "groupBy", function() { return groupBy; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uniqueBy", function() { return uniqueBy; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "unionBy", function() { return unionBy; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortBy", function() { return sortBy; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "matchPattern", function() { return matchPattern; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "throttle", function() { return throttle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bind", function() { return bind; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUndefined", function() { return isUndefined; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isDefined", function() { return isDefined; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNil", function() { return isNil; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isArray", function() { return isArray; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isObject", function() { return isObject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNumber", function() { return isNumber; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFunction", function() { return isFunction; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isString", function() { return isString; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureArray", function() { return ensureArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "has", function() { return has; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assign", function() { return assign; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pick", function() { return pick; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "omit", function() { return omit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isArray", function() { return isArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isDefined", function() { return isDefined; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFunction", function() { return isFunction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNil", function() { return isNil; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNumber", function() { return isNumber; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isObject", function() { return isObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isString", function() { return isString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUndefined", function() { return isUndefined; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "keys", function() { return keys; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "map", function() { return map; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "matchPattern", function() { return matchPattern; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "merge", function() { return merge; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "omit", function() { return omit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pick", function() { return pick; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reduce", function() { return reduce; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "set", function() { return set; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "size", function() { return size; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "some", function() { return some; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortBy", function() { return sortBy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "throttle", function() { return throttle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "unionBy", function() { return unionBy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uniqueBy", function() { return uniqueBy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "values", function() { return values; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "without", function() { return without; });
 /**
  * Flatten array, one level deep.
  *
@@ -17950,6 +18097,42 @@ function assign(target) {
   }
 
   return _extends.apply(void 0, [target].concat(others));
+}
+/**
+ * Sets a nested property of a given object to the specified value.
+ *
+ * This mutates the object and returns it.
+ *
+ * @param {Object} target The target of the set operation.
+ * @param {(string|number)[]} path The path to the nested value.
+ * @param {any} value The value to set.
+ */
+
+function set(target, path, value) {
+  var currentTarget = target;
+  forEach(path, function (key, idx) {
+    if (key === '__proto__') {
+      throw new Error('illegal key: __proto__');
+    }
+
+    var nextKey = path[idx + 1];
+    var nextTarget = currentTarget[key];
+
+    if (isDefined(nextKey) && isNil(nextTarget)) {
+      nextTarget = currentTarget[key] = isNaN(+nextKey) ? {} : [];
+    }
+
+    if (isUndefined(nextKey)) {
+      if (isUndefined(value)) {
+        delete currentTarget[key];
+      } else {
+        currentTarget[key] = value;
+      }
+    } else {
+      currentTarget = nextTarget;
+    }
+  });
+  return target;
 }
 /**
  * Pick given properties from the target object.
@@ -18728,6 +18911,7 @@ function Context(options) {
       id = element.get(idProperty.name);
 
       if (id) {
+
         // for QName validation as per http://www.w3.org/TR/REC-xml/#NT-NameChar
         if (!/^([a-z][\w-.]*:)?[a-z_][\w-.]*$/i.test(id)) {
           throw new Error('illegal ID <' + id + '>');
@@ -18925,6 +19109,7 @@ ElementHandler.prototype.createElement = function(node) {
           id: value
         });
       } else {
+
         // IDREFS: parse references as whitespace-separated list
         values = value.split(' ');
 
@@ -19022,6 +19207,7 @@ ElementHandler.prototype.getPropertyForNode = function(node) {
       });
     }
   } else {
+
     // parse unknown element (maybe extension)
     property = Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["find"])(descriptor.properties, function(p) {
       return !p.isReference && !p.isAttribute && p.type === 'Element';
@@ -19097,6 +19283,7 @@ ElementHandler.prototype.handleChild = function(node) {
 
       this.context.addReference(newElement);
     } else {
+
       // establish child -> parent relationship
       newElement.$parent = element;
     }
@@ -19234,15 +19421,18 @@ Reader.prototype.fromXML = function(xml, options, done) {
   var rootHandler = options.rootHandler;
 
   if (options instanceof ElementHandler) {
+
     // root handler passed via (xml, { rootHandler: ElementHandler }, ...)
     rootHandler = options;
     options = {};
   } else {
     if (typeof options === 'string') {
+
       // rootHandler passed via (xml, 'someString', ...)
       rootHandler = this.handler(options);
       options = {};
     } else if (typeof rootHandler === 'string') {
+
       // rootHandler passed via (xml, { rootHandler: 'someString' }, ...)
       rootHandler = this.handler(rootHandler);
     }
@@ -19304,6 +19494,7 @@ Reader.prototype.fromXML = function(xml, options, done) {
   }
 
   function handleWarning(err, getContext) {
+
     // just like handling errors in <lax=true> mode
     return handleError(err, getContext, true);
   }
@@ -19343,9 +19534,11 @@ Reader.prototype.fromXML = function(xml, options, done) {
         }
 
         if (!reference) {
+
           // remove unresolvable reference
           collection.splice(idx, 1);
         } else {
+
           // add or update reference in collection
           collection[idx] = reference;
         }
@@ -19408,6 +19601,7 @@ Reader.prototype.fromXML = function(xml, options, done) {
   }
 
   function handleText(text, getContext) {
+
     // strip whitespace only nodes, i.e. before
     // <!CDATA[ ... ]> sections and in between tags
     text = text.trim();
@@ -19660,7 +19854,7 @@ function getSerializableProperties(element) {
     }
 
     // do not serialize defaults
-    if (!element.hasOwnProperty(name)) {
+    if (!Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["has"])(element, name)) {
       return false;
     }
 
@@ -19938,9 +20132,11 @@ ElementSerializer.prototype.parseNsAttribute = function(element, name, value) {
   }
 
   if (model && model.getPackage(value)) {
+
     // register well known namespace
     this.logNamespace(ns, true, true);
   } else {
+
     // log custom namespace directly as used
     var actualNs = this.logNamespaceUsed(ns, true);
 
@@ -20028,6 +20224,7 @@ ElementSerializer.prototype.parseContainments = function(properties) {
         body.push(new ReferenceSerializer(self.addTagName(self.nsPropertyTagName(p))).build(v));
       });
     } else {
+
       // allow serialization via type
       // rather than element name
       var asType = serializeAsType(p),
@@ -20155,6 +20352,7 @@ ElementSerializer.prototype.parseAttributes = function(properties) {
         Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["forEach"])(value, function(v) {
           values.push(v.id);
         });
+
         // IDREFS is a whitespace-separated list of references.
         value = values.join(' ');
       }
@@ -21653,7 +21851,7 @@ var p2s = /,?([a-z]),?/gi,
     pow = math.pow,
     abs = math.abs,
     pathCommand = /([a-z])[\s,]*((-?\d*\.?\d*(?:e[-+]?\d+)?[\s]*,?[\s]*)+)/ig,
-    pathValues = /(-?\d*\.?\d*(?:e[-+]?\\d+)?)[\s]*,?[\s]*/ig;
+    pathValues = /(-?\d*\.?\d*(?:e[-+]?\d+)?)[\s]*,?[\s]*/ig;
 
 var isArray = Array.isArray || function(o) { return o instanceof Array; };
 
@@ -22451,13 +22649,17 @@ function pathToCurve(path) {
           break;
         case 'S':
           if (pathCommand == 'C' || pathCommand == 'S') {
+
             // In 'S' case we have to take into account, if the previous command is C/S.
             nx = d.x * 2 - d.bx;
+
             // And reflect the previous
             ny = d.y * 2 - d.by;
+
             // command's control point relative to the current point.
           }
           else {
+
             // or some else or nothing
             nx = d.x;
             ny = d.y;
@@ -22466,13 +22668,17 @@ function pathToCurve(path) {
           break;
         case 'T':
           if (pathCommand == 'Q' || pathCommand == 'T') {
+
             // In 'T' case we have to take into account, if the previous command is Q/T.
             d.qx = d.x * 2 - d.qx;
+
             // And make a reflection similar
             d.qy = d.y * 2 - d.qy;
+
             // to case 'S'.
           }
           else {
+
             // or something else or nothing
             d.qx = d.x;
             d.qy = d.y;
@@ -24525,7 +24731,7 @@ function transform(node, transforms) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/moklein/Documents/git/github/bpmn-viewer/index.js */"./index.js");
+module.exports = __webpack_require__(/*! C:\Users\damthor\Desktop\dev\bpmn-viewer\index.js */"./index.js");
 
 
 /***/ })

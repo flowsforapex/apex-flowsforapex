@@ -2,14 +2,3 @@
   height: 80vh;
   background-color: #f0f0f0;
 }
-
-.mtbv-is-current:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: green !important;
-}
-
-.mtbv-is-last-completed:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: grey !important;
-}
-.mtbv-is-completed:not(.djs-connection) .djs-visual > :nth-child(1) {
-  fill: grey !important;
-}

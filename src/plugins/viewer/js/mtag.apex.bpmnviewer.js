@@ -8,11 +8,22 @@
       itemsToSubmit: null,
       noDataFoundMessage: "Could not load Diagram",
       refreshOnLoad: false,
-      currentClass: "mtbv-is-current",
-      completedClass: "mtbv-is-completed",
-      lastCompletedClass: "mtbv-is-last-completed",
       useNavigatedViewer: false,
-      enableExpandModule: true
+      enableExpandModule: true,
+      config: {
+        currentStyle: {
+          fill: "green",
+          stroke: "black"
+        },
+        completedStyle: {
+          fill: "grey",
+          stroke: "black"
+        },
+        lastCompletedStyle: {
+          fill: "grey",
+          stroke: "black"
+        }
+      }
     },
     _create: function() {
       this._defaultXml =
@@ -26,13 +37,14 @@
       this.regionId    = this.element[0].id;
       this.canvasId    = this.regionId + "_canvas";
       this.enabledModules = [];
+      this.enabledModules.push(bpmnViewer.customModules.styleModule);
       if ( this.options.enableExpandModule ) {
         this.enabledModules.push( bpmnViewer.customModules.spViewModule );
       }
       if ( this.options.useNavigatedViewer ) {
-        this.bpmnViewer$ = new bpmnViewer.BpmnJSNavigated({ container: "#" + this.canvasId, additionalModules: this.enabledModules });
+        this.bpmnViewer$ = new bpmnViewer.NavigatedViewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules });
       } else {
-        this.bpmnViewer$ = new bpmnViewer.BpmnJS({ container: "#" + this.canvasId, additionalModules: this.enabledModules });
+        this.bpmnViewer$ = new bpmnViewer.Viewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules });
       }
       if ( this.options.refreshOnLoad ) {
         this.refresh();
@@ -43,7 +55,7 @@
         refresh: () => { this.refresh(); },
         reset: () => { this.reset(); },
         loadDiagram: () => { this.loadDiagram(); },
-        addMarkers: () => { this.addMarkers(); },
+        getSVG: () => this.getSVG(),
         getViewerInstance: () => { return this.bpmnViewer$; },
         getEventBus: () => { return this.bpmnViewer$.get( "eventBus" ); },
         widgetName: "bpmnviewer",
@@ -57,33 +69,30 @@
       try {
         const result = await bpmnViewer$.importXML( this.diagram || this._defaultXml );
         const { warnings } = result;
-        
         if ( warnings.length > 0 ) {
           apex.debug.warn( "Warnings during XML Import", warnings );
         }
-
         this.zoom( "fit-viewport" );
-        this.addMarkers( this.current, this.options.currentClass );
-        this.addMarkers( this.completed, this.options.completedClass );
-        this.addMarkers( this.lastCompleted, this.options.lastCompletedClass );
+        bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
+        bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
+        bpmnViewer$.get('styleModule').addStylesToElements(this.lastCompleted, this.options.config.lastCompletedStyle);
       } catch (err) {
         apex.debug.error( "Loading Diagram failed.", err, this.diagram );
       }
     },
-    addMarkers: function( markers, markerClass ) {
-      let canvas = this.bpmnViewer$.get( "canvas" );
-      if ( Array.isArray( markers ) ) {
-        markers.forEach( currentMarker => {
-          canvas.addMarker( currentMarker, markerClass );
-        });
-      } else if ( markers ) {
-        canvas.addMarker( markers, markerClass );
-      } else {
-        apex.debug.warn( "No markers received?", markers );
-      }
-    },
     zoom: function( zoomOption ) {
       this.bpmnViewer$.get( "canvas" ).zoom( zoomOption );
+    },
+    getSVG: async function() {
+      const bpmnViewer$ = this.bpmnViewer$;
+      try {
+        const result = await bpmnViewer$.saveSVG({ format: true });
+        const { svg } = result;
+        return svg;
+      } catch (err) {
+        apex.debug.error( "Get SVG failed.", err );
+        throw err;
+      }
     },
     refresh: function() {
       apex.debug.info( "Enter Refresh", this.options );
