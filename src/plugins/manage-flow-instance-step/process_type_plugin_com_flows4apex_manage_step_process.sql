@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   14:25 Friday July 9, 2021
+--   Date and Time:   09:59 Wednesday July 21, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -169,10 +169,9 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<p>SQL Query which returns one row with two columns:</p>',
 '<ul>',
-'<li>PROCESS_ID</li>',
-'<li>SUBFLOW_ID</li>',
-'</ul>',
-'<p>Important: Column aliases must be <b>uppercase</b></p>'))
+'<li>First column needs to contain the Instance Id (prcs_id)</li>',
+'<li>Second column needs to contain the Subflow Id (sbfl_id)</li>',
+'</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(16806822324830979)
@@ -186,6 +185,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_default_value=>'complete'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
+,p_help_text=>'Allows you to define the action you want to apply to the Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(16807173118834164)
@@ -331,6 +331,10 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'reserve'
+,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>Reserve with the connected user name</p>',
+'<pre>&APP_USER.</pre>'))
+,p_help_text=>'Use this to define the value for the reservation.'
 );
 end;
 /
