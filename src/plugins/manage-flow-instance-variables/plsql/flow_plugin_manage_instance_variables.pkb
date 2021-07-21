@@ -67,6 +67,13 @@ create or replace package body flow_plugin_manage_instance_variables as
          );
       end if;
 
+      if p_process.attribute_10 is not null then
+         apex_debug.info(
+            p_message => '...Return Instance ID into: %s'
+            , p0        => p_process.attribute_10
+         );
+      end if;
+
       apex_debug.info(
            p_message => ' < Process plug-in attributes'
       );
@@ -81,15 +88,16 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_context apex_exec.t_context;
 
       --attributes
-      l_attribute1 p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
-      l_attribute2 p_process.attribute_02%type := p_process.attribute_02; -- Process ID (APEX item)
-      l_attribute3 p_process.attribute_03%type := p_process.attribute_03; -- SQL query (1 column process id)
-      l_attribute4 p_process.attribute_04%type := p_process.attribute_04; -- Action (get/set)
-      l_attribute5 p_process.attribute_05%type := p_process.attribute_05; -- Manage Process Variables using
-      l_attribute6 p_process.attribute_06%type := p_process.attribute_06; -- Process Variable(s) Name(s)
-      l_attribute7 p_process.attribute_07%type := p_process.attribute_07; -- APEX item(s)
-      l_attribute8 p_process.attribute_08%type := p_process.attribute_08; -- JSON
-      l_attribute9 p_process.attribute_09%type := p_process.attribute_09; -- SQL query (1 column JSON array)
+      l_attribute1  p_process.attribute_01%type := p_process.attribute_01; -- Flow instance selection (APEX item/SQL)
+      l_attribute2  p_process.attribute_02%type := p_process.attribute_02; -- Process ID (APEX item)
+      l_attribute3  p_process.attribute_03%type := p_process.attribute_03; -- SQL query (1 column process id)
+      l_attribute4  p_process.attribute_04%type := p_process.attribute_04; -- Action (get/set)
+      l_attribute5  p_process.attribute_05%type := p_process.attribute_05; -- Manage Process Variables using
+      l_attribute6  p_process.attribute_06%type := p_process.attribute_06; -- Process Variable(s) Name(s)
+      l_attribute7  p_process.attribute_07%type := p_process.attribute_07; -- APEX item(s)
+      l_attribute8  p_process.attribute_08%type := p_process.attribute_08; -- JSON
+      l_attribute9  p_process.attribute_09%type := p_process.attribute_09; -- SQL query (1 column JSON array)
+      l_attribute10 p_process.attribute_10%type := p_process.attribute_10; -- Return instance Id into
 
       --exceptions
       e_var_config              exception;
@@ -558,6 +566,15 @@ create or replace package body flow_plugin_manage_instance_variables as
                            when 'get' then 'getting'
                         end 
       );
+
+      -- Return instance id in the APEX item provided
+      if ( l_attribute10 is not null ) then
+         apex_debug.info(
+            p_message => '...Return Flow Instance Id into item "%s"'
+         , p0        => l_attribute10
+         );
+         apex_util.set_session_state( l_attribute10, l_prcs_id );
+      end if;
 
       return l_result;
    exception 
