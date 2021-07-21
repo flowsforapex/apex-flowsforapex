@@ -28,7 +28,7 @@ prompt APPLICATION 101 - Holiday Approval (demo app to show how to integrate Flo
 -- Application Export:
 --   Application:     101
 --   Name:            Holiday Approval (demo app to show how to integrate Flows for APEX)
---   Date and Time:   14:25 Friday July 9, 2021
+--   Date and Time:   09:51 Wednesday July 21, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -57,7 +57,7 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
-,p_version_identifier=>'1.2'
+,p_version_identifier=>'1.0'
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex	'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -78,7 +78,12 @@ wwv_flow_api.create_plugin_attribute(
 '<pre>Holiday,0</pre>',
 'Set Flow using Id:',
 '<pre>1</pre>'))
-,p_help_text=>'Provide Flow (Diagram) Name (and optionally Flow Version) or Flow Id.'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'Depends on the action selected, you can provide:',
+'<ul>',
+'<li> a Flow Diagram by Name (and optionally Flow Version) or Id.</li>',
+'<li> a Flow Instance Id.</li>',
+'</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(25120740280389859)
@@ -92,6 +97,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_default_value=>'create_and_start'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
+,p_help_text=>'Use this attribute to define the action you want to process.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25121290549391648)
@@ -100,6 +106,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_value=>'Create and Start'
 ,p_return_value=>'create_and_start'
 ,p_is_quick_pick=>true
+,p_help_text=>'Use this option to create and start a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25121675435393240)
@@ -108,6 +115,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_value=>'Create'
 ,p_return_value=>'create'
 ,p_is_quick_pick=>true
+,p_help_text=>'Use this option to create a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25122062003393771)
@@ -115,6 +123,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>30
 ,p_display_value=>'Start'
 ,p_return_value=>'start'
+,p_help_text=>'Use this option to start a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25122597355395212)
@@ -122,6 +131,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>40
 ,p_display_value=>'Delete'
 ,p_return_value=>'delete'
+,p_help_text=>'Use this option to delete a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25123028547396253)
@@ -129,6 +139,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>50
 ,p_display_value=>'Reset'
 ,p_return_value=>'reset'
+,p_help_text=>'Use this option to reset a Flow Instance.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(25112496497373360)
@@ -145,7 +156,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'IN_LIST'
 ,p_depending_on_expression=>'create,create_and_start'
-,p_help_text=>'Define the new flow instance name to be created.'
+,p_help_text=>'Define the new Flow Instance name to be created.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(25100708704373356)
@@ -160,14 +171,14 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>A <i>Flows for APEX</i> <b>Flow</b> is the business process diagram or business workflow diagram used to control how your business process proceeds.  These are created using the Flow Modeller in the <i>Flows for APEX</i> application.  Once you hav'
-||'e created your Flow diagram, you should specify the Flow name (diagram name) you want to use to control the flow instance to be started.</p>',
+'<p>A <i>Flows for APEX</i> <b>Flow</b> is the business process diagram or business workflow diagram used to control how your business process proceeds. These are created using the Flow Modeller in the <i>Flows for APEX</i> application.  Once you have'
+||' created your Flow diagram, you should specify the Flow name (diagram name) you want to use to control the flow instance to be started.</p>',
 '',
-'<p>The Flow name can be specified using a SQL query, in an APEX Page Item, or as Static Text.</p>',
+'<p>Depends on the action selected, this attribute can be use to define how to retrieve the Flow (Diagram) or the Flow Instance.</p>',
 '',
-'<p> <b>On Versioning.</b> If you are using flow versioning, where you can have multiple versions of a diagram, note that if you specify just the diagram name, the version of the diagram which is currently in <b>released</b> status will be used.  If n'
-||'o <b>released</b> status version exists, a <b>draft</b> status having version = ''0'' will be used.  If that doesn''t exist, you will receive an error.  So in a production environment, where you want your app to run with the current <b>released</b> vers'
-||'ion, just specify the flow / diagram name - and let the system find the current released version for you.  If you want to test a <b>draft</b> diagram for testing, you will need to use a query to specify which flow / model to use.</p>'))
+'<p> <b>On Versioning.</b> If you are using flow versioning, where you can have multiple versions of a diagram, note that if you specify just the diagram name, the version of the diagram which is currently in <b>released</b> status will be used. If no'
+||' <b>released</b> status version exists, a <b>draft</b> status having version = ''0'' will be used. If that doesn''t exist, you will receive an error.  So in a production environment, where you want your app to run with the current <b>released</b> versio'
+||'n, just specify the flow / diagram name - and let the system find the current released version for you.  If you want to test a <b>draft</b> diagram for testing, you will need to use a query to specify which flow / model to use.</p>'))
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25101154424373356)
@@ -175,7 +186,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>10
 ,p_display_value=>'APEX item'
 ,p_return_value=>'item'
-,p_help_text=>'Use this when the Flow is contained in APEX Item(s).'
+,p_help_text=>'Use this when the Flow (Diagram or Instance) is contained in APEX Item(s).'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25203290217468756)
@@ -183,6 +194,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>20
 ,p_display_value=>'SQL Query'
 ,p_return_value=>'sql'
+,p_help_text=>'Use this when you want to specify the Flow (Diagram or Instance) with a SQL Query.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25102185668373357)
@@ -190,7 +202,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>30
 ,p_display_value=>'Static Text'
 ,p_return_value=>'static'
-,p_help_text=>'Use this when you want to specify the Flow Name to be used as text.'
+,p_help_text=>'Use this when you want to specify the Flow (Diagram or Instance) as text.'
 );
 wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(25102625162373357)
@@ -198,7 +210,7 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_sequence=>40
 ,p_display_value=>'Component Setting'
 ,p_return_value=>'component'
-,p_help_text=>'Use this when you want to specify the Flow to be used as a global component setting.'
+,p_help_text=>'Use this when you want to specify the Flow (Diagram or Instance) to be used as a global component setting.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(25103158252373357)
@@ -214,7 +226,13 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
-,p_help_text=>'APEX Item(s) containing the Flow Name (a dgrm_name) and optionally the Flow Version (a dgrm_version).'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'APEX Item(s) containing:',
+'<ul>',
+'<li>the Flow Name (a dgrm_name) and optionally the Flow Version (a dgrm_version)</li> ',
+'<li>the Flow Id (a dgrm_id)</li>',
+'<li>the Flow Instance Id (a prcs_id)</li>',
+'</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(25103916610373357)
@@ -232,13 +250,19 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'static'
 ,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'Set Flow using Name only:',
+'Set Flow DIagram  using Name only:',
 '<pre>Holiday</pre>',
-'Set Flow using Name and Version:',
+'Set Flow DIagram using Name and Version:',
 '<pre>Holiday,0</pre>',
-'Set Flow using Id:',
+'Set Flow Diagram or Instance using Id:',
 '<pre>1</pre>'))
-,p_help_text=>'Provide Flow Name (and optionally Flow Version, using a Comma (,) separator) or Flow Id.'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'Provide ',
+'<ul>',
+'<li>a Flow Diagram Name and optionally Flow Diagram Version, using a Comma (,) separator</li>',
+'<li>a Flow Diagram Id</li>',
+'<li>a Flow Instance Id</li>',
+'</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(25202559271466793)
@@ -248,7 +272,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_display_sequence=>60
 ,p_prompt=>'SQL Query'
 ,p_attribute_type=>'SQL'
-,p_is_required=>false
+,p_is_required=>true
 ,p_sql_min_column_count=>1
 ,p_sql_max_column_count=>2
 ,p_is_translatable=>false
@@ -256,6 +280,39 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
+,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SQL query to retrieve Flow Diagram by Name:',
+'<pre>',
+'select dgrm_name',
+'from flow_diagrams',
+'where dgrm_id = 1',
+'</pre>',
+'SQL query to retrieve Flow Diagram by Name and Version:',
+'<pre>',
+'select dgrm_name, dgrm_version',
+'from flow_diagrams',
+'where dgrm_id = 1',
+'</pre>',
+'SQL query to retrieve Flow Diagram by ID:',
+'<pre>',
+'select dgrm_id',
+'from flow_diagrams',
+'where dgrm_id = 1',
+'</pre>',
+'SQL query to retrieve Flow Instance by ID:',
+'<pre>',
+'select prcs_id',
+'from flow_processes',
+'where prcs_id = 1',
+'</pre>'))
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SQL Query returning depends on the Action (and the Flow (Diagram) Selection) choosen:</br>',
+'<ul>',
+'<li>The flow name to use. Returned value should be a valid Flow name, i.e., should be contained in the table FLOW_DIAGRAMS in column dgrm_name.</li>',
+'<li>The flow name and the flow version to use. Returned values should be a valid Flow name and version, i.e., should be contained in the table FLOW_DIAGRAMS in columns dgrm_name and dgrm_version.</li>',
+'<li>The flow id to use. Returned values should be a valid Flow ID, i.e., should be contained in the table FLOW_DIAGRAMS in columns dgrm_id</li>',
+'<li>The flow instance id to use. Returned values should be a valid Flow ID, i.e., should be contained in the table FLOW_PROCESSES in columns prcs_id</li>',
+'</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(25106601682373357)
@@ -274,7 +331,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_expression=>'create,create_and_start'
 ,p_lov_type=>'STATIC'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>How are you going to specify which Flow Diagram to use to start the Flow?</p>',
+'<p>How are you going to specify which Flow Diagram to use to create the Flow Instance?</p>',
 '',
 '<p>If you are not using Flow versioning, you can specify the Flow (diagram) by its Name, its Name and Version, or by a Flow ID. If you are not using versioning, the Version will probably be "0".  ',
 '',
