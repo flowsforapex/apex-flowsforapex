@@ -106,6 +106,10 @@ as
   gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
   gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
 
+  -- Standard Process Variables
+
+  gc_prov_builtin_business_ref        constant  varchar2(50 char) := 'BUSINESS_REF';
+
   -- Process Variable Expression Types
   gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'STATIC';
   gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'F4A_PROC_VAR';

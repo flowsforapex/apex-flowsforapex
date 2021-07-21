@@ -53,6 +53,16 @@ function get_var_clob
 , pi_var_name in flow_process_variables.prov_var_name%type)
 return flow_process_variables.prov_var_clob%type;
 
+/********************************************************************************
+**
+**        SPECIAL CASE / BUILT-IN PROCESS VARIABLES
+**
+********************************************************************************/ 
+
+function get_business_ref
+( pi_prcs_id in flow_processes.prcs_id%type)
+return flow_process_variables.prov_var_vc2%type;
+
  /********************************************************************************
 **
 **        FOR FLOW_ENGINE USE
