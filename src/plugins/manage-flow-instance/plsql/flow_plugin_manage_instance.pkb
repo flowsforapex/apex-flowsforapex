@@ -154,13 +154,14 @@ create or replace package body flow_plugin_manage_instance as
                          when 'start' then 'starting'
                          when 'delete' then 'deleting'
                          when 'reset' then 'reseting'
+                         when 'terminate' then 'terminating'
                          when 'create' then 'creating'
                          when 'create_and_start' then 'creating and starting'
                       end  
       );
 
       if l_attribute3 = 'item' then
-         if l_attribute1 in ( 'start', 'delete', 'reset' ) then
+         if l_attribute1 in ( 'start', 'delete', 'reset', 'terminate' ) then
             l_prcs_id  := apex_util.get_session_state( p_item => l_attribute4 );
          else
             --Flow is define by name only
@@ -190,7 +191,7 @@ create or replace package body flow_plugin_manage_instance as
          );
 
          while apex_exec.next_row(l_context) loop
-            if l_attribute1 in ( 'start', 'delete', 'reset' ) then
+            if l_attribute1 in ( 'start', 'delete', 'reset', 'terminate' ) then
                l_prcs_id  := apex_exec.get_number(l_context, 1);
             else
                if l_attribute7 in ( 'name', 'name_and_version' ) then
@@ -208,7 +209,7 @@ create or replace package body flow_plugin_manage_instance as
          apex_exec.close(l_context);
 
       elsif l_attribute3 = 'static' then
-         if l_attribute1 in ( 'start', 'delete', 'reset' ) then
+         if l_attribute1 in ( 'start', 'delete', 'reset', 'terminate' ) then
             l_prcs_id := l_attribute5;
          else
             --Flow is define by name only
@@ -229,7 +230,7 @@ create or replace package body flow_plugin_manage_instance as
             end if;
          end if;
       elsif l_attribute3 = 'component' then
-         if l_attribute1 in ( 'start', 'delete', 'reset' ) then
+         if l_attribute1 in ( 'start', 'delete', 'reset', 'terminate' ) then
             l_prcs_id := l_g_attribute1;
          else
             --Flow is define by name only
@@ -270,12 +271,21 @@ create or replace package body flow_plugin_manage_instance as
             p_process_id  => l_prcs_id
          );
       elsif l_attribute1 = 'reset' then
-         -- Call API to start the instance
+         -- Call API to reset the instance
          apex_debug.info(
             p_message => '...Reset Flow Instance Id %s'
             , p0        => l_prcs_id
          );
          flow_api_pkg.flow_reset(
+            p_process_id  => l_prcs_id
+         );
+      elsif l_attribute1 = 'terminate' then
+         -- Call API to terminate the instance
+         apex_debug.info(
+            p_message => '...Terminate Flow Instance Id %s'
+            , p0        => l_prcs_id
+         );
+         flow_api_pkg.flow_terminate(
             p_process_id  => l_prcs_id
          );
       elsif l_attribute1 in ( 'create', 'create_and_start' ) then
