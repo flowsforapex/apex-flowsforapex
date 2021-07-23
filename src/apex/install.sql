@@ -104,6 +104,9 @@ prompt --install
 @@application/shared_components/user_interface/shortcuts/delete_confirm_msg.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
 @@application/shared_components/plugins/region_type/com_mtag_apex_bpmnmodeler_region.sql
+@@application/shared_components/plugins/process_type/com_flows4apex_manage_step_process.sql
+@@application/shared_components/plugins/process_type/com_flows4apex_manage_ins_vars_process.sql
+@@application/shared_components/plugins/process_type/com_flows4apex_manage_instance_process.sql
 @@application/shared_components/plugins/region_type/com_mtag_apex_bpmnviewer_region.sql
 @@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql
@@ -115,6 +118,7 @@ prompt --install
 @@application/pages/page_00007.sql
 @@application/pages/page_00010.sql
 @@application/pages/page_00011.sql
+@@application/pages/page_00012.sql
 @@application/pages/page_09999.sql
 @@application/deployment/definition.sql
 @@application/deployment/checks.sql

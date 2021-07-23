@@ -9,6 +9,11 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_plugin_setting(
+ p_id=>wwv_flow_api.id(33700780045345979)
+,p_plugin_type=>'PROCESS TYPE'
+,p_plugin=>'PLUGIN_COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'
+);
+wwv_flow_api.create_plugin_setting(
  p_id=>wwv_flow_api.id(12495637049419880410)
 ,p_plugin_type=>'REGION TYPE'
 ,p_plugin=>'NATIVE_IR'

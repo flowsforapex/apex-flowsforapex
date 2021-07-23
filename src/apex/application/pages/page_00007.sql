@@ -20,10 +20,10 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$("#deprecate_btn").height("26");',
-'$("#release_btn").height("26");',
-'$("#archive_btn").height("26");',
-'$("#new_version_btn").height("26");'))
+'apex.jQuery("#deprecate_btn").height("26");',
+'apex.jQuery("#release_btn").height("26");',
+'apex.jQuery("#archive_btn").height("26");',
+'apex.jQuery("#new_version_btn").height("26");'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '#deprecate_btn,#release_btn,#archive_btn,#new_version_btn{',
 '  margin-top:8px;',
@@ -37,7 +37,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210226163506'
+,p_last_upd_yyyymmddhh24miss=>'20210723094549'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24215396220956137)
