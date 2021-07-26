@@ -53,6 +53,43 @@ as
       raise;
   end log_step_completion;
 
+  procedure log_instance_event
+  ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
+  , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
+  , p_comment           in flow_instance_event_log.lgpr_comment%type 
+  )
+  is 
+  begin 
+    insert into flow_instance_event_log
+    ( lgpr_prcs_id 
+    , lgpr_dgrm_id 
+    , lgpr_prcs_name 
+    , lgpr_business_id
+    , lgpr_prcs_event
+    , lgpr_timestamp 
+    , lgpr_user 
+    , lgpr_comment
+    )
+    select prcs.prcs_id
+         , prcs.prcs_dgrm_id
+         , prcs.prcs_name
+         , flow_process_vars.get_business_ref (p_process_id)  --- 
+         , p_event
+         , systimestamp 
+         , sys_context('USERENV', 'SESSION_USER')   --- check this is complete
+         , p_comment
+      from flow_processes prcs 
+     where prcs.prcs_id = p_process_id
+    ;
+  exception
+    when others then
+      apex_error.add_error
+      ( p_message => 'Flows - Internal error logging instance event'
+      , p_display_location => apex_error.c_on_error_page
+      );
+      raise;
+  end log_instance_event;
+
   function check_subflow_exists
   ( 
     p_process_id in flow_processes.prcs_id%type

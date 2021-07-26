@@ -319,7 +319,8 @@ create table flow_flow_event_log
 , lgfl_dgrm_status   		VARCHAR2(10 CHAR) NOT NULL
 , lgfl_dgrm_category 		VARCHAR2(30 CHAR)
 , lgfl_timestamp 			TIMESTAMP WITH TIME ZONE NOT NULL
-, lgfl_user				    VARCHAR2
+, lgfl_user				    VARCHAR2(255 char)
+, lgfl_comment              VARCHAR2(2000 CHAR)
 , lgfl_dgrm_content  		CLOB
 );
 

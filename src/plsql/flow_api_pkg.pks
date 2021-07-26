@@ -129,7 +129,8 @@ This is not meant for use in Production Systems.
 */
   procedure flow_reset
   ( 
-    p_process_id in flow_processes.prcs_id%type
+    p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
   /***
 Procedure flow_terminate
@@ -138,7 +139,8 @@ It ends all subflows, but retains the process definition and the subflow logs fo
 */
   procedure flow_terminate
   ( 
-    p_process_id in flow_processes.prcs_id%type
+    p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
   /***
 Procedure flow_delete
@@ -146,7 +148,8 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
 */
   procedure flow_delete
   ( 
-    p_process_id in flow_processes.prcs_id%type
+    p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null    
   );
 
  /********************************************************************************

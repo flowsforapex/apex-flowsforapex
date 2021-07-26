@@ -13,16 +13,19 @@ as
     );
 
   procedure reset_process
-    ( p_process_id in flow_processes.prcs_id%type
+    ( p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     );
 
   procedure terminate_process
-    ( p_process_id in flow_processes.prcs_id%type
+    ( p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     );
 
   procedure delete_process
     (
-      p_process_id in flow_processes.prcs_id%type
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     );
 
 end flow_instances;

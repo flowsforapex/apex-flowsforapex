@@ -176,7 +176,8 @@ as
   end start_process;
 
   procedure reset_process
-    ( p_process_id in flow_processes.prcs_id%type
+    ( p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     )
   is
     l_return_code   number;
@@ -244,7 +245,8 @@ as
 
   procedure terminate_process
     (
-      p_process_id in flow_processes.prcs_id%type
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     )
   is
     l_return_code   number;
@@ -306,7 +308,8 @@ as
 
   procedure delete_process
     (
-      p_process_id in flow_processes.prcs_id%type
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     )
   is
     l_return_code   number;

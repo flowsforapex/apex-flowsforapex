@@ -320,6 +320,7 @@ procedure flow_next_branch
 
   procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
@@ -327,12 +328,14 @@ procedure flow_next_branch
     ( p_routine_name => 'flow_reset'
     );
     flow_instances.reset_process 
-    ( p_process_id => p_process_id
+    ( p_process_id  => p_process_id
+    , p_comment     => p_comment
     );
   end flow_reset;
 
   procedure flow_terminate
-  ( p_process_id in flow_processes.prcs_id%type
+  ( p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
@@ -341,11 +344,13 @@ procedure flow_next_branch
     );
     flow_instances.terminate_process 
     ( p_process_id => p_process_id
+    , p_comment    => p_comment
     );
   end flow_terminate;
 
   procedure flow_delete
-  ( p_process_id in flow_processes.prcs_id%type
+  ( p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
@@ -354,6 +359,7 @@ procedure flow_next_branch
     );
     flow_instances.delete_process 
     ( p_process_id => p_process_id
+    , p_comment    => p_comment
     );
   end flow_delete;
 
