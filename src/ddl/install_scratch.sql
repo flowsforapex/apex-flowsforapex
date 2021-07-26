@@ -138,7 +138,9 @@ CREATE TABLE flow_subflows (
     sbfl_last_completed   VARCHAR2(50 CHAR),
     sbfl_current          VARCHAR2(50 CHAR),
     sbfl_status           VARCHAR2(20 CHAR),
-    sbfl_has_events        VARCHAR2(200 CHAR),
+    sbfl_became_current   TIMESTAMP WITH TIME ZONE,
+    sbfl_work_started     TIMESTAMP WITH TIME ZONE,
+    sbfl_has_events       VARCHAR2(200 CHAR),
     sbfl_reservation      VARCHAR2(255 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL
 );
@@ -308,3 +310,63 @@ create table flow_process_variables
 );
 
 alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_var_name);
+
+
+create table flow_flow_event_log
+( lgfl_dgrm_id       		NUMBER NOT NULL
+, lgfl_dgrm_name     		VARCHAR2(150 CHAR) NOT NULL
+, lgfl_dgrm_version  		VARCHAR2(10 CHAR) NOT NULL
+, lgfl_dgrm_status   		VARCHAR2(10 CHAR) NOT NULL
+, lgfl_dgrm_category 		VARCHAR2(30 CHAR)
+, lgfl_timestamp 			TIMESTAMP WITH TIME ZONE NOT NULL
+, lgfl_user				    VARCHAR2
+, lgfl_dgrm_content  		CLOB
+);
+
+create table flow_instance_event_log
+( lgpr_prcs_id           	NUMBER NOT NULL
+, lgpr_dgrm_id      		NUMBER NOT NULL
+, lgpr_prcs_name         	VARCHAR2(150 CHAR) NOT NULL
+, lgpr_business_id			VARCHAR2(4000 char)
+, lgpr_prcs_event       	VARCHAR2(20 CHAR) NOT NULL
+, lgpr_timestamp     		TIMESTAMP WITH TIME ZONE NOT NULL
+, lgpr_user 				VARCHAR2(255 char)
+, lgpr_comment				VARCHAR2(2000)
+);
+
+
+create table flow_subflow_event_log
+( lgsf_prcs_id       		NUMBER NOT NULL
+, lgsf_objt_id       		VARCHAR2(50) NOT NULL
+, lgsf_sbfl_id      		NUMBER NOT NULL
+, lgsf_last_completed 	    VARCHAR2(50) NOT NULL
+, lgsf_sbfl_dgrm_id   	    NUMBER NOT NULL
+, lgsf_was_current		    TIMESTAMP WITH TIME ZONE
+, lgsf_started 			    TIMESTAMP WITH TIME ZONE
+, lgsf_completed 			TIMESTAMP WITH TIME ZONE
+, lgsf_reservation		    VARCHAR2(255 char)
+, lgsf_user				    VARCHAR2(255 char)	
+, lgsf_comment         	    VARCHAR2(2000)
+);
+
+create table flow_variable_event_log
+( lgvr_prcs_id			    number not null
+, lgvr_var_name			    varchar2(50 char) not null
+, lgvr_objt_id			    NUMBER
+, lgvr_sbfl_id			    NUMBER
+, lgvr_expr_set			    VARCHAR2(20 CHAR) NOT NULL
+, lgvr_timestamp			TIMESTAMP WITH TIME ZONE NOT NULL
+, lgvr_var_type			    varchar2(50 char) not null 
+, lgvr_var_vc2 			    varchar2(4000 char)
+, lgvr_var_num 			    number
+, lgvr_var_date 			date
+, lgvr_var_clob 			clob
+);
+
+create table flow_parameters
+( fpar_key                  varchar2(50 char) NOT NULL
+, fpar_value                varchar2(2000 char)
+);
+
+alter table flow_parameters ADD CONSTRAINT fpar_pk PRIMARY KEY ( fpar_key );
+

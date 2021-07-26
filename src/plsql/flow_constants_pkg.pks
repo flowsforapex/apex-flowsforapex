@@ -69,6 +69,7 @@ as
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
+  gc_terminate_end_key                constant flow_types_pkg.t_bpmn_id := 'terminateStatus';
 
   -- Flows 4 APEX Substitution Strings
   gc_substitution_flow_identifier     constant varchar2(10 char)                    := 'F4A$';
@@ -93,11 +94,14 @@ as
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
+  gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
 
   -- Process Instance Status
   gc_prcs_status_created              constant  varchar2(20 char) := 'created';
   gc_prcs_status_running              constant  varchar2(20 char) := 'running';
   gc_prcs_status_completed            constant  varchar2(20 char) := 'completed';
+  gc_prcs_status_terminated           constant  varchar2(20 char) := 'terminated';
+  gc_prcs_status_error                constant  varchar2(20 char) := 'error';
 
   -- Gateway Function Types
   gc_gateway_splitting                constant  varchar2(10 char) := 'splitting'; 
