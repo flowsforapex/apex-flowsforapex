@@ -44,9 +44,9 @@ as
   , p_subflow_id        in flow_subflows.sbfl_id%type
   );
 
-  procedure flow_terminate_level
-  ( p_process_id   in flow_processes.prcs_id%type
-  , p_subflow_id   in flow_subflows.sbfl_id%type
+  procedure terminate_level
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_process_level in flow_subflows.sbfl_process_level%type
   );
 
   function subflow_start
@@ -69,3 +69,4 @@ as
   ) return boolean;
 
 end flow_engine_util;
+/

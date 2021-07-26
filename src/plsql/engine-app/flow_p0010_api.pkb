@@ -26,6 +26,8 @@ as
           , p_subflow_id => pi_sbfl_id
           , p_reservation => V('APP_USER')
           );
+        when 'TERMINATE' then 
+          flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_id );
         when 'RELEASE' then
           flow_api_pkg.flow_release_step
           (

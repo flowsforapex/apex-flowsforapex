@@ -27,8 +27,8 @@ is
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_step_info     in flow_types_pkg.flow_step_info
   , p_par_sbfl      in flow_subflows.sbfl_id%type
+  , p_process_level in flow_subflows.sbfl_process_level%type
   );
 
 end flow_boundary_events;
 /
-

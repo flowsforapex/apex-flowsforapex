@@ -16,9 +16,14 @@ as
     ( p_process_id in flow_processes.prcs_id%type
     );
 
+  procedure terminate_process
+    ( p_process_id in flow_processes.prcs_id%type
+    );
+
   procedure delete_process
     (
       p_process_id in flow_processes.prcs_id%type
     );
 
 end flow_instances;
+/

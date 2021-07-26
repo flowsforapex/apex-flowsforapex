@@ -150,8 +150,18 @@ When a process is reset:
 - any event handlers, such as timers, are terminated.
 - any current subflows are removed.
 - process progress is reset to the begining, showing which objects were completed when the process ran.
-- any process variables attached to the instance ARE RETAINED.  If you wish to restart the process instance with a clean set of process variables, you should delete and recreate the process instance, ratherthan resetting it.
+- any process variables attached to the instance ARE RETAINED.  If you wish to restart the process instance with a clean set of process variables, you should delete and recreate the process instance, rather than resetting it.
 - the process status is reset to `created`.
+
+#### Action when a Process is Deleted
+
+When a process is terminated, the effect is the same as if the Flow had procesed a Terminate End Event at its current position:
+
+- any event handlers, such as timers, are terminated and deleted.
+- any current subflows are removed.
+- process progress recorded in the subflow log (FLOWS_SUBFLOW_LOG) is retained.
+- all associated process variables are retained.
+- the process instance is set to `completed`.
 
 #### Action when a Process is Deleted
 

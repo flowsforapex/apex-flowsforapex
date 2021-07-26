@@ -180,7 +180,7 @@ is
     l_boundary_objt_bpmn_id  flow_objects.objt_bpmn_id%type;
     l_parent_objt_tag        flow_objects.objt_tag_name%type;
     l_parent_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
-    l_child_sbfl             flow_subflows.sbfl_id%type;
+    l_child_process_level    flow_subflows.sbfl_process_level%type;
   begin
     apex_debug.enter 
     ( 'handle_interrupting_boundary_event'
@@ -209,18 +209,18 @@ is
         ;
     if l_parent_objt_tag = flow_constants_pkg.gc_bpmn_subprocess
     then
-       -- find a child subprocess and then stop all processing at that level and below
-      select sbfl.sbfl_id
-        into l_child_sbfl
+       -- if the boundary event is on a subprocess (rather than a task type), terminate the subprocess level
+       -- find the process level inside the subprocess and then stop all processing at that level and below
+      select distinct sbfl.sbfl_process_level
+        into l_child_process_level
         from flow_subflows sbfl
        where sbfl.sbfl_sbfl_id = p_subflow_id
-         and rownum = 1
        ;
-       if l_child_sbfl is not null 
+       if l_child_process_level is not null 
        then 
-          flow_engine_util.flow_terminate_level
-          ( p_process_id => p_process_id
-          , p_subflow_id => l_child_sbfl
+          flow_engine_util.terminate_level
+          ( p_process_id    => p_process_id
+          , p_process_level => l_child_process_level
           );
        end if;
     end if;
@@ -292,6 +292,7 @@ procedure process_boundary_event
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_step_info     in flow_types_pkg.flow_step_info
   , p_par_sbfl      in flow_subflows.sbfl_id%type
+  , p_process_level in flow_subflows.sbfl_process_level%type
   )
 is 
   l_next_objt             flow_objects.objt_bpmn_id%type;
@@ -328,10 +329,10 @@ begin
   if l_interrupting = 1 then
     -- first remove any non-interrupting timers that are on the parent event
     unset_boundary_timers (p_process_id, p_par_sbfl);
-    -- stop processing in sub process and all children
-    flow_engine_util.flow_terminate_level
+    -- stop processing in sub process and all child levels
+    flow_engine_util.terminate_level
     ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
+    , p_process_level => p_process_level
     );        
     -- set parent subflow to boundary event and do flow_complete_step
     update flow_subflows sbfl
