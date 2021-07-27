@@ -145,178 +145,58 @@ as
       );
   end flow_create;
 
-  function next_multistep_exists 
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean
-  -- returns true if next step requires a choice of direction (i.e., has a tag of
-  -- - an Opening Exclusive Gateway
-  -- - an Opening Optional Gateway
-  is
-    l_next_count number;
-    l_dgrm_id    flow_diagrams.dgrm_id%type;
-    l_return     boolean;
-  begin
-  /*  apex_debug.message(p_message => 'Begin next_multistep_exists', p_level => 3) ;
-    
-    if (p_subflow_id is not null and p_process_id is not null) then
+  procedure flow_start
+    ( p_process_id in flow_processes.prcs_id%type
+    )
+    is
+    begin  
+        apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
+  
+        flow_instances.start_process 
+          ( p_process_id => p_process_id
+          );
+  end flow_start;
 
-      l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
-      
-      select count(*)                        
-        into l_next_count
-        from flow_connections conn
-        join flow_objects objt
-          on objt.objt_id = conn.conn_src_objt_id
-         and conn.conn_dgrm_id = objt.objt_dgrm_id
-         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
-       where conn.conn_dgrm_id = l_dgrm_id
-         and objt.objt_bpmn_id = ( select sbfl.sbfl_current
-                                     from flow_subflows sbfl
-                                    where sbfl.sbfl_prcs_id = p_process_id
-                                      and sbfl.sbfl_id = p_subflow_id
-                                 )
-      ;
-      
-      l_return := ( l_next_count > 1 );
-    else*/
-      l_return := false;
-    --end if;
-    
-    return l_return;
-  end next_multistep_exists;
-
-  function next_multistep_exists_yn 
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2
-  is
-      l_ret boolean;
-  begin
-      l_ret := next_multistep_exists
-              ( p_process_id => p_process_id
-              , p_subflow_id => p_subflow_id
-              );
-      if l_ret = true
-      then
-          return 'y';
-      else 
-          return 'n';
-      end if;
-  end next_multistep_exists_yn;
-
-  function next_step_type
-  (
-    p_sbfl_id in flow_subflows.sbfl_id%type
-  ) return varchar2
-  /*
-  This function was required in F4A V4.x only, and is included in V5.x only to prevent any apps breaking.
-  It was required to tell the UI whether the next step was a normal step, single choiuce, or multi choice.
-  As Inclusive and Exclusive Gateways do not stop for user input in V5, this is unnecessary.
-  This now always returns gc-step = 'simple-step'
-  For removal in F4A V6.0
-  */
-  as
-  begin
-    return gc_step;
-  end next_step_type;
-
-procedure flow_start
-  ( p_process_id in flow_processes.prcs_id%type
+  procedure flow_reserve_step
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_reservation   in flow_subflows.sbfl_reservation%type
   )
-  is
-  begin  
-      apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
- 
-      flow_instances.start_process 
-        ( p_process_id => p_process_id
-        );
-end flow_start;
+  is 
+  begin
 
-procedure flow_reserve_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-, p_reservation   in flow_subflows.sbfl_reservation%type
-)
-is 
-begin
+    flow_reservations.reserve_step
+    ( p_process_id  => p_process_id
+    , p_subflow_id  => p_subflow_id
+    , p_reservation => p_reservation
+    );
+  end flow_reserve_step;
 
-  flow_reservations.reserve_step
-  ( p_process_id  => p_process_id
-  , p_subflow_id  => p_subflow_id
-  , p_reservation => p_reservation
-  );
-end flow_reserve_step;
+  procedure flow_release_step
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin
 
-procedure flow_release_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-)
-is 
-begin
+    flow_reservations.release_step
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );
+  end flow_release_step;
 
-  flow_reservations.release_step
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  );
-end flow_release_step;
+  procedure flow_complete_step
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin
 
-procedure flow_complete_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-)
-is 
-begin
-
-  flow_engine.flow_complete_step
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  );
+    flow_engine.flow_complete_step
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );
 end flow_complete_step;
-
-procedure flow_next_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in varchar2 default null 
-)
-is 
-begin
--- FFA50 Remove from here...
-  if p_forward_route is not null 
-  then
-        apex_error.add_error
-          ( p_message => 'Application Error: p_forward_route should not be specified on flow_next_step in V5.0'
-          , p_display_location => apex_error.c_on_error_page
-          );
-  end if;
-
-  flow_engine.flow_complete_step
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_forward_route => null);   -- FFA 41 remove this and only pass null once next_branch removed
--- FFA50 ....to here
-/* FFA50  replace procedure with this before release
-          apex_error.add_error
-          ( p_message => 'Flow_next_step replaced by flow_complete_step for Flows for Apex V5.  See Documentation '
-          , p_display_location => apex_error.c_on_error_page
-          );
-
-*/
-end flow_next_step;
-
-
-procedure flow_next_branch  
-  ( p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_branch_name in varchar2
-  )
-  is
-  begin
-          apex_error.add_error
-          ( p_message => 'Flow_next_branch removed for Flows for Apex V5.  See Documentation '
-          , p_display_location => apex_error.c_on_error_page
-          );
-  end flow_next_branch; 
 
   procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
