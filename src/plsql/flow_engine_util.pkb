@@ -76,7 +76,10 @@ as
          , flow_process_vars.get_business_ref (p_process_id)  --- 
          , p_event
          , systimestamp 
-         , sys_context('USERENV', 'SESSION_USER')   --- check this is complete
+         , coalesce ( sys_context('apex$session','app_user') 
+                    , sys_context('userenv','os_user')
+                    , sys_context('userenv','session_user')
+                    )  --- check this is complete
          , p_comment
       from flow_processes prcs 
      where prcs.prcs_id = p_process_id

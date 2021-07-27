@@ -103,6 +103,15 @@ as
   gc_prcs_status_terminated           constant  varchar2(20 char) := 'terminated';
   gc_prcs_status_error                constant  varchar2(20 char) := 'error';
 
+  -- Process Instance Events
+  gc_prcs_event_created              constant  varchar2(20 char) := gc_prcs_status_created;
+  gc_prcs_event_started              constant  varchar2(20 char) := 'started';
+  gc_prcs_event_completed            constant  varchar2(20 char) := gc_prcs_status_completed;
+  gc_prcs_event_terminated           constant  varchar2(20 char) := gc_prcs_status_terminated;
+  gc_prcs_event_reset                constant  varchar2(20 char) := 'reset';
+  gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
+  gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
+
   -- Process Variable Datatypes
 
   gc_prov_var_type_varchar2           constant  varchar2(50 char) := 'VARCHAR2';
