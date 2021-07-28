@@ -21,8 +21,9 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_step_template=>wwv_flow_api.id(12495624331342880306)
 ,p_page_template_options=>'#DEFAULT#'
+,p_dialog_chained=>'N'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210226164311'
+,p_last_upd_yyyymmddhh24miss=>'20210723094328'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603847781745438)
