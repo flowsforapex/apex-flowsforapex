@@ -5,3 +5,4 @@ create or replace package flow_plugin_manage_instance authid current_user as
    ) return apex_plugin.t_process_exec_result;
 
 end flow_plugin_manage_instance;
+/

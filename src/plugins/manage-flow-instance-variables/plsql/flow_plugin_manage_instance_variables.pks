@@ -6,3 +6,4 @@ create or replace package flow_plugin_manage_instance_variables authid current_u
    ) return apex_plugin.t_process_exec_result;
 
 end flow_plugin_manage_instance_variables;
+/
