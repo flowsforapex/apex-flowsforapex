@@ -185,6 +185,19 @@ as
     );
   end flow_release_step;
 
+  procedure flow_start_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin
+    flow_engine.start_step
+    ( p_process_id  => p_process_id
+    , p_subflow_id  => p_subflow_id
+    );
+  end flow_start_step;
+
   procedure flow_complete_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type

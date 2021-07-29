@@ -104,6 +104,19 @@ forward to the next object(s) in the process diagram, in acordance with the beha
 History:  Flow_complete_step replaces the flow_next_step call in versions prior to V5.  Unlike flow_next_step, flow_complete_step 
 is used to move a process forward, regardless of the object type. 
 */
+  procedure flow_start_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  );
+/***
+Procedure flow_start_step
+flow_start_step can optionally be called when a user is about to start working on a task.  flow_start_step records the start time for 
+work on the task, which is used to distinguish betweeen time waiting for the task to get worked on and the time that it is actually 
+being worked on. Flow_start_step does not perform any functional role in processing a flow instance, and is optional - but it 
+just helps gather process performance statistics that distinguish queing time from processing time.  
+Despite being optional, a well formed, best-practice application will use this call so that process statistics can be captured.
+*/
    procedure flow_complete_step
   (
     p_process_id    in flow_processes.prcs_id%type
