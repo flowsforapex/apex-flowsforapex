@@ -50,6 +50,37 @@ as
       raise;
   end log_instance_event;
 
+  procedure log_step_completion
+  ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
+  , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
+  , p_completed_object  in flow_subflow_log.sflg_objt_id%type
+  , p_notes             in flow_subflow_log.sflg_notes%type default null
+  )
+  is 
+  begin
+    insert into flow_subflow_log sflg
+    ( sflg_prcs_id
+    , sflg_objt_id
+    , sflg_sbfl_id
+    , sflg_last_updated
+    , sflg_notes
+    )
+    values 
+    ( p_process_id
+    , p_completed_object
+    , p_subflow_id
+    , sysdate
+    , p_notes
+    );
+  exception
+    when others then
+      apex_error.add_error
+      ( p_message => 'Flows - Internal error logging step completion'
+      , p_display_location => apex_error.c_on_error_page
+      );
+      raise;
+  end log_step_completion;
+
   -- initialize logging parameters
 
   begin 

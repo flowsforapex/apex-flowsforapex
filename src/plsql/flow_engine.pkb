@@ -53,7 +53,7 @@ begin
       , pi_link_bpmn_id => p_step_info.target_objt_ref
       );
     -- log throw event as complete
-   flow_engine_util.log_step_completion   
+   flow_logging.log_step_completion   
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_completed_object => p_step_info.target_objt_ref
@@ -106,7 +106,7 @@ end flow_process_link_event;
       , p_current    => p_sbfl_info.sbfl_current
       );
     -- log the current endEvent as completed
-    flow_engine_util.log_step_completion
+    flow_logging.log_step_completion
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
       , p_completed_object => p_step_info.target_objt_ref
@@ -788,7 +788,7 @@ begin
   end if;
 
   -- log current step as completed
-  flow_engine_util.log_step_completion   
+  flow_logging.log_step_completion   
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   , p_completed_object => l_sbfl_rec.sbfl_current

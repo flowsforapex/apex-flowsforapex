@@ -13,13 +13,6 @@ as
     p_default_value in flow_configuration.cfig_value%type
   ) return flow_configuration.cfig_value%type;
 
-  procedure log_step_completion
-  ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
-  , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
-  , p_completed_object  in flow_subflow_log.sflg_objt_id%type
-  , p_notes             in flow_subflow_log.sflg_notes%type default null
-  );
-
   function check_subflow_exists
   (
     p_process_id in flow_processes.prcs_id%type
