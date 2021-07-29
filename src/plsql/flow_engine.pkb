@@ -144,6 +144,11 @@ end flow_process_link_event;
              , prcs.prcs_last_update = systimestamp
          where prcs.prcs_id = p_process_id
         ;
+        -- log the reset
+        flow_logging.log_instance_event
+        ( p_process_id => p_process_id
+        , p_event      => flow_constants_pkg.gc_prcs_event_completed
+        );
         apex_debug.info 
         ( p_message => 'Process Completed: Process %0'
         , p0        => p_process_id 

@@ -13,11 +13,7 @@ as
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_notes             in flow_subflow_log.sflg_notes%type default null
   );
-  procedure log_instance_event
-  ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
-  , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
-  , p_comment           in flow_instance_event_log.lgpr_comment%type 
-  );
+
   function check_subflow_exists
   (
     p_process_id in flow_processes.prcs_id%type

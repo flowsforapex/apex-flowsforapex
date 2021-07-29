@@ -364,9 +364,9 @@ create table flow_variable_event_log
 , lgvr_var_clob 			clob
 );
 
-create table flow_parameters
-( fpar_key                  varchar2(50 char) NOT NULL
-, fpar_value                varchar2(2000 char)
+create table flow_configuration
+( cfig_key                  varchar2(50 char) NOT NULL
+, cfig_value                varchar2(2000 char)
 );
 
 alter table flow_parameters ADD CONSTRAINT fpar_pk PRIMARY KEY ( fpar_key );

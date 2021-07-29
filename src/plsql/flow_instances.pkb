@@ -34,6 +34,11 @@ as
           )
       returning prcs.prcs_id into l_ret
     ;
+    -- log the process creation
+    flow_logging.log_instance_event
+    ( p_process_id => l_ret
+    , p_event      => flow_constants_pkg.gc_prcs_event_created
+    );
     commit;
 
     apex_debug.info
@@ -125,6 +130,11 @@ as
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;    
+    -- log the reset
+    flow_logging.log_instance_event
+    ( p_process_id => p_process_id
+    , p_event      => flow_constants_pkg.gc_prcs_event_started
+    );
     -- check if start has a timer?  
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
       l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
@@ -241,7 +251,7 @@ as
      where prcs.prcs_id = p_process_id
     ;
     -- log the reset
-    flow_engine_util.log_instance_event
+    flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_reset
     , p_comment    => p_comment
@@ -309,7 +319,7 @@ as
      where prcs.prcs_id = p_process_id
     ; 
     -- log termination
-    flow_engine_util.log_instance_event
+    flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_terminated
     , p_comment    => p_comment
@@ -356,7 +366,7 @@ as
         );
     end;
     -- log the deletion before process data deleted
-    flow_engine_util.log_instance_event
+    flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_deleted
     , p_comment    => p_comment
