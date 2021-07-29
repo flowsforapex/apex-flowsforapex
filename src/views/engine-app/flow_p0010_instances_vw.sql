@@ -10,6 +10,7 @@ as
         , prcs_status
         , prcs_init_date
         , prcs_last_update
+        , prcs_business_ref
         , '<button type="button" title="' || btn_title || '" aria-label="' || btn_title || '"' ||
           ' class="clickable-action t-Button t-Button--noLabel t-Button--icon"' ||
           ' data-prcs="' || prcs_id || '" data-action="' || btn_action || '"' ||
@@ -34,6 +35,7 @@ as
                  , prcs_status
                  , prcs_init_ts as prcs_init_date
                  , prcs_last_update
+                 , prcs_business_ref
                  , case prcs_status
                      when 'running' then 'Reset Process'
                      when 'created' then 'Start Process'
