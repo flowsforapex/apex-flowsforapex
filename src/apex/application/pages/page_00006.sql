@@ -17,13 +17,13 @@ wwv_flow_api.create_page(
 ,p_name=>'Import Flow'
 ,p_alias=>'IMPORT-FLOW'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Import Flow'
+,p_step_title=>'Import Flow - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210224143445'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210729105126'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)

@@ -17,11 +17,11 @@ wwv_flow_api.create_page(
 ,p_name=>'Viewer'
 ,p_alias=>'VIEWER'
 ,p_page_mode=>'NON_MODAL'
-,p_step_title=>'Flow Monitor'
+,p_step_title=>'Flow Monitor - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch:t-Dialog--noPadding'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210723092914'
+,p_last_upd_yyyymmddhh24miss=>'20210729102605'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6161598858353963900)
