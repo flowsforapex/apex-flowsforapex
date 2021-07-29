@@ -1,11 +1,17 @@
 create or replace package flow_engine_util
--- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg)
+-- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging)
 as 
 
   function get_dgrm_id
   (
     p_prcs_id in flow_processes.prcs_id%type
   ) return flow_processes.prcs_dgrm_id%type;
+
+  function get_config_value
+  ( 
+    p_config_key    in flow_configuration.cfig_key%type,
+    p_default_value in flow_configuration.cfig_value%type
+  ) return flow_configuration.cfig_value%type;
 
   procedure log_step_completion
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type

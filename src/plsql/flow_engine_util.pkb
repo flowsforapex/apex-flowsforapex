@@ -22,6 +22,25 @@ as
     
   end get_dgrm_id;
 
+  function get_config_value
+  ( 
+    p_config_key    in flow_configuration.cfig_key%type
+  , p_default_value in flow_configuration.cfig_value%type
+  ) return flow_configuration.cfig_value%type
+  as  
+    l_config_value   flow_configuration.cfig_value%type;
+  begin 
+    select cfig.cfig_value
+      into l_config_value
+      from flow_configuration cfig
+     where cfig.cfig_key = p_config_key
+    ;
+    return l_config_value;
+  exception 
+    when no_data_found then 
+      return p_default_value;
+  end get_config_value;
+
   procedure log_step_completion
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type

@@ -369,5 +369,5 @@ create table flow_configuration
 , cfig_value                varchar2(2000 char)
 );
 
-alter table flow_parameters ADD CONSTRAINT fpar_pk PRIMARY KEY ( fpar_key );
+alter table flow_configuration ADD CONSTRAINT cfig_pk PRIMARY KEY ( cfig_key );
 

@@ -140,6 +140,25 @@ as
   gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'BeforeEvent';
   gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'OnEvent';
 
+-- Config Parameter Keys
+
+  gc_config_logging_level             constant varchar2(50 char) := 'logging_level';
+  gc_config_logging_hide_userid       constant varchar2(50 char) := 'logging_hide_userid';
+
+-- Config Parameter Valid Values (when not true / false or numeric)
+
+  gc_config_logging_level_none        constant varchar2(2000 char) := 'none';      -- none
+  gc_config_logging_level_standard    constant varchar2(2000 char) := 'standard';  -- instances and tasks
+  gc_config_logging_level_secure      constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
+  gc_config_logging_level_full        constant varchar2(2000 char) := 'full';      -- secure + variable changes
+
+
+-- Config Parameter Default Values
+
+  gc_config_default_logging_level             constant varchar2(2000 char) := gc_config_logging_level_standard;
+  gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
+
+
 
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>

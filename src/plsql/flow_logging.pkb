@@ -1,6 +1,9 @@
 create or replace package body flow_logging
 as
 
+  g_logging_level           flow_configuration.cfig_value%type; 
+  g_logging_hide_userid     flow_configuration.cfig_value%type;
+
   procedure log_instance_event
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
@@ -8,30 +11,36 @@ as
   )
   is 
   begin 
-    insert into flow_instance_event_log
-    ( lgpr_prcs_id 
-    , lgpr_dgrm_id 
-    , lgpr_prcs_name 
-    , lgpr_business_id
-    , lgpr_prcs_event
-    , lgpr_timestamp 
-    , lgpr_user 
-    , lgpr_comment
-    )
-    select prcs.prcs_id
-         , prcs.prcs_dgrm_id
-         , prcs.prcs_name
-         , flow_process_vars.get_business_ref (p_process_id)  --- 
-         , p_event
-         , systimestamp 
-         , coalesce ( sys_context('apex$session','app_user') 
-                    , sys_context('userenv','os_user')
-                    , sys_context('userenv','session_user')
-                    )  --- check this is complete
-         , p_comment
-      from flow_processes prcs 
-     where prcs.prcs_id = p_process_id
-    ;
+    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_standard 
+                          , flow_constants_pkg.gc_config_logging_level_secure
+                          , flow_constants_pkg.gc_config_logging_level_full
+                          ) 
+    then
+      insert into flow_instance_event_log
+      ( lgpr_prcs_id 
+      , lgpr_dgrm_id 
+      , lgpr_prcs_name 
+      , lgpr_business_id
+      , lgpr_prcs_event
+      , lgpr_timestamp 
+      , lgpr_user 
+      , lgpr_comment
+      )
+      select prcs.prcs_id
+          , prcs.prcs_dgrm_id
+          , prcs.prcs_name
+          , flow_process_vars.get_business_ref (p_process_id)  --- 
+          , p_event
+          , systimestamp 
+          , coalesce ( sys_context('apex$session','app_user') 
+                      , sys_context('userenv','os_user')
+                      , sys_context('userenv','session_user')
+                      )  --- check this is complete
+          , p_comment
+        from flow_processes prcs 
+      where prcs.prcs_id = p_process_id
+      ;
+    end if;
   exception
     when others then
       apex_error.add_error
@@ -41,4 +50,16 @@ as
       raise;
   end log_instance_event;
 
+  -- initialize logging parameters
+
+  begin 
+    g_logging_level := flow_engine_util.get_config_value
+                       ( p_config_key => flow_constants_pkg.gc_config_logging_level
+                       , p_default_value => flow_constants_pkg.gc_config_default_logging_level
+                       );
+    g_logging_hide_userid := flow_engine_util.get_config_value
+                       ( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid 
+                       , p_default_value => flow_constants_pkg.gc_config_default_logging_hide_userid 
+                       );
+  
 end flow_logging;
