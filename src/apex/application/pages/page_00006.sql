@@ -17,13 +17,13 @@ wwv_flow_api.create_page(
 ,p_name=>'Import Flow'
 ,p_alias=>'IMPORT-FLOW'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Import Flow'
+,p_step_title=>'Import Flow - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210224143445'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20210730113049'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -329,7 +329,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.message.confirm( apex.lang.getMessage("FLOW_OVERWRITE_WARN"), function( okPressed ) {',
+'apex.message.confirm( apex.lang.getMessage("APP_OVERWRITE_WARN"), function( okPressed ) {',
 '    if( !okPressed ) {',
 '        apex.item("P6_FORCE_OVERWRITE").setValue("N");',
 '    }',

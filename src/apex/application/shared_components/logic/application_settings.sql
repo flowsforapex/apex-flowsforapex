@@ -11,7 +11,14 @@ wwv_flow_api.component_begin (
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-null;
+wwv_flow_api.create_app_setting(
+ p_id=>wwv_flow_api.id(34520562059999250)
+,p_name=>'EDIT_RELEASED_DIAGRAM_ALLOWED'
+,p_value=>'Y'
+,p_is_required=>'Y'
+,p_valid_values=>'Y,N'
+,p_on_upgrade_keep_value=>true
+);
 wwv_flow_api.component_end;
 end;
 /
