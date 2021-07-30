@@ -16,11 +16,11 @@ as
           ' data-prcs="' || prcs_id || '" data-action="' || btn_action || '"' ||
           '><span aria-hidden="true" class="' || btn_icon_class || '"></span></button>' ||
           term_btn ||
-          '<button type="button" title="Delete Process Instance" aria-label="Delete Process Instance"' ||
+          '<button type="button" title="' || apex_lang.message(p_name => 'APP_DELETE_INSTANCE') || '" aria-label="' || apex_lang.message(p_name => 'APP_DELETE_INSTANCE') || '"' ||
           ' class="clickable-action t-Button t-Button--noLabel t-Button--icon"' ||
           ' data-prcs="' || prcs_id || '" data-action="delete"' ||
           '><span aria-hidden="true" class="t-Icon fa fa-trash"></span></button>' ||
-          '<button type="button" title="Create new Instance" aria-label="Create new Instance"' ||
+          '<button type="button" title="' || apex_lang.message(p_name => 'APP_CREATE_INSTANCE') || '" aria-label="' || apex_lang.message(p_name => 'APP_CREATE_INSTANCE') || '"' ||
           ' class="t-Button t-Button--noLabel t-Button--icon"' ||
           ' onclick="' || apex_page.get_url( p_page => '11', p_items => 'P11_DGRM_ID', p_values => dgrm_id ) || '">' ||
           '<span class="t-Icon fa fa-plus" aria-hidden="true"></span></button>' 
@@ -37,9 +37,9 @@ as
                  , prcs_last_update
                  , prcs_business_ref
                  , case prcs_status
-                     when 'running' then 'Reset Process'
-                     when 'created' then 'Start Process'
-                     when 'completed' then 'Reset Process'
+                     when 'running' then apex_lang.message(p_name => 'APP_RESET_INSTANCE')
+                     when 'created' then apex_lang.message(p_name => 'APP_START_INSTANCE')
+                     when 'completed' then apex_lang.message(p_name => 'APP_RESET_INSTANCE')
                    end as btn_title
                  , 't-Icon fa ' ||
                    case prcs_status
@@ -55,7 +55,7 @@ as
                  , case prcs_status
                      when 'running' then 
                       '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
-                      'title="Terminate Process" aria-label="Terminate Flow Instance" ' ||
+                      'title="' || apex_lang.message(p_name => 'APP_TERMINATE_INSTANCE') || '" aria-label="' || apex_lang.message(p_name => 'APP_TERMINATE_INSTANCE') || '" ' ||
                       ' data-prcs="' || prcs_id || '" data-action="terminate"' ||
                       '><span aria-hidden="true" class="t-Icon fa fa-stop-circle"></span></button>'  
                      else
