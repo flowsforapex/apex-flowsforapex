@@ -62,7 +62,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210729183632'
+,p_last_upd_yyyymmddhh24miss=>'20210730112602'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -1129,7 +1129,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>40
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("INSTANCE_CREATED"));'
+,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_INSTANCE_CREATED"));'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(25020236512509606)
@@ -1171,7 +1171,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("INSTANCE_CREATED"));'
+,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_INSTANCE_CREATED"));'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(160797616307501979)

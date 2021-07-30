@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210729102541'
+,p_last_upd_yyyymmddhh24miss=>'20210730123719'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(17600327473220601)
@@ -52,7 +52,7 @@ wwv_flow_api.create_page_button(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17600676567220604)
 ,p_name=>'P5_DGRM_ID'
-,p_item_sequence=>10
+,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
@@ -60,7 +60,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17601343709220611)
 ,p_name=>'P5_FILENAME'
-,p_item_sequence=>130
+,p_item_sequence=>80
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_prompt=>'File Name'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
@@ -76,7 +76,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17601485306220612)
 ,p_name=>'P5_INCLUDE_VERSION'
-,p_item_sequence=>80
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_prompt=>'Include Version'
 ,p_display_as=>'NATIVE_YES_NO'
@@ -88,7 +88,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17601505679220613)
 ,p_name=>'P5_INCLUDE_CATEGORY'
-,p_item_sequence=>100
+,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_prompt=>'Include Category'
 ,p_display_as=>'NATIVE_YES_NO'
@@ -100,7 +100,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17601607926220614)
 ,p_name=>'P5_INCLUDE_LAST_CHANGE_DATE'
-,p_item_sequence=>110
+,p_item_sequence=>60
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_prompt=>'Include Last Change Date'
 ,p_display_as=>'NATIVE_YES_NO'
@@ -113,7 +113,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17601740723220615)
 ,p_name=>'P5_DOWNLOAD_AS'
-,p_item_sequence=>120
+,p_item_sequence=>70
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_item_default=>'BPMN'
 ,p_prompt=>'Download As'
@@ -129,7 +129,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(17602168797220619)
 ,p_name=>'P5_INCLUDE_STATUS'
-,p_item_sequence=>90
+,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
 ,p_prompt=>'Include Status'
 ,p_display_as=>'NATIVE_YES_NO'
@@ -139,6 +139,14 @@ wwv_flow_api.create_page_item(
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'APPLICATION'
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(34632201368575824)
+,p_name=>'P5_MULTI'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(17600327473220601)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(17601968120220617)
 ,p_name=>'Set File Name On Change'
@@ -147,6 +155,9 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element=>'.filename-changer'
 ,p_bind_type=>'live'
 ,p_bind_event_type=>'change'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_display_when_cond=>'P5_MULTI'
+,p_display_when_cond2=>'N'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(17602048410220618)
@@ -184,7 +195,8 @@ wwv_flow_api.create_page_process(
 '    flow_p0005_api.download_file(',
 '        p_dgrm_id => :P5_DGRM_ID,',
 '        p_file_name => :P5_FILENAME,',
-'        p_download_as => :P5_DOWNLOAD_AS',
+'        p_download_as => :P5_DOWNLOAD_AS,',
+'        p_multi_file => case :P5_MULTI when ''Y'' then true else false end',
 '    );',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
