@@ -720,11 +720,12 @@ begin
   if l_sbfl_rec.sbfl_has_events like '%:S_T%' then 
     flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
   end if;
-  
+
   -- Find next subflow step
   begin
     select sbfl.sbfl_dgrm_id
          , objt_source.objt_tag_name
+         , objt_source.objt_id
          , conn.conn_tgt_objt_id
          , objt_target.objt_bpmn_id
          , objt_target.objt_tag_name    
