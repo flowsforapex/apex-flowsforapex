@@ -340,11 +340,11 @@ create table flow_subflow_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL
 , lgsf_objt_id       		VARCHAR2(50) NOT NULL
 , lgsf_sbfl_id      		NUMBER NOT NULL
-, lgsf_last_completed 	    VARCHAR2(50) NOT NULL
+, lgsf_last_completed 	    VARCHAR2(50) 
 , lgsf_sbfl_dgrm_id   	    NUMBER NOT NULL
 , lgsf_was_current		    TIMESTAMP WITH TIME ZONE
 , lgsf_started 			    TIMESTAMP WITH TIME ZONE
-, lgsf_completed 			TIMESTAMP WITH TIME ZONE
+, lgsf_completed 			TIMESTAMP WITH TIME ZONE 
 , lgsf_reservation		    VARCHAR2(255 char)
 , lgsf_user				    VARCHAR2(255 char)	
 , lgsf_comment         	    VARCHAR2(2000)

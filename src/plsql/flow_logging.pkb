@@ -58,6 +58,7 @@ as
   )
   is 
   begin
+    -- current instance status / progress logging
     insert into flow_subflow_log sflg
     ( sflg_prcs_id
     , sflg_objt_id
@@ -72,6 +73,43 @@ as
     , sysdate
     , p_notes
     );
+    -- system event logging
+    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_standard 
+                          , flow_constants_pkg.gc_config_logging_level_secure
+                          , flow_constants_pkg.gc_config_logging_level_full
+                          ) 
+    then
+      insert into flow_subflow_event_log
+      ( lgsf_prcs_id 
+      , lgsf_objt_id 
+      , lgsf_sbfl_id 
+      , lgsf_last_completed
+      , lgsf_sbfl_dgrm_id
+      , lgsf_was_current 
+      , lgsf_started 
+      , lgsf_completed
+      , lgsf_reservation
+      , lgsf_user
+      , lgsf_comment
+      )
+      select sbfl.sbfl_prcs_id
+           , sbfl.sbfl_current
+           , sbfl.sbfl_id
+           , sbfl.sbfl_last_completed
+           , sbfl.sbfl_dgrm_id
+           , sbfl.sbfl_became_current
+           , sbfl.sbfl_work_started
+           , systimestamp
+           , sbfl.sbfl_reservation
+           , coalesce ( sys_context('apex$session','app_user') 
+                      , sys_context('userenv','os_user')
+                      , sys_context('userenv','session_user')
+                      )  --- check this is complete
+           , p_completed_object||' - '||p_notes         -- for initial debugging only - remove p_completed_object
+        from flow_subflows sbfl 
+       where sbfl.sbfl_id = p_subflow_id
+      ;
+    end if;
   exception
     when others then
       apex_error.add_error
