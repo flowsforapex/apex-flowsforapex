@@ -43,6 +43,13 @@ wwv_flow_api.create_menu_option(
 ,p_link=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:::'
 ,p_page_id=>10
 );
+wwv_flow_api.create_menu_option(
+ p_id=>wwv_flow_api.id(34709672555312450)
+,p_parent_id=>0
+,p_short_name=>'Dashboard'
+,p_link=>'f?p=&APP_ID.:3:&SESSION.::&DEBUG.:::'
+,p_page_id=>3
+);
 wwv_flow_api.component_end;
 end;
 /

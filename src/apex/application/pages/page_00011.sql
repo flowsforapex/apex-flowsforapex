@@ -24,7 +24,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_chained=>'N'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210729184932'
+,p_last_upd_yyyymmddhh24miss=>'20210730100430'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603847781745438)
@@ -148,7 +148,7 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_success_message=>'Instance created.'
+,p_process_success_message=>'&APP_TEXT$INSTANCE_CREATED.'
 );
 wwv_flow_api.component_end;
 end;

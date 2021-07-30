@@ -55,14 +55,14 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210729144219'
+,p_last_upd_yyyymmddhh24miss=>'20210730091349'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(34404686490171432)
 ,p_name=>'Flow Instances per status'
 ,p_region_name=>'flow-instances-per-status'
 ,p_template=>wwv_flow_api.id(12495582446800880234)
-,p_display_sequence=>10
+,p_display_sequence=>20
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#:t-BadgeList--large:t-BadgeList--dash:t-BadgeList--fixed:t-Report--hideNoPagination'
@@ -193,10 +193,10 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(34405803831171444)
-,p_plug_name=>'Number of Flow Instances per diagram - Top 10'
+,p_plug_name=>'Flow Instances per Diagram - Top 10'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
-,p_plug_display_sequence=>30
+,p_plug_display_sequence=>40
 ,p_plug_new_grid_row=>false
 ,p_plug_display_point=>'BODY'
 ,p_plug_source_type=>'NATIVE_JET_CHART'
@@ -233,10 +233,10 @@ wwv_flow_api.create_jet_chart_series(
 ,p_name=>'Created'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end  label, count(i.prcs_id) value',
+'select d.dgrm_name label, count(i.prcs_id) value',
 'from flow_diagrams_vw d',
 'left join flow_instances_vw i on i.dgrm_id = d.dgrm_id and i.prcs_status = ''created''',
-'group by d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end',
+'group by d.dgrm_name',
 'order by 2 desc, 1 asc',
 'fetch first 10 rows only'))
 ,p_max_row_count=>20
@@ -254,10 +254,10 @@ wwv_flow_api.create_jet_chart_series(
 ,p_name=>'Running'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end label, count(i.prcs_id) value',
+'select d.dgrm_name label, count(i.prcs_id) value',
 'from flow_diagrams_vw d',
 'left join flow_instances_vw i on i.dgrm_id = d.dgrm_id and i.prcs_status = ''running''',
-'group by d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end',
+'group by d.dgrm_name',
 'order by 2 desc, 1 asc',
 'fetch first 10 rows only'))
 ,p_max_row_count=>20
@@ -275,10 +275,10 @@ wwv_flow_api.create_jet_chart_series(
 ,p_name=>'Completed'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end label, count(i.prcs_id) value',
+'select d.dgrm_name label, count(i.prcs_id) value',
 'from flow_diagrams_vw d',
 'left join flow_instances_vw i on i.dgrm_id = d.dgrm_id and i.prcs_status = ''completed''',
-'group by d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end',
+'group by d.dgrm_name',
 'order by 2 desc, 1 asc',
 'fetch first 10 rows only'))
 ,p_max_row_count=>20
@@ -296,10 +296,10 @@ wwv_flow_api.create_jet_chart_series(
 ,p_name=>'Terminated'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end label, count(i.prcs_id) value',
+'select d.dgrm_name label, count(i.prcs_id) value',
 'from flow_diagrams_vw d',
 'left join flow_instances_vw i on i.dgrm_id = d.dgrm_id and i.prcs_status = ''terminated''',
-'group by d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end',
+'group by d.dgrm_name',
 'order by 2 desc, 1 asc',
 'fetch first 10 rows only'))
 ,p_max_row_count=>20
@@ -317,10 +317,10 @@ wwv_flow_api.create_jet_chart_series(
 ,p_name=>'Error'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end label, count(i.prcs_id) value',
+'select d.dgrm_name label, count(i.prcs_id) value',
 'from flow_diagrams_vw d',
 'left join flow_instances_vw i on i.dgrm_id = d.dgrm_id and i.prcs_status = ''error''',
-'group by d.dgrm_name || case when :P3_INCLUDE_VERSION = ''Y'' then '' ('' || d.dgrm_version || '')'' end',
+'group by d.dgrm_name',
 'order by 2 desc, 1 asc',
 'fetch first 10 rows only'))
 ,p_max_row_count=>20
@@ -360,10 +360,10 @@ wwv_flow_api.create_jet_chart_axis(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(34586934772532100)
-,p_plug_name=>'Number of Flow Instances created in the last 7 days'
+,p_plug_name=>'Flow Instances created in the last 7 days'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
-,p_plug_display_sequence=>20
+,p_plug_display_sequence=>30
 ,p_plug_display_point=>'BODY'
 ,p_plug_source_type=>'NATIVE_JET_CHART'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
@@ -451,6 +451,20 @@ wwv_flow_api.create_jet_chart_axis(
 ,p_zoom_order_months=>false
 ,p_zoom_order_quarters=>false
 ,p_zoom_order_years=>false
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(34631684166575818)
+,p_plug_name=>'Breadcrumb'
+,p_region_template_options=>'#DEFAULT#:t-BreadcrumbRegion--useBreadcrumbTitle'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_api.id(12495573047450880221)
+,p_plug_display_sequence=>10
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_01'
+,p_menu_id=>wwv_flow_api.id(12495636486941880396)
+,p_plug_source_type=>'NATIVE_BREADCRUMB'
+,p_menu_template_id=>wwv_flow_api.id(12495520300515880126)
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34630280895575804)

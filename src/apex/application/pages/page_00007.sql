@@ -69,7 +69,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210729182302'
+,p_last_upd_yyyymmddhh24miss=>'20210730090833'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(26003019626877931)
@@ -259,9 +259,12 @@ wwv_flow_api.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select apex_lang.message(p_name => ''FLOW_DIAGRAM_INSTANCES_NB'', p0 => nb_instances) as nb_instances',
+'from (',
 'select count(*) as nb_instances',
 'from flow_processes',
-'where prcs_dgrm_id = :P7_DGRM_ID'))
+'where prcs_dgrm_id = :P7_DGRM_ID',
+')'))
 ,p_ajax_enabled=>'Y'
 ,p_ajax_items_to_submit=>'P7_DGRM_ID'
 ,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
@@ -280,7 +283,6 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>1
 ,p_column_heading=>'Nb Instances'
 ,p_use_as_row_header=>'N'
-,p_column_html_expression=>'<span>There are #NB_INSTANCES# process instances associated to this flow.</span>'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'N'
 );
@@ -854,7 +856,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'You are about to release this flow, this will mark as deprecated the released version. Do you want to continue?'
+,p_attribute_01=>'&APP_TEXT$FLOW_RELEASE_DIAGRAM.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(34630686363575808)
@@ -882,7 +884,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'You are about to mark as deprecated this flow. Do you want to continue?'
+,p_attribute_01=>'&APP_TEXT$FLOW_DEPRECATE_DIAGRAM.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(34630931054575811)
@@ -914,6 +916,17 @@ wwv_flow_api.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_success_message=>'Action processed.'
 );
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(22800039236488039)
+,p_process_sequence=>20
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_SESSION_STATE'
+,p_process_name=>'Clear Session State on Delete'
+,p_attribute_01=>'CLEAR_CACHE_CURRENT_PAGE'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'DELETE'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+);
 wwv_flow_api.component_end;
 end;
 /
@@ -927,17 +940,6 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(22800039236488039)
-,p_process_sequence=>20
-,p_process_point=>'AFTER_SUBMIT'
-,p_process_type=>'NATIVE_SESSION_STATE'
-,p_process_name=>'Clear Session State on Delete'
-,p_attribute_01=>'CLEAR_CACHE_CURRENT_PAGE'
-,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'DELETE'
-,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
-);
-wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(26010056924877981)
 ,p_process_sequence=>10
 ,p_process_point=>'BEFORE_HEADER'
@@ -946,6 +948,7 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'Initialize form Edit Diagram'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
+null;
 wwv_flow_api.component_end;
 end;
 /
