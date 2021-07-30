@@ -14,7 +14,8 @@ as
   procedure download_file(
       p_dgrm_id in number,
       p_file_name in varchar2,
-      p_download_as in varchar2
+      p_download_as in varchar2,
+      p_multi_file in boolean default false
   );
 
 end flow_p0005_api;
