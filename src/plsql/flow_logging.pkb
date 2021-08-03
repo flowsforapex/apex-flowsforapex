@@ -84,6 +84,7 @@ as
       , lgsf_objt_id 
       , lgsf_sbfl_id 
       , lgsf_last_completed
+      , lgsf_status_when_complete
       , lgsf_sbfl_dgrm_id
       , lgsf_was_current 
       , lgsf_started 
@@ -93,9 +94,10 @@ as
       , lgsf_comment
       )
       select sbfl.sbfl_prcs_id
-           , sbfl.sbfl_current
+           , p_completed_object
            , sbfl.sbfl_id
            , sbfl.sbfl_last_completed
+           , sbfl.sbfl_status
            , sbfl.sbfl_dgrm_id
            , sbfl.sbfl_became_current
            , sbfl.sbfl_work_started

@@ -105,6 +105,16 @@ end flow_process_link_event;
       , p_subflow_id => p_subflow_id
       , p_current    => p_sbfl_info.sbfl_current
       );
+    -- update the subflow before logging
+     update flow_subflows sbfl
+        set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+          , sbfl.sbfl_current = p_step_info.target_objt_ref
+          , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_completed  
+          , sbfl.sbfl_work_started = systimestamp
+          , sbfl.sbfl_last_update = systimestamp 
+      where sbfl.sbfl_id = p_subflow_id
+        and sbfl.sbfl_prcs_id = p_process_id
+    ;
     -- log the current endEvent as completed
     flow_logging.log_step_completion
       ( p_process_id => p_process_id
@@ -144,7 +154,7 @@ end flow_process_link_event;
              , prcs.prcs_last_update = systimestamp
          where prcs.prcs_id = p_process_id
         ;
-        -- log the reset
+        -- log the completion
         flow_logging.log_instance_event
         ( p_process_id => p_process_id
         , p_event      => flow_constants_pkg.gc_prcs_event_completed
@@ -686,9 +696,10 @@ end flow_handle_event;
 
 
 procedure flow_complete_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in flow_connections.conn_bpmn_id%type default null
+( p_process_id        in flow_processes.prcs_id%type
+, p_subflow_id        in flow_subflows.sbfl_id%type
+, p_forward_route     in flow_connections.conn_bpmn_id%type default null
+, p_log_as_completed  in boolean default true
 )
 is
   l_sbfl_rec              flow_subflows%rowtype;
@@ -779,6 +790,14 @@ begin
       );
       flow_boundary_events.unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
+  if p_log_as_completed then
+    -- log current step as completed before loosing the reservation
+    flow_logging.log_step_completion   
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_completed_object => l_sbfl_rec.sbfl_current
+    );
+  end if;
   -- release subflow reservation
   if l_sbfl_rec.sbfl_reservation is not null then
     flow_reservations.release_step
@@ -788,12 +807,6 @@ begin
     );
   end if;
 
-  -- log current step as completed
-  flow_logging.log_step_completion   
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_completed_object => l_sbfl_rec.sbfl_current
-  );
   
   -- end of post- phase for previous step
   commit;

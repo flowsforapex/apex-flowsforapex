@@ -95,6 +95,7 @@ as
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
+  gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 
   -- Process Instance Status
   gc_prcs_status_created              constant  varchar2(20 char) := 'created';
