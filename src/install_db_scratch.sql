@@ -25,6 +25,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_process_vars.pks
 @plsql/flow_usertask_pkg.pks
 @plsql/flow_plsql_runner_pkg.pks
+@plsql/flow_logging.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -53,6 +54,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_timers_pkg.pkb
 @plsql/flow_usertask_pkg.pkb
 @plsql/flow_plsql_runner_pkg.pkb
+@plsql/flow_logging.pkb
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================

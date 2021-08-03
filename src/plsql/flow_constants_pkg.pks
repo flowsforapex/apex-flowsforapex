@@ -69,6 +69,7 @@ as
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
+  gc_terminate_end_key                constant flow_types_pkg.t_bpmn_id := 'terminateStatus';
 
   -- Flows 4 APEX Substitution Strings
   gc_substitution_flow_identifier     constant varchar2(10 char)                    := 'F4A$';
@@ -93,16 +94,71 @@ as
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
+  gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
+  gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 
   -- Process Instance Status
   gc_prcs_status_created              constant  varchar2(20 char) := 'created';
   gc_prcs_status_running              constant  varchar2(20 char) := 'running';
   gc_prcs_status_completed            constant  varchar2(20 char) := 'completed';
+  gc_prcs_status_terminated           constant  varchar2(20 char) := 'terminated';
+  gc_prcs_status_error                constant  varchar2(20 char) := 'error';
 
-  -- Gateway Function Types
-  gc_gateway_splitting                constant  varchar2(10 char) := 'splitting'; 
-  gc_gateway_merging                  constant  varchar2(10 char) := 'merging'; 
-  gc_gateway_both                     constant  varchar2(10 char) := 'both'; 
+  -- Process Instance Events
+  gc_prcs_event_created              constant  varchar2(20 char) := gc_prcs_status_created;
+  gc_prcs_event_started              constant  varchar2(20 char) := 'started';
+  gc_prcs_event_completed            constant  varchar2(20 char) := gc_prcs_status_completed;
+  gc_prcs_event_terminated           constant  varchar2(20 char) := gc_prcs_status_terminated;
+  gc_prcs_event_reset                constant  varchar2(20 char) := 'reset';
+  gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
+  gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
+
+  -- Process Variable Datatypes
+
+  gc_prov_var_type_varchar2           constant  varchar2(50 char) := 'VARCHAR2';
+  gc_prov_var_type_date               constant  varchar2(50 char) := 'DATE';
+  gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
+  gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
+
+  -- Standard Process Variables
+
+  gc_prov_builtin_business_ref        constant  varchar2(50 char) := 'BUSINESS_REF';
+
+  -- Process Variable Expression Types
+  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'STATIC';
+  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'F4A_PROC_VAR';
+  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'ITEM';
+  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'SQL';
+  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'SQL_DELIMITED_LIST';
+  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'PLSQL_FUNCTION';
+  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'PLSQL_EXPRESSION';
+
+-- Process Variable Expression set := 'BeforeTask';
+  gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'BeforeTask';
+  gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'AfterTask';
+  gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'BeforeSplit';
+  gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'AfterMerge';
+  gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'BeforeEvent';
+  gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'OnEvent';
+
+-- Config Parameter Keys
+
+  gc_config_logging_level             constant varchar2(50 char) := 'logging_level';
+  gc_config_logging_hide_userid       constant varchar2(50 char) := 'logging_hide_userid';
+
+-- Config Parameter Valid Values (when not true / false or numeric)
+
+  gc_config_logging_level_none        constant varchar2(2000 char) := 'none';      -- none
+  gc_config_logging_level_standard    constant varchar2(2000 char) := 'standard';  -- instances and tasks
+  gc_config_logging_level_secure      constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
+  gc_config_logging_level_full        constant varchar2(2000 char) := 'full';      -- secure + variable changes
+
+
+-- Config Parameter Default Values
+
+  gc_config_default_logging_level             constant varchar2(2000 char) := gc_config_logging_level_standard;
+  gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
+
 
 
   -- Default XML for new diagrams

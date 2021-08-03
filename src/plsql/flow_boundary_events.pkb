@@ -300,7 +300,7 @@ begin
   , 'subflow', p_subflow_id
   );
   -- set the throwing event to completed
-  flow_engine_util.log_step_completion   
+  flow_logging.log_step_completion   
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   , p_completed_object => p_step_info.target_objt_ref

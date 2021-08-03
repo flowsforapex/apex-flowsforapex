@@ -185,6 +185,19 @@ as
     );
   end flow_release_step;
 
+  procedure flow_start_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin
+    flow_engine.start_step
+    ( p_process_id  => p_process_id
+    , p_subflow_id  => p_subflow_id
+    );
+  end flow_start_step;
+
   procedure flow_complete_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -200,6 +213,7 @@ end flow_complete_step;
 
   procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
@@ -207,12 +221,14 @@ end flow_complete_step;
     ( p_routine_name => 'flow_reset'
     );
     flow_instances.reset_process 
-    ( p_process_id => p_process_id
+    ( p_process_id  => p_process_id
+    , p_comment     => p_comment
     );
   end flow_reset;
 
   procedure flow_terminate
-  ( p_process_id in flow_processes.prcs_id%type
+  ( p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
@@ -221,11 +237,13 @@ end flow_complete_step;
     );
     flow_instances.terminate_process 
     ( p_process_id => p_process_id
+    , p_comment    => p_comment
     );
   end flow_terminate;
 
   procedure flow_delete
-  ( p_process_id in flow_processes.prcs_id%type
+  ( p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
@@ -234,6 +252,7 @@ end flow_complete_step;
     );
     flow_instances.delete_process 
     ( p_process_id => p_process_id
+    , p_comment    => p_comment
     );
   end flow_delete;
 
