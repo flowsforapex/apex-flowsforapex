@@ -413,7 +413,7 @@ as
 
     update flow_subflows sbfl
         set sbfl.sbfl_current = p_step_info.target_objt_ref
-            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
             , sbfl.sbfl_last_update = systimestamp
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
       where sbfl.sbfl_id = p_subflow_id
