@@ -711,12 +711,12 @@ module.exports = function (element, bpmnFactory, options, translate) {
                       'data-list-entry-container ' +
                       'data-on-change="selectElement">' +
               `</select>${ 
-              canCreate ? `${'<button class="action-button add fa fa-plus" ' +
+              canCreate ? `${'<button class="action-button add" ' +
                                    'id="cam-extensionElements-create-'}${escapeHTML(id)}" ` +
                                    'data-action="createElement">' +
                              '<span>+</span>' +
                            '</button>' : '' 
-              }${canRemove ? `${'<button class="action-button clear fa fa-remove" ' +
+              }${canRemove ? `${'<button class="action-button clear" ' +
                                    'id="cam-extensionElements-remove-'}${escapeHTML(id)}" ` +
                                    'data-action="removeElement" ' +
                                    'data-disable="disableRemove">' +
