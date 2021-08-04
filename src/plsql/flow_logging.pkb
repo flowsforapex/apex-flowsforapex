@@ -83,6 +83,7 @@ as
       ( lgsf_prcs_id 
       , lgsf_objt_id 
       , lgsf_sbfl_id 
+      , lgsf_sbfl_process_level
       , lgsf_last_completed
       , lgsf_status_when_complete
       , lgsf_sbfl_dgrm_id
@@ -96,6 +97,7 @@ as
       select sbfl.sbfl_prcs_id
            , p_completed_object
            , sbfl.sbfl_id
+           , sbfl.sbfl_process_level
            , sbfl.sbfl_last_completed
            , sbfl.sbfl_status
            , sbfl.sbfl_dgrm_id
@@ -107,7 +109,7 @@ as
                       , sys_context('userenv','os_user')
                       , sys_context('userenv','session_user')
                       )  --- check this is complete
-           , p_completed_object||' - '||p_notes         -- for initial debugging only - remove p_completed_object
+           , p_notes        
         from flow_subflows sbfl 
        where sbfl.sbfl_id = p_subflow_id
       ;

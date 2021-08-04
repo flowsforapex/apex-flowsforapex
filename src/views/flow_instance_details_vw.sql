@@ -3,10 +3,10 @@ as
 with completed_objects as (
         select distinct sflg.sflg_prcs_id as prcs_id, sflg.sflg_objt_id as objt_id
           from flow_subflow_log sflg
-         where sflg.sflg_objt_id not in ( select sbfl.sbfl_last_completed
+         where sflg.sflg_objt_id not in ( /*select sbfl.sbfl_last_completed
                                               from flow_subflows sbfl
                                              where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
-                                             union
+                                             union*/
                                             select sbfl.sbfl_current
                                               from flow_subflows sbfl
                                              where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id

@@ -447,13 +447,19 @@ as
     );
     -- mark parent flow as split
     update flow_subflows sbfl
-       set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+       set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
          , sbfl.sbfl_current = p_step_info.target_objt_ref
          , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
          , sbfl.sbfl_last_update = systimestamp 
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+    -- log gateway as completed here so only logged once
+    flow_logging.log_step_completion   
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_completed_object => p_step_info.target_objt_ref 
+    );
     -- get all forward parallel paths and create subflows for them
     -- these are paths forward of p_step_info.target_objt_ref as we are doing double step
     for new_path in ( select conn.conn_bpmn_id route
@@ -486,9 +492,10 @@ as
       -- step into first step on the new path
       flow_engine.flow_complete_step   
       (
-        p_process_id    => p_process_id
-      , p_subflow_id    => l_sbfl_id_sub
-      , p_forward_route => new_path.route
+        p_process_id        => p_process_id
+      , p_subflow_id        => l_sbfl_id_sub
+      , p_forward_route     => new_path.route
+      , p_log_as_completed  => false
       );
     end loop;
   end process_eventBasedGateway;

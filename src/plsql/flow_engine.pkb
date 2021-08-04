@@ -42,6 +42,7 @@ end flow_get_matching_link_object;
 procedure flow_process_link_event
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
 is 
@@ -52,6 +53,14 @@ begin
       ( pi_dgrm_id => p_step_info.dgrm_id
       , pi_link_bpmn_id => p_step_info.target_objt_ref
       );
+    -- update current step info before logging
+    update flow_subflows sbfl
+       set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+         , sbfl.sbfl_last_update = systimestamp
+         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+     where sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
+    ;
     -- log throw event as complete
    flow_logging.log_step_completion   
     ( p_process_id => p_process_id
@@ -62,6 +71,7 @@ begin
     update flow_subflows sbfl
     set   sbfl.sbfl_current = l_next_objt
         , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+        , sbfl.sbfl_became_current = systimestamp 
         , sbfl.sbfl_last_update = systimestamp
         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
     where sbfl.sbfl_id = p_subflow_id
@@ -371,7 +381,7 @@ end flow_process_link_event;
       -- this includes bpmn:linkEventDefinition which should come here
       update flow_subflows sbfl
          set sbfl.sbfl_current = p_step_info.target_objt_ref
-           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
            , sbfl.sbfl_last_update = systimestamp
            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
        where sbfl.sbfl_id = p_subflow_id
@@ -415,7 +425,8 @@ end flow_process_link_event;
       flow_process_link_event
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
-      , p_step_info => p_step_info
+      , p_sbfl_info  => p_sbfl_info
+      , p_step_info  => p_step_info
       );   
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
       -- make the ITE the current event
@@ -521,6 +532,7 @@ begin
      update flow_subflows sbfl
         set sbfl_status = flow_constants_pkg.gc_sbfl_status_running
           , sbfl_current = l_current_object
+          , sbfl_last_completed = l_child_starting_object
           , sbfl_last_update = systimestamp
       where sbfl.sbfl_prcs_id = p_process_id
         and sbfl.sbfl_id = p_parent_subflow_id
