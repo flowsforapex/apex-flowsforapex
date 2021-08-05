@@ -23,8 +23,8 @@
           "fill": "grey",
           "stroke": "black"
         },
-        lastCompletedStyle: {
-          "fill": "grey",
+        errorStyle: {
+          "fill": "red",
           "stroke": "black"
         }
       }
@@ -82,7 +82,7 @@
         this.zoom( "fit-viewport" );
         bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
         bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
-        bpmnViewer$.get('styleModule').addStylesToElements(this.lastCompleted, this.options.config.lastCompletedStyle);
+        bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
       } catch (err) {
         apex.debug.error( "Loading Diagram failed.", err, this.diagram );
       }
@@ -110,10 +110,10 @@
         loadingIndicator: "#" + this.canvasId
       }).then( pData => {
         if ( pData.found ) {
-          this.diagram       = pData.data.diagram;
-          this.current       = pData.data.current;
-          this.completed     = pData.data.completed;
-          this.lastCompleted = pData.data.lastCompleted;
+          this.diagram   = pData.data.diagram;
+          this.current   = pData.data.current;
+          this.completed = pData.data.completed;
+          this.error     = pData.data.error;
           this.loadDiagram();
         } else {
           $( "#" + this.canvasId ).hide();
