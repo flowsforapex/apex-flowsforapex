@@ -11,17 +11,21 @@
       useNavigatedViewer: false,
       enableExpandModule: true,
       config: {
+        canvasStyle: {
+          "height": "80vh",
+          "background-color": "#f0f0f0"
+        },
         currentStyle: {
-          fill: "green",
-          stroke: "black"
+          "fill": "green",
+          "stroke": "black"
         },
         completedStyle: {
-          fill: "grey",
-          stroke: "black"
+          "fill": "grey",
+          "stroke": "black"
         },
         lastCompletedStyle: {
-          fill: "grey",
-          stroke: "black"
+          "fill": "grey",
+          "stroke": "black"
         }
       }
     },
@@ -61,6 +65,9 @@
         widgetName: "bpmnviewer",
         type: "mtag.bpmnviewer"
       });
+      for (const c in this.options.config.canvasStyle) {
+        $( "#" + this.canvasId ).css(c, this.options.config.canvasStyle[c]);
+      }
     },
     loadDiagram: async function() {
       $( "#" + this.canvasId ).show();
