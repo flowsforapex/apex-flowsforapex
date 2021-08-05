@@ -8,7 +8,6 @@ as
        , sbfl.sbfl_status
        , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
-       , sbfl.sbfl_next_step_type
        , case
           when sbfl.sbfl_status in ('split', 'in subprocess', 'waiting at gateway', 'waiting for event', 'waiting for timer') then
             '<span class="' ||
@@ -22,19 +21,9 @@ as
             '"></span>'
           else
             '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
-            case 
-              when sbfl.sbfl_next_step_type in ( 'single-choice', 'multi-choice' ) then 'title="' || apex_lang.message(p_name => 'APP_CHOOSE_BRANCH') ||'" aria-label="' || apex_lang.message(p_name => 'APP_CHOOSE_BRANCH') ||'" '
-              when sbfl.sbfl_next_step_type = 'simple-step' then 'title="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') ||'" aria-label="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') ||'" '
-            end || 'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '" data-action="' ||
-            case sbfl.sbfl_next_step_type
-              when 'single-choice' then 'choose_single'
-              when 'multi-choice' then 'choose_multiple'
-              when 'simple-step' then 'next_step'
-            end || '"><span aria-hidden="true" class="' ||
-            case
-              when sbfl.sbfl_next_step_type in ( 'single-choice', 'multi-choice' ) then 'fa fa-tasks'
-              when sbfl.sbfl_next_step_type = 'simple-step' then 'fa fa-sign-out'
-            end || '"></span></button>'
+            'title="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" aria-label="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" ' ||
+            'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || 
+            '" data-action="next_step"><span aria-hidden="true" class="fa fa-sign-out"></span></button>' 
          end as action_html
        , case 
           when sbfl.sbfl_status = 'running' then 
