@@ -28,7 +28,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   09:07 Thursday August 5, 2021
+--   Date and Time:   09:24 Thursday August 5, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -55,7 +55,6 @@ wwv_flow_api.create_plugin(
 ,p_javascript_file_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '#PLUGIN_FILES#js/mtag.bpmnviewer#MIN#.js',
 '#PLUGIN_FILES#js/mtag.apex.bpmnviewer.js'))
-,p_css_file_urls=>'#PLUGIN_FILES#css/mtag.bpmnviewer.css'
 ,p_plsql_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '  function render',
 '  (',
@@ -14060,23 +14059,6 @@ wwv_flow_api.create_plugin_file(
 ,p_plugin_id=>wwv_flow_api.id(3473753155574711090)
 ,p_file_name=>'js/mtag.bpmnviewer.js'
 ,p_mime_type=>'application/javascript'
-,p_file_charset=>'utf-8'
-,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
-);
-end;
-/
-begin
-wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
-wwv_flow_api.g_varchar2_table(1) := '2E6D7462762D72656E64657263616E766173207B0D0A20206865696768743A20383076683B0D0A20206261636B67726F756E642D636F6C6F723A20236630663066303B0D0A7D';
-null;
-end;
-/
-begin
-wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(21570406664751849)
-,p_plugin_id=>wwv_flow_api.id(3473753155574711090)
-,p_file_name=>'css/mtag.bpmnviewer.css'
-,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
 ,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
 );
