@@ -198,6 +198,18 @@ as
     );
   end flow_start_step;
 
+  procedure flow_restart_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  )
+  is 
+  begin 
+    null;
+  end flow_restart_step;
+
+
   procedure flow_complete_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type

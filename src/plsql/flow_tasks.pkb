@@ -9,8 +9,9 @@ as
   begin 
     update flow_subflows sbfl
      set   sbfl.sbfl_current = p_sbfl_current
-         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
          , sbfl.sbfl_last_update = systimestamp
+         , sbfl.sbfl_work_started = systimestamp
          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
      where sbfl.sbfl_id = p_sbfl_info.sbfl_id
        and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
@@ -100,12 +101,41 @@ as
     );
 
   exception
-    when flow_plsql_runner_pkg.e_plsql_call_failed then
+    when flow_plsql_runner_pkg.e_plsql_script_failed or flow_plsql_runner_pkg.e_plsql_script_requested_stop then
       rollback;
-      raise flow_plsql_runner_pkg.e_plsql_call_failed;
+      -- lock process and subflow
+
+      -- set subflow to error status
+      update flow_subflows sbfl
+         set sbfl.sbfl_current = p_step_info.target_objt_ref
+           , sbfl.sbfl_last_update = systimestamp
+           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
+       where sbfl.sbfl_id = p_sbfl_info.sbfl_id
+         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+      ;
+      -- set instance to error status
+      update flow_processes prcs
+         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
+           , prcs.prcs_last_update = systimestamp
+       where prcs.prcs_id = p_process_id
+      ;
+      -- log error as instance event
+      flow_logging.log_instance_event
+      ( p_process_id  => p_process_id 
+      , p_event       => flow_constants_pkg.gc_prcs_event_error
+      , p_comment     => 'ScriptTask failed on object '|| p_step_info.target_objt_ref|| ' error data....'
+      );
+
+      apex_debug.message 
+      ( p_message => 'Script failed in ScriptTask.  Object: %0'
+      , p0        => p_step_info.target_objt_ref
+      , p_level   => 2
+      );
+      commit;
+      -- raise flow_plsql_runner_pkg.e_plsql_script_failed;
   end process_scriptTask;
 
-  procedure process_serviceTask
+  procedure process_serviceTask --- note NOT CURRENTLY BEING USED FOR SERVICETASKS - USING process_scriptTask
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_sbfl_info     in flow_subflows%rowtype
@@ -141,7 +171,7 @@ as
   exception
     when others then
       rollback;
-      raise flow_plsql_runner_pkg.e_plsql_call_failed;
+      raise flow_plsql_runner_pkg.e_plsql_script_failed;
   end process_serviceTask;
 
   procedure process_manualTask

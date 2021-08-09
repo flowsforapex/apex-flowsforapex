@@ -98,18 +98,6 @@ Flow_release_step releases a previously made reservation.
   , p_subflow_id    in flow_subflows.sbfl_id%type
   ); 
 /***
-Procedure flow_complete_step
-Flow_complete_step is called when a process step has been completed.  Calling flow_complete_step moves the process 
-forward to the next object(s) in the process diagram, in acordance with the behaviour rules for the objects.
-History:  Flow_complete_step replaces the flow_next_step call in versions prior to V5.  Unlike flow_next_step, flow_complete_step 
-is used to move a process forward, regardless of the object type. 
-*/
-  procedure flow_start_step
-  (
-    p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  );
-/***
 Procedure flow_start_step
 flow_start_step can optionally be called when a user is about to start working on a task.  flow_start_step records the start time for 
 work on the task, which is used to distinguish betweeen time waiting for the task to get worked on and the time that it is actually 
@@ -117,11 +105,39 @@ being worked on. Flow_start_step does not perform any functional role in process
 just helps gather process performance statistics that distinguish queing time from processing time.  
 Despite being optional, a well formed, best-practice application will use this call so that process statistics can be captured.
 */
+  procedure flow_start_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  );
+
+/*** Procedure flow_restart_step
+flow_restart_step is procedure that is designed to be called by an administrator to restart a scriptTask or serviceTask that has 
+failed due to an error.  The intended usage is that the adminstrator can fix the script or edit the process data that caused the 
+task to fail, and then restart the task using this call.  
+A comment can optionally be provided, which will be added to the task event log entry.
+It should only be used on a subflow having a status of 'error'
+*/
+  procedure flow_restart_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  );
+
+/***
+Procedure flow_complete_step
+Flow_complete_step is called when a process step has been completed.  Calling flow_complete_step moves the process 
+forward to the next object(s) in the process diagram, in acordance with the behaviour rules for the objects.
+History:  Flow_complete_step replaces the flow_next_step call in versions prior to V5.  Unlike flow_next_step, flow_complete_step 
+is used to move a process forward, regardless of the object type. 
+*/
    procedure flow_complete_step
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   ); 
+
 /***
 Procedure flow_reset
 flow_reset aborts all processing on a process instance, and returns it to the state when it was
@@ -138,6 +154,7 @@ This is not meant for use in Production Systems.
     p_process_id  in flow_processes.prcs_id%type
   , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
+
   /***
 Procedure flow_terminate
 flow_delete ends all processing of a process instance, and has the same effect as processing a Terminating End Event inside a Flow Diagram.
@@ -148,6 +165,7 @@ It ends all subflows, but retains the process definition and the subflow logs fo
     p_process_id  in flow_processes.prcs_id%type
   , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
+
   /***
 Procedure flow_delete
 flow_delete ends all processing of a process instance.  It removes all subflows and subflow logs of the process.

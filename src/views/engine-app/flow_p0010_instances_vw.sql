@@ -38,20 +38,23 @@ as
                      when 'running' then 'Reset Process'
                      when 'created' then 'Start Process'
                      when 'completed' then 'Reset Process'
+                     when 'error' then 'Reset Process'
                    end as btn_title
                  , 't-Icon fa ' ||
                    case prcs_status
                      when 'running' then 'fa-undo'
                      when 'created' then 'fa-play'
                      when 'completed' then 'fa-undo'
+                     when 'error' then 'fa-undo'
                    end as btn_icon_class
                  , case prcs_status
                      when 'running' then 'reset'
                      when 'created' then 'start'
                      when 'completed' then 'reset'
+                     when 'error' then 'reset'
                    end as btn_action
-                 , case prcs_status
-                     when 'running' then 
+                 , case 
+                     when prcs_status in ('running', 'error') then 
                       '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
                       'title="Terminate Process" aria-label="Terminate Flow Instance" ' ||
                       ' data-prcs="' || prcs_id || '" data-action="terminate"' ||

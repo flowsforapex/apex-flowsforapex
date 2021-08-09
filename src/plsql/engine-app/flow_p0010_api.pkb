@@ -41,6 +41,12 @@ as
             p_process_id    => pi_prcs_id
           , p_subflow_id    => pi_sbfl_id
           );
+        when 'RESTART_STEP' then 
+          flow_api_pkg.flow_restart_step 
+          (
+            p_process_id    => pi_prcs_id
+          , p_subflow_id    => pi_sbfl_id           
+          );
         when 'VIEW' then
           l_url := apex_page.get_url(
               p_page => 12
