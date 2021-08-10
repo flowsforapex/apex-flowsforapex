@@ -134,12 +134,12 @@ as
   gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'PLSQL_EXPRESSION';
 
 -- Process Variable Expression set := 'BeforeTask';
-  gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'BeforeTask';
-  gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'AfterTask';
-  gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'BeforeSplit';
-  gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'AfterMerge';
-  gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'BeforeEvent';
-  gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'OnEvent';
+  gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';
+  gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'afterTask';
+  gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'beforeSplit';
+  gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'afterMerge';
+  gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'beforeEvent';
+  gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'onEvent';
 
 -- Config Parameter Keys
 
