@@ -226,7 +226,10 @@ is
        end if;
     end if;
     -- clean up any other boundary timers on the object
-    flow_boundary_events.unset_boundary_timers (p_process_id, p_subflow_id);
+    flow_boundary_events.unset_boundary_timers 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );
     -- switch processing onto boundaryEvent path and do next step
     update flow_subflows sbfl
        set sbfl.sbfl_current = l_boundary_objt_bpmn_id
@@ -235,8 +238,11 @@ is
          , sbfl.sbfl_last_update = systimestamp 
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
-         ;
-    flow_engine.flow_complete_step (p_process_id, p_subflow_id);
+    ;
+    flow_engine.flow_complete_step 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );
 
   end handle_interrupting_boundary_event;
 

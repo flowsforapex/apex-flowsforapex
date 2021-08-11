@@ -131,6 +131,13 @@ end flow_process_link_event;
       , p_subflow_id => p_subflow_id
       , p_completed_object => p_step_info.target_objt_ref
       );  
+    -- process any variable expressions in the onEvent set
+    flow_expressions.process_expressions
+    ( pi_objt_id     => p_step_info.target_objt_ref
+    , pi_set         => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+    );
 
     if p_sbfl_info.sbfl_process_level = 0 then   
       -- in a top level process
@@ -582,18 +589,30 @@ begin
 end handle_event_gateway_event;
 
 procedure handle_intermediate_catch_event
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
+  ( p_process_id   in flow_processes.prcs_id%type
+  , p_subflow_id   in flow_subflows.sbfl_id%type
+  , p_current_objt in flow_subflows.sbfl_id%type
   ) 
 is
 begin
-  apex_debug.enter('handle_intermediate_catch_event', 'Subflow', p_subflow_id);
+  apex_debug.enter
+  ( 'handle_intermediate_catch_event'
+  , 'Subflow', p_subflow_id
+  );
   update flow_subflows sbfl 
-      set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-        , sbfl.sbfl_last_update = systimestamp
-    where sbfl.sbfl_prcs_id = p_process_id
-      and sbfl.sbfl_id = p_subflow_id
-        ;
+     set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+       , sbfl.sbfl_last_update = systimestamp
+   where sbfl.sbfl_prcs_id = p_process_id
+     and sbfl.sbfl_id = p_subflow_id
+  ;
+  --  process any variable expressions in the OnEvent set
+  flow_expressions.process_expressions
+  ( pi_objt_id     => p_current_objt
+  , pi_set         => flow_constants_pkg.gc_expr_set_on_event
+  , pi_prcs_id     => p_process_id
+  , pi_sbfl_id     => p_subflow_id
+  );
+  -- move onto next step
   flow_complete_step 
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
@@ -647,20 +666,25 @@ begin
       -- required functionality same as iCE currently
       handle_intermediate_catch_event 
       (
-        p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
+        p_process_id   => p_process_id
+      , p_subflow_id   => p_subflow_id
+      , p_current_objt => l_sbfl_current
       );
     elsif l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_subprocess
                                   , flow_constants_pkg.gc_bpmn_task 
                                   , flow_constants_pkg.gc_bpmn_usertask
                                   , flow_constants_pkg.gc_bpmn_manualtask
                                   )   -- add any objects that can support timer boundary events here
+          -- if any of these events have a timer on them, it must be an interrupting timer.
+          -- because non-interupting timers are set on the boundary event itself
     then
+      -- we have an interrupting boundary event
       flow_boundary_events.handle_interrupting_boundary_event 
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
       );
     else
+      -- we need to look at previous step to see if this follows an eventBasedGateway...
       begin
         select prev_objt.objt_tag_name
           into l_prev_objt_tag_name
@@ -694,6 +718,7 @@ begin
         (
           p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
+        , p_current_objt => l_sbfl_current
         );
       end if;
     end if;
@@ -724,6 +749,7 @@ begin
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
   );
+
   --l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
   -- Get current object and current subflow info and lock it
   l_sbfl_rec := flow_engine_util.get_and_lock_subflow_info 
@@ -786,6 +812,18 @@ begin
     );
   end;
 
+  -- evaluate and set any post-step variable expressions on the last object
+  if l_step_info.source_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
+  then 
+    flow_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.source_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_after_task
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+    );
+  end if;
 
   -- clean up any boundary events left over from the previous activity
   if (l_step_info.source_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
@@ -818,8 +856,13 @@ begin
     , p_called_internally => true
     );
   end if;
+  -- log current step as completed
+ flow_engine_util.log_step_completion   
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  , p_completed_object => l_sbfl_rec.sbfl_current
+  );
 
-  
   -- end of post- phase for previous step
   commit;
   apex_debug.info
@@ -835,7 +878,32 @@ begin
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   );
+
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
+        
+  -- evaluate and set any pre-step variable expressions on the next object
+  if l_step_info.source_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
+  then 
+    flow_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_task
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+    );
+  elsif l_step_info.source_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
+  , flow_constants_pkg.gc_bpmn_intermediate_throw_event, flow_constants_pkg.gc_bpmn_intermediate_catch_event
+  , flow_constants_pkg.gc_bpmn_boundary_event )
+  then
+    flow_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+    );
+  end if;
 
   apex_debug.info 
   ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
@@ -1026,6 +1094,7 @@ begin
         , p_display_location => apex_error.c_on_error_page
         );
   end start_step;
+
 
 end flow_engine;
 /
