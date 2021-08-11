@@ -96,6 +96,12 @@ as
     l_num_unfinished_subflows number;
     l_gateway_forward_status    varchar2(10)  := 'wait';
   begin  
+    apex_debug.enter 
+    ( 'gateway_merge'
+    , 'p_sbfl_info.sbfl_current' , p_sbfl_info.sbfl_current
+    , 'p_step_info.target_objt_ref' , p_step_info.target_objt_ref
+    , 'p_sbfl_info.sbfl_last_completed', p_sbfl_info.sbfl_last_completed
+    );
     -- set current subflow to status waiting,       
     update flow_subflows sbfl
         set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
@@ -119,12 +125,12 @@ as
       -- lock parent subflow first
       if flow_engine_util.lock_subflow(p_sbfl_info.sbfl_sbfl_id) then
         -- proceed from gateway, locking child subflows
-        for completed_subflows in ( select sbfl.sbfl_id
-                                      from flow_subflows sbfl 
-                                      where sbfl.sbfl_prcs_id = p_process_id
-                                        and sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
-                                        and sbfl.sbfl_current = p_step_info.target_objt_ref 
-                                        and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
+        for completed_subflows in ( select completed_sbfl.sbfl_id
+                                      from flow_subflows completed_sbfl 
+                                      where completed_sbfl.sbfl_prcs_id = p_process_id
+                                        and completed_sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
+                                        and completed_sbfl.sbfl_current = p_step_info.target_objt_ref 
+                                        and completed_sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
                                         for update wait 2
                                   )
         loop
@@ -135,13 +141,14 @@ as
         end loop;
 
         --mark parent split subflow ready to restart
-        update flow_subflows sbfl
-            set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_proceed_gateway
-              , sbfl.sbfl_current = p_step_info.target_objt_ref
-              , sbfl.sbfl_last_update = systimestamp
-          where sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
-            and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-            and sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
+        update flow_subflows parent_sbfl
+            set parent_sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_proceed_gateway
+              , parent_sbfl.sbfl_current = p_step_info.target_objt_ref
+              , parent_sbfl.sbfl_last_update = systimestamp
+              , parent_sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current  -- last step of final child sbfl pre-merge
+          where parent_sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
+            and parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
+            and parent_sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
         ;
         -- process any after-merge expression set
         flow_expressions.process_expressions
@@ -183,12 +190,18 @@ as
     l_new_subflows              t_new_sbfls := t_new_sbfls();
     l_new_subflow               t_new_sbfl_rec;
   begin 
+    apex_debug.enter 
+    ( 'gateway_split'
+    , 'p_sbfl_info.sbfl_current' , p_sbfl_info.sbfl_current
+    , 'p_step_info.target_objt_ref' , p_step_info.target_objt_ref
+    );
     -- we have splitting gateway going forward
-    -- Current Subflow into status split and no current object
+    -- Current Subflow into status split 
     update flow_subflows sbfl
-        set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
-          , sbfl.sbfl_current = null
+        set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+          , sbfl.sbfl_current = p_step_info.target_objt_ref
           , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
+          , sbfl.sbfl_work_started = nvl(sbfl.sbfl_work_started, systimestamp)
           , sbfl.sbfl_last_update = systimestamp 
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
@@ -231,7 +244,7 @@ as
         , p_starting_object        => p_step_info.target_objt_ref         
         , p_current_object         => p_step_info.target_objt_ref          
         , p_route                  => new_path.route         
-        , p_last_completed         => p_step_info.target_objt_ref  
+        , p_last_completed         => p_sbfl_info.sbfl_current 
         , p_status                 => flow_constants_pkg.gc_sbfl_status_created
         , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
         , p_new_proc_level         => false
@@ -242,7 +255,19 @@ as
       l_new_subflows.extend;
       l_new_subflows (l_new_subflows.last) := l_new_subflow;
     end loop;
-
+    -- log gateway as completed
+    flow_logging.log_step_completion   
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_completed_object => p_step_info.target_objt_ref 
+    );
+    -- update parent status now split and no current object
+     update flow_subflows sbfl
+        set sbfl.sbfl_current = null
+          , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+          , sbfl.sbfl_last_update = systimestamp 
+      where sbfl.sbfl_id = p_subflow_id
+        and sbfl.sbfl_prcs_id = p_process_id;
     -- commit the transaction
     commit;
     
@@ -255,9 +280,10 @@ as
       then
         -- step into first step on the new path
         flow_engine.flow_complete_step    
-        ( p_process_id    => p_process_id
-        , p_subflow_id    => l_new_subflows(new_subflow).sbfl_id
-        , p_forward_route => l_new_subflows(new_subflow).route
+        ( p_process_id        => p_process_id
+        , p_subflow_id        => l_new_subflows(new_subflow).sbfl_id
+        , p_forward_route     => l_new_subflows(new_subflow).route
+        , p_log_as_completed  => false
         );
       end if;
     end loop;
@@ -351,7 +377,7 @@ as
       elsif l_num_forward_connections = 1 then
         -- only single path going forward
         update  flow_subflows sbfl
-            set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+            set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
               , sbfl.sbfl_current = p_step_info.target_objt_ref
               , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
               , sbfl.sbfl_last_update = systimestamp 
@@ -418,7 +444,7 @@ as
 
     update flow_subflows sbfl
         set sbfl.sbfl_current = p_step_info.target_objt_ref
-            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
             , sbfl.sbfl_last_update = systimestamp
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
       where sbfl.sbfl_id = p_subflow_id
@@ -459,13 +485,19 @@ as
     );
     -- mark parent flow as split
     update flow_subflows sbfl
-       set sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+       set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
          , sbfl.sbfl_current = p_step_info.target_objt_ref
          , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
          , sbfl.sbfl_last_update = systimestamp 
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+    -- log gateway as completed here so only logged once
+    flow_logging.log_step_completion   
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_completed_object => p_step_info.target_objt_ref 
+    );
     -- get all forward parallel paths and create subflows for them
     -- these are paths forward of p_step_info.target_objt_ref as we are doing double step
     for new_path in ( select conn.conn_bpmn_id route
@@ -498,9 +530,10 @@ as
       -- step into first step on the new path
       flow_engine.flow_complete_step   
       (
-        p_process_id    => p_process_id
-      , p_subflow_id    => l_sbfl_id_sub
-      , p_forward_route => new_path.route
+        p_process_id        => p_process_id
+      , p_subflow_id        => l_sbfl_id_sub
+      , p_forward_route     => new_path.route
+      , p_log_as_completed  => false
       );
     end loop;
   end process_eventBasedGateway;

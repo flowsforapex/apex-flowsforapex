@@ -21,7 +21,6 @@ as
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_last_update
         , sbfl.sbfl_status
-        , 'simple-step' as sbfl_next_step_type -- FOR V4 Compatibility.  will be removed in V6
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
         , sbfl.sbfl_process_level

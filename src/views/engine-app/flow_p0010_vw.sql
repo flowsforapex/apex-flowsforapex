@@ -4,6 +4,7 @@ as
        , prcs_id
        , all_completed
        , last_completed
+       , all_errors
        , all_current
     from flow_instance_details_vw
 with read only;

@@ -19,28 +19,23 @@ as
               when 'waiting for event' then 'fa fa-hand-stop-o'
             end ||
             '"></span>'
+          when sbfl.sbfl_status = 'error' then 
+            '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
+            'title="Re-start Previous Step" aria-label="Re-start Previous Step" ' ||
+            'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || 
+            '" data-action="restart_step"><span aria-hidden="true" class="fa fa-redo-arrow"></span></button>' 
           else
             '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
-            case 
-              when sbfl.sbfl_next_step_type in ( 'single-choice', 'multi-choice' ) then 'title="Choose branch" aria-label="Choose branch" '
-              when sbfl.sbfl_next_step_type = 'simple-step' then 'title="Go to next step" aria-label="Go to next step" '
-            end || 'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '" data-action="' ||
-            case sbfl.sbfl_next_step_type
-              when 'single-choice' then 'choose_single'
-              when 'multi-choice' then 'choose_multiple'
-              when 'simple-step' then 'next_step'
-            end || '"><span aria-hidden="true" class="' ||
-            case
-              when sbfl.sbfl_next_step_type in ( 'single-choice', 'multi-choice' ) then 'fa fa-tasks'
-              when sbfl.sbfl_next_step_type = 'simple-step' then 'fa fa-sign-out'
-            end || '"></span></button>'
+            'title="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" aria-label="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" ' ||
+            'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || 
+            '" data-action="next_step"><span aria-hidden="true" class="fa fa-sign-out"></span></button>' 
          end as action_html
        , case 
           when sbfl.sbfl_status = 'running' then 
             '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
             case 
-                when sbfl.sbfl_reservation is null then 'title="Reserve Step" aria-label="Reserve Step" '
-                when sbfl.sbfl_reservation is not null then 'title="Release Reservation" aria-label="Release Reservation" '
+                when sbfl.sbfl_reservation is null then 'title="' || apex_lang.message(p_name => 'APP_RESERVE_STEP') ||'" aria-label="' || apex_lang.message(p_name => 'APP_RESERVE_STEP') ||'" '
+                when sbfl.sbfl_reservation is not null then 'title="' || apex_lang.message(p_name => 'APP_RELEASE_STEP') ||'" aria-label="' || apex_lang.message(p_name => 'APP_RELEASE_STEP') ||'" '
             end || 'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '" data-action="' ||
             case 
                 when sbfl.sbfl_reservation is null then 'reserve'

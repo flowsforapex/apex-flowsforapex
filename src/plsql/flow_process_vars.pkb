@@ -177,8 +177,9 @@ end set_var;
 
 function get_var_vc2
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_vc2%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_vc2%type
 is 
    po_vc2_value  flow_process_variables.prov_var_vc2%type;
 begin 
@@ -191,23 +192,21 @@ begin
    return po_vc2_value;
 exception
   when no_data_found then
-     if pi_var_name like '%:route' 
-     then
-        -- special case error handling for FFA41 to permit next_branch to work.
-        -- remove if...then...else and have all cases do the <else> action  in FFA50
-         return null;
-     else
+    if pi_exception_on_null then
       apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
       );
-     end if;
+    else
+      return null;
+    end if;
 end get_var_vc2;
 
 function get_var_num
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_num%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_num%type
 is 
    po_num_value  flow_process_variables.prov_var_num%type;
 begin 
@@ -220,16 +219,21 @@ begin
    return po_num_value;
 exception
   when no_data_found then
+    if pi_exception_on_null then
       apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
       );
+    else
+      return null;
+    end if;
 end get_var_num;
 
 function get_var_date
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_date%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_date%type
 is 
    po_date_value  flow_process_variables.prov_var_date%type;
 begin 
@@ -242,16 +246,21 @@ begin
    return po_date_value;
 exception
   when no_data_found then
+    if pi_exception_on_null then
       apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
       );
+    else
+      return null;
+    end if;
 end get_var_date;
 
 function get_var_clob
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_clob%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_clob%type
 is 
    po_clob_value  flow_process_variables.prov_var_clob%type;
 begin 
@@ -264,10 +273,14 @@ begin
    return po_clob_value;
 exception
   when no_data_found then
+    if pi_exception_on_null then
       apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
       );
+    else
+      return null;
+    end if;
 end get_var_clob;
 
 -- special cases / built-in standard variables

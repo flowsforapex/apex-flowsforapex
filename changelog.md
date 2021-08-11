@@ -1,5 +1,11 @@
 # Flows for APEX - Changelog
 
+## v21.1
+
+- NOTE - MAJOR NEW FEATURES then MINOR CHANGES then DEPRECATION then REMOVAL...
+- Removed - v4 API calls flow_next_step, flow_next_branch, next_multistep_exists, next_multistep_exists_yn, next_step_type (all non-functioning in v5) removed.
+- Removed - Column sbfl_next_step_type removed from flow_subflows_vw, flow_task_inbox_vw, and application views based on them. (no longer functional v4 feature).
+
 ## v5.1.2
 
 - Added business reference to views

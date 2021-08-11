@@ -9,6 +9,7 @@ as
   )
   as
     l_error_occured boolean := false;
+    l_url           varchar2(4000);
   begin
     apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => pi_action, p1 => pi_prcs_id, p2 => pi_sbfl_id );
     begin
@@ -40,6 +41,18 @@ as
             p_process_id    => pi_prcs_id
           , p_subflow_id    => pi_sbfl_id
           );
+        when 'RESTART_STEP' then 
+          flow_api_pkg.flow_restart_step 
+          (
+            p_process_id    => pi_prcs_id
+          , p_subflow_id    => pi_sbfl_id           
+          );
+        when 'VIEW' then
+          l_url := apex_page.get_url(
+              p_page => 12
+            , p_items => 'P12_PRCS_ID'
+            , p_values => pi_prcs_id
+          );
         else
           apex_error.add_error
           (
@@ -50,6 +63,9 @@ as
   
       apex_json.open_object;
       apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
+      if upper(pi_action) = 'VIEW' then
+        apex_json.write( p_name => 'url', p_value => l_url );
+      end if;
       apex_json.close_all;
     exception
       when others then

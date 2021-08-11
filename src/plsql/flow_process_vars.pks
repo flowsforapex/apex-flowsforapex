@@ -35,23 +35,37 @@ procedure set_var
 
 function get_var_vc2
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_vc2%type;
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_vc2%type;
 
 function get_var_num
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_num%type;
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_num%type;
 
 function get_var_date
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_date%type;
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_date%type;
 
 function get_var_clob
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_clob%type;
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_clob%type;
+
+/********************************************************************************
+**
+**        SPECIAL CASE / BUILT-IN PROCESS VARIABLES
+**
+********************************************************************************/ 
+
+function get_business_ref
+( pi_prcs_id in flow_processes.prcs_id%type)
+return flow_process_variables.prov_var_vc2%type;
 
 /********************************************************************************
 **

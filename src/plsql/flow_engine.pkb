@@ -42,6 +42,7 @@ end flow_get_matching_link_object;
 procedure flow_process_link_event
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
 is 
@@ -52,8 +53,16 @@ begin
       ( pi_dgrm_id => p_step_info.dgrm_id
       , pi_link_bpmn_id => p_step_info.target_objt_ref
       );
+    -- update current step info before logging
+    update flow_subflows sbfl
+       set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+         , sbfl.sbfl_last_update = systimestamp
+         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+     where sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
+    ;
     -- log throw event as complete
-   flow_engine_util.log_step_completion   
+   flow_logging.log_step_completion   
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_completed_object => p_step_info.target_objt_ref
@@ -62,6 +71,7 @@ begin
     update flow_subflows sbfl
     set   sbfl.sbfl_current = l_next_objt
         , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+        , sbfl.sbfl_became_current = systimestamp 
         , sbfl.sbfl_last_update = systimestamp
         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
     where sbfl.sbfl_id = p_subflow_id
@@ -101,16 +111,26 @@ end flow_process_link_event;
     --next step can be either end of process or sub-process returning to its parent
     -- get parent subflow
     l_sbfl_id_par := flow_engine_util.get_subprocess_parent_subflow
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_current    => p_sbfl_info.sbfl_current
-    );
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      , p_current    => p_sbfl_info.sbfl_current
+      );
+    -- update the subflow before logging
+     update flow_subflows sbfl
+        set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+          , sbfl.sbfl_current = p_step_info.target_objt_ref
+          , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_completed  
+          , sbfl.sbfl_work_started = systimestamp
+          , sbfl.sbfl_last_update = systimestamp 
+      where sbfl.sbfl_id = p_subflow_id
+        and sbfl.sbfl_prcs_id = p_process_id
+    ;
     -- log the current endEvent as completed
-    flow_engine_util.log_step_completion
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_completed_object => p_step_info.target_objt_ref
-    );  
+    flow_logging.log_step_completion
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      , p_completed_object => p_step_info.target_objt_ref
+      );  
     -- process any variable expressions in the onEvent set
     flow_expressions.process_expressions
     ( pi_objt_id     => p_step_info.target_objt_ref
@@ -151,6 +171,11 @@ end flow_process_link_event;
              , prcs.prcs_last_update = systimestamp
          where prcs.prcs_id = p_process_id
         ;
+        -- log the completion
+        flow_logging.log_instance_event
+        ( p_process_id => p_process_id
+        , p_event      => flow_constants_pkg.gc_prcs_event_completed
+        );
         apex_debug.info 
         ( p_message => 'Process Completed: Process %0'
         , p0        => p_process_id 
@@ -363,7 +388,7 @@ end flow_process_link_event;
       -- this includes bpmn:linkEventDefinition which should come here
       update flow_subflows sbfl
          set sbfl.sbfl_current = p_step_info.target_objt_ref
-           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
            , sbfl.sbfl_last_update = systimestamp
            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
        where sbfl.sbfl_id = p_subflow_id
@@ -407,7 +432,8 @@ end flow_process_link_event;
       flow_process_link_event
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
-      , p_step_info => p_step_info
+      , p_sbfl_info  => p_sbfl_info
+      , p_step_info  => p_step_info
       );   
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
       -- make the ITE the current event
@@ -513,6 +539,7 @@ begin
      update flow_subflows sbfl
         set sbfl_status = flow_constants_pkg.gc_sbfl_status_running
           , sbfl_current = l_current_object
+          , sbfl_last_completed = l_child_starting_object
           , sbfl_last_update = systimestamp
       where sbfl.sbfl_prcs_id = p_process_id
         and sbfl.sbfl_id = p_parent_subflow_id
@@ -706,9 +733,10 @@ end flow_handle_event;
 
 
 procedure flow_complete_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in flow_connections.conn_bpmn_id%type default null
+( p_process_id        in flow_processes.prcs_id%type
+, p_subflow_id        in flow_subflows.sbfl_id%type
+, p_forward_route     in flow_connections.conn_bpmn_id%type default null
+, p_log_as_completed  in boolean default true
 )
 is
   l_sbfl_rec              flow_subflows%rowtype;
@@ -741,7 +769,7 @@ begin
   if l_sbfl_rec.sbfl_has_events like '%:S_T%' then 
     flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
   end if;
-  
+
   -- Find next subflow step
   begin
     select sbfl.sbfl_dgrm_id
@@ -812,6 +840,14 @@ begin
       );
       flow_boundary_events.unset_boundary_timers (p_process_id, p_subflow_id);
   end if;
+  if p_log_as_completed then
+    -- log current step as completed before loosing the reservation
+    flow_logging.log_step_completion   
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_completed_object => l_sbfl_rec.sbfl_current
+    );
+  end if;
   -- release subflow reservation
   if l_sbfl_rec.sbfl_reservation is not null then
     flow_reservations.release_step
@@ -820,7 +856,6 @@ begin
     , p_called_internally => true
     );
   end if;
-
   -- log current step as completed
  flow_engine_util.log_step_completion   
   ( p_process_id => p_process_id
@@ -979,7 +1014,7 @@ begin
          , p_step_info => l_step_info
          );
     when  flow_constants_pkg.gc_bpmn_servicetask then 
-    flow_tasks.process_serviceTask
+    flow_tasks.process_scriptTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -988,7 +1023,7 @@ begin
     end case;
     -- Commit transaction before returning
     commit;
-exception
+  exception
     when case_not_found then
       apex_error.add_error
       ( p_message => 'Process Model Error: Process BPMN model next step uses unsupported object: '||l_step_info.target_objt_tag
@@ -999,13 +1034,66 @@ exception
       ( p_message => 'Next step does not exist. Please check your process diagram.'
       , p_display_location => apex_error.c_on_error_page
       );
-    when flow_plsql_runner_pkg.e_plsql_call_failed then
+    when flow_plsql_runner_pkg.e_plsql_script_failed then
+    /*
       apex_error.add_error
       (
         p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute successfully.'
       , p_display_location => apex_error.c_on_error_page
       );
-end flow_complete_step;
+    */
+    null;
+  end flow_complete_step;
+
+  procedure start_step -- just (optionally) records the start time gpr work on the current step
+    ( p_process_id         in flow_processes.prcs_id%type
+    , p_subflow_id         in flow_subflows.sbfl_id%type
+    , p_called_internally  in boolean default false
+    )
+  is
+    l_existing_start       flow_subflows.sbfl_work_started%type;
+  begin
+    apex_debug.enter
+    ( 'start_step'
+    , 'Subflow ', p_subflow_id
+    , 'Process ', p_process_id 
+    );
+    -- subflow should already be locked when calling internally
+    if not p_called_internally then 
+      -- lock  subflow if called externally
+      select sbfl_work_started
+        into l_existing_start
+        from flow_subflows sbfl 
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+         for update of sbfl_work_started wait 2
+      ;
+    end if;
+    -- set the start time if null
+    if l_existing_start is null then
+      update flow_subflows sbfl
+        set sbfl_work_started = systimestamp
+      where sbfl_prcs_id = p_process_id
+        and sbfl_id = p_subflow_id
+      ;
+      -- commit reservation if this is an external call
+      if not p_called_internally then 
+        commit;
+      end if;
+    end if;
+
+  exception
+    when no_data_found then
+      apex_error.add_error
+      ( p_message => 'Start Work time recording unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    when lock_timeout then
+        apex_error.add_error
+        ( p_message => 'Subflow '||p_subflow_id||' currently locked by another user.  Try to start your task later.'
+        , p_display_location => apex_error.c_on_error_page
+        );
+  end start_step;
 
 
 end flow_engine;

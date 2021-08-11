@@ -34,6 +34,11 @@ as
           )
       returning prcs.prcs_id into l_ret
     ;
+    -- log the process creation
+    flow_logging.log_instance_event
+    ( p_process_id => l_ret
+    , p_event      => flow_constants_pkg.gc_prcs_event_created
+    );
     commit;
 
     apex_debug.info
@@ -125,6 +130,11 @@ as
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;    
+    -- log the reset
+    flow_logging.log_instance_event
+    ( p_process_id => p_process_id
+    , p_event      => flow_constants_pkg.gc_prcs_event_started
+    );
     -- check if start has a timer?  
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
       l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
@@ -190,7 +200,8 @@ as
   end start_process;
 
   procedure reset_process
-    ( p_process_id in flow_processes.prcs_id%type
+    ( p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     )
   is
     l_return_code   number;
@@ -253,12 +264,19 @@ as
          , prcs.prcs_status = flow_constants_pkg.gc_prcs_status_created
      where prcs.prcs_id = p_process_id
     ;
+    -- log the reset
+    flow_logging.log_instance_event
+    ( p_process_id => p_process_id
+    , p_event      => flow_constants_pkg.gc_prcs_event_reset
+    , p_comment    => p_comment
+    );
     commit;
   end reset_process;
 
   procedure terminate_process
     (
-      p_process_id in flow_processes.prcs_id%type
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     )
   is
     l_return_code   number;
@@ -278,7 +296,7 @@ as
     , 'process_id', p_process_id
     );
     begin 
-      -- lock all timers, logs, subflows and the process
+      -- lock all timers, logs, subflows and the process.  
       open c_lock_all;
       flow_timers_pkg.lock_process_timers
       ( pi_prcs_id => p_process_id
@@ -308,19 +326,26 @@ as
     ( p_message => 'Flow Instance %0 terminated'
     , p0        => p_process_id
     );
-    -- mark process as completed
+    -- mark process as terminated
     update flow_processes prcs
        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_completed
          , prcs.prcs_last_update = systimestamp
      where prcs.prcs_id = p_process_id
-         ; 
+    ; 
+    -- log termination
+    flow_logging.log_instance_event
+    ( p_process_id => p_process_id
+    , p_event      => flow_constants_pkg.gc_prcs_event_terminated
+    , p_comment    => p_comment
+    );
     -- finalize
     commit;
   end terminate_process;
 
   procedure delete_process
     (
-      p_process_id in flow_processes.prcs_id%type
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     )
   is
     l_return_code   number;
@@ -354,7 +379,12 @@ as
         , p_display_location => apex_error.c_on_error_page
         );
     end;
-
+    -- log the deletion before process data deleted
+    flow_logging.log_instance_event
+    ( p_process_id => p_process_id
+    , p_event      => flow_constants_pkg.gc_prcs_event_deleted
+    , p_comment    => p_comment
+    );
     -- kill any timers sill running in the process
     flow_timers_pkg.delete_process_timers(
         pi_prcs_id => p_process_id
@@ -378,6 +408,7 @@ as
       from flow_processes prcs
      where prcs.prcs_id = p_process_id
     ;
+
     commit;
   end delete_process;
 

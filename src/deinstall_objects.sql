@@ -9,6 +9,7 @@ drop package flow_p0005_api;
 drop package flow_p0006_api;
 drop package flow_p0007_api;
 drop package flow_p0010_api;
+drop package flow_logging;
 drop package flow_plsql_runner_pkg;
 drop package flow_usertask_pkg;
 drop package flow_tasks;
@@ -60,6 +61,13 @@ drop table flow_timers cascade constraints;
 drop table flow_object_attributes cascade constraints;
 drop table flow_process_variables cascade constraints;
 drop table flow_object_expressions cascade constraints;
+drop table flow_flow_event_log cascade constraints;
+drop table flow_instance_event_log cascade constraints;
+drop table flow_subflow_event_log cascade constraints;
+drop table flow_variable_event_log cascade constraints;
+drop table flow_configuration cascade constraints;
+
+
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================

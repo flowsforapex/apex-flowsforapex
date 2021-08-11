@@ -23,6 +23,7 @@ is
              , objt.objt_interrupting as objt_interrupting
              , sbfl.sbfl_process_level as sbfl_process_level
              , sbfl.sbfl_dgrm_id as sbfl_dgrm_id
+             , sbfl.sbfl_current as parent_current_object
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
@@ -51,7 +52,7 @@ is
           , p_starting_object => boundary_timers.objt_bpmn_id
           , p_current_object => boundary_timers.objt_bpmn_id
           , p_route => 'boundary_timer'
-          , p_last_completed => null 
+          , p_last_completed => boundary_timers.parent_current_object 
           , p_status => flow_constants_pkg.gc_sbfl_status_waiting_timer
           , p_parent_sbfl_proc_level => boundary_timers.sbfl_process_level
           , p_new_proc_level => false
@@ -306,7 +307,7 @@ begin
   , 'subflow', p_subflow_id
   );
   -- set the throwing event to completed
-  flow_engine_util.log_step_completion   
+  flow_logging.log_step_completion   
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
   , p_completed_object => p_step_info.target_objt_ref
@@ -367,7 +368,7 @@ begin
       , p_starting_object => l_next_objt
       , p_current_object => l_next_objt
       , p_route => 'from '||l_next_objt
-      , p_last_completed => null 
+      , p_last_completed => p_step_info.target_objt_ref -- even thou it hasnt yet completed 
       , p_status => flow_constants_pkg.gc_sbfl_status_running
       , p_parent_sbfl_proc_level => l_parent_processs_level
       , p_new_proc_level => false
