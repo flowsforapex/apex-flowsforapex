@@ -1,5 +1,6 @@
 {
   "editor.tabSize": 2,
+  "editor.renderFinalNewline": true,
   "[javascript]": {
     "editor.formatOnSave": false,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
