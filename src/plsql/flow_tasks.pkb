@@ -18,6 +18,64 @@ as
     ;
   end;
 
+  procedure handle_script_error 
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_script_object in flow_objects.objt_bpmn_id%type 
+  , p_error_type    in varchar2
+  , p_error_stack   in varchar2 default null
+  )
+  is 
+    l_prcs_id   flow_processes.prcs_id%type;
+    l_sbfl_id   flow_subflows.sbfl_id%type;
+  begin 
+        apex_debug.enter 
+      ( 'handle_script_error'
+      , 'p_script_object: ', p_script_object
+      , 'p_error_type ', p_error_type 
+      );
+       -- lock process and subflow
+      select prcs.prcs_id, sbfl.sbfl_id
+        into l_prcs_id, l_sbfl_id
+        from flow_processes prcs
+        join flow_subflows sbfl 
+          on prcs.prcs_id = sbfl.sbfl_prcs_id
+       where prcs.prcs_id = p_process_id
+         and sbfl.sbfl_id = p_subflow_id
+      for update wait 2;
+      -- set subflow to error status
+      update flow_subflows sbfl
+         set sbfl.sbfl_current = p_script_object
+           , sbfl.sbfl_last_update = systimestamp
+           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+      ;
+      -- set instance to error status
+      update flow_processes prcs
+         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
+           , prcs.prcs_last_update = systimestamp
+       where prcs.prcs_id = p_process_id
+      ;
+      -- log error as instance event
+      flow_logging.log_instance_event
+      ( p_process_id  => p_process_id 
+      , p_event       => flow_constants_pkg.gc_prcs_event_error
+      , p_comment     => case p_error_type
+                         when 'failed'      then 'ScriptTask failed on object '
+                         when 'stop_engine' then 'User Script Requested ScriptTask Stop on object '
+                         end 
+                         || p_script_object|| ' error data....'||p_error_stack
+      );
+
+      apex_debug.message 
+      ( p_message => 'Script failed in ScriptTask.  Object: %0.'
+      , p0        => p_script_object
+      , p_level   => 2
+      );
+  end handle_script_error;
+
+
   procedure process_task
     ( p_process_id    in flow_processes.prcs_id%type
     , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -101,38 +159,26 @@ as
     );
 
   exception
-    when flow_plsql_runner_pkg.e_plsql_script_failed or flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_plsql_runner_pkg.e_plsql_script_failed then
       rollback;
-      -- lock process and subflow
-
-      -- set subflow to error status
-      update flow_subflows sbfl
-         set sbfl.sbfl_current = p_step_info.target_objt_ref
-           , sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
-       where sbfl.sbfl_id = p_sbfl_info.sbfl_id
-         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
-      ;
-      -- set instance to error status
-      update flow_processes prcs
-         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
-           , prcs.prcs_last_update = systimestamp
-       where prcs.prcs_id = p_process_id
-      ;
-      -- log error as instance event
-      flow_logging.log_instance_event
-      ( p_process_id  => p_process_id 
-      , p_event       => flow_constants_pkg.gc_prcs_event_error
-      , p_comment     => 'ScriptTask failed on object '|| p_step_info.target_objt_ref|| ' error data....'
-      );
-
-      apex_debug.message 
-      ( p_message => 'Script failed in ScriptTask.  Object: %0'
-      , p0        => p_step_info.target_objt_ref
-      , p_level   => 2
+      handle_script_error
+      ( p_process_id    => p_process_id
+      , p_subflow_id    => p_subflow_id
+      , p_script_object => p_step_info.target_objt_ref
+      , p_error_type    => 'failed'
+      , p_error_stack   => 'error stack to be added'
       );
       commit;
-      -- raise flow_plsql_runner_pkg.e_plsql_script_failed;
+    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+      rollback;
+      handle_script_error
+      ( p_process_id    => p_process_id
+      , p_subflow_id    => p_subflow_id
+      , p_script_object => p_step_info.target_objt_ref
+      , p_error_type    => 'stop_engine'
+      , p_error_stack   => 'error stack to be added'
+      );
+      commit;      
   end process_scriptTask;
 
   procedure process_serviceTask --- note NOT CURRENTLY BEING USED FOR SERVICETASKS - USING process_scriptTask
