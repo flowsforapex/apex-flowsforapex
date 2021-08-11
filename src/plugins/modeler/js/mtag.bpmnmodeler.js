@@ -1904,102 +1904,152 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
 
-var extensionElementsEntry = __webpack_require__(/*! ./custom/ExtensionElements */ "./apexPropertiesProvider/provider/parts/process_variables/custom/ExtensionElements.js"),
-    extensionElementsHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper.js"),
-    cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js"),
-    elementHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ElementHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ElementHelper.js")
+var extensionElementsEntry = __webpack_require__(/*! ./custom/ExtensionElements */ "./apexPropertiesProvider/provider/parts/process_variables/custom/ExtensionElements.js");
+var extensionElementsHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper.js");
+var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+var elementHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ElementHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ElementHelper.js");
 
 const TYPE_PROCESS_VARIABLE = 'apex:ProcessVariable';
 var procVarProps = [];
 
 function getEntries(element, type) {
-    var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element);
-    return bo && extensionElementsHelper.getExtensionElements(bo, 'apex:' + type) && extensionElementsHelper.getExtensionElements(bo, 'apex:' + type)[0].procVars || [];
+  var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element);
+  return bo &&
+    extensionElementsHelper.getExtensionElements(bo, `apex:${type}`) &&
+    extensionElementsHelper.getExtensionElements(bo, `apex:${type}`)[0] ? extensionElementsHelper.getExtensionElements(bo, `apex:${type}`)[0]
+        .procVars : [];
 }
 
 function isSelected(element, node) {
-    return (typeof getSelectedEntry(element, node) != 'undefined');
+  return typeof getSelectedEntry(element, node) !== 'undefined';
 }
 
 function getSelectedEntry(element, node) {
+  var selection;
+  var entry;
 
-    var selection,
-        entry;
+  if (element && procVarProps) {
+    procVarProps.forEach((e) => {
+      if (e.getSelected(element, node).idx > -1) {
+        selection = e.getSelected(element, node);
+        entry = getEntries(element, e.id)[selection.idx];
+      }
+    });
+  }
 
-    if (element && procVarProps) {
-        procVarProps.forEach(e => {
-            if (e.getSelected(element, node).idx > -1) {
-                selection = e.getSelected(element, node);
-                entry = getEntries(element, e.id)[selection.idx];
-            }
-        });
-    }
-
-    return entry;
+  return entry;
 }
 
-var setOptionLabelValue = function(type) {
-    return function(element, node, option, property, value, idx) {
-        var entries = getEntries(element, type);
-        var entry = entries[idx];
+var setOptionLabelValue = function (type) {
+  return function (element, node, option, property, value, idx) {
+    var entries = getEntries(element, type);
+    var entry = entries[idx];
 
-        var label = entry ? (entry.get('varName') + (entry.get('varExpression') && (' : ' + entry.get('varExpression')))) : '';
+    var label = entry ? entry.get('varName') +
+        (entry.get('varExpression') && ` : ${entry.get('varExpression')}`) : '';
 
-        option.text = label;
-        option.value = entry && entry.get('varName');
-    };
+    option.text = label;
+    option.value = entry && entry.get('varName');
+  };
 };
 
-var newElement = function(bpmnFactory, type, props) {
-    return function(element, extensionElements, values) {
+var newElement = function (bpmnFactory, type, props) {
+  return function (element, extensionElements, values) {
+    var commands = [];
 
-        var commands = [];
+    var container =
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      ) &&
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      )[0];
 
-        var container = extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), 'apex:' + type) && extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), 'apex:' + type)[0];
+    if (!container) {
+      container = elementHelper.createElement(
+        `apex:${type}`,
+        {},
+        extensionElements,
+        bpmnFactory
+      );
+      commands.push(
+        cmdHelper.addElementsTolist(element, extensionElements, 'values', [
+          container,
+        ])
+      );
+    }
 
-        if (!container) {
-            container = elementHelper.createElement('apex:' + type, {}, extensionElements, bpmnFactory);
-            commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [ container ]));
-        }
+    var index =
+      (container.procVars && String(container.procVars.length)) || '0';
+    var re = new RegExp(`${props.varName}_\\d$`);
+    var newNumber =
+      (container.procVars &&
+        container.procVars
+          .filter(e => e.varName.match(re))
+          .map(e => parseInt(e.varName.split('_')[1]))
+          .reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
 
-        var index = (container.procVars && String(container.procVars.length)) || '0';
-        var re = new RegExp(props.varName + "_\\d$");
-        var newNumber = (container.procVars && container.procVars.filter(e => e.varName.match(re)).map(e => parseInt(e.varName.split('_')[1])).reduce((a, b) => {return Math.max(a, b)}, -1)) + 1 || 0;
-
-        values = {
-            varSequence: String(index),
-            varName: props.varName + '_' + newNumber,
-            varDataType: props.varDataType,
-            varExpression: props.varExpression,
-            varExpressionType: props.varExpressionType
-        }
-
-        var newElem = elementHelper.createElement(TYPE_PROCESS_VARIABLE, values, container, bpmnFactory);
-        commands.push(cmdHelper.addElementsTolist(element, container, 'procVars', [ newElem ]));
-
-        return commands;
+    values = {
+      varSequence: String(index),
+      varName: `${props.varName}_${newNumber}`,
+      varDataType: props.varDataType,
+      varExpression: props.varExpression,
+      varExpressionType: props.varExpressionType,
     };
+
+    var newElem = elementHelper.createElement(
+      TYPE_PROCESS_VARIABLE,
+      values,
+      container,
+      bpmnFactory
+    );
+    commands.push(
+      cmdHelper.addElementsTolist(element, container, 'procVars', [newElem])
+    );
+
+    return commands;
+  };
 };
 
-var removeElement = function(type) {
-    return function(element, extensionElements, value, idx) {
+var removeElement = function (type) {
+  return function (element, extensionElements, value, idx) {
+    var container =
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      ) &&
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      )[0];
 
-        var container = extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), 'apex:' + type) && extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), 'apex:' + type)[0];
-
-        var entries = getEntries(element, type);
-        var entry = entries[idx];
-        if (entry) {
-            var command = (container.procVars.length > 1) ? 
-                cmdHelper.removeElementsFromList(element, container, 'procVars', 'extensionElements', [ entry ]) :
-                cmdHelper.removeElementsFromList(element, extensionElements, 'values', 'extensionElements', [ container ]);
-            return command;
-        }
-    };
+    var entries = getEntries(element, type);
+    var entry = entries[idx];
+    if (entry) {
+      var command =
+        container.procVars.length > 1 ? cmdHelper.removeElementsFromList(
+              element,
+              container,
+              'procVars',
+              'extensionElements',
+              [entry]
+            ) : cmdHelper.removeElementsFromList(
+              element,
+              extensionElements,
+              'values',
+              'extensionElements',
+              [container]
+            );
+      return command;
+    }
+  };
 };
 
 function resetSequences(element, type) {
-    var entries = getEntries(element, type);
-    entries.forEach((e, i) => e.set('varSequence', String(i)));
+  var entries = getEntries(element, type);
+  entries.forEach((e, i) => e.set('varSequence', String(i)));
 }
 
 // function deleteInvalidProperties(element, bpmnFactory, elementRegistry, type) {
@@ -2011,89 +2061,88 @@ function resetSequences(element, type) {
 //     }
 // }
 
-function procVarLists(element, bpmnFactory, elementRegistry, translate, options) {
+function procVarLists(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  translate,
+  options
+) {
+  procVarProps = [];
 
-    procVarProps = [];
-    
-    if (options.type1) {
+  if (options.type1) {
+    var { type1 } = options;
+    var { label1 } = options;
 
-        var type1 = options.type1,
-            label1 = options.label1;
+    // create first list element
+    var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+      id: type1,
+      label: label1,
 
-        // create first list element
-        var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-        id : type1,
-        label : label1,
+      createExtensionElement: newElement(bpmnFactory, type1, {
+        varName: type1,
+        varDataType: 'varchar2',
+        varExpression: '',
+        varExpressionType: 'static',
+      }),
+      removeExtensionElement: removeElement(type1),
 
-        createExtensionElement: newElement(bpmnFactory, type1, {
-            varName: type1,
-            varDataType: 'varchar2',
-            varExpression: '',
-            varExpressionType: 'static'
-        }),
-        removeExtensionElement: removeElement(type1),
+      getExtensionElements: function (element) {
+        return getEntries(element, type1);
+      },
 
-        getExtensionElements: function(element) {
-            return getEntries(element, type1);
-        },
+      onSelectionChange: function (element, node) {
+        if (postProcessVariables) postProcessVariables.deselect(element, node);
+      },
 
-        onSelectionChange: function(element, node) {
-            if (postProcessVariables)
-                postProcessVariables.deselect(element, node);
-        },
+      setOptionLabelValue: setOptionLabelValue(type1),
 
-        setOptionLabelValue: setOptionLabelValue(type1),
-
-        onEntryMoved : resetSequences(element, type1)
-
+      onEntryMoved: resetSequences(element, type1),
     });
 
-        procVarProps.push(preProcessVariables);
+    procVarProps.push(preProcessVariables);
+  }
+  // else {
+  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type2);
+  // }
 
-    }
-    // else {
-    //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type2);
-    // }
+  if (options.type2) {
+    var { type2 } = options;
+    var { label2 } = options;
 
-    if (options.type2) {
+    // create second list element
+    var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+      id: type2,
+      label: label2,
 
-        var type2 = options.type2,
-            label2 = options.label2;
+      createExtensionElement: newElement(bpmnFactory, type2, {
+        varName: type2,
+        varDataType: 'varchar2',
+        varExpression: '',
+        varExpressionType: 'static',
+      }),
 
-        // create second list element
-        var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-        id : type2,
-        label : label2,
+      removeExtensionElement: removeElement(type2),
 
-        createExtensionElement: newElement(bpmnFactory, type2, {
-            varName: type2,
-            varDataType: 'varchar2',
-            varExpression: '',
-            varExpressionType: 'static'
-        }),
+      getExtensionElements: function (element) {
+        return getEntries(element, type2);
+      },
 
-        removeExtensionElement: removeElement(type2),
+      onSelectionChange: function (element, node) {
+        if (preProcessVariables) preProcessVariables.deselect(element, node);
+      },
 
-        getExtensionElements: function(element) {
-            return getEntries(element, type2);
-        },
+      setOptionLabelValue: setOptionLabelValue(type2),
 
-        onSelectionChange: function(element, node) {
-            if (preProcessVariables)
-                preProcessVariables.deselect(element, node);
-        },
-
-        setOptionLabelValue: setOptionLabelValue(type2),
-
-        onEntryMoved : resetSequences(element, type2)
+      onEntryMoved: resetSequences(element, type2),
     });
-        
-        procVarProps.push(postProcessVariables);
-    }
-    // else {
-    //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type1);
-    // }
-    
+
+    procVarProps.push(postProcessVariables);
+  }
+  // else {
+  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type1);
+  // }
+
   return procVarProps;
 }
 
