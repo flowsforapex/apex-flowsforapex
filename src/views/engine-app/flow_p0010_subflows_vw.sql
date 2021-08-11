@@ -19,6 +19,11 @@ as
               when 'waiting for event' then 'fa fa-hand-stop-o'
             end ||
             '"></span>'
+          when sbfl.sbfl_status = 'error' then 
+            '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
+            'title="Re-start Previous Step" aria-label="Re-start Previous Step" ' ||
+            'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || 
+            '" data-action="restart_step"><span aria-hidden="true" class="fa fa-redo-arrow"></span></button>' 
           else
             '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
             'title="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" aria-label="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" ' ||

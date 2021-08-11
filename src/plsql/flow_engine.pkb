@@ -946,7 +946,7 @@ begin
          , p_step_info => l_step_info
          );
     when  flow_constants_pkg.gc_bpmn_servicetask then 
-    flow_tasks.process_serviceTask
+    flow_tasks.process_scriptTask
          ( p_process_id => p_process_id
          , p_subflow_id => p_subflow_id
          , p_sbfl_info => l_sbfl_rec
@@ -966,12 +966,15 @@ begin
       ( p_message => 'Next step does not exist. Please check your process diagram.'
       , p_display_location => apex_error.c_on_error_page
       );
-    when flow_plsql_runner_pkg.e_plsql_call_failed then
+    when flow_plsql_runner_pkg.e_plsql_script_failed then
+    /*
       apex_error.add_error
       (
         p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute successfully.'
       , p_display_location => apex_error.c_on_error_page
       );
+    */
+    null;
   end flow_complete_step;
 
   procedure start_step -- just (optionally) records the start time gpr work on the current step

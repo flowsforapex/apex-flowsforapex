@@ -2,7 +2,8 @@ create or replace package flow_plsql_runner_pkg
   authid current_user
 as
 
-  e_plsql_call_failed exception;
+  e_plsql_script_requested_stop exception;
+  e_plsql_script_failed exception;
 
   function get_current_prcs_id
     return flow_processes.prcs_id%type
