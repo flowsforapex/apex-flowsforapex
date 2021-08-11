@@ -62,7 +62,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210730112602'
+,p_last_upd_yyyymmddhh24miss=>'20210811093823'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -80,6 +80,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24415197915878710)
 ,p_plug_name=>'Tab Holder'
+,p_region_name=>'flow-reports'
 ,p_region_template_options=>'#DEFAULT#:t-TabsRegion-mod--simple'
 ,p_plug_template=>wwv_flow_api.id(12495575615770880223)
 ,p_plug_display_sequence=>10
@@ -893,11 +894,8 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'DGRM_CONTENT'
 ,p_attribute_02=>'ALL_CURRENT'
-,p_attribute_03=>':'
 ,p_attribute_04=>'ALL_COMPLETED'
-,p_attribute_05=>':'
-,p_attribute_06=>'LAST_COMPLETED'
-,p_attribute_07=>':'
+,p_attribute_06=>'ALL_ERRORS'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'Y'
 ,p_attribute_10=>'Y'
