@@ -56,6 +56,7 @@ as
     l_dgrm_id               flow_diagrams.dgrm_id%type;
     l_process_status        flow_processes.prcs_status%type;
     l_objt_bpmn_id          flow_objects.objt_bpmn_id%type;
+    l_objt_id               flow_objects.objt_id%type;
     l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
     l_main_subflow_id       flow_subflows.sbfl_id%type;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
@@ -97,8 +98,10 @@ as
       -- get the starting object 
       select objt.objt_bpmn_id
            , objt.objt_sub_tag_name
+           , objt.objt_id
         into l_objt_bpmn_id
            , l_objt_sub_tag_name
+           , l_objt_id
         from flow_objects objt
         join flow_objects parent
           on objt.objt_objt_id = parent.objt_id
@@ -130,7 +133,7 @@ as
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;    
-    -- log the reset
+    -- log the start
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_started
@@ -161,7 +164,7 @@ as
     );
     -- process any variable expressions on the starting object
     flow_expressions.process_expressions
-    ( pi_objt_id     => l_objt_bpmn_id
+    ( pi_objt_id     => l_objt_id
     , pi_set         => flow_constants_pkg.gc_expr_set_before_event
     , pi_prcs_id     => p_process_id
     , pi_sbfl_id     => l_main_subflow_id
@@ -180,7 +183,7 @@ as
       -- plain startEvent
       -- process any variable expressions on the starting object
       flow_expressions.process_expressions
-      ( pi_objt_id     => l_objt_bpmn_id
+      ( pi_objt_id     => l_objt_id
       , pi_set         => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id     => p_process_id
       , pi_sbfl_id     => l_main_subflow_id

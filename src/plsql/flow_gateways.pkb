@@ -152,7 +152,7 @@ as
         ;
         -- process any after-merge expression set
         flow_expressions.process_expressions
-        ( pi_objt_id     => p_step_info.target_objt_ref
+        ( pi_objt_id     => p_step_info.target_objt_id
         , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
         , pi_prcs_id     => p_process_id
         , pi_sbfl_id     => p_sbfl_info.sbfl_sbfl_id
@@ -349,7 +349,7 @@ as
         );       
         -- process any before-split expression set
         flow_expressions.process_expressions
-        ( pi_objt_id     => p_step_info.target_objt_ref
+        ( pi_objt_id     => p_step_info.target_objt_id
         , pi_set         => flow_constants_pkg.gc_expr_set_before_split
         , pi_prcs_id     => p_process_id
         , pi_sbfl_id     => p_subflow_id
@@ -422,7 +422,7 @@ as
       -- opening gateway 
       -- process any before-split expression set before gateway chooses route
       flow_expressions.process_expressions
-      ( pi_objt_id     => p_sbfl_info.sbfl_current
+      ( pi_objt_id     => p_step_info.target_objt_id
       , pi_set         => flow_constants_pkg.gc_expr_set_before_split
       , pi_prcs_id     => p_process_id
       , pi_sbfl_id     => p_subflow_id
@@ -433,7 +433,7 @@ as
       -- closing gateway 
       -- process any after-merge expression set
       flow_expressions.process_expressions
-      ( pi_objt_id     => p_sbfl_info.sbfl_current
+      ( pi_objt_id     => p_step_info.target_objt_id
       , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
       , pi_prcs_id     => p_process_id
       , pi_sbfl_id     => p_subflow_id
@@ -478,7 +478,7 @@ as
     );
     -- process any before-split expression set
     flow_expressions.process_expressions
-    ( pi_objt_id     => p_step_info.target_objt_ref
+    ( pi_objt_id     => p_step_info.target_objt_id
     , pi_set         => flow_constants_pkg.gc_expr_set_before_split
     , pi_prcs_id     => p_process_id
     , pi_sbfl_id     => p_subflow_id

@@ -424,6 +424,11 @@ as
   as
     l_expressions   t_expr_set;
   begin
+    apex_debug.enter
+    ( 'process_expressions'
+    , 'pi_objt_id', pi_objt_id
+    , 'pi_set' , pi_set
+    );
     l_expressions := get_expression_set
     ( pi_objt_id => pi_objt_id
     , pi_set     => pi_set

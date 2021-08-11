@@ -133,7 +133,7 @@ end flow_process_link_event;
       );  
     -- process any variable expressions in the onEvent set
     flow_expressions.process_expressions
-    ( pi_objt_id     => p_step_info.target_objt_ref
+    ( pi_objt_id     => p_step_info.target_objt_id
     , pi_set         => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id     => p_process_id
     , pi_sbfl_id     => p_subflow_id
@@ -606,12 +606,12 @@ begin
      and sbfl.sbfl_id = p_subflow_id
   ;
   --  process any variable expressions in the OnEvent set
-  flow_expressions.process_expressions
-  ( pi_objt_id     => p_current_objt
+ /*flow_expressions.process_expressions
+  ( pi_objt_id     => p_current_objt  ---  wrong object type - needs to be an objt_id, not bpmn_id
   , pi_set         => flow_constants_pkg.gc_expr_set_on_event
   , pi_prcs_id     => p_process_id
   , pi_sbfl_id     => p_subflow_id
-  );
+  );*/
   -- move onto next step
   flow_complete_step 
   ( p_process_id => p_process_id
@@ -856,12 +856,6 @@ begin
     , p_called_internally => true
     );
   end if;
-  -- log current step as completed
- flow_engine_util.log_step_completion   
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_completed_object => l_sbfl_rec.sbfl_current
-  );
 
   -- end of post- phase for previous step
   commit;
