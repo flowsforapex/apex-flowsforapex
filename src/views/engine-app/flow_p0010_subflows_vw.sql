@@ -26,7 +26,7 @@ as
             '" data-action="restart_step"><span aria-hidden="true" class="fa fa-redo-arrow"></span></button>' 
           else
             '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
-            'title="Go to next step" aria-label="Go to next step" ' ||
+            'title="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" aria-label="' || apex_lang.message(p_name => 'APP_COMPLETE_STEP') || '" ' ||
             'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || 
             '" data-action="next_step"><span aria-hidden="true" class="fa fa-sign-out"></span></button>' 
          end as action_html
@@ -34,8 +34,8 @@ as
           when sbfl.sbfl_status = 'running' then 
             '<button type="button" class="clickable-action t-Button t-Button--noLabel t-Button--icon" ' ||
             case 
-                when sbfl.sbfl_reservation is null then 'title="Reserve Step" aria-label="Reserve Step" '
-                when sbfl.sbfl_reservation is not null then 'title="Release Reservation" aria-label="Release Reservation" '
+                when sbfl.sbfl_reservation is null then 'title="' || apex_lang.message(p_name => 'APP_RESERVE_STEP') ||'" aria-label="' || apex_lang.message(p_name => 'APP_RESERVE_STEP') ||'" '
+                when sbfl.sbfl_reservation is not null then 'title="' || apex_lang.message(p_name => 'APP_RELEASE_STEP') ||'" aria-label="' || apex_lang.message(p_name => 'APP_RELEASE_STEP') ||'" '
             end || 'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '" data-action="' ||
             case 
                 when sbfl.sbfl_reservation is null then 'reserve'

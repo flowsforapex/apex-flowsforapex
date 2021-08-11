@@ -818,3 +818,12 @@ marker.djs-dragger tspan {
 .djs-label-hidden .djs-label {
   display: none !important;
 }
+
+/* flip redo icon */
+.bpmn-icon-redo:before { 
+  -moz-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1); 
+}

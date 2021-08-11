@@ -16,11 +16,11 @@ wwv_flow_api.create_page(
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
 ,p_name=>'Getting Started'
 ,p_alias=>'GETTING-STARTED'
-,p_step_title=>'Getting Started'
+,p_step_title=>'Getting Started - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210224115647'
+,p_last_upd_yyyymmddhh24miss=>'20210729102437'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603774502745437)

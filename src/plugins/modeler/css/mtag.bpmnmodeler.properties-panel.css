@@ -145,6 +145,12 @@
 .bpp-properties-panel button.clear:before {
   content: '\E802';
 }
+.bpp-properties-panel button.up, .bpp-properties-panel button.down {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute !important;
+}
 .bpp-properties-panel button:hover {
   color: #52B415;
 }
@@ -213,7 +219,11 @@
 .bpp-select button.add,
 .bpp-element-list button.add,
 .bpp-select button.clear,
-.bpp-element-list button.clear {
+.bpp-element-list button.clear,
+.bpp-select button.down,
+.bpp-element-list button.down,
+.bpp-select button.up,
+.bpp-element-list button.up {
   top: -23px;
   border-bottom: none;
 }
@@ -224,6 +234,14 @@
 .bpp-select button.clear,
 .bpp-element-list button.clear {
   right: 23px;
+}
+.bpp-select button.down,
+.bpp-element-list button.down {
+  right: 46px;
+}
+.bpp-select button.up,
+.bpp-element-list button.up {
+  right: 69px;
 }
 .bpp-properties-entry {
   margin-bottom: 9px;
@@ -511,4 +529,13 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
 }
 .bpp-properties-tab.bpp-active {
   display: block;
+}
+.properties-panel-parent:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: w-resize;
 }

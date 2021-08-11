@@ -17,6 +17,9 @@ prompt --install
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
+@@application/shared_components/logic/application_items/app_name_title.sql
+@@application/shared_components/logic/application_items/flow_page_title.sql
+@@application/shared_components/logic/application_computations/app_name_title.sql
 @@application/shared_components/logic/application_settings.sql
 @@application/shared_components/navigation/tabs/standard.sql
 @@application/shared_components/navigation/tabs/parent.sql
@@ -112,6 +115,7 @@ prompt --install
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00001.sql
 @@application/pages/page_00002.sql
+@@application/pages/page_00003.sql
 @@application/pages/page_00004.sql
 @@application/pages/page_00005.sql
 @@application/pages/page_00006.sql

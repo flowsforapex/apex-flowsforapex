@@ -17,6 +17,14 @@ wwv_flow_api.create_list(
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(34597614443542059)
+,p_list_item_display_sequence=>5
+,p_list_item_link_text=>'Getting started'
+,p_list_item_link_target=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-info-square-o'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12495487956468879842)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'&APP_USER.'

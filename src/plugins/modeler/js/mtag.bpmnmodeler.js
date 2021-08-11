@@ -245,7 +245,7 @@ cache['bpmnlint-plugin-apex/max-id-length'] = bpmnlint_plugin_apex_rules_max_id_
 /*! exports provided: name, prefix, uri, xml, associations, types, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"APEX\",\"prefix\":\"apex\",\"uri\":\"http://www.apex.mt-ag.com\",\"xml\":{\"tagAlias\":\"lowerCase\"},\"associations\":[],\"types\":[{\"name\":\"apexPage\",\"extends\":[\"bpmn:UserTask\"],\"properties\":[{\"name\":\"apex-application\",\"type\":\"String\"},{\"name\":\"apex-page\",\"type\":\"String\"},{\"name\":\"apex-request\",\"type\":\"String\"},{\"name\":\"apex-cache\",\"type\":\"String\"},{\"name\":\"apex-item\",\"type\":\"String\"},{\"name\":\"apex-value\",\"type\":\"String\"},{\"name\":\"apex-insertUrl\",\"type\":\"String\"}]},{\"name\":\"apexScript\",\"extends\":[\"bpmn:ScriptTask\",\"bpmn:ServiceTask\"],\"properties\":[{\"name\":\"serviceTaskType\",\"type\":\"String\"},{\"name\":\"plsqlCode\",\"type\":\"String\"},{\"name\":\"autoBinds\",\"type\":\"String\"},{\"name\":\"applicationId\",\"type\":\"String\"},{\"name\":\"pageId\",\"type\":\"String\"},{\"name\":\"username\",\"type\":\"String\"},{\"name\":\"templateIdentifier\",\"type\":\"String\"},{\"name\":\"emailFrom\",\"type\":\"String\"},{\"name\":\"emailTo\",\"type\":\"String\"},{\"name\":\"engine\",\"type\":\"String\"}]}]}");
+module.exports = JSON.parse("{\"name\":\"APEX\",\"prefix\":\"apex\",\"uri\":\"http://www.apex.mt-ag.com\",\"xml\":{\"tagAlias\":\"lowerCase\"},\"associations\":[],\"types\":[{\"name\":\"apexPage\",\"extends\":[\"bpmn:UserTask\"],\"properties\":[{\"name\":\"apex-application\",\"type\":\"String\"},{\"name\":\"apex-page\",\"type\":\"String\"},{\"name\":\"apex-request\",\"type\":\"String\"},{\"name\":\"apex-cache\",\"type\":\"String\"},{\"name\":\"apex-item\",\"type\":\"String\"},{\"name\":\"apex-value\",\"type\":\"String\"},{\"name\":\"apex-insertUrl\",\"type\":\"String\"}]},{\"name\":\"apexScript\",\"extends\":[\"bpmn:ScriptTask\",\"bpmn:ServiceTask\"],\"properties\":[{\"name\":\"serviceTaskType\",\"type\":\"String\"},{\"name\":\"plsqlCode\",\"type\":\"String\"},{\"name\":\"autoBinds\",\"type\":\"String\"},{\"name\":\"applicationId\",\"type\":\"String\"},{\"name\":\"pageId\",\"type\":\"String\"},{\"name\":\"username\",\"type\":\"String\"},{\"name\":\"templateIdentifier\",\"type\":\"String\"},{\"name\":\"emailFrom\",\"type\":\"String\"},{\"name\":\"emailTo\",\"type\":\"String\"},{\"name\":\"engine\",\"type\":\"String\"}]},{\"name\":\"apexTerminationEvent\",\"extends\":[\"bpmn:TerminateEventDefinition\"],\"properties\":[{\"name\":\"processStatus\",\"type\":\"String\"}]},{\"name\":\"ProcessVariable\",\"superClass\":[\"Element\"],\"properties\":[{\"name\":\"varSequence\",\"type\":\"String\"},{\"name\":\"varName\",\"type\":\"String\"},{\"name\":\"varDataType\",\"type\":\"String\"},{\"name\":\"varExpressionType\",\"type\":\"String\"},{\"name\":\"varExpression\",\"type\":\"String\"}]},{\"name\":\"BeforeTask\",\"superClass\":[\"Element\"],\"properties\":[{\"name\":\"procVars\",\"type\":\"ProcessVariable\",\"isMany\":true}]},{\"name\":\"AfterTask\",\"superClass\":[\"Element\"],\"properties\":[{\"name\":\"procVars\",\"type\":\"ProcessVariable\",\"isMany\":true}]},{\"name\":\"AfterMerge\",\"superClass\":[\"Element\"],\"properties\":[{\"name\":\"procVars\",\"type\":\"ProcessVariable\",\"isMany\":true}]},{\"name\":\"BeforeSplit\",\"superClass\":[\"Element\"],\"properties\":[{\"name\":\"procVars\",\"type\":\"ProcessVariable\",\"isMany\":true}]},{\"name\":\"BeforeEvent\",\"superClass\":[\"Element\"],\"properties\":[{\"name\":\"procVars\",\"type\":\"ProcessVariable\",\"isMany\":true}]},{\"name\":\"OnEvent\",\"superClass\":[\"Element\"],\"properties\":[{\"name\":\"procVars\",\"type\":\"ProcessVariable\",\"isMany\":true}]}]}");
 
 /***/ }),
 
@@ -265,8 +265,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps.js");
 /* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_EventProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/EventProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/EventProps.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_EventProps__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_EventProps__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./parts/events/EventProps */ "./apexPropertiesProvider/provider/parts/events/EventProps.js");
+/* harmony import */ var _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps.js");
 /* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps.js");
@@ -277,6 +277,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./parts/userTaskProps.js */ "./apexPropertiesProvider/provider/parts/userTaskProps.js");
 /* harmony import */ var _parts_scriptTaskProps_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./parts/scriptTaskProps.js */ "./apexPropertiesProvider/provider/parts/scriptTaskProps.js");
 /* harmony import */ var _parts_serviceTaskProps_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./parts/serviceTaskProps.js */ "./apexPropertiesProvider/provider/parts/serviceTaskProps.js");
+/* harmony import */ var _parts_process_variables_taskProcVarProps_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./parts/process_variables/taskProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/taskProcVarProps.js");
+/* harmony import */ var _parts_process_variables_gatewayProcVarProps_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./parts/process_variables/gatewayProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/gatewayProcVarProps.js");
+/* harmony import */ var _parts_process_variables_eventProcVarProps_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./parts/process_variables/eventProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/eventProcVarProps.js");
+/* harmony import */ var _parts_process_variables_procVarDetailProps_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./parts/process_variables/procVarDetailProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/procVarDetailProps.js");
+/* harmony import */ var _parts_process_variables_procVarLists_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./parts/process_variables/procVarLists.js */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
+/* harmony import */ var _parts_process_variables_helper_validateXML__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./parts/process_variables/helper/validateXML */ "./apexPropertiesProvider/provider/parts/process_variables/helper/validateXML.js");
 // eslint-disable-next-line import/no-extraneous-dependencies
 
 
@@ -290,6 +296,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // Require your custom property entries.
+
+
+
+
+
+
+
+
+
 
 
 
@@ -318,7 +333,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
   bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_6___default()(generalGroup, element, bpmnFactory, canvas, translate);
   bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2___default()(generalGroup, element, translate);
   bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4___default()(detailsGroup, element, translate);
-  bpmn_js_properties_panel_lib_provider_bpmn_parts_EventProps__WEBPACK_IMPORTED_MODULE_3___default()(detailsGroup, element, bpmnFactory, elementRegistry, translate);
+  _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3___default()(detailsGroup, element, bpmnFactory, elementRegistry, translate);
   bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_5___default()(documentationGroup, element, bpmnFactory, translate);
 
   return [
@@ -330,7 +345,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 
 function createApexTabGroups(element, translate) {
   var apexPageGroup = {
-    id: 'apex-page-call',
+    id: 'apex-page-calls',
     label: 'Call APEX Page',
     entries: Object(_parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_8__["default"])(element, translate)
   };
@@ -352,11 +367,50 @@ function createApexTabGroups(element, translate) {
   ];
 }
 
+function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate) {
+
+  var taskGroup = {
+    id: 'apex-task',
+    label: 'Process Variables',
+    entries: Object(_parts_process_variables_taskProcVarProps_js__WEBPACK_IMPORTED_MODULE_11__["default"])(element, bpmnFactory, elementRegistry, translate)
+  };
+
+  var gatewayGroup = {
+    id: 'apex-gateway',
+    label: 'Process Variables',
+    entries: Object(_parts_process_variables_gatewayProcVarProps_js__WEBPACK_IMPORTED_MODULE_12__["default"])(element, bpmnFactory, elementRegistry, translate)
+  };
+
+  var eventGroup = {
+    id: 'apex-event',
+    label: 'Process Variables',
+    entries: Object(_parts_process_variables_eventProcVarProps_js__WEBPACK_IMPORTED_MODULE_13__["default"])(element, bpmnFactory, elementRegistry, translate)
+  }
+
+  var detailGroup = {
+    id: 'details',
+    label: 'Variable Details',
+    entries: Object(_parts_process_variables_procVarDetailProps_js__WEBPACK_IMPORTED_MODULE_14__["procVarDetailProps"])(element, bpmnFactory, translate),
+    enabled: _parts_process_variables_procVarLists_js__WEBPACK_IMPORTED_MODULE_15__["isSelected"]
+  }
+
+  return [
+    taskGroup,
+    gatewayGroup,
+    eventGroup,
+    detailGroup
+  ];
+}
+
 function apexPropertiesProvider(
     eventBus, bpmnFactory, canvas,
     elementRegistry, translate) {
 
   bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1___default.a.call(this, eventBus);
+
+  eventBus.on('saveXML.start', function() {
+    Object(_parts_process_variables_helper_validateXML__WEBPACK_IMPORTED_MODULE_16__["removeInvalidExtensionsElements"])(bpmnFactory, canvas, elementRegistry)
+  });
 
   this.getTabs = function (element) {
 
@@ -373,10 +427,17 @@ function apexPropertiesProvider(
       groups: createApexTabGroups(element, translate)
     };
 
+    var VariablesTab = {
+      id: 'variables',
+      label: 'Variables',
+      groups: createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate)
+    };
+
     // Show general + APEX tabs
     return [
       generalTab,
-      ApexTab
+      ApexTab,
+      VariablesTab,
     ];
   };
 }
@@ -404,6 +465,469 @@ __webpack_require__.r(__webpack_exports__);
   __init__: ['propertiesProvider'],
   propertiesProvider: ['type', _apexPropertiesProvider_js__WEBPACK_IMPORTED_MODULE_0__["default"]]
 });
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/events/EventDefinitionHelper.js":
+/*!*******************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/events/EventDefinitionHelper.js ***!
+  \*******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var EventDefinitionHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/EventDefinitionHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/EventDefinitionHelper.js");
+
+EventDefinitionHelper.getTerminationEventDefinition = function(element) {
+    return this.getEventDefinition(element, 'bpmn:TerminateEventDefinition');
+};
+
+module.exports = EventDefinitionHelper;
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/events/EventProps.js":
+/*!********************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/events/EventProps.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
+    isAny = __webpack_require__(/*! bpmn-js/lib/features/modeling/util/ModelingUtil */ "./node_modules/bpmn-js/lib/features/modeling/util/ModelingUtil.js").isAny,
+    getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").getBusinessObject,
+    eventDefinitionHelper = __webpack_require__(/*! ./EventDefinitionHelper */ "./apexPropertiesProvider/provider/parts/events/EventDefinitionHelper.js");
+
+var forEach = __webpack_require__(/*! lodash/forEach */ "./node_modules/lodash/forEach.js");
+
+var message = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/MessageEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/MessageEventDefinition.js"),
+    signal = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/SignalEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/SignalEventDefinition.js"),
+    error = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ErrorEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ErrorEventDefinition.js"),
+    escalation = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/EscalationEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/EscalationEventDefinition.js"),
+    timer = __webpack_require__(/*! ./TimerEventDefinition */ "./apexPropertiesProvider/provider/parts/events/TimerEventDefinition.js"),
+    compensation = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/CompensateEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/CompensateEventDefinition.js"),
+    condition = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ConditionalEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ConditionalEventDefinition.js"),
+    termination = __webpack_require__(/*! ./TerminationEventDefinition */ "./apexPropertiesProvider/provider/parts/events/TerminationEventDefinition.js");
+
+
+module.exports = function(group, element, bpmnFactory, elementRegistry, translate) {
+  var events = [
+    'bpmn:StartEvent',
+    'bpmn:EndEvent',
+    'bpmn:IntermediateThrowEvent',
+    'bpmn:BoundaryEvent',
+    'bpmn:IntermediateCatchEvent'
+  ];
+
+  // Message and Signal Event Definition
+  forEach(events, function(event) {
+    if (is(element, event)) {
+
+      var messageEventDefinition = eventDefinitionHelper.getMessageEventDefinition(element),
+          signalEventDefinition = eventDefinitionHelper.getSignalEventDefinition(element);
+
+      if (messageEventDefinition) {
+        message(group, element, bpmnFactory, messageEventDefinition, translate);
+      }
+
+      if (signalEventDefinition) {
+        signal(group, element, bpmnFactory, signalEventDefinition, translate);
+      }
+
+    }
+  });
+
+  // Special Case: Receive Task
+  if (is(element, 'bpmn:ReceiveTask')) {
+    message(group, element, bpmnFactory, getBusinessObject(element), translate);
+  }
+
+  // Error Event Definition
+  var errorEvents = [
+    'bpmn:StartEvent',
+    'bpmn:BoundaryEvent',
+    'bpmn:EndEvent'
+  ];
+
+  forEach(errorEvents, function(event) {
+    if (is(element, event)) {
+
+      var errorEventDefinition = eventDefinitionHelper.getErrorEventDefinition(element);
+
+      if (errorEventDefinition) {
+
+        error(group, element, bpmnFactory, errorEventDefinition, translate);
+      }
+    }
+  });
+
+  // Escalation Event Definition
+  var escalationEvents = [
+    'bpmn:StartEvent',
+    'bpmn:BoundaryEvent',
+    'bpmn:IntermediateThrowEvent',
+    'bpmn:EndEvent'
+  ];
+
+  forEach(escalationEvents, function(event) {
+    if (is(element, event)) {
+
+      var showEscalationCodeVariable = is(element, 'bpmn:StartEvent') || is(element, 'bpmn:BoundaryEvent');
+
+      // get business object
+      var escalationEventDefinition = eventDefinitionHelper.getEscalationEventDefinition(element);
+
+      if (escalationEventDefinition) {
+        escalation(group, element, bpmnFactory, escalationEventDefinition, showEscalationCodeVariable,
+          translate);
+      }
+    }
+
+  });
+
+  // Timer Event Definition
+  var timerEvents = [
+    'bpmn:StartEvent',
+    'bpmn:BoundaryEvent',
+    'bpmn:IntermediateCatchEvent'
+  ];
+
+  forEach(timerEvents, function(event) {
+    if (is(element, event)) {
+
+      // get business object
+      var timerEventDefinition = eventDefinitionHelper.getTimerEventDefinition(element);
+
+      if (timerEventDefinition) {
+        timer(group, element, bpmnFactory, timerEventDefinition, translate);
+      }
+    }
+  });
+
+  // Compensate Event Definition
+  var compensationEvents = [
+    'bpmn:EndEvent',
+    'bpmn:IntermediateThrowEvent'
+  ];
+
+  forEach(compensationEvents, function(event) {
+    if (is(element, event)) {
+
+      // get business object
+      var compensateEventDefinition = eventDefinitionHelper.getCompensateEventDefinition(element);
+
+      if (compensateEventDefinition) {
+        compensation(group, element, bpmnFactory, compensateEventDefinition, elementRegistry, translate);
+      }
+    }
+  });
+
+
+  // Conditional Event Definition
+  var conditionalEvents = [
+    'bpmn:StartEvent',
+    'bpmn:BoundaryEvent',
+    'bpmn:IntermediateThrowEvent',
+    'bpmn:IntermediateCatchEvent'
+  ];
+
+  if (isAny(element, conditionalEvents)) {
+
+    // get business object
+    var conditionalEventDefinition = eventDefinitionHelper.getConditionalEventDefinition(element);
+
+    if (conditionalEventDefinition) {
+      condition(group, element, bpmnFactory, conditionalEventDefinition, elementRegistry, translate);
+    }
+  }
+
+  // Termination Event Definition
+  var terminationEvents = [
+    'bpmn:EndEvent'
+  ];
+
+  forEach(terminationEvents, function(event) {
+    if (is(element, event)) {
+
+      // get business object
+      var terminationEventDefinition = eventDefinitionHelper.getTerminationEventDefinition(element);
+
+      if (terminationEventDefinition) {
+        termination(group, element, bpmnFactory, terminationEventDefinition, elementRegistry, translate);
+      }
+    }
+
+  });
+
+};
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/events/TerminationEventDefinition.js":
+/*!************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/events/TerminationEventDefinition.js ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var entryFactory = __webpack_require__(/*! bpmn-js-properties-panel/lib/factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js"),
+    cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js"),
+    UpdateBusinessObjectHandler = __webpack_require__(/*! bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler */ "./node_modules/bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler.js");
+const TimerEventDefinition = __webpack_require__(/*! ./TimerEventDefinition */ "./apexPropertiesProvider/provider/parts/events/TimerEventDefinition.js");
+
+module.exports = function(group, element, bpmnFactory, terminationEventDefinition, elementRegistry, translate) {
+
+    var getValue = function() {
+        return function(element) {
+            var processStatus = terminationEventDefinition.get('processStatus');
+
+            if (typeof processStatus === 'undefined') {
+                var command = cmdHelper.updateBusinessObject(element, terminationEventDefinition, { processStatus: 'completed' });
+                new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(command.context);
+            }
+            
+            return {
+                processStatus: processStatus || undefined
+            };
+        };
+    };
+
+    var setValue = function() {
+        return function(element, values) {
+
+            return cmdHelper.updateBusinessObject(element, terminationEventDefinition, { processStatus: values['processStatus'] });
+        };
+    };
+
+    group.entries.push(entryFactory.selectBox(translate, {
+        id: 'processStatus',
+        label: translate('Process status after termination'),
+        modelProperty: 'processStatus',
+        selectOptions: [
+            { value: 'completed', name: translate('Completed') },
+            { value: 'terminated', name: translate('Terminated') }
+        ],
+
+        get: getValue('processStatus'),
+        set: setValue('processStatus')
+    }));
+};
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/events/TimerEventDefinition.js":
+/*!******************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/events/TimerEventDefinition.js ***!
+  \******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var elementHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ElementHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ElementHelper.js"),
+    cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+
+var entryFactory = __webpack_require__(/*! bpmn-js-properties-panel/lib/factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js");
+
+/**
+ * Get the timer definition type for a given timer event definition.
+ *
+ * @param {ModdleElement<bpmn:TimerEventDefinition>} timer
+ *
+ * @return {string|undefined} the timer definition type
+ */
+function getTimerDefinitionType(timer) {
+
+  if (!timer) {
+    return;
+  }
+
+  var timeDate = timer.get('timeDate');
+  if (typeof timeDate !== 'undefined') {
+    return 'timeDate';
+  }
+
+  var timeCycle = timer.get('timeCycle');
+  if (typeof timeCycle !== 'undefined') {
+    return 'timeCycle';
+  }
+
+  var timeDuration = timer.get('timeDuration');
+  if (typeof timeDuration !== 'undefined') {
+    return 'timeDuration';
+  }
+}
+
+/**
+ * Get the actual timer event definition based on option, whether it's a getter
+ * to fetch the timer event definition or the exact event definition itself
+ *
+ * @param {ModdleElement<bpmn:TimerEventDefinition>|Function} timerOrFunction
+ * @param {Shape} element
+ * @param {HTMLElement} node
+ *
+ * @return ModdleElement<bpmn:TimerEventDefinition>
+ */
+function getTimerDefinition(timerOrFunction, element, node) {
+  if (typeof timerOrFunction === 'function') {
+    return timerOrFunction(element, node);
+  }
+
+  return timerOrFunction;
+}
+
+/**
+ * Creates 'bpmn:FormalExpression' element.
+ *
+ * @param {ModdleElement} parent
+ * @param {string} body
+ * @param {BpmnFactory} bpmnFactory
+ *
+ * @return {ModdleElement<bpmn:FormalExpression>} a formal expression
+ */
+function createFormalExpression(parent, body, bpmnFactory) {
+  body = body || undefined;
+  return elementHelper.createElement('bpmn:FormalExpression', { body: body }, parent, bpmnFactory);
+}
+
+function TimerEventDefinition(group, element, bpmnFactory, timerEventDefinition, translate, options) {
+
+  var selectOptions;
+
+    if (element.type === 'bpmn:StartEvent' || element.type === 'bpmn:IntermediateCatchEvent' || (element.type === 'bpmn:BoundaryEvent' && element.businessObject.cancelActivity)) {
+        selectOptions = [
+            { value: 'timeDate', name: translate('Date') },
+            { value: 'timeDuration', name: translate('Duration') }
+          ];
+    } else {
+        selectOptions = [
+            { value: 'timeDate', name: translate('Date') },
+            { value: 'timeDuration', name: translate('Duration') },
+            { value: 'timeCycle', name: translate('Cycle') }
+          ];
+    }
+
+  var prefix = options && options.idPrefix,
+      createTimerEventDefinition = options && options.createTimerEventDefinition;
+
+
+  group.entries.push(entryFactory.selectBox(translate, {
+    id: prefix + 'timer-event-definition-type',
+    label: translate('Timer Definition Type'),
+    selectOptions: selectOptions,
+    emptyParameter: true,
+    modelProperty: 'timerDefinitionType',
+
+    get: function(element, node) {
+      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
+
+      return {
+        timerDefinitionType: getTimerDefinitionType(timerDefinition) || ''
+      };
+    },
+
+    set: function(element, values, node) {
+      var props = {
+        timeDuration: undefined,
+        timeDate: undefined,
+        timeCycle: undefined
+      };
+
+
+      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
+          newType = values.timerDefinitionType;
+
+      if (!timerDefinition && typeof createTimerEventDefinition === 'function') {
+        timerDefinition = createTimerEventDefinition(element, node);
+      }
+
+      if (values.timerDefinitionType) {
+        var oldType = getTimerDefinitionType(timerDefinition);
+
+        var value;
+        if (oldType) {
+          var definition = timerDefinition.get(oldType);
+          value = definition.get('body');
+        }
+
+        props[newType] = createFormalExpression(timerDefinition, value, bpmnFactory);
+      }
+
+      return cmdHelper.updateBusinessObject(element, timerDefinition, props);
+    },
+
+    hidden: function(element, node) {
+      return getTimerDefinition(timerEventDefinition, element, node) === undefined;
+    }
+
+  }));
+
+
+  group.entries.push(entryFactory.textField(translate, {
+    id: prefix + 'timer-event-definition',
+    label: translate('Timer Definition'),
+    modelProperty: 'timerDefinition',
+
+    get: function(element, node) {
+      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
+          type = getTimerDefinitionType(timerDefinition),
+          definition = type && timerDefinition.get(type),
+          value = definition && definition.get('body');
+
+      return {
+        timerDefinition: value
+      };
+    },
+
+    set: function(element, values, node) {
+      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
+          type = getTimerDefinitionType(timerDefinition),
+          definition = type && timerDefinition.get(type);
+
+      if (definition) {
+        return cmdHelper.updateBusinessObject(element, definition, {
+          body: values.timerDefinition || undefined
+        });
+      }
+    },
+
+    validate: function(element, node) {
+      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
+          type = getTimerDefinitionType(timerDefinition),
+          definition = type && timerDefinition.get(type);
+
+      if (definition) {
+        var value = definition.get('body');
+        if (!value) {
+          return {
+            timerDefinition: translate('Must provide a value')
+          };
+        }
+      }
+    },
+
+    hidden: function(element, node) {
+      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
+
+      return !getTimerDefinitionType(timerDefinition);
+    }
+
+  }));
+
+}
+
+module.exports = TimerEventDefinition;
 
 
 /***/ }),
@@ -450,6 +974,1210 @@ __webpack_require__.r(__webpack_exports__);
       return idError ? { id: idError } : {};
     }
   }));
+});
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/custom/EntryFactory.js":
+/*!****************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/custom/EntryFactory.js ***!
+  \****************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var EntryFactory = __webpack_require__(/*! bpmn-js-properties-panel/lib/factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js");
+
+var getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").getBusinessObject;
+var dynamicTextBox = __webpack_require__(/*! ./dynamicTextBox */ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicTextBox.js");
+
+var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+
+// helper from default EntryFactory
+
+function ensureNotNull(prop) {
+  if (!prop) {
+    throw new Error(prop + ' must be set.');
+  }
+
+  return prop;
+}
+
+/**
+ * sets the default parameters which are needed to create an entry
+ *
+ * @param options
+ * @returns {{id: *, description: (*|string), get: (*|Function), set: (*|Function),
+ *            validate: (*|Function), html: string}}
+ */
+var setDefaultParameters = function(options) {
+
+  // default method to fetch the current value of the input field
+  var defaultGet = function(element) {
+    var bo = getBusinessObject(element),
+        res = {},
+        prop = ensureNotNull(options.modelProperty);
+    res[prop] = bo.get(prop);
+
+    return res;
+  };
+
+  // default method to set a new value to the input field
+  var defaultSet = function(element, values) {
+    var res = {},
+        prop = ensureNotNull(options.modelProperty);
+    if (values[prop] !== '') {
+      res[prop] = values[prop];
+    } else {
+      res[prop] = undefined;
+    }
+
+    return cmdHelper.updateProperties(element, res);
+  };
+
+  // default validation method
+  var defaultValidate = function() {
+    return {};
+  };
+
+  return {
+    id : options.id,
+    description : (options.description || ''),
+    get : (options.get || defaultGet),
+    set : (options.set || defaultSet),
+    validate : (options.validate || defaultValidate),
+    html: ''
+  };
+};
+
+// custom TextBox
+
+EntryFactory.dynamicTextBox = function(translate, options) {
+    return dynamicTextBox(translate, options, setDefaultParameters(options));
+}
+
+module.exports = EntryFactory;
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/custom/ExtensionElements.js":
+/*!*********************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/custom/ExtensionElements.js ***!
+  \*********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+
+var {getBusinessObject} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+
+var domQuery = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").query;
+    var domClosest = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").closest;
+    var {domify} = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+    var forEach = __webpack_require__(/*! lodash/forEach */ "./node_modules/lodash/forEach.js");
+
+var elementHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ElementHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ElementHelper.js");
+    var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+    var utils = __webpack_require__(/*! bpmn-js-properties-panel/lib/Utils */ "./node_modules/bpmn-js-properties-panel/lib/Utils.js");
+
+    var {escapeHTML} = utils;
+
+function getSelectBox(node, id) {
+  var currentTab = domClosest(node, 'div.bpp-properties-tab');
+  var query = `select[name=selectedExtensionElement]${id ? `[id=cam-extensionElements-${id}]` : ''}`;
+  return domQuery(query, currentTab);
+}
+
+function getSelected(node, id) {
+  var selectBox = getSelectBox(node, id);
+  return {
+    value: (selectBox || {}).value,
+    idx: (selectBox || {}).selectedIndex
+  };
+}
+
+function generateElementId(prefix) {
+  prefix += '_';
+  return utils.nextId(prefix);
+}
+
+var CREATE_EXTENSION_ELEMENT_ACTION = 'create-extension-element';
+    var REMOVE_EXTENSION_ELEMENT_ACTION = 'remove-extension-element';
+
+module.exports = function (element, bpmnFactory, options, translate) {
+
+  var {id} = options;
+      var prefix = options.prefix || 'elem';
+      var label = options.label || id;
+      var idGeneration = (options.idGeneration === false) ? options.idGeneration : true;
+      var businessObject = options.businessObject || getBusinessObject(element);
+      var {type} = options;
+
+  var modelProperty = options.modelProperty || 'id';
+
+  var getElements = options.getExtensionElements;
+
+  var createElement = options.createExtensionElement;
+      var canCreate = typeof createElement === 'function';
+
+  var removeElement = options.removeExtensionElement;
+      var canRemove = typeof removeElement === 'function';
+
+  var {onSelectionChange} = options;
+  var {onEntryMoved} = options;
+
+  var hideElements = options.hideExtensionElements;
+      var canBeHidden = typeof hideElements === 'function';
+
+  var {setOptionLabelValue} = options;
+
+  var defaultSize = options.size || 5;
+      var {resizable} = options;
+
+  var reference = options.reference || undefined;
+
+  var selectionChanged = function (element, node, event, scope) {
+    if (typeof onSelectionChange === 'function') {
+      return onSelectionChange(element, node, event, scope);
+    }
+  };
+
+  var entryMoved = function (element) {
+    if (typeof onEntryMoved === 'function') {
+      return onEntryMoved(element);
+    }
+  };
+
+  var createOption = function (value) {
+    return `<option value="${escapeHTML(value)}" data-value data-name="extensionElementValue">${escapeHTML(value)}</option>`;
+  };
+
+  var initSelectionSize = function (selectBox, optionsLength) {
+    if (resizable) {
+      selectBox.size = optionsLength > defaultSize ? optionsLength : defaultSize;
+    }
+  };
+
+  return {
+    id: id,
+    type: type,
+    html: `<div class="bpp-row bpp-element-list" ${ 
+            canBeHidden ? 'data-show="hideElements"' : ''}>` +
+            `<label for="cam-extensionElements-${escapeHTML(id)}">${escapeHTML(label)}</label>` +
+            '<div class="bpp-field-wrapper">' +
+              `<select id="cam-extensionElements-${escapeHTML(id)}"` +
+                      'name="selectedExtensionElement" ' +
+                      `size="${escapeHTML(defaultSize)}" ` +
+                      'data-list-entry-container ' +
+                      'data-on-change="selectElement">' +
+              `</select>${ 
+              canCreate ? `${'<button class="action-button add" ' +
+                                   'id="cam-extensionElements-create-'}${escapeHTML(id)}" ` +
+                                   'data-action="createElement">' +
+                             '<span>+</span>' +
+                           '</button>' : '' 
+              }${canRemove ? `${'<button class="action-button clear" ' +
+                                   'id="cam-extensionElements-remove-'}${escapeHTML(id)}" ` +
+                                   'data-action="removeElement" ' +
+                                   'data-disable="disableRemove">' +
+                             '<span>-</span>' +
+                           '</button>' : '' 
+              }<button class="action-button down fa fa-arrow-down" id="cam-extensionElements-down-${escapeHTML(id)}" data-action="moveDown" data-disable="disableMoveDown"><span>d</span></button>` +
+              `<button class="action-button up fa fa-arrow-up" id="cam-extensionElements-up-${escapeHTML(id)}" data-action="moveUp" data-disable="disableMoveUp"><span>u</span></button>` +
+            '</div>' +
+          '</div>',
+
+    get: function (element, node) {
+      var elements = getElements(element, node);
+
+      var result = [];
+      forEach(elements, function (elem) {
+        result.push({
+          extensionElementValue: elem.get(modelProperty)
+        });
+      });
+
+      var selectBox = getSelectBox(node.parentNode, id);
+      initSelectionSize(selectBox, result.length);
+
+      return result;
+    },
+
+    set: function (element, values, node) {
+      var action = this.__action;
+      delete this.__action;
+
+      businessObject = businessObject || getBusinessObject(element);
+
+      var bo =
+        (reference && businessObject.get(reference)) ? businessObject.get(reference) : businessObject;
+
+      var extensionElements = bo.get('extensionElements');
+
+      if (action.id === CREATE_EXTENSION_ELEMENT_ACTION) {
+        var commands = [];
+        if (!extensionElements) {
+          extensionElements = elementHelper.createElement('bpmn:ExtensionElements', { values: [] }, bo, bpmnFactory);
+          commands.push(cmdHelper.updateBusinessObject(element, bo, { extensionElements: extensionElements }));
+        }
+        commands.push(createElement(element, extensionElements, action.value, node));
+        return commands;
+
+      } else if (action.id === REMOVE_EXTENSION_ELEMENT_ACTION) {
+        return removeElement(element, extensionElements, action.value, action.idx, node);
+      }
+
+    },
+
+    createListEntryTemplate: function (value, index, selectBox) {
+      initSelectionSize(selectBox, selectBox.options.length + 1);
+      return createOption(value.extensionElementValue);
+    },
+
+    deselect: function (element, node) {
+      var selectBox = getSelectBox(node, id);
+      selectBox.selectedIndex = -1;
+    },
+
+    getSelected: function (element, node) {
+      return getSelected(node, id);
+    },
+
+    setControlValue: function (element, node, option, property, value, idx) {
+      node.value = value;
+
+      if (!setOptionLabelValue) {
+        node.text = value;
+      } else {
+        setOptionLabelValue(element, node, option, property, value, idx);
+      }
+    },
+
+    createElement: function (element, node) {
+
+      // create option template
+      var generatedId;
+      if (idGeneration) {
+        generatedId = generateElementId(prefix);
+      }
+
+      var selectBox = getSelectBox(node, id);
+      var template = domify(createOption(generatedId));
+
+      // add new empty option as last child element
+      selectBox.appendChild(template);
+
+      // select last child element
+      selectBox.lastChild.selected = 'selected';
+      selectionChanged(element, node);
+
+      // update select box size
+      initSelectionSize(selectBox, selectBox.options.length);
+
+      this.__action = {
+        id: CREATE_EXTENSION_ELEMENT_ACTION,
+        value: generatedId
+      };
+
+      return true;
+    },
+
+    removeElement: function (element, node) {
+      var selection = getSelected(node, id);
+
+      var selectBox = getSelectBox(node, id);
+      selectBox.removeChild(selectBox.options[selection.idx]);
+
+      // update select box size
+      initSelectionSize(selectBox, selectBox.options.length);
+
+      this.__action = {
+        id: REMOVE_EXTENSION_ELEMENT_ACTION,
+        value: selection.value,
+        idx: selection.idx
+      };
+
+      return true;
+    },
+
+    hideElements: function (element, entryNode, node, scopeNode) {
+      return !hideElements(element, entryNode, node, scopeNode);
+    },
+
+    disableRemove: function (element, entryNode, node, scopeNode) {
+      return (getSelected(entryNode, id) || {}).idx < 0;
+    },
+
+    selectElement: selectionChanged,
+
+    moveUp: function (element, node) {
+        var selection = getSelected(node, id);
+            var selectBox = getSelectBox(node, id);
+            var elements = getElements(element, node);
+
+        var prevOption = selectBox.options[selection.idx - 1];
+            var currentOption = selectBox.options[selection.idx];
+
+        var prevElement = elements[prevOption.index];
+            var currentElement = elements[currentOption.index];
+
+        elements[prevOption.index] = currentElement;
+        elements[currentOption.index] = prevElement;
+
+        currentOption.parentNode.insertBefore(currentOption, prevOption);    
+        
+        entryMoved(element);
+    },
+
+    disableMoveUp: function (element, node) {
+        var selection = getSelected(node, id);
+            var selectBox = getSelectBox(node, id);
+
+        return !(selectBox && selection && selectBox.options[selection.idx - 1]);
+    },
+
+    moveDown: function (element, node) {
+        var selection = getSelected(node, id);
+            var selectBox = getSelectBox(node, id);
+            var elements = getElements(element, node);
+
+        var nextOption = selectBox.options[selection.idx + 1];
+            var currentOption = selectBox.options[selection.idx];
+
+        var nextElement = elements[nextOption.index];
+            var currentElement = elements[currentOption.index];
+
+        elements[nextOption.index] = currentElement;
+        elements[currentOption.index] = nextElement;
+
+        currentOption.parentNode.insertBefore(nextOption, currentOption);
+
+        entryMoved(element);
+    },
+
+    disableMoveDown: function (element, node) {
+        var selection = getSelected(node, id);
+            var selectBox = getSelectBox(node, id);
+
+        return !(selectBox && selection && selectBox.options[selection.idx + 1] && selection.idx > -1);
+    }
+  };
+};
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicEntryFieldDescription.js":
+/*!********************************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicEntryFieldDescription.js ***!
+  \********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var domify = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").domify,
+    domClasses = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").classes,
+    domEvent = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").event;
+
+var escapeHTML = __webpack_require__(/*! bpmn-js-properties-panel/lib/Utils */ "./node_modules/bpmn-js-properties-panel/lib/Utils.js").escapeHTML;
+
+var MAX_DESCRIPTION_LENGTH = 200;
+
+/**
+ * Create a linkified and HTML escaped entry field description.
+ *
+ * As a special feature, this description may contain both markdown,
+ * plain <a href> links and <br />
+ *
+ * @param {string} description
+ * @param {object} [options]
+ * @param {string} [options.show] - name of callback to determine whether description is shown
+ */
+module.exports = function entryFieldDescription(translate, description, dataValueDescription, options) {
+  var show = options && options.show;
+
+  // we tokenize the description to extract text, HTML and markdown links
+  // text, links and new lines are handled seperately
+
+  var escaped = [];
+
+  // match markdown [{TEXT}]({URL}) and HTML links <a href="{URL}">{TEXT}</a>
+  var pattern = /(?:\[([^\]]+)\]\((https?:\/\/[^)]+)\))|(?:<a href="(https?:\/\/[^"]+)">(.+?(?=<\/))<\/a>)/gi;
+
+  var index = 0;
+  var match;
+  var link, text;
+
+  if (description) {
+    while ((match = pattern.exec(description))) {
+
+      // escape + insert text before match
+      if (match.index > index) {
+        escaped.push(escapeText(description.substring(index, match.index)));
+      }
+
+      link = match[2] && encodeURI(match[2]) || match[3];
+      text = match[1] || match[4];
+
+      // insert safe link
+      escaped.push('<a href="' + link + '" target="_blank">' + escapeText(text) + '</a>');
+
+      index = match.index + match[0].length;
+    }
+
+    // escape and insert text after last match
+    if (index < description.length) {
+      escaped.push(escapeText(description.substring(index)));
+    }
+
+    description = escaped.join('');
+  }
+
+  var html = domify(
+    '<div class="bpp-field-description description description--expanded"' +
+    (show ? 'data-show="' + show + '">' : '>') +
+    '</div>'
+  );
+
+  var descriptionText = domify('<span class="description__text"' + (dataValueDescription ? 'data-value="' + dataValueDescription + '"' : '') + '>' + description + '</span>');
+
+  html.appendChild(descriptionText);
+
+  function toggleExpanded(expanded) {
+    if (expanded) {
+      domClasses(html).add('description--expanded');
+
+      descriptionText.textContent = description + ' ';
+
+      expand.textContent = translate('Less');
+    } else {
+      domClasses(html).remove('description--expanded');
+
+      descriptionText.textContent = descriptionShortened + ' ... ';
+
+      expand.textContent = translate('More');
+    }
+  }
+
+  var descriptionShortened,
+      expand,
+      expanded = false;
+
+  if (description && description.length > MAX_DESCRIPTION_LENGTH) {
+    descriptionShortened = description.slice(0, MAX_DESCRIPTION_LENGTH);
+
+    expand = domify(
+      '<span class="bpp-entry-link description__expand">' +
+        translate('More') +
+      '</span>'
+    );
+
+    domEvent.bind(expand, 'click', function() {
+      expanded = !expanded;
+
+      toggleExpanded(expanded);
+    });
+
+    html.appendChild(expand);
+
+    toggleExpanded(expanded);
+  }
+
+  return html;
+};
+
+function escapeText(text) {
+  var match, index = 0, escaped = [];
+
+  // match new line <br/> <br /> <br.... /> etc.
+  var pattern = /<br\s*\/?>/gi;
+
+  while ((match = pattern.exec(text))) {
+
+    if (match.index > index) {
+      escaped.push(escapeHTML(text.substring(index, match.index)));
+    }
+
+    escaped.push('<br />');
+
+    index = match.index + match[0].length;
+  }
+
+  if (index < text.length) {
+    escaped.push(escapeHTML(text.substring(index)));
+  }
+
+  return escaped.join('');
+}
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicTextBox.js":
+/*!******************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicTextBox.js ***!
+  \******************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var domify = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").domify;
+
+var escapeHTML = __webpack_require__(/*! bpmn-js-properties-panel/lib/Utils */ "./node_modules/bpmn-js-properties-panel/lib/Utils.js").escapeHTML;
+
+var entryFieldDescription = __webpack_require__(/*! ./dynamicEntryFieldDescription */ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicEntryFieldDescription.js");
+
+
+var textBox = function(translate, options, defaultParameters) {
+
+  var resource = defaultParameters,
+      label = options.label || resource.id,
+      canBeShown = !!options.show && typeof options.show === 'function',
+      description = options.description,
+      dataValueLabel = options.dataValueLabel,
+      dataValueDescription = options.dataValueDescription;
+
+  resource.html =
+    domify('<label for="camunda-' + escapeHTML(resource.id) + '" ' +
+    (canBeShown ? 'data-show="isShown"' : '') +
+    (dataValueLabel ? 'data-value="' + dataValueLabel + '"' : '') +
+    '>' + label + '</label>' +
+    '<div class="bpp-field-wrapper" ' +
+    (canBeShown ? 'data-show="isShown"' : '') +
+    '>' +
+      '<div contenteditable="true" id="camunda-' + escapeHTML(resource.id) + '" ' +
+            'name="' + escapeHTML(options.modelProperty) + '" />' +
+    '</div>');
+
+  // add description below text box entry field
+  if (description || dataValueDescription) {
+    resource.html.appendChild(entryFieldDescription(translate, description, dataValueDescription, { show: canBeShown && 'isShown' }));
+  }
+
+  if (canBeShown) {
+    resource.isShown = function() {
+      return options.show.apply(resource, arguments);
+    };
+  }
+
+  resource.cssClasses = ['bpp-textbox'];
+
+  return resource;
+};
+
+module.exports = textBox;
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/eventProcVarProps.js":
+/*!**************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/eventProcVarProps.js ***!
+  \**************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
+var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
+    getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").getBusinessObject;
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (function (element, bpmnFactory, elementRegistry, translate) {
+
+  if (
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+  ) {
+
+    if (getBusinessObject(element).eventDefinitions && getBusinessObject(element).eventDefinitions.some(e => e.$type == 'bpmn:TimerEventDefinition')) {
+        return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
+            type1: 'BeforeEvent', label1: 'Before Event',
+            type2: 'OnEvent', label2: 'On Event'
+        });
+    }
+    else {
+        return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
+            type1: 'OnEvent', label1: 'On Event'
+        });
+    }
+  }
+});
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/gatewayProcVarProps.js":
+/*!****************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/gatewayProcVarProps.js ***!
+  \****************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
+var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is;
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (function (element, bpmnFactory, elementRegistry, translate) {
+
+  if (
+    is(element, 'bpmn:ExclusiveGateway') ||
+    is(element, 'bpmn:ParallelGateway') ||
+    is(element, 'bpmn:InclusiveGateway') ||
+    is(element, 'bpmn:EventBasedGateway')
+  ) {
+
+    // opening gateway
+    if (element.incoming.length == 1 && element.outgoing.length > 1) {
+        return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
+            type1: 'BeforeSplit', label1: 'Before Split'
+          });    
+    }
+    // closing gateway
+    else if (element.incoming.length > 1 && element.outgoing.length == 1) {
+        return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
+            type1: 'AfterMerge', label1: 'After Merge'
+          });
+    }
+    else if (element.incoming.length > 1 && element.outgoing.length > 1) {
+        return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
+            type1: 'AfterMerge', label1: 'After Merge',
+            type2: 'BeforeSplit', label2: 'Before Split'
+          });
+    }
+  }
+});
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/helper/validateXML.js":
+/*!***************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/helper/validateXML.js ***!
+  \***************************************************************************************/
+/*! exports provided: removeInvalidExtensionsElements */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeInvalidExtensionsElements", function() { return removeInvalidExtensionsElements; });
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var bpmn_js_properties_panel_lib_cmd_UpdateBusinessObjectListHandler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectListHandler */ "./node_modules/bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectListHandler.js");
+/* harmony import */ var bpmn_js_properties_panel_lib_cmd_UpdateBusinessObjectListHandler__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_cmd_UpdateBusinessObjectListHandler__WEBPACK_IMPORTED_MODULE_1__);
+var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
+    extensionElementsHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper.js");
+
+
+
+
+
+function removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry) {
+
+    var elements = canvas.getRootElement().children;
+  
+    elements.forEach(element => {
+  
+      var filter = [];
+      
+      if (
+        is(element, 'bpmn:ExclusiveGateway') ||
+        is(element, 'bpmn:ParallelGateway') ||
+        is(element, 'bpmn:InclusiveGateway') ||
+        is(element, 'bpmn:EventBasedGateway')
+      ) {
+        // opening gateway
+        if (element.incoming.length == 1 && element.outgoing.length > 1) {
+          filter.push('apex:AfterMerge');
+        }
+        // closing gateway
+        else if (element.incoming.length > 1 && element.outgoing.length == 1) {
+          filter.push('apex:BeforeSplit');
+        }
+        else if (element.incoming.length == 1 && element.outgoing.length == 1) {
+            filter.push('apex:AfterMerge');
+            filter.push('apex:BeforeSplit');
+        }
+      }
+      else if (
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+      ) {
+        // not timer event
+        if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element).eventDefinitions === undefined) {
+          filter.push('apex:BeforeEvent');
+        }
+      }
+  
+      if (filter.length > 0) {
+        var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element);
+        var toRemove = bo.extensionElements && bo.extensionElements.values.filter(e => filter.includes(e.$type));
+        
+        if (toRemove && toRemove.length > 0) {
+            toRemove.forEach(e => {
+                var command = extensionElementsHelper.removeEntry(bo, element, e);
+                new bpmn_js_properties_panel_lib_cmd_UpdateBusinessObjectListHandler__WEBPACK_IMPORTED_MODULE_1___default.a(elementRegistry, bpmnFactory).execute(command.context);
+            })
+        }
+      }
+    });
+  }
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/procVarDetailProps.js":
+/*!***************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/procVarDetailProps.js ***!
+  \***************************************************************************************/
+/*! exports provided: procVarDetailProps */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "procVarDetailProps", function() { return procVarDetailProps; });
+/* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
+var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
+    entryFactory = __webpack_require__(/*! ./custom/EntryFactory */ "./apexPropertiesProvider/provider/parts/process_variables/custom/EntryFactory.js"),
+    cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+
+
+
+var EXPRESSION_DESCRIPTION = {
+    static: 'Static value',
+    processVariable: 'Name of the Process Variable',
+    // pageItem: 'Name of the APEX Page Item',
+    sqlQuerySingle: 'SQL query returning a single value',
+    sqlQueryList: 'SQL query returning a colon delimited list',
+    plsqlExpression: 'Expression returning a value',
+    plsqlFunctionBody: 'Function Body returning a value'
+}
+
+var getProperty = function(property) {
+    return function(element, node) {
+
+        var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+
+        return {
+            [property]: (entry && entry.get(property)) || undefined,
+            varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
+        }
+    }
+}
+
+var setProperty = function() {
+    return function(element, values, node) {
+    var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+
+    return cmdHelper.updateBusinessObject(element, entry, values);
+    }
+}
+
+function procVarDetailProps(element, bpmnFactory, translate) {
+
+    var procVarProps = [];
+
+    if (
+        // task elements
+        is(element, 'bpmn:Task') ||
+        is(element, 'bpmn:UserTask') ||
+        is(element, 'bpmn:ScriptTask') ||
+        is(element, 'bpmn:ServiceTask') ||
+        is(element, 'bpmn:ManualTask') ||
+        // gateway elements
+        is(element, 'bpmn:ExclusiveGateway') ||
+        is(element, 'bpmn:ParallelGateway') ||
+        is(element, 'bpmn:InclusiveGateway') ||
+        is(element, 'bpmn:EventBasedGateway') ||
+        // event elements
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+      ) {
+        
+        // name field
+        procVarProps.push(
+            entryFactory.textField(translate, {
+                id: 'varName',
+                description: 'Variable name',
+                label: 'Name',
+                modelProperty: 'varName',
+
+                get: getProperty('varName'),
+
+                set: setProperty()
+            })
+        );
+
+        // datatype field
+        procVarProps.push(
+            entryFactory.selectBox(translate, {
+                id: 'varDataType',
+                description: 'Data Type',
+                label: 'Data Type',
+                modelProperty: 'varDataType',
+
+                get: getProperty('varDataType'),
+
+                set: setProperty(),
+
+                selectOptions: [
+                    {name: 'Varchar2', value: 'varchar2'},
+                    {name: 'Number', value: 'number'},
+                    {name: 'Date', value: 'date'},
+                    {name: 'Clob', value: 'clob'},
+                ]
+            })
+        );
+
+        // expression type
+        procVarProps.push(
+            entryFactory.selectBox(translate, {
+                id: 'varExpressionType',
+                label: 'Expression Type',
+                modelProperty: 'varExpressionType',
+
+                get: getProperty('varExpressionType'),
+
+                set: setProperty(),
+
+                selectOptions: [
+                    {name: 'Static', value: 'static'},
+                    {name: 'Process Variable', value: 'processVariable'},
+                    // {name: 'Page Item', value: 'pageItem'},
+                    {name: 'SQL query (single value)', value: 'sqlQuerySingle'},
+                    {name: 'SQL query (colon delimited list)', value: 'sqlQueryList'},
+                    {name: 'Expression', value: 'plsqlExpression'},
+                    {name: 'Function Body', value: 'plsqlFunctionBody'},
+                ]
+            })
+        );
+
+        // expression
+        procVarProps.push(
+            entryFactory.dynamicTextBox(translate, {
+                id: 'varExpression',
+                label: 'Expression',
+                modelProperty: 'varExpression',
+                dataValueDescription: 'varExpressionDynamicDescription',
+
+                get: getProperty('varExpression'),
+
+                set: setProperty()
+            })
+        );
+    }
+
+    return procVarProps;
+}
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js":
+/*!*********************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js ***!
+  \*********************************************************************************/
+/*! exports provided: isSelected, getSelectedEntry, procVarLists */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSelected", function() { return isSelected; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSelectedEntry", function() { return getSelectedEntry; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "procVarLists", function() { return procVarLists; });
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+
+
+var extensionElementsEntry = __webpack_require__(/*! ./custom/ExtensionElements */ "./apexPropertiesProvider/provider/parts/process_variables/custom/ExtensionElements.js");
+var extensionElementsHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper.js");
+var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+var elementHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/ElementHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ElementHelper.js");
+
+const TYPE_PROCESS_VARIABLE = 'apex:ProcessVariable';
+var procVarProps = [];
+
+function getEntries(element, type) {
+  var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element);
+  return bo &&
+    extensionElementsHelper.getExtensionElements(bo, `apex:${type}`) &&
+    extensionElementsHelper.getExtensionElements(bo, `apex:${type}`)[0] ? extensionElementsHelper.getExtensionElements(bo, `apex:${type}`)[0]
+        .procVars : [];
+}
+
+function isSelected(element, node) {
+  return typeof getSelectedEntry(element, node) !== 'undefined';
+}
+
+function getSelectedEntry(element, node) {
+  var selection;
+  var entry;
+
+  if (element && procVarProps) {
+    procVarProps.forEach((e) => {
+      if (e.getSelected(element, node).idx > -1) {
+        selection = e.getSelected(element, node);
+        entry = getEntries(element, e.id)[selection.idx];
+      }
+    });
+  }
+
+  return entry;
+}
+
+var setOptionLabelValue = function (type) {
+  return function (element, node, option, property, value, idx) {
+    var entries = getEntries(element, type);
+    var entry = entries[idx];
+
+    var label = entry ? entry.get('varName') +
+        (entry.get('varExpression') && ` : ${entry.get('varExpression')}`) : '';
+
+    option.text = label;
+    option.value = entry && entry.get('varName');
+  };
+};
+
+var newElement = function (bpmnFactory, type, props) {
+  return function (element, extensionElements, values) {
+    var commands = [];
+
+    var container =
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      ) &&
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      )[0];
+
+    if (!container) {
+      container = elementHelper.createElement(
+        `apex:${type}`,
+        {},
+        extensionElements,
+        bpmnFactory
+      );
+      commands.push(
+        cmdHelper.addElementsTolist(element, extensionElements, 'values', [
+          container,
+        ])
+      );
+    }
+
+    var index =
+      (container.procVars && String(container.procVars.length)) || '0';
+    var re = new RegExp(`${props.varName}_\\d$`);
+    var newNumber =
+      (container.procVars &&
+        container.procVars
+          .filter(e => e.varName.match(re))
+          .map(e => parseInt(e.varName.split('_')[1]))
+          .reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
+
+    values = {
+      varSequence: String(index),
+      varName: `${props.varName}_${newNumber}`,
+      varDataType: props.varDataType,
+      varExpression: props.varExpression,
+      varExpressionType: props.varExpressionType,
+    };
+
+    var newElem = elementHelper.createElement(
+      TYPE_PROCESS_VARIABLE,
+      values,
+      container,
+      bpmnFactory
+    );
+    commands.push(
+      cmdHelper.addElementsTolist(element, container, 'procVars', [newElem])
+    );
+
+    return commands;
+  };
+};
+
+var removeElement = function (type) {
+  return function (element, extensionElements, value, idx) {
+    var container =
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      ) &&
+      extensionElementsHelper.getExtensionElements(
+        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
+        `apex:${type}`
+      )[0];
+
+    var entries = getEntries(element, type);
+    var entry = entries[idx];
+    if (entry) {
+      var command =
+        container.procVars.length > 1 ? cmdHelper.removeElementsFromList(
+              element,
+              container,
+              'procVars',
+              'extensionElements',
+              [entry]
+            ) : cmdHelper.removeElementsFromList(
+              element,
+              extensionElements,
+              'values',
+              'extensionElements',
+              [container]
+            );
+      return command;
+    }
+  };
+};
+
+function resetSequences(element, type) {
+  var entries = getEntries(element, type);
+  entries.forEach((e, i) => e.set('varSequence', String(i)));
+}
+
+// function deleteInvalidProperties(element, bpmnFactory, elementRegistry, type) {
+//     var bo = getBusinessObject(element);
+//     var toRemove = bo.extensionElements && bo.extensionElements.values.filter(e => e.$type != 'apex:' + type);
+//     if (toRemove) {
+//         var command = extensionElementsHelper.removeEntry(bo, element, toRemove[0]);
+//         new UpdateBusinessObjectListHandler(elementRegistry, bpmnFactory).execute(command.context);
+//     }
+// }
+
+function procVarLists(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  translate,
+  options
+) {
+  procVarProps = [];
+
+  if (options.type1) {
+    var { type1 } = options;
+    var { label1 } = options;
+
+    // create first list element
+    var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+      id: type1,
+      label: label1,
+
+      createExtensionElement: newElement(bpmnFactory, type1, {
+        varName: type1,
+        varDataType: 'varchar2',
+        varExpression: '',
+        varExpressionType: 'static',
+      }),
+      removeExtensionElement: removeElement(type1),
+
+      getExtensionElements: function (element) {
+        return getEntries(element, type1);
+      },
+
+      onSelectionChange: function (element, node) {
+        if (postProcessVariables) postProcessVariables.deselect(element, node);
+      },
+
+      setOptionLabelValue: setOptionLabelValue(type1),
+
+      onEntryMoved: resetSequences(element, type1),
+    });
+
+    procVarProps.push(preProcessVariables);
+  }
+  // else {
+  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type2);
+  // }
+
+  if (options.type2) {
+    var { type2 } = options;
+    var { label2 } = options;
+
+    // create second list element
+    var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+      id: type2,
+      label: label2,
+
+      createExtensionElement: newElement(bpmnFactory, type2, {
+        varName: type2,
+        varDataType: 'varchar2',
+        varExpression: '',
+        varExpressionType: 'static',
+      }),
+
+      removeExtensionElement: removeElement(type2),
+
+      getExtensionElements: function (element) {
+        return getEntries(element, type2);
+      },
+
+      onSelectionChange: function (element, node) {
+        if (preProcessVariables) preProcessVariables.deselect(element, node);
+      },
+
+      setOptionLabelValue: setOptionLabelValue(type2),
+
+      onEntryMoved: resetSequences(element, type2),
+    });
+
+    procVarProps.push(postProcessVariables);
+  }
+  // else {
+  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type1);
+  // }
+
+  return procVarProps;
+}
+
+
+/***/ }),
+
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/taskProcVarProps.js":
+/*!*************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/taskProcVarProps.js ***!
+  \*************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
+var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is;
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (function (element, bpmnFactory, elementRegistry, translate) {
+
+  if (
+    is(element, 'bpmn:Task') ||
+    is(element, 'bpmn:UserTask') ||
+    is(element, 'bpmn:ScriptTask') ||
+    is(element, 'bpmn:ServiceTask') ||
+    is(element, 'bpmn:ManualTask')
+  ) {
+
+    return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
+      type1: 'BeforeTask', label1: 'Before Task',
+      type2: 'AfterTask', label2: 'After Task'
+    });
+  }
 });
 
 
@@ -538,11 +2266,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js");
 /* harmony import */ var bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-/* harmony import */ var _lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../lib/formsHelper */ "./lib/formsHelper.js");
-
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../lib/formsHelper */ "./lib/formsHelper.js");
 
 
 
@@ -550,31 +2275,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (element, translate) {
   const serviceTaskEngine = '[name="engine"]';
   const engineNo = 0;
-  const serviceTaskType = '[name="serviceTaskType"]';
-  const typePlsql = 0;
-  const typeEmail = 1;
   const serviceTaskProps = [];
 
-  if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["is"])(element, 'bpmn:ServiceTask')) {
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
-        id: 'serviceTaskType',
-        description: 'choose the Type of the Service Task',
-        modelProperty: 'serviceTaskType',
-        selectOptions: [
-          { name: 'Run PL/SQL Code', value: 'PL/SQL' },
-          { name: 'Send Mail using APEX Template', value: 'Template' }
-        ],
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            'serviceTaskType': values.serviceTaskType
-          });
-        }
-      })
-    );
-
-    // engine: if 'yes' then add 'autoBinds' 
+  if (Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(element, 'bpmn:ServiceTask')) {
+    // if 'yes' then add 'autoBinds' 
     serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'engine',
@@ -584,10 +2288,7 @@ __webpack_require__.r(__webpack_exports__);
         selectOptions: [
           { name: 'No', value: 'false' },
           { name: 'Yes', value: 'true' }
-        ],
-        hidden: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
+        ]
       })
     );
 
@@ -597,19 +2298,11 @@ __webpack_require__.r(__webpack_exports__);
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
         label: 'PL/SQL Code',
-        modelProperty: 'plsqlCode',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            plsqlCode: values.plsqlCode
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typePlsql);
-        }
+        modelProperty: 'plsqlCode'
       })
     );
 
+    // only shown, when APEX_EXEC is used
     serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'autoBinds',
@@ -621,119 +2314,10 @@ __webpack_require__.r(__webpack_exports__);
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail)
-            || Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskEngine, engineNo);
+          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__["isOptionSelected"])(serviceTaskEngine, engineNo);
         }
-      })
-    );
-
-    // Send Mail Using Template
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'applicationId',
-        description: 'Enter the Application ID.',
-        label: 'Application ID',
-        modelProperty: 'applicationId',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            applicationId: values.applicationId
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'pageId',
-        description: 'Enter the Page ID.',
-        label: 'Page ID',
-        modelProperty: 'pageId',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            pageId: values.pageId
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'username',
-        description: 'Enter the Username.',
-        label: 'Username',
-        modelProperty: 'username',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            username: values.username
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'templateIdentifier',
-        description: 'Enter the Template Identifier.',
-        label: 'Template Identifier',
-        modelProperty: 'templateIdentifier',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            templateIdentifier: values.templateIdentifier
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'emailFrom',
-        description: 'Enter the email sender.',
-        label: 'Email From',
-        modelProperty: 'emailFrom',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            emailFrom: values.emailFrom
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
-    );
-
-    serviceTaskProps.push(
-      bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
-        id: 'emailTo',
-        description: 'Enter the email recipient.',
-        label: 'Email To',
-        modelProperty: 'emailTo',
-        set: function (element, values, node) {
-          var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__["getBusinessObject"])(element);
-          return bpmn_js_properties_panel_lib_helper_CmdHelper__WEBPACK_IMPORTED_MODULE_1___default.a.updateBusinessObject(element, bo, {
-            emailTo: values.emailTo
-          });
-        },
-        show: function () {
-          return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_3__["isOptionSelected"])(serviceTaskType, typeEmail);
-        }
-      })
+      }
+      )
     );
   }
 
@@ -846,6 +2430,382 @@ module.exports = function () {
 
 /***/ }),
 
+/***/ "./custom/palette/PaletteProvider.js":
+/*!*******************************************!*\
+  !*** ./custom/palette/PaletteProvider.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PaletteProvider; });
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll_ZoomScroll__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll/ZoomScroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/ZoomScroll.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+
+
+  
+/**
+ * A palette provider for BPMN 2.0 elements.
+ */
+function PaletteProvider(
+    palette, create, elementFactory,
+    spaceTool, lassoTool, handTool,
+    globalConnect, translate, commandStack,
+    eventBus, canvas) {
+
+  this._palette = palette;
+  this._create = create;
+  this._elementFactory = elementFactory;
+  this._spaceTool = spaceTool;
+  this._lassoTool = lassoTool;
+  this._handTool = handTool;
+  this._globalConnect = globalConnect;
+  this._translate = translate;
+  this._commandStack = commandStack;
+  this._eventBus = eventBus;
+  this._canvas = canvas;
+
+  palette.registerProvider(this);
+}
+
+PaletteProvider.$inject = [
+  'palette',
+  'create',
+  'elementFactory',
+  'spaceTool',
+  'lassoTool',
+  'handTool',
+  'globalConnect',
+  'translate',
+  'commandStack',
+  'eventBus',
+  'canvas'
+];
+
+
+PaletteProvider.prototype.getPaletteEntries = function (element) {
+
+  var actions = {};
+  var create = this._create;
+  var elementFactory = this._elementFactory;
+  var spaceTool = this._spaceTool;
+  var lassoTool = this._lassoTool;
+  var handTool = this._handTool;
+  var globalConnect = this._globalConnect;
+  var translate = this._translate;
+  var commandStack = this._commandStack;
+  var eventBus = this._eventBus;
+  var canvas = this._canvas;
+
+  var zoomScroll = new diagram_js_lib_navigation_zoomscroll_ZoomScroll__WEBPACK_IMPORTED_MODULE_0__["default"]({}, eventBus, canvas);
+
+  function createAction(type, group, className, title, options) {
+
+    function createListener(event) {
+      var shape = elementFactory.createShape(Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])({ type: type }, options));
+
+      if (options) {
+        shape.businessObject.di.isExpanded = options.isExpanded;
+      }
+
+      create.start(event, shape);
+    }
+
+    var shortType = type.replace(/^bpmn:/, '');
+
+    return {
+      group: group,
+      className: className,
+      title: title || translate('Create {type}', { type: shortType }),
+      action: {
+        dragstart: createListener,
+        click: createListener
+      }
+    };
+  }
+
+  function createSubprocess(event) {
+    var subProcess = elementFactory.createShape({
+      type: 'bpmn:SubProcess',
+      x: 0,
+      y: 0,
+      isExpanded: true
+    });
+
+    var startEvent = elementFactory.createShape({
+      type: 'bpmn:StartEvent',
+      x: 40,
+      y: 82,
+      parent: subProcess
+    });
+
+    create.start(event, [subProcess, startEvent], {
+      hints: {
+        autoSelect: [startEvent]
+      }
+    });
+  }
+
+  function createParticipant(event) {
+    create.start(event, elementFactory.createParticipantShape());
+  }
+
+  Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {    
+    'hand-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-hand-tool',
+      title: translate('Activate the hand tool'),
+      action: {
+        click: function (event) {
+          handTool.activateHand(event);
+        }
+      }
+    },
+    'lasso-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-lasso-tool',
+      title: translate('Activate the lasso tool'),
+      action: {
+        click: function (event) {
+          lassoTool.activateSelection(event);
+        }
+      }
+    },
+    'space-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-space-tool',
+      title: translate('Activate the create/remove space tool'),
+      action: {
+        click: function (event) {
+          spaceTool.activateSelection(event);
+        }
+      }
+    },
+    'global-connect-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-connection-multi',
+      title: translate('Activate the global connect tool'),
+      action: {
+        click: function (event) {
+          globalConnect.start(event);
+        }
+      }
+    },
+    'tool-separator': {
+      group: 'tools',
+      separator: true
+    },
+    'undo': {
+      group: 'controls',
+      className: 'fa fa-undo-arrow',
+      title: translate('Undo'),
+      action: {
+        click: function (event) {
+          commandStack.undo();
+        }
+      }
+    },
+    'redo': {
+      group: 'controls',
+      className: 'fa fa-redo-arrow',
+      title: translate('Redo'),
+      action: {
+        click: function (event) {
+          commandStack.redo();
+        }
+      }
+    },
+    'zoom-in': {
+      group: 'controls',
+      className: 'fa fa-search-plus',
+      title: translate('Zoom In'),
+      action: {
+        click: function (event) {
+          zoomScroll.zoom(1, 0);
+        }
+      }
+    },
+    'zoom-out': {
+      group: 'controls',
+      className: 'fa fa-search-minus',
+      title: translate('Zoom In'),
+      action: {
+        click: function (event) {
+          zoomScroll.zoom(-1, 0);
+        }
+      }
+    },
+    'controls-separator': {
+      group: 'controls',
+      separator: true
+    },
+    'create.start-event': createAction(
+      'bpmn:StartEvent', 'event', 'bpmn-icon-start-event-none',
+      translate('Create StartEvent')
+    ),
+    'create.intermediate-event': createAction(
+      'bpmn:IntermediateThrowEvent', 'event', 'bpmn-icon-intermediate-event-none',
+      translate('Create Intermediate/Boundary Event')
+    ),
+    'create.end-event': createAction(
+      'bpmn:EndEvent', 'event', 'bpmn-icon-end-event-none',
+      translate('Create EndEvent')
+    ),
+    'create.exclusive-gateway': createAction(
+      'bpmn:ExclusiveGateway', 'gateway', 'bpmn-icon-gateway-none',
+      translate('Create Gateway')
+    ),
+    'create.task': createAction(
+      'bpmn:Task', 'activity', 'bpmn-icon-task',
+      translate('Create Task')
+    ),
+    'create.data-object': createAction(
+      'bpmn:DataObjectReference', 'data-object', 'bpmn-icon-data-object',
+      translate('Create DataObjectReference')
+    ),
+    'create.data-store': createAction(
+      'bpmn:DataStoreReference', 'data-store', 'bpmn-icon-data-store',
+      translate('Create DataStoreReference')
+    ),
+    'create.subprocess-expanded': {
+      group: 'activity',
+      className: 'bpmn-icon-subprocess-expanded',
+      title: translate('Create expanded SubProcess'),
+      action: {
+        dragstart: createSubprocess,
+        click: createSubprocess
+      }
+    },
+    'create.participant-expanded': {
+      group: 'collaboration',
+      className: 'bpmn-icon-participant',
+      title: translate('Create Pool/Participant'),
+      action: {
+        dragstart: createParticipant,
+        click: createParticipant
+      }
+    },
+    'create.group': createAction(
+      'bpmn:Group', 'artifact', 'bpmn-icon-group',
+      translate('Create Group')
+    ),
+  });
+
+  return actions;
+};
+
+/***/ }),
+
+/***/ "./custom/palette/index.js":
+/*!*********************************!*\
+  !*** ./custom/palette/index.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PaletteProvider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PaletteProvider.js */ "./custom/palette/PaletteProvider.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  __init__: ['paletteProvider'],
+  paletteProvider: ['type', _PaletteProvider_js__WEBPACK_IMPORTED_MODULE_0__["default"]]
+});
+
+
+/***/ }),
+
+/***/ "./custom/properties-panel/PropertiesPanel.js":
+/*!****************************************************!*\
+  !*** ./custom/properties-panel/PropertiesPanel.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var PropertiesPanel = __webpack_require__(/*! bpmn-js-properties-panel/lib/PropertiesPanel */ "./node_modules/bpmn-js-properties-panel/lib/PropertiesPanel.js");
+
+var domQuery = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").query;
+PropertiesPanel.prototype.attachTo = function(parentNode) {
+  if (!parentNode) {
+    throw new Error('parentNode required');
+  }
+
+  // ensure we detach from the
+  // previous, old parent
+  this.detach();
+
+  // unwrap jQuery if provided
+  if (parentNode.get && parentNode.constructor.prototype.jquery) {
+    parentNode = parentNode.get(0);
+  }
+
+  if (typeof parentNode === 'string') {
+    parentNode = domQuery(parentNode);
+  }
+
+  var container = this._container;
+
+  parentNode.appendChild(container);
+
+  // custom part for resizable properties panel
+
+  var mouseX;
+  const BORDER_WIDTH = 5;
+
+  document.addEventListener('mousedown', function(event) {
+    if (event.offsetX < BORDER_WIDTH) {
+      mouseX = event.x;
+      document.addEventListener("mousemove", resize, false);
+    }
+  });
+
+  document.addEventListener('mouseup', function() {
+    document.removeEventListener("mousemove", resize, false);
+  });
+
+  const canvas = this._canvas._container;
+
+  function resize(event) {
+    var dx = mouseX - event.x;
+    mouseX = event.x;
+    var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
+    var maxWidth = (parseInt(getComputedStyle(canvas, '').width))/100 * parseInt(getComputedStyle(parentNode).maxWidth);
+    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && panelWidth < maxWidth) {
+      parentNode.style.width = panelWidth + "px";
+      parentNode.firstChild.style.width = panelWidth + "px";
+    }
+  }
+
+  // end custom part
+
+  this._emit('attach');
+}
+
+module.exports = PropertiesPanel;
+
+/***/ }),
+
+/***/ "./custom/properties-panel/index.js":
+/*!******************************************!*\
+  !*** ./custom/properties-panel/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = {
+  __depends__: [
+    __webpack_require__(/*! bpmn-js-properties-panel/lib/cmd */ "./node_modules/bpmn-js-properties-panel/lib/cmd/index.js"),
+    __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js").default
+  ],
+  __init__: [ 'propertiesPanel' ],
+  propertiesPanel: [ 'type', __webpack_require__(/*! ./PropertiesPanel */ "./custom/properties-panel/PropertiesPanel.js") ]
+};
+
+
+/***/ }),
+
 /***/ "./index.js":
 /*!******************!*\
   !*** ./index.js ***!
@@ -855,14 +2815,15 @@ module.exports = function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/Modeler */ "./node_modules/bpmn-js/lib/Modeler.js");
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/bpmn-js-properties-panel/index.js");
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./apexPropertiesProvider/provider */ "./apexPropertiesProvider/provider/index.js");
+/* harmony import */ var bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-bpmnlint */ "./node_modules/bpmn-js-bpmnlint/dist/index.esm.js");
+/* harmony import */ var bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/Modeler */ "./node_modules/bpmn-js/lib/Modeler.js");
+/* harmony import */ var _bpmnlintrc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./.bpmnlintrc */ "./.bpmnlintrc");
 /* harmony import */ var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json");
 var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3___namespace = /*#__PURE__*/__webpack_require__.t(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json", 1);
-/* harmony import */ var bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js-bpmnlint */ "./node_modules/bpmn-js-bpmnlint/dist/index.esm.js");
-/* harmony import */ var _bpmnlintrc__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./.bpmnlintrc */ "./.bpmnlintrc");
+/* harmony import */ var _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./apexPropertiesProvider/provider */ "./apexPropertiesProvider/provider/index.js");
+/* harmony import */ var _custom_palette__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./custom/palette */ "./custom/palette/index.js");
+/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./custom/properties-panel */ "./custom/properties-panel/index.js");
+/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
@@ -870,23 +2831,23 @@ var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3___na
 
 
 
- 
+
 
 var bpmnModeler = {
-  Modeler: bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_0__["default"],
-  linting: { apexLinting: _bpmnlintrc__WEBPACK_IMPORTED_MODULE_5__["default"] },
+  Modeler: bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_1__["default"],
+  linting: { apexLinting: _bpmnlintrc__WEBPACK_IMPORTED_MODULE_2__["default"] },
   customModules: {
-    propertiesPanelModule: (bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_1___default()),
-    propertiesProviderModule: _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_2__["default"],
-    lintModule: bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_4__["default"]
+    propertiesPanelModule: (_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default()),
+    propertiesProviderModule: _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_4__["default"],
+    lintModule: bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_0__["default"],
+    customPaletteProviderModule: _custom_palette__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   moddleExtensions: {
-    apexModdleDescriptor: _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__
+    apexModdleDescriptor: _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__,
   }
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (bpmnModeler);
-
 
 /***/ }),
 
@@ -1445,18 +3406,6 @@ function escapeHTML(str) {
 
 /***/ }),
 
-/***/ "./node_modules/bpmn-js-properties-panel/index.js":
-/*!********************************************************!*\
-  !*** ./node_modules/bpmn-js-properties-panel/index.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(/*! ./lib */ "./node_modules/bpmn-js-properties-panel/lib/index.js");
-
-
-/***/ }),
-
 /***/ "./node_modules/bpmn-js-properties-panel/lib/PropertiesActivator.js":
 /*!**************************************************************************!*\
   !*** ./node_modules/bpmn-js-properties-panel/lib/PropertiesActivator.js ***!
@@ -1597,6 +3546,7 @@ var getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ ".
 var HIDE_CLASS = 'bpp-hidden';
 var DEBOUNCE_DELAY = 300;
 
+var DEFAULT_PRIORITY = 1000;
 
 function isToggle(node) {
   return node.type === 'checkbox' || node.type === 'radio';
@@ -1783,34 +3733,56 @@ function extractGroups(tabs) {
  * @constructor
  *
  * @param {Object} config
+ * @param {didi.Injector} injector
  * @param {EventBus} eventBus
  * @param {Modeling} modeling
- * @param {PropertiesProvider} propertiesProvider
  * @param {Canvas} canvas
  * @param {CommandStack} commandStack
  */
-function PropertiesPanel(config, eventBus, modeling, propertiesProvider, commandStack, canvas) {
+function PropertiesPanel(config, injector, eventBus, modeling, commandStack, canvas) {
 
   this._eventBus = eventBus;
   this._modeling = modeling;
   this._commandStack = commandStack;
   this._canvas = canvas;
-  this._propertiesProvider = propertiesProvider;
+
+  var propertiesProvider = injector.get('propertiesProvider', false);
+
+  if (propertiesProvider) {
+    this.registerProvider(propertiesProvider);
+  }
 
   this._init(config);
 }
 
 PropertiesPanel.$inject = [
   'config.propertiesPanel',
+  'injector',
   'eventBus',
   'modeling',
-  'propertiesProvider',
   'commandStack',
   'canvas'
 ];
 
 module.exports = PropertiesPanel;
 
+/**
+ * @param {number} [priority]
+ * @param { { getTabs: any[] | (any) => (any[]) => any[]) } } provider
+ */
+PropertiesPanel.prototype.registerProvider = function(priority, provider) {
+
+  if (!provider) {
+    provider = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  this._eventBus.on('propertiesPanel.getProviders', priority, function(event) {
+    event.providers.push(provider);
+  });
+
+  this._eventBus.fire('propertiesPanel.providersChanged');
+};
 
 PropertiesPanel.prototype._init = function(config) {
 
@@ -1900,7 +3872,10 @@ PropertiesPanel.prototype._init = function(config) {
     }
   });
 
-  eventBus.on('elementTemplates.changed', function() {
+  eventBus.on([
+    'elementTemplates.changed',
+    'propertiesPanel.providersChanged'
+  ], function() {
     var current = self._current;
     var element = current && current.element;
 
@@ -2020,6 +3995,34 @@ PropertiesPanel.prototype.activateTab = function(tabId) {
   }
 };
 
+PropertiesPanel.prototype._getProviders = function() {
+
+  var event = this._eventBus.createEvent({
+    type: 'propertiesPanel.getProviders',
+    providers: []
+  });
+
+  this._eventBus.fire(event);
+
+  return event.providers;
+};
+
+PropertiesPanel.prototype._getTabs = function(element) {
+  var providers = this._getProviders();
+
+  // loop through all providers and their entries.
+  // group entries by id so that overriding an entry is possible
+  return reduce(providers, function(tabs, provider) {
+    var tabsOrUpdater = provider.getTabs(element);
+
+    if (isFunction(tabsOrUpdater)) {
+      return tabsOrUpdater(tabs);
+    } else {
+      return tabsOrUpdater;
+    }
+  }, []);
+};
+
 /**
  * Update properties panel to show properties of element. Create new properties panel if no previous
  * properties panel, element has changed or element has not changed but entries have.
@@ -2034,7 +4037,7 @@ PropertiesPanel.prototype.update = function(element) {
   }
 
   // (2) Get tabs
-  var tabs = this._propertiesProvider.getTabs(element);
+  var tabs = this._getTabs(element);
 
   var activeTabId,
       activeTabNode;
@@ -2998,6 +5001,20 @@ module.exports.addEmptyParameter = addEmptyParameter;
 
 
 /**
+ * returns a dropdown option label depending on the defined event attributes
+ */
+function getOptionLabel(obj) {
+  var label = obj.name || '';
+
+  if (obj.errorCode)
+    label += ' (code=' + obj.errorCode + ')';
+  if (obj.escalationCode)
+    label += ' (code=' + obj.escalationCode + ')';
+
+  return label;
+}
+
+/**
  * returns a list with all root elements for the given parameter 'referencedType'
  */
 function refreshOptionsModel(businessObject, referencedType) {
@@ -3005,7 +5022,7 @@ function refreshOptionsModel(businessObject, referencedType) {
   var referableObjects = findRootElementsByType(businessObject, referencedType);
   forEach(referableObjects, function(obj) {
     model.push({
-      label: (obj.name || '') + ' (id='+obj.id+')',
+      label: getOptionLabel(obj),
       value: obj.id,
       name: obj.name
     });
@@ -6045,6 +8062,75 @@ EventDefinitionHelper.getConditionalEventDefinition = function(element) {
 
 /***/ }),
 
+/***/ "./node_modules/bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper.js":
+/*!*************************************************************************************!*\
+  !*** ./node_modules/bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper.js ***!
+  \*************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var cmdHelper = __webpack_require__(/*! ./CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js"),
+    elementHelper = __webpack_require__(/*! ./ElementHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ElementHelper.js");
+
+var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is;
+
+var ExtensionElementsHelper = {};
+
+var getExtensionElements = function(bo) {
+  return bo.get('extensionElements');
+};
+
+ExtensionElementsHelper.getExtensionElements = function(bo, type) {
+  var extensionElements = getExtensionElements(bo);
+  if (typeof extensionElements !== 'undefined') {
+    var extensionValues = extensionElements.get('values');
+    if (typeof extensionValues !== 'undefined') {
+      var elements = extensionValues.filter(function(value) {
+        return is(value, type);
+      });
+      if (elements.length) {
+        return elements;
+      }
+    }
+  }
+};
+
+ExtensionElementsHelper.addEntry = function(bo, element, entry, bpmnFactory) {
+  var extensionElements = bo.get('extensionElements');
+
+  // if there is no extensionElements list, create one
+  if (!extensionElements) {
+
+    // TODO: Ask Daniel which operation costs more
+    extensionElements = elementHelper.createElement('bpmn:ExtensionElements', { values: [entry] }, bo, bpmnFactory);
+    return { extensionElements : extensionElements };
+  } else {
+
+    // add new failedJobRetryExtensionElement to existing extensionElements list
+    return cmdHelper.addElementsTolist(element, extensionElements, 'values', [entry]);
+  }
+};
+
+ExtensionElementsHelper.removeEntry = function(bo, element, entry) {
+  var extensionElements = bo.get('extensionElements');
+
+  if (!extensionElements) {
+
+    // return an empty command when there is no extensionElements list
+    return {};
+  }
+
+  return cmdHelper.removeElementsFromList(element, extensionElements, 'values', 'extensionElements', [entry]);
+};
+
+module.exports = ExtensionElementsHelper;
+
+
+/***/ }),
+
 /***/ "./node_modules/bpmn-js-properties-panel/lib/helper/ParticipantHelper.js":
 /*!*******************************************************************************!*\
   !*** ./node_modules/bpmn-js-properties-panel/lib/helper/ParticipantHelper.js ***!
@@ -6089,25 +8175,6 @@ ParticipantHelper.getProcessBusinessObject = function(element, propertyName) {
 
   return properties;
 };
-
-/***/ }),
-
-/***/ "./node_modules/bpmn-js-properties-panel/lib/index.js":
-/*!************************************************************!*\
-  !*** ./node_modules/bpmn-js-properties-panel/lib/index.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = {
-  __depends__: [
-    __webpack_require__(/*! ./cmd */ "./node_modules/bpmn-js-properties-panel/lib/cmd/index.js"),
-    __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js").default
-  ],
-  __init__: [ 'propertiesPanel' ],
-  propertiesPanel: [ 'type', __webpack_require__(/*! ./PropertiesPanel */ "./node_modules/bpmn-js-properties-panel/lib/PropertiesPanel.js") ]
-};
-
 
 /***/ }),
 
@@ -6188,168 +8255,6 @@ module.exports = function(group, element, bpmnFactory, translate) {
       processDocuEntry.get = getValue(processRef);
 
       group.entries.push(processDocuEntry);
-    }
-  }
-
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/EventProps.js":
-/*!*************************************************************************************!*\
-  !*** ./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/EventProps.js ***!
-  \*************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
-    isAny = __webpack_require__(/*! bpmn-js/lib/features/modeling/util/ModelingUtil */ "./node_modules/bpmn-js/lib/features/modeling/util/ModelingUtil.js").isAny,
-    getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").getBusinessObject,
-    eventDefinitionHelper = __webpack_require__(/*! ../../../helper/EventDefinitionHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/EventDefinitionHelper.js");
-
-var forEach = __webpack_require__(/*! lodash/forEach */ "./node_modules/lodash/forEach.js");
-
-var message = __webpack_require__(/*! ./implementation/MessageEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/MessageEventDefinition.js"),
-    signal = __webpack_require__(/*! ./implementation/SignalEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/SignalEventDefinition.js"),
-    error = __webpack_require__(/*! ./implementation/ErrorEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ErrorEventDefinition.js"),
-    escalation = __webpack_require__(/*! ./implementation/EscalationEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/EscalationEventDefinition.js"),
-    timer = __webpack_require__(/*! ./implementation/TimerEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/TimerEventDefinition.js"),
-    compensation = __webpack_require__(/*! ./implementation/CompensateEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/CompensateEventDefinition.js"),
-    condition = __webpack_require__(/*! ./implementation/ConditionalEventDefinition */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ConditionalEventDefinition.js");
-
-
-module.exports = function(group, element, bpmnFactory, elementRegistry, translate) {
-  var events = [
-    'bpmn:StartEvent',
-    'bpmn:EndEvent',
-    'bpmn:IntermediateThrowEvent',
-    'bpmn:BoundaryEvent',
-    'bpmn:IntermediateCatchEvent'
-  ];
-
-  // Message and Signal Event Definition
-  forEach(events, function(event) {
-    if (is(element, event)) {
-
-      var messageEventDefinition = eventDefinitionHelper.getMessageEventDefinition(element),
-          signalEventDefinition = eventDefinitionHelper.getSignalEventDefinition(element);
-
-      if (messageEventDefinition) {
-        message(group, element, bpmnFactory, messageEventDefinition, translate);
-      }
-
-      if (signalEventDefinition) {
-        signal(group, element, bpmnFactory, signalEventDefinition, translate);
-      }
-
-    }
-  });
-
-  // Special Case: Receive Task
-  if (is(element, 'bpmn:ReceiveTask')) {
-    message(group, element, bpmnFactory, getBusinessObject(element), translate);
-  }
-
-  // Error Event Definition
-  var errorEvents = [
-    'bpmn:StartEvent',
-    'bpmn:BoundaryEvent',
-    'bpmn:EndEvent'
-  ];
-
-  forEach(errorEvents, function(event) {
-    if (is(element, event)) {
-
-      var errorEventDefinition = eventDefinitionHelper.getErrorEventDefinition(element);
-
-      if (errorEventDefinition) {
-
-        error(group, element, bpmnFactory, errorEventDefinition, translate);
-      }
-    }
-  });
-
-  // Escalation Event Definition
-  var escalationEvents = [
-    'bpmn:StartEvent',
-    'bpmn:BoundaryEvent',
-    'bpmn:IntermediateThrowEvent',
-    'bpmn:EndEvent'
-  ];
-
-  forEach(escalationEvents, function(event) {
-    if (is(element, event)) {
-
-      var showEscalationCodeVariable = is(element, 'bpmn:StartEvent') || is(element, 'bpmn:BoundaryEvent');
-
-      // get business object
-      var escalationEventDefinition = eventDefinitionHelper.getEscalationEventDefinition(element);
-
-      if (escalationEventDefinition) {
-        escalation(group, element, bpmnFactory, escalationEventDefinition, showEscalationCodeVariable,
-          translate);
-      }
-    }
-
-  });
-
-  // Timer Event Definition
-  var timerEvents = [
-    'bpmn:StartEvent',
-    'bpmn:BoundaryEvent',
-    'bpmn:IntermediateCatchEvent'
-  ];
-
-  forEach(timerEvents, function(event) {
-    if (is(element, event)) {
-
-      // get business object
-      var timerEventDefinition = eventDefinitionHelper.getTimerEventDefinition(element);
-
-      if (timerEventDefinition) {
-        timer(group, element, bpmnFactory, timerEventDefinition, translate);
-      }
-    }
-  });
-
-  // Compensate Event Definition
-  var compensationEvents = [
-    'bpmn:EndEvent',
-    'bpmn:IntermediateThrowEvent'
-  ];
-
-  forEach(compensationEvents, function(event) {
-    if (is(element, event)) {
-
-      // get business object
-      var compensateEventDefinition = eventDefinitionHelper.getCompensateEventDefinition(element);
-
-      if (compensateEventDefinition) {
-        compensation(group, element, bpmnFactory, compensateEventDefinition, elementRegistry, translate);
-      }
-    }
-  });
-
-
-  // Conditional Event Definition
-  var conditionalEvents = [
-    'bpmn:StartEvent',
-    'bpmn:BoundaryEvent',
-    'bpmn:IntermediateThrowEvent',
-    'bpmn:IntermediateCatchEvent'
-  ];
-
-  if (isAny(element, conditionalEvents)) {
-
-    // get business object
-    var conditionalEventDefinition = eventDefinitionHelper.getConditionalEventDefinition(element);
-
-    if (conditionalEventDefinition) {
-      condition(group, element, bpmnFactory, conditionalEventDefinition, elementRegistry, translate);
     }
   }
 
@@ -6833,11 +8738,14 @@ module.exports = function(element, definition, bpmnFactory, translate, options) 
   var referenceProperty = options.referenceProperty;
   var modelProperty = options.modelProperty || 'name';
   var shouldValidate = options.shouldValidate || false;
+  var description = options.description;
+  var canBeHidden = !!options.hidden && typeof options.hidden === 'function';
 
   var entry = entryFactory.textField(translate, {
     id: id,
     label: label,
     modelProperty: modelProperty,
+    description: description,
 
     get: function(element, node) {
       var reference = definition.get(referenceProperty);
@@ -6854,6 +8762,9 @@ module.exports = function(element, definition, bpmnFactory, translate, options) 
     },
 
     hidden: function(element, node) {
+      if (canBeHidden) {
+        return options.hidden.apply(definition, arguments) || !definition.get(referenceProperty);
+      }
       return !definition.get(referenceProperty);
     }
   });
@@ -6893,7 +8804,7 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
 
 
   group.entries = group.entries.concat(eventDefinitionReference(element, errorEventDefinition, bpmnFactory, {
-    label: translate('Error'),
+    label: translate('Global Error referenced'),
     elementName: 'error',
     elementType: 'bpmn:Error',
     referenceProperty: 'errorRef',
@@ -6904,7 +8815,7 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
   group.entries = group.entries.concat(
     elementReferenceProperty(element, errorEventDefinition, bpmnFactory, translate, {
       id: 'error-element-name',
-      label: translate('Error Name'),
+      label: translate('Name'),
       referenceProperty: 'errorRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -6915,7 +8826,7 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
   group.entries = group.entries.concat(
     elementReferenceProperty(element, errorEventDefinition, bpmnFactory, translate, {
       id: 'error-element-code',
-      label: translate('Error Code'),
+      label: translate('Code'),
       referenceProperty: 'errorRef',
       modelProperty: 'errorCode'
     })
@@ -6937,7 +8848,8 @@ module.exports = function(group, element, bpmnFactory, errorEventDefinition, tra
 
 
 var entryFactory = __webpack_require__(/*! ../../../../factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js"),
-    cmdHelper = __webpack_require__(/*! ../../../../helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+    cmdHelper = __webpack_require__(/*! ../../../../helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js"),
+    utils = __webpack_require__(/*! ../../../../Utils */ "./node_modules/bpmn-js-properties-panel/lib/Utils.js");
 
 var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReference */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/EventDefinitionReference.js"),
     elementReferenceProperty = __webpack_require__(/*! ./ElementReferenceProperty */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/ElementReferenceProperty.js");
@@ -6946,7 +8858,7 @@ var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReferenc
 module.exports = function(group, element, bpmnFactory, escalationEventDefinition, showEscalationCodeVariable, translate) {
 
   group.entries = group.entries.concat(eventDefinitionReference(element, escalationEventDefinition, bpmnFactory, {
-    label: translate('Escalation'),
+    label: translate('Global Escalation referenced'),
     elementName: 'escalation',
     elementType: 'bpmn:Escalation',
     referenceProperty: 'escalationRef',
@@ -6957,7 +8869,7 @@ module.exports = function(group, element, bpmnFactory, escalationEventDefinition
   group.entries = group.entries.concat(
     elementReferenceProperty(element, escalationEventDefinition, bpmnFactory, translate, {
       id: 'escalation-element-name',
-      label: translate('Escalation Name'),
+      label: translate('Global Escalation Name'),
       referenceProperty: 'escalationRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -6968,7 +8880,7 @@ module.exports = function(group, element, bpmnFactory, escalationEventDefinition
   group.entries = group.entries.concat(
     elementReferenceProperty(element, escalationEventDefinition, bpmnFactory, translate, {
       id: 'escalation-element-code',
-      label: translate('Escalation Code'),
+      label: translate('Global Escalation Code'),
       referenceProperty: 'escalationRef',
       modelProperty: 'escalationCode'
     })
@@ -6976,22 +8888,34 @@ module.exports = function(group, element, bpmnFactory, escalationEventDefinition
 
 
   if (showEscalationCodeVariable) {
-    group.entries.push(entryFactory.textField(translate, {
+    group.entries.push(entryFactory.validationAwareTextField(translate, {
       id : 'escalationCodeVariable',
       label : translate('Escalation Code Variable'),
       modelProperty : 'escalationCodeVariable',
+      description: translate('Define the name of the variable that will contain the escalation code'),
 
-      get: function(element) {
+      getProperty: function(element) {
         var codeVariable = escalationEventDefinition.get('camunda:escalationCodeVariable');
-        return {
-          escalationCodeVariable: codeVariable
-        };
+
+        return codeVariable;
       },
 
-      set: function(element, values) {
-        return cmdHelper.updateBusinessObject(element, escalationEventDefinition, {
-          'camunda:escalationCodeVariable': values.escalationCodeVariable || undefined
-        });
+      setProperty: function(element, values) {
+        if (values.escalationCodeVariable === '')
+          values.escalationCodeVariable = undefined;
+
+        return cmdHelper.updateBusinessObject(element, escalationEventDefinition, values);
+      },
+
+      validate: function(element, values) {
+        var validation = {},
+            targetValue = values.escalationCodeVariable;
+
+        if (utils.containsSpace(targetValue)) {
+          validation.escalationCodeVariable = translate('Escalation code variable must not contain spaces.');
+        }
+
+        return validation;
       }
     }));
   }
@@ -7033,7 +8957,7 @@ var selector = 'select[name=selectedElement]';
  * @return {DOMElement} the select box
  */
 function getSelectBox(node) {
-  return domQuery(selector, node.parentElement);
+  return domQuery(selector, node);
 }
 
 /**
@@ -7080,11 +9004,19 @@ module.exports = function(element, definition, bpmnFactory, options) {
 
   var entries = [];
 
+  var canBeHidden = !!options.hidden && typeof options.hidden === 'function';
+
   entries.push({
 
-    id: 'event-definitions-' + elementName,
+    id: options.id || 'event-definitions-' + elementName,
     description: description,
-    html: '<div class="bpp-row bpp-select">' +
+    isShown: function() {
+      if (canBeHidden) {
+        return !options.hidden.apply(definition, arguments);
+      }
+      return !options.hidden;
+    },
+    html: '<div class="bpp-row bpp-select" data-show="isShown">' +
              '<label for="camunda-' + escapeHTML(elementName) + '">' + escapeHTML(label) + '</label>' +
              '<div class="bpp-field-wrapper">' +
                '<select id="camunda-' + escapeHTML(elementName) + '" name="selectedElement" data-value>' +
@@ -7181,7 +9113,7 @@ var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReferenc
 module.exports = function(group, element, bpmnFactory, messageEventDefinition, translate) {
 
   group.entries = group.entries.concat(eventDefinitionReference(element, messageEventDefinition, bpmnFactory, {
-    label: translate('Message'),
+    label: translate('Global Message referenced'),
     elementName: 'message',
     elementType: 'bpmn:Message',
     referenceProperty: 'messageRef',
@@ -7192,7 +9124,7 @@ module.exports = function(group, element, bpmnFactory, messageEventDefinition, t
   group.entries = group.entries.concat(
     elementReferenceProperty(element, messageEventDefinition, bpmnFactory, translate, {
       id: 'message-element-name',
-      label: translate('Message Name'),
+      label: translate('Global Message Name'),
       referenceProperty: 'messageRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -7266,7 +9198,7 @@ var eventDefinitionReference = __webpack_require__(/*! ./EventDefinitionReferenc
 module.exports = function(group, element, bpmnFactory, signalEventDefinition, translate) {
 
   group.entries = group.entries.concat(eventDefinitionReference(element, signalEventDefinition, bpmnFactory, {
-    label: translate('Signal'),
+    label: translate('Global Signal referenced'),
     elementName: 'signal',
     elementType: 'bpmn:Signal',
     referenceProperty: 'signalRef',
@@ -7277,7 +9209,7 @@ module.exports = function(group, element, bpmnFactory, signalEventDefinition, tr
   group.entries = group.entries.concat(
     elementReferenceProperty(element, signalEventDefinition, bpmnFactory, translate, {
       id: 'signal-element-name',
-      label: translate('Signal Name'),
+      label: translate('Global Signal Name'),
       referenceProperty: 'signalRef',
       modelProperty: 'name',
       shouldValidate: true
@@ -7285,204 +9217,6 @@ module.exports = function(group, element, bpmnFactory, signalEventDefinition, tr
   );
 
 };
-
-
-/***/ }),
-
-/***/ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/TimerEventDefinition.js":
-/*!**************************************************************************************************************!*\
-  !*** ./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/implementation/TimerEventDefinition.js ***!
-  \**************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var elementHelper = __webpack_require__(/*! ../../../../helper/ElementHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/ElementHelper.js"),
-    cmdHelper = __webpack_require__(/*! ../../../../helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
-
-var entryFactory = __webpack_require__(/*! ../../../../factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js");
-
-/**
- * Get the timer definition type for a given timer event definition.
- *
- * @param {ModdleElement<bpmn:TimerEventDefinition>} timer
- *
- * @return {string|undefined} the timer definition type
- */
-function getTimerDefinitionType(timer) {
-
-  if (!timer) {
-    return;
-  }
-
-  var timeDate = timer.get('timeDate');
-  if (typeof timeDate !== 'undefined') {
-    return 'timeDate';
-  }
-
-  var timeCycle = timer.get('timeCycle');
-  if (typeof timeCycle !== 'undefined') {
-    return 'timeCycle';
-  }
-
-  var timeDuration = timer.get('timeDuration');
-  if (typeof timeDuration !== 'undefined') {
-    return 'timeDuration';
-  }
-}
-
-/**
- * Get the actual timer event definition based on option, whether it's a getter
- * to fetch the timer event definition or the exact event definition itself
- *
- * @param {ModdleElement<bpmn:TimerEventDefinition>|Function} timerOrFunction
- * @param {Shape} element
- * @param {HTMLElement} node
- *
- * @return ModdleElement<bpmn:TimerEventDefinition>
- */
-function getTimerDefinition(timerOrFunction, element, node) {
-  if (typeof timerOrFunction === 'function') {
-    return timerOrFunction(element, node);
-  }
-
-  return timerOrFunction;
-}
-
-/**
- * Creates 'bpmn:FormalExpression' element.
- *
- * @param {ModdleElement} parent
- * @param {string} body
- * @param {BpmnFactory} bpmnFactory
- *
- * @return {ModdleElement<bpmn:FormalExpression>} a formal expression
- */
-function createFormalExpression(parent, body, bpmnFactory) {
-  body = body || undefined;
-  return elementHelper.createElement('bpmn:FormalExpression', { body: body }, parent, bpmnFactory);
-}
-
-function TimerEventDefinition(group, element, bpmnFactory, timerEventDefinition, translate, options) {
-
-  var selectOptions = [
-    { value: 'timeDate', name: translate('Date') },
-    { value: 'timeDuration', name: translate('Duration') },
-    { value: 'timeCycle', name: translate('Cycle') }
-  ];
-
-  var prefix = options && options.idPrefix,
-      createTimerEventDefinition = options && options.createTimerEventDefinition;
-
-
-  group.entries.push(entryFactory.selectBox(translate, {
-    id: prefix + 'timer-event-definition-type',
-    label: translate('Timer Definition Type'),
-    selectOptions: selectOptions,
-    emptyParameter: true,
-    modelProperty: 'timerDefinitionType',
-
-    get: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
-
-      return {
-        timerDefinitionType: getTimerDefinitionType(timerDefinition) || ''
-      };
-    },
-
-    set: function(element, values, node) {
-      var props = {
-        timeDuration: undefined,
-        timeDate: undefined,
-        timeCycle: undefined
-      };
-
-
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          newType = values.timerDefinitionType;
-
-      if (!timerDefinition && typeof createTimerEventDefinition === 'function') {
-        timerDefinition = createTimerEventDefinition(element, node);
-      }
-
-      if (values.timerDefinitionType) {
-        var oldType = getTimerDefinitionType(timerDefinition);
-
-        var value;
-        if (oldType) {
-          var definition = timerDefinition.get(oldType);
-          value = definition.get('body');
-        }
-
-        props[newType] = createFormalExpression(timerDefinition, value, bpmnFactory);
-      }
-
-      return cmdHelper.updateBusinessObject(element, timerDefinition, props);
-    },
-
-    hidden: function(element, node) {
-      return getTimerDefinition(timerEventDefinition, element, node) === undefined;
-    }
-
-  }));
-
-
-  group.entries.push(entryFactory.textField(translate, {
-    id: prefix + 'timer-event-definition',
-    label: translate('Timer Definition'),
-    modelProperty: 'timerDefinition',
-
-    get: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          type = getTimerDefinitionType(timerDefinition),
-          definition = type && timerDefinition.get(type),
-          value = definition && definition.get('body');
-
-      return {
-        timerDefinition: value
-      };
-    },
-
-    set: function(element, values, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          type = getTimerDefinitionType(timerDefinition),
-          definition = type && timerDefinition.get(type);
-
-      if (definition) {
-        return cmdHelper.updateBusinessObject(element, definition, {
-          body: values.timerDefinition || undefined
-        });
-      }
-    },
-
-    validate: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          type = getTimerDefinitionType(timerDefinition),
-          definition = type && timerDefinition.get(type);
-
-      if (definition) {
-        var value = definition.get('body');
-        if (!value) {
-          return {
-            timerDefinition: translate('Must provide a value')
-          };
-        }
-      }
-    },
-
-    hidden: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
-
-      return !getTimerDefinitionType(timerDefinition);
-    }
-
-  }));
-
-}
-
-module.exports = TimerEventDefinition;
 
 
 /***/ }),
@@ -7944,12 +9678,12 @@ BaseViewer.prototype.saveXML = Object(_util_CompatibilityUtil__WEBPACK_IMPORTED_
 
   var definitions = this._definitions;
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
 
     if (!definitions) {
-      var err = new Error('no definitions loaded');
-
-      return reject(err);
+      return resolve({
+        error: new Error('no definitions loaded')
+      });
     }
 
     // allow to fiddle around with definitions
@@ -7961,25 +9695,27 @@ BaseViewer.prototype.saveXML = Object(_util_CompatibilityUtil__WEBPACK_IMPORTED_
 
       var xml = result.xml;
 
-      try {
-        xml = self._emit('saveXML.serialized', {
-          error: null,
-          xml: xml
-        }) || xml;
+      xml = self._emit('saveXML.serialized', {
+        xml: xml
+      }) || xml;
 
-        self._emit('saveXML.done', {
-          error: null,
-          xml: xml
-        });
-      } catch (e) {
-        console.error('error in saveXML life-cycle listener', e);
-      }
-
-      return resolve({ xml: xml });
-    }).catch(function(err) {
-
-      return reject(err);
+      return resolve({
+        xml: xml
+      });
     });
+  }).catch(function(error) {
+    return { error: error };
+  }).then(function(result) {
+
+    self._emit('saveXML.done', result);
+
+    var error = result.error;
+
+    if (error) {
+      return Promise.reject(error);
+    }
+
+    return result;
   });
 });
 
@@ -33822,7 +35558,8 @@ module.exports = disallowNodeType('bpmn:ComplexGateway');
 /***/ (function(module, exports, __webpack_require__) {
 
 const {
-  isAny
+  isAny,
+  is
 } = __webpack_require__(/*! bpmnlint-utils */ "./node_modules/bpmnlint-utils/dist/index.esm.js");
 
 
@@ -33844,6 +35581,13 @@ module.exports = function() {
       return;
     }
 
+    // compensation activity and boundary events are
+    // linked visually via associations. If these associations
+    // exist we are fine, too
+    if (isCompensationLinked(node)) {
+      return;
+    }
+
     const incoming = node.incoming || [];
     const outgoing = node.outgoing || [];
 
@@ -33855,9 +35599,37 @@ module.exports = function() {
   return {
     check
   };
-
 };
 
+
+// helpers /////////////////
+
+function isCompensationBoundary(node) {
+
+  var eventDefinitions = node.eventDefinitions;
+
+  if (!is(node, 'bpmn:BoundaryEvent')) {
+    return false;
+  }
+
+  if (!eventDefinitions || eventDefinitions.length !== 1) {
+    return false;
+  }
+
+  return is(eventDefinitions[0], 'bpmn:CompensateEventDefinition');
+}
+
+function isCompensationActivity(node) {
+  return node.isForCompensation;
+}
+
+function isCompensationLinked(node) {
+  var source = isCompensationBoundary(node);
+  var target = isCompensationActivity(node);
+
+  // TODO(nikku): check, whether compensation association exists
+  return source || target;
+}
 
 /***/ }),
 
@@ -79203,7 +80975,7 @@ var p2s = /,?([a-z]),?/gi,
     pow = math.pow,
     abs = math.abs,
     pathCommand = /([a-z])[\s,]*((-?\d*\.?\d*(?:e[-+]?\d+)?[\s]*,?[\s]*)+)/ig,
-    pathValues = /(-?\d*\.?\d*(?:e[-+]?\\d+)?)[\s]*,?[\s]*/ig;
+    pathValues = /(-?\d*\.?\d*(?:e[-+]?\d+)?)[\s]*,?[\s]*/ig;
 
 var isArray = Array.isArray || function(o) { return o instanceof Array; };
 
@@ -80001,13 +81773,17 @@ function pathToCurve(path) {
           break;
         case 'S':
           if (pathCommand == 'C' || pathCommand == 'S') {
+
             // In 'S' case we have to take into account, if the previous command is C/S.
             nx = d.x * 2 - d.bx;
+
             // And reflect the previous
             ny = d.y * 2 - d.by;
+
             // command's control point relative to the current point.
           }
           else {
+
             // or some else or nothing
             nx = d.x;
             ny = d.y;
@@ -80016,13 +81792,17 @@ function pathToCurve(path) {
           break;
         case 'T':
           if (pathCommand == 'Q' || pathCommand == 'T') {
+
             // In 'T' case we have to take into account, if the previous command is Q/T.
             d.qx = d.x * 2 - d.qx;
+
             // And make a reflection similar
             d.qy = d.y * 2 - d.qy;
+
             // to case 'S'.
           }
           else {
+
             // or something else or nothing
             d.qx = d.x;
             d.qy = d.y;
@@ -82698,7 +84478,7 @@ module.exports = function(module) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/moklein/Documents/git/github/bpmn-modeler/index.js */"./index.js");
+module.exports = __webpack_require__(/*! C:\Users\damthor\Desktop\dev\bpmn-modeler\index.js */"./index.js");
 
 
 /***/ })
