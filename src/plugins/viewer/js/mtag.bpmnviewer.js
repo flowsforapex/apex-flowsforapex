@@ -96,8 +96,8 @@ var bpmnViewer =
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
-/* harmony import */ var bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/NavigatedViewer */ "./node_modules/bpmn-js/lib/NavigatedViewer.js");
+/* harmony import */ var bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/NavigatedViewer */ "./node_modules/bpmn-js/lib/NavigatedViewer.js");
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
 /* harmony import */ var _lib_spViewModule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./lib/spViewModule */ "./lib/spViewModule/index.js");
 /* harmony import */ var _lib_styleModule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./lib/styleModule */ "./lib/styleModule/index.js");
 
@@ -106,12 +106,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var bpmnViewer = {
-  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_0__["default"],
-  NavigatedViewer: bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_1__["default"],
-  customModules: { 
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_1__["default"],
+  NavigatedViewer: bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_0__["default"],
+  customModules: {
     spViewModule: _lib_spViewModule__WEBPACK_IMPORTED_MODULE_2__["default"],
-    styleModule: _lib_styleModule__WEBPACK_IMPORTED_MODULE_3__["default"]
-  }
+    styleModule: _lib_styleModule__WEBPACK_IMPORTED_MODULE_3__["default"],
+  },
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (bpmnViewer);
@@ -482,20 +482,23 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return StyleModule; });
+function StyleModule() {}
 
-function StyleModule() {
-}
+StyleModule.prototype.addStylesToElements = function (elements, css) {
+  for (const e of elements) {
+    var rect = document.querySelector(
+      `g[data-element-id="${ 
+        e 
+        }"]:not(.djs-connection) .djs-visual > :nth-child(1)`
+    );
 
-StyleModule.prototype.addStylesToElements = function(elements, css) {
-
-    for (const e of elements) {
-        var rect = document.querySelector('g[data-element-id="' + e +'"]:not(.djs-connection) .djs-visual > :nth-child(1)');
-
-        for (const c in css) {
-            rect.style[c] = css[c];
-        }
+    if (rect) {
+      for (const c in css) {
+        rect.style[c] = css[c];
+      }
     }
-}
+  }
+};
 
 
 /***/ }),
@@ -1482,7 +1485,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!*********************************************************!*\
   !*** ./node_modules/bpmn-js/lib/draw/BpmnRenderUtil.js ***!
   \*********************************************************/
-/*! exports provided: isTypedEvent, isThrowEvent, isCollection, getDi, getSemantic, getFillColor, getStrokeColor, getCirclePath, getRoundRectPath, getDiamondPath, getRectPath */
+/*! exports provided: isTypedEvent, isThrowEvent, isCollection, getDi, getSemantic, getFillColor, getStrokeColor, getLabelColor, getCirclePath, getRoundRectPath, getDiamondPath, getRectPath */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1494,6 +1497,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSemantic", function() { return getSemantic; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFillColor", function() { return getFillColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStrokeColor", function() { return getStrokeColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLabelColor", function() { return getLabelColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCirclePath", function() { return getCirclePath; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRoundRectPath", function() { return getRoundRectPath; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDiamondPath", function() { return getDiamondPath; });
@@ -1551,13 +1555,24 @@ function getSemantic(element) {
 // color access //////////////////////
 
 function getFillColor(element, defaultColor) {
-  return getDi(element).get('bioc:fill') || defaultColor || 'white';
+  var di = getDi(element);
+
+  return di.get('color:background-color') || di.get('bioc:fill') || defaultColor || 'white';
 }
 
 function getStrokeColor(element, defaultColor) {
-  return getDi(element).get('bioc:stroke') || defaultColor || 'black';
+  var di = getDi(element);
+
+  return di.get('color:border-color') || di.get('bioc:stroke') || defaultColor || 'black';
 }
 
+function getLabelColor(element, defaultColor, defaultStrokeColor) {
+  var di = getDi(element),
+      label = di.get('label');
+
+  return label && label.get('color:color') || defaultColor ||
+    getStrokeColor(element, defaultStrokeColor);
+}
 
 // cropping path customizations //////////////////////
 
@@ -1695,6 +1710,7 @@ var INNER_OUTER_DIST = 3;
 var DEFAULT_FILL_OPACITY = .95,
     HIGH_FILL_OPACITY = .35;
 
+var ELEMENT_LABEL_DISTANCE = 10;
 
 function BpmnRenderer(
     config, eventBus, styles, pathMap,
@@ -1703,7 +1719,8 @@ function BpmnRenderer(
   diagram_js_lib_draw_BaseRenderer__WEBPACK_IMPORTED_MODULE_2__["default"].call(this, eventBus, priority);
 
   var defaultFillColor = config && config.defaultFillColor,
-      defaultStrokeColor = config && config.defaultStrokeColor;
+      defaultStrokeColor = config && config.defaultStrokeColor,
+      defaultLabelColor = config && config.defaultLabelColor;
 
   var rendererId = RENDERER_IDS.next();
 
@@ -2102,7 +2119,7 @@ function BpmnRenderer(
       align: align,
       padding: 5,
       style: {
-        fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getStrokeColor"])(element, defaultStrokeColor)
+        fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getLabelColor"])(element, defaultLabelColor, defaultStrokeColor)
       }
     });
   }
@@ -2123,7 +2140,7 @@ function BpmnRenderer(
         {},
         textRenderer.getExternalStyle(),
         {
-          fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getStrokeColor"])(element, defaultStrokeColor)
+          fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getLabelColor"])(element, defaultLabelColor, defaultStrokeColor)
         }
       )
     });
@@ -2137,7 +2154,7 @@ function BpmnRenderer(
       },
       align: 'center-middle',
       style: {
-        fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getStrokeColor"])(element, defaultStrokeColor)
+        fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getLabelColor"])(element, defaultLabelColor, defaultStrokeColor)
       }
     });
 
@@ -2793,7 +2810,7 @@ function BpmnRenderer(
         renderLabel(parentGfx, text2, {
           box: element, align: 'center-middle',
           style: {
-            fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getStrokeColor"])(element, defaultStrokeColor)
+            fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getLabelColor"])(element, defaultLabelColor, defaultStrokeColor)
           }
         });
       }
@@ -3105,7 +3122,25 @@ function BpmnRenderer(
           messageAttrs.stroke = 'white';
         }
 
-        drawPath(parentGfx, markerPathData, messageAttrs);
+        var message = drawPath(parentGfx, markerPathData, messageAttrs);
+
+        var labelText = semantic.messageRef.name;
+        var label = renderLabel(parentGfx, labelText, {
+          align: 'center-top',
+          fitBox: true,
+          style: {
+            fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getStrokeColor"])(element, defaultLabelColor, defaultStrokeColor)
+          }
+        });
+
+        var messageBounds = message.getBBox(),
+            labelBounds = label.getBBox();
+
+        var translateX = midPoint.x - labelBounds.width / 2,
+            translateY = midPoint.y + messageBounds.height / 2 + ELEMENT_LABEL_DISTANCE;
+
+        Object(diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_10__["transform"])(label, translateX, translateY, 0);
+
       }
 
       return path;
@@ -3260,7 +3295,7 @@ function BpmnRenderer(
         align: 'left-top',
         padding: 5,
         style: {
-          fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getStrokeColor"])(element, defaultStrokeColor)
+          fill: Object(_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_7__["getLabelColor"])(element, defaultLabelColor, defaultStrokeColor)
         }
       });
 
@@ -8284,7 +8319,8 @@ var types = [
 	{
 		name: "CallActivity",
 		superClass: [
-			"Activity"
+			"Activity",
+			"InteractionNode"
 		],
 		properties: [
 			{
@@ -9379,12 +9415,75 @@ var BiocPackage = {
 	associations: associations$4
 };
 
+var name$5 = "BPMN in Color";
+var uri$5 = "http://www.omg.org/spec/BPMN/non-normative/color/1.0";
+var prefix$5 = "color";
+var types$5 = [
+	{
+		name: "ColoredLabel",
+		"extends": [
+			"bpmndi:BPMNLabel"
+		],
+		properties: [
+			{
+				name: "color",
+				isAttr: true,
+				type: "String"
+			}
+		]
+	},
+	{
+		name: "ColoredShape",
+		"extends": [
+			"bpmndi:BPMNShape"
+		],
+		properties: [
+			{
+				name: "background-color",
+				isAttr: true,
+				type: "String"
+			},
+			{
+				name: "border-color",
+				isAttr: true,
+				type: "String"
+			}
+		]
+	},
+	{
+		name: "ColoredEdge",
+		"extends": [
+			"bpmndi:BPMNEdge"
+		],
+		properties: [
+			{
+				name: "border-color",
+				isAttr: true,
+				type: "String"
+			}
+		]
+	}
+];
+var enumerations$3 = [
+];
+var associations$5 = [
+];
+var BpmnInColorPackage = {
+	name: name$5,
+	uri: uri$5,
+	prefix: prefix$5,
+	types: types$5,
+	enumerations: enumerations$3,
+	associations: associations$5
+};
+
 var packages = {
   bpmn: BpmnPackage,
   bpmndi: BpmnDiPackage,
   dc: DcPackage,
   di: DiPackage,
-  bioc: BiocPackage
+  bioc: BiocPackage,
+  color: BpmnInColorPackage
 };
 
 function simple(additionalPackages, options) {
@@ -9646,7 +9745,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/Collections */ "./node_modules/diagram-js/lib/util/Collections.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/Elements */ "./node_modules/diagram-js/lib/util/Elements.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../layout/LayoutUtil */ "./node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+
+
 
 
 
@@ -9698,8 +9800,8 @@ function createContainer(options) {
 }
 
 function createGroup(parent, cls, childIndex) {
-  var group = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["create"])('g');
-  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["classes"])(group).add(cls);
+  var group = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["create"])('g');
+  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["classes"])(group).add(cls);
 
   var index = childIndex !== undefined ? childIndex : parent.childNodes.length - 1;
 
@@ -9767,10 +9869,10 @@ Canvas.prototype._init = function(config) {
   // html container
   var container = this._container = createContainer(config);
 
-  var svg = this._svg = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["create"])('svg');
-  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["attr"])(svg, { width: '100%', height: '100%' });
+  var svg = this._svg = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["create"])('svg');
+  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["attr"])(svg, { width: '100%', height: '100%' });
 
-  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["append"])(container, svg);
+  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["append"])(container, svg);
 
   var viewport = this._viewport = createGroup(svg, 'viewport');
 
@@ -9965,9 +10067,9 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
 
       // invoke either addClass or removeClass based on mode
       if (add) {
-        Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["classes"])(gfx).add(marker);
+        Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["classes"])(gfx).add(marker);
       } else {
-        Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["classes"])(gfx).remove(marker);
+        Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["classes"])(gfx).remove(marker);
       }
     }
   });
@@ -10033,7 +10135,7 @@ Canvas.prototype.hasMarker = function(element, marker) {
 
   var gfx = this.getGraphics(element);
 
-  return Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["classes"])(gfx).has(marker);
+  return Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["classes"])(gfx).has(marker);
 };
 
 /**
@@ -10423,8 +10525,8 @@ Canvas.prototype.viewbox = function(box) {
     // external components, such as overlays
     innerBox = this.getDefaultLayer().getBBox();
 
-    transform = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["transform"])(viewport);
-    matrix = transform ? transform.matrix : Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["createMatrix"])();
+    transform = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["transform"])(viewport);
+    matrix = transform ? transform.matrix : Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["createMatrix"])();
     scale = round(matrix.a, 1000);
 
     x = round(-matrix.e || 0, 1000);
@@ -10455,7 +10557,7 @@ Canvas.prototype.viewbox = function(box) {
         .scale(scale)
         .translate(-box.x, -box.y);
 
-      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["transform"])(viewport, matrix);
+      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["transform"])(viewport, matrix);
     });
   }
 
@@ -10489,6 +10591,66 @@ Canvas.prototype.scroll = function(delta) {
   return { x: matrix.e, y: matrix.f };
 };
 
+/**
+ * Scrolls the viewbox to contain the given element.
+ * Optionally specify a padding to be applied to the edges.
+ *
+ * @param {Object} [element] the element to scroll to.
+ * @param {Object|Number} [padding=100] the padding to be applied. Can also specify top, bottom, left and right.
+ *
+ */
+Canvas.prototype.scrollToElement = function(element, padding) {
+  var defaultPadding = 100;
+  if (!padding) {
+    padding = {};
+  }
+  if (typeof padding === 'number') {
+    defaultPadding = padding;
+  }
+
+  padding = {
+    top: padding.top || defaultPadding,
+    right: padding.right || defaultPadding,
+    bottom: padding.bottom || defaultPadding,
+    left: padding.left || defaultPadding
+  };
+
+  var elementBounds = Object(_util_Elements__WEBPACK_IMPORTED_MODULE_2__["getBBox"])(element),
+      elementTrbl = Object(_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_3__["asTRBL"])(elementBounds),
+      viewboxBounds = this.viewbox(),
+      zoom = this.zoom(),
+      dx, dy;
+
+  // Shrink viewboxBounds with padding
+  viewboxBounds.y += padding.top / zoom;
+  viewboxBounds.x += padding.left / zoom;
+  viewboxBounds.width -= (padding.right + padding.left) / zoom;
+  viewboxBounds.height -= (padding.bottom + padding.top) / zoom;
+
+  var viewboxTrbl = Object(_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_3__["asTRBL"])(viewboxBounds);
+
+  var canFit = elementBounds.width < viewboxBounds.width && elementBounds.height < viewboxBounds.height;
+
+  if (!canFit) {
+
+    // top-left when element can't fit
+    dx = elementBounds.x - viewboxBounds.x;
+    dy = elementBounds.y - viewboxBounds.y;
+
+  } else {
+
+    var dRight = Math.max(0, elementTrbl.right - viewboxTrbl.right),
+        dLeft = Math.min(0, elementTrbl.left - viewboxTrbl.left),
+        dBottom = Math.max(0, elementTrbl.bottom - viewboxTrbl.bottom),
+        dTop = Math.min(0, elementTrbl.top - viewboxTrbl.top);
+
+    dx = dRight || dLeft;
+    dy = dBottom || dTop;
+
+  }
+
+  this.scroll({ dx: -dx * zoom, dy: -dy * zoom });
+};
 
 /**
  * Gets or sets the current zoom of the canvas, optionally zooming
@@ -17554,7 +17716,7 @@ if (typeof Object.create === 'function') {
 /*!*************************************************!*\
   !*** ./node_modules/min-dash/dist/index.esm.js ***!
   \*************************************************/
-/*! exports provided: assign, bind, debounce, ensureArray, every, filter, find, findIndex, flatten, forEach, groupBy, has, isArray, isDefined, isFunction, isNil, isNumber, isObject, isString, isUndefined, keys, map, matchPattern, merge, omit, pick, reduce, set, size, some, sortBy, throttle, unionBy, uniqueBy, values, without */
+/*! exports provided: assign, bind, debounce, ensureArray, every, filter, find, findIndex, flatten, forEach, get, groupBy, has, isArray, isDefined, isFunction, isNil, isNumber, isObject, isString, isUndefined, keys, map, matchPattern, merge, omit, pick, reduce, set, size, some, sortBy, throttle, unionBy, uniqueBy, values, without */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17569,6 +17731,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findIndex", function() { return findIndex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flatten", function() { return flatten; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "forEach", function() { return forEach; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "groupBy", function() { return groupBy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "has", function() { return has; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isArray", function() { return isArray; });
@@ -18133,6 +18296,27 @@ function set(target, path, value) {
     }
   });
   return target;
+}
+/**
+ * Gets a nested property of a given object.
+ *
+ * @param {Object} target The target of the get operation.
+ * @param {(string|number)[]} path The path to the nested value.
+ * @param {any} [defaultValue] The value to return if no value exists.
+ */
+
+function get(target, path, defaultValue) {
+  var currentTarget = target;
+  forEach(path, function (key) {
+    // accessing nil property yields <undefined>
+    if (isNil(currentTarget)) {
+      currentTarget = undefined;
+      return false;
+    }
+
+    currentTarget = currentTarget[key];
+  });
+  return isUndefined(currentTarget) ? defaultValue : currentTarget;
 }
 /**
  * Pick given properties from the target object.
@@ -19604,9 +19788,8 @@ Reader.prototype.fromXML = function(xml, options, done) {
 
     // strip whitespace only nodes, i.e. before
     // <!CDATA[ ... ]> sections and in between tags
-    text = text.trim();
 
-    if (!text) {
+    if (!text.trim()) {
       return;
     }
 
@@ -19824,7 +20007,11 @@ function nsName(ns) {
 
 function getNsAttrs(namespaces) {
 
-  return Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["map"])(namespaces.getUsed(), function(ns) {
+  return namespaces.getUsed().filter(function(ns) {
+
+    // do not serialize built in <xml> namespace
+    return ns.prefix !== 'xml';
+  }).map(function(ns) {
     var name = 'xmlns' + (ns.prefix ? ':' + ns.prefix : '');
     return { name: name, value: ns.uri };
   });
@@ -20275,7 +20462,7 @@ ElementSerializer.prototype.logNamespace = function(ns, wellknown, local) {
 
   var existing = namespaces.byUri(nsUri);
 
-  if (nsPrefix !== 'xml' && (!existing || local)) {
+  if (!existing || local) {
     namespaces.add(ns, wellknown);
   }
 
@@ -20656,7 +20843,7 @@ var TYPE_CONVERTERS = {
   String: function(s) { return s; },
   Boolean: function(s) { return s === 'true'; },
   Integer: function(s) { return parseInt(s, 10); },
-  Real: function(s) { return parseFloat(s, 10); }
+  Real: function(s) { return parseFloat(s); }
 };
 
 /**
@@ -21394,6 +21581,7 @@ Moddle.prototype.createAny = function(name, nsUri, properties) {
   this.properties.defineDescriptor(element, descriptor);
   this.properties.defineModel(element, this);
   this.properties.define(element, '$parent', { enumerable: false, writable: true });
+  this.properties.define(element, '$instanceOf', { enumerable: false, writable: true });
 
   Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["forEach"])(properties, function(a, key) {
     if (Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["isObject"])(a) && a.value !== undefined) {
