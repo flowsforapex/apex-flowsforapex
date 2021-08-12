@@ -10,7 +10,7 @@ as
        , terminated_cnt
        , error_cnt
        , created_cnt + running_cnt + completed_cnt + terminated_cnt + error_cnt as total_cnt
-    from flow_instances_vw
+    from (select dgrm_id, prcs_status from flow_instances_vw)
    pivot (
      count(*) as cnt
      for prcs_status in ( 'created' as created, 'running' as running, 'completed' as completed, 'terminated' as terminated, 'error' as error ) 
