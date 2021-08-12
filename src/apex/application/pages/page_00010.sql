@@ -62,7 +62,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210811093823'
+,p_last_upd_yyyymmddhh24miss=>'20210812035258'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -944,6 +944,21 @@ wwv_flow_api.create_page_button(
 ,p_button_css_classes=>'fa-plus'
 );
 wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(5026212622302456)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(6127698437330102702)
+,p_button_name=>'DOWNLOAD_IMAGE'
+,p_button_static_id=>'download-image'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_image_alt=>'Download Image'
+,p_button_position=>'REGION_TEMPLATE_NEXT'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'u-hidden'
+,p_icon_css_classes=>'fa-image'
+);
+wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(12491866636991262848)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(34403200187171418)
@@ -1016,6 +1031,28 @@ wwv_flow_api.create_page_item(
 ,p_attribute_02=>'N'
 );
 wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(4404672943699536)
+,p_name=>'P10_PRCS_NAME'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(6127698437330102702)
+,p_use_cache_before_default=>'NO'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'Y'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(6600306983290124)
 ,p_name=>'P10_SBFL_ID'
 ,p_item_sequence=>20
@@ -1048,18 +1085,6 @@ wwv_flow_api.create_page_item(
 ,p_warn_on_unsaved_changes=>'I'
 ,p_lov_display_extra=>'YES'
 ,p_attribute_01=>'2'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(33735283006406123)
@@ -1703,6 +1728,73 @@ wwv_flow_api.create_page_da_action(
 'apex_util.set_preference(''VIEWPORT'',:P10_SELECT_OUTPUT);'))
 ,p_attribute_02=>'P10_SELECT_OUTPUT'
 ,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(4404114146699531)
+,p_name=>'Download Image clicked'
+,p_event_sequence=>260
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(5026212622302456)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(4404532994699535)
+,p_event_id=>wwv_flow_api.id(4404114146699531)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P10_PRCS_NAME'
+,p_attribute_01=>'SQL_STATEMENT'
+,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select',
+'    prcs_name',
+'from',
+'    flow_processes',
+'where',
+'    prcs_id = :P10_PRCS_ID'))
+,p_attribute_07=>'P10_PRCS_ID'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(4404288501699532)
+,p_event_id=>wwv_flow_api.id(4404114146699531)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.region( "flow-monitor" ).getSVG().then( ( svg ) => {',
+'     var svgBlob = new Blob([svg], {',
+'        type: ''image/svg+xml''',
+'    });',
+'    var fileName = $v(''P10_PRCS_NAME'');',
+'',
+'    var downloadLink = document.createElement(''a'');',
+'    downloadLink.download = fileName;',
+'    downloadLink.href = window.URL.createObjectURL(svgBlob);',
+'    downloadLink.click();',
+'} );'))
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(4404300076699533)
+,p_name=>'Reposition Download Image Button'
+,p_event_sequence=>270
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(4404452394699534)
+,p_event_id=>wwv_flow_api.id(4404300076699533)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'$("#download-image").prependTo("#flow-monitor > div.t-Region-header > div.t-Region-headerItems.t-Region-headerItems--buttons").removeClass("u-hidden");'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(24417245693878731)

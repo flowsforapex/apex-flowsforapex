@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210811092508'
+,p_last_upd_yyyymmddhh24miss=>'20210812032540'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(22800510543488044)
@@ -68,8 +68,21 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(4403850573699528)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
+,p_button_name=>'DOWNLOAD_IMAGE'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_image_alt=>'Download Image'
+,p_button_position=>'REGION_TEMPLATE_NEXT'
+,p_warn_on_unsaved_changes=>null
+,p_icon_css_classes=>'fa-image'
+);
+wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24418161449878740)
-,p_button_sequence=>30
+,p_button_sequence=>20
 ,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
 ,p_button_name=>'DOWNLOAD_FLOW'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -83,7 +96,7 @@ wwv_flow_api.create_page_button(
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(15683484308738625)
-,p_button_sequence=>40
+,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
 ,p_button_name=>'SAVE_FLOW'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -191,6 +204,35 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_OPEN_REGION'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(24418438259878743)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(4403930039699529)
+,p_name=>'Download Image clicked'
+,p_event_sequence=>80
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(4403850573699528)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(4404060981699530)
+,p_event_id=>wwv_flow_api.id(4403930039699529)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.region( "modeler" ).getSVG().then( ( svg ) => {',
+'     var svgBlob = new Blob([svg], {',
+'        type: ''image/svg+xml''',
+'    });',
+'    var fileName = $v(''P4_REGION_TITLE'');',
+'',
+'    var downloadLink = document.createElement(''a'');',
+'    downloadLink.download = fileName;',
+'    downloadLink.href = window.URL.createObjectURL(svgBlob);',
+'    downloadLink.click();',
+'} );'))
 );
 wwv_flow_api.component_end;
 end;
