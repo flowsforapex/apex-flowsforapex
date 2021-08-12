@@ -335,10 +335,8 @@ ALTER TABLE flow_object_expressions
             ON DELETE CASCADE;
 
 ALTER TABLE flow_object_expressions
-
     ADD CONSTRAINT expr_set_ck
-      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge') )
-;
+      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge') );
 
 create table flow_flow_event_log
 ( lgfl_dgrm_id       		NUMBER NOT NULL
