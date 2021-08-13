@@ -41,8 +41,12 @@ wwv_flow_api.create_page(
 '',
 ''))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'',
-''))
+'$(".a-IRR-headerLabel").each(function() {',
+'    var text = $(this).text();',
+'    if (text == ''Viewer'') {',
+'        $(this).parent().addClass("viewer-heading")',
+'    }',
+'})'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.clickable-action {',
 '  cursor: pointer;',
@@ -58,11 +62,29 @@ wwv_flow_api.create_page(
 '',
 '[for^="P10_SELECT_OUTPUT"] {',
 '    margin: 5px 0 5px 0!important;',
+'}',
+'',
+'.viewer-heading {',
+'    text-align: center !important;',
+'}',
+'',
+'#col2 {',
+'    padding-top: 40px;',
+'}',
+'',
+'td[headers*=action]',
+'{',
+'  display: flex;',
+'  justify-content: flex-start;',
+'}',
+'',
+'.a-IRR-header {',
+'    vertical-align: inherit;',
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210813040711'
+,p_last_upd_yyyymmddhh24miss=>'20210813055433'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -692,7 +714,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'VIEW_PROCESS'
 ,p_display_order=>10
 ,p_column_identifier=>'K'
-,p_column_label=>'<span class="fa fa-eye" title="View Process Instance"></span>'
+,p_column_label=>'Viewer'
 ,p_column_html_expression=>'<span class="clickable-action id-ref fa fa-eye" data-prcs="#PRCS_ID#" data-action="view" data-name="#PRCS_NAME#" title="View Process Instance"></span>'
 ,p_allow_sorting=>'N'
 ,p_allow_filtering=>'N'
@@ -712,7 +734,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094452210304631)
 ,p_db_column_name=>'PRCS_NAME'
-,p_display_order=>30
+,p_display_order=>20
 ,p_column_identifier=>'B'
 ,p_column_label=>'Instance'
 ,p_column_type=>'STRING'
@@ -722,7 +744,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094567431304632)
 ,p_db_column_name=>'PRCS_DGRM_NAME'
-,p_display_order=>40
+,p_display_order=>30
 ,p_column_identifier=>'C'
 ,p_column_label=>'Name'
 ,p_column_type=>'STRING'
@@ -731,7 +753,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094640100304633)
 ,p_db_column_name=>'PRCS_DGRM_VERSION'
-,p_display_order=>50
+,p_display_order=>40
 ,p_column_identifier=>'D'
 ,p_column_label=>'Version'
 ,p_column_type=>'STRING'
@@ -740,7 +762,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094739199304634)
 ,p_db_column_name=>'PRCS_DGRM_STATUS'
-,p_display_order=>60
+,p_display_order=>50
 ,p_column_identifier=>'E'
 ,p_column_label=>'Flow Status'
 ,p_column_type=>'STRING'
@@ -749,7 +771,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094816603304635)
 ,p_db_column_name=>'PRCS_DGRM_CATEGORY'
-,p_display_order=>70
+,p_display_order=>60
 ,p_column_identifier=>'F'
 ,p_column_label=>'Flow Category'
 ,p_column_type=>'STRING'
@@ -758,7 +780,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094928056304636)
 ,p_db_column_name=>'PRCS_STATUS'
-,p_display_order=>80
+,p_display_order=>70
 ,p_column_identifier=>'G'
 ,p_column_label=>'Status'
 ,p_column_type=>'STRING'
@@ -767,7 +789,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26095045075304637)
 ,p_db_column_name=>'PRCS_INIT_DATE'
-,p_display_order=>90
+,p_display_order=>80
 ,p_column_identifier=>'H'
 ,p_column_label=>'Creation Date'
 ,p_column_type=>'DATE'
@@ -778,7 +800,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26095177493304638)
 ,p_db_column_name=>'PRCS_LAST_UPDATE'
-,p_display_order=>100
+,p_display_order=>90
 ,p_column_identifier=>'I'
 ,p_column_label=>'Last Update'
 ,p_column_type=>'DATE'
@@ -789,7 +811,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26095284298304639)
 ,p_db_column_name=>'BTN'
-,p_display_order=>110
+,p_display_order=>100
 ,p_column_identifier=>'J'
 ,p_column_label=>'Actions'
 ,p_allow_sorting=>'N'
@@ -805,11 +827,12 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_heading_alignment=>'LEFT'
+,p_static_id=>'action'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094328735304630)
 ,p_db_column_name=>'PRCS_ID'
-,p_display_order=>120
+,p_display_order=>110
 ,p_column_identifier=>'A'
 ,p_column_label=>'Process ID'
 ,p_column_type=>'NUMBER'
@@ -818,7 +841,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34631054458575812)
 ,p_db_column_name=>'PRCS_BUSINESS_REF'
-,p_display_order=>130
+,p_display_order=>120
 ,p_column_identifier=>'L'
 ,p_column_label=>'Business Reference'
 ,p_column_type=>'STRING'
@@ -1030,16 +1053,6 @@ wwv_flow_api.create_page_item(
 ,p_attribute_01=>'NONE'
 ,p_attribute_02=>'N'
 );
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(4404672943699536)
-,p_name=>'P10_PRCS_NAME'
-,p_item_sequence=>10
-,p_item_plug_id=>wwv_flow_api.id(6127698437330102702)
-,p_use_cache_before_default=>'NO'
-,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
-,p_attribute_01=>'Y'
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -1051,6 +1064,16 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(4404672943699536)
+,p_name=>'P10_PRCS_NAME'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(6127698437330102702)
+,p_use_cache_before_default=>'NO'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'Y'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(6600306983290124)
@@ -1380,7 +1403,14 @@ wwv_flow_api.create_page_da_action(
 '  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("Flow Monitor (" + currentName +")" );',
 '} else {',
 '  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("No process selected" );',
-'}'))
+'}',
+'',
+'$(".a-IRR-headerLabel").each(function() {',
+'    var text = $(this).text();',
+'    if (text == ''Viewer'') {',
+'        $(this).parent().addClass("viewer-heading")',
+'    }',
+'})'))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(24417684477878735)

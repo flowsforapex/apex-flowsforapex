@@ -19,16 +19,31 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flow Management - &APP_NAME_TITLE.'
 ,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$(".a-IRR-headerLabel").each(function() {',
+'    var text = $(this).text();',
+'    if (text == ''Export'') {',
+'        $(this).parent().addClass("export-heading")',
+'    }',
+'})'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'td[headers="NB_INSTANCES"]{',
 '   padding-left:0px;',
 '}',
 '',
-'',
-'th#action,',
-'td[headers=action]',
+'th#action',
 '{',
 '  width:160px;',
+'}',
+'',
+'td[headers*=action]',
+'{',
+'  display: flex;',
+'  justify-content: space-between;',
+'}',
+'',
+'.export-heading {',
+'    text-align: center !important;',
 '}',
 '',
 '.status-badge {',
@@ -69,7 +84,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210730140616'
+,p_last_upd_yyyymmddhh24miss=>'20210813055700'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24213241311956116)
@@ -384,7 +399,17 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'CHECKBOX'
 ,p_display_order=>240
 ,p_column_identifier=>'Y'
-,p_column_label=>'-'
+,p_column_label=>'Export'
+,p_allow_sorting=>'N'
+,p_allow_filtering=>'N'
+,p_allow_highlighting=>'N'
+,p_allow_ctrl_breaks=>'N'
+,p_allow_aggregations=>'N'
+,p_allow_computations=>'N'
+,p_allow_charting=>'N'
+,p_allow_group_by=>'N'
+,p_allow_pivot=>'N'
+,p_allow_hide=>'N'
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_column_alignment=>'CENTER'
@@ -755,6 +780,30 @@ wwv_flow_api.create_page_da_action(
 'if (this.data.successMessage !== undefined) {',
 '    apex.message.showPageSuccess(this.data.successMessage.text);',
 '}'))
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(5521840396864939)
+,p_name=>'Flow Management Report refreshed'
+,p_event_sequence=>100
+,p_triggering_element_type=>'REGION'
+,p_triggering_region_id=>wwv_flow_api.id(24213241311956116)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'apexafterrefresh'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(5521906942864940)
+,p_event_id=>wwv_flow_api.id(5521840396864939)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$(".a-IRR-headerLabel").each(function() {',
+'    var text = $(this).text();',
+'    if (text == ''Export'') {',
+'        $(this).parent().addClass("export-heading")',
+'    }',
+'})'))
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(26094153642304628)
