@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210812032540'
+,p_last_upd_yyyymmddhh24miss=>'20210813021459'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(22800510543488044)
@@ -36,7 +36,7 @@ wwv_flow_api.create_page_plug(
 ,p_query_table=>'FLOW_DIAGRAMS'
 ,p_query_where=>'dgrm_id = :p4_dgrm_id'
 ,p_include_rowid_column=>false
-,p_plug_source_type=>'PLUGIN_COM.MTAG.APEX.BPMNMODELER.REGION'
+,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.MODELER.REGION'
 ,p_ajax_items_to_submit=>'P4_DGRM_ID'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );

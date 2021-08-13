@@ -4,12 +4,6 @@ prompt --install
 @@application/create_application.sql
 @@application/shared_components/navigation/lists/desktop_navigation_bar.sql
 @@application/shared_components/navigation/lists/desktop_navigation_menu.sql
-@@application/shared_components/files/js_mtag_bpmnmodeler_js.sql
-@@application/shared_components/files/js_mtag_bpmnmodeler_js_map.sql
-@@application/shared_components/files/js_mtag_bpmnmodeler_min_js.sql
-@@application/shared_components/files/css_mtag_bpmnmodeler_css.sql
-@@application/shared_components/files/css_mtag_bpmnmodeler_font_css.sql
-@@application/shared_components/files/css_mtag_bpmnmodeler_properties_panel_css.sql
 @@application/shared_components/files/app_100_logo_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
@@ -106,11 +100,11 @@ prompt --install
 @@application/shared_components/globalization/dyntranslations.sql
 @@application/shared_components/user_interface/shortcuts/delete_confirm_msg.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
-@@application/shared_components/plugins/region_type/com_mtag_apex_bpmnmodeler_region.sql
+@@application/shared_components/plugins/region_type/com_flows4apex_modeler_region.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_step_process.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_ins_vars_process.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_instance_process.sql
-@@application/shared_components/plugins/region_type/com_mtag_apex_bpmnviewer_region.sql
+@@application/shared_components/plugins/region_type/com_flows4apex_viewer_region.sql
 @@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00001.sql

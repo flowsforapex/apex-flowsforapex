@@ -62,7 +62,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210812035258'
+,p_last_upd_yyyymmddhh24miss=>'20210813022715'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -889,7 +889,7 @@ wwv_flow_api.create_page_plug(
 ,p_query_table=>'FLOW_P0010_VW'
 ,p_query_where=>'prcs_id = :p10_prcs_id'
 ,p_include_rowid_column=>false
-,p_plug_source_type=>'PLUGIN_COM.MTAG.APEX.BPMNVIEWER.REGION'
+,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION'
 ,p_ajax_items_to_submit=>'P10_PRCS_ID'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'DGRM_CONTENT'

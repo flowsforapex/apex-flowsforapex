@@ -28,7 +28,10 @@ drop package flow_types_pkg;
 drop package flow_constants_pkg;
 
 PROMPT >> Modeler Plugin Objects
-drop package flow_bpmn_modeler;
+drop package flow_modeler;
+
+PROMPT >> Viewer Plugin Objects
+drop package flow_viewer;
 
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;

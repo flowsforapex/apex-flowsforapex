@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch:t-Dialog--noPadding'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210811093716'
+,p_last_upd_yyyymmddhh24miss=>'20210813022715'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6161598858353963900)
@@ -37,7 +37,7 @@ wwv_flow_api.create_page_plug(
 ,p_query_table=>'FLOW_INSTANCE_DETAILS_VW'
 ,p_query_where=>'prcs_id = :P12_PRCS_ID'
 ,p_include_rowid_column=>false
-,p_plug_source_type=>'PLUGIN_COM.MTAG.APEX.BPMNVIEWER.REGION'
+,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION'
 ,p_ajax_items_to_submit=>'P12_PRCS_ID'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'DGRM_CONTENT'

@@ -86,8 +86,12 @@ PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0010_api.pkb
 
 PROMPT >> Modeler Plugin Objects
-@plugins/modeler/plsql/flow_bpmn_modeler.pks
-@plugins/modeler/plsql/flow_bpmn_modeler.pkb
+@plugins/modeler/plsql/flow_modeler.pks
+@plugins/modeler/plsql/flow_modeler.pkb
+
+PROMPT >> Viewer Plugin Objects
+@plugins/viewer/plsql/flow_viewer.pks
+@plugins/viewer/plsql/flow_viewer.pkb
 
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object
