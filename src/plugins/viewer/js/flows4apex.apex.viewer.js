@@ -2,7 +2,7 @@
 
 (function( $, region, event ){
 
-  $.widget( "mtag.bpmnviewer", {
+  $.widget( "flows4apex.viewer", {
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null,
@@ -63,7 +63,7 @@
         getViewerInstance: () => { return this.bpmnViewer$; },
         getEventBus: () => { return this.bpmnViewer$.get( "eventBus" ); },
         widgetName: "bpmnviewer",
-        type: "mtag.bpmnviewer"
+        type: "flows4apex.viewer"
       });
       for (const c in this.options.config.canvasStyle) {
         $( "#" + this.canvasId ).css(c, this.options.config.canvasStyle[c]);

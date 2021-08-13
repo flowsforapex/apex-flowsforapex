@@ -26,7 +26,7 @@ as
     apex_javascript.add_onload_code
     (
       p_code =>
-        'apex.jQuery("#' || p_region.static_id || '").bpmnmodeler({' ||
+        'apex.jQuery("#' || p_region.static_id || '").modeler({' ||
         apex_javascript.add_attribute
         (
           p_name      => 'ajaxIdentifier'

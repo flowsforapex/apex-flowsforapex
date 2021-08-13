@@ -2,7 +2,7 @@
 
 (function( $, region, debug, server, message, page ){
 
-  $.widget( "mtag.bpmnmodeler", {
+  $.widget( "flows4apex.modeler", {
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null
@@ -59,7 +59,7 @@
         getDiagram: () => this.getDiagram(),
         getSVG: () => this.getSVG(),
         widgetName: "bpmnmodeler",
-        type: "mtag.bpmnmodeler"
+        type: "flows4apex.modeler"
       });
 
       this.refresh();
