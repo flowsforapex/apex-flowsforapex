@@ -120,18 +120,20 @@ as
   gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
   gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
 
+  gc_prov_default_date_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS';
+
   -- Standard Process Variables
 
   gc_prov_builtin_business_ref        constant  varchar2(50 char) := 'BUSINESS_REF';
 
   -- Process Variable Expression Types
-  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'STATIC';
-  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'F4A_PROC_VAR';
-  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'ITEM';
-  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'SQL';
-  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'SQL_DELIMITED_LIST';
-  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'PLSQL_FUNCTION';
-  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'PLSQL_EXPRESSION';
+  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'static';
+  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'processVariable';
+  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'item';
+  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
+  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'sqlQueryList';
+  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
+  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
 
 -- Process Variable Expression set := 'BeforeTask';
   gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';

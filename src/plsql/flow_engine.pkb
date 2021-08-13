@@ -860,7 +860,7 @@ begin
   -- end of post- phase for previous step
   commit;
   apex_debug.info
-  ( p_message => 'End of Post Phase (committed) for current step %1 on subflow %0. Moving onto Pre-Phase of Next Step'
+  ( p_message => 'End of Post Phase (committed) for current step %1 on subflow %0. Moving onto Pre-Phase of Next Step '
   , p0        => p_subflow_id
   , p1        => l_sbfl_rec.sbfl_current
   );
@@ -875,29 +875,7 @@ begin
 
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
         
-  -- evaluate and set any pre-step variable expressions on the next object
-  if l_step_info.source_objt_tag in 
-  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
-  then 
-    flow_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.target_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_task
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
-    );
-  elsif l_step_info.source_objt_tag in 
-  ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
-  , flow_constants_pkg.gc_bpmn_intermediate_throw_event, flow_constants_pkg.gc_bpmn_intermediate_catch_event
-  , flow_constants_pkg.gc_bpmn_boundary_event )
-  then
-    flow_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.target_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
-    );
-  end if;
+
 
   apex_debug.info 
   ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
@@ -921,6 +899,30 @@ begin
   , p1 => l_sbfl_rec.sbfl_last_completed
   , p2 => l_sbfl_rec.sbfl_prcs_id
   );    
+
+  -- evaluate and set any pre-step variable expressions on the next object
+  if l_step_info.target_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
+  then 
+    flow_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_task
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+    );
+  elsif l_step_info.target_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
+  , flow_constants_pkg.gc_bpmn_intermediate_throw_event, flow_constants_pkg.gc_bpmn_intermediate_catch_event
+  , flow_constants_pkg.gc_bpmn_boundary_event )
+  then
+    flow_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+    );
+  end if;
 
   case (l_step_info.target_objt_tag)
     when flow_constants_pkg.gc_bpmn_end_event then  --next step is either end of process or sub-process returning to its parent

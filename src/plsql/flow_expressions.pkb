@@ -40,7 +40,8 @@ as
     apex_debug.enter
     ( 'flow_expressions.set_static'
     , 'expr_var_name', pi_expression.expr_var_name
-    , 'pi_expression_text' , l_expression_text
+    , 'pi_expression.expr_var_type', pi_expression.expr_var_type
+    , 'pi_expression.expr_expression' , pi_expression.expr_expression
     );
 
     l_expression_text := pi_expression.expr_expression;
@@ -141,6 +142,12 @@ as
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
   begin
+      apex_debug.enter
+    ( 'flow_expressions.set_sql'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'sql text' , pi_expression.expr_expression
+    );
+
     l_sql_text := pi_expression.expr_expression;
     -- substitute any F4A Process Variables
     flow_process_vars.do_substitution
@@ -258,6 +265,11 @@ as
     l_result_set_vc2  apex_t_varchar2;
     l_result          flow_process_variables.prov_var_vc2%type;
   begin
+      apex_debug.enter
+    ( 'flow_expressions.set_sql_delimited'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'sql text' , pi_expression.expr_expression
+    );
     l_sql_text := pi_expression.expr_expression;
     -- substitute any F4A Process Variables
     flow_process_vars.do_substitution
@@ -324,6 +336,11 @@ as
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
   begin
+    apex_debug.enter
+    ( 'flow_expressions.set_plsql_expression'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'plsql expression' , pi_expression.expr_expression
+    );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
       l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
@@ -342,7 +359,7 @@ as
       flow_process_vars.set_var 
       ( pi_prcs_id   => pi_prcs_id
       , pi_var_name  => pi_expression.expr_var_name
-      , pi_date_value => to_date(l_result_vc2,'DD-MON-YYYY HH24:MI:SS')
+      , pi_date_value => to_date(l_result_vc2,flow_constants_pkg.gc_prov_default_date_format)
       );
     when flow_constants_pkg.gc_prov_var_type_number then
       l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
@@ -371,6 +388,11 @@ as
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
   begin
+    apex_debug.enter
+    ( 'flow_expressions.set_plsql_function'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'plsql function body' , pi_expression.expr_expression
+    );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
       l_result_vc2 := apex_plugin_util.get_plsql_function_result 
@@ -389,7 +411,7 @@ as
       flow_process_vars.set_var 
       ( pi_prcs_id   => pi_prcs_id
       , pi_var_name  => pi_expression.expr_var_name
-      , pi_date_value => to_date(l_result_vc2,'DD-MON-YYYY HH24:MI:SS')
+      , pi_date_value => to_date(l_result_vc2, flow_constants_pkg.gc_prov_default_date_format)
       );
     when flow_constants_pkg.gc_prov_var_type_number then
       l_result_vc2 := apex_plugin_util.get_plsql_function_result 
@@ -433,6 +455,11 @@ as
     ( pi_objt_id => pi_objt_id
     , pi_set     => pi_set
     );
+    apex_debug.trace 
+    ( p_message => 'l_expressions.count: %0'
+    , p0        => l_expressions.count
+    );
+
     -- step through expressions
     for i in 1..l_expressions.count loop
       -- process expression
