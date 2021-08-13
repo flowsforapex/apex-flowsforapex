@@ -1751,9 +1751,9 @@ function removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "procVarDetailProps", function() { return procVarDetailProps; });
 /* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
-var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
-    entryFactory = __webpack_require__(/*! ./custom/EntryFactory */ "./apexPropertiesProvider/provider/parts/process_variables/custom/EntryFactory.js"),
-    cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+var {is} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+    var entryFactory = __webpack_require__(/*! ./custom/EntryFactory */ "./apexPropertiesProvider/provider/parts/process_variables/custom/EntryFactory.js");
+    var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
 
 
 
@@ -1765,27 +1765,27 @@ var EXPRESSION_DESCRIPTION = {
     sqlQueryList: 'SQL query returning a colon delimited list',
     plsqlExpression: 'Expression returning a value',
     plsqlFunctionBody: 'Function Body returning a value'
-}
+};
 
-var getProperty = function(property) {
-    return function(element, node) {
+var getProperty = function (property) {
+    return function (element, node) {
 
         var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
 
         return {
             [property]: (entry && entry.get(property)) || undefined,
             varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
-        }
-    }
-}
+        };
+    };
+};
 
-var setProperty = function() {
-    return function(element, values, node) {
+var setProperty = function () {
+    return function (element, values, node) {
     var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
 
     return cmdHelper.updateBusinessObject(element, entry, values);
-    }
-}
+    };
+};
 
 function procVarDetailProps(element, bpmnFactory, translate) {
 
@@ -1838,10 +1838,10 @@ function procVarDetailProps(element, bpmnFactory, translate) {
                 set: setProperty(),
 
                 selectOptions: [
-                    {name: 'Varchar2', value: 'varchar2'},
-                    {name: 'Number', value: 'number'},
-                    {name: 'Date', value: 'date'},
-                    {name: 'Clob', value: 'clob'},
+                    {name: 'Varchar2', value: 'VARCHAR2'},
+                    {name: 'Number', value: 'NUMBER'},
+                    {name: 'Date', value: 'DATE'},
+                    {name: 'Clob', value: 'CLOB'},
                 ]
             })
         );
@@ -84484,4 +84484,4 @@ module.exports = __webpack_require__(/*! C:\Users\damthor\Desktop\dev\bpmn-model
 /***/ })
 
 /******/ })["default"];
-//# sourceMappingURL=mtag.bpmnmodeler.js.map
+//# sourceMappingURL=flows4apex.modeler.js.map
