@@ -606,12 +606,12 @@ begin
      and sbfl.sbfl_id = p_subflow_id
   ;
   --  process any variable expressions in the OnEvent set
- /*flow_expressions.process_expressions
-  ( pi_objt_id     => p_current_objt  ---  wrong object type - needs to be an objt_id, not bpmn_id
-  , pi_set         => flow_constants_pkg.gc_expr_set_on_event
-  , pi_prcs_id     => p_process_id
-  , pi_sbfl_id     => p_subflow_id
-  );*/
+  flow_expressions.process_expressions
+  ( pi_objt_bpmn_id => p_current_objt  
+  , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+  , pi_prcs_id      => p_process_id
+  , pi_sbfl_id      => p_subflow_id
+  );
   -- move onto next step
   flow_complete_step 
   ( p_process_id => p_process_id

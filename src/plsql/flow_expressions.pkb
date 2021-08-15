@@ -498,6 +498,44 @@ as
       end case;
     end loop;
   end process_expressions;
+
+  -- overloaded process_expressions that accepts a objt_bpmn_id rather than an objt_id
+  procedure process_expressions
+  ( pi_objt_bpmn_id flow_objects.objt_bpmn_id%type
+  , pi_set          flow_object_expressions.expr_set%type
+  , pi_prcs_id      flow_processes.prcs_id%type
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
+  )
+  is 
+    l_objt_id       flow_objects.objt_id%type;
+  begin 
+    apex_debug.enter
+    ( 'process_expressions'
+    , 'pi_objt_bpmn_id', pi_objt_bpmn_id
+    , 'pi_set' , pi_set
+    );
+    -- look up the objt_id
+    select objt.objt_id
+      into l_objt_id
+      from flow_objects objt
+      join flow_subflows sbfl 
+        on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+     where sbfl.sbfl_id = pi_sbfl_id
+       and objt.objt_bpmn_id = pi_objt_bpmn_id
+    ;
+    process_expressions
+    ( pi_objt_id      => l_objt_id
+    , pi_set          => pi_set
+    , pi_prcs_id      => pi_prcs_id
+    , pi_sbfl_id      => pi_sbfl_id
+    );
+  exception
+    when no_data_found then
+      apex_error.add_error
+      ( p_message          => 'Internal error looking up object '||pi_objt_bpmn_id||' in process_expressions.  SQL error shown in debug output.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+  end process_expressions;  
   
 end flow_expressions;
 /
