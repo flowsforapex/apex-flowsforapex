@@ -8,19 +8,19 @@ Subflows were a major change introduced in Flows for APEX release 4.0.
 
 This documentation explains the subflow architecture, its implementation, and how to interact with subflows to create low-code BPMN-based workflows using Flows for APEX.
 
-### Processes Instances and Subflows
+### Flows,  Instances and Subflows
 
-A *Business Process* is defined using a BPMN Diagram, which is identified by a Diagram Name and Diagram ID.  This defines the rules and seqence in which a business process should be executed.  For example, the following BPMN diagram below shows the business process definition for an Order Shipment process.
+A *Flow* or Business Process is defined using a BPMN Diagram, which is identified by a Diagram Name and Diagram ID.  This defines the rules and seqence in which all of the tasks of business process should be executed.  For example, the following BPMN diagram below shows the business process definition for an Order Shipment process.
 
 ![Order Shipment Process](images/ShipmentProcess.png)
 
-A *Process Instance* is one occurance of this business process.  Building on our Shipping example, this process would be followed for all orders.  There would be one Process Instance for each order.
+A *Flow Instance* is one occurance of this Flow or business process.  Building on our Shipping example, this process model would be followed for all orders.  There would be one Flow Instance followed for each order processed.
 
-Within that process instance, there could be one or more *subflows* running at any time.  Each *subflow* is a branch of the process tree.  Continuing to build our example, the process instance starts with a single subflow running. Once it passes the first object, a parallel gateway, there would then be two subflows running - one with 'Decide if ...' activity as the next activity, and a second with 'Package Goods' as it's first activity.
+Within that flow instance, there could be one or more *subflows* running at any time.  Each *subflow* is a branch of the process tree.  Continuing to build our example, the process instance starts with a single subflow running. Once it passes the first object, a parallel gateway, there would then be two subflows running - one with 'Decide if ...' activity as the next activity, and a second with 'Package Goods' as it's first activity.
 
-As the process continues, additional subflows can be added, multiple subflows can be synchronised and combined into one, and subflows can end.  Subflows are a transient objects that are created, processed, and deleted as they are required or finished with.
+As the flow instance continues, additional subflows can be added, multiple subflows can be synchronised and combined into one, and subflows can end.  Subflows are a transient objects that are created, processed, and deleted as they are required or finished with.
 
-As the process continues, and each object is completed, a record of object completion is kept in the FLOW_SUBFLOW_LOG table.
+As the process continues, and each object is completed, a record of object completion is kept in the FLOW_SUBFLOW_LOG table.  This is used to show step completion in the BPMN viewer plugin.
 
 ### Subflow Behaviour
 
@@ -28,15 +28,19 @@ As the process continues, and each object is completed, a record of object compl
 
 When a Process Instance is created, a Process is created in the FLOW_PROCESSES table.  The process has a status of `created`.  At this point, it does not have any Subflows associated with it.
 
+Instance creation is logged in the instance event log, if logging is enabled.
+
 #### Process Instance Start
 
-When the Process Instance is started, the Process status is set to `started` and a subflow is created for the process.  This 'main' subflow has a current object of the Start Event.
+When the Process Instance is started, the Process Instance status is set to `started` and a subflow is created for the process.  This 'main' subflow has a current object of the Start Event.
 
 All subflows are marked with where they started -- in this case, the opening StartEvent.
 
 A subflow also has a *status* -- in this case, the status is `running`.
 
 The Process Start automatically calls a `flow_complete_step` event on the 'main' subflow.  In our example this steps the 'main' subflow to the next object, an opening (splitting) parallel gateway.
+
+Instance start is logged in the instance event log, if logging is enabled.
 
 #### Standard Subflow Progression
 
@@ -122,6 +126,12 @@ At the end of a sub process, if there are no other active subflows, the sub proc
 
 At the end of a process, the engine checks whether there are any other subflows still active.  If not, the Process Instance has completed and the Process has its process status set to `completed`.
 
+If the End Event is a Terminating End Event inside a SubProcess, all processing on the subflow and all other subflows inside the SubProcess, including any lower level SubProcesses, is terminated and the parent subflow progesses to the object after the SubProcess.
+
+If the End Event is a Terminating End Event in the top level of a Flow, all processing of the Flow Instance stops.  Depending on the definition of the Terminating End Event in the BPMN model, you can control whether the Flow Instance is marked as `terminated` or `completed`.  If you use a Terminate End Event in your model to trap a process error, you can set the resulting Instance status as `terminated` so that an administrator is aware that the process instance did not run to its normal, successful solution.
+
+Completion is logged in the instance event log, if logging is enabled.
+
 #### Action at an Interrupting Boundary Event.
 
 Boundary Events can be Interrupting or Non-Interrupting.
@@ -141,6 +151,12 @@ Timer Non-Interrupting Boundary Event.  When an object has an attached non-inter
 
 Non-Timer Non-Interrupting Boundary Events.  For example, a non-interrupting escalation boundary event.  These boundary events only fork off a new subflow if the relevant event event fires.  For example, if a sub process had an attached Non-Interrupting Escalation Boundary Event, the escalation subflow is only created if an escalation event is fired from inside the sub process, which is then caught by the matching boundary event.
 
+#### Action when a ScriptTask or ServiceTask Fails (new in v21.1)
+
+A ScriptTask or ServiceTask can fail due to an error in the script or encountering unexpected data.  The script can also request that processing stop by raising a predefined Flows forAPEX exception.  When this occurs, the subflow will be set to a status of `error`, and the instance will also be set to status of `error`.
+
+When an `error` occurs, an administrator can investigate the cause of the error by examining debug logs, the error codes, and prcess variable state.  Once the error has been fixed, the current ScriptTask or ServiceTask can be restarted from the Flow Monitor application or from the PL/SQL API using `flow_restart_step`.  This willl reset the subflow status to `running`, set the instance status to `running` if there are no other error subflows, and attempt to re-run the script task or service task.
+
 #### Action when a Process is Reset
 
 ***Note that resetting a process is not intended to be a common, day-to-day operation, and is included as an administrator function.  A process should be re-run by creating a new process instance in most normal operational cases.***
@@ -150,18 +166,20 @@ When a process is reset:
 - any event handlers, such as timers, are terminated.
 - any current subflows are removed.
 - process progress is reset to the begining, showing which objects were completed when the process ran.
-- any process variables attached to the instance ARE RETAINED.  If you wish to restart the process instance with a clean set of process variables, you should delete and recreate the process instance, rather than resetting it.
+- any process variables attached to the instance, except for BUSINESS_REF, are deleted.  Note that this behaviour has changed in v21 - previously all process variables were retained on a reset.
 - the process status is reset to `created`.
+- the reset is logged in the instance event log, if logging is enabled.
 
-#### Action when a Process is Deleted
+#### Action when a Process is Terminated
 
-When a process is terminated, the effect is the same as if the Flow had procesed a Terminate End Event at its current position:
+When a process is terminated from the PL/SQL API, the effect is the same as if the Flow had procesed a Terminate End Event at its current position:
 
 - any event handlers, such as timers, are terminated and deleted.
 - any current subflows are removed.
 - process progress recorded in the subflow log (FLOWS_SUBFLOW_LOG) is retained.
 - all associated process variables are retained.
-- the process instance is set to `completed`.
+- the process instance is set to `terminated`.
+- termination is logged in the instance event log, if logging is enabled.
 
 #### Action when a Process is Deleted
 
@@ -172,9 +190,14 @@ When a process is deleted:
 - process progress recorded in the subflow log (FLOWS_SUBFLOW_LOG) is removed.
 - all associated process variables are deleted.
 - the process instance record is removed.
+- deletion is logged in the instance event log, if logging is enabled.
 
 ### On Performance, Auditing and Logging...
 
 The Subflow architecture implemented in V4 is designed to be performant and the working tables holding Process Instances, Subflows, Timers, and Subflow Progress have been designed with the intention that they should stay small, un-cluttered, and hopefully cached!
 
-A subsequent inplementation project should move relevant performance and audit data from these working tables into audit trails, with process performance statistics, etc., being captured.  If anybody needs to build these functions into their project, please contact the Flows For APEX team to coordinate and contribute to the further development of the project.
+The Flow, Instance, Subflow and Variable event log tables are designed to hold longer term event logging and audit trail data for your system.  Depending upon the logging level set for your system, these logs can grow to become quite large, especially if process variable logging is enabled.  
+
+- The event logs will grow continuously, and are not deleted by the system when the subject instance is deleted.
+- If you have audit requirements, you should develop a retention plan to archive and manage these logs to meet your requirements.
+- Any log data can be deleted without damaging your system.  However, removing log data for Instances that asre still active or completed (i.e., have not yet been deleted) will remove information about the instance from the Flow Monitor application.
