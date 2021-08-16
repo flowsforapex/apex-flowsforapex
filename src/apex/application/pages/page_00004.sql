@@ -21,7 +21,22 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210813021459'
+,p_last_upd_yyyymmddhh24miss=>'20210816050719'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(7938399981499706)
+,p_plug_name=>'Action Menu'
+,p_region_name=>'actions'
+,p_region_template_options=>'#DEFAULT#'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_api.id(12495609856182880263)
+,p_plug_display_sequence=>20
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_01'
+,p_list_id=>wwv_flow_api.id(7959288629726086)
+,p_plug_source_type=>'NATIVE_LIST'
+,p_list_template_id=>wwv_flow_api.id(12495525309455880143)
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(22800510543488044)
@@ -68,45 +83,33 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(4403850573699528)
-,p_button_sequence=>10
-,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
-,p_button_name=>'DOWNLOAD_IMAGE'
-,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
-,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
-,p_button_image_alt=>'Download Image'
-,p_button_position=>'REGION_TEMPLATE_NEXT'
-,p_warn_on_unsaved_changes=>null
-,p_icon_css_classes=>'fa-image'
-);
-wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(24418161449878740)
-,p_button_sequence=>20
-,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
-,p_button_name=>'DOWNLOAD_FLOW'
-,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
-,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
-,p_button_image_alt=>'View Source'
-,p_button_position=>'REGION_TEMPLATE_NEXT'
-,p_button_execute_validations=>'N'
-,p_warn_on_unsaved_changes=>null
-,p_icon_css_classes=>'fa-cloud-download'
-);
-wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(15683484308738625)
 ,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
 ,p_button_name=>'SAVE_FLOW'
 ,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--padRight'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Save Flow'
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-save'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(7938283749499705)
+,p_button_sequence=>40
+,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
+,p_button_name=>'ACTION_MENU'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_api.id(12495522463331880131)
+,p_button_image_alt=>'Action Menu'
+,p_button_position=>'REGION_TEMPLATE_NEXT'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'js-menuButton'
+,p_icon_css_classes=>'fa-bars'
+,p_button_cattributes=>'data-menu="actions_menu"'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(15681777930738608)
@@ -176,63 +179,6 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'apex.region(''modeler'').save();'
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(22801184516488050)
-,p_name=>'Download Flow clicked'
-,p_event_sequence=>70
-,p_triggering_element_type=>'BUTTON'
-,p_triggering_button_id=>wwv_flow_api.id(24418161449878740)
-,p_bind_type=>'bind'
-,p_bind_event_type=>'click'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(25019734287509601)
-,p_event_id=>wwv_flow_api.id(22801184516488050)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'apex.region( "modeler" ).getDiagram().then( ( xml ) => { apex.item( "P4_DIAGRAM_XML" ).setValue( xml ); } );'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(25019836407509602)
-,p_event_id=>wwv_flow_api.id(22801184516488050)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_OPEN_REGION'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(24418438259878743)
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(4403930039699529)
-,p_name=>'Download Image clicked'
-,p_event_sequence=>80
-,p_triggering_element_type=>'BUTTON'
-,p_triggering_button_id=>wwv_flow_api.id(4403850573699528)
-,p_bind_type=>'bind'
-,p_bind_event_type=>'click'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(4404060981699530)
-,p_event_id=>wwv_flow_api.id(4403930039699529)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.region( "modeler" ).getSVG().then( ( svg ) => {',
-'     var svgBlob = new Blob([svg], {',
-'        type: ''image/svg+xml''',
-'    });',
-'    var fileName = $v(''P4_REGION_TITLE'');',
-'',
-'    var downloadLink = document.createElement(''a'');',
-'    downloadLink.download = fileName;',
-'    downloadLink.href = window.URL.createObjectURL(svgBlob);',
-'    downloadLink.click();',
-'} );'))
 );
 wwv_flow_api.component_end;
 end;
