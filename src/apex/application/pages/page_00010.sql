@@ -46,7 +46,9 @@ wwv_flow_api.create_page(
 '    if (text == ''Viewer'') {',
 '        $(this).parent().addClass("viewer-heading")',
 '    }',
-'})'))
+'})',
+'',
+'$(''#dlg-settings .container'').prepend($(''#settings-header''));'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.clickable-action {',
 '  cursor: pointer;',
@@ -80,11 +82,19 @@ wwv_flow_api.create_page(
 '',
 '.a-IRR-header {',
 '    vertical-align: inherit;',
+'}',
+'',
+'#settings-header {',
+'    font-weight: bold;',
+'}',
+'',
+'.a-Tabs-panel {',
+'    display: none;',
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210816051320'
+,p_last_upd_yyyymmddhh24miss=>'20210817032638'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -763,6 +773,8 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>30
 ,p_column_identifier=>'C'
 ,p_column_label=>'Name'
+,p_column_link=>'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4:P4_DGRM_ID,FLOW_PAGE_TITLE,P7_DGRM_ID:#PRCS_DGRM_ID#,#PRCS_DGRM_NAME# - Version #PRCS_DGRM_VERSION#,#PRCS_DGRM_ID#'
+,p_column_linktext=>'#PRCS_DGRM_NAME#'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
@@ -865,6 +877,15 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(7938514653499708)
+,p_db_column_name=>'PRCS_DGRM_ID'
+,p_display_order=>130
+,p_column_identifier=>'M'
+,p_column_label=>'Prcs Dgrm Id'
+,p_column_type=>'NUMBER'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(26608389028834346)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -872,7 +893,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'266084'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'PRCS_DGRM_CATEGORY:VIEW_PROCESS:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:BTN:'
+,p_report_columns=>'PRCS_DGRM_CATEGORY:VIEW_PROCESS:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:BTN::PRCS_DGRM_ID'
 ,p_sort_column_1=>'PRCS_DGRM_CATEGORY'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'PRCS_NAME'
@@ -922,12 +943,13 @@ wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(33735152614406122)
 ,p_plug_name=>'Settings'
 ,p_region_name=>'dlg-settings'
-,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-popup-noOverlay:js-popup-callout:js-dialog-size480x320'
+,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-popup-noOverlay:js-popup-callout:js-dialog-nosize'
 ,p_region_attributes=>'data-parent-element="#settings-btn"'
 ,p_plug_template=>wwv_flow_api.id(12495587659835880238)
 ,p_plug_display_sequence=>60
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_04'
+,p_plug_source=>'<span id="settings-header">Flow Viewer display setting</span>'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
@@ -948,7 +970,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6127698437330102702)
-,p_plug_name=>'Flow Monitor'
+,p_plug_name=>'Flow Viewer'
 ,p_region_name=>'flow-monitor'
 ,p_region_css_classes=>'js-react-on-prcs'
 ,p_region_template_options=>'#DEFAULT#:js-showMaximizeButton:t-Region--scrollBody'
@@ -1028,6 +1050,18 @@ wwv_flow_api.create_page_button(
 ,p_button_redirect_url=>'f?p=&APP_ID.:11:&SESSION.::&DEBUG.:RP::'
 ,p_icon_css_classes=>'fa-plus'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(7937992279499702)
 ,p_button_sequence=>20
@@ -1056,18 +1090,6 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-gear'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(34569800907098125)
@@ -1148,14 +1170,14 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(33735283006406123)
 ,p_name=>'P10_SELECT_OUTPUT'
-,p_item_sequence=>10
+,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(33735152614406122)
 ,p_prompt=>'Show BPMN-Viewer on'
 ,p_display_as=>'NATIVE_RADIOGROUP'
-,p_lov=>'STATIC2:Show BPMN-Viewer under Report;row,Show BPMN-Viewer side-by-side with Report;column,Open BPMN-Viewer in new Window;window'
+,p_lov=>'STATIC2:below report;row,side-by-side;column,new window;window'
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_api.id(12495523145758880138)
-,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:t-Form-fieldContainer--radioButtonGroup'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--radioButtonGroup'
 ,p_warn_on_unsaved_changes=>'I'
 ,p_lov_display_extra=>'YES'
 ,p_attribute_01=>'1'
@@ -1444,7 +1466,7 @@ wwv_flow_api.create_page_da_action(
 '  var currentRow = processRows.has( currentSelector );',
 '  var currentName = apex.jQuery( currentSelector ).data("name");',
 '  currentRow.parent().children().addClass( "current-process" );',
-'  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("Flow Monitor (" + currentName +")" );',
+'  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("Flow Viewer (" + currentName +")" );',
 '} else {',
 '  apex.jQuery( "#" + this.affectedElements[0].id + "_heading" ).text("No process selected" );',
 '}',
@@ -1969,6 +1991,18 @@ wwv_flow_api.create_page_process(
 ', pi_sbfl_id => apex_application.g_x03',
 ');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(5522324613864944)

@@ -51,6 +51,11 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(8221810702495139)
+,p_name=>'APP_COPY_FLOW'
+,p_message_text=>'Copy Flow'
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34714502237388987)
 ,p_name=>'APP_CREATE_INSTANCE'
 ,p_message_text=>'Create New Instance'
@@ -110,6 +115,11 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_EDIT'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('\00C9diter')
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(8225061315538358)
+,p_name=>'APP_FLOW_COPIED'
+,p_message_text=>'Flow copied.'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(28300791809214356)

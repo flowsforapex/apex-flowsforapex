@@ -68,7 +68,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210816050209'
+,p_last_upd_yyyymmddhh24miss=>'20210817023248'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -104,7 +104,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(28425138174759832)
-,p_plug_name=>'BPMN'
+,p_plug_name=>'Flow Viewer'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>40

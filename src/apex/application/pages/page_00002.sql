@@ -98,7 +98,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210816051224'
+,p_last_upd_yyyymmddhh24miss=>'20210817034537'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -114,6 +114,19 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source_type=>'NATIVE_LIST'
 ,p_list_template_id=>wwv_flow_api.id(12495525309455880143)
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(7938769092499710)
+,p_plug_name=>'Copy Flow'
+,p_region_name=>'copy_flow_reg'
+,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
+,p_plug_template=>wwv_flow_api.id(12495608896288880263)
+,p_plug_display_sequence=>50
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24213241311956116)
@@ -240,8 +253,8 @@ wwv_flow_api.create_worksheet_column(
 '<button type="button" title="&APP_TEXT$APP_EDIT." aria-label="&APP_TEXT$APP_EDIT." class="t-Button t-Button--noLabel t-Button--icon" onclick="location.href=''#EDIT_LINK#''"><span aria-hidden="true" class="t-Icon fa fa-pencil"></span></button>',
 '<button type="button" title="&APP_TEXT$APP_NEW_VERSION." aria-label="&APP_TEXT$APP_NEW_VERSION." class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-dgrm="#DGRM_ID#" data-action="new_version"><span aria-hidden="true" class="t-Icon'
 ||' fa fa-arrow-circle-o-up"></span></button>',
-'<button type="button" title="&APP_TEXT$APP_CREATE_INSTANCE." aria-label="&APP_TEXT$APP_CREATE_INSTANCE." class="t-Button t-Button--noLabel t-Button--icon" onclick="#CREATE_INSTANCE_LINK#"><span aria-hidden="true" class="t-Icon fa fa-plus"></span></bu'
-||'tton>'))
+'<button type="button" title="&APP_TEXT$APP_COPY_FLOW." aria-label="&APP_TEXT$APP_COPY_FLOW." class="clickable-action t-Button t-Button--noLabel t-Button--icon" data-dgrm="#DGRM_ID#" data-action="copy_flow"><span aria-hidden="true" class="t-Icon fa fa'
+||'-plus"></span></button>'))
 ,p_allow_sorting=>'N'
 ,p_allow_filtering=>'N'
 ,p_allow_highlighting=>'N'
@@ -563,6 +576,20 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(7938939101499712)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(7938769092499710)
+,p_button_name=>'COPY_FLOW'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
+,p_button_is_hot=>'Y'
+,p_button_image_alt=>'Copy Flow'
+,p_button_position=>'BELOW_BOX'
+,p_warn_on_unsaved_changes=>null
+,p_icon_css_classes=>'fa-plus'
+);
+wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(26400953036736995)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(71488161436297107)
@@ -625,6 +652,24 @@ wwv_flow_api.create_page_branch(
 ,p_branch_point=>'BEFORE_COMPUTATION'
 ,p_branch_type=>'REDIRECT_URL'
 ,p_branch_sequence=>10
+,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_branch_condition=>'EXPORT_FLOW'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(7938841081499711)
+,p_name=>'P2_NEW_NAME'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(7938769092499710)
+,p_prompt=>'New Name'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>10
+,p_field_template=>wwv_flow_api.id(12495522548744880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(26093937239304626)
@@ -732,8 +777,19 @@ wwv_flow_api.create_page_da_action(
 'var myDiagram = myElement.data( "dgrm" );',
 '',
 'apex.item( "P2_DGRM_ID" ).setValue( myDiagram );',
-'apex.item( "P2_NEW_VERSION" ).setValue( "" );',
-'apex.theme.openRegion( "new_version_reg" );',
+'',
+'switch (myAction) {',
+'    case ''new_version'': {',
+'        apex.item( "P2_NEW_VERSION" ).setValue( "" );',
+'        apex.theme.openRegion( "new_version_reg" );    ',
+'        break;',
+'    }',
+'    case ''copy_flow'': {',
+'        apex.item( "P2_NEW_NAME" ).setValue( "" );',
+'        apex.theme.openRegion( "copy_flow_reg" );    ',
+'        break;',
+'    }',
+'}',
 ''))
 );
 wwv_flow_api.create_page_da_event(
@@ -850,6 +906,43 @@ wwv_flow_api.create_page_process(
 ,p_process_success_message=>'&APP_TEXT$APP_NEW_VERSION_ADDED.'
 );
 wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(7939199045499714)
+,p_process_sequence=>20
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'Copy Flow'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'declare',
+'    l_dgrm_id flow_diagrams.dgrm_id%type := :P2_DGRM_ID;',
+'    r_diagrams flow_diagrams%rowtype;',
+'begin',
+'    select * ',
+'    into r_diagrams',
+'    from flow_diagrams',
+'    where dgrm_id = l_dgrm_id;',
+'    ',
+'    l_dgrm_id :=',
+'      flow_bpmn_parser_pkg.upload_diagram',
+'      (',
+'        pi_dgrm_name => :P2_NEW_NAME',
+'      , pi_dgrm_version => r_diagrams.dgrm_version',
+'      , pi_dgrm_category => r_diagrams.dgrm_category',
+'      , pi_dgrm_content => r_diagrams.dgrm_content',
+'      , pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_draft',
+'      );',
+'    ',
+'    flow_bpmn_parser_pkg.parse',
+'    (',
+'      pi_dgrm_id => l_dgrm_id',
+'    );',
+'    ',
+'end;'))
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'COPY_FLOW'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_process_success_message=>'&APP_TEXT$APP_FLOW_COPIED.'
+);
+wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(34632414579575826)
 ,p_process_sequence=>10
 ,p_process_point=>'ON_SUBMIT_BEFORE_COMPUTATION'
@@ -874,6 +967,8 @@ wwv_flow_api.create_page_process(
 '   end if;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'EXPORT_FLOW'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 );
 wwv_flow_api.component_end;
 end;

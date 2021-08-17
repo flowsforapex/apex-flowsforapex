@@ -3,6 +3,7 @@ as
    select null as view_process
         , prcs_id
         , prcs_name
+        , prcs_dgrm_id
         , prcs_dgrm_name
         , prcs_dgrm_version
         , prcs_dgrm_status
@@ -19,15 +20,11 @@ as
           '<button type="button" title="' || apex_lang.message(p_name => 'APP_DELETE_INSTANCE') || '" aria-label="' || apex_lang.message(p_name => 'APP_DELETE_INSTANCE') || '"' ||
           ' class="clickable-action t-Button t-Button--noLabel t-Button--icon"' ||
           ' data-prcs="' || prcs_id || '" data-action="delete"' ||
-          '><span aria-hidden="true" class="t-Icon fa fa-trash"></span></button>' ||
-          '<button type="button" title="' || apex_lang.message(p_name => 'APP_CREATE_INSTANCE') || '" aria-label="' || apex_lang.message(p_name => 'APP_CREATE_INSTANCE') || '"' ||
-          ' class="t-Button t-Button--noLabel t-Button--icon"' ||
-          ' onclick="' || apex_page.get_url( p_page => '11', p_items => 'P11_DGRM_ID', p_values => dgrm_id ) || '">' ||
-          '<span class="t-Icon fa fa-plus" aria-hidden="true"></span></button>' 
+          '><span aria-hidden="true" class="t-Icon fa fa-trash"></span></button>'
           as btn
      from ( select prcs_id
                  , prcs_name
-                 , dgrm_id
+                 , dgrm_id as prcs_dgrm_id
                  , dgrm_name as prcs_dgrm_name
                  , dgrm_version as prcs_dgrm_version
                  , dgrm_status as prcs_dgrm_status

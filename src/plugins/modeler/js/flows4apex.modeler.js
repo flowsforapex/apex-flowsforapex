@@ -2081,7 +2081,7 @@ function procVarLists(
 
       createExtensionElement: newElement(bpmnFactory, type1, {
         varName: type1,
-        varDataType: 'varchar2',
+        varDataType: 'VARCHAR2',
         varExpression: '',
         varExpressionType: 'static',
       }),
@@ -2117,7 +2117,7 @@ function procVarLists(
 
       createExtensionElement: newElement(bpmnFactory, type2, {
         varName: type2,
-        varDataType: 'varchar2',
+        varDataType: 'VARCHAR2',
         varExpression: '',
         varExpressionType: 'static',
       }),
