@@ -14,7 +14,7 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_flow_item(
  p_id=>wwv_flow_api.id(34551546825917526)
 ,p_name=>'FLOW_PAGE_TITLE'
-,p_protection_level=>'N'
+,p_protection_level=>'I'
 );
 wwv_flow_api.component_end;
 end;

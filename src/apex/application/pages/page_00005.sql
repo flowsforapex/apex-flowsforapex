@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210730123719'
+,p_last_upd_yyyymmddhh24miss=>'20210817104539'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(17600327473220601)
@@ -66,6 +66,9 @@ wwv_flow_api.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>300
+,p_display_when=>'P5_MULTI'
+,p_display_when2=>'N'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'N'
@@ -81,6 +84,9 @@ wwv_flow_api.create_page_item(
 ,p_prompt=>'Include Version'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_tag_css_classes=>'filename-changer'
+,p_display_when=>'P5_MULTI'
+,p_display_when2=>'N'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'APPLICATION'
@@ -93,6 +99,9 @@ wwv_flow_api.create_page_item(
 ,p_prompt=>'Include Category'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_tag_css_classes=>'filename-changer'
+,p_display_when=>'P5_MULTI'
+,p_display_when2=>'N'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'APPLICATION'
@@ -105,6 +114,9 @@ wwv_flow_api.create_page_item(
 ,p_prompt=>'Include Last Change Date'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_begin_on_new_line=>'N'
+,p_display_when=>'P5_MULTI'
+,p_display_when2=>'N'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_css_classes=>'filename-changer'
 ,p_item_template_options=>'#DEFAULT#'
@@ -134,6 +146,9 @@ wwv_flow_api.create_page_item(
 ,p_prompt=>'Include Status'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_begin_on_new_line=>'N'
+,p_display_when=>'P5_MULTI'
+,p_display_when2=>'N'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_css_classes=>'filename-changer'
 ,p_item_template_options=>'#DEFAULT#'
