@@ -2629,7 +2629,7 @@ PaletteProvider.prototype.getPaletteEntries = function (element) {
     'zoom-out': {
       group: 'controls',
       className: 'fa fa-search-minus',
-      title: translate('Zoom In'),
+      title: translate('Zoom Out'),
       action: {
         click: function (event) {
           zoomScroll.zoom(-1, 0);
