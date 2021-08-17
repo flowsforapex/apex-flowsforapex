@@ -201,7 +201,11 @@ as
     l_json_array  json_array_t;
     l_json_object json_object_t;
     l_json_clob   clob;
+    l_sql_clob    clob;
+    l_file_name   varchar2(300);
   begin
+    l_file_name := p_file_name;
+
     if ( p_download_as = 'BPMN' ) then
       l_json_array := json_array_t('[]');
     end if;
@@ -254,6 +258,8 @@ as
           l_json_object.put('file' ,  sanitize_file_name(l_flows(i).filename) || '.bpmn');
 
           l_json_array.append(l_json_object);
+        elsif ( p_download_as = 'SQL' ) then
+          l_sql_clob := l_sql_clob||'@"'||sanitize_file_name(l_flows(i).filename) || '.' || lower(p_download_as)||'";'||utl_tcp.crlf;
         end if;
       end if;
     end loop;
@@ -266,7 +272,15 @@ as
 
         apex_zip.add_file (
           p_zipped_blob => l_zip_file,
-          p_file_name   => 'flows.json',
+          p_file_name   => 'import.json',
+          p_content     => l_blob
+        );
+      elsif ( p_download_as = 'SQL' ) then
+        l_sql_clob := 'set define off;' || utl_tcp.crlf || l_sql_clob || utl_tcp.crlf;
+        l_blob := clob_to_blob(l_sql_clob);
+        apex_zip.add_file (
+          p_zipped_blob => l_zip_file,
+          p_file_name   => 'import.sql',
           p_content     => l_blob
         );
       end if;
@@ -276,13 +290,15 @@ as
       );
       l_blob := l_zip_file;
       l_mime_type := 'application/zip';
+
+      l_file_name := 'F4A_'||to_char(systimestamp, 'YYYYMMDD_HH24MISS')||'.zip';
     end if;
 
     l_length := dbms_lob.getlength(l_blob);
 
     owa_util.mime_header(l_mime_type, false) ;
     htp.p('Content-length: ' || l_length);
-    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(p_file_name)||'"');
+    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(l_file_name)||'"');
     owa_util.http_header_close;
     wpg_docload.download_file(l_blob);
 
