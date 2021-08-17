@@ -68,7 +68,7 @@ as
         flow_process_vars.set_var 
         ( pi_prcs_id   => pi_prcs_id
         , pi_var_name  => pi_expression.expr_var_name
-        , pi_date_value => l_expression_text
+        , pi_date_value => to_date(l_expression_text, flow_constants_pkg.gc_prov_default_date_format)
         );
     when flow_constants_pkg.gc_prov_var_type_clob then
         -- does this one make sense?
