@@ -219,6 +219,13 @@ end flow_process_link_event;
           where sbfl.sbfl_id = l_sbfl_id_par
             and sbfl.sbfl_prcs_id = p_process_id
             ;
+          -- execute the on-event expressions for the boundary event
+          flow_expressions.process_expressions
+          ( pi_objt_bpmn_id => l_boundary_event  
+          , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+          , pi_prcs_id      => p_process_id
+          , pi_sbfl_id      => p_subflow_id
+          );
         exception
           when no_data_found then
             -- error exit with no Boundary Event specified -- return to normal exit
@@ -325,9 +332,17 @@ end flow_process_link_event;
       , p_dgrm_id => p_sbfl_info.sbfl_dgrm_id
       );
 
-    -- Always do all updates to data first before performing any next step.
+    -- Always do all updates to parent data first before performing any next step in the children.
     -- Reason: A subflow could immediately disappear if we're stepping through it completly.
-    -- update parent subflow
+
+    -- run on-event expressions for child startEvent
+    flow_expressions.process_expressions
+    ( pi_objt_bpmn_id => l_target_objt_sub  
+    , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id      => p_process_id
+    , pi_sbfl_id      => l_sbfl_id_sub
+    );
+    -- Update parent subflow
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -412,6 +427,13 @@ end flow_process_link_event;
     apex_debug.enter 
     ('process_IntermediateThrowEvent'
     , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
+    );
+    -- process on-event expressions for the ITE
+    flow_expressions.process_expressions
+    ( pi_objt_id      => p_step_info.target_objt_id  
+    , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id      => p_process_id
+    , pi_sbfl_id      => p_subflow_id
     );
 
     if p_step_info.target_objt_subtag is null then

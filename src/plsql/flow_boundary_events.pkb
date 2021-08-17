@@ -239,6 +239,14 @@ is
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+    -- process on-event variable expressions for the boundary event
+    flow_expressions.process_expressions
+    ( pi_objt_bpmn_id => l_boundary_objt_bpmn_id  
+    , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id      => p_process_id
+    , pi_sbfl_id      => p_subflow_id
+    );
+    -- step off on new path
     flow_engine.flow_complete_step 
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
@@ -343,6 +351,14 @@ begin
       where sbfl.sbfl_id = p_par_sbfl
         and sbfl.sbfl_prcs_id = p_process_id
     ;
+    -- process on-event expressions for boundary event
+    flow_expressions.process_expressions
+    ( pi_objt_bpmn_id => l_next_objt  
+    , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id      => p_process_id
+    , pi_sbfl_id      => p_par_sbfl
+    );
+
     if p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_intermediate_throw_event  
     then 
       flow_engine.flow_complete_step
@@ -374,6 +390,14 @@ begin
       , p_new_proc_level => false
       , p_dgrm_id => l_parent_dgrm_id
       );
+      -- process on-event expressions for boundary event
+      flow_expressions.process_expressions
+      ( pi_objt_bpmn_id => l_next_objt  
+      , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+      , pi_prcs_id      => p_process_id
+      , pi_sbfl_id      => l_new_sbfl
+      );     
+      -- step forward from boundary event
       flow_engine.flow_complete_step 
       ( p_process_id => p_process_id
       , p_subflow_id => l_new_sbfl
