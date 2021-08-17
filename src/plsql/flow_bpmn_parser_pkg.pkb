@@ -305,7 +305,7 @@ as
            , pi_expr_set
            , pi_expr_order
            , pi_expr_var_name
-           , pi_expr_var_type
+           , upper(pi_expr_var_type)
            , pi_expr_type
            , pi_expr_expression
            )

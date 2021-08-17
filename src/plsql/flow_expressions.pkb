@@ -40,7 +40,8 @@ as
     apex_debug.enter
     ( 'flow_expressions.set_static'
     , 'expr_var_name', pi_expression.expr_var_name
-    , 'pi_expression_text' , l_expression_text
+    , 'pi_expression.expr_var_type', pi_expression.expr_var_type
+    , 'pi_expression.expr_expression' , pi_expression.expr_expression
     );
 
     l_expression_text := pi_expression.expr_expression;
@@ -141,6 +142,12 @@ as
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
   begin
+      apex_debug.enter
+    ( 'flow_expressions.set_sql'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'sql text' , pi_expression.expr_expression
+    );
+
     l_sql_text := pi_expression.expr_expression;
     -- substitute any F4A Process Variables
     flow_process_vars.do_substitution
@@ -258,6 +265,11 @@ as
     l_result_set_vc2  apex_t_varchar2;
     l_result          flow_process_variables.prov_var_vc2%type;
   begin
+      apex_debug.enter
+    ( 'flow_expressions.set_sql_delimited'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'sql text' , pi_expression.expr_expression
+    );
     l_sql_text := pi_expression.expr_expression;
     -- substitute any F4A Process Variables
     flow_process_vars.do_substitution
@@ -324,6 +336,11 @@ as
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
   begin
+    apex_debug.enter
+    ( 'flow_expressions.set_plsql_expression'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'plsql expression' , pi_expression.expr_expression
+    );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
       l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
@@ -342,7 +359,7 @@ as
       flow_process_vars.set_var 
       ( pi_prcs_id   => pi_prcs_id
       , pi_var_name  => pi_expression.expr_var_name
-      , pi_date_value => to_date(l_result_vc2,'DD-MON-YYYY HH24:MI:SS')
+      , pi_date_value => to_date(l_result_vc2,flow_constants_pkg.gc_prov_default_date_format)
       );
     when flow_constants_pkg.gc_prov_var_type_number then
       l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
@@ -371,6 +388,11 @@ as
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
   begin
+    apex_debug.enter
+    ( 'flow_expressions.set_plsql_function'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'plsql function body' , pi_expression.expr_expression
+    );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
       l_result_vc2 := apex_plugin_util.get_plsql_function_result 
@@ -389,7 +411,7 @@ as
       flow_process_vars.set_var 
       ( pi_prcs_id   => pi_prcs_id
       , pi_var_name  => pi_expression.expr_var_name
-      , pi_date_value => to_date(l_result_vc2,'DD-MON-YYYY HH24:MI:SS')
+      , pi_date_value => to_date(l_result_vc2, flow_constants_pkg.gc_prov_default_date_format)
       );
     when flow_constants_pkg.gc_prov_var_type_number then
       l_result_vc2 := apex_plugin_util.get_plsql_function_result 
@@ -433,6 +455,11 @@ as
     ( pi_objt_id => pi_objt_id
     , pi_set     => pi_set
     );
+    apex_debug.trace 
+    ( p_message => 'l_expressions.count: %0'
+    , p0        => l_expressions.count
+    );
+
     -- step through expressions
     for i in 1..l_expressions.count loop
       -- process expression
@@ -471,6 +498,44 @@ as
       end case;
     end loop;
   end process_expressions;
+
+  -- overloaded process_expressions that accepts a objt_bpmn_id rather than an objt_id
+  procedure process_expressions
+  ( pi_objt_bpmn_id flow_objects.objt_bpmn_id%type
+  , pi_set          flow_object_expressions.expr_set%type
+  , pi_prcs_id      flow_processes.prcs_id%type
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
+  )
+  is 
+    l_objt_id       flow_objects.objt_id%type;
+  begin 
+    apex_debug.enter
+    ( 'process_expressions'
+    , 'pi_objt_bpmn_id', pi_objt_bpmn_id
+    , 'pi_set' , pi_set
+    );
+    -- look up the objt_id
+    select objt.objt_id
+      into l_objt_id
+      from flow_objects objt
+      join flow_subflows sbfl 
+        on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+     where sbfl.sbfl_id = pi_sbfl_id
+       and objt.objt_bpmn_id = pi_objt_bpmn_id
+    ;
+    process_expressions
+    ( pi_objt_id      => l_objt_id
+    , pi_set          => pi_set
+    , pi_prcs_id      => pi_prcs_id
+    , pi_sbfl_id      => pi_sbfl_id
+    );
+  exception
+    when no_data_found then
+      apex_error.add_error
+      ( p_message          => 'Internal error looking up object '||pi_objt_bpmn_id||' in process_expressions.  SQL error shown in debug output.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+  end process_expressions;  
   
 end flow_expressions;
 /

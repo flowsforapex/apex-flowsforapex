@@ -219,6 +219,13 @@ end flow_process_link_event;
           where sbfl.sbfl_id = l_sbfl_id_par
             and sbfl.sbfl_prcs_id = p_process_id
             ;
+          -- execute the on-event expressions for the boundary event
+          flow_expressions.process_expressions
+          ( pi_objt_bpmn_id => l_boundary_event  
+          , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+          , pi_prcs_id      => p_process_id
+          , pi_sbfl_id      => p_subflow_id
+          );
         exception
           when no_data_found then
             -- error exit with no Boundary Event specified -- return to normal exit
@@ -325,9 +332,17 @@ end flow_process_link_event;
       , p_dgrm_id => p_sbfl_info.sbfl_dgrm_id
       );
 
-    -- Always do all updates to data first before performing any next step.
+    -- Always do all updates to parent data first before performing any next step in the children.
     -- Reason: A subflow could immediately disappear if we're stepping through it completly.
-    -- update parent subflow
+
+    -- run on-event expressions for child startEvent
+    flow_expressions.process_expressions
+    ( pi_objt_bpmn_id => l_target_objt_sub  
+    , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id      => p_process_id
+    , pi_sbfl_id      => l_sbfl_id_sub
+    );
+    -- Update parent subflow
     update flow_subflows sbfl
     set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
@@ -412,6 +427,13 @@ end flow_process_link_event;
     apex_debug.enter 
     ('process_IntermediateThrowEvent'
     , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
+    );
+    -- process on-event expressions for the ITE
+    flow_expressions.process_expressions
+    ( pi_objt_id      => p_step_info.target_objt_id  
+    , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id      => p_process_id
+    , pi_sbfl_id      => p_subflow_id
     );
 
     if p_step_info.target_objt_subtag is null then
@@ -606,12 +628,12 @@ begin
      and sbfl.sbfl_id = p_subflow_id
   ;
   --  process any variable expressions in the OnEvent set
- /*flow_expressions.process_expressions
-  ( pi_objt_id     => p_current_objt  ---  wrong object type - needs to be an objt_id, not bpmn_id
-  , pi_set         => flow_constants_pkg.gc_expr_set_on_event
-  , pi_prcs_id     => p_process_id
-  , pi_sbfl_id     => p_subflow_id
-  );*/
+  flow_expressions.process_expressions
+  ( pi_objt_bpmn_id => p_current_objt  
+  , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+  , pi_prcs_id      => p_process_id
+  , pi_sbfl_id      => p_subflow_id
+  );
   -- move onto next step
   flow_complete_step 
   ( p_process_id => p_process_id
@@ -860,7 +882,7 @@ begin
   -- end of post- phase for previous step
   commit;
   apex_debug.info
-  ( p_message => 'End of Post Phase (committed) for current step %1 on subflow %0. Moving onto Pre-Phase of Next Step'
+  ( p_message => 'End of Post Phase (committed) for current step %1 on subflow %0. Moving onto Pre-Phase of Next Step '
   , p0        => p_subflow_id
   , p1        => l_sbfl_rec.sbfl_current
   );
@@ -875,29 +897,7 @@ begin
 
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
         
-  -- evaluate and set any pre-step variable expressions on the next object
-  if l_step_info.source_objt_tag in 
-  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
-  then 
-    flow_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.target_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_task
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
-    );
-  elsif l_step_info.source_objt_tag in 
-  ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
-  , flow_constants_pkg.gc_bpmn_intermediate_throw_event, flow_constants_pkg.gc_bpmn_intermediate_catch_event
-  , flow_constants_pkg.gc_bpmn_boundary_event )
-  then
-    flow_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.target_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
-    );
-  end if;
+
 
   apex_debug.info 
   ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
@@ -921,6 +921,30 @@ begin
   , p1 => l_sbfl_rec.sbfl_last_completed
   , p2 => l_sbfl_rec.sbfl_prcs_id
   );    
+
+  -- evaluate and set any pre-step variable expressions on the next object
+  if l_step_info.target_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
+  then 
+    flow_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_task
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+    );
+  elsif l_step_info.target_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
+  , flow_constants_pkg.gc_bpmn_intermediate_throw_event, flow_constants_pkg.gc_bpmn_intermediate_catch_event
+  , flow_constants_pkg.gc_bpmn_boundary_event )
+  then
+    flow_expressions.process_expressions
+      ( pi_objt_id     => l_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+    );
+  end if;
 
   case (l_step_info.target_objt_tag)
     when flow_constants_pkg.gc_bpmn_end_event then  --next step is either end of process or sub-process returning to its parent

@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/b' exporter='Flows for APEX' exporterVersion='5.1.2'>
+  <bpmn:process id='Process_0rxermh' name='Task Trigger Point Tests' isExecutable='false'>
+    <bpmn:documentation>Exercises Before-Task and After Task trigger points for all task types.
+To run:  Ste through All tasks
+Expected Output:  Each Step should have an &lt;step Letter&gt;&lt;Before|After&gt;&lt;Task&gt; variable with content the same.</bpmn:documentation>
+    <bpmn:startEvent id='Event_1urgomv' name='Start'>
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Start_OnEvent</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>StartOnEvent</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>Originator</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>Richard</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1dy2opv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id='Activity_0ogte0s' name='TaskA'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>A_BeforeTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>ABeforeTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>A_AfterTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>AAfterTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1dy2opv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yqxh23</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_1dy2opv' sourceRef='Event_1urgomv' targetRef='Activity_0ogte0s' />
+    <bpmn:sequenceFlow id='Flow_0yqxh23' sourceRef='Activity_0ogte0s' targetRef='Activity_1qez1oa' />
+    <bpmn:sequenceFlow id='Flow_0g3l9at' sourceRef='Activity_1qez1oa' targetRef='Activity_1b38yoz' />
+    <bpmn:sequenceFlow id='Flow_00o1bpv' sourceRef='Activity_1b38yoz' targetRef='Activity_02wwy42' />
+    <bpmn:sequenceFlow id='Flow_1iogtwi' sourceRef='Activity_02wwy42' targetRef='Activity_0nlysg9' />
+    <bpmn:endEvent id='Event_16nj9nn' name='End'>
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>EOnEvent_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>EndOnEvent</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ij3bc8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_0ij3bc8' sourceRef='Activity_0nlysg9' targetRef='Event_16nj9nn' />
+    <bpmn:manualTask id='Activity_1qez1oa' name='ManualTaskB'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BBeforeTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>BBeforeTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BAfterTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>BAfterTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yqxh23</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g3l9at</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:userTask id='Activity_1b38yoz' name='UserTaskC'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>CBeforeTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>CBeforeTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>CAfterTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>CAfterTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g3l9at</bpmn:incoming>
+      <bpmn:outgoing>Flow_00o1bpv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id='Activity_02wwy42' name='ScriptTaskD'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>DBeforeTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>DBeforeTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>DAfterTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>DAfterTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00o1bpv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1iogtwi</bpmn:outgoing>
+      <apex:plsqlCode>null;</apex:plsqlCode>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id='Activity_0nlysg9' name='ServiceTaskE'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>EBeforeTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>EBeforeTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>EAfterTask_0</apex:varName>
+            <apex:varDataType>varchar2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>EAfterTask</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1iogtwi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ij3bc8</bpmn:outgoing>
+      <apex:plsqlCode>null;</apex:plsqlCode>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>
+    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_0rxermh'>
+      <bpmndi:BPMNEdge id='Flow_0ij3bc8_di' bpmnElement='Flow_0ij3bc8'>
+        <di:waypoint x='1230' y='500' />
+        <di:waypoint x='1292' y='500' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1iogtwi_di' bpmnElement='Flow_1iogtwi'>
+        <di:waypoint x='1070' y='500' />
+        <di:waypoint x='1130' y='500' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_00o1bpv_di' bpmnElement='Flow_00o1bpv'>
+        <di:waypoint x='910' y='500' />
+        <di:waypoint x='970' y='500' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0g3l9at_di' bpmnElement='Flow_0g3l9at'>
+        <di:waypoint x='750' y='500' />
+        <di:waypoint x='810' y='500' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0yqxh23_di' bpmnElement='Flow_0yqxh23'>
+        <di:waypoint x='590' y='500' />
+        <di:waypoint x='650' y='500' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1dy2opv_di' bpmnElement='Flow_1dy2opv'>
+        <di:waypoint x='438' y='500' />
+        <di:waypoint x='490' y='500' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id='Event_1urgomv_di' bpmnElement='Event_1urgomv'>
+        <dc:Bounds x='402' y='482' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='408' y='525' width='24' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0ogte0s_di' bpmnElement='Activity_0ogte0s'>
+        <dc:Bounds x='490' y='460' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_16nj9nn_di' bpmnElement='Event_16nj9nn'>
+        <dc:Bounds x='1292' y='482' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='1300' y='525' width='20' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1u600o8_di' bpmnElement='Activity_1qez1oa'>
+        <dc:Bounds x='650' y='460' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_06qmdwb_di' bpmnElement='Activity_1b38yoz'>
+        <dc:Bounds x='810' y='460' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_19j41sj_di' bpmnElement='Activity_02wwy42'>
+        <dc:Bounds x='970' y='460' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_16oqqnp_di' bpmnElement='Activity_0nlysg9'>
+        <dc:Bounds x='1130' y='460' width='100' height='80' />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
