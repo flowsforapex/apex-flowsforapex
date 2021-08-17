@@ -2,7 +2,7 @@ create or replace view flow_instance_gateways_lov
 as
   select obj.objt_id
        , obj.objt_bpmn_id
-       , coalesce(obj.objt_name, obj.objt_bpmn_id) objt_name
+       , case when obj.objt_name is null then obj.objt_bpmn_id else obj.objt_name || ' (' || obj.objt_bpmn_id ||')' end objt_name
        , case obj.objt_tag_name
            when 'bpmn:exclusiveGateway' then 'single'
            when 'bpmn:inclusiveGateway' then 'multi'
