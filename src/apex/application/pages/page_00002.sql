@@ -46,7 +46,16 @@ wwv_flow_api.create_page(
 '    else if (text == ''Error'') {',
 '        $(this).parent().addClass("status-error");',
 '    }',
-'});'))
+'});',
+'',
+'/*Disable download image when no instances selected*/',
+'$( "#actions_menu" ).on( "menubeforeopen", function( event, ui ) {',
+'    console.log(ui);',
+'    var menuItems = ui.menu.items;',
+'    menuItems[0].disabled = apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"]:checked'').length > 0 ? false : true;',
+'    ui.menu.items = menuItems;',
+'} );',
+''))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'td[headers="NB_INSTANCES"]{',
 '   padding-left:0px;',
@@ -98,7 +107,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210817034537'
+,p_last_upd_yyyymmddhh24miss=>'20210818132904'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -622,6 +631,7 @@ wwv_flow_api.create_page_button(
 ,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(34402625223171412)
 ,p_button_name=>'ACTION_MENU'
+,p_button_static_id=>'action-menu-btn'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#'
 ,p_button_template_id=>wwv_flow_api.id(12495522463331880131)
@@ -942,6 +952,18 @@ wwv_flow_api.create_page_process(
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 ,p_process_success_message=>'&APP_TEXT$APP_FLOW_COPIED.'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(34632414579575826)
 ,p_process_sequence=>10
@@ -970,6 +992,7 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'EXPORT_FLOW'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 );
+null;
 wwv_flow_api.component_end;
 end;
 /
