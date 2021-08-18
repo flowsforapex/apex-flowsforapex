@@ -70,6 +70,8 @@ wwv_flow_api.create_page(
 '{',
 '  display: flex;',
 '  justify-content: space-between;',
+'  align-items: center;',
+'  height: auto;',
 '}',
 '',
 '.export-heading {',
@@ -107,7 +109,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210818132904'
+,p_last_upd_yyyymmddhh24miss=>'20210818083453'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
