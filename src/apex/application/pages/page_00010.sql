@@ -136,10 +136,6 @@ wwv_flow_api.create_page(
 '  background-color: rgba(0,0,0,.05);',
 '}',
 '',
-'[for^="P10_SELECT_OUTPUT"] {',
-'    margin: 5px 0 5px 0!important;',
-'}',
-'',
 '.viewer-heading {',
 '    text-align: center !important;',
 '}',
@@ -204,7 +200,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210818084523'
+,p_last_upd_yyyymmddhh24miss=>'20210819091805'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -729,7 +725,7 @@ wwv_flow_api.create_report_columns(
 ,p_column_heading=>'Status'
 ,p_use_as_row_header=>'N'
 ,p_column_html_expression=>'<span class="sbfl_status status-#SBFL_STATUS#">#SBFL_STATUS#</span>'
-,p_heading_alignment=>'LEFT'
+,p_column_alignment=>'CENTER'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
@@ -874,7 +870,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>20
 ,p_column_identifier=>'B'
 ,p_column_label=>'Instance'
-,p_column_link=>'f?p=&APP_ID.:14:&SESSION.::&DEBUG.::P14_PRCS_ID:#PRCS_ID#'
+,p_column_link=>'f?p=&APP_ID.:14:&SESSION.::&DEBUG.:14:P14_PRCS_ID:#PRCS_ID#'
 ,p_column_linktext=>'#PRCS_NAME#'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
@@ -926,7 +922,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Status'
 ,p_column_html_expression=>'<span class="prcs_status status-#PRCS_STATUS#">#PRCS_STATUS#</span>'
 ,p_column_type=>'STRING'
-,p_heading_alignment=>'LEFT'
 ,p_column_alignment=>'CENTER'
 );
 wwv_flow_api.create_worksheet_column(
@@ -1433,7 +1428,7 @@ wwv_flow_api.create_page_da_action(
 'var myAction  = myElement.data( "action" );',
 'var myProcess = myElement.data( "prcs" );',
 'var mySubflow = myElement.data( "sbfl" );',
-'var displayOption = apex.item("P10_SELECT_OUTPUT").getValue();',
+'var displayOption = apex.item("P10_DISPLAY_SETTING").getValue();',
 '',
 'if ( myAction !== "view" || ( myAction === "view" && displayOption === "window") ) {',
 '  var result = apex.server.process( "PROCESS_ACTION", {',
@@ -1481,7 +1476,8 @@ wwv_flow_api.create_page_da_action(
 'var runningSelector = "button.clickable-action";',
 'var processRows = apex.jQuery( "#subflows tr" );',
 '',
-'processRows.has( runningSelector ).addClass( "flow-running" );'))
+'processRows.has( runningSelector ).addClass( "flow-running" );',
+''))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(24414763832878706)
@@ -1541,7 +1537,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'var prcsId = apex.item("P10_PRCS_ID").getValue();',
-'var selectedView  = apex.item("P10_SELECT_OUTPUT").getValue();',
+'var selectedView  = apex.item("P10_DISPLAY_SETTING").getValue();',
 '',
 'if ( prcsId !== "" && selectedView === "window") {',
 '    redirectToMonitor(prcsId);',
@@ -1779,85 +1775,6 @@ wwv_flow_api.create_page_da_action(
 ''))
 );
 wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(33735458903406125)
-,p_name=>'Flow Monitor View Settings'
-,p_event_sequence=>250
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P10_SELECT_OUTPUT'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'change'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(33735523526406126)
-,p_event_id=>wwv_flow_api.id(33735458903406125)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var selectedView = apex.item("P10_SELECT_OUTPUT").getValue();',
-'var prcsId = apex.item("P10_PRCS_ID").getValue();',
-'',
-'switch(selectedView) {',
-'    case "row" : ',
-'        apex.jQuery("#col1").addClass("col-12").removeClass("col-6");',
-'        apex.jQuery("#col2").addClass("col-12").removeClass("col-6");',
-'        ',
-'        apex.jQuery("#flow-monitor").show();',
-'        apex.region("flow-monitor").refresh();',
-'        break;',
-'    case "column" :',
-'        apex.jQuery("#col1").addClass("col-6").removeClass("col-12");',
-'        apex.jQuery("#col2").addClass("col-6").removeClass("col-12");',
-'        apex.jQuery("#col2").appendTo(apex.jQuery("#col1").parent());',
-'        ',
-'        apex.jQuery("#flow-monitor").show();',
-'        apex.region("flow-monitor").refresh();',
-'        break;',
-'    case "window" :',
-'        apex.jQuery("#flow-monitor").hide();',
-'        apex.jQuery("#col1").addClass("col-12").removeClass("col-6");',
-'        apex.jQuery("#col2").addClass("col-12").removeClass("col-6");',
-'        ',
-'        if ( prcsId !== "" ) {',
-'            redirectToMonitor(prcsId);',
-'        }',
-'        break;',
-'}',
-'',
-'',
-''))
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(33735607736406127)
-,p_event_id=>wwv_flow_api.id(33735458903406125)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- Save user preference',
-'apex_util.set_preference(''VIEWPORT'',:P10_SELECT_OUTPUT);',
-'',
-'if (:P10_SELECT_OUTPUT = ''row'') then',
-'    :P10_SUBFLOW_MAX_ROWS := 10;',
-'else',
-'    :P10_SUBFLOW_MAX_ROWS := 50;',
-'end if;'))
-,p_attribute_02=>'P10_SELECT_OUTPUT'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(34633996700575841)
-,p_event_id=>wwv_flow_api.id(33735458903406125)
-,p_event_result=>'TRUE'
-,p_action_sequence=>40
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(160799453422501997)
-);
-wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(4404300076699533)
 ,p_name=>'Reposition Download Image Button'
 ,p_event_sequence=>270
@@ -1987,18 +1904,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(160799453422501997)
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(24417245693878731)
 ,p_process_sequence=>10
@@ -2071,6 +1976,18 @@ wwv_flow_api.create_page_process(
 '    end if;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(160796959681501972)
