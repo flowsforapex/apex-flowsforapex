@@ -381,7 +381,7 @@ create table flow_subflow_event_log
 create table flow_variable_event_log
 ( lgvr_prcs_id			    number not null
 , lgvr_var_name			    varchar2(50 char) not null
-, lgvr_objt_id			    NUMBER
+, lgvr_objt_id			    VARCHAR2(50 char) 
 , lgvr_sbfl_id			    NUMBER
 , lgvr_expr_set			    VARCHAR2(20 CHAR) NOT NULL
 , lgvr_timestamp			TIMESTAMP WITH TIME ZONE NOT NULL

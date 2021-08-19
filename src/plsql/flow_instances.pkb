@@ -258,9 +258,11 @@ as
      where sbfl.sbfl_prcs_id = p_process_id
     ;
     
---    flow_process_vars.delete_all_for_process (pi_prcs_id => p_process_id);
---    commented out until variable expressions feature is released
---    process variables are NOT being cleared when the process is reset without this
+    -- delete all process variables except the builtins (new behaviour in 21.1)
+    flow_process_vars.delete_all_for_process 
+    ( pi_prcs_id => p_process_id
+    , pi_retain_builtins => true
+    );
 
     update flow_processes prcs
        set prcs.prcs_last_update = systimestamp
@@ -405,7 +407,10 @@ as
      where sbfl.sbfl_prcs_id = p_process_id
     ;
 
-    flow_process_vars.delete_all_for_process (pi_prcs_id => p_process_id);
+    flow_process_vars.delete_all_for_process 
+    ( pi_prcs_id => p_process_id
+    , pi_retain_builtins => false
+    );
     
     delete
       from flow_processes prcs
