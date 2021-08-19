@@ -1,8 +1,19 @@
 create or replace package body flow_expressions
 as 
   
+  type t_expr_rec is record
+  ( expr_id             flow_object_expressions.expr_id%type
+  , expr_objt_id        flow_object_expressions.expr_objt_id%type
+  , expr_set            flow_object_expressions.expr_set%type
+  , expr_order          flow_object_expressions.expr_order%type
+  , expr_var_name       flow_object_expressions.expr_var_name%type
+  , expr_var_type       flow_object_expressions.expr_var_type%type
+  , expr_type           flow_object_expressions.expr_type%type
+  , expr_expression     flow_object_expressions.expr_expression%type
+  , expr_objt_bpmn_id   flow_objects.objt_bpmn_id%type
+  );
 
-  type t_expr_set is table of flow_object_expressions%rowtype;
+  type t_expr_set is table of t_expr_rec;
 
 
   function get_expression_set
@@ -12,9 +23,19 @@ as
   as
     l_expressions   t_expr_set;
   begin
-    select *
+    select expr.expr_id
+         , expr.expr_objt_id
+         , expr.expr_set
+         , expr.expr_order
+         , expr.expr_var_name
+         , expr.expr_var_type
+         , expr.expr_type
+         , expr.expr_expression
+         , objt.objt_bpmn_id as expr_objt_bpmn_id
     bulk collect into l_expressions
       from flow_object_expressions expr
+      join flow_objects objt
+        on objt.objt_id = expr.expr_objt_id
      where expr.expr_objt_id = pi_objt_id
        and expr.expr_set = pi_set
      order by expr.expr_order asc
@@ -32,7 +53,7 @@ as
   procedure set_static
   ( pi_prcs_id      flow_processes.prcs_id%type
   , pi_sbfl_id      flow_subflows.sbfl_id%type
-  , pi_expression   flow_object_expressions%rowtype
+  , pi_expression   t_expr_rec
   )
   as 
     l_expression_text   flow_object_expressions.expr_expression%type;
@@ -54,35 +75,48 @@ as
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
         flow_process_vars.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_vc2_value => l_expression_text
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_vc2_value      => l_expression_text
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );
     when flow_constants_pkg.gc_prov_var_type_number then
         flow_process_vars.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_num_value => l_expression_text
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_num_value      => l_expression_text
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );
     when flow_constants_pkg.gc_prov_var_type_date then
         flow_process_vars.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_date_value => l_expression_text
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_date_value     => to_date(l_expression_text, flow_constants_pkg.gc_prov_default_date_format)
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );
     when flow_constants_pkg.gc_prov_var_type_clob then
         -- does this one make sense?
         flow_process_vars.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_clob_value => l_expression_text
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_clob_value     => l_expression_text
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );  
     end case;
   end set_static;
 
   procedure set_proc_var
   ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   flow_object_expressions%rowtype
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_expression   t_expr_rec
   )
   as 
   begin
@@ -100,6 +134,9 @@ as
                           ( pi_prcs_id => pi_prcs_id
                           , pi_var_name => pi_expression.expr_expression
                           )
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );      
     when flow_constants_pkg.gc_prov_var_type_date then
         flow_process_vars.set_var 
@@ -109,6 +146,9 @@ as
                            ( pi_prcs_id  => pi_prcs_id
                            , pi_var_name => pi_expression.expr_expression
                            )
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );     
     when flow_constants_pkg.gc_prov_var_type_number then
         flow_process_vars.set_var 
@@ -118,6 +158,9 @@ as
                              ( pi_prcs_id  => pi_prcs_id
                              , pi_var_name => pi_expression.expr_expression
                              )
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );    
     when flow_constants_pkg.gc_prov_var_type_clob then
         flow_process_vars.set_var 
@@ -127,13 +170,16 @@ as
                           ( pi_prcs_id  => pi_prcs_id
                           , pi_var_name => pi_expression.expr_expression
                           )
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );    
     end case;         
   end set_proc_var;
 
   procedure set_sql
   ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   flow_object_expressions%rowtype
+  , pi_expression   t_expr_rec
   , pi_sbfl_id      flow_subflows.sbfl_id%type
   )
   as 
@@ -184,9 +230,12 @@ as
             );
         end;
         flow_process_vars.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_vc2_value => l_result_vc2
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_vc2_value      => l_result_vc2
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );
     when flow_constants_pkg.gc_prov_var_type_date then
         begin
@@ -216,9 +265,12 @@ as
             );
         end;
         flow_process_vars.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_date_value => l_result_date
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_date_value     => l_result_date
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );
     when flow_constants_pkg.gc_prov_var_type_number then
         begin
@@ -248,16 +300,19 @@ as
             );
         end;
         flow_process_vars.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_num_value => l_result_num
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_num_value      => l_result_num
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
         );
     end case;
   end set_sql;
 
   procedure set_sql_delimited
   ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   flow_object_expressions%rowtype
+  , pi_expression   t_expr_rec
   , pi_sbfl_id      flow_subflows.sbfl_id%type
   )
   as 
@@ -320,15 +375,18 @@ as
     apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result, p_level => 3);
     -- set proc variable
     flow_process_vars.set_var 
-    ( pi_prcs_id   => pi_prcs_id
-    , pi_var_name  => pi_expression.expr_var_name
-    , pi_vc2_value => l_result
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_var_name       => pi_expression.expr_var_name
+    , pi_vc2_value      => l_result
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+    , pi_expr_set       => pi_expression.expr_set    
     );
   end set_sql_delimited;
 
   procedure set_plsql_expression         
   ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   flow_object_expressions%rowtype
+  , pi_expression   t_expr_rec
   , pi_sbfl_id      flow_subflows.sbfl_id%type
   )
   as 
@@ -347,9 +405,12 @@ as
                       ( p_plsql_expression => pi_expression.expr_expression
                       );
       flow_process_vars.set_var 
-      ( pi_prcs_id   => pi_prcs_id
-      , pi_var_name  => pi_expression.expr_var_name
-      , pi_vc2_value => l_result_vc2
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_vc2_value      => l_result_vc2
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_date then
       l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
@@ -357,18 +418,24 @@ as
                       );
       -- a date value must be returned using our specified format
       flow_process_vars.set_var 
-      ( pi_prcs_id   => pi_prcs_id
-      , pi_var_name  => pi_expression.expr_var_name
-      , pi_date_value => to_date(l_result_vc2,flow_constants_pkg.gc_prov_default_date_format)
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_date_value     => to_date(l_result_vc2,flow_constants_pkg.gc_prov_default_date_format)
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_number then
       l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
                       ( p_plsql_expression => pi_expression.expr_expression
                       );
       flow_process_vars.set_var 
-      ( pi_prcs_id   => pi_prcs_id
-      , pi_var_name  => pi_expression.expr_var_name
-      , pi_num_value => to_number(l_result_vc2)
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_num_value      => to_number(l_result_vc2)
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set
       ); 
     else
       apex_error.add_error
@@ -380,7 +447,7 @@ as
 
   procedure set_plsql_function        
   ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   flow_object_expressions%rowtype
+  , pi_expression   t_expr_rec
   , pi_sbfl_id      flow_subflows.sbfl_id%type
   )
   as 
@@ -399,9 +466,12 @@ as
                       ( p_plsql_function => pi_expression.expr_expression
                       );
       flow_process_vars.set_var 
-      ( pi_prcs_id   => pi_prcs_id
-      , pi_var_name  => pi_expression.expr_var_name
-      , pi_vc2_value => l_result_vc2
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_vc2_value      => l_result_vc2
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_date then
       l_result_vc2 := apex_plugin_util.get_plsql_function_result 
@@ -409,18 +479,24 @@ as
                       );
       -- a date value must be returned using our specified format
       flow_process_vars.set_var 
-      ( pi_prcs_id   => pi_prcs_id
-      , pi_var_name  => pi_expression.expr_var_name
-      , pi_date_value => to_date(l_result_vc2, flow_constants_pkg.gc_prov_default_date_format)
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_date_value     => to_date(l_result_vc2, flow_constants_pkg.gc_prov_default_date_format)
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_number then
       l_result_vc2 := apex_plugin_util.get_plsql_function_result 
                       ( p_plsql_function => pi_expression.expr_expression
                       );
       flow_process_vars.set_var 
-      ( pi_prcs_id   => pi_prcs_id
-      , pi_var_name  => pi_expression.expr_var_name
-      , pi_num_value => to_number(l_result_vc2)
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_num_value      => to_number(l_result_vc2)
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set 
       ); 
     else
       apex_error.add_error
@@ -451,6 +527,7 @@ as
     , 'pi_objt_id', pi_objt_id
     , 'pi_set' , pi_set
     );
+
     l_expressions := get_expression_set
     ( pi_objt_id => pi_objt_id
     , pi_set     => pi_set
@@ -466,12 +543,14 @@ as
       case l_expressions(i).expr_type
         when flow_constants_pkg.gc_expr_type_static then
           set_static 
-          ( pi_prcs_id => pi_prcs_id
-          , pi_sbfl_id => pi_sbfl_id
-          , pi_expression => l_expressions(i));
+          ( pi_prcs_id      => pi_prcs_id
+          , pi_sbfl_id      => pi_sbfl_id
+          , pi_expression   => l_expressions(i)
+          );
         when flow_constants_pkg.gc_expr_type_proc_var then
           set_proc_var
-          ( pi_prcs_id => pi_prcs_id
+          ( pi_prcs_id    => pi_prcs_id
+          , pi_sbfl_id    => pi_sbfl_id
           , pi_expression => l_expressions(i));
         when flow_constants_pkg.gc_expr_type_sql  then
           set_sql
@@ -535,7 +614,7 @@ as
       ( p_message          => 'Internal error looking up object '||pi_objt_bpmn_id||' in process_expressions.  SQL error shown in debug output.'
       , p_display_location => apex_error.c_on_error_page
       );
-  end process_expressions;  
+  end process_expressions; 
   
 end flow_expressions;
 /

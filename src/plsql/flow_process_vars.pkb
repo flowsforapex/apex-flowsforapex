@@ -5,8 +5,12 @@ procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_vc2_value in flow_process_variables.prov_var_vc2%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin
   begin
       insert into flow_process_variables 
@@ -17,39 +21,51 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'VARCHAR2'
+      , flow_constants_pkg.gc_prov_var_type_varchar2 
       , pi_vc2_value
-      );
+      );      
   exception
     when dup_val_on_index then
+      l_action := 'updating';
       update flow_process_variables prov 
          set prov.prov_var_vc2 = pi_vc2_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'VARCHAR2'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_varchar2 
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_varchar2 
+  , p_var_vc2           => pi_vc2_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    apex_error.add_error
+    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
+    , p_display_location => apex_error.c_on_error_page
+    );
 end set_var;
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_num_value in flow_process_variables.prov_var_num%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin 
   begin
       insert into flow_process_variables 
@@ -60,39 +76,51 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'NUMBER'
+      , flow_constants_pkg.gc_prov_var_type_number
       , pi_num_value
       );
   exception
     when dup_val_on_index then
+      l_action := 'updating';
       update flow_process_variables prov 
          set prov.prov_var_num = pi_num_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'NUMBER'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_number
+  , p_var_num           => pi_num_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    apex_error.add_error
+    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
+    , p_display_location => apex_error.c_on_error_page
+    );
 end set_var;
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_date_value in flow_process_variables.prov_var_date%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin 
   begin
       insert into flow_process_variables 
@@ -103,39 +131,51 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'DATE'
+      , flow_constants_pkg.gc_prov_var_type_date
       , pi_date_value
       );
   exception
     when dup_val_on_index then
+      l_action := 'updating';
       update flow_process_variables prov 
          set prov.prov_var_date = pi_date_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'DATE'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_date
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_date 
+  , p_var_date          => pi_date_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    apex_error.add_error
+    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
+    , p_display_location => apex_error.c_on_error_page
+    );
 end set_var;
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_clob_value in flow_process_variables.prov_var_clob%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin 
   begin
       insert into flow_process_variables 
@@ -146,7 +186,7 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'CLOB'
+      , flow_constants_pkg.gc_prov_var_type_clob
       , pi_clob_value
       );
   exception
@@ -155,22 +195,29 @@ begin
          set prov.prov_var_clob = pi_clob_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'CLOB'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_clob
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_clob 
+  , p_var_clob           => pi_clob_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    apex_error.add_error
+    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
+    , p_display_location => apex_error.c_on_error_page
+    );
 end set_var;
 
 -- getters return
@@ -301,11 +348,19 @@ end get_var_clob;
 
   procedure delete_all_for_process
   ( pi_prcs_id in flow_processes.prcs_id%type
+  , pi_retain_builtins in boolean default false
   )
   is
   begin
-    delete from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id;
+    if pi_retain_builtins then 
+      delete from flow_process_variables prov
+      where prov.prov_prcs_id = pi_prcs_id
+        and prov.prov_var_name not in ( flow_constants_pkg.gc_prov_builtin_business_ref )
+      ;
+    else
+      delete from flow_process_variables prov
+      where prov.prov_prcs_id = pi_prcs_id;
+    end if;
   end delete_all_for_process;
 
   procedure do_substitution
