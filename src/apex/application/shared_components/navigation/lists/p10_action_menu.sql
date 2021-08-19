@@ -42,6 +42,28 @@ wwv_flow_api.create_list_item(
 ,p_list_item_icon=>'fa-image'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(39805200139904551)
+,p_list_item_display_sequence=>30
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(39805591040910001)
+,p_list_item_display_sequence=>40
+,p_list_item_link_text=>'Display Setting'
+,p_list_item_icon=>'fa-gear'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(39805873547914084)
+,p_list_item_display_sequence=>50
+,p_list_item_link_text=>'below report|side-by-side|new window'
+,p_parent_list_item_id=>wwv_flow_api.id(39805591040910001)
+,p_list_text_01=>'choose-setting'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
 wwv_flow_api.component_end;
 end;
 /
