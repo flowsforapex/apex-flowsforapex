@@ -22,6 +22,7 @@ as
           ' data-prcs="' || prcs_id || '" data-action="delete"' ||
           '><span aria-hidden="true" class="t-Icon fa fa-trash"></span></button>'
           as btn
+        , apex_item.checkbox2(p_idx => 1, p_value => prcs_id) as checkbox
      from ( select prcs_id
                  , prcs_name
                  , dgrm_id as prcs_dgrm_id

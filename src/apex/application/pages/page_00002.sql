@@ -39,6 +39,22 @@ wwv_flow_api.create_page(
 '            }',
 '        },',
 '        {',
+'           name: "bulk-new-flow-version",',
+'            action: function(event, focusElement){ ',
+'                var dgrmId = apex.jQuery("input[name=f01]:checked").map(function(){return apex.jQuery(this).attr("value");}).get().join(":"); ',
+'                apex.item("P2_DGRM_ID").setValue(dgrmId);',
+'                apex.theme.openRegion("new_version_reg");',
+'            }',
+'        },',
+'        {',
+'           name: "bulk-copy-flow",',
+'            action: function(event, focusElement){ ',
+'                var dgrmId = apex.jQuery("input[name=f01]:checked").map(function(){return apex.jQuery(this).attr("value");}).get().join(":"); ',
+'                apex.item("P2_DGRM_ID").setValue(dgrmId);',
+'                apex.theme.openRegion("copy_flow_reg");',
+'            }',
+'        },',
+'        {',
 '           name: "copy-flow",',
 '            action: function(event, focusElement){ ',
 '                var dgrmId = apex.jQuery(focusElement).attr("data-dgrm"); ',
@@ -80,22 +96,37 @@ wwv_flow_api.create_page(
 '    }',
 '});',
 '',
-'$("th").each(function(i){',
+'$("th.a-IRR-header").each(function(i){',
 '  if ( apex.jQuery(this).attr("id") === undefined) {',
 '     apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
+'     apex.jQuery(this).find(''button#header-action'').hide();',
+'  } else {',
+'    apex.jQuery(this).addClass("u-alignMiddle");',
 '  }',
 '})',
 '',
-'/*Disable export when no flow selected*/',
-'$( "#actions_menu" ).on( "menubeforeopen", function( event, ui ) {',
-'    console.log(ui);',
-'    var menuItems = ui.menu.items;',
-'    menuItems[0].disabled = apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"]:checked'').length > 0 ? false : true;',
-'    ui.menu.items = menuItems;',
-'} );',
 '',
 '$( "#row_actions_menu" ).on( "menubeforeopen", function( event, ui ) {',
 '    console.log(ui);',
+'} );',
+'',
+'$( "#header_actions_menu" ).on( "menubeforeopen", function( event, ui ) {',
+'    var menuItems = ui.menu.items;',
+'    if ( apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"]:checked'').length === 0 ) {',
+'        menuItems = menuItems.map(function(item){ if (item.action !== "refresh") { item.disabled = true;} return item;});',
+'    } else {',
+'        menuItems = menuItems.map(function(item){ if (item.action !== "refresh") { item.disabled = false;} return item;});',
+'',
+'        apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"]:checked'').each(function(){',
+'          var name = $(this).data("name");',
+'          ',
+'          if ( apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"][data-name="'' + name + ''"]:checked'').length > 1 ) {',
+'            menuItems = menuItems.map(function(item){ if (item.action === "bulk-new-flow-version" || item.action === "bulk-copy-flow") { item.disabled = true;} return item;});',
+'            return false;',
+'          }',
+'        });',
+'    }',
+'    ui.menu.items = menuItems;',
 '} );',
 ''))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -106,14 +137,6 @@ wwv_flow_api.create_page(
 'th#action',
 '{',
 '  width:160px;',
-'}',
-'',
-'td[headers*=action]',
-'{',
-'  display: flex;',
-'  justify-content: space-between;',
-'  align-items: center;',
-'  height: auto;',
 '}',
 '',
 'th#action_col,',
@@ -158,7 +181,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210819091049'
+,p_last_upd_yyyymmddhh24miss=>'20210819131547'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -195,7 +218,7 @@ wwv_flow_api.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--hideHeader:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
-,p_plug_display_sequence=>20
+,p_plug_display_sequence=>30
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'TABLE'
 ,p_query_table=>'FLOW_P0002_DIAGRAMS_VW'
@@ -308,7 +331,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'BTN'
 ,p_display_order=>70
 ,p_column_identifier=>'G'
-,p_column_label=>'Actions'
+,p_column_label=>'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="header-action" data-menu="header_actions_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" ',
 '        data-menu="row_actions_menu"',
@@ -623,6 +646,20 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(40001574962317105)
+,p_plug_name=>'Header Action Menu'
+,p_region_name=>'header_actions'
+,p_region_template_options=>'#DEFAULT#'
+,p_component_template_options=>'#DEFAULT#:js-addActions:js-menu-callout'
+,p_plug_template=>wwv_flow_api.id(12495609667684880263)
+,p_plug_display_sequence=>20
+,p_plug_display_point=>'BODY'
+,p_list_id=>wwv_flow_api.id(40402255178815218)
+,p_plug_source_type=>'NATIVE_LIST'
+,p_list_template_id=>wwv_flow_api.id(12495525309455880143)
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+);
+wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(71488161436297107)
 ,p_plug_name=>'New Version'
 ,p_region_name=>'new_version_reg'
@@ -730,12 +767,13 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P2_NEW_NAME'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(7938769092499710)
-,p_prompt=>'New Name'
+,p_prompt=>'New Name/Suffix'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>10
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_warn_on_unsaved_changes=>'I'
+,p_inline_help_text=>'In case of single flow copy, the new flow wil have the entered name but if you have selected more than one row then the value entered will be used as a suffix.'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -767,25 +805,30 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(26401796293739221)
-,p_validation_name=>'Version'
+,p_validation_name=>'Flow exists (new version)'
 ,p_validation_sequence=>10
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_err varchar2(4000);',
 '    l_version_exists number;',
+'    l_flows apex_t_varchar2 := apex_string.split(:P2_DGRM_ID, '':'');',
 'begin',
 '    if (:P2_NEW_VERSION is null) then',
 '        l_err := ''#LABEL# must have a value'';',
 '    else',
-'        select count(*)',
-'        into l_version_exists',
-'        from flow_diagrams',
-'        where dgrm_name = (select dgrm_name from flow_diagrams where dgrm_id = :P2_DGRM_ID)',
-'        and dgrm_version = :P2_NEW_VERSION;',
-'        ',
-'        if (l_version_exists > 0) then',
-'            l_err := ''Version already exists.'';',
-'        end if;',
+'        for i in l_flows.first..l_flows.last',
+'        loop',
+'            select count(*)',
+'            into l_version_exists',
+'            from flow_diagrams',
+'            where dgrm_name = (select dgrm_name from flow_diagrams where dgrm_id = l_flows(i))',
+'            and dgrm_version = :P2_NEW_VERSION;',
+'',
+'            if (l_version_exists > 0) then',
+'                l_err := ''Version already exists.'';',
+'            end if;',
+'            exit when l_err is not null;',
+'        end loop;',
 '    end if;',
 '    return l_err;',
 'end;'))
@@ -793,6 +836,49 @@ wwv_flow_api.create_page_validation(
 ,p_validation_condition=>'ADD_VERSION'
 ,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
 ,p_associated_item=>wwv_flow_api.id(26401222533737000)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(40001878906317108)
+,p_validation_name=>'Flow exists (copy)'
+,p_validation_sequence=>20
+,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'declare',
+'    l_err varchar2(4000);',
+'    l_flow_exists number;',
+'    l_flows apex_t_varchar2 := apex_string.split(:P2_DGRM_ID, '':'');',
+'    l_dgrm_name flow_diagrams.dgrm_name%type;',
+'    l_dgrm_version flow_diagrams.dgrm_version%type;',
+'begin',
+'    if (:P2_NEW_NAME is null) then',
+'        l_err := ''#LABEL# must have a value'';',
+'    else',
+'        for i in l_flows.first..l_flows.last',
+'        loop',
+'            select dgrm_name|| '' - ''|| :P2_NEW_NAME, dgrm_version',
+'            into l_dgrm_name, l_dgrm_version',
+'            from flow_diagrams ',
+'            where dgrm_id = l_flows(i);',
+'            ',
+'            ',
+'            select count(*)',
+'            into l_flow_exists',
+'            from flow_diagrams',
+'            where dgrm_name = l_dgrm_name',
+'            and dgrm_version = l_dgrm_version;',
+'',
+'            if (l_flow_exists > 0) then',
+'                l_err := ''Flow ''||l_dgrm_name||'' (version ''||l_dgrm_version || ''already exists.'';',
+'            end if;',
+'            exit when l_err is not null;',
+'        end loop;',
+'    end if;',
+'    return l_err;',
+'end;'))
+,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
+,p_validation_condition=>'COPY_FLOW'
+,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_associated_item=>wwv_flow_api.id(7938841081499711)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
 wwv_flow_api.create_page_da_event(
@@ -824,6 +910,18 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(24213241311956116)
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(26093728782304624)
@@ -941,6 +1039,9 @@ wwv_flow_api.create_page_da_action(
 '$("th").each(function(i){',
 '  if ( apex.jQuery(this).attr("id") === undefined) {',
 '     apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
+'     apex.jQuery(this).find(''button#header-action'').hide();',
+'  } else {',
+'    apex.jQuery(this).addClass("u-alignMiddle");',
 '  }',
 '})'))
 );
@@ -952,18 +1053,6 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element=>'#check-all'
 ,p_bind_type=>'live'
 ,p_bind_event_type=>'change'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(40001401094317104)
@@ -987,28 +1076,32 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'Add new version'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
-'    l_dgrm_id flow_diagrams.dgrm_id%type := :P2_DGRM_ID;',
+'    l_flows apex_t_varchar2 := apex_string.split(:P2_DGRM_ID, '':'');',
+'    l_dgrm_id flow_diagrams.dgrm_id%type;',
 '    r_diagrams flow_diagrams%rowtype;',
 'begin',
-'    select * ',
-'    into r_diagrams',
-'    from flow_diagrams',
-'    where dgrm_id = l_dgrm_id;',
-'    ',
-'    l_dgrm_id :=',
-'      flow_bpmn_parser_pkg.upload_diagram',
-'      (',
-'        pi_dgrm_name => r_diagrams.dgrm_name',
-'      , pi_dgrm_version => :P2_NEW_VERSION',
-'      , pi_dgrm_category => r_diagrams.dgrm_category',
-'      , pi_dgrm_content => r_diagrams.dgrm_content',
-'      , pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_draft',
-'      );',
-'    ',
-'    flow_bpmn_parser_pkg.parse',
-'    (',
-'      pi_dgrm_id => l_dgrm_id',
-'    );',
+'    for i in l_flows.first..l_flows.last',
+'    loop',
+'        select * ',
+'        into r_diagrams',
+'        from flow_diagrams',
+'        where dgrm_id = l_flows(i);',
+'',
+'        l_dgrm_id :=',
+'          flow_bpmn_parser_pkg.upload_diagram',
+'          (',
+'            pi_dgrm_name => r_diagrams.dgrm_name',
+'          , pi_dgrm_version => :P2_NEW_VERSION',
+'          , pi_dgrm_category => r_diagrams.dgrm_category',
+'          , pi_dgrm_content => r_diagrams.dgrm_content',
+'          , pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_draft',
+'          );',
+'',
+'        flow_bpmn_parser_pkg.parse',
+'        (',
+'          pi_dgrm_id => l_dgrm_id',
+'        );',
+'    end loop;',
 '    ',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
@@ -1024,29 +1117,32 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'Copy Flow'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
-'    l_dgrm_id flow_diagrams.dgrm_id%type := :P2_DGRM_ID;',
+'    l_flows apex_t_varchar2 := apex_string.split(:P2_DGRM_ID, '':'');',
+'    l_dgrm_id flow_diagrams.dgrm_id%type;',
 '    r_diagrams flow_diagrams%rowtype;',
 'begin',
-'    select * ',
-'    into r_diagrams',
-'    from flow_diagrams',
-'    where dgrm_id = l_dgrm_id;',
-'    ',
-'    l_dgrm_id :=',
-'      flow_bpmn_parser_pkg.upload_diagram',
-'      (',
-'        pi_dgrm_name => :P2_NEW_NAME',
-'      , pi_dgrm_version => r_diagrams.dgrm_version',
-'      , pi_dgrm_category => r_diagrams.dgrm_category',
-'      , pi_dgrm_content => r_diagrams.dgrm_content',
-'      , pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_draft',
-'      );',
-'    ',
-'    flow_bpmn_parser_pkg.parse',
-'    (',
-'      pi_dgrm_id => l_dgrm_id',
-'    );',
-'    ',
+'    for i in l_flows.first..l_flows.last',
+'    loop',
+'        select * ',
+'        into r_diagrams',
+'        from flow_diagrams',
+'        where dgrm_id = l_flows(i);',
+'',
+'        l_dgrm_id :=',
+'          flow_bpmn_parser_pkg.upload_diagram',
+'          (',
+'            pi_dgrm_name => case when l_flows.count() > 1 then r_diagrams.dgrm_name || '' - '' end || :P2_NEW_NAME',
+'          , pi_dgrm_version => r_diagrams.dgrm_version',
+'          , pi_dgrm_category => r_diagrams.dgrm_category',
+'          , pi_dgrm_content => r_diagrams.dgrm_content',
+'          , pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_draft',
+'          );',
+'',
+'        flow_bpmn_parser_pkg.parse',
+'        (',
+'          pi_dgrm_id => l_dgrm_id',
+'        );',
+'    end loop;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'COPY_FLOW'
@@ -1061,25 +1157,18 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'Set Selection in Collection'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'begin',
-'  if apex_application.g_f01.count() = 0 then',
-'      apex_error.add_error (',
-'          p_message          => ''Select at least one row.'',',
-'          p_display_location => apex_error.c_on_error_page ',
-'      );',
-'   else',
-'       apex_collection.create_or_truncate_collection( p_collection_name => ''C_SELECT'' );',
-'       for i in 1..apex_application.g_f01.count()',
-'       loop',
-'           apex_collection.add_member(',
-'                 p_collection_name => ''C_SELECT''',
-'               , p_n001            => apex_application.g_f01(i)',
-'           );',
-'       end loop;',
-'   end if;',
+'    apex_collection.create_or_truncate_collection( p_collection_name => ''C_SELECT'' );',
+'    for i in 1..apex_application.g_f01.count()',
+'    loop',
+'        apex_collection.add_member(',
+'             p_collection_name => ''C_SELECT''',
+'           , p_n001            => apex_application.g_f01(i)',
+'        );',
+'    end loop;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'EXPORT_FLOW'
-,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_process_when=>'EXPORT_FLOW,ADD_VERSION,COPY_FLOW'
+,p_process_when_type=>'REQUEST_IN_CONDITION'
 );
 wwv_flow_api.component_end;
 end;
