@@ -48,22 +48,6 @@ wwv_flow_api.create_list_item(
 ,p_list_text_01=>'export-flow'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
-wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(40417487918422396)
-,p_list_item_display_sequence=>50
-,p_list_item_link_text=>'-'
-,p_list_item_link_target=>'separator'
-,p_list_item_current_type=>'TARGET_PAGE'
-);
-wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(40417710185424087)
-,p_list_item_display_sequence=>60
-,p_list_item_link_text=>'Refresh'
-,p_list_item_link_target=>'javascript:apex.region(''parsed_drgm'').refresh();'
-,p_list_item_icon=>'fa-refresh'
-,p_list_text_01=>'refresh'
-,p_list_item_current_type=>'TARGET_PAGE'
-);
 wwv_flow_api.component_end;
 end;
 /

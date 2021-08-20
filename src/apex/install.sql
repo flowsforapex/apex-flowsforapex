@@ -2,13 +2,15 @@ prompt --install
 @@application/set_environment.sql
 @@application/delete_application.sql
 @@application/create_application.sql
+@@application/shared_components/navigation/lists/p10_subflow_row_action_menu.sql
+@@application/shared_components/navigation/lists/p10_instance_header_action_menu.sql
 @@application/shared_components/navigation/lists/p2_action_menu.sql
 @@application/shared_components/navigation/lists/p7_action_menu.sql
 @@application/shared_components/navigation/lists/p10_action_menu.sql
 @@application/shared_components/navigation/lists/p4_action_menu.sql
 @@application/shared_components/navigation/lists/p2_row_action_menu.sql
 @@application/shared_components/navigation/lists/p2_header_action_menu.sql
-@@application/shared_components/navigation/lists/p10_row_action_menu.sql
+@@application/shared_components/navigation/lists/p10_instance_row_action_menu.sql
 @@application/shared_components/navigation/lists/desktop_navigation_bar.sql
 @@application/shared_components/navigation/lists/desktop_navigation_menu.sql
 @@application/shared_components/files/app_100_logo_png.sql

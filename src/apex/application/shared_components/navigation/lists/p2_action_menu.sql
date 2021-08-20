@@ -28,7 +28,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7928603491409069)
 ,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'Refresh'
-,p_list_item_link_target=>'javascript:window.location.reload();'
+,p_list_item_link_target=>'javascript:apex.region(''parsed_drgm'').refresh();'
 ,p_list_item_icon=>'fa-refresh'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
