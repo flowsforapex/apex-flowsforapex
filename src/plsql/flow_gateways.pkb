@@ -201,7 +201,6 @@ as
         set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
           , sbfl.sbfl_current = p_step_info.target_objt_ref
           , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-          , sbfl.sbfl_work_started = nvl(sbfl.sbfl_work_started, systimestamp)
           , sbfl.sbfl_last_update = systimestamp 
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id

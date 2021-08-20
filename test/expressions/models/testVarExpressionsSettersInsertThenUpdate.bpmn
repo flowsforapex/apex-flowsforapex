@@ -29,8 +29,8 @@
       <bpmn:incoming>Flow_1410v0p</bpmn:incoming>
       <bpmn:outgoing>Flow_1nudehk</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_1whclr0' sourceRef='Event_StartTest' targetRef='Gateway_111hurr' />
-    <bpmn:task id='Activity_1bfbsvr' name='UpdateVarchar2'>
+    <bpmn:sequenceFlow id='Flow_1whclr0' sourceRef='Event_StartTest' targetRef='Gateway_Split' />
+    <bpmn:task id='Activity_UpdateVC2' name='UpdateVarchar2'>
       <bpmn:extensionElements>
         <apex:beforeTask>
           <apex:processVariable>
@@ -45,9 +45,9 @@
       <bpmn:incoming>Flow_1nudehk</bpmn:incoming>
       <bpmn:outgoing>Flow_06a63ey</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_1nudehk' sourceRef='Activity_InsertVC2' targetRef='Activity_1bfbsvr' />
-    <bpmn:sequenceFlow id='Flow_0k1v3p7' sourceRef='Gateway_111hurr' targetRef='Activity_0pgpyby' />
-    <bpmn:parallelGateway id='Gateway_111hurr'>
+    <bpmn:sequenceFlow id='Flow_1nudehk' sourceRef='Activity_InsertVC2' targetRef='Activity_UpdateVC2' />
+    <bpmn:sequenceFlow id='Flow_0k1v3p7' sourceRef='Gateway_Split' targetRef='Activity_PreStepVC2' />
+    <bpmn:parallelGateway id='Gateway_Split' name='Split'>
       <bpmn:incoming>Flow_1whclr0</bpmn:incoming>
       <bpmn:outgoing>Flow_0k1v3p7</bpmn:outgoing>
       <bpmn:outgoing>Flow_1og9ea0</bpmn:outgoing>
@@ -78,7 +78,7 @@
       <bpmn:incoming>Flow_0m8t81u</bpmn:incoming>
       <bpmn:outgoing>Flow_02m09mv</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_1og9ea0' sourceRef='Gateway_111hurr' targetRef='Activity_0usd9mv' />
+    <bpmn:sequenceFlow id='Flow_1og9ea0' sourceRef='Gateway_Split' targetRef='Activity_PreStepNum' />
     <bpmn:task id='Activity_UpdateNum' name='UpdateNum'>
       <bpmn:extensionElements>
         <apex:beforeTask>
@@ -119,8 +119,8 @@
       <bpmn:incoming>Flow_1q432pz</bpmn:incoming>
       <bpmn:outgoing>Flow_126xhmt</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_0bt7mos' sourceRef='Gateway_111hurr' targetRef='Activity_02caynu' />
-    <bpmn:task id='Activity_18rd1lh' name='Update Date'>
+    <bpmn:sequenceFlow id='Flow_0bt7mos' sourceRef='Gateway_Split' targetRef='Activity_PreStepDate' />
+    <bpmn:task id='Activity_UpdateDate' name='Update Date'>
       <bpmn:extensionElements>
         <apex:beforeTask>
           <apex:processVariable>
@@ -135,21 +135,65 @@
       <bpmn:incoming>Flow_126xhmt</bpmn:incoming>
       <bpmn:outgoing>Flow_122qil5</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_126xhmt' sourceRef='Activity_InsertDate' targetRef='Activity_18rd1lh' />
-    <bpmn:task id='Activity_0rprzvc' name='Insert CLOB'>
+    <bpmn:sequenceFlow id='Flow_126xhmt' sourceRef='Activity_InsertDate' targetRef='Activity_UpdateDate' />
+    <bpmn:task id='Activity_InsertCLOB' name='Insert CLOB'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>OriginalCLOB</apex:varName>
+            <apex:varDataType>CLOB</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>&lt;bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/b' exporter='Flows for APEX' exporterVersion='21.1.0'&gt;</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>CopyofOriginalCLOB</apex:varName>
+            <apex:varDataType>CLOB</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>OriginalCLOB</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_05qg33e</bpmn:incoming>
       <bpmn:outgoing>Flow_1o79qdb</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_13w4qj0' sourceRef='Gateway_111hurr' targetRef='Activity_08aj9yd' />
-    <bpmn:task id='Activity_0jkpav6' name='Update Clob'>
+    <bpmn:sequenceFlow id='Flow_13w4qj0' sourceRef='Gateway_Split' targetRef='Activity_PreStepCLOB' />
+    <bpmn:task id='Activity_updateCLOB' name='Update Clob'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>OriginalCLOB</apex:varName>
+            <apex:varDataType>CLOB</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression> &lt;bpmn:startEvent id='Event_0b152er' name='Start'&gt;
+      &lt;bpmn:extensionElements&gt;
+        &lt;apex:onEvent&gt;
+          &lt;apex:processVariable&gt;
+            &lt;apex:varSequence&gt;0&lt;/apex:varSequence&gt;
+            &lt;apex:varName&gt;Author&lt;/apex:varName&gt;
+            &lt;apex:varDataType&gt;VARCHAR2&lt;/apex:varDataType&gt;
+            &lt;apex:varExpressionType&gt;static&lt;/apex:varExpressionType&gt;
+            &lt;apex:varExpression&gt;Richard&lt;/apex:varExpression&gt;
+          &lt;/apex:processVariable&gt;
+        &lt;/apex:onEvent&gt;
+      &lt;/bpmn:extensionElements&gt;
+      &lt;bpmn:outgoing&gt;Flow_0uuu5a1&lt;/bpmn:outgoing&gt;
+    &lt;/bpmn:startEvent&gt;</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1o79qdb</bpmn:incoming>
       <bpmn:outgoing>Flow_1g001mh</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_1o79qdb' sourceRef='Activity_0rprzvc' targetRef='Activity_0jkpav6' />
+    <bpmn:sequenceFlow id='Flow_1o79qdb' sourceRef='Activity_InsertCLOB' targetRef='Activity_updateCLOB' />
     <bpmn:endEvent id='Event_EndVC2' name='EndVC2'>
       <bpmn:incoming>Flow_06a63ey</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id='Flow_06a63ey' sourceRef='Activity_1bfbsvr' targetRef='Event_EndVC2' />
+    <bpmn:sequenceFlow id='Flow_06a63ey' sourceRef='Activity_UpdateVC2' targetRef='Event_EndVC2' />
     <bpmn:endEvent id='Event_EndNum' name='EndNum'>
       <bpmn:incoming>Flow_1wlekfq</bpmn:incoming>
     </bpmn:endEvent>
@@ -157,31 +201,31 @@
     <bpmn:endEvent id='Event_EndDate' name='EndDate'>
       <bpmn:incoming>Flow_122qil5</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id='Flow_122qil5' sourceRef='Activity_18rd1lh' targetRef='Event_EndDate' />
-    <bpmn:endEvent id='Event_1ehcpzg'>
+    <bpmn:sequenceFlow id='Flow_122qil5' sourceRef='Activity_UpdateDate' targetRef='Event_EndDate' />
+    <bpmn:endEvent id='Event_EndCLOB' name='EndCLOB'>
       <bpmn:incoming>Flow_1g001mh</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id='Flow_1g001mh' sourceRef='Activity_0jkpav6' targetRef='Event_1ehcpzg' />
-    <bpmn:task id='Activity_0pgpyby' name='PreStepVC2'>
+    <bpmn:sequenceFlow id='Flow_1g001mh' sourceRef='Activity_updateCLOB' targetRef='Event_EndCLOB' />
+    <bpmn:task id='Activity_PreStepVC2' name='PreStepVC2'>
       <bpmn:incoming>Flow_0k1v3p7</bpmn:incoming>
       <bpmn:outgoing>Flow_1410v0p</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_1410v0p' sourceRef='Activity_0pgpyby' targetRef='Activity_InsertVC2' />
-    <bpmn:task id='Activity_0usd9mv' name='PreStepNum'>
+    <bpmn:sequenceFlow id='Flow_1410v0p' sourceRef='Activity_PreStepVC2' targetRef='Activity_InsertVC2' />
+    <bpmn:task id='Activity_PreStepNum' name='PreStepNum'>
       <bpmn:incoming>Flow_1og9ea0</bpmn:incoming>
       <bpmn:outgoing>Flow_0m8t81u</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_0m8t81u' sourceRef='Activity_0usd9mv' targetRef='Activity_InsertNum' />
-    <bpmn:task id='Activity_02caynu' name='PreStepDate'>
+    <bpmn:sequenceFlow id='Flow_0m8t81u' sourceRef='Activity_PreStepNum' targetRef='Activity_InsertNum' />
+    <bpmn:task id='Activity_PreStepDate' name='PreStepDate'>
       <bpmn:incoming>Flow_0bt7mos</bpmn:incoming>
       <bpmn:outgoing>Flow_1q432pz</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_1q432pz' sourceRef='Activity_02caynu' targetRef='Activity_InsertDate' />
-    <bpmn:task id='Activity_08aj9yd' name='Prestep'>
+    <bpmn:sequenceFlow id='Flow_1q432pz' sourceRef='Activity_PreStepDate' targetRef='Activity_InsertDate' />
+    <bpmn:task id='Activity_PreStepCLOB' name='PrestepCLOB'>
       <bpmn:incoming>Flow_13w4qj0</bpmn:incoming>
       <bpmn:outgoing>Flow_05qg33e</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id='Flow_05qg33e' sourceRef='Activity_08aj9yd' targetRef='Activity_0rprzvc' />
+    <bpmn:sequenceFlow id='Flow_05qg33e' sourceRef='Activity_PreStepCLOB' targetRef='Activity_InsertCLOB' />
   </bpmn:process>
   <bpmndi:BPMNDiagram id='BPMNDiagram_1'>
     <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_0rxermh'>
@@ -265,11 +309,14 @@
       <bpmndi:BPMNShape id='Activity_0hao43f_di' bpmnElement='Activity_InsertVC2'>
         <dc:Bounds x='290' y='200' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_1bfbsvr_di' bpmnElement='Activity_1bfbsvr'>
+      <bpmndi:BPMNShape id='Activity_1bfbsvr_di' bpmnElement='Activity_UpdateVC2'>
         <dc:Bounds x='450' y='200' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Gateway_0cdbrsv_di' bpmnElement='Gateway_111hurr'>
+      <bpmndi:BPMNShape id='Gateway_0cdbrsv_di' bpmnElement='Gateway_Split'>
         <dc:Bounds x='75' y='385' width='50' height='50' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='59' y='373' width='22' height='14' />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='Activity_1iukl6e_di' bpmnElement='Activity_InsertNum'>
         <dc:Bounds x='290' y='370' width='100' height='80' />
@@ -280,13 +327,13 @@
       <bpmndi:BPMNShape id='Activity_1pxyiih_di' bpmnElement='Activity_InsertDate'>
         <dc:Bounds x='290' y='480' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_18rd1lh_di' bpmnElement='Activity_18rd1lh'>
+      <bpmndi:BPMNShape id='Activity_18rd1lh_di' bpmnElement='Activity_UpdateDate'>
         <dc:Bounds x='460' y='480' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_0rprzvc_di' bpmnElement='Activity_0rprzvc'>
+      <bpmndi:BPMNShape id='Activity_0rprzvc_di' bpmnElement='Activity_InsertCLOB'>
         <dc:Bounds x='290' y='590' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_0jkpav6_di' bpmnElement='Activity_0jkpav6'>
+      <bpmndi:BPMNShape id='Activity_0jkpav6_di' bpmnElement='Activity_updateCLOB'>
         <dc:Bounds x='460' y='590' width='100' height='80' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='Event_1qkg7xa_di' bpmnElement='Event_EndVC2'>
@@ -307,19 +354,22 @@
           <dc:Bounds x='629' y='545' width='43' height='14' />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Event_1ehcpzg_di' bpmnElement='Event_1ehcpzg'>
+      <bpmndi:BPMNShape id='Event_1ehcpzg_di' bpmnElement='Event_EndCLOB'>
         <dc:Bounds x='632' y='612' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='625' y='655' width='50' height='14' />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_0pgpyby_di' bpmnElement='Activity_0pgpyby'>
+      <bpmndi:BPMNShape id='Activity_0pgpyby_di' bpmnElement='Activity_PreStepVC2'>
         <dc:Bounds x='150' y='200' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_0usd9mv_di' bpmnElement='Activity_0usd9mv'>
+      <bpmndi:BPMNShape id='Activity_0usd9mv_di' bpmnElement='Activity_PreStepNum'>
         <dc:Bounds x='150' y='370' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_02caynu_di' bpmnElement='Activity_02caynu'>
+      <bpmndi:BPMNShape id='Activity_02caynu_di' bpmnElement='Activity_PreStepDate'>
         <dc:Bounds x='150' y='480' width='100' height='80' />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id='Activity_08aj9yd_di' bpmnElement='Activity_08aj9yd'>
+      <bpmndi:BPMNShape id='Activity_08aj9yd_di' bpmnElement='Activity_PreStepCLOB'>
         <dc:Bounds x='150' y='590' width='100' height='80' />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

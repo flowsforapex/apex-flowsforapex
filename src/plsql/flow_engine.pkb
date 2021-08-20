@@ -120,7 +120,6 @@ end flow_process_link_event;
         set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
           , sbfl.sbfl_current = p_step_info.target_objt_ref
           , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_completed  
-          , sbfl.sbfl_work_started = systimestamp
           , sbfl.sbfl_last_update = systimestamp 
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
@@ -896,8 +895,17 @@ begin
   );
 
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
-        
-
+  -- updating subflows here with became-current time, new current objt, new last completed.  Reset started time
+  -- set status to running here...
+ update flow_subflows sbfl
+     set sbfl.sbfl_current = l_step_info.target_objt_ref
+       , sbfl.sbfl_last_completed = l_sbfl_rec.sbfl_current
+       , sbfl_became_current = systimestamp
+       , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+       , sbfl_work_started = null
+   where sbfl.sbfl_prcs_id = p_process_id
+     and sbfl.sbfl_id = p_subflow_id
+  ;
 
   apex_debug.info 
   ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
