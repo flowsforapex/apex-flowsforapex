@@ -17,14 +17,6 @@ wwv_flow_api.create_list(
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(7927841421409067)
-,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Export Flow'
-,p_list_item_link_target=>'javascript:apex.submit(''EXPORT_FLOW'');'
-,p_list_item_icon=>'fa-download'
-,p_list_item_current_type=>'TARGET_PAGE'
-);
-wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7928205045409069)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'Import Flow'
@@ -36,7 +28,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7928603491409069)
 ,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'Refresh'
-,p_list_item_link_target=>'javascript:apex.region(''parsed_drgm'').refresh();'
+,p_list_item_link_target=>'javascript:window.location.reload();'
 ,p_list_item_icon=>'fa-refresh'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );

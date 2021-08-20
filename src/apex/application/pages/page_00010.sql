@@ -39,21 +39,50 @@ wwv_flow_api.create_page(
 '        });  ',
 '}',
 '',
-'//Define action for display setting',
+'function processAction(action, element) {',
+'    var myElement = apex.jQuery( element );',
+'    var myAction  = action',
+'    var myProcess = myElement.data( "prcs" );',
+'    var mySubflow = myElement.data( "sbfl" );',
+'    var displayOption = apex.item("P10_DISPLAY_SETTING").getValue();',
+'',
+'    if ( myAction !== "view-flow-instance" || ( myAction === "view" && displayOption === "window") ) {',
+'      var result = apex.server.process( "PROCESS_ACTION", {',
+'        x01: myAction,',
+'        x02: myProcess,',
+'        x03: mySubflow',
+'      });',
+'      result.done( function( data ) {',
+'        if (!data.success) {',
+'          apex.debug.error( "Something went wrong..." );',
+'        } else {',
+'          if ( myAction === "delete-flow-instance" ) {',
+'            apex.item( "P10_PRCS_ID" ).setValue();',
+'         }',
+'          else if ( myAction === "view-flow-instance" ) {',
+'              apex.navigation.redirect(data.url);',
+'          } else {',
+'            apex.item( "P10_PRCS_ID" ).setValue( myProcess );',
+'          }',
+'        }',
+'      }).fail( function( jqXHR, textStatus, errorThrown ) {',
+'        apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );',
+'      });  ',
+'    } else {',
+'      apex.item( "P10_PRCS_ID" ).setValue( myProcess );',
+'    }',
+'}',
+'',
+'//Define actions',
 '$(function() {',
 '    apex.actions.add([',
 '        {',
-'            /*',
-'             * The chooose-size action This sets a class on an element to ',
-'             * change the size of the icon.',
-'             */',
-'            name: "choose-setting", // this matches the A01 Data ID list attribute',
+'            name: "choose-setting", ',
 '            get: function() {',
 '                return apex.item("P10_DISPLAY_SETTING").getValue();',
 '            },',
 '            set: function(value) {',
 '                apex.item("P10_DISPLAY_SETTING").setValue(value);',
-'                //Todo add changing display there',
 '                var prcsId = apex.item("P10_PRCS_ID").getValue();',
 '',
 '                switch(value) {',
@@ -84,27 +113,84 @@ wwv_flow_api.create_page(
 '                }',
 '',
 '            },',
-'            // the thing that makes an action a radio group is set and get methods + a choices array',
-'            choices: [] // fill this in, in a moment',
+'            choices: [] ',
+'        },',
+'        {',
+'            name: "view-flow-instance",',
+'            action: function(event, focusElement) { processAction(this.name, focusElement); }',
+'        },',
+'        {',
+'            name: "start-flow-instance",',
+'            action: function(event, focusElement) { processAction(this.name, focusElement); }',
+'        },',
+'        {',
+'            name: "reset-flow-instance",',
+'            action: function(event, focusElement) { ',
+'                var action = this.name;',
+'                apex.message.confirm( ',
+'                    "This will reset the flow instance. Are you sure?", ',
+'                    function( okPressed ) {',
+'                        if( okPressed ) {',
+'                            processAction(action, focusElement); ',
+'                        }',
+'                    }',
+'                );  ',
+'            }',
+'        },',
+'        {',
+'            name: "terminate-flow-instance",',
+'            action: function(event, focusElement) { ',
+'                var action = this.name;',
+'                apex.message.confirm( ',
+'                    "This will terminate the flow instance. Are you sure?", ',
+'                    function( okPressed ) {',
+'                        if( okPressed ) {',
+'                            processAction(action, focusElement); ',
+'                        }',
+'                    }',
+'                );  ',
+'            }',
+'        },',
+'        {',
+'            name: "delete-flow-instance",',
+'             action: function(event, focusElement) { ',
+'                 var action = this.name;',
+'                 apex.message.confirm( ',
+'                     "This will delete the flow instance. Are you sure?", ',
+'                     function( okPressed ) {',
+'                         if( okPressed ) {',
+'                             processAction(action, focusElement); ',
+'                         }',
+'                     }',
+'                 );   ',
+'             }    ',
+'        },',
+'        {',
+'            name: "complete-step",',
+'            action: function(event, focusElement) { processAction(this.name, focusElement); }',
+'        },',
+'        {',
+'            name: "restart-step",',
+'            action: function(event, focusElement) { processAction(this.name, focusElement); }',
+'        },',
+'        {',
+'            name: "reserve-step",',
+'            action: function(event, focusElement) { processAction(this.name, focusElement); }',
+'        },',
+'        {',
+'            name: "release-step",',
+'            action: function(event, focusElement) { processAction(this.name, focusElement); }',
 '        }',
 '    ]);',
 '',
-'    // When the page first loads',
-'    // Use the actions set methods to make sure the UI is in sync with the initial state when the page loads',
 '    apex.actions.set("choose-setting", apex.item("P10_DISPLAY_SETTING").getValue());',
-'    // Action labels and shortcuts *will be* added to above actions when the menu is initialized (it happens because',
-'    // the Menu Popup list template JavaScript code calls apex.actions.addFromMarkup)',
-'    // Rather than define message text for each of the size choices and for the',
-'    // dynamic antonyms on/off labels, take the choice and on/off labels from the list text.',
-'    // Look at the list to see how the text is encoded with | separators.',
-'    // Could add the following code to add Execute when Page Loads but we know that menu will be initialized real soon now hence the setTimeout',
+'    ',
 '    setTimeout(function() {',
 '        var action, label;',
-'        // initialize the choices for chooose-size',
 '        action = apex.actions.lookup("choose-setting");',
 '        action.choices = action.label.split("|").map(function(c, i) { return {label: c, value: ["row", "column", "window"][i]}; } );',
 '        delete action.label;',
-'        apex.actions.update("choose-setting"); // not needed if only used from menus but good idea to call after making changes.',
+'        apex.actions.update("choose-setting");',
 '    }, 1);',
 '});',
 ''))
@@ -122,7 +208,28 @@ wwv_flow_api.create_page(
 '    menuItems[1].disabled = apex.item("P10_PRCS_ID").getValue() === "" ? true : false;',
 '    ui.menu.items = menuItems;',
 '} );',
-''))
+'',
+'',
+'$( "#instance_row_action_menu" ).on( "menubeforeopen", function( event, ui ) {',
+'    var rowBtn = apex.jQuery(".flow-instance-actions-btn.is-active");',
+'    console.log(rowBtn);',
+'    console.log(ui);',
+'    var menuItems = ui.menu.items;',
+'    var prcsStatus = rowBtn.data("status");',
+'    console.log(prcsStatus);',
+'    menuItems = menuItems.map(function(item){ ',
+'        console.log(item);',
+'        if ( item.action === "start-flow-instance" ) { ',
+'            item.disabled = prcsStatus !== "created" ? true : false;',
+'        } ',
+'        if ( item.action === "reset-flow-instance" ) { ',
+'            item.disabled = prcsStatus !== "created" ? false : true;',
+'        } ',
+'        return item;',
+'    });',
+'    ',
+'    ui.menu.items = menuItems;',
+'} );'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.clickable-action {',
 '  cursor: pointer;',
@@ -196,11 +303,23 @@ wwv_flow_api.create_page(
 '    background-color: #d2423b !important;',
 '    fill: #d2423b !important;',
 '    color: #ffffff !important;',
+'}',
+'',
+'th#instance_action_col,',
+'td[headers=''instance_action_col''],',
+'th#instance_checkbox_col,',
+'td[headers=''instance_checkbox_col''],',
+'th#view-process,',
+'td[headers=''view-process''],',
+'th#view-process,',
+'td[headers=''view-process'']',
+'{',
+'    width: 10px !important;',
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210819091805'
+,p_last_upd_yyyymmddhh24miss=>'20210819183825'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -848,7 +967,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>10
 ,p_column_identifier=>'K'
 ,p_column_label=>'Viewer'
-,p_column_html_expression=>'<span class="clickable-action id-ref fa fa-eye" data-prcs="#PRCS_ID#" data-action="view" data-name="#PRCS_NAME#" title="View Process Instance"></span>'
+,p_column_html_expression=>'<span class="clickable-action id-ref fa fa-eye" data-prcs="#PRCS_ID#" data-action="view-flow-instance" data-name="#PRCS_NAME#" title="View Process Instance"></span>'
 ,p_allow_sorting=>'N'
 ,p_allow_filtering=>'N'
 ,p_allow_highlighting=>'N'
@@ -905,6 +1024,18 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094816603304635)
 ,p_db_column_name=>'PRCS_DGRM_CATEGORY'
@@ -952,6 +1083,14 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>100
 ,p_column_identifier=>'J'
 ,p_column_label=>'Actions'
+,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon flow-instance-actions-btn js-menuButton" ',
+'        data-menu="instance_row_action_menu"',
+'        data-prcs=#PRCS_ID#',
+'        data-status=#PRCS_STATUS#',
+'        >',
+'    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
+'</button>'))
 ,p_allow_sorting=>'N'
 ,p_allow_filtering=>'N'
 ,p_allow_highlighting=>'N'
@@ -965,7 +1104,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_heading_alignment=>'LEFT'
-,p_static_id=>'action'
+,p_static_id=>'instance_action_col'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26094328735304630)
@@ -994,6 +1133,27 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'NUMBER'
 ,p_display_text_as=>'HIDDEN'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(40002069571317110)
+,p_db_column_name=>'CHECKBOX'
+,p_display_order=>140
+,p_column_identifier=>'N'
+,p_column_label=>'-'
+,p_allow_sorting=>'N'
+,p_allow_filtering=>'N'
+,p_allow_highlighting=>'N'
+,p_allow_ctrl_breaks=>'N'
+,p_allow_aggregations=>'N'
+,p_allow_computations=>'N'
+,p_allow_charting=>'N'
+,p_allow_group_by=>'N'
+,p_allow_pivot=>'N'
+,p_allow_hide=>'N'
+,p_column_type=>'STRING'
+,p_display_text_as=>'WITHOUT_MODIFICATION'
+,p_column_alignment=>'CENTER'
+,p_static_id=>'instance_checkbox_col'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(26608389028834346)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -1001,7 +1161,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'266084'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'PRCS_DGRM_CATEGORY:VIEW_PROCESS:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:BTN::PRCS_DGRM_ID'
+,p_report_columns=>'CHECKBOX:BTN:PRCS_DGRM_CATEGORY:VIEW_PROCESS:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:'
 ,p_sort_column_1=>'PRCS_DGRM_CATEGORY'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'PRCS_NAME'
@@ -1018,6 +1178,21 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_break_enabled_on=>'PRCS_DGRM_CATEGORY:0:0:0:0:0'
 );
 wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(40001946826317109)
+,p_plug_name=>'Instances - Row Actions'
+,p_region_name=>'instance_row_action'
+,p_parent_plug_id=>wwv_flow_api.id(12493545854579486121)
+,p_region_template_options=>'#DEFAULT#'
+,p_component_template_options=>'#DEFAULT#:js-addActions:js-menu-callout'
+,p_plug_template=>wwv_flow_api.id(12495609856182880263)
+,p_plug_display_sequence=>10
+,p_plug_display_point=>'BODY'
+,p_list_id=>wwv_flow_api.id(40423692118997018)
+,p_plug_source_type=>'NATIVE_LIST'
+,p_list_template_id=>wwv_flow_api.id(12495525309455880143)
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+);
+wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(34403200187171418)
 ,p_plug_name=>'Breadcrumb'
 ,p_region_template_options=>'#DEFAULT#:t-BreadcrumbRegion--useBreadcrumbTitle'
@@ -1030,18 +1205,6 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
 ,p_menu_template_id=>wwv_flow_api.id(12495520300515880126)
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6127698437330102702)
@@ -1430,31 +1593,8 @@ wwv_flow_api.create_page_da_action(
 'var mySubflow = myElement.data( "sbfl" );',
 'var displayOption = apex.item("P10_DISPLAY_SETTING").getValue();',
 '',
-'if ( myAction !== "view" || ( myAction === "view" && displayOption === "window") ) {',
-'  var result = apex.server.process( "PROCESS_ACTION", {',
-'    x01: myAction,',
-'    x02: myProcess,',
-'    x03: mySubflow',
-'  });',
-'  result.done( function( data ) {',
-'    if (!data.success) {',
-'      apex.debug.error( "Something went wrong..." );',
-'    } else {',
-'      if ( myAction === "delete" ) {',
-'        apex.item( "P10_PRCS_ID" ).setValue();',
-'     }',
-'      else if ( myAction === "view" ) {',
-'          apex.navigation.redirect(data.url);',
-'      } else {',
-'        apex.item( "P10_PRCS_ID" ).setValue( myProcess );',
-'      }',
-'	}',
-'  }).fail( function( jqXHR, textStatus, errorThrown ) {',
-'    apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );',
-'  });  ',
-'} else {',
-'  apex.item( "P10_PRCS_ID" ).setValue( myProcess );',
-'}'))
+'apex.actions.invoke( myAction, event, event.target );',
+''))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(7695828836745145)
@@ -1853,6 +1993,18 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(5522653812864947)
 ,p_event_id=>wwv_flow_api.id(5522454027864945)
@@ -1976,18 +2128,6 @@ wwv_flow_api.create_page_process(
 '    end if;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(160796959681501972)

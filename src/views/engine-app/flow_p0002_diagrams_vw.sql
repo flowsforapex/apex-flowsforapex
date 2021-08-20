@@ -39,7 +39,7 @@ as
        , apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS', p_values => dgrm_name||','||dgrm_version||',terminated', p_clear_cache => 'RP,RIR') as instance_terminated_link
        , coalesce( inst_nums.error_cnt, 0) as instance_error
        , apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS', p_values => dgrm_name||','||dgrm_version||',error', p_clear_cache => 'RP,RIR') as instance_error_link
-       , apex_item.checkbox2(p_idx => 1, p_value => d.dgrm_id) as checkbox
+       , apex_item.checkbox2(p_idx => 1, p_value => d.dgrm_id, p_attributes => 'data-name = "' || dgrm_name || '" data-version = "' || dgrm_version || '"') as checkbox
   from flow_diagrams_vw d
 left join instance_numbers inst_nums
        on inst_nums.dgrm_id = d.dgrm_id

@@ -14,40 +14,40 @@ as
     apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => pi_action, p1 => pi_prcs_id, p2 => pi_sbfl_id );
     begin
       case upper(pi_action)
-        when 'RESET' then
+        when 'RESET-FLOW-INSTANCE' then
           flow_api_pkg.flow_reset( p_process_id => pi_prcs_id );
-        when 'START' then
+        when 'START-FLOW-INSTANCE' then
           flow_api_pkg.flow_start( p_process_id => pi_prcs_id );
-        when 'DELETE' then
+        when 'DELETE-FLOW-INSTANCE' then
           flow_api_pkg.flow_delete( p_process_id => pi_prcs_id );
-        when 'RESERVE' then
+        when 'RESERVE-STEP' then
           flow_api_pkg.flow_reserve_step
           (
             p_process_id => pi_prcs_id
           , p_subflow_id => pi_sbfl_id
           , p_reservation => V('APP_USER')
           );
-        when 'TERMINATE' then 
+        when 'TERMINATE-FLOW-INSTANCE' then 
           flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_id );
-        when 'RELEASE' then
+        when 'RELEASE-STEP' then
           flow_api_pkg.flow_release_step
           (
             p_process_id => pi_prcs_id
           , p_subflow_id => pi_sbfl_id
           );         
-        when 'NEXT_STEP' then
+        when 'COMPLETE-STEP' then
           flow_api_pkg.flow_complete_step
           (
             p_process_id    => pi_prcs_id
           , p_subflow_id    => pi_sbfl_id
           );
-        when 'RESTART_STEP' then 
+        when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
           (
             p_process_id    => pi_prcs_id
           , p_subflow_id    => pi_sbfl_id           
           );
-        when 'VIEW' then
+        when 'VIEW-FLOW-INSTANCE' then
           l_url := apex_page.get_url(
               p_page => 12
             , p_items => 'P12_PRCS_ID'
@@ -63,7 +63,7 @@ as
   
       apex_json.open_object;
       apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
-      if upper(pi_action) = 'VIEW' then
+      if upper(pi_action) = 'VIEW-FLOW-INSTANCE' then
         apex_json.write( p_name => 'url', p_value => l_url );
       end if;
       apex_json.close_all;
