@@ -197,6 +197,7 @@ procedure get_number_of_connections
          , sbfl_starting_object
          , sbfl_route
          , sbfl_last_completed
+         , sbfl_became_current
          , sbfl_current
          , sbfl_status
          , sbfl_last_update
@@ -209,6 +210,7 @@ procedure get_number_of_connections
          , p_starting_object
          , p_route
          , p_last_completed
+         , systimestamp
          , p_current_object
          , p_status
          , systimestamp
