@@ -102,6 +102,7 @@ end flow_process_link_event;
     l_subproc_objt          flow_objects.objt_bpmn_id%type;
     l_exit_type             flow_objects.objt_sub_tag_name%type default null;
     l_remaining_subflows    number;
+    l_process_end_status    flow_processes.prcs_status%type;
   begin
     apex_debug.enter 
     ( 'process_endEvent'
@@ -146,6 +147,19 @@ end flow_process_link_event;
       );
       -- check for Terminate sub-Event
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
+        -- get desired process status after termination from model
+        begin
+          select coalesce(obat.obat_vc_value, flow_constants_pkg.gc_prcs_status_completed)
+            into l_process_end_status
+            from flow_object_attributes obat
+          where obat.obat_objt_id = p_step_info.target_objt_id
+            and obat.obat_key = flow_constants_pkg.gc_terminate_end_key
+          ;
+        exception
+          when no_data_found then
+            l_process_end_status := flow_constants_pkg.gc_prcs_status_completed;
+        end;
+        -- terminate the main level
         flow_engine_util.terminate_level
         ( 
           p_process_id     => p_process_id
@@ -156,6 +170,7 @@ end flow_process_link_event;
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
+        l_process_end_status := flow_constants_pkg.gc_prcs_status_completed;
       end if;
       -- check if there are ANY remaining subflows.  If not, close process
       select count(*)
@@ -166,18 +181,19 @@ end flow_process_link_event;
       if l_remaining_subflows = 0 then 
         -- No remaining subflows so process has completed
         update flow_processes prcs 
-           set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_completed
+           set prcs.prcs_status = l_process_end_status
              , prcs.prcs_last_update = systimestamp
          where prcs.prcs_id = p_process_id
         ;
         -- log the completion
         flow_logging.log_instance_event
         ( p_process_id => p_process_id
-        , p_event      => flow_constants_pkg.gc_prcs_event_completed
+        , p_event      => l_process_end_status
         );
         apex_debug.info 
-        ( p_message => 'Process Completed: Process %0'
-        , p0        => p_process_id 
+        ( p_message => 'Process Completed with %1 Status: Process %0  '
+        , p0        => p_process_id
+        , p1        => l_process_end_status
         );
       end if;
     else  
