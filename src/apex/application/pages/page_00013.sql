@@ -19,33 +19,9 @@ wwv_flow_api.create_page(
 ,p_page_mode=>'MODAL'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code_onload=>'apex.util.getTopApex().jQuery(".ui-dialog-content").dialog("option", "title", $v("P13_TITLE"));'
-,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.a-Tabs-panel {',
-'    display: none;',
-'}',
-'',
-'.t-Timeline-type.updated {',
-'    background-color: #0076df;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.started {',
-'    background-color: #d9b13b;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.completed {',
-'    background-color: #6aad42;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.current {',
-'    background-color: #8c9eb0;',
-'    color: white;',
-'}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210820151751'
+,p_last_upd_yyyymmddhh24miss=>'20210823132746'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2444672040538201)

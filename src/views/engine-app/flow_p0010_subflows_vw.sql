@@ -49,7 +49,7 @@ as
             null  
          end as reservation_html
        , null as actions   
-       , apex_item.checkbox2(p_idx => 2, p_value => sbfl_id, p_attributes => 'data-status="'|| sbfl_status ||'"') as checkbox
+       , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
     from flow_subflows_vw sbfl
 with read only
 ;

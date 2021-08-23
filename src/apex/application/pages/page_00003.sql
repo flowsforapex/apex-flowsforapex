@@ -19,43 +19,14 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Dashboard - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.jQuery(''span[data-status="created"]'').parents("span.t-BadgeList-wrap").addClass("status-created");',
-'apex.jQuery(''span[data-status="running"]'').parents("span.t-BadgeList-wrap").addClass("status-running");',
-'apex.jQuery(''span[data-status="completed"]'').parents("span.t-BadgeList-wrap").addClass("status-completed");',
-'apex.jQuery(''span[data-status="terminated"]'').parents("span.t-BadgeList-wrap").addClass("status-terminated");',
-'apex.jQuery(''span[data-status="error"]'').parents("span.t-BadgeList-wrap").addClass("status-error");'))
-,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.status-created{',
-'    background-color: #8c9eb0 !important;',
-'    fill: #8c9eb0 !important;',
-'    color: #ffffff !important;',
-'}',
-'.status-running{',
-'    background-color: #d9b13b !important;',
-'    fill: #d9b13b !important;',
-'    color: #ffffff !important;',
-'}',
-'.status-completed{',
-'    background-color: #6aad42 !important;',
-'    fill: #6aad42 !important;',
-'    color: #f9f9f9 !important; ',
-'}',
-'.status-terminated{',
-'    background-color: #d76a27 !important;',
-'    fill: #d76a27 !important;',
-'    color: #f9f9f9 !important; ',
-'}',
-'.status-error{',
-'    background-color: #d2423b !important;',
-'    fill: #d2423b !important;',
-'    color: #ffffff !important;',
-'}',
-'#flow-instances-per-status a {',
-'    color: inherit;',
-'}'))
+'apex.jQuery(''span[data-status="created"]'').parents("span.t-BadgeList-wrap").addClass("created");',
+'apex.jQuery(''span[data-status="running"]'').parents("span.t-BadgeList-wrap").addClass("running");',
+'apex.jQuery(''span[data-status="completed"]'').parents("span.t-BadgeList-wrap").addClass("completed");',
+'apex.jQuery(''span[data-status="terminated"]'').parents("span.t-BadgeList-wrap").addClass("terminated");',
+'apex.jQuery(''span[data-status="error"]'').parents("span.t-BadgeList-wrap").addClass("error");'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210816035426'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210823132714'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(34404686490171432)

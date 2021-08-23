@@ -19,79 +19,9 @@ wwv_flow_api.create_page(
 ,p_page_mode=>'MODAL'
 ,p_step_title=>'Logs'
 ,p_autocomplete_on_off=>'OFF'
-,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.a-Tabs-panel {',
-'    display: none;',
-'}',
-'',
-'.t-Timeline-type.started {',
-'    background-color: #d9b13b;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.error {',
-'    background-color: #d2423b;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.terminated {',
-'    background-color: #d76a27;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.created, .t-Timeline-type.current {',
-'    background-color: #8c9eb0;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.completed {',
-'    background-color: #6aad42;',
-'    color: white;',
-'}',
-'',
-'.t-Timeline-type.reset {',
-'    background-color: #0076df;',
-'    color: white;',
-'}',
-'',
-'.lgpr_prcs_event {',
-'    font-size: 1.1rem;',
-'    line-height: 1.1rem;',
-'    padding: 2px 4px;',
-'    border-radius: 2px;',
-'    min-width: 64px;',
-'    text-align: center;',
-'    display: inline-block;',
-'}',
-'',
-'.event-created{',
-'    background-color: #8c9eb0 !important;',
-'    fill: #8c9eb0 !important;',
-'    color: #ffffff !important;',
-'}',
-'.event-started{',
-'    background-color: #d9b13b !important;',
-'    fill: #d9b13b !important;',
-'    color: #ffffff !important;',
-'}',
-'.event-completed{',
-'    background-color: #6aad42 !important;',
-'    fill: #6aad42 !important;',
-'    color: #f9f9f9 !important; ',
-'}',
-'.event-terminated, .event-reset{',
-'    background-color: #d76a27 !important;',
-'    fill: #d76a27 !important;',
-'    color: #f9f9f9 !important; ',
-'}',
-'.event-error{',
-'    background-color: #d2423b !important;',
-'    fill: #d2423b !important;',
-'    color: #ffffff !important;',
-'}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210820151748'
+,p_last_upd_yyyymmddhh24miss=>'20210823132750'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(2447308339538228)
@@ -346,7 +276,7 @@ wwv_flow_api.create_report_columns(
 ,p_column_display_sequence=>5
 ,p_column_heading=>'Event'
 ,p_use_as_row_header=>'N'
-,p_column_html_expression=>'<span class="lgpr_prcs_event event-#LGPR_PRCS_EVENT#">#LGPR_PRCS_EVENT#</span>'
+,p_column_html_expression=>'<span class="ffa-badge #LGPR_PRCS_EVENT#">#LGPR_PRCS_EVENT#</span>'
 ,p_column_alignment=>'CENTER'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'

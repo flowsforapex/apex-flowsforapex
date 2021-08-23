@@ -19,169 +19,10 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flow Management - &APP_NAME_TITLE.'
 ,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$(function() {',
-'    apex.actions.add([',
-'        {',
-'            name: "edit-flow",',
-'            action: function(event, focusElement){ ',
-'                var dgrmId = apex.jQuery(focusElement).attr("data-dgrm");',
-'                apex.item("P2_DGRM_ID").setValue(dgrmId);',
-'                apex.page.submit("EDIT_FLOW");',
-'            }',
-'        },',
-'        {',
-'           name: "new-flow-version",',
-'            action: function(event, focusElement){ ',
-'                var dgrmId = apex.jQuery(focusElement).attr("data-dgrm"); ',
-'                apex.item("P2_DGRM_ID").setValue(dgrmId);',
-'                apex.theme.openRegion("new_version_reg");',
-'            }',
-'        },',
-'        {',
-'           name: "bulk-new-flow-version",',
-'            action: function(event, focusElement){ ',
-'                var dgrmId = apex.jQuery("input[name=f01]:checked").map(function(){return apex.jQuery(this).attr("value");}).get().join(":"); ',
-'                apex.item("P2_DGRM_ID").setValue(dgrmId);',
-'                apex.theme.openRegion("new_version_reg");',
-'            }',
-'        },',
-'        {',
-'           name: "bulk-copy-flow",',
-'            action: function(event, focusElement){ ',
-'                var dgrmId = apex.jQuery("input[name=f01]:checked").map(function(){return apex.jQuery(this).attr("value");}).get().join(":"); ',
-'                apex.item("P2_DGRM_ID").setValue(dgrmId);',
-'                apex.theme.openRegion("copy_flow_reg");',
-'            }',
-'        },',
-'        {',
-'           name: "copy-flow",',
-'            action: function(event, focusElement){ ',
-'                var dgrmId = apex.jQuery(focusElement).attr("data-dgrm"); ',
-'                apex.item("P2_DGRM_ID").setValue(dgrmId);',
-'                apex.theme.openRegion("copy_flow_reg");',
-'            }',
-'        }',
-'    ])',
-'  }',
-');',
-'',
-''))
-,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$(".a-IRR-headerLabel").each(function() {',
-'    var text = $(this).text();',
-'    if (text == ''Export'') {',
-'        $(this).parent().addClass("export-heading")',
-'    }',
-'})',
-'',
-'$("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after(''<th colspan="5" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>'');',
-'',
-'$(".a-IRR-headerLabel, .a-IRR-headerLink").each(function() {',
-'    var text = $(this).text();',
-'    if (text == ''Created'') {',
-'        $(this).parent().addClass("status-created");',
-'    }',
-'    else if (text == ''Completed'') {',
-'        $(this).parent().addClass("status-completed");',
-'    }',
-'    else if (text == ''Running'') {',
-'        $(this).parent().addClass("status-running");',
-'    }',
-'    else if (text == ''Terminated'') {',
-'        $(this).parent().addClass("status-terminated");',
-'    }',
-'    else if (text == ''Error'') {',
-'        $(this).parent().addClass("status-error");',
-'    }',
-'});',
-'',
-'$("th.a-IRR-header").each(function(i){',
-'  if ( apex.jQuery(this).attr("id") === undefined) {',
-'     apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
-'     apex.jQuery(this).find(''button#header-action'').hide();',
-'  } else {',
-'    apex.jQuery(this).addClass("u-alignMiddle");',
-'  }',
-'})',
-'',
-'',
-'$( "#row_actions_menu" ).on( "menubeforeopen", function( event, ui ) {',
-'    console.log(ui);',
-'} );',
-'',
-'$( "#header_actions_menu" ).on( "menubeforeopen", function( event, ui ) {',
-'    var menuItems = ui.menu.items;',
-'    if ( apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"]:checked'').length === 0 ) {',
-'        menuItems = menuItems.map(function(item){ if (item.action !== "refresh") { item.disabled = true;} return item;});',
-'    } else {',
-'        menuItems = menuItems.map(function(item){ if (item.action !== "refresh") { item.disabled = false;} return item;});',
-'',
-'        apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"]:checked'').each(function(){',
-'          var name = $(this).data("name");',
-'          ',
-'          if ( apex.jQuery(''#parsed_drgm_ir .a-IRR-tableContainer'').find(''input[type="checkbox"][data-name="'' + name + ''"]:checked'').length > 1 ) {',
-'            menuItems = menuItems.map(function(item){ if (item.action === "bulk-new-flow-version" || item.action === "bulk-copy-flow") { item.disabled = true;} return item;});',
-'            return false;',
-'          }',
-'        });',
-'    }',
-'    ui.menu.items = menuItems;',
-'} );',
-''))
-,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'td[headers="NB_INSTANCES"]{',
-'   padding-left:0px;',
-'}',
-'',
-'th#action',
-'{',
-'  width:160px;',
-'}',
-'',
-'th#action_col,',
-'td[headers=''action_col''],',
-'th#checkbox_col,',
-'td[headers=''checkbox_col'']{',
-'    width: 10px !important;',
-'}',
-'',
-'.export-heading {',
-'    text-align: center !important;',
-'}',
-'',
-'.a-IRR-headerLink{',
-'    color: inherit !important;',
-'}',
-'',
-'.status-created{',
-'    background-color: #8c9eb0 !important;',
-'    fill: #8c9eb0 !important;',
-'    color: #ffffff !important;',
-'}',
-'.status-running{',
-'    background-color: #d9b13b !important;',
-'    fill: #d9b13b !important;',
-'    color: #ffffff !important;',
-'}',
-'.status-completed{',
-'    background-color: #6aad42 !important;',
-'    fill: #6aad42 !important;',
-'    color: #f9f9f9 !important; ',
-'}',
-'.status-terminated{',
-'    background-color: #d76a27 !important;',
-'    fill: #d76a27 !important;',
-'    color: #f9f9f9 !important; ',
-'}',
-'.status-error{',
-'    background-color: #d2423b !important;',
-'    fill: #d2423b !important;',
-'    color: #ffffff !important;',
-'}'))
+,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210819131547'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210823185302'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -303,13 +144,28 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>40
 ,p_column_identifier=>'D'
 ,p_column_label=>'Status'
+,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<span class="ffa-dgrm-badge">',
+'    <i class="#DGRM_STATUS_ICON# u-info"></i>',
+'    <span class="ffa-dgrm-badge-text u-info-border">#DGRM_STATUS#</span>',
+'</span>'))
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
+,p_column_alignment=>'CENTER'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(2496678063177011)
+,p_db_column_name=>'DGRM_STATUS_ICON'
+,p_display_order=>50
+,p_column_identifier=>'Z'
+,p_column_label=>'Dgrm Status Icon'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(24214982358956133)
 ,p_db_column_name=>'DGRM_CATEGORY'
-,p_display_order=>50
+,p_display_order=>60
 ,p_column_identifier=>'E'
 ,p_column_label=>'Category'
 ,p_column_type=>'STRING'
@@ -318,7 +174,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(24215092633956134)
 ,p_db_column_name=>'DGRM_LAST_UPDATE'
-,p_display_order=>60
+,p_display_order=>70
 ,p_column_identifier=>'F'
 ,p_column_label=>'Last Update'
 ,p_column_type=>'DATE'
@@ -329,7 +185,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(24215123061956135)
 ,p_db_column_name=>'BTN'
-,p_display_order=>70
+,p_display_order=>80
 ,p_column_identifier=>'G'
 ,p_column_label=>'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="header-action" data-menu="header_actions_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -356,7 +212,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(24215292671956136)
 ,p_db_column_name=>'INSTANCES'
-,p_display_order=>80
+,p_display_order=>90
 ,p_column_identifier=>'H'
 ,p_column_label=>'Instances'
 ,p_column_link=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION:#DGRM_NAME#,#DGRM_VERSION#'
@@ -367,7 +223,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26092727630304614)
 ,p_db_column_name=>'DIAGRAM_PARSED'
-,p_display_order=>90
+,p_display_order=>100
 ,p_column_identifier=>'J'
 ,p_column_label=>'Flow Parsed'
 ,p_column_html_expression=>'<span aria-hidden="true" class="fa #DIAGRAM_PARSED_ICON#"></span>'
@@ -377,31 +233,11 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(26093269879304619)
 ,p_db_column_name=>'DIAGRAM_PARSED_ICON'
-,p_display_order=>100
+,p_display_order=>110
 ,p_column_identifier=>'K'
 ,p_column_label=>'Diagram Parsed Icon'
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'HIDDEN'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(34401549034171401)
-,p_db_column_name=>'INSTANCES_BADGES'
-,p_display_order=>110
-,p_column_identifier=>'L'
-,p_column_label=>'Instance Badges'
-,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<a href=#INSTANCE_CREATED_LINK#><span class="status-badge status-created" title="Created">#INSTANCE_CREATED#</span></a>',
-'<a href=#INSTANCE_RUNNING_LINK#><span class="status-badge status-running" title="Running">#INSTANCE_RUNNING#</span></a>',
-'<a href=#INSTANCE_COMPLETED_LINK#><span class="status-badge status-completed"  title="Completed">#INSTANCE_COMPLETED#</span></a>',
-'<a href=#INSTANCE_TERMINATED_LINK#><span class="status-badge status-terminated"  title="Terminated">#INSTANCE_TERMINATED#</span></a>',
-'<a href=#INSTANCE_ERROR_LINK#><span class="status-badge status-error"  title="Error">#INSTANCE_ERROR#</span></a>'))
-,p_column_type=>'STRING'
-,p_column_alignment=>'CENTER'
-,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<span class="status-badge status-created">Created</span>',
-'    <span class="status-badge status-running">Running</span>',
-'    <span class="status-badge status-completed">Completed</span>',
-'    <span class="status-badge status-error">Error</span>'))
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34401608353171402)
@@ -426,7 +262,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34401808911171404)
 ,p_db_column_name=>'INSTANCE_COMPLETED'
-,p_display_order=>150
+,p_display_order=>140
 ,p_column_identifier=>'O'
 ,p_column_label=>'Completed'
 ,p_column_html_expression=>'<a href=#INSTANCE_COMPLETED_LINK#>#INSTANCE_COMPLETED#</a>'
@@ -436,7 +272,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34403520844171421)
 ,p_db_column_name=>'INSTANCE_TERMINATED'
-,p_display_order=>160
+,p_display_order=>150
 ,p_column_identifier=>'T'
 ,p_column_label=>'Terminated'
 ,p_column_html_expression=>'<a href=#INSTANCE_TERMINATED_LINK#>#INSTANCE_TERMINATED#</a>'
@@ -446,7 +282,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34401973271171405)
 ,p_db_column_name=>'INSTANCE_ERROR'
-,p_display_order=>170
+,p_display_order=>160
 ,p_column_identifier=>'P'
 ,p_column_label=>'Error'
 ,p_column_html_expression=>'<a href=#INSTANCE_ERROR_LINK#>#INSTANCE_ERROR#</a>'
@@ -456,7 +292,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34402061088171406)
 ,p_db_column_name=>'INSTANCE_CREATED_LINK'
-,p_display_order=>180
+,p_display_order=>170
 ,p_column_identifier=>'Q'
 ,p_column_label=>'Instance Created Link'
 ,p_column_type=>'STRING'
@@ -465,7 +301,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34403349213171419)
 ,p_db_column_name=>'INSTANCE_RUNNING_LINK'
-,p_display_order=>190
+,p_display_order=>180
 ,p_column_identifier=>'R'
 ,p_column_label=>'Instance Running Link'
 ,p_column_type=>'STRING'
@@ -474,7 +310,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34403481804171420)
 ,p_db_column_name=>'INSTANCE_COMPLETED_LINK'
-,p_display_order=>200
+,p_display_order=>190
 ,p_column_identifier=>'S'
 ,p_column_label=>'Instance Completed Link'
 ,p_column_type=>'STRING'
@@ -483,7 +319,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34403626861171422)
 ,p_db_column_name=>'INSTANCE_TERMINATED_LINK'
-,p_display_order=>210
+,p_display_order=>200
 ,p_column_identifier=>'U'
 ,p_column_label=>'Instance Terminated Link'
 ,p_column_type=>'STRING'
@@ -492,7 +328,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34403765313171423)
 ,p_db_column_name=>'INSTANCE_ERROR_LINK'
-,p_display_order=>220
+,p_display_order=>210
 ,p_column_identifier=>'V'
 ,p_column_label=>'Instance Error Link'
 ,p_column_type=>'STRING'
@@ -501,7 +337,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34631762547575819)
 ,p_db_column_name=>'EDIT_LINK'
-,p_display_order=>230
+,p_display_order=>220
 ,p_column_identifier=>'W'
 ,p_column_label=>'Edit Link'
 ,p_column_type=>'STRING'
@@ -510,7 +346,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34631865848575820)
 ,p_db_column_name=>'CREATE_INSTANCE_LINK'
-,p_display_order=>240
+,p_display_order=>230
 ,p_column_identifier=>'X'
 ,p_column_label=>'Create Instance Link'
 ,p_column_type=>'STRING'
@@ -519,7 +355,7 @@ wwv_flow_api.create_worksheet_column(
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(34632066723575822)
 ,p_db_column_name=>'CHECKBOX'
-,p_display_order=>250
+,p_display_order=>240
 ,p_column_identifier=>'Y'
 ,p_column_label=>'<input type="checkbox" id="check-all">'
 ,p_allow_sorting=>'N'
@@ -544,7 +380,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'260350'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'DGRM_CATEGORY:CHECKBOX:BTN:DGRM_NAME:DGRM_VERSION:DGRM_STATUS:DGRM_LAST_UPDATE:INSTANCE_CREATED:INSTANCE_RUNNING:INSTANCE_COMPLETED:INSTANCE_TERMINATED:INSTANCE_ERROR:'
+,p_report_columns=>'DGRM_CATEGORY:CHECKBOX:BTN:DGRM_NAME:DGRM_VERSION:DGRM_STATUS:DGRM_LAST_UPDATE:INSTANCE_CREATED:INSTANCE_RUNNING:INSTANCE_COMPLETED:INSTANCE_TERMINATED:INSTANCE_ERROR::DGRM_STATUS_ICON'
 ,p_sort_column_1=>'DGRM_CATEGORY'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'DGRM_NAME'
@@ -911,18 +747,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(24213241311956116)
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(26093728782304624)
 ,p_name=>'Clickable Action clicked - Forward to Process or Selection'
@@ -1008,31 +832,24 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$(".a-IRR-headerLabel").each(function() {',
-'    var text = $(this).text();',
-'    if (text == ''Export'') {',
-'        $(this).parent().addClass("export-heading")',
-'    }',
-'})',
-'',
 '$("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after(''<th colspan="5" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>'');',
 '',
 '$(".a-IRR-headerLabel, .a-IRR-headerLink").each(function() {',
 '    var text = $(this).text();',
 '    if (text == ''Created'') {',
-'        $(this).parent().addClass("status-created");',
+'        $(this).parent().addClass("created");',
 '    }',
 '    else if (text == ''Completed'') {',
-'        $(this).parent().addClass("status-completed");',
+'        $(this).parent().addClass("completed");',
 '    }',
 '    else if (text == ''Running'') {',
-'        $(this).parent().addClass("status-running");',
+'        $(this).parent().addClass("running");',
 '    }',
 '    else if (text == ''Terminated'') {',
-'        $(this).parent().addClass("status-terminated");',
+'        $(this).parent().addClass("terminated");',
 '    }',
 '    else if (text == ''Error'') {',
-'        $(this).parent().addClass("status-error");',
+'        $(this).parent().addClass("error");',
 '    }',
 '});',
 '',
@@ -1149,6 +966,18 @@ wwv_flow_api.create_page_process(
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 ,p_process_success_message=>'&APP_TEXT$APP_FLOW_COPIED.'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(34632414579575826)
 ,p_process_sequence=>10
@@ -1170,6 +999,7 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'EXPORT_FLOW,ADD_VERSION,COPY_FLOW'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'
 );
+null;
 wwv_flow_api.component_end;
 end;
 /

@@ -4,6 +4,7 @@ prompt --install
 @@application/create_application.sql
 @@application/shared_components/navigation/lists/p10_subflow_row_action_menu.sql
 @@application/shared_components/navigation/lists/p10_instance_header_action_menu.sql
+@@application/shared_components/navigation/lists/p10_subflow_header_action_menu.sql
 @@application/shared_components/navigation/lists/p2_action_menu.sql
 @@application/shared_components/navigation/lists/p7_action_menu.sql
 @@application/shared_components/navigation/lists/p10_action_menu.sql
@@ -13,6 +14,10 @@ prompt --install
 @@application/shared_components/navigation/lists/p10_instance_row_action_menu.sql
 @@application/shared_components/navigation/lists/desktop_navigation_bar.sql
 @@application/shared_components/navigation/lists/desktop_navigation_menu.sql
+@@application/shared_components/files/css_flows4apex_css.sql
+@@application/shared_components/files/js_flows4apex_js.sql
+@@application/shared_components/files/js_flows4apex_min_js.sql
+@@application/shared_components/files/js_flows4apex_js_map.sql
 @@application/shared_components/files/app_100_logo_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql

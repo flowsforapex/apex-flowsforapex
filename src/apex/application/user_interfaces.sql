@@ -26,6 +26,8 @@ wwv_flow_api.create_user_interface(
 ,p_navigation_list_position=>'SIDE'
 ,p_navigation_list_template_id=>wwv_flow_api.id(12495533999726880152)
 ,p_nav_list_template_options=>'#DEFAULT#:js-defaultCollapsed:js-navCollapsed--default:t-TreeNav--styleB'
+,p_css_file_urls=>'#APP_IMAGES#css/flows4apex.css'
+,p_javascript_file_urls=>'#APP_IMAGES#js/flows4apex.js'
 ,p_nav_bar_type=>'LIST'
 ,p_nav_bar_list_id=>wwv_flow_api.id(12495499558192880054)
 ,p_nav_bar_list_template_id=>wwv_flow_api.id(12495534382344880154)

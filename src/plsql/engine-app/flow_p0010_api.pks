@@ -5,8 +5,9 @@ as
   procedure process_action
   (
     pi_action  in varchar2
-  , pi_prcs_id in flow_processes.prcs_id%type
-  , pi_sbfl_id in flow_subflows.sbfl_id%type
+  , pi_prcs_ids in apex_application.g_f01%type
+  , pi_sbfl_ids in apex_application.g_f02%type
+  , pi_reservation in varchar2
   );
 
   procedure process_variables_row
