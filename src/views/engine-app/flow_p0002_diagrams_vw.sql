@@ -28,7 +28,12 @@ as
        , coalesce( inst_nums.total_cnt, 0 ) as instances 
        , case when coalesce( (select count(*) from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id), 0 ) = 0 then 'No' else 'Yes' end as diagram_parsed
        , case when coalesce( (select count(*) from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id), 0 ) = 0 then 'fa-times-circle-o fa-lg u-danger-text' else 'fa-check-circle-o fa-lg u-success-text' end as diagram_parsed_icon
-       , null as instances_badges
+       , case dgrm_status
+           when 'draft' then 'fa fa-wrench'
+           when 'released' then 'fa fa-check'
+           when 'deprecated' then 'fa fa-ban'
+           when 'archived' then 'fa fa-archive'
+         end as dgrm_status_icon
        , coalesce( inst_nums.created_cnt, 0) as instance_created
        , apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS', p_values => dgrm_name||','||dgrm_version||',created', p_clear_cache => 'RP,RIR') as instance_created_link
        , coalesce( inst_nums.running_cnt, 0) as instance_running
