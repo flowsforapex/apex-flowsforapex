@@ -69,6 +69,11 @@ function get_var_clob
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_clob%type;
 
+procedure delete_var
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+);
+
 /********************************************************************************
 **
 **        SPECIAL CASE / BUILT-IN PROCESS VARIABLES

@@ -101,7 +101,6 @@ as
         , pi_expr_set       => pi_expression.expr_set
         );
     when flow_constants_pkg.gc_prov_var_type_clob then
-        -- does this one make sense?
         flow_process_vars.set_var 
         ( pi_prcs_id        => pi_prcs_id
         , pi_var_name       => pi_expression.expr_var_name

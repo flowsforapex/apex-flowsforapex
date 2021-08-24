@@ -383,7 +383,7 @@ create table flow_variable_event_log
 , lgvr_var_name			    varchar2(50 char) not null
 , lgvr_objt_id			    VARCHAR2(50 char) 
 , lgvr_sbfl_id			    NUMBER
-, lgvr_expr_set			    VARCHAR2(20 CHAR) NOT NULL
+, lgvr_expr_set			    VARCHAR2(20 CHAR) 
 , lgvr_timestamp			TIMESTAMP WITH TIME ZONE NOT NULL
 , lgvr_var_type			    varchar2(50 char) not null 
 , lgvr_var_vc2 			    varchar2(4000 char)

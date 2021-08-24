@@ -1,6 +1,9 @@
 create or replace package body flow_process_vars
 as
 
+  lock_timeout exception;
+  pragma exception_init (lock_timeout, -3006);
+
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
@@ -329,6 +332,45 @@ exception
       return null;
     end if;
 end get_var_clob;
+
+-- delete a variable
+
+procedure delete_var 
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+)
+is
+  l_var_type   flow_process_variables.prov_var_type%type;
+begin 
+  select prov_var_type
+    into l_var_type
+    from flow_process_variables prov
+   where prov.prov_prcs_id = pi_prcs_id
+     and prov.prov_var_name = pi_var_name
+     for update wait 2;
+
+  delete 
+    from flow_process_variables prov
+   where prov.prov_prcs_id = pi_prcs_id
+     and prov.prov_var_name = pi_var_name
+  ;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_var_type          => l_var_type
+  );
+exception
+  when  no_data_found then
+      apex_error.add_error
+      ( p_message          => 'Process variable '||pi_var_name||' in process '||pi_prcs_id||' not found.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+  when lock_timeout then
+    apex_error.add_error
+    ( p_message => 'Process variable '||pi_var_name||' in process '||pi_prcs_id||' already locked by another user. Try to start your task later.'
+    , p_display_location => apex_error.c_on_error_page
+    );
+end delete_var;
 
 -- special cases / built-in standard variables
 
