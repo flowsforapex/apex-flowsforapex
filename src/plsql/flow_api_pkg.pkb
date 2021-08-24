@@ -206,7 +206,11 @@ as
   )
   is 
   begin 
-    null;
+    flow_engine.restart_step
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_comment => p_comment
+    );
   end flow_restart_step;
 
 

@@ -123,15 +123,36 @@ procedure get_number_of_connections
     ;
   end get_number_of_connections;
 
-  function get_and_lock_subflow_info
+  function get_subflow_info
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_lock_subflow  in boolean default false
+  , p_lock_process  in boolean default false
   ) return flow_subflows%rowtype
   is 
     l_sbfl_rec          flow_subflows%rowtype;
     l_prcs_check_id     flow_processes.prcs_id%type;
   begin
     begin 
+      if p_lock_process then
+        begin
+          select prcs.prcs_id
+            into l_prcs_check_id
+            from flow_processes prcs
+          where prcs.prcs_id = p_process_id
+          ;
+        exception
+          when no_data_found then
+            apex_error.add_error
+            ( p_message   =>  apex_string.format 
+                              ( p_message => 'Application Error: Process ID %0 not found).'
+                              , p0 =>  p_process_id
+                              )
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end;
+      end if;
+      if p_lock_subflow then 
         select *
         into l_sbfl_rec
         from flow_subflows sbfl
@@ -139,6 +160,14 @@ procedure get_number_of_connections
         and sbfl.sbfl_id = p_subflow_id
         for update wait 2
         ;
+      else 
+        select *
+        into l_sbfl_rec
+        from flow_subflows sbfl
+        where sbfl.sbfl_prcs_id = p_process_id
+        and sbfl.sbfl_id = p_subflow_id
+        ;
+      end if;
     exception
       when no_data_found then
         -- check if subflow valid in process
@@ -149,13 +178,21 @@ procedure get_number_of_connections
          ;
         if l_prcs_check_id != p_process_id then
             apex_error.add_error
-            ( p_message => 'Application Error: Subflow ID supplied ( '||p_subflow_id||' ) exists but is not child of Process ID Supplied ( '||p_process_id||' ).'
+            ( p_message => apex_string.format
+                           ( p_message => 'Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 ).'
+                           , p0 => p_subflow_id
+                           , p1 => p_process_id
+                           )
             , p_display_location => apex_error.c_on_error_page
             );
         end if;
       when lock_timeout then
         apex_error.add_error
-        ( p_message => 'Unable to lock subflow '||p_subflow_id||' as another user is modifying.  Try again later.'
+        ( p_message => apex_string.format 
+                       ( p_message => 'Unable to lock items as another user is modifying.  Try again later.  Process: %0 Subflow: %1'
+                       , p0 => p_process_id
+                       , p1 => p_subflow_id
+                       )
         , p_display_location => apex_error.c_on_error_page
         );
     end;
@@ -163,10 +200,13 @@ procedure get_number_of_connections
   exception
     when no_data_found then
             apex_error.add_error
-            ( p_message => 'Subflow ID supplied ( '||p_subflow_id||' ) not found. Check for process events that changed process flow (timeouts, errors, escalations). '
+            ( p_message =>  apex_string.format
+                            ( 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations). '
+                            , p0 => p_subflow_id
+                            )
             , p_display_location => apex_error.c_on_error_page
             );
-  end get_and_lock_subflow_info;
+  end get_subflow_info;
 
   function subflow_start
     ( 
