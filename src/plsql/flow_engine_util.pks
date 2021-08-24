@@ -33,9 +33,11 @@ as
   , po_num_back_connections     out number
   );
   
-  function get_and_lock_subflow_info
+  function get_subflow_info
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_lock_subflow  in boolean default false
+  , p_lock_process  in boolean default false
   ) return flow_subflows%rowtype;
 
   procedure subflow_complete

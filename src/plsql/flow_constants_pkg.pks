@@ -111,6 +111,7 @@ as
   gc_prcs_event_terminated           constant  varchar2(20 char) := gc_prcs_status_terminated;
   gc_prcs_event_reset                constant  varchar2(20 char) := 'reset';
   gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
+  gc_prcs_event_restart_step         constant  varchar2(20 char) := 'restart step';
   gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
 
   -- Process Variable Datatypes
