@@ -1,0 +1,22 @@
+.mtbv-rendercanvas {
+  height: 80vh;
+  background-color: #f0f0f0;
+}
+
+.bjs-container {
+  --default-fill-color: white;
+  --default-stroke-color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mtbv-rendercanvas {
+    background-color: #2b3035;
+  }
+  .bjs-container {
+    --default-fill-color: #2b3035;
+    --default-stroke-color: white;
+  }
+  .bjs-powered-by {
+    color: white !important;
+  }
+}

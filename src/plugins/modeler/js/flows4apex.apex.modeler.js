@@ -29,13 +29,20 @@
         bpmnlint: bpmnModeler.linting.apexLinting
       };
 
+      this.bpmnRenderer = {
+        defaultFillColor: "var(--default-fill-color)",
+        defaultStrokeColor: "var(--default-stroke-color)",
+        defaultLabelColor: "var(--default-stroke-color)",
+      }
+
       this.bpmnModeler$ = new bpmnModeler.Modeler( {
         container: "#" + this.canvasId,
         keyboard: { bindTo: document },
         propertiesPanel: { parent: "#" + this.propertiesPanelParent },
         additionalModules: this.enabledModules,
         moddleExtensions: this.moddleExtensions,
-        linting: this.linting
+        linting: this.linting,
+        bpmnRenderer: this.bpmnRenderer
       });
 
       // prevent click events from bubbling up the dom

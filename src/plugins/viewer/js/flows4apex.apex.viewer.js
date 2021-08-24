@@ -11,10 +11,6 @@
       useNavigatedViewer: false,
       enableExpandModule: true,
       config: {
-        canvasStyle: {
-          "height": "80vh",
-          "background-color": "#f0f0f0"
-        },
         currentStyle: {
           "fill": "green",
           "stroke": "black"
@@ -45,10 +41,15 @@
       if ( this.options.enableExpandModule ) {
         this.enabledModules.push( bpmnViewer.customModules.spViewModule );
       }
+      this.bpmnRenderer = {
+        defaultFillColor: "var(--default-fill-color)",
+        defaultStrokeColor: "var(--default-stroke-color)",
+        defaultLabelColor: "var(--default-stroke-color)",
+      }
       if ( this.options.useNavigatedViewer ) {
-        this.bpmnViewer$ = new bpmnViewer.NavigatedViewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules });
+        this.bpmnViewer$ = new bpmnViewer.NavigatedViewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
       } else {
-        this.bpmnViewer$ = new bpmnViewer.Viewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules });
+        this.bpmnViewer$ = new bpmnViewer.Viewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
       }
       if ( this.options.refreshOnLoad ) {
         this.refresh();
@@ -65,9 +66,6 @@
         widgetName: "bpmnviewer",
         type: "flows4apex.viewer"
       });
-      for (const c in this.options.config.canvasStyle) {
-        $( "#" + this.canvasId ).css(c, this.options.config.canvasStyle[c]);
-      }
     },
     loadDiagram: async function() {
       $( "#" + this.canvasId ).show();

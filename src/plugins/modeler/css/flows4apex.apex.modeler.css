@@ -30,3 +30,9 @@
   padding-bottom: 70px;
   min-height:100%;
 }
+
+@media (prefers-color-scheme: dark) {
+  .mtbm-rendercanvas, .properties-panel-parent {
+    background-color: #2b3035;
+  }
+}
