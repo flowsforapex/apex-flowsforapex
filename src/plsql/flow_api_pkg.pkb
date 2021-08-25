@@ -151,10 +151,14 @@ as
     is
     begin  
         apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
+
+        flow_globals.set_context
+        ( pi_prcs_id => p_process_id
+        );
   
         flow_instances.start_process 
-          ( p_process_id => p_process_id
-          );
+        ( p_process_id => p_process_id
+        );
   end flow_start;
 
   procedure flow_reserve_step
@@ -206,6 +210,10 @@ as
   )
   is 
   begin 
+    flow_globals.set_context
+    ( pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    );
     flow_engine.restart_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
@@ -220,7 +228,10 @@ as
   )
   is 
   begin
-
+    flow_globals.set_context
+    ( pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    );
     flow_engine.flow_complete_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
