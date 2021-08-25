@@ -12,6 +12,18 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_theme_style(
+ p_id=>wwv_flow_api.id(5633999520827555)
+,p_theme_id=>42
+,p_name=>'FLOWS - Dark'
+,p_is_current=>false
+,p_is_public=>true
+,p_is_accessible=>false
+,p_theme_roller_input_file_urls=>'#THEME_IMAGES#less/theme/Vita-Dark.less'
+,p_theme_roller_config=>'{"customCSS":"","vars":{}}'
+,p_theme_roller_output_file_url=>'#THEME_DB_IMAGES#5633999520827555.css'
+,p_theme_roller_read_only=>false
+);
+wwv_flow_api.create_theme_style(
  p_id=>wwv_flow_api.id(26992397294947328)
 ,p_theme_id=>42
 ,p_name=>'FLOWS'

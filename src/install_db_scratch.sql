@@ -78,6 +78,14 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0010_variables_vw.sql
 @views/engine-app/flow_p0002_diagrams_vw.sql
 @views/engine-app/flow_p0007_instances_counter_vw.sql
+@views/engine-app/flow_p0013_attributes_vw.sql
+@views/engine-app/flow_p0013_expressions_vw.sql
+@views/engine-app/flow_p0013_subflows_vw.sql
+@views/engine-app/flow_p0013_subflow_low_vw.sql
+@views/engine-app/flow_p0013_variable_log_vw.sql
+@views/engine-app/flow_p0014_instance_log_vw.sql
+@views/engine-app/flow_p0014_subflows_vw.sql
+@views/engine-app/flow_p0014_subflow_log_vw.sql
 
 PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0005_api.pkb

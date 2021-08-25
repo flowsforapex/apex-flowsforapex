@@ -87,6 +87,14 @@
   --tooltip-error-color: var(--red-base-62);
 }
 
+/** 
+ * custom colors
+ */
+.bjs-container {
+  --default-fill-color: white;
+  --default-stroke-color: black;
+}
+
 /**
  * outline styles
  */
@@ -826,4 +834,38 @@ marker.djs-dragger tspan {
   -o-transform: scale(-1, 1);
   -ms-transform: scale(-1, 1);
   transform: scale(-1, 1); 
+}
+
+/**
+ * custom dark mode colors
+ */
+@media (prefers-color-scheme: dark) {
+  .bjs-container {
+    --default-fill-color: #2b3035;
+    --default-stroke-color: white;
+  }
+  .djs-popup {
+    --popup-body-background-color:  #2b3035;
+    --popup-background-color: #2b3035;
+    color: white;
+  }
+  .djs-context-pad .entry {
+    --context-pad-entry-background-color: #2b3035;
+    --context-pad-entry-hover-background-color: #1e2328;
+    color: white;
+  }
+  .djs-palette {
+    --palette-background-color: #2b3035;
+    --palette-entry-color: white;
+  }
+  .djs-direct-editing-parent {
+    background-color: #2b3035 !important;
+    color: white !important;
+  }
+  .bjs-powered-by {
+    color: white !important;
+  }
+  .bjsl-button-inactive {
+    background-color: #4c4e50 !important;
+  }
 }
