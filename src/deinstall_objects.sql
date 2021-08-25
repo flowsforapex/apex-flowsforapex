@@ -45,7 +45,7 @@ drop view flow_p0010_variables_vw;
 drop view flow_p0013_attributes_vw;
 drop view flow_p0013_expressions_vw;
 drop view flow_p0013_subflows_vw;
-drop view flow_p0013_subflow_low_vw;
+drop view flow_p0013_subflow_log_vw;
 drop view flow_p0013_variable_log_vw;
 drop view flow_p0014_instance_log_vw;
 drop view flow_p0014_subflows_vw;
