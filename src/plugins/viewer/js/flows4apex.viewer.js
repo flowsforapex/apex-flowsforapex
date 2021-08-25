@@ -487,9 +487,7 @@ function StyleModule() {}
 StyleModule.prototype.addStylesToElements = function (elements, css) {
   for (const e of elements) {
     var rect = document.querySelector(
-      `g[data-element-id="${ 
-        e 
-        }"]:not(.djs-connection) .djs-visual > :nth-child(1)`
+      `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > :nth-child(1)`
     );
 
     if (rect) {
@@ -498,6 +496,23 @@ StyleModule.prototype.addStylesToElements = function (elements, css) {
       }
     }
   }
+};
+
+StyleModule.prototype.addToSVGStyle = function (svg, style) {
+  var parser = new DOMParser();
+  var xmlDoc = parser.parseFromString(svg, 'text/xml');
+
+  var defs = xmlDoc.getElementsByTagName('defs')[0];
+
+  var styleNode = document.createElement('style');
+  styleNode.setAttribute('type', 'text/css');
+  var content = document.createTextNode(style);
+  styleNode.appendChild(content);
+  defs.appendChild(styleNode);
+
+  var xmlText = new XMLSerializer().serializeToString(xmlDoc);
+
+  return xmlText;
 };
 
 
@@ -24925,4 +24940,4 @@ module.exports = __webpack_require__(/*! C:\Users\damthor\Desktop\dev\bpmn-viewe
 /***/ })
 
 /******/ })["default"];
-//# sourceMappingURL=mtag.bpmnviewer.js.map
+//# sourceMappingURL=flows4apex.viewer.js.map

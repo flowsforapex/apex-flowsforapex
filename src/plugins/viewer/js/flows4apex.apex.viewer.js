@@ -93,7 +93,8 @@
       try {
         const result = await bpmnViewer$.saveSVG({ format: true });
         const { svg } = result;
-        return svg;
+        const styledSVG = bpmnViewer$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+        return styledSVG;
       } catch (err) {
         apex.debug.error( "Get SVG failed.", err );
         throw err;
