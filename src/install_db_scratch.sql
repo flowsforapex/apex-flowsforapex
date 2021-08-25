@@ -101,6 +101,9 @@ PROMPT >> Viewer Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
 
+PROMPT >> Viewer Plugin Objects
+@ddl/install_default_config_data.sql
+
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object
     from user_objects

@@ -74,12 +74,15 @@ as
   , po_timer_def  out nocopy flow_object_attributes.obat_vc_value%type
   )
   is
-    l_objt_with_timer     flow_objects.objt_id%type;
+    l_objt_with_timer             flow_objects.objt_id%type;
+    l_objt_with_timer_bpmn_id     flow_objects.objt_bpmn_id%type;
   begin
     -- get objt that timers are attached to (object or attached boundaryEvent)
     begin 
       select objt.objt_id
+           , objt.objt_bpmn_id
         into l_objt_with_timer
+           , l_objt_with_timer_bpmn_id
         from flow_subflows sbfl
         join flow_processes prcs
           on prcs.prcs_id = sbfl.sbfl_prcs_id
@@ -122,7 +125,7 @@ as
     apex_debug.info
     (
       p_message => 'get_timer_definition.  Getting timer definition for object %s on subflow %s'
-    , p0        => l_objt_with_timer
+    , p0        => l_objt_with_timer_bpmn_id
     , p1        => pi_sbfl_id
     );
 
@@ -148,13 +151,24 @@ as
       apex_error.add_error
       ( p_message          => apex_string.format
                               ( 
-                                p_message =>'Incomplete timer definitions for object %s. Type: %s; Value: %s'
-                              , p0        => l_objt_with_timer
+                                p_message =>'Incomplete timer definitions for object %0. Type: %1; Value: %2'
+                              , p0        => l_objt_with_timer_bpmn_id
                               , p1        => coalesce(po_timer_type, '!NULL!')
                               , p2        => coalesce(po_timer_def, '!NULL!')
                               )
       , p_display_location => apex_error.c_on_error_page
       );
+    elsif po_timer_type = flow_constants_pkg.gc_timer_type_cycle then
+      -- cycle timers disabled in v21.1 until redone in future release
+      apex_error.add_error
+      ( p_message         => apex_string.format
+                             (
+                               p_message => 'Cycle Timer defined for object %0 not currently supported.'
+                             , p0        => l_objt_with_timer_bpmn_id
+                             )
+      , p_display_location => apex_error.c_on_error_page
+      );
+
     end if;
   end get_timer_definition;
 

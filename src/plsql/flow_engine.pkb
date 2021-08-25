@@ -102,6 +102,7 @@ end flow_process_link_event;
     l_subproc_objt          flow_objects.objt_bpmn_id%type;
     l_exit_type             flow_objects.objt_sub_tag_name%type default null;
     l_remaining_subflows    number;
+    l_process_end_status    flow_processes.prcs_status%type;
   begin
     apex_debug.enter 
     ( 'process_endEvent'
@@ -146,6 +147,19 @@ end flow_process_link_event;
       );
       -- check for Terminate sub-Event
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
+        -- get desired process status after termination from model
+        begin
+          select coalesce(obat.obat_vc_value, flow_constants_pkg.gc_prcs_status_completed)
+            into l_process_end_status
+            from flow_object_attributes obat
+          where obat.obat_objt_id = p_step_info.target_objt_id
+            and obat.obat_key = flow_constants_pkg.gc_terminate_result
+          ;
+        exception
+          when no_data_found then
+            l_process_end_status := flow_constants_pkg.gc_prcs_status_completed;
+        end;
+        -- terminate the main level
         flow_engine_util.terminate_level
         ( 
           p_process_id     => p_process_id
@@ -156,6 +170,7 @@ end flow_process_link_event;
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
+        l_process_end_status := flow_constants_pkg.gc_prcs_status_completed;
       end if;
       -- check if there are ANY remaining subflows.  If not, close process
       select count(*)
@@ -166,18 +181,19 @@ end flow_process_link_event;
       if l_remaining_subflows = 0 then 
         -- No remaining subflows so process has completed
         update flow_processes prcs 
-           set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_completed
+           set prcs.prcs_status = l_process_end_status
              , prcs.prcs_last_update = systimestamp
          where prcs.prcs_id = p_process_id
         ;
         -- log the completion
         flow_logging.log_instance_event
         ( p_process_id => p_process_id
-        , p_event      => flow_constants_pkg.gc_prcs_event_completed
+        , p_event      => l_process_end_status
         );
         apex_debug.info 
-        ( p_message => 'Process Completed: Process %0'
-        , p0        => p_process_id 
+        ( p_message => 'Process Completed with %1 Status: Process %0  '
+        , p0        => p_process_id
+        , p1        => l_process_end_status
         );
       end if;
     else  
@@ -752,46 +768,91 @@ end flow_handle_event;
 ****
 *************************************************************************************************************/
 
-
-procedure flow_complete_step
-( p_process_id        in flow_processes.prcs_id%type
-, p_subflow_id        in flow_subflows.sbfl_id%type
-, p_forward_route     in flow_connections.conn_bpmn_id%type default null
+procedure finish_current_step
+( p_sbfl_rec          in flow_subflows%rowtype
+, p_current_step_tag  in flow_objects.objt_tag_name%type
 , p_log_as_completed  in boolean default true
 )
 is
+begin
+  -- runs all of the post-step operations for the old current task (handling post- expressionsa, releasing reservations, etc.)
+  apex_debug.enter 
+  ( 'finish_current_step'
+  , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
+  , 'Subflow ID', p_sbfl_rec.sbfl_id
+  );
+  -- evaluate and set any post-step variable expressions on the last object
+  if p_current_step_tag in 
+  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
+  then 
+    flow_expressions.process_expressions
+      ( pi_objt_bpmn_id   => p_sbfl_rec.sbfl_current
+      , pi_set            => flow_constants_pkg.gc_expr_set_after_task
+      , pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_rec.sbfl_id
+    );
+  end if;
+  -- clean up any boundary events left over from the previous activity
+  if (p_current_step_tag in ( flow_constants_pkg.gc_bpmn_subprocess
+                              , flow_constants_pkg.gc_bpmn_task
+                              , flow_constants_pkg.gc_bpmn_usertask
+                              , flow_constants_pkg.gc_bpmn_manualtask
+                            ) -- boundary event attachable types
+      and p_sbfl_rec.sbfl_has_events is not null )            -- subflow has events attached
+  then
+      -- 
+      apex_debug.info 
+      ( p_message => 'boundary event cleanup triggered for subflow %0'
+      , p0        => p_sbfl_rec.sbfl_id
+      );
+      flow_boundary_events.unset_boundary_timers 
+      ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+      , p_subflow_id => p_sbfl_rec.sbfl_id);
+  end if;
+
+  if p_log_as_completed then
+    -- log current step as completed before loosing the reservation
+    flow_logging.log_step_completion   
+    ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_rec.sbfl_id
+    , p_completed_object => p_sbfl_rec.sbfl_current
+    );
+  end if;
+  -- release subflow reservation
+  if p_sbfl_rec.sbfl_reservation is not null then
+    flow_reservations.release_step
+    ( p_process_id        => p_sbfl_rec.sbfl_prcs_id
+    , p_subflow_id        => p_sbfl_rec.sbfl_id
+    , p_called_internally => true
+    );
+  end if;
+
+  apex_debug.info
+  ( p_message => 'Post Step Operations completed for current step %1 on subflow %0.'
+  , p0        => p_sbfl_rec.sbfl_id
+  , p1        => p_sbfl_rec.sbfl_current
+  );
+
+end finish_current_step;
+
+function get_next_step_info
+( p_process_id        in flow_processes.prcs_id%type
+, p_subflow_id        in flow_subflows.sbfl_id%type
+, p_forward_route     in flow_connections.conn_bpmn_id%type default null
+) return flow_types_pkg.flow_step_info
+is
   l_sbfl_rec              flow_subflows%rowtype;
-  l_step_info             flow_types_pkg.flow_step_info;
   l_dgrm_id               flow_diagrams.dgrm_id%type;
+  l_step_info             flow_types_pkg.flow_step_info;
  -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
   apex_debug.enter 
-  ( 'flow_complete_step'
+  ( 'get_next_step_info'
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
   );
-
-  --l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
-  -- Get current object and current subflow info and lock it
-  l_sbfl_rec := flow_engine_util.get_and_lock_subflow_info 
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  );
-  -- if subflow has any associated non-interrupting timers on current object, lock the subflows and timers
-  -- (other boundary event types only create a subflow when they fire)
-  if l_sbfl_rec.sbfl_has_events like '%:CNT%' then 
-    flow_boundary_events.lock_child_boundary_timers
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_parent_objt_bpmn_id => l_sbfl_rec.sbfl_current 
-    ); 
-  end if;
-  -- lock associated timers for interrupting boundary events
-  if l_sbfl_rec.sbfl_has_events like '%:S_T%' then 
-    flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
-  end if;
-
-  -- Find next subflow step
+-- Find next subflow step
   begin
     select sbfl.sbfl_dgrm_id
          , objt_source.objt_tag_name
@@ -820,6 +881,7 @@ begin
        and sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
     ;
+    return l_step_info;
   exception
   when no_data_found then
     apex_error.add_error
@@ -832,56 +894,291 @@ begin
     , p_display_location => apex_error.c_on_error_page
     );
   end;
+end get_next_step_info;
 
-  -- evaluate and set any post-step variable expressions on the last object
-  if l_step_info.source_objt_tag in 
+function get_restart_step_info
+( p_process_id        in flow_processes.prcs_id%type
+, p_subflow_id        in flow_subflows.sbfl_id%type
+, p_current_bpmn_id   in flow_objects.objt_bpmn_id%type
+) return flow_types_pkg.flow_step_info
+is
+  l_sbfl_rec              flow_subflows%rowtype;
+  l_dgrm_id               flow_diagrams.dgrm_id%type;
+  l_step_info             flow_types_pkg.flow_step_info;
+begin
+  -- used to set up the current step for restarting when a subflow has status = error
+  apex_debug.enter 
+  ( 'get_restart_step_info'
+  , 'Process ID',  p_process_id
+  , 'Subflow ID', p_subflow_id
+  );
+-- Find next subflow step
+  begin
+    select sbfl.sbfl_dgrm_id
+         , null 
+         , null
+         , objt_current.objt_id
+         , objt_current.objt_bpmn_id
+         , objt_current.objt_tag_name    
+         , objt_current.objt_sub_tag_name
+      into l_step_info
+      from flow_objects objt_current
+      join flow_subflows sbfl
+        on sbfl.sbfl_current = objt_current.objt_bpmn_id 
+       and sbfl.sbfl_dgrm_id = objt_current.objt_dgrm_id
+     where sbfl.sbfl_prcs_id = p_process_id
+       and sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_current = p_current_bpmn_id
+    ;
+    return l_step_info;
+  exception
+  when no_data_found then
+    apex_error.add_error
+    ( p_message => 'No Current Error Found.  Check your process diagram.'
+    , p_display_location => apex_error.c_on_error_page
+    );
+  when too_many_rows then
+    apex_error.add_error
+    ( p_message => 'More than 1 forward path found when only 1 allowed'
+    , p_display_location => apex_error.c_on_error_page
+    );
+  end;
+end get_restart_step_info;
+
+procedure run_step
+( p_sbfl_rec          in flow_subflows%rowtype
+, p_step_info         in flow_types_pkg.flow_step_info
+)
+is
+
+begin
+  apex_debug.enter 
+  ( 'run_step'
+  , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
+  , 'Subflow ID', p_sbfl_rec.sbfl_id
+  );
+
+  apex_debug.info 
+  ( p_message => 'Running Step - Target object: %s.  More info at APP_TRACE level.'
+  , p0        => coalesce(p_step_info.target_objt_tag, '!NULL!') 
+  );
+  apex_debug.trace
+  ( p_message => 'Runing Step Info - dgrm_id : %0, source_objt_tag : %1, target_objt_id : %2, target_objt_ref : %3'
+  , p0  => p_step_info.dgrm_id
+  , p1  => p_step_info.source_objt_tag
+  , p2  => p_step_info.target_objt_id
+  , p3  => p_step_info.target_objt_ref
+  );
+  apex_debug.trace
+  ( p_message => 'Running Step Info - target_objt_tag : %0, target_objt_subtag : %1'
+  , p0 => p_step_info.target_objt_tag
+  , p1 => p_step_info.target_objt_subtag
+  );
+  apex_debug.trace
+  ( p_message => 'Runing Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
+  , p0 => p_sbfl_rec.sbfl_id
+  , p1 => p_sbfl_rec.sbfl_last_completed
+  , p2 => p_sbfl_rec.sbfl_prcs_id
+  );    
+
+  -- evaluate and set any pre-step variable expressions on the next object
+  if p_step_info.target_objt_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
   , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
   then 
     flow_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.source_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_after_task
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
+      ( pi_objt_id     => p_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_task
+      , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
+      , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+    );
+  elsif p_step_info.target_objt_tag in 
+  ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
+  , flow_constants_pkg.gc_bpmn_intermediate_throw_event, flow_constants_pkg.gc_bpmn_intermediate_catch_event
+  , flow_constants_pkg.gc_bpmn_boundary_event )
+  then
+    flow_expressions.process_expressions
+      ( pi_objt_id     => p_step_info.target_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+      , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
+      , pi_sbfl_id     => p_sbfl_rec.sbfl_id
     );
   end if;
 
-  -- clean up any boundary events left over from the previous activity
-  if (l_step_info.source_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
-                                     , flow_constants_pkg.gc_bpmn_task
-                                     , flow_constants_pkg.gc_bpmn_usertask
-                                     , flow_constants_pkg.gc_bpmn_manualtask
-                                    ) -- boundary event attachable types
-      and l_sbfl_rec.sbfl_has_events is not null )            -- subflow has events attached
-  then
-      -- 
-      apex_debug.info 
-      ( p_message => 'boundary event cleanup triggered for subflow %0'
-      , p0        => p_subflow_id
+  case (p_step_info.target_objt_tag)
+    when flow_constants_pkg.gc_bpmn_end_event then  --next step is either end of process or sub-process returning to its parent
+      flow_engine.process_endEvent
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when flow_constants_pkg.gc_bpmn_gateway_exclusive then
+      flow_gateways.process_exclusiveGateway
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when flow_constants_pkg.gc_bpmn_gateway_inclusive then
+      flow_gateways.process_para_incl_Gateway
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when flow_constants_pkg.gc_bpmn_gateway_parallel then
+      flow_gateways.process_para_incl_Gateway
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when flow_constants_pkg.gc_bpmn_subprocess then
+      flow_engine.process_subProcess
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when flow_constants_pkg.gc_bpmn_gateway_event_based then
+        flow_gateways.process_eventBasedGateway
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when  flow_constants_pkg.gc_bpmn_intermediate_catch_event then 
+        flow_engine.process_intermediateCatchEvent
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when  flow_constants_pkg.gc_bpmn_intermediate_throw_event then 
+        flow_engine.process_intermediateThrowEvent
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         ); 
+    when  flow_constants_pkg.gc_bpmn_task then 
+        flow_tasks.process_task
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         );
+    when  flow_constants_pkg.gc_bpmn_usertask then
+        flow_tasks.process_userTask
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         );
+    when  flow_constants_pkg.gc_bpmn_scripttask then 
+        flow_tasks.process_scriptTask
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         );
+    when  flow_constants_pkg.gc_bpmn_manualtask then 
+        flow_tasks.process_manualTask
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         );
+    when  flow_constants_pkg.gc_bpmn_servicetask then 
+    flow_tasks.process_scriptTask
+         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+         , p_subflow_id => p_sbfl_rec.sbfl_id
+         , p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         );
+    end case;
+
+  exception
+    when case_not_found then
+      apex_error.add_error
+      ( p_message => 'Process Model Error: Process BPMN model next step uses unsupported object: '||p_step_info.target_objt_tag
+      , p_display_location => apex_error.c_on_error_page
       );
-      flow_boundary_events.unset_boundary_timers (p_process_id, p_subflow_id);
-  end if;
-  if p_log_as_completed then
-    -- log current step as completed before loosing the reservation
-    flow_logging.log_step_completion   
+    when no_data_found then
+      apex_error.add_error
+      ( p_message => 'Next step does not exist. Please check your process diagram.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    when flow_plsql_runner_pkg.e_plsql_script_failed then
+    /*
+      apex_error.add_error
+      (
+        p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute successfully.'
+      , p_display_location => apex_error.c_on_error_page
+      );
+    */
+    null;
+end run_step;
+
+
+procedure flow_complete_step
+( p_process_id        in flow_processes.prcs_id%type
+, p_subflow_id        in flow_subflows.sbfl_id%type
+, p_forward_route     in flow_connections.conn_bpmn_id%type default null
+, p_log_as_completed  in boolean default true
+)
+is
+  l_sbfl_rec              flow_subflows%rowtype;
+  l_step_info             flow_types_pkg.flow_step_info;
+  l_dgrm_id               flow_diagrams.dgrm_id%type;
+ -- l_prcs_check_id         flow_processes.prcs_id%type;
+begin
+  apex_debug.enter 
+  ( 'flow_complete_step'
+  , 'Process ID',  p_process_id
+  , 'Subflow ID', p_subflow_id
+  );
+  -- Get current object and current subflow info and lock it
+  l_sbfl_rec := flow_engine_util.get_subflow_info 
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  , p_lock_process => false 
+  , p_lock_subflow => true
+  );
+  -- if subflow has any associated non-interrupting timers on current object, lock the subflows and timers
+  -- (other boundary event types only create a subflow when they fire)
+  if l_sbfl_rec.sbfl_has_events like '%:CNT%' then 
+    flow_boundary_events.lock_child_boundary_timers
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
-    , p_completed_object => l_sbfl_rec.sbfl_current
-    );
+    , p_parent_objt_bpmn_id => l_sbfl_rec.sbfl_current 
+    ); 
   end if;
-  -- release subflow reservation
-  if l_sbfl_rec.sbfl_reservation is not null then
-    flow_reservations.release_step
-    ( p_process_id        => p_process_id
-    , p_subflow_id        => p_subflow_id
-    , p_called_internally => true
-    );
+  -- lock associated timers for interrupting boundary events
+  if l_sbfl_rec.sbfl_has_events like '%:S_T%' then 
+    flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
   end if;
 
-  -- end of post- phase for previous step
+  -- Find next subflow step
+  l_step_info := get_next_step_info 
+  ( p_process_id => p_process_id
+  , p_subflow_id => p_subflow_id
+  , p_forward_route => p_forward_route
+  );
+
+  -- complete the current step by doing the post-step operations
+  finish_current_step
+  ( p_sbfl_rec => l_sbfl_rec
+  , p_current_step_tag => l_step_info.source_objt_tag
+  , p_log_as_completed => p_log_as_completed
+  );
+
+  -- end of post-step operations for previous step
   commit;
+
   apex_debug.info
-  ( p_message => 'End of Post Phase (committed) for current step %1 on subflow %0. Moving onto Pre-Phase of Next Step '
+  ( p_message => 'Step End Committed'
   , p0        => p_subflow_id
   , p1        => l_sbfl_rec.sbfl_current
   );
@@ -889,9 +1186,11 @@ begin
   -- start of pre-phase for next step
 
   -- relock subflow
-  l_sbfl_rec := flow_engine_util.get_and_lock_subflow_info 
+  l_sbfl_rec := flow_engine_util.get_subflow_info 
   ( p_process_id => p_process_id
   , p_subflow_id => p_subflow_id
+  , p_lock_process => false
+  , p_lock_subflow => true
   );
 
   l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
@@ -907,6 +1206,12 @@ begin
      and sbfl.sbfl_id = p_subflow_id
   ;
 
+  run_step 
+  ( p_sbfl_rec => l_sbfl_rec
+  , p_step_info => l_step_info 
+  );
+
+/*
   apex_debug.info 
   ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
   , p0        => coalesce(l_step_info.target_objt_tag, '!NULL!') 
@@ -1047,6 +1352,8 @@ begin
          , p_step_info => l_step_info
          );
     end case;
+
+    */
     -- Commit transaction before returning
     commit;
   exception
@@ -1069,6 +1376,8 @@ begin
       );
     */
     null;
+  
+    -- add a when others here??
   end flow_complete_step;
 
   procedure start_step -- just (optionally) records the start time gpr work on the current step
@@ -1107,7 +1416,6 @@ begin
         commit;
       end if;
     end if;
-
   exception
     when no_data_found then
       apex_error.add_error
@@ -1121,6 +1429,80 @@ begin
         );
   end start_step;
 
+procedure restart_step
+  ( p_process_id          in flow_processes.prcs_id%type
+  , p_subflow_id          in flow_subflows.sbfl_id%type
+  , p_comment             in flow_instance_event_log.lgpr_comment%type default null
+  )
+is 
+  l_sbfl_rec            flow_subflows%rowtype;
+  l_step_info           flow_types_pkg.flow_step_info;
+  l_num_error_subflows  number;
+begin 
+  apex_debug.enter 
+  ( 'flow_restart_step'
+  , 'Process ID',  p_process_id
+  , 'Subflow ID', p_subflow_id
+  );
+  -- lock the process and subflow
+  l_sbfl_rec := flow_engine_util.get_subflow_info 
+                ( p_process_id => p_process_id
+                , p_subflow_id => p_subflow_id
+                , p_lock_process => true
+                , p_lock_subflow => true
+                );
+  -- check subflow current task is in error status
+  if l_sbfl_rec.sbfl_status <> flow_constants_pkg.gc_sbfl_status_error then 
+      apex_error.add_error
+      ( p_message => 'Only Subflows with a status of error can be re-started'
+      , p_display_location => apex_error.c_on_error_page
+      );
+  end if;
+  -- set up step context
+  l_step_info :=  get_restart_step_info
+                  ( p_process_id => p_process_id
+                  , p_subflow_id => p_subflow_id
+                  , p_current_bpmn_id => l_sbfl_rec.sbfl_current
+                  );
+  -- set subflow status to running
+  update flow_subflows sbfl
+     set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+       , sbfl_last_update = systimestamp
+   where sbfl.sbfl_prcs_id = p_process_id
+     and sbfl.sbfl_id = p_subflow_id
+  ;
+  -- log the restart
+  flow_logging.log_instance_event
+  ( p_process_id => p_process_id
+  , p_event      => flow_constants_pkg.gc_prcs_event_restart_step
+  , p_comment    => 'restart step '||l_sbfl_rec.sbfl_current||'. Comment: '||p_comment
+  );
+  -- see if instance can be reset to running
+  select count(sbfl_id)
+    into l_num_error_subflows
+    from flow_subflows sbfl 
+   where sbfl.sbfl_prcs_id = p_process_id
+     and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error 
+  ;
+  if l_num_error_subflows = 0 then
+    update flow_processes prcs
+       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
+     where prcs.prcs_id = p_process_id
+    ;
+    flow_logging.log_instance_event
+    ( p_process_id => p_process_id
+    , p_event      => flow_constants_pkg.gc_prcs_status_running
+    );
+  end if;
+
+  -- restart current task
+  run_step 
+  ( p_sbfl_rec => l_sbfl_rec
+  , p_step_info => l_step_info
+  );
+  -- commit
+  commit;
+end restart_step;
 
 end flow_engine;
 /

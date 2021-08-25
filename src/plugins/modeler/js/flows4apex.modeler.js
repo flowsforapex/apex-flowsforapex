@@ -128,6 +128,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmnlint_rules_superfluous_gateway__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_rules_superfluous_gateway__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! bpmnlint-plugin-apex/rules/max-id-length */ "./bpmnlint-plugin-apex/rules/max-id-length.js");
 /* harmony import */ var bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! bpmnlint-plugin-apex/rules/merge-split-gateways */ "./bpmnlint-plugin-apex/rules/merge-split-gateways.js");
+/* harmony import */ var bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15__);
 
 const cache = {};
 
@@ -173,7 +175,8 @@ const rules = {
   "start-event-required": "error",
   "sub-process-blank-start-event": "error",
   "superfluous-gateway": "warning",
-  "apex/max-id-length": "error"
+  "apex/max-id-length": "error",
+  "apex/merge-split-gateways": "warn"
 };
 
 const config = {
@@ -236,6 +239,9 @@ cache['bpmnlint/superfluous-gateway'] = bpmnlint_rules_superfluous_gateway__WEBP
 
 cache['bpmnlint-plugin-apex/max-id-length'] = bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14___default.a;
 
+
+cache['bpmnlint-plugin-apex/merge-split-gateways'] = bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15___default.a;
+
 /***/ }),
 
 /***/ "./apexPropertiesProvider/descriptor/apexProps.json":
@@ -259,31 +265,32 @@ module.exports = JSON.parse("{\"name\":\"APEX\",\"prefix\":\"apex\",\"uri\":\"ht
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return apexPropertiesProvider; });
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "./node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/PropertiesActivator */ "./node_modules/bpmn-js-properties-panel/lib/PropertiesActivator.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./parts/events/EventProps */ "./apexPropertiesProvider/provider/parts/events/EventProps.js");
-/* harmony import */ var _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps.js");
-/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/PropertiesActivator */ "./node_modules/bpmn-js-properties-panel/lib/PropertiesActivator.js");
+/* harmony import */ var bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps.js");
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps.js");
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps.js");
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps */ "./node_modules/bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps.js");
+/* harmony import */ var bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! inherits */ "./node_modules/inherits/inherits_browser.js");
+/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./parts/events/EventProps */ "./apexPropertiesProvider/provider/parts/events/EventProps.js");
+/* harmony import */ var _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_parts_events_EventProps__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _parts_globalProps_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./parts/globalProps.js */ "./apexPropertiesProvider/provider/parts/globalProps.js");
-/* harmony import */ var _parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./parts/userTaskProps.js */ "./apexPropertiesProvider/provider/parts/userTaskProps.js");
-/* harmony import */ var _parts_scriptTaskProps_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./parts/scriptTaskProps.js */ "./apexPropertiesProvider/provider/parts/scriptTaskProps.js");
-/* harmony import */ var _parts_serviceTaskProps_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./parts/serviceTaskProps.js */ "./apexPropertiesProvider/provider/parts/serviceTaskProps.js");
-/* harmony import */ var _parts_process_variables_taskProcVarProps_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./parts/process_variables/taskProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/taskProcVarProps.js");
-/* harmony import */ var _parts_process_variables_gatewayProcVarProps_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./parts/process_variables/gatewayProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/gatewayProcVarProps.js");
-/* harmony import */ var _parts_process_variables_eventProcVarProps_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./parts/process_variables/eventProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/eventProcVarProps.js");
-/* harmony import */ var _parts_process_variables_procVarDetailProps_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./parts/process_variables/procVarDetailProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/procVarDetailProps.js");
-/* harmony import */ var _parts_process_variables_procVarLists_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./parts/process_variables/procVarLists.js */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
-/* harmony import */ var _parts_process_variables_helper_validateXML__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./parts/process_variables/helper/validateXML */ "./apexPropertiesProvider/provider/parts/process_variables/helper/validateXML.js");
+/* harmony import */ var _parts_process_variables_eventProcVarProps_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./parts/process_variables/eventProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/eventProcVarProps.js");
+/* harmony import */ var _parts_process_variables_gatewayProcVarProps_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./parts/process_variables/gatewayProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/gatewayProcVarProps.js");
+/* harmony import */ var _parts_process_variables_helper_validateXML__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./parts/process_variables/helper/validateXML */ "./apexPropertiesProvider/provider/parts/process_variables/helper/validateXML.js");
+/* harmony import */ var _parts_process_variables_procVarDetailProps_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./parts/process_variables/procVarDetailProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/procVarDetailProps.js");
+/* harmony import */ var _parts_process_variables_procVarLists_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./parts/process_variables/procVarLists.js */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
+/* harmony import */ var _parts_process_variables_taskProcVarProps_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./parts/process_variables/taskProcVarProps.js */ "./apexPropertiesProvider/provider/parts/process_variables/taskProcVarProps.js");
+/* harmony import */ var _parts_scriptTaskProps_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./parts/scriptTaskProps.js */ "./apexPropertiesProvider/provider/parts/scriptTaskProps.js");
+/* harmony import */ var _parts_serviceTaskProps_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./parts/serviceTaskProps.js */ "./apexPropertiesProvider/provider/parts/serviceTaskProps.js");
+/* harmony import */ var _parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./parts/userTaskProps.js */ "./apexPropertiesProvider/provider/parts/userTaskProps.js");
 // eslint-disable-next-line import/no-extraneous-dependencies
+
 
 
 
@@ -292,12 +299,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
 // Require your custom property entries.
-
-
 
 
 
@@ -315,26 +317,26 @@ __webpack_require__.r(__webpack_exports__);
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
   var generalGroup = {
     id: 'general',
-    label: 'General',
+    label: translate('General'),
     entries: []
   };
   var detailsGroup = {
     id: 'details',
-    label: 'Details',
+    label: translate('Details'),
     entries: []
   };
   var documentationGroup = {
     id: 'documentation',
-    label: 'Documentation',
+    label: translate('Documentation'),
     entries: []
   };
 
   Object(_parts_globalProps_js__WEBPACK_IMPORTED_MODULE_7__["default"])(generalGroup, element, translate);
-  bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_6___default()(generalGroup, element, bpmnFactory, canvas, translate);
-  bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_2___default()(generalGroup, element, translate);
-  bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_4___default()(detailsGroup, element, translate);
-  _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_3___default()(detailsGroup, element, bpmnFactory, elementRegistry, translate);
-  bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_5___default()(documentationGroup, element, bpmnFactory, translate);
+  bpmn_js_properties_panel_lib_provider_bpmn_parts_NameProps__WEBPACK_IMPORTED_MODULE_3___default()(generalGroup, element, bpmnFactory, canvas, translate);
+  bpmn_js_properties_panel_lib_provider_bpmn_parts_ProcessProps__WEBPACK_IMPORTED_MODULE_4___default()(generalGroup, element, translate);
+  bpmn_js_properties_panel_lib_provider_bpmn_parts_LinkProps__WEBPACK_IMPORTED_MODULE_2___default()(detailsGroup, element, translate);
+  _parts_events_EventProps__WEBPACK_IMPORTED_MODULE_6___default()(detailsGroup, element, bpmnFactory, elementRegistry, translate);
+  bpmn_js_properties_panel_lib_provider_bpmn_parts_DocumentationProps__WEBPACK_IMPORTED_MODULE_1___default()(documentationGroup, element, bpmnFactory, translate);
 
   return [
     generalGroup,
@@ -346,18 +348,18 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 function createApexTabGroups(element, translate) {
   var apexPageGroup = {
     id: 'apex-page-calls',
-    label: 'Call APEX Page',
-    entries: Object(_parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_8__["default"])(element, translate)
+    label: translate('Call APEX Page'),
+    entries: Object(_parts_userTaskProps_js__WEBPACK_IMPORTED_MODULE_16__["default"])(element, translate)
   };
   var apexScriptGroup = {
     id: 'apex-script-group',
-    label: 'Script Task',
-    entries: Object(_parts_scriptTaskProps_js__WEBPACK_IMPORTED_MODULE_9__["default"])(element, translate)
+    label: translate('Script Task'),
+    entries: Object(_parts_scriptTaskProps_js__WEBPACK_IMPORTED_MODULE_14__["default"])(element, translate)
   };
   var apexServiceGroup = {
     id: 'apex-service-group',
-    label: 'Service Task',
-    entries: Object(_parts_serviceTaskProps_js__WEBPACK_IMPORTED_MODULE_10__["default"])(element, translate)
+    label: translate('Service Task'),
+    entries: Object(_parts_serviceTaskProps_js__WEBPACK_IMPORTED_MODULE_15__["default"])(element, translate)
   };
 
   return [
@@ -371,34 +373,42 @@ function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translat
 
   var taskGroup = {
     id: 'apex-task',
-    label: 'Process Variables',
-    entries: Object(_parts_process_variables_taskProcVarProps_js__WEBPACK_IMPORTED_MODULE_11__["default"])(element, bpmnFactory, elementRegistry, translate)
+    label: translate('Process Variables'),
+    entries: Object(_parts_process_variables_taskProcVarProps_js__WEBPACK_IMPORTED_MODULE_13__["default"])(element, bpmnFactory, elementRegistry, translate)
   };
 
   var gatewayGroup = {
     id: 'apex-gateway',
-    label: 'Process Variables',
-    entries: Object(_parts_process_variables_gatewayProcVarProps_js__WEBPACK_IMPORTED_MODULE_12__["default"])(element, bpmnFactory, elementRegistry, translate)
+    label: translate('Process Variables'),
+    entries: Object(_parts_process_variables_gatewayProcVarProps_js__WEBPACK_IMPORTED_MODULE_9__["default"])(element, bpmnFactory, elementRegistry, translate)
   };
 
   var eventGroup = {
     id: 'apex-event',
-    label: 'Process Variables',
-    entries: Object(_parts_process_variables_eventProcVarProps_js__WEBPACK_IMPORTED_MODULE_13__["default"])(element, bpmnFactory, elementRegistry, translate)
-  }
+    label: translate('Process Variables'),
+    entries: Object(_parts_process_variables_eventProcVarProps_js__WEBPACK_IMPORTED_MODULE_8__["default"])(element, bpmnFactory, elementRegistry, translate)
+  };
 
   var detailGroup = {
     id: 'details',
-    label: 'Variable Details',
-    entries: Object(_parts_process_variables_procVarDetailProps_js__WEBPACK_IMPORTED_MODULE_14__["procVarDetailProps"])(element, bpmnFactory, translate),
-    enabled: _parts_process_variables_procVarLists_js__WEBPACK_IMPORTED_MODULE_15__["isSelected"]
-  }
+    label: translate('Variable Details'),
+    entries: Object(_parts_process_variables_procVarDetailProps_js__WEBPACK_IMPORTED_MODULE_11__["procVarDetailProps"])(element, bpmnFactory, translate),
+    enabled: _parts_process_variables_procVarLists_js__WEBPACK_IMPORTED_MODULE_12__["isSelected"]
+  };
+
+  var expressionGroup = {
+    id: 'expression',
+    label: translate('Variable Expression'),
+    entries: Object(_parts_process_variables_procVarDetailProps_js__WEBPACK_IMPORTED_MODULE_11__["procVarExpressionProps"])(element, bpmnFactory, translate),
+    enabled: _parts_process_variables_procVarLists_js__WEBPACK_IMPORTED_MODULE_12__["isSelected"]
+  };
 
   return [
     taskGroup,
     gatewayGroup,
     eventGroup,
-    detailGroup
+    detailGroup,
+    expressionGroup
   ];
 }
 
@@ -406,30 +416,30 @@ function apexPropertiesProvider(
     eventBus, bpmnFactory, canvas,
     elementRegistry, translate) {
 
-  bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1___default.a.call(this, eventBus);
+  bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_0___default.a.call(this, eventBus);
 
-  eventBus.on('saveXML.start', function() {
-    Object(_parts_process_variables_helper_validateXML__WEBPACK_IMPORTED_MODULE_16__["removeInvalidExtensionsElements"])(bpmnFactory, canvas, elementRegistry)
+  eventBus.on('saveXML.start', function () {
+    Object(_parts_process_variables_helper_validateXML__WEBPACK_IMPORTED_MODULE_10__["removeInvalidExtensionsElements"])(bpmnFactory, canvas, elementRegistry);
   });
 
   this.getTabs = function (element) {
 
     var generalTab = {
       id: 'general',
-      label: 'General',
+      label: translate('General'),
       groups: createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate)
     };
 
     // The 'APEX' tab
     var ApexTab = {
       id: 'apex',
-      label: 'APEX',
+      label: translate('APEX'),
       groups: createApexTabGroups(element, translate)
     };
 
     var VariablesTab = {
       id: 'variables',
-      label: 'Variables',
+      label: translate('Variables'),
       groups: createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate)
     };
 
@@ -442,7 +452,7 @@ function apexPropertiesProvider(
   };
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(apexPropertiesProvider, bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_1___default.a);
+inherits__WEBPACK_IMPORTED_MODULE_5___default()(apexPropertiesProvider, bpmn_js_properties_panel_lib_PropertiesActivator__WEBPACK_IMPORTED_MODULE_0___default.a);
 
 apexPropertiesProvider.$inject = ['eventBus', 'bpmnFactory', 'canvas', 'elementRegistry', 'translate'];
 
@@ -805,7 +815,7 @@ function TimerEventDefinition(group, element, bpmnFactory, timerEventDefinition,
 
   var selectOptions;
 
-    if (element.type === 'bpmn:StartEvent' || element.type === 'bpmn:IntermediateCatchEvent' || (element.type === 'bpmn:BoundaryEvent' && element.businessObject.cancelActivity)) {
+    if (element.type === 'bpmn:StartEvent' || element.type === 'bpmn:IntermediateCatchEvent' || (element.type === 'bpmn:BoundaryEvent')) {
         selectOptions = [
             { value: 'timeDate', name: translate('Date') },
             { value: 'timeDuration', name: translate('Duration') }
@@ -986,12 +996,13 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+
 
 var EntryFactory = __webpack_require__(/*! bpmn-js-properties-panel/lib/factory/EntryFactory */ "./node_modules/bpmn-js-properties-panel/lib/factory/EntryFactory.js");
 
-var getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").getBusinessObject;
+var {getBusinessObject} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 var dynamicTextBox = __webpack_require__(/*! ./dynamicTextBox */ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicTextBox.js");
+var dynamicSelectBox = __webpack_require__(/*! ./dynamicSelectBox */ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicSelectBox.js");
 
 var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
 
@@ -999,7 +1010,7 @@ var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdH
 
 function ensureNotNull(prop) {
   if (!prop) {
-    throw new Error(prop + ' must be set.');
+    throw new Error(`${prop} must be set.`);
   }
 
   return prop;
@@ -1012,22 +1023,22 @@ function ensureNotNull(prop) {
  * @returns {{id: *, description: (*|string), get: (*|Function), set: (*|Function),
  *            validate: (*|Function), html: string}}
  */
-var setDefaultParameters = function(options) {
+var setDefaultParameters = function (options) {
 
   // default method to fetch the current value of the input field
-  var defaultGet = function(element) {
-    var bo = getBusinessObject(element),
-        res = {},
-        prop = ensureNotNull(options.modelProperty);
+  var defaultGet = function (element) {
+    var bo = getBusinessObject(element);
+        var res = {};
+        var prop = ensureNotNull(options.modelProperty);
     res[prop] = bo.get(prop);
 
     return res;
   };
 
   // default method to set a new value to the input field
-  var defaultSet = function(element, values) {
-    var res = {},
-        prop = ensureNotNull(options.modelProperty);
+  var defaultSet = function (element, values) {
+    var res = {};
+        var prop = ensureNotNull(options.modelProperty);
     if (values[prop] !== '') {
       res[prop] = values[prop];
     } else {
@@ -1038,25 +1049,31 @@ var setDefaultParameters = function(options) {
   };
 
   // default validation method
-  var defaultValidate = function() {
+  var defaultValidate = function () {
     return {};
   };
 
   return {
-    id : options.id,
-    description : (options.description || ''),
-    get : (options.get || defaultGet),
-    set : (options.set || defaultSet),
-    validate : (options.validate || defaultValidate),
+    id: options.id,
+    description: (options.description || ''),
+    get: (options.get || defaultGet),
+    set: (options.set || defaultSet),
+    validate: (options.validate || defaultValidate),
     html: ''
   };
 };
 
 // custom TextBox
 
-EntryFactory.dynamicTextBox = function(translate, options) {
+EntryFactory.dynamicTextBox = function (translate, options) {
     return dynamicTextBox(translate, options, setDefaultParameters(options));
-}
+};
+
+// custom SelectBox
+
+EntryFactory.dynamicSelectBox = function (translate, options) {
+  return dynamicSelectBox(translate, options, setDefaultParameters(options));
+};
 
 module.exports = EntryFactory;
 
@@ -1517,6 +1534,162 @@ function escapeText(text) {
 
 /***/ }),
 
+/***/ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicSelectBox.js":
+/*!********************************************************************************************!*\
+  !*** ./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicSelectBox.js ***!
+  \********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+
+var {escapeHTML} = __webpack_require__(/*! bpmn-js-properties-panel/lib/Utils */ "./node_modules/bpmn-js-properties-panel/lib/Utils.js");
+
+var {domify} = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+var domQuery = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").query;
+
+var forEach = __webpack_require__(/*! lodash/forEach */ "./node_modules/lodash/forEach.js");
+
+var entryFieldDescription = __webpack_require__(/*! ./dynamicEntryFieldDescription */ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicEntryFieldDescription.js");
+
+
+var isList = function (list) {
+  return !(!list || Object.prototype.toString.call(list) !== '[object Array]');
+};
+
+var addEmptyParameter = function (list) {
+  return list.concat([{ name: '', value: '' }]);
+};
+
+var createOption = function (option) {
+  return `<option value="${option.value}">${option.name}</option>`;
+};
+
+/**
+ * @param  {Object} options
+ * @param  {string} options.id
+ * @param  {string} [options.label]
+ * @param  {Array<Object>} options.selectOptions
+ * @param  {string} options.modelProperty
+ * @param  {boolean} options.emptyParameter
+ * @param  {function} options.disabled
+ * @param  {function} options.hidden
+ * @param  {Object} defaultParameters
+ *
+ * @return {Object}
+ */
+var selectbox = function (translate, options, defaultParameters) {
+  var resource = defaultParameters;
+  var label = options.label || resource.id;
+  var selectOptions = options.selectOptions || [{ name: '', value: '' }];
+  var {modelProperty} = options;
+  var {emptyParameter} = options;
+  var canBeDisabled = !!options.disabled && typeof options.disabled === 'function';
+  var canBeHidden = !!options.hidden && typeof options.hidden === 'function';
+  var {description} = options;
+  var {dataValueDescription} = options;
+
+  if (emptyParameter) {
+    selectOptions = addEmptyParameter(selectOptions);
+  }
+
+
+  resource.html =
+    domify(`<label for="camunda-${escapeHTML(resource.id)}"${ 
+    canBeDisabled ? 'data-disable="isDisabled" ' : '' 
+    }${canBeHidden ? 'data-show="isHidden" ' : '' 
+    }>${escapeHTML(label)}</label>` +
+    `<select id="camunda-${escapeHTML(resource.id)}-select" name="${ 
+    escapeHTML(modelProperty)}"${ 
+    canBeDisabled ? 'data-disable="isDisabled" ' : '' 
+    }${canBeHidden ? 'data-show="isHidden" ' : '' 
+    } data-value></select>`);
+
+  var select = domQuery('select', resource.html);
+
+  if (isList(selectOptions)) {
+    forEach(selectOptions, function (option) {
+      select.appendChild(
+        domify(
+          `<option value="${escapeHTML(option.value) 
+          }${option.title ? `" title="${escapeHTML(option.title)}` : '' 
+          }">${ 
+          option.name ? escapeHTML(option.name) : '' 
+          }</option>`
+        )
+      );
+    });
+  }
+
+  // add description below select box entry field
+  if ((description || dataValueDescription) && typeof options.showCustomInput !== 'function') {
+    resource.html.appendChild(entryFieldDescription(translate, description, dataValueDescription, { show: canBeHidden && 'isHidden' }));
+  }
+
+  /**
+   * Fill the select box options dynamically.
+   *
+   * Calls the defined function #selectOptions in the entry to get the
+   * values for the options and set the value to the inputNode.
+   *
+   * @param {djs.model.Base} element
+   * @param {HTMLElement} entryNode
+   * @param {EntryDescriptor} inputNode
+   * @param {Object} inputName
+   * @param {Object} newValue
+   */
+  resource.setControlValue = function (element, entryNode, inputNode, inputName, newValue) {
+    if (typeof selectOptions === 'function') {
+
+      var options = selectOptions(element, inputNode);
+
+      if (options) {
+
+        // remove existing options
+        while (inputNode.firstChild) {
+          inputNode.removeChild(inputNode.firstChild);
+        }
+
+        // add options
+        forEach(options, function (option) {
+          var template = domify(createOption(option));
+
+          inputNode.appendChild(template);
+        });
+
+
+      }
+    }
+
+    // set select value
+    if (newValue !== undefined) {
+      inputNode.value = newValue;
+    }
+
+  };
+
+  if (canBeDisabled) {
+    resource.isDisabled = function () {
+      return options.disabled.apply(resource, arguments);
+    };
+  }
+
+  if (canBeHidden) {
+    resource.isHidden = function () {
+      return !options.hidden.apply(resource, arguments);
+    };
+  }
+
+  resource.cssClasses = ['bpp-dropdown'];
+
+  return resource;
+};
+
+module.exports = selectbox;
+
+
+/***/ }),
+
 /***/ "./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicTextBox.js":
 /*!******************************************************************************************!*\
   !*** ./apexPropertiesProvider/provider/parts/process_variables/custom/dynamicTextBox.js ***!
@@ -1585,8 +1758,8 @@ module.exports = textBox;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
-var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
-    getBusinessObject = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").getBusinessObject;
+var {is} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+var {getBusinessObject} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
 
 
@@ -1602,15 +1775,18 @@ var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/b
 
     if (getBusinessObject(element).eventDefinitions && getBusinessObject(element).eventDefinitions.some(e => e.$type == 'bpmn:TimerEventDefinition')) {
         return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'BeforeEvent', label1: 'Before Event',
-            type2: 'OnEvent', label2: 'On Event'
+            type1: 'BeforeEvent',
+            label1: translate('Before Event'),
+            type2: 'OnEvent',
+            label2: translate('On Event')
         });
     }
-    else {
+    
         return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'OnEvent', label1: 'On Event'
+            type1: 'OnEvent',
+            label1: translate('On Event')
         });
-    }
+    
   }
 });
 
@@ -1627,7 +1803,7 @@ var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/b
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
-var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is;
+var {is} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
 
 
@@ -1641,21 +1817,24 @@ var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/b
   ) {
 
     // opening gateway
-    if (element.incoming.length == 1 && element.outgoing.length > 1) {
+    if (element.incoming.length === 1 && element.outgoing.length > 1) {
         return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'BeforeSplit', label1: 'Before Split'
+            type1: 'BeforeSplit',
+            label1: translate('Before Split')
           });    
     }
     // closing gateway
-    else if (element.incoming.length > 1 && element.outgoing.length == 1) {
+    else if (element.incoming.length > 1 && element.outgoing.length === 1) {
         return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'AfterMerge', label1: 'After Merge'
+            type1: 'AfterMerge',
+            label1: translate('After Merge')
           });
-    }
-    else if (element.incoming.length > 1 && element.outgoing.length > 1) {
+    } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
         return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'AfterMerge', label1: 'After Merge',
-            type2: 'BeforeSplit', label2: 'Before Split'
+            type1: 'AfterMerge',
+            label1: translate('After Merge'),
+            type2: 'BeforeSplit',
+            label2: translate('Before Split')
           });
     }
   }
@@ -1744,50 +1923,45 @@ function removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry) {
 /*!***************************************************************************************!*\
   !*** ./apexPropertiesProvider/provider/parts/process_variables/procVarDetailProps.js ***!
   \***************************************************************************************/
-/*! exports provided: procVarDetailProps */
+/*! exports provided: procVarDetailProps, procVarExpressionProps */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "procVarDetailProps", function() { return procVarDetailProps; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "procVarExpressionProps", function() { return procVarExpressionProps; });
 /* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
 var {is} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-    var entryFactory = __webpack_require__(/*! ./custom/EntryFactory */ "./apexPropertiesProvider/provider/parts/process_variables/custom/EntryFactory.js");
-    var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
+var entryFactory = __webpack_require__(/*! ./custom/EntryFactory */ "./apexPropertiesProvider/provider/parts/process_variables/custom/EntryFactory.js");
+var cmdHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/CmdHelper */ "./node_modules/bpmn-js-properties-panel/lib/helper/CmdHelper.js");
 
 
-
-var EXPRESSION_DESCRIPTION = {
-    static: 'Static value',
-    processVariable: 'Name of the Process Variable',
-    // pageItem: 'Name of the APEX Page Item',
-    sqlQuerySingle: 'SQL query returning a single value',
-    sqlQueryList: 'SQL query returning a colon delimited list',
-    plsqlExpression: 'Expression returning a value',
-    plsqlFunctionBody: 'Function Body returning a value'
-};
-
-var getProperty = function (property) {
-    return function (element, node) {
-
-        var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
-
-        return {
-            [property]: (entry && entry.get(property)) || undefined,
-            varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
-        };
-    };
-};
-
-var setProperty = function () {
-    return function (element, values, node) {
-    var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
-
-    return cmdHelper.updateBusinessObject(element, entry, values);
-    };
-};
 
 function procVarDetailProps(element, bpmnFactory, translate) {
+   
+    const DATA_TYPE_DESCRIPTION = {
+        DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
+    };
+
+    var getProperty = function (property) {
+        return function (element, node) {
+    
+            var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+    
+            return {
+                [property]: (entry && entry.get(property)) || undefined,
+                varDataTypeDynamicDescription: DATA_TYPE_DESCRIPTION[entry && entry.get('varDataType')]
+            };
+        };
+    };
+    
+    var setProperty = function () {
+        return function (element, values, node) {
+        var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+    
+        return cmdHelper.updateBusinessObject(element, entry, values);
+        };
+    };
 
     var procVarProps = [];
 
@@ -1815,8 +1989,7 @@ function procVarDetailProps(element, bpmnFactory, translate) {
         procVarProps.push(
             entryFactory.textField(translate, {
                 id: 'varName',
-                description: 'Variable name',
-                label: 'Name',
+                label: translate('Name'),
                 modelProperty: 'varName',
 
                 get: getProperty('varName'),
@@ -1827,30 +2000,88 @@ function procVarDetailProps(element, bpmnFactory, translate) {
 
         // datatype field
         procVarProps.push(
-            entryFactory.selectBox(translate, {
+            entryFactory.dynamicSelectBox(translate, {
                 id: 'varDataType',
-                description: 'Data Type',
-                label: 'Data Type',
+                label: translate('Data Type'),
                 modelProperty: 'varDataType',
+                dataValueDescription: 'varDataTypeDynamicDescription',
 
                 get: getProperty('varDataType'),
 
                 set: setProperty(),
 
                 selectOptions: [
-                    {name: 'Varchar2', value: 'VARCHAR2'},
-                    {name: 'Number', value: 'NUMBER'},
-                    {name: 'Date', value: 'DATE'},
-                    {name: 'Clob', value: 'CLOB'},
+                    {name: translate('Varchar2'), value: 'VARCHAR2'},
+                    {name: translate('Number'), value: 'NUMBER'},
+                    {name: translate('Date'), value: 'DATE'},
+                    {name: translate('Clob'), value: 'CLOB'},
                 ]
             })
         );
+    }
+
+    return procVarProps;
+}
+
+function procVarExpressionProps(element, bpmnFactory, translate) {
+
+    const EXPRESSION_DESCRIPTION = {
+        static: translate('Static value'),
+        processVariable: translate('Name of the Process Variable'),
+        // pageItem: translate('Name of the APEX Page Item'),
+        sqlQuerySingle: translate('SQL query returning a single value'),
+        sqlQueryList: translate('SQL query returning a colon delimited list'),
+        plsqlExpression: translate('PL/SQL Expression returning a value'),
+        plsqlFunctionBody: translate('PL/SQL Function Body returning a value')
+    };
+
+    var getProperty = function (property) {
+        return function (element, node) {
+    
+            var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+    
+            return {
+                [property]: (entry && entry.get(property)) || undefined,
+                varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')]
+            };
+        };
+    };
+    
+    var setProperty = function () {
+        return function (element, values, node) {
+        var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+    
+        return cmdHelper.updateBusinessObject(element, entry, values);
+        };
+    };
+
+    var procVarProps = [];
+
+    if (
+        // task elements
+        is(element, 'bpmn:Task') ||
+        is(element, 'bpmn:UserTask') ||
+        is(element, 'bpmn:ScriptTask') ||
+        is(element, 'bpmn:ServiceTask') ||
+        is(element, 'bpmn:ManualTask') ||
+        // gateway elements
+        is(element, 'bpmn:ExclusiveGateway') ||
+        is(element, 'bpmn:ParallelGateway') ||
+        is(element, 'bpmn:InclusiveGateway') ||
+        is(element, 'bpmn:EventBasedGateway') ||
+        // event elements
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+      ) {
 
         // expression type
         procVarProps.push(
             entryFactory.selectBox(translate, {
                 id: 'varExpressionType',
-                label: 'Expression Type',
+                label: translate('Expression Type'),
                 modelProperty: 'varExpressionType',
 
                 get: getProperty('varExpressionType'),
@@ -1858,13 +2089,13 @@ function procVarDetailProps(element, bpmnFactory, translate) {
                 set: setProperty(),
 
                 selectOptions: [
-                    {name: 'Static', value: 'static'},
-                    {name: 'Process Variable', value: 'processVariable'},
-                    // {name: 'Page Item', value: 'pageItem'},
-                    {name: 'SQL query (single value)', value: 'sqlQuerySingle'},
-                    {name: 'SQL query (colon delimited list)', value: 'sqlQueryList'},
-                    {name: 'Expression', value: 'plsqlExpression'},
-                    {name: 'Function Body', value: 'plsqlFunctionBody'},
+                    {name: translate('Static'), value: 'static'},
+                    {name: translate('Process Variable'), value: 'processVariable'},
+                    // {name: translate('Page Item'), value: 'pageItem'},
+                    {name: translate('SQL query (single value)'), value: 'sqlQuerySingle'},
+                    {name: translate('SQL query (colon delimited list)'), value: 'sqlQueryList'},
+                    {name: translate('Expression'), value: 'plsqlExpression'},
+                    {name: translate('Function Body'), value: 'plsqlFunctionBody'},
                 ]
             })
         );
@@ -1873,7 +2104,7 @@ function procVarDetailProps(element, bpmnFactory, translate) {
         procVarProps.push(
             entryFactory.dynamicTextBox(translate, {
                 id: 'varExpression',
-                label: 'Expression',
+                label: translate('Expression'),
                 modelProperty: 'varExpression',
                 dataValueDescription: 'varExpressionDynamicDescription',
 
@@ -1911,6 +2142,8 @@ var elementHelper = __webpack_require__(/*! bpmn-js-properties-panel/lib/helper/
 
 const TYPE_PROCESS_VARIABLE = 'apex:ProcessVariable';
 var procVarProps = [];
+var preProcessVariables;
+var postProcessVariables;
 
 function getEntries(element, type) {
   var bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element);
@@ -1936,7 +2169,7 @@ function getSelectedEntry(element, node) {
       }
     });
   }
-
+  
   return entry;
 }
 
@@ -1957,39 +2190,17 @@ var newElement = function (bpmnFactory, type, props) {
   return function (element, extensionElements, values) {
     var commands = [];
 
-    var container =
-      extensionElementsHelper.getExtensionElements(
-        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
-        `apex:${type}`
-      ) &&
-      extensionElementsHelper.getExtensionElements(
-        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
-        `apex:${type}`
-      )[0];
+    var container = extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), `apex:${type}`) &&
+      extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), `apex:${type}`)[0];
 
     if (!container) {
-      container = elementHelper.createElement(
-        `apex:${type}`,
-        {},
-        extensionElements,
-        bpmnFactory
-      );
-      commands.push(
-        cmdHelper.addElementsTolist(element, extensionElements, 'values', [
-          container,
-        ])
-      );
+      container = elementHelper.createElement(`apex:${type}`, {}, extensionElements, bpmnFactory);
+      commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [container, ]));
     }
 
-    var index =
-      (container.procVars && String(container.procVars.length)) || '0';
+    var index = (container.procVars && String(container.procVars.length)) || '0';
     var re = new RegExp(`${props.varName}_\\d$`);
-    var newNumber =
-      (container.procVars &&
-        container.procVars
-          .filter(e => e.varName.match(re))
-          .map(e => parseInt(e.varName.split('_')[1]))
-          .reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
+    var newNumber = (container.procVars && container.procVars.filter(e => e.varName.match(re)).map(e => parseInt(e.varName.split('_')[1])).reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
 
     values = {
       varSequence: String(index),
@@ -2005,9 +2216,7 @@ var newElement = function (bpmnFactory, type, props) {
       container,
       bpmnFactory
     );
-    commands.push(
-      cmdHelper.addElementsTolist(element, container, 'procVars', [newElem])
-    );
+    commands.push(cmdHelper.addElementsTolist(element, container, 'procVars', [newElem]));
 
     return commands;
   };
@@ -2015,33 +2224,13 @@ var newElement = function (bpmnFactory, type, props) {
 
 var removeElement = function (type) {
   return function (element, extensionElements, value, idx) {
-    var container =
-      extensionElementsHelper.getExtensionElements(
-        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
-        `apex:${type}`
-      ) &&
-      extensionElementsHelper.getExtensionElements(
-        Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element),
-        `apex:${type}`
-      )[0];
+    var container = extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), `apex:${type}`) &&
+      extensionElementsHelper.getExtensionElements(Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element), `apex:${type}`)[0];
 
     var entries = getEntries(element, type);
     var entry = entries[idx];
     if (entry) {
-      var command =
-        container.procVars.length > 1 ? cmdHelper.removeElementsFromList(
-              element,
-              container,
-              'procVars',
-              'extensionElements',
-              [entry]
-            ) : cmdHelper.removeElementsFromList(
-              element,
-              extensionElements,
-              'values',
-              'extensionElements',
-              [container]
-            );
+      var command = container.procVars.length > 1 ? cmdHelper.removeElementsFromList(element, container, 'procVars', 'extensionElements', [entry]) : cmdHelper.removeElementsFromList(element, extensionElements, 'values', 'extensionElements', [container]);
       return command;
     }
   };
@@ -2052,22 +2241,7 @@ function resetSequences(element, type) {
   entries.forEach((e, i) => e.set('varSequence', String(i)));
 }
 
-// function deleteInvalidProperties(element, bpmnFactory, elementRegistry, type) {
-//     var bo = getBusinessObject(element);
-//     var toRemove = bo.extensionElements && bo.extensionElements.values.filter(e => e.$type != 'apex:' + type);
-//     if (toRemove) {
-//         var command = extensionElementsHelper.removeEntry(bo, element, toRemove[0]);
-//         new UpdateBusinessObjectListHandler(elementRegistry, bpmnFactory).execute(command.context);
-//     }
-// }
-
-function procVarLists(
-  element,
-  bpmnFactory,
-  elementRegistry,
-  translate,
-  options
-) {
+function procVarLists(element, bpmnFactory, elementRegistry, translate, options) {
   procVarProps = [];
 
   if (options.type1) {
@@ -2080,7 +2254,7 @@ function procVarLists(
       label: label1,
 
       createExtensionElement: newElement(bpmnFactory, type1, {
-        varName: type1,
+        varName: translate(type1),
         varDataType: 'VARCHAR2',
         varExpression: '',
         varExpressionType: 'static',
@@ -2102,10 +2276,7 @@ function procVarLists(
 
     procVarProps.push(preProcessVariables);
   }
-  // else {
-  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type2);
-  // }
-
+  
   if (options.type2) {
     var { type2 } = options;
     var { label2 } = options;
@@ -2116,7 +2287,7 @@ function procVarLists(
       label: label2,
 
       createExtensionElement: newElement(bpmnFactory, type2, {
-        varName: type2,
+        varName: translate(type2),
         varDataType: 'VARCHAR2',
         varExpression: '',
         varExpressionType: 'static',
@@ -2139,9 +2310,6 @@ function procVarLists(
 
     procVarProps.push(postProcessVariables);
   }
-  // else {
-  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type1);
-  // }
 
   return procVarProps;
 }
@@ -2159,7 +2327,7 @@ function procVarLists(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _procVarLists__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./procVarLists */ "./apexPropertiesProvider/provider/parts/process_variables/procVarLists.js");
-var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is;
+var {is} = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
 
 
@@ -2174,8 +2342,10 @@ var is = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/b
   ) {
 
     return Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["procVarLists"])(element, bpmnFactory, elementRegistry, translate, {
-      type1: 'BeforeTask', label1: 'Before Task',
-      type2: 'AfterTask', label2: 'After Task'
+      type1: 'BeforeTask', 
+      label1: translate('Before Task'),
+      type2: 'AfterTask',
+      label2: translate('After Task')
     });
   }
 });
@@ -2210,12 +2380,12 @@ __webpack_require__.r(__webpack_exports__);
     scriptTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'engine',
-        description: 'Use APEX_EXEC',
+        description: translate('Use APEX_EXEC'),
         modelProperty: 'engine',
-        label: 'Engine',
+        label: translate('Engine'),
         selectOptions: [
-          { name: 'No', value: 'false' },
-          { name: 'Yes', value: 'true' }
+          { name: translate('No'), value: 'false' },
+          { name: translate('Yes'), value: 'true' }
         ]
       })
     );
@@ -2224,8 +2394,8 @@ __webpack_require__.r(__webpack_exports__);
     scriptTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'plsqlCode',
-        description: 'Enter the PL/SQL code to be executed.',
-        label: 'PL/SQL Code',
+        description: translate('Enter the PL/SQL code to be executed.'),
+        label: translate('PL/SQL Code'),
         modelProperty: 'plsqlCode'
       })
     );
@@ -2234,12 +2404,12 @@ __webpack_require__.r(__webpack_exports__);
     scriptTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'autoBinds',
-        description: 'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.',
-        label: 'Bind Page Item Values',
+        description: translate('Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.'),
+        label: translate('Bind Page Item Values'),
         modelProperty: 'autoBinds',
         selectOptions: [
-          { name: 'No', value: 'false' },
-          { name: 'Yes', value: 'true' }
+          { name: translate('No'), value: 'false' },
+          { name: translate('Yes'), value: 'true' }
         ],
         hidden: function () {
           return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__["isOptionSelected"])(scriptTaskEngine, engineNo);
@@ -2282,12 +2452,12 @@ __webpack_require__.r(__webpack_exports__);
     serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'engine',
-        description: 'Use APEX_EXEC',
+        description: translate('Use APEX_EXEC'),
         modelProperty: 'engine',
-        label: 'Engine',
+        label: translate('Engine'),
         selectOptions: [
-          { name: 'No', value: 'false' },
-          { name: 'Yes', value: 'true' }
+          { name: translate('No'), value: 'false' },
+          { name: translate('Yes'), value: 'true' }
         ]
       })
     );
@@ -2296,8 +2466,8 @@ __webpack_require__.r(__webpack_exports__);
     serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'plsqlCode',
-        description: 'Enter the PL/SQL code to be executed.',
-        label: 'PL/SQL Code',
+        description: translate('Enter the PL/SQL code to be executed.'),
+        label: translate('PL/SQL Code'),
         modelProperty: 'plsqlCode'
       })
     );
@@ -2306,12 +2476,12 @@ __webpack_require__.r(__webpack_exports__);
     serviceTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.selectBox(translate, {
         id: 'autoBinds',
-        description: 'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.',
-        label: 'Bind Page Item Values',
+        description: translate('Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.'),
+        label: translate('Bind Page Item Values'),
         modelProperty: 'autoBinds',
         selectOptions: [
-          { name: 'No', value: 'false' },
-          { name: 'Yes', value: 'true' }
+          { name: translate('No'), value: 'false' },
+          { name: translate('Yes'), value: 'true' }
         ],
         hidden: function () {
           return Object(_lib_formsHelper__WEBPACK_IMPORTED_MODULE_2__["isOptionSelected"])(serviceTaskEngine, engineNo);
@@ -2351,48 +2521,48 @@ __webpack_require__.r(__webpack_exports__);
     userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
         id: 'apex-application',
-        description: 'Application ID or Alias',
-        label: 'Application',
+        description: translate('Application ID or Alias'),
+        label: translate('Application'),
         modelProperty: 'apex-application'
       })
     );
     userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
         id: 'apex-page',
-        description: 'Page ID or Alias',
-        label: 'Page',
+        description: translate('Page ID or Alias'),
+        label: translate('Page'),
         modelProperty: 'apex-page'
       })
     );
     userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
         id: 'apex-request',
-        description: 'Request Value for Page Call',
-        label: 'Request',
+        description: translate('Request Value for Page Call'),
+        label: translate('Request'),
         modelProperty: 'apex-request'
       })
     );
     userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textField(translate, {
         id: 'apex-cache',
-        description: 'Clear Cache Value for Page Call',
-        label: 'Clear Cache',
+        description: translate('Clear Cache Value for Page Call'),
+        label: translate('Clear Cache'),
         modelProperty: 'apex-cache'
       })
     );
     userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'apex-item',
-        description: 'Page Items to set',
-        label: 'Page Items',
+        description: translate('Page Items to set'),
+        label: translate('Page Items'),
         modelProperty: 'apex-item'
       })
     );
     userTaskProps.push(
       bpmn_js_properties_panel_lib_factory_EntryFactory__WEBPACK_IMPORTED_MODULE_0___default.a.textBox(translate, {
         id: 'apex-value',
-        description: 'Page Item Values',
-        label: 'Item Values',
+        description: translate('Page Item Values'),
+        label: translate('Item Values'),
         modelProperty: 'apex-value'
       })
     );
@@ -2427,6 +2597,31 @@ module.exports = function () {
   return { check };
 };
 
+
+/***/ }),
+
+/***/ "./bpmnlint-plugin-apex/rules/merge-split-gateways.js":
+/*!************************************************************!*\
+  !*** ./bpmnlint-plugin-apex/rules/merge-split-gateways.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * A rule that warns when using gateways that merge and open in the same time.
+ */
+ module.exports = function () {
+  function check(businessObject, reporter) {
+
+    if (businessObject.$type === 'bpmn:ExclusiveGateway' || businessObject.$type === 'bpmn:ParallelGateway' || businessObject.$type === 'bpmn:InclusiveGateway') {
+      if (businessObject.incoming.length > 1 && businessObject.outgoing.length > 1) {
+        reporter.report(businessObject.id, 'A gateway should not merge and split at the same time.');
+      }
+    }
+  }
+
+  return { check };
+};
 
 /***/ }),
 
@@ -2727,7 +2922,36 @@ __webpack_require__.r(__webpack_exports__);
 var PropertiesPanel = __webpack_require__(/*! bpmn-js-properties-panel/lib/PropertiesPanel */ "./node_modules/bpmn-js-properties-panel/lib/PropertiesPanel.js");
 
 var domQuery = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").query;
-PropertiesPanel.prototype.attachTo = function(parentNode) {
+var domQueryAll = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").queryAll;
+var domAttr = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").attr;
+var domMatches = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").matches;
+
+var forEach = __webpack_require__(/*! lodash/forEach */ "./node_modules/lodash/forEach.js");
+
+var updateSelection = __webpack_require__(/*! selection-update */ "./node_modules/selection-update/index.js");
+
+function isToggle(node) {
+  return node.type === 'checkbox' || node.type === 'radio';
+}
+
+function isSelect(node) {
+  return node.type === 'select-one';
+}
+
+function isContentEditable(node) {
+  return domAttr(node, 'contenteditable');
+}
+
+function getPropertyPlaceholders(node) {
+  var selector = 'input[name], textarea[name], [data-value], [contenteditable]';
+  var placeholders = domQueryAll(selector, node);
+  if ((!placeholders || !placeholders.length) && domMatches(node, selector)) {
+    placeholders = [node];
+  }
+  return placeholders;
+}
+
+PropertiesPanel.prototype.attachTo = function (parentNode) {
   if (!parentNode) {
     throw new Error('parentNode required');
   }
@@ -2754,15 +2978,15 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
   var mouseX;
   const BORDER_WIDTH = 5;
 
-  document.addEventListener('mousedown', function(event) {
+  document.addEventListener('mousedown', function (event) {
     if (event.offsetX < BORDER_WIDTH) {
       mouseX = event.x;
-      document.addEventListener("mousemove", resize, false);
+      document.addEventListener('mousemove', resize, false);
     }
   });
 
-  document.addEventListener('mouseup', function() {
-    document.removeEventListener("mousemove", resize, false);
+  document.addEventListener('mouseup', function () {
+    document.removeEventListener('mousemove', resize, false);
   });
 
   const canvas = this._canvas._container;
@@ -2771,16 +2995,188 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
     var dx = mouseX - event.x;
     mouseX = event.x;
     var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
-    var maxWidth = (parseInt(getComputedStyle(canvas, '').width))/100 * parseInt(getComputedStyle(parentNode).maxWidth);
+    var maxWidth = (parseInt(getComputedStyle(canvas, '').width)) / 100 * parseInt(getComputedStyle(parentNode).maxWidth);
     if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && panelWidth < maxWidth) {
-      parentNode.style.width = panelWidth + "px";
-      parentNode.firstChild.style.width = panelWidth + "px";
+      parentNode.style.width = `${panelWidth}px`;
+      parentNode.firstChild.style.width = `${panelWidth}px`;
     }
   }
 
   // end custom part
 
   this._emit('attach');
+};
+
+PropertiesPanel.prototype._bindTemplate = function (element, entry, values, entryNode, idx) {
+
+  var eventBus = this._eventBus;
+
+  function isPropertyEditable(entry, propertyName) {
+    return eventBus.fire('propertiesPanel.isPropertyEditable', {
+      entry: entry,
+      propertyName: propertyName,
+      element: element
+    });
+  }
+
+  var inputNodes = getPropertyPlaceholders(entryNode);
+
+  forEach(inputNodes, function (node) {
+
+    var name;
+    var newValue;
+    var editable;
+
+    // we deal with an input element
+    if ('value' in node || isContentEditable(node) === 'true') {
+      name = domAttr(node, 'name') || domAttr(node, 'data-name');
+      newValue = values[name];
+
+      editable = isPropertyEditable(entry, name);
+      if (editable && entry.editable) {
+        editable = entry.editable(element, entryNode, node, name, newValue, idx);
+      }
+
+      domAttr(node, 'readonly', editable ? null : '');
+      domAttr(node, 'disabled', editable ? null : '');
+
+      // take full control over setting the value
+      // and possibly updating the input in entry#setControlValue
+      if (entry.setControlValue) {
+        entry.setControlValue(element, entryNode, node, name, newValue, idx);
+      } else if (isToggle(node)) {
+        setToggleValue(node, newValue);
+      } else if (isSelect(node)) {
+        setSelectValue(node, newValue);
+      } else {
+        setInputValue(node, newValue);
+      }
+    }
+
+    // we deal with some non-editable html element
+    else {
+      name = domAttr(node, 'data-value');
+      newValue = values[name];
+      if (entry.setControlValue) {
+        entry.setControlValue(element, entryNode, node, name, newValue, idx);
+      } else {
+        setTextValue(node, newValue);
+      }
+    }
+
+    // custom: dynamic select box description
+    if (node.classList.contains('description__text')) {
+      name = domAttr(node, 'data-value');
+      newValue = values[name];
+      setTextValue(node, newValue);
+    }
+  });
+};
+
+function setInputValue(node, value) {
+
+  var contentEditable = isContentEditable(node);
+
+  var oldValue = contentEditable ? node.innerText : node.value;
+
+  var selection;
+
+  // prevents input fields from having the value 'undefined'
+  if (value === undefined) {
+    value = '';
+  }
+
+  if (oldValue === value) {
+    return;
+  }
+
+  // update selection on undo/redo
+  if (document.activeElement === node) {
+    selection = updateSelection(getSelection(node), oldValue, value);
+  }
+
+  if (contentEditable) {
+    node.innerText = value;
+  } else {
+    node.value = value;
+  }
+
+  if (selection) {
+    setSelection(node, selection);
+  }
+}
+
+function setSelectValue(node, value) {
+  if (value !== undefined) {
+    node.value = value;
+  }
+}
+
+function setToggleValue(node, value) {
+  var nodeValue = node.value;
+
+  node.checked = (value === nodeValue) || (!domAttr(node, 'value') && value);
+}
+
+function setTextValue(node, value) {
+  node.textContent = value;
+}
+
+function getSelection(node) {
+
+  return isContentEditable(node) ? getContentEditableSelection(node) : {
+    start: node.selectionStart,
+    end: node.selectionEnd
+  };
+}
+
+function getContentEditableSelection(node) {
+
+  var selection = window.getSelection();
+
+  var {focusNode} = selection;
+      var {focusOffset} = selection;
+      var {anchorOffset} = selection;
+
+  if (!focusNode) {
+    throw new Error('not selected');
+  }
+
+  // verify we have selection on the current element
+  if (!node.contains(focusNode)) {
+    throw new Error('not selected');
+  }
+
+  return {
+    start: Math.min(focusOffset, anchorOffset),
+    end: Math.max(focusOffset, anchorOffset)
+  };
+}
+
+function setSelection(node, selection) {
+
+  if (isContentEditable(node)) {
+    setContentEditableSelection(node, selection);
+  } else {
+    node.selectionStart = selection.start;
+    node.selectionEnd = selection.end;
+  }
+}
+
+function setContentEditableSelection(node, selection) {
+
+  var focusNode;
+      var domRange;
+      var domSelection;
+
+  focusNode = node.firstChild || node,
+  domRange = document.createRange();
+  domRange.setStart(focusNode, selection.start);
+  domRange.setEnd(focusNode, selection.end);
+
+  domSelection = window.getSelection();
+  domSelection.removeAllRanges();
+  domSelection.addRange(domRange);
 }
 
 module.exports = PropertiesPanel;
@@ -2806,6 +3202,317 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./custom/translation/TranslationModule.js":
+/*!*************************************************!*\
+  !*** ./custom/translation/TranslationModule.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _languages_fr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./languages/fr */ "./custom/translation/languages/fr.js");
+
+
+const languages = {
+  'fr': _languages_fr__WEBPACK_IMPORTED_MODULE_0__["default"]
+};
+
+var language;
+
+function applyTranslation() {
+  
+  if (typeof window.f4a !== 'undefined') {
+    language = languages[window.f4a.language];
+  }
+
+  return (template, replacements) => {
+    replacements = replacements || {};
+
+    if (typeof language !== 'undefined') {
+      // Translate
+      template = language[template] || template;
+    }
+
+    // Replace
+    return template.replace(/{([^}]+)}/g, function (_, key) {
+      return replacements[key] || `{${key}}`;
+    });
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  translate: ['value', applyTranslation()]
+});
+
+/***/ }),
+
+/***/ "./custom/translation/languages/fr.js":
+/*!********************************************!*\
+  !*** ./custom/translation/languages/fr.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  /* provided by bpmn */
+  'Activate the create/remove space tool': 'Activer l\'outil de création/suppression d\'espace',
+  'Activate the global connect tool': 'Activer l\'outil de connexion globale',
+  'Activate the hand tool': 'Activer l\'outil à main',
+  'Activate the lasso tool': 'Activer l\'outil Lasso',
+  'Ad-hoc': 'Ad hoc',
+  'Add Lane above': 'Ajouter un couloir au dessus',
+  'Add Lane below': 'Ajouter un couloir en dessous',
+  'Append ConditionIntermediateCatchEvent': 'Ajouter un évènement intermédiaire de type condition (réception)',
+  'Append EndEvent': 'Ajouter un évènement de fin',
+  'Append Gateway': 'Ajouter une passerelle',
+  'Append Intermediate/Boundary Event': 'Ajouter un événement intermédiaire/frontière',
+  'Append MessageIntermediateCatchEvent': 'Ajouter un évènement intermédiaire de type message (réception)',
+  'Append ReceiveTask': 'Ajouter une tâche de type réception de message',
+  'Append SignalIntermediateCatchEvent': 'Ajouter un évènement intermédiaire de type signal (réception)',
+  'Append Task': 'Ajouter une tâche',
+  'Append TimerIntermediateCatchEvent': 'Ajouter un évènement intermédiare de type minuteur (réception)',
+  'Append compensation activity': 'Ajouter une activité de type compensation',
+  'Append {type}': 'Ajouter {type}',
+  'Business Rule Task': 'Tâche de type règle métier',
+  'Call Activity': 'Activité appelée',
+  'Cancel Boundary Event': 'Événement frontière de type annulation',
+  'Cancel End Event': 'Événement de fin de type annulation',
+  'Change type': 'Changer de type',
+  'Collection': 'Collection',
+  'Collapsed Pool': 'Piscine (réduite)',
+  'Compensation Boundary Event': 'Événement de frontière de type compensation',
+  'Compensation End Event': 'Événement de fin de type compensation',
+  'Compensation Intermediate Throw Event': 'Evènement intermédiaire de type compensation (émission)',
+  'Compensation Start Event': 'Événement de début de type compensation',
+  'Complex Gateway': 'Passerelle complexe',
+  'Conditional Boundary Event': 'Événement de frontière de type conditionnel',
+  'Conditional Boundary Event (non-interrupting)': 'Événement de frontière de type conditionnel (non interruptif)',
+  'Conditional Flow': 'Flux conditionnel',
+  'Conditional Intermediate Catch Event': 'Événement intermédiaire de type conditionnel (réception)',
+  'Conditional Start Event': 'Événement de début de type conditionnel',
+  'Conditional Start Event (non-interrupting)': 'Événement de début de type conditionnel (non interruptif)',
+  'Connect using Association': 'Connecter à l\'aide d\'une association',
+  'Connect using DataInputAssociation': 'Connecter à l\'aide d\'une association de saisie de données',
+  'Connect using Sequence/MessageFlow or Association': 'Conecter à l\'aide d\'un flux de séquence/message ou d\'une association',
+  'Create DataObjectReference': 'Créer un objet de données',
+  'Create DataStoreReference': 'Créer une banque de données',
+  'Create EndEvent': 'Créer un évènement de fin',
+  'Create Gateway': 'Créer une passerelle',
+  'Create Group': 'Créer un groupe',
+  'Create Intermediate/Boundary Event': 'Créer un évènement intermédiaire/frontière',
+  'Create Pool/Participant': 'Créer une piscine/participant',
+  'Create StartEvent': 'Créer un évènement de début',
+  'Create Task': 'Créer une tâche',
+  'Create Start Timer Event': 'Créer un événement de début de type de minuteur',
+  'Create expanded SubProcess': 'Créer un sous-processus (étendu)',
+  'Create {type}': 'Créer {type}',
+  'Data Object Reference': 'Objet de données',
+  'Data Store Reference': 'Banque de données',
+  'Default Flow': 'Flux par défaut',
+  'Divide into three Lanes': 'Diviser en trois couloirs',
+  'Divide into two Lanes': 'Diviser en deux couloirs',
+  'Empty Pool': 'Piscine vide',
+  'Empty Pool (removes content)': 'Piscine vide (suppression du contenu)',
+  'End Event': 'Événement de fin',
+  'Error Boundary Event': 'Événement de frontière de type erreur',
+  'Error End Event': 'Événement de fin de type erreur',
+  'Error Start Event': 'Événement de début de type erreur',
+  'Escalation Boundary Event': 'Événement de frontière de type escalade',
+  'Escalation Boundary Event (non-interrupting)': 'Événement de frontière de type escalade (non interruptif)',
+  'Escalation End Event': 'Événement de fin de type escalade',
+  'Escalation Intermediate Throw Event': 'Événement intermédiaire de type escalade (émission)',
+  'Escalation Start Event': 'Événement de début de type escalade',
+  'Escalation Start Event (non-interrupting)': 'Événement de début de type escalade (non interruptif)',
+  'Event Sub Process': 'Sous-processus évènementiel',
+  'Event based Gateway': 'Passerelle basée sur un évènement',
+  'Exclusive Gateway': 'Passerelle exclusive',
+  'Expanded Pool': 'Piscine (étendue)',
+  'Inclusive Gateway': 'Passerelle inclusive',
+  'Intermediate Throw Event': 'Événement intermédiaire (émission)',
+  'Link Intermediate Catch Event': 'Événement intermédiaire de type lien (réception)',
+  'Link Intermediate Throw Event': 'Événement intermédiaire de type lien (émission)',
+  'Loop': 'Boucle',
+  'Manual Task': 'Tâche manuelle',
+  'Message Boundary Event': 'Événement de frontière de type message',
+  'Message Boundary Event (non-interrupting)': 'Événement de frontière de type message (non interruptif)',
+  'Message End Event': 'Événement de fin de type message',
+  'Message Intermediate Catch Event': 'Événement intermédiaire de type message (réception)',
+  'Message Intermediate Throw Event': 'Événement intermédiaire de type message (émission)',
+  'Message Start Event': 'Événement de début de type message',
+  'Message Start Event (non-interrupting)': 'Événement de début de type message (non interruptif)',
+  'Parallel Gateway': 'Passerelle parallèle',
+  'Parallel Multi Instance': 'Multi-instance parallèle',
+  'Participant Multiplicity': 'Collection de participant',
+  'Receive Task': 'Tâche de réception de message',
+  'Remove': 'Supprimer',
+  'Script Task': 'Tâche de script',
+  'Send Task': 'Tâche de type émission de message',
+  'Sequence Flow': 'Flux de séquence',
+  'Sequential Multi Instance': 'Multi-instance séquentielle',
+  'Service Task': 'Tâche de service',
+  'Signal Boundary Event': 'Événement de frontière de type signal',
+  'Signal Boundary Event (non-interrupting)': 'Événement de frontière de type signal (non interruptif)',
+  'Signal End Event': 'Événement de fin de type signal',
+  'Signal Intermediate Catch Event': 'Evénement intermédiaire de type signal (réception)',
+  'Signal Intermediate Throw Event': 'Événement intermédiaire de type signal (émission)',
+  'Signal Start Event': 'Événement de début de type signal',
+  'Signal Start Event (non-interrupting)': 'Événement de début de type signal (non interruptif)',
+  'Start Event': 'Événement de début',
+  'Sub Process': 'Sous-processus',
+  'Sub Process (collapsed)': 'Sous-processus (réduit)',
+  'Sub Process (expanded)': 'Sous-processus (étendu)',
+  'Task': 'Tâche',
+  'Terminate End Event': 'Événement de fin de type terminaison',
+  'Timer Boundary Event': 'Événement de frontière de type minuteur',
+  'Timer Boundary Event (non-interrupting)': 'Événement de frontière de type minuteur (non interruptif)',
+  'Timer Intermediate Catch Event': 'Événement intermédiaire de type minuteur (réception)',
+  'Timer Start Event': 'Événement de début de type minuteur',
+  'Timer Start Event (non-interrupting)': 'Evénement de début de type minuteur (non interruptif)',
+  'Transaction': 'Transaction',
+  'User Task': 'Tâche utilisateur',
+
+  'correcting missing bpmnElement on {plane} to {rootElement}': 'correction bpmnElement manquant sur {plane} à {rootElement}',
+  'element {element} referenced by {referenced}#{property} not yet drawn': 'l\'élément {element} indiqué par {referenced}#{property} n\'est pas encore dessiné',
+  'failed to import {element}': 'erreur à l\'import de {element}',
+  'flow elements must be children of pools/participants': 'les éléments de flux doivent être des enfants des piscines/participants',
+  '{semantic}#attachedToRef': '{semantic}#attachedToRef manquant',
+  'multiple DI elements defined for {element}': 'ID multiple défini pour {element}',
+  'no bpmnElement referenced in {element}': 'pas de bpmnElement référencé dans {element}',
+  'no diagram to display': 'aucun diagramme à afficher',
+  'no process or collaboration to display': 'aucun processus ou collaboration à afficher',
+
+  'already rendered {element}': '{element} déjà rendu',
+  'diagram not part of bpmn:Definitions': 'le diagramme ne fait pas partie de bpmn:Definitions',
+  'element required': 'élément requis',
+  'more than {count} child lanes': 'plus de {count} couloirs enfants',
+  'no parent for {element} in {parent}': 'pas de parent pour {element} dans {parent}',
+  'no shape type specified': 'pas de type de forme spécifié',
+
+  /* palette */
+  'Undo': 'Annuler',
+  'Redo': 'Rétablir',
+  'Zoom in': 'Agrandir',
+  'Zoom out': 'Réduire',
+
+  /* properties panel */
+  /* general */
+  'General': 'Général',
+  'Id': 'Id',
+  'Name': 'Nom',
+  'Details': 'Détails',
+  'Documentation': 'Documentation',
+  'Element Documentation': 'Documentation de l\'élément',
+  /* Pool/Participant */
+  'Process Id': 'Id du processus',
+  'Process Name': 'Nom du processus',
+  'Process Documentation': 'Documentation du processus',
+  /* Group */
+  'Category Value': 'Valeur de la catégorie',
+  /* user task */
+  'APEX': 'APEX',
+  'Call APEX Page': 'Appel d\'une page APEX',
+  'Application': 'Application',
+  'Application ID or Alias': 'ID ou alias de l\'application',
+  'Page': 'Page',
+  'Page ID or Alias': 'ID ou alias de la page',
+  'Request': 'Requête',
+  'Request Value for Page Call': 'Value de la requête pour l\'appel de la page',
+  'Clear Cache': 'Effacer le cache',
+  'Clear Cache Value for Page Call': 'Valeur de l\'effacement du cache pour l\'appel de la page',
+  'Page Items': 'Eléments de page',
+  'Page Items to set': 'Eléments de page à soumettre',
+  'Item Values': 'Valeur des éléments',
+  'Page Item Values': 'Valeurs des éléments de page',
+  /* script + service task */
+  'Engine': 'Moteur',
+  'No': 'Non',
+  'Yes': 'Oui',
+  'Use APEX_EXEC': 'Utiliser APEX_EXEC',
+  'PL/SQL Code': 'Code PL/SQL',
+  'Enter the PL/SQL code to be executed.': 'Entrer le code PL/SQL à exécuter.',
+  'Bind Page Item Values': 'Lier les valeurs des éléments de page',
+  'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.': 'Activer la liaison automatique des paramètres pour les éléments de page APEX.<br>Indiquer Oui seulement si vous référencez des éléments de page APEX.',
+  /* variables */
+  'Variables': 'Variables',
+  'Process Variables': 'Variables de processus',
+  'Before Task': 'Avant la tâche',
+  'BeforeTask': 'Avant la tâche',
+  'After Task': 'Après la tâche',
+  'AfterTask': 'Après la tâche',
+  'Before Event': 'Avant l\'évènement',
+  'BeforeEvent': 'Avant l\'évènement',
+  'On Event': 'Pendant l\'évènement',
+  'OnEvent': 'Pendant l\'évènement',
+  'Before Split': 'Avant la division',
+  'BeforeSplit': 'Avant la divison',
+  'After Merge': 'Après la réunion',
+  'AfterMerge': 'Après la réunion',
+  /* details */
+  'Variable Details': 'Détails de la variable',
+  /* data types */
+  'Data Type': 'Type de données',
+  'Varchar2': 'Varchar2',
+  'Number': 'Number',
+  'Date': 'Date',
+  'Clob': 'Clob',
+  /* descriptions */
+  'Date in format YYYY-MM-DD HH24:MI:SS': 'Format de date YYYY-MM-DD HH24:MI:SS',
+  /* expressions */
+  'Variable Expression': 'Expression de variable',
+  /* expression types */
+  'Expression Type': 'Type d\'expression',
+  'Static': 'Statique',
+  'Process Variable': 'Variable de processus',
+  'Page Item': 'Item de page',
+  'SQL query (single value)': 'Requête SQL (valeur unique)',
+  'SQL query (colon delimited list)': 'Requête SQL (liste séparée par des deux-points)',
+  'Expression': 'Expression',
+  'Function Body': 'Corps de fonction',
+  /* descriptions */
+  'Static value': 'Valeur statique',
+  'Name of the Process Variable': 'Nom de la variable de processus',
+  'Name of the APEX Page Item': 'Nom de l\'item de page APEX',
+  'SQL query returning a single value': 'Requête SQL retournant une valeur unique',
+  'SQL query returning a colon delimited list': 'Requête SQL retournant une liste séparée par des deux-points',
+  'PL/SQL Expression returning a value': 'Expression PL/SQL retournant une valeur',
+  'PL/SQL Function Body returning a value': 'Corps de fonction PL/SQL retournant une valeur',
+  /* events */
+  /* message */
+  'Global Message referenced': 'Message global de référence',
+  'Global Message Name': 'Nom du message global',
+  /* timer */
+  'Timer Definition Type': 'Type de définition de minuteur',
+  'Duration': 'Durée',
+  'Cycle': 'Cycle',
+  'Timer Definition': 'Définition du minuteur',
+  'Must provide a value': 'Une valeur doit être fournie',
+  /* conditional */
+  'Variable Name': 'Nom de la variable',
+  'Variable Events': 'Événements de variable',
+  'Specify more than one variable change event as a comma separated list.': 'Spécifiez plus d\'un évènement de changement sous la forme d\'une liste séparée par des virgules',
+  /* signal */
+  'Global Signal referenced': 'Signal global de reference',
+  'Global Signal Name': 'Nom du signal global',
+  /* escalation */
+  'Global Escalation referenced': 'Escalade global de référence',
+  'Global Escalation Name': 'Nom de l\'escalade globale',
+  'Global Escalation Code': 'Code de l\'escalade globale',
+  /* link */
+  'Link Name': 'Nom du lien',
+  /* compensation */
+  'Wait for Completion': 'Attendre la fin de l\'opération',
+  'Activity Ref': 'Référence de l\'activité',
+  /* error */
+  'Global Error referenced': 'Erreur globale référencée',
+  'Code': 'Code',
+});
+
+
+/***/ }),
+
 /***/ "./index.js":
 /*!******************!*\
   !*** ./index.js ***!
@@ -2824,6 +3531,7 @@ var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3___na
 /* harmony import */ var _custom_palette__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./custom/palette */ "./custom/palette/index.js");
 /* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./custom/properties-panel */ "./custom/properties-panel/index.js");
 /* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _custom_translation_TranslationModule__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./custom/translation/TranslationModule */ "./custom/translation/TranslationModule.js");
 
 
 
@@ -2840,7 +3548,8 @@ var bpmnModeler = {
     propertiesPanelModule: (_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default()),
     propertiesProviderModule: _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_4__["default"],
     lintModule: bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_0__["default"],
-    customPaletteProviderModule: _custom_palette__WEBPACK_IMPORTED_MODULE_5__["default"]
+    customPaletteProviderModule: _custom_palette__WEBPACK_IMPORTED_MODULE_5__["default"],
+    translationModule: _custom_translation_TranslationModule__WEBPACK_IMPORTED_MODULE_7__["default"]
   },
   moddleExtensions: {
     apexModdleDescriptor: _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__,
