@@ -1,0 +1,148 @@
+/* color settings */
+
+.prcs_status--created, .prcs_event--created, .prcs_event--reset{
+  background-color: #8c9eb0 !important;
+  fill: #8c9eb0 !important;
+  color: #ffffff !important;
+}
+
+.prcs_status--running, .prcs_event--started{
+  background-color: #d9b13b !important;
+  fill: #d9b13b !important;
+  color: #ffffff !important;
+}
+
+.prcs_status--completed, .prcs_event--completed{
+  background-color: #6aad42 !important;
+  fill: #6aad42 !important;
+  color: #f9f9f9 !important; 
+}
+
+.prcs_status--terminated, .prcs_event--terminated{
+  background-color: #d76a27 !important;
+  fill: #d76a27 !important;
+  color: #f9f9f9 !important; 
+}
+
+.prcs_status--error, .prcs_event--error{
+  background-color: #d2423b !important;
+  fill: #d2423b !important;
+  color: #ffffff !important;
+}
+
+/* page 2 */
+
+th#action_col, td[headers*="action_col"],
+th#checkbox_col, td[headers*="checkbox_col"]{
+   width: 10px !important;
+}
+
+.a-IRR-headerLink{
+   color: inherit !important;
+}
+
+.ffa-dgrm-badge{
+  display: flex;
+}
+
+.ffa-dgrm-badge .fa, .ffa-dgrm-badge-text{
+  padding: 4px;
+}
+
+/* page 3 */
+
+#flow-instances-per-status a{
+  color: inherit;
+}
+
+/* page 7 */
+
+#deprecate_btn, #release_btn, #archive_btn, #new_version_btn{
+  height: 50px;
+}
+
+.instance-counter-link{
+    cursor: pointer;
+}
+
+td[headers="NB_INSTANCES"]{
+    padding-left: 0px;
+}
+
+/* page 10 */
+
+.current-process:not([class*=prcs_status]){
+  background-color: rgba(0,0,0,.05)!important;
+}
+
+.flow-running{
+  background-color: rgba(0,0,0,.05);
+}
+
+#col2.col-6{
+    padding-top: 40px;
+}
+
+.a-Tabs-panel{
+    display: none;
+}
+
+th#instance_action_col, td[headers*="instance_action_col"],
+th#instance_checkbox_col, td[headers*="instance_checkbox_col"],
+th#subflow_action_col, td[headers*="subflow_action_col"],
+th#subflow_checkbox_col, td[headers*="subflow_checkbox_col"],
+th#view-process, td[headers*="view-process"]{
+    width: 10px !important;
+}
+
+/* page 13 */
+
+.a-Tabs-panel{
+  display: none;
+}
+
+/* page 14 */
+
+.a-Tabs-panel{
+  display: none;
+}
+
+/* dark mode fixes */
+
+@media (prefers-color-scheme: dark) {
+
+  /*Button in Flow Edit page next to version and status fiels*/
+  .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning) {
+    background-color: #4c4e50 !important;
+    color: #fff!important;
+  }
+
+  .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning).is-active, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):focus, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):hover {
+    background-color: #65686a !important;
+  }
+
+  /*Disabled menu*/
+  .a-Menu .a-Menu-item.is-disabled .a-Menu-accel,
+  .a-Menu .a-Menu-item.is-disabled .a-Menu-label {
+  color:rgb(144, 146, 147) !important;
+  }
+
+  /*IR controls when expanded*/
+  .a-IG-controlsLabel,
+  .a-IRR-controlsLabel {
+  background-color:#222629 !important;
+  }
+
+  #ui-timepicker-divhour, #ui-timepicker-divminute {
+    background: #3f4244;
+    border-color: #646464;
+    border-radius: 8px;
+  }
+  #ui-timepicker-divhour:hover, #ui-timepicker-divminute:hover {
+    background: #646464;
+  }
+
+  .ui-datepicker-month, .ui-datepicker-year {
+    background-color: inherit;
+  }
+}
