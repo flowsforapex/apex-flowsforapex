@@ -19,14 +19,14 @@ as
     return flow_processes.prcs_id%type
   as
   begin
-    return g_current_prcs_id;
+    return flow_globals.process_id;
   end get_current_prcs_id;
 
   function get_current_sbfl_id
     return flow_subflows.sbfl_id%type
   as
   begin
-    return g_current_sbfl_id;
+    return flow_globals.subflow_id;
   end get_current_sbfl_id;
 
   procedure execute_plsql
@@ -67,7 +67,11 @@ as
     , 'pi_objt_id', pi_objt_id
     );
 
-    init_globals( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id );
+    --init_globals( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id );
+    flow_globals.set_context 
+    ( pi_prcs_id => pi_prcs_id
+    , pi_sbfl_id => pi_sbfl_id 
+    );
 
     for rec in ( select obat.obat_key
                       , obat.obat_vc_value

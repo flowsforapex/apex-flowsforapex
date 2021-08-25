@@ -668,6 +668,7 @@ is
   l_dgrm_id               flow_diagrams.dgrm_id%type;
   l_sbfl_current          flow_subflows.sbfl_current%type;
 begin
+  -- currently handles callbacks from flow_timers when a timer fires
   apex_debug.enter 
   ( 'flow_handle_event'
   , 'Subflow', p_subflow_id
@@ -678,7 +679,11 @@ begin
   -- an independant iCE (not following an eBG) can have >1 inputs
   -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
   l_dgrm_id := flow_engine_util.get_dgrm_id (p_prcs_id => p_process_id);
-
+  -- set context for scripts and variable expressions
+  flow_globals.set_context
+  ( pi_prcs_id => p_process_id
+  , pi_sbfl_id => p_subflow_id
+  );
   -- lock subflow containing event
   if flow_engine_util.lock_subflow(p_subflow_id) then
     -- subflow_locked

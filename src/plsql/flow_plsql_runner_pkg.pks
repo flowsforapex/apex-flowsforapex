@@ -5,6 +5,9 @@ as
   e_plsql_script_requested_stop exception;
   e_plsql_script_failed exception;
 
+  pragma deprecate (get_current_prcs_id, 'flow_plsql_runner_pkg.get_current_prcs_id is deprecated.  Use flow_globals.process_id instead');
+  pragma deprecate (get_current_sbfl_id, 'flow_plsql_runner_pkg.get_current_sbfl_id is deprecated.  Use flow_globals.subflow_id instead');
+
   function get_current_prcs_id
     return flow_processes.prcs_id%type
   ;
