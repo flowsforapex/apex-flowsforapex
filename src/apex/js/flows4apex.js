@@ -300,6 +300,7 @@ function initPage10() {
             ) {
               apex.navigation.redirect( data.url );
             } else {
+              apex.region( "flow_instances" ).refresh();
               apex.region( "subflows" ).refresh();
               apex.region( "flow-monitor" ).refresh();
             }
