@@ -800,7 +800,28 @@ as
           );
 		
         elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
-          null;
+          select details.detail_type
+               , details.detail_value
+            into l_detail_type
+               , l_detail_value
+            from xmltable
+                 (
+                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                 , '*' passing rec.child_details
+                   columns
+                     detail_type  varchar2(50 char) path   'name()'
+                   , detail_value varchar2(4000 char) path 'text()'
+                 ) details
+          ;
+          if l_detail_type = flow_constants_pkg.gc_apex_process_status then
+            register_object_attributes
+            (
+              pi_objt_bpmn_id      => pi_objt_bpmn_id
+            , pi_objt_sub_tag_name => rec.child_type
+            , pi_obat_key          => flow_constants_pkg.gc_terminate_result
+            , pi_obat_vc_value     => l_detail_value
+            );
+          end if;
 	    end if;
 
       end if;
