@@ -66,10 +66,13 @@ as
   gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
   gc_apex_scripttask_auto_binds       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
 
+  --terminateEndEvent
+  gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
+
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
-  gc_terminate_end_key                constant flow_types_pkg.t_bpmn_id := 'terminateStatus';
+  gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
   -- Flows 4 APEX Substitution Strings
   gc_substitution_flow_identifier     constant varchar2(10 char)                    := 'F4A$';

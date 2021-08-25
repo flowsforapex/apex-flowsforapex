@@ -153,7 +153,7 @@ end flow_process_link_event;
             into l_process_end_status
             from flow_object_attributes obat
           where obat.obat_objt_id = p_step_info.target_objt_id
-            and obat.obat_key = flow_constants_pkg.gc_terminate_end_key
+            and obat.obat_key = flow_constants_pkg.gc_terminate_result
           ;
         exception
           when no_data_found then
