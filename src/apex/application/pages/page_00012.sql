@@ -20,8 +20,8 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flow Monitor - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch:t-Dialog--noPadding'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210813040711'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210824173035'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6161598858353963900)
@@ -47,7 +47,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'Y'
 ,p_attribute_10=>'Y'
-,p_attribute_11=>'N'
+,p_attribute_11=>'Y'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(33735715098406128)

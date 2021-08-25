@@ -51,6 +51,24 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(5024381545147791)
+,p_name=>'APP_CONFIRM_DELETE_INSTANCE'
+,p_message_text=>'This will delete the flow instance. Are you sure?'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(5023975409141065)
+,p_name=>'APP_CONFIRM_RESET_INSTANCE'
+,p_message_text=>'This will reset the flow instance. Are you sure?'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(5024181840145883)
+,p_name=>'APP_CONFIRM_TERMINATE_INSTANCE'
+,p_message_text=>'This will terminate the flow instance. Are you sure?'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(8221810702495139)
 ,p_name=>'APP_COPY_FLOW'
 ,p_message_text=>'Copy Flow'

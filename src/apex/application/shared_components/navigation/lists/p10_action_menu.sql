@@ -25,24 +25,6 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(7954342541664818)
-,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Download Image'
-,p_list_item_link_target=>'javascript:apex.region( ''flow-monitor'' ).getSVG().then( ( svg ) => {'||wwv_flow.LF||
-'     var svgBlob = new Blob([svg], {'||wwv_flow.LF||
-'        type: ''image/svg+xml'''||wwv_flow.LF||
-'    });'||wwv_flow.LF||
-'    var fileName = Date.now();'||wwv_flow.LF||
-''||wwv_flow.LF||
-'    var downloadLink = document.createElement(''a'');'||wwv_flow.LF||
-'    downloadLink.download = fileName;'||wwv_flow.LF||
-'    downloadLink.href = window.URL.createObjectURL(svgBlob);'||wwv_flow.LF||
-'    downloadLink.click();'||wwv_flow.LF||
-'} );'
-,p_list_item_icon=>'fa-image'
-,p_list_item_current_type=>'TARGET_PAGE'
-);
-wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(39805200139904551)
 ,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'-'
