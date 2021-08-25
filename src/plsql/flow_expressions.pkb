@@ -531,50 +531,56 @@ as
     ( pi_objt_id => pi_objt_id
     , pi_set     => pi_set
     );
-    apex_debug.trace 
-    ( p_message => 'l_expressions.count: %0'
-    , p0        => l_expressions.count
-    );
-
-    -- step through expressions
-    for i in 1..l_expressions.count loop
-      -- process expression
-      case l_expressions(i).expr_type
-        when flow_constants_pkg.gc_expr_type_static then
-          set_static 
-          ( pi_prcs_id      => pi_prcs_id
-          , pi_sbfl_id      => pi_sbfl_id
-          , pi_expression   => l_expressions(i)
-          );
-        when flow_constants_pkg.gc_expr_type_proc_var then
-          set_proc_var
-          ( pi_prcs_id    => pi_prcs_id
-          , pi_sbfl_id    => pi_sbfl_id
-          , pi_expression => l_expressions(i));
-        when flow_constants_pkg.gc_expr_type_sql  then
-          set_sql
-          ( pi_prcs_id => pi_prcs_id
-          , pi_expression => l_expressions(i)
-          , pi_sbfl_id => pi_sbfl_id);
-        when flow_constants_pkg.gc_expr_type_sql_delimited_list  then
-          set_sql_delimited
-          ( pi_prcs_id => pi_prcs_id
-          , pi_expression => l_expressions(i)
-          , pi_sbfl_id => pi_sbfl_id);     
-        when flow_constants_pkg.gc_expr_type_plsql_expression then
-          set_plsql_expression
-          ( pi_prcs_id => pi_prcs_id
-          , pi_expression => l_expressions(i)
-          , pi_sbfl_id => pi_sbfl_id); 
-        when flow_constants_pkg.gc_expr_type_plsql_function_body then
-          set_plsql_function
-          ( pi_prcs_id => pi_prcs_id
-          , pi_expression => l_expressions(i)
-          , pi_sbfl_id => pi_sbfl_id);  
-        else
-            null;
-      end case;
-    end loop;
+    if l_expressions.count > 0 then 
+      -- set context
+      flow_globals.set_context
+      ( pi_prcs_id => pi_prcs_id
+      , pi_sbfl_id => pi_sbfl_id
+      );
+      apex_debug.trace 
+      ( p_message => 'l_expressions.count: %0'
+      , p0        => l_expressions.count
+      );
+      -- step through expressions
+      for i in 1..l_expressions.count loop
+        -- process expression
+        case l_expressions(i).expr_type
+          when flow_constants_pkg.gc_expr_type_static then
+            set_static 
+            ( pi_prcs_id      => pi_prcs_id
+            , pi_sbfl_id      => pi_sbfl_id
+            , pi_expression   => l_expressions(i)
+            );
+          when flow_constants_pkg.gc_expr_type_proc_var then
+            set_proc_var
+            ( pi_prcs_id    => pi_prcs_id
+            , pi_sbfl_id    => pi_sbfl_id
+            , pi_expression => l_expressions(i));
+          when flow_constants_pkg.gc_expr_type_sql  then
+            set_sql
+            ( pi_prcs_id => pi_prcs_id
+            , pi_expression => l_expressions(i)
+            , pi_sbfl_id => pi_sbfl_id);
+          when flow_constants_pkg.gc_expr_type_sql_delimited_list  then
+            set_sql_delimited
+            ( pi_prcs_id => pi_prcs_id
+            , pi_expression => l_expressions(i)
+            , pi_sbfl_id => pi_sbfl_id);     
+          when flow_constants_pkg.gc_expr_type_plsql_expression then
+            set_plsql_expression
+            ( pi_prcs_id => pi_prcs_id
+            , pi_expression => l_expressions(i)
+            , pi_sbfl_id => pi_sbfl_id); 
+          when flow_constants_pkg.gc_expr_type_plsql_function_body then
+            set_plsql_function
+            ( pi_prcs_id => pi_prcs_id
+            , pi_expression => l_expressions(i)
+            , pi_sbfl_id => pi_sbfl_id);  
+          else
+              null;
+        end case;
+      end loop;
+    end if;
   end process_expressions;
 
   -- overloaded process_expressions that accepts a objt_bpmn_id rather than an objt_id
