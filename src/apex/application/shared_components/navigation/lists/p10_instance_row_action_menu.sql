@@ -25,8 +25,39 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(40424429805997034)
+ p_id=>wwv_flow_api.id(5664262065267010)
 ,p_list_item_display_sequence=>20
+,p_list_item_link_text=>'Audit'
+,p_list_item_icon=>'fa-info-circle-o'
+,p_list_text_01=>'flow-instance-audit'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5664576928271979)
+,p_list_item_display_sequence=>30
+,p_list_item_link_text=>'Edit (Diagram)'
+,p_list_item_icon=>'fa-pencil'
+,p_list_text_01=>'edit-flow-diagram'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5662379313207242)
+,p_list_item_display_sequence=>40
+,p_list_item_link_text=>'Download (SVG)'
+,p_list_item_icon=>'fa-image'
+,p_list_text_01=>'download-as-svg'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5664803242273579)
+,p_list_item_display_sequence=>50
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(40424429805997034)
+,p_list_item_display_sequence=>60
 ,p_list_item_link_text=>'Start'
 ,p_list_item_icon=>'fa-play'
 ,p_list_text_01=>'start-flow-instance'
@@ -34,7 +65,7 @@ wwv_flow_api.create_list_item(
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40425672453997035)
-,p_list_item_display_sequence=>30
+,p_list_item_display_sequence=>70
 ,p_list_item_link_text=>'Reset'
 ,p_list_item_icon=>'fa-undo'
 ,p_list_text_01=>'reset-flow-instance'
@@ -42,7 +73,7 @@ wwv_flow_api.create_list_item(
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40426450496997035)
-,p_list_item_display_sequence=>40
+,p_list_item_display_sequence=>80
 ,p_list_item_link_text=>'Terminate'
 ,p_list_item_icon=>'fa-stop-circle-o'
 ,p_list_text_01=>'terminate-flow-instance'
@@ -50,7 +81,7 @@ wwv_flow_api.create_list_item(
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40427116551997037)
-,p_list_item_display_sequence=>50
+,p_list_item_display_sequence=>90
 ,p_list_item_link_text=>'Delete'
 ,p_list_item_icon=>'fa-trash-o'
 ,p_list_text_01=>'delete-flow-instance'

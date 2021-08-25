@@ -50,6 +50,16 @@ as
          end as reservation_html
        , null as actions   
        , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
+       , case 
+            when sbfl.sbfl_status = 'error' then 
+              '<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" ' || 
+              'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '"data-action="restart-step" '||
+              '><span aria-hidden="true" class="t-Icon t-Icon--left fa fa-redo-arrow"></span>Restart</button>'
+            when sbfl.sbfl_status = 'running' then 
+              '<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" ' || 
+              'data-prcs="' || sbfl.sbfl_prcs_id || '" data-sbfl="' || sbfl.sbfl_id || '"data-action="complete-step" '||
+              '><span aria-hidden="true" class="t-Icon t-Icon--left fa fa-sign-out"></span>Complete</button>'
+            end as quick_action_hmtl 
     from flow_subflows_vw sbfl
 with read only
 ;

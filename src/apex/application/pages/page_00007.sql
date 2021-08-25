@@ -18,17 +18,11 @@ wwv_flow_api.create_page(
 ,p_alias=>'FLOW'
 ,p_step_title=>'Flow - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
-,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
-,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.jQuery(''span[data-status="created"]'').parents("span.t-BadgeList-value").addClass(["created", "instance-counter-link"]);',
-'apex.jQuery(''span[data-status="running"]'').parents("span.t-BadgeList-value").addClass(["running", "instance-counter-link"]);',
-'apex.jQuery(''span[data-status="completed"]'').parents("span.t-BadgeList-value").addClass(["completed", "instance-counter-link"]);',
-'apex.jQuery(''span[data-status="terminated"]'').parents("span.t-BadgeList-value").addClass(["terminated", "instance-counter-link"]);',
-'apex.jQuery(''span[data-status="error"]'').parents("span.t-BadgeList-value").addClass(["error", "instance-counter-link"]);'))
+,p_javascript_code=>'initPage7();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210823151636'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210825155638'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -718,8 +712,8 @@ wwv_flow_api.create_page_da_action(
 'var dgrmName = apex.item("P7_DGRM_NAME").getValue();',
 'var dgrmVersion = apex.item("P7_DGRM_VERSION").getValue();',
 '',
-'apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + "::" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS:" + dgrmName + "," + dgrmVer'
-||'sion + "," + prcsStatus);'))
+'apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + ":IR[flow_instances]:" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS:" + dgrmNa'
+||'me + "," + dgrmVersion + "," + prcsStatus);'))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34402165369171407)

@@ -25,6 +25,7 @@ prompt --install
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
+@@application/shared_components/logic/application_processes/switch_theme_mode.sql
 @@application/shared_components/logic/application_items/app_name_title.sql
 @@application/shared_components/logic/application_items/flow_page_title.sql
 @@application/shared_components/logic/application_computations/app_name_title.sql

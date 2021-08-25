@@ -26,12 +26,17 @@ wwv_flow_api.create_page(
 '    background-repeat: no-repeat;',
 '    background-size: cover;',
 '}',
-''))
+'',
+'@media (prefers-color-scheme: dark){',
+'    .login-page-logo {',
+'        background-image: url(#APP_IMAGES#workflow_white.svg);',
+'    }',
+'}'))
 ,p_step_template=>wwv_flow_api.id(12495629732925880320)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_is_public_y_n=>'Y'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210223193311'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210825072638'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12495495236065879932)

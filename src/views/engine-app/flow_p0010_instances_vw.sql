@@ -23,6 +23,9 @@ as
           '><span aria-hidden="true" class="t-Icon fa fa-trash"></span></button>'
           as btn
         , apex_item.checkbox2(p_idx => 1, p_value => prcs_id, p_attributes => 'data-prcs = "' || prcs_id || '" data-status = "' || prcs_status ||'"') as checkbox
+        , '<button type="button" class="t-Button t-Button--icon t-Button--iconLeft t-Button--link js-actionButton"'||
+          ' data-prcs="' || prcs_id || '" data-name="' || prcs_name || '" data-action="view-flow-instance"' ||
+          '><span aria-hidden="true" class="t-Icon t-Icon--left fa fa-eye"></span>View</button>' as view_instance
      from ( select prcs_id
                  , prcs_name
                  , dgrm_id as prcs_dgrm_id

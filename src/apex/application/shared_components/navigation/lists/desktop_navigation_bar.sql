@@ -25,6 +25,31 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5589254850825963)
+,p_list_item_display_sequence=>7
+,p_list_item_link_text=>'Theme'
+,p_required_patch=>wwv_flow_api.id(88199069651756122)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5591024903839479)
+,p_list_item_display_sequence=>50
+,p_list_item_link_text=>'Light Mode'
+,p_list_item_link_target=>'javascript:apex.submit(''LIGHT_MODE'');'
+,p_list_item_icon=>'fa-sun-o'
+,p_parent_list_item_id=>wwv_flow_api.id(5589254850825963)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5591767688841799)
+,p_list_item_display_sequence=>60
+,p_list_item_link_text=>'Dark Mode'
+,p_list_item_link_target=>'javascript:apex.submit(''DARK_MODE'');'
+,p_list_item_icon=>'fa-moon-o'
+,p_parent_list_item_id=>wwv_flow_api.id(5589254850825963)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12495487956468879842)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'&APP_USER.'
