@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210825171927'
+,p_last_upd_yyyymmddhh24miss=>'20210826083912'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2401245095481901)
@@ -541,6 +541,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_name=>'Flow Instances'
 ,p_region_name=>'flow_instances'
 ,p_parent_plug_id=>wwv_flow_api.id(24415197915878710)
+,p_region_css_classes=>'js-react-on-prcs'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>20
@@ -1733,6 +1734,97 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_api.id(2438570961881223)
 );
 wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(5680482213037004)
+,p_name=>'Add clicked - add row to variables grid_1'
+,p_event_sequence=>180
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_api.id(5047712064489747)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(5680552533037005)
+,p_event_id=>wwv_flow_api.id(5680482213037004)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.message.clearErrors();',
+'var errors = [];',
+'',
+'if (apex.item("P10_SELECT_OPTION").getValue() === "single" && apex.item("P10_CONNECTION").getValue().length > 1) {',
+'    errors = [',
+'        {',
+'            type:       "error",',
+'            location:   [ "inline" ],',
+'            pageItem:   "P10_CONNECTION",',
+'            message:    "Please select only one connection.",',
+'            unsafe:     false',
+'        }',
+'    ];',
+'}',
+'if (apex.item("P10_CONNECTION").getValue().length === 0) {',
+'    errors = [',
+'        {',
+'            type:       "error",',
+'            location:   [ "inline" ],',
+'            pageItem:   "P10_CONNECTION",',
+'            message:    "Please select a connection.",',
+'            unsafe:     false',
+'        }',
+'    ];',
+'}',
+'',
+'if (errors.length > 0) {',
+'    apex.message.showErrors(errors);',
+'    apex.da.cancel();',
+'} else {',
+'    /*var view = apex.region( "variables_ig" ).widget().interactiveGrid( "getCurrentView" );',
+'    var model = view.model;',
+'    var newRecordId = model.insertNewRecord();',
+'    var $newRecord = model.getRecord( newRecordId );',
+'',
+'    setTimeout( function(){ ',
+'      model.setValue( $newRecord, "PROV_VAR_TYPE", "VARCHAR2" );',
+'      model.setValue( $newRecord, "PROV_VAR_NAME", apex.item("P10_GATEWAY").getValue() + ":route" );',
+'      model.setValue( $newRecord, "PROV_VAR_VC2",  apex.item("P10_CONNECTION").getValue().join(":"));',
+'    }, 5);*/',
+'    apex.theme.closeRegion("gateway_selector");',
+'}',
+'',
+'',
+'',
+'',
+''))
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(5680610403037006)
+,p_event_id=>wwv_flow_api.id(5680482213037004)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_process_vars.set_var',
+'( pi_prcs_id => :P10_PRCS_ID',
+', pi_var_name => :P10_GATEWAY||'':route''',
+', pi_vc2_value => :P10_CONNECTION',
+');'))
+,p_attribute_02=>'P10_GATEWAY,P10_CONNECTION,P10_PRCS_ID'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(5680755397037007)
+,p_event_id=>wwv_flow_api.id(5680482213037004)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(2438570961881223)
+);
+wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10427083703468004)
 ,p_name=>'Set Connection Select Option '
 ,p_event_sequence=>190
@@ -1833,6 +1925,18 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'BUTTON'
 ,p_affected_button_id=>wwv_flow_api.id(10428749558468021)
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(10429160835468025)
 ,p_event_id=>wwv_flow_api.id(10428830923468022)
@@ -1878,7 +1982,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(4404300076699533)
 ,p_name=>'Reposition Download Image Button'
-,p_event_sequence=>270
+,p_event_sequence=>230
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'ready'
 );
@@ -1894,7 +1998,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5522150485864942)
 ,p_name=>'Element clicked'
-,p_event_sequence=>280
+,p_event_sequence=>240
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(6127698437330102702)
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
@@ -1915,18 +2019,6 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_05=>'this.data.element.id'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(2449082180538245)
@@ -1976,7 +2068,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5522454027864945)
 ,p_name=>'Change cursor'
-,p_event_sequence=>290
+,p_event_sequence=>250
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(6127698437330102702)
 ,p_bind_type=>'bind'
@@ -2018,7 +2110,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34634407162575846)
 ,p_name=>'On Change Display Setting'
-,p_event_sequence=>300
+,p_event_sequence=>260
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_DISPLAY_SETTING'
 ,p_bind_type=>'bind'
@@ -2056,7 +2148,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(4300450048764256)
 ,p_name=>'Change check-all-instances'
-,p_event_sequence=>310
+,p_event_sequence=>270
 ,p_triggering_element_type=>'JQUERY_SELECTOR'
 ,p_triggering_element=>'#check-all-instances'
 ,p_bind_type=>'live'
@@ -2079,7 +2171,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(2438387958881221)
 ,p_name=>'Change check-all-subflows'
-,p_event_sequence=>320
+,p_event_sequence=>280
 ,p_triggering_element_type=>'JQUERY_SELECTOR'
 ,p_triggering_element=>'#check-all-subflows'
 ,p_bind_type=>'live'
@@ -2102,7 +2194,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5043268719489702)
 ,p_name=>'On Change Variable Type'
-,p_event_sequence=>330
+,p_event_sequence=>290
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_PROV_VAR_TYPE'
 ,p_condition_element=>'P10_PROV_VAR_TYPE'
@@ -2149,7 +2241,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5043518090489705)
 ,p_name=>'Click on Add Process Variable'
-,p_event_sequence=>340
+,p_event_sequence=>300
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(5043401451489704)
 ,p_bind_type=>'bind'
@@ -2192,9 +2284,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>40
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.jQuery("#P10_PROV_VAR_NAME").attr("data-oldValue", "");',
-'apex.jQuery("#P10_PROV_VAR_TYPE").attr("data-oldType", "");'))
+,p_attribute_01=>'apex.jQuery("#P10_PROV_VAR_NAME").attr("data-oldValue", "");'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(5043617111489706)
@@ -2209,7 +2299,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5043948382489709)
 ,p_name=>'Add Process Variable'
-,p_event_sequence=>350
+,p_event_sequence=>310
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(5043705998489707)
 ,p_bind_type=>'bind'
@@ -2270,7 +2360,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5045905228489729)
 ,p_name=>'Save Process Variable'
-,p_event_sequence=>360
+,p_event_sequence=>320
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(5045693684489726)
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
@@ -2386,7 +2476,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5044680756489716)
 ,p_name=>'Click on Add Gateway Route'
-,p_event_sequence=>370
+,p_event_sequence=>330
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(5044505383489715)
 ,p_bind_type=>'bind'
@@ -2413,7 +2503,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5045016953489720)
 ,p_name=>'Click on .edit-process-var'
-,p_event_sequence=>380
+,p_event_sequence=>340
 ,p_triggering_element_type=>'JQUERY_SELECTOR'
 ,p_triggering_element=>'.edit-process-var'
 ,p_bind_type=>'live'
@@ -2517,16 +2607,16 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5046559282489735)
 ,p_name=>'Change Var Name'
-,p_event_sequence=>390
+,p_event_sequence=>350
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P10_PROV_VAR_NAME'
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'apex.jQuery(this.triggeringElement).attr("data-oldValue") !== "" && apex.jQuery(this.triggeringElement).attr("data-oldValue") !== apex.item(this.triggeringElement.id).getValue()'
+,p_triggering_expression=>'apex.jQuery(this.triggeringElement).attr("data-oldValue") !== "" && apex.jQuery(this.triggeringElement).attr("data-oldValue") !== apex.item(this.triggeringElement.id).getValue();'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'change'
 );
 wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(5047292107489742)
+ p_id=>wwv_flow_api.id(5681016840037010)
 ,p_event_id=>wwv_flow_api.id(5046559282489735)
 ,p_event_result=>'FALSE'
 ,p_action_sequence=>10
@@ -2546,7 +2636,7 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_button_id=>wwv_flow_api.id(5043705998489707)
 );
 wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(5047176080489741)
+ p_id=>wwv_flow_api.id(5680958809037009)
 ,p_event_id=>wwv_flow_api.id(5046559282489735)
 ,p_event_result=>'FALSE'
 ,p_action_sequence=>20
@@ -2568,11 +2658,12 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5047996095489749)
 ,p_name=>'Click on checbox f01 (instance)'
-,p_event_sequence=>400
+,p_event_sequence=>360
 ,p_triggering_element_type=>'JQUERY_SELECTOR'
 ,p_triggering_element=>'input[name="f01"]'
 ,p_bind_type=>'live'
 ,p_bind_event_type=>'click'
+,p_display_when_type=>'NEVER'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(5048079654489750)
@@ -2602,7 +2693,7 @@ wwv_flow_api.create_page_da_action(
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5680206381037002)
 ,p_name=>'Variables Report Refreshed'
-,p_event_sequence=>410
+,p_event_sequence=>370
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(2438570961881223)
 ,p_bind_type=>'bind'
@@ -2714,6 +2805,18 @@ wwv_flow_api.create_page_process(
 'END;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(5045249467489722)
 ,p_process_sequence=>30
@@ -2763,6 +2866,7 @@ wwv_flow_api.create_page_process(
 ' end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
+null;
 wwv_flow_api.component_end;
 end;
 /

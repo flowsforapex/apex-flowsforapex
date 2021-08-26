@@ -223,7 +223,7 @@ function redirectToMonitor( prcs_id ) {
     } );
 }
 
-function initPage10() {
+function initPage8() {
   initApp();
 
   function processAction( action, element ) {
@@ -235,7 +235,7 @@ function initPage10() {
     if ( action.includes( "bulk-" ) ) {
       if ( action.includes( "-flow-instance" ) ) {
         processes = apex
-          .jQuery( "#flow_instances .a-IRR-tableContainer" )
+          .jQuery( "#flow-instances .a-IRR-tableContainer" )
           .find( 'input[name="f01"]:checked' )
           .map( function ( item ) {
             return apex.jQuery( this ).attr( "data-prcs" );
@@ -300,8 +300,410 @@ function initPage10() {
             ) {
               apex.navigation.redirect( data.url );
             } else {
-              apex.region( "flow_instances" ).refresh();
+              apex.region( "flow-instances" ).refresh();
               apex.region( "subflows" ).refresh();
+              apex.region( "flow-monitor" ).refresh();
+            }
+          }
+        } )
+        .fail( function ( jqXHR, textStatus, errorThrown ) {
+          apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );
+        } );
+    } else {
+      apex.item( "P10_PRCS_ID" ).setValue( myProcess );
+    }
+  }
+
+  //Define actions
+  $( function () {
+    apex.actions.add( [
+      {
+        name: "choose-setting",
+        get: function () {
+          return apex.item( "P8_DISPLAY_SETTING" ).getValue();
+        },
+        set: function ( value ) {
+          apex.item( "P8_DISPLAY_SETTING" ).setValue( value );
+          var prcsId = apex.item( "P8_PRCS_ID" ).getValue();
+
+          switch ( value ) {
+            case "row":
+              apex.jQuery( "#col1" ).addClass( "col-12" ).removeClass( "col-6" );
+              apex.jQuery( "#col2" ).addClass( "col-12" ).removeClass( "col-6" );
+
+              apex.jQuery( "#flow-monitor" ).show();
+              apex.region( "flow-monitor" ).refresh();
+              break;
+            case "column":
+              apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( "col-12" );
+              apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( "col-12" );
+              apex.jQuery( "#col2" ).appendTo( apex.jQuery( "#col1" ).parent() );
+
+              apex.jQuery( "#flow-monitor" ).show();
+              apex.region( "flow-monitor" ).refresh();
+              break;
+            case "window":
+              apex.jQuery( "#flow-monitor" ).hide();
+              apex.jQuery( "#col1" ).addClass( "col-12" ).removeClass( "col-6" );
+              apex.jQuery( "#col2" ).addClass( "col-12" ).removeClass( "col-6" );
+
+              if ( prcsId !== "" ) {
+                redirectToMonitor( prcsId );
+              }
+              break;
+          }
+        },
+        choices: [],
+      },
+      {
+        name: "start-flow-instance",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "reset-flow-instance",
+        action: function ( event, focusElement ) {
+          var action = this.name;
+          apex.message.confirm(
+            apex.lang.getMessage( "APP_CONFIRM_RESET_INSTANCE" ),
+            function ( okPressed ) {
+              if ( okPressed ) {
+                processAction( action, focusElement );
+              }
+            }
+          );
+        },
+      },
+      {
+        name: "terminate-flow-instance",
+        action: function ( event, focusElement ) {
+          var action = this.name;
+          apex.message.confirm(
+            apex.lang.getMessage( "APP_CONFIRM_TERMINATE_INSTANCE" ),
+            function ( okPressed ) {
+              if ( okPressed ) {
+                processAction( action, focusElement );
+              }
+            }
+          );
+        },
+      },
+      {
+        name: "delete-flow-instance",
+        action: function ( event, focusElement ) {
+          var action = this.name;
+          apex.message.confirm(
+            apex.lang.getMessage( "APP_CONFIRM_DELETE_INSTANCE" ),
+            function ( okPressed ) {
+              if ( okPressed ) {
+                processAction( action, focusElement );
+              }
+            }
+          );
+        },
+      },
+      {
+        name: "download-as-svg",
+        action: function ( event, focusElement ) {
+          apex
+            .region( "flow-monitor" )
+            .getSVG()
+            .then( ( svg ) => {
+              var svgBlob = new Blob( [svg], {
+                type: "image/svg+xml",
+              } );
+              var fileName = Date.now();
+
+              var downloadLink = document.createElement( "a" );
+              downloadLink.download = fileName;
+              downloadLink.href = window.URL.createObjectURL( svgBlob );
+              downloadLink.click();
+            } );
+        },
+      },
+      {
+        name: "flow-instance-audit",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "edit-flow-diagram",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "complete-step",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "bulk-complete-step",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "restart-step",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "bulk-restart-step",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "reserve-step",
+        action: function ( event, focusElement ) {
+          if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "reservation_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_RESERVATION" ).setValue( "" );
+            apex.jQuery( "#reserve-step-btn" ).attr( "data-action", this.name );
+            apex
+              .jQuery( "#reserve-step-btn" )
+              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
+            apex
+              .jQuery( "#reserve-step-btn" )
+              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
+            apex.theme.openRegion( "reservation_dialog" );
+          }
+        },
+      },
+      {
+        name: "bulk-reserve-step",
+        action: function ( event, focusElement ) {
+          if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "reservation_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_RESERVATION" ).setValue( "" );
+            apex.jQuery( "#reserve-step-btn" ).attr( "data-action", this.name );
+            apex.jQuery( "#reserve-step-btn" ).attr( "data-prcs", "" );
+            apex.jQuery( "#reserve-step-btn" ).attr( "data-sbfl", "" );
+            apex.theme.openRegion( "reservation_dialog" );
+          }
+        },
+      },
+      {
+        name: "release-step",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+      {
+        name: "bulk-release-step",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        },
+      },
+    ] );
+
+    apex.actions.set(
+      "choose-setting",
+      apex.item( "P8_DISPLAY_SETTING" ).getValue()
+    );
+
+    setTimeout( function () {
+      var action, label;
+      action = apex.actions.lookup( "choose-setting" );
+      action.choices = action.label.split( "|" ).map( function ( c, i ) {
+        return { label: c, value: ["row", "column", "window"][i] };
+      } );
+      delete action.label;
+      apex.actions.update( "choose-setting" );
+    }, 1 );
+  } );
+
+  apex.jQuery( window ).on( "theme42ready", function () {
+    $( "th.a-IRR-header" ).each( function ( i ) {
+      if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
+        apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
+        apex.jQuery( this ).find( "button#subflow-header-action" ).hide();
+      } else {
+        apex.jQuery( this ).addClass( "u-alignMiddle" );
+      }
+    } );
+
+    /*Disable download image when no instances selected*/
+    $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {
+      var menuItems = ui.menu.items;
+      menuItems[1].disabled =
+        apex.item( "P8_PRCS_ID" ).getValue() === "" ? true : false;
+      ui.menu.items = menuItems;
+    } );
+
+    $( "#subflow_header_action_menu" ).on( "menubeforeopen", function ( event, ui ) {
+      var menuItems = ui.menu.items;
+      menuItems = menuItems.map( function ( item ) {
+        if ( apex.jQuery( 'input[name="f02"]:checked' ).length === 0 ) {
+          item.disabled = true;
+        } else {
+          item.disabled = false;
+          if ( item.action === "bulk-complete-step" ) {
+            if (
+              apex
+                .jQuery( "#subflows .a-IRR-tableContainer" )
+                .find( 'input[name="f02"][data-status!="running"]:checked' )
+                .length > 0
+            ) {
+              item.disabled = true;
+            }
+          }
+          if ( item.action === "bulk-restart-step" ) {
+            if (
+              apex
+                .jQuery( "#subflows .a-IRR-tableContainer" )
+                .find( 'input[name="f02"][data-status!="error"]:checked' )
+                .length > 0
+            ) {
+              item.disabled = true;
+            }
+          }
+          if ( item.action === "bulk-reserve-step" ) {
+            if (
+              apex
+                .jQuery( "#subflows .a-IRR-tableContainer" )
+                .find( 'input[name="f02"][data-reservation!=""]:checked' )
+                .length > 0
+            ) {
+              item.disabled = true;
+            }
+          }
+          if ( item.action === "bulk-release-step" ) {
+            if (
+              apex
+                .jQuery( "#subflows .a-IRR-tableContainer" )
+                .find( 'input[name="f02"][data-reservation=""]:checked' ).length >
+              0
+            ) {
+              item.disabled = true;
+            }
+          }
+        }
+        return item;
+      } );
+      ui.menu.items = menuItems;
+    } );
+
+    apex
+      .jQuery( "#subflow_row_action_menu" )
+      .on( "menubeforeopen", function ( event, ui ) {
+        var rowBtn = apex.jQuery( ".subflow-actions-btn.is-active" );
+        var menuItems = ui.menu.items;
+        var sbflStatus = rowBtn.data( "status" );
+        var subflReservation = rowBtn.data( "reservation" );
+        menuItems = menuItems.map( function ( item ) {
+          if ( item.action === "complete-step" ) {
+            item.disabled = sbflStatus === "running" ? false : true;
+          }
+          if ( item.action === "restart-step" ) {
+            item.disabled = sbflStatus === "error" ? false : true;
+          }
+          if ( item.action === "reserve-step" ) {
+            item.disabled =
+              subflReservation === "" && sbflStatus === "running"
+                ? false
+                : true;
+          }
+          if ( item.action === "release-step" ) {
+            item.disabled =
+              subflReservation !== "" && sbflStatus === "running"
+                ? false
+                : true;
+          }
+          return item;
+        } );
+        ui.menu.items = menuItems;
+      } );
+  } );
+}
+
+function initPage10() {
+  initApp();
+
+  function processAction( action, element ) {
+    var processes = [];
+    var subflows = [];
+    var diagrams = [];
+    var processesNames = [];
+
+    if ( action.includes( "bulk-" ) ) {
+      if ( action.includes( "-flow-instance" ) ) {
+        processes = apex
+          .jQuery( "#flow-instances .a-IRR-tableContainer" )
+          .find( 'input[name="f01"]:checked' )
+          .map( function ( item ) {
+            return apex.jQuery( this ).attr( "data-prcs" );
+          } )
+          .toArray();
+        subflows = processes.map( function ( i ) {
+          return null;
+        } );
+      } else {
+        processes = apex
+          .jQuery( "#subflows .a-IRR-tableContainer" )
+          .find( 'input[name="f02"]:checked' )
+          .map( function ( item ) {
+            return apex.jQuery( this ).attr( "data-prcs" );
+          } )
+          .toArray();
+        subflows = apex
+          .jQuery( "#subflows .a-IRR-tableContainer" )
+          .find( 'input[name="f02"]:checked' )
+          .map( function ( item ) {
+            return this.value;
+          } )
+          .toArray();
+      }
+    } else {
+      var myElement = apex.jQuery( element );
+      var myProcess = myElement.attr( "data-prcs" );
+      var mySubflow = myElement.attr( "data-sbfl" );
+      var myDiagram = myElement.attr( "data-dgrm" );
+      var myProcessName = myElement.attr( "data-name" );
+      processes.push( myProcess );
+      subflows.push( mySubflow === undefined ? null : mySubflow );
+      diagrams.push( myDiagram === undefined ? null : myDiagram );
+      processesNames.push( myProcessName === undefined ? null : myProcessName );
+    }
+
+    var displaySetting = apex.item( "P10_DISPLAY_SETTING" ).getValue();
+
+    if (
+      action !== "view-flow-instance" ||
+      ( action === "view-flow-instance" && displaySetting === "window" )
+    ) {
+      var result = apex.server.process( "PROCESS_ACTION", {
+        x01: action,
+        x02: apex.item( "P10_RESERVATION" ).getValue(),
+        f01: processes,
+        f02: subflows,
+        f03: diagrams,
+        f04: processesNames,
+      } );
+      result
+        .done( function ( data ) {
+          if ( !data.success ) {
+            apex.debug.error( "Something went wrong..." );
+          } else {
+            if ( action === "delete-flow-instance" ) {
+              apex.item( "P10_PRCS_ID" ).setValue();
+            } else if (
+              action === "view-flow-instance" ||
+              action === "flow-instance-audit" ||
+              action === "edit-flow-diagram"
+            ) {
+              apex.navigation.redirect( data.url );
+            } else {
+              apex.region( "flow-instances" ).refresh();
               apex.region( "flow-monitor" ).refresh();
             }
           }
@@ -358,7 +760,7 @@ function initPage10() {
       {
         name: "view-flow-instance",
         action: function ( event, focusElement ) {
-          var processRows = apex.jQuery( "#flow_instances td" );
+          var processRows = apex.jQuery( "#flow-instances td" );
           var selectedProcess = apex.jQuery( focusElement ).attr( "data-prcs" );
           var currentName = apex.jQuery( focusElement ).attr( "data-name" );
           var currentSelector =
@@ -500,77 +902,7 @@ function initPage10() {
         action: function ( event, focusElement ) {
           processAction( this.name, focusElement );
         },
-      },
-      {
-        name: "complete-step",
-        action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
-        },
-      },
-      {
-        name: "bulk-complete-step",
-        action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
-        },
-      },
-      {
-        name: "restart-step",
-        action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
-        },
-      },
-      {
-        name: "bulk-restart-step",
-        action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
-        },
-      },
-      {
-        name: "reserve-step",
-        action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "reservation_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P10_RESERVATION" ).setValue( "" );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-action", this.name );
-            apex
-              .jQuery( "#reserve-step-btn" )
-              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
-            apex
-              .jQuery( "#reserve-step-btn" )
-              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
-            apex.theme.openRegion( "reservation_dialog" );
-          }
-        },
-      },
-      {
-        name: "bulk-reserve-step",
-        action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "reservation_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P10_RESERVATION" ).setValue( "" );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-action", this.name );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-prcs", "" );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-sbfl", "" );
-            apex.theme.openRegion( "reservation_dialog" );
-          }
-        },
-      },
-      {
-        name: "release-step",
-        action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
-        },
-      },
-      {
-        name: "bulk-release-step",
-        action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
-        },
-      },
+      }
     ] );
 
     apex.actions.set(
@@ -594,7 +926,6 @@ function initPage10() {
       if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
         apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
         apex.jQuery( this ).find( "button#instance-header-action" ).hide();
-        apex.jQuery( this ).find( "button#subflow-header-action" ).hide();
       } else {
         apex.jQuery( this ).addClass( "u-alignMiddle" );
       }
@@ -620,7 +951,7 @@ function initPage10() {
             if ( item.action === "bulk-start-flow-instance" ) {
               if (
                 apex
-                  .jQuery( "#flow_instances .a-IRR-tableContainer" )
+                  .jQuery( "#flow-instances .a-IRR-tableContainer" )
                   .find( 'input[name="f01"][data-status!="created"]:checked' )
                   .length > 0
               ) {
@@ -630,7 +961,7 @@ function initPage10() {
             if ( item.action === "bulk-reset-flow-instance" ) {
               if (
                 apex
-                  .jQuery( "#flow_instances .a-IRR-tableContainer" )
+                  .jQuery( "#flow-instances .a-IRR-tableContainer" )
                   .find( 'input[name="f01"][data-status="created"]:checked' )
                   .length > 0
               ) {
@@ -640,7 +971,7 @@ function initPage10() {
             if ( item.action === "bulk-terminate-flow-instance" ) {
               if (
                 apex
-                  .jQuery( "#flow_instances .a-IRR-tableContainer" )
+                  .jQuery( "#flow-instances .a-IRR-tableContainer" )
                   .find(
                     'input[name="f01"][data-status!="running"]:checked',
                     'input[name="f01"][data-status!="error"]:checked'
@@ -677,88 +1008,5 @@ function initPage10() {
       ui.menu.items = menuItems;
     } );
 
-    $( "#subflow_header_action_menu" ).on( "menubeforeopen", function ( event, ui ) {
-      var menuItems = ui.menu.items;
-      menuItems = menuItems.map( function ( item ) {
-        if ( apex.jQuery( 'input[name="f02"]:checked' ).length === 0 ) {
-          item.disabled = true;
-        } else {
-          item.disabled = false;
-          if ( item.action === "bulk-complete-step" ) {
-            if (
-              apex
-                .jQuery( "#subflows .a-IRR-tableContainer" )
-                .find( 'input[name="f02"][data-status!="running"]:checked' )
-                .length > 0
-            ) {
-              item.disabled = true;
-            }
-          }
-          if ( item.action === "bulk-restart-step" ) {
-            if (
-              apex
-                .jQuery( "#subflows .a-IRR-tableContainer" )
-                .find( 'input[name="f02"][data-status!="error"]:checked' )
-                .length > 0
-            ) {
-              item.disabled = true;
-            }
-          }
-          if ( item.action === "bulk-reserve-step" ) {
-            if (
-              apex
-                .jQuery( "#subflows .a-IRR-tableContainer" )
-                .find( 'input[name="f02"][data-reservation!=""]:checked' )
-                .length > 0
-            ) {
-              item.disabled = true;
-            }
-          }
-          if ( item.action === "bulk-release-step" ) {
-            if (
-              apex
-                .jQuery( "#subflows .a-IRR-tableContainer" )
-                .find( 'input[name="f02"][data-reservation=""]:checked' ).length >
-              0
-            ) {
-              item.disabled = true;
-            }
-          }
-        }
-        return item;
-      } );
-      ui.menu.items = menuItems;
-    } );
-
-    apex
-      .jQuery( "#subflow_row_action_menu" )
-      .on( "menubeforeopen", function ( event, ui ) {
-        var rowBtn = apex.jQuery( ".subflow-actions-btn.is-active" );
-        var menuItems = ui.menu.items;
-        var sbflStatus = rowBtn.data( "status" );
-        var subflReservation = rowBtn.data( "reservation" );
-        menuItems = menuItems.map( function ( item ) {
-          if ( item.action === "complete-step" ) {
-            item.disabled = sbflStatus === "running" ? false : true;
-          }
-          if ( item.action === "restart-step" ) {
-            item.disabled = sbflStatus === "error" ? false : true;
-          }
-          if ( item.action === "reserve-step" ) {
-            item.disabled =
-              subflReservation === "" && sbflStatus === "running"
-                ? false
-                : true;
-          }
-          if ( item.action === "release-step" ) {
-            item.disabled =
-              subflReservation !== "" && sbflStatus === "running"
-                ? false
-                : true;
-          }
-          return item;
-        } );
-        ui.menu.items = menuItems;
-      } );
   } );
 }
