@@ -542,20 +542,18 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
 /**
  * custom dark mode colors
  */
- @media (prefers-color-scheme: dark) {
-  .bpp-properties-panel,
-  ul.bpp-properties-tabs-links > li > a {
-    background-color: #32383d;
-    color: white;
-  }
-  .bpp-properties-panel [contenteditable],
-  .bpp-properties-panel select,
-  .bpp-properties-panel input,
-  .bpp-properties-panel button{
-    color: white;
-    background-color: #282c30;
-  }
-  .bpp-properties-panel label {
-    color: white;
-  }
+.FLOWS-DARK .bpp-properties-panel,
+.FLOWS-DARK ul.bpp-properties-tabs-links > li > a {
+  background-color: #32383d;
+  color: white;
+}
+.FLOWS-DARK .bpp-properties-panel [contenteditable],
+.FLOWS-DARK .bpp-properties-panel select,
+.FLOWS-DARK .bpp-properties-panel input,
+.FLOWS-DARK .bpp-properties-panel button{
+  color: white;
+  background-color: #282c30;
+}
+.FLOWS-DARK .bpp-properties-panel label {
+  color: white;
 }

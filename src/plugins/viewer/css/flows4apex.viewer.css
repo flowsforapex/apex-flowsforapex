@@ -8,15 +8,18 @@
   --default-stroke-color: black;
 }
 
-@media (prefers-color-scheme: dark) {
-  .mtbv-rendercanvas {
-    background-color: #2b3035;
-  }
-  .bjs-container {
-    --default-fill-color: #2b3035;
-    --default-stroke-color: white;
-  }
-  .bjs-powered-by {
-    color: white !important;
-  }
+/**
+ * custom dark mode colors
+ */
+.mtbv-rendercanvas.FLOWS-DARK {
+  background-color: #2b3035;
+}
+
+.FLOWS-DARK .bjs-container {
+  --default-fill-color: #2b3035;
+  --default-stroke-color: white;
+}
+
+.FLOWS-DARK .bjs-powered-by {
+  color: white !important;
 }

@@ -30,6 +30,12 @@
   color: #ffffff !important;
 }
 
+/* header */
+.apex-logo-img{
+  max-height:25px!important;
+  margin-right:5px;
+}
+
 /* page 2 */
 
 th#action_col, td[headers*="action_col"],
@@ -71,20 +77,8 @@ td[headers="NB_INSTANCES"]{
 
 /* page 10 */
 
-.current-process:not([class*=prcs_status]){
-  background-color: rgba(0,0,0,.05)!important;
-}
-
 .flow-running{
   background-color: rgba(0,0,0,.05);
-}
-
-#col2.col-6{
-    padding-top: 40px;
-}
-
-.a-Tabs-panel{
-    display: none;
 }
 
 th#instance_action_col, td[headers*="instance_action_col"],
@@ -95,54 +89,8 @@ th#view-process, td[headers*="view-process"]{
     width: 10px !important;
 }
 
-/* page 13 */
+/* region display selector fix */
 
 .a-Tabs-panel{
   display: none;
-}
-
-/* page 14 */
-
-.a-Tabs-panel{
-  display: none;
-}
-
-/* dark mode fixes */
-
-@media (prefers-color-scheme: dark) {
-
-  /*Button in Flow Edit page next to version and status fiels*/
-  .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning) {
-    background-color: #4c4e50 !important;
-    color: #fff!important;
-  }
-
-  .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning).is-active, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):focus, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):hover {
-    background-color: #65686a !important;
-  }
-
-  /*Disabled menu*/
-  .a-Menu .a-Menu-item.is-disabled .a-Menu-accel,
-  .a-Menu .a-Menu-item.is-disabled .a-Menu-label {
-  color:rgb(144, 146, 147) !important;
-  }
-
-  /*IR controls when expanded*/
-  .a-IG-controlsLabel,
-  .a-IRR-controlsLabel {
-  background-color:#222629 !important;
-  }
-
-  #ui-timepicker-divhour, #ui-timepicker-divminute {
-    background: #3f4244;
-    border-color: #646464;
-    border-radius: 8px;
-  }
-  #ui-timepicker-divhour:hover, #ui-timepicker-divminute:hover {
-    background: #646464;
-  }
-
-  .ui-datepicker-month, .ui-datepicker-year {
-    background-color: inherit;
-  }
 }
