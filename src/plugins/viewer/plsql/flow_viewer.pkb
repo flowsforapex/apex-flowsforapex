@@ -18,7 +18,7 @@ as
     , p_region => p_region
     );
 
-    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="mtbv-rendercanvas" style="display: none;"></div>' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="mtbv-rendercanvas ' || v('CURRENT_THEME_NAME') || '" style="display: none;"></div>' );
     sys.htp.p( '<span id="' || p_region.static_id || '_ndf" class="nodatafound" style="display: none;">' || coalesce(p_region.no_data_found_message, 'No data found.') || '</span>' );
 
     apex_javascript.add_onload_code

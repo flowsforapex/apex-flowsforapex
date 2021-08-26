@@ -31,8 +31,9 @@
   min-height:100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  .mtbm-rendercanvas, .properties-panel-parent {
-    background-color: #2b3035;
-  }
+/**
+ * custom dark mode colors
+ */
+.FLOWS-DARK .mtbm-rendercanvas, .FLOWS-DARK .properties-panel-parent {
+  background-color: #2b3035;
 }
