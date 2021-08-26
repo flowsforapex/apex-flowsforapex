@@ -1,35 +1,3 @@
-/* color settings */
-
-.prcs_status--created, .prcs_event--created, .prcs_event--reset{
-  background-color: #8c9eb0 !important;
-  fill: #8c9eb0 !important;
-  color: #ffffff !important;
-}
-
-.prcs_status--running, .prcs_event--started{
-  background-color: #d9b13b !important;
-  fill: #d9b13b !important;
-  color: #ffffff !important;
-}
-
-.prcs_status--completed, .prcs_event--completed{
-  background-color: #6aad42 !important;
-  fill: #6aad42 !important;
-  color: #f9f9f9 !important; 
-}
-
-.prcs_status--terminated, .prcs_event--terminated{
-  background-color: #d76a27 !important;
-  fill: #d76a27 !important;
-  color: #f9f9f9 !important; 
-}
-
-.prcs_status--error, .prcs_event--error{
-  background-color: #d2423b !important;
-  fill: #d2423b !important;
-  color: #ffffff !important;
-}
-
 /* header */
 .apex-logo-img{
   max-height:25px!important;
@@ -49,6 +17,10 @@ th#checkbox_col, td[headers*="checkbox_col"]{
 
 .ffa-dgrm-badge{
   display: flex;
+}
+
+.status_icon {
+  padding-right: 8px;
 }
 
 .ffa-dgrm-badge .fa, .ffa-dgrm-badge-text{

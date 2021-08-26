@@ -76,15 +76,15 @@ function initPage2() {
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
       var text = $( this ).text();
       if ( text == "Created" ) {
-        $( this ).parent().addClass( "prcs_status--created" );
+        $( this ).parent().addClass( "u-color-44" );
       } else if ( text == "Completed" ) {
-        $( this ).parent().addClass( "prcs_status--completed" );
+        $( this ).parent().addClass( "u-color-35" );
       } else if ( text == "Running" ) {
-        $( this ).parent().addClass( "prcs_status--running" );
+        $( this ).parent().addClass( "u-color-37" );
       } else if ( text == "Terminated" ) {
-        $( this ).parent().addClass( "prcs_status--terminated" );
+        $( this ).parent().addClass( "u-color-38" );
       } else if ( text == "Error" ) {
-        $( this ).parent().addClass( "prcs_status--error" );
+        $( this ).parent().addClass( "u-color-39" );
       }
     } );
 
@@ -155,23 +155,23 @@ function initPage3() {
     apex
       .jQuery( 'span[data-status="created"]' )
       .parents( "span.t-BadgeList-wrap" )
-      .addClass( "prcs_status--created" );
+      .addClass( "u-color-44" );
     apex
       .jQuery( 'span[data-status="running"]' )
       .parents( "span.t-BadgeList-wrap" )
-      .addClass( "prcs_status--running" );
+      .addClass( "u-color-37" );
     apex
       .jQuery( 'span[data-status="completed"]' )
       .parents( "span.t-BadgeList-wrap" )
-      .addClass( "prcs_status--completed" );
+      .addClass( "u-color-35" );
     apex
       .jQuery( 'span[data-status="terminated"]' )
       .parents( "span.t-BadgeList-wrap" )
-      .addClass( "prcs_status--terminated" );
+      .addClass( "u-color-38" );
     apex
       .jQuery( 'span[data-status="error"]' )
       .parents( "span.t-BadgeList-wrap" )
-      .addClass( "prcs_status--error" );
+      .addClass( "u-color-39" );
   } );
 }
 
@@ -180,23 +180,23 @@ function initPage7() {
     apex
       .jQuery( 'span[data-status="created"]' )
       .parents( "span.t-BadgeList-value" )
-      .addClass( ["prcs_status--created", "instance-counter-link"] );
+      .addClass( ["u-color-44", "instance-counter-link"] );
     apex
       .jQuery( 'span[data-status="running"]' )
       .parents( "span.t-BadgeList-value" )
-      .addClass( ["prcs_status--running", "instance-counter-link"] );
+      .addClass( ["u-color-37", "instance-counter-link"] );
     apex
       .jQuery( 'span[data-status="completed"]' )
       .parents( "span.t-BadgeList-value" )
-      .addClass( ["prcs_status--completed", "instance-counter-link"] );
+      .addClass( ["u-color-35", "instance-counter-link"] );
     apex
       .jQuery( 'span[data-status="terminated"]' )
       .parents( "span.t-BadgeList-value" )
-      .addClass( ["prcs_status--terminated", "instance-counter-link"] );
+      .addClass( ["u-color-38", "instance-counter-link"] );
     apex
       .jQuery( 'span[data-status="error"]' )
       .parents( "span.t-BadgeList-value" )
-      .addClass( ["prcs_status--error", "instance-counter-link"] );
+      .addClass( ["u-color-39", "instance-counter-link"] );
   } );
 }
 
