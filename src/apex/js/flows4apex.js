@@ -76,14 +76,19 @@ function initPage2() {
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
       var text = $( this ).text();
       if ( text == "Created" ) {
+        $( this ).prepend('<i class="status_icon fa fa-plus"></i>');  
         $( this ).parent().addClass( "u-color-44" );
       } else if ( text == "Completed" ) {
+        $( this ).prepend('<i class="status_icon fa fa-play"></i>');  
         $( this ).parent().addClass( "u-color-35" );
       } else if ( text == "Running" ) {
+        $( this ).prepend('<i class="status_icon fa fa-check"></i>');  
         $( this ).parent().addClass( "u-color-37" );
       } else if ( text == "Terminated" ) {
+        $( this ).prepend('<i class="status_icon fa fa-stop-circle-o"></i>');  
         $( this ).parent().addClass( "u-color-38" );
       } else if ( text == "Error" ) {
+        $( this ).prepend('<i class="status_icon fa fa-warning"></i>');  
         $( this ).parent().addClass( "u-color-39" );
       }
     } );
