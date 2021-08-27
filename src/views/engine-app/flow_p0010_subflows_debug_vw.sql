@@ -69,3 +69,4 @@ as
          end as reservation_html
     from flow_subflows_vw sbfl
 with read only
+;
