@@ -994,6 +994,10 @@ function initPage10() {
           item.disabled =
             prcsStatus === "running" || prcsStatus === "error" ? false : true;
         }
+        if ( item.action === "download-as-svg" ) {
+          item.disabled = 
+          apex.item("P10_PRCS_ID").getValue() === "" ? true : false;
+        }
         return item;
       } );
 
