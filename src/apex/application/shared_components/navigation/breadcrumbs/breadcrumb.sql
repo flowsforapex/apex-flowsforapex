@@ -16,6 +16,12 @@ wwv_flow_api.create_menu(
 ,p_name=>'Breadcrumb'
 );
 wwv_flow_api.create_menu_option(
+ p_id=>wwv_flow_api.id(6043758234733358)
+,p_parent_id=>wwv_flow_api.id(34554383018964598)
+,p_short_name=>'&P8_PRCS_NAME.'
+,p_page_id=>8
+);
+wwv_flow_api.create_menu_option(
  p_id=>wwv_flow_api.id(34530380979770009)
 ,p_parent_id=>0
 ,p_short_name=>'Flow Management'

@@ -73,3 +73,20 @@ th#view-process, td[headers*="view-process"]{
 .a-Tabs-panel{
   display: none;
 }
+
+/* page 8 */
+.u-color-44-alert-bg{
+  background-color: rgba(140, 158, 176, 0.15)!important;
+}
+.u-color-37-alert-bg {
+  background-color: rgba(252, 186, 3, 0.15)!important;
+}
+.u-color-35-alert-bg{
+  background-color: rgba(106, 173, 66, 0.15)!important;
+}
+.u-color-38-alert-bg{
+  background-color: rgba(215, 106, 39, 0.15)!important;
+}
+.u-color-39-alert-bg{
+  background-color: rgba(210, 67, 59, 0.15)!important;
+}

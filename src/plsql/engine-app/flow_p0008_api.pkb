@@ -24,6 +24,10 @@ as
           flow_api_pkg.flow_start( p_process_id => pi_prcs_ids(i) );
         when 'DELETE-FLOW-INSTANCE' then
           flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i) );
+          l_url := apex_page.get_url(
+                p_page => 10
+              , p_clear_cache => 10
+          );
         when 'RESERVE-STEP' then
           flow_api_pkg.flow_reserve_step
           (

@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210825170302'
+,p_last_upd_yyyymmddhh24miss=>'20210827111739'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2447308339538228)
@@ -467,6 +467,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>40
 ,p_column_identifier=>'D'
 ,p_column_label=>'Event'
+,p_column_html_expression=>'<span class="prcs_event_badge"><i class="status_icon fa #LGPR_PRCS_EVENT_ICON#"></i>#LGPR_PRCS_EVENT#</span>'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'instance_event_col'
@@ -498,6 +499,15 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Comment'
 ,p_column_type=>'STRING'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(6176982328209914)
+,p_db_column_name=>'LGPR_PRCS_EVENT_ICON'
+,p_display_order=>80
+,p_column_identifier=>'I'
+,p_column_label=>'Lgpr Prcs Event Icon'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(5543735378437756)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -506,7 +516,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>20
-,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT:'
+,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT::LGPR_PRCS_EVENT_ICON'
 ,p_sort_column_1=>'LGPR_TIMESTAMP'
 ,p_sort_direction_1=>'DESC'
 );
@@ -548,10 +558,19 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '$("td[headers*=instance_event_col]").each(function() {',
-'    var className = ''prcs_event--'' + $(this).text();',
-'    $(this).addClass(className);',
+'  var text = $( this ).text();',
+'  if ( text == "created" || text == "reset" ) {',
+'    $( this ).addClass( "u-color-44" );',
+'  } else if ( text == "completed" ) {',
+'    $( this ).addClass( "u-color-35" );',
+'  } else if ( text == "started" ) {',
+'    $( this ).addClass( "u-color-37" );',
+'  } else if ( text == "terminated" ) {',
+'    $( this ).addClass( "u-color-38" );',
+'  } else if ( text == "error" ) {',
+'    $( this ).addClass( "u-color-39" );',
 '  }',
-');'))
+'});'))
 );
 wwv_flow_api.component_end;
 end;

@@ -1,4 +1,4 @@
-create or replace package flow_p0010_api
+create or replace package flow_p0008_api
   authid definer
 as
 
@@ -25,5 +25,5 @@ as
   , pi_prov_var_clob   in flow_process_variables.prov_var_clob%type
   );
 
-end flow_p0010_api;
+end flow_p0008_api;
 /

@@ -215,18 +215,7 @@ function initPage8() {
     var processesNames = [];
 
     if ( action.includes( "bulk-" ) ) {
-      if ( action.includes( "-flow-instance" ) ) {
-        processes = apex
-          .jQuery( "#flow-instances .a-IRR-tableContainer" )
-          .find( 'input[name="f01"]:checked' )
-          .map( function ( item ) {
-            return apex.jQuery( this ).attr( "data-prcs" );
-          } )
-          .toArray();
-        subflows = processes.map( function ( i ) {
-          return null;
-        } );
-      } else {
+      if ( action.includes( "-step" ) ) {
         processes = apex
           .jQuery( "#subflows .a-IRR-tableContainer" )
           .find( 'input[name="f02"]:checked' )
@@ -254,47 +243,46 @@ function initPage8() {
       processesNames.push( myProcessName === undefined ? null : myProcessName );
     }
 
-    var displaySetting = apex.item( "P10_DISPLAY_SETTING" ).getValue();
+    var displaySetting = apex.item( "P8_DISPLAY_SETTING" ).getValue();
 
-    if (
-      action !== "view-flow-instance" ||
-      ( action === "view-flow-instance" && displaySetting === "window" )
-    ) {
-      var result = apex.server.process( "PROCESS_ACTION", {
-        x01: action,
-        x02: apex.item( "P10_RESERVATION" ).getValue(),
-        f01: processes,
-        f02: subflows,
-        f03: diagrams,
-        f04: processesNames,
-      } );
-      result
-        .done( function ( data ) {
-          if ( !data.success ) {
-            apex.debug.error( "Something went wrong..." );
+    var result = apex.server.process( "PROCESS_ACTION", {
+      x01: action,
+      x02: apex.item( "P8_RESERVATION" ).getValue(),
+      f01: processes,
+      f02: subflows,
+      f03: diagrams,
+      f04: processesNames,
+    } );
+    result
+      .done( function ( data ) {
+        if ( !data.success ) {
+          apex.debug.error( "Something went wrong..." );
+        } else {
+          if (
+            action === "view-flow-instance" ||
+            action === "flow-instance-audit" ||
+            action === "edit-flow-diagram" ||
+            action === "delete-flow-instance"
+          ) {
+            apex.navigation.redirect( data.url );
+          } else if ( 
+            action === "start-flow-instance" ||
+            action === "reset-flow-instance" ||
+            action === "terminate-flow-instance"
+          ) {
+            window.location.reload();
           } else {
-            if ( action === "delete-flow-instance" ) {
-              apex.item( "P10_PRCS_ID" ).setValue();
-            } else if (
-              action === "view-flow-instance" ||
-              action === "flow-instance-audit" ||
-              action === "edit-flow-diagram"
-            ) {
-              apex.navigation.redirect( data.url );
-            } else {
-              apex.region( "flow-instances" ).refresh();
-              apex.region( "subflows" ).refresh();
-              apex.region( "flow-monitor" ).refresh();
-            }
+            apex.region( "flow-instance-detail" ).refresh();
+            apex.region( "subflows" ).refresh();
+            apex.region( "process-variables" ).refresh();
+            apex.region( "flow-monitor" ).refresh();
           }
-        } )
-        .fail( function ( jqXHR, textStatus, errorThrown ) {
-          apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );
-        } );
-    } else {
-      apex.item( "P10_PRCS_ID" ).setValue( myProcess );
+        }
+      } )
+      .fail( function ( jqXHR, textStatus, errorThrown ) {
+        apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );
+      } );
     }
-  }
 
   //Define actions
   $( function () {
@@ -513,12 +501,47 @@ function initPage8() {
         apex.jQuery( this ).addClass( "u-alignMiddle" );
       }
     } );
+    
+    var prcsStatus = apex.item("P8_PRCS_STATUS").getValue();
+      
+    if ( prcsStatus === "created" ) {
+        apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-44-text", "fa", "fa-plus-circle-o"]);
+        apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-44-alert-bg");
+    } else if ( prcsStatus === "running" ) {
+        apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-37-text", "fa", "fa-check-circle-o"]);
+        apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-37-alert-bg");
+    } else if ( prcsStatus === "completed" ) {
+        apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-35-text", "fa", "fa-play-circle-o"]);
+        apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-35-alert-bg");
+    } else if ( prcsStatus === "terminated" ) {
+        apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-38-text", "fa", "fa-stop-circle-o"]);
+        apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-38-alert-bg");
+    } else if ( prcsStatus === "error" ) {
+        apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-39-text", "fa", "fa-exclamation-triangle-o"]);
+        apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-39-alert-bg");
+    } 
+    
+    apex.jQuery("#flow-reports .apex-rds-slider").hide();
 
-    /*Disable download image when no instances selected*/
+
     $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {
       var menuItems = ui.menu.items;
-      menuItems[1].disabled =
-        apex.item( "P8_PRCS_ID" ).getValue() === "" ? true : false;
+      var prcsStatus = apex.item("P8_PRCS_STATUS").getValue();
+      var prcsId = apex.item("P8_PRCS_ID").getValue();
+      menuItems = menuItems.map( function ( item ) {
+        if ( item.action === "start-flow-instance" ) {
+          item.disabled = prcsStatus !== "created" ? true : false;
+        }
+        if ( item.action === "reset-flow-instance" ) {
+          item.disabled = prcsStatus !== "created" ? false : true;
+        }
+        if ( item.action === "terminate-flow-instance" ) {
+          item.disabled =
+            prcsStatus === "running" || prcsStatus === "error" ? false : true;
+        }
+        return item;
+      } );
+
       ui.menu.items = menuItems;
     } );
 
