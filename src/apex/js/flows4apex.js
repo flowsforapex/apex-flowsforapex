@@ -858,7 +858,9 @@ function initPage10() {
       {
         name: "download-as-svg",
         action: function ( event, focusElement ) {
-          apex
+          apex.item("P10_PRCS_ID").setValue(apex.jQuery(focusElement).attr("data-prcs"));
+          setTimeout(function() {
+            apex
             .region( "flow-monitor" )
             .getSVG()
             .then( ( svg ) => {
@@ -872,6 +874,7 @@ function initPage10() {
               downloadLink.href = window.URL.createObjectURL( svgBlob );
               downloadLink.click();
             } );
+          }, 1000);
         },
       },
       {
