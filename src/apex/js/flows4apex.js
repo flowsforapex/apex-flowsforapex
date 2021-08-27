@@ -7,6 +7,13 @@ function initApp() {
   } );
 }
 
+function addClassesToParents(pSelector, pParentSelector, pClasses) {
+  apex
+    .jQuery( pSelector )
+    .parents( pParentSelector )
+    .addClass( pClasses );
+}
+
 function initPage2() {
   initApp();
   $( function () {
@@ -157,51 +164,21 @@ function initPage2() {
 function initPage3() {
   initApp();
   apex.jQuery( window ).on( "theme42ready", function () {
-    apex
-      .jQuery( 'span[data-status="created"]' )
-      .parents( "span.t-BadgeList-wrap" )
-      .addClass( "u-color-44" );
-    apex
-      .jQuery( 'span[data-status="running"]' )
-      .parents( "span.t-BadgeList-wrap" )
-      .addClass( "u-color-37" );
-    apex
-      .jQuery( 'span[data-status="completed"]' )
-      .parents( "span.t-BadgeList-wrap" )
-      .addClass( "u-color-35" );
-    apex
-      .jQuery( 'span[data-status="terminated"]' )
-      .parents( "span.t-BadgeList-wrap" )
-      .addClass( "u-color-38" );
-    apex
-      .jQuery( 'span[data-status="error"]' )
-      .parents( "span.t-BadgeList-wrap" )
-      .addClass( "u-color-39" );
+    addClassesToParents('span[data-status="created"]'  , "span.t-BadgeList-wrap", "u-color-44");
+    addClassesToParents('span[data-status="running"]'  , "span.t-BadgeList-wrap", "u-color-37");
+    addClassesToParents('span[data-status="completed"]', "span.t-BadgeList-wrap", "u-color-35");
+    addClassesToParents('span[data-status="terminated"]', "span.t-BadgeList-wrap", "u-color-38");
+    addClassesToParents('span[data-status="error"]'     , "span.t-BadgeList-wrap", "u-color-39");
   } );
 }
 
 function initPage7() {
   apex.jQuery( window ).on( "theme42ready", function () {
-    apex
-      .jQuery( 'span[data-status="created"]' )
-      .parents( "span.t-BadgeList-value" )
-      .addClass( ["u-color-44", "instance-counter-link"] );
-    apex
-      .jQuery( 'span[data-status="running"]' )
-      .parents( "span.t-BadgeList-value" )
-      .addClass( ["u-color-37", "instance-counter-link"] );
-    apex
-      .jQuery( 'span[data-status="completed"]' )
-      .parents( "span.t-BadgeList-value" )
-      .addClass( ["u-color-35", "instance-counter-link"] );
-    apex
-      .jQuery( 'span[data-status="terminated"]' )
-      .parents( "span.t-BadgeList-value" )
-      .addClass( ["u-color-38", "instance-counter-link"] );
-    apex
-      .jQuery( 'span[data-status="error"]' )
-      .parents( "span.t-BadgeList-value" )
-      .addClass( ["u-color-39", "instance-counter-link"] );
+    addClassesToParents('span[data-status="created"]'   , "span.t-BadgeList-value", ["u-color-44", "instance-counter-link"]);
+    addClassesToParents('span[data-status="running"]'   , "span.t-BadgeList-value", ["u-color-37", "instance-counter-link"]);
+    addClassesToParents('span[data-status="completed"]' , "span.t-BadgeList-value", ["u-color-35", "instance-counter-link"]);
+    addClassesToParents('span[data-status="terminated"]', "span.t-BadgeList-value", ["u-color-38", "instance-counter-link"]);
+    addClassesToParents('span[data-status="error"]'     , "span.t-BadgeList-value", ["u-color-39", "instance-counter-link"]);
   } );
 }
 
@@ -702,9 +679,10 @@ function initPage10() {
             if ( action === "delete-flow-instance" ) {
               apex.item( "P10_PRCS_ID" ).setValue();
             } else if (
-              action === "view-flow-instance" ||
+              action === "view-flow-instance"  ||
               action === "flow-instance-audit" ||
-              action === "edit-flow-diagram"
+              action === "edit-flow-diagram"   ||
+              action === "open-flow-instance-details"
             ) {
               apex.navigation.redirect( data.url );
             } else {
@@ -907,6 +885,12 @@ function initPage10() {
         action: function ( event, focusElement ) {
           processAction( this.name, focusElement );
         },
+      },
+      {
+        name: "open-flow-instance-details",
+        action: function ( event, focusElement ) {
+          processAction( this.name, focusElement );
+        }
       }
     ] );
 

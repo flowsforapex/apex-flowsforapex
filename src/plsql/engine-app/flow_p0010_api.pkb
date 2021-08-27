@@ -30,60 +30,10 @@ as
           flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i) );
         when 'BULK-DELETE-FLOW-INSTANCE' then
           flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i) );
-        when 'RESERVE-STEP' then
-          flow_api_pkg.flow_reserve_step
-          (
-            p_process_id => pi_prcs_ids(i)
-          , p_subflow_id => pi_sbfl_ids(i)
-          , p_reservation => coalesce(pi_reservation, V('APP_USER'))
-          );
-        when 'BULK-RESERVE-STEP' then
-          flow_api_pkg.flow_reserve_step
-          (
-            p_process_id => pi_prcs_ids(i)
-          , p_subflow_id => pi_sbfl_ids(i)
-          , p_reservation => coalesce(pi_reservation, V('APP_USER'))
-          );
         when 'TERMINATE-FLOW-INSTANCE' then 
           flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i) );
         when 'BULK-TERMINATE-FLOW-INSTANCE' then 
           flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i) );
-        when 'RELEASE-STEP' then
-          flow_api_pkg.flow_release_step
-          (
-            p_process_id => pi_prcs_ids(i)
-          , p_subflow_id => pi_sbfl_ids(i)
-          );   
-        when 'BULK-RELEASE-STEP' then
-          flow_api_pkg.flow_release_step
-          (
-            p_process_id => pi_prcs_ids(i)
-          , p_subflow_id => pi_sbfl_ids(i)
-          );        
-        when 'COMPLETE-STEP' then
-          flow_api_pkg.flow_complete_step
-          (
-            p_process_id    => pi_prcs_ids(i)
-          , p_subflow_id    => pi_sbfl_ids(i)
-          );
-        when 'BULK-COMPLETE-STEP' then
-          flow_api_pkg.flow_complete_step
-          (
-            p_process_id    => pi_prcs_ids(i)
-          , p_subflow_id    => pi_sbfl_ids(i)
-          );
-        when 'RESTART-STEP' then 
-          flow_api_pkg.flow_restart_step 
-          (
-            p_process_id    => pi_prcs_ids(i)
-          , p_subflow_id    => pi_sbfl_ids(i)           
-          );
-        when 'BULK-RESTART-STEP' then 
-          flow_api_pkg.flow_restart_step 
-          (
-            p_process_id    => pi_prcs_ids(i)
-          , p_subflow_id    => pi_sbfl_ids(i)           
-          );
         when 'VIEW-FLOW-INSTANCE' then
           l_url := apex_page.get_url(
               p_page => 12
@@ -101,6 +51,12 @@ as
               p_page => 7
             , p_items => 'P7_DGRM_ID'
             , p_values => pi_dgrm_ids(i)
+          );
+        when 'OPEN-FLOW-INSTANCE-DETAILS' then
+          l_url := apex_page.get_url(
+              p_page => 8
+            , p_items => 'P8_PRCS_ID'
+            , p_values => pi_prcs_ids(i)
           );
         else
           apex_error.add_error
@@ -124,62 +80,6 @@ as
         l_error_occured := true;
     
   end process_action;
-
-
-procedure process_variables_row
-(
-  pi_request         in varchar2
-, pi_delete_prov_var in boolean default false
-, pi_prov_prcs_id    in out nocopy flow_process_variables.prov_prcs_id%type
-, pi_prov_var_name   in out nocopy flow_process_variables.prov_var_name%type
-, pi_prov_var_type   in flow_process_variables.prov_var_type%type
-, pi_prov_var_vc2    in flow_process_variables.prov_var_vc2%type
-, pi_prov_var_num    in flow_process_variables.prov_var_num%type
-, pi_prov_var_date   in flow_process_variables.prov_var_date%type
-, pi_prov_var_clob   in flow_process_variables.prov_var_clob%type
-)
-as
-begin
-  if ( pi_delete_prov_var ) then
-    flow_process_vars.delete_var(
-        pi_prcs_id  => pi_prov_prcs_id
-      , pi_var_name => pi_prov_var_name
-    );
-  end if;
-
-  case pi_prov_var_type
-    when 'VARCHAR2' then
-      flow_process_vars.set_var
-      (
-        pi_prcs_id   => pi_prov_prcs_id
-      , pi_var_name  => pi_prov_var_name
-      , pi_vc2_value => pi_prov_var_vc2
-      );
-    when 'NUMBER' then
-      flow_process_vars.set_var
-      (
-        pi_prcs_id   => pi_prov_prcs_id
-      , pi_var_name  => pi_prov_var_name
-      , pi_num_value => pi_prov_var_num
-      );
-    when 'DATE' then
-      flow_process_vars.set_var
-      (
-        pi_prcs_id    => pi_prov_prcs_id
-      , pi_var_name   => pi_prov_var_name
-      , pi_date_value => pi_prov_var_date
-      );
-    when 'CLOB' then
-      flow_process_vars.set_var
-      (
-        pi_prcs_id    => pi_prov_prcs_id
-      , pi_var_name   => pi_prov_var_name
-      , pi_clob_value => pi_prov_var_clob
-      );
-    else
-      null;
-  end case;
-end process_variables_row;
 
 end flow_p0010_api;
 /
