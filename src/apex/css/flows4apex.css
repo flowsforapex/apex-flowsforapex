@@ -61,6 +61,13 @@ th#view-process, td[headers*="view-process"]{
     width: 10px !important;
 }
 
+/* badges */
+
+.prcs_status_badge, .prcs_event_badge {
+  display: flex;
+  justify-content: center;
+}
+
 /* region display selector fix */
 
 .a-Tabs-panel{

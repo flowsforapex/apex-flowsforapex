@@ -4,6 +4,14 @@ as
        , lgpr.lgpr_prcs_name
        , lgpr.lgpr_business_id
        , lgpr.lgpr_prcs_event
+       , case lgpr.lgpr_prcs_event
+           when 'started' then 'fa-play'
+           when 'created' then 'fa-plus'
+           when 'completed' then 'fa-check'
+           when 'terminated' then 'fa-stop-circle-o'
+           when 'error' then 'fa-warning'
+           when 'reset' then 'fa-undo'
+         end as lgpr_prcs_event_icon
        , lgpr.lgpr_timestamp
        , lgpr.lgpr_user
        , lgpr.lgpr_comment
