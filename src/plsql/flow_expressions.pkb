@@ -398,11 +398,13 @@ as
     , 'expr_var_name', pi_expression.expr_var_name
     , 'plsql expression' , pi_expression.expr_expression
     );
+    -- evaluate the expression
+    l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
+                    ( p_plsql_expression => pi_expression.expr_expression
+                    );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
-      l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
-                      ( p_plsql_expression => pi_expression.expr_expression
-                      );
+
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -412,10 +414,15 @@ as
       , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_date then
-      l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
-                      ( p_plsql_expression => pi_expression.expr_expression
-                      );
-      -- a date value must be returned using our specified format
+      -- test date value returned using our specified format
+      /*
+      if l_result_vc2 != to_char  ( to_date ( l_result_vc2 
+                                            , flow_constants_pkg.gc_prov_default_date_format )
+                                  , flow_constants_pkg.gc_prov_default_date_format ) then 
+         
+
+*/
+
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -425,9 +432,6 @@ as
       , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_number then
-      l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
-                      ( p_plsql_expression => pi_expression.expr_expression
-                      );
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -442,6 +446,17 @@ as
       , p_display_location => apex_error.c_on_error_page
       );
     end case;
+  exception
+    when others then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_plsql_error'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $$SOMETAG 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
   end set_plsql_expression;  
 
   procedure set_plsql_function        
@@ -459,11 +474,13 @@ as
     , 'expr_var_name', pi_expression.expr_var_name
     , 'plsql function body' , pi_expression.expr_expression
     );
-    case pi_expression.expr_var_type 
-    when flow_constants_pkg.gc_prov_var_type_varchar2 then
-      l_result_vc2 := apex_plugin_util.get_plsql_function_result 
+
+    -- evaluate the function
+    l_result_vc2 := apex_plugin_util.get_plsql_function_result 
                       ( p_plsql_function => pi_expression.expr_expression
                       );
+    case pi_expression.expr_var_type 
+    when flow_constants_pkg.gc_prov_var_type_varchar2 then
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -473,10 +490,8 @@ as
       , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_date then
-      l_result_vc2 := apex_plugin_util.get_plsql_function_result 
-                      ( p_plsql_function => pi_expression.expr_expression
-                      );
       -- a date value must be returned using our specified format
+      -- add a test that format is good?
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -486,9 +501,6 @@ as
       , pi_expr_set       => pi_expression.expr_set
       );
     when flow_constants_pkg.gc_prov_var_type_number then
-      l_result_vc2 := apex_plugin_util.get_plsql_function_result 
-                      ( p_plsql_function => pi_expression.expr_expression
-                      );
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -503,6 +515,17 @@ as
       , p_display_location => apex_error.c_on_error_page
       );
     end case;
+  exception
+    when others then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_plsql_error'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $$SOMETAG 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
   end set_plsql_function;
 
   /**********************************************************************

@@ -8,6 +8,7 @@ as
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
   , p_comment           in flow_instance_event_log.lgpr_comment%type default null
+  , p_error_info        in flow_instance_event_log.lgpr_error_info%type default null
   )
   is 
   begin 
@@ -25,6 +26,7 @@ as
       , lgpr_timestamp 
       , lgpr_user 
       , lgpr_comment
+      , lgpr_error_info
       )
       select prcs.prcs_id
           , prcs.prcs_dgrm_id
@@ -37,6 +39,7 @@ as
                       , sys_context('userenv','session_user')
                       )  --- check this is complete
           , p_comment
+          , p_error_info
         from flow_processes prcs 
       where prcs.prcs_id = p_process_id
       ;
