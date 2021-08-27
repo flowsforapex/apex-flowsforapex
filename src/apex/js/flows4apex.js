@@ -858,23 +858,20 @@ function initPage10() {
       {
         name: "download-as-svg",
         action: function ( event, focusElement ) {
-          apex.item("P10_PRCS_ID").setValue(apex.jQuery(focusElement).attr("data-prcs"));
-          setTimeout(function() {
-            apex
-            .region( "flow-monitor" )
-            .getSVG()
-            .then( ( svg ) => {
-              var svgBlob = new Blob( [svg], {
-                type: "image/svg+xml",
-              } );
-              var fileName = Date.now();
-
-              var downloadLink = document.createElement( "a" );
-              downloadLink.download = fileName;
-              downloadLink.href = window.URL.createObjectURL( svgBlob );
-              downloadLink.click();
+          apex
+          .region( "flow-monitor" )
+          .getSVG()
+          .then( ( svg ) => {
+            var svgBlob = new Blob( [svg], {
+              type: "image/svg+xml",
             } );
-          }, 1000);
+
+            var fileName = Date.now();
+            var downloadLink = document.createElement( "a" );
+            downloadLink.download = fileName;
+            downloadLink.href = window.URL.createObjectURL( svgBlob );
+            downloadLink.click();
+          } );
         },
       },
       {
@@ -983,6 +980,7 @@ function initPage10() {
       var rowBtn = apex.jQuery( ".flow-instance-actions-btn.is-active" );
       var menuItems = ui.menu.items;
       var prcsStatus = rowBtn.data( "status" );
+      var prcsId = rowBtn.attr( "data-prcs" );
       menuItems = menuItems.map( function ( item ) {
         if ( item.action === "start-flow-instance" ) {
           item.disabled = prcsStatus !== "created" ? true : false;
@@ -996,7 +994,7 @@ function initPage10() {
         }
         if ( item.action === "download-as-svg" ) {
           item.disabled = 
-          apex.item("P10_PRCS_ID").getValue() === "" ? true : false;
+          prcsId !== apex.item("P10_PRCS_ID").getValue() ? true : false;
         }
         return item;
       } );
