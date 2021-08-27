@@ -358,7 +358,8 @@ create table flow_instance_event_log
 , lgpr_prcs_event       	VARCHAR2(20 CHAR) NOT NULL
 , lgpr_timestamp     		TIMESTAMP WITH TIME ZONE NOT NULL
 , lgpr_user 				VARCHAR2(255 char)
-, lgpr_comment				VARCHAR2(2000)
+, lgpr_comment				VARCHAR2(2000 CHAR)
+, lgpr_error_info           VARCHAR2(2000 CHAR)
 );
 
 
@@ -375,7 +376,7 @@ create table flow_subflow_event_log
 , lgsf_completed 			TIMESTAMP WITH TIME ZONE 
 , lgsf_reservation		    VARCHAR2(255 char)
 , lgsf_user				    VARCHAR2(255 char)	
-, lgsf_comment         	    VARCHAR2(2000)
+, lgsf_comment         	    VARCHAR2(2000 CHAR)
 );
 
 create table flow_variable_event_log
@@ -398,4 +399,12 @@ create table flow_configuration
 );
 
 alter table flow_configuration ADD CONSTRAINT cfig_pk PRIMARY KEY ( cfig_key );
+
+create table flow_messages
+( fmsg_message_key          varchar2(30 char) not null
+, fmsg_lang                 varchar2(10 char) not null
+, fmsg_message_content      varchar2(2000 char) 
+);
+
+alter table flow_messages ADD CONSTRAINT fmsg_pk PRIMARY KEY ( fmsg_message_key, fmsg_lang );
 
