@@ -558,7 +558,9 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
   color: white;
   background-color: #282c30;
 }
-.FLOWS-DARK .bpp-properties-panel label,
+.FLOWS-DARK .bpp-properties-panel label {
+  color: white;
+}
 .FLOWS-DARK .bpp-properties-panel button[data-action="clear"] {
   background-color: inherit;
 }
