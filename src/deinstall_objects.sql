@@ -77,7 +77,7 @@ drop table flow_instance_event_log cascade constraints;
 drop table flow_subflow_event_log cascade constraints;
 drop table flow_variable_event_log cascade constraints;
 drop table flow_configuration cascade constraints;
-
+drop table flow_messages cascade constraints;
 
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
