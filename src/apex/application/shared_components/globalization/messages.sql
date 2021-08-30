@@ -63,6 +63,12 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7072975164227666)
+,p_name=>'APP_CONFIRM_RESTART_STEP'
+,p_message_text=>'This will re-start the subflow. Are you sure?'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(5024181840145883)
 ,p_name=>'APP_CONFIRM_TERMINATE_INSTANCE'
 ,p_message_text=>'This will terminate the flow instance. Are you sure?'
@@ -166,6 +172,58 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7005845949232185)
+,p_name=>'APP_INSTANCE_DELETED'
+,p_message_text=>'Flow instance deleted.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7006138066240834)
+,p_name=>'APP_INSTANCE_DELETED'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Instance de flux supprim\00E9e.')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7005460531221619)
+,p_name=>'APP_INSTANCE_RESET'
+,p_message_text=>'Flow instance reset.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7006743414248765)
+,p_name=>'APP_INSTANCE_RESET'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Instance de flux r\00E9initialis\00E9e.')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7005265750200100)
+,p_name=>'APP_INSTANCE_STARTED'
+,p_message_text=>'Flow instance started.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7006585036246542)
+,p_name=>'APP_INSTANCE_STARTED'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Instance de flux d\00E9marr\00E9e.')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7005690133229935)
+,p_name=>'APP_INSTANCE_TERMINATED'
+,p_message_text=>'Flow instance terminated.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7006368587244427)
+,p_name=>'APP_INSTANCE_TERMINATED'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Instance de flux termin\00E9e.')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34714875794391923)
 ,p_name=>'APP_NEW_VERSION'
 ,p_message_text=>'New version'
@@ -200,6 +258,32 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_OVERWRITE_WARN'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('S''il existe des instances en cours d''ex\00E9cution associ\00E9es \00E0 ce mod\00E8le, cela risque de provoquer des erreurs. \00CAtes-vous s\00FBr de vouloir continuer ?')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7049063211512400)
+,p_name=>'APP_PROCESS_VARIABLE_ADDED'
+,p_message_text=>'Process variable added.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7049247532514652)
+,p_name=>'APP_PROCESS_VARIABLE_ADDED'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Variable de processus ajout\00E9e.')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7049459946516827)
+,p_name=>'APP_PROCESS_VARIABLE_SAVED'
+,p_message_text=>'Process variable saved.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7049651493519440)
+,p_name=>'APP_PROCESS_VARIABLE_SAVED'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Variable de processus enregistr\00E9e.')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -255,6 +339,12 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7072717610226144)
+,p_name=>'APP_RESTART_STEP'
+,p_message_text=>'Re-start subflow'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34715595762431684)
 ,p_name=>'APP_START_INSTANCE'
 ,p_message_text=>'Start Flow Instance'
@@ -265,6 +355,19 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_START_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('D\00E9marrer l''instance de flux')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7020498147014290)
+,p_name=>'APP_SUBLFOW_RESTARTED'
+,p_message_text=>'Subflow restarted.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7020695466017798)
+,p_name=>'APP_SUBLFOW_RESTARTED'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Sous-flux red\00E9marr\00E9.')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(

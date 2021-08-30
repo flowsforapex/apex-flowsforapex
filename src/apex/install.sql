@@ -6,6 +6,7 @@ prompt --install
 @@application/shared_components/navigation/lists/p10_instance_header_action_menu.sql
 @@application/shared_components/navigation/lists/p8_subflow_header_action_menu.sql
 @@application/shared_components/navigation/lists/p8_action_menu.sql
+@@application/shared_components/navigation/lists/p8_variable_row_action_menu.sql
 @@application/shared_components/navigation/lists/p2_action_menu.sql
 @@application/shared_components/navigation/lists/p7_action_menu.sql
 @@application/shared_components/navigation/lists/p10_action_menu.sql

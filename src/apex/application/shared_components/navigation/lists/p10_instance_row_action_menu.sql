@@ -75,7 +75,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40426450496997035)
 ,p_list_item_display_sequence=>80
 ,p_list_item_link_text=>'Terminate'
-,p_list_item_icon=>'fa-stop-circle-o'
+,p_list_item_icon=>'fa-stop'
 ,p_list_text_01=>'terminate-flow-instance'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );

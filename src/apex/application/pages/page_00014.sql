@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210827111739'
+,p_last_upd_yyyymmddhh24miss=>'20210830085101'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2447308339538228)
@@ -500,9 +500,17 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(6177795465209922)
+,p_db_column_name=>'LGPR_ERROR_INFO'
+,p_display_order=>80
+,p_column_identifier=>'J'
+,p_column_label=>'Error Stack'
+,p_column_type=>'STRING'
+);
+wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(6176982328209914)
 ,p_db_column_name=>'LGPR_PRCS_EVENT_ICON'
-,p_display_order=>80
+,p_display_order=>90
 ,p_column_identifier=>'I'
 ,p_column_label=>'Lgpr Prcs Event Icon'
 ,p_column_type=>'STRING'
@@ -516,7 +524,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>20
-,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT::LGPR_PRCS_EVENT_ICON'
+,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT::LGPR_PRCS_EVENT_ICON:LGPR_ERROR_INFO'
 ,p_sort_column_1=>'LGPR_TIMESTAMP'
 ,p_sort_direction_1=>'DESC'
 );

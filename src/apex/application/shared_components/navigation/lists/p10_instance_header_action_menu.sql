@@ -36,7 +36,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(2432979512873125)
 ,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'Terminate'
-,p_list_item_icon=>'fa-stop-circle-o'
+,p_list_item_icon=>'fa-stop'
 ,p_list_text_01=>'bulk-terminate-flow-instance'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );

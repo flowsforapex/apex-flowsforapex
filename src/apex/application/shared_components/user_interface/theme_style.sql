@@ -26,7 +26,8 @@ wwv_flow_api.create_theme_style(
 ||'n  background-color:#222629 !important;\n}\n\n.a-Menu .a-Menu-item.is-disabled.is-focused {\n  color: rgba(254, 254, 254, 0.5);\n  background-color: #6c6c6c75;\n}\n.a-Menu .a-Menu-item.is-disabled.is-focused > .a-Menu-inner .a-Menu-statusCol,\n.a-Men'
 ||'u .a-Menu-item.is-disabled.is-focused > .a-Menu-inner .a-Menu-accel {\n  color: rgb(144, 146, 147);\n  opacity: 1;\n}\n\n/*Date picker*/\n\n#ui-timepicker-divhour, #ui-timepicker-divminute {\n  background: #3f4244;\n  border-color: #646464;\n  border'
 ||'-radius: 8px;\n}\n#ui-timepicker-divhour:hover, #ui-timepicker-divminute:hover {\n  background: #646464;\n}\n\n.ui-datepicker-month, .ui-datepicker-year {\n  background-color: inherit;\n}\n\n.current-process:not([headers*=\"instance_status_col\"]) {\'
-||'n  background-color: rgba(255, 255, 255, 0.14) !important;\n}\n\n/*Confirm dialog title background*/\nbody .ui-dialog .ui-dialog-titlebar {\n  background-color: #222629!important;\n}","vars":{}}'
+||'n  background-color: rgba(255, 255, 255, 0.14) !important;\n}\n\n/*Confirm dialog title background*/\nbody .ui-dialog .ui-dialog-titlebar {\n  background-color: #222629!important;\n}\n\n/*IR Row selector label*/\n.a-IRR-rowSelector label {\n color:#f'
+||'fffff !important;\n}\n","vars":{}}'
 ,p_theme_roller_output_file_url=>'#THEME_DB_IMAGES#5633999520827555.css'
 ,p_theme_roller_read_only=>false
 );
