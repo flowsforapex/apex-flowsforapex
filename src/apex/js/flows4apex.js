@@ -535,7 +535,7 @@ function initPage8() {
         apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-38-text", "fa", "fa-stop-circle-o"]);
         apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-38-alert-bg");
     } else if ( prcsStatus === "error" ) {
-        apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-39-text", "fa", "fa-exclamation-triangle-o"]);
+        apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-39-text", "fa", "fa-exclamation-circle-o"]);
         apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-39-alert-bg");
     } 
     
@@ -706,7 +706,7 @@ function initPage10() {
     ) {
       var result = apex.server.process( "PROCESS_ACTION", {
         x01: action,
-        x02: apex.item( "P10_RESERVATION" ).getValue(),
+        x02: apex.item( "P10_COMMENT" ).getValue(),
         f01: processes,
         f02: subflows,
         f03: diagrams,
@@ -727,7 +727,7 @@ function initPage10() {
             } else if ( action === "delete-flow-instance" ) {
               messageKey = "APP_INSTANCE_DELETED";
             }   
-            if ( messageKey !== "" ){
+            if ( messageKey !== undefined ){
               apex.message.showPageSuccess( apex.lang.getMessage( messageKey ) );
             }
             if ( action === "delete-flow-instance" ) {
@@ -828,85 +828,127 @@ function initPage10() {
       {
         name: "reset-flow-instance",
         action: function ( event, focusElement ) {
-          var action = this.name;
-          apex.message.confirm(
-            apex.lang.getMessage( "APP_CONFIRM_RESET_INSTANCE" ),
-            function ( okPressed ) {
-              if ( okPressed ) {
-                processAction( action, focusElement );
-              }
-            }
-          );
+          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "instance_action_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_COMMENT" ).setValue( "" );
+            apex.item( "P10_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_RESET_INSTANCE" ));
+            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
+            apex.theme.openRegion( "instance_action_dialog" );
+            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_RESET_INSTANCE" ));
+          }
         },
       },
       {
         name: "bulk-reset-flow-instance",
         action: function ( event, focusElement ) {
-          var action = this.name;
-          apex.message.confirm(
-            apex.lang.getMessage( "APP_CONFIRM_RESET_INSTANCE" ),
-            function ( okPressed ) {
-              if ( okPressed ) {
-                processAction( action, focusElement );
-              }
-            }
-          );
+          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "instance_action_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_COMMENT" ).setValue( "" );
+            apex.item( "P10_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_RESET_INSTANCE" ));
+            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
+            apex.theme.openRegion( "instance_action_dialog" );
+            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_RESET_INSTANCE" ));
+          }
         },
       },
       {
         name: "terminate-flow-instance",
         action: function ( event, focusElement ) {
-          var action = this.name;
-          apex.message.confirm(
-            apex.lang.getMessage( "APP_CONFIRM_TERMINATE_INSTANCE" ),
-            function ( okPressed ) {
-              if ( okPressed ) {
-                processAction( action, focusElement );
-              }
-            }
-          );
+          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "instance_action_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_COMMENT" ).setValue( "" );
+            apex.item( "P10_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_TERMINATE_INSTANCE" ));
+            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
+            apex.theme.openRegion( "instance_action_dialog" );
+            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_TERMINATE_INSTANCE" ));
+          }
         },
       },
       {
         name: "bulk-terminate-flow-instance",
         action: function ( event, focusElement ) {
-          var action = this.name;
-          apex.message.confirm(
-            apex.lang.getMessage( "APP_CONFIRM_TERMINATE_INSTANCE" ),
-            function ( okPressed ) {
-              if ( okPressed ) {
-                processAction( action, focusElement );
-              }
-            }
-          );
+          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "instance_action_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_COMMENT" ).setValue( "" );
+            apex.item( "P10_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_TERMINATE_INSTANCE" ));
+            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
+            apex.theme.openRegion( "instance_action_dialog" );
+            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_TERMINATE_INSTANCE" ));
+          }
         },
       },
       {
         name: "delete-flow-instance",
         action: function ( event, focusElement ) {
-          var action = this.name;
-          apex.message.confirm(
-            apex.lang.getMessage( "APP_CONFIRM_DELETE_INSTANCE" ),
-            function ( okPressed ) {
-              if ( okPressed ) {
-                processAction( action, focusElement );
-              }
-            }
-          );
+          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "instance_action_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_COMMENT" ).setValue( "" );
+            apex.item( "P10_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_DELETE_INSTANCE" ));
+            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
+            apex.theme.openRegion( "instance_action_dialog" );
+            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_DELETE_INSTANCE" ));
+          }
         },
       },
       {
         name: "bulk-delete-flow-instance",
         action: function ( event, focusElement ) {
-          var action = this.name;
-          apex.message.confirm(
-            apex.lang.getMessage( "APP_CONFIRM_DELETE_INSTANCE" ),
-            function ( okPressed ) {
-              if ( okPressed ) {
-                processAction( action, focusElement );
-              }
-            }
-          );
+          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+            apex.theme.closeRegion( "instance_action_dialog" );
+            processAction( this.name, focusElement );
+          } else {
+            apex.item( "P10_COMMENT" ).setValue( "" );
+            apex.item( "P10_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_DELETE_INSTANCE" ));
+            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
+            apex
+              .jQuery( "#confirm-btn" )
+              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
+            apex.theme.openRegion( "instance_action_dialog" );
+            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_DELETE_INSTANCE" ));
+          }
         },
       },
       {

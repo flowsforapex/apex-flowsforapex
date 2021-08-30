@@ -8,7 +8,7 @@ as
   , pi_sbfl_ids in apex_application.g_f02%type
   , pi_dgrm_ids in apex_application.g_f03%type
   , pi_prcs_names in apex_application.g_f04%type
-  , pi_reservation in varchar2
+  , pi_comment in varchar2
   )
   as
     l_error_occured boolean := false;
@@ -19,21 +19,21 @@ as
       apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => pi_action, p1 => pi_prcs_ids(i), p2 => pi_sbfl_ids(i) );
       case upper(pi_action)
         when 'RESET-FLOW-INSTANCE' then
-          flow_api_pkg.flow_reset( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_reset( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'BULK-RESET-FLOW-INSTANCE' then
-          flow_api_pkg.flow_reset( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_reset( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'START-FLOW-INSTANCE' then
           flow_api_pkg.flow_start( p_process_id => pi_prcs_ids(i) );
         when 'BULK-START-FLOW-INSTANCE' then
           flow_api_pkg.flow_start( p_process_id => pi_prcs_ids(i) );
         when 'DELETE-FLOW-INSTANCE' then
-          flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'BULK-DELETE-FLOW-INSTANCE' then
-          flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'TERMINATE-FLOW-INSTANCE' then 
-          flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'BULK-TERMINATE-FLOW-INSTANCE' then 
-          flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'VIEW-FLOW-INSTANCE' then
           l_url := apex_page.get_url(
               p_page => 12
