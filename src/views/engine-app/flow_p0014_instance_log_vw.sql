@@ -5,11 +5,11 @@ as
        , lgpr.lgpr_business_id
        , lgpr.lgpr_prcs_event
        , case lgpr.lgpr_prcs_event
-           when 'started' then 'fa-play'
-           when 'created' then 'fa-plus'
-           when 'completed' then 'fa-check'
+           when 'started' then 'fa-play-circle-o'
+           when 'created' then 'fa-plus-circle-o'
+           when 'completed' then 'fa-check-circle-o'
            when 'terminated' then 'fa-stop-circle-o'
-           when 'error' then 'fa-warning'
+           when 'error' then 'fa-exclamation-circle-o'
            when 'reset' then 'fa-undo'
          end as lgpr_prcs_event_icon
        , lgpr.lgpr_timestamp
