@@ -15,5 +15,6 @@ as
        , lgpr.lgpr_timestamp
        , lgpr.lgpr_user
        , lgpr.lgpr_comment
+       , lgpr_error_info
     from flow_instance_event_log lgpr
 with read only;
