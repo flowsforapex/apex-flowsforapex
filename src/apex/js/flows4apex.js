@@ -83,19 +83,19 @@ function initPage2() {
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
       var text = $( this ).text();
       if ( text == "Created" ) {
-        $( this ).prepend('<i class="status_icon fa fa-plus"></i>');  
+        $( this ).prepend('<i class="status_icon fa fa-plus-circle-o"></i>');  
         $( this ).parent().addClass( "u-color-44" );
       } else if ( text == "Completed" ) {
-        $( this ).prepend('<i class="status_icon fa fa-play"></i>');  
+        $( this ).prepend('<i class="status_icon fa fa-play-circle-o"></i>');  
         $( this ).parent().addClass( "u-color-35" );
       } else if ( text == "Running" ) {
-        $( this ).prepend('<i class="status_icon fa fa-check"></i>');  
+        $( this ).prepend('<i class="status_icon fa fa-check-circle-o"></i>');  
         $( this ).parent().addClass( "u-color-37" );
       } else if ( text == "Terminated" ) {
         $( this ).prepend('<i class="status_icon fa fa-stop-circle-o"></i>');  
         $( this ).parent().addClass( "u-color-38" );
       } else if ( text == "Error" ) {
-        $( this ).prepend('<i class="status_icon fa fa-warning"></i>');  
+        $( this ).prepend('<i class="status_icon fa fa-exclamation-circle-o"></i>');  
         $( this ).parent().addClass( "u-color-39" );
       }
     } );
@@ -255,9 +255,27 @@ function initPage8() {
     } );
     result
       .done( function ( data ) {
+        console.log(data);
         if ( !data.success ) {
           apex.debug.error( "Something went wrong..." );
         } else {
+          var messageKey;
+          if ( action === "start-flow-instance" ) {
+            messageKey = "APP_INSTANCE_STARTED";
+          } else if ( action === "reset-flow-instance" ) {
+            messageKey = "APP_INSTANCE_RESET";
+          } else if ( action === "terminate-flow-instance" ) {
+            messageKey = "APP_INSTANCE_TERMINATED";
+          } else if ( action === "delete-flow-instance" ) {
+            messageKey = "APP_INSTANCE_DELETED";
+          } else if ( action === "restart-step" ) {
+            messageKey = "APP_SUBLFOW_RESTARTED";
+          }  
+
+          if ( messageKey !== undefined ){
+            apex.message.showPageSuccess( apex.lang.getMessage( messageKey ) );
+          }
+
           if (
             action === "view-flow-instance" ||
             action === "flow-instance-audit" ||
@@ -699,6 +717,19 @@ function initPage10() {
           if ( !data.success ) {
             apex.debug.error( "Something went wrong..." );
           } else {
+            var messageKey;
+            if ( action === "start-flow-instance" ) {
+              messageKey = "APP_INSTANCE_STARTED";
+            } else if ( action === "reset-flow-instance" ) {
+              messageKey = "APP_INSTANCE_RESET";
+            } else if ( action === "terminate-flow-instance" ) {
+              messageKey = "APP_INSTANCE_TERMINATED";
+            } else if ( action === "delete-flow-instance" ) {
+              messageKey = "APP_INSTANCE_DELETED";
+            }   
+            if ( messageKey !== "" ){
+              apex.message.showPageSuccess( apex.lang.getMessage( messageKey ) );
+            }
             if ( action === "delete-flow-instance" ) {
               apex.item( "P10_PRCS_ID" ).setValue();
             } else if (

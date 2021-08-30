@@ -58,11 +58,11 @@ as
                      when 'error' then 'reset'
                    end as btn_action
                  , case prcs_status
-                     when 'running' then 'fa-play'
-                     when 'created' then 'fa-plus'
-                     when 'completed' then 'fa-check'
+                     when 'running' then 'fa-play-circle-o'
+                     when 'created' then 'fa-plus-circle-o'
+                     when 'completed' then 'fa-check-circle-o'
                      when 'terminated' then 'fa-stop-circle-o'
-                     when 'error' then 'fa-warning'
+                     when 'error' then 'fa-exclamation-circle-o'
                    end as prcs_status_icon
                  , case 
                      when prcs_status in ('running', 'error') then 
