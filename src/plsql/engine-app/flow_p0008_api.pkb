@@ -2,13 +2,170 @@ create or replace package body flow_p0008_api
 as
 
   procedure process_action
+  as 
+    l_error_occured boolean := false;
+    l_url           varchar2(4000);
+    l_clob          clob;
+  begin
+    if instr(apex_application.g_x01, 'bulk-') > 0 then
+      for i in apex_application.g_f01.first..apex_application.g_f01.last
+      loop
+        apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => apex_application.g_x01, p1 => apex_application.g_f01(i), p2 => apex_application.g_f02(i) );
+        case upper(apex_application.g_x01)
+          when 'BULK-RESERVE-STEP' then
+            flow_api_pkg.flow_reserve_step
+            (
+              p_process_id => apex_application.g_f01(i)
+            , p_subflow_id => apex_application.g_f02(i)
+            , p_reservation => coalesce(apex_application.g_x02, V('APP_USER'))
+            );
+          when 'BULK-RELEASE-STEP' then
+            flow_api_pkg.flow_release_step
+            (
+              p_process_id => apex_application.g_f01(i)
+            , p_subflow_id => apex_application.g_f02(i)
+            );        
+          when 'BULK-COMPLETE-STEP' then
+            flow_api_pkg.flow_complete_step
+            (
+              p_process_id => apex_application.g_f01(i)
+            , p_subflow_id => apex_application.g_f02(i)
+            );
+          when 'BULK-RESTART-STEP' then 
+            flow_api_pkg.flow_restart_step 
+            (
+              p_process_id => apex_application.g_f01(i)
+            , p_subflow_id => apex_application.g_f02(i)
+            , p_comment       => apex_application.g_x02           
+            );
+          else
+            apex_error.add_error
+            (
+              p_message          => 'Unknow action requested.'
+            , p_display_location => apex_error.c_on_error_page
+            );
+        end case;
+      end loop;
+    else
+      apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => apex_application.g_x01, p1 => apex_application.g_x02, p2 => apex_application.g_x03 );
+      case upper(apex_application.g_x01)
+        when 'RESET-FLOW-INSTANCE' then
+          flow_api_pkg.flow_reset( p_process_id => apex_application.g_x01, p_comment => apex_application.g_x02 );
+        when 'START-FLOW-INSTANCE' then
+          flow_api_pkg.flow_start( p_process_id => apex_application.g_x01 );
+        when 'DELETE-FLOW-INSTANCE' then
+          flow_api_pkg.flow_delete( p_process_id => apex_application.g_x01, p_comment => apex_application.g_x02 );
+          l_url := apex_page.get_url(
+                p_page => 10
+              , p_clear_cache => 10
+          );
+        when 'RESERVE-STEP' then
+          flow_api_pkg.flow_reserve_step
+          (
+            p_process_id => apex_application.g_x02
+          , p_subflow_id => apex_application.g_x03
+          , p_reservation => coalesce(apex_application.g_x04, V('APP_USER'))
+          );
+        when 'TERMINATE-FLOW-INSTANCE' then 
+          flow_api_pkg.flow_terminate ( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
+        when 'RELEASE-STEP' then
+          flow_api_pkg.flow_release_step
+          (
+            p_process_id => apex_application.g_x02
+          , p_subflow_id => apex_application.g_x03
+          );    
+        when 'COMPLETE-STEP' then
+          flow_api_pkg.flow_complete_step
+          (
+            p_process_id    => apex_application.g_x02
+          , p_subflow_id    => apex_application.g_x03
+          );
+        when 'RESTART-STEP' then 
+          flow_api_pkg.flow_restart_step 
+          (
+            p_process_id    => apex_application.g_x02
+          , p_subflow_id    => apex_application.g_x03
+          , p_comment       => apex_application.g_x04       
+          );
+        when 'FLOW-INSTANCE-AUDIT' then
+          l_url := apex_page.get_url(
+              p_page => 14
+            , p_items => 'P14_PRCS_ID,P14_TITLE'
+            , p_values => apex_application.g_x02||','||apex_application.g_x03
+          );
+        when 'EDIT-FLOW-DIAGRAM' then
+          l_url := apex_page.get_url(
+              p_page => 7
+            , p_items => 'P7_DGRM_ID'
+            , p_values => apex_application.g_x02
+          );
+        when 'ADD-PROCESS-VARIABLE' then
+          case apex_application.g_x04
+            when 'VARCHAR2' then
+              flow_process_vars.set_var
+              (
+                pi_prcs_id   => apex_application.g_x02
+              , pi_var_name  => apex_application.g_x03
+              , pi_vc2_value => apex_application.g_x05
+              );
+            when 'NUMBER' then
+              flow_process_vars.set_var
+              (
+                pi_prcs_id   => apex_application.g_x02
+              , pi_var_name  => apex_application.g_x03
+              , pi_num_value => to_number(apex_application.g_x05)
+              );
+            when 'DATE' then
+              flow_process_vars.set_var
+              (
+                pi_prcs_id    => apex_application.g_x02
+              , pi_var_name   => apex_application.g_x03
+              , pi_date_value => to_date(apex_application.g_x05, v('APP_DATE_TIME_FORMAT'))
+              );
+            when 'CLOB' then
+              for i in apex_application.g_f01.first..apex_application.g_f01.last
+              loop
+                l_clob := l_clob || apex_application.g_f01(i);
+              end loop;
+              flow_process_vars.set_var
+              (
+                pi_prcs_id    => apex_application.g_x02
+              , pi_var_name   => apex_application.g_x03
+              , pi_clob_value => l_clob
+              );
+            else
+              null;
+          end case;
+        else
+          apex_error.add_error
+          (
+            p_message          => 'Unknow action requested.'
+          , p_display_location => apex_error.c_on_error_page
+          );
+      end case;
+    end if;
+
+    apex_json.open_object;
+    apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
+    if l_url is not null then
+      apex_json.write( p_name => 'url', p_value => l_url );
+    end if;
+    apex_json.close_all;
+    
+  exception
+      when others then
+        l_error_occured := true;
+  end process_action;
+
+  procedure process_action
   (
-    pi_action  in varchar2
-  , pi_prcs_ids in apex_application.g_f01%type
-  , pi_sbfl_ids in apex_application.g_f02%type
-  , pi_dgrm_ids in apex_application.g_f03%type
-  , pi_prcs_names in apex_application.g_f04%type
+    pi_action      in varchar2
+  , pi_prcs_ids    in apex_application.g_f01%type
+  , pi_sbfl_ids    in apex_application.g_f02%type
+  , pi_dgrm_ids    in apex_application.g_f03%type
+  , pi_prcs_names  in apex_application.g_f04%type
   , pi_reservation in varchar2
+  , pi_comment     in varchar2
   )
   as
     l_error_occured boolean := false;
@@ -19,11 +176,11 @@ as
       apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => pi_action, p1 => pi_prcs_ids(i), p2 => pi_sbfl_ids(i) );
       case upper(pi_action)
         when 'RESET-FLOW-INSTANCE' then
-          flow_api_pkg.flow_reset( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_reset( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'START-FLOW-INSTANCE' then
           flow_api_pkg.flow_start( p_process_id => pi_prcs_ids(i) );
         when 'DELETE-FLOW-INSTANCE' then
-          flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_delete( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
           l_url := apex_page.get_url(
                 p_page => 10
               , p_clear_cache => 10
@@ -43,7 +200,7 @@ as
           , p_reservation => coalesce(pi_reservation, V('APP_USER'))
           );
         when 'TERMINATE-FLOW-INSTANCE' then 
-          flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i) );
+          flow_api_pkg.flow_terminate ( p_process_id => pi_prcs_ids(i), p_comment => pi_comment );
         when 'RELEASE-STEP' then
           flow_api_pkg.flow_release_step
           (
@@ -72,13 +229,15 @@ as
           flow_api_pkg.flow_restart_step 
           (
             p_process_id    => pi_prcs_ids(i)
-          , p_subflow_id    => pi_sbfl_ids(i)           
+          , p_subflow_id    => pi_sbfl_ids(i)    
+          , p_comment       => pi_comment       
           );
         when 'BULK-RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
           (
             p_process_id    => pi_prcs_ids(i)
-          , p_subflow_id    => pi_sbfl_ids(i)           
+          , p_subflow_id    => pi_sbfl_ids(i)
+          , p_comment       => pi_comment           
           );
         when 'FLOW-INSTANCE-AUDIT' then
           l_url := apex_page.get_url(

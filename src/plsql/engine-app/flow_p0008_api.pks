@@ -2,6 +2,8 @@ create or replace package flow_p0008_api
   authid definer
 as
 
+  procedure process_action;
+  
   procedure process_action
   (
     pi_action  in varchar2
@@ -10,8 +12,8 @@ as
   , pi_dgrm_ids in apex_application.g_f03%type
   , pi_prcs_names in apex_application.g_f04%type
   , pi_reservation in varchar2
+  , pi_comment     in varchar2
   );
-
   procedure process_variables_row
   (
     pi_request         in varchar2
