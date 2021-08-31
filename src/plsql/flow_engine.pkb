@@ -628,7 +628,7 @@ end handle_event_gateway_event;
 procedure handle_intermediate_catch_event
   ( p_process_id   in flow_processes.prcs_id%type
   , p_subflow_id   in flow_subflows.sbfl_id%type
-  , p_current_objt in flow_subflows.sbfl_id%type
+  , p_current_objt in flow_subflows.sbfl_current%type
   ) 
 is
 begin
@@ -643,12 +643,12 @@ begin
      and sbfl.sbfl_id = p_subflow_id
   ;
   --  process any variable expressions in the OnEvent set
-  /*flow_expressions.process_expressions
+  flow_expressions.process_expressions
   ( pi_objt_bpmn_id => p_current_objt  
   , pi_set          => flow_constants_pkg.gc_expr_set_on_event
   , pi_prcs_id      => p_process_id
   , pi_sbfl_id      => p_subflow_id
-  );*/
+  );
   -- move onto next step
   flow_complete_step 
   ( p_process_id => p_process_id
