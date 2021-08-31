@@ -11,6 +11,7 @@ procedure flow_complete_step
   , p_subflow_id        in flow_subflows.sbfl_id%type
   , p_forward_route     in flow_connections.conn_bpmn_id%type default null   
   , p_log_as_completed  in boolean default true
+  , p_recursive_call    in boolean default true
   );
 
 procedure start_step

@@ -165,7 +165,7 @@ as
 
   gc_config_default_logging_level             constant varchar2(2000 char) := gc_config_logging_level_standard;
   gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
-  gc_config_default_logging_language          constant varchar2(2000 char) := 'ENU';
+  gc_config_default_logging_language          constant varchar2(2000 char) := 'en-us';
 
 
 

@@ -643,12 +643,12 @@ begin
      and sbfl.sbfl_id = p_subflow_id
   ;
   --  process any variable expressions in the OnEvent set
-  flow_expressions.process_expressions
+  /*flow_expressions.process_expressions
   ( pi_objt_bpmn_id => p_current_objt  
   , pi_set          => flow_constants_pkg.gc_expr_set_on_event
   , pi_prcs_id      => p_process_id
   , pi_sbfl_id      => p_subflow_id
-  );
+  );*/
   -- move onto next step
   flow_complete_step 
   ( p_process_id => p_process_id
@@ -671,7 +671,8 @@ begin
   -- currently handles callbacks from flow_timers when a timer fires
   apex_debug.enter 
   ( 'flow_handle_event'
-  , 'Subflow', p_subflow_id
+  , 'subflow_id', p_subflow_id
+  , 'process_id', p_process_id
   );
   -- look at current event to check if it is a startEvent.  (this also has no previous event!)
   -- if not, examine previous event on the subflow to determine if it was eventBasedGateway (eBG)
@@ -684,6 +685,7 @@ begin
   ( pi_prcs_id => p_process_id
   , pi_sbfl_id => p_subflow_id
   );
+  flow_globals.set_is_recursive_step (p_is_recursive_step => true);
   -- lock subflow containing event
   if flow_engine_util.lock_subflow(p_subflow_id) then
     -- subflow_locked
@@ -696,11 +698,12 @@ begin
       from flow_objects curr_objt 
       join flow_subflows sbfl 
         on sbfl.sbfl_current = curr_objt.objt_bpmn_id
-      join flow_processes prcs
+       and sbfl.sbfl_dgrm_id = curr_objt.objt_dgrm_id
+/*      join flow_processes prcs
         on prcs.prcs_id = sbfl.sbfl_prcs_id
-       and prcs_dgrm_id = curr_objt.objt_dgrm_id
+       and prcs_dgrm_id = curr_objt.objt_dgrm_id */
      where sbfl.sbfl_id = p_subflow_id
-       and prcs.prcs_id = p_process_id
+       and sbfl.sbfl_prcs_id = p_process_id
         ;
 
     if l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_start_event   -- startEvent with associated event.
@@ -765,6 +768,20 @@ begin
       end if;
     end if;
   end if; -- sbfl locked
+exception
+  when others then
+    flow_errors.handle_instance_error
+    ( pi_prcs_id  => p_process_id
+    , pi_sbfl_id  => p_subflow_id
+    , pi_message_key  => 'eng_handle_event_int'
+    , p0  => p_process_id
+    , p1  => p_subflow_id 
+    , p2  => 'flow_handle_event'
+    , p3  => l_curr_objt_tag_name
+    , p4  => l_sbfl_current
+    );
+      -- $F4AMESSAGE 'eng_handle_event_int' || 'Flow Engine Internal Error: Process %0 Subflow %1 Module %2 Current %4 Current Tag %3'
+
 end flow_handle_event;
 
 /************************************************************************************************************
@@ -888,16 +905,42 @@ begin
     ;
     return l_step_info;
   exception
-  when no_data_found then
-    apex_error.add_error
-    ( p_message => 'No Next Step Found.  Check your process diagram.'
-    , p_display_location => apex_error.c_on_error_page
-    );
-  when too_many_rows then
-    apex_error.add_error
-    ( p_message => 'More than 1 forward path found when only 1 allowed'
-    , p_display_location => apex_error.c_on_error_page
-    );
+    when no_data_found then
+  /*    apex_error.add_error
+      ( p_message => 'No Next Step Found.  Check your process diagram.'
+      , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'no_next_step_found'
+      , p0 => p_subflow_id
+      );
+      -- $F4AMESSAGE 'no_next_step_found' || 'No Next Step Found on subflow %0.  Check your process diagram.'
+    when too_many_rows then
+  /*    apex_error.add_error
+      ( p_message => 'More than 1 forward path found when only 1 allowed'
+      , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'more_than_1_forward_path'
+      , p0 => p_subflow_id
+      );
+      -- $F4AMESSAGE 'more_than_1_forward_path' || 'More than 1 forward path found when only 1 allowed.'
+    when others then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id  => p_process_id
+      , pi_sbfl_id  => p_subflow_id
+      , pi_message_key  => 'eng_handle_event_int'
+      , p0  => p_process_id
+      , p1  => p_subflow_id 
+      , p2  => 'get_next_step_info'
+      , p3  => null
+      , p4  => null
+      );
+      -- $F4AMESSAGE 'eng_handle_event_int' || 'Flow Engine Internal Error: Process %0 Subflow %1 Module %2 Current %4 Current Tag %3'
   end;
 end get_next_step_info;
 
@@ -1116,14 +1159,19 @@ begin
       , p_display_location => apex_error.c_on_error_page
       );
     when flow_plsql_runner_pkg.e_plsql_script_failed then
-    /*
+      /*
       apex_error.add_error
       (
         p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute successfully.'
       , p_display_location => apex_error.c_on_error_page
       );
-    */
-    null;
+      */
+      null;
+    when others then
+      apex_error.add_error
+      ( p_message => 'Some other error finding next step'
+      , p_display_location => apex_error.c_on_error_page
+      );
 end run_step;
 
 
@@ -1132,6 +1180,7 @@ procedure flow_complete_step
 , p_subflow_id        in flow_subflows.sbfl_id%type
 , p_forward_route     in flow_connections.conn_bpmn_id%type default null
 , p_log_as_completed  in boolean default true
+, p_recursive_call    in boolean default true
 )
 is
   l_sbfl_rec              flow_subflows%rowtype;
@@ -1143,7 +1192,13 @@ begin
   ( 'flow_complete_step'
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
+  , 'recursive_call', case when p_recursive_call then 
+                                                    'true' 
+                                                 else 
+                                                    'false' 
+                                                 end
   );
+  flow_globals.set_is_recursive_step (p_is_recursive_step => p_recursive_call);
   -- Get current object and current subflow info and lock it
   l_sbfl_rec := flow_engine_util.get_subflow_info 
   ( p_process_id => p_process_id
@@ -1180,7 +1235,11 @@ begin
   );
 
   -- end of post-step operations for previous step
-  commit;
+  if flow_globals.get_step_error then
+    rollback;
+  else
+    commit;
+  end if;
 
   apex_debug.info
   ( p_message => 'Step End Committed'
@@ -1189,6 +1248,8 @@ begin
   );
 
   -- start of pre-phase for next step
+  -- reset step_had_error flag
+  flow_globals.set_step_error ( p_has_error => false);
 
   -- relock subflow
   l_sbfl_rec := flow_engine_util.get_subflow_info 
@@ -1216,173 +1277,15 @@ begin
   , p_step_info => l_step_info 
   );
 
-/*
-  apex_debug.info 
-  ( p_message => 'Next Step - Target object: %s.  More info at APP_TRACE level.'
-  , p0        => coalesce(l_step_info.target_objt_tag, '!NULL!') 
-  );
-  apex_debug.trace
-  ( p_message => 'Next Step Info - dgrm_id : %0, source_objt_tag : %1, target_objt_id : %2, target_objt_ref : %3'
-  , p0  => l_step_info.dgrm_id
-  , p1  => l_step_info.source_objt_tag
-  , p2  => l_step_info.target_objt_id
-  , p3  => l_step_info.target_objt_ref
-  );
-  apex_debug.trace
-  ( p_message => 'Next Step Info - target_objt_tag : %0, target_objt_subtag : %1'
-  , p0 => l_step_info.target_objt_tag
-  , p1 => l_step_info.target_objt_subtag
-  );
-  apex_debug.trace
-  ( p_message => 'Next Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
-  , p0 => l_sbfl_rec.sbfl_id
-  , p1 => l_sbfl_rec.sbfl_last_completed
-  , p2 => l_sbfl_rec.sbfl_prcs_id
-  );    
-
-  -- evaluate and set any pre-step variable expressions on the next object
-  if l_step_info.target_objt_tag in 
-  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
-  then 
-    flow_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.target_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_task
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
-    );
-  elsif l_step_info.target_objt_tag in 
-  ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
-  , flow_constants_pkg.gc_bpmn_intermediate_throw_event, flow_constants_pkg.gc_bpmn_intermediate_catch_event
-  , flow_constants_pkg.gc_bpmn_boundary_event )
-  then
-    flow_expressions.process_expressions
-      ( pi_objt_id     => l_step_info.target_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
-    );
+    -- Commit transaction before returning
+  if flow_globals.get_step_error then
+    rollback;
+  else
+    commit;
   end if;
 
-  case (l_step_info.target_objt_tag)
-    when flow_constants_pkg.gc_bpmn_end_event then  --next step is either end of process or sub-process returning to its parent
-      flow_engine.process_endEvent
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when flow_constants_pkg.gc_bpmn_gateway_exclusive then
-      flow_gateways.process_exclusiveGateway
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when flow_constants_pkg.gc_bpmn_gateway_inclusive then
-      flow_gateways.process_para_incl_Gateway
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when flow_constants_pkg.gc_bpmn_gateway_parallel then
-      flow_gateways.process_para_incl_Gateway
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when flow_constants_pkg.gc_bpmn_subprocess then
-      flow_engine.process_subProcess
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when flow_constants_pkg.gc_bpmn_gateway_event_based then
-        flow_gateways.process_eventBasedGateway
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when  flow_constants_pkg.gc_bpmn_intermediate_catch_event then 
-        flow_engine.process_intermediateCatchEvent
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when  flow_constants_pkg.gc_bpmn_intermediate_throw_event then 
-        flow_engine.process_intermediateThrowEvent
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         ); 
-    when  flow_constants_pkg.gc_bpmn_task then 
-        flow_tasks.process_task
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         );
-    when  flow_constants_pkg.gc_bpmn_usertask then
-        flow_tasks.process_userTask
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         );
-    when  flow_constants_pkg.gc_bpmn_scripttask then 
-        flow_tasks.process_scriptTask
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         );
-    when  flow_constants_pkg.gc_bpmn_manualtask then 
-        flow_tasks.process_manualTask
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         );
-    when  flow_constants_pkg.gc_bpmn_servicetask then 
-    flow_tasks.process_scriptTask
-         ( p_process_id => p_process_id
-         , p_subflow_id => p_subflow_id
-         , p_sbfl_info => l_sbfl_rec
-         , p_step_info => l_step_info
-         );
-    end case;
-
-    */
-    -- Commit transaction before returning
-    commit;
-  exception
-    when case_not_found then
-      apex_error.add_error
-      ( p_message => 'Process Model Error: Process BPMN model next step uses unsupported object: '||l_step_info.target_objt_tag
-      , p_display_location => apex_error.c_on_error_page
-      );
-    when no_data_found then
-      apex_error.add_error
-      ( p_message => 'Next step does not exist. Please check your process diagram.'
-      , p_display_location => apex_error.c_on_error_page
-      );
-    when flow_plsql_runner_pkg.e_plsql_script_failed then
-    /*
-      apex_error.add_error
-      (
-        p_message => 'PL/SQL Call Error: The given PL/SQL code did not execute successfully.'
-      , p_display_location => apex_error.c_on_error_page
-      );
-    */
-    null;
   
-    -- add a when others here??
+
   end flow_complete_step;
 
   procedure start_step -- just (optionally) records the start time gpr work on the current step
@@ -1449,6 +1352,10 @@ begin
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
   );
+  flow_globals.set_is_recursive_step (p_is_recursive_step => true);
+   -- reset step_had_error flag
+  flow_globals.set_step_error ( p_has_error => false);
+
   -- lock the process and subflow
   l_sbfl_rec := flow_engine_util.get_subflow_info 
                 ( p_process_id => p_process_id
@@ -1505,8 +1412,12 @@ begin
   ( p_sbfl_rec => l_sbfl_rec
   , p_step_info => l_step_info
   );
-  -- commit
-  commit;
+  -- commit or rollback based on errors
+  if flow_globals.get_step_error then
+    rollback;
+  else
+    commit;
+  end if;
 end restart_step;
 
 end flow_engine;

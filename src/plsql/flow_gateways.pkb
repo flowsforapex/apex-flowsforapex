@@ -272,6 +272,8 @@ as
     
     for new_subflow in 1.. l_new_subflows.count
     loop
+      -- reset step_had_error flag
+      flow_globals.set_step_error ( p_has_error => false);
       -- check subflow still exists and lock it(in case earlier loop terminated everything in level)
       if flow_engine_util.lock_subflow
         ( p_subflow_id => l_new_subflows(new_subflow).sbfl_id

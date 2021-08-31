@@ -370,6 +370,15 @@ as
         ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
         , p_display_location => apex_error.c_on_error_page
         );
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'var_exp_sql_error'
+        , p0 => pi_sbfl_id
+        , p1 => pi_expression.expr_var_name
+        , p2 => pi_expression.expr_set
+        );
+        -- $F4AMESSAGE 'var_exp_sql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
     end;
     apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result, p_level => 3);
     -- set proc variable
@@ -456,7 +465,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $$SOMETAG 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
+      -- $F4AMESSAGE 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
   end set_plsql_expression;  
 
   procedure set_plsql_function        
@@ -525,7 +534,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $$SOMETAG 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
+      -- $F4AMESSAGE 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
   end set_plsql_function;
 
   /**********************************************************************
