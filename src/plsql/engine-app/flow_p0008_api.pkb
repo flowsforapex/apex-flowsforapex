@@ -6,8 +6,17 @@ as
     l_error_occured boolean := false;
     l_url           varchar2(4000);
     l_clob          clob;
+    l_before_prcs_status flow_instances_vw.prcs_status%type;
+    l_after_prcs_status flow_instances_vw.prcs_status%type;
+    l_reload boolean := false;
   begin
     if instr(apex_application.g_x01, 'bulk-') > 0 then
+      if ( upper(apex_application.g_x01) = 'BULK-COMPLETE-STEP' or upper(apex_application.g_x01) = 'BULK-RESTART-STEP' ) then
+        select prcs_status
+        into l_before_prcs_status
+        from flow_instances_vw
+        where prcs_id = apex_application.g_f01(1);
+      end if;
       for i in apex_application.g_f01.first..apex_application.g_f01.last
       loop
         apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => apex_application.g_x01, p1 => apex_application.g_f01(i), p2 => apex_application.g_f02(i) );
@@ -38,6 +47,11 @@ as
             , p_subflow_id => apex_application.g_f02(i)
             , p_comment       => apex_application.g_x02           
             );
+          when 'BULK-DELETE-PROCESS-VARIABLE' then 
+            flow_process_vars.delete_var(
+              pi_prcs_id => apex_application.g_f01(i)
+            , pi_var_name => apex_application.g_f02(i)
+          );
           else
             apex_error.add_error
             (
@@ -46,15 +60,34 @@ as
             );
         end case;
       end loop;
+      if ( upper(apex_application.g_x01) = 'BULK-COMPLETE-STEP' or upper(apex_application.g_x01) = 'BULK-RESTART-STEP' ) then
+        select prcs_status
+        into l_after_prcs_status
+        from flow_instances_vw
+        where prcs_id = apex_application.g_f01(1);
+
+        if l_before_prcs_status != l_after_prcs_status then
+          l_reload := true;
+        end if;
+      end if;
     else
       apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => apex_application.g_x01, p1 => apex_application.g_x02, p2 => apex_application.g_x03 );
+
+      if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
+        select prcs_status
+        into l_before_prcs_status
+        from flow_instances_vw
+        where prcs_id = apex_application.g_x02;
+      end if;
+
+
       case upper(apex_application.g_x01)
         when 'RESET-FLOW-INSTANCE' then
-          flow_api_pkg.flow_reset( p_process_id => apex_application.g_x01, p_comment => apex_application.g_x02 );
+          flow_api_pkg.flow_reset( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
         when 'START-FLOW-INSTANCE' then
-          flow_api_pkg.flow_start( p_process_id => apex_application.g_x01 );
+          flow_api_pkg.flow_start( p_process_id => apex_application.g_x02 );
         when 'DELETE-FLOW-INSTANCE' then
-          flow_api_pkg.flow_delete( p_process_id => apex_application.g_x01, p_comment => apex_application.g_x02 );
+          flow_api_pkg.flow_delete( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
           l_url := apex_page.get_url(
                 p_page => 10
               , p_clear_cache => 10
@@ -99,7 +132,7 @@ as
             , p_items => 'P7_DGRM_ID'
             , p_values => apex_application.g_x02
           );
-        when 'ADD-PROCESS-VARIABLE' then
+        when 'PROCESS-VARIABLE' then
           case apex_application.g_x04
             when 'VARCHAR2' then
               flow_process_vars.set_var
@@ -136,6 +169,11 @@ as
             else
               null;
           end case;
+        when 'DELETE-PROCESS-VARIABLE' then
+          flow_process_vars.delete_var(
+            pi_prcs_id => apex_application.g_x02
+            , pi_var_name => apex_application.g_x03
+          );
         else
           apex_error.add_error
           (
@@ -143,12 +181,27 @@ as
           , p_display_location => apex_error.c_on_error_page
           );
       end case;
+
+      if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
+        select prcs_status
+        into l_after_prcs_status
+        from flow_instances_vw
+        where prcs_id = apex_application.g_x02;
+
+        if l_before_prcs_status != l_after_prcs_status then
+          l_reload := true;
+        end if;
+      end if;
+
     end if;
 
     apex_json.open_object;
     apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
     if l_url is not null then
       apex_json.write( p_name => 'url', p_value => l_url );
+    end if;
+    if l_reload then 
+      apex_json.write( p_name => 'reloadPage', p_value => true );
     end if;
     apex_json.close_all;
     

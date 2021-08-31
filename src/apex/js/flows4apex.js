@@ -14,6 +14,101 @@ function addClassesToParents(pSelector, pParentSelector, pClasses) {
     .addClass( pClasses );
 }
 
+function childrenAttributeToArray(container, children, attribute){
+  return apex
+           .jQuery(container)
+           .find(children)
+           .map( function ( item ) {
+             return apex.jQuery( this ).attr( attribute );
+           })
+           .toArray();
+}
+
+function getflowInstanceData(action, element){
+  return {
+    "x01": action,
+    "x02": apex.jQuery( element ).attr("data-prcs")
+  };
+}
+
+function getBulkFlowInstanceData(action){
+  return {
+    "x01": action,
+    "f01": childrenAttributeToArray( "#flow-instances .a-IRR-tableContainer", 'input[name="f01"]:checked', "data-prcs" )
+  };
+}
+
+function getSubflowData(action, element){
+  return {
+    "x01": action,
+    "x02": apex.jQuery( element ).attr("data-prcs"),
+    "x03": apex.jQuery( element ).attr("data-sbfl")
+  };
+}
+
+function getBulkSubflowData(action){
+  return {
+    "x01": action,
+    "f01": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "data-prcs" ),
+    "f01": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "value" )
+  };
+}
+
+function sendToServer(dataToSend, options = {}){
+  var result = apex.server.process( "PROCESS_ACTION_1", dataToSend);
+  result
+    .done( function ( data ) {
+      if ( !data.success ) {
+        apex.debug.error( "Something went wrong..." );
+      } else {
+        if ( options.messageKey !== undefined ){
+          apex.message.showPageSuccess( apex.lang.getMessage( options.messageKey ) );
+        }
+        if ( data.url !== undefined ){
+          apex.navigation.redirect( data.url );
+        }
+        if ( ( options.reloadPage !== undefined && options.reloadPage ) || ( data.reloadPage !== undefined && data.reloadPage ) ) {
+          window.location.reload();
+        }
+        if ( options.refreshRegion !== undefined && options.refreshRegion.length > 0 ) {
+          options.refreshRegion.forEach(function(name) {
+            apex.region(name).refresh();
+          })
+        }
+      }
+    })
+    .fail( function ( jqXHR, textStatus, errorThrown ) {
+      apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );
+    } ); 
+  return result;
+}
+
+function downloadAsSVG(){
+  apex
+    .region( "flow-monitor" )
+    .getSVG()
+    .then( ( svg ) => {
+      var svgBlob = new Blob( [svg], {
+        type: "image/svg+xml",
+      } );
+      var fileName = Date.now();
+
+      var downloadLink = document.createElement( "a" );
+      downloadLink.download = fileName;
+      downloadLink.href = window.URL.createObjectURL( svgBlob );
+      downloadLink.click();
+    } );
+}
+
+function startFlowInstance( action, element ) {
+  var data = getflowInstanceData(action, element);
+  var options = {};
+  options.messageKey = "APP_INSTANCE_STARTED";
+  options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
+  options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
+  sendToServer(data, options);
+}
+
 function initPage2() {
   initApp();
   $( function () {
@@ -208,7 +303,7 @@ function redirectToMonitor( prcs_id ) {
 function initPage8() {
   initApp();
 
-  function getVariableErros(){
+  function getVariableErrors(){
     var errors = [];
 
     if ( apex.item("P8_PROV_VAR_NAME").isEmpty() ) {
@@ -217,7 +312,7 @@ function initPage8() {
           type:       "error",
           location:   [ "inline" ],
           pageItem:   "P8_PROV_VAR_NAME",
-          message:    "Variable Name must have a value",
+          message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_NAME_EMPTY" ),
           unsafe:     false
         }
       );
@@ -229,7 +324,7 @@ function initPage8() {
           type:       "error",
           location:   [ "inline" ],
           pageItem:   "P8_PROV_VAR_TYPE",
-          message:    "Variable Type must have a value",
+          message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_TYPE_EMPTY" ),
           unsafe:     false
         }
       );
@@ -242,7 +337,7 @@ function initPage8() {
               type:       "error",
               location:   [ "inline" ],
               pageItem:   "P8_PROV_VAR_VC2",
-              message:    "Value must have a value",
+              message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_VALUE_EMPTY" ),
               unsafe:     false
             }
           );
@@ -254,7 +349,7 @@ function initPage8() {
               type:       "error",
               location:   [ "inline" ],
               pageItem:   "P8_PROV_VAR_NUM",
-              message:    "Value must have a value",
+              message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_VALUE_EMPTY" ),
               unsafe:     false
             }
           );
@@ -265,7 +360,7 @@ function initPage8() {
                 type:       "error",
                 location:   [ "inline" ],
                 pageItem:   "P8_PROV_VAR_NUM",
-                message:    "Value must be a number",
+                message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_NUM_NOT_NUMBER" ),
                 unsafe:     false
               }
             );
@@ -278,7 +373,7 @@ function initPage8() {
               type:       "error",
               location:   [ "inline" ],
               pageItem:   "P8_PROV_VAR_DATE",
-              message:    "Value must have a value",
+              message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_VALUE_EMPTY" ),
               unsafe:     false
             }
           );
@@ -288,7 +383,7 @@ function initPage8() {
               type:       "error",
               location:   [ "inline" ],
               pageItem:   "P8_PROV_VAR_DATE",
-              message:    "Value must be a valid date",
+              message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_DATE_NOT_DATE" ),
               unsafe:     false
             }
           );
@@ -300,7 +395,7 @@ function initPage8() {
               type:       "error",
               location:   [ "inline" ],
               pageItem:   "P8_PROV_VAR_CLOB",
-              message:    "Value must have a value",
+              message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_VALUE_EMPTY" ),
               unsafe:     false
             }
           );
@@ -310,104 +405,243 @@ function initPage8() {
     return errors;
   }
 
-  function childrenAttributeToArray(container, children, attribute){
-    return apex
-             .jQuery(container)
-             .find(children)
-             .map( function ( item ) {
-               return apex.jQuery( this ).attr( attribute );
-             })
-             .toArray();
+  function getGatewayErrors(){
+    var errors = [];
+
+    if (apex.item("P8_SELECT_OPTION").getValue() === "single" && apex.item("P8_CONNECTION").getValue().length > 1) {
+        errors = [
+            {
+                type:       "error",
+                location:   [ "inline" ],
+                pageItem:   "P8_CONNECTION",
+                message:    apex.lang.getMessage( "APP_ERR_GATEWAY_ONLY_ONE_CONNECTION" ),
+                unsafe:     false
+            }
+        ];
+    }
+    if (apex.item("P8_CONNECTION").getValue().length === 0) {
+        errors = [
+            {
+                type:       "error",
+                location:   [ "inline" ],
+                pageItem:   "P8_CONNECTION",
+                message:    apex.lang.getMessage( "APP_ERR_GATEWAY_CONNECTION_EMPTY" ),
+                unsafe:     false
+            }
+        ];
+    }
+    return errors;
   }
 
-  function getElementData( action, element) {
-    var data = {};
 
-    if ( action.includes( "bulk-" ) ) {
-      if ( action.includes( "-step" ) ) {
-        data.f01 = apex
-          .jQuery( "#subflows .a-IRR-tableContainer" )
-          .find( 'input[name="f02"]:checked' )
-          .map( function ( item ) {
-            return apex.jQuery( this ).attr( "data-prcs" );
-          } )
-          .toArray();
-        data.f02 = apex
-          .jQuery( "#subflows .a-IRR-tableContainer" )
-          .find( 'input[name="f02"]:checked' )
-          .map( function ( item ) {
-            return this.value;
-          } )
-          .toArray();
+  function addProcessVariable(action, focusElement){ 
+    var gatewayRoute = apex.jQuery(focusElement).attr("data-gateway-route") === "true" ? true : false;
+    var dialogId = gatewayRoute ? "gateway_selector" : "variable_dialog" ;
+
+    if ( apex.jQuery( "#" + dialogId ).dialog( "isOpen" ) ) {
+      var errors = gatewayRoute ? getGatewayErrors() : getVariableErrors();
+      if ( errors.length === 0 ) {
+        apex.theme.closeRegion( dialogId );
+
+        var data = {}, options = {};
+        data.x01 = action;
+        data.x02 = apex.item("P8_PRCS_ID").getValue();
+        if ( gatewayRoute ) {
+          data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
+          data.x04 = 'VARCHAR2';
+          data.x05 = apex.item("P8_CONNECTION").getValue();
+        } else {
+          data.x03 = apex.item("P8_PROV_VAR_NAME").getValue();
+          data.x04 = apex.item("P8_PROV_VAR_TYPE").getValue();
+          if ( data.x04 === "VARCHAR2" ) {
+            data.x05 = apex.item("P8_PROV_VAR_VC2").getValue();
+          } else if ( data.x04 === "NUMBER" ) {
+            data.x05 = apex.item("P8_PROV_VAR_NUM").getValue();
+          } else if ( data.x04 === "DATE" ) {
+            data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
+          } else if ( data.x04 === "CLOB" ) {
+            var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
+            if ( !Array.isArray( chunkedClob ) ) {
+              chunkedClob = [chunkedClob];
+            }
+            data.f01 = chunkedClob;
+          } 
+
+        }
+        
+        options.messageKey = "APP_PROCESS_VARIABLE_ADDED";
+        options.refreshRegion = ["process-variables"];
+
+        sendToServer(data, options);
+      } else {
+        apex.message.showErrors( errors );
       }
     } else {
-      var myElement = apex.jQuery( element );
-      data.x01 = myElement.attr( "data-prcs" );
-      data.x02 = myElement.attr( "data-sbfl" );
-      data.x03 = myElement.attr( "data-dgrm" );
-      data.x04 = myElement.attr( "data-name" );
-    }
-    data.x01 = action;
-
-    return data;
-  }
-
-  function sendToServer(dataToSend, options = {}){
-    var result = apex.server.process( "PROCESS_ACTION_1", dataToSend);
-    result
-      .done( function ( data ) {
-        if ( !data.success ) {
-          apex.debug.error( "Something went wrong..." );
-        } else {
-          if ( options.messageKey !== undefined ){
-            apex.message.showPageSuccess( apex.lang.getMessage( options.messageKey ) );
-          }
-          if ( data.url !== undefined ){
-            apex.navigation.redirect( data.url );
-          }
-          if (options.reloadPage) {
-            window.location.reload;
-          }
-          if ( options.refreshRegion.length > 0 ) {
-            options.refreshRegion.forEach(function(name) {
-              apex.region(name).refresh();
-            })
-          }
-        }
-      })
-      .fail( function ( jqXHR, textStatus, errorThrown ) {
-        apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );
-      } ); 
-    return result;
-  }
-
-  function addProcessVariable(action){ 
-    var data = {}, options = {};
-    data.x01 = action;
-    data.x02 = apex.item("P8_PRCS_ID").getValue();
-    data.x03 = apex.item("P8_PROV_VAR_NAME").getValue();
-    data.x04 = apex.item("P8_PROV_VAR_TYPE").getValue();
-    if ( data.x04 === "VARCHAR2" ) {
-      data.x05 = apex.item("P8_PROV_VAR_VC2").getValue();
-    } else if ( data.x04 === "NUMBER" ) {
-      data.x05 = apex.item("P8_PROV_VAR_NUM").getValue();
-    } else if ( data.x04 === "DATE" ) {
-      data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
-    } else if ( data.x04 === "CLOB" ) {
-      var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
-      if ( !Array.isArray( chunkedClob ) ) {
-        chunkedClob = [chunkedClob];
+      if (gatewayRoute) {
+        apex.item( "P8_GATEWAY" ).setValue( "" );
+        apex.item("P8_GATEWAY").enable();
+        apex.item( "P8_CONNECTION" ).setValue( "" );
+        apex.jQuery( "#unselect_btn" ).hide();
+        apex.jQuery( "#select_btn" ).hide();
+        apex.jQuery( "#add-prov-var-route-btn" ).show();
+        apex.jQuery( "#save-prov-var-route-btn" ).hide();
+      } else {
+        apex.item( "P8_PROV_VAR_VC2" ).setValue();
+        apex.item( "P8_PROV_VAR_NUM" ).setValue();
+        apex.item( "P8_PROV_VAR_DATE" ).setValue();
+        apex.item( "P8_PROV_VAR_CLOB" ).setValue();
+        apex.item( "P8_PROV_VAR_NAME" ).setValue();
+        apex.item("P8_PROV_VAR_NAME").enable();
+        apex.item( "P8_PROV_VAR_TYPE" ).setValue("VARCHAR2");
+        apex.item( "P8_PROV_VAR_TYPE" ).enable();
+        apex.jQuery( "#add-prov-var-btn" ).show();
+        apex.jQuery( "#save-prov-var-btn" ).hide();
       }
-      data.f01 = chunkedClob;
-    } 
-
-    options.messageKey = "APP_PROCESS_VARIABLE_ADDED";
-    options.refreshRegion = ["process-variables"];
-
-    sendToServer(data, options);
+      apex.message.clearErrors();
+      apex.theme.openRegion( dialogId );
+    }
   }
 
-  
+  function updateProcessVariable(action, focusElement){ 
+    var gatewayRoute = apex.jQuery(focusElement).attr("data-gateway-route") === "true" ? true : false;
+    var dialogId = gatewayRoute ? "gateway_selector" : "variable_dialog" ;
+
+    if ( apex.jQuery( "#" + dialogId ).dialog( "isOpen" ) ) {
+      var errors = gatewayRoute ? getGatewayErrors() : getVariableErrors();
+      if ( errors.length === 0 ) {
+        apex.theme.closeRegion( dialogId );
+
+        var data = {}, options = {};
+        data.x01 = action;
+        data.x02 = apex.item("P8_PRCS_ID").getValue();
+        if ( gatewayRoute ) {
+          data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
+          data.x04 = 'VARCHAR2';
+          data.x05 = apex.item("P8_CONNECTION").getValue();
+        } else {
+          data.x03 = apex.item("P8_PROV_VAR_NAME").getValue();
+          data.x04 = apex.item("P8_PROV_VAR_TYPE").getValue();
+          if ( data.x04 === "VARCHAR2" ) {
+            data.x05 = apex.item("P8_PROV_VAR_VC2").getValue();
+          } else if ( data.x04 === "NUMBER" ) {
+            data.x05 = apex.item("P8_PROV_VAR_NUM").getValue();
+          } else if ( data.x04 === "DATE" ) {
+            data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
+          } else if ( data.x04 === "CLOB" ) {
+            var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
+            if ( !Array.isArray( chunkedClob ) ) {
+              chunkedClob = [chunkedClob];
+            }
+            data.f01 = chunkedClob;
+          } 
+        }
+        
+        options.messageKey = "APP_PROCESS_VARIABLE_SAVED";
+        options.refreshRegion = ["process-variables"];
+
+        sendToServer(data, options);
+      } else {
+        apex.message.showErrors( errors );
+      }
+    } else {
+      var varName = apex.jQuery(focusElement).attr("data-name");
+      var varType = apex.jQuery(focusElement).attr("data-type");
+      apex.server.process( 
+        "GET_VARIABLE", 
+        {
+          x01: apex.item("P8_PRCS_ID").getValue(),
+          x02: varName,
+          x03: varType
+        }, 
+        {
+          success: function( data )  {
+            if (data.success){
+              if (gatewayRoute) {
+                apex.message.clearErrors();
+                apex.theme.openRegion("gateway_selector");
+                apex.jQuery("#unselect_btn").hide();
+                apex.jQuery("#select_btn").hide();
+                apex.jQuery("#add-prov-var-route-btn").hide();
+                apex.jQuery("#save-prov-var-route-btn").show();
+                apex.item("P8_GATEWAY").setValue(varName.split(":")[0]);
+                setTimeout(function(){ 
+                  apex.item("P8_CONNECTION").setValue(data.vc2_value); 
+                  apex.item("P8_GATEWAY").disable();
+                }, 300);
+              } else {
+                apex.item("P8_PROV_VAR_NAME").setValue(varName);
+                apex.item("P8_PROV_VAR_NAME").disable();
+                apex.item("P8_PROV_VAR_TYPE").setValue(varType);
+                apex.item("P8_PROV_VAR_TYPE").disable();
+                apex.theme.openRegion("variable_dialog");
+                if ( varType === "VARCHAR2") {
+                  apex.item("P8_PROV_VAR_VC2").setValue(data.vc2_value);
+                  apex.item("P8_PROV_VAR_NUM").setValue("");
+                  apex.item("P8_PROV_VAR_DATE").setValue("");
+                  apex.item("P8_PROV_VAR_CLOB").setValue("");
+                  apex.item("P8_PROV_VAR_VC2").setFocus();
+                } else if ( varType === "NUMBER") {
+                  apex.item("P8_PROV_VAR_NUM").setValue(data.num_value);
+                  apex.item("P8_PROV_VAR_VC2").setValue("");
+                  apex.item("P8_PROV_VAR_DATE").setValue("");
+                  apex.item("P8_PROV_VAR_CLOB").setValue("");
+                  apex.item("P8_PROV_VAR_NUM").setFocus();
+                } else if ( varType === "DATE") {
+                  apex.item("P8_PROV_VAR_DATE").setValue(data.date_value);
+                  apex.item("P8_PROV_VAR_VC2").setValue("");
+                  apex.item("P8_PROV_VAR_NUM").setValue("");
+                  apex.item("P8_PROV_VAR_CLOB").setValue("");
+                  apex.item("P8_PROV_VAR_DATE").setFocus();
+                } else if ( varType === "CLOB") {
+                  apex.item("P8_PROV_VAR_CLOB").setValue(data.clob_value);
+                  apex.item("P8_PROV_VAR_VC2").setValue("");
+                  apex.item("P8_PROV_VAR_NUM").setValue("");
+                  apex.item("P8_PROV_VAR_DATE").setValue("");
+                  apex.item("P8_PROV_VAR_CLOB").setFocus();
+                } 
+                apex.jQuery("#add-prov-var-btn").hide();
+                apex.jQuery("#save-prov-var-btn").show(); 
+              }
+              apex.theme.openRegion( dialogId );
+            }
+          },
+          error: function( jqXHR, textStatus, errorThrown ) {
+            console.log(jqXHR);
+          }
+        } 
+      );
+    }
+  }
+
+  function deleteProcessVariable(action, focusElement){
+    apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_DELETE_PROCESS_VARIABLE"), function( okPressed ) {
+      if( okPressed ) {
+        var data = {}, options = {};
+        data.x01 = action;
+        data.x02 = apex.jQuery(focusElement).attr("data-prcs");
+        data.x03 = apex.jQuery(focusElement).attr("data-name");
+        
+        options.messageKey = "APP_PROCESS_VARIABLE_DELETED";
+        options.refreshRegion = ["process-variables"];
+        sendToServer(data, options);
+      }
+    });
+  }
+
+  function bulkDeleteProcessVariable(action){
+    apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_DELETE_PROCESS_VARIABLE"), function( okPressed ) {
+      if( okPressed ) {
+        var data = {}, options = {};
+        data.x01 = action;
+        data.f01 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "data-prcs");
+        data.f02 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "value");
+        
+        options.messageKey = "APP_PROCESS_VARIABLE_DELETED";
+        options.refreshRegion = ["process-variables"];
+        sendToServer(data, options);
+      }
+    });
+  }
 
   function processAction( action, element ) {
     var processes = [];
@@ -502,6 +736,183 @@ function initPage8() {
       } );
     }
 
+  function openModalConfirmWithComment( options ){
+    var pageId = apex.item("pFlowStepId").getValue();
+    apex.item( "P" + pageId + "_COMMENT" ).setValue( "" );
+    apex.item( "P" + pageId + "_CONFIRM_TEXT" ).setValue( apex.lang.getMessage( options.confirmMessageKey ) );
+    Object.keys(options.attributes).forEach(function(attribute){
+      apex.jQuery( "#confirm-btn" ).attr(attribute, options.attributes[attribute]);
+    })
+    apex.theme.openRegion( "instance_action_dialog" );
+    apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( options.titleKey ));
+  }
+  
+  function openModalConfirmWithComment( action, element, confirmMessageKey, titleKey ){
+    var pageId = apex.item("pFlowStepId").getValue();
+    apex.item( "P" + pageId + "_COMMENT" ).setValue( "" );
+    apex.item( "P" + pageId + "_CONFIRM_TEXT" ).setValue( apex.lang.getMessage( confirmMessageKey ) );
+    apex.jQuery( "#confirm-btn" ).attr( "data-action", action );
+    apex
+      .jQuery( "#confirm-btn" )
+      .attr( "data-prcs", apex.jQuery( element ).attr( "data-prcs" ) );
+    apex
+      .jQuery( "#confirm-btn" )
+      .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+    apex.theme.openRegion( "instance_action_dialog" );
+    apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( titleKey ));
+  }
+
+  function getConfirmComment(){
+    var pageId = apex.item("pFlowStepId").getValue();
+    return apex.item( "P" + pageId + "_COMMENT" ).getValue();
+  }
+
+  function resetFlowInstance(action, element){
+    if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+      apex.theme.closeRegion( "instance_action_dialog" );
+      var data = getflowInstanceData(action, element);
+      data.x03 = getConfirmComment();
+
+      var options = {};
+      options.messageKey = "APP_INSTANCE_RESET";
+      options.reloadPage = true;
+      sendToServer(data, options);
+    } else {
+      openModalConfirmWithComment( action, element, "APP_CONFIRM_RESET_INSTANCE", "APP_RESET_INSTANCE" );
+    }
+  }
+
+  function terminateFlowInstance(action, element) {
+    if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+      apex.theme.closeRegion( "instance_action_dialog" );
+      var data = getflowInstanceData(action, element);
+      data.x03 = getConfirmComment();
+
+      var options = {};
+      options.messageKey = "APP_INSTANCE_TERMINATED";
+      options.reloadPage = true;
+      sendToServer(data, options);
+    } else {
+      openModalConfirmWithComment( action, element, "APP_CONFIRM_TERMINATE_INSTANCE", "APP_TERMINATE_INSTANCE" );
+    }
+  }
+
+  function deleteFlowInstance( action, element ){ 
+    if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+      apex.theme.closeRegion( "instance_action_dialog" );
+      var data = getflowInstanceData(action, element);
+      data.x03 = getConfirmComment();
+
+      var options = {};
+      options.messageKey = "APP_INSTANCE_DELETED";
+      options.reloadPage = false;
+      sendToServer(data, options);
+    } else {
+      openModalConfirmWithComment( action, element, "APP_CONFIRM_DELETE_INSTANCE", "APP_DELETE_INSTANCE" );
+    }
+  }
+
+  
+
+  function redirectToFlowInstanceAudit( action, element ){
+    var data = getflowInstanceData(action, element);
+    data.x03 = apex.jQuery( element ).attr("data-name");
+    sendToServer(data);
+  }
+
+  function redirectToFlowDiagram( action, element ){
+    var data = getflowInstanceData(action, element);
+    data.x02 = apex.jQuery( element ).attr("data-dgrm");
+    sendToServer(data);
+  }
+
+  function completeStep( action, element ){
+    var data = getSubflowData(action, element);
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor"];
+    sendToServer(data, options);
+  }
+
+  function bulkCompleteStep( action ){
+    var data = getBulkSubflowData( action );
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor"];
+    sendToServer(data, options);
+  }
+
+  function restartStep( action, element){
+    if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+      apex.theme.closeRegion( "instance_action_dialog" );
+      var data = getSubflowData(action, element);
+      data.x04 = getConfirmComment();
+      var options = {};
+      options.messageKey = "APP_SUBLFOW_RESTARTED";
+      options.refreshRegion = ["subflows", "flow-monitor"];
+      sendToServer(data, options);
+    } else {
+      openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
+    }
+  }
+
+  function bulkRestartStep( action ){
+    if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+      apex.theme.closeRegion( "instance_action_dialog" );
+      var data = getBulkSubflowData( action );
+      data.x02 = getConfirmComment();
+      
+      var options = {};
+      options.refreshRegion = ["subflows", "flow-monitor"];
+      sendToServer(data, options);
+    } else {
+      var dialogOptions = {
+        "action": action,
+        "confirmMessageKey": "APP_CONFIRM_RESTART_STEP",
+        "titleKey": "APP_RESTART_STEP"
+      }
+      openModalConfirmWithComment( dialogOptions );
+    }
+  }
+
+  function openReservationDialog(action, element){
+    apex.item( "P8_RESERVATION" ).setValue( "" );
+    apex.jQuery( "#reserve-step-btn" ).attr( "data-action", action );
+    apex
+      .jQuery( "#reserve-step-btn" )
+      .attr( "data-prcs", apex.jQuery( element ).attr( "data-prcs" ) );
+    apex
+      .jQuery( "#reserve-step-btn" )
+      .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+    apex.theme.openRegion( "reservation_dialog" );
+  }
+
+  function reserveStep( action, element ){
+    if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
+      apex.theme.closeRegion( "reservation_dialog" );
+      var data = getSubflowData(action, element);
+      data.x04 = apex.item("P8_RESERVATION").getValue();
+
+      var options = {};
+      options.refreshRegion = ["subflows"];
+      sendToServer(data, options);
+    } else {
+      openReservationDialog( action, element );
+    }
+  }
+
+  function bulkReserveStep( action ){
+    if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
+      apex.theme.closeRegion( "reservation_dialog" );
+      var data = getBulkSubflowData( action );
+      data.x02 = apex.item("P8_RESERVATION").getValue();
+      
+      var options = {};
+      options.refreshRegion = ["subflows"];
+      sendToServer(data, options);
+    } else {
+      openReservationDialog( action, element );
+    }
+  }
+
   //Define actions
   $( function () {
     apex.actions.add( [
@@ -546,162 +957,79 @@ function initPage8() {
       {
         name: "start-flow-instance",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          startFlowInstance( this.name, focusElement);
         }
       },
       {
         name: "reset-flow-instance",
         action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "instance_action_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P8_COMMENT" ).setValue( "" );
-            apex.item( "P8_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_RESET_INSTANCE" ));
-            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
-            apex
-              .jQuery( "#confirm-btn" )
-              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
-            apex
-              .jQuery( "#confirm-btn" )
-              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
-            apex.theme.openRegion( "instance_action_dialog" );
-            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_RESET_INSTANCE" ));
-          }
+          resetFlowInstance( this.name, focusElement );
         }
       },
       {
         name: "terminate-flow-instance",
         action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "instance_action_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P8_COMMENT" ).setValue( "" );
-            apex.item( "P8_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_TERMINATE_INSTANCE" ));
-            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
-            apex.theme.openRegion( "instance_action_dialog" );
-            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_TERMINATE_INSTANCE" ));
-          }
+          terminateFlowInstance( this.name, focusElement );
         }
       },
       {
         name: "delete-flow-instance",
         action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "instance_action_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P8_COMMENT" ).setValue( "" );
-            apex.item( "P8_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_DELETE_INSTANCE" ));
-            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
-            apex.theme.openRegion( "instance_action_dialog" );
-            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_DELETE_INSTANCE" ));
-          }
+          deleteFlowInstance( this.name, focusElement );
         }
       },
       {
         name: "download-as-svg",
         action: function ( event, focusElement ) {
-          apex
-            .region( "flow-monitor" )
-            .getSVG()
-            .then( ( svg ) => {
-              var svgBlob = new Blob( [svg], {
-                type: "image/svg+xml",
-              } );
-              var fileName = Date.now();
-
-              var downloadLink = document.createElement( "a" );
-              downloadLink.download = fileName;
-              downloadLink.href = window.URL.createObjectURL( svgBlob );
-              downloadLink.click();
-            } );
+          downloadAsSVG();
         }
       },
       {
         name: "flow-instance-audit",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          redirectToFlowInstanceAudit( this.name, focusElement );
         }
       },
       {
         name: "edit-flow-diagram",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          redirectToFlowDiagram( this.name, focusElement );
         }
       },
       {
         name: "complete-step",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          completeStep( this.name, focusElement );
         },
       },
       {
         name: "bulk-complete-step",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          bulkCompleteStep( this.name );
         }
       },
       {
         name: "restart-step",
         action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "instance_action_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P8_COMMENT" ).setValue( "" );
-            apex.item( "P8_CONFIRM_TEXT" ).setValue(apex.lang.getMessage( "APP_CONFIRM_RESTART_STEP" ));
-            apex.jQuery( "#confirm-btn" ).attr( "data-action", this.name );
-            apex
-              .jQuery( "#confirm-btn" )
-              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
-            apex
-              .jQuery( "#confirm-btn" )
-              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
-            apex.theme.openRegion( "instance_action_dialog" );
-            apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( "APP_RESTART_STEP" ));
-          }
+          restartStep( this.name, focusElement);
         }
       },
       {
         name: "bulk-restart-step",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          bulkRestartStep( this.name );
         }
       },
       {
         name: "reserve-step",
         action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "reservation_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P8_RESERVATION" ).setValue( "" );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-action", this.name );
-            apex
-              .jQuery( "#reserve-step-btn" )
-              .attr( "data-prcs", apex.jQuery( focusElement ).attr( "data-prcs" ) );
-            apex
-              .jQuery( "#reserve-step-btn" )
-              .attr( "data-sbfl", apex.jQuery( focusElement ).attr( "data-sbfl" ) );
-            apex.theme.openRegion( "reservation_dialog" );
-          }
+          reserveStep( this.name, focusElement );
         }
       },
       {
         name: "bulk-reserve-step",
         action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
-            apex.theme.closeRegion( "reservation_dialog" );
-            processAction( this.name, focusElement );
-          } else {
-            apex.item( "P8_RESERVATION" ).setValue( "" );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-action", this.name );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-prcs", "" );
-            apex.jQuery( "#reserve-step-btn" ).attr( "data-sbfl", "" );
-            apex.theme.openRegion( "reservation_dialog" );
-          }
+          bulkReserveStep( this.name );
         }
       },
       {
@@ -719,45 +1047,25 @@ function initPage8() {
       {
         name: "add-process-variable",
         action: function ( event, focusElement ) {
-          if ( apex.jQuery( "#variable_dialog" ).dialog( "isOpen" ) ) {
-            var errors = getVariableErros();
-            if ( errors.length === 0 ) {
-              apex.theme.closeRegion( "variable_dialog" );
-              addProcessVariable( this.name );
-              //processAction( this.name, focusElement );
-            } else {
-              apex.message.showErrors( errors );
-            }
-          } else {
-            apex.item("P8_PROV_VAR_VC2").setValue();
-            apex.item("P8_PROV_VAR_NUM").setValue();
-            apex.item("P8_PROV_VAR_DATE").setValue();
-            apex.item("P8_PROV_VAR_CLOB").setValue();
-            apex.item("P8_PROV_VAR_NAME").setValue();
-            apex.item("P8_PROV_VAR_TYPE").setValue("VARCHAR2");
-            apex.item("P8_PROV_VAR_TYPE").enable();
-            apex.jQuery("#add-prov-var-btn").show();
-            apex.jQuery("#save-prov-var-btn").hide();
-            apex.theme.openRegion("variable_dialog");
-          }
+          addProcessVariable( 'process-variable', focusElement );
         }
       },
       {
-        name: "edit-process-variable",
+        name: "update-process-variable",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          updateProcessVariable( 'process-variable', focusElement );
         }
       },
       {
         name: "delete-process-variable",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          deleteProcessVariable( this.name, focusElement );
         }
       },
       {
         name: "bulk-delete-process-variable",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          bulkDeleteProcessVariable( this.name );
         }
       }
     ] );
@@ -914,6 +1222,22 @@ function initPage8() {
         } );
         ui.menu.items = menuItems;
       } );
+
+    apex
+      .jQuery( "#variable_header_action_menu" )
+      .on( "menubeforeopen", function ( event, ui ) {
+        var menuItems = ui.menu.items;
+        menuItems = menuItems.map( function ( item ) {
+          if ( apex.jQuery( 'input[name="f03"]:checked' ).length === 0 ) {
+            item.disabled = true;
+          } else {
+            item.disabled = false;
+          }
+          return item;
+        } );
+        ui.menu.items = menuItems;
+      } );
+
   } );
 }
 
@@ -1084,7 +1408,7 @@ function initPage10() {
       {
         name: "start-flow-instance",
         action: function ( event, focusElement ) {
-          processAction( this.name, focusElement );
+          startFlowInstance( this.name, focusElement );
         },
       },
       {
@@ -1222,20 +1546,7 @@ function initPage10() {
       {
         name: "download-as-svg",
         action: function ( event, focusElement ) {
-          apex
-          .region( "flow-monitor" )
-          .getSVG()
-          .then( ( svg ) => {
-            var svgBlob = new Blob( [svg], {
-              type: "image/svg+xml",
-            } );
-
-            var fileName = Date.now();
-            var downloadLink = document.createElement( "a" );
-            downloadLink.download = fileName;
-            downloadLink.href = window.URL.createObjectURL( svgBlob );
-            downloadLink.click();
-          } );
+          downloadAsSVG();
         },
       },
       {
