@@ -267,8 +267,11 @@ as
           , sbfl.sbfl_last_update = systimestamp 
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id;
+
     -- commit the transaction
     commit;
+    
+    apex_debug.info ( p_message => 'New Subflow Creation Commited');
     
     for new_subflow in 1.. l_new_subflows.count
     loop

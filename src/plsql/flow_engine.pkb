@@ -1237,15 +1237,22 @@ begin
   -- end of post-step operations for previous step
   if flow_globals.get_step_error then
     rollback;
+
+    apex_debug.info
+    ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error on Step %1'
+    , p0        => p_subflow_id
+    , p1        => l_sbfl_rec.sbfl_current
+    );
+    -- then what happens....
   else
     commit;
-  end if;
 
-  apex_debug.info
-  ( p_message => 'Step End Committed'
-  , p0        => p_subflow_id
-  , p1        => l_sbfl_rec.sbfl_current
-  );
+    apex_debug.info
+    ( p_message => 'Subflow %0 : Step End Committed for step %1'
+    , p0        => p_subflow_id
+    , p1        => l_sbfl_rec.sbfl_current
+    );
+  end if;
 
   -- start of pre-phase for next step
   -- reset step_had_error flag
@@ -1280,12 +1287,21 @@ begin
     -- Commit transaction before returning
   if flow_globals.get_step_error then
     rollback;
+
+    apex_debug.info
+    ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error'
+    , p0        => p_subflow_id
+    );
+    -- then what happens....
   else
     commit;
+
+    apex_debug.info
+    ( p_message => 'Subflow %0 : Step End Committed'
+    , p0        => p_subflow_id
+    );
   end if;
-
   
-
   end flow_complete_step;
 
   procedure start_step -- just (optionally) records the start time gpr work on the current step

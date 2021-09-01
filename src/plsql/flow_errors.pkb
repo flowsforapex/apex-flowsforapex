@@ -22,6 +22,11 @@ as
     l_message_content  flow_messages.fmsg_message_content%type;
     l_message          flow_instance_event_log.lgpr_comment%type;
   begin 
+    apex_debug.enter
+    ( 'handle_instance_error'
+    , 'pi_sbfl_id', pi_sbfl_id
+    , 'pi_message_key', pi_message_key
+    );
     -- get the message template in the correct language, or fall through to default language
     begin
       select fmsg.fmsg_message_content
