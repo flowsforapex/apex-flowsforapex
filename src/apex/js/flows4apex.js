@@ -89,7 +89,7 @@ function sendToServer(dataToSend, options = {}){
             apex.item(itemName).setValue(options.ItemsToSet[itemName]);
           });
         }
-        if ( data.url !== undefined ){
+        if ( data.url !== undefined && options.redirect !== false ){
           apex.navigation.redirect( data.url );
         }
         if ( ( options.reloadPage !== undefined && options.reloadPage ) || ( data.reloadPage !== undefined && data.reloadPage ) ) {
@@ -217,6 +217,7 @@ function deleteFlowInstance( action, element ){
     options.messageKey = "APP_INSTANCE_DELETED";
     options.refreshRegion = apex.item("pFlowStepId").getValue() === "10" ? ["flow-instances", "flow-monitor"] : [];
     options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": ""};
+    options.redirect = apex.item("pFlowStepId").getValue() === "10" ? false : true;
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_DELETE_INSTANCE", "APP_DELETE_INSTANCE" );
