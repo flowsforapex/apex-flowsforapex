@@ -13,15 +13,18 @@
       config: {
         currentStyle: {
           "fill": "#6aad42",
-          "stroke": "black"
+          "border": "black",
+          "label": "black"
         },
         completedStyle: {
           "fill": "#8c9eb0",
-          "stroke": "black"
+          "border": "black",
+          "label": "black"
         },
         errorStyle: {
           "fill": "#d2423b",
-          "stroke": "black"
+          "border": "black",
+          "label": "white"
         }
       }
     },

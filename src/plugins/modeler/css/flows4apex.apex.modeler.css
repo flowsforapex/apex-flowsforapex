@@ -34,6 +34,12 @@
 /**
  * custom dark mode colors
  */
-.FLOWS-DARK .mtbm-rendercanvas, .FLOWS-DARK .properties-panel-parent {
+.mtag-bpmn-modeler.FLOWS-DARK .mtbm-rendercanvas, .FLOWS-DARK .properties-panel-parent {
   background-color: #2b3035;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mtag-bpmn-modeler:not(.FLOWS) .mtbm-rendercanvas, .mtag-bpmn-modeler:not(.FLOWS) .properties-panel-parent {
+    background-color: #2b3035;
+  }
 }

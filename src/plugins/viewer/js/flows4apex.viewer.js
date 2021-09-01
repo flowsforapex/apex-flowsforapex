@@ -522,13 +522,38 @@ function StyleModule() {}
 StyleModule.prototype.addStylesToElements = function (elements, css) {
   for (const e of elements) {
     var rect = document.querySelector(
-      `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > :nth-child(1)`
+      `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > rect`
+    );
+    var circles = document.querySelectorAll(
+      `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > circle`
+    );
+    var polygons = document.querySelectorAll(
+      `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > polygon`
+    );
+    var text = document.querySelector(
+      `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > text`
+    );
+    var paths = document.querySelectorAll(
+      `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > path`
     );
 
-    if (rect) {
-      for (const c in css) {
-        rect.style[c] = css[c];
-      }
+    if (css.fill !== undefined) {
+      if (rect) rect.style.fill = css.fill;
+      if (circles.length > 0) circles.forEach(c => (c.style.fill = css.fill));
+      if (polygons.length > 0) { polygons.forEach(p => (p.style.fill = css.fill)); }
+      if (rect && paths.length > 0) { paths.forEach(p => (p.style.fill = css.fill)); }
+    }
+
+    if (css.border !== undefined) {
+      if (rect) rect.style.stroke = css.border;
+      if (circles.length > 0) { circles.forEach(c => (c.style.stroke = css.border)); }
+      if (polygons.length > 0) { polygons.forEach(p => (p.style.stroke = css.border)); }
+    }
+
+    if (css.label !== undefined) {
+      if (text) text.style.fill = css.label;
+      if (paths.length > 0) paths.forEach(p => (p.style.stroke = css.label));
+      if (polygons.length > 0 && paths.length > 0) { paths.forEach(p => (p.style.fill = css.label)); }
     }
   }
 };

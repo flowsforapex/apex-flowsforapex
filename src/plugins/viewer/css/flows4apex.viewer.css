@@ -23,3 +23,18 @@
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
 }
+
+@media (prefers-color-scheme: dark) {
+  .mtbv-rendercanvas:not(.FLOWS) {
+    background-color: #2b3035;
+  }
+
+  .mtbv-rendercanvas:not(.FLOWS) .bjs-container {
+    --default-fill-color: #2b3035;
+    --default-stroke-color: white;
+  }
+
+  .mtbv-rendercanvas:not(.FLOWS) .bjs-powered-by {
+    color: white !important;
+  }
+}
