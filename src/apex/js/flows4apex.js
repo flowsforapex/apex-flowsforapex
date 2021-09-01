@@ -683,10 +683,9 @@ function bulkReserveStep( action ){
   }
 }
 
-function viewFlowInstance( action, element ){
+function markAsCurrent(prcsId){
   var processRows = apex.jQuery( "#flow-instances td" );
-  var selectedProcess = apex.jQuery( element ).attr( "data-prcs" );
-  var currentName = apex.jQuery( element ).attr( "data-name" );
+  var selectedProcess = prcsId;
   var currentSelector =
     "button.flow-instance-actions-btn[data-prcs=" +
     selectedProcess +
@@ -694,15 +693,26 @@ function viewFlowInstance( action, element ){
   var currentRow = processRows.has( currentSelector );
   processRows.removeClass( "current-process" );
   currentRow.parent().children().addClass( "current-process" );
+}
+
+function refreshViewer(prcsId, prcsName){
   apex
     .jQuery( "#flow-monitor_heading" )
-    .text( "Flow Viewer (" + currentName + ")" );
-  apex.item("P10_PRCS_ID").setValue(selectedProcess);
+    .text( "Flow Viewer (" + prcsName + ")" );
+  
   if ( apex.item("P10_DISPLAY_SETTING").getValue() === "window" ) {
-    redirectToMonitor(action, selectedProcess);
+    redirectToMonitor("view-flow-instance", prcsId);
   } else {
     apex.region("flow-monitor").refresh();
   }
+}
+
+function viewFlowInstance( action, element ){
+  var selectedProcess = apex.jQuery( element ).attr( "data-prcs" );
+  var currentName = apex.jQuery( element ).attr( "data-name" );
+  apex.item("P10_PRCS_ID").setValue(selectedProcess);
+  markAsCurrent(selectedProcess);
+  refreshViewer(selectedProcess, currentName);
 }
 function initActions(){
   //Define actions
