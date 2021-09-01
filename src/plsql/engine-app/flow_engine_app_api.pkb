@@ -135,6 +135,7 @@ as
               p_page => 14
             , p_items => 'P14_PRCS_ID,P14_TITLE'
             , p_values => apex_application.g_x02||','||apex_application.g_x03
+            , p_clear_cache => 'RP'
           );
         when 'EDIT-FLOW-DIAGRAM' then
           l_url := apex_page.get_url(
