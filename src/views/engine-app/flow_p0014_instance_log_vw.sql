@@ -6,11 +6,13 @@ as
        , lgpr.lgpr_prcs_event
        , case lgpr.lgpr_prcs_event
            when 'started' then 'fa-play-circle-o'
+           when 'running' then 'fa-play-circle-o'
            when 'created' then 'fa-plus-circle-o'
            when 'completed' then 'fa-check-circle-o'
            when 'terminated' then 'fa-stop-circle-o'
            when 'error' then 'fa-exclamation-circle-o'
            when 'reset' then 'fa-undo'
+           when 'restart step' then 'fa-undo'
          end as lgpr_prcs_event_icon
        , lgpr.lgpr_timestamp
        , lgpr.lgpr_user

@@ -50,6 +50,7 @@ drop view flow_p0013_variable_log_vw;
 drop view flow_p0014_instance_log_vw;
 drop view flow_p0014_subflows_vw;
 drop view flow_p0014_subflow_log_vw;
+drop view flow_p0014_variable_log_vw;
 drop view flow_task_inbox_vw;
 drop view flow_instance_connections_lov;
 drop view flow_instance_gateways_lov;
