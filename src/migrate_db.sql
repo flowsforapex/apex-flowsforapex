@@ -120,6 +120,14 @@ PROMPT >> Modeler Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
 
+PROMPT >> Process Plugin Objects
+@plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pks
+@plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pkb
+@plugins/manage-flow-instance-step/plsql/flow_plugin_manage_instance_step.pks
+@plugins/manage-flow-instance-step/plsql/flow_plugin_manage_instance_step.pkb
+@plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pks
+@plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pkb
+
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object
     from user_objects

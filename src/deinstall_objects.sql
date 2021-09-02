@@ -36,6 +36,11 @@ drop package flow_modeler;
 PROMPT >> Viewer Plugin Objects
 drop package flow_viewer;
 
+PROMPT >> Process Plugin Objects
+drop package flow_plugin_manage_instance;
+drop package flow_plugin_manage_instance_step;
+drop package flow_plugin_manage_instance_variables;
+
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;
 drop view flow_p0007_instances_counter_vw;
