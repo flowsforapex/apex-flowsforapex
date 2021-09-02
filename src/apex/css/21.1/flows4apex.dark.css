@@ -1,0 +1,3 @@
+.current-process:not([headers*="instance_status_col"]) {
+  background-color: rgba(255, 255, 255, 0.14) !important;
+}
