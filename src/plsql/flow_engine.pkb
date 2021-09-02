@@ -1167,11 +1167,11 @@ begin
       );
       */
       null;
-    when others then
+    /*when others then
       apex_error.add_error
       ( p_message => 'Some other error finding next step'
       , p_display_location => apex_error.c_on_error_page
-      );
+      );*/  -- let error run back to run_step
 end run_step;
 
 
@@ -1237,14 +1237,29 @@ begin
   -- end of post-step operations for previous step
   if flow_globals.get_step_error then
     rollback;
-
+    if p_recursive_call then
+      -- set errort status on instance and subflow
+      flow_errors.set_error_status
+      ( pi_prcs_id => p_process_id
+      , pi_sbfl_id => p_subflow_id
+      );
+    end if;
     apex_debug.info
     ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error on Step %1'
     , p0        => p_subflow_id
     , p1        => l_sbfl_rec.sbfl_current
     );
-    -- then what happens....
   else
+    -- update subflow with step completed, and prepare for next step before committing
+    update flow_subflows sbfl
+      set sbfl.sbfl_current = l_step_info.target_objt_ref
+        , sbfl.sbfl_last_completed = l_sbfl_rec.sbfl_current
+        , sbfl_became_current = systimestamp
+        , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+        , sbfl_work_started = null
+    where sbfl.sbfl_prcs_id = p_process_id
+      and sbfl.sbfl_id = p_subflow_id
+    ;
     commit;
 
     apex_debug.info
@@ -1252,56 +1267,65 @@ begin
     , p0        => p_subflow_id
     , p1        => l_sbfl_rec.sbfl_current
     );
-  end if;
-
-  -- start of pre-phase for next step
-  -- reset step_had_error flag
-  flow_globals.set_step_error ( p_has_error => false);
-
-  -- relock subflow
-  l_sbfl_rec := flow_engine_util.get_subflow_info 
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_lock_process => false
-  , p_lock_subflow => true
-  );
-
-  l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
-  -- updating subflows here with became-current time, new current objt, new last completed.  Reset started time
-  -- set status to running here...
- update flow_subflows sbfl
-     set sbfl.sbfl_current = l_step_info.target_objt_ref
-       , sbfl.sbfl_last_completed = l_sbfl_rec.sbfl_current
-       , sbfl_became_current = systimestamp
-       , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-       , sbfl_work_started = null
-   where sbfl.sbfl_prcs_id = p_process_id
-     and sbfl.sbfl_id = p_subflow_id
-  ;
-
-  run_step 
-  ( p_sbfl_rec => l_sbfl_rec
-  , p_step_info => l_step_info 
-  );
-
-    -- Commit transaction before returning
-  if flow_globals.get_step_error then
-    rollback;
-
-    apex_debug.info
-    ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error'
-    , p0        => p_subflow_id
-    );
-    -- then what happens....
-  else
-    commit;
-
-    apex_debug.info
-    ( p_message => 'Subflow %0 : Step End Committed'
-    , p0        => p_subflow_id
-    );
-  end if;
   
+
+    -- start of pre-phase for next step
+    -- reset step_had_error flag
+    flow_globals.set_step_error ( p_has_error => false);
+    -- now into next step so is not part of users current step
+    flow_globals.set_is_recursive_step (p_is_recursive_step => true);
+    apex_debug.info ( p_message => 'Step now counted as recursive');
+    -- relock subflow
+    l_sbfl_rec := flow_engine_util.get_subflow_info 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_lock_process => false
+    , p_lock_subflow => true
+    );
+/*
+    l_sbfl_rec.sbfl_last_completed := l_sbfl_rec.sbfl_current;
+    -- updating subflows here with became-current time, new current objt, new last completed.  Reset started time
+    -- set status to running here...
+    update flow_subflows sbfl
+      set sbfl.sbfl_current = l_step_info.target_objt_ref
+        , sbfl.sbfl_last_completed = l_sbfl_rec.sbfl_current
+        , sbfl_became_current = systimestamp
+        , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+        , sbfl_work_started = null
+    where sbfl.sbfl_prcs_id = p_process_id
+      and sbfl.sbfl_id = p_subflow_id
+    ;
+*/
+    run_step 
+    ( p_sbfl_rec => l_sbfl_rec
+    , p_step_info => l_step_info 
+    );
+
+      -- Commit transaction before returning
+    if flow_globals.get_step_error then
+      rollback;
+ --     if p_recursive_call then
+        -- set errort status on instance and subflow
+        flow_errors.set_error_status
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        );
+        commit;
+ --     end if;
+      apex_debug.info
+      ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error.  (Error Status Just Committed.)'
+      , p0        => p_subflow_id
+      );
+      
+    else
+      commit;
+
+      apex_debug.info
+      ( p_message => 'Subflow %0 : Step End Committed'
+      , p0        => p_subflow_id
+      );
+    end if;
+  end if;
   end flow_complete_step;
 
   procedure start_step -- just (optionally) records the start time gpr work on the current step

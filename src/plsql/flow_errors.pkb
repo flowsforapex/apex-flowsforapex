@@ -3,6 +3,44 @@ as
 
   g_logging_language        flow_configuration.cfig_value%type; 
 
+  procedure autonomous_write_to_instance_log
+  ( pi_prcs_id        in flow_processes.prcs_id%type
+  , pi_message        in flow_instance_event_log.lgpr_comment%type
+  , pi_error_info     in flow_instance_event_log.lgpr_error_info%type
+  )
+  is
+    pragma autonomous_transaction;
+  begin
+    -- add to instance_event_log
+    flow_logging.log_instance_event
+    ( p_process_id        => pi_prcs_id
+    , p_event             => flow_constants_pkg.gc_prcs_event_error
+    , p_comment           => pi_message
+    , p_error_info        => pi_error_info
+    );
+    --  commit the autonomous transaction
+    commit;
+  end autonomous_write_to_instance_log;
+
+  procedure set_error_status
+  ( pi_prcs_id        in flow_processes.prcs_id%type
+  , pi_sbfl_id        in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin  
+      -- set sbfl & prcs error status
+      update flow_subflows sbfl
+        set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
+          , sbfl.sbfl_last_update = systimestamp
+      where sbfl.sbfl_id = pi_sbfl_id
+      ;
+      update flow_processes prcs
+        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
+          , prcs.prcs_last_update = systimestamp
+      where prcs.prcs_id = pi_prcs_id
+      ;   
+  end set_error_status;
+
   procedure handle_instance_error
   ( pi_prcs_id        in flow_processes.prcs_id%type
   , pi_sbfl_id        in flow_subflows.sbfl_id%type default null
@@ -21,6 +59,7 @@ as
   is
     l_message_content  flow_messages.fmsg_message_content%type;
     l_message          flow_instance_event_log.lgpr_comment%type;
+    l_error_info       flow_instance_event_log.lgpr_error_info%type;
   begin 
     apex_debug.enter
     ( 'handle_instance_error'
@@ -68,26 +107,17 @@ as
                   , p8 => p8
                   , p9 => p9
                   );
+    -- get the error stack and step type
+    l_error_info   := dbms_utility.format_error_stack;
     -- add to instance_event_log
-    flow_logging.log_instance_event
-    ( p_process_id        => pi_prcs_id
-    , p_event             => flow_constants_pkg.gc_prcs_event_error
-    , p_comment           => l_message
-    , p_error_info        => dbms_utility.format_error_stack
+    autonomous_write_to_instance_log
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_message        => l_message
+    , pi_error_info     => l_error_info
     );
     -- decide where to put error message
     if flow_globals.get_is_recursive_step then
-      -- error is on step not relating to users current task.  Log error, set sbfl & prcs error status
-      update flow_subflows sbfl
-        set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
-          , sbfl.sbfl_last_update = systimestamp
-      where sbfl.sbfl_id = pi_sbfl_id
-      ;
-      update flow_processes prcs
-        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
-          , prcs.prcs_last_update = systimestamp
-      where prcs.prcs_id = pi_prcs_id
-      ;     
+      -- errors written to log, status already set to error in autonomous session
       flow_globals.set_step_error (p_has_error => true);
     else
       -- step belongs to current user's current session - use apex_error
