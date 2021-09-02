@@ -81,7 +81,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12017214847815037)
 ,p_list_item_display_sequence=>90
-,p_list_item_link_text=>'Edit (Diagram)'
+,p_list_item_link_text=>'Edit Flow'
 ,p_list_item_icon=>'fa-pencil'
 ,p_list_text_01=>'edit-flow-diagram'
 ,p_list_item_current_type=>'TARGET_PAGE'

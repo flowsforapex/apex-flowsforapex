@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210825084054'
+,p_last_upd_yyyymmddhh24miss=>'20210902104410'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2444672040538201)
@@ -65,18 +65,15 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(5151686219389207)
 ,p_query_column_id=>1
 ,p_column_alias=>'OBJT_BPMN_ID'
-,p_column_display_sequence=>6
-,p_column_heading=>'Objt Bpmn Id'
-,p_use_as_row_header=>'N'
-,p_disable_sort_column=>'N'
+,p_column_display_sequence=>1
+,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
-,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(7100767336320961)
 ,p_query_column_id=>2
 ,p_column_alias=>'EXPR_SET'
-,p_column_display_sequence=>1
+,p_column_display_sequence=>3
 ,p_column_heading=>'Execution'
 ,p_use_as_row_header=>'N'
 ,p_derived_column=>'N'
@@ -86,7 +83,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(7101132228320962)
 ,p_query_column_id=>3
 ,p_column_alias=>'EXPR_VAR_NAME'
-,p_column_display_sequence=>2
+,p_column_display_sequence=>4
 ,p_column_heading=>'Name'
 ,p_use_as_row_header=>'N'
 ,p_derived_column=>'N'
@@ -96,7 +93,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(7101559667320963)
 ,p_query_column_id=>4
 ,p_column_alias=>'EXPR_VAR_TYPE'
-,p_column_display_sequence=>3
+,p_column_display_sequence=>5
 ,p_column_heading=>'Data Type'
 ,p_use_as_row_header=>'N'
 ,p_derived_column=>'N'
@@ -106,7 +103,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(7101989546320963)
 ,p_query_column_id=>5
 ,p_column_alias=>'EXPR_TYPE'
-,p_column_display_sequence=>4
+,p_column_display_sequence=>6
 ,p_column_heading=>'Expression Type'
 ,p_use_as_row_header=>'N'
 ,p_derived_column=>'N'
@@ -116,7 +113,7 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(7102337978320963)
 ,p_query_column_id=>6
 ,p_column_alias=>'EXPR_EXPRESSION'
-,p_column_display_sequence=>5
+,p_column_display_sequence=>7
 ,p_column_heading=>'Expression'
 ,p_use_as_row_header=>'N'
 ,p_derived_column=>'N'
@@ -126,12 +123,9 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(5151781729389208)
 ,p_query_column_id=>7
 ,p_column_alias=>'PRCS_ID'
-,p_column_display_sequence=>7
-,p_column_heading=>'Prcs Id'
-,p_use_as_row_header=>'N'
-,p_disable_sort_column=>'N'
+,p_column_display_sequence=>2
+,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
-,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(16213590277416087)
@@ -326,7 +320,10 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'55783'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'LGVR_PRCS_ID:LGVR_OBJT_ID:LGVR_VAR_NAME:LGVR_EXPR_SET:LGVR_TIMESTAMP:LGVR_VAR_TYPE:LGVR_VALUE'
+,p_display_rows=>10
+,p_report_columns=>'LGVR_EXPR_SET:LGVR_VAR_NAME:LGVR_VAR_TYPE:LGVR_VALUE:LGVR_TIMESTAMP:'
+,p_sort_column_1=>'LGVR_TIMESTAMP'
+,p_sort_direction_1=>'DESC'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(16212173591416073)

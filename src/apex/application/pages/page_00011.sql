@@ -23,8 +23,8 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495624331342880306)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_chained=>'N'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210813050513'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210902075156'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603847781745438)
@@ -62,6 +62,14 @@ wwv_flow_api.create_page_button(
 ,p_button_image_alt=>'Create'
 ,p_button_position=>'TEMPLATE_DEFAULT'
 ,p_icon_css_classes=>'fa-plus'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(6433507492417645)
+,p_name=>'P11_PRCS_ID'
+,p_item_sequence=>40
+,p_item_plug_id=>wwv_flow_api.id(12491866042341262842)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(34631117879575813)
@@ -139,6 +147,7 @@ wwv_flow_api.create_page_process(
 '            , pi_vc2_value => :P11_BUSINESS_REF',
 '        );',
 '    end if;',
+'    :P11_PRCS_ID := l_prcs_id; ',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
@@ -148,6 +157,7 @@ wwv_flow_api.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
+,p_attribute_01=>'P11_PRCS_ID,P11_PRCS_NAME'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_success_message=>'&APP_TEXT$APP_INSTANCE_CREATED.'
 );

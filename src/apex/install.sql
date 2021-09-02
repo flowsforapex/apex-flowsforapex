@@ -7,6 +7,7 @@ prompt --install
 @@application/shared_components/navigation/lists/p8_subflow_header_action_menu.sql
 @@application/shared_components/navigation/lists/p8_action_menu.sql
 @@application/shared_components/navigation/lists/p8_variable_row_action_menu.sql
+@@application/shared_components/navigation/lists/p8_variable_header_action_menu.sql
 @@application/shared_components/navigation/lists/p2_action_menu.sql
 @@application/shared_components/navigation/lists/p7_action_menu.sql
 @@application/shared_components/navigation/lists/p10_action_menu.sql
@@ -31,6 +32,7 @@ prompt --install
 @@application/shared_components/navigation/navigation_bar.sql
 @@application/shared_components/logic/application_processes/switch_theme_mode.sql
 @@application/shared_components/logic/application_processes/reset_theme_mode.sql
+@@application/shared_components/logic/application_processes/ajax_handler.sql
 @@application/shared_components/logic/application_items/app_name_title.sql
 @@application/shared_components/logic/application_items/current_theme_name.sql
 @@application/shared_components/logic/application_items/flow_page_title.sql

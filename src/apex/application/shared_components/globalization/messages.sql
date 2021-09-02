@@ -53,25 +53,31 @@ wwv_flow_api.create_message(
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(5024381545147791)
 ,p_name=>'APP_CONFIRM_DELETE_INSTANCE'
-,p_message_text=>'This will delete the flow instance. Are you sure?'
+,p_message_text=>'This will delete the flow instance. Please add a comment (optional) and click confirm.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7370414939802683)
+,p_name=>'APP_CONFIRM_DELETE_PROCESS_VARIABLE'
+,p_message_text=>'This will delete the process variable. Please add a comment (optional) and click confirm.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(5023975409141065)
 ,p_name=>'APP_CONFIRM_RESET_INSTANCE'
-,p_message_text=>'This will reset the flow instance. Are you sure?'
+,p_message_text=>'This will reset the flow instance. Please add a comment (optional) and click confirm.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7072975164227666)
 ,p_name=>'APP_CONFIRM_RESTART_STEP'
-,p_message_text=>'This will re-start the subflow. Are you sure?'
+,p_message_text=>'This will restart the subflow. Please add a comment (optional) and click confirm.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(5024181840145883)
 ,p_name=>'APP_CONFIRM_TERMINATE_INSTANCE'
-,p_message_text=>'This will terminate the flow instance. Are you sure?'
+,p_message_text=>'This will terminate the flow instance. Please add a comment (optional) and click confirm.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -139,6 +145,50 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_EDIT'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('\00C9diter')
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7385691008882345)
+,p_name=>'APP_ERR_GATEWAY_CONNECTION_EMPTY'
+,p_message_text=>'Please select a connection'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7385418133881112)
+,p_name=>'APP_ERR_GATEWAY_ONLY_ONE_CONNECTION'
+,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'Please select only one connection',
+''))
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7385297806875971)
+,p_name=>'APP_ERR_PROV_VAR_DATE_NOT_DATE'
+,p_message_text=>'Value must be a date'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7384469808866136)
+,p_name=>'APP_ERR_PROV_VAR_NAME_EMPTY'
+,p_message_text=>'Variable Name must have a value'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7385007498873734)
+,p_name=>'APP_ERR_PROV_VAR_NUM_NOT_NUMBER'
+,p_message_text=>'Value must be a number'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7384642544868247)
+,p_name=>'APP_ERR_PROV_VAR_TYPE_EMPTY'
+,p_message_text=>'Variable Type must have a value'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7384854796870876)
+,p_name=>'APP_ERR_PROV_VAR_VALUE_EMPTY'
+,p_message_text=>'Value must have a value'
+,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(8225061315538358)
@@ -271,6 +321,12 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_PROCESS_VARIABLE_ADDED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Variable de processus ajout\00E9e.')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7371506201807240)
+,p_name=>'APP_PROCESS_VARIABLE_DELETED'
+,p_message_text=>'Process variable deleted.'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
