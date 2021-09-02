@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210825155638'
+,p_last_upd_yyyymmddhh24miss=>'20210827084419'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -712,8 +712,8 @@ wwv_flow_api.create_page_da_action(
 'var dgrmName = apex.item("P7_DGRM_NAME").getValue();',
 'var dgrmVersion = apex.item("P7_DGRM_VERSION").getValue();',
 '',
-'apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + ":IR[flow_instances]:" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS:" + dgrmNa'
-||'me + "," + dgrmVersion + "," + prcsStatus);'))
+'apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + "::" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS:" + dgrmName + "," + dgrmVer'
+||'sion + "," + prcsStatus);'))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34402165369171407)
@@ -849,6 +849,8 @@ wwv_flow_api.create_page_process(
 ', pi_request       => :request',
 ');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>':request not in (''FLOWS'', ''FLOWS-DARK'', ''DARK_MODE'', ''LIGHT_MODE'')'
+,p_process_when_type=>'PLSQL_EXPRESSION'
 ,p_process_success_message=>'Action processed.'
 );
 wwv_flow_api.create_page_process(

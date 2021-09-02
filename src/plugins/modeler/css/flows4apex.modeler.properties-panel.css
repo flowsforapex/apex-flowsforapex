@@ -539,23 +539,48 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
   height: 100%;
   cursor: w-resize;
 }
+/* button height fix */
+.bpp-properties-panel button[data-action="clear"] {
+  height: 100%;
+}
 /**
  * custom dark mode colors
  */
- @media (prefers-color-scheme: dark) {
-  .bpp-properties-panel,
-  ul.bpp-properties-tabs-links > li > a {
+.FLOWS-DARK .bpp-properties-panel,
+.FLOWS-DARK ul.bpp-properties-tabs-links > li > a {
+  background-color: #32383d;
+  color: white;
+}
+.FLOWS-DARK .bpp-properties-panel [contenteditable],
+.FLOWS-DARK .bpp-properties-panel select,
+.FLOWS-DARK .bpp-properties-panel input,
+.FLOWS-DARK .bpp-properties-panel button {
+  color: white;
+  background-color: #282c30;
+}
+.FLOWS-DARK .bpp-properties-panel label {
+  color: white;
+}
+.FLOWS-DARK .bpp-properties-panel button[data-action="clear"] {
+  background-color: inherit;
+}
+@media (prefers-color-scheme: dark) {
+  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel,
+  .flows4apex-modeler:not(.FLOWS) ul.bpp-properties-tabs-links > li > a {
     background-color: #32383d;
     color: white;
   }
-  .bpp-properties-panel [contenteditable],
-  .bpp-properties-panel select,
-  .bpp-properties-panel input,
-  .bpp-properties-panel button{
+  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel [contenteditable],
+  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel select,
+  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel input,
+  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel button {
     color: white;
     background-color: #282c30;
   }
-  .bpp-properties-panel label {
+  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel label {
     color: white;
+  }
+  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel button[data-action="clear"] {
+    background-color: inherit;
   }
 }

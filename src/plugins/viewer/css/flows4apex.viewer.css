@@ -1,4 +1,4 @@
-.mtbv-rendercanvas {
+.flows4apex-viewer {
   height: 80vh;
   background-color: #f0f0f0;
 }
@@ -8,15 +8,33 @@
   --default-stroke-color: black;
 }
 
+/**
+ * custom dark mode colors
+ */
+.flows4apex-viewer.FLOWS-DARK {
+  background-color: #2b3035;
+}
+
+.FLOWS-DARK .bjs-container {
+  --default-fill-color: #2b3035;
+  --default-stroke-color: white;
+}
+
+.FLOWS-DARK .bjs-powered-by {
+  color: white !important;
+}
+
 @media (prefers-color-scheme: dark) {
-  .mtbv-rendercanvas {
+  .flows4apex-viewer:not(.FLOWS) {
     background-color: #2b3035;
   }
-  .bjs-container {
+
+  .flows4apex-viewer:not(.FLOWS) .bjs-container {
     --default-fill-color: #2b3035;
     --default-stroke-color: white;
   }
-  .bjs-powered-by {
+
+  .flows4apex-viewer:not(.FLOWS) .bjs-powered-by {
     color: white !important;
   }
 }

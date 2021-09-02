@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage3();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210825160314'
+,p_last_upd_yyyymmddhh24miss=>'20210902110542'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(34404686490171432)
@@ -31,22 +31,22 @@ wwv_flow_api.create_report_region(
 ,p_display_sequence=>20
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
-,p_component_template_options=>'#DEFAULT#:t-BadgeList--large:t-BadgeList--dash:t-BadgeList--fixed:t-Report--hideNoPagination'
+,p_component_template_options=>'#DEFAULT#:t-BadgeList--large:t-BadgeList--dash:t-BadgeList--cols t-BadgeList--5cols:t-Report--hideNoPagination'
 ,p_display_point=>'BODY'
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
 '    sum(case when i.prcs_status = ''created'' then 1 else 0 end)  as created_instances,',
-'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''created'', p_clear_cache => ''RP,RIR'', p_request => ''IR[flow_instances]'') as instance_created_link,',
+'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''created'', p_clear_cache => ''RP,RIR'') as instance_created_link,',
 '    sum(case when i.prcs_status = ''running'' then 1 else 0 end)  as running_instances,',
-'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''running'', p_clear_cache => ''RP,RIR'', p_request => ''IR[flow_instances]'') as instance_running_link,',
+'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''running'', p_clear_cache => ''RP,RIR'') as instance_running_link,',
 '    sum(case when i.prcs_status = ''completed'' then 1 else 0 end) as completed_instances,',
-'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''completed'', p_clear_cache => ''RP,RIR'', p_request => ''IR[flow_instances]'') as instance_completed_link,',
+'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''completed'', p_clear_cache => ''RP,RIR'') as instance_completed_link,',
 '    sum(case when i.prcs_status = ''terminated'' then 1 else 0 end)  as terminated_instances,',
-'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''terminated'', p_clear_cache => ''RP,RIR'', p_request => ''IR[flow_instances]'') as instance_terminated_link,',
+'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''terminated'', p_clear_cache => ''RP,RIR'') as instance_terminated_link,',
 '    sum(case when i.prcs_status = ''error'' then 1 else 0 end) as error_instances,',
-'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''error'', p_clear_cache => ''RP,RIR'', p_request => ''IR[flow_instances]'') as instance_error_link',
+'    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''error'', p_clear_cache => ''RP,RIR'') as instance_error_link',
 'from flow_instances_vw i'))
 ,p_ajax_enabled=>'Y'
 ,p_query_row_template=>wwv_flow_api.id(12495570578125880206)
@@ -208,7 +208,7 @@ wwv_flow_api.create_jet_chart_series(
 ,p_max_row_count=>20
 ,p_items_value_column_name=>'VALUE'
 ,p_items_label_column_name=>'LABEL'
-,p_color=>'#8C9EB0'
+,p_color=>'#D9B13B'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
 );
@@ -228,7 +228,7 @@ wwv_flow_api.create_jet_chart_series(
 ,p_max_row_count=>20
 ,p_items_value_column_name=>'VALUE'
 ,p_items_label_column_name=>'LABEL'
-,p_color=>'#D9B13B'
+,p_color=>'#6AAD42'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
 );
@@ -248,7 +248,7 @@ wwv_flow_api.create_jet_chart_series(
 ,p_max_row_count=>20
 ,p_items_value_column_name=>'VALUE'
 ,p_items_label_column_name=>'LABEL'
-,p_color=>'#69AD42'
+,p_color=>'#8C9EB0 '
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
 );
@@ -390,24 +390,23 @@ wwv_flow_api.create_jet_chart_series(
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'with period as (',
-'   select sysdate - 7 + level - 1 dt',
-'   from   dual',
-'   connect by level <= (',
-'     sysdate - sysdate  + 8',
-'   )',
-')',
-'select  to_char(trunc(p.dt), ''YYYY-MM-DD'') label, count(ins.prcs_id) as value',
-'from period p',
-'left join flow_instances_vw ins on trunc(cast(ins.prcs_init_ts as date)) = trunc(p.dt)',
-'group by to_char(trunc(p.dt), ''YYYY-MM-DD'')',
-'order by  to_char(trunc(p.dt), ''YYYY-MM-DD'');'))
+'    select sysdate - 7 + level - 1 dt',
+'    from   dual',
+'    connect by level <= (',
+'      sysdate - sysdate  + 8',
+'    )',
+'  )',
+'  select  to_char(trunc(p.dt), ''YYYY-MM-DD'') label, count(ins.prcs_id) as value',
+'  from period p',
+'  left join flow_instances_vw ins on trunc(cast(ins.prcs_init_ts as date)) = trunc(p.dt)',
+'  group by to_char(trunc(p.dt), ''YYYY-MM-DD'')',
+'  order by  to_char(trunc(p.dt), ''YYYY-MM-DD'')'))
 ,p_max_row_count=>20
 ,p_items_value_column_name=>'VALUE'
 ,p_items_label_column_name=>'LABEL'
+,p_color=>'#D9B13B'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
-,p_items_label_display_as=>'PERCENT'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_axis(
  p_id=>wwv_flow_api.id(34587853181532103)
@@ -459,25 +458,6 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
 ,p_menu_template_id=>wwv_flow_api.id(12495520300515880126)
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(34630280895575804)
-,p_name=>'On change Include Version'
-,p_event_sequence=>10
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P3_INCLUDE_VERSION'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'change'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(34630325020575805)
-,p_event_id=>wwv_flow_api.id(34630280895575804)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(34405803831171444)
 );
 wwv_flow_api.component_end;
 end;
