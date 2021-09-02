@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage10();'
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210902154102'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210902175832'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -733,15 +733,15 @@ wwv_flow_api.create_page_da_action(
 '$("td[headers*=instance_status_col]").each(function() {',
 '  var text = $( this ).text();',
 '  if ( text == "created" ) {',
-'    $( this ).addClass( "u-color-37" );',
+'    $( this ).addClass( "ffa-color--created" );',
 '  } else if ( text == "completed" ) {',
-'    $( this ).addClass( "u-color-44" );',
+'    $( this ).addClass( "ffa-color--completed" );',
 '  } else if ( text == "running" ) {',
-'    $( this ).addClass( "u-color-35" );',
+'    $( this ).addClass( "ffa-color--running" );',
 '  } else if ( text == "terminated" ) {',
-'    $( this ).addClass( "u-color-38" );',
+'    $( this ).addClass( "ffa-color--terminated" );',
 '  } else if ( text == "error" ) {',
-'    $( this ).addClass( "u-color-39" );',
+'    $( this ).addClass( "ffa-color--error" );',
 '  }',
 '});',
 ''))

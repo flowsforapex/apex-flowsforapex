@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210901162833'
+,p_last_upd_yyyymmddhh24miss=>'20210902175913'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2447308339538228)
@@ -706,15 +706,15 @@ wwv_flow_api.create_page_da_action(
 '$("td[headers*=instance_event_col]").each(function() {',
 '  var text = $( this ).text();',
 '  if ( text == "created" || text == "reset" || text == "restart step") {',
-'    $( this ).addClass( "u-color-37" );',
+'    $( this ).addClass( "ffa-color--created" );',
 '  } else if ( text == "completed" ) {',
-'    $( this ).addClass( "u-color-44" );',
+'    $( this ).addClass( "ffa-color--completed" );',
 '  } else if ( text == "started" || text == "running" ) {',
-'    $( this ).addClass( "u-color-35" );',
+'    $( this ).addClass( "ffa-color--running" );',
 '  } else if ( text == "terminated" ) {',
-'    $( this ).addClass( "u-color-38" );',
+'    $( this ).addClass( "ffa-color--terminated" );',
 '  } else if ( text == "error" ) {',
-'    $( this ).addClass( "u-color-39" );',
+'    $( this ).addClass( "ffa-color--error" );',
 '  }',
 '});'))
 );

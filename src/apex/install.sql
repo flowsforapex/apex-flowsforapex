@@ -23,6 +23,12 @@ prompt --install
 @@application/shared_components/files/js_flows4apex_js_map.sql
 @@application/shared_components/files/css_flows4apex_min_css.sql
 @@application/shared_components/files/css_flows4apex_css_map.sql
+@@application/shared_components/files/css_20_1_flows4apex_light_css.sql
+@@application/shared_components/files/css_20_1_flows4apex_dark_css.sql
+@@application/shared_components/files/css_20_1_flows4apex_dark_min_css.sql
+@@application/shared_components/files/css_20_1_flows4apex_dark_css_map.sql
+@@application/shared_components/files/css_20_1_flows4apex_light_min_css.sql
+@@application/shared_components/files/css_20_1_flows4apex_light_css_map.sql
 @@application/shared_components/files/app_100_logo_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
@@ -32,10 +38,11 @@ prompt --install
 @@application/shared_components/navigation/navigation_bar.sql
 @@application/shared_components/logic/application_processes/switch_theme_mode.sql
 @@application/shared_components/logic/application_processes/reset_theme_mode.sql
+@@application/shared_components/logic/application_processes/css_tricks.sql
 @@application/shared_components/logic/application_processes/ajax_handler.sql
 @@application/shared_components/logic/application_items/app_name_title.sql
-@@application/shared_components/logic/application_items/current_theme_name.sql
 @@application/shared_components/logic/application_items/flow_page_title.sql
+@@application/shared_components/logic/application_items/theme_plugin_class.sql
 @@application/shared_components/logic/application_computations/app_name_title.sql
 @@application/shared_components/logic/application_settings.sql
 @@application/shared_components/navigation/tabs/standard.sql

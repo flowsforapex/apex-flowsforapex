@@ -34,7 +34,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(6211519620415215)
 ,p_list_item_display_sequence=>40
 ,p_list_item_link_text=>'Automatic'
-,p_list_item_link_target=>'javascript:apex.submit((window.matchMedia && window.matchMedia(''(prefers-color-scheme: dark)'').matches) ? ''FLOWS-DARK'' : ''FLOWS'');'
+,p_list_item_link_target=>'javascript:apex.submit((window.matchMedia && window.matchMedia(''(prefers-color-scheme: dark)'').matches) ? ''RESET_DARK'' : ''RESET_LIGHT'');'
 ,p_list_item_icon=>'fa-adjust'
 ,p_parent_list_item_id=>wwv_flow_api.id(5589254850825963)
 ,p_list_item_current_type=>'TARGET_PAGE'
