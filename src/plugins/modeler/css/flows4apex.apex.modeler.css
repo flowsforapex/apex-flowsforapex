@@ -1,9 +1,9 @@
-.mtbm-rendercanvas {
+.canvas {
   height: 80vh;
   background-color: #f0f0f0;
 }
 
-.mtag-bpmn-modeler {
+.flows4apex-modeler {
   position: relative;
 }
 
@@ -34,12 +34,12 @@
 /**
  * custom dark mode colors
  */
-.mtag-bpmn-modeler.FLOWS-DARK .mtbm-rendercanvas, .FLOWS-DARK .properties-panel-parent {
+.FLOWS-DARK .mtbm-rendercanvas, .FLOWS-DARK .properties-panel-parent {
   background-color: #2b3035;
 }
 
 @media (prefers-color-scheme: dark) {
-  .mtag-bpmn-modeler:not(.FLOWS) .mtbm-rendercanvas, .mtag-bpmn-modeler:not(.FLOWS) .properties-panel-parent {
+  .flows4apex-modeler:not(.FLOWS) .canvas, .flows4apex-modeler:not(.FLOWS) .properties-panel-parent {
     background-color: #2b3035;
   }
 }
