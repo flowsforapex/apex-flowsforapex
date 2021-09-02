@@ -1,0 +1,62 @@
+/*Button in Flow Edit page next to version and status fiels*/
+
+.t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning) {
+  background-color: #4c4e50 !important;
+  color: #fff!important;
+}
+
+.t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning).is-active, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):focus, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):hover {
+  background-color: #65686a !important;
+}
+
+/*Disabled menu*/
+
+.a-Menu .a-Menu-item.is-disabled .a-Menu-accel,
+.a-Menu .a-Menu-item.is-disabled .a-Menu-label {
+  color:rgb(144, 146, 147) !important;
+}
+
+/*IR controls when expanded*/
+.a-IG-controlsLabel,
+.a-IRR-controlsLabel {
+  background-color:#222629 !important;
+}
+
+.a-Menu .a-Menu-item.is-disabled.is-focused {
+  color: rgba(254, 254, 254, 0.5);
+  background-color: #6c6c6c75;
+}
+.a-Menu .a-Menu-item.is-disabled.is-focused > .a-Menu-inner .a-Menu-statusCol,
+.a-Menu .a-Menu-item.is-disabled.is-focused > .a-Menu-inner .a-Menu-accel {
+  color: rgb(144, 146, 147);
+  opacity: 1;
+}
+
+/*Date picker*/
+
+#ui-timepicker-divhour, #ui-timepicker-divminute {
+  background: #3f4244;
+  border-color: #646464;
+  border-radius: 8px;
+}
+#ui-timepicker-divhour:hover, #ui-timepicker-divminute:hover {
+  background: #646464;
+}
+
+.ui-datepicker-month, .ui-datepicker-year {
+  background-color: inherit;
+}
+
+.current-process:not([headers*="instance_status_col"]) {
+  background-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+/*Confirm dialog title background*/
+body .ui-dialog .ui-dialog-titlebar {
+  background-color: #222629!important;
+}
+
+/*IR Row selector label*/
+.a-IRR-rowSelector label {
+ color:#ffffff !important;
+}
