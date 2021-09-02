@@ -26,6 +26,9 @@ drop package flow_gateways;
 drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
+drop package flow_engine_app_api;
+drop package flow_errors;
+drop package flow_globals;
 
 PROMPT >> Modeler Plugin Objects
 drop package flow_modeler;
@@ -36,6 +39,8 @@ drop package flow_viewer;
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;
 drop view flow_p0007_instances_counter_vw;
+drop view flow_p0008_vw;
+drop view flow_p0008_subflows_vw;
 drop view flow_p0010_vw;
 drop view flow_p0010_branches_vw;
 drop view flow_p0010_instances_vw;
