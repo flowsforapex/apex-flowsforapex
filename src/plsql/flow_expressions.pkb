@@ -207,15 +207,33 @@ as
                     into l_result_vc2;
         exception
         when no_data_found then
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_no_data'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
         when too_many_rows then
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_too_many_rows'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'            
         when others then
             apex_debug.error
             ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
@@ -223,10 +241,19 @@ as
             , p1        => pi_prcs_id
             , p2        => sqlerrm
             );
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_other'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'               
         end;
         flow_process_vars.set_var 
         ( pi_prcs_id        => pi_prcs_id
@@ -242,15 +269,33 @@ as
                     into l_result_date;
         exception
         when no_data_found then
-            apex_error.add_error
+/*            apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_no_data'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
         when too_many_rows then
-            apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
+            /*apex_error.add_error
+            ( p_message          => 'Error setting %2 process variable '||pi_expression.expr_var_name||' in process id '||pi_prcs_id||'.  Query returns multiple rows.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_too_many_rows'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'            
         when others then
             apex_debug.error
             ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
@@ -258,10 +303,19 @@ as
             , p1        => pi_prcs_id
             , p2        => sqlerrm
             );
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_other'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'   
         end;
         flow_process_vars.set_var 
         ( pi_prcs_id        => pi_prcs_id
@@ -277,15 +331,33 @@ as
                     into l_result_num;
         exception
         when no_data_found then
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_no_data'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
         when too_many_rows then
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_too_many_rows'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'  
         when others then
             apex_debug.error
             ( p_message => 'Error setting process variable %0 for process id %1. SQLERRM: %2'
@@ -293,10 +365,19 @@ as
             , p1        => pi_prcs_id
             , p2        => sqlerrm
             );
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'var_exp_sql_other'
+            , p0 => pi_prcs_id
+            , p1 => pi_expression.expr_var_name
+            , p2 => pi_expression.expr_set
             );
+            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'   
         end;
         flow_process_vars.set_var 
         ( pi_prcs_id        => pi_prcs_id
@@ -336,10 +417,19 @@ as
         bulk collect into  l_result_set_vc2;
     exception
     when no_data_found then
-        apex_error.add_error
+        /*apex_error.add_error
         ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'s.  No data found in query.'
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'var_exp_sql_no_data'
+        , p0 => pi_prcs_id
+        , p1 => pi_expression.expr_var_name
+        , p2 => pi_expression.expr_set
         );
+        -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
     when others then
         apex_debug.error
         ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
@@ -347,10 +437,19 @@ as
         , p1        => pi_prcs_id
         , p2        => sqlerrm
         );
-        apex_error.add_error
+        /*apex_error.add_error
         ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'var_exp_sql_other'
+        , p0 => pi_prcs_id
+        , p1 => pi_expression.expr_var_name
+        , p2 => pi_expression.expr_set
         );
+        -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'   
     end;
     -- create delimited string output
     begin 
@@ -366,10 +465,19 @@ as
         , p1        => pi_prcs_id
         , p2        => sqlerrm
         );
-        apex_error.add_error
+        /*apex_error.add_error
         ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'var_exp_sql_other'
+        , p0 => pi_sbfl_id
+        , p1 => pi_expression.expr_var_name
+        , p2 => pi_expression.expr_set
         );
+        -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'
     end;
     apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result, p_level => 3);
     -- set proc variable
@@ -456,7 +564,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $$SOMETAG 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
+      -- $F4AMESSAGE 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
   end set_plsql_expression;  
 
   procedure set_plsql_function        
@@ -525,7 +633,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $$SOMETAG 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
+      -- $F4AMESSAGE 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
   end set_plsql_function;
 
   /**********************************************************************

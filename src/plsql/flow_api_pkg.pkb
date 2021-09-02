@@ -235,6 +235,7 @@ as
     flow_engine.flow_complete_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
+    , p_recursive_call => false
     );
 end flow_complete_step;
 

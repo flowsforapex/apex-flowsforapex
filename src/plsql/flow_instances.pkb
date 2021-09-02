@@ -333,7 +333,7 @@ as
     );
     -- mark process as terminated
     update flow_processes prcs
-       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_completed
+       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_terminated
          , prcs.prcs_last_update = systimestamp
      where prcs.prcs_id = p_process_id
     ; 

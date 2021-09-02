@@ -1,0 +1,541 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/b' exporter='Flows for APEX' exporterVersion='21.1.0'>
+  <bpmn:process id='Process_0rxermh' isExecutable='false'>
+    <bpmn:startEvent id='Event_Start' name='Start'>
+      <bpmn:outgoing>Flow_14z06uz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id='Activity_PreTest' name='PreTest'>
+      <bpmn:incoming>Flow_14z06uz</bpmn:incoming>
+      <bpmn:outgoing>Flow_00jb8i0</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_14z06uz' sourceRef='Event_Start' targetRef='Activity_PreTest' />
+    <bpmn:sequenceFlow id='Flow_00jb8i0' sourceRef='Activity_PreTest' targetRef='Gateway_Split' />
+    <bpmn:parallelGateway id='Gateway_Split' name='Split'>
+      <bpmn:incoming>Flow_00jb8i0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gaz0ao</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0y9ffj0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_09qiw1o</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1fop9iz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1y9kqgx</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id='Activity_PreStepA' name='PreStepA - Next Step Has Bad Pre-Step Expression'>
+      <bpmn:incoming>Flow_0gaz0ao</bpmn:incoming>
+      <bpmn:outgoing>Flow_02g1lu6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0gaz0ao' sourceRef='Gateway_Split' targetRef='Activity_PreStepA' />
+    <bpmn:task id='Activity_PreStepB' name='Pre-StepB - Next Step Has Bad Script'>
+      <bpmn:incoming>Flow_0y9ffj0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vrq8za</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0y9ffj0' sourceRef='Gateway_Split' targetRef='Activity_PreStepB' />
+    <bpmn:task id='Activity_PreStepC' name='Pre-Step C&#10;- Next Step has Bad Post-Step Expression'>
+      <bpmn:incoming>Flow_09qiw1o</bpmn:incoming>
+      <bpmn:outgoing>Flow_128itma</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_09qiw1o' sourceRef='Gateway_Split' targetRef='Activity_PreStepC' />
+    <bpmn:sequenceFlow id='Flow_02g1lu6' sourceRef='Activity_PreStepA' targetRef='Activity_PrePhaseError' />
+    <bpmn:scriptTask id='Activity_PrePhaseError' name='PrePhaseError'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeTask_A</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select rubbish
+from not_emp</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>AfterTask_A</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>PostTaskAStatic</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_02g1lu6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k8wtys</bpmn:outgoing>
+      <apex:plsqlCode>null;</apex:plsqlCode>
+    </bpmn:scriptTask>
+    <bpmn:task id='Activity_PostA' name='POst Step A'>
+      <bpmn:incoming>Flow_1k8wtys</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ezxz2g</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_1k8wtys' sourceRef='Activity_PrePhaseError' targetRef='Activity_PostA' />
+    <bpmn:endEvent id='Event_AEnd' name='A End'>
+      <bpmn:incoming>Flow_0ezxz2g</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_0ezxz2g' sourceRef='Activity_PostA' targetRef='Event_AEnd' />
+    <bpmn:sequenceFlow id='Flow_1vrq8za' sourceRef='Activity_PreStepB' targetRef='Activity_ScriptError' />
+    <bpmn:scriptTask id='Activity_ScriptError' name='ScriptError'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeTask_B</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>PreTaskB</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>AfterTask_B</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>AfterTaskB</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vrq8za</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xzm7c9</bpmn:outgoing>
+      <apex:plsqlCode>rubbish;</apex:plsqlCode>
+    </bpmn:scriptTask>
+    <bpmn:task id='Activity_PostB' name='Post Step B'>
+      <bpmn:incoming>Flow_0xzm7c9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kd6wqd</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0xzm7c9' sourceRef='Activity_ScriptError' targetRef='Activity_PostB' />
+    <bpmn:endEvent id='Event_BEnd' name='B End'>
+      <bpmn:incoming>Flow_1kd6wqd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_1kd6wqd' sourceRef='Activity_PostB' targetRef='Event_BEnd' />
+    <bpmn:sequenceFlow id='Flow_128itma' sourceRef='Activity_PreStepC' targetRef='Activity_PostPhaseError' />
+    <bpmn:scriptTask id='Activity_PostPhaseError' name='PostPhaseError'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeTask_C</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>PreStepGood</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>AfterTask_C</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>rubbish</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_128itma</bpmn:incoming>
+      <bpmn:outgoing>Flow_09g3n12</bpmn:outgoing>
+      <apex:plsqlCode>null;</apex:plsqlCode>
+    </bpmn:scriptTask>
+    <bpmn:task id='Activity_PostC' name='Post Step C'>
+      <bpmn:incoming>Flow_09g3n12</bpmn:incoming>
+      <bpmn:outgoing>Flow_1opo1dx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_09g3n12' sourceRef='Activity_PostPhaseError' targetRef='Activity_PostC' />
+    <bpmn:endEvent id='Event_CEnd' name='C End'>
+      <bpmn:incoming>Flow_1opo1dx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_1opo1dx' sourceRef='Activity_PostC' targetRef='Event_CEnd' />
+    <bpmn:task id='Activity_PreStepZ' name='PreStep Z&#10;- PostStep Contains Error'>
+      <bpmn:extensionElements>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>AfterTask_Z</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlFunctionBody</apex:varExpressionType>
+            <apex:varExpression>rubbish;</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1fop9iz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nm4pbz</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_1fop9iz' sourceRef='Gateway_Split' targetRef='Activity_PreStepZ' />
+    <bpmn:sequenceFlow id='Flow_0nm4pbz' sourceRef='Activity_PreStepZ' targetRef='Activity_1h759x2' />
+    <bpmn:task id='Activity_PostZ' name='Post Task Z'>
+      <bpmn:incoming>Flow_0othahn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lz66dy</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0othahn' sourceRef='Activity_1h759x2' targetRef='Activity_PostZ' />
+    <bpmn:scriptTask id='Activity_1h759x2' name='Good TaskZ'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeTask_Z</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>All Good</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>AfterTask_Z</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>All Good too!</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0nm4pbz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0othahn</bpmn:outgoing>
+      <apex:plsqlCode>null;</apex:plsqlCode>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id='Event_1xum1dw' name='Z End'>
+      <bpmn:incoming>Flow_1lz66dy</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_1lz66dy' sourceRef='Activity_PostZ' targetRef='Event_1xum1dw' />
+    <bpmn:task id='Activity_PreStepD' name='Pre-Step D - All Good'>
+      <bpmn:incoming>Flow_1y9kqgx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ec84gv</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_1y9kqgx' sourceRef='Gateway_Split' targetRef='Activity_PreStepD' />
+    <bpmn:sequenceFlow id='Flow_0ec84gv' sourceRef='Activity_PreStepD' targetRef='Activity_GoodScriptD' />
+    <bpmn:task id='Activity_PostStepD' name='Post StepD - pre-stage error'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeTask_PostDBad</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>12/8/2021 3PM</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0vgrl8f</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l37hyj</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0vgrl8f' sourceRef='Activity_GoodScriptD' targetRef='Activity_PostStepD' />
+    <bpmn:endEvent id='Event_17bkt8l' name='D End'>
+      <bpmn:incoming>Flow_0l37hyj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_0l37hyj' sourceRef='Activity_PostStepD' targetRef='Event_17bkt8l' />
+    <bpmn:scriptTask id='Activity_GoodScriptD' name='Good Task D'>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeTask_D</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>All Good</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>AfterTask_D</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>All Good</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ec84gv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vgrl8f</bpmn:outgoing>
+      <apex:plsqlCode>null;</apex:plsqlCode>
+    </bpmn:scriptTask>
+    <bpmn:textAnnotation id='TextAnnotation_0kyw102'>
+      <bpmn:text>error in post_step vars</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_1gg8pu7' sourceRef='Activity_PreStepZ' targetRef='TextAnnotation_0kyw102' />
+    <bpmn:textAnnotation id='TextAnnotation_0guluia'>
+      <bpmn:text>error in pre-step vars</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_1o5acys' sourceRef='Activity_PrePhaseError' targetRef='TextAnnotation_0guluia' />
+    <bpmn:textAnnotation id='TextAnnotation_1f9y2nk'>
+      <bpmn:text>error in script</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_0x5nz7e' sourceRef='Activity_ScriptError' targetRef='TextAnnotation_1f9y2nk' />
+    <bpmn:textAnnotation id='TextAnnotation_1a2u21m'>
+      <bpmn:text>error in post-step vars</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_06b1kap' sourceRef='Activity_PostPhaseError' targetRef='TextAnnotation_1a2u21m' />
+    <bpmn:textAnnotation id='TextAnnotation_17qk6if'>
+      <bpmn:text>error in pre-step vars</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_0ja5ptc' sourceRef='Activity_PostStepD' targetRef='TextAnnotation_17qk6if' />
+    <bpmn:textAnnotation id='TextAnnotation_13m6rlc'>
+      <bpmn:text>should stop on pre-step</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_005y9tm' sourceRef='Event_1xum1dw' targetRef='TextAnnotation_13m6rlc' />
+    <bpmn:textAnnotation id='TextAnnotation_1rlq1e2'>
+      <bpmn:text>should stop on scriptTask in error status for restart</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_1ax8cgj' sourceRef='Event_AEnd' targetRef='TextAnnotation_1rlq1e2' />
+    <bpmn:textAnnotation id='TextAnnotation_0glax76'>
+      <bpmn:text>should stop on scriptTask in error status for restart</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id='TextAnnotation_1jv8fhs'>
+      <bpmn:text>should stop on scriptTask in error status for restart</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id='TextAnnotation_1v2sl6y'>
+      <bpmn:text>should stop on PostStep in error status for restart</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_09sovbw' sourceRef='Event_BEnd' targetRef='TextAnnotation_0glax76' />
+    <bpmn:association id='Association_1v7paiu' sourceRef='Event_CEnd' targetRef='TextAnnotation_1jv8fhs' />
+    <bpmn:association id='Association_007zmvy' sourceRef='Event_17bkt8l' targetRef='TextAnnotation_1v2sl6y' />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>
+    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_0rxermh'>
+      <bpmndi:BPMNShape id='TextAnnotation_0kyw102_di' bpmnElement='TextAnnotation_0kyw102'>
+        <dc:Bounds x='660' y='-10' width='100.00000762939453' height='37.986114501953125' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_0guluia_di' bpmnElement='TextAnnotation_0guluia'>
+        <dc:Bounds x='750' y='160' width='170.00001525878906' height='30.000001907348633' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_1f9y2nk_di' bpmnElement='TextAnnotation_1f9y2nk'>
+        <dc:Bounds x='765' y='340' width='140' height='30.000001907348633' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_1a2u21m_di' bpmnElement='TextAnnotation_1a2u21m'>
+        <dc:Bounds x='805' y='490' width='100.00000762939453' height='37.986114501953125' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_17qk6if_di' bpmnElement='TextAnnotation_17qk6if'>
+        <dc:Bounds x='920' y='650' width='100.00000762939453' height='37.986114501953125' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_13m6rlc_di' bpmnElement='TextAnnotation_13m6rlc'>
+        <dc:Bounds x='1140' y='95' width='100.00000762939453' height='37.986114501953125' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_1rlq1e2_di' bpmnElement='TextAnnotation_1rlq1e2'>
+        <dc:Bounds x='1130' y='247' width='100' height='65' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_0glax76_di' bpmnElement='TextAnnotation_0glax76'>
+        <dc:Bounds x='1130' y='407' width='100' height='65' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_1jv8fhs_di' bpmnElement='TextAnnotation_1jv8fhs'>
+        <dc:Bounds x='1130' y='558' width='100' height='65' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_1v2sl6y_di' bpmnElement='TextAnnotation_1v2sl6y'>
+        <dc:Bounds x='1130' y='718' width='100.00000762939453' height='65' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Flow_1opo1dx_di' bpmnElement='Flow_1opo1dx'>
+        <di:waypoint x='980' y='590' />
+        <di:waypoint x='1042' y='590' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_09g3n12_di' bpmnElement='Flow_09g3n12'>
+        <di:waypoint x='820' y='590' />
+        <di:waypoint x='880' y='590' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_128itma_di' bpmnElement='Flow_128itma'>
+        <di:waypoint x='660' y='590' />
+        <di:waypoint x='720' y='590' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1kd6wqd_di' bpmnElement='Flow_1kd6wqd'>
+        <di:waypoint x='980' y='440' />
+        <di:waypoint x='1042' y='440' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0xzm7c9_di' bpmnElement='Flow_0xzm7c9'>
+        <di:waypoint x='820' y='440' />
+        <di:waypoint x='880' y='440' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1vrq8za_di' bpmnElement='Flow_1vrq8za'>
+        <di:waypoint x='660' y='440' />
+        <di:waypoint x='720' y='440' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0ezxz2g_di' bpmnElement='Flow_0ezxz2g'>
+        <di:waypoint x='980' y='280' />
+        <di:waypoint x='1042' y='280' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1k8wtys_di' bpmnElement='Flow_1k8wtys'>
+        <di:waypoint x='820' y='280' />
+        <di:waypoint x='880' y='280' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_02g1lu6_di' bpmnElement='Flow_02g1lu6'>
+        <di:waypoint x='660' y='280' />
+        <di:waypoint x='720' y='280' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_09qiw1o_di' bpmnElement='Flow_09qiw1o'>
+        <di:waypoint x='480' y='465' />
+        <di:waypoint x='480' y='590' />
+        <di:waypoint x='560' y='590' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0y9ffj0_di' bpmnElement='Flow_0y9ffj0'>
+        <di:waypoint x='505' y='440' />
+        <di:waypoint x='560' y='440' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0gaz0ao_di' bpmnElement='Flow_0gaz0ao'>
+        <di:waypoint x='480' y='415' />
+        <di:waypoint x='480' y='280' />
+        <di:waypoint x='560' y='280' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_00jb8i0_di' bpmnElement='Flow_00jb8i0'>
+        <di:waypoint x='400' y='440' />
+        <di:waypoint x='455' y='440' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_14z06uz_di' bpmnElement='Flow_14z06uz'>
+        <di:waypoint x='248' y='440' />
+        <di:waypoint x='300' y='440' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1fop9iz_di' bpmnElement='Flow_1fop9iz'>
+        <di:waypoint x='480' y='415' />
+        <di:waypoint x='480' y='110' />
+        <di:waypoint x='560' y='110' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0nm4pbz_di' bpmnElement='Flow_0nm4pbz'>
+        <di:waypoint x='660' y='110' />
+        <di:waypoint x='720' y='110' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0othahn_di' bpmnElement='Flow_0othahn'>
+        <di:waypoint x='820' y='110' />
+        <di:waypoint x='880' y='110' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1lz66dy_di' bpmnElement='Flow_1lz66dy'>
+        <di:waypoint x='980' y='110' />
+        <di:waypoint x='1042' y='110' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1y9kqgx_di' bpmnElement='Flow_1y9kqgx'>
+        <di:waypoint x='480' y='465' />
+        <di:waypoint x='480' y='750' />
+        <di:waypoint x='560' y='750' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0ec84gv_di' bpmnElement='Flow_0ec84gv'>
+        <di:waypoint x='660' y='750' />
+        <di:waypoint x='720' y='750' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0vgrl8f_di' bpmnElement='Flow_0vgrl8f'>
+        <di:waypoint x='820' y='750' />
+        <di:waypoint x='880' y='750' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0l37hyj_di' bpmnElement='Flow_0l37hyj'>
+        <di:waypoint x='980' y='750' />
+        <di:waypoint x='1042' y='750' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id='Event_0q6uwjt_di' bpmnElement='Event_Start'>
+        <dc:Bounds x='212' y='422' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='218' y='465' width='24' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0cd71ez_di' bpmnElement='Activity_PreTest'>
+        <dc:Bounds x='300' y='400' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Gateway_11wd1rw_di' bpmnElement='Gateway_Split'>
+        <dc:Bounds x='455' y='415' width='50' height='50' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='449' y='403' width='22' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1duzlry_di' bpmnElement='Activity_PreStepB'>
+        <dc:Bounds x='560' y='400' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_006ixz4_di' bpmnElement='Activity_ScriptError'>
+        <dc:Bounds x='720' y='400' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1v0kt8w_di' bpmnElement='Activity_PostB'>
+        <dc:Bounds x='880' y='400' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1kxmmmt_di' bpmnElement='Event_BEnd'>
+        <dc:Bounds x='1042' y='422' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='1045' y='465' width='30' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1cb7qcw_di' bpmnElement='Activity_PreStepZ'>
+        <dc:Bounds x='560' y='70' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1t521zk_di' bpmnElement='Activity_PostZ'>
+        <dc:Bounds x='880' y='70' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1f8uqcf_di' bpmnElement='Activity_1h759x2'>
+        <dc:Bounds x='720' y='70' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1xum1dw_di' bpmnElement='Event_1xum1dw'>
+        <dc:Bounds x='1042' y='92' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='1045' y='135' width='30' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_022tggj_di' bpmnElement='Activity_PreStepC'>
+        <dc:Bounds x='560' y='550' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0xtgdm1_di' bpmnElement='Activity_PostPhaseError'>
+        <dc:Bounds x='720' y='550' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1qllzm7_di' bpmnElement='Activity_PostC'>
+        <dc:Bounds x='880' y='550' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_0erye7g_di' bpmnElement='Event_CEnd'>
+        <dc:Bounds x='1042' y='572' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='1045' y='615' width='31' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0y6uwio_di' bpmnElement='Activity_PreStepA'>
+        <dc:Bounds x='560' y='240' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_11a4ozy_di' bpmnElement='Activity_PrePhaseError'>
+        <dc:Bounds x='720' y='240' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_07cthsx_di' bpmnElement='Activity_PostA'>
+        <dc:Bounds x='880' y='240' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1lsxsvd_di' bpmnElement='Event_AEnd'>
+        <dc:Bounds x='1042' y='262' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='1045' y='305' width='30' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0bs1z4c_di' bpmnElement='Activity_PreStepD'>
+        <dc:Bounds x='560' y='710' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0m0ryiy_di' bpmnElement='Activity_GoodScriptD'>
+        <dc:Bounds x='720' y='710' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0kpzskl_di' bpmnElement='Activity_PostStepD'>
+        <dc:Bounds x='880' y='710' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_17bkt8l_di' bpmnElement='Event_17bkt8l'>
+        <dc:Bounds x='1042' y='732' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='1045' y='775' width='31' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Association_1gg8pu7_di' bpmnElement='Association_1gg8pu7'>
+        <di:waypoint x='648' y='70' />
+        <di:waypoint x='688' y='28' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_1o5acys_di' bpmnElement='Association_1o5acys'>
+        <di:waypoint x='730' y='240' />
+        <di:waypoint x='760' y='190' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_0x5nz7e_di' bpmnElement='Association_0x5nz7e'>
+        <di:waypoint x='770' y='400' />
+        <di:waypoint x='770' y='370' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_06b1kap_di' bpmnElement='Association_06b1kap'>
+        <di:waypoint x='810' y='550' />
+        <di:waypoint x='832' y='528' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_0ja5ptc_di' bpmnElement='Association_0ja5ptc'>
+        <di:waypoint x='900' y='710' />
+        <di:waypoint x='920' y='680' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_005y9tm_di' bpmnElement='Association_005y9tm'>
+        <di:waypoint x='1078' y='110' />
+        <di:waypoint x='1140' y='110' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_1ax8cgj_di' bpmnElement='Association_1ax8cgj'>
+        <di:waypoint x='1078' y='280' />
+        <di:waypoint x='1130' y='280' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_09sovbw_di' bpmnElement='Association_09sovbw'>
+        <di:waypoint x='1078' y='440' />
+        <di:waypoint x='1130' y='440' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_1v7paiu_di' bpmnElement='Association_1v7paiu'>
+        <di:waypoint x='1078' y='590' />
+        <di:waypoint x='1130' y='590' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_007zmvy_di' bpmnElement='Association_007zmvy'>
+        <di:waypoint x='1078' y='750' />
+        <di:waypoint x='1130' y='750' />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

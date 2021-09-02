@@ -407,7 +407,7 @@ procedure get_number_of_connections
   ( p_subflow_id    in flow_subflows.sbfl_id%type
   ) return boolean
   is 
-    l_sbfl_id   flow_subflows.sbfl_id%type;
+    l_sbfl_prcs_id   flow_subflows.sbfl_prcs_id%type;
   begin 
 
     apex_debug.enter 
@@ -415,21 +415,31 @@ procedure get_number_of_connections
     , 'Subflow', p_subflow_id 
     );
 
-    select sbfl.sbfl_id
-      into l_sbfl_id
+    select sbfl.sbfl_prcs_id
+      into l_sbfl_prcs_id
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
-    for update of sbfl.sbfl_id wait 2
+    for update wait 2
     ;
     return true;
   exception
     when no_data_found then
       return false;
     when lock_timeout then
-      apex_error.add_error
+/*      apex_error.add_error
       ( p_message => 'Unable to lock subflow '||p_subflow_id||'.  Select for update timed out'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+
+
+      flow_errors.handle_instance_error
+      ( pi_prcs_id => l_sbfl_prcs_id
+      , pi_sbfl_id => p_subflow_id
+      , pi_message_key => 'timeout_locking_subflow'
+      , p0 => p_subflow_id
       );
+      -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock Subflow : %0.'
+      return false;
   end lock_subflow;
 
 end flow_engine_util;

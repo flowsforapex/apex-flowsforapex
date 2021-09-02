@@ -17,5 +17,10 @@ as
   , p9                in varchar2 default null
   );
 
+  procedure set_error_status
+  ( pi_prcs_id        in flow_processes.prcs_id%type
+  , pi_sbfl_id        in flow_subflows.sbfl_id%type
+  );
+
 end flow_errors;
 /
