@@ -101,7 +101,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_subflow_log_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
 @views/engine-app/flow_p0008_vw.sql
-@views/engine-app/flow_p0008_details_vw.sql
+@views/engine-app/flow_p0008_instance_details_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
 
