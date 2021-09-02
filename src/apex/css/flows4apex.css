@@ -90,3 +90,12 @@ th#view-process, td[headers*="view-process"]{
 .u-color-39-alert-bg{
   background-color: rgba(210, 67, 59, 0.15)!important;
 }
+
+/* IR Header with header action*/
+#instance_action_col .a-IRR-headerLabel, 
+#action_col .a-IRR-headerLabel,
+#subflow_action_col .a-IRR-headerLabel,
+#variable_action_col .a-IRR-headerLabel {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}

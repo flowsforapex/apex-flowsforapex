@@ -92,16 +92,16 @@ function sendToServer(dataToSend, options = {}){
             apex.item(itemName).setValue(options.ItemsToSet[itemName]);
           });
         }
+        if ( options.refreshRegion !== undefined && options.refreshRegion.length > 0 ) {
+          options.refreshRegion.forEach(function(name) {
+            apex.region(name).refresh();
+          })
+        }
         if ( data.url !== undefined && options.redirect !== false ){
           apex.navigation.redirect( data.url );
         }
         if ( ( options.reloadPage !== undefined && options.reloadPage ) || ( data.reloadPage !== undefined && data.reloadPage ) ) {
           window.location.reload();
-        }
-        if ( options.refreshRegion !== undefined && options.refreshRegion.length > 0 ) {
-          options.refreshRegion.forEach(function(name) {
-            apex.region(name).refresh();
-          })
         }
       }
     })
@@ -244,11 +244,21 @@ function bulkDeleteFlowInstance( action, element ){
 function redirectToFlowInstanceAudit( action, element ){
   var data = getflowInstanceData(action, element);
   data.x03 = apex.jQuery( element ).attr("data-name");
-  sendToServer(data);
+  if ( apex.item("pFlowStepId").getValue() === "10" ) {
+    apex.item("P10_PRCS_ID").setValue(data.x02);
+    apex.item("P10_PRCS_NAME").setValue( data.x03 );
+    data.pageItems = ["P10_PRCS_ID", "P10_PRCS_NAME"];
+  }
+  var options = {};
+  options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
+  sendToServer(data, options);
 }
 
 function redirectToFlowInstanceDetail( action, element ){
   var data = getflowInstanceData(action, element);
+  apex.item("P10_PRCS_ID").setValue(data.x02);
+  apex.item("P10_PRCS_NAME").setValue( apex.jQuery( element ).attr("data-name") );
+  data.pageItems = ["P10_PRCS_ID", "P10_PRCS_NAME"];
   sendToServer(data);
 }
 
@@ -906,6 +916,7 @@ function initActions(){
   
                 apex.jQuery( "#flow-monitor" ).show();
                 apex.region( "flow-monitor" ).refresh();
+               
                 break;
               case "column":
                 apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( "col-12" );
@@ -914,12 +925,13 @@ function initActions(){
   
                 apex.jQuery( "#flow-monitor" ).show();
                 apex.region( "flow-monitor" ).refresh();
+                
                 break;
               case "window":
                 apex.jQuery( "#flow-monitor" ).hide();
                 apex.jQuery( "#col1" ).addClass( "col-12" ).removeClass( "col-6" );
                 apex.jQuery( "#col2" ).addClass( "col-12" ).removeClass( "col-6" );
-  
+
                 if ( prcsId !== "" ) {
                   redirectToMonitor( "view-flow-instance", prcsId );
                 }

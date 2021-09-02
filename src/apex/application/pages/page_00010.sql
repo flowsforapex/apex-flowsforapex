@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210902111641'
+,p_last_upd_yyyymmddhh24miss=>'20210902154102'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -181,9 +181,9 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>20
 ,p_column_identifier=>'B'
 ,p_column_label=>'Flow Name'
-,p_column_link=>'f?p=&APP_ID.:8:&SESSION.::&DEBUG.:8:P8_PRCS_ID:#PRCS_ID#'
+,p_column_link=>'javascript:void(0);'
 ,p_column_linktext=>'#PRCS_NAME#'
-,p_column_link_attr=>'title="View Instance Details"'
+,p_column_link_attr=>'title="Details" class="detail-link" data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#"'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 ,p_static_id=>'PRCS_NAME'
@@ -779,7 +779,6 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'var prcsId = apex.item("P10_PRCS_ID").getValue();',
 'var prcsName = apex.item("P10_PRCS_NAME").getValue();',
-'console.log(prcsName );',
 'apex',
 '    .jQuery( "#flow-monitor_heading" )',
 '    .text( "Flow Viewer (" + prcsName + ")" );',
@@ -1012,6 +1011,25 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_CLOSE_REGION'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(6177850959209923)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(8023857502825607)
+,p_name=>'Click on Flow Name'
+,p_event_sequence=>300
+,p_triggering_element_type=>'JQUERY_SELECTOR'
+,p_triggering_element=>'.detail-link'
+,p_bind_type=>'live'
+,p_bind_delegate_to_selector=>'#flow-instances'
+,p_bind_event_type=>'click'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(8023966198825608)
+,p_event_id=>wwv_flow_api.id(8023857502825607)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'apex.actions.invoke("open-flow-instance-details", "", this.triggeringElement);'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(33735382808406124)
