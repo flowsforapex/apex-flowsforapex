@@ -65,6 +65,9 @@ function openModalConfirmWithComment( action, element, confirmMessageKey, titleK
   apex
     .jQuery( "#confirm-btn" )
     .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+    apex
+    .jQuery( "#confirm-btn" )
+    .attr( "data-name", apex.jQuery( element ).attr( "data-name" ) );
   apex.theme.openRegion( "instance_action_dialog" );
   apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( titleKey ));
 }
@@ -105,7 +108,6 @@ function sendToServer(dataToSend, options = {}){
     .fail( function ( jqXHR, textStatus, errorThrown ) {
       apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );
     } ); 
-  return result;
 }
 
 function downloadAsSVG(){
@@ -131,7 +133,7 @@ function startFlowInstance( action, element ) {
   options.messageKey = "APP_INSTANCE_STARTED";
   options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
   options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
-  options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02};
+  options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
   sendToServer(data, options);
 }
 
@@ -153,7 +155,7 @@ function resetFlowInstance(action, element){
     options.messageKey = "APP_INSTANCE_RESET";
     options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
     options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
-    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02};
+    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESET_INSTANCE", "APP_RESET_INSTANCE" );
@@ -185,7 +187,7 @@ function terminateFlowInstance(action, element) {
     options.messageKey = "APP_INSTANCE_TERMINATED";
     options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
     options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
-    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02};
+    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_TERMINATE_INSTANCE", "APP_TERMINATE_INSTANCE" );
@@ -216,7 +218,7 @@ function deleteFlowInstance( action, element ){
     var options = {};
     options.messageKey = "APP_INSTANCE_DELETED";
     options.refreshRegion = apex.item("pFlowStepId").getValue() === "10" ? ["flow-instances", "flow-monitor"] : [];
-    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": ""};
+    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": "", "P10_PRCS_NAME": ""};
     options.redirect = apex.item("pFlowStepId").getValue() === "10" ? false : true;
     sendToServer(data, options);
   } else {
@@ -696,11 +698,7 @@ function markAsCurrent(prcsId){
   currentRow.parent().children().addClass( "current-process" );
 }
 
-function refreshViewer(prcsId, prcsName){
-  apex
-    .jQuery( "#flow-monitor_heading" )
-    .text( "Flow Viewer (" + prcsName + ")" );
-  
+function refreshViewer(prcsId){
   if ( apex.item("P10_DISPLAY_SETTING").getValue() === "window" ) {
     redirectToMonitor("view-flow-instance", prcsId);
   } else {
@@ -712,9 +710,11 @@ function viewFlowInstance( action, element ){
   var selectedProcess = apex.jQuery( element ).attr( "data-prcs" );
   var currentName = apex.jQuery( element ).attr( "data-name" );
   apex.item("P10_PRCS_ID").setValue(selectedProcess);
+  apex.item("P10_PRCS_NAME").setValue(currentName);
   markAsCurrent(selectedProcess);
-  refreshViewer(selectedProcess, currentName);
+  refreshViewer(selectedProcess);
 }
+
 function initActions(){
   //Define actions
   $( function () {
