@@ -21,23 +21,24 @@ wwv_flow_api.create_list_item(
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'View'
 ,p_list_item_icon=>'fa-eye'
+,p_list_item_disp_cond_type=>'NEVER'
 ,p_list_text_01=>'view-flow-instance'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(5664262065267010)
+ p_id=>wwv_flow_api.id(6315881052890668)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Audit'
-,p_list_item_icon=>'fa-info-circle-o'
-,p_list_text_01=>'flow-instance-audit'
+,p_list_item_link_text=>'Details'
+,p_list_item_icon=>'fa-search'
+,p_list_text_01=>'open-flow-instance-details'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(5664576928271979)
+ p_id=>wwv_flow_api.id(5664262065267010)
 ,p_list_item_display_sequence=>30
-,p_list_item_link_text=>'Edit (Diagram)'
-,p_list_item_icon=>'fa-pencil'
-,p_list_text_01=>'edit-flow-diagram'
+,p_list_item_link_text=>'Audit'
+,p_list_item_icon=>'fa-info-circle-o'
+,p_list_text_01=>'flow-instance-audit'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
@@ -49,7 +50,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(5664803242273579)
+ p_id=>wwv_flow_api.id(6316146932894106)
 ,p_list_item_display_sequence=>50
 ,p_list_item_link_text=>'-'
 ,p_list_item_link_target=>'separator'
@@ -75,7 +76,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40426450496997035)
 ,p_list_item_display_sequence=>80
 ,p_list_item_link_text=>'Terminate'
-,p_list_item_icon=>'fa-stop-circle-o'
+,p_list_item_icon=>'fa-stop'
 ,p_list_text_01=>'terminate-flow-instance'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
@@ -85,6 +86,21 @@ wwv_flow_api.create_list_item(
 ,p_list_item_link_text=>'Delete'
 ,p_list_item_icon=>'fa-trash-o'
 ,p_list_text_01=>'delete-flow-instance'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5664803242273579)
+,p_list_item_display_sequence=>100
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5664576928271979)
+,p_list_item_display_sequence=>110
+,p_list_item_link_text=>'Edit Flow'
+,p_list_item_icon=>'fa-pencil'
+,p_list_text_01=>'edit-flow-diagram'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.component_end;

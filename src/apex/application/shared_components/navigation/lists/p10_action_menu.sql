@@ -20,27 +20,27 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7947003406526806)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'Refresh'
-,p_list_item_link_target=>'javascript:apex.region(''flow_instances'').refresh();apex.region(''subflows'').refresh();apex.region(''variables_ig'').refresh();apex.region(''flow-monitor'').refresh();'
+,p_list_item_link_target=>'javascript:apex.region(''flow-instances'').refresh();apex.region(''flow-monitor'').refresh();'
 ,p_list_item_icon=>'fa-refresh'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(39805200139904551)
-,p_list_item_display_sequence=>30
+ p_id=>wwv_flow_api.id(6346082030489968)
+,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'-'
 ,p_list_item_link_target=>'separator'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(39805591040910001)
-,p_list_item_display_sequence=>40
+,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'Display Setting'
 ,p_list_item_icon=>'fa-gear'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(39805873547914084)
-,p_list_item_display_sequence=>50
+,p_list_item_display_sequence=>40
 ,p_list_item_link_text=>'below report|side-by-side|new window'
 ,p_parent_list_item_id=>wwv_flow_api.id(39805591040910001)
 ,p_list_text_01=>'choose-setting'

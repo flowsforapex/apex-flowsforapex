@@ -2,9 +2,12 @@ prompt --install
 @@application/set_environment.sql
 @@application/delete_application.sql
 @@application/create_application.sql
-@@application/shared_components/navigation/lists/p10_subflow_row_action_menu.sql
+@@application/shared_components/navigation/lists/p8_subflow_row_action_menu.sql
 @@application/shared_components/navigation/lists/p10_instance_header_action_menu.sql
-@@application/shared_components/navigation/lists/p10_subflow_header_action_menu.sql
+@@application/shared_components/navigation/lists/p8_subflow_header_action_menu.sql
+@@application/shared_components/navigation/lists/p8_action_menu.sql
+@@application/shared_components/navigation/lists/p8_variable_row_action_menu.sql
+@@application/shared_components/navigation/lists/p8_variable_header_action_menu.sql
 @@application/shared_components/navigation/lists/p2_action_menu.sql
 @@application/shared_components/navigation/lists/p7_action_menu.sql
 @@application/shared_components/navigation/lists/p10_action_menu.sql
@@ -18,6 +21,8 @@ prompt --install
 @@application/shared_components/files/js_flows4apex_js.sql
 @@application/shared_components/files/js_flows4apex_min_js.sql
 @@application/shared_components/files/js_flows4apex_js_map.sql
+@@application/shared_components/files/css_flows4apex_min_css.sql
+@@application/shared_components/files/css_flows4apex_css_map.sql
 @@application/shared_components/files/app_100_logo_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
@@ -26,7 +31,10 @@ prompt --install
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
 @@application/shared_components/logic/application_processes/switch_theme_mode.sql
+@@application/shared_components/logic/application_processes/reset_theme_mode.sql
+@@application/shared_components/logic/application_processes/ajax_handler.sql
 @@application/shared_components/logic/application_items/app_name_title.sql
+@@application/shared_components/logic/application_items/current_theme_name.sql
 @@application/shared_components/logic/application_items/flow_page_title.sql
 @@application/shared_components/logic/application_computations/app_name_title.sql
 @@application/shared_components/logic/application_settings.sql
@@ -35,8 +43,8 @@ prompt --install
 @@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
-@@application/shared_components/user_interface/lovs/p10_instance_connections_lov.sql
-@@application/shared_components/user_interface/lovs/p10_instance_gateways_lov.sql
+@@application/shared_components/user_interface/lovs/p8_instance_connections_lov.sql
+@@application/shared_components/user_interface/lovs/p8_instance_gateways_lov.sql
 @@application/pages/page_groups.sql
 @@application/comments.sql
 @@application/shared_components/navigation/breadcrumbs/breadcrumb.sql
@@ -129,6 +137,7 @@ prompt --install
 @@application/pages/page_00005.sql
 @@application/pages/page_00006.sql
 @@application/pages/page_00007.sql
+@@application/pages/page_00008.sql
 @@application/pages/page_00010.sql
 @@application/pages/page_00011.sql
 @@application/pages/page_00012.sql

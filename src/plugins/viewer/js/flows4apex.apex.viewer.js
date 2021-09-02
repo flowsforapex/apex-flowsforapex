@@ -12,16 +12,19 @@
       enableExpandModule: true,
       config: {
         currentStyle: {
-          "fill": "green",
-          "stroke": "black"
+          "fill": "#6aad42",
+          "border": "black",
+          "label": "black"
         },
         completedStyle: {
-          "fill": "grey",
-          "stroke": "black"
+          "fill": "#8c9eb0",
+          "border": "black",
+          "label": "black"
         },
         errorStyle: {
-          "fill": "red",
-          "stroke": "black"
+          "fill": "#d2423b",
+          "border": "black",
+          "label": "white"
         }
       }
     },

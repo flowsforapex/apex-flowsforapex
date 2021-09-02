@@ -41,7 +41,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:RP,RIR:::'
 ,p_list_item_icon=>'fa-sequence'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
-,p_list_item_current_for_pages=>'10'
+,p_list_item_current_for_pages=>'10,8'
 );
 wwv_flow_api.component_end;
 end;

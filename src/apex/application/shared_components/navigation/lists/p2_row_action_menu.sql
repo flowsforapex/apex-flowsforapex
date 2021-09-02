@@ -21,7 +21,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'Edit'
 ,p_list_item_icon=>'fa-pencil'
-,p_list_text_01=>'edit-flow'
+,p_list_text_01=>'edit-flow-diagram'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(

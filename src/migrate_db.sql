@@ -74,11 +74,13 @@ PROMPT >> Installing Package Bodies
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
+PROMPT >> Global App Package Specifications
+@plsql/engine-app/flow_engine_app_api.pks
+
 PROMPT >> Page API Specifications
 @plsql/engine-app/flow_p0005_api.pks
 @plsql/engine-app/flow_p0006_api.pks
 @plsql/engine-app/flow_p0007_api.pks
-@plsql/engine-app/flow_p0010_api.pks
 
 PROMPT >> Global Error Function
 @plsql/engine-app/apex_error_handling.sql;
@@ -86,10 +88,8 @@ PROMPT >> Global Error Function
 PROMPT >> Page Views
 @views/engine-app/flow_p0010_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
-@views/engine-app/flow_p0010_subflows_vw.sql
 @views/engine-app/flow_p0010_branches_vw.sql
 @views/engine-app/flow_p0010_routes_vw.sql
-@views/engine-app/flow_p0010_variables_vw.sql
 @views/engine-app/flow_p0002_diagrams_vw.sql
 @views/engine-app/flow_p0007_instances_counter_vw.sql
 @views/engine-app/flow_p0013_attributes_vw.sql
@@ -100,12 +100,17 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_instance_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_subflow_log_vw.sql
+@views/engine-app/flow_p0008_vw.sql
+@views/engine-app/flow_p0008_subflows_vw.sql
+@views/engine-app/flow_p0008_variables_vw.sql
+
+PROMPT >> Global App Package Body
+@plsql/engine-app/flow_engine_app_api.pkb
 
 PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0005_api.pkb
 @plsql/engine-app/flow_p0006_api.pkb
 @plsql/engine-app/flow_p0007_api.pkb
-@plsql/engine-app/flow_p0010_api.pkb
 
 PROMPT >> Modeler Plugin Objects
 @plugins/modeler/plsql/flow_modeler.pks
