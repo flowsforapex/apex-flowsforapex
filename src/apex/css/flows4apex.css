@@ -1,3 +1,29 @@
+/* color classes */
+.ffa-color--created {
+  background-color: #d9b13b!important;
+  color: #463400!important
+}
+
+.ffa-color--completed {
+  background-color: #8c9eb0!important;
+  color: #283a4d!important
+}
+
+.ffa-color--running {
+  background-color: #6aad42!important;
+  color: white!important;
+}
+
+.ffa-color--terminated {
+  background-color: #d76a27!important;
+  color: white!important;
+}
+
+.ffa-color--error {
+  background-color: #d2423b!important;
+  color: white!important;
+}
+
 /* header */
 .apex-logo-img{
   max-height:25px!important;
@@ -75,6 +101,21 @@ th#view-process, td[headers*="view-process"]{
 }
 
 /* page 8 */
+.u-color-44-alert-text{
+  color: #8c9eb0!important;
+}
+.u-color-37-alert-text {
+  color: #d9b13b!important;
+}
+.u-color-35-alert-text{
+  color: #6aad42!important;
+}
+.u-color-38-alert-text{
+  color: #d76a27!important;
+}
+.u-color-39-alert-text{
+  color: #d2423b!important;
+}
 .u-color-44-alert-bg{
   background-color: rgba(140, 158, 176, 0.15)!important;
 }
@@ -89,4 +130,13 @@ th#view-process, td[headers*="view-process"]{
 }
 .u-color-39-alert-bg{
   background-color: rgba(210, 67, 59, 0.15)!important;
+}
+
+/* IR Header with header action*/
+#instance_action_col .a-IRR-headerLabel, 
+#action_col .a-IRR-headerLabel,
+#subflow_action_col .a-IRR-headerLabel,
+#variable_action_col .a-IRR-headerLabel {
+	padding-top: 8px;
+	padding-bottom: 8px;
 }

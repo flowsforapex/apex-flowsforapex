@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210902105815'
+,p_last_upd_yyyymmddhh24miss=>'20210902154053'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -1463,8 +1463,7 @@ wwv_flow_api.create_page_da_action(
 'var objects = $v(''P8_OBJT_LIST'').split('':'');',
 '$.each(objects, function( index, value ) {',
 '    $( "[data-element-id=''" + value + "'']").css( "cursor", "pointer" );',
-'})',
-'console.log("test");'))
+'})'))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6014453052464529)

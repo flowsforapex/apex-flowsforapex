@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210827084419'
+,p_last_upd_yyyymmddhh24miss=>'20210902154043'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -707,7 +707,6 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'var myElement = $( this.triggeringElement ).children().first();',
-'console.log(myElement);',
 'var prcsStatus  = myElement.data( "status" );',
 'var dgrmName = apex.item("P7_DGRM_NAME").getValue();',
 'var dgrmVersion = apex.item("P7_DGRM_VERSION").getValue();',

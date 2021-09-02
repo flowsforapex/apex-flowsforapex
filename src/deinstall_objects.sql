@@ -8,7 +8,7 @@ PROMPT >> Packages
 drop package flow_p0005_api;
 drop package flow_p0006_api;
 drop package flow_p0007_api;
-drop package flow_p0010_api;
+drop package flow_engine_app_api;
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
 drop package flow_usertask_pkg;
@@ -47,9 +47,8 @@ drop view flow_p0007_instances_counter_vw;
 drop view flow_p0008_vw;
 drop view flow_p0008_subflows_vw;
 drop view flow_p0010_vw;
-drop view flow_p0010_branches_vw;
 drop view flow_p0010_instances_vw;
-drop view flow_p0010_subflows_vw;
+
 drop view flow_p0010_routes_vw;
 drop view flow_p0010_variables_vw;
 drop view flow_p0013_attributes_vw;

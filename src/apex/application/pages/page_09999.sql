@@ -39,7 +39,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_is_public_y_n=>'Y'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210826124050'
+,p_last_upd_yyyymmddhh24miss=>'20210902174401'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12495495236065879932)
@@ -173,7 +173,9 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P9999_THEME_MODE'
 ,p_attribute_01=>'JAVASCRIPT_EXPRESSION'
-,p_attribute_05=>'(window.matchMedia && window.matchMedia(''(prefers-color-scheme: dark)'').matches) ? ''FLOWS-DARK'' : ''FLOWS'';'
+,p_attribute_05=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'(window.matchMedia && window.matchMedia(''(prefers-color-scheme: dark)'').matches) ? ''Vita - Dark'' : ''Vita'';',
+''))
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
@@ -187,6 +189,15 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>'null;'
 ,p_attribute_02=>'P9999_THEME_MODE'
 ,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(7335845767307040)
+,p_event_id=>wwv_flow_api.id(6176061925209905)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'console.log((window.matchMedia && window.matchMedia(''(prefers-color-scheme: dark)'').matches) ? ''Vita - Dark'' : ''Vita'');'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(12495491676374879884)
@@ -221,6 +232,7 @@ wwv_flow_api.create_page_process(
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_theme_name varchar2(4000);',
+'    l_theme_plugin_class varchar2(10);',
 'begin',
 '    ',
 '    begin',
@@ -242,9 +254,15 @@ wwv_flow_api.create_page_process(
 '        p_name => l_theme_name',
 '    );',
 '    ',
+'    if l_theme_name = ''Vita''',
+'    then l_theme_plugin_class := ''FLOWS'';',
+'    elsif l_theme_name = ''Vita - Dark''',
+'    then l_theme_plugin_class := ''FLOWS-DARK'';',
+'    end if;',
+'    ',
 '    apex_util.set_session_state(',
-'        p_name => ''CURRENT_THEME_NAME'',',
-'        p_value => l_theme_name',
+'        p_name => ''THEME_PLUGIN_CLASS'',',
+'        p_value => l_theme_plugin_class',
 '    );',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
