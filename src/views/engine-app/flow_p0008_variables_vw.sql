@@ -1,4 +1,4 @@
-create or replace view flow_p0010_variables_vw
+create or replace view flow_p0008_variables_vw
 as
   select prov_prcs_id
        , prov_var_name
