@@ -28,6 +28,7 @@ wwv_flow_api.create_page(
 '    background-image: url(#APP_IMAGES#workflow_black.svg);',
 '    background-repeat: no-repeat;',
 '    background-size: cover;',
+'    background-color: inherit;',
 '}',
 '',
 '@media (prefers-color-scheme: dark){',
@@ -38,8 +39,8 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495629732925880320)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_is_public_y_n=>'Y'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210902174401'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210903173746'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12495495236065879932)

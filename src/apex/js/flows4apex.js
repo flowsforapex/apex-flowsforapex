@@ -617,14 +617,14 @@ function bulkDeleteProcessVariable(action){
 function completeStep( action, element ){
   var data = getSubflowData(action, element);
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
   sendToServer(data, options);
 }
 
 function bulkCompleteStep( action ){
   var data = getBulkSubflowData( action );
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor"];
+  options.refreshRegion = ["subflows", "flow-monitor",, "process-variables"];
   sendToServer(data, options);
 }
 
@@ -635,7 +635,7 @@ function restartStep( action, element){
     data.x04 = getConfirmComment();
     var options = {};
     options.messageKey = "APP_SUBLFOW_RESTARTED";
-    options.refreshRegion = ["subflows", "flow-monitor"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
@@ -649,7 +649,7 @@ function bulkRestartStep( action, element ){
     data.x02 = getConfirmComment();
     
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
@@ -911,16 +911,16 @@ function initActions(){
   
             switch ( value ) {
               case "row":
-                apex.jQuery( "#col1" ).addClass( "col-12" ).removeClass( "col-6" );
-                apex.jQuery( "#col2" ).addClass( "col-12" ).removeClass( "col-6" );
+                apex.jQuery( "#col1" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );
+                apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );
   
                 apex.jQuery( "#flow-monitor" ).show();
                 apex.region( "flow-monitor" ).refresh();
                
                 break;
               case "column":
-                apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( "col-12" );
-                apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( "col-12" );
+                apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( [ "col-12", "col-end" ] );
+                apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( [ "col-12", "col-start" ] );
                 apex.jQuery( "#col2" ).appendTo( apex.jQuery( "#col1" ).parent() );
   
                 apex.jQuery( "#flow-monitor" ).show();
@@ -929,8 +929,8 @@ function initActions(){
                 break;
               case "window":
                 apex.jQuery( "#flow-monitor" ).hide();
-                apex.jQuery( "#col1" ).addClass( "col-12" ).removeClass( "col-6" );
-                apex.jQuery( "#col2" ).addClass( "col-12" ).removeClass( "col-6" );
+                apex.jQuery( "#col1" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );
+                apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );
 
                 if ( prcsId !== "" ) {
                   redirectToMonitor( "view-flow-instance", prcsId );
