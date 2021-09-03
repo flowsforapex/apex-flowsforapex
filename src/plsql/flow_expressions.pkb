@@ -110,6 +110,18 @@ as
         , pi_expr_set       => pi_expression.expr_set
         );  
     end case;
+  exception
+    when others then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_static_general'
+      , p0 => pi_prcs_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting %2 process variable %1 in process id %0.  See error in event log.'
+
   end set_static;
 
   procedure set_proc_var
@@ -173,7 +185,19 @@ as
         , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
         , pi_expr_set       => pi_expression.expr_set
         );    
-    end case;         
+    end case; 
+  exception
+    when others then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_static_general'
+      , p0 => pi_prcs_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting %2 process variable %1 in process id %0.  See error in event log.'
+        
   end set_proc_var;
 
   procedure set_sql
