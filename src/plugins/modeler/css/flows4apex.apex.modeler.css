@@ -34,7 +34,7 @@
 /**
  * custom dark mode colors
  */
-.FLOWS-DARK .mtbm-rendercanvas, .FLOWS-DARK .properties-panel-parent {
+.FLOWS-DARK .canvas, .FLOWS-DARK .properties-panel-parent {
   background-color: #2b3035;
 }
 
