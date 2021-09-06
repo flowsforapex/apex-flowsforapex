@@ -2,9 +2,37 @@
 
 ## v21.1
 
-- NOTE - MAJOR NEW FEATURES then MINOR CHANGES then DEPRECATION then REMOVAL...
-- Removed - v4 API calls flow_next_step, flow_next_branch, next_multistep_exists, next_multistep_exists_yn, next_step_type (all non-functioning in v5) removed.
-- Removed - Column sbfl_next_step_type removed from flow_subflows_vw, flow_task_inbox_vw, and application views based on them. (no longer functional v4 feature).
+- Introduces model-based declarative process variable expressions to set process variables before and after each step.
+- Introduces 3 process plugins to ease application integration:
+  
+  - Manage Flow Instance, for controlling instance creation, starting, termination, reset and deletion.
+  - Manage Flow Instance Step, for controlling step statrt, reservation, release and completion.
+  - Manage Flow Instance Variables, for transferring process variable content to and from APEX page items.
+- Introduces Transaction Safety, making each process step a separate database transaction.
+- Introduces new Instance Status of 'error' and 'terminated' to signal abnormal instance conditions.
+- Introduces new Subflow status of 'error' signalling an abnormal condition.
+- Steps halted with error status can be re-started after an administrator fixes the problem.
+- Introduces Monitoring and Auditing event logs of Instances, instance steps, and process variables
+- Major upgrade of the Flow Engine Application, with enhancements to the modeler, viewer, and the app UI.
+  
+  - App: enhanced UI, including support for dark mode
+  - App: Flow Monitor additionally supports side-by-side and multi-monitor support for administering larger systems.
+  - Modeler: Properties panel can now be expanded by dragging
+  - Modeler: Supports Cut, paste, zoom, keyboard shortcuts, and save of model components
+  - Viewer: Clicking on an object opens pop-up containing definition, status and history.
+  - Viewer: Allows export of process status diagrams.
+- Addition of (optional) flow_start_step API call used to gather wait time vs. processing time statistics.
+- Addition of flow_terminate API call to allow an administrator to stop an instance without having to delete it.
+- Adds a built-in process variable BUSINESS_REF to link a flow instance to its underlying business object.
+- Enhances the Holiday Approval demo app to show off some new capabilities.
+- Modifies behaviour of flow_reset to delete all non-built-in process variables.
+- Disables (non-operative) cycle timers from all timer event types.
+- Allows Inclusive Gateways to be used as 'merge-then-resplit' gateways.
+- Allows process variables to be deleted.
+- Introduces a flow_configuration table containing configuration parameters, initially for audit and language settings.
+- Makes Engine App and engine error messages available in French language.
+- Removes deprecated v4 API calls flow_next_step, flow_next_branch.
+- Removes next_step_type from subflow view (non longer required since V4)
 
 ## v5.1.2
 
@@ -108,3 +136,4 @@
 ## v1.0
 
 - Initial Release
+
