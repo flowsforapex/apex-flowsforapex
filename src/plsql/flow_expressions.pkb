@@ -625,6 +625,7 @@ as
                                               , flow_constants_pkg.gc_prov_default_date_format )
                                     , flow_constants_pkg.gc_prov_default_date_format ) then 
         raise e_var_exp_date_format_error;
+        end if;
       exception
         when others then
           raise e_var_exp_date_format_error;
