@@ -53,7 +53,7 @@ HISTORY
   - Introduces a flow_configuration table containing configuration parameters, initially for audit and language settings.
   - Makes Engine App and engine error messages available in French language.
   - Removes deprecated V4 API calls.
-  - Enhances the Holiday Approval demo app to show off some new capabilities.
+  - New sample app "Expense Claims".
 
 * v5.1.2
   - Added business reference to views
