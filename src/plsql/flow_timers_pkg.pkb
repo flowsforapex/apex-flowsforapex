@@ -229,15 +229,24 @@ as
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
         when others then
-        apex_debug.error
+        /*apex_debug.error
         (
           p_message => 'Timer with ID %s did not work. Check logs.'
         , p0        => l_timers.timr_id
-        );
+        );*/
         update flow_timers
           set timr_status = c_broken
         where timr_id = l_timers.timr_id
         ;
+        flow_errors.handle_instance_error
+        ( pi_prcs_id    => l_timers.timr_prcs_id
+        , pi_sbfl_id    => l_timers.timr_sbfl_id
+        , pi_message_key => 'timer_broken'
+        , p0 => l_timers.timr_id
+        , p1 => l_timers.timr_prcs_id
+        , p2 => l_timers.timr_sbfl_id
+        );
+        -- $F4AMESSAGE 'timer-broken' || 'Timer %0 broken in process %1 , subflow : %2.  See error_info.'
       end;
       commit;
     end loop;

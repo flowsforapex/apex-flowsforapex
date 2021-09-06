@@ -10,6 +10,9 @@ PROMPT >> =============================
 PROMPT >> Updating Tables
 @ddl/migrate_^from_version._to_^to_version..sql
 
+-- need to delete all existing error messages and rerun @data/install_error_messages.sql
+-- need to add NEW config parameters
+
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
 PROMPT >> Installing Package Specifications
@@ -31,6 +34,8 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_plsql_runner_pkg.pks
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
+@plsql/flow_errors.pks
+
 
 
 PROMPT >> Installing Views
@@ -63,6 +68,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_plsql_runner_pkg.pkb
 @plsql/flow_logging.pkb
 @plsql/flow_globals.pkb
+@plsql/flow_errors.pkb
 
 
 
@@ -115,6 +121,14 @@ PROMPT >> Modeler Plugin Objects
 PROMPT >> Modeler Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
+
+PROMPT >> Process Plugin Objects
+@plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pks
+@plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pkb
+@plugins/manage-flow-instance-step/plsql/flow_plugin_manage_instance_step.pks
+@plugins/manage-flow-instance-step/plsql/flow_plugin_manage_instance_step.pkb
+@plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pks
+@plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pkb
 
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object

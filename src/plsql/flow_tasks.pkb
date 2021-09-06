@@ -2,7 +2,7 @@ create or replace package body flow_tasks
 as 
 
 
-  procedure handle_script_error 
+  procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_script_object in flow_objects.objt_bpmn_id%type 
@@ -142,24 +142,48 @@ as
   exception
     when flow_plsql_runner_pkg.e_plsql_script_failed then
       rollback;
-      handle_script_error
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script failed in plsql script runner'
+      );
+      /*handle_script_error
       ( p_process_id    => p_process_id
       , p_subflow_id    => p_subflow_id
       , p_script_object => p_step_info.target_objt_ref
       , p_error_type    => 'failed'
       , p_error_stack   => 'error stack to be added'
       );
-      commit;
+      commit;*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'plsql_script_failed'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );
+      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
+
     when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
       rollback;
-      handle_script_error
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
+      );
+      /*handle_script_error
       ( p_process_id    => p_process_id
       , p_subflow_id    => p_subflow_id
       , p_script_object => p_step_info.target_objt_ref
       , p_error_type    => 'stop_engine'
       , p_error_stack   => 'error stack to be added'
       );
-      commit;      
+      commit;  */  
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'plsql_script_requested_stop'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );  
+      -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: ScriptTask %1 requested processing stop - see event log.'
+
   end process_scriptTask;
 
   procedure process_serviceTask --- note NOT CURRENTLY BEING USED FOR SERVICETASKS - USING process_scriptTask

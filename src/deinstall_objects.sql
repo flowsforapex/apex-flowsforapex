@@ -8,7 +8,6 @@ PROMPT >> Packages
 drop package flow_p0005_api;
 drop package flow_p0006_api;
 drop package flow_p0007_api;
-drop package flow_engine_app_api;
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
 drop package flow_usertask_pkg;
@@ -26,12 +25,20 @@ drop package flow_gateways;
 drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
+drop package flow_engine_app_api;
+drop package flow_errors;
+drop package flow_globals;
 
 PROMPT >> Modeler Plugin Objects
 drop package flow_modeler;
 
 PROMPT >> Viewer Plugin Objects
 drop package flow_viewer;
+
+PROMPT >> Process Plugin Objects
+drop package flow_plugin_manage_instance;
+drop package flow_plugin_manage_instance_step;
+drop package flow_plugin_manage_instance_variables;
 
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;
@@ -43,9 +50,8 @@ drop view flow_p0008_instance_details_vw;
 drop view flow_p0008_variables_vw;
 drop view flow_p0010_vw;
 drop view flow_p0010_instances_vw;
-
+drop view flow_p0010_branches_vw;
 drop view flow_p0010_routes_vw;
-drop view flow_p0010_variables_vw;
 drop view flow_p0013_attributes_vw;
 drop view flow_p0013_expressions_vw;
 drop view flow_p0013_subflows_vw;
@@ -82,7 +88,7 @@ drop table flow_instance_event_log cascade constraints;
 drop table flow_subflow_event_log cascade constraints;
 drop table flow_variable_event_log cascade constraints;
 drop table flow_configuration cascade constraints;
-
+drop table flow_messages cascade constraints;
 
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects

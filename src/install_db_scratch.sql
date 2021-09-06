@@ -28,6 +28,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_plsql_runner_pkg.pks
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
+@plsql/flow_errors.pks
 
 
 PROMPT >> Installing Views
@@ -60,6 +61,14 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_plsql_runner_pkg.pkb
 @plsql/flow_logging.pkb
 @plsql/flow_globals.pkb
+@plsql/flow_errors.pkb
+
+PROMPT >> Installing Initial Engine Data
+PROMPT >> =============================
+PROMPT >> 
+
+@data/install_default_config_data.sql
+@data/install_engine_messages.sql
 
 
 PROMPT >> Installing Engine-App Objects
@@ -92,7 +101,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_subflow_log_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
 @views/engine-app/flow_p0008_vw.sql
-@views/engine-app/flow_p0008_details_vw.sql
+@views/engine-app/flow_p0008_instance_details_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
 @views/engine-app/flow_p0008_instance_log_vw.sql
@@ -105,6 +114,14 @@ PROMPT >> Page API Bodies
 @plsql/engine-app/flow_p0006_api.pkb
 @plsql/engine-app/flow_p0007_api.pkb
 
+PROMPT >> Process Plugin Objects
+@plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pks
+@plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pkb
+@plugins/manage-flow-instance-step/plsql/flow_plugin_manage_instance_step.pks
+@plugins/manage-flow-instance-step/plsql/flow_plugin_manage_instance_step.pkb
+@plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pks
+@plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pkb
+
 PROMPT >> Modeler Plugin Objects
 @plugins/modeler/plsql/flow_modeler.pks
 @plugins/modeler/plsql/flow_modeler.pkb
@@ -113,8 +130,6 @@ PROMPT >> Viewer Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
 
-PROMPT >> Viewer Plugin Objects
-@ddl/install_default_config_data.sql
 
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object

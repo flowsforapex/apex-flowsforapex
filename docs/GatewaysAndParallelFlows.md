@@ -86,7 +86,7 @@ It's usually fairly easy to re-write process structure to create balanced gatewa
 
 ![ReWriting Parallel Processes to make them Balanced](images/parallelRewriteLogic.png "ReWriting Processes with Balanced Pairs of Parallel Gateways")
 
-A merging Parallel Gateway can also be used to merge, syncronise, and then re-split the flow -- as in the following diagram.
+A merging Parallel Gateway can also be used to merge, synchronize, and then re-split the flow -- as in the following diagram.
 
 ![Parallel Gateway Merge and Resplit](images/parallelMergeSplit.png "Parallel Gateway Merge and Resplit")
 
@@ -111,11 +111,9 @@ If no closing gateway is incuded, all routes must proceed to their own end event
 
 ![Inclusive Gateway with Separate End Events](images/inclusiveSeparateEnds.png "Inclusive Gateway with Separate End Events")
 
-An Inclusive Gateway cannot act, simultaneosly, as both a Merging / Closing gateway and an Opening Gateway.
+Starting from v21.1, an Inclusive Gateway can now act, simultaneosly, as both a Merging / Closing gateway and an Opening Gateway, in the same way that a Parallel Gateway does.  Some experts advise that this is not good BPMN practice as users can get confused by the concept, and so the BPMN Modeler will give you a warning if you include this in your diagram.  But it works!
 
-![Inclusive Gateway can't Merge and Split](images/inclusiveMergeSplit.png "Inclusive Gateway can't Merge and Split")
-
-#### Controlling the Forward Path at an Inclusive Gateway (Changed in V5.0).
+Controlling the Forward Path at an Inclusive Gateway (Changed in V5.0).
 
 When a subflow reaches an exclusive gateway, the flow engine chooses the forward path as follows:
 
@@ -145,8 +143,6 @@ Value     :  Flow_05d0ha9:Flow_0zhby4b   ----(varchar2)
 
 Typically you would set these routing instructions into a variable as part of a Task step, or you might have a scriptTask that sets it based on a database query.  If it is a user decision, you would create an APEX Page for the user to review some information and make a decision.  If the routing can be looked up or calculated, a scriptTask could run a PL/SQL procedure that does the appropriate query and processing to make the decision.
 
-
 #### Default Paths on Inclusive Gateways (New in V5.0)
 
 Like Exclusive Gateways, Inclusive Gateways can also have a single default path which is enabled if no other path is chosen.
-
