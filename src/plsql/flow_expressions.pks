@@ -2,6 +2,7 @@ create or replace package flow_expressions
   authid current_user
   -- accessible by flow_engine, flow_process_vars ??
 as 
+  e_var_exp_date_format_error exception;
 
   -- Call using objt_id if you have available
   procedure process_expressions

@@ -39,9 +39,17 @@ When the final End Event is met for a Process, the Process Instance is complete.
 ### Terminate End Event
 
 A Terminate End Event in the top level of a Flow (i.e., not in a sub process) will terminate all current branches running in the flow, and cause the flow instance to complete.
-Flow variables are maintained when the flow instance terminates.
+Flow process variables are maintained when the flow instance terminates.
 
-A Flow instance can also be terminated from the flows4APEX API using the flow_terminate() call, which has the same effect as processing a Terminate End Event in a flow model.
+Terminate End Events can be used in a Flow model for two main purposes:
+
+- to trap process errors, and end model processing once an error is detected
+- to ensure that all elements in a complex model stop when the business process has finished.
+
+Flows for APEX allows you to specify the status of your Instance after a Terminate End Event.  If your Terminate End Event is trapping an error, and ending the process in an abnormal state, you might want the instance status to be set as `terminated`;  If the terminate end represents a normal process ending, you would want your instance to have a status of `completed`.  The Flow Modeler properties panel allows you to specify which status should be used when the Terminate End Event is processed. (By default, it will be marked as `completed`).
+
+A Flow instance can also be terminated from the flows4APEX PL/SQL API using the `flow_terminate()` call, which has the same effect as processing a Terminate End Event in a flow model.  The Flow Modeler page of the Flows for APEX application allows an administrator to do this from its interface.  An Instance which hass terminated from the API always has its instance state set as `terminated`.
+
 
 ![Terminate End Event](images/terminateEnd.png "Terminate End Event")
 
