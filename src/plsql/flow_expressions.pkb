@@ -92,6 +92,18 @@ as
         , pi_expr_set       => pi_expression.expr_set
         );
     when flow_constants_pkg.gc_prov_var_type_date then
+        -- test date is in our required format
+        begin
+          if l_expression_text != to_char  ( to_date ( l_expression_text
+                                                    , flow_constants_pkg.gc_prov_default_date_format )
+                                          , flow_constants_pkg.gc_prov_default_date_format ) then 
+          raise e_var_exp_date_format_error;
+          end if;
+        exception
+          when others then
+            raise e_var_exp_date_format_error;
+        end;
+
         flow_process_vars.set_var 
         ( pi_prcs_id        => pi_prcs_id
         , pi_var_name       => pi_expression.expr_var_name
@@ -111,6 +123,16 @@ as
         );  
     end case;
   exception
+    when e_var_exp_date_format_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_date_format'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'      
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
@@ -231,10 +253,6 @@ as
                     into l_result_vc2;
         exception
         when no_data_found then
-            /*apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -245,10 +263,6 @@ as
             );
             -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
         when too_many_rows then
-            /*apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -265,10 +279,7 @@ as
             , p1        => pi_prcs_id
             , p2        => sqlerrm
             );
-            /*apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
+
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -293,10 +304,6 @@ as
                     into l_result_date;
         exception
         when no_data_found then
-/*            apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -307,10 +314,6 @@ as
             );
             -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
         when too_many_rows then
-            /*apex_error.add_error
-            ( p_message          => 'Error setting %2 process variable '||pi_expression.expr_var_name||' in process id '||pi_prcs_id||'.  Query returns multiple rows.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -327,10 +330,7 @@ as
             , p1        => pi_prcs_id
             , p2        => sqlerrm
             );
-            /*apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
+
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -355,10 +355,6 @@ as
                     into l_result_num;
         exception
         when no_data_found then
-            /*apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  No data found in query.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -369,10 +365,6 @@ as
             );
             -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
         when too_many_rows then
-            /*apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  Query returns multiple rows.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -389,10 +381,7 @@ as
             , p1        => pi_prcs_id
             , p2        => sqlerrm
             );
-            /*apex_error.add_error
-            ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
+
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -547,14 +536,11 @@ as
       );
     when flow_constants_pkg.gc_prov_var_type_date then
       -- test date value returned using our specified format
-      /*
       if l_result_vc2 != to_char  ( to_date ( l_result_vc2 
                                             , flow_constants_pkg.gc_prov_default_date_format )
                                   , flow_constants_pkg.gc_prov_default_date_format ) then 
-         
-
-*/
-
+         raise e_var_exp_date_format_error;
+      end if;
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -579,6 +565,16 @@ as
       );
     end case;
   exception
+    when e_var_exp_date_format_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_date_format'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'      
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
@@ -624,6 +620,16 @@ as
     when flow_constants_pkg.gc_prov_var_type_date then
       -- a date value must be returned using our specified format
       -- add a test that format is good?
+      begin
+        if l_result_vc2 != to_char  ( to_date ( l_result_vc2 
+                                              , flow_constants_pkg.gc_prov_default_date_format )
+                                    , flow_constants_pkg.gc_prov_default_date_format ) then 
+        raise e_var_exp_date_format_error;
+      exception
+        when others then
+          raise e_var_exp_date_format_error;
+      end;
+
       flow_process_vars.set_var 
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
@@ -648,6 +654,16 @@ as
       );
     end case;
   exception
+    when e_var_exp_date_format_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_date_format'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'      km
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
