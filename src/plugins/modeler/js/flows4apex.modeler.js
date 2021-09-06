@@ -1943,6 +1943,37 @@ function procVarDetailProps(element, bpmnFactory, translate) {
         DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
     };
 
+    var getDataTypes = function () {
+        return function (element, node) {
+            var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+            var expressionType = entry && entry.get('varExpressionType');
+
+            switch (expressionType) {
+                case 'sqlQueryList':
+                    return [
+                        {name: translate('Varchar2'), value: 'VARCHAR2'},
+                    ];
+                case 'sqlQuerySingle':
+                case 'plsqlExpression':
+                case 'plsqlFunctionBody':
+                    return [
+                        {name: translate('Varchar2'), value: 'VARCHAR2'},
+                        {name: translate('Number'), value: 'NUMBER'},
+                        {name: translate('Date'), value: 'DATE'},
+                    ];
+                case 'static':
+                case 'processVariable':
+                default:
+                    return [
+                        {name: translate('Varchar2'), value: 'VARCHAR2'},
+                        {name: translate('Number'), value: 'NUMBER'},
+                        {name: translate('Date'), value: 'DATE'},
+                        {name: translate('Clob'), value: 'CLOB'},
+                    ];
+            }
+        };
+    };
+
     var getProperty = function (property) {
         return function (element, node) {
     
@@ -2010,12 +2041,7 @@ function procVarDetailProps(element, bpmnFactory, translate) {
 
                 set: setProperty(),
 
-                selectOptions: [
-                    {name: translate('Varchar2'), value: 'VARCHAR2'},
-                    {name: translate('Number'), value: 'NUMBER'},
-                    {name: translate('Date'), value: 'DATE'},
-                    {name: translate('Clob'), value: 'CLOB'},
-                ]
+                selectOptions: getDataTypes()
             })
         );
     }
@@ -2050,6 +2076,21 @@ function procVarExpressionProps(element, bpmnFactory, translate) {
     var setProperty = function () {
         return function (element, values, node) {
         var entry = Object(_procVarLists__WEBPACK_IMPORTED_MODULE_0__["getSelectedEntry"])(element, node);
+
+        if (values.varExpressionType !== undefined) {
+            switch (values.varExpressionType) {
+                case 'sqlQuerySingle':
+                case 'plsqlExpression':
+                case 'plsqlFunctionBody':
+                    if (entry.varDataType === 'CLOB') { entry.varDataType = 'VARCHAR2'; }
+                    break;
+                case 'sqlQueryList':
+                    entry.varDataType = 'VARCHAR2';
+                    break;
+                default:
+                    break;
+            }
+        }
     
         return cmdHelper.updateBusinessObject(element, entry, values);
         };
@@ -2615,7 +2656,7 @@ module.exports = function () {
 
     if (businessObject.$type === 'bpmn:ExclusiveGateway' || businessObject.$type === 'bpmn:ParallelGateway' || businessObject.$type === 'bpmn:InclusiveGateway') {
       if (businessObject.incoming.length > 1 && businessObject.outgoing.length > 1) {
-        reporter.report(businessObject.id, 'A gateway should not merge and split at the same time.');
+        reporter.report(businessObject.id, 'A gateway should not merge and split at the same time');
       }
     }
   }
@@ -3508,6 +3549,29 @@ __webpack_require__.r(__webpack_exports__);
   /* error */
   'Global Error referenced': 'Erreur globale référencée',
   'Code': 'Code',
+
+  /* linter messages */
+  'Process is missing end event': '',
+  'Sub process is missing end event': '',
+  'Start event is missing event definition': '',
+  'Incoming flows do not join': '',
+  'Gateway is superfluous. It only has one source and target.': '',
+  'Element is missing label/name': '',
+  'Element has disallowed type <bpmn:ComplexGateway>': '',
+  'Element is not connected': '',
+  'SequenceFlow is a duplicate': '',
+  'Duplicate outgoing sequence flows': '',
+  'Duplicate incoming sequence flows': '',
+  'Flow splits implicitly': '',
+  'Process has multiple blank start events': '',
+  'Sub process has multiple blank start events': '',
+  'Event has multiple event definitions': '',
+  'Process is missing start event': '',
+  'Sub process is missing start event': '',
+  'Start event must be blank': '',
+  'Element ID is longer than 50 characters': '',
+  'Element ID was not changed yet': '',
+  'A gateway should not merge and split at the same time': '',
 });
 
 

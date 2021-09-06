@@ -18,10 +18,11 @@ wwv_flow_api.create_page(
 ,p_alias=>'MODELER'
 ,p_step_title=>'Flow Modeler - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code=>'initPage4();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210903164539'
+,p_last_upd_yyyymmddhh24miss=>'20210906080415'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7938399981499706)

@@ -1109,6 +1109,18 @@ function initPage3() {
   } );
 }
 
+function initPage4() {
+  initApp();
+  $(window).bind('keydown', function(event) {
+    if (event.ctrlKey || event.metaKey) {
+        if (String.fromCharCode(event.which).toLowerCase() === 's') {
+            event.preventDefault();
+            apex.region('modeler').save();
+        }
+    }
+  });
+}
+
 function initPage7() {
   apex.jQuery( window ).on( "theme42ready", function () {
     addClassesToParents('span[data-status="created"]'   , "span.t-BadgeList-value", ["ffa-color--created", "instance-counter-link"]);
