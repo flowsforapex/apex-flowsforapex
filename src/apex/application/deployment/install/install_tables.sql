@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_install_script(
- p_id=>wwv_flow_api.id(8152952384680819)
+ p_id=>wwv_flow_api.id(8806702689381517)
 ,p_install_id=>wwv_flow_api.id(14200193318202500)
 ,p_name=>'Tables'
 ,p_sequence=>10

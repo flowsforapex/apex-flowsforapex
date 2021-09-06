@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_install_script(
- p_id=>wwv_flow_api.id(8153371213682431)
+ p_id=>wwv_flow_api.id(8806949341382474)
 ,p_install_id=>wwv_flow_api.id(14200193318202500)
 ,p_name=>'Packages Spec'
 ,p_sequence=>30
@@ -652,6 +652,7 @@ wwv_flow_api.create_install_script(
 '  authid current_user',
 '  -- accessible by flow_engine, flow_process_vars ??',
 'as ',
+'  e_var_exp_date_format_error exception;',
 '',
 '  -- Call using objt_id if you have available',
 '  procedure process_expressions',
@@ -685,10 +686,7 @@ wwv_flow_api.create_install_script(
 '  ( p_process_id    in flow_processes.prcs_id%type',
 '  , p_subflow_id    in flow_subflows.sbfl_id%type',
 '  , p_sbfl_info     in flow_subflows%rowtype',
-'  , p_step_info     in flow_types_pkg.flow_step_info',
-'  );',
-'',
-' pr'))
+'  , p_step_info     i'))
 );
 wwv_flow_api.component_end;
 end;
@@ -703,9 +701,12 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153371213682431)
+ p_id=>wwv_flow_api.id(8806949341382474)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'ocedure process_eventBasedGateway',
+'n flow_types_pkg.flow_step_info',
+'  );',
+'',
+' procedure process_eventBasedGateway',
 '  ( p_process_id in flow_processes.prcs_id%type',
 '  , p_subflow_id in flow_subflows.sbfl_id%type',
 '  , p_sbfl_info  in flow_subflows%rowtype',
@@ -810,36 +811,6 @@ wwv_flow_api.append_to_install_script(
 '  );',
 '',
 'end flow_logging;',
-'/',
-'',
-'create or replace PACKAGE flow_notif_pkg AS',
-'/******************************************************************************',
-' Purpose:',
-'   Provides support to notifications in Flows for APEX.',
-'******************************************************************************/',
-'',
-'/* FUNCTIONS */',
-'/******************************************************************************',
-'  get_transf_value',
-'    Only for internal use in SQL.',
-'******************************************************************************/',
-'    FUNCTION get_transf_value (',
-'        in_value VARCHAR2',
-'    ) RETURN CLOB;',
-'',
-'/* PROCEDURES */',
-'/******************************************************************************',
-'  send_notification',
-'    Send a notification using the template defined in the p_template_ident',
-'    parameter.',
-'******************************************************************************/',
-'   PROCEDURE send_notification (',
-'      p_process_id       IN   flow_processes.prcs_id%TYPE,',
-'      p_template_ident   IN   apex_appl_email_templates.static_id%TYPE,',
-'      p_modeller_values  IN   CLOB,',
-'      p_return_code      OUT  NUMBER',
-'   );',
-'END flow_notif_pkg;',
 '/',
 '',
 'create or replace package flow_plsql_runner_pkg',
