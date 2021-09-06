@@ -29,6 +29,12 @@ prompt --install
 @@application/shared_components/files/css_20_1_flows4apex_dark_css_map.sql
 @@application/shared_components/files/css_20_1_flows4apex_light_min_css.sql
 @@application/shared_components/files/css_20_1_flows4apex_light_css_map.sql
+@@application/shared_components/files/css_21_1_flows4apex_dark_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_dark_min_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_dark_css_map.sql
+@@application/shared_components/files/css_21_1_flows4apex_light_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_light_min_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_light_css_map.sql
 @@application/shared_components/files/app_100_logo_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
@@ -152,6 +158,12 @@ prompt --install
 @@application/pages/page_00014.sql
 @@application/pages/page_09999.sql
 @@application/deployment/definition.sql
+@@application/deployment/install/install_tables.sql
+@@application/deployment/install/install_data.sql
+@@application/deployment/install/install_packages_spec.sql
+@@application/deployment/install/install_views.sql
+@@application/deployment/install/install_packages_body.sql
+@@application/deployment/install/install_functions.sql
 @@application/deployment/checks.sql
 @@application/deployment/buildoptions.sql
 @@application/end_environment.sql

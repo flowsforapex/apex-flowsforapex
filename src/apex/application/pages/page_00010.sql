@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage10();'
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210902175832'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210903174815'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -183,7 +183,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Flow Name'
 ,p_column_link=>'javascript:void(0);'
 ,p_column_linktext=>'#PRCS_NAME#'
-,p_column_link_attr=>'title="Details" class="detail-link" data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#"'
+,p_column_link_attr=>'title="View" class="view-link" data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#"'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 ,p_static_id=>'PRCS_NAME'
@@ -285,6 +285,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_allow_pivot=>'N'
 ,p_allow_hide=>'N'
 ,p_column_type=>'STRING'
+,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'instance_action_col'
 );
@@ -337,25 +338,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_static_id=>'instance_checkbox_col'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(5680146247037001)
-,p_db_column_name=>'VIEW_INSTANCE'
-,p_display_order=>150
-,p_column_identifier=>'O'
-,p_column_label=>'View'
-,p_allow_sorting=>'N'
-,p_allow_filtering=>'N'
-,p_allow_highlighting=>'N'
-,p_allow_ctrl_breaks=>'N'
-,p_allow_aggregations=>'N'
-,p_allow_computations=>'N'
-,p_allow_charting=>'N'
-,p_allow_group_by=>'N'
-,p_allow_pivot=>'N'
-,p_column_type=>'STRING'
-,p_display_text_as=>'WITHOUT_MODIFICATION'
-,p_column_alignment=>'CENTER'
-);
-wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(6176739527209912)
 ,p_db_column_name=>'PRCS_STATUS_ICON'
 ,p_display_order=>160
@@ -363,6 +345,21 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Prcs Status Icon'
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(8024079343825609)
+,p_db_column_name=>'QUICK_ACTION'
+,p_display_order=>170
+,p_column_identifier=>'Q'
+,p_column_label=>'Quick Action'
+,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<button type="button" class="t-Button t-Button--icon t-Button--iconLeft t-Button--link js-actionButton"',
+'data-prcs="#PRCS_ID#" data-action="open-flow-instance-details">',
+'<span aria-hidden="true" class="t-Icon t-Icon--left fa fa-search"></span>Details</button>'))
+,p_column_type=>'STRING'
+,p_display_text_as=>'WITHOUT_MODIFICATION'
+,p_column_alignment=>'CENTER'
+,p_static_id=>'quick_action_col'
 );
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(26608389028834346)
@@ -372,7 +369,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>5
-,p_report_columns=>'PRCS_DGRM_CATEGORY:CHECKBOX:BTN:VIEW_PROCESS:VIEW_INSTANCE:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE::PRCS_STATUS_ICON'
+,p_report_columns=>'PRCS_DGRM_CATEGORY:CHECKBOX:BTN:VIEW_PROCESS:QUICK_ACTION:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:'
 ,p_sort_column_1=>'PRCS_DGRM_CATEGORY'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'PRCS_NAME'
@@ -942,6 +939,18 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'live'
 ,p_bind_event_type=>'change'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(4300813188764310)
 ,p_event_id=>wwv_flow_api.id(4300450048764256)
@@ -955,18 +964,6 @@ wwv_flow_api.create_page_da_action(
 '     } else {',
 '     $(''#flow-instances input[type=checkbox][name=f01]'').prop(''checked'',false);',
 ' } '))
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6177414128209919)
@@ -1017,7 +1014,7 @@ wwv_flow_api.create_page_da_event(
 ,p_name=>'Click on Flow Name'
 ,p_event_sequence=>300
 ,p_triggering_element_type=>'JQUERY_SELECTOR'
-,p_triggering_element=>'.detail-link'
+,p_triggering_element=>'.view-link'
 ,p_bind_type=>'live'
 ,p_bind_delegate_to_selector=>'#flow-instances'
 ,p_bind_event_type=>'click'
@@ -1029,7 +1026,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'apex.actions.invoke("open-flow-instance-details", "", this.triggeringElement);'
+,p_attribute_01=>'apex.actions.invoke("view-flow-instance", "", this.triggeringElement);'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(33735382808406124)
@@ -1057,15 +1054,15 @@ wwv_flow_api.create_page_process(
 '    -- Set view to side-by-side if preference = ''column''',
 '    if :P10_DISPLAY_SETTING = ''column'' then',
 '    ',
-'        l_script := q''#apex.jQuery("#col1").addClass("col-6").removeClass("col-12");',
-'                       apex.jQuery("#col2").addClass("col-6").removeClass("col-12");',
+'        l_script := q''#apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( [ "col-12", "col-end" ] );',
+'                       apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( [ "col-12", "col-start" ] );',
 '                       apex.jQuery("#col2").appendTo(apex.jQuery("#col1").parent());',
 '                       apex.jQuery("#flow-monitor").show();',
 '                       apex.region( "flow-monitor" ).refresh();#'';',
 '     elsif :P10_DISPLAY_SETTING = ''window'' then',
 '        l_script := q''#apex.jQuery("#flow-monitor").hide();',
-'                       apex.jQuery("#col1").addClass("col-12").removeClass("col-6");',
-'                       apex.jQuery("#col2").addClass("col-12").removeClass("col-6");#'';',
+'                       apex.jQuery( "#col1" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );',
+'                       apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );#'';',
 '    end if;',
 '    ',
 '    if l_script is not null then',

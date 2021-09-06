@@ -45,6 +45,7 @@ drop view flow_p0002_diagrams_vw;
 drop view flow_p0007_instances_counter_vw;
 drop view flow_p0008_vw;
 drop view flow_p0008_subflows_vw;
+drop view flow_p0008_instance_log_vw;
 drop view flow_p0008_instance_details_vw;
 drop view flow_p0008_variables_vw;
 drop view flow_p0010_vw;

@@ -22,11 +22,11 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210902175913'
+,p_last_upd_yyyymmddhh24miss=>'20210903164153'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2447308339538228)
-,p_plug_name=>'Completed Objects'
+,p_plug_name=>'Completed Steps'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>50
@@ -46,7 +46,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>11
 ,p_prn_height=>8.5
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Completed Objects'
+,p_prn_page_header=>'Completed Steps'
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -97,7 +97,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'COMPLETED_OBJECT'
 ,p_display_order=>20
 ,p_column_identifier=>'B'
-,p_column_label=>'Object'
+,p_column_label=>'Step'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
@@ -204,7 +204,7 @@ wwv_flow_api.create_worksheet_rpt(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7332140854307003)
-,p_plug_name=>'Variables'
+,p_plug_name=>'Variable History'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
@@ -225,7 +225,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>11
 ,p_prn_height=>8.5
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Variables'
+,p_prn_page_header=>'Variable History'
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -285,7 +285,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'LGVR_OBJT_ID'
 ,p_display_order=>30
 ,p_column_identifier=>'C'
-,p_column_label=>'Object'
+,p_column_label=>'Step'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
@@ -339,10 +339,12 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_is_default=>'Y'
 ,p_display_rows=>20
 ,p_report_columns=>'LGVR_SBFL_ID:LGVR_OBJT_ID:LGVR_EXPR_SET:LGVR_VAR_NAME:LGVR_VAR_TYPE:LGVR_VALUE:LGVR_TIMESTAMP:'
+,p_sort_column_1=>'LGVR_TIMESTAMP'
+,p_sort_direction_1=>'DESC'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(16453181626752830)
-,p_plug_name=>'Current Objects'
+,p_plug_name=>'Current Steps'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>40
@@ -362,7 +364,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>11
 ,p_prn_height=>8.5
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Current Objects'
+,p_prn_page_header=>'Current Steps'
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'
@@ -439,7 +441,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'CURRENT_OBJECT'
 ,p_display_order=>50
 ,p_column_identifier=>'E'
-,p_column_label=>'Current Object'
+,p_column_label=>'Step'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
@@ -517,7 +519,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(20683667255713697)
-,p_plug_name=>'Instances'
+,p_plug_name=>'Instance Events'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>30
@@ -537,7 +539,7 @@ wwv_flow_api.create_page_plug(
 ,p_prn_width=>11
 ,p_prn_height=>8.5
 ,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header=>'Instances'
+,p_prn_page_header=>'Instance Events'
 ,p_prn_page_header_font_color=>'#000000'
 ,p_prn_page_header_font_family=>'Helvetica'
 ,p_prn_page_header_font_weight=>'normal'

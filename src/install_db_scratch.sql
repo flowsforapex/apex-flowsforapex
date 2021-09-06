@@ -104,6 +104,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_instance_details_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
+@views/engine-app/flow_p0008_instance_log_vw.sql
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb
