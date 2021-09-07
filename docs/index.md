@@ -34,7 +34,10 @@ The diagram below gives a full definition of the BPMN syntax supported in the cu
 
 ### Using the Flows for APEX PL/SQL API
 
+- [The Flows for APEX PL/SQL API](FlowsforAPEX_PLSQL_API.md)
 - [The Process Variable System](processVariables.md)
+- [Declarative Process Variable Expressions](variableExpressions.md)
+- [Event Logging and Audit Trail](eventLoggingAndAuditing.md)
 
 ### Understanding Flows for APEX Concepts
 
