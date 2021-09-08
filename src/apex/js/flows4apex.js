@@ -1067,14 +1067,16 @@ function initPage2() {
       }
     } );
 
-    $( "th.a-IRR-header" ).each( function ( i ) {
-      if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
-        apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
-        apex.jQuery( this ).find( "button#header-action" ).hide();
-      } else {
-        apex.jQuery( this ).addClass( "u-alignMiddle" );
-      }
-    } );
+    if ($("th.a-IRR-header--group").length > 0) {
+      $("th").each(function(i){
+          if ( apex.jQuery(this).attr("id") === undefined) {
+              apex.jQuery(this).find('input[type="checkbox"]').hide();
+              apex.jQuery(this).find('button#header-action').hide();
+          } else {
+              apex.jQuery(this).addClass("u-alignMiddle");
+          }
+      });
+    }
 
     $( "#header_actions_menu" ).on( "menubeforeopen", function ( event, ui ) {
       var menuItems = ui.menu.items;
