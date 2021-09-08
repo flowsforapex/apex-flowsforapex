@@ -692,8 +692,32 @@ function bulkReserveStep( action ){
     options.refreshRegion = ["subflows"];
     sendToServer(data, options);
   } else {
-    openReservationDialog( action, element );
+    openReservationDialog( action, null );
   }
+}
+
+function releaseStep( action, element ){
+  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
+    if( okPressed ) {
+      var data = getSubflowData( action );
+      
+      var options = {};
+      options.refreshRegion = ["subflows"];
+      sendToServer(data, options);
+    }
+  });
+}
+
+function bulkReleaseStep( action ){
+  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
+    if( okPressed ) {
+      var data = getBulkSubflowData( action );
+      
+      var options = {};
+      options.refreshRegion = ["subflows"];
+      sendToServer(data, options);
+    }
+  });
 }
 
 function markAsCurrent(prcsId){
@@ -830,13 +854,13 @@ function initActions(){
         {
           name: "release-step",
           action: function ( event, focusElement ) {
-            processAction( this.name, focusElement );
+            releaseStep( this.name, focusElement );
           }
         },
         {
           name: "bulk-release-step",
           action: function ( event, focusElement ) {
-            processAction( this.name, focusElement );
+            bulkReleaseStep( this.name );
           }
         },
         {
