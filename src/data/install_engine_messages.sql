@@ -1,6 +1,4 @@
--- delete from flow_messages;
-
-
+PROMPT >> Loading Exported Messages
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'eng_handle_event_int',
@@ -52,6 +50,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
+'var_exp_date_format',
+'en-us',
+'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
 'var_exp_plsql_error',
 'en-us',
 'Subflow : %0 Error in %2 expression for Variable : %1'
@@ -78,4 +83,10 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'
 );
  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_static_general',
+'en-us',
+'Error setting %2 process variable %1 in process id %0.  See error in event log.'
+);
  

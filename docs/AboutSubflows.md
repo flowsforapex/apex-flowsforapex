@@ -18,9 +18,9 @@ A *Flow Instance* is one occurance of this Flow or business process.  Building o
 
 Within that flow instance, there could be one or more *subflows* running at any time.  Each *subflow* is a branch of the process tree.  Continuing to build our example, the process instance starts with a single subflow running. Once it passes the first object, a parallel gateway, there would then be two subflows running - one with 'Decide if ...' activity as the next activity, and a second with 'Package Goods' as it's first activity.
 
-As the flow instance continues, additional subflows can be added, multiple subflows can be synchronised and combined into one, and subflows can end.  Subflows are a transient objects that are created, processed, and deleted as they are required or finished with.
+As the flow instance continues, additional subflows can be added, multiple subflows can be synchronised and combined into one, and subflows can end.  Subflows are transient objects that are created as they are required, processed, and deleted once they are finished with.
 
-As the process continues, and each object is completed, a record of object completion is kept in the FLOW_SUBFLOW_LOG table.  This is used to show step completion in the BPMN viewer plugin.
+As the process continues, and each object is completed, a record of object completion is kept in the FLOW_SUBFLOW_LOG table.  This is used to show step completion in the BPMN viewer plugin.  In addition, flow, instance, step, and variable events are logged into a series of event log tables for process monitoring and auditing purposes.
 
 ### Subflow Behaviour
 
@@ -86,6 +86,8 @@ A child subflow is created for each forward path that is chosen.  Routes that do
 As each parallel child subflow reaches its merging / closing Inclusive Gateway object, they are set to status `waiting at gateway`.
 
 When *all* of the chosen child subflows have reached the merging gateway, they are complete and the original parent subflow resumes its status of `running` and continues on the forward path.
+
+At a combined merging and reopening Inclusive Gateway, all of the incoming child subflows are processed, as for a merging Inclusive Gateway, above.  Once all child flows have reached the gateway, it then performs the activities of an Opening Gateway to create a new set of child subflows for the forward path.
 
 #### Action at a Sub Process
 
@@ -166,7 +168,8 @@ When a process is reset:
 - any event handlers, such as timers, are terminated.
 - any current subflows are removed.
 - process progress is reset to the begining, showing which objects were completed when the process ran.
-- any process variables attached to the instance, except for BUSINESS_REF, are deleted.  Note that this behaviour has changed in v21 - previously all process variables were retained on a reset.
+- any process variables attached to the instance, except for built-ins like BUSINESS_REF, are deleted.
+- **Note that this behaviour has changed in v21 - previously all process variables were retained on a reset.**
 - the process status is reset to `created`.
 - the reset is logged in the instance event log, if logging is enabled.
 
@@ -194,10 +197,10 @@ When a process is deleted:
 
 ### On Performance, Auditing and Logging...
 
-The Subflow architecture implemented in V4 is designed to be performant and the working tables holding Process Instances, Subflows, Timers, and Subflow Progress have been designed with the intention that they should stay small, un-cluttered, and hopefully cached!
+The Subflow architecture implemented from V4 onwards is designed to be performant and the working tables holding Process Instances, Subflows, Timers, and Subflow Progress have been designed with the intention that they should stay small, un-cluttered, and hopefully cached!
 
-The Flow, Instance, Subflow and Variable event log tables are designed to hold longer term event logging and audit trail data for your system.  Depending upon the logging level set for your system, these logs can grow to become quite large, especially if process variable logging is enabled.  
+The Flow, Instance, Subflow and Variable event log tables are designed to hold longer term [event logging and audit trail](eventLoggingAndauditing.md) data for your system.  Depending upon the logging level set for your system, these logs can grow to become quite large, especially if process variable logging is enabled.
 
 - The event logs will grow continuously, and are not deleted by the system when the subject instance is deleted.
 - If you have audit requirements, you should develop a retention plan to archive and manage these logs to meet your requirements.
-- Any log data can be deleted without damaging your system.  However, removing log data for Instances that asre still active or completed (i.e., have not yet been deleted) will remove information about the instance from the Flow Monitor application.
+- Any log data can be deleted without damaging your system.  However, removing log data for Instances that are still active or completed (i.e., have not yet been deleted) will remove information about the instance from the Flow Monitor application.
