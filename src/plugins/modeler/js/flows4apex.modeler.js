@@ -3243,16 +3243,142 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./custom/translation/TranslationModule.js":
-/*!*************************************************!*\
-  !*** ./custom/translation/TranslationModule.js ***!
-  \*************************************************/
+/***/ "./index.js":
+/*!******************!*\
+  !*** ./index.js ***!
+  \******************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _languages_fr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./languages/fr */ "./custom/translation/languages/fr.js");
+/* harmony import */ var bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-bpmnlint */ "./node_modules/bpmn-js-bpmnlint/dist/index.esm.js");
+/* harmony import */ var bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/Modeler */ "./node_modules/bpmn-js/lib/Modeler.js");
+/* harmony import */ var _bpmnlintrc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./.bpmnlintrc */ "./.bpmnlintrc");
+/* harmony import */ var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json");
+var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3___namespace = /*#__PURE__*/__webpack_require__.t(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json", 1);
+/* harmony import */ var _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./apexPropertiesProvider/provider */ "./apexPropertiesProvider/provider/index.js");
+/* harmony import */ var _custom_palette__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./custom/palette */ "./custom/palette/index.js");
+/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./custom/properties-panel */ "./custom/properties-panel/index.js");
+/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _lib_styleModule__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./lib/styleModule */ "./lib/styleModule/index.js");
+/* harmony import */ var _lib_translation_TranslationModule__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./lib/translation/TranslationModule */ "./lib/translation/TranslationModule.js");
+
+
+
+
+
+
+
+
+
+
+var bpmnModeler = {
+  Modeler: bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_1__["default"],
+  linting: { apexLinting: _bpmnlintrc__WEBPACK_IMPORTED_MODULE_2__["default"] },
+  customModules: {
+    propertiesPanelModule: (_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default()),
+    propertiesProviderModule: _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_4__["default"],
+    lintModule: bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_0__["default"],
+    customPaletteProviderModule: _custom_palette__WEBPACK_IMPORTED_MODULE_5__["default"],
+    translationModule: _lib_translation_TranslationModule__WEBPACK_IMPORTED_MODULE_8__["default"],
+    styleModule: _lib_styleModule__WEBPACK_IMPORTED_MODULE_7__["default"],
+  },
+  moddleExtensions: {
+    apexModdleDescriptor: _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__,
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (bpmnModeler);
+
+/***/ }),
+
+/***/ "./lib/formsHelper.js":
+/*!****************************!*\
+  !*** ./lib/formsHelper.js ***!
+  \****************************/
+/*! exports provided: isOptionSelected */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isOptionSelected", function() { return isOptionSelected; });
+function isOptionSelected(dropdownSelector, option) {
+  var selectBox = document.querySelector(dropdownSelector);
+  var isSelected = false;
+
+  if (selectBox && selectBox.selectedIndex === option) {
+    isSelected = true;
+  }
+
+  return isSelected;
+}
+
+
+/***/ }),
+
+/***/ "./lib/styleModule/StyleModule.js":
+/*!****************************************!*\
+  !*** ./lib/styleModule/StyleModule.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return StyleModule; });
+function StyleModule() {}
+
+StyleModule.prototype.addToSVGStyle = function (svg, style) {
+  var parser = new DOMParser();
+  var xmlDoc = parser.parseFromString(svg, 'text/xml');
+
+  var defs = xmlDoc.getElementsByTagName('defs')[0];
+
+  var styleNode = document.createElement('style');
+  styleNode.setAttribute('type', 'text/css');
+  var content = document.createTextNode(style);
+  styleNode.appendChild(content);
+  defs.appendChild(styleNode);
+
+  var xmlText = new XMLSerializer().serializeToString(xmlDoc);
+
+  return xmlText;
+};
+
+
+/***/ }),
+
+/***/ "./lib/styleModule/index.js":
+/*!**********************************!*\
+  !*** ./lib/styleModule/index.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _StyleModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StyleModule */ "./lib/styleModule/StyleModule.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  __init__: ['styleModule'],
+  styleModule: ['type', _StyleModule__WEBPACK_IMPORTED_MODULE_0__["default"]]
+});
+
+
+/***/ }),
+
+/***/ "./lib/translation/TranslationModule.js":
+/*!**********************************************!*\
+  !*** ./lib/translation/TranslationModule.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _languages_fr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./languages/fr */ "./lib/translation/languages/fr.js");
 
 
 const languages = {
@@ -3288,10 +3414,10 @@ function applyTranslation() {
 
 /***/ }),
 
-/***/ "./custom/translation/languages/fr.js":
-/*!********************************************!*\
-  !*** ./custom/translation/languages/fr.js ***!
-  \********************************************/
+/***/ "./lib/translation/languages/fr.js":
+/*!*****************************************!*\
+  !*** ./lib/translation/languages/fr.js ***!
+  \*****************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3435,8 +3561,8 @@ __webpack_require__.r(__webpack_exports__);
   /* palette */
   'Undo': 'Annuler',
   'Redo': 'Rétablir',
-  'Zoom in': 'Agrandir',
-  'Zoom out': 'Réduire',
+  'Zoom In': 'Agrandir',
+  'Zoom Out': 'Réduire',
 
   /* properties panel */
   /* general */
@@ -3551,99 +3677,30 @@ __webpack_require__.r(__webpack_exports__);
   'Code': 'Code',
 
   /* linter messages */
-  'Process is missing end event': '',
-  'Sub process is missing end event': '',
-  'Start event is missing event definition': '',
-  'Incoming flows do not join': '',
-  'Gateway is superfluous. It only has one source and target.': '',
-  'Element is missing label/name': '',
-  'Element has disallowed type <bpmn:ComplexGateway>': '',
-  'Element is not connected': '',
-  'SequenceFlow is a duplicate': '',
-  'Duplicate outgoing sequence flows': '',
-  'Duplicate incoming sequence flows': '',
-  'Flow splits implicitly': '',
-  'Process has multiple blank start events': '',
-  'Sub process has multiple blank start events': '',
-  'Event has multiple event definitions': '',
-  'Process is missing start event': '',
-  'Sub process is missing start event': '',
-  'Start event must be blank': '',
-  'Element ID is longer than 50 characters': '',
-  'Element ID was not changed yet': '',
-  'A gateway should not merge and split at the same time': '',
+  'Process is missing end event': 'Un évènement de fin manque au processus.',
+  'Sub process is missing end event': 'Un événement de fin manque au sous-processus.',
+  'Start event is missing event definition': 'La définition de l\'évènement de début est manquante.',
+  'Incoming flows do not join': 'Les flux entrants ne se rejoignent pas.',
+  'Gateway is superfluous. It only has one source and target.': 'La passerelle est superflue, elle n\'a qu\'une source et une cible.',
+  'Element is missing label/name': 'L\'élément n\'a pas de libellé/nom.',
+  'Element has disallowed type <bpmn:ComplexGateway>': 'L\'élément a un type non autorisé (<bpmn:ComplexGateway>).',
+  'Element is not connected': 'L\'élément n\'est pas connecté.',
+  'SequenceFlow is a duplicate': 'Le flux de séquence est en double.',
+  'Duplicate outgoing sequence flows': 'Flux de séquence sortants en double.',
+  'Duplicate incoming sequence flows': 'Flux de séquence entrants en double.',
+  'Flow splits implicitly': 'Le flux se sépare implicitement.',
+  'Process has multiple blank start events': 'Le processus a plusieurs événements de début à blanc.',
+  'Sub process has multiple blank start events': 'Le sous-processus a plusieurs événements de début à blanc.',
+  'Event has multiple event definitions': 'L\'évènement a plusieurs définitions.',
+  'Process is missing start event': 'Le processus n\'a pas d\'évènement de début.',
+  'Sub process is missing start event': 'Le sous processus n\'a pas d\'évènement de début.',
+  'Start event must be blank': 'L\'évènement de début doit être à blanc.',
+  'Element ID is longer than 50 characters': 'L\'ID de l\'élément comporte plus de 50 caractères.',
+  'Element ID was not changed yet': 'L\'ID de l\'élément n\'a pas encore été modifié',
+  'A gateway should not merge and split at the same time': 'Une passerelle ne devrait pas se rejoindre et se séparer en même temps.',
+
+  '{errors} Errors, {warnings} Warnings': '{errors} Erreurs, {warnings} Avertissements',
 });
-
-
-/***/ }),
-
-/***/ "./index.js":
-/*!******************!*\
-  !*** ./index.js ***!
-  \******************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-bpmnlint */ "./node_modules/bpmn-js-bpmnlint/dist/index.esm.js");
-/* harmony import */ var bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/Modeler */ "./node_modules/bpmn-js/lib/Modeler.js");
-/* harmony import */ var _bpmnlintrc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./.bpmnlintrc */ "./.bpmnlintrc");
-/* harmony import */ var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json");
-var _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3___namespace = /*#__PURE__*/__webpack_require__.t(/*! ./apexPropertiesProvider/descriptor/apexProps */ "./apexPropertiesProvider/descriptor/apexProps.json", 1);
-/* harmony import */ var _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./apexPropertiesProvider/provider */ "./apexPropertiesProvider/provider/index.js");
-/* harmony import */ var _custom_palette__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./custom/palette */ "./custom/palette/index.js");
-/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./custom/properties-panel */ "./custom/properties-panel/index.js");
-/* harmony import */ var _custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _custom_translation_TranslationModule__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./custom/translation/TranslationModule */ "./custom/translation/TranslationModule.js");
-
-
-
-
-
-
-
-
-
-var bpmnModeler = {
-  Modeler: bpmn_js_lib_Modeler__WEBPACK_IMPORTED_MODULE_1__["default"],
-  linting: { apexLinting: _bpmnlintrc__WEBPACK_IMPORTED_MODULE_2__["default"] },
-  customModules: {
-    propertiesPanelModule: (_custom_properties_panel__WEBPACK_IMPORTED_MODULE_6___default()),
-    propertiesProviderModule: _apexPropertiesProvider_provider__WEBPACK_IMPORTED_MODULE_4__["default"],
-    lintModule: bpmn_js_bpmnlint__WEBPACK_IMPORTED_MODULE_0__["default"],
-    customPaletteProviderModule: _custom_palette__WEBPACK_IMPORTED_MODULE_5__["default"],
-    translationModule: _custom_translation_TranslationModule__WEBPACK_IMPORTED_MODULE_7__["default"]
-  },
-  moddleExtensions: {
-    apexModdleDescriptor: _apexPropertiesProvider_descriptor_apexProps__WEBPACK_IMPORTED_MODULE_3__,
-  }
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (bpmnModeler);
-
-/***/ }),
-
-/***/ "./lib/formsHelper.js":
-/*!****************************!*\
-  !*** ./lib/formsHelper.js ***!
-  \****************************/
-/*! exports provided: isOptionSelected */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isOptionSelected", function() { return isOptionSelected; });
-function isOptionSelected(dropdownSelector, option) {
-  var selectBox = document.querySelector(dropdownSelector);
-  var isSelected = false;
-
-  if (selectBox && selectBox.selectedIndex === option) {
-    isSelected = true;
-  }
-
-  return isSelected;
-}
 
 
 /***/ }),
@@ -14379,12 +14436,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ContextPadProvider; });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var diagram_js_lib_util_Mouse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/util/Mouse */ "./node_modules/diagram-js/lib/util/Mouse.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_DiUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/DiUtil */ "./node_modules/bpmn-js/lib/util/DiUtil.js");
-/* harmony import */ var _modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modeling/util/ModelingUtil */ "./node_modules/bpmn-js/lib/features/modeling/util/ModelingUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 /* harmony import */ var _modeling_util_LaneUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../modeling/util/LaneUtil */ "./node_modules/bpmn-js/lib/features/modeling/util/LaneUtil.js");
-/* harmony import */ var diagram_js_lib_util_Mouse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/util/Mouse */ "./node_modules/diagram-js/lib/util/Mouse.js");
+/* harmony import */ var _modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modeling/util/ModelingUtil */ "./node_modules/bpmn-js/lib/features/modeling/util/ModelingUtil.js");
 
 
 
@@ -14431,7 +14488,7 @@ function ContextPadProvider(
     var context = event.context,
         shape = context.shape;
 
-    if (!Object(diagram_js_lib_util_Mouse__WEBPACK_IMPORTED_MODULE_5__["hasPrimaryModifier"])(event) || !contextPad.isOpen(shape)) {
+    if (!Object(diagram_js_lib_util_Mouse__WEBPACK_IMPORTED_MODULE_0__["hasPrimaryModifier"])(event) || !contextPad.isOpen(shape)) {
       return;
     }
 
@@ -14530,7 +14587,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
 
     function appendStart(event, element) {
 
-      var shape = elementFactory.createShape(Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])({ type: type }, options));
+      var shape = elementFactory.createShape(Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])({ type: type }, options));
       create.start(event, shape, {
         source: element
       });
@@ -14538,7 +14595,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
 
 
     var append = autoPlace ? function(event, element) {
-      var shape = elementFactory.createShape(Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])({ type: type }, options));
+      var shape = elementFactory.createShape(Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])({ type: type }, options));
 
       autoPlace.append(element, shape);
     } : appendStart;
@@ -14569,11 +14626,11 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
   }
 
 
-  if (Object(_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_3__["isAny"])(businessObject, [ 'bpmn:Lane', 'bpmn:Participant' ]) && Object(_util_DiUtil__WEBPACK_IMPORTED_MODULE_2__["isExpanded"])(businessObject)) {
+  if (Object(_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_5__["isAny"])(businessObject, [ 'bpmn:Lane', 'bpmn:Participant' ]) && Object(_util_DiUtil__WEBPACK_IMPORTED_MODULE_2__["isExpanded"])(businessObject)) {
 
     var childLanes = Object(_modeling_util_LaneUtil__WEBPACK_IMPORTED_MODULE_4__["getChildLanes"])(element);
 
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+    Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
       'lane-insert-above': {
         group: 'lane-insert-above',
         className: 'bpmn-icon-lane-insert-above',
@@ -14589,7 +14646,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
     if (childLanes.length < 2) {
 
       if (element.height >= 120) {
-        Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+        Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
           'lane-divide-two': {
             group: 'lane-divide',
             className: 'bpmn-icon-lane-divide-two',
@@ -14602,7 +14659,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
       }
 
       if (element.height >= 180) {
-        Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+        Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
           'lane-divide-three': {
             group: 'lane-divide',
             className: 'bpmn-icon-lane-divide-three',
@@ -14615,7 +14672,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
       }
     }
 
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+    Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
       'lane-insert-below': {
         group: 'lane-insert-below',
         className: 'bpmn-icon-lane-insert-below',
@@ -14630,11 +14687,11 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
 
   }
 
-  if (Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(businessObject, 'bpmn:FlowNode')) {
+  if (Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__["is"])(businessObject, 'bpmn:FlowNode')) {
 
-    if (Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(businessObject, 'bpmn:EventBasedGateway')) {
+    if (Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__["is"])(businessObject, 'bpmn:EventBasedGateway')) {
 
-      Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+      Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
         'append.receive-task': appendAction(
           'bpmn:ReceiveTask',
           'bpmn-icon-receive-task',
@@ -14669,7 +14726,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
 
     if (isEventType(businessObject, 'bpmn:BoundaryEvent', 'bpmn:CompensateEventDefinition')) {
 
-      Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+      Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
         'append.compensation-activity':
             appendAction(
               'bpmn:Task',
@@ -14682,12 +14739,12 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
       });
     } else
 
-    if (!Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(businessObject, 'bpmn:EndEvent') &&
+    if (!Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__["is"])(businessObject, 'bpmn:EndEvent') &&
         !businessObject.isForCompensation &&
         !isEventType(businessObject, 'bpmn:IntermediateThrowEvent', 'bpmn:LinkEventDefinition') &&
         !Object(_util_DiUtil__WEBPACK_IMPORTED_MODULE_2__["isEventSubProcess"])(businessObject)) {
 
-      Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+      Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
         'append.end-event': appendAction(
           'bpmn:EndEvent',
           'bpmn-icon-end-event-none',
@@ -14715,7 +14772,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
   if (!popupMenu.isEmpty(element, 'bpmn-replace')) {
 
     // Replace menu entry
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+    Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
       'replace': {
         group: 'edit',
         className: 'bpmn-icon-screw-wrench',
@@ -14723,7 +14780,7 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
         action: {
           click: function(event, element) {
 
-            var position = Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(getReplaceMenuPosition(element), {
+            var position = Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(getReplaceMenuPosition(element), {
               cursor: { x: event.x, y: event.y }
             });
 
@@ -14734,14 +14791,14 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
     });
   }
 
-  if (Object(_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_3__["isAny"])(businessObject, [
+  if (Object(_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_5__["isAny"])(businessObject, [
     'bpmn:FlowNode',
     'bpmn:InteractionNode',
     'bpmn:DataObjectReference',
     'bpmn:DataStoreReference'
   ])) {
 
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+    Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
       'append.text-annotation': appendAction('bpmn:TextAnnotation', 'bpmn-icon-text-annotation'),
 
       'connect': {
@@ -14758,8 +14815,8 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
     });
   }
 
-  if (Object(_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_3__["isAny"])(businessObject, [ 'bpmn:DataObjectReference', 'bpmn:DataStoreReference' ])) {
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+  if (Object(_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_5__["isAny"])(businessObject, [ 'bpmn:DataObjectReference', 'bpmn:DataStoreReference' ])) {
+    Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
       'connect': {
         group: 'connect',
         className: 'bpmn-icon-connection-multi',
@@ -14772,8 +14829,8 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
     });
   }
 
-  if (Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(businessObject, 'bpmn:Group')) {
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+  if (Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__["is"])(businessObject, 'bpmn:Group')) {
+    Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
       'append.text-annotation': appendAction('bpmn:TextAnnotation', 'bpmn-icon-text-annotation')
     });
   }
@@ -14781,14 +14838,14 @@ ContextPadProvider.prototype.getContextPadEntries = function(element) {
   // delete element entry, only show if allowed by rules
   var deleteAllowed = rules.allowed('elements.delete', { elements: [ element ] });
 
-  if (Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["isArray"])(deleteAllowed)) {
+  if (Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["isArray"])(deleteAllowed)) {
 
     // was the element returned as a deletion candidate?
     deleteAllowed = deleteAllowed[0] === element;
   }
 
   if (deleteAllowed) {
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["assign"])(actions, {
+    Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["assign"])(actions, {
       'delete': {
         group: 'edit',
         className: 'bpmn-icon-trash',
@@ -14812,7 +14869,7 @@ function isEventType(eventBo, type, definition) {
   var isDefinition = false;
 
   var definitions = eventBo.eventDefinitions || [];
-  Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["forEach"])(definitions, function(def) {
+  Object(min_dash__WEBPACK_IMPORTED_MODULE_1__["forEach"])(definitions, function(def) {
     if (def.$type === definition) {
       isDefinition = true;
     }

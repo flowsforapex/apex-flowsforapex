@@ -20,6 +20,7 @@
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
+        bpmnModeler.customModules.styleModule,
       ];
 
       this.moddleExtensions = {
@@ -136,12 +137,12 @@
       }
     },
     getSVG: async function () {
-      var that = this;
-      const bpmnModeler$ = that.bpmnModeler$;
+      const bpmnModeler$ = this.bpmnModeler$;
       try {
         const result = await bpmnModeler$.saveSVG( { format: true } );
         const { svg } = result;
-        return svg;
+        const styledSVG = bpmnModeler$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+        return styledSVG;
       } catch ( err ) {
         debug.error( "Get SVG failed.", err );
         throw err;

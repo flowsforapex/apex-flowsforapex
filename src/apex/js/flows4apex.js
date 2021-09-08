@@ -69,7 +69,7 @@ function openModalConfirmWithComment( action, element, confirmMessageKey, titleK
     .jQuery( "#confirm-btn" )
     .attr( "data-name", apex.jQuery( element ).attr( "data-name" ) );
   apex.theme.openRegion( "instance_action_dialog" );
-  apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( titleKey ));
+  apex.util.getTopApex().jQuery(".f4a-dynamic-title").closest(".ui-dialog-content").dialog('option', 'title', apex.lang.getMessage( titleKey ));
 }
 
 function getConfirmComment(){
@@ -692,8 +692,32 @@ function bulkReserveStep( action ){
     options.refreshRegion = ["subflows"];
     sendToServer(data, options);
   } else {
-    openReservationDialog( action, element );
+    openReservationDialog( action, null );
   }
+}
+
+function releaseStep( action, element ){
+  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
+    if( okPressed ) {
+      var data = getSubflowData( action );
+      
+      var options = {};
+      options.refreshRegion = ["subflows"];
+      sendToServer(data, options);
+    }
+  });
+}
+
+function bulkReleaseStep( action ){
+  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
+    if( okPressed ) {
+      var data = getBulkSubflowData( action );
+      
+      var options = {};
+      options.refreshRegion = ["subflows"];
+      sendToServer(data, options);
+    }
+  });
 }
 
 function markAsCurrent(prcsId){
@@ -778,6 +802,17 @@ function initActions(){
       ] );
     }
 
+    if ( pageId === "7") {
+      apex.actions.add( [
+        {
+          name: "delete-flow-diagram",
+          action: function ( event, focusElement ) {
+            apex.theme.openRegion("delete_reg");
+          },
+        }
+      ] );
+    }
+
     if ( pageId === "8") {
       apex.actions.add( [
         {
@@ -819,13 +854,13 @@ function initActions(){
         {
           name: "release-step",
           action: function ( event, focusElement ) {
-            processAction( this.name, focusElement );
+            releaseStep( this.name, focusElement );
           }
         },
         {
           name: "bulk-release-step",
           action: function ( event, focusElement ) {
-            processAction( this.name, focusElement );
+            bulkReleaseStep( this.name );
           }
         },
         {
@@ -1020,31 +1055,28 @@ function initPage2() {
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
       var text = $( this ).text();
       if ( text == "Created" ) {
-        $( this ).prepend('<i class="status_icon fa fa-plus-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--created" );
       } else if ( text == "Completed" ) {
-        $( this ).prepend('<i class="status_icon fa fa-play-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--completed" );
       } else if ( text == "Running" ) {
-        $( this ).prepend('<i class="status_icon fa fa-check-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--running" );
       } else if ( text == "Terminated" ) {
-        $( this ).prepend('<i class="status_icon fa fa-stop-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--terminated" );
       } else if ( text == "Error" ) {
-        $( this ).prepend('<i class="status_icon fa fa-exclamation-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--error" );
       }
     } );
 
-    $( "th.a-IRR-header" ).each( function ( i ) {
-      if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
-        apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
-        apex.jQuery( this ).find( "button#header-action" ).hide();
-      } else {
-        apex.jQuery( this ).addClass( "u-alignMiddle" );
-      }
-    } );
+    if ($("th.a-IRR-header--group").length > 0) {
+      $("th").each(function(i){
+          if ( apex.jQuery(this).attr("id") === undefined) {
+              apex.jQuery(this).find('input[type="checkbox"]').hide();
+              apex.jQuery(this).find('button#header-action').hide();
+          } else {
+              apex.jQuery(this).addClass("u-alignMiddle");
+          }
+      });
+    }
 
     $( "#header_actions_menu" ).on( "menubeforeopen", function ( event, ui ) {
       var menuItems = ui.menu.items;
@@ -1122,6 +1154,7 @@ function initPage4() {
 }
 
 function initPage7() {
+  initActions();
   apex.jQuery( window ).on( "theme42ready", function () {
     addClassesToParents('span[data-status="created"]'   , "span.t-BadgeList-value", ["ffa-color--created", "instance-counter-link"]);
     addClassesToParents('span[data-status="running"]'   , "span.t-BadgeList-value", ["ffa-color--running", "instance-counter-link"]);

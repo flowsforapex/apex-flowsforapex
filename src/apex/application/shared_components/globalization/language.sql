@@ -11,7 +11,12 @@ wwv_flow_api.component_begin (
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-null;
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(9033928420999483)
+,p_translation_flow_id=>100001
+,p_translation_flow_language_cd=>'fr'
+,p_direction_right_to_left=>'N'
+);
 wwv_flow_api.component_end;
 end;
 /

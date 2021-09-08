@@ -28,8 +28,8 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7936149892465882)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'Delete'
-,p_list_item_link_target=>'javascript:apex.theme.openRegion(''delete_reg'');'
 ,p_list_item_icon=>'fa-trash-o'
+,p_list_text_01=>'delete-flow-diagram'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.component_end;

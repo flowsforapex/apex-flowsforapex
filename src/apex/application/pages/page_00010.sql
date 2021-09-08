@@ -22,12 +22,13 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210903174815'
+,p_last_upd_yyyymmddhh24miss=>'20210908122118'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
 ,p_plug_name=>'Instance Action'
 ,p_region_name=>'instance_action_dialog'
+,p_region_css_classes=>'f4a-dynamic-title'
 ,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
 ,p_plug_template=>wwv_flow_api.id(12495608896288880263)
 ,p_plug_display_sequence=>40
@@ -368,8 +369,8 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'266084'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_display_rows=>5
-,p_report_columns=>'PRCS_DGRM_CATEGORY:CHECKBOX:BTN:VIEW_PROCESS:QUICK_ACTION:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:'
+,p_display_rows=>10
+,p_report_columns=>'CHECKBOX:BTN:QUICK_ACTION:VIEW_PROCESS:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_CATEGORY:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:'
 ,p_sort_column_1=>'PRCS_DGRM_CATEGORY'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'PRCS_NAME'
@@ -383,7 +384,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_sort_column_6=>'0'
 ,p_sort_direction_6=>'ASC'
 ,p_break_on=>'PRCS_DGRM_CATEGORY:0:0:0:0:0'
-,p_break_enabled_on=>'PRCS_DGRM_CATEGORY:0:0:0:0:0'
+,p_break_enabled_on=>'0:0:0:0:0:PRCS_DGRM_CATEGORY'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2436340351881201)
@@ -764,7 +765,7 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' apex',
 '    .jQuery( "#flow-monitor_heading" )',
-'    .text( "Flow Viewer" );'))
+'    .text( apex.lang.getMessage("APP_VIEWER_TITLE_NO_PROCESS") );'))
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(33736700260406138)
@@ -778,7 +779,7 @@ wwv_flow_api.create_page_da_action(
 'var prcsName = apex.item("P10_PRCS_NAME").getValue();',
 'apex',
 '    .jQuery( "#flow-monitor_heading" )',
-'    .text( "Flow Viewer (" + prcsName + ")" );',
+'    .text( apex.lang.formatMessage("APP_VIEWER_TITLE_PROCESS_SELECTED", prcsName) );',
 '',
 'if ( apex.item("P10_DISPLAY_SETTING").getValue() === "window" ) {',
 '    redirectToMonitor("view-flow-instance", prcsId);',

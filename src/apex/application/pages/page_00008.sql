@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210903180318'
+,p_last_upd_yyyymmddhh24miss=>'20210908122028'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -692,24 +692,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_heading_alignment=>'LEFT'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(5961114090464443)
-,p_db_column_name=>'ACTION_HTML'
-,p_display_order=>90
-,p_column_identifier=>'I'
-,p_column_label=>'Action Html'
-,p_column_type=>'STRING'
-,p_display_text_as=>'HIDDEN'
-);
-wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(5961596532464443)
-,p_db_column_name=>'RESERVATION_HTML'
-,p_display_order=>100
-,p_column_identifier=>'J'
-,p_column_label=>'Reservation Html'
-,p_column_type=>'STRING'
-,p_display_text_as=>'HIDDEN'
-);
-wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(5961953081464444)
 ,p_db_column_name=>'ACTIONS'
 ,p_display_order=>110
@@ -760,24 +742,37 @@ wwv_flow_api.create_worksheet_column(
 ,p_static_id=>'subflow_checkbox_col'
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(5962787427464444)
-,p_db_column_name=>'QUICK_ACTION_HMTL'
+ p_id=>wwv_flow_api.id(8025464938825623)
+,p_db_column_name=>'QUICK_ACTION_ICON'
 ,p_display_order=>130
-,p_column_identifier=>'M'
-,p_column_label=>'Quick Action'
-,p_allow_sorting=>'N'
-,p_allow_filtering=>'N'
-,p_allow_highlighting=>'N'
-,p_allow_ctrl_breaks=>'N'
-,p_allow_aggregations=>'N'
-,p_allow_computations=>'N'
-,p_allow_charting=>'N'
-,p_allow_group_by=>'N'
-,p_allow_pivot=>'N'
+,p_column_identifier=>'N'
+,p_column_label=>'Quick Action Icon'
 ,p_column_type=>'STRING'
-,p_display_text_as=>'WITHOUT_MODIFICATION'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(8025569156825624)
+,p_db_column_name=>'QUICK_ACTION'
+,p_display_order=>140
+,p_column_identifier=>'O'
+,p_column_label=>'Quick Action'
+,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" ',
+'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-action="#QUICK_ACTION#">',
+'    <span aria-hidden="true" class="t-Icon t-Icon--left fa #QUICK_ACTION_ICON#"></span>#QUICK_ACTION_LABEL#',
+'</button>'))
+,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'quick_action_col'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(8025669951825625)
+,p_db_column_name=>'QUICK_ACTION_LABEL'
+,p_display_order=>150
+,p_column_identifier=>'P'
+,p_column_label=>'Quick Action Label'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
 );
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(8498061205860315)
@@ -786,10 +781,10 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'59631'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION_HMTL:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION:'
+,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION::QUICK_ACTION_LABEL'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(5963535972464452)
+ p_id=>wwv_flow_api.id(11261908176020193)
 ,p_report_id=>wwv_flow_api.id(8498061205860315)
 ,p_condition_type=>'FILTER'
 ,p_allow_delete=>'Y'
@@ -873,6 +868,7 @@ wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(13245209048329626)
 ,p_plug_name=>'Instance Action'
 ,p_region_name=>'instance_action_dialog'
+,p_region_css_classes=>'f4a-dynamic-title'
 ,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
 ,p_plug_template=>wwv_flow_api.id(12495608896288880263)
 ,p_plug_display_sequence=>80
@@ -953,6 +949,18 @@ wwv_flow_api.create_page_button(
 ,p_warn_on_unsaved_changes=>null
 ,p_grid_new_row=>'Y'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5955186680464411)
 ,p_button_sequence=>50
@@ -966,18 +974,6 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'BODY'
 ,p_warn_on_unsaved_changes=>null
 ,p_grid_new_row=>'Y'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5955586107464411)
@@ -1898,6 +1894,18 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(166753193485966384)
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6016280779464530)
 ,p_name=>'Change check-all-subflows'
@@ -1920,18 +1928,6 @@ wwv_flow_api.create_page_da_action(
 '     } else {',
 '     $(''#subflows input[type=checkbox][name=f02]'').prop(''checked'',false);',
 ' } '))
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6432898825417638)
@@ -2341,7 +2337,7 @@ wwv_flow_api.create_page_process(
 '    apex_json.open_object;',
 '    apex_json.write( p_name => ''success'', p_value => not apex_error.have_errors_occurred );',
 '    apex_json.write( p_name => ''vc2_value'', p_value => l_prov_var_vc2);',
-'    apex_json.write( p_name => ''num_value'', p_value => l_prov_var_num);',
+'    apex_json.write( p_name => ''num_value'', p_value => to_char(l_prov_var_num));',
 '    apex_json.write( p_name => ''date_value'', p_value => to_char(l_prov_var_date, :APP_DATE_TIME_FORMAT));',
 '    apex_json.write( p_name => ''clob_value'', p_value => l_prov_var_clob);',
 '    apex_json.close_all;',
