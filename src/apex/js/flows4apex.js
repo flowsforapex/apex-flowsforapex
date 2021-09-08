@@ -1055,19 +1055,14 @@ function initPage2() {
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
       var text = $( this ).text();
       if ( text == "Created" ) {
-        $( this ).prepend('<i class="status_icon fa fa-plus-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--created" );
       } else if ( text == "Completed" ) {
-        $( this ).prepend('<i class="status_icon fa fa-play-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--completed" );
       } else if ( text == "Running" ) {
-        $( this ).prepend('<i class="status_icon fa fa-check-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--running" );
       } else if ( text == "Terminated" ) {
-        $( this ).prepend('<i class="status_icon fa fa-stop-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--terminated" );
       } else if ( text == "Error" ) {
-        $( this ).prepend('<i class="status_icon fa fa-exclamation-circle-o"></i>');  
         $( this ).parent().addClass( "ffa-color--error" );
       }
     } );
