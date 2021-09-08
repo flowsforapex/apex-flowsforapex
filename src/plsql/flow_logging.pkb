@@ -34,10 +34,15 @@ as
           , flow_process_vars.get_business_ref (p_process_id)  --- 
           , p_event
           , systimestamp 
-          , coalesce ( sys_context('apex$session','app_user') 
-                      , sys_context('userenv','os_user')
-                      , sys_context('userenv','session_user')
-                      )  --- check this is complete
+          , case g_logging_hide_userid 
+            when 'true' then 
+              null
+            else 
+              coalesce  ( sys_context('apex$session','app_user') 
+                        , sys_context('userenv','os_user')
+                        , sys_context('userenv','session_user')
+                        )  
+            end 
           , p_comment
           , p_error_info
         from flow_processes prcs 
@@ -108,10 +113,15 @@ as
            , sbfl.sbfl_work_started
            , systimestamp
            , sbfl.sbfl_reservation
-           , coalesce ( sys_context('apex$session','app_user') 
-                      , sys_context('userenv','os_user')
-                      , sys_context('userenv','session_user')
-                      )  --- check this is complete
+          , case g_logging_hide_userid 
+            when 'true' then 
+              null
+            else 
+              coalesce  ( sys_context('apex$session','app_user') 
+                        , sys_context('userenv','os_user')
+                        , sys_context('userenv','session_user')
+                        )  
+            end 
            , p_notes        
         from flow_subflows sbfl 
        where sbfl.sbfl_id = p_subflow_id
@@ -184,10 +194,11 @@ as
                        ( p_config_key => flow_constants_pkg.gc_config_logging_level
                        , p_default_value => flow_constants_pkg.gc_config_default_logging_level
                        );
-    g_logging_hide_userid := flow_engine_util.get_config_value
-                       ( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid 
-                       , p_default_value => flow_constants_pkg.gc_config_default_logging_hide_userid 
-                       );
+    g_logging_hide_userid := lower (flow_engine_util.get_config_value
+                                      ( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid 
+                                      , p_default_value => flow_constants_pkg.gc_config_default_logging_hide_userid 
+                                      )
+                                   );
   
     apex_debug.message ( p_message  => 'Logging level: %0'
                        , p0         => g_logging_level
