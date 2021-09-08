@@ -15,6 +15,10 @@ as
             when sbfl.sbfl_status = 'running' then 'fa-sign-out'
           end as quick_action_icon 
         , case 
+            when sbfl.sbfl_status = 'error' then apex_lang.message('APP_RESTART_STEP')
+            when sbfl.sbfl_status = 'running' then apex_lang.message('APP_COMPLETE_STEP')
+          end as quick_action_label 
+        , case 
             when sbfl.sbfl_status = 'error' then 'restart-step'
             when sbfl.sbfl_status = 'running' then 'complete-step'
           end as quick_action 
