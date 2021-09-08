@@ -69,7 +69,7 @@ function openModalConfirmWithComment( action, element, confirmMessageKey, titleK
     .jQuery( "#confirm-btn" )
     .attr( "data-name", apex.jQuery( element ).attr( "data-name" ) );
   apex.theme.openRegion( "instance_action_dialog" );
-  apex.util.getTopApex().jQuery('.ui-dialog-content').dialog('option', 'title', apex.lang.getMessage( titleKey ));
+  apex.util.getTopApex().jQuery(".f4a-dynamic-title").closest(".ui-dialog-content").dialog('option', 'title', apex.lang.getMessage( titleKey ));
 }
 
 function getConfirmComment(){
