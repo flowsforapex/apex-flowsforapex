@@ -778,6 +778,17 @@ function initActions(){
       ] );
     }
 
+    if ( pageId === "7") {
+      apex.actions.add( [
+        {
+          name: "delete-flow-diagram",
+          action: function ( event, focusElement ) {
+            apex.theme.openRegion("delete_reg");
+          },
+        }
+      ] );
+    }
+
     if ( pageId === "8") {
       apex.actions.add( [
         {
@@ -1122,6 +1133,7 @@ function initPage4() {
 }
 
 function initPage7() {
+  initActions();
   apex.jQuery( window ).on( "theme42ready", function () {
     addClassesToParents('span[data-status="created"]'   , "span.t-BadgeList-value", ["ffa-color--created", "instance-counter-link"]);
     addClassesToParents('span[data-status="running"]'   , "span.t-BadgeList-value", ["ffa-color--running", "instance-counter-link"]);
