@@ -18,11 +18,12 @@ wwv_flow_api.create_page(
 ,p_alias=>'LOGS'
 ,p_page_mode=>'MODAL'
 ,p_autocomplete_on_off=>'OFF'
-,p_javascript_code_onload=>'apex.util.getTopApex().jQuery(".ui-dialog-content").dialog("option", "title", $v("P14_TITLE"));'
+,p_javascript_code_onload=>'apex.util.getTopApex().jQuery(".f4a-dynamic-title .ui-dialog-content").dialog("option", "title", $v("P14_TITLE"));'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
+,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210903164153'
+,p_last_upd_yyyymmddhh24miss=>'20210908090937'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2447308339538228)

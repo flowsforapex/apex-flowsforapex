@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
+ p_id=>wwv_flow_api.id(8807340970384277)
 ,p_install_id=>wwv_flow_api.id(14200193318202500)
 ,p_name=>'Packages Body'
 ,p_sequence=>50
@@ -913,7 +913,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
+ p_id=>wwv_flow_api.id(8807340970384277)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'e;',
 '	  exception',
@@ -1727,7 +1727,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
+ p_id=>wwv_flow_api.id(8807340970384277)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'path ''* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements''',
 '                         , extension_elements xmltype            path ''bpmn:extensionElements''',
@@ -2653,7 +2653,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
+ p_id=>wwv_flow_api.id(8807340970384277)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' subflow',
 '    l_sbfl_id_par := flow_engine_util.get_subprocess_parent_subflow',
@@ -3400,7 +3400,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
+ p_id=>wwv_flow_api.id(8807340970384277)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '  );',
 '  end if;',
@@ -4256,7 +4256,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
+ p_id=>wwv_flow_api.id(8807340970384277)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ar_type ',
 '    when flow_constants_pkg.gc_prov_var_type_varchar2 then',
@@ -4278,6 +4278,18 @@ wwv_flow_api.append_to_install_script(
 '        , pi_expr_set       => pi_expression.expr_set',
 '        );',
 '    when flow_constants_pkg.gc_prov_var_type_date then',
+'        -- test date is in our required format',
+'        begin',
+'          if l_expression_text != to_char  ( to_date ( l_expression_text',
+'                                                    , flow_constants_pkg.gc_prov_default_date_format )',
+'                                          , flow_constants_pkg.gc_prov_default_date_format ) then ',
+'          raise e_var_exp_date_format_error;',
+'          end if;',
+'        exception',
+'          when others then',
+'            raise e_var_exp_date_format_error;',
+'        end;',
+'',
 '        flow_process_vars.set_var ',
 '        ( pi_prcs_id        => pi_prcs_id',
 '        , pi_var_name       => pi_expression.expr_var_name',
@@ -4296,6 +4308,28 @@ wwv_flow_api.append_to_install_script(
 '        , pi_expr_set       => pi_expression.expr_set',
 '        );  ',
 '    end case;',
+'  exception',
+'    when e_var_exp_date_format_error then',
+'      flow_errors.handle_instance_error',
+'      ( pi_prcs_id        => pi_prcs_id',
+'      , pi_sbfl_id        => pi_sbfl_id',
+'      , pi_message_key    => ''var_exp_date_format''',
+'      , p0 => pi_sbfl_id',
+'      , p1 => pi_expression.expr_var_name',
+'      , p2 => pi_expression.expr_set',
+'      );',
+'      -- $F4AMESSAGE ''var_exp_date_format'' || ''Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)''      ',
+'    when others then',
+'      flow_errors.handle_instance_error',
+'      ( pi_prcs_id        => pi_prcs_id',
+'      , pi_sbfl_id        => pi_sbfl_id',
+'      , pi_message_key    => ''var_exp_static_general''',
+'      , p0 => pi_prcs_id',
+'      , p1 => pi_expression.expr_var_name',
+'      , p2 => pi_expression.expr_set',
+'      );',
+'      -- $F4AMESSAGE ''var_exp_static_general'' || ''Error setting %2 process variable %1 in process id %0.  See error in event log.''',
+'',
 '  end set_static;',
 '',
 '  procedure set_proc_var',
@@ -4359,7 +4393,19 @@ wwv_flow_api.append_to_install_script(
 '        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id',
 '        , pi_expr_set       => pi_expression.expr_set',
 '        );    ',
-'    end case;         ',
+'    end case; ',
+'  exception',
+'    when others then',
+'      flow_errors.handle_instance_error',
+'      ( pi_prcs_id        => pi_prcs_id',
+'      , pi_sbfl_id        => pi_sbfl_id',
+'      , pi_message_key    => ''var_exp_static_general''',
+'      , p0 => pi_prcs_id',
+'      , p1 => pi_expression.expr_var_name',
+'      , p2 => pi_expression.expr_set',
+'      );',
+'      -- $F4AMESSAGE ''var_exp_static_general'' || ''Error setting %2 process variable %1 in process id %0.  See error in event log.''',
+'        ',
 '  end set_proc_var;',
 '',
 '  procedure set_sql',
@@ -4393,10 +4439,6 @@ wwv_flow_api.append_to_install_script(
 '                    into l_result_vc2;',
 '        exception',
 '        when no_data_found then',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  No data found in query.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4407,10 +4449,6 @@ wwv_flow_api.append_to_install_script(
 '            );',
 '            -- $F4AMESSAGE ''var_exp_sql_no_data'' || ''Error setting %2 process variable %1 in process id %0.  No data found in query.''',
 '        when too_many_rows then',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  Query returns multiple rows.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4427,10 +4465,7 @@ wwv_flow_api.append_to_install_script(
 '            , p1        => pi_prcs_id',
 '            , p2        => sqlerrm',
 '            );',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  SQL error shown in debug output.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
+'',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4455,10 +4490,6 @@ wwv_flow_api.append_to_install_script(
 '                    into l_result_date;',
 '        exception',
 '        when no_data_found then',
-'/*            apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  No data found in query.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4469,10 +4500,6 @@ wwv_flow_api.append_to_install_script(
 '            );',
 '            -- $F4AMESSAGE ''var_exp_sql_no_data'' || ''Error setting %2 process variable %1 in process id %0.  No data found in query.''',
 '        when too_many_rows then',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting %2 process variable ''||pi_expression.expr_var_name||'' in process id ''||pi_prcs_id||''.  Query returns multiple rows.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4489,10 +4516,7 @@ wwv_flow_api.append_to_install_script(
 '            , p1        => pi_prcs_id',
 '            , p2        => sqlerrm',
 '            );',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  SQL error shown in debug output.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
+'',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4517,10 +4541,6 @@ wwv_flow_api.append_to_install_script(
 '                    into l_result_num;',
 '        exception',
 '        when no_data_found then',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  No data found in query.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4531,10 +4551,6 @@ wwv_flow_api.append_to_install_script(
 '            );',
 '            -- $F4AMESSAGE ''var_exp_sql_no_data'' || ''Error setting %2 process variable %1 in process id %0.  No data found in query.''',
 '        when too_many_rows then',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  Query returns multiple rows.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4551,10 +4567,7 @@ wwv_flow_api.append_to_install_script(
 '            , p1        => pi_prcs_id',
 '            , p2        => sqlerrm',
 '            );',
-'            /*apex_error.add_error',
-'            ( p_message          => ''Error setting process variable ''||pi_expression.expr_var_name||'' for process id ''||pi_prcs_id||''.  SQL error shown in debug output.''',
-'            , p_display_location => apex_error.c_on_error_page',
-'            );*/',
+'',
 '            flow_errors.handle_instance_error',
 '            ( pi_prcs_id        => pi_prcs_id',
 '            , pi_sbfl_id        => pi_sbfl_id',
@@ -4709,14 +4722,11 @@ wwv_flow_api.append_to_install_script(
 '      );',
 '    when flow_constants_pkg.gc_prov_var_type_date then',
 '      -- test date value returned using our specified format',
-'      /*',
 '      if l_result_vc2 != to_char  ( to_date ( l_result_vc2 ',
 '                                            , flow_constants_pkg.gc_prov_default_date_format )',
 '                                  , flow_constants_pkg.gc_prov_default_date_format ) then ',
-'         ',
-'',
-'*/',
-'',
+'         raise e_var_exp_date_format_error;',
+'      end if;',
 '      flow_process_vars.set_var ',
 '      ( pi_prcs_id        => pi_prcs_id',
 '      , pi_var_name       => pi_expression.expr_var_name',
@@ -4741,6 +4751,16 @@ wwv_flow_api.append_to_install_script(
 '      );',
 '    end case;',
 '  exception',
+'    when e_var_exp_date_format_error then',
+'      flow_errors.handle_instance_error',
+'      ( pi_prcs_id        => pi_prcs_id',
+'      , pi_sbfl_id        => pi_sbfl_id',
+'      , pi_message_key    => ''var_exp_date_format''',
+'      , p0 => pi_sbfl_id',
+'      , p1 => pi_expression.expr_var_name',
+'      , p2 => pi_expression.expr_set',
+'      );',
+'      -- $F4AMESSAGE ''var_exp_date_format'' || ''Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)''      ',
 '    when others then',
 '      flow_errors.handle_instance_error',
 '      ( pi_prcs_id        => pi_prcs_id',
@@ -4786,6 +4806,17 @@ wwv_flow_api.append_to_install_script(
 '    when flow_constants_pkg.gc_prov_var_type_date then',
 '      -- a date value must be returned using our specified format',
 '      -- add a test that format is good?',
+'      begin',
+'        if l_result_vc2 != to_char  ( to_date ( l_result_vc2 ',
+'                                              , flow_constants_pkg.gc_prov_default_date_format )',
+'                                    , flow_constants_pkg.gc_prov_default_date_format ) then ',
+'        raise e_var_exp_date_format_error;',
+'        end if;',
+'      exception',
+'        when others then',
+'          raise e_var_exp_date_format_error;',
+'      end;',
+'',
 '      flow_process_vars.set_var ',
 '      ( pi_prcs_id        => pi_prcs_id',
 '      , pi_var_name       => pi_expression.expr_var_name',
@@ -4810,6 +4841,16 @@ wwv_flow_api.append_to_install_script(
 '      );',
 '    end case;',
 '  exception',
+'    when e_var_exp_date_format_error then',
+'      flow_errors.handle_instance_error',
+'      ( pi_prcs_id        => pi_prcs_id',
+'      , pi_sbfl_id        => pi_sbfl_id',
+'      , pi_message_key    => ''var_exp_date_format''',
+'      , p0 => pi_sbfl_id',
+'      , p1 => pi_expression.expr_var_name',
+'      , p2 => pi_expression.expr_set',
+'      );',
+'      -- $F4AMESSAGE ''var_exp_date_format'' || ''Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)''      km',
 '    when others then',
 '      flow_errors.handle_instance_error',
 '      ( pi_prcs_id        => pi_prcs_id',
@@ -4958,23 +4999,7 @@ wwv_flow_api.append_to_install_script(
 '    , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type',
 '    ) return varchar2',
 '  is',
-'    l_forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)',
-'    l_bad_routes        apex_application_global.vc_arr2;',
-'    l_bad_route_string  varchar2(2000) := '''';',
-'    l_num_bad_routes    number := 0;',
-'  begin',
-'    -- check if route is in process variable',
-'    l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, pi_objt_bpmn_id||'':route'');',
-'    if l_forward_route is not null',
-'    then',
-'       begin',
-'        -- test routes are all valid connections before returning',
-'        l_num_bad_routes := 0;',
-'        for bad_routes in (',
-'            select column_value as bad_route ',
-'              from table(apex_string.split(l_forward_route,'':''))',
-'            minus ',
-'            select conn.'))
+'    l_'))
 );
 null;
 wwv_flow_api.component_end;
@@ -4990,9 +5015,25 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
+ p_id=>wwv_flow_api.id(8807340970384277)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'conn_bpmn_id',
+'forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)',
+'    l_bad_routes        apex_application_global.vc_arr2;',
+'    l_bad_route_string  varchar2(2000) := '''';',
+'    l_num_bad_routes    number := 0;',
+'  begin',
+'    -- check if route is in process variable',
+'    l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, pi_objt_bpmn_id||'':route'');',
+'    if l_forward_route is not null',
+'    then',
+'       begin',
+'        -- test routes are all valid connections before returning',
+'        l_num_bad_routes := 0;',
+'        for bad_routes in (',
+'            select column_value as bad_route ',
+'              from table(apex_string.split(l_forward_route,'':''))',
+'            minus ',
+'            select conn.conn_bpmn_id',
 '              from flow_connections conn',
 '              join flow_objects objt ',
 '                on objt.objt_id = conn.conn_src_objt_id',
@@ -5727,7 +5768,25 @@ wwv_flow_api.append_to_install_script(
 '    ( pi_objt_id     => l_objt_id',
 '    , pi_set         => flow_constants_pkg.gc_expr_set_before_event',
 '    , pi_prcs_id     => p_process_id',
-'    , pi_sbfl_id     => l_main_subflow_id',
+'    , pi_sbfl_id     => l_main_su'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'bflow_id',
 '    );',
 '    -- commit the subflow creation',
 '    commit;',
@@ -5746,25 +5805,7 @@ wwv_flow_api.append_to_install_script(
 '      ( pi_objt_id     => l_objt_id',
 '      , pi_set         => flow_constants_pkg.gc_expr_set_on_event',
 '      , pi_prcs_id     => p_process_id',
-' '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'     , pi_sbfl_id     => l_main_subflow_id',
+'      , pi_sbfl_id     => l_main_subflow_id',
 '      );',
 '        -- step into first step',
 '      flow_engine.flow_complete_step  ',
@@ -6199,142 +6240,6 @@ wwv_flow_api.append_to_install_script(
 'end flow_logging;',
 '/',
 '',
-'create or replace PACKAGE BODY flow_notif_pkg AS',
-'',
-'',
-'    FUNCTION get_transf_value (',
-'        in_value VARCHAR2',
-'    ) RETURN CLOB IS',
-'    BEGIN',
-'        IF instr(in_value, ''&'') = 1 THEN',
-'            RETURN to_clob(v(''''''''',
-'                             || translate(in_value, ''&.'', '''')',
-'                             || ''''''''));',
-'',
-'        ELSE',
-'            RETURN to_clob(in_value);',
-'        END IF;',
-'    END get_transf_value;',
-'',
-'    PROCEDURE send_notification (',
-'        p_process_id        IN    flow_processes.prcs_id%TYPE,',
-'      --p_object_id_modif        IN       --- to get mail_to',
-'        p_template_ident    IN    apex_appl_email_templates.static_id%TYPE, -- Do we need this?',
-'        p_modeller_values   IN    CLOB,',
-'        p_return_code       OUT   NUMBER',
-'    ) IS',
-'',
-'        l_templ_content_all   CLOB;',
-'        l_templ_tags_all      apex_t_varchar2;',
-'        l_templ_tags_temp     apex_t_varchar2;',
-'        l_temp_str            VARCHAR2(4000);',
-'        l_temp_val            CLOB; -- Dependent by var. table but unlimited in email template, what to do?',
-'        l_process_values      apex_t_varchar2;',
-'        l_p_placeholders      CLOB;',
-'        l_first_record        NUMBER := 1;',
-'        CURSOR c1 IS',
-'        WITH clobs AS (',
-'            SELECT',
-'                to_clob(subject) subject,',
-'                html_header,',
-'                html_body,',
-'                html_footer',
-'            FROM',
-'                apex_appl_email_templates',
-'            WHERE',
-'                static_id = p_template_ident',
-'        )',
-'        SELECT',
-'            colvalue',
-'        FROM',
-'            clobs UNPIVOT ( colvalue',
-'                FOR col',
-'            IN ( subject,',
-'                 html_header,',
-'                 html_body,',
-'                 html_footer ) );',
-'',
-'    BEGIN',
-'      -- Optional create session',
-'        IF apex_custom_auth.is_session_valid THEN',
-'            NULL;',
-'        ELSE',
-'            apex_session.create_session(p_app_id => 984337, p_page_id => 1, p_username => ''FFA'');',
-'        END IF;',
-'      -- Get template fields',
-'',
-'        dbms_lob.createtemporary(l_templ_content_all, true);',
-'        FOR c1_row IN c1 LOOP dbms_lob.append(l_templ_content_all, c1_row.colvalue);',
-'        END LOOP;',
-'      -- Extract tags',
-'',
-'        l_templ_tags_all := apex_string.grep(p_str => l_templ_content_all, p_pattern => ''\#(.*?)\#'', p_modifier => ''i'', p_subexpression',
-'',
-'        => ''1'');',
-'',
-'      -- Deduplicate',
-'',
-'        l_templ_tags_temp := l_templ_tags_all;',
-'        l_templ_tags_all := l_templ_tags_all MULTISET UNION DISTINCT l_templ_tags_temp;',
-'      -- Get process values',
-'        dbms_lob.createtemporary(l_p_placeholders, true);',
-'        FOR i IN 1..l_templ_tags_all.count LOOP BEGIN',
-'            SELECT',
-'                prov_var_name,',
-'                CASE prov_var_type',
-'                    WHEN ''VC2''    THEN',
-'                        get_transf_value(prov_var_vc2)',
-'                    WHEN ''NUM''    THEN',
-'                        to_clob(prov_var_num)',
-'                    WHEN ''DATE''   THEN',
-'                        to_clob(TO_CHAR(prov_var_date, v(''APP_NLS_DATE_FORMAT'')))',
-'                    WHEN ''CLOB''   THEN',
-'                        prov_var_clob',
-'                END val',
-'            INTO',
-'                l_temp_str,',
-'                l_temp_val',
-'            FROM',
-'                flow_process_variables',
-'            WHERE',
-'                prov_var_name = l_templ_tags_all(i);',
-'         -- Prepare placeholders',
-'',
-'            dbms_lob.append(l_p_placeholders,',
-'                CASE i',
-'                    WHEN l_first_record THEN',
-'                        ''{''',
-'                    ELSE '', ''',
-'                END',
-'                || apex_json.stringify(l_temp_str)',
-'                || '':''',
-'                || apex_json.stringify(l_temp_val));',
-'',
-'        EXCEPTION',
-'            WHEN no_data_found THEN',
-'                l_first_record := i + 1;',
-'                l_templ_tags_all.DELETE(i);',
-'        END;',
-'        END LOOP;',
-'',
-'        dbms_lob.append(l_p_placeholders, ''}'');',
-'      ',
-'        apex_mail.send(p_to => ''fs@frasit.com''/*Parameter TBD*/, p_template_static_id => p_template_ident, p_placeholders => l_p_placeholders);',
-'',
-'        dbms_lob.freetemporary(l_templ_content_all);',
-'        dbms_lob.freetemporary(l_p_placeholders);',
-'        p_return_code := 0;',
-'    EXCEPTION',
-'        WHEN OTHERS THEN',
-'            dbms_lob.freetemporary(l_templ_content_all);',
-'            dbms_lob.freetemporary(l_p_placeholders);',
-'            p_return_code := 1;',
-'            RAISE;',
-'    END send_notification;',
-'',
-'END flow_notif_pkg;',
-'/',
-'',
 'create or replace package body flow_plsql_runner_pkg',
 'as',
 '',
@@ -6722,25 +6627,7 @@ wwv_flow_api.append_to_install_script(
 '  when no_data_found then',
 '    if pi_exception_on_null then',
 '      apex_error.add_error',
-'      ( p_message => ''Process variable ''||pi_var_name|'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'|'' for process id ''||pi_prcs_id||'' not found.''',
+'      ( p_message => ''Process variable ''||pi_var_name||'' for process id ''||pi_prcs_id||'' not found.''',
 '      , p_display_location => apex_error.c_on_error_page',
 '      );',
 '    else',
@@ -6865,7 +6752,25 @@ wwv_flow_api.append_to_install_script(
 '    apex_error.add_error',
 '    ( p_message => ''Process variable ''||pi_var_name||'' in process ''||pi_prcs_id||'' already locked by another user. Try to start your task later.''',
 '    , p_display_location => apex_error.c_on_error_page',
-'    );',
+'    )'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+';',
 'end delete_var;',
 '',
 '-- special cases / built-in standard variables',
@@ -7612,25 +7517,7 @@ wwv_flow_api.append_to_install_script(
 '    l_run_now boolean;',
 '  begin',
 '    select *',
-'      bulk collect into l_tim'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'ers',
+'      bulk collect into l_timers',
 '      from flow_timers',
 '     where timr_status in ( c_created, c_active )',
 '     order by timr_created_on',
@@ -7731,7 +7618,25 @@ wwv_flow_api.append_to_install_script(
 '',
 '    l_start_pos_time  pls_integer;',
 '    l_token_count     pls_integer;',
-'    l_before_t        varchar2(200 char);',
+'    l_before_t        varcha'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'r2(200 char);',
 '    l_after_t         varchar2(200 char);',
 '    l_ym_part         varchar2(200 char);',
 '    l_ds_part         varchar2(200 char);',
@@ -8529,25 +8434,7 @@ wwv_flow_api.append_to_install_script(
 '                    , p_display_location => apex_error.c_on_error_page',
 '                );',
 '            end if;',
-'      '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'  end if;',
+'        end if;',
 '        return l_dgrm_id;',
 '    end upload_and_parse;',
 '',
@@ -8670,7 +8557,25 @@ wwv_flow_api.append_to_install_script(
 '  , pi_dgrm_category in flow_diagrams.dgrm_category%type',
 '  , pi_new_version   in flow_diagrams.dgrm_version%type',
 '  , pi_cascade       in varchar2',
-'  , pi_request       in varchar2',
+'  , pi_req'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'uest       in varchar2',
 '  )',
 '  as',
 '    l_dgrm_category flow_diagrams.dgrm_category%type;',
@@ -9345,25 +9250,7 @@ wwv_flow_api.append_to_install_script(
 '      -- Return instance id in the APEX item provided',
 '      if ( l_attribute9 is not null ) then',
 '         apex_debug.info(',
-'            p_message => ''...Return Flow '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'Instance Id into item "%s"''',
+'            p_message => ''...Return Flow Instance Id into item "%s"''',
 '         , p0        => l_attribute9',
 '         );',
 '         apex_util.set_session_state( l_attribute9, l_prcs_id );',
@@ -9448,7 +9335,25 @@ wwv_flow_api.append_to_install_script(
 '                     , pi_var_name    => l_var_name',
 '                     , pi_clob_value  => l_process_variable.get_clob(''value'')',
 '                     );',
-'                  else',
+'                '))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'  else',
 '                     raise e_incorrect_variable_type;',
 '               end case;',
 '            end loop;',
@@ -10134,25 +10039,7 @@ wwv_flow_api.append_to_install_script(
 '                     when ''get'' then',
 '                        apex_util.set_session_state( ',
 '                             p_name  => l_item_name',
-'                           , p_value '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8153714336684231)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'=> flow_process_vars.get_var_vc2(',
+'                           , p_value => flow_process_vars.get_var_vc2(',
 '                                             pi_prcs_id  => l_prcs_id',
 '                                           , pi_var_name => l_prcs_var_name',
 '                                        ) ',
@@ -10224,7 +10111,25 @@ wwv_flow_api.append_to_install_script(
 '                          pi_prcs_id    => l_prcs_id',
 '                        , pi_var_name   => l_prcs_var_name',
 '                        , pi_date_value => l_process_variable.get_timestamp(''value'')',
-'                        );',
+'        '))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'                );',
 '                     when ''get'' then',
 '                        apex_exec.execute_plsql(   ''begin',
 '                           :'' || l_item_name || '' :=  flow_process_vars.get_var_date(',

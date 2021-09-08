@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_reload_on_submit=>'A'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210817104539'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210908121909'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(17600327473220601)
@@ -130,7 +130,8 @@ wwv_flow_api.create_page_item(
 ,p_item_default=>'BPMN'
 ,p_prompt=>'Download As'
 ,p_display_as=>'NATIVE_RADIOGROUP'
-,p_lov=>'STATIC:BPMN File;BPMN,SQL Script;SQL'
+,p_named_lov=>'P5_DOWNLOAD_AS'
+,p_lov=>'.'||wwv_flow_api.id(11258952541008552)||'.'
 ,p_tag_css_classes=>'filename-changer'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--radioButtonGroup'

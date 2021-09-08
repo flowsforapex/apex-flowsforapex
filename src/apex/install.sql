@@ -48,6 +48,7 @@ prompt --install
 @@application/shared_components/logic/application_processes/ajax_handler.sql
 @@application/shared_components/logic/application_items/app_name_title.sql
 @@application/shared_components/logic/application_items/flow_page_title.sql
+@@application/shared_components/logic/application_items/fsp_language_preference.sql
 @@application/shared_components/logic/application_items/theme_plugin_class.sql
 @@application/shared_components/logic/application_computations/app_name_title.sql
 @@application/shared_components/logic/application_settings.sql
@@ -56,6 +57,8 @@ prompt --install
 @@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
+@@application/shared_components/user_interface/lovs/p5_download_as.sql
+@@application/shared_components/user_interface/lovs/p6_import_from.sql
 @@application/shared_components/user_interface/lovs/p8_instance_connections_lov.sql
 @@application/shared_components/user_interface/lovs/p8_instance_gateways_lov.sql
 @@application/pages/page_groups.sql

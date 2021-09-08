@@ -22,6 +22,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_link_text=>'Edit'
 ,p_list_item_icon=>'fa-pencil'
 ,p_list_text_01=>'edit-flow-diagram'
+,p_translate_list_text_y_n=>'Y'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
@@ -30,6 +31,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_link_text=>'New Version'
 ,p_list_item_icon=>'fa-arrow-circle-o-up'
 ,p_list_text_01=>'new-flow-version'
+,p_translate_list_text_y_n=>'Y'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
@@ -38,6 +40,7 @@ wwv_flow_api.create_list_item(
 ,p_list_item_link_text=>'Copy'
 ,p_list_item_icon=>'fa-plus'
 ,p_list_text_01=>'copy-flow'
+,p_translate_list_text_y_n=>'Y'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.component_end;
