@@ -25,6 +25,14 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(11904067894914484)
+,p_list_item_display_sequence=>6
+,p_list_item_link_text=>'Configuration'
+,p_list_item_link_target=>'f?p=&APP_ID.:9:&SESSION.::&DEBUG.:9:::'
+,p_list_item_icon=>'fa-gear'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(5589254850825963)
 ,p_list_item_display_sequence=>7
 ,p_list_item_link_text=>'Theme'

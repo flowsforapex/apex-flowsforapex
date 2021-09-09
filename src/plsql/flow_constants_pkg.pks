@@ -159,13 +159,15 @@ as
   gc_config_logging_level_standard    constant varchar2(2000 char) := 'standard';  -- instances and tasks
   gc_config_logging_level_secure      constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
   gc_config_logging_level_full        constant varchar2(2000 char) := 'full';      -- secure + variable changes
-
+  gc_config_engine_app_mode_dev       constant varchar2(2000 char) := 'development';
+  gc_config_engine_app_mode_prod      constant varchar2(2000 char) := 'production';
 
 -- Config Parameter Default Values
 
   gc_config_default_logging_level             constant varchar2(2000 char) := gc_config_logging_level_standard;
   gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
   gc_config_default_logging_language          constant varchar2(2000 char) := 'en-us';
+  gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
 
 
 

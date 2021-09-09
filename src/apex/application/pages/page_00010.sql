@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210908122118'
+,p_last_upd_yyyymmddhh24miss=>'20210909095107'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -719,14 +719,16 @@ wwv_flow_api.create_page_da_action(
 '  markAsCurrent( prcsId ); ',
 '}',
 '',
-'$("th.a-IRR-header").each(function(i){',
-'    if ( apex.jQuery(this).attr("id") === undefined) {',
-'      apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
-'      apex.jQuery(this).find(''button#instance-header-action'').hide();',
-'    } else {',
-'      apex.jQuery(this).addClass("u-alignMiddle");',
-'    }',
-'});',
+'if ($("th.a-IRR-header--group").length > 0) {',
+'    $("th.a-IRR-header").each(function(i){',
+'        if ( apex.jQuery(this).attr("id") === undefined) {',
+'          apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
+'          apex.jQuery(this).find(''button#instance-header-action'').hide();',
+'        } else {',
+'          apex.jQuery(this).addClass("u-alignMiddle");',
+'        }',
+'    });',
+'}',
 '',
 '$("td[headers*=instance_status_col]").each(function() {',
 '  var text = $( this ).text();',
@@ -931,15 +933,6 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_02=>'P10_DISPLAY_SETTING'
 ,p_wait_for_result=>'Y'
 );
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(4300450048764256)
-,p_name=>'Change check-all-instances'
-,p_event_sequence=>270
-,p_triggering_element_type=>'JQUERY_SELECTOR'
-,p_triggering_element=>'#check-all-instances'
-,p_bind_type=>'live'
-,p_bind_event_type=>'change'
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -951,6 +944,15 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(4300450048764256)
+,p_name=>'Change check-all-instances'
+,p_event_sequence=>270
+,p_triggering_element_type=>'JQUERY_SELECTOR'
+,p_triggering_element=>'#check-all-instances'
+,p_bind_type=>'live'
+,p_bind_event_type=>'change'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(4300813188764310)
