@@ -80,7 +80,7 @@ Step forward &amp; see routes A &amp; C become the current task.
 
 You can restart the model, and manually change the routing variable if you want.
 
-This is a tutorial, and we've set the variable using a simple script.  Obviously in your app, your pl/sql script could look at process variables, or could run a query in the database, or perform some other calculation or logic to determine and then set the routing that makes sense in your application.
+This is a tutorial, and we've set the variable using a simple script.  Obviously in your app, your pl/sql script could look at process variables, or could run a query in the database, or perform some other calculation or logic to determine and then set the routing that makes sense in your application.  These can be set in a scriptTask (as here) or using declarative variable expressions, which we will explore later....
 
 Note that an Inclusive Gateway also can have a default path - on Flow C in our example.  Flows for APEX will first look for a process variable with the correct name; if that doesn't exist, it will look for default routing; and it that doesn't exist, it will show an error.</bpmn:text>
     </bpmn:textAnnotation>
@@ -91,7 +91,7 @@ Note that an Inclusive Gateway also can have a default path - on Flow C in our e
 
 We've used a scriptTask that runs a simple PL/SQL procedure that sets the routing to 'Flow_A:Flow_C'. 
 
-In the Properties Panel on the right side of the Flow Modeller, select the ScriptTask and select the APEX tab to see how we get the process id and then set the process variable.
+In the Properties Panel on the right side of the Flow Modeler, select the ScriptTask and select the APEX tab to see how we get the process id and then set the process variable.
 
 Your application could include a PL/SQL procedure that performs a query in the database &amp; which determines the route through your process. That makes this very powerful!</bpmn:text>
     </bpmn:textAnnotation>
@@ -199,7 +199,7 @@ Your application could include a PL/SQL procedure that performs a query in the d
         <dc:Bounds x='500' y='450' width='100' height='80' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1w4hasz_di' bpmnElement='TextAnnotation_1w4hasz'>
-        <dc:Bounds x='600' y='-45' width='1080' height='365' />
+        <dc:Bounds x='600' y='-45' width='1080' height='355' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_0v50lx0_di' bpmnElement='TextAnnotation_0v50lx0'>
         <dc:Bounds x='610' y='700' width='509.9935521503016' height='164.36903499469778' />

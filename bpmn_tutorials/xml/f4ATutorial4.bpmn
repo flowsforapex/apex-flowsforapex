@@ -43,9 +43,9 @@ twitter: @FlowquestR</bpmn:documentation>
 
 So much for steering your process through gateways, etc.  How do we actually get things done?
 
-Flows for APEX V5 can now direct steps in your process.  This step introduces the task types, and how to configure them.
+Flows for APEX  can now direct steps in your process.  This step introduces the task types, and how to configure them.
 
-This tutorial is one to look at in Flow Modeller, but not run in your system</bpmn:text>
+This tutorial is one to look at in Flow Management / Flow Modeler, but not run in your system.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id='Association_00jab7b' sourceRef='Event_0etkrt2' targetRef='TextAnnotation_0xw8y26' />
     <bpmn:textAnnotation id='TextAnnotation_1vygfet'>
@@ -57,15 +57,15 @@ Open the APEX tab in the Properties Panel (on the right) and you can see how you
     <bpmn:textAnnotation id='TextAnnotation_1egb903'>
       <bpmn:text>Service Tasks call various services, such as messaging, email, etc.  
 
-In V5.x, we use these for sending Email using the APEX Mail Template features.  Other services could be added here in future releases.
+In v5/v21.1, we use these for sending Email using the APEX Mail Template features.  Other services could be added here in future releases.
 
-In V5.x, this works in the same way as do ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>
+In in v5 and v21.1, a serviceTask works in the same way as  ScriptTasks - by calling a PL/SQL procedure that you provide.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id='Association_061ntp9' sourceRef='Activity_1sk9zqj' targetRef='TextAnnotation_1egb903' />
     <bpmn:textAnnotation id='TextAnnotation_1rkmr7t'>
       <bpmn:text>Manual Tasks are used to model non-computer steps in your process.
 
-In V5.x, they behave like a standard Task.</bpmn:text>
+In V5 and v21.1, they behave like a standard Task.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id='Association_1crb5iq' sourceRef='Activity_0t8licd' targetRef='TextAnnotation_1rkmr7t' />
     <bpmn:textAnnotation id='TextAnnotation_02mhmae'>
@@ -78,15 +78,12 @@ You can use a script task to set process variables, execute a script, Lots of us
 As the modeller is not a great editor, we usually write our PL/SQL as packages that are stored in the database, and just call the procedure from the diagram.
 
 
-Optionally you can bind your APEX page items into your scripts. Just be careful whether your script is going run when a page / session exists, or whether it could fire after a timer fires, for example, when you might not have page state.</bpmn:text>
+Optionally you can bind your APEX page items into your scripts. Just be careful whether your script is going run when a page / session exists, or whether it could fire after a timer fires, for example, when you might not have page state.  If you might execute the script outside of an APEX script, move any process state / variables from APEX items into Process Variables in earlier steps.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id='Association_1w56n8r' sourceRef='Activity_0w0fi2i' targetRef='TextAnnotation_02mhmae' />
   </bpmn:process>
   <bpmndi:BPMNDiagram id='BPMNDiagram_1'>
     <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Tutorial4'>
-      <bpmndi:BPMNShape id='TextAnnotation_0xw8y26_di' bpmnElement='TextAnnotation_0xw8y26'>
-        <dc:Bounds x='410' y='40' width='620' height='123.99456787109375' />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id='Flow_07uwsw9_di' bpmnElement='Flow_07uwsw9'>
         <di:waypoint x='1090' y='380' />
         <di:waypoint x='1152' y='380' />
@@ -132,18 +129,25 @@ Optionally you can bind your APEX page items into your scripts. Just be careful 
       <bpmndi:BPMNShape id='Event_1da6vg3_di' bpmnElement='Event_1da6vg3'>
         <dc:Bounds x='1152' y='362' width='36' height='36' />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_0xw8y26_di' bpmnElement='TextAnnotation_0xw8y26'>
+        <dc:Bounds x='410' y='40' width='620' height='123.9930648803711' />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1vygfet_di' bpmnElement='TextAnnotation_1vygfet'>
         <dc:Bounds x='560' y='178' width='370' height='120' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1egb903_di' bpmnElement='TextAnnotation_1egb903'>
-        <dc:Bounds x='950' y='490' width='390' height='140' />
+        <dc:Bounds x='950' y='490' width='390.0000305175781' height='117.98611450195312' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1rkmr7t_di' bpmnElement='TextAnnotation_1rkmr7t'>
-        <dc:Bounds x='1080' y='190' width='199.9854819976771' height='95.23809523809524' />
+        <dc:Bounds x='1080' y='190' width='200.00001525878906' height='95.00000762939453' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_02mhmae_di' bpmnElement='TextAnnotation_02mhmae'>
-        <dc:Bounds x='450' y='490' width='430' height='240' />
+        <dc:Bounds x='450' y='490' width='430.0000305175781' height='251.9965362548828' />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Association_00jab7b_di' bpmnElement='Association_00jab7b'>
+        <di:waypoint x='287' y='364' />
+        <di:waypoint x='401' y='102' />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id='Association_1r0p5lj_di' bpmnElement='Association_1r0p5lj'>
         <di:waypoint x='573' y='340' />
         <di:waypoint x='585' y='298' />
@@ -157,12 +161,8 @@ Optionally you can bind your APEX page items into your scripts. Just be careful 
         <di:waypoint x='1089' y='285' />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id='Association_1w56n8r_di' bpmnElement='Association_1w56n8r'>
-        <di:waypoint x='670' y='408' />
-        <di:waypoint x='526' y='490' />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id='Association_00jab7b_di' bpmnElement='Association_00jab7b'>
-        <di:waypoint x='287' y='364' />
-        <di:waypoint x='401' y='102' />
+        <di:waypoint x='670' y='405' />
+        <di:waypoint x='665' y='407' />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

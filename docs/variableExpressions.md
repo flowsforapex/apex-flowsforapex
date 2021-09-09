@@ -41,7 +41,7 @@ Data-types Supported:  varchar2, number, date
 
 Substitutions Allowed: The query definition can contain Flows for APEX substitution variables, including `&F4A$process_id.`, `&F4A$subflow_id.`, `&F4A$<process_var_name>.`
 
-Format issues:  The query must return a value of the correct type to match the variable.
+Format issues:  The query must return a value of the correct type to match the variable.  A query returning no data will result in the vaeriable being set to `null`.
 
 Example:
 
@@ -55,7 +55,7 @@ Data-types Supported:  varchar2 only
 
 Substitutions Allowed: The static string can contain Flows for APEX substitution variables, including `&F4A$process_id.`, `&F4A$subflow_id.`, `&F4A$<process_var_name.`
 
-Format issues:  The query must return one or more varchar2 values, which will be concatenated using ':' (colon) separators into a single varchar2 process variable.
+Format issues:  The query must return zero or more varchar2 values, which will be concatenated using ':' (colon) separators into a single varchar2 process variable.  If the query returns no values, the process variable will be `null`.
 
 Example:
 
@@ -86,6 +86,7 @@ Format issues:
 
 - Static values supplied for number type variables must be character strings in a format that will convert into an Oracle number field using a standard Oracle  to_number conversion.
 - Static values supplied for date type variables must be character strings that strictly comply to the Oracle format mask 'YYYY-MM-DD HH24:MI:SS'.
+
 ### Trigger Points
 
 Variable expressions are, in general, triggered before and after each object in the Flow diagram.  Each trigger point can contain a set of zero or more expressions that are evaluated as part of the *expression set*.
@@ -101,5 +102,4 @@ If errors occur while processing process variable expressions, the behaviour dep
 
 - if the error is in the user's current step, Flows for APEX will present an error message to the user, and typically not allow the user's current transaction to complete.
 - if the error is in a step triggered by the user's current step, for example in a gateway or a scriptTask following on from the user's current task, the user's transaction will be allowed to proceed;  any following steps that complete successfully will complete, but the step containing the error will be put into `error` status and will rollback.  After an administrator fixes the underlying problem, the failed step can be restarted from the Flow Monitor.
-
 
