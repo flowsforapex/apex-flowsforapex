@@ -1327,14 +1327,16 @@ function initPage10() {
   initActions();
 
   apex.jQuery( window ).on( "theme42ready", function () {
-    $( "th.a-IRR-header" ).each( function ( i ) {
-      if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
-        apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
-        apex.jQuery( this ).find( "button#instance-header-action" ).hide();
-      } else {
-        apex.jQuery( this ).addClass( "u-alignMiddle" );
-      }
-    } );
+    if ($("th.a-IRR-header--group").length > 0) {
+      $( "th.a-IRR-header" ).each( function ( i ) {
+        if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
+          apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
+          apex.jQuery( this ).find( "button#instance-header-action" ).hide();
+        } else {
+          apex.jQuery( this ).addClass( "u-alignMiddle" );
+        }
+      } );
+    }
 
     /*Disable download image when no instances selected*/
     $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {
