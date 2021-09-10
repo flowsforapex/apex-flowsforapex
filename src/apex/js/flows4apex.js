@@ -623,14 +623,14 @@ function bulkDeleteProcessVariable(action){
 function completeStep( action, element ){
   var data = getSubflowData(action, element);
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
   sendToServer(data, options);
 }
 
 function bulkCompleteStep( action ){
   var data = getBulkSubflowData( action );
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor",, "process-variables"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
   sendToServer(data, options);
 }
 
@@ -641,7 +641,7 @@ function restartStep( action, element){
     data.x04 = getConfirmComment();
     var options = {};
     options.messageKey = "APP_SUBLFOW_RESTARTED";
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
@@ -655,7 +655,7 @@ function bulkRestartStep( action, element ){
     data.x02 = getConfirmComment();
     
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
