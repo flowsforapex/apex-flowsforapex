@@ -94,7 +94,13 @@ function sendToServer(dataToSend, options = {}){
         }
         if ( options.refreshRegion !== undefined && options.refreshRegion.length > 0 ) {
           options.refreshRegion.forEach(function(name) {
-            apex.region(name).refresh();
+            if (apex.region(name).type === "InteractiveReport") {
+              var currentRowsPerPage = apex.jQuery("#" + name + "_ir").data().apexInteractiveReport.options.currentRowsPerPage;
+              var currentPage = apex.jQuery("#" + name +" .a-IRR-pagination-label").text().split('-')[0].trim();
+              apex.jQuery("#" + name + "_ir").data().apexInteractiveReport._paginate("pgR_min_row=" + currentPage + "max_rows=" + currentRowsPerPage + "rows_fetched=" + currentRowsPerPage );
+            } else {
+              apex.region(name).refresh();
+            }
           })
         }
         if ( data.url !== undefined && options.redirect !== false ){
