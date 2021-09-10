@@ -1161,6 +1161,19 @@ function initPage7() {
     addClassesToParents('span[data-status="completed"]' , "span.t-BadgeList-value", ["ffa-color--completed", "instance-counter-link"]);
     addClassesToParents('span[data-status="terminated"]', "span.t-BadgeList-value", ["ffa-color--terminated", "instance-counter-link"]);
     addClassesToParents('span[data-status="error"]'     , "span.t-BadgeList-value", ["ffa-color--error", "instance-counter-link"]);
+
+    $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {
+      var menuItems = ui.menu.items;
+      var dgrmStatus = apex.item("P7_DGRM_STATUS").getValue();
+      var engineAppMode = apex.item("P7_ENGINE_APP_MODE").getValue();
+      menuItems = menuItems.map( function ( item ) {
+        if ( item.action === "delete-flow-diagram" ) {
+          item.disabled = dgrmStatus === "draft" || dgrmStatus === "archived" || engineAppMode === "development" ? false : true;
+        }
+        return item;
+      } );
+      ui.menu.items = menuItems;
+    } );
   } );
 }
 
@@ -1327,14 +1340,16 @@ function initPage10() {
   initActions();
 
   apex.jQuery( window ).on( "theme42ready", function () {
-    $( "th.a-IRR-header" ).each( function ( i ) {
-      if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
-        apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
-        apex.jQuery( this ).find( "button#instance-header-action" ).hide();
-      } else {
-        apex.jQuery( this ).addClass( "u-alignMiddle" );
-      }
-    } );
+    if ($("th.a-IRR-header--group").length > 0) {
+      $( "th.a-IRR-header" ).each( function ( i ) {
+        if ( apex.jQuery( this ).attr( "id" ) === undefined ) {
+          apex.jQuery( this ).find( 'input[type="checkbox"]' ).hide();
+          apex.jQuery( this ).find( "button#instance-header-action" ).hide();
+        } else {
+          apex.jQuery( this ).addClass( "u-alignMiddle" );
+        }
+      } );
+    }
 
     /*Disable download image when no instances selected*/
     $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {

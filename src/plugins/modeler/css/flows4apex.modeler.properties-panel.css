@@ -564,23 +564,3 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
 .FLOWS-DARK .bpp-properties-panel button[data-action="clear"] {
   background-color: inherit;
 }
-@media (prefers-color-scheme: dark) {
-  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel,
-  .flows4apex-modeler:not(.FLOWS) ul.bpp-properties-tabs-links > li > a {
-    background-color: #32383d;
-    color: white;
-  }
-  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel [contenteditable],
-  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel select,
-  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel input,
-  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel button {
-    color: white;
-    background-color: #282c30;
-  }
-  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel label {
-    color: white;
-  }
-  .flows4apex-modeler:not(.FLOWS) .bpp-properties-panel button[data-action="clear"] {
-    background-color: inherit;
-  }
-}

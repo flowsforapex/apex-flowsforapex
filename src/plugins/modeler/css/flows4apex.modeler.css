@@ -867,34 +867,3 @@ marker.djs-dragger tspan {
 .FLOWS-DARK .bjsl-button-inactive {
   background-color: #4c4e50 !important;
 }
-
-@media (prefers-color-scheme: dark) {
-  .flows4apex-modeler:not(.FLOWS) .bjs-container {
-    --default-fill-color: #2b3035;
-    --default-stroke-color: white;
-  }
-  .flows4apex-modeler:not(.FLOWS) .djs-popup {
-    --popup-body-background-color:  #2b3035;
-    --popup-background-color: #2b3035;
-    color: white;
-  }
-  .flows4apex-modeler:not(.FLOWS) .djs-context-pad .entry {
-    --context-pad-entry-background-color: #2b3035;
-    --context-pad-entry-hover-background-color: #1e2328;
-    color: white;
-  }
-  .flows4apex-modeler:not(.FLOWS) .djs-palette {
-    --palette-background-color: #2b3035;
-    --palette-entry-color: white;
-  }
-  .flows4apex-modeler:not(.FLOWS) .djs-direct-editing-parent {
-    background-color: #2b3035 !important;
-    color: white !important;
-  }
-  .flows4apex-modeler:not(.FLOWS) .bjs-powered-by {
-    color: white !important;
-  }
-  .flows4apex-modeler:not(.FLOWS) .bjsl-button-inactive {
-    background-color: #4c4e50 !important;
-  }
-}

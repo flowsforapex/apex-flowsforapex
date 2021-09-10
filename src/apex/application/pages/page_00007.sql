@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210908093139'
+,p_last_upd_yyyymmddhh24miss=>'20210909160101'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -396,7 +396,15 @@ wwv_flow_api.create_page_button(
 ,p_button_image_alt=>'Edit Flow'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
-,p_button_condition=>':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_draft or (:P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_released and apex_app_setting.get_value( p_name => ''EDIT_RELEASED_DIAGRAM_ALLOWED'' ) = ''Y'')'
+,p_button_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
+':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_draft ',
+'or (',
+'    :P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_released ',
+'    and flow_engine_util.get_config_value(',
+'           p_config_key => ''engine_app_mode''',
+'         , p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode',
+'       ) = ''development''',
+')'))
 ,p_button_condition_type=>'PLSQL_EXPRESSION'
 ,p_icon_css_classes=>'fa-apex'
 );
@@ -466,6 +474,14 @@ wwv_flow_api.create_page_branch(
 ,p_branch_sequence=>10
 ,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
 ,p_branch_condition=>'EDIT_FLOW'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(8026927386825638)
+,p_name=>'P7_ENGINE_APP_MODE'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(7937843762499701)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(24212748636956111)
@@ -630,6 +646,18 @@ wwv_flow_api.create_page_computation(
 ,p_computation_point=>'AFTER_HEADER'
 ,p_computation_type=>'PLSQL_EXPRESSION'
 ,p_computation=>'case when :P7_DGRM_ID is null then ''New Flow'' else :P7_DGRM_NAME||'' - Version ''||:P7_DGRM_VERSION end'
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(8027046376825639)
+,p_computation_sequence=>10
+,p_computation_item=>'P7_ENGINE_APP_MODE'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key => ''engine_app_mode''',
+'         , p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode',
+'       );'))
 );
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(26093582071304622)

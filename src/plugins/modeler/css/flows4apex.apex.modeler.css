@@ -37,9 +37,3 @@
 .FLOWS-DARK .canvas, .FLOWS-DARK .properties-panel-parent {
   background-color: #2b3035;
 }
-
-@media (prefers-color-scheme: dark) {
-  .flows4apex-modeler:not(.FLOWS) .canvas, .flows4apex-modeler:not(.FLOWS) .properties-panel-parent {
-    background-color: #2b3035;
-  }
-}

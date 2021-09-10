@@ -21,7 +21,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Mod\00E9lisateur de flux')
+,p_translate_to_text=>unistr('\00C9diteur de flux')
 ,p_translate_from_text=>'Flow Modeler'
 );
 wwv_flow_api.create_translation(
@@ -60,7 +60,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('D\00E9tails d''une instance de flux')
+,p_translate_to_text=>unistr('D\00E9tails de l''instance de flux')
 ,p_translate_from_text=>'Flow Instance Details'
 );
 wwv_flow_api.create_translation(
@@ -203,7 +203,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Mod\00E9lisateur de flux - &APP_NAME_TITLE.')
+,p_translate_to_text=>unistr('\00C9diteur de flux - &APP_NAME_TITLE.')
 ,p_translate_from_text=>'Flow Modeler - &APP_NAME_TITLE.'
 );
 wwv_flow_api.create_translation(
@@ -593,7 +593,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Editer le flux'
+,p_translate_to_text=>unistr('\00C9diter le flux')
 ,p_translate_from_text=>'Edit Flow'
 );
 wwv_flow_api.create_translation(
@@ -1060,7 +1060,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Multiple Files'
+,p_translate_to_text=>'Plusieurs fichiers'
 ,p_translate_from_text=>'Multiple Files'
 );
 wwv_flow_api.create_translation(
@@ -1138,7 +1138,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Fichier BPMN'
+,p_translate_to_text=>'Fichier'
 ,p_translate_from_text=>'File'
 );
 wwv_flow_api.create_translation(
@@ -1476,7 +1476,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Veuillez s\00E9lectioner un(e) #LABEL#.')
+,p_translate_to_text=>unistr('Veuillez s\00E9lectionner un #LABEL#.')
 ,p_translate_from_text=>'Please select a #LABEL#.'
 );
 wwv_flow_api.create_translation(
@@ -1502,7 +1502,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'#LABEL# must have some value.'
+,p_translate_to_text=>unistr('Le champ #LABEL# ne peut \00EAtre vide.')
 ,p_translate_from_text=>'#LABEL# must have some value.'
 );
 wwv_flow_api.create_translation(
@@ -1515,7 +1515,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'#LABEL# must have some value.'
+,p_translate_to_text=>unistr('Le champ #LABEL# ne peut \00EAtre vide.')
 ,p_translate_from_text=>'#LABEL# must have some value.'
 );
 wwv_flow_api.create_translation(
@@ -1528,7 +1528,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Le flux existe d\00E9j\00E0. Utilisez la fonction de remplacement forc\00E9.')
+,p_translate_to_text=>unistr('Le flux existe d\00E9j\00E0. Activez l''option de remplacement forc\00E9.')
 ,p_translate_from_text=>'Flow already exists. Use force orverwrite.'
 );
 wwv_flow_api.create_translation(
@@ -1541,7 +1541,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Le flux existe d\00E9j\00E0. Utilisez la fonction de remplacement forc\00E9.')
+,p_translate_to_text=>unistr('Le flux existe d\00E9j\00E0. Activez l''option de remplacement forc\00E9.')
 ,p_translate_from_text=>'Flow already exists. Use force orverwrite.'
 );
 wwv_flow_api.create_translation(
@@ -1593,7 +1593,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Flow imported.'
+,p_translate_to_text=>unistr('Flux import\00E9.')
 ,p_translate_from_text=>'Flow imported.'
 );
 wwv_flow_api.create_translation(
@@ -1619,7 +1619,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'&APP_TEXT$INSTANCE_CREATED.'
+,p_translate_to_text=>'&APP_TEXT$APP_INSTANCE_CREATED.'
 ,p_translate_from_text=>'&APP_TEXT$APP_INSTANCE_CREATED.'
 );
 wwv_flow_api.create_translation(
@@ -2463,7 +2463,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>unistr('Ev\00E8nements')
+,p_translate_to_text=>unistr('\00C9v\00E9nements')
 ,p_translate_from_text=>'Events'
 );
 wwv_flow_api.create_translation(
@@ -2476,7 +2476,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>unistr('Ev\00E8nements')
+,p_translate_to_text=>unistr('\00C9v\00E9nements')
 ,p_translate_from_text=>'Events'
 );
 wwv_flow_api.create_translation(
@@ -2763,7 +2763,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Re-d\00E9marrer l''\00E9tape')
+,p_translate_to_text=>unistr('Red\00E9marrer l''\00E9tape')
 ,p_translate_from_text=>'Re-start Step'
 );
 wwv_flow_api.create_translation(
@@ -2871,7 +2871,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Re-d\00E9marrer l''\00E9tape')
+,p_translate_to_text=>unistr('Red\00E9marrer l''\00E9tape')
 ,p_translate_from_text=>'Re-start Step'
 );
 wwv_flow_api.create_translation(
@@ -3327,7 +3327,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Editer le flux'
+,p_translate_to_text=>unistr('\00C9diter le flux')
 ,p_translate_from_text=>'Edit Flow'
 );
 wwv_flow_api.create_translation(
@@ -3630,7 +3630,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Aucune variables d''expression trouv\00E9es.')
+,p_translate_to_text=>unistr('Aucune variable d''expression trouv\00E9e.')
 ,p_translate_from_text=>'No variable expressions found.'
 );
 wwv_flow_api.create_translation(
@@ -3823,7 +3823,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Mod\00E9lisateur de flux')
+,p_translate_to_text=>unistr('\00C9diteur de flux')
 ,p_translate_from_text=>'Flow Modeler'
 );
 wwv_flow_api.create_translation(
@@ -3956,7 +3956,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Created'
+,p_translate_to_text=>'Created'
 ,p_translate_from_text=>'Created'
 );
 wwv_flow_api.create_translation(
@@ -3968,7 +3968,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Running'
+,p_translate_to_text=>'Running'
 ,p_translate_from_text=>'Running'
 );
 wwv_flow_api.create_translation(
@@ -3980,7 +3980,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Completed'
+,p_translate_to_text=>'Completed'
 ,p_translate_from_text=>'Completed'
 );
 wwv_flow_api.create_translation(
@@ -3992,7 +3992,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Terminated'
+,p_translate_to_text=>'Terminated'
 ,p_translate_from_text=>'Terminated'
 );
 wwv_flow_api.create_translation(
@@ -4004,7 +4004,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Error'
+,p_translate_to_text=>'Error'
 ,p_translate_from_text=>'Error'
 );
 wwv_flow_api.create_translation(
@@ -4016,7 +4016,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Created'
+,p_translate_to_text=>'Created'
 ,p_translate_from_text=>'Created'
 );
 wwv_flow_api.create_translation(
@@ -4028,7 +4028,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Running'
+,p_translate_to_text=>'Running'
 ,p_translate_from_text=>'Running'
 );
 wwv_flow_api.create_translation(
@@ -4040,7 +4040,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Completed'
+,p_translate_to_text=>'Completed'
 ,p_translate_from_text=>'Completed'
 );
 wwv_flow_api.create_translation(
@@ -4052,7 +4052,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Terminated'
+,p_translate_to_text=>'Terminated'
 ,p_translate_from_text=>'Terminated'
 );
 wwv_flow_api.create_translation(
@@ -4064,7 +4064,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instances Error'
+,p_translate_to_text=>'Error'
 ,p_translate_from_text=>'Error'
 );
 wwv_flow_api.create_translation(
@@ -4419,7 +4419,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Ev\00E8nements')
+,p_translate_to_text=>unistr('\00C9v\00E9nements')
 ,p_translate_from_text=>'Events'
 );
 wwv_flow_api.create_translation(
@@ -4432,7 +4432,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Ev\00E8nements')
+,p_translate_to_text=>unistr('\00C9v\00E9nements')
 ,p_translate_from_text=>'Events'
 );
 wwv_flow_api.component_end;
@@ -6459,7 +6459,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Ev\00E8nement')
+,p_translate_to_text=>unistr('\00C9v\00E9nement')
 ,p_translate_from_text=>'Event'
 );
 wwv_flow_api.create_translation(
@@ -6979,7 +6979,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'<span class="fa fa-eye" title="Voir l''instance de processus"></span>'
+,p_translate_to_text=>'Visionneuse'
 ,p_translate_from_text=>'Viewer'
 );
 wwv_flow_api.create_translation(
@@ -6992,7 +6992,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Instance'
+,p_translate_to_text=>'Nom de l''instance'
 ,p_translate_from_text=>'Flow Name'
 );
 wwv_flow_api.create_translation(
@@ -7461,7 +7461,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Dernier termin\00E9e')
+,p_translate_to_text=>unistr('Dernier termin\00E9')
 ,p_translate_from_text=>'Last Completed'
 );
 wwv_flow_api.create_translation(
@@ -7877,7 +7877,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Ev\00E8nement')
+,p_translate_to_text=>unistr('\00C9v\00E9nement')
 ,p_translate_from_text=>'Event'
 );
 wwv_flow_api.create_translation(
@@ -11061,7 +11061,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'&APP_TEXT$FLOW_RELEASE_DIAGRAM.'
+,p_translate_to_text=>'&APP_TEXT$APP_RELEASE_DIAGRAM.'
 ,p_translate_from_text=>'&APP_TEXT$APP_RELEASE_DIAGRAM.'
 );
 wwv_flow_api.create_translation(
@@ -11690,14 +11690,16 @@ wwv_flow_api.create_translation(
 '  markAsCurrent( prcsId ); ',
 '}',
 '',
-'$("th.a-IRR-header").each(function(i){',
-'    if ( apex.jQuery(this).attr("id") === undefined) {',
-'      apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
-'      apex.jQuery(this).find(''button#instance-header-action'').hide();',
-'    } else {',
-'      apex.jQuery(this).addClass("u-alignMiddle");',
-'    }',
-'});',
+'if ($("th.a-IRR-header--group").length > 0) {',
+'    $("th.a-IRR-header").each(function(i){',
+'        if ( apex.jQuery(this).attr("id") === undefined) {',
+'          apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
+'          apex.jQuery(this).find(''button#instance-header-action'').hide();',
+'        } else {',
+'          apex.jQuery(this).addClass("u-alignMiddle");',
+'        }',
+'    });',
+'}',
 '',
 '$("td[headers*=instance_status_col]").each(function() {',
 '  var text = $( this ).text();',
@@ -11720,14 +11722,16 @@ wwv_flow_api.create_translation(
 '  markAsCurrent( prcsId ); ',
 '}',
 '',
-'$("th.a-IRR-header").each(function(i){',
-'    if ( apex.jQuery(this).attr("id") === undefined) {',
-'      apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
-'      apex.jQuery(this).find(''button#instance-header-action'').hide();',
-'    } else {',
-'      apex.jQuery(this).addClass("u-alignMiddle");',
-'    }',
-'});',
+'if ($("th.a-IRR-header--group").length > 0) {',
+'    $("th.a-IRR-header").each(function(i){',
+'        if ( apex.jQuery(this).attr("id") === undefined) {',
+'          apex.jQuery(this).find(''input[type="checkbox"]'').hide();',
+'          apex.jQuery(this).find(''button#instance-header-action'').hide();',
+'        } else {',
+'          apex.jQuery(this).addClass("u-alignMiddle");',
+'        }',
+'    });',
+'}',
 '',
 '$("td[headers*=instance_status_col]").each(function() {',
 '  var text = $( this ).text();',
@@ -15151,7 +15155,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Cr\00E9\00E9')
+,p_translate_to_text=>'Created'
 ,p_translate_from_text=>'Created'
 );
 wwv_flow_api.create_translation(
@@ -15313,7 +15317,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Quick Action'
+,p_translate_to_text=>'Action rapide'
 ,p_translate_from_text=>'Quick Action'
 );
 wwv_flow_api.create_translation(
@@ -15462,6 +15466,422 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Quick Action Label'
 ,p_translate_from_text=>'Quick Action Label'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11917006547468402)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>9.100001
+,p_translate_from_id=>9
+,p_translate_column_id=>5
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Configuration'
+,p_translate_from_text=>'Configuration'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11917185041468429)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>9.100001
+,p_translate_from_id=>9
+,p_translate_column_id=>6
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Configuration'
+,p_translate_from_text=>'Configuration'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11917353718468446)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026761271825636.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026761271825636)
+,p_translate_column_id=>13
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Appliquer les modifications'
+,p_translate_from_text=>'Apply Changes'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11917577606468455)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026058435825629.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026058435825629)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Masquer l''ID utilisateur'
+,p_translate_from_text=>'Hide User ID'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11917763244468455)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025977827825628.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025977827825628)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Niveau de journalisation'
+,p_translate_from_text=>'Logging Level'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11917987346468455)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026117068825630.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026117068825630)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Engine App Mode'
+,p_translate_from_text=>'Engine App Mode'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11918183566468455)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025840557825627.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025840557825627)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Langage de journalisation'
+,p_translate_from_text=>'Logging Language'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11918355597468470)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026807639825637.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026807639825637)
+,p_translate_column_id=>18
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Changements enregistr\00E9s.')
+,p_translate_from_text=>'Changes saved.'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11918405293468479)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(17585395174953770.100001)
+,p_translate_from_id=>wwv_flow_api.id(17585395174953770)
+,p_translate_column_id=>20
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'Y'
+,p_translate_to_text=>'Breadcrumb'
+,p_translate_from_text=>'Breadcrumb'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11918605708468479)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025751205825626.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025751205825626)
+,p_translate_column_id=>20
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'Y'
+,p_translate_to_text=>unistr('Param\00E8tres')
+,p_translate_from_text=>'Settings'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11918850882468507)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(11904067894914484.100001)
+,p_translate_from_id=>wwv_flow_api.id(11904067894914484)
+,p_translate_column_id=>28
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Configuration'
+,p_translate_from_text=>'Configuration'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11919056005468735)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(11904723133918726.100001)
+,p_translate_from_id=>wwv_flow_api.id(11904723133918726)
+,p_translate_column_id=>100
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Configuration'
+,p_translate_from_text=>'Configuration'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11919110832469207)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026058435825629.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026058435825629)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'CUSTOM'
+,p_translate_from_text=>'CUSTOM'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11919276243469208)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025977827825628.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025977827825628)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'4'
+,p_translate_from_text=>'4'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11919458216469208)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026117068825630.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026117068825630)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'2'
+,p_translate_from_text=>'2'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11919649358469208)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025840557825627.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025840557825627)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'4'
+,p_translate_from_text=>'4'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11919837988469213)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026058435825629.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026058435825629)
+,p_translate_column_id=>269
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'true'
+,p_translate_from_text=>'true'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11920031384469213)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025977827825628.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025977827825628)
+,p_translate_column_id=>269
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'NONE'
+,p_translate_from_text=>'NONE'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11920202424469213)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026117068825630.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026117068825630)
+,p_translate_column_id=>269
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'NONE'
+,p_translate_from_text=>'NONE'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11920420322469213)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025840557825627.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025840557825627)
+,p_translate_column_id=>269
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'NONE'
+,p_translate_from_text=>'NONE'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11920688096469217)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026058435825629.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026058435825629)
+,p_translate_column_id=>270
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Oui'
+,p_translate_from_text=>'Yes'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11920833968469221)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026058435825629.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026058435825629)
+,p_translate_column_id=>271
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'false'
+,p_translate_from_text=>'false'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11921043910469225)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026058435825629.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026058435825629)
+,p_translate_column_id=>272
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Non'
+,p_translate_from_text=>'No'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11921252566469335)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025751205825626.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025751205825626)
+,p_translate_column_id=>308
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11921449008469340)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025751205825626.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025751205825626)
+,p_translate_column_id=>309
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'HTML'
+,p_translate_from_text=>'HTML'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11921632104469782)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026058435825629.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026058435825629)
+,p_translate_column_id=>458
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+unistr('    <li><strong>activ\00E9</strong> - ne capture pas les informations de l''utilisateur concernant l''\00E9tape</li>'),
+unistr('    <li><strong>d\00E9sactiv\00E9</strong> (default) - capture l''identifiant de l''utilisateur de l''\00E9tape du processus tel qu''il est connu par le moteur de flux.</li>'),
+'</ul>'))
+,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+'    <li><strong>enabled</strong> - does not capture user information about the step	</li>',
+'    <li><strong>disabled</strong> (default) - captures userid of the process step as known to the Flow Engine	</li>',
+'</ul>'))
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11921741570469783)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025977827825628.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025977827825628)
+,p_translate_column_id=>458
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+unistr('    <li><strong>off</strong> - la journalisation est d\00E9sactiv\00E9e</li>'),
+unistr('    <li><strong>standard</strong> (defaut) - enregistre les \00E9v\00E9nements relatifs aux instances</li>'),
+unistr('    <li><strong>secure</strong> - enregistre les \00E9v\00E9nements relatifs aux flux et aux instances</li>'),
+unistr('    <li><strong>full</strong> - enregistre les \00E9v\00E9nements relatifs aux flux, aux instances et aux variables de processus</li>'),
+'</ul>'))
+,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+'    <li><strong>off</strong> - logging is disabled	</li>',
+'    <li><strong>standard</strong> (default) - logs instance events</li>',
+'    <li><strong>secure</strong> - logs flow events and instance events	</li>',
+'    <li><strong>full</strong> - logs flow, instance and process variable events		</li>',
+'</ul>'))
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11921968066469783)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026117068825630.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026117068825630)
+,p_translate_column_id=>458
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+unistr('    <li><strong>production</strong> (default) - emp\00EAche l''\00E9dition des flux au statut released</li>'),
+unistr('    <li><strong>development</strong> - autorise l''\00E9dition des flux au statut released</li>'),
+'</ul>'))
+,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+'    <li><strong>production</strong> (default) - prevents editing of released flows</li>',
+'    <li><strong>development</strong> - allows editing of released flows	</li>',
+'</ul>'))
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(11922165109469783)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8025840557825627.100001)
+,p_translate_from_id=>wwv_flow_api.id(8025840557825627)
+,p_translate_column_id=>458
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Langue utilis\00E9e pour afficher les messages d''erreur et enregistrer les \00E9v\00E9nements.')
+,p_translate_from_text=>'Language used to display error messages and log events.'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(12121725244853268)
+,p_page_id=>7
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(8026927386825638.100001)
+,p_translate_from_id=>wwv_flow_api.id(8026927386825638)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Y'
+,p_translate_from_text=>'Y'
 );
 wwv_flow_api.component_end;
 end;
