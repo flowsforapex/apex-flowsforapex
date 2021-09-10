@@ -147,7 +147,7 @@ As ALL paths are taken, there are no default paths or process variables required
 
 At the end of our parallel section, we have another Parallel Gateway.  This acts as a merge and synchronize gateway to bring all of the sections together again.  Task C only becomes the current tasks when all 3 of B1, B2, and B3 have completed.
 
-Flows for APEX requires that Parallel Gateway areas are balanced if you want to merge them together.  If you want to merge with a closing parallel gateway, all of the paths that start at B Split must go to B Merge.</bpmn:text>
+Flows for APEX requires that Parallel Gateway areas are balanced if you want to merge / synchronize the paths before moving forwards. If you want to merge with a closing parallel gateway, all of the paths that start at B Split must go to B Merge.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id='Association_01fj9ha' sourceRef='Activity_1xxuo52' targetRef='TextAnnotation_1elusm3' />
     <bpmn:textAnnotation id='TextAnnotation_1g5plgd'>
@@ -392,7 +392,7 @@ How many times does J get executed?</bpmn:text>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1elusm3_di' bpmnElement='TextAnnotation_1elusm3'>
-        <dc:Bounds x='440' y='100' width='580' height='222' />
+        <dc:Bounds x='440' y='100' width='580' height='230' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1g5plgd_di' bpmnElement='TextAnnotation_1g5plgd'>
         <dc:Bounds x='1130' y='390' width='100' height='96' />
@@ -405,7 +405,7 @@ How many times does J get executed?</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id='Association_01fj9ha_di' bpmnElement='Association_01fj9ha'>
         <di:waypoint x='403' y='460' />
-        <di:waypoint x='448' y='322' />
+        <di:waypoint x='445' y='330' />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id='Association_0vub955_di' bpmnElement='Association_0vub955'>
         <di:waypoint x='1111' y='486' />
