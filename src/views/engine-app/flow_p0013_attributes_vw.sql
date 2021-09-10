@@ -8,6 +8,8 @@ as
            when obat_vc_value is not null then obat_vc_value
            when obat_clob_value is not null then '[clob]'
          end as obat_value
+       , case when instr(obat_key, 'plsql') > 0 then '<pre><code class="language-plsql">' end as pretag
+       , case when instr(obat_key, 'plsql') > 0 then '</code></pre>' end as posttag  
        , prcs.prcs_id
     from flow_object_attributes obat
     join flow_objects objt

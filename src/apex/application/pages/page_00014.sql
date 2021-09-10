@@ -18,12 +18,13 @@ wwv_flow_api.create_page(
 ,p_alias=>'LOGS'
 ,p_page_mode=>'MODAL'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_file_urls=>'#APP_IMAGES#lib/prismjs/js/prism.js'
 ,p_javascript_code_onload=>'apex.util.getTopApex().jQuery(".f4a-dynamic-title .ui-dialog-content").dialog("option", "title", $v("P14_TITLE"));'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210908090937'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210910175655'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2447308339538228)
@@ -646,6 +647,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>80
 ,p_column_identifier=>'J'
 ,p_column_label=>'Error Stack'
+,p_column_html_expression=>'#PRETAG##LGPR_ERROR_INFO##POSTTAG#'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
@@ -657,6 +659,24 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'HIDDEN'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(8027944385825648)
+,p_db_column_name=>'PRETAG'
+,p_display_order=>100
+,p_column_identifier=>'K'
+,p_column_label=>'Pretag'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(8028057953825649)
+,p_db_column_name=>'POSTTAG'
+,p_display_order=>110
+,p_column_identifier=>'L'
+,p_column_label=>'Posttag'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(5543735378437756)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -665,7 +685,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>20
-,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT::LGPR_PRCS_EVENT_ICON:LGPR_ERROR_INFO'
+,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT::LGPR_PRCS_EVENT_ICON:LGPR_ERROR_INFO:PRETAG:POSTTAG'
 ,p_sort_column_1=>'LGPR_TIMESTAMP'
 ,p_sort_direction_1=>'DESC'
 );
@@ -719,7 +739,9 @@ wwv_flow_api.create_page_da_action(
 '  } else if ( text == "error" ) {',
 '    $( this ).addClass( "ffa-color--error" );',
 '  }',
-'});'))
+'});',
+'',
+'Prism.highlightAll();'))
 );
 wwv_flow_api.component_end;
 end;
