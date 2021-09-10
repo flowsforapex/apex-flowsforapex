@@ -23,18 +23,3 @@
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
 }
-
-@media (prefers-color-scheme: dark) {
-  .flows4apex-viewer:not(.FLOWS) {
-    background-color: #2b3035;
-  }
-
-  .flows4apex-viewer:not(.FLOWS) .bjs-container {
-    --default-fill-color: #2b3035;
-    --default-stroke-color: white;
-  }
-
-  .flows4apex-viewer:not(.FLOWS) .bjs-powered-by {
-    color: white !important;
-  }
-}
