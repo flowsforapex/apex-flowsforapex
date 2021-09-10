@@ -20,15 +20,25 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210909155226'
+,p_last_upd_yyyymmddhh24miss=>'20210910125127'
 );
 wwv_flow_api.create_page_plug(
- p_id=>wwv_flow_api.id(8025751205825626)
-,p_plug_name=>'Settings'
+ p_id=>wwv_flow_api.id(8027146440825640)
+,p_plug_name=>'Logging'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>10
-,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'BODY'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(8027206694825641)
+,p_plug_name=>'Engine App'
+,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_plug_template=>wwv_flow_api.id(12495582446800880234)
+,p_plug_display_sequence=>20
 ,p_plug_display_point=>'BODY'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
@@ -65,8 +75,8 @@ wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(8025840557825627)
 ,p_name=>'P9_LOGGING_LANGUAGE'
 ,p_item_sequence=>10
-,p_item_plug_id=>wwv_flow_api.id(8025751205825626)
-,p_prompt=>'Logging Language'
+,p_item_plug_id=>wwv_flow_api.id(8027146440825640)
+,p_prompt=>'Language'
 ,p_display_as=>'NATIVE_RADIOGROUP'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select distinct ',
@@ -84,8 +94,8 @@ wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(8025977827825628)
 ,p_name=>'P9_LOGGING_LEVEL'
 ,p_item_sequence=>20
-,p_item_plug_id=>wwv_flow_api.id(8025751205825626)
-,p_prompt=>'Logging Level'
+,p_item_plug_id=>wwv_flow_api.id(8027146440825640)
+,p_prompt=>'Level'
 ,p_display_as=>'NATIVE_RADIOGROUP'
 ,p_lov=>'STATIC2:off;off,standard;standard,secure;secure,full;full'
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
@@ -105,7 +115,7 @@ wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(8026058435825629)
 ,p_name=>'P9_LOGGING_HIDE_USERID'
 ,p_item_sequence=>30
-,p_item_plug_id=>wwv_flow_api.id(8025751205825626)
+,p_item_plug_id=>wwv_flow_api.id(8027146440825640)
 ,p_prompt=>'Hide User ID'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
@@ -124,9 +134,9 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(8026117068825630)
 ,p_name=>'P9_ENGINE_APP_MODE'
-,p_item_sequence=>40
-,p_item_plug_id=>wwv_flow_api.id(8025751205825626)
-,p_prompt=>'Engine App Mode'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(8027206694825641)
+,p_prompt=>'Mode'
 ,p_display_as=>'NATIVE_RADIOGROUP'
 ,p_lov=>'STATIC2:Production;production,Development;development'
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)

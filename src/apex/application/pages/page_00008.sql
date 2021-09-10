@@ -18,12 +18,13 @@ wwv_flow_api.create_page(
 ,p_alias=>'FLOW-INSTANCE-DETAILS'
 ,p_step_title=>'Flow Instance Details  - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_file_urls=>'#APP_IMAGES#lib/prismjs/js/prism.js'
 ,p_javascript_code=>'initPage8();'
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210908122028'
+,p_last_upd_yyyymmddhh24miss=>'20210910180416'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -197,6 +198,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(29001516138505995)
 ,p_plug_name=>'Instance Events'
+,p_region_name=>'flow-instance-events'
 ,p_parent_plug_id=>wwv_flow_api.id(8024125104825610)
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
@@ -322,6 +324,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>80
 ,p_column_identifier=>'J'
 ,p_column_label=>'Error Stack'
+,p_column_html_expression=>'#PRETAG##LGPR_ERROR_INFO##POSTTAG#'
 ,p_column_type=>'STRING'
 );
 wwv_flow_api.create_worksheet_column(
@@ -333,6 +336,24 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'HIDDEN'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(8028177005825650)
+,p_db_column_name=>'PRETAG'
+,p_display_order=>100
+,p_column_identifier=>'K'
+,p_column_label=>'Pretag'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(12631588555220601)
+,p_db_column_name=>'POSTTAG'
+,p_display_order=>110
+,p_column_identifier=>'L'
+,p_column_label=>'Posttag'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(13861584261230054)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -341,7 +362,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>20
-,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT::LGPR_PRCS_EVENT_ICON:LGPR_ERROR_INFO'
+,p_report_columns=>'LGPR_USER:LGPR_TIMESTAMP:LGPR_PRCS_EVENT:LGPR_COMMENT::LGPR_PRCS_EVENT_ICON:LGPR_ERROR_INFO:PRETAG:POSTTAG'
 ,p_sort_column_1=>'LGPR_TIMESTAMP'
 ,p_sort_direction_1=>'DESC'
 );
@@ -669,6 +690,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>60
 ,p_column_identifier=>'F'
 ,p_column_label=>'Status'
+,p_column_html_expression=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span>'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'subflow_status_col'
@@ -774,6 +796,15 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'HIDDEN'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(7335900830307041)
+,p_db_column_name=>'SBFL_STATUS_ICON'
+,p_display_order=>160
+,p_column_identifier=>'Q'
+,p_column_label=>'Sbfl Status Icon'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(8498061205860315)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -781,7 +812,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'59631'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION::QUICK_ACTION_LABEL'
+,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION::QUICK_ACTION_LABEL:SBFL_STATUS_ICON'
 );
 wwv_flow_api.create_worksheet_condition(
  p_id=>wwv_flow_api.id(11261908176020193)
@@ -935,6 +966,18 @@ wwv_flow_api.create_page_button(
 ,p_button_css_classes=>'js-actionButton'
 ,p_button_cattributes=>'data-action="" data-prcs="" data-sbfl="" data-no-update="true"'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5954728604464411)
 ,p_button_sequence=>40
@@ -948,18 +991,6 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'BODY'
 ,p_warn_on_unsaved_changes=>null
 ,p_grid_new_row=>'Y'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5955186680464411)
@@ -1533,7 +1564,7 @@ wwv_flow_api.create_page_da_action(
 '});',
 '',
 '$("td[headers*=subflow_status_col]").each(function() {',
-'    var className = ''prcs_status--'' + $(this).text();',
+'    var className = ''ffa-color--'' + $(this).text();',
 '    $(this).addClass(className);',
 '  }',
 ');',
@@ -1884,16 +1915,6 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_02=>'P8_DISPLAY_SETTING'
 ,p_wait_for_result=>'Y'
 );
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(6008810667464526)
-,p_event_id=>wwv_flow_api.id(6007809031464526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_api.id(166753193485966384)
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -1905,6 +1926,16 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(6008810667464526)
+,p_event_id=>wwv_flow_api.id(6007809031464526)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_api.id(166753193485966384)
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6016280779464530)
@@ -2217,7 +2248,9 @@ wwv_flow_api.create_page_da_action(
 '  } else if ( text == "error" ) {',
 '    $( this ).addClass( "ffa-color--error" );',
 '  }',
-'});'))
+'});',
+'',
+'Prism.highlightAll();'))
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(5987781654464507)

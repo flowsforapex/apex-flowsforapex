@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage10();'
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210909095107'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210910092554'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -355,7 +355,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Quick Action'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<button type="button" class="t-Button t-Button--icon t-Button--iconLeft t-Button--link js-actionButton"',
-'data-prcs="#PRCS_ID#" data-action="open-flow-instance-details">',
+'data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#" data-action="open-flow-instance-details">',
 '<span aria-hidden="true" class="t-Icon t-Icon--left fa fa-search"></span>Details</button>'))
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
@@ -731,19 +731,10 @@ wwv_flow_api.create_page_da_action(
 '}',
 '',
 '$("td[headers*=instance_status_col]").each(function() {',
-'  var text = $( this ).text();',
-'  if ( text == "created" ) {',
-'    $( this ).addClass( "ffa-color--created" );',
-'  } else if ( text == "completed" ) {',
-'    $( this ).addClass( "ffa-color--completed" );',
-'  } else if ( text == "running" ) {',
-'    $( this ).addClass( "ffa-color--running" );',
-'  } else if ( text == "terminated" ) {',
-'    $( this ).addClass( "ffa-color--terminated" );',
-'  } else if ( text == "error" ) {',
-'    $( this ).addClass( "ffa-color--error" );',
+'    var className = ''ffa-color--'' + $(this).text();',
+'    $(this).addClass(className);',
 '  }',
-'});',
+');',
 ''))
 );
 wwv_flow_api.create_page_da_event(
@@ -933,18 +924,6 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_02=>'P10_DISPLAY_SETTING'
 ,p_wait_for_result=>'Y'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(4300450048764256)
 ,p_name=>'Change check-all-instances'
@@ -967,6 +946,18 @@ wwv_flow_api.create_page_da_action(
 '     } else {',
 '     $(''#flow-instances input[type=checkbox][name=f01]'').prop(''checked'',false);',
 ' } '))
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6177414128209919)
