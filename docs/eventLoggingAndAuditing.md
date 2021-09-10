@@ -50,17 +50,18 @@ Event logging is currently designed to be configurable, so that an installation 
 
 Logging is configured using Flows for APEX configuration parameters, which are stored in the FLOW_CONFIGURATION table.
 
-| parameter |  possible values | behaviour | default |
-| --- | --- | --- | --- |
-| logging_level | off    | logging is disabled |  |
-|  | standard | - logs instance events | yes |
-|  | secure | logs flow events and instance events | |
-|  | full | logs flow, instance and process variable events | |
-| === | === | === | === |
-| logging_hide_userid | true | does not capture user information about the step |  |
-| | false | captures userid of the process step as known to the Flow Engine | yes |
-
-
+| parameter           | possible values | behaviour                                                       | default |
+| --------------------- | ----------------- | ----------------------------------------------------------------- | --------- |
+| logging_level       | off             | logging is disabled                                             |         |
+|                     | standard        | logs instance and step events                                         | yes  |
+|                     | secure          | logs flow, instance and step events      |   |
+|                     | full            | logs flow, instance, step and process variable events                 |         |
+|||||
+| logging_hide_userid | true            | does not capture user information about the step                |         |
+|                     | false           | captures userid of the process step as known to the Flow Engine | yes     |
+|||||
+| logging_language | en | error messages generated in the Flows for APEX engine will be placed in the Instance Event Log in this language.  If the message is not available in the required language, it will appear in English (en)     | yes|
+| | fr    | event log messages in French (fr) | |
 
 ### Managing Your Event Logs
 
@@ -69,6 +70,4 @@ Like any audit trail and event log, the Flows for APEX event log can rapidly col
 Flows for APEX will operate without event logging enabled, and after any event logging data has been deleted -- so nothing is required for execution of BPMN instances.  However, the Flow Monitor is unable to show detailed history, including error messages for tasks performed outside the users current step, unless the event logging data is captured and is still stored in the database. So you can delete anything you want from the event log tables, and Flows for APEX will continue to work.
 
 You should consider deleting or moving to archival storage event logging data for instances which have been completed or deleted for some period of time.  As at v21.1, Flows for APEX doesn't contain any tools to help you manage event logs archive or destruction.
-
-
 
