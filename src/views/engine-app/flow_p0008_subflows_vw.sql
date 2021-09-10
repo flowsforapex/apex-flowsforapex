@@ -6,6 +6,18 @@ as
        , sbfl.sbfl_starting_object_name as sbfl_starting_object
        , sbfl.sbfl_last_update
        , sbfl.sbfl_status
+       , case sbfl.sbfl_status
+             when 'running' then 'fa-play-circle-o'
+             when 'created' then 'fa-plus-circle-o'
+             when 'completed' then 'fa-check-circle-o'
+             when 'terminated' then 'fa-stop-circle-o'
+             when 'error' then 'fa-exclamation-circle-o'
+             when 'split' then 'fa fa-share-alt'
+             when 'in subprocess' then 'fa fa-share-alt'
+             when 'waiting at gateway' then 'fa fa-hand-stop-o'
+             when 'waiting for timer' then 'fa fa-clock-o'
+             when 'waiting for event' then 'fa fa-hand-stop-o'
+         end as sbfl_status_icon
        , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
        , null as actions   

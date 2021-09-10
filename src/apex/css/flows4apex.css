@@ -37,6 +37,10 @@ th#checkbox_col, td[headers*="checkbox_col"]{
    width: 10px !important;
 }
 
+.a-IRR-header {
+  vertical-align: inherit;
+}
+
 .a-IRR-headerLink{
    color: inherit !important;
 }
@@ -89,9 +93,10 @@ th#view-process, td[headers*="view-process"]{
 
 /* badges */
 
-.prcs_status_badge, .prcs_event_badge {
+.prcs_status_badge, .prcs_event_badge, .sbfl_status_badge {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 /* region display selector fix */
