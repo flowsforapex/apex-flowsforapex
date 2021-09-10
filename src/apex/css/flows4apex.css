@@ -105,6 +105,13 @@ th#view-process, td[headers*="view-process"]{
   display: none;
 }
 
+/* fix for inline dialog in 21.1 */
+
+#instance_action_dialog div.t-Form-labelContainer.col-null {
+  height: 0;
+  padding: 0;
+}
+
 /* page 8 */
 .u-color-44-alert-text{
   color: #8c9eb0!important;
