@@ -152,3 +152,8 @@ th#view-process, td[headers*="view-process"]{
 	padding-top: 8px;
 	padding-bottom: 8px;
 }
+
+/* Syntax highlight fix for IR */
+.a-IRR-table pre[class*="language-"] {
+	padding: 0px !important;
+}
