@@ -85,26 +85,24 @@ PROMPT >> Global Error Function
 @plsql/engine-app/apex_error_handling.sql;
 
 PROMPT >> Page Views
-@views/engine-app/flow_p0010_vw.sql
-@views/engine-app/flow_p0010_instances_vw.sql
-@views/engine-app/flow_p0010_branches_vw.sql
-@views/engine-app/flow_p0010_routes_vw.sql
-@views/engine-app/flow_p0002_diagrams_vw.sql
+@views/engine-app/flow_p002_diagrams_vw.sql
 @views/engine-app/flow_p0007_instances_counter_vw.sql
-@views/engine-app/flow_p0013_attributes_vw.sql
-@views/engine-app/flow_p0013_expressions_vw.sql
-@views/engine-app/flow_p0013_subflows_vw.sql
-@views/engine-app/flow_p0013_subflow_log_vw.sql
-@views/engine-app/flow_p0013_variable_log_vw.sql
-@views/engine-app/flow_p0014_instance_log_vw.sql
-@views/engine-app/flow_p0014_subflows_vw.sql
-@views/engine-app/flow_p0014_subflow_log_vw.sql
-@views/engine-app/flow_p0014_variable_log_vw.sql
-@views/engine-app/flow_p0008_vw.sql
 @views/engine-app/flow_p0008_instance_details_vw.sql
+@views/engine-app/flow_p0008_instance_log_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
-@views/engine-app/flow_p0008_instance_log_vw.sql
+@views/engine-app/flow_p0008_vw.sql
+@views/engine-app/flow_p0010_instances_vw.sql
+@views/engine-app/flow_p0010_vw.sql
+@views/engine-app/flow_p0013_attributes_vw.sql
+@views/engine-app/flow_p0013_expressions_vw.sql
+@views/engine-app/flow_p0013_subflow_log_vw.sql
+@views/engine-app/flow_p0013_subflows_vw.sql
+@views/engine-app/flow_p0013_variable_log_vw.sql
+@views/engine-app/flow_p0014_instance_log_vw.sql
+@views/engine-app/flow_p0014_subflow_log_vw.sql
+@views/engine-app/flow_p0014_subflows_vw.sql
+@views/engine-app/flow_p0014_variable_log_vw.sql
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb
