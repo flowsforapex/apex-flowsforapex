@@ -1,7 +1,6 @@
 create or replace view flow_p0010_instances_vw
 as
-   select null as view_process
-        , prcs_id
+   select prcs_id
         , prcs_name
         , prcs_dgrm_id
         , prcs_dgrm_name
