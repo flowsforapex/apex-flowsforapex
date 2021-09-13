@@ -66,6 +66,7 @@ prompt --install
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p5_download_as.sql
 @@application/shared_components/user_interface/lovs/p6_import_from.sql
+@@application/shared_components/user_interface/lovs/p6_multiple_files.sql
 @@application/shared_components/user_interface/lovs/p8_instance_connections_lov.sql
 @@application/shared_components/user_interface/lovs/p8_instance_gateways_lov.sql
 @@application/pages/page_groups.sql

@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210908121934'
+,p_last_upd_yyyymmddhh24miss=>'20210913120510'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -220,11 +220,55 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P6_MULTIPLE_FILES'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
+,p_item_default=>'single'
 ,p_prompt=>'Multiple Files'
-,p_display_as=>'NATIVE_YES_NO'
-,p_field_template=>wwv_flow_api.id(12495522847445880132)
-,p_item_template_options=>'#DEFAULT#:margin-top-none'
-,p_attribute_01=>'APPLICATION'
+,p_display_as=>'NATIVE_RADIOGROUP'
+,p_named_lov=>'P6_MULTIPLE_FILES'
+,p_lov=>'.'||wwv_flow_api.id(13102745982982601)||'.'
+,p_grid_label_column_span=>0
+,p_field_template=>wwv_flow_api.id(12495523145758880138)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--xlarge:t-Form-fieldContainer--radioButtonGroup'
+,p_lov_display_extra=>'NO'
+,p_escape_on_http_output=>'N'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+'    <li>One Flow: Import a single flow by providing all the attributes</li>',
+'    <li>Multiple Flows: Import several flows by providing a zip file*</li>',
+'</ul>',
+'<p>',
+'    * The zip file must contain:',
+'    <ul>',
+'        <li>The bpmn files to import</li>',
+'        <li>An import.json file which is an array of objects (see example below) with the following attributes:',
+'            <ul>',
+'                <li>dgrm_name: The flow''s name</li>',
+'                <li>dgrm_version: The flow''s version</li>',
+'                <li>dgrm_category: The flow''s category</li>',
+'                <li>file: The name of the bpmn file in the archive</li>',
+'            </ul>',
+'        </li>',
+'    </ul>',
+'Example of an import.json file with two flows<br>',
+'<pre><code>[',
+'  {',
+'    "dgrm_name": "The Pizza Collaboration",',
+'    "dgrm_version": "0",',
+'    "dgrm_status": "draft",',
+'    "dgrm_category": null,',
+'    "file": "The Pizza Collaboration_0.bpmn"',
+'  },',
+'  {',
+'    "dgrm_name": "Holidays",',
+'    "dgrm_version": "0",',
+'    "dgrm_status": "draft",',
+'    "dgrm_category": null,',
+'    "file": "Holidays_0.bpmn"',
+'  }',
+']',
+'</code></pre>',
+'</p>'))
+,p_attribute_01=>'2'
+,p_attribute_02=>'NONE'
 );
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(19023151364332949)
@@ -246,7 +290,7 @@ wwv_flow_api.create_page_validation(
 ,p_validation=>'return flow_p0006_api.is_file_uploaded(pi_file_name => :P6_FILE);'
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please select a #LABEL#.'
-,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MULTIPLE_FILES = ''Y'''
+,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MULTIPLE_FILES = ''multi'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(19018652597332904)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
@@ -263,7 +307,7 @@ wwv_flow_api.create_page_validation(
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please check the flow provided.'
-,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''N'''
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''single'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
@@ -276,7 +320,7 @@ wwv_flow_api.create_page_validation(
 '        pi_file_name => :P6_FILE',
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
-,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''Y'''
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''multi'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
@@ -288,7 +332,7 @@ wwv_flow_api.create_page_validation(
 ,p_validation_type=>'ITEM_NOT_NULL'
 ,p_error_message=>'#LABEL# must have some value.'
 ,p_validation_condition=>'P6_MULTIPLE_FILES'
-,p_validation_condition2=>'N'
+,p_validation_condition2=>'single'
 ,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_associated_item=>wwv_flow_api.id(19001062236190895)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
@@ -301,7 +345,7 @@ wwv_flow_api.create_page_validation(
 ,p_validation_type=>'ITEM_NOT_NULL'
 ,p_error_message=>'#LABEL# must have some value.'
 ,p_validation_condition=>'P6_MULTIPLE_FILES'
-,p_validation_condition2=>'N'
+,p_validation_condition2=>'single'
 ,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_associated_item=>wwv_flow_api.id(19001891912190900)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
@@ -393,7 +437,7 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element=>'P6_MULTIPLE_FILES'
 ,p_condition_element=>'P6_MULTIPLE_FILES'
 ,p_triggering_condition_type=>'EQUALS'
-,p_triggering_expression=>'Y'
+,p_triggering_expression=>'multi'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'change'
 );
@@ -477,7 +521,7 @@ wwv_flow_api.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MULTIPLE_FILES'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
-,p_process_when2=>'N'
+,p_process_when2=>'single'
 ,p_process_success_message=>'Flow imported.'
 );
 wwv_flow_api.create_page_process(
@@ -498,7 +542,7 @@ wwv_flow_api.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MULTIPLE_FILES'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
-,p_process_when2=>'Y'
+,p_process_when2=>'multiple'
 ,p_process_success_message=>'Flow imported.'
 );
 wwv_flow_api.create_page_process(

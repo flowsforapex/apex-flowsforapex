@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210909160101'
+,p_last_upd_yyyymmddhh24miss=>'20210913121635'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -819,7 +819,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'&APP_TEXT$APP_RELEASE_DIAGRAM.'
+,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_RELEASE_DIAGRAM.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(34630686363575808)
@@ -847,7 +847,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'&APP_TEXT$APP_DEPRECATE_DIAGRAM.'
+,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_DEPRECATE_DIAGRAM.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(34630931054575811)
@@ -875,7 +875,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'&APP_TEXT$APP_ARCHIVE_DIAGRAM.'
+,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_ARCHIVE_DIAGRAM.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(8025291955825621)
