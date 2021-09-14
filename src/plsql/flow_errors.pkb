@@ -41,10 +41,8 @@ as
       ;   
   end set_error_status;
 
-  procedure handle_instance_error
-  ( pi_prcs_id        in flow_processes.prcs_id%type
-  , pi_sbfl_id        in flow_subflows.sbfl_id%type default null
-  , pi_message_key    in varchar2
+  function make_error_message
+  ( pi_message_key    in varchar2 
   , p0                in varchar2 default null
   , p1                in varchar2 default null
   , p2                in varchar2 default null
@@ -55,17 +53,11 @@ as
   , p7                in varchar2 default null
   , p8                in varchar2 default null
   , p9                in varchar2 default null
-  )
+  ) return flow_messages.fmsg_message_content%type
   is
     l_message_content  flow_messages.fmsg_message_content%type;
     l_message          flow_instance_event_log.lgpr_comment%type;
-    l_error_info       flow_instance_event_log.lgpr_error_info%type;
   begin 
-    apex_debug.enter
-    ( 'handle_instance_error'
-    , 'pi_sbfl_id', pi_sbfl_id
-    , 'pi_message_key', pi_message_key
-    );
     -- get the message template in the correct language, or fall through to default language
     begin
       select fmsg.fmsg_message_content
@@ -107,6 +99,50 @@ as
                   , p8 => p8
                   , p9 => p9
                   );
+    return l_message;
+  end make_error_message;
+
+  procedure handle_instance_error
+  ( pi_prcs_id        in flow_processes.prcs_id%type
+  , pi_sbfl_id        in flow_subflows.sbfl_id%type default null
+  , pi_message_key    in varchar2
+  , p0                in varchar2 default null
+  , p1                in varchar2 default null
+  , p2                in varchar2 default null
+  , p3                in varchar2 default null
+  , p4                in varchar2 default null
+  , p5                in varchar2 default null
+  , p6                in varchar2 default null
+  , p7                in varchar2 default null
+  , p8                in varchar2 default null
+  , p9                in varchar2 default null
+  )
+  is
+    l_message_content  flow_messages.fmsg_message_content%type;
+    l_message          flow_instance_event_log.lgpr_comment%type;
+    l_error_info       flow_instance_event_log.lgpr_error_info%type;
+  begin 
+    apex_debug.enter
+    ( 'handle_instance_error'
+    , 'pi_sbfl_id', pi_sbfl_id
+    , 'pi_message_key', pi_message_key
+    , 'is_recursive' , case when flow_globals.get_is_recursive_step then 'true' else 'false' end
+    );
+    -- get the message template in the correct language, or fall through to default language
+    -- for log & apex_error
+    l_message :=  make_error_message
+                  ( pi_message_key   => pi_message_key
+                  , p0               => p0
+                  , p1               => p1
+                  , p2               => p2
+                  , p3               => p3
+                  , p4               => p4
+                  , p5               => p5
+                  , p6               => p6
+                  , p7               => p7
+                  , p8               => p8
+                  , p9               => p9
+                  );
     -- get the error stack and step type
     l_error_info   := dbms_utility.format_error_stack;
     -- add to instance_event_log
@@ -127,6 +163,48 @@ as
       );
     end if;
   end handle_instance_error;
+
+  procedure handle_general_error
+  ( pi_message_key    in varchar2
+  , p0                in varchar2 default null
+  , p1                in varchar2 default null
+  , p2                in varchar2 default null
+  , p3                in varchar2 default null
+  , p4                in varchar2 default null
+  , p5                in varchar2 default null
+  , p6                in varchar2 default null
+  , p7                in varchar2 default null
+  , p8                in varchar2 default null
+  , p9                in varchar2 default null
+  )
+  is
+    l_message_content  flow_messages.fmsg_message_content%type;
+    l_message          flow_instance_event_log.lgpr_comment%type;
+  begin 
+    apex_debug.enter
+    ( 'handle_instance_error'
+    , 'pi_message_key', pi_message_key
+    );
+    -- get the message template in the correct language, or fall through to default language
+    -- for log & apex_error
+    l_message :=  make_error_message
+                  ( pi_message_key   => pi_message_key
+                  , p0               => p0
+                  , p1               => p1
+                  , p2               => p2
+                  , p3               => p3
+                  , p4               => p4
+                  , p5               => p5
+                  , p6               => p6
+                  , p7               => p7
+                  , p8               => p8
+                  , p9               => p9
+                  );
+    apex_error.add_error
+      ( p_message => l_message
+      , p_display_location => apex_error.c_on_error_page
+      );
+  end handle_general_error;
 
   -- initialize logging parameters
 

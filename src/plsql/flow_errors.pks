@@ -17,6 +17,19 @@ as
   , p9                in varchar2 default null
   );
 
+  procedure handle_general_error
+  ( pi_message_key    in varchar2
+  , p0                in varchar2 default null
+  , p1                in varchar2 default null
+  , p2                in varchar2 default null
+  , p3                in varchar2 default null
+  , p4                in varchar2 default null
+  , p5                in varchar2 default null
+  , p6                in varchar2 default null
+  , p7                in varchar2 default null
+  , p8                in varchar2 default null
+  , p9                in varchar2 default null
+  );
   procedure set_error_status
   ( pi_prcs_id        in flow_processes.prcs_id%type
   , pi_sbfl_id        in flow_subflows.sbfl_id%type

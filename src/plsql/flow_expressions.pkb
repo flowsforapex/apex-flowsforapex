@@ -628,7 +628,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'      km
+      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'    
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id

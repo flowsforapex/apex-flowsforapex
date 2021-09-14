@@ -19,24 +19,6 @@ as
          
     return l_dgrm_name;
   end get_dgrm_name;
-  
-  function get_dgrm_id    --- FFA50 currently also exists in flow_engine - delete once function next_multistep_exists deleted
-  (
-    p_prcs_id in flow_processes.prcs_id%type
-  ) return flow_processes.prcs_dgrm_id%type
-  as
-    l_prcs_dgrm_id flow_processes.prcs_dgrm_id%type;
-  begin
-    
-    select prcs.prcs_dgrm_id
-      into l_prcs_dgrm_id
-      from flow_processes prcs
-     where prcs.prcs_id = p_prcs_id
-    ;
-    
-    return l_prcs_dgrm_id;
-    
-  end get_dgrm_id;
 
   function flow_create
   (
@@ -71,10 +53,14 @@ as
               ;
           exception
             when no_data_found then
-                apex_error.add_error
+              /*  apex_error.add_error
                 ( p_message => 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
                 , p_display_location => apex_error.c_on_error_page
-                );  
+                );  */
+              flow_errors.handle_general_error
+              ( pi_message_key => 'version-no-rel-or-draft-v0'
+              );
+              -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
           end;
       end;            
     else -- dgrm_version was specified
