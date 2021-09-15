@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage3();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915151424'
+,p_last_upd_yyyymmddhh24miss=>'20210915185749'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(34404686490171432)
@@ -390,10 +390,10 @@ wwv_flow_api.create_jet_chart_series(
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'with period as (',
-'    select sysdate - 7 + level - 1 dt',
+'    select sysdate - 6 + level - 1 dt',
 '    from   dual',
 '    connect by level <= (',
-'      sysdate - sysdate  + 8',
+'      sysdate - sysdate  + 7',
 '    )',
 '  )',
 '  select  to_char(trunc(p.dt), ''YYYY-MM-DD'') label, count(ins.prcs_id) as value',
