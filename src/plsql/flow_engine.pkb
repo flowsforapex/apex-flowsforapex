@@ -1425,9 +1425,10 @@ begin
   ;
   -- log the restart
   flow_logging.log_instance_event
-  ( p_process_id => p_process_id
-  , p_event      => flow_constants_pkg.gc_prcs_event_restart_step
-  , p_comment    => 'restart step '||l_sbfl_rec.sbfl_current||'. Comment: '||p_comment
+  ( p_process_id    => p_process_id
+  , p_event         => flow_constants_pkg.gc_prcs_event_restart_step
+  , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
+  , p_comment       => 'restart step '||l_sbfl_rec.sbfl_current||'. Comment: '||p_comment
   );
   -- see if instance can be reset to running
   select count(sbfl_id)
@@ -1443,6 +1444,7 @@ begin
     ;
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
+    , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
     , p_event      => flow_constants_pkg.gc_prcs_status_running
     );
   end if;

@@ -1,4 +1,4 @@
-create or replace view flow_p0014_subflow_log_vw
+create or replace view flow_p0014_step_log_vw
 as
   select distinct lgsf.lgsf_prcs_id
                 , coalesce(objt.objt_name, lgsf.lgsf_objt_id) as completed_object
@@ -12,7 +12,7 @@ as
                 , lgsf.lgsf_reservation
                 , lgsf.lgsf_user
                 , lgsf.lgsf_comment
-             from flow_subflow_event_log lgsf
+             from flow_step_event_log lgsf
              join flow_objects objt
                on lgsf.lgsf_objt_id = objt.objt_bpmn_id
 with read only;

@@ -1,6 +1,7 @@
 create or replace view flow_p0014_instance_log_vw
 as
   select lgpr.lgpr_prcs_id
+       , lgpr.lgpr_objt_id
        , lgpr.lgpr_prcs_name
        , lgpr.lgpr_business_id
        , lgpr.lgpr_prcs_event
