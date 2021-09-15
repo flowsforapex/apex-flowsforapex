@@ -24,7 +24,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210914171244'
+,p_last_upd_yyyymmddhh24miss=>'20210915150346'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -1078,12 +1078,12 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(6431406612417624)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(5681179787037011)
-,p_button_name=>'AUDIT'
+,p_button_name=>'SHOW_HISTORY'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Audit'
+,p_button_image_alt=>'Show History'
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'js-actionButton'

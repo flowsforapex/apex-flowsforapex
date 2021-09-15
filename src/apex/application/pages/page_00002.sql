@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210908112144'
+,p_last_upd_yyyymmddhh24miss=>'20210915165801'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -41,7 +41,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7938769092499710)
-,p_plug_name=>'Copy Flow'
+,p_plug_name=>'Copy Model'
 ,p_region_name=>'copy_flow_reg'
 ,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
 ,p_plug_template=>wwv_flow_api.id(12495608896288880263)
@@ -466,12 +466,12 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(7938939101499712)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(7938769092499710)
-,p_button_name=>'COPY_FLOW'
+,p_button_name=>'COPY_MODEL'
 ,p_button_action=>'SUBMIT'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Copy Flow'
+,p_button_image_alt=>'Copy Model'
 ,p_button_position=>'BELOW_BOX'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-plus'
@@ -494,12 +494,12 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24212654778956110)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(34402625223171412)
-,p_button_name=>'CREATE_FLOW'
+,p_button_name=>'CREATE_MODEL'
 ,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft:t-Button--padRight'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Create Flow'
+,p_button_image_alt=>'Create Model'
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
 ,p_button_redirect_url=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7::'
 ,p_icon_css_classes=>'fa-plus'
@@ -563,7 +563,7 @@ wwv_flow_api.create_page_item(
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_warn_on_unsaved_changes=>'I'
-,p_inline_help_text=>'In case of single flow copy, the new flow wil have the entered name but if you have selected more than one row then the value entered will be used as a suffix.'
+,p_inline_help_text=>'In case of single model copy, the new model will have the entered name but if you have selected more than one row then the value entered will be used as a suffix.'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -884,7 +884,7 @@ wwv_flow_api.create_page_process(
 ,p_process_sequence=>20
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Copy Flow'
+,p_process_name=>'Copy Model'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_flows apex_t_varchar2 := apex_string.split(:P2_DGRM_ID, '':'');',
@@ -915,7 +915,7 @@ wwv_flow_api.create_page_process(
 '    end loop;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'COPY_FLOW'
+,p_process_when=>'COPY_MODEL'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 ,p_process_success_message=>'&APP_TEXT$APP_FLOW_COPIED.'
 );

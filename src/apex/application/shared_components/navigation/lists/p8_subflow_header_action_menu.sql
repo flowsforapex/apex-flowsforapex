@@ -19,7 +19,7 @@ wwv_flow_api.create_list(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(4409268569512242)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Complete Step'
+,p_list_item_link_text=>'Complete'
 ,p_list_item_icon=>'fa-sign-out'
 ,p_list_text_01=>'bulk-complete-step'
 ,p_list_item_current_type=>'TARGET_PAGE'
@@ -27,7 +27,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(4409653667512250)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Re-start Step'
+,p_list_item_link_text=>'Re-start'
 ,p_list_item_icon=>'fa-redo-arrow'
 ,p_list_text_01=>'bulk-restart-step'
 ,p_list_item_current_type=>'TARGET_PAGE'
@@ -42,7 +42,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(4410440520512250)
 ,p_list_item_display_sequence=>40
-,p_list_item_link_text=>'Reserve Step'
+,p_list_item_link_text=>'Reserve'
 ,p_list_item_icon=>'fa-lock'
 ,p_list_text_01=>'bulk-reserve-step'
 ,p_list_item_current_type=>'TARGET_PAGE'
@@ -50,7 +50,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(4410861620512250)
 ,p_list_item_display_sequence=>50
-,p_list_item_link_text=>'Release Step'
+,p_list_item_link_text=>'Release'
 ,p_list_item_icon=>'fa-unlock'
 ,p_list_text_01=>'bulk-release-step'
 ,p_list_item_current_type=>'TARGET_PAGE'

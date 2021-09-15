@@ -19,7 +19,7 @@ wwv_flow_api.create_list(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7935795315465880)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Export Flow'
+,p_list_item_link_text=>'Export'
 ,p_list_item_link_target=>'f?p=&APP_ID.:5:&SESSION.::&DEBUG.:5:P5_DGRM_ID,P5_MULTI:&P7_DGRM_ID.,N:'
 ,p_list_item_icon=>'fa-download'
 ,p_list_item_current_type=>'TARGET_PAGE'

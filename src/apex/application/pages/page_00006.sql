@@ -14,16 +14,16 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>6
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Import Flow'
-,p_alias=>'IMPORT-FLOW'
+,p_name=>'Import'
+,p_alias=>'IMPORT'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Import Flow - &APP_NAME_TITLE.'
+,p_step_title=>'Import - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210913120510'
+,p_last_upd_yyyymmddhh24miss=>'20210915165925'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -39,12 +39,12 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24211779219956101)
 ,p_plug_name=>'Import Warning'
-,p_region_template_options=>'#DEFAULT#:t-Alert--colorBG:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--info:t-Alert--accessibleHeading'
+,p_region_template_options=>'#DEFAULT#:t-Alert--colorBG:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--info:t-Alert--accessibleHeading:margin-top-none:margin-bottom-none'
 ,p_plug_template=>wwv_flow_api.id(12495613507239880288)
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_01'
-,p_plug_source=>'We encourage you to import flow that were built using Flows for APEX to make sure that they can be run by the engine.'
+,p_plug_source=>'We encourage you to import models that were built using Flows for APEX to make sure that they can be run by the engine.'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
@@ -217,13 +217,13 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(34632505849575827)
-,p_name=>'P6_MULTIPLE_FILES'
+,p_name=>'P6_MODE'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
 ,p_item_default=>'single'
-,p_prompt=>'Multiple Files'
+,p_prompt=>'Mode'
 ,p_display_as=>'NATIVE_RADIOGROUP'
-,p_named_lov=>'P6_MULTIPLE_FILES'
+,p_named_lov=>'P6_MODE'
 ,p_lov=>'.'||wwv_flow_api.id(13102745982982601)||'.'
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_api.id(12495523145758880138)
@@ -232,8 +232,8 @@ wwv_flow_api.create_page_item(
 ,p_escape_on_http_output=>'N'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li>One Flow: Import a single flow by providing all the attributes</li>',
-'    <li>Multiple Flows: Import several flows by providing a zip file*</li>',
+'    <li>One Model: Import a single model by providing all the attributes</li>',
+'    <li>Multiple Models: Import several models by providing a zip file*</li>',
 '</ul>',
 '<p>',
 '    * The zip file must contain:',
@@ -241,14 +241,14 @@ wwv_flow_api.create_page_item(
 '        <li>The bpmn files to import</li>',
 '        <li>An import.json file which is an array of objects (see example below) with the following attributes:',
 '            <ul>',
-'                <li>dgrm_name: The flow''s name</li>',
-'                <li>dgrm_version: The flow''s version</li>',
-'                <li>dgrm_category: The flow''s category</li>',
+'                <li>dgrm_name: The model''s name</li>',
+'                <li>dgrm_version: The model''s version</li>',
+'                <li>dgrm_category: The model''s category</li>',
 '                <li>file: The name of the bpmn file in the archive</li>',
 '            </ul>',
 '        </li>',
 '    </ul>',
-'Example of an import.json file with two flows<br>',
+'Example of an import.json file with two models<br>',
 '<pre><code>[',
 '  {',
 '    "dgrm_name": "The Pizza Collaboration",',
@@ -331,7 +331,7 @@ wwv_flow_api.create_page_validation(
 ,p_validation=>'P6_DGRM_NAME'
 ,p_validation_type=>'ITEM_NOT_NULL'
 ,p_error_message=>'#LABEL# must have some value.'
-,p_validation_condition=>'P6_MULTIPLE_FILES'
+,p_validation_condition=>'P6_MODE'
 ,p_validation_condition2=>'single'
 ,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_associated_item=>wwv_flow_api.id(19001062236190895)
@@ -344,7 +344,7 @@ wwv_flow_api.create_page_validation(
 ,p_validation=>'P6_DGRM_VERSION'
 ,p_validation_type=>'ITEM_NOT_NULL'
 ,p_error_message=>'#LABEL# must have some value.'
-,p_validation_condition=>'P6_MULTIPLE_FILES'
+,p_validation_condition=>'P6_MODE'
 ,p_validation_condition2=>'single'
 ,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_associated_item=>wwv_flow_api.id(19001891912190900)
@@ -431,11 +431,11 @@ wwv_flow_api.create_page_da_action(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34632685881575828)
-,p_name=>'Change Multiple Files'
+,p_name=>'Change Mode'
 ,p_event_sequence=>30
 ,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P6_MULTIPLE_FILES'
-,p_condition_element=>'P6_MULTIPLE_FILES'
+,p_triggering_element=>'P6_MODE'
+,p_condition_element=>'P6_MODE'
 ,p_triggering_condition_type=>'EQUALS'
 ,p_triggering_expression=>'multi'
 ,p_bind_type=>'bind'
@@ -519,7 +519,7 @@ wwv_flow_api.create_page_process(
 ''))
 ,p_process_error_message=>'Flow already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'P6_MULTIPLE_FILES'
+,p_process_when=>'P6_MODE'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_process_when2=>'single'
 ,p_process_success_message=>'Flow imported.'
@@ -540,7 +540,7 @@ wwv_flow_api.create_page_process(
 ''))
 ,p_process_error_message=>'Flow already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'P6_MULTIPLE_FILES'
+,p_process_when=>'P6_MODE'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_process_when2=>'multiple'
 ,p_process_success_message=>'Flow imported.'

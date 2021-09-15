@@ -35,7 +35,7 @@ wwv_flow_api.create_translation(
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Import'
-,p_translate_from_text=>'Import Flow'
+,p_translate_from_text=>'Import'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9034337627000395)
@@ -112,8 +112,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Exporter'
-,p_translate_from_text=>'Export Flow'
+,p_translate_to_text=>'Export'
+,p_translate_from_text=>'Export'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9035510897000396)
@@ -217,7 +217,7 @@ wwv_flow_api.create_translation(
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Import - &APP_NAME_TITLE.'
-,p_translate_from_text=>'Import Flow - &APP_NAME_TITLE.'
+,p_translate_from_text=>'Import - &APP_NAME_TITLE.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9037103606000400)
@@ -295,7 +295,7 @@ wwv_flow_api.create_translation(
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Export - &APP_NAME_TITLE.'
-,p_translate_from_text=>'Export Flow - &APP_NAME_TITLE.'
+,p_translate_from_text=>'Export - &APP_NAME_TITLE.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9038388753000400)
@@ -385,8 +385,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Copie de flux'
-,p_translate_from_text=>'Copy Flow'
+,p_translate_to_text=>unistr('Copier le mod\00E8le')
+,p_translate_from_text=>'Copy Model'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9039708558000416)
@@ -411,8 +411,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Cr\00E9er un flux')
-,p_translate_from_text=>'Create Flow'
+,p_translate_to_text=>unistr('Cr\00E9er un mod\00E8le')
+,p_translate_from_text=>'Create Model'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9040124028000416)
@@ -424,8 +424,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Enregistrer le flux'
-,p_translate_from_text=>'Save Flow'
+,p_translate_to_text=>'Appliquer les modifications'
+,p_translate_from_text=>'Apply Changes'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9040319318000416)
@@ -593,8 +593,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\00C9diter le flux')
-,p_translate_from_text=>'Edit Flow'
+,p_translate_to_text=>'Modifier le diagramme'
+,p_translate_from_text=>'Modify Diagram'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9042998055000417)
@@ -671,8 +671,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Audit'
-,p_translate_from_text=>'Audit'
+,p_translate_to_text=>'Voir l''historique'
+,p_translate_from_text=>'Show History'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9044168227000418)
@@ -853,8 +853,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Cr\00E9er une nouvelle instance')
-,p_translate_from_text=>'Create new Instance'
+,p_translate_to_text=>'Create instance'
+,p_translate_from_text=>'Create instance'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9046925181000420)
@@ -1060,8 +1060,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Plusieurs fichiers'
-,p_translate_from_text=>'Multiple Files'
+,p_translate_to_text=>'Mode'
+,p_translate_from_text=>'Mode'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9049978854000426)
@@ -1658,8 +1658,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Copie de flux'
-,p_translate_from_text=>'Copy Flow'
+,p_translate_to_text=>'Copy Model'
+,p_translate_from_text=>'Copy Model'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9059161097000448)
@@ -1749,8 +1749,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Instances de flux par diagramme - Top 10'
-,p_translate_from_text=>'Flow Instances per Diagram - Top 10'
+,p_translate_to_text=>unistr('Instances de flux par mod\00E8le - Top 10')
+,p_translate_from_text=>'Flow Instances per model- Top 10'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9060513961000449)
@@ -1969,8 +1969,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Supprimer le diagramme'
-,p_translate_from_text=>'Delete Diagram'
+,p_translate_to_text=>'Delete Model'
+,p_translate_from_text=>'Delete Model'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9063747658000451)
@@ -2689,8 +2689,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Nous vous encourageons \00E0 importer des flux qui ont \00E9t\00E9 mod\00E9lis\00E9s \00E0 l''aide de Flows for APEX afin de vous assurer qu''ils puissent \00EAtre ex\00E9cut\00E9s par le moteur.')
-,p_translate_from_text=>'We encourage you to import flow that were built using Flows for APEX to make sure that they can be run by the engine.'
+,p_translate_to_text=>unistr('Nous vous encourageons \00E0 importer des mod\00E8les qui ont \00E9t\00E9 cr\00E9\00E9s \00E0 l''aide de Flows for APEX afin de vous assurer qu''ils puissent \00EAtre ex\00E9cut\00E9s par le moteur.')
+,p_translate_from_text=>'We encourage you to import models that were built using Flows for APEX to make sure that they can be run by the engine.'
 );
 wwv_flow_api.component_end;
 end;
@@ -2751,8 +2751,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Compl\00E9ter l''\00E9tape')
-,p_translate_from_text=>'Complete Step'
+,p_translate_to_text=>unistr('Compl\00E9ter')
+,p_translate_from_text=>'Complete'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9074368127000480)
@@ -2763,8 +2763,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Red\00E9marrer l''\00E9tape')
-,p_translate_from_text=>'Re-start Step'
+,p_translate_to_text=>unistr('Red\00E9marrer')
+,p_translate_from_text=>'Re-start'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9074566408000480)
@@ -2787,8 +2787,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('R\00E9server l''\00E9tape')
-,p_translate_from_text=>'Reserve Step'
+,p_translate_to_text=>unistr('R\00E9server')
+,p_translate_from_text=>'Reserve'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9074947837000480)
@@ -2799,8 +2799,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Lib\00E9rer l''\00E9tape')
-,p_translate_from_text=>'Release Step'
+,p_translate_to_text=>unistr('Lib\00E9rer')
+,p_translate_from_text=>'Release'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9075116057000480)
@@ -2859,8 +2859,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Compl\00E9ter l''\00E9tape')
-,p_translate_from_text=>'Complete Step'
+,p_translate_to_text=>unistr('Compl\00E9ter')
+,p_translate_from_text=>'Complete'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9076173861000481)
@@ -2871,8 +2871,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Red\00E9marrer l''\00E9tape')
-,p_translate_from_text=>'Re-start Step'
+,p_translate_to_text=>unistr('Red\00E9marrer')
+,p_translate_from_text=>'Re-start'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9076373369000481)
@@ -2895,8 +2895,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('R\00E9server l''\00E9tape')
-,p_translate_from_text=>'Reserve Step'
+,p_translate_to_text=>unistr('R\00E9server')
+,p_translate_from_text=>'Reserve'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9076706357000481)
@@ -2907,8 +2907,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Lib\00E9rer l''\00E9tape')
-,p_translate_from_text=>'Release Step'
+,p_translate_to_text=>unistr('Lib\00E9rer')
+,p_translate_from_text=>'Release'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9076926092000482)
@@ -2919,8 +2919,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Audit'
-,p_translate_from_text=>'Audit'
+,p_translate_to_text=>'Voir l''historique'
+,p_translate_from_text=>'Show History'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9077135421000482)
@@ -3063,8 +3063,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\00C9diter le flux')
-,p_translate_from_text=>'Edit Flow'
+,p_translate_to_text=>unistr('\00C9diter le mod\00E8le')
+,p_translate_from_text=>'Edit Model'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9079500369000483)
@@ -3124,7 +3124,7 @@ wwv_flow_api.create_translation(
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Importer'
-,p_translate_from_text=>'Import Flow'
+,p_translate_from_text=>'Import'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9080596788000484)
@@ -3148,7 +3148,7 @@ wwv_flow_api.create_translation(
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Exporter'
-,p_translate_from_text=>'Export Flow'
+,p_translate_from_text=>'Export'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9080947213000484)
@@ -3231,8 +3231,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('T\00E9l\00E9charger l''image')
-,p_translate_from_text=>'Download Image'
+,p_translate_to_text=>unistr('T\00E9l\00E9charger (SVG)')
+,p_translate_from_text=>'Download (SVG)'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9082384273000485)
@@ -3255,8 +3255,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Nouvelle version'
-,p_translate_from_text=>'New Version'
+,p_translate_to_text=>'Ajouter nouvelle version'
+,p_translate_from_text=>'Add New Version'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9082744535000485)
@@ -3279,8 +3279,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Nouvelle version'
-,p_translate_from_text=>'New Version'
+,p_translate_to_text=>'Ajouter nouvelle version'
+,p_translate_from_text=>'Add New Version'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9083194424000485)
@@ -3327,8 +3327,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\00C9diter le flux')
-,p_translate_from_text=>'Edit Flow'
+,p_translate_to_text=>unistr('\00C9diter le mod\00E8le')
+,p_translate_from_text=>'Edit Model'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9083970377000486)
@@ -3375,8 +3375,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Audit'
-,p_translate_from_text=>'Audit'
+,p_translate_to_text=>'Voir l''historique'
+,p_translate_from_text=>'Show History'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9084796552000486)
@@ -3387,8 +3387,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('D\00E9tails')
-,p_translate_from_text=>'Details'
+,p_translate_to_text=>unistr('Afficher les d\00E9tails')
+,p_translate_from_text=>'Show Details'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9084954692000489)
@@ -8822,8 +8822,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Y'
-,p_translate_from_text=>'Y'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9168426854001050)
@@ -9146,8 +9146,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Y'
-,p_translate_from_text=>'Y'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9173251853001053)
@@ -10983,8 +10983,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'EDIT_FLOW'
-,p_translate_from_text=>'EDIT_FLOW'
+,p_translate_to_text=>'MODIFY_DIAGRAM'
+,p_translate_from_text=>'MODIFY_DIAGRAM'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9198922737001109)
@@ -10996,8 +10996,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Vous \00EAtes sur le point de modifier un diagramme au statut released. Cela pourrait \00E9ventuellement provoquer des erreurs sur les instances en cours d''ex\00E9cution pour ce flux. Voulez-vous continuer ?')
-,p_translate_from_text=>'Your are about to modify a released diagram. That could possibly breaks running instances of that Flow. Do you want to continue?'
+,p_translate_to_text=>'&APP_TEXT$APP_CONFIRM_EDIT_RELEASE_DIAGRAM.'
+,p_translate_from_text=>'&APP_TEXT$APP_CONFIRM_EDIT_RELEASE_DIAGRAM.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9199178474001110)
@@ -11009,8 +11009,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'EDIT_FLOW'
-,p_translate_from_text=>'EDIT_FLOW'
+,p_translate_to_text=>'MODIFY_DIAGRAM'
+,p_translate_from_text=>'MODIFY_DIAGRAM'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9199348508001110)
@@ -11022,8 +11022,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'&APP_TEXT$APP_RELEASE_DIAGRAM.'
-,p_translate_from_text=>'&APP_TEXT$APP_RELEASE_DIAGRAM.'
+,p_translate_to_text=>'&APP_TEXT$APP_CONFIRM_RELEASE_MODEL.'
+,p_translate_from_text=>'&APP_TEXT$APP_CONFIRM_RELEASE_MODEL.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9199505350001110)
@@ -11048,8 +11048,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'&APP_TEXT$APP_DEPRECATE_DIAGRAM.'
-,p_translate_from_text=>'&APP_TEXT$APP_DEPRECATE_DIAGRAM.'
+,p_translate_to_text=>'&APP_TEXT$APP_CONFIRM_DEPRECATE_MODEL.'
+,p_translate_from_text=>'&APP_TEXT$APP_CONFIRM_DEPRECATE_MODEL.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9199973374001110)
@@ -11696,18 +11696,6 @@ wwv_flow_api.create_translation(
 ');',
 ''))
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9205395518001113)
 ,p_page_id=>10
@@ -11738,6 +11726,18 @@ wwv_flow_api.create_translation(
 'if ( apex.item("P10_DISPLAY_SETTING").getValue() === "window" ) {',
 '    redirectToMonitor("view-flow-instance", prcsId);',
 '}'))
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9205560598001113)
@@ -12535,18 +12535,6 @@ wwv_flow_api.create_translation(
 '(window.matchMedia && window.matchMedia(''(prefers-color-scheme: dark)'').matches) ? ''Vita - Dark'' : ''Vita'';',
 ''))
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9214318405001130)
 ,p_page_id=>5
@@ -12577,6 +12565,18 @@ wwv_flow_api.create_translation(
 '    p_download_as => :P5_DOWNLOAD_AS',
 ');',
 ''))
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9214537170001130)
@@ -13515,18 +13515,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'N'
 ,p_translate_from_text=>'N'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9228561711001172)
 ,p_page_id=>7
@@ -13552,6 +13540,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'N'
 ,p_translate_from_text=>'N'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9228983056001172)
@@ -14489,18 +14489,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'Y'
 ,p_translate_from_text=>'Y'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9243298237001244)
 ,p_page_id=>12
@@ -14525,6 +14513,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'return true;'
 ,p_translate_from_text=>'return true;'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9243688732001322)
@@ -15054,8 +15054,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('En cas de copie d''un seul flux, le nouveau flux portera le nom saisi, mais si vous avez s\00E9lectionn\00E9 plus d''une ligne, la valeur saisie sera utilis\00E9e comme suffixe.')
-,p_translate_from_text=>'In case of single flow copy, the new flow wil have the entered name but if you have selected more than one row then the value entered will be used as a suffix.'
+,p_translate_to_text=>unistr('En cas de copie d''un seul mod\00E8le, le nouveau mod\00E8le portera le nom saisi, mais si vous avez s\00E9lectionn\00E9 plus d''une ligne, la valeur saisie sera utilis\00E9e comme suffixe.')
+,p_translate_from_text=>'In case of single model copy, the new model will have the entered name but if you have selected more than one row then the value entered will be used as a suffix.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9252267651001481)
@@ -15093,7 +15093,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Series 1'
+,p_translate_to_text=>unistr('S\00E9rie 1')
 ,p_translate_from_text=>'Series 1'
 );
 wwv_flow_api.create_translation(
@@ -15328,8 +15328,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'&APP_TEXT$APP_ARCHIVE_DIAGRAM.'
-,p_translate_from_text=>'&APP_TEXT$APP_ARCHIVE_DIAGRAM.'
+,p_translate_to_text=>'&APP_TEXT$APP_CONFIRM_ARCHIVE_MODEL.'
+,p_translate_from_text=>'&APP_TEXT$APP_CONFIRM_ARCHIVE_MODEL.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(11254758207951141)
@@ -15380,18 +15380,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'Fichier BPMN'
 ,p_translate_from_text=>'BPMN File'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(11263883089037982)
 ,p_page_id=>8
@@ -15404,6 +15392,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Quick Action Label'
 ,p_translate_from_text=>'Quick Action Label'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(11263963052037987)
@@ -15760,13 +15760,13 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-unistr('    <li><strong>production</strong> (default) - emp\00EAche l''\00E9dition des flux au statut released</li>'),
-unistr('    <li><strong>development</strong> - autorise l''\00E9dition des flux au statut released</li>'),
+'    <li><strong>production</strong> (default) - prevents editing of diagram for released models</li>',
+'    <li><strong>development</strong> - allows editing of diagram for released models</li>',
 '</ul>'))
 ,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li><strong>production</strong> (default) - prevents editing of released flows</li>',
-'    <li><strong>development</strong> - allows editing of released flows	</li>',
+'    <li><strong>production</strong> (default) - prevents editing of diagram for released models</li>',
+'    <li><strong>development</strong> - allows editing of diagram for released models</li>',
 '</ul>'))
 );
 wwv_flow_api.create_translation(
@@ -15830,8 +15830,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'<span><span aria-hidden="true" class="fa fa-files-o fa-lg"></span><span style="display: block;">Plusieurs flux</span></span>'
-,p_translate_from_text=>'<span><span aria-hidden="true" class="fa fa-files-o fa-lg"></span><span style="display: block;">Multiple Flows</span></span>'
+,p_translate_to_text=>unistr('<span><span aria-hidden="true" class="fa fa-files-o fa-lg"></span><span style="display: block;">Plusieurs mod\00E8les</span></span>')
+,p_translate_from_text=>'<span><span aria-hidden="true" class="fa fa-files-o fa-lg"></span><span style="display: block;">Multiple Models</span></span>'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(13104884076987260)
@@ -15842,8 +15842,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'<span><span aria-hidden="true" class="fa fa-file-o fa-lg"></span><span style="display: block;">Un flux</span></span>'
-,p_translate_from_text=>'<span><span aria-hidden="true" class="fa fa-file-o fa-lg"></span><span style="display: block;">One Flow</span></span>'
+,p_translate_to_text=>unistr('<span><span aria-hidden="true" class="fa fa-file-o fa-lg"></span><span style="display: block;">Un mod\00E8le</span></span>')
+,p_translate_from_text=>'<span><span aria-hidden="true" class="fa fa-file-o fa-lg"></span><span style="display: block;">One Model</span></span>'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(13105045086987282)
@@ -15880,23 +15880,23 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li>Un flux: Importez un flux en fournissant tous les attributs</li>',
-'    <li>Multiple Flows: Importez plusieurs flux en fournissant un fichier zip*</li>',
+'    <li>One Model: Import a single model by providing all the attributes</li>',
+'    <li>Multiple Models: Import several models by providing a zip file*</li>',
 '</ul>',
 '<p>',
-'    * Le fichier zip doit contenir:',
+'    * The zip file must contain:',
 '    <ul>',
-unistr('        <li>Les fichiers bpmn \00E0 importer</li>'),
-'        <li>Un fichier impport.json (voir l''exemple ci-dessous) qui est un tableau d''objet contenant les attributs suivants:',
+'        <li>The bpmn files to import</li>',
+'        <li>An import.json file which is an array of objects (see example below) with the following attributes:',
 '            <ul>',
-'                <li>dgrm_name: Le nom du flux</li>',
-'                <li>dgrm_version: La version du flux</li>',
-unistr('                <li>dgrm_category: La cat\00E9groie du flux</li>'),
-'                <li>file: Le nom du fichier bpmn correspondant dans l''archive</li>',
+'                <li>dgrm_name: The model''s name</li>',
+'                <li>dgrm_version: The model''s version</li>',
+'                <li>dgrm_category: The model''s category</li>',
+'                <li>file: The name of the bpmn file in the archive</li>',
 '            </ul>',
 '        </li>',
 '    </ul>',
-'Exmpale d''un fichier import.json contenant deux flux<br>',
+'Example of an import.json file with two models<br>',
 '<pre><code>[',
 '  {',
 '    "dgrm_name": "The Pizza Collaboration",',
@@ -15917,8 +15917,8 @@ unistr('                <li>dgrm_category: La cat\00E9groie du flux</li>'),
 '</p>'))
 ,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li>One Flow: Import a single flow by providing all the attributes</li>',
-'    <li>Multiple Flows: Import several flows by providing a zip file*</li>',
+'    <li>One Model: Import a single model by providing all the attributes</li>',
+'    <li>Multiple Models: Import several models by providing a zip file*</li>',
 '</ul>',
 '<p>',
 '    * The zip file must contain:',
@@ -15926,14 +15926,14 @@ unistr('                <li>dgrm_category: La cat\00E9groie du flux</li>'),
 '        <li>The bpmn files to import</li>',
 '        <li>An import.json file which is an array of objects (see example below) with the following attributes:',
 '            <ul>',
-'                <li>dgrm_name: The flow''s name</li>',
-'                <li>dgrm_version: The flow''s version</li>',
-'                <li>dgrm_category: The flow''s category</li>',
+'                <li>dgrm_name: The model''s name</li>',
+'                <li>dgrm_version: The model''s version</li>',
+'                <li>dgrm_category: The model''s category</li>',
 '                <li>file: The name of the bpmn file in the archive</li>',
 '            </ul>',
 '        </li>',
 '    </ul>',
-'Example of an import.json file with two flows<br>',
+'Example of an import.json file with two models<br>',
 '<pre><code>[',
 '  {',
 '    "dgrm_name": "The Pizza Collaboration",',

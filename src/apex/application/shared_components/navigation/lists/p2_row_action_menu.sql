@@ -28,7 +28,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(39902920078857437)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'New Version'
+,p_list_item_link_text=>'Add New Version'
 ,p_list_item_icon=>'fa-arrow-circle-o-up'
 ,p_list_text_01=>'new-flow-version'
 ,p_translate_list_text_y_n=>'Y'

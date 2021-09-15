@@ -39,15 +39,15 @@ wwv_flow_api.create_message(
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(11208996871917779)
-,p_name=>'APP_CONFIRM_ARCHIVE_DIAGRAM'
-,p_message_text=>'You are about to archive this flow. Do you want to continue?'
+,p_name=>'APP_CONFIRM_ARCHIVE_MODEL'
+,p_message_text=>'You are about to archive this model. Do you want to continue?'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(12115144449552060)
-,p_name=>'APP_CONFIRM_ARCHIVE_DIAGRAM'
+,p_name=>'APP_CONFIRM_ARCHIVE_MODEL'
 ,p_message_language=>'fr'
-,p_message_text=>unistr('Vous \00EAtes sur le point d''archiver ce flux. Voulez-vous continuer?')
+,p_message_text=>unistr('Vous \00EAtes sur le point d''archiver ce mod\00E8le. Voulez-vous continuer?')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -78,28 +78,41 @@ wwv_flow_api.create_message(
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34705077390288729)
-,p_name=>'APP_CONFIRM_DEPRECATE_DIAGRAM'
-,p_message_text=>'You are about to mark as deprecated this flow. Do you want to continue?'
+,p_name=>'APP_CONFIRM_DEPRECATE_MODEL'
+,p_message_text=>'You are about to mark as deprecated this model. Do you want to continue?'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(12116281951552061)
-,p_name=>'APP_CONFIRM_DEPRECATE_DIAGRAM'
+,p_name=>'APP_CONFIRM_DEPRECATE_MODEL'
 ,p_message_language=>'fr'
-,p_message_text=>unistr('Vous \00EAtes sur le point de rendre obsol\00E8te ce flux. Voulez-vous continuer ?')
+,p_message_text=>unistr('Vous \00EAtes sur le point de rendre obsol\00E8te ce mod\00E8le. Voulez-vous continuer ?')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14021007858509194)
+,p_name=>'APP_CONFIRM_EDIT_RELEASE_DIAGRAM'
+,p_message_text=>'Your are about to modify a diagram of a released model. That could possibly breaks running instances of that model. Do you want to continue?'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14021269066518104)
+,p_name=>'APP_CONFIRM_EDIT_RELEASE_DIAGRAM'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Vous \00EAtes sur le point de modifier un diagramme d''un mod\00E8le au statut released. Cela pourrait \00E9ventuellement provoquer des erreurs sur les instances en cours d''ex\00E9cution pour ce mod\00E8le. Voulez-vous continuer ?')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34706651053300739)
-,p_name=>'APP_CONFIRM_RELEASE_DIAGRAM'
-,p_message_text=>'You are about to release this flow, this will mark as deprecated the current released version. Do you want to continue?'
+,p_name=>'APP_CONFIRM_RELEASE_MODEL'
+,p_message_text=>'You are about to release this model, this will mark as deprecated the current released version. Do you want to continue?'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(12116395116552061)
-,p_name=>'APP_CONFIRM_RELEASE_DIAGRAM'
+,p_name=>'APP_CONFIRM_RELEASE_MODEL'
 ,p_message_language=>'fr'
-,p_message_text=>unistr('Vous \00EAtes sur le point de publier ce flux, ceci rendra obsol\00E8te la version courant publi\00E9e. Voulez-vous continuer?')
+,p_message_text=>unistr('Vous \00EAtes sur le point de publier ce mod\00E8le, ceci rendra obsol\00E8te la version courant publi\00E9e. Voulez-vous continuer?')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -445,14 +458,14 @@ wwv_flow_api.create_message(
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7072717610226144)
 ,p_name=>'APP_RESTART_STEP'
-,p_message_text=>'Re-start step'
+,p_message_text=>'Re-start'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(12113834177552059)
 ,p_name=>'APP_RESTART_STEP'
 ,p_message_language=>'fr'
-,p_message_text=>unistr('Red\00E9marrer l''\00E9tape')
+,p_message_text=>unistr('Red\00E9marrer')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -479,6 +492,41 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_TERMINATE_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>'Terminer l''instance de flux'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14002829627275379)
+,p_name=>'APP_TITLE_MODEL'
+,p_message_text=>'%0 - Version %1'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14003075497277036)
+,p_name=>'APP_TITLE_MODEL'
+,p_message_language=>'fr'
+,p_message_text=>'%0 - Version %1'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14002221742257151)
+,p_name=>'APP_TITLE_NEW_MODEL'
+,p_message_text=>'New Model'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14002465543258712)
+,p_name=>'APP_TITLE_NEW_MODEL'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Nouveau Mod\00E8le')
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14016328404425844)
+,p_name=>'APP_TITLE_RESTART_STEP'
+,p_message_text=>'Re-start Step'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(14016573610430877)
+,p_name=>'APP_TITLE_RESTART_STEP'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Red\00E9marrer l''\00E9tape')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(

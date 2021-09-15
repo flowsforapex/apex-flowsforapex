@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210914171235'
+,p_last_upd_yyyymmddhh24miss=>'20210915150510'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -402,7 +402,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_options=>'#DEFAULT#:t-Button--mobileHideLabel:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Create new Instance'
+,p_button_image_alt=>'Create instance'
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
 ,p_button_redirect_url=>'f?p=&APP_ID.:11:&SESSION.::&DEBUG.:RP,11::'
 ,p_icon_css_classes=>'fa-plus'
