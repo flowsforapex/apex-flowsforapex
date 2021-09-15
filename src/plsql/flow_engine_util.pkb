@@ -234,6 +234,7 @@ procedure get_number_of_connections
       , pi_message_key => 'engine-util-sbfl-not-found'
       , p0 => p_subflow_id
       );
+      return null;
       -- $F4AMESSAGE 'engine-util-sbfl-not-in-prcs' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
   end get_subflow_info;
 

@@ -523,10 +523,17 @@ as
       , pi_expr_set       => pi_expression.expr_set
       ); 
     else
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message          => 'Error setting process variable.  Incorrect datatype for variable '||pi_expression.expr_var_name||'.  SQL error shown in debug output.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_datatype'
+      , p0 => pi_expression.expr_var_name
       );
+      -- $F4AMESSAGE 'var_exp_datatype' || 'Error setting process variable.  Incorrect datatype for variable %0.  SQL error shown in debug output.'  
     end case;
   exception
     when e_var_exp_date_format_error then
@@ -613,10 +620,17 @@ as
       , pi_expr_set       => pi_expression.expr_set 
       ); 
     else
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message          => 'Error setting process variable.  Incorrect datatype for variable '||pi_expression.expr_var_name||'.  SQL error shown in debug output.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_datatype'
+      , p0 => pi_expression.expr_var_name
       );
+      -- $F4AMESSAGE 'var_exp_datatype' || 'Error setting process variable.  Incorrect datatype for variable %0.  SQL error shown in debug output.'  
     end case;
   exception
     when e_var_exp_date_format_error then
@@ -751,10 +765,17 @@ as
     );
   exception
     when no_data_found then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message          => 'Internal error looking up object '||pi_objt_bpmn_id||' in process_expressions.  SQL error shown in debug output.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_object_not_found'
+      , p0 => pi_objt_bpmn_id
       );
+      -- $F4AMESSAGE 'var_exp_object_not_found' || 'Internal error looking up object %0 in process_expressions.  SQL error shown in debug output.'  
   end process_expressions; 
   
 end flow_expressions;

@@ -40,6 +40,7 @@ as
         , pi_message_key => 'link-no-catch'
         , p0 => pi_link_bpmn_id
         );
+        return null;
         -- $F4AMESSAGE 'link-no-catch' || 'Unable to find matching link catch event named %0.'  
     when too_many_rows then
         /*apex_error.add_error
@@ -52,6 +53,7 @@ as
         , pi_message_key => 'link-too-many-catches'
         , p0 => pi_link_bpmn_id
         );
+        return null;
         -- $F4AMESSAGE 'link-too-many-catches' || 'More than one matching link catch event named %0.'  
   end flow_get_matching_link_object;
 
@@ -76,12 +78,9 @@ begin
       , pi_dgrm_id      => p_step_info.dgrm_id
       , pi_link_bpmn_id => p_step_info.target_objt_ref
       );
+  
     -- proceed if link found cleanly
     if not flow_globals.get_step_error then
-      apex_debug.message ( p_message  => 'matching link object found - '
-                         , p0  => l_next_objt
-                         , p_level  => apex_debug.c_log_level_app_trace
-                         );
       -- update current step info before logging
       update flow_subflows sbfl
           set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
