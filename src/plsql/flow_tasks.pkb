@@ -44,6 +44,7 @@ as
       -- log error as instance event
       flow_logging.log_instance_event
       ( p_process_id  => p_process_id 
+      , p_objt_bpmn_id => p_script_object
       , p_event       => flow_constants_pkg.gc_prcs_event_error
       , p_comment     => case p_error_type
                          when 'failed'      then 'ScriptTask failed on object '

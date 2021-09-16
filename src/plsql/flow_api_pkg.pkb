@@ -318,5 +318,38 @@ end flow_complete_step;
       );
   end get_current_usertask_url;
 
+  function message
+  ( p_message_key    in varchar2
+  , p_lang            in varchar2 default 'en'
+  , p0                in varchar2 default null
+  , p1                in varchar2 default null
+  , p2                in varchar2 default null
+  , p3                in varchar2 default null
+  , p4                in varchar2 default null
+  , p5                in varchar2 default null
+  , p6                in varchar2 default null
+  , p7                in varchar2 default null
+  , p8                in varchar2 default null
+  , p9                in varchar2 default null
+  ) return varchar2
+  is
+  begin
+    return flow_errors.make_error_message
+           ( pi_message_key => p_message_key
+           , pi_lang        => p_lang
+           , p0   => p0
+           , p1   => p1
+           , p2   => p2
+           , p3   => p3
+           , p4   => p4
+           , p5   => p5
+           , p6   => p6
+           , p7   => p7
+           , p8   => p8
+           , p9   => p9
+           );
+
+  end message;
+
 end flow_api_pkg;
 /

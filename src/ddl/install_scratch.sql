@@ -352,6 +352,7 @@ create table flow_flow_event_log
 
 create table flow_instance_event_log
 ( lgpr_prcs_id           	NUMBER NOT NULL
+, lgpr_objt_id              VARCHAR2(50 CHAR) NULL
 , lgpr_dgrm_id      		NUMBER NOT NULL
 , lgpr_prcs_name         	VARCHAR2(150 CHAR) NOT NULL
 , lgpr_business_id			VARCHAR2(4000 char)
@@ -363,7 +364,7 @@ create table flow_instance_event_log
 );
 
 
-create table flow_subflow_event_log
+create table flow_step_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL
 , lgsf_objt_id       		VARCHAR2(50) NOT NULL
 , lgsf_sbfl_id      		NUMBER NOT NULL
