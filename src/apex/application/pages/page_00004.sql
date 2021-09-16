@@ -24,8 +24,8 @@ wwv_flow_api.create_page(
 'window.f4a.language = ''&BROWSER_LANGUAGE.'';'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210907080350'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210915143223'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7938399981499706)
@@ -90,12 +90,12 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(15683484308738625)
 ,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_api.id(34403031827171416)
-,p_button_name=>'SAVE_FLOW'
+,p_button_name=>'APPLY_CHANGES'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Save Flow'
+,p_button_image_alt=>'Apply Changes'
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-save'
@@ -168,7 +168,7 @@ wwv_flow_api.create_page_computation(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(15683695432738627)
-,p_name=>'Save Flow Clicked'
+,p_name=>'Apply Changes Clicked'
 ,p_event_sequence=>50
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(15683484308738625)

@@ -19,8 +19,8 @@ wwv_flow_api.create_list(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(39902501487857435)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Edit'
-,p_list_item_icon=>'fa-pencil'
+,p_list_item_link_text=>'Show Details'
+,p_list_item_icon=>'fa-search'
 ,p_list_text_01=>'edit-flow-diagram'
 ,p_translate_list_text_y_n=>'Y'
 ,p_list_item_current_type=>'TARGET_PAGE'
@@ -28,7 +28,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(39902920078857437)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'New Version'
+,p_list_item_link_text=>'Add New Version'
 ,p_list_item_icon=>'fa-arrow-circle-o-up'
 ,p_list_text_01=>'new-flow-version'
 ,p_translate_list_text_y_n=>'Y'

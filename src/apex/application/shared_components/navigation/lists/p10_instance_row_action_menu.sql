@@ -28,7 +28,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(6315881052890668)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Details'
+,p_list_item_link_text=>'Show Details'
 ,p_list_item_icon=>'fa-search'
 ,p_list_text_01=>'open-flow-instance-details'
 ,p_list_item_current_type=>'TARGET_PAGE'
@@ -36,7 +36,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(5664262065267010)
 ,p_list_item_display_sequence=>30
-,p_list_item_link_text=>'Audit'
+,p_list_item_link_text=>'Show History'
 ,p_list_item_icon=>'fa-info-circle-o'
 ,p_list_text_01=>'flow-instance-audit'
 ,p_list_item_current_type=>'TARGET_PAGE'
@@ -98,8 +98,8 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(5664576928271979)
 ,p_list_item_display_sequence=>110
-,p_list_item_link_text=>'Edit Flow'
-,p_list_item_icon=>'fa-pencil'
+,p_list_item_link_text=>'Show Model Details'
+,p_list_item_icon=>'fa-search'
 ,p_list_text_01=>'edit-flow-diagram'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );

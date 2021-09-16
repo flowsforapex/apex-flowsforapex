@@ -14,15 +14,15 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>5
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Export Flow'
-,p_alias=>'EXPORT-FLOW'
+,p_name=>'Export'
+,p_alias=>'EXPORT'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Export Flow - &APP_NAME_TITLE.'
+,p_step_title=>'Export - &APP_NAME_TITLE.'
 ,p_reload_on_submit=>'A'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210908121909'
+,p_last_upd_yyyymmddhh24miss=>'20210915143743'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(17600327473220601)

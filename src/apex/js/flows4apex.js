@@ -644,7 +644,7 @@ function restartStep( action, element){
     options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
     sendToServer(data, options);
   } else {
-    openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
+    openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_TITLE_RESTART_STEP" );
   }
 }
 
@@ -658,7 +658,7 @@ function bulkRestartStep( action, element ){
     options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
     sendToServer(data, options);
   } else {
-    openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
+    openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_TITLE_RESTART_STEP" );
   }
 }
 

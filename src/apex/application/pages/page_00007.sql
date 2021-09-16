@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210913121635'
+,p_last_upd_yyyymmddhh24miss=>'20210916120936'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -205,7 +205,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(45089270532561391)
-,p_plug_name=>'Delete Diagram'
+,p_plug_name=>'Delete Model'
 ,p_region_name=>'delete_reg'
 ,p_region_template_options=>'#DEFAULT#:js-dialog-size600x400'
 ,p_plug_template=>wwv_flow_api.id(12495608896288880263)
@@ -388,12 +388,12 @@ wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(26091600150304603)
 ,p_button_sequence=>10
 ,p_button_plug_id=>wwv_flow_api.id(28425138174759832)
-,p_button_name=>'EDIT_FLOW'
+,p_button_name=>'MODIFY_DIAGRAM'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Edit Flow'
+,p_button_image_alt=>'Modify Diagram'
 ,p_button_position=>'REGION_TEMPLATE_EDIT'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -468,12 +468,13 @@ wwv_flow_api.create_page_branch(
 );
 wwv_flow_api.create_page_branch(
  p_id=>wwv_flow_api.id(34402504419171411)
+,p_branch_name=>'Go To Page 4'
 ,p_branch_action=>'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4:P4_DGRM_ID:&P7_DGRM_ID.&success_msg=#SUCCESS_MSG#'
 ,p_branch_point=>'BEFORE_COMPUTATION'
 ,p_branch_type=>'REDIRECT_URL'
 ,p_branch_sequence=>10
 ,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
-,p_branch_condition=>'EDIT_FLOW'
+,p_branch_condition=>'MODIFY_DIAGRAM'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(8026927386825638)
@@ -645,7 +646,20 @@ wwv_flow_api.create_page_computation(
 ,p_computation_item=>'FLOW_PAGE_TITLE'
 ,p_computation_point=>'AFTER_HEADER'
 ,p_computation_type=>'PLSQL_EXPRESSION'
-,p_computation=>'case when :P7_DGRM_ID is null then ''New Flow'' else :P7_DGRM_NAME||'' - Version ''||:P7_DGRM_VERSION end'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'case ',
+'    when :P7_DGRM_ID is null ',
+'    then ',
+'        apex_lang.message(',
+'            p_name => ''APP_TITLE_NEW_MODEL''',
+'        )',
+'    else ',
+'        apex_lang.message(',
+'              p_name => ''APP_TITLE_MODEL''',
+'            , p0 => :P7_DGRM_NAME',
+'            , p1 => :P7_DGRM_VERSION',
+'        )',
+'end'))
 );
 wwv_flow_api.create_page_computation(
  p_id=>wwv_flow_api.id(8027046376825639)
@@ -669,7 +683,7 @@ wwv_flow_api.create_page_validation(
 '    l_version_exists number;',
 'begin',
 '    if (:P7_NEW_VERSION is null) then',
-'        l_err := ''#LABEL# must have a value'';',
+'        l_err := apex_lang.message(p_name => ''APEX.PAGE_ITEM_IS_REQUIRED''); --''#LABEL# must have a value'';',
 '    else',
 '        select count(*)',
 '        into l_version_exists',
@@ -678,7 +692,7 @@ wwv_flow_api.create_page_validation(
 '        and dgrm_version = :P7_NEW_VERSION;',
 '        ',
 '        if (l_version_exists > 0) then',
-'            l_err := ''Version already exists.'';',
+'            l_err := apex_lang.message(p_name => ''APP_ERR_MODEL_VERSION_EXIST'');',
 '        end if;',
 '    end if;',
 '    return l_err;',
@@ -745,7 +759,7 @@ wwv_flow_api.create_page_da_action(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34402165369171407)
-,p_name=>'Click on Edit Flow'
+,p_name=>'Click on Modify Diagram'
 ,p_event_sequence=>50
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_api.id(26091600150304603)
@@ -762,7 +776,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SUBMIT_PAGE'
-,p_attribute_01=>'EDIT_FLOW'
+,p_attribute_01=>'MODIFY_DIAGRAM'
 ,p_attribute_02=>'Y'
 );
 wwv_flow_api.create_page_da_action(
@@ -772,7 +786,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'Your are about to modify a released diagram. That could possibly breaks running instances of that Flow. Do you want to continue?'
+,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_EDIT_RELEASE_DIAGRAM.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(34402353637171409)
@@ -781,7 +795,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>20
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SUBMIT_PAGE'
-,p_attribute_01=>'EDIT_FLOW'
+,p_attribute_01=>'MODIFY_DIAGRAM'
 ,p_attribute_02=>'Y'
 );
 wwv_flow_api.create_page_da_event(
@@ -819,7 +833,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_RELEASE_DIAGRAM.'
+,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_RELEASE_MODEL.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(34630686363575808)
@@ -847,7 +861,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_DEPRECATE_DIAGRAM.'
+,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_DEPRECATE_MODEL.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(34630931054575811)
@@ -875,7 +889,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_CONFIRM'
-,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_ARCHIVE_DIAGRAM.'
+,p_attribute_01=>'&APP_TEXT$APP_CONFIRM_ARCHIVE_MODEL.'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(8025291955825621)
@@ -920,6 +934,18 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'DELETE'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(26010056924877981)
 ,p_process_sequence=>10
@@ -929,6 +955,7 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'Initialize form Edit Diagram'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
+null;
 wwv_flow_api.component_end;
 end;
 /
