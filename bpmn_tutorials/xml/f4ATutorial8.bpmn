@@ -65,7 +65,9 @@ twitter: @FlowquestR</bpmn:documentation>
     <bpmn:sequenceFlow id='Flow_1tof406' name='Y' sourceRef='Gateway_1hvg7i1' targetRef='Event_1fqq9sr' />
     <bpmn:endEvent id='Event_1fqq9sr' name='Terminate Order'>
       <bpmn:incoming>Flow_1tof406</bpmn:incoming>
-      <bpmn:terminateEventDefinition id='TerminateEventDefinition_180cega' />
+      <bpmn:terminateEventDefinition id='TerminateEventDefinition_180cega'>
+        <apex:processStatus>terminated</apex:processStatus>
+      </bpmn:terminateEventDefinition>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id='Flow_10doy19' sourceRef='Activity_1r5snya' targetRef='Activity_0rghtfj' />
     <bpmn:sequenceFlow id='Flow_1071r1d' sourceRef='Activity_1btthx3' targetRef='Gateway_0ctvx3o' />
@@ -154,9 +156,11 @@ To prevent 2 users in the same lane working on the same task by accident, you ca
     </bpmn:textAnnotation>
     <bpmn:association id='Association_024tpq3' sourceRef='Activity_1fb79se' targetRef='TextAnnotation_0l49ruu' />
     <bpmn:textAnnotation id='TextAnnotation_1q7qdra'>
-      <bpmn:text>This is a Terminate End - which immediately ends the process
+      <bpmn:text>This is a Terminate End - which immediately ends the process if it is in the top level of the process.
 
-If inside a Sub-Process, it ends the sub Process and any embedded processes &amp; returns control to the parent process</bpmn:text>
+From v21.1, you can control whether you want the process to have a normal 'completed' status, or a 'terminated' status to highlight an abnormal end.  Set in the properties panel. --&gt;
+
+If it's inside a Sub-Process, it ends the sub Process and any embedded processes &amp; returns control to the parent process.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id='Association_18cs70j' sourceRef='Event_1fqq9sr' targetRef='TextAnnotation_1q7qdra' />
     <bpmn:textAnnotation id='TextAnnotation_1gr1e8a'>
@@ -366,7 +370,7 @@ Let us know if you need further help or support.</bpmn:text>
         <dc:Bounds x='560' y='120' width='915.0000610351562' height='110.00000762939453' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1q7qdra_di' bpmnElement='TextAnnotation_1q7qdra'>
-        <dc:Bounds x='1070' y='810' width='230' height='96' />
+        <dc:Bounds x='1070' y='810' width='570' height='105.00000762939453' />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id='TextAnnotation_1gr1e8a_di' bpmnElement='TextAnnotation_1gr1e8a'>
         <dc:Bounds x='1830' y='430' width='170' height='82' />
@@ -376,8 +380,8 @@ Let us know if you need further help or support.</bpmn:text>
         <di:waypoint x='560' y='228' />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id='Association_18cs70j_di' bpmnElement='Association_18cs70j'>
-        <di:waypoint x='1017' y='855' />
-        <di:waypoint x='1070' y='840' />
+        <di:waypoint x='1018' y='857' />
+        <di:waypoint x='1070' y='850' />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id='Association_1lsw1mc_di' bpmnElement='Association_1lsw1mc'>
         <di:waypoint x='1863' y='548' />

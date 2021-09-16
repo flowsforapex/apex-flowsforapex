@@ -193,5 +193,33 @@
         { "content_type": "plaintext", "path": "engine-app/", "name": "apex_error_handling.sql", "add_show_errors": false }
       ]
     }
+  , {
+      "base_path": "../../"
+    , "search_path": "bpmn_tutorials/"
+    , "build_type": "concat"
+    , "build_path": "src/apex/"
+    , "script_path": "src/apex/supportingObjects"
+    , "script_name": "Examples"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "sql/", "name": "installTut0.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut2.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut3.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut3A.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut4.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut5.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut6.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut7.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut8.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut9.sql", "add_show_errors": false }
+      ]
+    }
   ]
 }

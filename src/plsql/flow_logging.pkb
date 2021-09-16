@@ -6,6 +6,7 @@ as
 
   procedure log_instance_event
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
+  , p_objt_bpmn_id      in flow_objects.objt_bpmn_id%type default null
   , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
   , p_comment           in flow_instance_event_log.lgpr_comment%type default null
   , p_error_info        in flow_instance_event_log.lgpr_error_info%type default null
@@ -19,6 +20,7 @@ as
     then
       insert into flow_instance_event_log
       ( lgpr_prcs_id 
+      , lgpr_objt_id
       , lgpr_dgrm_id 
       , lgpr_prcs_name 
       , lgpr_business_id
@@ -29,15 +31,21 @@ as
       , lgpr_error_info
       )
       select prcs.prcs_id
+          , p_objt_bpmn_id
           , prcs.prcs_dgrm_id
           , prcs.prcs_name
           , flow_process_vars.get_business_ref (p_process_id)  --- 
           , p_event
           , systimestamp 
-          , coalesce ( sys_context('apex$session','app_user') 
-                      , sys_context('userenv','os_user')
-                      , sys_context('userenv','session_user')
-                      )  --- check this is complete
+          , case g_logging_hide_userid 
+            when 'true' then 
+              null
+            else 
+              coalesce  ( sys_context('apex$session','app_user') 
+                        , sys_context('userenv','os_user')
+                        , sys_context('userenv','session_user')
+                        )  
+            end 
           , p_comment
           , p_error_info
         from flow_processes prcs 
@@ -82,7 +90,7 @@ as
                           , flow_constants_pkg.gc_config_logging_level_full
                           ) 
     then
-      insert into flow_subflow_event_log
+      insert into flow_step_event_log
       ( lgsf_prcs_id 
       , lgsf_objt_id 
       , lgsf_sbfl_id 
@@ -108,10 +116,15 @@ as
            , sbfl.sbfl_work_started
            , systimestamp
            , sbfl.sbfl_reservation
-           , coalesce ( sys_context('apex$session','app_user') 
-                      , sys_context('userenv','os_user')
-                      , sys_context('userenv','session_user')
-                      )  --- check this is complete
+          , case g_logging_hide_userid 
+            when 'true' then 
+              null
+            else 
+              coalesce  ( sys_context('apex$session','app_user') 
+                        , sys_context('userenv','os_user')
+                        , sys_context('userenv','session_user')
+                        )  
+            end 
            , p_notes        
         from flow_subflows sbfl 
        where sbfl.sbfl_id = p_subflow_id
@@ -184,10 +197,11 @@ as
                        ( p_config_key => flow_constants_pkg.gc_config_logging_level
                        , p_default_value => flow_constants_pkg.gc_config_default_logging_level
                        );
-    g_logging_hide_userid := flow_engine_util.get_config_value
-                       ( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid 
-                       , p_default_value => flow_constants_pkg.gc_config_default_logging_hide_userid 
-                       );
+    g_logging_hide_userid := lower (flow_engine_util.get_config_value
+                                      ( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid 
+                                      , p_default_value => flow_constants_pkg.gc_config_default_logging_hide_userid 
+                                      )
+                                   );
   
     apex_debug.message ( p_message  => 'Logging level: %0'
                        , p0         => g_logging_level

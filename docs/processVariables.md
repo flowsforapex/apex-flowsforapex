@@ -6,13 +6,10 @@ Executing a process typically requires the process to have its own variable syst
 
 The Flows for APEX Process Variable system is a flexible, persistant process variable system that allows you to create and use variables for the lifetime of  your process instance.
 
-A process instance would typically need to know the identity of its subject - typically the primary key of the main object this process works on.
-
-*For example, an order handling process instance would typically need to have a unique identifier / primary key of the order that it is working on.  Each instance of the process would typically be working on a separate order.*
-
 All process variables are accessed through the setters and getters provided in the `flow_process_vars` package.
 
 The process variable system allows you to create process variables identified by an arbitrary name and the process_ID of their process instance.
+
 
 #### Data Types
 
@@ -23,13 +20,21 @@ Process variables are typed, and are based on Oracle datatypes.  Allowed types a
 - `date`
 - `clob`
 
+#### Built-In Variables
+
+Flows for APEX instances contains one built-in process variable that is created for every Instance.
+
+BUSINESS_REF:  A process instance typically needs to know the identity of its subject - typically the primary key of the main object this process works on. BUSINESS_REF should be used to contain the primary key of the subject data.
+
+*For example, an order handling process instance would typically need to have a unique identifier / primary key of the order that it is working on.  Each instance of the process would typically be working on a separate order.*
+
 ### Setting and Getting Process Variables.
 
 Process Variables can be accessed via the following interfaces:
 
 - via the flow_process_vars PL/SQL API, which allows you to set, get, and delete a process variable.
 - from an APEX application, using the Flows for APEX Process Variable Plugin (*manage-flow-instance-variables* ).
-- from a BPMN model, where steps in the model can set variables using declarative process variable expressions before and after each process step.
+- from a BPMN model, where each process step can set variables using [declarative process variable expressions](variableExpressions.md) defined in the Flow diagram, before and after the process step.
 
 #### The Process Variable PL/SQL API
 

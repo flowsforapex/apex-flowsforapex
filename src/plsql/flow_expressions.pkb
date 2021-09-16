@@ -253,15 +253,7 @@ as
                     into l_result_vc2;
         exception
         when no_data_found then
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_no_data'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
+          l_result_vc2 := null;
         when too_many_rows then
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
@@ -304,15 +296,7 @@ as
                     into l_result_date;
         exception
         when no_data_found then
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_no_data'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
+            l_result_date := null;
         when too_many_rows then
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
@@ -355,15 +339,7 @@ as
                     into l_result_num;
         exception
         when no_data_found then
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_no_data'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
+            l_result_num := null;
         when too_many_rows then
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
@@ -430,19 +406,7 @@ as
         bulk collect into  l_result_set_vc2;
     exception
     when no_data_found then
-        /*apex_error.add_error
-        ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'s.  No data found in query.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
-        flow_errors.handle_instance_error
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_message_key    => 'var_exp_sql_no_data'
-        , p0 => pi_prcs_id
-        , p1 => pi_expression.expr_var_name
-        , p2 => pi_expression.expr_set
-        );
-        -- $F4AMESSAGE 'var_exp_sql_no_data' || 'Error setting %2 process variable %1 in process id %0.  No data found in query.'
+          l_result_set_vc2 := null;
     when others then
         apex_debug.error
         ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'

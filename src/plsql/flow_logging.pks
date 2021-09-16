@@ -6,6 +6,7 @@ as
 
   procedure log_instance_event
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
+  , p_objt_bpmn_id      in flow_objects.objt_bpmn_id%type default null
   , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
   , p_comment           in flow_instance_event_log.lgpr_comment%type default null
   , p_error_info        in flow_instance_event_log.lgpr_error_info%type default null
