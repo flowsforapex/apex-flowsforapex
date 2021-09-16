@@ -24,7 +24,7 @@ wwv_flow_api.create_page(
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210910173204'
+,p_last_upd_yyyymmddhh24miss=>'20210916183706'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2444672040538201)
@@ -374,7 +374,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_display_sequence=>20
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'TABLE'
-,p_query_table=>'FLOW_P0013_SUBFLOW_LOG_VW'
+,p_query_table=>'FLOW_P0013_STEP_LOG_VW'
 ,p_query_where=>'lgsf_prcs_id = :P13_PRCS_ID and lgsf_objt_id = :P13_OBJT_ID'
 ,p_include_rowid_column=>false
 ,p_plug_source_type=>'NATIVE_IR'

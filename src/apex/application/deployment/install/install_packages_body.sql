@@ -898,7 +898,21 @@ wwv_flow_api.create_install_script(
 '	  -- check, if the index already exists',
 '	  begin',
 '	     l_objt_sub_tag_name := g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name;',
-'		 l_objt_obat_idx_exists := tru'))
+'		 l_objt_obat_idx_exists := true;',
+'	  exception',
+'	    when no_data_found then',
+'		 l_objt_obat_idx_exists := false;',
+'	  end;',
+'',
+'	  -- fill attributes record',
+'	  l_obat_rec.obat_key        := pi_obat_key;',
+'	  l_obat_rec.obat_num_value  := pi_obat_num_value;',
+'	  l_obat_rec.obat_date_value := pi_obat_date_value;',
+'	  l_obat_rec.obat_vc_value   := pi_obat_vc_value;',
+'	  l_obat_rec.obat_clob_value := pi_obat_clob_value;',
+'	  ',
+'      if not l_objt_obat_idx_exists then',
+'        g_obj_attribs(pi_objt_'))
 );
 wwv_flow_api.component_end;
 end;
@@ -915,21 +929,7 @@ wwv_flow_api.component_begin (
 wwv_flow_api.append_to_install_script(
  p_id=>wwv_flow_api.id(8807340970384277)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'e;',
-'	  exception',
-'	    when no_data_found then',
-'		 l_objt_obat_idx_exists := false;',
-'	  end;',
-'',
-'	  -- fill attributes record',
-'	  l_obat_rec.obat_key        := pi_obat_key;',
-'	  l_obat_rec.obat_num_value  := pi_obat_num_value;',
-'	  l_obat_rec.obat_date_value := pi_obat_date_value;',
-'	  l_obat_rec.obat_vc_value   := pi_obat_vc_value;',
-'	  l_obat_rec.obat_clob_value := pi_obat_clob_value;',
-'	  ',
-'      if not l_objt_obat_idx_exists then',
-'        g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name := pi_objt_sub_tag_name;',
+'bpmn_id).obat_sub_tag_name := pi_objt_sub_tag_name;',
 '		g_obj_attribs(pi_objt_bpmn_id).obat_tab(1) := l_obat_rec;',
 '	  else',
 '        l_obat_idx := coalesce(g_obj_attribs(pi_objt_bpmn_id).obat_tab.last,0);',
@@ -1711,25 +1711,7 @@ wwv_flow_api.append_to_install_script(
 '                         , default_conn       varchar2(50 char)  path ''@default''',
 '                         , attached_to        varchar2(50 char)  path ''@attachedToRef''',
 '                         , interrupting       varchar2(50 char)  path ''@cancelActivity''',
-'                         , child_elements     xmltype            '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'path ''* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements''',
+'                         , child_elements     xmltype            path ''* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements''',
 '                         , extension_elements xmltype            path ''bpmn:extensionElements''',
 '                       ) steps',
 '               )',
@@ -1766,7 +1748,25 @@ wwv_flow_api.append_to_install_script(
 '',
 '        register_object',
 '        (',
-'          pi_objt_bpmn_id        => rec.steps_id',
+'          pi_objt_bpmn_id   '))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'     => rec.steps_id',
 '        , pi_objt_name           => rec.steps_name',
 '        , pi_objt_tag_name       => rec.steps_type',
 '        , pi_objt_sub_tag_name   => l_objt_sub_tag_name',
@@ -2637,25 +2637,7 @@ wwv_flow_api.append_to_install_script(
 '    , ''Subflow'', p_subflow_id',
 '    );',
 '    --next step can be either end of process or sub-process returning to its parent',
-'    -- get parent'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-' subflow',
+'    -- get parent subflow',
 '    l_sbfl_id_par := flow_engine_util.get_subprocess_parent_subflow',
 '      ( p_process_id => p_process_id',
 '      , p_subflow_id => p_subflow_id',
@@ -2694,7 +2676,25 @@ wwv_flow_api.append_to_install_script(
 '      if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then',
 '        -- get desired process status after termination from model',
 '        begin',
-'          select coalesce(obat.obat_vc_value, flow_constants_pkg.gc_prcs_status_completed)',
+'          sel'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'ect coalesce(obat.obat_vc_value, flow_constants_pkg.gc_prcs_status_completed)',
 '            into l_process_end_status',
 '            from flow_object_attributes obat',
 '          where obat.obat_objt_id = p_step_info.target_objt_id',
@@ -3384,25 +3384,7 @@ wwv_flow_api.append_to_install_script(
 '    ( p_process_id => p_sbfl_rec.sbfl_prcs_id',
 '    , p_subflow_id => p_sbfl_rec.sbfl_id',
 '    , p_completed_object => p_sbfl_rec.sbfl_current',
-'  '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'  );',
+'    );',
 '  end if;',
 '  -- release subflow reservation',
 '  if p_sbfl_rec.sbfl_reservation is not null then',
@@ -3451,7 +3433,25 @@ wwv_flow_api.append_to_install_script(
 '      join flow_objects objt_source',
 '        on conn.conn_src_objt_id = objt_source.objt_id',
 '       and conn.conn_dgrm_id = objt_source.objt_dgrm_id',
-'      join flow_objects objt_target',
+'      join flow_objects objt'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'_target',
 '        on conn.conn_tgt_objt_id = objt_target.objt_id',
 '       and conn.conn_dgrm_id = objt_target.objt_dgrm_id',
 '--      join flow_processes prcs',
@@ -4240,25 +4240,7 @@ wwv_flow_api.append_to_install_script(
 '    , pi_sbfl_id => pi_sbfl_id',
 '    , pio_string => l_expression_text',
 '    );',
-'    case pi_expression.expr_v'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'ar_type ',
+'    case pi_expression.expr_var_type ',
 '    when flow_constants_pkg.gc_prov_var_type_varchar2 then',
 '        flow_process_vars.set_var ',
 '        ( pi_prcs_id        => pi_prcs_id',
@@ -4293,7 +4275,25 @@ wwv_flow_api.append_to_install_script(
 '        flow_process_vars.set_var ',
 '        ( pi_prcs_id        => pi_prcs_id',
 '        , pi_var_name       => pi_expression.expr_var_name',
-'        , pi_date_value     => to_date(l_expression_text, flow_constants_pkg.gc_prov_default_date_format)',
+'        , pi_date_value     => to_date(l_expression_text, flow_con'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'stants_pkg.gc_prov_default_date_format)',
 '        , pi_sbfl_id        => pi_sbfl_id',
 '        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id',
 '        , pi_expr_set       => pi_expression.expr_set',
@@ -4999,25 +4999,7 @@ wwv_flow_api.append_to_install_script(
 '    , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type',
 '    ) return varchar2',
 '  is',
-'    l_'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)',
+'    l_forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)',
 '    l_bad_routes        apex_application_global.vc_arr2;',
 '    l_bad_route_string  varchar2(2000) := '''';',
 '    l_num_bad_routes    number := 0;',
@@ -5049,7 +5031,25 @@ wwv_flow_api.append_to_install_script(
 '        end loop;',
 '        if l_num_bad_routes > 0 then',
 '            apex_error.add_error( p_message => ''Error routing process flow at ''||pi_objt_bpmn_id||''. Supplied variable ''||pi_objt_bpmn_id||'':route contains invalid route: ''||l_bad_route_string',
-'                         , p_display_location => apex_error.c_on_error_page) ;',
+'                         , p_display_location => apex_error.c_on_'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'error_page) ;',
 '        end if;',
 '      exception',
 '        when no_data_found then -- all routes good',
@@ -5768,25 +5768,7 @@ wwv_flow_api.append_to_install_script(
 '    ( pi_objt_id     => l_objt_id',
 '    , pi_set         => flow_constants_pkg.gc_expr_set_before_event',
 '    , pi_prcs_id     => p_process_id',
-'    , pi_sbfl_id     => l_main_su'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'bflow_id',
+'    , pi_sbfl_id     => l_main_subflow_id',
 '    );',
 '    -- commit the subflow creation',
 '    commit;',
@@ -5830,7 +5812,25 @@ wwv_flow_api.append_to_install_script(
 '    cursor c_lock_all is ',
 '        select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated',
 '          from flow_subflows sbfl',
-'          join flow_processes prcs',
+'          join flow_processe'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'s prcs',
 '            on prcs.prcs_id = sbfl.sbfl_prcs_id ',
 '          join flow_subflow_log sflg ',
 '            on prcs.prcs_id = sflg.sflg_prcs_id',
@@ -6752,25 +6752,7 @@ wwv_flow_api.append_to_install_script(
 '    apex_error.add_error',
 '    ( p_message => ''Process variable ''||pi_var_name||'' in process ''||pi_prcs_id||'' already locked by another user. Try to start your task later.''',
 '    , p_display_location => apex_error.c_on_error_page',
-'    )'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-';',
+'    );',
 'end delete_var;',
 '',
 '-- special cases / built-in standard variables',
@@ -6832,7 +6814,25 @@ wwv_flow_api.append_to_install_script(
 '      apex_string.grep',
 '      (',
 '        p_str           => pio_string',
-'      , p_pattern       => flow_constants_pkg.gc_substitution_pattern',
+'      , p_pattern   '))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'    => flow_constants_pkg.gc_substitution_pattern',
 '      , p_modifier      => ''i''',
 '      , p_subexpression => ''1''',
 '      )',
@@ -7618,25 +7618,7 @@ wwv_flow_api.append_to_install_script(
 '',
 '    l_start_pos_time  pls_integer;',
 '    l_token_count     pls_integer;',
-'    l_before_t        varcha'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'r2(200 char);',
+'    l_before_t        varchar2(200 char);',
 '    l_after_t         varchar2(200 char);',
 '    l_ym_part         varchar2(200 char);',
 '    l_ds_part         varchar2(200 char);',
@@ -7694,7 +7676,25 @@ wwv_flow_api.append_to_install_script(
 '    l_repeat_times        flow_timers.timr_repeat_times%type;',
 '',
 '    l_timer_type flow_object_attributes.obat_vc_value%type;',
-'    l_timer_def  flow_object_attributes.obat_vc_value%type;',
+'    l_timer_def  f'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'low_object_attributes.obat_vc_value%type;',
 '  begin',
 '    get_timer_definition',
 '    (',
@@ -8557,25 +8557,7 @@ wwv_flow_api.append_to_install_script(
 '  , pi_dgrm_category in flow_diagrams.dgrm_category%type',
 '  , pi_new_version   in flow_diagrams.dgrm_version%type',
 '  , pi_cascade       in varchar2',
-'  , pi_req'))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'uest       in varchar2',
+'  , pi_request       in varchar2',
 '  )',
 '  as',
 '    l_dgrm_category flow_diagrams.dgrm_category%type;',
@@ -8651,7 +8633,25 @@ wwv_flow_api.append_to_install_script(
 '           set dgrm_status = flow_constants_pkg.gc_dgrm_status_released',
 '         where dgrm_id = pio_dgrm_id',
 '        ;',
-'      when ''DEPRECATE'' then',
+'      when ''DEPRECA'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'TE'' then',
 '        update flow_diagrams',
 '           set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated',
 '         where dgrm_id = pio_dgrm_id',
@@ -9335,25 +9335,7 @@ wwv_flow_api.append_to_install_script(
 '                     , pi_var_name    => l_var_name',
 '                     , pi_clob_value  => l_process_variable.get_clob(''value'')',
 '                     );',
-'                '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'  else',
+'                  else',
 '                     raise e_incorrect_variable_type;',
 '               end case;',
 '            end loop;',
@@ -9426,7 +9408,25 @@ wwv_flow_api.append_to_install_script(
 '   is',
 '   begin',
 '      apex_debug.info(',
-'           p_message => '' > Process plug-in attributes''',
+'           p_message => '' > Proce'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'ss plug-in attributes''',
 '      );',
 '      apex_debug.info(',
 '           p_message => ''...Flow Instance & Subflow define by: %s''',
@@ -10111,25 +10111,7 @@ wwv_flow_api.append_to_install_script(
 '                          pi_prcs_id    => l_prcs_id',
 '                        , pi_var_name   => l_prcs_var_name',
 '                        , pi_date_value => l_process_variable.get_timestamp(''value'')',
-'        '))
-);
-null;
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.append_to_install_script(
- p_id=>wwv_flow_api.id(8807340970384277)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'                );',
+'                        );',
 '                     when ''get'' then',
 '                        apex_exec.execute_plsql(   ''begin',
 '                           :'' || l_item_name || '' :=  flow_process_vars.get_var_date(',
@@ -10180,7 +10162,25 @@ wwv_flow_api.append_to_install_script(
 '         -- Get APEX item(s) name(s)',
 '         l_split_items := apex_string.split(l_attribute7, '','');',
 '',
-'         --Raise exception if number of process variables is not the same of APEX items',
+'         --R'))
+);
+null;
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.append_to_install_script(
+ p_id=>wwv_flow_api.id(8807340970384277)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'aise exception if number of process variables is not the same of APEX items',
 '         if ( l_split_prcs_var.count() != l_split_items.count() ) then',
 '            raise e_var_config;',
 '         end if;',

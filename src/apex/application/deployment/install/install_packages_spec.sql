@@ -686,7 +686,14 @@ wwv_flow_api.create_install_script(
 '  ( p_process_id    in flow_processes.prcs_id%type',
 '  , p_subflow_id    in flow_subflows.sbfl_id%type',
 '  , p_sbfl_info     in flow_subflows%rowtype',
-'  , p_step_info     i'))
+'  , p_step_info     in flow_types_pkg.flow_step_info',
+'  );',
+'',
+' procedure process_eventBasedGateway',
+'  ( p_process_id in flow_processes.prcs_id%type',
+'  , p_subflow_id in flow_subflows.sbfl_id%type',
+'  , p_sbfl_info  in flow_subflows%rowtype',
+'  , p_step_info  in flow_types_pkg.flow_step_i'))
 );
 wwv_flow_api.component_end;
 end;
@@ -703,14 +710,7 @@ wwv_flow_api.component_begin (
 wwv_flow_api.append_to_install_script(
  p_id=>wwv_flow_api.id(8806949341382474)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'n flow_types_pkg.flow_step_info',
-'  );',
-'',
-' procedure process_eventBasedGateway',
-'  ( p_process_id in flow_processes.prcs_id%type',
-'  , p_subflow_id in flow_subflows.sbfl_id%type',
-'  , p_sbfl_info  in flow_subflows%rowtype',
-'  , p_step_info  in flow_types_pkg.flow_step_info',
+'nfo',
 '  );',
 '',
 'end flow_gateways;',
