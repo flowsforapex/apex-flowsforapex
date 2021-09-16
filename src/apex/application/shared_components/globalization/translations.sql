@@ -86,7 +86,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Gestion des flux'
+,p_translate_to_text=>unistr('Gestion des mod\00E8les')
 ,p_translate_from_text=>'Flow Management'
 );
 wwv_flow_api.create_translation(
@@ -125,7 +125,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Surveillance des flux'
+,p_translate_to_text=>'Surveillance des instances'
 ,p_translate_from_text=>'Flow Monitor'
 );
 wwv_flow_api.create_translation(
@@ -307,7 +307,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Surveillance des flux - &APP_NAME_TITLE.'
+,p_translate_to_text=>'Surveillance des instances - &APP_NAME_TITLE.'
 ,p_translate_from_text=>'Flow Monitor - &APP_NAME_TITLE.'
 );
 wwv_flow_api.create_translation(
@@ -333,7 +333,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Surveillance des flux - &APP_NAME_TITLE.'
+,p_translate_to_text=>'Surveillance des instances - &APP_NAME_TITLE.'
 ,p_translate_from_text=>'Flow Monitor - &APP_NAME_TITLE.'
 );
 wwv_flow_api.create_translation(
@@ -853,7 +853,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Create instance'
+,p_translate_to_text=>unistr('Cr\00E9er une instance')
 ,p_translate_from_text=>'Create instance'
 );
 wwv_flow_api.create_translation(
@@ -1541,8 +1541,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Le flux existe d\00E9j\00E0. Activez l''option de remplacement forc\00E9.')
-,p_translate_from_text=>'Flow already exists. Use force orverwrite.'
+,p_translate_to_text=>'Model already exists. Use force orverwrite.'
+,p_translate_from_text=>'Model already exists. Use force orverwrite.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9057342266000440)
@@ -1554,8 +1554,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'&APP_TEXT$APP_FLOW_COPIED.'
-,p_translate_from_text=>'&APP_TEXT$APP_FLOW_COPIED.'
+,p_translate_to_text=>'&APP_TEXT$APP_MODEL_COPIED.'
+,p_translate_from_text=>'&APP_TEXT$APP_MODEL_COPIED.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9057591653000441)
@@ -1580,8 +1580,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Flux import\00E9.')
-,p_translate_from_text=>'Flow imported.'
+,p_translate_to_text=>unistr('Mod\00E8le import\00E9.')
+,p_translate_from_text=>'Model imported.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9057986271000441)
@@ -1593,8 +1593,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Flux import\00E9.')
-,p_translate_from_text=>'Flow imported.'
+,p_translate_to_text=>unistr('Mod\00E8le import\00E9.')
+,p_translate_from_text=>'Model imported.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9058184675000441)
@@ -1645,7 +1645,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Action Menu'
+,p_translate_to_text=>'Menu d''action'
 ,p_translate_from_text=>'Action Menu'
 );
 wwv_flow_api.create_translation(
@@ -1658,7 +1658,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Copy Model'
+,p_translate_to_text=>unistr('Copie du mod\00E8le')
 ,p_translate_from_text=>'Copy Model'
 );
 wwv_flow_api.create_translation(
@@ -1671,7 +1671,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Gestion des flux'
+,p_translate_to_text=>unistr('Gestion des mod\00E8les')
 ,p_translate_from_text=>'Flow Management'
 );
 wwv_flow_api.create_translation(
@@ -1684,7 +1684,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Breadcrumb'
+,p_translate_to_text=>'Breadcrumb - fr'
 ,p_translate_from_text=>'Breadcrumb'
 );
 wwv_flow_api.create_translation(
@@ -1775,7 +1775,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Breadcrumb'
+,p_translate_to_text=>'Breadcrumb - fr'
 ,p_translate_from_text=>'Breadcrumb'
 );
 wwv_flow_api.create_translation(
@@ -1788,7 +1788,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Action Menu'
+,p_translate_to_text=>'Menu d''action'
 ,p_translate_from_text=>'Action Menu'
 );
 wwv_flow_api.create_translation(
@@ -1827,7 +1827,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Breadcrumb'
+,p_translate_to_text=>'Breadcrumb - fr'
 ,p_translate_from_text=>'Breadcrumb'
 );
 wwv_flow_api.create_translation(
@@ -1879,7 +1879,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Action Menu'
+,p_translate_to_text=>'Menu d''action'
 ,p_translate_from_text=>'Action Menu'
 );
 wwv_flow_api.create_translation(
@@ -1930,7 +1930,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Breadcrumb'
+,p_translate_to_text=>'Breadcrumb - fr'
 ,p_translate_from_text=>'Breadcrumb'
 );
 wwv_flow_api.create_translation(
@@ -1969,7 +1969,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Delete Model'
+,p_translate_to_text=>unistr('Suppression du mod\00E8le')
 ,p_translate_from_text=>'Delete Model'
 );
 wwv_flow_api.create_translation(
@@ -2008,7 +2008,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Breadcrumb'
+,p_translate_to_text=>'Breadcrumb - fr'
 ,p_translate_from_text=>'Breadcrumb'
 );
 wwv_flow_api.create_translation(
@@ -2099,7 +2099,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Action Menu'
+,p_translate_to_text=>'Menu d''action'
 ,p_translate_from_text=>'Action Menu'
 );
 wwv_flow_api.create_translation(
@@ -2294,7 +2294,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Action Menu'
+,p_translate_to_text=>'Menu d''action'
 ,p_translate_from_text=>'Action Menu'
 );
 wwv_flow_api.create_translation(
@@ -2333,7 +2333,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Breadcrumb'
+,p_translate_to_text=>'Breadcrumb - fr'
 ,p_translate_from_text=>'Breadcrumb'
 );
 wwv_flow_api.create_translation(
@@ -2359,7 +2359,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Buttons Container'
+,p_translate_to_text=>'Conteneur de boutons'
 ,p_translate_from_text=>'Buttons Container'
 );
 wwv_flow_api.create_translation(
@@ -2385,7 +2385,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Surveillance des flux (&P12_FLOW_NAME.)'
+,p_translate_to_text=>'Surveillance des instances (&P12_FLOW_NAME.)'
 ,p_translate_from_text=>'Flow Monitor (&P12_PRCS_NAME.)'
 );
 wwv_flow_api.create_translation(
@@ -3063,8 +3063,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\00C9diter le mod\00E8le')
-,p_translate_from_text=>'Edit Model'
+,p_translate_to_text=>unistr('Afficher les d\00E9tails du mod\00E8le')
+,p_translate_from_text=>'Show Model Details'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9079500369000483)
@@ -3243,8 +3243,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\00C9diter')
-,p_translate_from_text=>'Edit'
+,p_translate_to_text=>unistr('Afficher les d\00E9tails')
+,p_translate_from_text=>'Show Details'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9082552828000485)
@@ -3327,8 +3327,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\00C9diter le mod\00E8le')
-,p_translate_from_text=>'Edit Model'
+,p_translate_to_text=>unistr('Afficher les d\00E9tails du mod\00E8le')
+,p_translate_from_text=>'Show Model Details'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9083970377000486)
@@ -3567,7 +3567,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Gestion des flux'
+,p_translate_to_text=>unistr('Gestion des mod\00E8les')
 ,p_translate_from_text=>'Flow Management'
 );
 wwv_flow_api.create_translation(
@@ -3579,7 +3579,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Surveillance des flux'
+,p_translate_to_text=>'Surveillance des instances'
 ,p_translate_from_text=>'Flow Monitor'
 );
 wwv_flow_api.create_translation(
@@ -3799,7 +3799,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Gestion des flux'
+,p_translate_to_text=>unistr('Gestion des mod\00E8les')
 ,p_translate_from_text=>'Flow Management'
 );
 wwv_flow_api.create_translation(
@@ -3835,7 +3835,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Surveillance des flux'
+,p_translate_to_text=>'Surveillance des instances'
 ,p_translate_from_text=>'Flow Monitor'
 );
 wwv_flow_api.create_translation(
@@ -4341,7 +4341,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Gestion des flux'
+,p_translate_to_text=>unistr('Gestion des mod\00E8les')
 ,p_translate_from_text=>'Flow Management'
 );
 wwv_flow_api.create_translation(
@@ -5263,7 +5263,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Flow Category'
+,p_translate_to_text=>unistr('Cat\00E9gorie de flux')
 ,p_translate_from_text=>'Flow Category'
 );
 wwv_flow_api.create_translation(
@@ -6096,7 +6096,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('Ev\00E8nement')
+,p_translate_to_text=>unistr('\00C9v\00E9nement')
 ,p_translate_from_text=>'Event'
 );
 wwv_flow_api.create_translation(
@@ -10705,8 +10705,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_FLOW_IMPORTED"));'
-,p_translate_from_text=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_FLOW_IMPORTED"));'
+,p_translate_to_text=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_MODEL_IMPORTED"));'
+,p_translate_from_text=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_MODEL_IMPORTED"));'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9196974588001108)
@@ -15532,7 +15532,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'Y'
-,p_translate_to_text=>'Breadcrumb'
+,p_translate_to_text=>'Breadcrumb - fr'
 ,p_translate_from_text=>'Breadcrumb'
 );
 wwv_flow_api.create_translation(
@@ -15760,8 +15760,8 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li><strong>production</strong> (default) - prevents editing of diagram for released models</li>',
-'    <li><strong>development</strong> - allows editing of diagram for released models</li>',
+unistr('    <li><strong>production</strong> (default) - emp\00EAche l''\00E9dition du diagramme pour les mod\00E8les au statut released</li>'),
+unistr('    <li><strong>development</strong> - autorise l''\00E9dition du diagramme pour les mod\00E8les au statut released</li>'),
 '</ul>'))
 ,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
@@ -15880,23 +15880,23 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li>One Model: Import a single model by providing all the attributes</li>',
-'    <li>Multiple Models: Import several models by providing a zip file*</li>',
+unistr('    <li>Un mod\00E8le: Import d''un seul mod\00E8le en fournissant tous les attributs</li>'),
+unistr('    <li>Plusieurs mod\00E8les: Import de plusieurs mod\00E8les en utilisant un fichier zip*</li>'),
 '</ul>',
 '<p>',
-'    * The zip file must contain:',
+'    * Le fichier zip doit contenir:',
 '    <ul>',
-'        <li>The bpmn files to import</li>',
-'        <li>An import.json file which is an array of objects (see example below) with the following attributes:',
+unistr('        <li>Les fichiers bpmn \00E0 importer</li>'),
+'        <li>Un fichier import.json qui est un tableau d''objets (voir exemple ci dessous) dont les attributs sont les suivants :',
 '            <ul>',
-'                <li>dgrm_name: The model''s name</li>',
-'                <li>dgrm_version: The model''s version</li>',
-'                <li>dgrm_category: The model''s category</li>',
-'                <li>file: The name of the bpmn file in the archive</li>',
+unistr('                <li>dgrm_name: le nom du mod\00E8le</li>'),
+unistr('                <li>dgrm_version: la version du mod\00E8le</li>'),
+unistr('                <li>dgrm_category: la cat\00E9gorie du mod\00E8le</li>'),
+'                <li>file: le nom du fichier bpmn dans l''archive</li>',
 '            </ul>',
 '        </li>',
 '    </ul>',
-'Example of an import.json file with two models<br>',
+unistr('Exemple d''un fichier import.json contenant deux mod\00E8les<br>'),
 '<pre><code>[',
 '  {',
 '    "dgrm_name": "The Pizza Collaboration",',

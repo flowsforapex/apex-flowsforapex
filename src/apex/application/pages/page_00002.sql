@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915165801'
+,p_last_upd_yyyymmddhh24miss=>'20210916113151'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -689,7 +689,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_FLOW_IMPORTED"));'
+,p_attribute_01=>'apex.message.showPageSuccess(apex.lang.getMessage("APP_MODEL_IMPORTED"));'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(26091408686304601)
@@ -917,7 +917,7 @@ wwv_flow_api.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'COPY_MODEL'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
-,p_process_success_message=>'&APP_TEXT$APP_FLOW_COPIED.'
+,p_process_success_message=>'&APP_TEXT$APP_MODEL_COPIED.'
 );
 wwv_flow_api.component_end;
 end;

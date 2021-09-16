@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915165925'
+,p_last_upd_yyyymmddhh24miss=>'20210916113252'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -522,7 +522,7 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'P6_MODE'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_process_when2=>'single'
-,p_process_success_message=>'Flow imported.'
+,p_process_success_message=>'Model imported.'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(34633718670575839)
@@ -538,12 +538,12 @@ wwv_flow_api.create_page_process(
 '    );',
 'end;',
 ''))
-,p_process_error_message=>'Flow already exists. Use force orverwrite.'
+,p_process_error_message=>'Model already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MODE'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_process_when2=>'multiple'
-,p_process_success_message=>'Flow imported.'
+,p_process_success_message=>'Model imported.'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(19019994508332917)

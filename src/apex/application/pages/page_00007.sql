@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915170802'
+,p_last_upd_yyyymmddhh24miss=>'20210916120936'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -683,7 +683,7 @@ wwv_flow_api.create_page_validation(
 '    l_version_exists number;',
 'begin',
 '    if (:P7_NEW_VERSION is null) then',
-'        l_err := ''#LABEL# must have a value'';',
+'        l_err := apex_lang.message(p_name => ''APEX.PAGE_ITEM_IS_REQUIRED''); --''#LABEL# must have a value'';',
 '    else',
 '        select count(*)',
 '        into l_version_exists',
@@ -692,7 +692,7 @@ wwv_flow_api.create_page_validation(
 '        and dgrm_version = :P7_NEW_VERSION;',
 '        ',
 '        if (l_version_exists > 0) then',
-'            l_err := ''Version already exists.'';',
+'            l_err := apex_lang.message(p_name => ''APP_ERR_MODEL_VERSION_EXIST'');',
 '        end if;',
 '    end if;',
 '    return l_err;',
@@ -934,6 +934,18 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'DELETE'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(26010056924877981)
 ,p_process_sequence=>10
@@ -943,6 +955,7 @@ wwv_flow_api.create_page_process(
 ,p_process_name=>'Initialize form Edit Diagram'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
+null;
 wwv_flow_api.component_end;
 end;
 /
