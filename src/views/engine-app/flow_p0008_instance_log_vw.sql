@@ -18,5 +18,7 @@ as
        , lgpr.lgpr_user
        , lgpr.lgpr_comment
        , lgpr_error_info
+       , case when lgpr_error_info is not null then '<pre><code class="language-log">' end as pretag
+       , case when lgpr_error_info is not null then '</code></pre>' end as posttag
     from flow_instance_event_log lgpr
 with read only;

@@ -35,6 +35,13 @@ prompt --install
 @@application/shared_components/files/css_21_1_flows4apex_light_css.sql
 @@application/shared_components/files/css_21_1_flows4apex_light_min_css.sql
 @@application/shared_components/files/css_21_1_flows4apex_light_css_map.sql
+@@application/shared_components/files/lib_prismjs_css_prism_dark_css.sql
+@@application/shared_components/files/lib_prismjs_css_prism_css.sql
+@@application/shared_components/files/lib_prismjs_js_prism_js.sql
+@@application/shared_components/files/lib_prismjs_css_prism_min_css.sql
+@@application/shared_components/files/lib_prismjs_css_prism_css_map.sql
+@@application/shared_components/files/lib_prismjs_css_prism_dark_min_css.sql
+@@application/shared_components/files/lib_prismjs_css_prism_dark_css_map.sql
 @@application/shared_components/files/app_100_logo_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
@@ -59,6 +66,7 @@ prompt --install
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p5_download_as.sql
 @@application/shared_components/user_interface/lovs/p6_import_from.sql
+@@application/shared_components/user_interface/lovs/p6_multiple_files.sql
 @@application/shared_components/user_interface/lovs/p8_instance_connections_lov.sql
 @@application/shared_components/user_interface/lovs/p8_instance_gateways_lov.sql
 @@application/pages/page_groups.sql

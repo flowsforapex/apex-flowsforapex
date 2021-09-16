@@ -8,5 +8,7 @@ PROMPT >> -------------------------------------------
 PROMPT >> Remove obsolete objects
 drop view flow_p0010_subflows_vw;
 drop view flow_p0010_variables_vw;
+drop view flow_p0010_branches_vw;
+drop view flow_p0010_routes_vw;
 
 drop package flow_p0010_api;

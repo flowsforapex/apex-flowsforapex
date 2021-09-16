@@ -64,6 +64,11 @@ wwv_flow_api.create_flow_process(
 '            , p_directory => ''#APP_IMAGES#''||l_directory',
 '        );',
 '    end if;',
+'    ',
+'     APEX_CSS.ADD_FILE(',
+'            p_name => ''prism'' || case l_user_style when ''Vita - Dark'' then ''.dark'' end ||''#MIN#''',
+'            , p_directory => ''#APP_IMAGES#lib/prismjs/css/''',
+'        ); ',
 '',
 'end;'))
 );

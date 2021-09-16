@@ -94,7 +94,13 @@ function sendToServer(dataToSend, options = {}){
         }
         if ( options.refreshRegion !== undefined && options.refreshRegion.length > 0 ) {
           options.refreshRegion.forEach(function(name) {
-            apex.region(name).refresh();
+            if (apex.region(name).type === "InteractiveReport") {
+              var currentRowsPerPage = apex.jQuery("#" + name + "_ir").data().apexInteractiveReport.options.currentRowsPerPage;
+              var currentPage = apex.jQuery("#" + name +" .a-IRR-pagination-label").text().split('-')[0].trim();
+              apex.jQuery("#" + name + "_ir").data().apexInteractiveReport._paginate("pgR_min_row=" + currentPage + "max_rows=" + currentRowsPerPage + "rows_fetched=" + currentRowsPerPage );
+            } else {
+              apex.region(name).refresh();
+            }
           })
         }
         if ( data.url !== undefined && options.redirect !== false ){
@@ -617,14 +623,14 @@ function bulkDeleteProcessVariable(action){
 function completeStep( action, element ){
   var data = getSubflowData(action, element);
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
   sendToServer(data, options);
 }
 
 function bulkCompleteStep( action ){
   var data = getBulkSubflowData( action );
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor",, "process-variables"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
   sendToServer(data, options);
 }
 
@@ -635,7 +641,7 @@ function restartStep( action, element){
     data.x04 = getConfirmComment();
     var options = {};
     options.messageKey = "APP_SUBLFOW_RESTARTED";
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );
@@ -649,7 +655,7 @@ function bulkRestartStep( action, element ){
     data.x02 = getConfirmComment();
     
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_RESTART_STEP" );

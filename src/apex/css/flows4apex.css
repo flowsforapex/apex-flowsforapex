@@ -37,6 +37,10 @@ th#checkbox_col, td[headers*="checkbox_col"]{
    width: 10px !important;
 }
 
+.a-IRR-header {
+  vertical-align: inherit;
+}
+
 .a-IRR-headerLink{
    color: inherit !important;
 }
@@ -89,15 +93,23 @@ th#view-process, td[headers*="view-process"]{
 
 /* badges */
 
-.prcs_status_badge, .prcs_event_badge {
+.prcs_status_badge, .prcs_event_badge, .sbfl_status_badge {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 /* region display selector fix */
 
 .a-Tabs-panel{
   display: none;
+}
+
+/* fix for inline dialog in 21.1 */
+
+#instance_action_dialog div.t-Form-labelContainer.col-null {
+  height: 0;
+  padding: 0;
 }
 
 /* page 8 */
@@ -139,4 +151,9 @@ th#view-process, td[headers*="view-process"]{
 #variable_action_col .a-IRR-headerLabel {
 	padding-top: 8px;
 	padding-bottom: 8px;
+}
+
+/* Syntax highlight fix for IR */
+.a-IRR-table pre[class*="language-"] {
+	padding: 0px !important;
 }

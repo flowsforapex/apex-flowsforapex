@@ -1,10 +1,29 @@
-create or replace view flow_p0008_subflows_vw
+-- dev version of flow_p0008_subflows_debug_vw exposing all moving parts
+-- not installed by default
+create or replace view flow_p0008_subflows_debug_vw
 as
   select sbfl.sbfl_id
        , sbfl.sbfl_prcs_id
-       , sbfl.sbfl_current_name as sbfl_current
-       , sbfl.sbfl_starting_object_name as sbfl_starting_object
+       , sbfl.sbfl_process_name
+       , sbfl.sbfl_dgrm_id
+       , sbfl.sbfl_sbfl_dgrm_id
+       , sbfl.sbfl_dgrm_name
+       , sbfl.sbfl_dgrm_version
+       , sbfl.sbfl_dgrm_status
+       , sbfl.sbfl_dgrm_category
+       , sbfl.sbfl_route
+       , sbfl.sbfl_route_name
+       , sbfl.sbfl_last_completed
+       , sbfl.sbfl_last_completed_name
+       , sbfl.sbfl.sbfl_current
+       , sbfl.sbfl_current_name 
+       , sbfl.sbfl_current_tag_name
+       , sbfl.sbfl_starting_object
+       , sbfl.sbfl_starting_object_name 
        , sbfl.sbfl_last_update
+       , sbfl.sbfl_current_lane
+       , sbfl.sbfl_current_lane_name
+       , sbfl.sbfl_process_level
        , sbfl.sbfl_status
        , case sbfl.sbfl_status
              when 'running' then 'fa-play-circle-o'
@@ -18,7 +37,6 @@ as
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
          end as sbfl_status_icon
-       , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
        , null as actions   
        , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
