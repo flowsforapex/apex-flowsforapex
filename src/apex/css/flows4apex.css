@@ -91,6 +91,11 @@ th#view-process, td[headers*="view-process"]{
     width: 10px !important;
 }
 
+/* page 13*/
+.t-AVPList-label.ffa-highlight-label {
+	padding-top: 30px;
+}
+
 /* badges */
 
 .prcs_status_badge, .prcs_event_badge, .sbfl_status_badge {
@@ -154,6 +159,6 @@ th#view-process, td[headers*="view-process"]{
 }
 
 /* Syntax highlight fix for IR */
-.a-IRR-table pre[class*="language-"] {
-	padding: 0px !important;
+.a-IRR-table pre[class*="language-"], .t-AVPList-value pre[class*="language-"] {
+	padding: 1em 0 1em 0 !important;
 }

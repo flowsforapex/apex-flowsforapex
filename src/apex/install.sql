@@ -64,6 +64,8 @@ prompt --install
 @@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
+@@application/shared_components/user_interface/lovs/p13_object_attributes.sql
+@@application/shared_components/user_interface/lovs/p13_var_exp_typ.sql
 @@application/shared_components/user_interface/lovs/p5_download_as.sql
 @@application/shared_components/user_interface/lovs/p6_import_from.sql
 @@application/shared_components/user_interface/lovs/p6_mode.sql
