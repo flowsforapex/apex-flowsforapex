@@ -15,12 +15,14 @@ as
     ( pi_process_id     in flow_processes.prcs_id%type
     , pi_subflow_id     in flow_subflows.sbfl_id%type
     , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
+    , pi_objt_tag       in flow_objects.objt_tag_name%type
     ) return varchar2
   is
-    l_forward_route     varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
-    l_bad_routes        apex_application_global.vc_arr2;
-    l_bad_route_string  varchar2(2000) := '';
-    l_num_bad_routes    number := 0;
+    l_forward_route         varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
+    l_bad_routes            apex_application_global.vc_arr2;
+    l_bad_route_string      varchar2(2000) := '';
+    l_num_bad_routes        number := 0;
+    l_num_routes            number := 0;
   begin
     -- check if route is in process variable
     l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, pi_objt_bpmn_id||':route');
@@ -47,9 +49,24 @@ as
           l_num_bad_routes := l_num_bad_routes +1;
           l_bad_route_string := l_bad_route_string||bad_routes.bad_route||', ';
         end loop;
+
+        if pi_objt_tag = flow_constants_pkg.gc_bpmn_gateway_exclusive then
+          -- check only one route provided
+          select count(*) 
+            into l_num_routes  
+            from table(apex_string.split(l_forward_route,':')
+          );
+          if l_num_routes != 1 then
+            l_bad_route_string := l_forward_route;
+            raise flow_errors.e_gateway_invalid_route;
+          end if;
+        end if;
+
         if l_num_bad_routes > 0 then
-          /*apex_error.add_error( p_message => 'Error routing process flow at '||pi_objt_bpmn_id||'. Supplied variable '||pi_objt_bpmn_id||':route contains invalid route: '||l_bad_route_string
-                        , p_display_location => apex_error.c_on_error_page) ;*/
+          raise flow_errors.e_gateway_invalid_route;
+        end if;
+      exception
+        when flow_errors.e_gateway_invalid_route then
           flow_errors.handle_instance_error
           ( pi_prcs_id        => pi_process_id
           , pi_sbfl_id        => pi_subflow_id
@@ -59,8 +76,6 @@ as
           , p2 => l_bad_route_string
           );
           -- $F4AMESSAGE 'gateway-invalid-route' || 'Error at gateway %0. Supplied variable %1 contains invalid route: %2'  
-        end if;
-      exception
         when no_data_found then -- all routes good
           return l_forward_route
           ;
@@ -442,7 +457,12 @@ as
 
           case p_step_info.target_objt_tag
           when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
-            l_forward_routes := get_gateway_route(p_process_id, p_subflow_id, p_step_info.target_objt_ref);
+            l_forward_routes := get_gateway_route
+            ( pi_process_id     => p_process_id
+            , pi_subflow_id     => p_subflow_id
+            , pi_objt_bpmn_id   => p_step_info.target_objt_ref
+            , pi_objt_tag       => p_step_info.target_objt_tag
+            );
             apex_debug.info
             ( p_message => 'Forward routes for inclusiveGateway %0 : %1'
             , p0 => p_step_info.target_objt_ref
@@ -528,8 +548,16 @@ as
       , pi_prcs_id     => p_process_id
       , pi_sbfl_id     => p_subflow_id
       );
-      -- get choice
-      l_forward_route := get_gateway_route(p_process_id, p_subflow_id, p_step_info.target_objt_ref);
+      -- test for any errors so far - if so, skip finding a route
+      if not flow_globals.get_step_error then 
+        -- get route choice
+        l_forward_route := get_gateway_route
+        ( pi_process_id     => p_process_id
+        , pi_subflow_id     => p_subflow_id
+        , pi_objt_bpmn_id   => p_step_info.target_objt_ref
+        , pi_objt_tag       => p_step_info.target_objt_tag
+        );
+      end if;
     else 
       -- closing gateway 
       -- process any after-merge expression set
@@ -543,19 +571,28 @@ as
       l_forward_route := null;
     end if;  
 
-    update flow_subflows sbfl
-        set sbfl.sbfl_current = p_step_info.target_objt_ref
-            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-            , sbfl.sbfl_last_update = systimestamp
-            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-      where sbfl.sbfl_id = p_subflow_id
-        and sbfl.sbfl_prcs_id = p_process_id
-    ;  
-    flow_engine.flow_complete_step   
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_forward_route => l_forward_route
-    );
+    if not flow_globals.get_step_error then 
+      -- all good so step forward
+      update flow_subflows sbfl
+         set sbfl.sbfl_current = p_step_info.target_objt_ref
+           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+           , sbfl.sbfl_last_update = systimestamp
+           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+      ;  
+      flow_engine.flow_complete_step   
+      ( p_process_id    => p_process_id
+      , p_subflow_id    => p_subflow_id
+      , p_forward_route => l_forward_route
+      );
+    else        
+      -- has step errors from evaluating route
+      flow_errors.set_error_status
+      ( pi_prcs_id => p_process_id
+      , pi_sbfl_id => p_subflow_id
+      );
+    end if;
 
   end process_exclusiveGateway; 
 

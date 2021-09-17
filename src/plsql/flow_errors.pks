@@ -35,5 +35,7 @@ as
   , pi_sbfl_id        in flow_subflows.sbfl_id%type
   );
 
+   e_gateway_invalid_route exception;
+
 end flow_errors;
 /
