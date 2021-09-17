@@ -354,17 +354,17 @@ create or replace package body flow_plugin_manage_instance_step as
    exception 
       when e_no_gateway then
          apex_error.add_error( 
-              p_message => 'Gateway is not define for routing.'
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-route-not-define', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
       when e_gateway_not_exists then
          apex_error.add_error( 
-              p_message => 'Gateway define does not exists for this flow.'
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-gateway-not-exist', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
       when e_no_flow then
          apex_error.add_error( 
-              p_message => 'Unable to get Flow Instance Id and or subflow Id to manage the step.'
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-no-instance-subflow-id', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
    end execution;

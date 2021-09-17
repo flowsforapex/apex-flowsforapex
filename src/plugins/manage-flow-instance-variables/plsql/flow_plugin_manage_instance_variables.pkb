@@ -580,7 +580,7 @@ create or replace package body flow_plugin_manage_instance_variables as
    exception 
       when e_var_config then
          apex_error.add_error( 
-              p_message => 'Wrong number of APEX item(s) or process variable(s).'
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-wrong-variable-number', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
       when e_incorrect_variable_type then
@@ -589,24 +589,24 @@ create or replace package body flow_plugin_manage_instance_variables as
                p_message => '-- Flows4apex - Plug-in configuration issue, process variables JSON contains incorrect variable type.'
             );
          end if;
-         apex_error.add_error(
-              p_message           => 'Error during parsing process variables.'
-            , p_display_location  => apex_error.c_on_error_page
+         apex_error.add_error( 
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-parsing-json-variables', p_lang => apex_util.get_session_lang() )
+            , p_display_location => apex_error.c_on_error_page
          );
       when e_types_different then
-         apex_error.add_error(
-              p_message           => 'One or more process variable(s) are a different type than the one defined in the JSON.'
-            , p_display_location  => apex_error.c_on_error_page
+         apex_error.add_error( 
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-wrong-variable-type', p_lang => apex_util.get_session_lang() )
+            , p_display_location => apex_error.c_on_error_page
          );
       when e_invalid_number then
-         apex_error.add_error(
-              p_message           => apex_string.format( '%s is not a valid number.', l_json_element.stringify() )
-            , p_display_location  => apex_error.c_on_error_page
+         apex_error.add_error( 
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-variable-not-a-number', p_lang => apex_util.get_session_lang() )
+            , p_display_location => apex_error.c_on_error_page
          );
       when e_invalid_date then
-         apex_error.add_error(
-              p_message           => apex_string.format( '%s is not a valid date.', l_json_element.stringify() )
-            , p_display_location  => apex_error.c_on_error_page
+         apex_error.add_error( 
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-variable-not-a-date', p_lang => apex_util.get_session_lang() )
+            , p_display_location => apex_error.c_on_error_page
          );
    end execution;
 

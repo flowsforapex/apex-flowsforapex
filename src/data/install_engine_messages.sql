@@ -156,7 +156,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
-'plugin-modeler-id-not-dound',
+'plugin-modeler-id-not-found',
 'en',
 'No data found. Check if Diagram with given ID exists.'
 );
