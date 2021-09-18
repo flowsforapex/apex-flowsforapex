@@ -100,6 +100,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
+'logging-instance-event',
+'en',
+'Flows - Internal error logging %0 event'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
 'more_than_1_forward_path',
 'en',
 'More than 1 forward path found when only 1 allowed.'
@@ -131,6 +138,41 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'process-lock-timeout',
 'en',
 'Process objects for %0 currently locked by another user.  Try again later.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-already-placed',
+'en',
+'Reservation already placed on next task for you.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-by-other_user',
+'en',
+'Reservation for %0 unsuccessful.  Step already reserved by another user (%1).'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-failed-not-found',
+'en',
+'Reservation for %2 unsuccessful.  Subflow %0 in Process %1 not found.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-lock-timeout',
+'en',
+'Subflow currently locked (not reserved) by another user.  Try your reservation again later.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-release-not-found',
+'en',
+'Reservation release unsuccessful.  Subflow %0 in Process %1 not found.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -212,9 +254,51 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
-'timer_broken',
+'timer-broken',
 'en',
 'Timer %0 broken in process %1 , subflow : %2.  See error_info.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-cycle-unsupported',
+'en',
+'Cycle Timer defined for object %0 not currently supported.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-incomplete-definition',
+'en',
+'Incomplete timer definitions for object %0. Type: %1; Value: %2'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-lock-timeout',
+'en',
+'Timer for subflow %0 currently locked by another user.  Try again later.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-object-not-found',
+'en',
+'Object with timer not found in get_timer_definition. Subflow %0.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timers-lock-timeout',
+'en',
+'Timers for process %0 currently locked by another user.  Try again later.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-set-error',
+'en',
+'Error %0 process variable %1 for process id %1.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -281,9 +365,3 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 );
  
  
- 
-commit;
-
-
-PL/SQL procedure successfully completed.
-

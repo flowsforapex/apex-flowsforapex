@@ -51,10 +51,15 @@ as
     end if;
   exception
     when others then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Flows - Internal error logging instance event'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_general_error
+      ( pi_message_key => 'logging-instance-event'
+      , p0 => 'instance'
       );
+      -- $F4AMESSAGE 'logging-instance-event' || 'Flows - Internal error logging %0 event'
       raise;
   end log_instance_event;
 
@@ -129,10 +134,15 @@ as
     end if;
   exception
     when others then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Flows - Internal error logging step completion'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_general_error
+      ( pi_message_key => 'logging-instance-event'
+      , p0 => 'step'
       );
+      -- $F4AMESSAGE 'logging-instance-event' || 'Flows - Internal error logging %0 event'
       raise;
   end log_step_completion;
 
@@ -180,10 +190,15 @@ as
     end if;
   exception
     when others then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Flows - Internal error logging step completion'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_general_error
+      ( pi_message_key => 'logging-instance-event'
+      , p0 => 'variable'
       );
+      -- $F4AMESSAGE 'logging-instance-event' || 'Flows - Internal error logging %0 event'
       raise;
   end log_variable_event;
 
