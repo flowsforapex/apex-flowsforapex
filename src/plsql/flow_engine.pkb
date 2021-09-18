@@ -706,12 +706,21 @@ begin
   , pi_prcs_id      => p_process_id
   , pi_sbfl_id      => p_subflow_id
   );
-  -- move onto next step
-  flow_complete_step 
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_forward_route => null
-  );
+  -- test for any errors so far 
+  if flow_globals.get_step_error then 
+    -- has step errors from expressions
+    flow_errors.set_error_status
+    ( pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    );
+  else
+    -- move onto next step
+    flow_complete_step 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_forward_route => null
+    );
+  end if;  
 end handle_intermediate_catch_event;
 
 procedure flow_handle_event
@@ -743,6 +752,10 @@ begin
   , pi_sbfl_id => p_subflow_id
   );
   flow_globals.set_is_recursive_step (p_is_recursive_step => true);
+  -- initialise step_had_error flag
+  flow_globals.set_step_error ( p_has_error => false);
+
+
   -- lock subflow containing event
   if flow_engine_util.lock_subflow(p_subflow_id) then
     -- subflow_locked

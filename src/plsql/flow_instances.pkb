@@ -61,13 +61,17 @@ as
     l_main_subflow_id       flow_subflows.sbfl_id%type;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
   begin
-      -- l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
     apex_debug.enter
     ('start_process'
     , 'Process_ID', p_process_id 
     );
     -- check process exists, is not running, and lock it
     begin
+
+      flow_globals.set_is_recursive_step (p_is_recursive_step => false);
+      -- initialise step_had_error flag
+      flow_globals.set_step_error ( p_has_error => false);
+
       select prcs.prcs_status
            , prcs.prcs_dgrm_id
         into l_process_status
@@ -77,22 +81,25 @@ as
       for update wait 2
       ;
       if l_process_status != 'created' then
-        apex_error.add_error
-        ( p_message => 'You tried to start a process that is already running'
-        , p_display_location => apex_error.c_on_error_page
-        );  
+        flow_errors.handle_general_error
+        ( pi_message_key => 'start-already-running'
+        , p0 => p_process_id
+        );
+        -- $F4AMESSAGE 'start-already-running' || 'You tried to start a process (id %0) that is already running.'
       end if;
     exception
       when no_data_found then
-        apex_error.add_error
-        ( p_message => 'You tried to start a non-existant process.'
-        , p_display_location => apex_error.c_on_error_page
-        );  
+        flow_errors.handle_general_error
+        ( pi_message_key => 'start-not-created'
+        , p0 => p_process_id
+        );
+        -- $F4AMESSAGE 'start-not-created' || 'You tried to start a process (id %0) that does not exist.' 
       when too_many_rows then
-        apex_error.add_error
-        ( p_message => 'Multiple copies of the process already running'
-        , p_display_location => apex_error.c_on_error_page
-        );  
+        flow_errors.handle_general_error
+        ( pi_message_key => 'start-multiple-already-running'
+        , p0 => p_process_id
+        );
+        -- $F4AMESSAGE 'start-multiple-already-running' || 'You tried to start a process (id %0) with multiple copies already running.' 
     end;
     begin
       -- get the starting object 
@@ -112,15 +119,17 @@ as
       ;
     exception
       when too_many_rows then
-        apex_error.add_error
-        ( p_message => 'You have multiple starting events defined. Make sure your diagram has only one starting event.'
-        , p_display_location => apex_error.c_on_error_page
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-multiple-start-events'
         );
+        -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
       when no_data_found then
-        apex_error.add_error
-        ( p_message => 'No starting event was defined.'
-        , p_display_location => apex_error.c_on_error_page
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-no-start-event'
         );
+        -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
     end;
     apex_debug.info
     ( p_message => 'Found starting object %0'
@@ -138,7 +147,7 @@ as
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_started
     );
-    -- check if start has a timer?  
+    -- create the status for new subflow based on start subtype 
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
       l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
     else
@@ -162,25 +171,25 @@ as
     ( p_message => 'Initial Subflow created %0'
     , p0 => l_main_subflow_id
     );
-    -- process any variable expressions on the starting object
-    flow_expressions.process_expressions
-    ( pi_objt_id     => l_objt_id
-    , pi_set         => flow_constants_pkg.gc_expr_set_before_event
-    , pi_prcs_id     => p_process_id
-    , pi_sbfl_id     => l_main_subflow_id
-    );
-    -- commit the subflow creation
-    commit;
-    -- check startEvent sub type for timer or (later releases) other sub types
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
-      -- eventStart must be delayed with the timer 
-      flow_timers_pkg.start_timer
-      (
-        pi_prcs_id => p_process_id
-      , pi_sbfl_id => l_main_subflow_id
+      -- process any before-event variable expressions on the starting object
+      flow_expressions.process_expressions
+      ( pi_objt_id     => l_objt_id
+      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+      , pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_main_subflow_id
       );
+      -- test for any step errors
+      if not flow_globals.get_step_error then 
+        flow_timers_pkg.start_timer
+        (
+          pi_prcs_id => p_process_id
+        , pi_sbfl_id => l_main_subflow_id
+        ); 
+      end if;       
+
     elsif l_objt_sub_tag_name is null then
-      -- plain startEvent
+      -- plain (none) startEvent
       -- process any variable expressions on the starting object
       flow_expressions.process_expressions
       ( pi_objt_id     => l_objt_id
@@ -188,18 +197,27 @@ as
       , pi_prcs_id     => p_process_id
       , pi_sbfl_id     => l_main_subflow_id
       );
+
+      if not flow_globals.get_step_error then 
         -- step into first step
-      flow_engine.flow_complete_step  
-      ( p_process_id => p_process_id
-      , p_subflow_id => l_main_subflow_id
-      , p_forward_route => null
-      );
+        flow_engine.flow_complete_step  
+        ( p_process_id => p_process_id
+        , p_subflow_id => l_main_subflow_id
+        , p_forward_route => null
+        , p_recursive_call => false
+        );
+      end if;
     else 
-      apex_error.add_error
-      ( p_message => 'You have an unsupported starting event type. Only None (standard) Start Event and Timer Start Event are currently supported.'
-      , p_display_location => apex_error.c_on_error_page
+      -- note that this path doesn't curretly get exercised (v21.1) because only the timer subType tag gets parsed...
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => l_main_subflow_id
+      , pi_message_key    => 'start-type-unsupported'
+      , p0 => l_objt_sub_tag_name       
       );
+      -- $F4AMESSAGE 'start-type-unsupported' || 'Unsupported start event type (%0). Only None (standard) Start Event and Timer Start Event are currently supported.'
     end if;
+
   end start_process;
 
   procedure reset_process
@@ -233,13 +251,19 @@ as
       close c_lock_all;
     exception 
       when lock_timeout then
-      apex_error.add_error
-      ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try to reset later.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+        /*apex_error.add_error
+        ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try to reset later.'
+        , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'process-lock-timeout'
+        , p0 => p_process_id          
+        );
+        -- $F4AMESSAGE 'process-lock-timeout' || 'Process objects for %0 currently locked by another user.  Try again later.'
     end;
 
-    -- kill any timers sill running in the process
+    -- kill any timers still running in the process
     flow_timers_pkg.terminate_process_timers
     ( pi_prcs_id => p_process_id
     , po_return_code => l_return_code
@@ -310,10 +334,16 @@ as
 
     exception 
       when lock_timeout then
-        apex_error.add_error
+        /*apex_error.add_error
         ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try again later.'
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'process-lock-timeout'
+        , p0 => p_process_id          
         );
+        -- $F4AMESSAGE 'process-lock-timeout' || 'Process objects for %0 currently locked by another user.  Try again later.'
     end;
 
     -- kill any timers sill running in the process
@@ -379,10 +409,16 @@ as
 
     exception 
       when lock_timeout then
-        apex_error.add_error
+        /*apex_error.add_error
         ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try again later.'
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'process-lock-timeout'
+        , p0 => p_process_id          
         );
+        -- $F4AMESSAGE 'process-lock-timeout' || 'Process objects for %0 currently locked by another user.  Try again later.'
     end;
     -- log the deletion before process data deleted
     flow_logging.log_instance_event

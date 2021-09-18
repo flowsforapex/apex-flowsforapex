@@ -427,6 +427,11 @@ as
     l_timer_type flow_object_attributes.obat_vc_value%type;
     l_timer_def  flow_object_attributes.obat_vc_value%type;
   begin
+    apex_debug.enter 
+    ( 'start_timer'
+    , 'prcs_id', pi_prcs_id
+    , 'sbfl_id', pi_sbfl_id
+    );
     get_timer_definition
     (
       pi_prcs_id    => pi_prcs_id
