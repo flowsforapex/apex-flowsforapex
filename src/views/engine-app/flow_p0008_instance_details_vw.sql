@@ -3,7 +3,8 @@ as
   select 
        prcs_id,
        prcs_name,
-       dgrm_name || ' - Version ' || dgrm_version as flow_diagram,
+       dgrm_name,
+       dgrm_version,
        prcs_status as status,
        prcs_init_ts as initialized_on,
        prcs_last_update as last_update_on,

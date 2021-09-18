@@ -24,7 +24,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210916182540'
+,p_last_upd_yyyymmddhh24miss=>'20210918151808'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -113,15 +113,18 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(8023653162825605)
 ,p_query_column_id=>1
 ,p_column_alias=>'PRCS_ID'
-,p_column_display_sequence=>7
-,p_hidden_column=>'Y'
+,p_column_display_sequence=>1
+,p_column_heading=>'ID'
+,p_use_as_row_header=>'N'
+,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
+,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(8023758985825606)
 ,p_query_column_id=>2
 ,p_column_alias=>'PRCS_NAME'
-,p_column_display_sequence=>1
+,p_column_display_sequence=>2
 ,p_column_heading=>'Name'
 ,p_use_as_row_header=>'N'
 ,p_disable_sort_column=>'N'
@@ -129,21 +132,30 @@ wwv_flow_api.create_report_columns(
 ,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(5683820665037038)
+ p_id=>wwv_flow_api.id(15355984569942507)
 ,p_query_column_id=>3
-,p_column_alias=>'FLOW_DIAGRAM'
-,p_column_display_sequence=>2
-,p_column_heading=>'Flow Diagram'
+,p_column_alias=>'DGRM_NAME'
+,p_column_display_sequence=>3
+,p_column_heading=>'Model'
 ,p_use_as_row_header=>'N'
+,p_column_html_expression=>'#DGRM_NAME# - Version #DGRM_VERSION#'
 ,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(5683966799037039)
+ p_id=>wwv_flow_api.id(15356093907942508)
 ,p_query_column_id=>4
+,p_column_alias=>'DGRM_VERSION'
+,p_column_display_sequence=>4
+,p_hidden_column=>'Y'
+,p_derived_column=>'N'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(5683966799037039)
+,p_query_column_id=>5
 ,p_column_alias=>'STATUS'
-,p_column_display_sequence=>3
+,p_column_display_sequence=>5
 ,p_column_heading=>'Status'
 ,p_use_as_row_header=>'N'
 ,p_disable_sort_column=>'N'
@@ -152,9 +164,9 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(5684069475037040)
-,p_query_column_id=>5
+,p_query_column_id=>6
 ,p_column_alias=>'INITIALIZED_ON'
-,p_column_display_sequence=>4
+,p_column_display_sequence=>6
 ,p_column_heading=>'Initialized On'
 ,p_use_as_row_header=>'N'
 ,p_disable_sort_column=>'N'
@@ -163,9 +175,9 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(5684163968037041)
-,p_query_column_id=>6
+,p_query_column_id=>7
 ,p_column_alias=>'LAST_UPDATE_ON'
-,p_column_display_sequence=>5
+,p_column_display_sequence=>7
 ,p_column_heading=>'Last Update On'
 ,p_use_as_row_header=>'N'
 ,p_disable_sort_column=>'N'
@@ -174,7 +186,7 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(5684296657037042)
-,p_query_column_id=>7
+,p_query_column_id=>8
 ,p_column_alias=>'BUSINESS_REFERENCE'
 ,p_column_display_sequence=>8
 ,p_column_heading=>'Business Reference'
@@ -1385,6 +1397,7 @@ wwv_flow_api.create_page_item(
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_warn_on_unsaved_changes=>'I'
+,p_inline_help_text=>'If you leave this field empty, the reservation will be made for the logged-in user (APP_USER)'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'

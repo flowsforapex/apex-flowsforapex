@@ -705,7 +705,7 @@ function bulkReserveStep( action ){
 function releaseStep( action, element ){
   apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
     if( okPressed ) {
-      var data = getSubflowData( action );
+      var data = getSubflowData(action, element);
       
       var options = {};
       options.refreshRegion = ["subflows"];
@@ -717,7 +717,7 @@ function releaseStep( action, element ){
 function bulkReleaseStep( action ){
   apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
     if( okPressed ) {
-      var data = getBulkSubflowData( action );
+      var data = getBulkSubflowData(action);
       
       var options = {};
       options.refreshRegion = ["subflows"];

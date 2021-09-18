@@ -159,6 +159,6 @@ th#view-process, td[headers*="view-process"]{
 }
 
 /* Syntax highlight fix for IR */
-.a-IRR-table pre[class*="language-"], .t-AVPList-value pre[class*="language-"] {
+.a-IRR-table pre[class*="language-"] {
 	padding: 1em 0 1em 0 !important;
 }

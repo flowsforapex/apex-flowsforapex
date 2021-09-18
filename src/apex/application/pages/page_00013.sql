@@ -28,7 +28,7 @@ wwv_flow_api.create_page(
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210917113202'
+,p_last_upd_yyyymmddhh24miss=>'20210918145904'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -107,6 +107,8 @@ wwv_flow_api.create_report_columns(
 ,p_column_heading=>'Execution'
 ,p_use_as_row_header=>'N'
 ,p_heading_alignment=>'LEFT'
+,p_display_as=>'TEXT_FROM_LOV_ESC'
+,p_named_lov=>wwv_flow_api.id(15901843917364053)
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
