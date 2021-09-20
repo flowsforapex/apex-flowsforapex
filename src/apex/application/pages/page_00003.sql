@@ -20,8 +20,8 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'initPage3();'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210917112322'
+,p_last_updated_by=>'SHAKEEB.RAHMAN@ORACLE.COM'
+,p_last_upd_yyyymmddhh24miss=>'20210920034255'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(34404686490171432)
@@ -30,7 +30,7 @@ wwv_flow_api.create_report_region(
 ,p_template=>wwv_flow_api.id(12495582446800880234)
 ,p_display_sequence=>20
 ,p_include_in_reg_disp_sel_yn=>'Y'
-,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#:t-BadgeList--large:t-BadgeList--dash:t-BadgeList--cols t-BadgeList--5cols:t-Report--hideNoPagination'
 ,p_display_point=>'BODY'
 ,p_source_type=>'NATIVE_SQL_REPORT'

@@ -19,8 +19,8 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Getting Started - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210816051839'
+,p_last_updated_by=>'SHAKEEB.RAHMAN@ORACLE.COM'
+,p_last_upd_yyyymmddhh24miss=>'20210920041603'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603774502745437)
@@ -54,6 +54,18 @@ wwv_flow_api.create_page_plug(
 '<h4>Demo App</h4>',
 '<p>Take a look at our <a href="https://apex.oracle.com/pls/apex/mtflows/r/flowsforapexdemo" target="_blank">demo application</a> to see how the integration of a flow can be done.<br />',
 'This uses an example Business Process of the ordering and fulfillment process for a webstore selling T Shirts.'))
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(16518361588787101)
+,p_plug_name=>'Getting Started'
+,p_region_template_options=>'#DEFAULT#:t-HeroRegion--hideIcon'
+,p_plug_template=>wwv_flow_api.id(12495589722092880240)
+,p_plug_display_sequence=>20
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_01'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'

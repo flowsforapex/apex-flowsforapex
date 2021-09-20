@@ -19,10 +19,15 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flow Monitor - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'initPage10();'
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'/* Adjust width of IRR Settings to be auto */',
+'.a-IRR-controls-cell--label {',
+'    width: auto;',
+'}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210917102830'
+,p_last_updated_by=>'SHAKEEB.RAHMAN@ORACLE.COM'
+,p_last_upd_yyyymmddhh24miss=>'20210920041405'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -72,7 +77,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_name=>'Flow Viewer'
 ,p_region_name=>'flow-monitor'
 ,p_region_css_classes=>'js-react-on-prcs'
-,p_region_template_options=>'#DEFAULT#:js-showMaximizeButton:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:js-showMaximizeButton:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>30
 ,p_include_in_reg_disp_sel_yn=>'Y'
@@ -98,7 +103,7 @@ wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12493545854579486121)
 ,p_plug_name=>'Flow Instances'
 ,p_region_name=>'flow-instances'
-,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>10
 ,p_plug_display_point=>'BODY'

@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage7();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210916120936'
+,p_last_updated_by=>'SHAKEEB.RAHMAN@ORACLE.COM'
+,p_last_upd_yyyymmddhh24miss=>'20210920040940'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -46,7 +46,7 @@ wwv_flow_api.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>10
-,p_plug_grid_column_span=>9
+,p_plug_grid_column_span=>8
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'TABLE'
 ,p_query_table=>'FLOW_DIAGRAMS'
@@ -60,7 +60,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(28425138174759832)
 ,p_plug_name=>'Flow Viewer'
-,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>40
 ,p_plug_display_point=>'BODY'
@@ -298,7 +298,7 @@ wwv_flow_api.create_page_button(
 ,p_icon_css_classes=>'fa-arrow-circle-o-up'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
-,p_grid_column_span=>2
+,p_grid_column_span=>3
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(24215607769956140)
@@ -317,7 +317,7 @@ wwv_flow_api.create_page_button(
 ,p_icon_css_classes=>'fa-ban'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
-,p_grid_column_span=>2
+,p_grid_column_span=>3
 ,p_database_action=>'UPDATE'
 );
 wwv_flow_api.create_page_button(
@@ -336,8 +336,7 @@ wwv_flow_api.create_page_button(
 ,p_button_condition_type=>'PLSQL_EXPRESSION'
 ,p_icon_css_classes=>'fa-check'
 ,p_grid_new_row=>'N'
-,p_grid_new_column=>'Y'
-,p_grid_column_span=>2
+,p_grid_new_column=>'N'
 ,p_database_action=>'UPDATE'
 );
 wwv_flow_api.create_page_button(
@@ -356,8 +355,7 @@ wwv_flow_api.create_page_button(
 ,p_button_condition_type=>'PLSQL_EXPRESSION'
 ,p_icon_css_classes=>'fa-archive'
 ,p_grid_new_row=>'N'
-,p_grid_new_column=>'Y'
-,p_grid_column_span=>2
+,p_grid_new_column=>'N'
 ,p_database_action=>'UPDATE'
 );
 wwv_flow_api.create_page_button(
@@ -576,7 +574,6 @@ wwv_flow_api.create_page_item(
 ,p_source=>'DGRM_STATUS'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_colspan=>10
 ,p_display_when=>'P7_DGRM_ID'
 ,p_display_when_type=>'ITEM_IS_NOT_NULL'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)

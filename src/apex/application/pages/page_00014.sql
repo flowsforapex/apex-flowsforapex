@@ -20,16 +20,16 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_file_urls=>'#APP_IMAGES#lib/prismjs/js/prism.js'
 ,p_javascript_code_onload=>'apex.util.getTopApex().jQuery(".f4a-dynamic-title .ui-dialog-content").dialog("option", "title", $v("P14_TITLE"));'
-,p_page_template_options=>'#DEFAULT#'
+,p_page_template_options=>'#DEFAULT#:t-Dialog--noPadding'
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210916221147'
+,p_last_updated_by=>'SHAKEEB.RAHMAN@ORACLE.COM'
+,p_last_upd_yyyymmddhh24miss=>'20210920040613'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2447308339538228)
 ,p_plug_name=>'Completed Steps'
-,p_region_template_options=>'#DEFAULT#'
+,p_region_template_options=>'#DEFAULT#:margin-bottom-none'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>50
 ,p_include_in_reg_disp_sel_yn=>'Y'
@@ -207,7 +207,7 @@ wwv_flow_api.create_worksheet_rpt(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7332140854307003)
 ,p_plug_name=>'Variable History'
-,p_region_template_options=>'#DEFAULT#'
+,p_region_template_options=>'#DEFAULT#:margin-bottom-none'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>60
@@ -347,7 +347,7 @@ wwv_flow_api.create_worksheet_rpt(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(16453181626752830)
 ,p_plug_name=>'Current Steps'
-,p_region_template_options=>'#DEFAULT#'
+,p_region_template_options=>'#DEFAULT#:margin-bottom-none'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>40
 ,p_include_in_reg_disp_sel_yn=>'Y'
@@ -512,7 +512,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_template=>wwv_flow_api.id(12495575615770880223)
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
-,p_plug_display_point=>'BODY'
+,p_plug_display_point=>'REGION_POSITION_01'
 ,p_plug_source_type=>'NATIVE_DISPLAY_SELECTOR'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'STANDARD'
@@ -522,7 +522,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(20683667255713697)
 ,p_plug_name=>'Instance Events'
-,p_region_template_options=>'#DEFAULT#'
+,p_region_template_options=>'#DEFAULT#:margin-bottom-none'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>30
 ,p_include_in_reg_disp_sel_yn=>'Y'

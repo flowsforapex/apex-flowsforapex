@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210916113151'
+,p_last_upd_yyyymmddhh24miss=>'20210920084330'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -631,7 +631,7 @@ wwv_flow_api.create_page_validation(
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(40001878906317108)
 ,p_validation_name=>'Flow exists (copy)'
-,p_validation_sequence=>20
+,p_validation_sequence=>30
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_err varchar2(4000);',

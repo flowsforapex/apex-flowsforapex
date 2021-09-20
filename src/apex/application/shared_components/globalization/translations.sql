@@ -5798,7 +5798,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Sous-flux ID'
+,p_translate_to_text=>'ID du sous-flux'
 ,p_translate_from_text=>'Subflow ID'
 );
 wwv_flow_api.create_translation(
@@ -6655,7 +6655,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Dgrm Id'
+,p_translate_to_text=>'ID'
 ,p_translate_from_text=>'ID'
 );
 wwv_flow_api.create_translation(
@@ -7553,7 +7553,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Sous-flux ID'
+,p_translate_to_text=>'ID du sous-flux'
 ,p_translate_from_text=>'Subflow ID'
 );
 wwv_flow_api.create_translation(
@@ -17231,6 +17231,45 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>unistr('Si vous laissez ce champ vide, la r\00E9servation sera effectu\00E9e pour l''utilisateur connect\00E9 (APP_USER)')
 ,p_translate_from_text=>'If you leave this field empty, the reservation will be made for the logged-in user (APP_USER)'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(16526247441095303)
+,p_page_id=>1
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(16518361588787101.100001)
+,p_translate_from_id=>wwv_flow_api.id(16518361588787101)
+,p_translate_column_id=>20
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'Y'
+,p_translate_to_text=>unistr('Bien d\00E9marrer')
+,p_translate_from_text=>'Getting Started'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(16526372295096210)
+,p_page_id=>1
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(16518361588787101.100001)
+,p_translate_from_id=>wwv_flow_api.id(16518361588787101)
+,p_translate_column_id=>308
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(16526493792096238)
+,p_page_id=>1
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(16518361588787101.100001)
+,p_translate_from_id=>wwv_flow_api.id(16518361588787101)
+,p_translate_column_id=>309
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'HTML'
+,p_translate_from_text=>'HTML'
 );
 wwv_flow_api.component_end;
 end;
