@@ -6,6 +6,8 @@ as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  e_invalid_duration exception;
+
   function timer_exists
   (
     pi_timr_id in flow_timers.timr_id%type
@@ -259,101 +261,6 @@ as
 
   end step_timers;
 
-  /*procedure step_timers
-  as
-    type t_timer_tab is table of flow_timers%rowtype;
-    l_timers t_timer_tab;
-    l_run_now boolean;
-  begin
-    select *
-      bulk collect into l_timers
-      from flow_timers
-     where timr_status in ( c_created, c_active )
-     order by timr_created_on
-    ;
-    for i in 1..l_timers.count loop
-      l_run_now := false;
-      begin
-        -- first part is deciding if timer should run now
-        -- and updates status on respective timer
-        case l_timers(i).timr_type
-          when flow_constants_pkg.gc_timer_type_cycle then
-            if (   l_timers(i).timr_start_on
-                 + ( l_timers(i).timr_interval_ym * coalesce( l_timers(i).timr_run_count, 1 ) )
-                 + ( l_timers(i).timr_interval_ds * coalesce( l_timers(i).timr_run_count, 1 ) )
-               ) <= systimestamp
-            then
-              l_run_now := true;
-              update flow_timers
-                 set timr_last_run = systimestamp
-                   , timr_run_count = timr_run_count + 1
-                   , timr_status = case when timr_run_count + 1 = timr_repeat_times then c_ended else c_active end
-               where timr_id = l_timers(i).timr_id
-              ;
-            end if;
-          else
-            if l_timers(i).timr_start_on <= systimestamp then
-              l_run_now := true;
-              update flow_timers
-                 set timr_last_run = systimestamp
-                   , timr_run_count = timr_run_count + 1
-                   , timr_status = c_ended
-               where timr_id = l_timers(i).timr_id
-              ;
-            end if;
-        end case;
-
-        -- Timer should run now
-        -- We apply couple of safeguards here
-        -- Verifying if timer still in flow_timers table
-        -- and checking if the connected subflow is still there
-        if l_run_now then
-          if timer_exists( pi_timr_id => l_timers(i).timr_id ) then
-            if flow_engine_util.check_subflow_exists
-                ( 
-                  p_process_id => l_timers(i).timr_prcs_id
-                , p_subflow_id => l_timers(i).timr_sbfl_id
-                ) 
-            then
-              flow_engine.flow_handle_event
-              (
-                p_process_id => l_timers(i).timr_prcs_id
-              , p_subflow_id => l_timers(i).timr_sbfl_id
-              );
-            else
-              apex_debug.warn
-              (
-                p_message => 'Timer with ID %s tried to trigger non existing subflow. Process: %s; Subflow: %s'
-              , p0        => l_timers(i).timr_id
-              , p1        => l_timers(i).timr_prcs_id
-              , p2        => l_timers(i).timr_sbfl_id
-              );
-            end if;
-          else
-            apex_debug.info
-            (
-              p_message => 'Timer with ID %s does not exist anymore, skipping.'
-            , p0        => l_timers(i).timr_id
-            );
-          end if;
-        end if;
-      exception
-        -- Some exception happened during processing the timer
-        -- We trap it here and mark respective timer as broken.
-        when others then
-          apex_debug.error
-          (
-            p_message => 'Timer with ID %s did not work. Check logs.'
-          , p0        => l_timers(i).timr_id
-          );
-          update flow_timers
-             set timr_status = c_broken
-           where timr_id = l_timers(i).timr_id
-          ;
-      end;
-    end loop;
-  end step_timers;*/
-
   procedure get_duration
   (
     in_string     in     varchar2
@@ -402,10 +309,14 @@ as
 
     l_ds_part := l_ds_part || l_after_t;
 
-    out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
-    out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
+    if l_ym_part is not null or l_ds_part is not null then
+      out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
+      out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
 
-    out_start_ts  := coalesce( in_start_ts, systimestamp ) + out_interv_ym + out_interv_ds;
+      out_start_ts  := coalesce( in_start_ts, systimestamp ) + out_interv_ym + out_interv_ds;
+    else
+      raise e_invalid_duration;
+    end if;
 
   end get_duration;
 
@@ -526,6 +437,18 @@ as
       , l_repeat_times
       )
     ;
+  exception
+    when e_invalid_duration then
+      flow_errors.handle_instance_error
+      (
+        pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'timer_definition_error'
+      , p0             => pi_prcs_id
+      , p1             => pi_sbfl_id
+      , p2             => l_timer_type
+      , p3             => l_timer_def
+      );
   end start_timer;
 
 /******************************************************************************
