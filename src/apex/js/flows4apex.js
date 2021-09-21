@@ -1219,8 +1219,6 @@ function initPage8() {
         apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-39-alert-text", "fa", "fa-exclamation-circle-o"]);
         apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-39-alert-bg");
     } 
-    
-    apex.jQuery("#flow-reports .apex-rds-slider").hide();
 
 
     $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {

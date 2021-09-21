@@ -224,6 +224,19 @@ unistr('Veuillez ne s\00E9lectionner qu''une connexion'),
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(16953295749988159)
+,p_name=>'APP_ERR_MODEL_EXIST'
+,p_message_text=>'Model "%0" Version %1 already exists.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(16953765861000515)
+,p_name=>'APP_ERR_MODEL_EXIST'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Le mod\00E8le "%0" - Version %1 existe d\00E9j\00E0.')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(14702944177906412)
 ,p_name=>'APP_ERR_MODEL_VERSION_EXIST'
 ,p_message_text=>'Version already exists.'

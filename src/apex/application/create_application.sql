@@ -36,7 +36,7 @@ wwv_flow_api.create_flow(
 ,p_logo_type=>'IT'
 ,p_logo=>'#APP_IMAGES#app-100-logo.png'
 ,p_logo_text=>'Flows for APEX'
-,p_favicons=>'<link rel="icon" sizes="32x32" href="#APP_IMAGES#app-100-logo.png">'
+,p_favicons=>'<link rel="icon" sizes="32x32" href="#APP_IMAGES#favicon.png">'
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
@@ -49,14 +49,14 @@ wwv_flow_api.create_flow(
 ,p_authorize_batch_job=>'N'
 ,p_rejoin_existing_sessions=>'N'
 ,p_csv_encoding=>'Y'
-,p_auto_time_zone=>'N'
+,p_auto_time_zone=>'Y'
 ,p_error_handling_function=>'apex_error_handling'
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Workflow'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210920084330'
+,p_last_upd_yyyymmddhh24miss=>'20210921132808'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
-,p_files_version=>838
+,p_files_version=>858
 ,p_ui_type_name => null
 );
 wwv_flow_api.component_end;

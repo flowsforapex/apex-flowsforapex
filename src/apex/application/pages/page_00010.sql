@@ -26,8 +26,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'SHAKEEB.RAHMAN@ORACLE.COM'
-,p_last_upd_yyyymmddhh24miss=>'20210920041405'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210921123442'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -1057,17 +1057,21 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'PREPARE_URL'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
+'declare',
 '    l_url varchar2(2000);',
-'    l_app number := v(''APP_ID'');',
-'    l_session number := v(''APP_SESSION'');',
-'',
-'BEGIN',
-'    l_url := APEX_UTIL.PREPARE_URL(',
-'        p_url => ''f?p='' || l_app || '':13:'' || l_session ||''::NO:RP:P13_PRCS_ID,P13_OBJT_ID,P13_TITLE:''|| apex_application.g_x01 || '','' || apex_application.g_x02 || '','' || apex_application.g_x03,',
-'        p_checksum_type => ''SESSION'');',
+'    l_dgrm_id flow_processes.prcs_dgrm_id%type;',
+'begin',
+'    select prcs_dgrm_id into l_dgrm_id from flow_processes where prcs_id = apex_application.g_x01;',
+'    l_url := apex_page.get_url(',
+'        p_application => v(''APP_ID''),',
+'        p_page => ''13'',',
+'        p_session => v(''APP_SESSION''),',
+'        p_clear_cache => ''RP'',',
+'        p_items => ''P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE'',',
+'        p_values => l_dgrm_id || '','' || apex_application.g_x01 || '','' || apex_application.g_x02 || '','' || apex_application.g_x03',
+'    );',
 '    htp.p(l_url);',
-'END;'))
+'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;

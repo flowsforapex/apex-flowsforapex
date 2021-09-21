@@ -42,8 +42,8 @@ prompt --install
 @@application/shared_components/files/lib_prismjs_css_prism_css_map.sql
 @@application/shared_components/files/lib_prismjs_css_prism_dark_min_css.sql
 @@application/shared_components/files/lib_prismjs_css_prism_dark_css_map.sql
-@@application/shared_components/files/app_100_logo_dark_png.sql
 @@application/shared_components/files/app_100_logo_png.sql
+@@application/shared_components/files/favicon_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
 @@application/shared_components/files/workflow_white_svg.sql
