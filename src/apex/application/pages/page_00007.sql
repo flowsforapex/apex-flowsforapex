@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage7();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210921123633'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210921142842'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -1146,52 +1146,6 @@ wwv_flow_api.create_page_process(
 ,p_region_id=>wwv_flow_api.id(26003019626877931)
 ,p_process_type=>'NATIVE_FORM_INIT'
 ,p_process_name=>'Initialize form Edit Diagram'
-,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-);
-wwv_flow_api.create_page_process(
- p_id=>wwv_flow_api.id(16954774040043084)
-,p_process_sequence=>30
-,p_process_point=>'BEFORE_HEADER'
-,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Set Viewport for BPMN-Viewer'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- Load user preference for the BPMN-Viewer and set it after the page has fully loaded',
-'declare',
-'    l_script varchar2(4000);',
-'begin',
-'',
-'    -- Set IDs for the the row divs',
-'    l_script := q''#apex.jQuery("#flow-instances").parent().attr("id","col1");',
-'                   apex.jQuery("#flow-monitor").parent().attr("id","col2");#'';',
-'    ',
-'    APEX_JAVASCRIPT.ADD_ONLOAD_CODE (',
-'        p_code => l_script,',
-'        p_key  => ''init_viewport'');',
-'',
-'    :P10_DISPLAY_SETTING := nvl(apex_util.get_preference(''VIEWPORT''),''column'');',
-'    ',
-'    l_script := null;',
-'    -- Set view to side-by-side if preference = ''column''',
-'    if :P10_DISPLAY_SETTING = ''column'' then',
-'    ',
-'        l_script := q''#apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( [ "col-12", "col-end" ] );',
-'                       apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( [ "col-12", "col-start" ] );',
-'                       apex.jQuery("#col2").appendTo(apex.jQuery("#col1").parent());',
-'                       apex.jQuery("#flow-monitor").show();',
-'                       apex.region( "flow-monitor" ).refresh();#'';',
-'     elsif :P10_DISPLAY_SETTING = ''window'' then',
-'        l_script := q''#apex.jQuery("#flow-monitor").hide();',
-'                       apex.jQuery( "#col1" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );',
-'                       apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );#'';',
-'    end if;',
-'    ',
-'    if l_script is not null then',
-'        APEX_JAVASCRIPT.ADD_ONLOAD_CODE (',
-'            p_code => l_script,',
-'            p_key  => ''viewport''',
-'        );',
-'    end if;',
-'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_process(

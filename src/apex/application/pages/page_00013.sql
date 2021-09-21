@@ -39,8 +39,8 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210921131458'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210921141823'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -106,6 +106,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(5519619992437209)
 ,p_max_row_count=>'1000000'
+,p_no_data_found_message=>'No Variable History found.'
 ,p_max_rows_per_page=>'10'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
@@ -241,6 +242,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(16967786479177907)
 ,p_max_row_count=>'1000000'
+,p_no_data_found_message=>'No Variable Expressions found.'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
 ,p_report_list_mode=>'TABS'
@@ -380,6 +382,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(12632654932220612)
 ,p_max_row_count=>'1000000'
+,p_no_data_found_message=>'No Step Errors found.'
 ,p_max_rows_per_page=>'10'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
@@ -1000,17 +1003,6 @@ wwv_flow_api.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
-wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(15355370045942501)
-,p_query_column_id=>2
-,p_column_alias=>'LGPR_USER'
-,p_column_display_sequence=>1
-,p_column_heading=>'User'
-,p_use_as_row_header=>'N'
-,p_heading_alignment=>'LEFT'
-,p_derived_column=>'N'
-,p_include_in_export=>'Y'
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -1022,6 +1014,17 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(15355370045942501)
+,p_query_column_id=>2
+,p_column_alias=>'LGPR_USER'
+,p_column_display_sequence=>1
+,p_column_heading=>'User'
+,p_use_as_row_header=>'N'
+,p_heading_alignment=>'LEFT'
+,p_derived_column=>'N'
+,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(15355453502942502)
@@ -1136,6 +1139,24 @@ wwv_flow_api.create_page_da_action(
 '});',
 '',
 'Prism.highlightAll();'))
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(15357032894942518)
+,p_name=>'Variable Expressions Report Refreshed'
+,p_event_sequence=>30
+,p_triggering_element_type=>'REGION'
+,p_triggering_region_id=>wwv_flow_api.id(11504924392020455)
+,p_bind_type=>'bind'
+,p_bind_event_type=>'apexafterrefresh'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(15357188013942519)
+,p_event_id=>wwv_flow_api.id(15357032894942518)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'Prism.highlightAll();'
 );
 wwv_flow_api.component_end;
 end;
