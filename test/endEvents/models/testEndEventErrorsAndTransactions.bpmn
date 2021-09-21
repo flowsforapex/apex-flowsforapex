@@ -1,0 +1,428 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/b' exporter='Flows for APEX' exporterVersion='21.1.0'>
+  <bpmn:process id='Process_0rxermh' isExecutable='false'>
+    <bpmn:startEvent id='Event_1f1wqap' name='StartTest'>
+      <bpmn:outgoing>Flow_1n8ck0l</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id='Flow_1n8ck0l' sourceRef='Event_1f1wqap' targetRef='Gateway_0frep5u' />
+    <bpmn:parallelGateway id='Gateway_0frep5u' name='Split'>
+      <bpmn:incoming>Flow_1n8ck0l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lu27w3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0befk6w</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0jqk419</bpmn:outgoing>
+      <bpmn:outgoing>Flow_04ndct7</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1anxvk5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1v25hzh</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id='Activity_0xoe37c' name='A. simple End Event - No Var exps'>
+      <bpmn:incoming>Flow_0lu27w3</bpmn:incoming>
+      <bpmn:outgoing>Flow_17ivgz7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0lu27w3' sourceRef='Gateway_0frep5u' targetRef='Activity_0xoe37c' />
+    <bpmn:endEvent id='Event_AEnd' name='AEnd'>
+      <bpmn:incoming>Flow_17ivgz7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_17ivgz7' sourceRef='Activity_0xoe37c' targetRef='Event_AEnd' />
+    <bpmn:task id='Activity_1fku9cl' name='B End Event with good onEvent varexp'>
+      <bpmn:incoming>Flow_0befk6w</bpmn:incoming>
+      <bpmn:outgoing>Flow_19x4tp6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0befk6w' sourceRef='Gateway_0frep5u' targetRef='Activity_1fku9cl' />
+    <bpmn:endEvent id='Event_BEnd' name='BEnd'>
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Good_OnEvent_B</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>Good OnEvent B</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19x4tp6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_19x4tp6' sourceRef='Activity_1fku9cl' targetRef='Event_BEnd' />
+    <bpmn:task id='Activity_178pujm' name='C End Event with bad onEvent varexp'>
+      <bpmn:incoming>Flow_0jqk419</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yuisyg</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0jqk419' sourceRef='Gateway_0frep5u' targetRef='Activity_178pujm' />
+    <bpmn:endEvent id='Event_CEnd' name='CEnd'>
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Bads_OnEvent_C</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>rubbish</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yuisyg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_0yuisyg' sourceRef='Activity_178pujm' targetRef='Event_CEnd' />
+    <bpmn:task id='Activity_1mwvhzl' name='D SubProcess Good End'>
+      <bpmn:incoming>Flow_04ndct7</bpmn:incoming>
+      <bpmn:outgoing>Flow_11k2r4y</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_04ndct7' sourceRef='Gateway_0frep5u' targetRef='Activity_1mwvhzl' />
+    <bpmn:sequenceFlow id='Flow_11k2r4y' sourceRef='Activity_1mwvhzl' targetRef='Activity_01trqoa' />
+    <bpmn:subProcess id='Activity_01trqoa' name='D1'>
+      <bpmn:incoming>Flow_11k2r4y</bpmn:incoming>
+      <bpmn:outgoing>Flow_161s9cx</bpmn:outgoing>
+      <bpmn:startEvent id='Event_18tmtwm' name='D1Start'>
+        <bpmn:outgoing>Flow_0103b0c</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:task id='Activity_0bd4e47' name='D1A'>
+        <bpmn:incoming>Flow_0103b0c</bpmn:incoming>
+        <bpmn:outgoing>Flow_1j503pl</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id='Flow_0103b0c' sourceRef='Event_18tmtwm' targetRef='Activity_0bd4e47' />
+      <bpmn:endEvent id='Event_D1End' name='D1End'>
+        <bpmn:extensionElements>
+          <apex:onEvent>
+            <apex:processVariable>
+              <apex:varSequence>0</apex:varSequence>
+              <apex:varName>D1_OnEvent_Good</apex:varName>
+              <apex:varDataType>VARCHAR2</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression>D1_OnEvent_Good</apex:varExpression>
+            </apex:processVariable>
+          </apex:onEvent>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1j503pl</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id='Flow_1j503pl' sourceRef='Activity_0bd4e47' targetRef='Event_D1End' />
+    </bpmn:subProcess>
+    <bpmn:endEvent id='Event_DEnd' name='D End'>
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>DEnd_OnEvent_Good</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>DEnd_OnEvent_Good is Good</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_161s9cx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_161s9cx' sourceRef='Activity_01trqoa' targetRef='Event_DEnd' />
+    <bpmn:task id='Activity_1e4xla6' name='E SubProcess Good varexp on subproc End'>
+      <bpmn:incoming>Flow_1anxvk5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jv2g54</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:subProcess id='Activity_E1' name='E1'>
+      <bpmn:incoming>Flow_1jv2g54</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pctj48</bpmn:outgoing>
+      <bpmn:startEvent id='Event_E1Start' name='E1Start'>
+        <bpmn:outgoing>Flow_03ok3oi</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:task id='Activity_E1A' name='E1A'>
+        <bpmn:incoming>Flow_03ok3oi</bpmn:incoming>
+        <bpmn:outgoing>Flow_0edg1q3</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:endEvent id='Event_E1End' name='E1End'>
+        <bpmn:extensionElements>
+          <apex:onEvent>
+            <apex:processVariable>
+              <apex:varSequence>0</apex:varSequence>
+              <apex:varName>E1_OnEvent_Good</apex:varName>
+              <apex:varDataType>NUMBER</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression>99</apex:varExpression>
+            </apex:processVariable>
+          </apex:onEvent>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0edg1q3</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id='Flow_03ok3oi' sourceRef='Event_E1Start' targetRef='Activity_E1A' />
+      <bpmn:sequenceFlow id='Flow_0edg1q3' sourceRef='Activity_E1A' targetRef='Event_E1End' />
+    </bpmn:subProcess>
+    <bpmn:endEvent id='Event_EEnd' name='E End'>
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>DEnd_OnEvent_Good</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>DEnd_OnEvent_Good is Good</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pctj48</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_1jv2g54' sourceRef='Activity_1e4xla6' targetRef='Activity_E1' />
+    <bpmn:sequenceFlow id='Flow_1pctj48' sourceRef='Activity_E1' targetRef='Event_EEnd' />
+    <bpmn:task id='Activity_0xvyl88' name='F SubProcess Bad Varexp on SubProc End'>
+      <bpmn:incoming>Flow_1v25hzh</bpmn:incoming>
+      <bpmn:outgoing>Flow_06f3o53</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:subProcess id='Activity_F1' name='F1'>
+      <bpmn:incoming>Flow_06f3o53</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fp6fzv</bpmn:outgoing>
+      <bpmn:startEvent id='Event_F1Start' name='F1Start'>
+        <bpmn:outgoing>Flow_01ghztp</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:task id='Activity_F1A' name='F1A'>
+        <bpmn:incoming>Flow_01ghztp</bpmn:incoming>
+        <bpmn:outgoing>Flow_0rhtc7e</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:endEvent id='Event_F1End' name='F1End'>
+        <bpmn:extensionElements>
+          <apex:onEvent>
+            <apex:processVariable>
+              <apex:varSequence>0</apex:varSequence>
+              <apex:varName>F1_OnEvent_Bad</apex:varName>
+              <apex:varDataType>NUMBER</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression>rubbish</apex:varExpression>
+            </apex:processVariable>
+          </apex:onEvent>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0rhtc7e</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id='Flow_01ghztp' sourceRef='Event_F1Start' targetRef='Activity_F1A' />
+      <bpmn:sequenceFlow id='Flow_0rhtc7e' sourceRef='Activity_F1A' targetRef='Event_F1End' />
+    </bpmn:subProcess>
+    <bpmn:endEvent id='Event_FEnd' name='F End'>
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>DEnd_OnEvent_Good</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>DEnd_OnEvent_Good is Good</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fp6fzv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_06f3o53' sourceRef='Activity_0xvyl88' targetRef='Activity_F1' />
+    <bpmn:sequenceFlow id='Flow_0fp6fzv' sourceRef='Activity_F1' targetRef='Event_FEnd' />
+    <bpmn:sequenceFlow id='Flow_1anxvk5' sourceRef='Gateway_0frep5u' targetRef='Activity_1e4xla6' />
+    <bpmn:sequenceFlow id='Flow_1v25hzh' sourceRef='Gateway_0frep5u' targetRef='Activity_0xvyl88' />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>
+    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_0rxermh'>
+      <bpmndi:BPMNEdge id='Flow_1v25hzh_di' bpmnElement='Flow_1v25hzh'>
+        <di:waypoint x='260' y='585' />
+        <di:waypoint x='260' y='895' />
+        <di:waypoint x='340' y='895' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1anxvk5_di' bpmnElement='Flow_1anxvk5'>
+        <di:waypoint x='260' y='585' />
+        <di:waypoint x='260' y='740' />
+        <di:waypoint x='340' y='740' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0fp6fzv_di' bpmnElement='Flow_0fp6fzv'>
+        <di:waypoint x='860' y='895' />
+        <di:waypoint x='932' y='895' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_06f3o53_di' bpmnElement='Flow_06f3o53'>
+        <di:waypoint x='440' y='895' />
+        <di:waypoint x='510' y='895' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1pctj48_di' bpmnElement='Flow_1pctj48'>
+        <di:waypoint x='860' y='740' />
+        <di:waypoint x='932' y='740' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1jv2g54_di' bpmnElement='Flow_1jv2g54'>
+        <di:waypoint x='440' y='740' />
+        <di:waypoint x='510' y='740' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_161s9cx_di' bpmnElement='Flow_161s9cx'>
+        <di:waypoint x='860' y='560' />
+        <di:waypoint x='932' y='560' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_11k2r4y_di' bpmnElement='Flow_11k2r4y'>
+        <di:waypoint x='440' y='560' />
+        <di:waypoint x='510' y='560' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_04ndct7_di' bpmnElement='Flow_04ndct7'>
+        <di:waypoint x='285' y='560' />
+        <di:waypoint x='340' y='560' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0yuisyg_di' bpmnElement='Flow_0yuisyg'>
+        <di:waypoint x='440' y='390' />
+        <di:waypoint x='502' y='390' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0jqk419_di' bpmnElement='Flow_0jqk419'>
+        <di:waypoint x='260' y='535' />
+        <di:waypoint x='260' y='390' />
+        <di:waypoint x='340' y='390' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_19x4tp6_di' bpmnElement='Flow_19x4tp6'>
+        <di:waypoint x='440' y='260' />
+        <di:waypoint x='502' y='260' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0befk6w_di' bpmnElement='Flow_0befk6w'>
+        <di:waypoint x='260' y='535' />
+        <di:waypoint x='260' y='260' />
+        <di:waypoint x='340' y='260' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_17ivgz7_di' bpmnElement='Flow_17ivgz7'>
+        <di:waypoint x='440' y='140' />
+        <di:waypoint x='502' y='140' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0lu27w3_di' bpmnElement='Flow_0lu27w3'>
+        <di:waypoint x='260' y='535' />
+        <di:waypoint x='260' y='140' />
+        <di:waypoint x='340' y='140' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1n8ck0l_di' bpmnElement='Flow_1n8ck0l'>
+        <di:waypoint x='178' y='560' />
+        <di:waypoint x='235' y='560' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id='Event_1f1wqap_di' bpmnElement='Event_1f1wqap'>
+        <dc:Bounds x='142' y='542' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='138' y='585' width='44' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Gateway_13gwyfp_di' bpmnElement='Gateway_0frep5u'>
+        <dc:Bounds x='235' y='535' width='50' height='50' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='209' y='523' width='22' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0xoe37c_di' bpmnElement='Activity_0xoe37c'>
+        <dc:Bounds x='340' y='100' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_08syljv_di' bpmnElement='Event_AEnd'>
+        <dc:Bounds x='502' y='122' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='507' y='165' width='27' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1fku9cl_di' bpmnElement='Activity_1fku9cl'>
+        <dc:Bounds x='340' y='220' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1klr720_di' bpmnElement='Event_BEnd'>
+        <dc:Bounds x='502' y='242' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='507' y='285' width='27' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_178pujm_di' bpmnElement='Activity_178pujm'>
+        <dc:Bounds x='340' y='350' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1l5ku1j_di' bpmnElement='Event_CEnd'>
+        <dc:Bounds x='502' y='372' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='506' y='415' width='28' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1mwvhzl_di' bpmnElement='Activity_1mwvhzl'>
+        <dc:Bounds x='340' y='520' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0xi8jaq_di' bpmnElement='Activity_01trqoa' isExpanded='true'>
+        <dc:Bounds x='510' y='495' width='350' height='130' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Flow_1j503pl_di' bpmnElement='Flow_1j503pl'>
+        <di:waypoint x='730' y='555' />
+        <di:waypoint x='792' y='555' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0103b0c_di' bpmnElement='Flow_0103b0c'>
+        <di:waypoint x='578' y='555' />
+        <di:waypoint x='630' y='555' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id='Event_18tmtwm_di' bpmnElement='Event_18tmtwm'>
+        <dc:Bounds x='541.6666666666666' y='537' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='541' y='580' width='38' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0bd4e47_di' bpmnElement='Activity_0bd4e47'>
+        <dc:Bounds x='630' y='515' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1jdi0ye_di' bpmnElement='Event_D1End'>
+        <dc:Bounds x='792' y='537' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='794' y='580' width='34' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1vku5c1_di' bpmnElement='Event_DEnd'>
+        <dc:Bounds x='932' y='542' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='935' y='585' width='31' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1e4xla6_di' bpmnElement='Activity_1e4xla6'>
+        <dc:Bounds x='340' y='700' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0ikpa6k_di' bpmnElement='Activity_E1' isExpanded='true'>
+        <dc:Bounds x='510' y='675' width='350' height='130' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Flow_0edg1q3_di' bpmnElement='Flow_0edg1q3'>
+        <di:waypoint x='730' y='735' />
+        <di:waypoint x='792' y='735' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_03ok3oi_di' bpmnElement='Flow_03ok3oi'>
+        <di:waypoint x='578' y='735' />
+        <di:waypoint x='630' y='735' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id='Event_1tp9n9q_di' bpmnElement='Event_E1Start'>
+        <dc:Bounds x='542' y='717' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='542' y='760' width='37' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0a1o7bv_di' bpmnElement='Activity_E1A'>
+        <dc:Bounds x='630' y='695' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1249nzd_di' bpmnElement='Event_E1End'>
+        <dc:Bounds x='792' y='717' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='795' y='760' width='33' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_0p77k92_di' bpmnElement='Event_EEnd'>
+        <dc:Bounds x='932' y='722' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='936' y='765' width='30' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0xvyl88_di' bpmnElement='Activity_0xvyl88'>
+        <dc:Bounds x='340' y='855' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1nfsqu7_di' bpmnElement='Activity_F1' isExpanded='true'>
+        <dc:Bounds x='510' y='830' width='350' height='130' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Flow_0rhtc7e_di' bpmnElement='Flow_0rhtc7e'>
+        <di:waypoint x='730' y='890' />
+        <di:waypoint x='792' y='890' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_01ghztp_di' bpmnElement='Flow_01ghztp'>
+        <di:waypoint x='578' y='890' />
+        <di:waypoint x='630' y='890' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id='Event_0z6srq3_di' bpmnElement='Event_F1Start'>
+        <dc:Bounds x='542' y='872' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='542' y='915' width='37' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1yecj6p_di' bpmnElement='Activity_F1A'>
+        <dc:Bounds x='630' y='850' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1kctio0_di' bpmnElement='Event_F1End'>
+        <dc:Bounds x='792' y='872' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='795' y='915' width='33' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1od65ri_di' bpmnElement='Event_FEnd'>
+        <dc:Bounds x='932' y='877' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='936' y='920' width='30' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
