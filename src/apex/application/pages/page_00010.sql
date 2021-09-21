@@ -19,10 +19,15 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flow Monitor - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'initPage10();'
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'/* Adjust width of IRR Settings to be auto */',
+'.a-IRR-controls-cell--label {',
+'    width: auto;',
+'}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915150510'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210921123442'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -72,7 +77,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_name=>'Flow Viewer'
 ,p_region_name=>'flow-monitor'
 ,p_region_css_classes=>'js-react-on-prcs'
-,p_region_template_options=>'#DEFAULT#:js-showMaximizeButton:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:js-showMaximizeButton:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>30
 ,p_include_in_reg_disp_sel_yn=>'Y'
@@ -98,7 +103,7 @@ wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12493545854579486121)
 ,p_plug_name=>'Flow Instances'
 ,p_region_name=>'flow-instances'
-,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>10
 ,p_plug_display_point=>'BODY'
@@ -1052,17 +1057,21 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'PREPARE_URL'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
+'declare',
 '    l_url varchar2(2000);',
-'    l_app number := v(''APP_ID'');',
-'    l_session number := v(''APP_SESSION'');',
-'',
-'BEGIN',
-'    l_url := APEX_UTIL.PREPARE_URL(',
-'        p_url => ''f?p='' || l_app || '':13:'' || l_session ||''::NO:RP:P13_PRCS_ID,P13_OBJT_ID,P13_TITLE:''|| apex_application.g_x01 || '','' || apex_application.g_x02 || '','' || apex_application.g_x03,',
-'        p_checksum_type => ''SESSION'');',
+'    l_dgrm_id flow_processes.prcs_dgrm_id%type;',
+'begin',
+'    select prcs_dgrm_id into l_dgrm_id from flow_processes where prcs_id = apex_application.g_x01;',
+'    l_url := apex_page.get_url(',
+'        p_application => v(''APP_ID''),',
+'        p_page => ''13'',',
+'        p_session => v(''APP_SESSION''),',
+'        p_clear_cache => ''RP'',',
+'        p_items => ''P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE'',',
+'        p_values => l_dgrm_id || '','' || apex_application.g_x01 || '','' || apex_application.g_x02 || '','' || apex_application.g_x03',
+'    );',
 '    htp.p(l_url);',
-'END;'))
+'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;

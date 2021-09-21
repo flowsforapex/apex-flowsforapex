@@ -36,6 +36,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(5589254850825963)
 ,p_list_item_display_sequence=>7
 ,p_list_item_link_text=>'Theme'
+,p_list_item_icon=>'fa-paint-brush'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(

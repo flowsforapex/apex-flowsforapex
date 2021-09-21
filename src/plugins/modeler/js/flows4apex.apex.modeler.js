@@ -188,7 +188,7 @@
           apex.message.clearErrors();
           if ( pData.success ) {
             this.changed = false;
-            message.showPageSuccess( "Changes saved!" );
+            message.showPageSuccess( pData.message );
           } else {
             message.showErrors( [
               {

@@ -75,6 +75,210 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0.  La requête renvoie plusieurs lignes.'
 );
 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'ITE-unsupported-type',
+'fr',
+'Type d''événement de lancer intermédiaire actuellement non pris en charge rencontré à %0.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'boundary-event-child-lock-to',
+'fr',
+'Sous-flux enfant ou minuteur de %0 sont actuellement verrouillés par un autre utilisateur. Child Boundary Subflows or Timers of %0 currently locked by another user. Réessayez votre transaction plus tard.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'boundary-event-no-catch-found',
+'fr',
+'Aucun événement de frontière de type %0 trouvé pour capturer l''événement.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'boundary-event-too-many',
+'fr',
+'Plus d''un événement de frontière %0 trouvé sur le sous-processus.'
+);
+
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'engine-unsupported-object',
+'fr',
+'Erreur de modèle : L''étape suivante du modèle de processus BPMN utilise un objet non supporté %0'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'engine-util-prcs-not-found',
+'fr',
+'Erreur applicative : L''ID du processus %0 n''a pas été trouvé.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'engine-util-sbfl-not-in-prcs',
+'fr',
+'L''ID du sous-flux fourni ( %0 ) est introuvable. Vérifiez les événements du processus qui ont modifié le flux du processus (délais, erreurs, escalades).'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'gateway-invalid-route',
+'fr',
+'Erreur au niveau de la passerelle %0. La variable fournie %1 contient une route invalide : %2'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'gateway-merge-error',
+'fr',
+'Erreur interne de traitement lors de la fusion au nivau de la passerelle sur le sous-flux %0'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'gateway-no-route',
+'fr',
+'Aucune instruction de routage de passerelle n''est fournie dans la variable %0 et le modèle ne contient pas de route par défaut.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'gateway-too-many-defaults',
+'fr',
+'Plus d''une route par défaut spécifiée dans le modèle pour la passerelle %0.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'link-no-catch',
+'fr',
+'Impossible de trouver le lien correspondant à l''événement %0.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'link-too-many-catches',
+'fr',
+'Plus d''un lien correspond à l''événement %0.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'process-lock-timeout',
+'fr',
+'Les objets de traitement pour %0 sont actuellement verrouillés par un autre utilisateur. Réessayez plus tard.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'restart-no-error',
+'fr',
+'Aucune erreur courante trouvée. Vérifiez votre diagramme de processus.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'start-already-running',
+'fr',
+'Vous avez essayé de démarrer un processus (id %0) qui est déjà en cours d''exécution.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'start-multiple-already-running',
+'fr',
+'Vous avez essayé de démarrer un processus (id %0) dont plusieurs copies sont déjà en cours d''exécution.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'start-multiple-start-events',
+'fr',
+'Vous avez défini plusieurs événements de début. Assurez-vous que votre diagramme n''a qu''un seul événement de début.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'start-no-start-event',
+'fr',
+'Aucun événement de début n''est défini dans le diagramme de flux.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'start-not-created',
+'fr',
+'Vous avez essayé de démarrer un processus (id %0) qui n''existe pas.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'start-type-unsupported',
+'fr',
+'Type d''événement de début non pris en charge (%0). Seuls les événements de début standard et de type minuteur sont actuellement pris en charge.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'startwork-sbfl-not-found',
+'fr',
+'Début de l''enregistrement des temps de travail non réussi. Le sous-flux %0 du processus %1 est introuvable.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'subProcess-no-start',
+'fr',
+'Impossible de trouver l''événement de début de sous-processus.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'subProcess-too-many-starts',
+'fr',
+'Plus d''un événement de sous-processus trouvé.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_datatype',
+'fr',
+'Erreur de définition de la variable de processus. Type de données incorrect pour la variable %0. Erreur SQL affichée dans le débogage.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_date_format',
+'fr',
+'Erreur de définition de la variable de processus %1 : format de date incorrect (Sous-flux : %0, Valeur : %3.)'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_object_not_found',
+'fr',
+'Erreur interne dans la recherche de l''objet %0 dans process_expressions. Erreur SQL affichée dans le débogage'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_static_general',
+'fr',
+'Erreur de définition de la variable de processus %2 %1 dans le processus id %0. Voir l''erreur dans le journal des événements.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'version-no-rel-or-draft-v0',
+'fr',
+'Impossible de trouver le diagramme publié ou la version 0 du diagramme - veuillez spécifier une version ou un numéro de diagramme.'
+);
+ 
 
 /* Plug-ins */
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -142,7 +346,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
-'plugin-modeler-id-not-dound',
+'plugin-modeler-id-not-found',
 'fr',
 'Aucune donnée trouvée. Vérifiez si le Diagramme avec l''ID fourni existe.'
 );

@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210916113151'
+,p_last_upd_yyyymmddhh24miss=>'20210921114733'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -570,6 +570,14 @@ wwv_flow_api.create_page_item(
 ,p_attribute_05=>'BOTH'
 );
 wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(15356359428942511)
+,p_name=>'P2_BULK_ACTION'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(24213241311956116)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(26093937239304626)
 ,p_name=>'P2_DGRM_ID'
 ,p_item_sequence=>10
@@ -595,43 +603,87 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(26401796293739221)
-,p_validation_name=>'Flow exists (new version)'
+,p_validation_name=>'Flow exists (bulk new version)'
 ,p_validation_sequence=>10
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_err varchar2(4000);',
 '    l_version_exists number;',
+'    l_dgrm_name flow_diagrams.dgrm_name%type;',
 '    l_flows apex_t_varchar2 := apex_string.split(:P2_DGRM_ID, '':'');',
 'begin',
-'    if (:P2_NEW_VERSION is null) then',
-'        l_err := ''#LABEL# must have a value'';',
-'    else',
-'        for i in l_flows.first..l_flows.last',
-'        loop',
-'            select count(*)',
-'            into l_version_exists',
-'            from flow_diagrams',
-'            where dgrm_name = (select dgrm_name from flow_diagrams where dgrm_id = l_flows(i))',
-'            and dgrm_version = :P2_NEW_VERSION;',
+'    for i in l_flows.first..l_flows.last',
+'    loop',
+'        ',
+'        select dgrm_name ',
+'        into l_dgrm_name',
+'        from flow_diagrams ',
+'        where dgrm_id = l_flows(i);',
+'        ',
+'        select count(*)',
+'        into l_version_exists',
+'        from flow_diagrams',
+'        where dgrm_name = l_dgrm_name',
+'        and dgrm_version = :P2_NEW_VERSION;',
 '',
-'            if (l_version_exists > 0) then',
-'                l_err := ''Version already exists.'';',
-'            end if;',
-'            exit when l_err is not null;',
-'        end loop;',
+'        if (l_version_exists > 0) then',
+'            l_err := apex_lang.message(',
+'                       p_name => ''APP_ERR_MODEL_EXIST''',
+'                     , p0 => l_dgrm_name',
+'                     , p1 => :P2_NEW_VERSION',
+'            );',
+'        end if;',
+'        exit when l_err is not null;',
+'    end loop;',
+'    return l_err;',
+'end;'))
+,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
+,p_validation_condition=>':request = ''ADD_VERSION'' and :P2_BULK_ACTION = ''Y'''
+,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_associated_item=>wwv_flow_api.id(26401222533737000)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(15356574500942513)
+,p_validation_name=>'Flow exists (new version)'
+,p_validation_sequence=>20
+,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'declare',
+'    l_err varchar2(4000);',
+'    l_version_exists number;',
+'    l_dgrm_name flow_diagrams.dgrm_name%type;',
+'begin',
+'    select dgrm_name',
+'    into l_dgrm_name',
+'    from flow_diagrams',
+'    where dgrm_id = :P2_DGRM_ID;',
+'    ',
+'    select count(*)',
+'    into l_version_exists',
+'    from flow_diagrams',
+'    where dgrm_name = l_dgrm_name',
+'    and dgrm_version = :P2_NEW_VERSION',
+'    and dgrm_status = ''draft''; ',
+'    ',
+'    if (l_version_exists > 0) then',
+'        l_err := apex_lang.message(',
+'                   p_name => ''APP_ERR_MODEL_EXIST''',
+'                 , p0 => l_dgrm_name',
+'                 , p1 => :P2_NEW_VERSION',
+'        );',
 '    end if;',
 '    return l_err;',
 'end;'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
-,p_validation_condition=>'ADD_VERSION'
-,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_validation_condition=>':request = ''ADD_VERSION'' and :P2_BULK_ACTION = ''N'''
+,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(26401222533737000)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(40001878906317108)
-,p_validation_name=>'Flow exists (copy)'
-,p_validation_sequence=>20
+,p_validation_name=>'Flow exists (bulk copy)'
+,p_validation_sequence=>30
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_err varchar2(4000);',
@@ -640,35 +692,92 @@ wwv_flow_api.create_page_validation(
 '    l_dgrm_name flow_diagrams.dgrm_name%type;',
 '    l_dgrm_version flow_diagrams.dgrm_version%type;',
 'begin',
-'    if (:P2_NEW_NAME is null) then',
-'        l_err := ''#LABEL# must have a value'';',
-'    else',
-'        for i in l_flows.first..l_flows.last',
-'        loop',
-'            select dgrm_name|| '' - ''|| :P2_NEW_NAME, dgrm_version',
-'            into l_dgrm_name, l_dgrm_version',
-'            from flow_diagrams ',
-'            where dgrm_id = l_flows(i);',
-'            ',
-'            ',
-'            select count(*)',
-'            into l_flow_exists',
-'            from flow_diagrams',
-'            where dgrm_name = l_dgrm_name',
-'            and dgrm_version = l_dgrm_version;',
+'    for i in l_flows.first..l_flows.last',
+'    loop',
+'        select dgrm_name|| '' - '' || :P2_NEW_NAME, dgrm_version',
+'        into l_dgrm_name, l_dgrm_version',
+'        from flow_diagrams ',
+'        where dgrm_id = l_flows(i);',
+'        ',
+'        ',
+'        select count(*)',
+'        into l_flow_exists',
+'        from flow_diagrams',
+'        where dgrm_name = l_dgrm_name',
+'        and dgrm_version = ''0''',
+'        and dgrm_status = ''draft'';',
 '',
-'            if (l_flow_exists > 0) then',
-'                l_err := ''Flow ''||l_dgrm_name||'' (version ''||l_dgrm_version || ''already exists.'';',
-'            end if;',
-'            exit when l_err is not null;',
-'        end loop;',
+'        if (l_flow_exists > 0) then',
+'            l_err := apex_lang.message(',
+'                       p_name => ''APP_ERR_MODEL_EXIST''',
+'                     , p0 => l_dgrm_name',
+'                     , p1 => ''0''',
+'            );',
+'        end if;',
+'        exit when l_err is not null;',
+'    end loop;',
+'    return l_err;',
+'end;'))
+,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
+,p_validation_condition=>':request = ''COPY_MODEL'' and :P2_BULK_ACTION = ''Y'''
+,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_associated_item=>wwv_flow_api.id(7938841081499711)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(15356425922942512)
+,p_validation_name=>'Flow exists (copy)'
+,p_validation_sequence=>40
+,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'declare',
+'    l_err varchar2(4000);',
+'    l_version_exists number;',
+'begin',
+'',
+'    select count(*)',
+'    into l_version_exists',
+'    from flow_diagrams',
+'    where dgrm_name = :P2_NEW_NAME',
+'    and dgrm_version = ''0''',
+'    and dgrm_status = ''draft'';',
+'    ',
+'    if (l_version_exists > 0) then',
+'        l_err := apex_lang.message(',
+'                   p_name => ''APP_ERR_MODEL_EXIST''',
+'                 , p0 => :P2_NEW_NAME',
+'                 , p1 => ''0''',
+'        );',
 '    end if;',
 '    return l_err;',
 'end;'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
-,p_validation_condition=>'COPY_FLOW'
+,p_validation_condition=>':request = ''COPY_MODEL'' and :P2_BULK_ACTION = ''N'''
+,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_associated_item=>wwv_flow_api.id(7938841081499711)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(15356651838942514)
+,p_validation_name=>'New name is not null'
+,p_validation_sequence=>50
+,p_validation=>'P2_NEW_NAME'
+,p_validation_type=>'ITEM_NOT_NULL'
+,p_error_message=>'#LABEL# must have a value.'
+,p_validation_condition=>'COPY_MODEL'
 ,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
 ,p_associated_item=>wwv_flow_api.id(7938841081499711)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(15356707920942515)
+,p_validation_name=>'New version is not null'
+,p_validation_sequence=>60
+,p_validation=>'P2_NEW_VERSION'
+,p_validation_type=>'ITEM_NOT_NULL'
+,p_error_message=>'#LABEL# must have a value.'
+,p_validation_condition=>'ADD_VERSION'
+,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_associated_item=>wwv_flow_api.id(26401222533737000)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
 wwv_flow_api.create_page_da_event(
@@ -815,6 +924,18 @@ wwv_flow_api.create_page_da_action(
 '    });',
 '}'))
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(40001392180317103)
 ,p_name=>'Change checkAll'
@@ -902,7 +1023,7 @@ wwv_flow_api.create_page_process(
 '          flow_bpmn_parser_pkg.upload_diagram',
 '          (',
 '            pi_dgrm_name => case when l_flows.count() > 1 then r_diagrams.dgrm_name || '' - '' end || :P2_NEW_NAME',
-'          , pi_dgrm_version => r_diagrams.dgrm_version',
+'          , pi_dgrm_version => ''0''',
 '          , pi_dgrm_category => r_diagrams.dgrm_category',
 '          , pi_dgrm_content => r_diagrams.dgrm_content',
 '          , pi_dgrm_status => flow_constants_pkg.gc_dgrm_status_draft',
@@ -918,18 +1039,6 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'COPY_MODEL'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 ,p_process_success_message=>'&APP_TEXT$APP_MODEL_COPIED.'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(34632414579575826)
@@ -952,7 +1061,6 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'EXPORT_FLOW,ADD_VERSION,COPY_FLOW'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'
 );
-null;
 wwv_flow_api.component_end;
 end;
 /

@@ -136,7 +136,7 @@ as
       apex_json.write
       (
         p_name  => 'message'
-      , p_value => 'No data found. Check if Diagram with given ID exists.'
+      , p_value => flow_api_pkg.message( p_message_key => 'plugin-modeler-id-not-found', p_lang => apex_util.get_session_lang() )
       );
     end if;
 
@@ -153,7 +153,7 @@ as
       apex_json.write
       (
         p_name  => 'message'
-      , p_value => 'Unexpected error, please contact your administrator.'
+      , p_value => flow_api_pkg.message( p_message_key => 'plugin-unexpected-error', p_lang => apex_util.get_session_lang() )
       );
       apex_json.close_all;
   end load;
@@ -194,6 +194,11 @@ as
 
     apex_json.open_object;
     apex_json.write( p_name => 'success', p_value => true );
+    apex_json.write
+      (
+        p_name  => 'message'
+      , p_value => flow_api_pkg.message( p_message_key => 'plugin-diagram-saved', p_lang => apex_util.get_session_lang() )
+      );
     apex_json.close_all;
   exception
     when others then
@@ -202,7 +207,7 @@ as
       apex_json.write
       (
         p_name  => 'message'
-      , p_value => 'Diagram could not be parsed.<br />Please review your diagram to ensure that it is supported.'
+      , p_value => flow_api_pkg.message( p_message_key => 'plugin-diagram-not-parsable', p_lang => apex_util.get_session_lang() )
       );
       apex_json.close_all;
   end save;

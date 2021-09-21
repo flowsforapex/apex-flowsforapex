@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage3();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915185749'
+,p_last_upd_yyyymmddhh24miss=>'20210921115551'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(34404686490171432)
@@ -30,22 +30,22 @@ wwv_flow_api.create_report_region(
 ,p_template=>wwv_flow_api.id(12495582446800880234)
 ,p_display_sequence=>20
 ,p_include_in_reg_disp_sel_yn=>'Y'
-,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#:t-BadgeList--large:t-BadgeList--dash:t-BadgeList--cols t-BadgeList--5cols:t-Report--hideNoPagination'
 ,p_display_point=>'BODY'
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
-'    sum(case when i.prcs_status = ''created'' then 1 else 0 end)  as created_instances,',
+'    nvl(sum(case when i.prcs_status = ''created'' then 1 else 0 end), 0)  as created_instances,',
 '    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''created'', p_clear_cache => ''RP,RIR'') as instance_created_link,',
-'    sum(case when i.prcs_status = ''running'' then 1 else 0 end)  as running_instances,',
+'    nvl(sum(case when i.prcs_status = ''running'' then 1 else 0 end), 0)  as running_instances,',
 '    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''running'', p_clear_cache => ''RP,RIR'') as instance_running_link,',
-'    sum(case when i.prcs_status = ''completed'' then 1 else 0 end) as completed_instances,',
+'    nvl(sum(case when i.prcs_status = ''completed'' then 1 else 0 end), 0) as completed_instances,',
 '    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''completed'', p_clear_cache => ''RP,RIR'') as instance_completed_link,',
-'    sum(case when i.prcs_status = ''terminated'' then 1 else 0 end)  as terminated_instances,',
+'    nvl(sum(case when i.prcs_status = ''terminated'' then 1 else 0 end), 0)  as terminated_instances,',
 '    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''terminated'', p_clear_cache => ''RP,RIR'') as instance_terminated_link,',
-'    sum(case when i.prcs_status = ''error'' then 1 else 0 end) as error_instances,',
+'    nvl(sum(case when i.prcs_status = ''error'' then 1 else 0 end), 0) as error_instances,',
 '    apex_page.get_url(p_page => 10, p_items => ''IR_PRCS_STATUS'', p_values => ''error'', p_clear_cache => ''RP,RIR'') as instance_error_link',
 'from flow_instances_vw i'))
 ,p_ajax_enabled=>'Y'
@@ -159,7 +159,7 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(34405803831171444)
-,p_plug_name=>'Flow Instances per model- Top 10'
+,p_plug_name=>'Flow Instances per Model - Top 10'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>40
@@ -183,6 +183,7 @@ wwv_flow_api.create_jet_chart(
 ,p_stack=>'on'
 ,p_stack_label=>'off'
 ,p_connect_nulls=>'Y'
+,p_value_position=>'auto'
 ,p_sorting=>'value-desc'
 ,p_fill_multi_series_gaps=>true
 ,p_zoom_and_scroll=>'off'
@@ -190,7 +191,20 @@ wwv_flow_api.create_jet_chart(
 ,p_show_series_name=>true
 ,p_show_group_name=>true
 ,p_show_value=>true
+,p_show_label=>true
+,p_show_row=>true
+,p_show_start=>true
+,p_show_end=>true
+,p_show_progress=>true
+,p_show_baseline=>true
 ,p_legend_rendered=>'off'
+,p_legend_position=>'auto'
+,p_overview_rendered=>'off'
+,p_horizontal_grid=>'auto'
+,p_vertical_grid=>'auto'
+,p_gauge_orientation=>'circular'
+,p_gauge_plot_area=>'on'
+,p_show_gauge_value=>true
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(34406094116171446)
@@ -211,6 +225,8 @@ wwv_flow_api.create_jet_chart_series(
 ,p_color=>'#D9B13B'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(34406322852171449)
@@ -231,6 +247,8 @@ wwv_flow_api.create_jet_chart_series(
 ,p_color=>'#6AAD42'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(34406421411171450)
@@ -251,6 +269,8 @@ wwv_flow_api.create_jet_chart_series(
 ,p_color=>'#8C9EB0 '
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(34629958268575801)
@@ -271,6 +291,8 @@ wwv_flow_api.create_jet_chart_series(
 ,p_color=>'#D76A27'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_series(
  p_id=>wwv_flow_api.id(34630038161575802)
@@ -291,6 +313,8 @@ wwv_flow_api.create_jet_chart_series(
 ,p_color=>'#D2433B'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_axis(
  p_id=>wwv_flow_api.id(34406178037171447)
@@ -407,6 +431,8 @@ wwv_flow_api.create_jet_chart_series(
 ,p_color=>'#D9B13B'
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>false
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
 wwv_flow_api.create_jet_chart_axis(
  p_id=>wwv_flow_api.id(34587853181532103)
