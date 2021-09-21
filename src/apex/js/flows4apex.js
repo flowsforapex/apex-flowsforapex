@@ -766,6 +766,7 @@ function initActions(){
           action: function ( event, focusElement ) {
             var dgrmId = apex.jQuery( focusElement ).attr( "data-dgrm" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "N" );
             apex.theme.openRegion( "new_version_reg" );
           },
         },
@@ -780,6 +781,7 @@ function initActions(){
               .get()
               .join( ":" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "Y" );
             apex.theme.openRegion( "new_version_reg" );
           },
         },
@@ -794,6 +796,7 @@ function initActions(){
               .get()
               .join( ":" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "Y" );
             apex.theme.openRegion( "copy_flow_reg" );
           },
         },
@@ -802,6 +805,7 @@ function initActions(){
           action: function ( event, focusElement ) {
             var dgrmId = apex.jQuery( focusElement ).attr( "data-dgrm" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "N" );
             apex.theme.openRegion( "copy_flow_reg" );
           },
         },
