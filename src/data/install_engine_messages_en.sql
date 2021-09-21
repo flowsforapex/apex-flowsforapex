@@ -364,4 +364,9 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
 );
  
- 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+ 'timer_definition_error',
+ 'en',
+ 'Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3'
+ );
