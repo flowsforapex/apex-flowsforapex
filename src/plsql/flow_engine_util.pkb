@@ -143,13 +143,20 @@ procedure get_number_of_connections
           ;
         exception
           when no_data_found then
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message   =>  apex_string.format 
                               ( p_message => 'Application Error: Process ID %0 not found).'
                               , p0 =>  p_process_id
                               )
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id     => p_process_id
+            , pi_sbfl_id     => p_subflow_id
+            , pi_message_key => 'engine-util-prcs-not-found'
+            , p0 => p_process_id
             );
+            -- $F4AMESSAGE 'engine-util-prcs-not-found' || 'Application Error: Process ID %0 not found).'  
         end;
       end if;
       if p_lock_subflow then 
@@ -177,35 +184,58 @@ procedure get_number_of_connections
          where sbfl.sbfl_id = p_subflow_id
          ;
         if l_prcs_check_id != p_process_id then
-            apex_error.add_error
-            ( p_message => apex_string.format
-                           ( p_message => 'Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 ).'
-                           , p0 => p_subflow_id
-                           , p1 => p_process_id
-                           )
-            , p_display_location => apex_error.c_on_error_page
-            );
+          /*apex_error.add_error
+          ( p_message => apex_string.format
+                          ( p_message => 'Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 ).'
+                          , p0 => p_subflow_id
+                          , p1 => p_process_id
+                          )
+          , p_display_location => apex_error.c_on_error_page
+          );*/
+          flow_errors.handle_instance_error
+          ( pi_prcs_id     => p_process_id
+          , pi_sbfl_id     => p_subflow_id
+          , pi_message_key => 'engine-util-sbfl-not-in-prcs'
+          , p0 => p_subflow_id
+          , p1 => p_process_id
+          );
+          -- $F4AMESSAGE 'engine-util-sbfl-not-in-prcs' || 'Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 ).'  
         end if;
       when lock_timeout then
-        apex_error.add_error
+        /*apex_error.add_error
         ( p_message => apex_string.format 
                        ( p_message => 'Unable to lock items as another user is modifying.  Try again later.  Process: %0 Subflow: %1'
                        , p0 => p_process_id
                        , p1 => p_subflow_id
                        )
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => p_subflow_id
+        , pi_message_key => 'timeout_locking_subflow'
+        , p0 => p_subflow_id
         );
+        -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Retry your transaction later.'  
     end;
     return l_sbfl_rec;
   exception
     when no_data_found then
-            apex_error.add_error
+            /*apex_error.add_error
             ( p_message =>  apex_string.format
                             ( 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations). '
                             , p0 => p_subflow_id
                             )
             , p_display_location => apex_error.c_on_error_page
-            );
+            );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => p_subflow_id
+      );
+      return null;
+      -- $F4AMESSAGE 'engine-util-sbfl-not-in-prcs' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
   end get_subflow_info;
 
   function subflow_start
@@ -284,19 +314,6 @@ procedure get_number_of_connections
     , 'Process',  p_process_id
     , 'Process Level', p_process_level
     );
-    --
-    /*begin
-      select sbfl.sbfl_process_level
-        into l_process_level 
-        from flow_subflows sbfl
-       where sbfl.sbfl_id = p_subflow_id
-         and sbfl.sbfl_prcs_id = p_process_id
-      ;
-    exception
-      when no_data_found 
-      then
-        return;
-    end;*/
     -- find any running subprocesses with parent at this level
     begin
       for child_proc_levels in (
@@ -430,15 +447,13 @@ procedure get_number_of_connections
       ( p_message => 'Unable to lock subflow '||p_subflow_id||'.  Select for update timed out'
       , p_display_location => apex_error.c_on_error_page
       );*/
-
-
       flow_errors.handle_instance_error
       ( pi_prcs_id => l_sbfl_prcs_id
       , pi_sbfl_id => p_subflow_id
       , pi_message_key => 'timeout_locking_subflow'
       , p0 => p_subflow_id
       );
-      -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock Subflow : %0.'
+      -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
       return false;
   end lock_subflow;
 

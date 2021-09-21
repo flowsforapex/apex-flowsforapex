@@ -4,40 +4,58 @@ as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
-function flow_get_matching_link_object
-( pi_dgrm_id     in flow_diagrams.dgrm_id%type 
-, pi_link_bpmn_id   in flow_objects.objt_name%type
-) return varchar2
-is 
-    l_matching_catch_event  flow_objects.objt_bpmn_id%type;
-begin 
-     select catch_objt.objt_bpmn_id
-       into l_matching_catch_event
-       from flow_objects catch_objt
-       join flow_objects throw_objt
-         on catch_objt.objt_name = throw_objt.objt_name
-        and catch_objt.objt_dgrm_id = throw_objt.objt_dgrm_id
-        and catch_objt.objt_objt_id = throw_objt.objt_objt_id
-      where throw_objt.objt_dgrm_id = pi_dgrm_id
-        and throw_objt.objt_bpmn_id = pi_link_bpmn_id
-        and catch_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_link_event_definition
-        and throw_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_link_event_definition
-        and catch_objt.objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event        
-        and throw_objt.objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_throw_event   
-        ;
-    return l_matching_catch_event;
-exception
-  when no_data_found then
-      apex_error.add_error
-      ( p_message => 'Unable to find matching link catch event named '||pi_link_bpmn_id||' .'
-      , p_display_location => apex_error.c_on_error_page
-      );
-   when too_many_rows then
-      apex_error.add_error
-      ( p_message => 'More than one matching link catch event named '||pi_link_bpmn_id||' .'
-      , p_display_location => apex_error.c_on_error_page
-      );   
-end flow_get_matching_link_object;
+  function flow_get_matching_link_object
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , pi_dgrm_id      in flow_diagrams.dgrm_id%type 
+  , pi_link_bpmn_id in flow_objects.objt_name%type
+  ) return varchar2
+  is 
+      l_matching_catch_event  flow_objects.objt_bpmn_id%type;
+  begin 
+      select catch_objt.objt_bpmn_id
+        into l_matching_catch_event
+        from flow_objects catch_objt
+        join flow_objects throw_objt
+          on catch_objt.objt_name = throw_objt.objt_name
+          and catch_objt.objt_dgrm_id = throw_objt.objt_dgrm_id
+          and catch_objt.objt_objt_id = throw_objt.objt_objt_id
+        where throw_objt.objt_dgrm_id = pi_dgrm_id
+          and throw_objt.objt_bpmn_id = pi_link_bpmn_id
+          and catch_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_link_event_definition
+          and throw_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_link_event_definition
+          and catch_objt.objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event        
+          and throw_objt.objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_throw_event   
+          ;
+      return l_matching_catch_event;
+  exception
+    when no_data_found then
+        /*apex_error.add_error
+        ( p_message => 'Unable to find matching link catch event named '||pi_link_bpmn_id||' .'
+        , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => p_subflow_id
+        , pi_message_key => 'link-no-catch'
+        , p0 => pi_link_bpmn_id
+        );
+        return null;
+        -- $F4AMESSAGE 'link-no-catch' || 'Unable to find matching link catch event named %0.'  
+    when too_many_rows then
+        /*apex_error.add_error
+        ( p_message => 'More than one matching link catch event named '||pi_link_bpmn_id||' .'
+        , p_display_location => apex_error.c_on_error_page
+        );  */ 
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => p_subflow_id
+        , pi_message_key => 'link-too-many-catches'
+        , p0 => pi_link_bpmn_id
+        );
+        return null;
+        -- $F4AMESSAGE 'link-too-many-catches' || 'More than one matching link catch event named %0.'  
+  end flow_get_matching_link_object;
 
 procedure flow_process_link_event
   ( p_process_id    in flow_processes.prcs_id%type
@@ -48,39 +66,52 @@ procedure flow_process_link_event
 is 
     l_next_objt      flow_objects.objt_bpmn_id%type;
 begin 
+    apex_debug.enter 
+    ( 'flow_process_link_event'
+    , 'Process', p_process_id
+    , 'Subflow', p_subflow_id
+    );
     -- find matching link catching event and step to it
     l_next_objt := flow_get_matching_link_object 
-      ( pi_dgrm_id => p_step_info.dgrm_id
+      ( p_process_id    => p_process_id
+      , p_subflow_id    => p_subflow_id
+      , pi_dgrm_id      => p_step_info.dgrm_id
       , pi_link_bpmn_id => p_step_info.target_objt_ref
       );
-    -- update current step info before logging
-    update flow_subflows sbfl
-       set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-         , sbfl.sbfl_last_update = systimestamp
-         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-     where sbfl.sbfl_id = p_subflow_id
-       and sbfl.sbfl_prcs_id = p_process_id
-    ;
-    -- log throw event as complete
-   flow_logging.log_step_completion   
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_completed_object => p_step_info.target_objt_ref
-    );
-    -- jump into matching catch event
-    update flow_subflows sbfl
-    set   sbfl.sbfl_current = l_next_objt
-        , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
-        , sbfl.sbfl_became_current = systimestamp 
-        , sbfl.sbfl_last_update = systimestamp
-        , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-    where sbfl.sbfl_id = p_subflow_id
-        and sbfl.sbfl_prcs_id = p_process_id
-    ;
-    flow_complete_step
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    );  
+  
+    -- proceed if link found cleanly
+    if not flow_globals.get_step_error then
+      -- update current step info before logging
+      update flow_subflows sbfl
+          set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+            , sbfl.sbfl_last_update = systimestamp
+            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+        where sbfl.sbfl_id = p_subflow_id
+          and sbfl.sbfl_prcs_id = p_process_id
+      ;
+      -- log throw event as complete
+      flow_logging.log_step_completion   
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      , p_completed_object => p_step_info.target_objt_ref
+      );
+      -- jump into matching catch event
+      update flow_subflows sbfl
+      set   sbfl.sbfl_current = l_next_objt
+          , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+          , sbfl.sbfl_became_current = systimestamp 
+          , sbfl.sbfl_last_update = systimestamp
+          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+      where sbfl.sbfl_id = p_subflow_id
+          and sbfl.sbfl_prcs_id = p_process_id
+      ;
+      flow_complete_step
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      );
+    else
+      apex_debug.error(p_message  => 'error finding matching link object found');    
+    end if;
 end flow_process_link_event;
 
 
@@ -246,10 +277,17 @@ end flow_process_link_event;
             -- error exit with no Boundary Event specified -- return to normal exit
             l_boundary_event := null;
           when too_many_rows then
-            apex_error.add_error
-              ( p_message => 'More than one error boundaryEvent found on sub process '||l_subproc_objt||'.'
+            /*apex_error.add_error
+              ( p_message => 'More than one error boundaryEvent found on sub process.'
             , p_display_location => apex_error.c_on_error_page
+            );*/
+            flow_errors.handle_instance_error
+            ( pi_prcs_id     => p_process_id
+            , pi_sbfl_id     => p_subflow_id
+            , pi_message_key => 'boundary-event-too-many'
+            , p0 => 'error'
             );
+            -- $F4AMESSAGE 'boundary-event-too-many' || 'More than one %0 boundaryEvent found on sub process.'  
         end;
         -- stop processing in sub process and all children
         flow_engine_util.terminate_level
@@ -323,15 +361,27 @@ end flow_process_link_event;
        ;
     exception
       when no_data_found then
-        apex_error.add_error
+        /*apex_error.add_error
         ( p_message => 'Unable to find Sub-Process Start Event.'
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => p_subflow_id
+        , pi_message_key => 'subProcess-no-start'
         );
+      -- $F4AMESSAGE 'subProcess-no-start' || 'Unable to find Sub-Process Start Event.'  
       when too_many_rows then
-        apex_error.add_error
-        ( p_message => 'More than one Sub-Process Start found..'
+        /*apex_error.add_error
+        ( p_message => 'More than one Sub-Process Start found.'
         , p_display_location => apex_error.c_on_error_page
+        );*/
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => p_subflow_id
+        , pi_message_key => 'subProcess-too-many-starts'
         );
+        -- $F4AMESSAGE 'subProcess-too-many-starts' || 'More than one Sub-Process Start found.'  
     end;
     -- start subflow for the sub-process
     l_sbfl_id_sub := 
@@ -498,10 +548,17 @@ end flow_process_link_event;
       );  
     else 
       --- other type of intermediateThrowEvent that is not currently supported
-      apex_error.add_error
+      /*apex_error.add_error
           ( p_message => 'Currently unsupported type of Intermediate Throw Event encountered at '||p_sbfl_info.sbfl_current||' .'
           , p_display_location => apex_error.c_on_error_page
-          );
+          );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'ITE-unsupported-type'
+      , p0 => p_sbfl_info.sbfl_current
+      );
+      -- $F4AMESSAGE 'ITE-unsupported-type' || 'Currently unsupported type of Intermediate Throw Event encountered at %0 .'  
     end if;
 end process_intermediateThrowEvent;
 
@@ -649,12 +706,21 @@ begin
   , pi_prcs_id      => p_process_id
   , pi_sbfl_id      => p_subflow_id
   );
-  -- move onto next step
-  flow_complete_step 
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_forward_route => null
-  );
+  -- test for any errors so far 
+  if flow_globals.get_step_error then 
+    -- has step errors from expressions
+    flow_errors.set_error_status
+    ( pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    );
+  else
+    -- move onto next step
+    flow_complete_step 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_forward_route => null
+    );
+  end if;  
 end handle_intermediate_catch_event;
 
 procedure flow_handle_event
@@ -686,6 +752,10 @@ begin
   , pi_sbfl_id => p_subflow_id
   );
   flow_globals.set_is_recursive_step (p_is_recursive_step => true);
+  -- initialise step_had_error flag
+  flow_globals.set_step_error ( p_has_error => false);
+
+
   -- lock subflow containing event
   if flow_engine_util.lock_subflow(p_subflow_id) then
     -- subflow_locked
@@ -981,15 +1051,23 @@ begin
     return l_step_info;
   exception
   when no_data_found then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'No Current Error Found.  Check your process diagram.'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_general_error
+    ( pi_message_key => 'restart-no-error'
     );
+    -- $F4AMESSAGE 'restart-no-error' || 'No Current Error Found.  Check your process diagram.'  
   when too_many_rows then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'More than 1 forward path found when only 1 allowed'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_general_error
+    ( pi_message_key => 'more_than_1_forward_path'
     );
+    -- $F4AMESSAGE 'more_than_1_forward_path' || 'More than 1 forward path found when only 1 allowed.'      
   end;
 end get_restart_step_info;
 
@@ -1149,15 +1227,29 @@ begin
 
   exception
     when case_not_found then
-      apex_error.add_error
-      ( p_message => 'Process Model Error: Process BPMN model next step uses unsupported object: '||p_step_info.target_objt_tag
+      /*apex_error.add_error
+      ( p_message => 'Model Error: Process BPMN model next step uses unsupported object: '||p_step_info.target_objt_tag
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
+      , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_message_key => 'engine-unsupported-object'
+      , p0 => p_step_info.target_objt_tag
       );
+      -- $F4AMESSAGE 'engine-unsupported-object' || 'Model Error: Process BPMN model next step uses unsupported object %0'  
     when no_data_found then
-      apex_error.add_error
-      ( p_message => 'Next step does not exist. Please check your process diagram.'
+      /*apex_error.add_error
+      ( p_message => 'No next step exists. Please check your process diagram.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
+      , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_message_key => 'no_next_step_found'
+      , p0 => p_sbfl_rec.sbfl_id
       );
+      -- $F4AMESSAGE 'no_next_step_found' || 'No Next Step Found on subflow %0.  Check your process diagram.'  
     when flow_plsql_runner_pkg.e_plsql_script_failed then
       /*
       apex_error.add_error
@@ -1167,11 +1259,7 @@ begin
       );
       */
       null;
-    /*when others then
-      apex_error.add_error
-      ( p_message => 'Some other error finding next step'
-      , p_display_location => apex_error.c_on_error_page
-      );*/  -- let error run back to run_step
+ -- let error run back to run_step
 end run_step;
 
 
@@ -1349,7 +1437,7 @@ begin
         from flow_subflows sbfl 
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
-         for update of sbfl_work_started wait 2
+         for update of sbfl_work_started wait 3
       ;
     end if;
     -- set the start time if null
@@ -1366,15 +1454,26 @@ begin
     end if;
   exception
     when no_data_found then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Start Work time recording unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_general_error
+      ( pi_message_key => 'restart-no-error'
+      , p0 => p_subflow_id
+      , p1 => p_process_id
       );
+      -- $F4AMESSAGE 'startwork-sbfl-not-found' || 'Start Work time recording unsuccessful.  Subflow %0 in Process %1 not found.'  
     when lock_timeout then
-        apex_error.add_error
-        ( p_message => 'Subflow '||p_subflow_id||' currently locked by another user.  Try to start your task later.'
-        , p_display_location => apex_error.c_on_error_page
-        );
+      /*apex_error.add_error
+      ( p_message => 'Subflow '||p_subflow_id||' currently locked by another user.  Try to start your task later.'
+      , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_general_error
+      ( pi_message_key => 'timeout_locking_subflow'
+      , p0 => p_subflow_id
+      );
+      -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'        
   end start_step;
 
 procedure restart_step
@@ -1405,10 +1504,14 @@ begin
                 );
   -- check subflow current task is in error status
   if l_sbfl_rec.sbfl_status <> flow_constants_pkg.gc_sbfl_status_error then 
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Only Subflows with a status of error can be re-started'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_general_error
+      ( pi_message_key => 'restart-no-error'
       );
+      -- $F4AMESSAGE 'restart-no-error' || 'No Current Error Found.  Check your process diagram.'  
   end if;
   -- set up step context
   l_step_info :=  get_restart_step_info
