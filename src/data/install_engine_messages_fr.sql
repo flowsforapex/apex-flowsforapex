@@ -1,80 +1,5 @@
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'eng_handle_event_int',
-'fr',
-'Erreur interne du moteur de flux: Processus %0 Sous-flux %1 Module %2 Courant %4 Balise courante %3'
-);
-
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'more_than_1_forward_path',
-'fr',
-'Plus d''un chemin d''accès trouvé alors qu''un seul est autorisé.'
-);
-
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'no_next_step_found',
-'fr',
-'Aucune étape suivante trouvée pour le sous-flux %0. Vérifiez votre diagramme de processus.'
-);
-
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'plsql_script_failed',
-'fr',
-'Processus %0 : Tâche de script %1 a échoué en raison d''une erreur PL/SQL - voir le journal des événements.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'plsql_script_requested_stop',
-'fr',
-'Processus %0: Tâche de script %1 arrêt du traitement demandé - voir le journal des événements.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'timeout_locking_subflow',
-'fr',
-'Impossible de verrouiller le sous-flux : %0.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'timer_broken',
-'fr',
-'Minuteur %0 en erreur dans le processus %1 , sous-flux : %2.  Voir error_info.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'var_exp_plsql_error',
-'fr',
-'Sous-flux : %0 Erreur dans l''expression %2 de la variable : %1'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'var_exp_sql_no_data',
-'fr',
-'Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0 - Aucune donnée trouvée dans la requête.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'var_exp_sql_other',
-'fr',
-'Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0.  Erreur SQL indiquée dans le journal des événements.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'var_exp_sql_too_many_rows',
-'fr',
-'Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0.  La requête renvoie plusieurs lignes.'
-);
-
+set define off
+PROMPT >> Loading Exported Messages
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'ITE-unsupported-type',
@@ -86,7 +11,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'boundary-event-child-lock-to',
 'fr',
-'Sous-flux enfant ou minuteur de %0 sont actuellement verrouillés par un autre utilisateur. Child Boundary Subflows or Timers of %0 currently locked by another user. Réessayez votre transaction plus tard.'
+'Sous-flux enfant ou minuteur de %0 sont actuellement verrouillés par un autre utilisateur. . Réessayez votre transaction plus tard.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -102,7 +27,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Plus d''un événement de frontière %0 trouvé sur le sous-processus.'
 );
-
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'eng_handle_event_int',
+'fr',
+'Erreur interne du moteur de flux: Processus %0 Sous-flux %1 Module %2 Courant %4 Balise courante %3'
+);
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
@@ -166,12 +97,88 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Plus d''un lien correspond à l''événement %0.'
 );
-
+  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'logging-instance-event',
+'fr',
+'Flux - Erreur interne - %0 event'
+);
+ 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'process-lock-timeout',
 'fr',
 'Les objets de traitement pour %0 sont actuellement verrouillés par un autre utilisateur. Réessayez plus tard.'
+);
+  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'more_than_1_forward_path',
+'fr',
+'Plus d''un chemin d''accès trouvé alors qu''un seul est autorisé.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'no_next_step_found',
+'fr',
+'Aucune étape suivante trouvée pour le sous-flux %0. Vérifiez votre diagramme de processus.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plsql_script_failed',
+'fr',
+'Processus %0 : Tâche de script %1 a échoué en raison d''une erreur PL/SQL - voir le journal des événements.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plsql_script_requested_stop',
+'fr',
+'Processus %0: Tâche de script %1 arrêt du traitement demandé - voir le journal des événements.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timeout_locking_subflow',
+'fr',
+'Impossible de verrouiller le sous-flux %0, celui-ci est actuellement verrouillé par un autre utilisateur. Veuillez réessayer ultérieurement.'
+);
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-already-placed',
+'fr',
+'Réservation déjà effectuée sur la prochaine tâche pour vous.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-by-other_user',
+'fr',
+'La réservation pour %0 est impossible. L''étape est déjà réservée par un autre utilisateur (%1).'
+); 
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-failed-not-found',
+'fr',
+'La réservation pour %0 est impossible. Sous-flux %0 dans le processus %1 non trouvé.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-lock-timeout',
+'fr',
+'Sous-flux actuellement verrouillé (non reservé) par un autre utilisteur. Veuillez réessayez ultérieurement.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'reservation-release-not-found',
+'fr',
+'La libération de la réservation est impossible. Sous-flux %0 dans le processus %1 non trouvé.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -243,6 +250,54 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Plus d''un événement de sous-processus trouvé.'
 );
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-broken',
+'fr',
+'Minuteur %0 en erreur dans le processus %1 , sous-flux : %2.  Voir error_info.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-cycle-unsupported',
+'fr',
+'Minuteur de type cycle défini pour l''objet %0 n''est pas pris en charge actuellement.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-incomplete-definition',
+'fr',
+'Définition incomplète du minuteur de l''objet %0. Type: %1; Valeur: %2'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-lock-timeout',
+'fr',
+'La minuteur du sous-flux %0 est verrouillé par un autre utilisateur. Veuillez réessayer ultérieurement.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer-object-not-found',
+'fr',
+'Objet avec minuteur non trouvé dans get_timer_definition. Sous-flux %0.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timers-lock-timeout',
+'fr',
+'Les minuteurs pour le processus %0 sont verrouillés par un autre utilisateur. Veuillez réessayer ultérieurement.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-set-error',
+'fr',
+'Erreur %0 variable de processus %1 pour l''ID de processus %1.'
+);
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
@@ -264,7 +319,35 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Erreur interne dans la recherche de l''objet %0 dans process_expressions. Erreur SQL affichée dans le débogage'
 );
-
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_plsql_error',
+'fr',
+'Sous-flux : %0 Erreur dans l''expression %2 de la variable : %1'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_sql_no_data',
+'fr',
+'Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0 - Aucune donnée trouvée dans la requête.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_sql_other',
+'fr',
+'Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0.  Erreur SQL indiquée dans le journal des événements.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var_exp_sql_too_many_rows',
+'fr',
+'Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0.  La requête renvoie plusieurs lignes.'
+);
+ 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var_exp_static_general',
@@ -279,7 +362,12 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Impossible de trouver le diagramme publié ou la version 0 du diagramme - veuillez spécifier une version ou un numéro de diagramme.'
 );
  
-
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+ 'timer_definition_error',
+ 'fr',
+ 'Erreur lors de l''analyse de la définition du minuteur dans le processus %0, sous-flux %1. Type de minuteur : %2, Définition: %3'
+ );
 /* Plug-ins */
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
@@ -378,3 +466,4 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Le modlèle a changé, annuler les changements?'
 );
+ 
