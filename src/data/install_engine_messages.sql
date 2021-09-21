@@ -86,9 +86,17 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var_exp_static_general',
-'en-us',
+'en',
 'Error setting %2 process variable %1 in process id %0.  See error in event log.'
 );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'timer_definition_error',
+'en',
+'Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3'
+);
+
 
  /* Plug-ins */
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
