@@ -174,12 +174,6 @@ prompt --install
 @@application/pages/page_00014.sql
 @@application/pages/page_09999.sql
 @@application/deployment/definition.sql
-@@application/deployment/install/install_tables.sql
-@@application/deployment/install/install_data.sql
-@@application/deployment/install/install_packages_spec.sql
-@@application/deployment/install/install_views.sql
-@@application/deployment/install/install_packages_body.sql
-@@application/deployment/install/install_functions.sql
 @@application/deployment/checks.sql
 @@application/deployment/buildoptions.sql
 @@application/end_environment.sql
