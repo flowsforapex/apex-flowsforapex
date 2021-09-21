@@ -52,6 +52,7 @@ The diagram below gives a full definition of the BPMN syntax supported in the cu
 
 - [About Subflows](AboutSubflows.md)
 - [Process Versioning](diagramVersioning.md) 🆕
+- [About Timestamps and Timezones](OnTimezones.md) 🆕
 
 ## Frequently Asked Questions (FAQ)
 
