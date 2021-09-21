@@ -53,10 +53,19 @@ begin
 exception
   when others
   then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
     );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 procedure set_var
@@ -108,10 +117,19 @@ begin
 exception
   when others
   then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
     );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 procedure set_var
@@ -163,10 +181,19 @@ begin
 exception
   when others
   then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
     );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 procedure set_var
@@ -217,10 +244,19 @@ begin
 exception
   when others
   then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
     );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 -- getters return
@@ -243,10 +279,18 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'       
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
     else
       return null;
     end if;
@@ -270,10 +314,18 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'         
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
     else
       return null;
     end if;
@@ -297,10 +349,18 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'        
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
     else
       return null;
     end if;
@@ -324,10 +384,18 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'       
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
     else
       return null;
     end if;
@@ -361,15 +429,31 @@ begin
   );
 exception
   when  no_data_found then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message          => 'Process variable '||pi_var_name||' in process '||pi_prcs_id||' not found.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'deleting'         
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
   when lock_timeout then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'Process variable '||pi_var_name||' in process '||pi_prcs_id||' already locked by another user. Try to start your task later.'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => 'locking'        
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
     );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end delete_var;
 
 -- special cases / built-in standard variables

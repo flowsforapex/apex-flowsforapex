@@ -161,16 +161,23 @@ is
            and child_sbfl.sbfl_prcs_id = p_process_id
            and child_sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_timer
          order by child_sbfl.sbfl_id
-        for update of child_sbfl.sbfl_id, child_timr.timr_id;
+        for update of child_sbfl.sbfl_id, child_timr.timr_id wait 3;
   begin 
     open c;
     close c;
   exception 
     when lock_timeout then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'Child Boundary Subflows or Timers of '||p_subflow_id||' currently locked by another user.  Retry your transaction later.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'boundary-event-child-lock-to'
+      , p0             => p_subflow_id
       );
+      -- $F4AMESSAGE 'boundary-event-child-lock-to' || 'Child Boundary Subflows or Timers of %0 currently locked by another user.  Retry your transaction later.'  
   end lock_child_boundary_timers; 
 
   procedure handle_interrupting_boundary_event
@@ -263,12 +270,15 @@ is
   , po_interrupting             out flow_objects.objt_interrupting%type
   )
 is 
+  l_process_id    flow_processes.prcs_id%type;
 begin
     -- in later release if named errors and escalations are supported, change this to look for specific event
     select boundary_objt.objt_bpmn_id
          , boundary_objt.objt_interrupting
+         , parent_sbfl.sbfl_prcs_id
       into po_boundary_objt
          , po_interrupting
+         , l_process_id
       from flow_objects boundary_objt
       join flow_subflows parent_sbfl
         on parent_sbfl.sbfl_current = boundary_objt.objt_attached_to
@@ -289,12 +299,18 @@ exception
          po_interrupting := 0;
       end if;
   when too_many_rows then
-      apex_error.add_error
+      /*apex_error.add_error
       ( p_message => 'More than one '||pi_sub_tag_name||' boundaryEvent found on sub process.'
       , p_display_location => apex_error.c_on_error_page
+      );*/
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => l_process_id
+      , pi_sbfl_id     => pi_par_sbfl
+      , pi_message_key => 'boundary-event-too-many'
+      , p0 => pi_sub_tag_name
       );
+      -- $F4AMESSAGE 'boundary-event-too-many' || 'More than one %0 boundaryEvent found on sub process.'  
 end get_boundary_event;
-
 
 procedure process_boundary_event
   ( p_process_id    in flow_processes.prcs_id%type
@@ -330,10 +346,17 @@ begin
   , po_interrupting => l_interrupting
   );
   if l_next_objt is null then
-    apex_error.add_error
+    /*apex_error.add_error
     ( p_message => 'No boundaryEvent of type '||p_step_info.target_objt_subtag||' found to catch event.'
     , p_display_location => apex_error.c_on_error_page
+    );*/
+    flow_errors.handle_instance_error
+    ( pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+    , pi_message_key => 'boundary-event-no-catch-found'
+    , p0 => p_step_info.target_objt_subtag
     );
+    -- $F4AMESSAGE 'boundary-event-no-catch-found' || 'No boundaryEvent of type %0 found to catch event.'  
   end if;
   if l_interrupting = 1 then
     -- first remove any non-interrupting timers that are on the parent event
