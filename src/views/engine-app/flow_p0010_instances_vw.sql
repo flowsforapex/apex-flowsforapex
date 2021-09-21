@@ -23,8 +23,8 @@ as
                  , dgrm_status as prcs_dgrm_status
                  , dgrm_category as prcs_dgrm_category
                  , prcs_status
-                 , prcs_init_ts as prcs_init_date
-                 , prcs_last_update
+                 , prcs_init_ts at time zone sessiontimezone as prcs_init_date
+                 , prcs_last_update at time zone sessiontimezone as prcs_last_update
                  , prcs_business_ref
                  , case prcs_status
                      when 'running' then 'fa-play-circle-o'

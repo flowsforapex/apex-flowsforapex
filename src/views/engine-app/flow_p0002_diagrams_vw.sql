@@ -21,7 +21,7 @@ as
        , d.dgrm_version
        , d.dgrm_status
        , d.dgrm_category
-       , d.dgrm_last_update
+       , d.dgrm_last_update at time zone sessiontimezone as dgrm_last_update
        , null as btn
        , apex_page.get_url(p_page => 7, p_items => 'P7_DGRM_ID', p_values => d.dgrm_id) as edit_link
        , apex_page.get_url(p_page => 11, p_items => 'P11_DGRM_ID', p_values => d.dgrm_id) as create_instance_link
