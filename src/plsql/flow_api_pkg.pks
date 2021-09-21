@@ -192,5 +192,22 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return varchar2;
 
+  -- message
+  -- returns a Flows for APEX error message with p0...p9 substitutions in p_lang
+  function message
+  ( p_message_key     in varchar2 
+  , p_lang            in varchar2 default 'en'
+  , p0                in varchar2 default null
+  , p1                in varchar2 default null
+  , p2                in varchar2 default null
+  , p3                in varchar2 default null
+  , p4                in varchar2 default null
+  , p5                in varchar2 default null
+  , p6                in varchar2 default null
+  , p7                in varchar2 default null
+  , p8                in varchar2 default null
+  , p9                in varchar2 default null
+  ) return varchar2;
+
 end flow_api_pkg;
 /

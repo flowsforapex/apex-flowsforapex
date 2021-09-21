@@ -14,7 +14,7 @@ as
            when 'reset' then 'fa-undo'
            when 'restart step' then 'fa-undo'
          end as lgpr_prcs_event_icon
-       , lgpr.lgpr_timestamp
+       , lgpr.lgpr_timestamp at time zone sessiontimezone as lgpr_timestamp
        , lgpr.lgpr_user
        , lgpr.lgpr_comment
        , lgpr_error_info

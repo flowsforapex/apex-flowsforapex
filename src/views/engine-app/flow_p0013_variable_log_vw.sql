@@ -4,7 +4,7 @@ as
        , lgvr_objt_id
        , lgvr_var_name
        , lgvr_expr_set
-       , lgvr_timestamp
+       , lgvr_timestamp at time zone sessiontimezone as lgvr_timestamp
        , lgvr_var_type
        , case
            when lgvr_var_vc2 is not null then lgvr_var_vc2

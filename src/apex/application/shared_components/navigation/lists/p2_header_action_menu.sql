@@ -19,7 +19,7 @@ wwv_flow_api.create_list(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40402870460815221)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'New Version'
+,p_list_item_link_text=>'Add New Version'
 ,p_list_item_icon=>'fa-arrow-circle-o-up'
 ,p_list_text_01=>'bulk-new-flow-version'
 ,p_list_item_current_type=>'TARGET_PAGE'

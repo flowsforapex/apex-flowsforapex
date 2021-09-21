@@ -15,12 +15,12 @@ as
        , sbfl.sbfl_route_name
        , sbfl.sbfl_last_completed
        , sbfl.sbfl_last_completed_name
-       , sbfl.sbfl.sbfl_current
+       , sbfl.sbfl_current
        , sbfl.sbfl_current_name 
        , sbfl.sbfl_current_tag_name
        , sbfl.sbfl_starting_object
        , sbfl.sbfl_starting_object_name 
-       , sbfl.sbfl_last_update
+       , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update
        , sbfl.sbfl_current_lane
        , sbfl.sbfl_current_lane_name
        , sbfl.sbfl_process_level

@@ -27,7 +27,7 @@ wwv_flow_api.create_list_item(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7959824792726090)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Download Image'
+,p_list_item_link_text=>'Download (SVG)'
 ,p_list_item_link_target=>'javascript:apex.region( ''modeler'' ).getSVG().then( ( svg ) => {'||wwv_flow.LF||
 '     var svgBlob = new Blob([svg], {'||wwv_flow.LF||
 '        type: ''image/svg+xml'''||wwv_flow.LF||

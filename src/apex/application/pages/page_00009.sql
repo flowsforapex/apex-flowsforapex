@@ -20,7 +20,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210910125127'
+,p_last_upd_yyyymmddhh24miss=>'20210915151746'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(8027146440825640)
@@ -144,8 +144,8 @@ wwv_flow_api.create_page_item(
 ,p_lov_display_extra=>'YES'
 ,p_inline_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li><strong>production</strong> (default) - prevents editing of released flows</li>',
-'    <li><strong>development</strong> - allows editing of released flows	</li>',
+'    <li><strong>production</strong> (default) - prevents editing of diagram for released models</li>',
+'    <li><strong>development</strong> - allows editing of diagram for released models</li>',
 '</ul>'))
 ,p_attribute_01=>'2'
 ,p_attribute_02=>'NONE'

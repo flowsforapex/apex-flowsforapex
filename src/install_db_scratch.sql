@@ -69,6 +69,7 @@ PROMPT >>
 
 @data/install_default_config_data.sql
 @data/install_engine_messages.sql
+@data/install_engine_messages_fr.sql
 
 
 PROMPT >> Installing Engine-App Objects

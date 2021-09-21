@@ -38,6 +38,7 @@
       [
         { "content_type": "plaintext", "path": "/", "name": "install_default_config_data.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_fr.sql", "add_show_errors": false }
       ]
     }
   , {
@@ -117,9 +118,7 @@
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_subflows_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_variables_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_branches_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_instances_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_routes_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_attributes_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_expressions_vw.sql", "add_show_errors": false }

@@ -1,10 +1,11 @@
 create or replace package body flow_errors
-as
+as 
 
   g_logging_language        flow_configuration.cfig_value%type; 
 
   procedure autonomous_write_to_instance_log
   ( pi_prcs_id        in flow_processes.prcs_id%type
+  , pi_objt_bpmn_id   in flow_subflows.sbfl_current%type default null
   , pi_message        in flow_instance_event_log.lgpr_comment%type
   , pi_error_info     in flow_instance_event_log.lgpr_error_info%type
   )
@@ -14,6 +15,7 @@ as
     -- add to instance_event_log
     flow_logging.log_instance_event
     ( p_process_id        => pi_prcs_id
+    , p_objt_bpmn_id      => pi_objt_bpmn_id
     , p_event             => flow_constants_pkg.gc_prcs_event_error
     , p_comment           => pi_message
     , p_error_info        => pi_error_info
@@ -42,7 +44,8 @@ as
   end set_error_status;
 
   function make_error_message
-  ( pi_message_key    in varchar2 
+  ( pi_message_key    in flow_messages.fmsg_message_key%type 
+  , pi_lang           in flow_messages.fmsg_lang%type
   , p0                in varchar2 default null
   , p1                in varchar2 default null
   , p2                in varchar2 default null
@@ -64,7 +67,7 @@ as
         into l_message_content
         from flow_messages fmsg
        where fmsg.fmsg_message_key = pi_message_key
-         and fmsg.fmsg_lang = g_logging_language
+         and fmsg.fmsg_lang = pi_lang
       ;
     exception
       when no_data_found then
@@ -121,6 +124,7 @@ as
     l_message_content  flow_messages.fmsg_message_content%type;
     l_message          flow_instance_event_log.lgpr_comment%type;
     l_error_info       flow_instance_event_log.lgpr_error_info%type;
+    l_current          flow_subflows.sbfl_current%type;
   begin 
     apex_debug.enter
     ( 'handle_instance_error'
@@ -132,6 +136,7 @@ as
     -- for log & apex_error
     l_message :=  make_error_message
                   ( pi_message_key   => pi_message_key
+                  , pi_lang          => g_logging_language
                   , p0               => p0
                   , p1               => p1
                   , p2               => p2
@@ -145,9 +150,25 @@ as
                   );
     -- get the error stack and step type
     l_error_info   := dbms_utility.format_error_stack;
+    -- get the current step, if known & available
+    begin
+      if pi_sbfl_id is not null then
+        select sbfl.sbfl_current
+          into l_current
+          from flow_subflows sbfl
+        where sbfl.sbfl_id = pi_sbfl_id
+        ;
+      else
+        l_current := null;
+      end if;
+    exception
+      when others then
+        l_current := null;
+    end; 
     -- add to instance_event_log
     autonomous_write_to_instance_log
     ( pi_prcs_id        => pi_prcs_id
+    , pi_objt_bpmn_id   => l_current
     , pi_message        => l_message
     , pi_error_info     => l_error_info
     );
@@ -189,6 +210,7 @@ as
     -- for log & apex_error
     l_message :=  make_error_message
                   ( pi_message_key   => pi_message_key
+                  , pi_lang          => g_logging_language
                   , p0               => p0
                   , p1               => p1
                   , p2               => p2

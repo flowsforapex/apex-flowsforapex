@@ -1,6 +1,7 @@
 create or replace view flow_p0014_instance_log_vw
 as
   select lgpr.lgpr_prcs_id
+       , lgpr.lgpr_objt_id
        , lgpr.lgpr_prcs_name
        , lgpr.lgpr_business_id
        , lgpr.lgpr_prcs_event
@@ -14,7 +15,7 @@ as
            when 'reset' then 'fa-undo'
            when 'restart step' then 'fa-undo'
          end as lgpr_prcs_event_icon
-       , lgpr.lgpr_timestamp
+       , lgpr.lgpr_timestamp at time zone sessiontimezone as lgpr_timestamp
        , lgpr.lgpr_user
        , lgpr.lgpr_comment
        , lgpr_error_info

@@ -6,9 +6,9 @@ as
        , sbfl.sbfl_last_completed
        , sbfl.sbfl_current
        , sbfl.sbfl_status
-       , sbfl.sbfl_became_current
-       , sbfl.sbfl_work_started
+       , sbfl.sbfl_became_current at time zone sessiontimezone as sbfl_became_current
+       , sbfl.sbfl_work_started at time zone sessiontimezone as sbfl_work_started
        , sbfl.sbfl_reservation
-       , sbfl.sbfl_last_update
+       , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update
     from flow_subflows sbfl
 with read only;

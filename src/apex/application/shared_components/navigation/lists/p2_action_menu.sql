@@ -19,7 +19,7 @@ wwv_flow_api.create_list(
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(7928205045409069)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Import Flow'
+,p_list_item_link_text=>'Import'
 ,p_list_item_link_target=>'f?p=&APP_ID.:6:&SESSION.:IMPORT_FLOW:&DEBUG.:6:P6_FORCE_OVERWRITE:N:'
 ,p_list_item_icon=>'fa-upload'
 ,p_list_item_current_type=>'TARGET_PAGE'
