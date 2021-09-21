@@ -194,6 +194,11 @@ as
 
     apex_json.open_object;
     apex_json.write( p_name => 'success', p_value => true );
+    apex_json.write
+      (
+        p_name  => 'message'
+      , p_value => flow_api_pkg.message( p_message_key => 'plugin-diagram-saved', p_lang => apex_util.get_session_lang() )
+      );
     apex_json.close_all;
   exception
     when others then
