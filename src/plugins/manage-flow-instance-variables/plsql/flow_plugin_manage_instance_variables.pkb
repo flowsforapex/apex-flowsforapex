@@ -112,8 +112,9 @@ create or replace package body flow_plugin_manage_instance_variables as
       type t_items    is table of t_item index by varchar2(50);
 
       --collections
-      l_prcs_var t_prcs_var;
-      l_items    t_items;
+      l_prcs_var   t_prcs_var;
+      l_items      t_items;
+      l_cur_app_id number;
 
       --json
       l_json              clob;
@@ -388,6 +389,7 @@ create or replace package body flow_plugin_manage_instance_variables as
             l_prcs_var(rec.prov_var_name) := rec.prov_var_type;
          end loop;
 
+         l_cur_app_id := nv('APP_ID');
          -- Get items types
          for rec in (
             select column_value as item_name
@@ -399,16 +401,18 @@ create or replace package body flow_plugin_manage_instance_variables as
                      else
                         'VARCHAR2'
                   end as item_type
-               , coalesce(aapi.format_mask, v('APP_NLS_DATE_FORMAT')) format_mask
+               , aapi.format_mask format_mask
             from table(apex_string.split(l_attribute7, ',')) items
             left outer join apex_application_page_items aapi
                on aapi.item_name = items.column_value
+              and aapi.application_id = l_cur_app_id
             left outer join apex_application_items aai
                on aai.item_name = items.column_value
+              and aai.application_id = l_cur_app_id
          )
          loop
             l_items(rec.item_name).item_type   := rec.item_type;
-            l_items(rec.item_name).format_mask := rec.format_mask;
+            l_items(rec.item_name).format_mask := coalesce( rec.format_mask, v('APP_NLS_DATE_FORMAT') );
          end loop;
 
          -- Loop through variables

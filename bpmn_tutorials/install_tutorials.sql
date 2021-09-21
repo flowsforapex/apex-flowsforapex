@@ -1,3 +1,5 @@
+set define '^'
+
 PROMPT >> Installing Tutorial Diagrams
 PROMPT >> ============================
 
