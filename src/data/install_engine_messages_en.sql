@@ -46,7 +46,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'engine-util-prcs-not-found',
 'en',
-'Application Error: Process ID %0 not found).'
+'Application Error: Process ID %0 not found.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -105,6 +105,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Flows - Internal error logging %0 event'
 );
  
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'process-lock-timeout',
+'en',
+'Process objects for %0 currently locked by another user.  Try again later.'
+);
+  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'more_than_1_forward_path',
@@ -130,14 +138,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_requested_stop',
 'en',
-'Process %0: ScriptTask %1 requested processing stop - see event log.'
+'Process %0: ScriptTask %1 requested processing stop - see event log.'										  
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
-'process-lock-timeout',
+'timeout_locking_subflow',
 'en',
-'Process objects for %0 currently locked by another user.  Try again later.'
+'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -152,7 +160,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'reservation-by-other_user',
 'en',
 'Reservation for %0 unsuccessful.  Step already reserved by another user (%1).'
-);
+); 
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
@@ -243,13 +251,6 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'subProcess-too-many-starts',
 'en',
 'More than one Sub-Process Start found.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'timeout_locking_subflow',
-'en',
-'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
