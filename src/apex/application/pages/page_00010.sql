@@ -26,8 +26,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210921123442'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210921171918'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -163,7 +163,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_NAME'
 ,p_display_order=>20
 ,p_column_identifier=>'B'
-,p_column_label=>'Flow Name'
+,p_column_label=>'Name'
 ,p_column_link=>'javascript:void(0);'
 ,p_column_linktext=>'#PRCS_NAME#'
 ,p_column_link_attr=>'title="&APP_TEXT$APP_VIEW." class="view-link" data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#"'
@@ -176,7 +176,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_DGRM_NAME'
 ,p_display_order=>30
 ,p_column_identifier=>'C'
-,p_column_label=>'Name'
+,p_column_label=>'Model Name'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
@@ -185,7 +185,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_DGRM_VERSION'
 ,p_display_order=>40
 ,p_column_identifier=>'D'
-,p_column_label=>'Version'
+,p_column_label=>'Model Version'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
@@ -194,7 +194,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_DGRM_STATUS'
 ,p_display_order=>50
 ,p_column_identifier=>'E'
-,p_column_label=>'Flow Status'
+,p_column_label=>'Model Status'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
@@ -203,7 +203,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'PRCS_DGRM_CATEGORY'
 ,p_display_order=>60
 ,p_column_identifier=>'F'
-,p_column_label=>'Flow Category'
+,p_column_label=>'Model Category'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );

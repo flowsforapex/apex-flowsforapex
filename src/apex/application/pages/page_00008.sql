@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210921123612'
+,p_last_upd_yyyymmddhh24miss=>'20210922120714'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -1434,7 +1434,7 @@ wwv_flow_api.create_page_item(
 ,p_item_default=>'VARCHAR2'
 ,p_prompt=>'Type'
 ,p_display_as=>'NATIVE_RADIOGROUP'
-,p_lov=>'STATIC2:Varchar2;VARCHAR2,Number;NUMBER,Date;DATE,Clob;CLOB'
+,p_lov=>'STATIC2:Varchar2;VARCHAR2,Number;NUMBER,Date;DATE'
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--radioButtonGroup'
 ,p_warn_on_unsaved_changes=>'I'

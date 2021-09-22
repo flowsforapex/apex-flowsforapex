@@ -1,4 +1,4 @@
-prompt --application/shared_components/files/css_21_1_flows4apex_light_css_map
+prompt --application/shared_components/files/css_flows4apex_light_css_map
 begin
 --   Manifest
 --     APP STATIC FILES: 100
@@ -16,8 +16,8 @@ wwv_flow_api.g_varchar2_table(1) := '7B2276657273696F6E223A332C22736F75726365732
 wwv_flow_api.g_varchar2_table(2) := '696C65223A22666C6F777334617065782E6C696768742E637373222C22736F7572636573436F6E74656E74223A5B222E63757272656E742D70726F636573733A6E6F74285B686561646572732A3D696E7374616E63655F7374617475735F636F6C5D297B';
 wwv_flow_api.g_varchar2_table(3) := '5C725C6E20206261636B67726F756E642D636F6C6F723A207267626128302C302C302C2E312921696D706F7274616E743B5C725C6E7D225D7D';
 wwv_flow_api.create_app_static_file(
- p_id=>wwv_flow_api.id(8152414918639669)
-,p_file_name=>'css/21.1/flows4apex.light.css.map'
+ p_id=>wwv_flow_api.id(17906637125094626)
+,p_file_name=>'css/flows4apex.light.css.map'
 ,p_mime_type=>'application/json'
 ,p_file_charset=>'utf-8'
 ,p_file_content => wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
