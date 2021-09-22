@@ -47,10 +47,6 @@
   background-color: inherit;
 }
 
-.current-process:not([headers*="instance_status_col"]) {
-  background-color: rgba(255, 255, 255, 0.14) !important;
-}
-
 /*Confirm dialog title background*/
 body .ui-dialog .ui-dialog-titlebar {
   background-color: #222629!important;
