@@ -399,35 +399,43 @@ end flow_process_link_event;
 
     -- Always do all updates to parent data first before performing any next step in the children.
     -- Reason: A subflow could immediately disappear if we're stepping through it completly.
+    -- check for any errors on the step
+    if not flow_globals.get_step_error then 
+      -- set boundaryEvent Timers, if any
+      flow_boundary_events.set_boundary_timers 
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      );  
+      if not flow_globals.get_step_error then 
+        -- Check again, then Update parent subflow
+        update flow_subflows sbfl
+        set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
+            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
+            , sbfl.sbfl_last_update = systimestamp
+            , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
+        where sbfl.sbfl_id = p_subflow_id
+          and sbfl.sbfl_prcs_id = p_process_id
+        ;  
+      
+        -- run on-event expressions for child startEvent
+        flow_expressions.process_expressions
+        ( pi_objt_bpmn_id => l_target_objt_sub  
+        , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+        , pi_prcs_id      => p_process_id
+        , pi_sbfl_id      => l_sbfl_id_sub
+        );
 
-    -- run on-event expressions for child startEvent
-    flow_expressions.process_expressions
-    ( pi_objt_bpmn_id => l_target_objt_sub  
-    , pi_set          => flow_constants_pkg.gc_expr_set_on_event
-    , pi_prcs_id      => p_process_id
-    , pi_sbfl_id      => l_sbfl_id_sub
-    );
-    -- Update parent subflow
-    update flow_subflows sbfl
-    set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
-        , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-        , sbfl.sbfl_last_update = systimestamp
-        , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
-    where sbfl.sbfl_id = p_subflow_id
-      and sbfl.sbfl_prcs_id = p_process_id
-    ;  
-    -- set boundaryEvent Timers, if any
-    flow_boundary_events.set_boundary_timers 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    );     
+        if not flow_globals.get_step_error then 
 
-    -- step into sub_process
-    flow_complete_step   
-    ( p_process_id => p_process_id
-    , p_subflow_id => l_sbfl_id_sub
-    , p_forward_route => null
-    );
+          -- check again for any errors from expressions before stepping into sub_process
+          flow_complete_step   
+          ( p_process_id => p_process_id
+          , p_subflow_id => l_sbfl_id_sub
+          , p_forward_route => null
+          );
+        end if;
+      end if;
+    end if;
   end process_subProcess; 
 
   procedure process_intermediateCatchEvent
@@ -490,7 +498,7 @@ end flow_process_link_event;
     -- currently only supports none Intermediate throw event (used as a process state marker)
     -- but this might later have a case type = timer, message, etc. ....
     apex_debug.enter 
-    ('process_IntermediateThrowEvent'
+    ( 'process_IntermediateThrowEvent'
     , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
     );
     -- process on-event expressions for the ITE
@@ -1071,6 +1079,67 @@ begin
   end;
 end get_restart_step_info;
 
+procedure restart_failed_timer_step
+( p_sbfl_rec    in flow_subflows%rowtype
+, p_step_info   in flow_types_pkg.flow_step_info
+)
+is
+begin
+  -- if an event with timer fails when the timer fires, we restart it by ignoring the timer
+  -- and immediately running the on-event variable set and then moving forwards on the subflow
+  apex_debug.enter 
+  ( 'restart_failed_timer_step'
+  , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
+  , 'Subflow ID', p_sbfl_rec.sbfl_id
+  );
+
+  apex_debug.info 
+  ( p_message => 'Restart Timer Step - Target object: %s.  More info at APP_TRACE level.'
+  , p0        => coalesce(p_step_info.target_objt_tag, '!NULL!') 
+  );
+  apex_debug.trace
+  ( p_message => 'Restart Timer Info - dgrm_id : %0, source_objt_tag : %1, target_objt_id : %2, target_objt_ref : %3'
+  , p0  => p_step_info.dgrm_id
+  , p1  => p_step_info.source_objt_tag
+  , p2  => p_step_info.target_objt_id
+  , p3  => p_step_info.target_objt_ref
+  );
+  apex_debug.trace
+  ( p_message => 'Timer Step Info - target_objt_tag : %0, target_objt_subtag : %1'
+  , p0 => p_step_info.target_objt_tag
+  , p1 => p_step_info.target_objt_subtag
+  );
+  apex_debug.trace
+  ( p_message => 'Runing Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
+  , p0 => p_sbfl_rec.sbfl_id
+  , p1 => p_sbfl_rec.sbfl_last_completed
+  , p2 => p_sbfl_rec.sbfl_prcs_id
+  );    
+
+  -- evaluate and set any on-event variable expressions from the timer object
+  flow_expressions.process_expressions
+    ( pi_objt_id     => p_step_info.target_objt_id
+    , pi_set         => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
+    , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+  );
+  -- test for any errors
+  if flow_globals.get_step_error then
+    -- has step errors from expressions
+    flow_errors.set_error_status
+    ( pi_prcs_id => p_sbfl_rec.sbfl_prcs_id
+    , pi_sbfl_id => p_sbfl_rec.sbfl_id
+    );
+  else
+    -- step forward onto next step
+    flow_complete_step
+    ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_rec.sbfl_id
+    );
+  end if;
+
+end restart_failed_timer_step;
+
 procedure run_step
 ( p_sbfl_rec          in flow_subflows%rowtype
 , p_step_info         in flow_types_pkg.flow_step_info
@@ -1089,7 +1158,7 @@ begin
   , p0        => coalesce(p_step_info.target_objt_tag, '!NULL!') 
   );
   apex_debug.trace
-  ( p_message => 'Runing Step Info - dgrm_id : %0, source_objt_tag : %1, target_objt_id : %2, target_objt_ref : %3'
+  ( p_message => 'Running Step Info - dgrm_id : %0, source_objt_tag : %1, target_objt_id : %2, target_objt_ref : %3'
   , p0  => p_step_info.dgrm_id
   , p1  => p_step_info.source_objt_tag
   , p2  => p_step_info.target_objt_id
@@ -1546,17 +1615,26 @@ begin
      where prcs.prcs_id = p_process_id
     ;
     flow_logging.log_instance_event
-    ( p_process_id => p_process_id
+    ( p_process_id    => p_process_id
     , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
-    , p_event      => flow_constants_pkg.gc_prcs_status_running
+    , p_event         => flow_constants_pkg.gc_prcs_status_running
     );
   end if;
 
-  -- restart current task
-  run_step 
-  ( p_sbfl_rec => l_sbfl_rec
-  , p_step_info => l_step_info
-  );
+  if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
+    -- restart object contains a timer.  run var exps and step forward immediately
+    restart_failed_timer_step
+    ( p_sbfl_rec => l_sbfl_rec
+    , p_step_info => l_step_info
+    );
+  else
+    -- all other object types.  restart current task
+    run_step 
+    ( p_sbfl_rec => l_sbfl_rec
+    , p_step_info => l_step_info
+    );
+  end if;
+
   -- commit or rollback based on errors
   if flow_globals.get_step_error then
     rollback;
