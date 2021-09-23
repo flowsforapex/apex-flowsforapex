@@ -17817,6 +17817,53 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'HTML'
 ,p_translate_from_text=>'HTML'
 );
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(18159369690972945)
+,p_page_id=>10
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(15357984541942527.100001)
+,p_translate_from_id=>wwv_flow_api.id(15357984541942527)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Prcs Dgrm Status Icon'
+,p_translate_from_text=>'Prcs Dgrm Status Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(18159434449972976)
+,p_page_id=>10
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(15357984541942527.100001)
+,p_translate_from_id=>wwv_flow_api.id(15357984541942527)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Prcs Dgrm Status Icon'
+,p_translate_from_text=>'Prcs Dgrm Status Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(18159611986972982)
+,p_page_id=>10
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(26094739199304634.100001)
+,p_translate_from_id=>wwv_flow_api.id(26094739199304634)
+,p_translate_column_id=>150
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<div class="ffa-dgrm-badge">',
+'    <i class="#PRCS_DGRM_STATUS_ICON#"></i>',
+'    <span class="ffa-dgrm-badge-text">#PRCS_DGRM_STATUS#</span>',
+'</div>'))
+,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<div class="ffa-dgrm-badge">',
+'    <i class="#PRCS_DGRM_STATUS_ICON#"></i>',
+'    <span class="ffa-dgrm-badge-text">#PRCS_DGRM_STATUS#</span>',
+'</div>'))
+);
 wwv_flow_api.component_end;
 end;
 /

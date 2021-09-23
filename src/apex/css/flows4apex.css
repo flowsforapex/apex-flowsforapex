@@ -47,6 +47,8 @@ th#checkbox_col, td[headers*="checkbox_col"]{
 
 .ffa-dgrm-badge{
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .status_icon {

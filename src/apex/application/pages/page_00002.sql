@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210921114733'
+,p_last_upd_yyyymmddhh24miss=>'20210923183108'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -150,7 +150,7 @@ wwv_flow_api.create_worksheet_column(
 '    <span class="ffa-dgrm-badge-text">#DGRM_STATUS#</span>',
 '</div>'))
 ,p_column_type=>'STRING'
-,p_heading_alignment=>'LEFT'
+,p_column_alignment=>'CENTER'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(2496678063177011)
