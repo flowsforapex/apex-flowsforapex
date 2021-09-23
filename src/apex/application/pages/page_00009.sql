@@ -18,9 +18,13 @@ wwv_flow_api.create_page(
 ,p_alias=>'CONFIGURATION'
 ,p_step_title=>'Configuration'
 ,p_autocomplete_on_off=>'OFF'
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'span.t-Form-inlineHelp ul li {',
+'    font-size: 1.1rem;',
+'}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915151746'
+,p_last_upd_yyyymmddhh24miss=>'20210922145602'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(8027146440825640)
@@ -105,8 +109,8 @@ wwv_flow_api.create_page_item(
 '<ul>',
 '    <li><strong>off</strong> - logging is disabled	</li>',
 '    <li><strong>standard</strong> (default) - logs instance events</li>',
-'    <li><strong>secure</strong> - logs flow events and instance events	</li>',
-'    <li><strong>full</strong> - logs flow, instance and process variable events		</li>',
+'    <li><strong>secure</strong> - logs model events and instance events	</li>',
+'    <li><strong>full</strong> - logs model, instance and process variable events		</li>',
 '</ul>'))
 ,p_attribute_01=>'4'
 ,p_attribute_02=>'NONE'
@@ -223,6 +227,7 @@ wwv_flow_api.create_page_process(
 '    set_config_value( p_config_key => ''engine_app_mode'', p_value => :P9_ENGINE_APP_MODE);',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when_button_id=>wwv_flow_api.id(8026761271825636)
 ,p_process_success_message=>'Changes saved.'
 );
 wwv_flow_api.component_end;

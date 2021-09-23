@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210921142842'
+,p_last_upd_yyyymmddhh24miss=>'20210921190209'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -1124,7 +1124,7 @@ wwv_flow_api.create_page_process(
 ', pi_request       => :request',
 ');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>':request not in (''FLOWS'', ''FLOWS-DARK'', ''DARK_MODE'', ''LIGHT_MODE'')'
+,p_process_when=>':request not in ( ''DARK_MODE'', ''LIGHT_MODE'', ''RESET_LIGHT'', ''RESET_DARK'')'
 ,p_process_when_type=>'PLSQL_EXPRESSION'
 ,p_process_success_message=>'Action processed.'
 );

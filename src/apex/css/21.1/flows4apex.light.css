@@ -1,3 +1,11 @@
-.current-process:not([headers*=instance_status_col]){
-  background-color: rgba(0,0,0,.1)!important;
+.ffa-color--running .t-BadgeList-label {
+  color: white!important;
+}
+
+.ffa-color--terminated .t-BadgeList-label {
+  color: white!important;
+}
+
+.ffa-color--error .t-BadgeList-label {
+  color: white!important;
 }

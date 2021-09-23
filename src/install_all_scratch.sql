@@ -31,5 +31,15 @@ end;
 PROMPT >> Install Application
 @apex/install.sql
 
+PROMPT >> Publish Translated Applications
+begin
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'fr' 
+  );
+  commit;
+end;
+/
+
 PROMPT >> Finished Installation of Flows4APEX
 PROMPT >> ====================================
