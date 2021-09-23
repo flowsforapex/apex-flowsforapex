@@ -24,6 +24,7 @@ is
              , sbfl.sbfl_process_level as sbfl_process_level
              , sbfl.sbfl_dgrm_id as sbfl_dgrm_id
              , sbfl.sbfl_current as parent_current_object
+             , objt.objt_id as objt_id
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
@@ -38,12 +39,22 @@ is
       loop
         case boundary_timers.objt_interrupting
         when 1 then
-          -- interupting timer.  set timer on current object in current subflow
-          flow_timers_pkg.start_timer
-          ( pi_prcs_id => p_process_id
-          , pi_sbfl_id => p_subflow_id
+          -- process any before-event variable expressions on the starting object
+          flow_expressions.process_expressions
+          ( pi_objt_id     => boundary_timers.objt_id 
+          , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+          , pi_prcs_id     => p_process_id
+          , pi_sbfl_id     => p_subflow_id
           );
-          l_parent_tag := ':SIT';  -- (Self, Interrupting, Timer)
+          -- test for any step errors
+          if not flow_globals.get_step_error then 
+            -- interupting timer.  set timer on current object in current subflow
+            flow_timers_pkg.start_timer
+            ( pi_prcs_id => p_process_id
+            , pi_sbfl_id => p_subflow_id
+            );
+            l_parent_tag := ':SIT';  -- (Self, Interrupting, Timer)
+          end if;
         when 0 then
           -- non-interupting timer.  create child subflow starting at boundary event and start timer
           l_new_non_int_timer_sbfl := flow_engine_util.subflow_start
@@ -58,18 +69,31 @@ is
           , p_new_proc_level => false
           , p_dgrm_id => boundary_timers.sbfl_dgrm_id
           );
-
-          flow_timers_pkg.start_timer
-          ( pi_prcs_id => p_process_id
-          , pi_sbfl_id => l_new_non_int_timer_sbfl
+ 
+          -- process any before-event variable expressions on the starting object
+          flow_expressions.process_expressions
+          ( pi_objt_id     => boundary_timers.objt_id
+          , pi_set         => flow_constants_pkg.gc_expr_set_before_event
+          , pi_prcs_id     => p_process_id
+          , pi_sbfl_id     => l_new_non_int_timer_sbfl
           );
-          -- set timer flag on child (Self, Noninterrupting, Timer)
-          update flow_subflows sbfl
-              set sbfl.sbfl_has_events = sbfl.sbfl_has_events||':SNT'
-            where sbfl.sbfl_id = l_new_non_int_timer_sbfl
-              and sbfl.sbfl_prcs_id = p_process_id
-          ;
-          l_parent_tag := ':CNT';  -- (Child, Noninterrupting, Timer)
+          -- test for any step errors
+          if not flow_globals.get_step_error then 
+            flow_timers_pkg.start_timer
+            ( pi_prcs_id => p_process_id
+            , pi_sbfl_id => l_new_non_int_timer_sbfl
+            );
+            -- test again for any step errors
+            if not flow_globals.get_step_error then 
+              -- set timer flag on child (Self, Noninterrupting, Timer)
+              update flow_subflows sbfl
+                  set sbfl.sbfl_has_events = sbfl.sbfl_has_events||':SNT'
+                where sbfl.sbfl_id = l_new_non_int_timer_sbfl
+                  and sbfl.sbfl_prcs_id = p_process_id
+              ;
+              l_parent_tag := ':CNT';  -- (Child, Noninterrupting, Timer)
+            end if;
+          end if;
         end case;
         --- set timer flag on parent (it can get more than 1)
         update flow_subflows sbfl
@@ -253,12 +277,21 @@ is
     , pi_prcs_id      => p_process_id
     , pi_sbfl_id      => p_subflow_id
     );
-    -- step off on new path
-    flow_engine.flow_complete_step 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    );
-
+    -- test for errors
+    if flow_globals.get_step_error then 
+      -- has step errors from expressions - set error status
+      flow_errors.set_error_status
+      ( pi_prcs_id => p_process_id
+      , pi_sbfl_id => p_subflow_id
+      );
+    else
+      -- If not, step off on new path...
+      flow_engine.flow_complete_step 
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      );
+    end if;
+    
   end handle_interrupting_boundary_event;
 
   procedure get_boundary_event
