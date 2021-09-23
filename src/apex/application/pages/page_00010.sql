@@ -26,8 +26,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210923190924'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210923191434'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -96,7 +96,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_06=>'ALL_ERRORS'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'Y'
-,p_attribute_10=>'Y'
+,p_attribute_10=>'N'
 ,p_attribute_11=>'Y'
 );
 wwv_flow_api.create_page_plug(
@@ -514,16 +514,6 @@ wwv_flow_api.create_page_item(
 ,p_attribute_01=>'N'
 );
 wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(6177010376209915)
-,p_name=>'P10_OBJT_SBFL_LIST'
-,p_item_sequence=>30
-,p_item_plug_id=>wwv_flow_api.id(6127698437330102702)
-,p_use_cache_before_default=>'NO'
-,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-);
-wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(6177972762209924)
 ,p_name=>'P10_COMMENT'
 ,p_item_sequence=>20
@@ -789,7 +779,7 @@ wwv_flow_api.create_page_da_action(
 'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
 'from FLOW_OBJECTS',
 'where OBJT_DGRM_ID = (select PRCS_DGRM_ID from FLOW_PROCESSES where PRCS_ID = :P10_PRCS_ID)',
-'and not OBJT_TAG_NAME in (''bpmn:process'', ''bpmn:subProcess'', ''bpmn:textAnnotation'', ''bpmn:participant'', ''bpmn:laneSet'', ''bpmn:lane'');'))
+'and not OBJT_TAG_NAME in (''bpmn:process'', ''bpmn:textAnnotation'', ''bpmn:participant'', ''bpmn:laneSet'', ''bpmn:lane'');'))
 ,p_attribute_07=>'P10_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -955,31 +945,6 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(6177414128209919)
-,p_name=>'Subflow clicked'
-,p_event_sequence=>280
-,p_triggering_element_type=>'REGION'
-,p_triggering_region_id=>wwv_flow_api.id(6127698437330102702)
-,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'$v(''P10_OBJT_SBFL_LIST'').split('':'').includes(this.data.element.id);'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(6177633863209921)
-,p_event_id=>wwv_flow_api.id(6177414128209919)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var objects = $v(''P10_OBJT_LIST'').split('':'');',
-'$.each(objects, function( index, value ) {',
-'    $( "[data-element-id=''" + value + "'']").css( "cursor", "pointer" );',
-'})'))
-,p_da_action_comment=>'Apply pointer cursor to clickable elements inside opened subflow'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6180087025209945)
