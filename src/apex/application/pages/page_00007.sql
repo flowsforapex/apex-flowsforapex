@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage7();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210921190209'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210923191644'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -76,7 +76,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'DGRM_CONTENT'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
-,p_attribute_10=>'Y'
+,p_attribute_10=>'N'
 ,p_attribute_11=>'N'
 );
 wwv_flow_api.create_page_plug(
@@ -478,16 +478,6 @@ wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(7336178189307043)
 ,p_name=>'P7_OBJT_LIST'
 ,p_item_sequence=>10
-,p_item_plug_id=>wwv_flow_api.id(28425138174759832)
-,p_use_cache_before_default=>'NO'
-,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-);
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(7336238174307044)
-,p_name=>'P7_OBJT_SBFL_LIST'
-,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(28425138174759832)
 ,p_use_cache_before_default=>'NO'
 ,p_display_as=>'NATIVE_HIDDEN'
@@ -947,18 +937,6 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'apexafterrefresh'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(16955942968047775)
 ,p_event_id=>wwv_flow_api.id(16955083547047750)
@@ -973,11 +951,23 @@ wwv_flow_api.create_page_da_action(
 'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
 'from FLOW_OBJECTS',
 'where OBJT_DGRM_ID = :P7_DGRM_ID',
-'and not OBJT_TAG_NAME in (''bpmn:process'', ''bpmn:subProcess'', ''bpmn:textAnnotation'', ''bpmn:participant'', ''bpmn:laneSet'', ''bpmn:lane'');'))
+'and not OBJT_TAG_NAME in (''bpmn:process'', ''bpmn:textAnnotation'', ''bpmn:participant'', ''bpmn:laneSet'', ''bpmn:lane'');'))
 ,p_attribute_07=>'P7_DGRM_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(16956421618047776)
@@ -1081,30 +1071,6 @@ wwv_flow_api.create_page_da_action(
 '        dataType: "text"                     ',
 '    }',
 ');'))
-);
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(16959123108051643)
-,p_name=>'Subflow clicked'
-,p_event_sequence=>120
-,p_triggering_element_type=>'REGION'
-,p_triggering_region_id=>wwv_flow_api.id(28425138174759832)
-,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'$v(''P7_OBJT_SBFL_LIST'').split('':'').includes(this.data.element.id);'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(16959516427051643)
-,p_event_id=>wwv_flow_api.id(16959123108051643)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var objects = $v(''P7_OBJT_LIST'').split('':'');',
-'$.each(objects, function( index, value ) {',
-'    $( "[data-element-id=''" + value + "'']").css( "cursor", "pointer" );',
-'})'))
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(22799930478488038)
