@@ -2,7 +2,7 @@ create or replace package body flow_globals
 as
 
 
-  g_error_on_step  boolean;  
+  g_error_on_step  boolean := false;  
   -- g_error_on_step starts false when every step is processed but is set true if an error
   -- occurs in the engine during processing.  It is then used to determine whether to 
   -- commit or rollback the engine transaction at the end of step processing
