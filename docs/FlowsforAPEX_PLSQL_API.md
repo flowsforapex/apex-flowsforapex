@@ -2,7 +2,7 @@
 
 ### Introduction
 
-Flow Instances are controlled in Flows  for APEX through the PL/SQL API.
+Flow Instances are controlled in Flows for APEX through the PL/SQL API.
 
 API Commands fall into the followig categories:
 
@@ -37,7 +37,7 @@ These comprise:
 - `flow_start_step` - an optional command that can be used in applications to signal that a user is about to start working on a task.  This is only used to differentiate 'waiting' time from 'processing' time in process managent and statistics.  A 'good-practice' app would issue this call when work is about to start on a task.
 - `flow_reserve_task` - is used to signal to other users that a user is going to handle this task (see the [documentation on reservations](reservations.md).
 - `flow_release_step` - is used to remove a reservation (see [documentation on reservations](reservations.md).
-- `flow_complete_step` - is used to tell the flow engine thatt the current step is complete, and to move the instance forward to the next step.
+- `flow_complete_step` - is used to tell the flow engine that the current step is complete, and to move the instance forward to the next step.
 
 ### Instance Variable (Process Variable) Operations
 
@@ -47,4 +47,4 @@ Process Variable operations are contained in the PL/SQL package `flow_process_va
 
 The process variable stystem and its PL/SQL API is [detailed in documentation here](ProcessVariables.md).
 
-Certain Process Variables are pre-defined with the intention that every Instance is likely to use trhem, and so having a naming convention and a variable which is accessible both as a Flows for APEX Process Variable and also through pre-defined PL/SQL procedures.  Currently, there is one built-in process variable, `BUSINESS_REF`, which can also be accessed directly through the PL/SQL function `flow_process_vars.get_business_ref()`.
+Certain Process Variables are pre-defined with the intention that every Instance is likely to use them, and so having a naming convention and a variable which is accessible both as a Flows for APEX Process Variable and also through pre-defined PL/SQL procedures.  Currently, there is one built-in process variable, `BUSINESS_REF`, which can also be accessed directly through the PL/SQL function `flow_process_vars.get_business_ref()`.

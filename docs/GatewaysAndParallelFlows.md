@@ -57,7 +57,7 @@ Value     :  Flow_B   ----(varchar2)
 ```
 There are several ways to set up the process variable to contain your routing instruction:
 
-- you could set the process variable as part of your processing in an earlier step.  For example, if an earlier task has a manager approve or reject a document, the process step in the application could set up  the routing instruction for a following gateway based on the approval decision. In v5, adding this would be implemented by including a PL/SQL `set_var()` call in APEX page processing; from v21.1, this can be done declaratively using the Flows for APEX manage_flow_instance_variables plugin.
+- you could set the process variable as part of your processing in an earlier step.  For example, if an earlier task has a manager approve or reject a document, the process step in the application could set up  the routing instruction for a following gateway based on the approval decision. In v5, adding this would be implemented by including a PL/SQL `set_var()` call in APEX page processing; from v21.1, this can be done declaratively using the Flows for APEX manage flow instance variables plugin.
 - you could have a scriptTask step that runs automatically before the gateway to set the routing instruction.
 - you could use a process variable expression defined in BPMN model to set the variable based on a function or a SQL query, etc., defined to execute in the pre-split processing of the gateway. (new from v21.1).
 
@@ -114,7 +114,7 @@ If no closing gateway is incuded, all routes must proceed to their own end event
 
 ![Inclusive Gateway with Separate End Events](images/inclusiveSeparateEnds.png "Inclusive Gateway with Separate End Events")
 
-Starting from v21.1, an Inclusive Gateway can now act, simultaneosly, as both a Merging / Closing gateway and an Opening Gateway, in the same way that a Parallel Gateway does.  Some experts advise that this is not good BPMN practice as users can get confused by the concept, and so the BPMN Modeler will give you a warning if you include this in your diagram.  But it works!
+Starting from v21.1, an Inclusive Gateway can now act, simultaneously, as both a Merging / Closing gateway and an Opening Gateway, in the same way that a Parallel Gateway does.  Some experts advise that this is not good BPMN practice as users can get confused by the concept, and so the BPMN Modeler will give you a warning if you include this in your diagram.  But it works!
 
 Controlling the Forward Path at an Inclusive Gateway (Changed in V5.0).
 
