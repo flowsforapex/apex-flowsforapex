@@ -1,4 +1,3 @@
-set define off
 PROMPT >> Loading Exported Messages
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
