@@ -40,10 +40,6 @@ as
     close c_lock;
   exception
     when lock_timeout then
-      /*apex_error.add_error
-      ( p_message => 'Timer for subflow '||pi_sbfl_id||' currently locked by another user.  Try again later.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id
@@ -69,10 +65,6 @@ as
     close c_lock;
   exception
   when lock_timeout then
-    /*apex_error.add_error
-    ( p_message => 'Timers for process '||pi_prcs_id||' currently locked by another user.  Try again later.'
-    , p_display_location => apex_error.c_on_error_page
-    );*/
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_message_key    => 'timers-lock-timeout'
@@ -130,11 +122,6 @@ as
           ;
         exception
           when no_data_found then
-            /*apex_error.add_error
-            ( 
-              p_message => 'Error finding object with timer in get_timer_definition. Subflow '||pi_sbfl_id||' .'
-            , p_display_location => apex_error.c_on_error_page
-            );*/
             flow_errors.handle_instance_error
             ( pi_prcs_id        => pi_prcs_id
             , pi_sbfl_id        => pi_sbfl_id
@@ -170,16 +157,6 @@ as
     end loop;
 
     if po_timer_type is null or po_timer_def is null then
-      /*apex_error.add_error
-      ( p_message          => apex_string.format
-                              ( 
-                                p_message =>'Incomplete timer definitions for object %0. Type: %1; Value: %2'
-                              , p0        => l_objt_with_timer_bpmn_id
-                              , p1        => coalesce(po_timer_type, '!NULL!')
-                              , p2        => coalesce(po_timer_def, '!NULL!')
-                              )
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id
@@ -191,14 +168,6 @@ as
       -- $F4AMESSAGE 'timer-incomplete-definition' || 'Incomplete timer definitions for object %0. Type: %1; Value: %2'
     elsif po_timer_type = flow_constants_pkg.gc_timer_type_cycle then
       -- cycle timers disabled in v21.1 until redone in future release
-      /*apex_error.add_error
-      ( p_message         => apex_string.format
-                             (
-                               p_message => 'Cycle Timer defined for object %0 not currently supported.'
-                             , p0        => l_objt_with_timer_bpmn_id
-                             )
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id
@@ -266,11 +235,6 @@ as
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
         when others then
-        /*apex_debug.error
-        (
-          p_message => 'Timer with ID %s did not work. Check logs.'
-        , p0        => l_timers.timr_id
-        );*/
         update flow_timers
           set timr_status = c_broken
         where timr_id = l_timers.timr_id
@@ -445,11 +409,6 @@ as
         , out_interv_ds => l_parsed_duration_ds
         );
       else
-        /*apex_error.add_error
-        ( 
-          p_message => 'No timer definitions found in start_timer on subflow '||pi_sbfl_id||' type '||l_timer_type||' def '||l_timer_def
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id

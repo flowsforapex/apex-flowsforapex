@@ -414,10 +414,6 @@ as
         , p1        => pi_prcs_id
         , p2        => sqlerrm
         );
-        /*apex_error.add_error
-        ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
@@ -442,10 +438,6 @@ as
         , p1        => pi_prcs_id
         , p2        => sqlerrm
         );
-        /*apex_error.add_error
-        ( p_message          => 'Error setting process variable '||pi_expression.expr_var_name||' for process id '||pi_prcs_id||'.  SQL error shown in debug output.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
@@ -523,10 +515,6 @@ as
       , pi_expr_set       => pi_expression.expr_set
       ); 
     else
-      /*apex_error.add_error
-      ( p_message          => 'Error setting process variable.  Incorrect datatype for variable '||pi_expression.expr_var_name||'.  SQL error shown in debug output.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id
@@ -620,10 +608,6 @@ as
       , pi_expr_set       => pi_expression.expr_set 
       ); 
     else
-      /*apex_error.add_error
-      ( p_message          => 'Error setting process variable.  Incorrect datatype for variable '||pi_expression.expr_var_name||'.  SQL error shown in debug output.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id
@@ -765,10 +749,6 @@ as
     );
   exception
     when no_data_found then
-      /*apex_error.add_error
-      ( p_message          => 'Internal error looking up object '||pi_objt_bpmn_id||' in process_expressions.  SQL error shown in debug output.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id

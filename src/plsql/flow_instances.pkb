@@ -257,10 +257,6 @@ as
       close c_lock_all;
     exception 
       when lock_timeout then
-        /*apex_error.add_error
-        ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try to reset later.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_instance_error
         ( pi_prcs_id        => p_process_id
         , pi_message_key    => 'process-lock-timeout'
@@ -274,20 +270,16 @@ as
     ( pi_prcs_id => p_process_id
     , po_return_code => l_return_code
     );  
-
     -- clear out run-time object_log
-
     delete
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
     ;
-    
     -- delete the subflows
     delete
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
     ;
-    
     -- delete all process variables except the builtins (new behaviour in 21.1)
     flow_process_vars.delete_all_for_process 
     ( pi_prcs_id => p_process_id
@@ -340,10 +332,6 @@ as
 
     exception 
       when lock_timeout then
-        /*apex_error.add_error
-        ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try again later.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_instance_error
         ( pi_prcs_id        => p_process_id
         , pi_message_key    => 'process-lock-timeout'
@@ -415,10 +403,6 @@ as
 
     exception 
       when lock_timeout then
-        /*apex_error.add_error
-        ( p_message => 'Process objects for '||p_process_id||' currently locked by another user.  Try again later.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_instance_error
         ( pi_prcs_id        => p_process_id
         , pi_message_key    => 'process-lock-timeout'
@@ -443,17 +427,14 @@ as
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
     ;
-    
     delete
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
     ;
-
     flow_process_vars.delete_all_for_process 
     ( pi_prcs_id => p_process_id
     , pi_retain_builtins => false
     );
-    
     delete
       from flow_processes prcs
      where prcs.prcs_id = p_process_id

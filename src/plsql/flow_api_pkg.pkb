@@ -53,10 +53,6 @@ as
               ;
           exception
             when no_data_found then
-              /*  apex_error.add_error
-                ( p_message => 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
-                , p_display_location => apex_error.c_on_error_page
-                );  */
               flow_errors.handle_general_error
               ( pi_message_key => 'version-no-rel-or-draft-v0'
               );
