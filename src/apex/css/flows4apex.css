@@ -1,12 +1,12 @@
 /* color classes */
 .ffa-color--created {
   background-color: #d9b13b!important;
-  color: #463400!important
+  color: #463400!important;
 }
 
 .ffa-color--completed {
   background-color: #8c9eb0!important;
-  color: #283a4d!important
+  color: #283a4d!important;
 }
 
 .ffa-color--running {
