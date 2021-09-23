@@ -5816,7 +5816,7 @@ function setContentEditableSelection(node, selection) {
 }
 
 function isImplicitRoot(element) {
-  return element && (element.isImplicit || element.id === '__implicitroot');
+  return element.id === '__implicitroot';
 }
 
 function normalizeEndOfLineSequences(string) {
@@ -19083,6 +19083,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var diagram_js_lib_features_modeling_Modeling__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/features/modeling/Modeling */ "./node_modules/diagram-js/lib/features/modeling/Modeling.js");
 /* harmony import */ var _cmd_UpdateModdlePropertiesHandler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./cmd/UpdateModdlePropertiesHandler */ "./node_modules/bpmn-js/lib/features/modeling/cmd/UpdateModdlePropertiesHandler.js");
+/* harmony import */ var _cmd_UpdateModdlePropertiesHandler__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_cmd_UpdateModdlePropertiesHandler__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _cmd_UpdatePropertiesHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./cmd/UpdatePropertiesHandler */ "./node_modules/bpmn-js/lib/features/modeling/cmd/UpdatePropertiesHandler.js");
 /* harmony import */ var _cmd_UpdateCanvasRootHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./cmd/UpdateCanvasRootHandler */ "./node_modules/bpmn-js/lib/features/modeling/cmd/UpdateCanvasRootHandler.js");
 /* harmony import */ var _cmd_AddLaneHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./cmd/AddLaneHandler */ "./node_modules/bpmn-js/lib/features/modeling/cmd/AddLaneHandler.js");
@@ -19139,7 +19140,7 @@ Modeling.$inject = [
 Modeling.prototype.getHandlers = function() {
   var handlers = diagram_js_lib_features_modeling_Modeling__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.getHandlers.call(this);
 
-  handlers['element.updateModdleProperties'] = _cmd_UpdateModdlePropertiesHandler__WEBPACK_IMPORTED_MODULE_2__["default"];
+  handlers['element.updateModdleProperties'] = _cmd_UpdateModdlePropertiesHandler__WEBPACK_IMPORTED_MODULE_2___default.a;
   handlers['element.updateProperties'] = _cmd_UpdatePropertiesHandler__WEBPACK_IMPORTED_MODULE_3__["default"];
   handlers['canvas.updateRoot'] = _cmd_UpdateCanvasRootHandler__WEBPACK_IMPORTED_MODULE_4__["default"];
   handlers['lane.add'] = _cmd_AddLaneHandler__WEBPACK_IMPORTED_MODULE_5__["default"];
@@ -25676,16 +25677,17 @@ UpdateFlowNodeRefsHandler.prototype.revert = function(context) {
 /*!*****************************************************************************************!*\
   !*** ./node_modules/bpmn-js/lib/features/modeling/cmd/UpdateModdlePropertiesHandler.js ***!
   \*****************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return UpdateModdlePropertiesHandler; });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
 
+var reduce = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js").reduce,
+    keys = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js").keys,
+    forEach = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js").forEach,
+    is = __webpack_require__(/*! ../../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").is,
+    getBusinessObject = __webpack_require__(/*! ../../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js").getBusinessObject;
 
 
 function UpdateModdlePropertiesHandler(elementRegistry) {
@@ -25693,6 +25695,9 @@ function UpdateModdlePropertiesHandler(elementRegistry) {
 }
 
 UpdateModdlePropertiesHandler.$inject = ['elementRegistry'];
+
+module.exports = UpdateModdlePropertiesHandler;
+
 
 UpdateModdlePropertiesHandler.prototype.execute = function(context) {
 
@@ -25705,7 +25710,7 @@ UpdateModdlePropertiesHandler.prototype.execute = function(context) {
   }
 
   var changed = context.changed || this.getVisualReferences(moddleElement).concat(element);
-  var oldProperties = context.oldProperties || getModdleProperties(moddleElement, Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["keys"])(properties));
+  var oldProperties = context.oldProperties || getModdleProperties(moddleElement, keys(properties));
 
   setModdleProperties(moddleElement, properties);
 
@@ -25736,7 +25741,7 @@ UpdateModdlePropertiesHandler.prototype.getVisualReferences = function(moddleEle
 
   var elementRegistry = this._elementRegistry;
 
-  if (Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(moddleElement, 'bpmn:DataObject')) {
+  if (is(moddleElement, 'bpmn:DataObject')) {
     return getAllDataObjectReferences(moddleElement, elementRegistry);
   }
 
@@ -25747,14 +25752,14 @@ UpdateModdlePropertiesHandler.prototype.getVisualReferences = function(moddleEle
 // helpers /////////////////
 
 function getModdleProperties(moddleElement, propertyNames) {
-  return Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["reduce"])(propertyNames, function(result, key) {
+  return reduce(propertyNames, function(result, key) {
     result[key] = moddleElement.get(key);
     return result;
   }, {});
 }
 
 function setModdleProperties(moddleElement, properties) {
-  Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["forEach"])(properties, function(value, key) {
+  forEach(properties, function(value, key) {
     moddleElement.set(key, value);
   });
 }
@@ -25762,12 +25767,11 @@ function setModdleProperties(moddleElement, properties) {
 function getAllDataObjectReferences(dataObject, elementRegistry) {
   return elementRegistry.filter(function(element) {
     return (
-      Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["is"])(element, 'bpmn:DataObjectReference') &&
-          Object(_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element).dataObjectRef === dataObject
+      is(element, 'bpmn:DataObjectReference') &&
+          getBusinessObject(element).dataObjectRef === dataObject
     );
   });
 }
-
 
 /***/ }),
 
@@ -39079,14 +39083,6 @@ function ensurePx(number) {
   return Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["isNumber"])(number) ? number + 'px' : number;
 }
 
-function findRoot(element) {
-  while (element.parent) {
-    element = element.parent;
-  }
-
-  return element;
-}
-
 /**
  * Creates a HTML container element for a SVG element with
  * the given configuration
@@ -39132,7 +39128,6 @@ function createGroup(parent, cls, childIndex) {
 }
 
 var BASE_LAYER = 'base';
-var HIDDEN_MARKER = 'djs-element-hidden';
 
 
 var REQUIRED_MODEL_ATTRS = {
@@ -39169,22 +39164,22 @@ Canvas.$inject = [
   'elementRegistry'
 ];
 
-/**
- * Creates a <svg> element that is wrapped into a <div>.
- * This way we are always able to correctly figure out the size of the svg element
- * by querying the parent node.
 
- * (It is not possible to get the size of a svg element cross browser @ 2014-04-01)
-
- * <div class="djs-container" style="width: {desired-width}, height: {desired-height}">
- *   <svg width="100%" height="100%">
- *    ...
- *   </svg>
- * </div>
- */
 Canvas.prototype._init = function(config) {
 
   var eventBus = this._eventBus;
+
+  // Creates a <svg> element that is wrapped into a <div>.
+  // This way we are always able to correctly figure out the size of the svg element
+  // by querying the parent node.
+  //
+  // (It is not possible to get the size of a svg element cross browser @ 2014-04-01)
+  //
+  // <div class="djs-container" style="width: {desired-width}, height: {desired-height}">
+  //   <svg width="100%" height="100%">
+  //    ...
+  //   </svg>
+  // </div>
 
   // html container
   var container = this._container = createContainer(config);
@@ -39197,7 +39192,6 @@ Canvas.prototype._init = function(config) {
   var viewport = this._viewport = createGroup(svg, 'viewport');
 
   this._layers = {};
-  this._planes = {};
 
   // debounce canvas.viewbox.changed events
   // for smoother diagram interaction
@@ -39256,8 +39250,7 @@ Canvas.prototype._destroy = function(emit) {
   delete this._svg;
   delete this._container;
   delete this._layers;
-  delete this._planes;
-  delete this._activePlane;
+  delete this._rootElement;
   delete this._viewport;
 };
 
@@ -39272,15 +39265,11 @@ Canvas.prototype._clear = function() {
     var type = Object(_util_Elements__WEBPACK_IMPORTED_MODULE_2__["getType"])(element);
 
     if (type === 'root') {
-      self.setRootElementForPlane(null, self.findPlane(element), true);
+      self.setRootElement(null, true);
     } else {
       self._removeElement(element, type);
     }
   });
-
-  // remove all planes
-  this._activePlane = null;
-  this._planes = {};
 
   // force recomputation of view box
   delete this._cachedViewbox;
@@ -39293,7 +39282,7 @@ Canvas.prototype._clear = function() {
  * @returns {SVGElement}
  */
 Canvas.prototype.getDefaultLayer = function() {
-  return this.getLayer(BASE_LAYER);
+  return this.getLayer(BASE_LAYER, 0);
 };
 
 /**
@@ -39359,142 +39348,6 @@ Canvas.prototype._createLayer = function(name, index) {
     index: index
   };
 
-};
-
-/**
- * Returns a plane that is used to draw elements on it.
- *
- * @param {string} name
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.getPlane = function(name) {
-  if (!name) {
-    throw new Error('must specify a name');
-  }
-
-  var plane = this._planes[name];
-
-  return plane;
-};
-
-/**
- * Creates a plane that is used to draw elements on it. If no
- * root element is provided, an implicit root will be used.
- *
- * @param {string} name
- * @param {Object|djs.model.Root} [rootElement] optional root element
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.createPlane = function(name, rootElement) {
-  if (!name) {
-    throw new Error('must specify a name');
-  }
-
-  if (this._planes[name]) {
-    throw new Error('plane ' + name + ' already exists');
-  }
-
-  if (!rootElement) {
-    rootElement = {
-      id: '__implicitroot' + name,
-      children: [],
-      isImplicit: true
-    };
-  }
-
-  var svgLayer = this.getLayer(name);
-  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["classes"])(svgLayer).add(HIDDEN_MARKER);
-
-  var plane = this._planes[name] = {
-    layer: svgLayer,
-    name: name,
-    rootElement: null
-  };
-
-  this.setRootElementForPlane(rootElement, plane);
-
-  return plane;
-};
-
-/**
- * Sets the active plane and hides the previously active plane.
- *
- * @param {string|Object} plane
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.setActivePlane = function(plane) {
-  if (!plane) {
-    throw new Error('must specify a plane');
-  }
-
-  if (typeof plane === 'string') {
-    plane = this.getPlane(plane);
-  }
-
-  // hide previous Plane
-  if (this._activePlane) {
-    Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["classes"])(this._activePlane.layer).add(HIDDEN_MARKER);
-  }
-
-  this._activePlane = plane;
-
-  // show current Plane
-  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_4__["classes"])(plane.layer).remove(HIDDEN_MARKER);
-
-  if (plane.rootElement) {
-    this._elementRegistry.updateGraphics(plane.rootElement, this._svg, true);
-  }
-
-  this._eventBus.fire('plane.set', { plane: plane });
-
-  return plane;
-};
-
-/**
- * Returns the currently active layer
- *
- * @returns {SVGElement}
- */
-
-Canvas.prototype.getActiveLayer = function() {
-  return this.getActivePlane().layer;
-};
-
-/**
- * Returns the currently active plane.
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.getActivePlane = function() {
-  var plane = this._activePlane;
-  if (!plane) {
-    plane = this.createPlane(BASE_LAYER);
-    this.setActivePlane(BASE_LAYER);
-  }
-
-  return plane;
-};
-
-/**
- * Returns the plane which contains the given element.
- *
- * @param {string|djs.model.Base} element
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.findPlane = function(element) {
-  if (typeof element === 'string') {
-    element = this._elementRegistry.get(element);
-  }
-
-  var root = findRoot(element);
-
-  return Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["find"])(this._planes, function(plane) {
-    return plane.rootElement === root;
-  });
 };
 
 /**
@@ -39618,9 +39471,11 @@ Canvas.prototype.toggleMarker = function(element, marker) {
 };
 
 Canvas.prototype.getRootElement = function() {
-  var plane = this.getActivePlane();
+  if (!this._rootElement) {
+    this.setRootElement({ id: '__implicitroot', children: [] });
+  }
 
-  return plane.rootElement;
+  return this._rootElement;
 };
 
 
@@ -39637,41 +39492,12 @@ Canvas.prototype.getRootElement = function() {
  * @return {Object|djs.model.Root} new root element
  */
 Canvas.prototype.setRootElement = function(element, override) {
-  var activePlane = this._activePlane;
-
-  if (activePlane) {
-    return this.setRootElementForPlane(element, activePlane, override);
-  } else {
-    var basePlane = this.createPlane(BASE_LAYER, element);
-
-    this.setActivePlane(basePlane);
-
-    return basePlane.rootElement;
-  }
-};
-
-
-/**
- * Sets a given element as the new root element for the canvas
- * and returns the new root element.
- *
- * @param {Object|djs.model.Root} element
- * @param {Object|djs.model.Root} plane
- * @param {boolean} [override] whether to override the current root element, if any
- *
- * @return {Object|djs.model.Root} new root element
- */
-Canvas.prototype.setRootElementForPlane = function(element, plane, override) {
-
-  if (typeof plane === 'string') {
-    plane = this.getPlane(plane);
-  }
 
   if (element) {
     this._ensureValid('root', element);
   }
 
-  var currentRoot = plane.rootElement,
+  var currentRoot = this._rootElement,
       elementRegistry = this._elementRegistry,
       eventBus = this._eventBus;
 
@@ -39688,25 +39514,22 @@ Canvas.prototype.setRootElementForPlane = function(element, plane, override) {
   }
 
   if (element) {
-    var gfx = plane.layer;
+    var gfx = this.getDefaultLayer();
 
     // resemble element add event sequence
     eventBus.fire('root.add', { element: element });
 
-    elementRegistry.add(element, gfx);
+    elementRegistry.add(element, gfx, this._svg);
 
     eventBus.fire('root.added', { element: element, gfx: gfx });
-
-    // associate SVG with root element when active
-    if (plane === this._activePlane) {
-      this._elementRegistry.updateGraphics(element, this._svg, true);
-    }
   }
 
-  plane.rootElement = element;
+  this._rootElement = element;
 
   return element;
 };
+
+
 
 // add functionality //////////////////////
 
@@ -40093,13 +39916,6 @@ Canvas.prototype.scroll = function(delta) {
  */
 Canvas.prototype.scrollToElement = function(element, padding) {
   var defaultPadding = 100;
-
-  // switch to correct Plane
-  var targetPlane = this.findPlane(element);
-  if (targetPlane !== this._activePlane) {
-    this.setActivePlane(targetPlane);
-  }
-
   if (!padding) {
     padding = {};
   }
@@ -40120,7 +39936,7 @@ Canvas.prototype.scrollToElement = function(element, padding) {
       zoom = this.zoom(),
       dx, dy;
 
-  // shrink viewboxBounds with padding
+  // Shrink viewboxBounds with padding
   viewboxBounds.y += padding.top / zoom;
   viewboxBounds.x += padding.left / zoom;
   viewboxBounds.width -= (padding.right + padding.left) / zoom;
@@ -40517,29 +40333,6 @@ ElementRegistry.prototype.updateId = function(element, newId) {
   element.id = newId;
 
   this.add(element, gfx, secondaryGfx);
-};
-
-/**
- * Update the graphics of an element
- *
- * @param {djs.model.Base} element
- * @param {SVGElement} gfx
- * @param {boolean} [secondary=false] whether to update the secondary connected element
- */
-ElementRegistry.prototype.updateGraphics = function(filter, gfx, secondary) {
-  var id = filter.id || filter;
-
-  var container = this._elements[id];
-
-  if (secondary) {
-    container.secondaryGfx = gfx;
-  } else {
-    container.gfx = gfx;
-  }
-
-  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_0__["attr"])(gfx, ELEMENT_ID, id);
-
-  return gfx;
 };
 
 /**
@@ -41068,11 +40861,12 @@ EventBus.prototype._invokeListener = function(event, args, listener) {
     if (returnValue === false) {
       event.preventDefault();
     }
-  } catch (error) {
-    if (!this.handleError(error)) {
-      console.error('unhandled error in event listener', error);
+  } catch (e) {
+    if (!this.handleError(e)) {
+      console.error('unhandled error in event listener');
+      console.error(e.stack);
 
-      throw error;
+      throw e;
     }
   }
 
@@ -41986,7 +41780,7 @@ AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
 /**
  * Executes the alignment of a selection of elements
  *
- * @param  {Array} elements
+ * @param  {Array} elements [description]
  * @param  {string} type left|right|center|top|bottom|middle
  */
 AlignElements.prototype.trigger = function(elements, type) {
@@ -45835,7 +45629,7 @@ ConnectionPreview.prototype.createConnectionPreviewGfx = function() {
 
   Object(tiny_svg__WEBPACK_IMPORTED_MODULE_0__["classes"])(gfx).add(MARKER_CONNECTION_PREVIEW);
 
-  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_0__["append"])(this._canvas.getActiveLayer(), gfx);
+  Object(tiny_svg__WEBPACK_IMPORTED_MODULE_0__["append"])(this._canvas.getDefaultLayer(), gfx);
 
   return gfx;
 };
@@ -47414,13 +47208,13 @@ function CreatePreview(
       dragGroup = context.dragGroup = createDragGroup(elements);
     }
 
-    var activeLayer;
+    var defaultLayer;
 
     if (hover) {
       if (!dragGroup.parentNode) {
-        activeLayer = canvas.getActiveLayer();
+        defaultLayer = canvas.getDefaultLayer();
 
-        Object(tiny_svg__WEBPACK_IMPORTED_MODULE_2__["append"])(activeLayer, dragGroup);
+        Object(tiny_svg__WEBPACK_IMPORTED_MODULE_2__["append"])(defaultLayer, dragGroup);
       }
 
       Object(_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_0__["translate"])(dragGroup, event.x, event.y);
@@ -47566,8 +47360,8 @@ DistributeElements.prototype.registerFilter = function(filterFn) {
 /**
  * Distributes the elements with a given orientation
  *
- * @param  {Array} elements
- * @param  {string} orientation
+ * @param  {Array} elements    [description]
+ * @param  {string} orientation [description]
  */
 DistributeElements.prototype.trigger = function(elements, orientation) {
   var modeling = this._modeling;
@@ -47701,11 +47495,11 @@ DistributeElements.prototype._hasIntersection = function(rangeA, rangeB) {
 /**
  * Returns the min and max values for an element
  *
- * @param  {Bounds} element
- * @param  {string} axis
- * @param  {string} dimension
+ * @param  {[type]} element   [description]
+ * @param  {[type]} axis      [description]
+ * @param  {[type]} dimension [description]
  *
- * @return {{ min: number, max: number }}
+ * @return {[type]}           [description]
  */
 DistributeElements.prototype._findRange = function(element) {
   var axis = element[this._axis],
@@ -50608,6 +50402,7 @@ var KEYDOWN_EVENT = 'keyboard.keydown',
 
 var DEFAULT_PRIORITY = 1000;
 
+
 /**
  * A keyboard abstraction that may be activated and
  * deactivated by users at will, consuming key events
@@ -50677,9 +50472,10 @@ Keyboard.prototype._keyupHandler = function(event) {
 };
 
 Keyboard.prototype._keyHandler = function(event, type) {
-  var eventBusResult;
+  var target = event.target,
+      eventBusResult;
 
-  if (this._isEventIgnored(event)) {
+  if (isInput(target)) {
     return;
   }
 
@@ -50692,10 +50488,6 @@ Keyboard.prototype._keyHandler = function(event, type) {
   if (eventBusResult) {
     event.preventDefault();
   }
-};
-
-Keyboard.prototype._isEventIgnored = function(event) {
-  return isInput(event.target) && !Object(_KeyboardUtil__WEBPACK_IMPORTED_MODULE_2__["isCmd"])(event);
 };
 
 Keyboard.prototype.bind = function(node) {
@@ -51297,7 +51089,7 @@ function LassoTool(
   var visuals = {
 
     create: function(context) {
-      var container = canvas.getActiveLayer(),
+      var container = canvas.getDefaultLayer(),
           frame;
 
       frame = context.frame = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_3__["create"])('rect');
@@ -54951,9 +54743,9 @@ function MovePreview(
 
       Object(tiny_svg__WEBPACK_IMPORTED_MODULE_2__["attr"])(dragGroup, styles.cls('djs-drag-group', [ 'no-events' ]));
 
-      var activeLayer = canvas.getActiveLayer();
+      var defaultLayer = canvas.getDefaultLayer();
 
-      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_2__["append"])(activeLayer, dragGroup);
+      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_2__["append"])(defaultLayer, dragGroup);
 
       context.dragGroup = dragGroup;
     }
@@ -55857,13 +55649,6 @@ Overlays.prototype._addOverlay = function(overlay) {
     Object(min_dom__WEBPACK_IMPORTED_MODULE_1__["classes"])(htmlContainer).add('djs-overlay-' + overlay.type);
   }
 
-  var plane = this._canvas.findPlane(element);
-  var activePlane = this._canvas.getActivePlane();
-  overlay.plane = plane;
-  if (plane !== activePlane) {
-    setVisible(htmlContainer, false);
-  }
-
   overlay.htmlContainer = htmlContainer;
 
   overlayContainer.overlays.push(overlay);
@@ -56016,12 +55801,6 @@ Overlays.prototype._init = function() {
     }
   });
 
-
-  eventBus.on('plane.set', function(e) {
-    Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["forEach"])(self._overlays, function(el) {
-      setVisible(el.htmlContainer, el.plane === e.plane);
-    });
-  });
 
   // clear overlays with diagram
 
@@ -58071,7 +57850,7 @@ function ResizePreview(eventBus, canvas, previewSupport) {
         frame = context.frame;
 
     if (!frame) {
-      frame = context.frame = previewSupport.addFrame(shape, canvas.getActiveLayer());
+      frame = context.frame = previewSupport.addFrame(shape, canvas.getDefaultLayer());
 
       canvas.addMarker(shape, MARKER_RESIZING);
     }
@@ -59197,10 +58976,9 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @param {EventBus} eventBus the event bus
  */
-function Selection(eventBus, canvas) {
+function Selection(eventBus) {
 
   this._eventBus = eventBus;
-  this._canvas = canvas;
 
   this._selectedElements = [];
 
@@ -59211,12 +58989,12 @@ function Selection(eventBus, canvas) {
     self.deselect(element);
   });
 
-  eventBus.on([ 'diagram.clear', 'plane.set' ], function(e) {
+  eventBus.on([ 'diagram.clear' ], function(e) {
     self.select(null);
   });
 }
 
-Selection.$inject = [ 'eventBus', 'canvas' ];
+Selection.$inject = [ 'eventBus' ];
 
 
 Selection.prototype.deselect = function(element) {
@@ -59261,14 +59039,6 @@ Selection.prototype.select = function(elements, add) {
   if (!Object(min_dash__WEBPACK_IMPORTED_MODULE_0__["isArray"])(elements)) {
     elements = elements ? [ elements ] : [];
   }
-
-  var canvas = this._canvas;
-
-  elements = elements.filter(function(element) {
-    var plane = canvas.findPlane(element);
-
-    return plane === canvas.getActivePlane();
-  });
 
   // selection may be cleared by passing an empty array or null
   // to the method
@@ -61093,7 +60863,7 @@ function SpaceToolPreview(
       var dragGroup = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["create"])('g');
       Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["attr"])(dragGroup, styles.cls('djs-drag-group', [ 'no-events' ]));
 
-      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["append"])(canvas.getActiveLayer(), dragGroup);
+      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["append"])(canvas.getDefaultLayer(), dragGroup);
 
       // shapes
       addPreviewGfx(movingShapes, dragGroup);
@@ -61155,7 +60925,7 @@ function SpaceToolPreview(
       var frameGroup = Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["create"])('g');
       Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["attr"])(frameGroup, styles.cls('djs-frame-group', [ 'no-events' ]));
 
-      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["append"])(canvas.getActiveLayer(), frameGroup);
+      Object(tiny_svg__WEBPACK_IMPORTED_MODULE_1__["append"])(canvas.getDefaultLayer(), frameGroup);
 
       var frames = [];
 
