@@ -26,13 +26,13 @@ Most Flows for APEX users with production systems will need to use Process Versi
 
 | status | draft | released | deprecated | archived |
 | :--- | :---: | :---: | :---: | :---: |
-| create a new diagram | :+1: | - | - | - |
-|  can edit diagram |  :+1: | 🛑   | 🛑  |  🛑 |
-| can delete diagram |  :+1: | 🛑   | 🛑  |  :+1: |
-|  start a new instance |  :+1: |  :+1: | 🛑  |  🛑 |
-| continue to run an existing instance | :+1: | :+1: | :+1: |🛑  |
-| can be copied to a new version | :+1: | :+1: | :+1: | :+1: |
-| can be exported | :+1: | :+1: | :+1: | :+1: |
+| create a new diagram | ✔️ | - | - | - |
+|  can edit diagram |  ✔️ | 🛑   | 🛑  |  🛑 |
+| can delete diagram |  ✔️ | 🛑   | 🛑  |  ✔️ |
+|  start a new instance |  ✔️ |  ✔️ | 🛑  |  🛑 |
+| continue to run an existing instance | ✔️ | ✔️ | ✔️ |🛑  |
+| can be copied to a new version | ✔️ | ✔️ | ✔️ | ✔️ |
+| can be exported | ✔️ | ✔️ | ✔️ | ✔️ |
 
 #### Application changes when processes change
 

@@ -10,7 +10,7 @@ This documentation explains the subflow architecture, its implementation, and ho
 
 ### Flows,  Instances and Subflows
 
-A *Flow* or Business Process is defined using a BPMN Diagram, which is identified by a Diagram Name and Diagram ID.  This defines the rules and seqence in which all of the tasks of business process should be executed.  For example, the following BPMN diagram below shows the business process definition for an Order Shipment process.
+A *Flow* or Business Process is defined using a BPMN Diagram, which is identified by a Diagram Name and Diagram ID.  This defines the rules and sequence in which all of the tasks of business process should be executed.  For example, the following BPMN diagram below shows the business process definition for an Order Shipment process.
 
 ![Order Shipment Process](images/ShipmentProcess.png)
 
@@ -52,7 +52,7 @@ As it progresses, the subflow's current object and last completed object are upd
 
 An opening Exclusive Gateway acts as a decision point, from which the process continues on just one forward path.
 
-When a subflow reaches an Exclusive Gateway, it just continues along on the chosen path.  No additional subflows are created.  Routing instructions are provided for the gateway by setting a process variable named `<bpmn_id_of_gateway>:route` containing the bpmn_id of the required forward paths to be taken.  ([See Gateways And Parallel Flows](GatewaysAndParaaalelFlows.md) for more details and an example.)  If a Process Variable is not found with the  routing instructions, the marked default path is taken.
+When a subflow reaches an Exclusive Gateway, it just continues along on the chosen path.  No additional subflows are created.  Routing instructions are provided for the gateway by setting a process variable named `<bpmn_id_of_gateway>:route` containing the bpmn_id of the required forward paths to be taken.  ([See Gateways And Parallel Flows](GatewaysAndParaaalelFlows.md) for more details and an example.)  If a Process Variable is not found with the routing instructions, the marked default path is taken.
 
 #### Action at a Parallel Gateway
 
@@ -155,9 +155,9 @@ Non-Timer Non-Interrupting Boundary Events.  For example, a non-interrupting esc
 
 #### Action when a ScriptTask or ServiceTask Fails (new in v21.1)
 
-A ScriptTask or ServiceTask can fail due to an error in the script or encountering unexpected data.  The script can also request that processing stop by raising a predefined Flows forAPEX exception.  When this occurs, the subflow will be set to a status of `error`, and the instance will also be set to status of `error`.
+A ScriptTask or ServiceTask can fail due to an error in the script or encountering unexpected data.  The script can also request that processing stop by raising a predefined Flows for APEX exception.  When this occurs, the subflow will be set to a status of `error`, and the instance will also be set to status of `error`.
 
-When an `error` occurs, an administrator can investigate the cause of the error by examining debug logs, the error codes, and prcess variable state.  Once the error has been fixed, the current ScriptTask or ServiceTask can be restarted from the Flow Monitor application or from the PL/SQL API using `flow_restart_step`.  This willl reset the subflow status to `running`, set the instance status to `running` if there are no other error subflows, and attempt to re-run the script task or service task.
+When an `error` occurs, an administrator can investigate the cause of the error by examining debug logs, the error codes, and process variable state.  Once the error has been fixed, the current ScriptTask or ServiceTask can be restarted from the Flow Monitor application or from the PL/SQL API using `flow_restart_step`.  This will reset the subflow status to `running`, set the instance status to `running` if there are no other error subflows, and attempt to re-run the script task or service task.
 
 #### Action when a Process is Reset
 
@@ -175,7 +175,7 @@ When a process is reset:
 
 #### Action when a Process is Terminated
 
-When a process is terminated from the PL/SQL API, the effect is the same as if the Flow had procesed a Terminate End Event at its current position:
+When a process is terminated from the PL/SQL API, the effect is the same as if the Flow had processed a Terminate End Event at its current position:
 
 - any event handlers, such as timers, are terminated and deleted.
 - any current subflows are removed.
@@ -203,4 +203,4 @@ The Flow, Instance, Subflow and Variable event log tables are designed to hold l
 
 - The event logs will grow continuously, and are not deleted by the system when the subject instance is deleted.
 - If you have audit requirements, you should develop a retention plan to archive and manage these logs to meet your requirements.
-- Any log data can be deleted without damaging your system.  However, removing log data for Instances that are still active or completed (i.e., have not yet been deleted) will remove information about the instance from the Flow Monitor application.
+- Any log data can be deleted without damaging your system.  However, removing log data for Instances that are still active or completed (i.e., have not yet been deleted) will remove information about the instance from the engine application.

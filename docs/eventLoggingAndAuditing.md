@@ -12,9 +12,9 @@ Events are logged for three main purposes:
 
 Like all event logging and audit trails, capturing and storing event trails uses processing power and fills storage resources -- so you should 'log only what you need to log' and 'retain only what you need to retain for as long as you need it'!
 
-### Logging Flow Events
+### Logging Model Events
 
-Flow Events are not currently logged in V21.1.
+Model Events are not currently logged in V21.1.
 
 ### Logging Instance Events
 
@@ -33,7 +33,7 @@ In the event of an error occuring on a step which causes the instance to be put 
 
 The Step Event Log contains one record for each completed process step, and includes information on:
 
-- the preceeding task
+- the preceding task
 - time at which the step became the current task
 - time at which work started (splitting waiting time from processing time) if the flow_start_work call is used.
 - time at which the step was completed
@@ -54,8 +54,8 @@ Logging is configured using Flows for APEX configuration parameters, which are s
 | --------------------- | ----------------- | ----------------------------------------------------------------- | --------- |
 | logging_level       | off             | logging is disabled                                             |         |
 |                     | standard        | logs instance and step events                                         | yes  |
-|                     | secure          | logs flow, instance and step events      |   |
-|                     | full            | logs flow, instance, step and process variable events                 |         |
+|                     | secure          | logs model, instance and step events      |   |
+|                     | full            | logs model, instance, step and process variable events                 |         |
 |||||
 | logging_hide_userid | true            | does not capture user information about the step                |         |
 |                     | false           | captures userid of the process step as known to the Flow Engine | yes     |
@@ -65,7 +65,7 @@ Logging is configured using Flows for APEX configuration parameters, which are s
 
 ### Managing Your Event Logs
 
-Like any audit trail and event log, the Flows for APEX event log can rapidly collect a large volume of data.  Some users will need to retain this for many years to meet their site security policy, while others will want to delete this periodicly to prevent the logs from becoming too large and from either slowing system performance or from filling their storage device!
+Like any audit trail and event log, the Flows for APEX event log can rapidly collect a large volume of data.  Some users will need to retain this for many years to meet their site security policy, while others will want to delete this periodically to prevent the logs from becoming too large and from either slowing system performance or from filling their storage device!
 
 Flows for APEX will operate without event logging enabled, and after any event logging data has been deleted -- so nothing is required for execution of BPMN instances.  However, the Flow Monitor is unable to show detailed history, including error messages for tasks performed outside the users current step, unless the event logging data is captured and is still stored in the database. So you can delete anything you want from the event log tables, and Flows for APEX will continue to work.
 
