@@ -8,6 +8,7 @@ as
         , prcs_dgrm_status
         , prcs_dgrm_category
         , prcs_status
+        , prcs_dgrm_status_icon
         , prcs_status_icon
         , prcs_init_date
         , prcs_last_update
@@ -21,6 +22,12 @@ as
                  , dgrm_name as prcs_dgrm_name
                  , dgrm_version as prcs_dgrm_version
                  , dgrm_status as prcs_dgrm_status
+                 , case dgrm_status
+                  when 'draft' then 'fa fa-wrench'
+                  when 'released' then 'fa fa-check'
+                  when 'deprecated' then 'fa fa-ban'
+                  when 'archived' then 'fa fa-archive'
+                end as prcs_dgrm_status_icon
                  , dgrm_category as prcs_dgrm_category
                  , prcs_status
                  , prcs_init_ts at time zone sessiontimezone as prcs_init_date
