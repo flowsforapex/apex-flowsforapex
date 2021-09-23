@@ -248,8 +248,12 @@ function bulkDeleteFlowInstance( action, element ){
 }
 
 function redirectToFlowInstanceAudit( action, element ){
-  var data = getflowInstanceData(action, element);
-  data.x03 = apex.jQuery( element ).attr("data-name");
+  var el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
+  var data = getflowInstanceData(action, el);
+  data.x03 = apex.jQuery( el ).attr("data-name");
   if ( apex.item("pFlowStepId").getValue() === "10" ) {
     apex.item("P10_PRCS_ID").setValue(data.x02);
     apex.item("P10_PRCS_NAME").setValue( data.x03 );
