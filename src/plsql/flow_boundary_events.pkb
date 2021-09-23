@@ -291,7 +291,7 @@ is
       , p_subflow_id => p_subflow_id
       );
     end if;
-    
+
   end handle_interrupting_boundary_event;
 
   procedure get_boundary_event
@@ -433,6 +433,9 @@ begin
         where par_sbfl.sbfl_id = p_par_sbfl
           and par_sbfl.sbfl_prcs_id = p_process_id
           ;
+
+      -- fork first, then procced on main, then step off on child
+
       -- start new subflow starting at the boundary event and step to next task
       l_new_sbfl := flow_engine_util.subflow_start
       ( p_process_id => p_process_id
@@ -446,6 +449,12 @@ begin
       , p_new_proc_level => false
       , p_dgrm_id => l_parent_dgrm_id
       );
+      
+      apex_debug.message
+      (
+        p_message => 'process_boundary_event.  target_objt_tag :'||p_step_info.target_objt_subtag
+      , p_level => 3
+      );
       -- process on-event expressions for boundary event
       flow_expressions.process_expressions
       ( pi_objt_bpmn_id => l_next_objt  
@@ -453,33 +462,47 @@ begin
       , pi_prcs_id      => p_process_id
       , pi_sbfl_id      => l_new_sbfl
       );     
-      -- step forward from boundary event
-      flow_engine.flow_complete_step 
-      ( p_process_id => p_process_id
-      , p_subflow_id => l_new_sbfl
-      );
-      apex_debug.message
-      (
-        p_message => 'process_boundary_event.  target_objt_tag :'||p_step_info.target_objt_subtag
-      , p_level => 3
-      );
-  
-      if p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_intermediate_throw_event  
-      then 
-          -- do next_step on triggering subflow if an ITE 
-          flow_engine.flow_complete_step 
-          ( p_process_id => p_process_id
-          , p_subflow_id => p_subflow_id
-          );
-      elsif p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_end_event  
-      then
-          -- normal end event
-          flow_engine_util.subflow_complete
-          ( p_process_id => p_process_id
-          , p_subflow_id => p_subflow_id
-          );
+
+      if not flow_globals.get_step_error then
+
+
+        if p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_intermediate_throw_event  
+        then 
+            -- do next_step on triggering subflow if an ITE 
+            flow_engine.flow_complete_step 
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            );
+        elsif p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_end_event  
+        then
+            -- normal end event
+            flow_engine_util.subflow_complete
+            ( p_process_id => p_process_id
+            , p_subflow_id => p_subflow_id
+            );
+        end if;
+        
+        -- step forward from boundary event
+        flow_engine.flow_complete_step 
+        ( p_process_id => p_process_id
+        , p_subflow_id => l_new_sbfl
+        );
+      else
+        -- set errort status on instance and subflow
+        flow_errors.set_error_status
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        );
       end if;
+
+      --switching back to main subflow so clear error flag before proceeding
+      --flow_globals.set_step_error ( p_has_error  =>  false);
+      
+
     end if;
+
+
+
   end process_boundary_event;
 
 
