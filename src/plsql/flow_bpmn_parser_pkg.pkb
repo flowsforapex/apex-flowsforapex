@@ -693,24 +693,22 @@ as
     c_nsmap        constant t_vc200 := flow_constants_pkg.gc_nsmap;
     l_return                flow_types_pkg.t_bpmn_id;
   begin
-
-    if pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_terminate_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_terminate_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_timer_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_timer_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_date, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_timer_type_date;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_duration, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_timer_type_duration;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_timer_type_cycle;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_error_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_escalation_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_link_event_definition;    
-    end if;
+    l_return :=
+      case
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_terminate_event_definition, nsmap => c_nsmap ) = 1   then flow_constants_pkg.gc_bpmn_terminate_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_timer_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_timer_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_date, nsmap => c_nsmap ) = 1                   then flow_constants_pkg.gc_timer_type_date
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_duration, nsmap => c_nsmap ) = 1               then flow_constants_pkg.gc_timer_type_duration
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1                  then flow_constants_pkg.gc_timer_type_cycle
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_error_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1  then flow_constants_pkg.gc_bpmn_escalation_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1        then flow_constants_pkg.gc_bpmn_link_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_message_event_definition, nsmap => c_nsmap ) = 1     then flow_constants_pkg.gc_bpmn_message_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_conditional_event_definition, nsmap => c_nsmap ) = 1 then flow_constants_pkg.gc_bpmn_conditional_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_signal_event_definition, nsmap => c_nsmap ) = 1      then flow_constants_pkg.gc_bpmn_signal_event_definition
+        else null
+      end
+    ;
 
     return l_return;
   end find_subtag_name;

@@ -46,7 +46,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'engine-util-prcs-not-found',
 'en',
-'Application Error: Process ID %0 not found).'
+'Application Error: Process ID %0 not found.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -105,6 +105,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Flows - Internal error logging %0 event'
 );
  
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'process-lock-timeout',
+'en',
+'Process objects for %0 currently locked by another user.  Try again later.'
+);
+  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'more_than_1_forward_path',
@@ -130,14 +138,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_requested_stop',
 'en',
-'Process %0: ScriptTask %1 requested processing stop - see event log.'
+'Process %0: ScriptTask %1 requested processing stop - see event log.'										  
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
-'process-lock-timeout',
+'timeout_locking_subflow',
 'en',
-'Process objects for %0 currently locked by another user.  Try again later.'
+'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -152,7 +160,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'reservation-by-other_user',
 'en',
 'Reservation for %0 unsuccessful.  Step already reserved by another user (%1).'
-);
+); 
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
@@ -243,13 +251,6 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'subProcess-too-many-starts',
 'en',
 'More than one Sub-Process Start found.'
-);
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'timeout_locking_subflow',
-'en',
-'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -370,3 +371,102 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  'en',
  'Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3'
  );
+ 
+/* Plug-ins */
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-model-no-version',
+'en',
+'Version not defined.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-parsing-json-variables',
+'en',
+'Error during parsing process variables.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-route-not-define',
+'en',
+'Gateway is not define for routing.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-gateway-not-exist',
+'en',
+'Gateway define does not exists for this flow.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-no-instance-subflow-id',
+'en',
+'Unable to get Flow Instance Id and or subflow Id to manage the step.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-wrong-variable-number',
+'en',
+'Wrong number of APEX item(s) or process variable(s).'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-wrong-variable-type',
+'en',
+'One or more process variable(s) are a different type than the one defined in the JSON.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-variable-not-a-number',
+'en',
+'%0 is not a valid number.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-variable-not-a-date',
+'en',
+'%0 is not a valid date.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-modeler-id-not-found',
+'en',
+'No data found. Check if Diagram with given ID exists.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-unexpected-error',
+'en',
+'Unexpected error, please contact your administrator.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-diagram-not-parsable',
+'en',
+'Diagram could not be parsed.<br />Please review your diagram to ensure that it is supported.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-diagram-saved',
+'en',
+'Changes saved!'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'plugin-diagram-has-changed',
+'en',
+'Model has changed. Discard changes?'
+);

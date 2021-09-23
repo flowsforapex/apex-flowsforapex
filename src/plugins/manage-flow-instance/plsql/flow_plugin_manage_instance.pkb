@@ -470,7 +470,7 @@ create or replace package body flow_plugin_manage_instance as
             );
          end if;
          apex_error.add_error( 
-              p_message => 'Version not defined.'
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-model-no-version', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
       when e_incorrect_variable_type then
@@ -479,9 +479,9 @@ create or replace package body flow_plugin_manage_instance as
                p_message => '-- Flows4apex - Plug-in configuration issue, process variables JSON contains incorrect variable type.'
             );
          end if;
-         apex_error.add_error(
-              p_message           => 'Error during parsing process variables.'
-            , p_display_location  => apex_error.c_on_error_page
+         apex_error.add_error( 
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-parsing-json-variables', p_lang => apex_util.get_session_lang() )
+            , p_display_location => apex_error.c_on_error_page
          );
    end execution;
    

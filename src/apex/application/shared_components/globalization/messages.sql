@@ -31,7 +31,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904993188298810)
+ p_id=>wwv_flow_api.id(15604611764243214)
 ,p_name=>'APP_COMPLETE_STEP'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Compl\00E9ter')
@@ -44,7 +44,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902763625298768)
+ p_id=>wwv_flow_api.id(15602488245243211)
 ,p_name=>'APP_CONFIRM_ARCHIVE_MODEL'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Vous \00EAtes sur le point d''archiver ce mod\00E8le. Voulez-vous continuer?')
@@ -57,7 +57,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14900798636298734)
+ p_id=>wwv_flow_api.id(15600449390243209)
 ,p_name=>'APP_CONFIRM_DELETE_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>'Ceci supprimera l''instance de flux. Veuillez ajouter un commentaire (facultatif) et cliquer sur confirmer.'
@@ -70,7 +70,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901732517298754)
+ p_id=>wwv_flow_api.id(15601401465243210)
 ,p_name=>'APP_CONFIRM_DELETE_PROCESS_VARIABLE'
 ,p_message_language=>'fr'
 ,p_message_text=>'Ceci supprimera la variable de processus. Voulez-vous continuer?'
@@ -83,7 +83,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904413813298798)
+ p_id=>wwv_flow_api.id(15604187448243214)
 ,p_name=>'APP_CONFIRM_DEPRECATE_MODEL'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Vous \00EAtes sur le point de rendre obsol\00E8te ce mod\00E8le. Voulez-vous continuer ?')
@@ -96,7 +96,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903584402298773)
+ p_id=>wwv_flow_api.id(15603261330243211)
 ,p_name=>'APP_CONFIRM_EDIT_RELEASE_DIAGRAM'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Vous \00EAtes sur le point de modifier un diagramme d''un mod\00E8le au statut released. Cela pourrait \00E9ventuellement provoquer des erreurs sur les instances en cours d''ex\00E9cution pour ce mod\00E8le. Voulez-vous continuer ?')
@@ -109,7 +109,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904599296298799)
+ p_id=>wwv_flow_api.id(15604274227243214)
 ,p_name=>'APP_CONFIRM_RELEASE_MODEL'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Vous \00EAtes sur le point de publier ce mod\00E8le, ceci rendra obsol\00E8te la version courant publi\00E9e. Voulez-vous continuer?')
@@ -122,10 +122,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902888277298768)
+ p_id=>wwv_flow_api.id(15602568731243211)
 ,p_name=>'APP_CONFIRM_RELEASE_STEP'
 ,p_message_language=>'fr'
-,p_message_text=>unistr('Vous \00EAtes sur le point de lib\00E9rer la r\00E9servation du ou des step(s). Voulez-vous continuer?')
+,p_message_text=>unistr('Vous \00EAtes sur le point de lib\00E9rer la r\00E9servation de la ou des \00E9tapes(s). Voulez-vous continuer?')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -135,7 +135,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14900516837298730)
+ p_id=>wwv_flow_api.id(15600223892243203)
 ,p_name=>'APP_CONFIRM_RESET_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Ceci r\00E9initialisera l''instance de flux. Veuillez ajouter un commentaire (facultatif) et cliquer sur confirmer.')
@@ -148,7 +148,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901656015298753)
+ p_id=>wwv_flow_api.id(15601394122243210)
 ,p_name=>'APP_CONFIRM_RESTART_STEP'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Ceci red\00E9marrera le sous-flux. Veuillez ajouter un commentaire (facultatif) et cliquer sur confirmer.')
@@ -161,7 +161,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14900650941298733)
+ p_id=>wwv_flow_api.id(15600311439243209)
 ,p_name=>'APP_CONFIRM_TERMINATE_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>'Ceci terminera l''instance de flux. Veuillez ajouter un commentaire (facultatif) et cliquer sur confirmer.'
@@ -174,7 +174,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904805110298810)
+ p_id=>wwv_flow_api.id(15604559268243214)
 ,p_name=>'APP_DELETE_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>'Supprimer une instance de flux'
@@ -187,7 +187,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904339511298798)
+ p_id=>wwv_flow_api.id(15604026325243214)
 ,p_name=>'APP_DIAGRAM_INSTANCES_NB'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Il existe %0 instance(s) de processus associ\00E9e(s) \00E0 ce flux.')
@@ -200,7 +200,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902567328298764)
+ p_id=>wwv_flow_api.id(15602214596243210)
 ,p_name=>'APP_ERR_GATEWAY_CONNECTION_EMPTY'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Veuillez s\00E9lectionner une connexion')
@@ -215,12 +215,25 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902494420298764)
+ p_id=>wwv_flow_api.id(15602154860243210)
 ,p_name=>'APP_ERR_GATEWAY_ONLY_ONE_CONNECTION'
 ,p_message_language=>'fr'
 ,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 unistr('Veuillez ne s\00E9lectionner qu''une connexion'),
 ''))
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(16953295749988159)
+,p_name=>'APP_ERR_MODEL_EXIST'
+,p_message_text=>'Model "%0" Version %1 already exists.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(16953765861000515)
+,p_name=>'APP_ERR_MODEL_EXIST'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Le mod\00E8le "%0" - Version %1 existe d\00E9j\00E0.')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -230,7 +243,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903684130298776)
+ p_id=>wwv_flow_api.id(15603360589243211)
 ,p_name=>'APP_ERR_MODEL_VERSION_EXIST'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('La version existe d\00E9j\00E0')
@@ -243,7 +256,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902340795298760)
+ p_id=>wwv_flow_api.id(15602005924243210)
 ,p_name=>'APP_ERR_PROV_VAR_DATE_NOT_DATE'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('La valeur doit \00EAtre une date')
@@ -256,7 +269,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901948555298757)
+ p_id=>wwv_flow_api.id(15601616708243210)
 ,p_name=>'APP_ERR_PROV_VAR_NAME_EMPTY'
 ,p_message_language=>'fr'
 ,p_message_text=>'Le nom de la variable doit avoir une valeur'
@@ -269,7 +282,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902255782298759)
+ p_id=>wwv_flow_api.id(15601994088243210)
 ,p_name=>'APP_ERR_PROV_VAR_NUM_NOT_NUMBER'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('La valeur doit \00EAtre un nombre')
@@ -282,7 +295,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902023370298757)
+ p_id=>wwv_flow_api.id(15601744611243210)
 ,p_name=>'APP_ERR_PROV_VAR_TYPE_EMPTY'
 ,p_message_language=>'fr'
 ,p_message_text=>'Le type de variable doit avoir une valeur'
@@ -295,7 +308,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902192510298757)
+ p_id=>wwv_flow_api.id(15601859468243210)
 ,p_name=>'APP_ERR_PROV_VAR_VALUE_EMPTY'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('La valeur ne peut \00EAtre vide')
@@ -308,7 +321,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904280802298794)
+ p_id=>wwv_flow_api.id(15603978864243214)
 ,p_name=>'APP_INSTANCE_CREATED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Instance cr\00E9\00E9e.')
@@ -321,7 +334,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901114659298741)
+ p_id=>wwv_flow_api.id(15600829863243209)
 ,p_name=>'APP_INSTANCE_DELETED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Instance de flux supprim\00E9e.')
@@ -334,7 +347,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14900936018298736)
+ p_id=>wwv_flow_api.id(15600606599243209)
 ,p_name=>'APP_INSTANCE_RESET'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Instance de flux r\00E9initialis\00E9e.')
@@ -347,7 +360,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14900845458298736)
+ p_id=>wwv_flow_api.id(15600524423243209)
 ,p_name=>'APP_INSTANCE_STARTED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Instance de flux d\00E9marr\00E9e.')
@@ -360,7 +373,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901005883298737)
+ p_id=>wwv_flow_api.id(15600701763243209)
 ,p_name=>'APP_INSTANCE_TERMINATED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Instance de flux termin\00E9e.')
@@ -372,7 +385,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Model copied.'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902663198298767)
+ p_id=>wwv_flow_api.id(15602399116243210)
 ,p_name=>'APP_MODEL_COPIED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Mod\00E8le copi\00E9.')
@@ -384,7 +397,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904105986298794)
+ p_id=>wwv_flow_api.id(15603899255243214)
 ,p_name=>'APP_MODEL_IMPORTED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Mod\00E8le import\00E9.')
@@ -397,7 +410,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14905015663298813)
+ p_id=>wwv_flow_api.id(15604719622243214)
 ,p_name=>'APP_NEW_VERSION_ADDED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Nouvelle version ajout\00E9e.')
@@ -410,7 +423,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904010048298794)
+ p_id=>wwv_flow_api.id(15603713611243212)
 ,p_name=>'APP_OVERWRITE_WARN'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Si des instances en cours d''ex\00E9cution sont associ\00E9es au mod\00E8le existant, ceci peut provoquer des erreurs. Etes-vous s\00FBr de vouloir continuer ?')
@@ -423,7 +436,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901304845298748)
+ p_id=>wwv_flow_api.id(15601096749243210)
 ,p_name=>'APP_PROCESS_VARIABLE_ADDED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Variable de processus ajout\00E9e.')
@@ -436,7 +449,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901819919298755)
+ p_id=>wwv_flow_api.id(15601562385243210)
 ,p_name=>'APP_PROCESS_VARIABLE_DELETED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Variable de processus supprim\00E9e.')
@@ -449,7 +462,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901499654298748)
+ p_id=>wwv_flow_api.id(15601111356243210)
 ,p_name=>'APP_PROCESS_VARIABLE_SAVED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Variable de processus enregistr\00E9e.')
@@ -462,7 +475,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904678195298802)
+ p_id=>wwv_flow_api.id(15604353132243214)
 ,p_name=>'APP_RESET_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('R\00E9initialiser l''instance de flux')
@@ -475,7 +488,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901528489298748)
+ p_id=>wwv_flow_api.id(15601218754243210)
 ,p_name=>'APP_RESTART_STEP'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Red\00E9marrer')
@@ -488,7 +501,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14901248225298743)
+ p_id=>wwv_flow_api.id(15600900302243209)
 ,p_name=>'APP_SUBLFOW_RESTARTED'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Sous-flux red\00E9marr\00E9.')
@@ -501,7 +514,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14904756779298803)
+ p_id=>wwv_flow_api.id(15604404473243214)
 ,p_name=>'APP_TERMINATE_INSTANCE'
 ,p_message_language=>'fr'
 ,p_message_text=>'Terminer l''instance de flux'
@@ -513,7 +526,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>'%0 - Version %1'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903392140298770)
+ p_id=>wwv_flow_api.id(15603076780243211)
 ,p_name=>'APP_TITLE_MODEL'
 ,p_message_language=>'fr'
 ,p_message_text=>'%0 - Version %1'
@@ -524,7 +537,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>'New Model'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903238977298770)
+ p_id=>wwv_flow_api.id(15602987144243211)
 ,p_name=>'APP_TITLE_NEW_MODEL'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Nouveau Mod\00E8le')
@@ -536,7 +549,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903402774298772)
+ p_id=>wwv_flow_api.id(15603150185243211)
 ,p_name=>'APP_TITLE_RESTART_STEP'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Red\00E9marrer l''\00E9tape')
@@ -549,7 +562,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903144549298770)
+ p_id=>wwv_flow_api.id(15602816355243211)
 ,p_name=>'APP_VIEW'
 ,p_message_language=>'fr'
 ,p_message_text=>'Voir'
@@ -562,7 +575,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14902988807298768)
+ p_id=>wwv_flow_api.id(15602654452243211)
 ,p_name=>'APP_VIEWER_TITLE_NO_PROCESS'
 ,p_message_language=>'fr'
 ,p_message_text=>'Visionneuse de flux'
@@ -575,7 +588,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903060788298768)
+ p_id=>wwv_flow_api.id(15602778258243211)
 ,p_name=>'APP_VIEWER_TITLE_PROCESS_SELECTED'
 ,p_message_language=>'fr'
 ,p_message_text=>'Visionneuse de flux (%0)'
@@ -600,7 +613,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903969097298791)
+ p_id=>wwv_flow_api.id(15603622319243211)
 ,p_name=>'DGRM_UK'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Un flux existe d\00E9j\00E0 avec le m\00EAme nom et le m\00EAme statut.')
@@ -613,7 +626,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903841349298784)
+ p_id=>wwv_flow_api.id(15603594889243211)
 ,p_name=>'DGRM_UK2'
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Un flux portant ce nom et ayant le statut "released" existe d\00E9j\00E0.  Changez le statut du flux existant en deprecated ou archived et r\00E9importez-le.')
@@ -638,7 +651,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(14903721449298780)
+ p_id=>wwv_flow_api.id(15603423390243211)
 ,p_name=>'PRCS_DGRM_FK'
 ,p_message_language=>'fr'
 ,p_message_text=>'Des instances de processus utilisant ce flux existent. Utilisez l''option cascade pour supprimer le flux et les instances de processus.'

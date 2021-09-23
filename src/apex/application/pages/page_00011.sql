@@ -20,11 +20,16 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Create Flow Instance - &APP_NAME_TITLE.'
 ,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.jQuery("#PopupLov_11_P11_DGRM_ID_dlg").parent(".ui-dialog").on( "dialogopen", function( event, ui ) {',
+'    console.log(event);',
+'    console.log(ui);',
+'} );'))
 ,p_step_template=>wwv_flow_api.id(12495624331342880306)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_chained=>'N'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210902075156'
+,p_last_upd_yyyymmddhh24miss=>'20210921132808'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603847781745438)
@@ -119,6 +124,29 @@ wwv_flow_api.create_page_item(
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
 ,p_lov_display_extra=>'YES'
+,p_plugin_init_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function(options) {',
+'    console.log(options);',
+'    var col, columns = options.columns;',
+'    ',
+'    //options.minWidth = 600;',
+'',
+'    col = columns.DGRM_NAME;',
+'    col.noStretch = false;',
+'',
+'    col = columns.DGRM_STATUS;',
+'    col.width = 100;',
+'    col.noStretch = true;',
+'    ',
+'    col = columns.DGRM_VERSION;',
+'    col.width = 100;',
+'    col.noStretch = true;',
+'    ',
+'    options.persistState = false;',
+'',
+'    ',
+'    return options;',
+'}'))
 ,p_attribute_01=>'POPUP'
 ,p_attribute_02=>'FIRST_ROWSET'
 ,p_attribute_03=>'N'

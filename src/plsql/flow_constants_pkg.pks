@@ -14,39 +14,42 @@ as
   gc_apex_prefix constant varchar2(10 char)  := 'apex:';
 
   -- BPMN Keys
-  gc_bpmn_process                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
-  gc_bpmn_subprocess                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
+  gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
+  gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
 
-  gc_bpmn_start_event                 constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
-  gc_bpmn_end_event                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'endEvent';
-  gc_bpmn_intermediate_throw_event    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'intermediateThrowEvent';
-  gc_bpmn_intermediate_catch_event    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'intermediateCatchEvent';
-  gc_bpmn_boundary_event              constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'boundaryEvent';
+  gc_bpmn_start_event                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
+  gc_bpmn_end_event                    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'endEvent';
+  gc_bpmn_intermediate_throw_event     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'intermediateThrowEvent';
+  gc_bpmn_intermediate_catch_event     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'intermediateCatchEvent';
+  gc_bpmn_boundary_event               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'boundaryEvent';
 
-  gc_bpmn_terminate_event_definition  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'terminateEventDefinition';
-  gc_bpmn_error_event_definition      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'errorEventDefinition';
-  gc_bpmn_escalation_event_definition constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'escalationEventDefinition';
-  gc_bpmn_link_event_definition       constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'linkEventDefinition';
+  gc_bpmn_terminate_event_definition   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'terminateEventDefinition';
+  gc_bpmn_error_event_definition       constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'errorEventDefinition';
+  gc_bpmn_escalation_event_definition  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'escalationEventDefinition';
+  gc_bpmn_link_event_definition        constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'linkEventDefinition';
+  gc_bpmn_message_event_definition     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'messageEventDefinition';
+  gc_bpmn_conditional_event_definition constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'conditionalEventDefinition';
+  gc_bpmn_signal_event_definition      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'signalEventDefinition';
 
-  gc_bpmn_timer_event_definition      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timerEventDefinition';
-  gc_timer_type_date                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timeDate';
-  gc_timer_type_duration              constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timeDuration';
-  gc_timer_type_cycle                 constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timeCycle';
+  gc_bpmn_timer_event_definition       constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timerEventDefinition';
+  gc_timer_type_date                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timeDate';
+  gc_timer_type_duration               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timeDuration';
+  gc_timer_type_cycle                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'timeCycle';
 
-  gc_bpmn_object_documentation        constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'documentation';
+  gc_bpmn_object_documentation         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'documentation';
 
-  gc_bpmn_gateway_exclusive           constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'exclusiveGateway';
-  gc_bpmn_gateway_inclusive           constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'inclusiveGateway';
-  gc_bpmn_gateway_parallel            constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'parallelGateway';
-  gc_bpmn_gateway_event_based         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'eventBasedGateway';
+  gc_bpmn_gateway_exclusive            constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'exclusiveGateway';
+  gc_bpmn_gateway_inclusive            constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'inclusiveGateway';
+  gc_bpmn_gateway_parallel             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'parallelGateway';
+  gc_bpmn_gateway_event_based          constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'eventBasedGateway';
 
-  gc_bpmn_sequence_flow               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sequenceFlow';
+  gc_bpmn_sequence_flow                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sequenceFlow';
 
-  gc_bpmn_task                        constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'task';
-  gc_bpmn_usertask                    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'userTask';
-  gc_bpmn_servicetask                 constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'serviceTask';
-  gc_bpmn_manualtask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'manualTask';
-  gc_bpmn_scripttask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
+  gc_bpmn_task                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'task';
+  gc_bpmn_usertask                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'userTask';
+  gc_bpmn_servicetask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'serviceTask';
+  gc_bpmn_manualtask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'manualTask';
+  gc_bpmn_scripttask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
 
   -- APEX Extensions to BPMN
   -- userTask

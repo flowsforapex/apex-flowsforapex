@@ -705,7 +705,7 @@ function bulkReserveStep( action ){
 function releaseStep( action, element ){
   apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
     if( okPressed ) {
-      var data = getSubflowData( action );
+      var data = getSubflowData(action, element);
       
       var options = {};
       options.refreshRegion = ["subflows"];
@@ -717,7 +717,7 @@ function releaseStep( action, element ){
 function bulkReleaseStep( action ){
   apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RELEASE_STEP"), function( okPressed ) {
     if( okPressed ) {
-      var data = getBulkSubflowData( action );
+      var data = getBulkSubflowData(action);
       
       var options = {};
       options.refreshRegion = ["subflows"];
@@ -766,6 +766,7 @@ function initActions(){
           action: function ( event, focusElement ) {
             var dgrmId = apex.jQuery( focusElement ).attr( "data-dgrm" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "N" );
             apex.theme.openRegion( "new_version_reg" );
           },
         },
@@ -780,6 +781,7 @@ function initActions(){
               .get()
               .join( ":" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "Y" );
             apex.theme.openRegion( "new_version_reg" );
           },
         },
@@ -794,6 +796,7 @@ function initActions(){
               .get()
               .join( ":" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "Y" );
             apex.theme.openRegion( "copy_flow_reg" );
           },
         },
@@ -802,6 +805,7 @@ function initActions(){
           action: function ( event, focusElement ) {
             var dgrmId = apex.jQuery( focusElement ).attr( "data-dgrm" );
             apex.item( "P2_DGRM_ID" ).setValue( dgrmId );
+            apex.item( "P2_BULK_ACTION" ).setValue( "N" );
             apex.theme.openRegion( "copy_flow_reg" );
           },
         },
@@ -1215,8 +1219,6 @@ function initPage8() {
         apex.jQuery("#flow-instance-detail").find("span.t-Icon").addClass(["u-color-39-alert-text", "fa", "fa-exclamation-circle-o"]);
         apex.jQuery("#flow-instance-detail").find("div.t-Alert-icon").addClass("u-color-39-alert-bg");
     } 
-    
-    apex.jQuery("#flow-reports .apex-rds-slider").hide();
 
 
     $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {

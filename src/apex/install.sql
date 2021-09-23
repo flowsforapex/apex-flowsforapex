@@ -43,6 +43,7 @@ prompt --install
 @@application/shared_components/files/lib_prismjs_css_prism_dark_min_css.sql
 @@application/shared_components/files/lib_prismjs_css_prism_dark_css_map.sql
 @@application/shared_components/files/app_100_logo_png.sql
+@@application/shared_components/files/favicon_png.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
 @@application/shared_components/files/workflow_white_svg.sql
@@ -64,6 +65,9 @@ prompt --install
 @@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
+@@application/shared_components/user_interface/lovs/p13_object_attributes.sql
+@@application/shared_components/user_interface/lovs/p13_var_exp_set_on.sql
+@@application/shared_components/user_interface/lovs/p13_var_exp_typ.sql
 @@application/shared_components/user_interface/lovs/p5_download_as.sql
 @@application/shared_components/user_interface/lovs/p6_import_from.sql
 @@application/shared_components/user_interface/lovs/p6_mode.sql
@@ -170,12 +174,6 @@ prompt --install
 @@application/pages/page_00014.sql
 @@application/pages/page_09999.sql
 @@application/deployment/definition.sql
-@@application/deployment/install/install_tables.sql
-@@application/deployment/install/install_data.sql
-@@application/deployment/install/install_packages_spec.sql
-@@application/deployment/install/install_views.sql
-@@application/deployment/install/install_packages_body.sql
-@@application/deployment/install/install_functions.sql
 @@application/deployment/checks.sql
 @@application/deployment/buildoptions.sql
 @@application/end_environment.sql

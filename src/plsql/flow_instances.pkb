@@ -5,6 +5,7 @@ as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  e_unsupported_start_event exception;
 
   function create_process
     ( p_dgrm_id   in flow_diagrams.dgrm_id%type
@@ -147,12 +148,15 @@ as
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_started
     );
-    -- create the status for new subflow based on start subtype 
-    if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
-      l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
-    else
-      l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_running;
-    end if;
+    -- create the status for new subflow based on start subtype
+    case
+      when l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
+        l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
+      when l_objt_sub_tag_name is null then
+        l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_running;
+      else
+        raise e_unsupported_start_event;
+    end case;
 
     l_main_subflow_id := flow_engine_util.subflow_start 
       ( p_process_id => p_process_id
@@ -208,16 +212,18 @@ as
         );
       end if;
     else 
-      -- note that this path doesn't curretly get exercised (v21.1) because only the timer subType tag gets parsed...
+      raise e_unsupported_start_event;
+    end if;
+
+  exception
+    when e_unsupported_start_event then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => p_process_id
       , pi_sbfl_id        => l_main_subflow_id
       , pi_message_key    => 'start-type-unsupported'
-      , p0 => l_objt_sub_tag_name       
+      , p0                => l_objt_sub_tag_name       
       );
       -- $F4AMESSAGE 'start-type-unsupported' || 'Unsupported start event type (%0). Only None (standard) Start Event and Timer Start Event are currently supported.'
-    end if;
-
   end start_process;
 
   procedure reset_process

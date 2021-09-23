@@ -130,6 +130,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_plugin_apex_rules_max_id_length__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! bpmnlint-plugin-apex/rules/merge-split-gateways */ "./bpmnlint-plugin-apex/rules/merge-split-gateways.js");
 /* harmony import */ var bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var bpmnlint_plugin_apex_rules_start_events__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! bpmnlint-plugin-apex/rules/start-events */ "./bpmnlint-plugin-apex/rules/start-events.js");
+/* harmony import */ var bpmnlint_plugin_apex_rules_start_events__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(bpmnlint_plugin_apex_rules_start_events__WEBPACK_IMPORTED_MODULE_16__);
 
 const cache = {};
 
@@ -176,7 +178,8 @@ const rules = {
   "sub-process-blank-start-event": "error",
   "superfluous-gateway": "warning",
   "apex/max-id-length": "error",
-  "apex/merge-split-gateways": "warn"
+  "apex/merge-split-gateways": "warn",
+  "apex/start-events": "warn"
 };
 
 const config = {
@@ -241,6 +244,9 @@ cache['bpmnlint-plugin-apex/max-id-length'] = bpmnlint_plugin_apex_rules_max_id_
 
 
 cache['bpmnlint-plugin-apex/merge-split-gateways'] = bpmnlint_plugin_apex_rules_merge_split_gateways__WEBPACK_IMPORTED_MODULE_15___default.a;
+
+
+cache['bpmnlint-plugin-apex/start-events'] = bpmnlint_plugin_apex_rules_start_events__WEBPACK_IMPORTED_MODULE_16___default.a;
 
 /***/ }),
 
@@ -2666,6 +2672,35 @@ module.exports = function () {
 
 /***/ }),
 
+/***/ "./bpmnlint-plugin-apex/rules/start-events.js":
+/*!****************************************************!*\
+  !*** ./bpmnlint-plugin-apex/rules/start-events.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * A rule that warns when using unsupported start event types.
+ */
+ module.exports = function () {
+  function check(businessObject, reporter) {
+
+    if (businessObject.$type === 'bpmn:StartEvent' && businessObject.eventDefinitions) {
+      if (businessObject.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
+          reporter.report(businessObject.id, 'Element has disallowed type <bpmn:MessageStartEvent>');
+      } else if (businessObject.eventDefinitions[0].$type === 'bpmn:ConditionalEventDefinition') {
+          reporter.report(businessObject.id, 'Element has disallowed type <bpmn:ConditionalStartEvent>');
+      } else if (businessObject.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
+          reporter.report(businessObject.id, 'Element has disallowed type <bpmn:SignalStartEvent>');
+      }
+    }
+  }
+
+  return { check };
+};
+
+/***/ }),
+
 /***/ "./custom/palette/PaletteProvider.js":
 /*!*******************************************!*\
   !*** ./custom/palette/PaletteProvider.js ***!
@@ -3693,11 +3728,14 @@ __webpack_require__.r(__webpack_exports__);
   'Sub process has multiple blank start events': 'Le sous-processus a plusieurs événements de début à blanc.',
   'Event has multiple event definitions': 'L\'évènement a plusieurs définitions.',
   'Process is missing start event': 'Le processus n\'a pas d\'évènement de début.',
-  'Sub process is missing start event': 'Le sous processus n\'a pas d\'évènement de début.',
+  'Sub process is missing start event': 'Le sous-processus n\'a pas d\'évènement de début.',
   'Start event must be blank': 'L\'évènement de début doit être à blanc.',
   'Element ID is longer than 50 characters': 'L\'ID de l\'élément comporte plus de 50 caractères.',
   'Element ID was not changed yet': 'L\'ID de l\'élément n\'a pas encore été modifié',
   'A gateway should not merge and split at the same time': 'Une passerelle ne devrait pas se rejoindre et se séparer en même temps.',
+  'Element has disallowed type <bpmn:MessageStartEvent>': 'L\'élément a un type non autorisé (<bpmn:MessageStartEvent>).',
+  'Element has disallowed type <bpmnConditionalStartEvent>': 'L\'élément a un type non autorisé (<bpmnConditionalStartEvent>).',
+  'Element has disallowed type <bpmn:SignalStartEvent>': 'L\'élément a un type non autorisé (<bpmn:SignalStartEvent>).',
 
   '{errors} Errors, {warnings} Warnings': '{errors} Erreurs, {warnings} Avertissements',
 });

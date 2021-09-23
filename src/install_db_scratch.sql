@@ -68,7 +68,7 @@ PROMPT >> =============================
 PROMPT >> 
 
 @data/install_default_config_data.sql
-@data/install_engine_messages.sql
+@data/install_engine_messages_en.sql
 @data/install_engine_messages_fr.sql
 
 
@@ -97,11 +97,12 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0010_vw.sql
 @views/engine-app/flow_p0013_attributes_vw.sql
 @views/engine-app/flow_p0013_expressions_vw.sql
-@views/engine-app/flow_p0013_subflow_log_vw.sql
+@views/engine-app/flow_p0013_instance_log_vw.sql
+@views/engine-app/flow_p0013_step_log_vw.sql
 @views/engine-app/flow_p0013_subflows_vw.sql
 @views/engine-app/flow_p0013_variable_log_vw.sql
 @views/engine-app/flow_p0014_instance_log_vw.sql
-@views/engine-app/flow_p0014_subflow_log_vw.sql
+@views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
 

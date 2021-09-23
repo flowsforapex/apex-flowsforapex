@@ -20,7 +20,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40402870460815221)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'Add New Version'
-,p_list_item_icon=>'fa-arrow-circle-o-up'
+,p_list_item_icon=>'fa-plus'
 ,p_list_text_01=>'bulk-new-flow-version'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
@@ -28,7 +28,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(40403252293815221)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'Copy'
-,p_list_item_icon=>'fa-plus'
+,p_list_item_icon=>'fa-clone'
 ,p_list_text_01=>'bulk-copy-flow'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
