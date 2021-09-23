@@ -4,15 +4,22 @@
 */
 
 set serveroutput on size unlimited
+set define '^'
+set concat '.'
+
+ACCEPT lang_name char default 'en' PROMPT 'Enteer Language to export: [en]'
+
 
 begin
-  sys.dbms_output.put_line('set define off');
   sys.dbms_output.put_line('PROMPT >> Loading Exported Messages');
+
+  sys.dbms_output.put_line('begin');
 
   for msg in ( select fmsg_message_key
                     , fmsg_lang
                     , fmsg_message_content
                  from flow_messages
+                where fmsg_lang = '^lang_name.'
                 order by fmsg_lang, fmsg_message_key
              )
   loop
@@ -34,5 +41,7 @@ begin
   sys.dbms_output.put_line( ' ');
   sys.dbms_output.put_line('commit;');
 
+  sys.dbms_output.put_line('end;');
+  sys.dbms_output.put_line('/');
 end;
 /
