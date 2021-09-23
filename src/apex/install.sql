@@ -41,6 +41,13 @@ prompt --install
 @@application/shared_components/files/css_flows4apex_light_css.sql
 @@application/shared_components/files/css_flows4apex_light_min_css.sql
 @@application/shared_components/files/css_flows4apex_light_css_map.sql
+@@application/shared_components/files/css_21_1_flows4apex_dark_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_dark_min_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_dark_css_map.sql
+@@application/shared_components/files/css_21_1_flows4apex_light_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_light_min_css.sql
+@@application/shared_components/files/css_21_1_flows4apex_light_css_map.sql
+@@application/shared_components/files/css_20_2_flows4apex_dark_css.sql
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
 @@application/shared_components/files/workflow_white_svg.sql

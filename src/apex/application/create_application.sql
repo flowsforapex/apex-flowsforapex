@@ -54,9 +54,9 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Workflow'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210922142945'
+,p_last_upd_yyyymmddhh24miss=>'20210923160819'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
-,p_files_version=>869
+,p_files_version=>881
 ,p_ui_type_name => null
 );
 wwv_flow_api.component_end;

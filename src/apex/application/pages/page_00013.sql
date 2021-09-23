@@ -36,7 +36,7 @@ wwv_flow_api.create_page(
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210922133222'
+,p_last_upd_yyyymmddhh24miss=>'20210923160819'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -962,7 +962,12 @@ wwv_flow_api.create_report_region(
 'from flow_subflows',
 'where sbfl_prcs_id = :P13_PRCS_ID ',
 'and sbfl_current = :P13_OBJT_ID',
-'and sbfl_status = ''error'''))
+'and sbfl_status = ''error''',
+'and exists (',
+'    select 1',
+'    from FLOW_P0013_INSTANCE_LOG_VW',
+'    where lgpr_prcs_id = :P13_PRCS_ID and lgpr_objt_id = :P13_OBJT_ID ',
+')'))
 ,p_display_condition_type=>'EXISTS'
 ,p_ajax_enabled=>'Y'
 ,p_query_row_template=>wwv_flow_api.id(12495548550946880181)
@@ -995,16 +1000,6 @@ wwv_flow_api.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
-wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(15355453502942502)
-,p_query_column_id=>3
-,p_column_alias=>'LGPR_COMMENT'
-,p_column_display_sequence=>3
-,p_column_heading=>'Comment'
-,p_use_as_row_header=>'N'
-,p_derived_column=>'N'
-,p_include_in_export=>'Y'
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -1016,6 +1011,16 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(15355453502942502)
+,p_query_column_id=>3
+,p_column_alias=>'LGPR_COMMENT'
+,p_column_display_sequence=>3
+,p_column_heading=>'Comment'
+,p_use_as_row_header=>'N'
+,p_derived_column=>'N'
+,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(15355565536942503)
