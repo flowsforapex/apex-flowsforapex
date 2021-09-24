@@ -1,0 +1,128 @@
+prompt --application/shared_components/navigation/lists/p8_action_menu
+begin
+--   Manifest
+--     LIST: P8_ACTION_MENU
+--   Manifest End
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_list(
+ p_id=>wwv_flow_api.id(6338940478461643)
+,p_name=>'P8_ACTION_MENU'
+,p_list_status=>'PUBLIC'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(46777067725540092)
+,p_list_item_display_sequence=>10
+,p_list_item_link_text=>'Start'
+,p_list_item_icon=>'fa-play'
+,p_list_text_01=>'start-flow-instance'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(46778310373540093)
+,p_list_item_display_sequence=>20
+,p_list_item_link_text=>'Reset'
+,p_list_item_icon=>'fa-undo'
+,p_list_text_01=>'reset-flow-instance'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(46779088416540093)
+,p_list_item_display_sequence=>30
+,p_list_item_link_text=>'Terminate'
+,p_list_item_icon=>'fa-stop'
+,p_list_text_01=>'terminate-flow-instance'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(46779754471540095)
+,p_list_item_display_sequence=>40
+,p_list_item_link_text=>'Delete'
+,p_list_item_icon=>'fa-trash-o'
+,p_list_text_01=>'delete-flow-instance'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(12017441161816637)
+,p_list_item_display_sequence=>50
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(12016899984810068)
+,p_list_item_display_sequence=>60
+,p_list_item_link_text=>'Show History'
+,p_list_item_icon=>'fa-info-circle-o'
+,p_list_text_01=>'flow-instance-audit'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(12015017232750300)
+,p_list_item_display_sequence=>70
+,p_list_item_link_text=>'Download (SVG)'
+,p_list_item_icon=>'fa-image'
+,p_list_text_01=>'download-as-svg'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(12668784852437164)
+,p_list_item_display_sequence=>80
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(12017214847815037)
+,p_list_item_display_sequence=>90
+,p_list_item_link_text=>'Show Model Details'
+,p_list_item_icon=>'fa-search'
+,p_list_text_01=>'edit-flow-diagram'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(6351240010504867)
+,p_list_item_display_sequence=>100
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(14295838249027758)
+,p_list_item_display_sequence=>110
+,p_list_item_link_text=>'Refresh'
+,p_list_item_link_target=>'javascript:apex.region(''subflows'').refresh();apex.region(''flow-monitor'').refresh();apex.region(''flow-instance-detail'').refresh();apex.region(''process-variables'').refresh();'
+,p_list_item_icon=>'fa-refresh'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(12694916872990920)
+,p_list_item_display_sequence=>120
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(46154425883410953)
+,p_list_item_display_sequence=>130
+,p_list_item_link_text=>'Display Setting'
+,p_list_item_icon=>'fa-gear'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(46154708390415036)
+,p_list_item_display_sequence=>140
+,p_list_item_link_text=>'below report|side-by-side|new window'
+,p_parent_list_item_id=>wwv_flow_api.id(46154425883410953)
+,p_list_text_01=>'choose-setting'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.component_end;
+end;
+/

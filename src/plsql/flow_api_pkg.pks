@@ -1,13 +1,10 @@
 create or replace package flow_api_pkg
 as
 
-  gc_step          constant varchar2(50 char) := 'simple-step';
-  gc_single_choice constant varchar2(50 char) := 'single-choice';
-  gc_multi_choice  constant varchar2(50 char) := 'multi-choice';
-
 /********************************************************************************
 **
-**        FLOW OPERATIONS (Create, Start, Next_step, Reset, Stop, Delete)
+**        FLOW INSTANCE OPERATIONS (Create, Start, Reset, Terminate, Delete)
+**        STEP OPERATIONS (Reserve, Release, Complete)
 **
 ********************************************************************************/
 
@@ -101,6 +98,34 @@ Flow_release_step releases a previously made reservation.
   , p_subflow_id    in flow_subflows.sbfl_id%type
   ); 
 /***
+Procedure flow_start_step
+flow_start_step can optionally be called when a user is about to start working on a task.  flow_start_step records the start time for 
+work on the task, which is used to distinguish betweeen time waiting for the task to get worked on and the time that it is actually 
+being worked on. Flow_start_step does not perform any functional role in processing a flow instance, and is optional - but it 
+just helps gather process performance statistics that distinguish queing time from processing time.  
+Despite being optional, a well formed, best-practice application will use this call so that process statistics can be captured.
+*/
+  procedure flow_start_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  );
+
+/*** Procedure flow_restart_step
+flow_restart_step is procedure that is designed to be called by an administrator to restart a scriptTask or serviceTask that has 
+failed due to an error.  The intended usage is that the adminstrator can fix the script or edit the process data that caused the 
+task to fail, and then restart the task using this call.  
+A comment can optionally be provided, which will be added to the task event log entry.
+It should only be used on a subflow having a status of 'error'
+*/
+  procedure flow_restart_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  );
+
+/***
 Procedure flow_complete_step
 Flow_complete_step is called when a process step has been completed.  Calling flow_complete_step moves the process 
 forward to the next object(s) in the process diagram, in acordance with the behaviour rules for the objects.
@@ -112,6 +137,7 @@ is used to move a process forward, regardless of the object type.
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   ); 
+
 /***
 Procedure flow_reset
 flow_reset aborts all processing on a process instance, and returns it to the state when it was
@@ -125,15 +151,29 @@ This is not meant for use in Production Systems.
 */
   procedure flow_reset
   ( 
-    p_process_id in flow_processes.prcs_id%type
+    p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
+
+  /***
+Procedure flow_terminate
+flow_delete ends all processing of a process instance, and has the same effect as processing a Terminating End Event inside a Flow Diagram.
+It ends all subflows, but retains the process definition and the subflow logs for the process.
+*/
+  procedure flow_terminate
+  ( 
+    p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+  );
+
   /***
 Procedure flow_delete
 flow_delete ends all processing of a process instance.  It removes all subflows and subflow logs of the process.
 */
   procedure flow_delete
   ( 
-    p_process_id in flow_processes.prcs_id%type
+    p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null    
   );
 
  /********************************************************************************
@@ -152,63 +192,21 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return varchar2;
 
- /********************************************************************************
-**
-**        DEPRECATED API CALLS - 
-**
-********************************************************************************/ 
-  -- flow_next_branch.  
-  -- Deprecated in V5.0.  Returns an Error Message in V5.0.  
-  -- To be Removed in V6.0
-  -- Note: flow_next_branch no longer required or supported in V5.0.  Flow_complete_step is used 
-  -- to advance the process through gateways as well as task objects.
-  procedure flow_next_branch
-  ( p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id  in flow_subflows.sbfl_id%type
-  , p_branch_name in varchar2
-  );
-  
-  -- flow_next_step
-  -- Deprecated in V5.0.  Returns an Error Message in V5.0.  
-  -- To be Removed in V6.0
-  -- Note: In V5.0, flow_next_step calls flow_complete_step.  See doc.
-  -- A Forward Route should also not be specified and will return an error message in V5.0+
-  procedure flow_next_step
-  (
-    p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_forward_route in varchar2 default null
-  );
-
- /********************************************************************************
-**
-**        DEPRECATED APPLICATION HELPERS (Progress, Next Step needs Decisions, etc.)
-**
-********************************************************************************/ 
- 
- -- used to handle gateway objects when the app had to decide whether to call flow_next_step
- -- or flow_next_branch.  No longer required in V5.0 and later.  
- -- To be deleted in v6.0
-  function next_multistep_exists
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean;
-
- -- used to handle gateway objects when the app had to decide whether to call flow_next_step
- -- or flow_next_branch.  No longer required in V5.0 and later.  
- -- To be deleted in v6.0
-  function next_multistep_exists_yn
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2;
-
- -- used to handle gateway objects when the app had to decide whether to call flow_next_step
- -- or flow_next_branch.  No longer required in V5.0 and later.  
- -- in V5.x, always returns 'simple-step'
- -- To be deleted in v6.0
-  function next_step_type
-  (
-    p_sbfl_id in flow_subflows.sbfl_id%type
+  -- message
+  -- returns a Flows for APEX error message with p0...p9 substitutions in p_lang
+  function message
+  ( p_message_key     in varchar2 
+  , p_lang            in varchar2 default 'en'
+  , p0                in varchar2 default null
+  , p1                in varchar2 default null
+  , p2                in varchar2 default null
+  , p3                in varchar2 default null
+  , p4                in varchar2 default null
+  , p5                in varchar2 default null
+  , p6                in varchar2 default null
+  , p7                in varchar2 default null
+  , p8                in varchar2 default null
+  , p9                in varchar2 default null
   ) return varchar2;
 
 end flow_api_pkg;

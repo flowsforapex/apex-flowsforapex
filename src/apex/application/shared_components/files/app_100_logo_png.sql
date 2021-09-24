@@ -18,9 +18,10 @@ wwv_flow_api.g_varchar2_table(3) := 'AB651DB014A1CC1207DFDB96185AE353CC6BB942486
 wwv_flow_api.g_varchar2_table(4) := '886A367336084ACB67D94E1F4154F183E61784EF9837564C28C63894A3C59083AD7EB4B85707C82DCAE1EE54124033F7079E011547952BC0542A44EAFBC47D1DD8ABC9693444ECE335450F7027FF57BC14009C3398FEBBCD5B005EB84A5E5D09CFBB1C00';
 wwv_flow_api.g_varchar2_table(5) := '00000049454E44AE426082';
 wwv_flow_api.create_app_static_file(
- p_id=>wwv_flow_api.id(26833346340830682)
+ p_id=>wwv_flow_api.id(16924045360692548)
 ,p_file_name=>'app-100-logo.png'
 ,p_mime_type=>'image/png'
+,p_file_charset=>'utf-8'
 ,p_file_content => wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
 );
 wwv_flow_api.component_end;

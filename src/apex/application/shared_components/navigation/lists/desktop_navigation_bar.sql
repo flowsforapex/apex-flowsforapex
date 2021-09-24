@@ -17,6 +17,56 @@ wwv_flow_api.create_list(
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(34597614443542059)
+,p_list_item_display_sequence=>5
+,p_list_item_link_text=>'Getting started'
+,p_list_item_link_target=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-info-square-o'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(11904067894914484)
+,p_list_item_display_sequence=>6
+,p_list_item_link_text=>'Configuration'
+,p_list_item_link_target=>'f?p=&APP_ID.:9:&SESSION.::&DEBUG.:9:::'
+,p_list_item_icon=>'fa-gear'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5589254850825963)
+,p_list_item_display_sequence=>7
+,p_list_item_link_text=>'Theme'
+,p_list_item_icon=>'fa-paint-brush'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(6211519620415215)
+,p_list_item_display_sequence=>40
+,p_list_item_link_text=>'Automatic'
+,p_list_item_link_target=>'javascript:apex.submit((window.matchMedia && window.matchMedia(''(prefers-color-scheme: dark)'').matches) ? ''RESET_DARK'' : ''RESET_LIGHT'');'
+,p_list_item_icon=>'fa-adjust'
+,p_parent_list_item_id=>wwv_flow_api.id(5589254850825963)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5591024903839479)
+,p_list_item_display_sequence=>50
+,p_list_item_link_text=>'Light Mode'
+,p_list_item_link_target=>'javascript:apex.submit(''LIGHT_MODE'');'
+,p_list_item_icon=>'fa-sun-o'
+,p_parent_list_item_id=>wwv_flow_api.id(5589254850825963)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(5591767688841799)
+,p_list_item_display_sequence=>60
+,p_list_item_link_text=>'Dark Mode'
+,p_list_item_link_target=>'javascript:apex.submit(''DARK_MODE'');'
+,p_list_item_icon=>'fa-moon-o'
+,p_parent_list_item_id=>wwv_flow_api.id(5589254850825963)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12495487956468879842)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'&APP_USER.'

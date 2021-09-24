@@ -55,6 +55,17 @@ create or replace package flow_timers_pkg as
   );
 
 /******************************************************************************
+  lock_timer
+    locks the specified timer.
+******************************************************************************/
+
+  procedure lock_timer
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  );
+
+/******************************************************************************
   kill_timer
     remove a timer instance before the expiration time.
 ******************************************************************************/
@@ -64,6 +75,17 @@ create or replace package flow_timers_pkg as
     pi_prcs_id      in flow_processes.prcs_id%type
   , pi_sbfl_id      in flow_subflows.sbfl_id%type
   , po_return_code out number
+  );
+
+
+/******************************************************************************
+  lock_process_timers
+    locks all the timers of a process.
+******************************************************************************/
+
+  procedure lock_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
   );
 
 /******************************************************************************
@@ -90,7 +112,7 @@ create or replace package flow_timers_pkg as
 
 /******************************************************************************
   terminate_all_timers
-    termintate all the timers of any process.
+    termintate all the timers of all processes.
 ******************************************************************************/
 
   procedure terminate_all_timers

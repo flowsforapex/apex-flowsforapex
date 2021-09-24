@@ -35,7 +35,20 @@ as
     , obat_tab            t_obat_tab
     );
   type t_objt_obat_tab is table of t_objt_obat_rec index by flow_types_pkg.t_bpmn_id;
-  
+
+  type t_expr_rec is
+    record
+    (
+      expr_set        flow_object_expressions.expr_set%type
+    , expr_order      flow_object_expressions.expr_order%type
+    , expr_var_name   flow_object_expressions.expr_var_name%type
+    , expr_var_type   flow_object_expressions.expr_var_type%type
+    , expr_type       flow_object_expressions.expr_type%type
+    , expr_expression flow_object_expressions.expr_expression%type
+    );
+  type t_expr_tab is table of t_expr_rec index by pls_integer;
+  type t_objt_expr_tab is table of t_expr_tab index by flow_types_pkg.t_bpmn_id;
+
   type t_conn_rec is
     record
     (
@@ -56,6 +69,7 @@ as
   g_dgrm_id        flow_diagrams.dgrm_id%type;
   g_objects        t_objt_tab;
   g_obj_attribs    t_objt_obat_tab;
+  g_objt_expr      t_objt_expr_tab;
   g_connections    t_conn_tab;
   g_lane_refs      t_bpmn_ref_tab;
   g_default_cons   t_bpmn_id_tab;
@@ -132,6 +146,39 @@ as
 
     end if;
   end register_object_attributes;
+
+  procedure register_object_expression
+  (
+    pi_objt_bpmn_id    in flow_objects.objt_bpmn_id%type
+  , pi_expr_set        in flow_object_expressions.expr_set%type
+  , pi_expr_order      in flow_object_expressions.expr_order%type
+  , pi_expr_var_name   in flow_object_expressions.expr_var_name%type
+  , pi_expr_var_type   in flow_object_expressions.expr_var_type%type
+  , pi_expr_type       in flow_object_expressions.expr_type%type
+  , pi_expr_expression in flow_object_expressions.expr_expression%type
+  )
+  as
+    l_object_expression t_expr_rec;
+    l_insert_index      pls_integer := 0;
+  begin
+    if pi_objt_bpmn_id is not null then
+      l_object_expression.expr_set        := pi_expr_set;
+      l_object_expression.expr_order      := pi_expr_order;
+      l_object_expression.expr_var_name   := pi_expr_var_name;
+      l_object_expression.expr_var_type   := pi_expr_var_type;
+      l_object_expression.expr_type       := pi_expr_type;
+      l_object_expression.expr_expression := pi_expr_expression;    
+
+      -- Verify if we already have some variable expression for same object
+      if g_objt_expr.exists(pi_objt_bpmn_id) then
+        l_insert_index := g_objt_expr(pi_objt_bpmn_id).count + 1;
+      else
+        l_insert_index := 1;
+      end if;
+
+      g_objt_expr(pi_objt_bpmn_id)(l_insert_index) := l_object_expression;
+    end if;
+  end register_object_expression;
 
   procedure register_connection
   (
@@ -230,6 +277,41 @@ as
     ;
   end insert_object_attributes;
 
+  procedure insert_object_expression
+  (
+    pi_expr_objt_id    in flow_object_expressions.expr_objt_id%type
+  , pi_expr_set        in flow_object_expressions.expr_set%type
+  , pi_expr_order      in flow_object_expressions.expr_order%type
+  , pi_expr_var_name   in flow_object_expressions.expr_var_name%type
+  , pi_expr_var_type   in flow_object_expressions.expr_var_type%type
+  , pi_expr_type       in flow_object_expressions.expr_type%type
+  , pi_expr_expression in flow_object_expressions.expr_expression%type
+  )
+  as
+  begin
+    insert
+      into flow_object_expressions
+           (
+             expr_objt_id
+           , expr_set
+           , expr_order
+           , expr_var_name
+           , expr_var_type
+           , expr_type
+           , expr_expression
+           )
+    values (
+             pi_expr_objt_id
+           , pi_expr_set
+           , pi_expr_order
+           , pi_expr_var_name
+           , upper(pi_expr_var_type)
+           , pi_expr_type
+           , pi_expr_expression
+           )
+    ;
+  end insert_object_expression;
+
   procedure insert_connection
   (
     pi_conn_bpmn_id      in flow_connections.conn_bpmn_id%type
@@ -315,6 +397,33 @@ as
 
   end process_object_attributes;
 
+  procedure process_object_expressions
+  (
+    pi_objt_id       in flow_object_expressions.expr_objt_id%type
+  , pi_objt_bpmn_id  in flow_types_pkg.t_bpmn_id    
+  )
+  as
+    l_cur_expressions t_expr_tab;
+    l_cur_index       pls_integer;
+  begin
+    if g_objt_expr.exists(pi_objt_bpmn_id) then
+      l_cur_index       := g_objt_expr(pi_objt_bpmn_id).first;
+      while l_cur_index is not null loop
+        insert_object_expression
+        (
+          pi_expr_objt_id    => pi_objt_id
+        , pi_expr_set        => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_set
+        , pi_expr_order      => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_order
+        , pi_expr_var_name   => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_name
+        , pi_expr_var_type   => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_type
+        , pi_expr_type       => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_type
+        , pi_expr_expression => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_expression
+        );
+        l_cur_index := g_objt_expr(pi_objt_bpmn_id).next(l_cur_index);
+      end loop;
+    end if;
+  end process_object_expressions;
+
   procedure process_objects
   as
     l_cur_objt_bpmn_id  flow_types_pkg.t_bpmn_id;
@@ -367,6 +476,12 @@ as
         (
           pi_objt_id           => l_objt_id
         , pi_objt_bpmn_id      => l_cur_objt_bpmn_id
+        );
+
+        process_object_expressions
+        (
+          pi_objt_id      => l_objt_id
+        , pi_objt_bpmn_id => l_cur_objt_bpmn_id
         );
 
       -- checks not passed skip record for now
@@ -578,24 +693,22 @@ as
     c_nsmap        constant t_vc200 := flow_constants_pkg.gc_nsmap;
     l_return                flow_types_pkg.t_bpmn_id;
   begin
-
-    if pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_terminate_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_terminate_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_timer_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_timer_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_date, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_timer_type_date;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_duration, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_timer_type_duration;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_timer_type_cycle;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_error_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_escalation_event_definition;
-    elsif pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1 then
-      l_return := flow_constants_pkg.gc_bpmn_link_event_definition;    
-    end if;
+    l_return :=
+      case
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_terminate_event_definition, nsmap => c_nsmap ) = 1   then flow_constants_pkg.gc_bpmn_terminate_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_timer_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_timer_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_date, nsmap => c_nsmap ) = 1                   then flow_constants_pkg.gc_timer_type_date
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_duration, nsmap => c_nsmap ) = 1               then flow_constants_pkg.gc_timer_type_duration
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1                  then flow_constants_pkg.gc_timer_type_cycle
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_error_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1  then flow_constants_pkg.gc_bpmn_escalation_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1        then flow_constants_pkg.gc_bpmn_link_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_message_event_definition, nsmap => c_nsmap ) = 1     then flow_constants_pkg.gc_bpmn_message_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_conditional_event_definition, nsmap => c_nsmap ) = 1 then flow_constants_pkg.gc_bpmn_conditional_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_signal_event_definition, nsmap => c_nsmap ) = 1      then flow_constants_pkg.gc_bpmn_signal_event_definition
+        else null
+      end
+    ;
 
     return l_return;
   end find_subtag_name;
@@ -620,10 +733,6 @@ as
                      , children.child_id
                      , children.child_value
                      , children.child_details
-                  into l_child_type
-                     , l_child_id
-                     , l_child_value
-                     , l_child_details
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
@@ -689,7 +798,28 @@ as
           );
 		
         elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
-          null;
+          select details.detail_type
+               , details.detail_value
+            into l_detail_type
+               , l_detail_value
+            from xmltable
+                 (
+                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                 , '*' passing rec.child_details
+                   columns
+                     detail_type  varchar2(50 char) path   'name()'
+                   , detail_value varchar2(4000 char) path 'text()'
+                 ) details
+          ;
+          if l_detail_type = flow_constants_pkg.gc_apex_process_status then
+            register_object_attributes
+            (
+              pi_objt_bpmn_id      => pi_objt_bpmn_id
+            , pi_objt_sub_tag_name => rec.child_type
+            , pi_obat_key          => flow_constants_pkg.gc_terminate_result
+            , pi_obat_vc_value     => l_detail_value
+            );
+          end if;
 	    end if;
 
       end if;
@@ -697,6 +827,62 @@ as
     end loop;
 
   end parse_child_elements;
+
+  procedure parse_extension_elements
+  (
+    pi_bpmn_id       in flow_types_pkg.t_bpmn_id
+  , pi_extension_xml in xmltype
+  )
+  as
+  begin
+    for rec in (
+                select replace(xtab1.run_scope, 'apex:') as run_scope
+                     , xtab2.variable_sequence
+                     , xtab2.variable_name
+                     , xtab2.variable_type
+                     , xtab2.expression_type
+                     , xtab2.expression_value
+                     , xtab1.procvars
+                  from xmltable
+                       (
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'http://www.apex.mt-ag.com' as "apex" )
+                       , '/bpmn:extensionElements/*' passing pi_extension_xml
+                         columns
+                           run_scope varchar2(20 char) path 'name()'
+                         , procvars  xmltype           path 'apex:processVariable'
+                       ) xtab1
+                     , xmltable
+                       (
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'http://www.apex.mt-ag.com' as "apex" )
+                       , '*' passing xtab1.procvars
+                         columns
+                           variable_sequence number              path 'apex:varSequence'
+                         , variable_name     varchar2(50 char)   path 'apex:varName'
+                         , variable_type     varchar2(50 char)   path 'apex:varDataType'
+                         , expression_type   varchar2(200 char)  path 'apex:varExpressionType'
+                         , expression_value  varchar2(4000 char) path 'apex:varExpression'
+                       ) xtab2
+               )
+    loop
+      -- only pick things for variable expressions for now
+      if rec.run_scope in ( flow_constants_pkg.gc_expr_set_before_task, flow_constants_pkg.gc_expr_set_after_task
+                          , flow_constants_pkg.gc_expr_set_before_split, flow_constants_pkg.gc_expr_set_after_merge
+                          , flow_constants_pkg.gc_expr_set_before_event, flow_constants_pkg.gc_expr_set_on_event
+                          )
+      then
+        register_object_expression
+        (
+          pi_objt_bpmn_id    => pi_bpmn_id
+        , pi_expr_set        => rec.run_scope
+        , pi_expr_order      => rec.variable_sequence
+        , pi_expr_var_name   => rec.variable_name
+        , pi_expr_var_type   => rec.variable_type
+        , pi_expr_type       => rec.expression_type
+        , pi_expr_expression => rec.expression_value
+        );
+      end if;
+    end loop;
+  end parse_extension_elements;
 
   procedure parse_steps
   (
@@ -717,20 +903,22 @@ as
                      , steps.attached_to
                      , case steps.interrupting when 'false' then 0 else 1 end as interrupting
                      , steps.child_elements
+                     , steps.extension_elements
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                        , '*' passing pi_xml
                          columns
-                           steps_type     varchar2(50 char)  path 'name()'
-                         , steps_name     varchar2(200 char) path '@name'
-                         , steps_id       varchar2(50 char)  path '@id'
-                         , source_ref     varchar2(50 char)  path '@sourceRef'
-                         , target_ref     varchar2(50 char)  path '@targetRef'
-                         , default_conn   varchar2(50 char)  path '@default'
-                         , attached_to    varchar2(50 char)  path '@attachedToRef'
-                         , interrupting   varchar2(50 char)  path '@cancelActivity'
-                         , child_elements xmltype            path '* except bpmn:incoming except bpmn:outgoing'
+                           steps_type         varchar2(50 char)  path 'name()'
+                         , steps_name         varchar2(200 char) path '@name'
+                         , steps_id           varchar2(50 char)  path '@id'
+                         , source_ref         varchar2(50 char)  path '@sourceRef'
+                         , target_ref         varchar2(50 char)  path '@targetRef'
+                         , default_conn       varchar2(50 char)  path '@default'
+                         , attached_to        varchar2(50 char)  path '@attachedToRef'
+                         , interrupting       varchar2(50 char)  path '@cancelActivity'
+                         , child_elements     xmltype            path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
+                         , extension_elements xmltype            path 'bpmn:extensionElements'
                        ) steps
                )
     loop
@@ -750,6 +938,14 @@ as
           );
         else
           l_objt_sub_tag_name := null;
+        end if;
+
+        if rec.extension_elements is not null then
+          parse_extension_elements
+          ( 
+            pi_bpmn_id       => rec.steps_id
+          , pi_extension_xml => rec.extension_elements
+          );
         end if;
 
         if rec.default_conn is not null then
@@ -970,6 +1166,7 @@ as
     g_dgrm_id := null;
     g_objects.delete;
     g_obj_attribs.delete;
+    g_objt_expr.delete;
     g_connections.delete;
     g_objt_lookup.delete;
   end reset;

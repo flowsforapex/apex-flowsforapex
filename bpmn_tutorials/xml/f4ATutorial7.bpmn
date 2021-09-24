@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/bpmn' exporter='bpmn-js (https://demo.bpmn.io)' exporterVersion='7.2.0'>
+  <bpmn:process id='Process_AA7_Timers' name='AA7 - Tutorial - About time' isExecutable='false'>
+    <bpmn:documentation>Tutorials by Richard Allen.
+Flowquest Consulting.
+twitter: @FlowquestR</bpmn:documentation>
+    <bpmn:startEvent id='Event_0ilo2tn' name='Start'>
+      <bpmn:outgoing>Flow_12z4jdz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id='Activity_1o7iby2' name='A'>
+      <bpmn:incoming>Flow_12z4jdz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b5yj72</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_12z4jdz' sourceRef='Event_0ilo2tn' targetRef='Activity_1o7iby2' />
+    <bpmn:task id='Activity_16stv78' name='B'>
+      <bpmn:incoming>Flow_0b5yj72</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l6l9o7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0b5yj72' sourceRef='Activity_1o7iby2' targetRef='Activity_16stv78' />
+    <bpmn:task id='Activity_0yu8dd0' name='D'>
+      <bpmn:incoming>Flow_14h9jqa</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dtmdza</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_1l6l9o7' sourceRef='Activity_16stv78' targetRef='Event_0r62ngx' />
+    <bpmn:endEvent id='Event_15qkntc' name='End'>
+      <bpmn:incoming>Flow_1dtmdza</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_1dtmdza' sourceRef='Activity_0yu8dd0' targetRef='Event_15qkntc' />
+    <bpmn:sequenceFlow id='Flow_14h9jqa' sourceRef='Event_0r62ngx' targetRef='Activity_0yu8dd0' />
+    <bpmn:task id='Activity_1ovx33p' name='Reminder&#10;Process'>
+      <bpmn:incoming>Flow_0b1o4si</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l2zovx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_0b1o4si' sourceRef='Timer_BE_1' targetRef='Activity_1ovx33p' />
+    <bpmn:endEvent id='Event_0u6iyrl'>
+      <bpmn:incoming>Flow_0l2zovx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_0l2zovx' sourceRef='Activity_1ovx33p' targetRef='Event_0u6iyrl' />
+    <bpmn:task id='Activity_1uox4x1' name='Timeout Process'>
+      <bpmn:incoming>Flow_186qh2w</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mm3pdn</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id='Flow_186qh2w' sourceRef='Event_100vuz3' targetRef='Activity_1uox4x1' />
+    <bpmn:endEvent id='Event_1sxunbl' name='Timeout End'>
+      <bpmn:incoming>Flow_1mm3pdn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id='Flow_1mm3pdn' sourceRef='Activity_1uox4x1' targetRef='Event_1sxunbl' />
+    <bpmn:boundaryEvent id='Timer_BE_1' name='Non Interrupting Timer Boundary Event (20s)' cancelActivity='false' attachedToRef='Activity_1o7iby2'>
+      <bpmn:outgoing>Flow_0b1o4si</bpmn:outgoing>
+      <bpmn:timerEventDefinition id='TimerEventDefinition_12rvdst'>
+        <bpmn:timeDuration xsi:type='bpmn:tFormalExpression'>PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id='Event_100vuz3' name='Interrupting Timer Boundary Event (20s)' attachedToRef='Activity_0yu8dd0'>
+      <bpmn:outgoing>Flow_186qh2w</bpmn:outgoing>
+      <bpmn:timerEventDefinition id='TimerEventDefinition_0uxg5qu'>
+        <bpmn:timeDuration xsi:type='bpmn:tFormalExpression'>PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:intermediateCatchEvent id='Event_0r62ngx' name='C&#10;Intermediate Timer Catch Event (20s)'>
+      <bpmn:incoming>Flow_1l6l9o7</bpmn:incoming>
+      <bpmn:outgoing>Flow_14h9jqa</bpmn:outgoing>
+      <bpmn:timerEventDefinition id='TimerEventDefinition_1yvpnqn'>
+        <bpmn:timeDuration xsi:type='bpmn:tFormalExpression'>PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:textAnnotation id='TextAnnotation_1wdez7y'>
+      <bpmn:text>Tutorial 7 - It's About Time!
+
+We can add timers to our models to add a delay, create a reminder, cause a time period to end, or force a process timeout.
+
+Task A has a Timer Boundary Event attached to it.  Notice the circles on the boundary event are dashed, not solid.  This means it is a non-interrupting timer.  Use this to send someone a reminder when they haven't completed a task after 2 days...
+
+Step C is a Timer Event.  This just stops the process until the timer fires.
+
+Step D has an Interrupting Timer Boundary Event attached.  An interrupting Boundary Event has a solid line.  When the timer fires, D is terminated &amp; the process moves forward from the Timer - to our Timeout Process.  Use this to implement processes that close input periods, etc.
+
+In the tutorial, all of the timers are set to 20 seconds.  Try going straight through the process A-&gt; B -&gt; C -&gt; D &amp; see what happens to the timers.  Then try going through it again slowly, waiting 30 seconds between steps so that the timers fire. 
+Use the Refresh button to see what's happened to the model.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_1ilv47z' sourceRef='Activity_1o7iby2' targetRef='TextAnnotation_1wdez7y' />
+    <bpmn:textAnnotation id='TextAnnotation_1lvcb8y'>
+      <bpmn:text>Boundary Event Timers can be set on Tasks, userTasks, and SubProcesses.
+
+Timers can be set to a specific date/time, to a duration, or to cycle. 
+
+The specific date timers are easiest used if you substitute a Date process variable into the Timer Definition string, starting with release 5.0.1.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_0dpxqu1' sourceRef='Activity_0yu8dd0' targetRef='TextAnnotation_1lvcb8y' />
+    <bpmn:textAnnotation id='TextAnnotation_0ijxguz'>
+      <bpmn:text>Timers use the DBMS_SCHEDULER features of the database, and require the schema owner to have the CREATE JOB privilege in the database.
+
+The scheduler is not set up for you when you install Flows for APEX.  It's simple to do this, however - once you have a user with CREATE JOB, you have to execute 2 pl/sql procedures that are included in the F4A distribution - see this file in the distribution.  setup/DBMS_SCHEDULER_setup_for_timers.txt</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id='Association_0y95ijj' sourceRef='Timer_BE_1' targetRef='TextAnnotation_0ijxguz' />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id='BPMNDiagram_1'>
+    <bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_AA7_Timers'>
+      <bpmndi:BPMNEdge id='Flow_1mm3pdn_di' bpmnElement='Flow_1mm3pdn'>
+        <di:waypoint x='1000' y='190' />
+        <di:waypoint x='1052' y='190' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_186qh2w_di' bpmnElement='Flow_186qh2w'>
+        <di:waypoint x='830' y='252' />
+        <di:waypoint x='830' y='190' />
+        <di:waypoint x='900' y='190' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0l2zovx_di' bpmnElement='Flow_0l2zovx'>
+        <di:waypoint x='560' y='430' />
+        <di:waypoint x='612' y='430' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0b1o4si_di' bpmnElement='Flow_0b1o4si'>
+        <di:waypoint x='390' y='368' />
+        <di:waypoint x='390' y='430' />
+        <di:waypoint x='460' y='430' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_14h9jqa_di' bpmnElement='Flow_14h9jqa'>
+        <di:waypoint x='688' y='310' />
+        <di:waypoint x='770' y='310' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1dtmdza_di' bpmnElement='Flow_1dtmdza'>
+        <di:waypoint x='870' y='310' />
+        <di:waypoint x='922' y='310' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_1l6l9o7_di' bpmnElement='Flow_1l6l9o7'>
+        <di:waypoint x='590' y='310' />
+        <di:waypoint x='652' y='310' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_0b5yj72_di' bpmnElement='Flow_0b5yj72'>
+        <di:waypoint x='430' y='310' />
+        <di:waypoint x='490' y='310' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Flow_12z4jdz_di' bpmnElement='Flow_12z4jdz'>
+        <di:waypoint x='278' y='310' />
+        <di:waypoint x='330' y='310' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id='Event_0ilo2tn_di' bpmnElement='Event_0ilo2tn'>
+        <dc:Bounds x='242' y='292' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='248' y='335' width='24' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1o7iby2_di' bpmnElement='Activity_1o7iby2'>
+        <dc:Bounds x='330' y='270' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_16stv78_di' bpmnElement='Activity_16stv78'>
+        <dc:Bounds x='490' y='270' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_0yu8dd0_di' bpmnElement='Activity_0yu8dd0'>
+        <dc:Bounds x='770' y='270' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_15qkntc_di' bpmnElement='Event_15qkntc'>
+        <dc:Bounds x='922' y='292' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='930' y='335' width='20' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1ovx33p_di' bpmnElement='Activity_1ovx33p'>
+        <dc:Bounds x='460' y='390' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_0u6iyrl_di' bpmnElement='Event_0u6iyrl'>
+        <dc:Bounds x='612' y='412' width='36' height='36' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Activity_1uox4x1_di' bpmnElement='Activity_1uox4x1'>
+        <dc:Bounds x='900' y='150' width='100' height='80' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1sxunbl_di' bpmnElement='Event_1sxunbl'>
+        <dc:Bounds x='1052' y='172' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='1039' y='215' width='62' height='14' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_11f8gws_di' bpmnElement='Event_0r62ngx'>
+        <dc:Bounds x='652' y='292' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='639' y='335' width='62' height='53' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_1wdez7y_di' bpmnElement='TextAnnotation_1wdez7y'>
+        <dc:Bounds x='200' y='-120' width='1050' height='270' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_1lvcb8y_di' bpmnElement='TextAnnotation_1lvcb8y'>
+        <dc:Bounds x='890' y='410' width='350' height='138' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='TextAnnotation_0ijxguz_di' bpmnElement='TextAnnotation_0ijxguz'>
+        <dc:Bounds x='240' y='530' width='320' height='194' />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1jj5rvr_di' bpmnElement='Event_100vuz3'>
+        <dc:Bounds x='812' y='252' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='741' y='210' width='78' height='40' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Event_1ak9s5r_di' bpmnElement='Timer_BE_1'>
+        <dc:Bounds x='372' y='332' width='36' height='36' />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='300' y='375' width='79' height='40' />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Association_1ilv47z_di' bpmnElement='Association_1ilv47z'>
+        <di:waypoint x='392' y='270' />
+        <di:waypoint x='424' y='150' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_0dpxqu1_di' bpmnElement='Association_0dpxqu1'>
+        <di:waypoint x='861' y='350' />
+        <di:waypoint x='924' y='410' />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Association_0y95ijj_di' bpmnElement='Association_0y95ijj'>
+        <di:waypoint x='389' y='368' />
+        <di:waypoint x='380' y='530' />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -3,10 +3,10 @@ as
 with completed_objects as (
         select distinct sflg.sflg_prcs_id as prcs_id, sflg.sflg_objt_id as objt_id
           from flow_subflow_log sflg
-         where sflg.sflg_objt_id not in ( select sbfl.sbfl_last_completed
+         where sflg.sflg_objt_id not in ( /*select sbfl.sbfl_last_completed
                                               from flow_subflows sbfl
                                              where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
-                                             union
+                                             union*/
                                             select sbfl.sbfl_current
                                               from flow_subflows sbfl
                                              where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
@@ -17,7 +17,7 @@ with completed_objects as (
            listagg( objt_id, ':') within group (order by objt_id) as bpmn_ids
     from completed_objects
     group by prcs_id
-), last_completed as (
+), last_completed as (         -- remove in v22.1
   select sbfl_prcs_id as prcs_id
        , listagg(sbfl_last_completed, ':') within group ( order by sbfl_last_completed ) as bpmn_ids
     from flow_subflows
@@ -27,7 +27,14 @@ group by sbfl_prcs_id
   select sbfl_prcs_id as prcs_id
        , listagg(sbfl_current, ':') within group ( order by sbfl_current ) as bpmn_ids
     from flow_subflows
+   where sbfl_current is not null  -- should this include  "and sbfl_status != 'error' "???
+group by sbfl_prcs_id
+), all_errors as (
+  select sbfl_prcs_id as prcs_id
+       , listagg(sbfl_current, ':') within group (order by sbfl_current) as bpmn_ids
+    from flow_subflows
    where sbfl_current is not null
+     and sbfl_status = 'error'
 group by sbfl_prcs_id
 )
   select prcs.prcs_id
@@ -45,11 +52,15 @@ group by sbfl_prcs_id
        , ( select lcomp.bpmn_ids
              from last_completed lcomp
             where lcomp.prcs_id = prcs.prcs_id
-         ) as last_completed
+         ) as last_completed     -- remove in v22.1
        , ( select acurr.bpmn_ids
              from all_current acurr
             where acurr.prcs_id = prcs.prcs_id
          ) as all_current
+       , ( select aerr.bpmn_ids
+             from all_errors aerr
+            where aerr.prcs_id = prcs.prcs_id
+         ) as all_errors
        , ( select prov.prov_var_vc2
              from flow_process_variables prov
             where prov.prov_var_name = 'BUSINESS_REF'

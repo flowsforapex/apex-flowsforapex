@@ -1,12 +1,19 @@
 create or replace package body flow_process_vars
 as
 
+  lock_timeout exception;
+  pragma exception_init (lock_timeout, -3006);
+
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_vc2_value in flow_process_variables.prov_var_vc2%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin
   begin
       insert into flow_process_variables 
@@ -17,39 +24,56 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'VARCHAR2'
+      , flow_constants_pkg.gc_prov_var_type_varchar2 
       , pi_vc2_value
-      );
+      );      
   exception
     when dup_val_on_index then
+      l_action := 'updating';
       update flow_process_variables prov 
          set prov.prov_var_vc2 = pi_vc2_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'VARCHAR2'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_varchar2 
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_varchar2 
+  , p_var_vc2           => pi_vc2_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_num_value in flow_process_variables.prov_var_num%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin 
   begin
       insert into flow_process_variables 
@@ -60,39 +84,56 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'NUMBER'
+      , flow_constants_pkg.gc_prov_var_type_number
       , pi_num_value
       );
   exception
     when dup_val_on_index then
+      l_action := 'updating';
       update flow_process_variables prov 
          set prov.prov_var_num = pi_num_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'NUMBER'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_number
+  , p_var_num           => pi_num_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_date_value in flow_process_variables.prov_var_date%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin 
   begin
       insert into flow_process_variables 
@@ -103,39 +144,56 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'DATE'
+      , flow_constants_pkg.gc_prov_var_type_date
       , pi_date_value
       );
   exception
     when dup_val_on_index then
+      l_action := 'updating';
       update flow_process_variables prov 
          set prov.prov_var_date = pi_date_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'DATE'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_date
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_date 
+  , p_var_date          => pi_date_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_clob_value in flow_process_variables.prov_var_clob%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 )
 is 
+  l_action  varchar2(20);
 begin 
   begin
       insert into flow_process_variables 
@@ -146,7 +204,7 @@ begin
       ) values
       ( pi_prcs_id
       , pi_var_name
-      , 'CLOB'
+      , flow_constants_pkg.gc_prov_var_type_clob
       , pi_clob_value
       );
   exception
@@ -155,30 +213,43 @@ begin
          set prov.prov_var_clob = pi_clob_value
        where prov.prov_prcs_id = pi_prcs_id
          and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = 'CLOB'
+         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_clob
            ;
     when others
     then
-      apex_error.add_error
-          ( p_message => 'Error creating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-          , p_display_location => apex_error.c_on_error_page
-          );
+      l_action := 'creating';
+      raise;
   end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_clob 
+  , p_var_clob           => pi_clob_value
+  );
 exception
   when others
   then
-      apex_error.add_error
-      ( p_message => 'Error updating process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-      , p_display_location => apex_error.c_on_error_page
-      );
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => l_action         
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
 end set_var;
 
 -- getters return
 
 function get_var_vc2
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_vc2%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_vc2%type
 is 
    po_vc2_value  flow_process_variables.prov_var_vc2%type;
 begin 
@@ -191,23 +262,25 @@ begin
    return po_vc2_value;
 exception
   when no_data_found then
-     if pi_var_name like '%:route' 
-     then
-        -- special case error handling for FFA41 to permit next_branch to work.
-        -- remove if...then...else and have all cases do the <else> action  in FFA50
-         return null;
-     else
-      apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
+    if pi_exception_on_null then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'       
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
-     end if;
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    else
+      return null;
+    end if;
 end get_var_vc2;
 
 function get_var_num
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_num%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_num%type
 is 
    po_num_value  flow_process_variables.prov_var_num%type;
 begin 
@@ -220,16 +293,25 @@ begin
    return po_num_value;
 exception
   when no_data_found then
-      apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
+    if pi_exception_on_null then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'         
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    else
+      return null;
+    end if;
 end get_var_num;
 
 function get_var_date
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_date%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_date%type
 is 
    po_date_value  flow_process_variables.prov_var_date%type;
 begin 
@@ -242,16 +324,25 @@ begin
    return po_date_value;
 exception
   when no_data_found then
-      apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
+    if pi_exception_on_null then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'        
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    else
+      return null;
+    end if;
 end get_var_date;
 
 function get_var_clob
 ( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type)
-return flow_process_variables.prov_var_clob%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_clob%type
 is 
    po_clob_value  flow_process_variables.prov_var_clob%type;
 begin 
@@ -264,21 +355,98 @@ begin
    return po_clob_value;
 exception
   when no_data_found then
-      apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
+    if pi_exception_on_null then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'getting'       
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
       );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    else
+      return null;
+    end if;
 end get_var_clob;
+
+-- delete a variable
+
+procedure delete_var 
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+)
+is
+  l_var_type   flow_process_variables.prov_var_type%type;
+begin 
+  select prov_var_type
+    into l_var_type
+    from flow_process_variables prov
+   where prov.prov_prcs_id = pi_prcs_id
+     and prov.prov_var_name = pi_var_name
+     for update wait 2;
+
+  delete 
+    from flow_process_variables prov
+   where prov.prov_prcs_id = pi_prcs_id
+     and prov.prov_var_name = pi_var_name
+  ;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_var_name          => pi_var_name
+  , p_var_type          => l_var_type
+  );
+exception
+  when  no_data_found then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-set-error'
+      , p0 => 'deleting'         
+      , p1 => pi_var_name
+      , p2 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+  when lock_timeout then
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_message_key    => 'var-set-error'
+    , p0 => 'locking'        
+    , p1 => pi_var_name
+    , p2 => pi_prcs_id
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+end delete_var;
+
+-- special cases / built-in standard variables
+
+  function get_business_ref
+  ( pi_prcs_id in flow_processes.prcs_id%type
+  )
+  return flow_process_variables.prov_var_vc2%type
+  is 
+  begin
+    return get_var_vc2 
+           ( pi_prcs_id => pi_prcs_id
+           , pi_var_name => flow_constants_pkg.gc_prov_builtin_business_ref
+           );
+  end get_business_ref;
 
 -- group delete for all vars in a process (used at process deletion, process reset)
 
   procedure delete_all_for_process
   ( pi_prcs_id in flow_processes.prcs_id%type
+  , pi_retain_builtins in boolean default false
   )
   is
   begin
-    delete from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id;
+    if pi_retain_builtins then 
+      delete from flow_process_variables prov
+      where prov.prov_prcs_id = pi_prcs_id
+        and prov.prov_var_name not in ( flow_constants_pkg.gc_prov_builtin_business_ref )
+      ;
+    else
+      delete from flow_process_variables prov
+      where prov.prov_prcs_id = pi_prcs_id;
+    end if;
   end delete_all_for_process;
 
   procedure do_substitution

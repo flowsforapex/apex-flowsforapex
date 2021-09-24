@@ -12,18 +12,6 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_theme_style(
- p_id=>wwv_flow_api.id(26992397294947328)
-,p_theme_id=>42
-,p_name=>'FLOWS'
-,p_is_current=>true
-,p_is_public=>true
-,p_is_accessible=>true
-,p_theme_roller_input_file_urls=>'#THEME_IMAGES#less/theme/Vita.less'
-,p_theme_roller_config=>'{"customCSS":".apex-logo-img{\n  max-height:25px!important;\n  margin-right:5px;\n}","vars":{"@Head-Height":"48px"}}'
-,p_theme_roller_output_file_url=>'#THEME_DB_IMAGES#26992397294947328.css'
-,p_theme_roller_read_only=>false
-);
-wwv_flow_api.create_theme_style(
  p_id=>wwv_flow_api.id(88100455406008715)
 ,p_theme_id=>42
 ,p_name=>'Vista'
@@ -38,7 +26,7 @@ wwv_flow_api.create_theme_style(
  p_id=>wwv_flow_api.id(88100946570008715)
 ,p_theme_id=>42
 ,p_name=>'Vita'
-,p_is_current=>false
+,p_is_current=>true
 ,p_is_public=>true
 ,p_is_accessible=>true
 ,p_theme_roller_input_file_urls=>'#THEME_IMAGES#less/theme/Vita.less'

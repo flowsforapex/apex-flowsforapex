@@ -26,7 +26,7 @@ APEX: Minimum 20.1.    (We haven't tested on 19.1, and haven't checked whether w
 
 #### Could this be used as a replacement for the old Oracle Workflow?
 
-Probably.  However, we haven't done any feature comparison with Oracle Workflow.  You should check all of the features that you used in Oracle Workflow and decide if these can be supported or not.  Please share with us if you do!
+Probably.  However, we haven't done any feature comparison with Oracle Workflow.  You should check all of the features that you used in Oracle Workflow and decide if these can be supported or not.  We are aware of some projects that are switching from Oracle Workflow to Flows for APEX.  Please share with us if you do!
 
 ## BPMN Support / Modeling Issues
 
@@ -44,7 +44,7 @@ You can do this several ways.
 
 1. You could have your process start with a Timer Start Event.
 2. You could create your own DBMS_SCHEDULER job that created and started a process every month.
-3. You could use the APEX 20.2 new feature APEX Automations to start a proces monthly - just have it call the `flow_api_pkg.create_process`procedure when it triggers.  (This is probably the best approach for repeated, long term scheduled starts).
+3. You could use the APEX 20.2 new feature APEX Automations to start a process monthly - just have it call the `flow_api_pkg.create_process`procedure when it triggers.  (This is probably the best approach for repeated, long term scheduled starts).
 
 ## BPMN Designer
 
@@ -62,9 +62,9 @@ The Flow for APEX app, containing the Flow Management (managing diagram versioni
 
 #### Is it possible to support other diagramming tools?
 
-If the tools provide a BPMN-conformant XML most things should work.  However you would be missing out on the APEX-specific things we put on top of bpmn.io.  And a process model of any real complexity is likely to use process variables, which are implemented differently in any run time environment, and APEX-specific syntax -- so we strongly recommend building your process diagrams using the Flows for APEX Modeler.
+If the tools provide a BPMN-conformant XML most things should work.  However you would be missing out on the APEX-specific things we put on top of bpmn.io.  And a process model of any real complexity is likely to use process variables, which are implemented differently in any run time environment, and APEX-specific syntax -- so we strongly recommend re-building your process diagrams using the Flows for APEX Modeler. This. shouldn't be an onerous task on most projects.
 
-#### Process versioning is a big factor in our workflow process. How does Flows for APEX support this? 🆕 
+#### Process versioning is a big factor in our workflow process. How does Flows for APEX support this? 🆕
 
 Versioning of process diagrams is important as users start to move into production usage.  Business processes evolve, and a process engine needs to support that. Flows for APEX V5.1 introduces process versioning for those who need it.
 
@@ -84,16 +84,21 @@ Version numbers are a free-text tag, so that users can create whatever versionin
 
 #### How do I call the Flows for APEX API from my application?
 
+Flows for APEX has a simple PL/SQL API that controls interaction with the flow engine.  In addition, starting in V21.1, there are APEX process plugins supplied with Flows for APEX that handle all of these calls for you in an APEX application.  See documentation on the Plugins.
+
 The Flows for APEX API is a simple PL/SQL API that allows you to do the following things:
 
-* create a process instance
-* start a (previously created) process instance
+* create a process instance.
+* start a (previously created) process instance.
 * the process progression calls:
-  * complete the current step (thus moving to the next step)
-  * reserve the next step (signalling to other users that you are going to do that step)
-  * release an existing reservation for the next step
+
+  * optionally, to signal work is starting on the current task (this is just used for performance management, to distinguish between waiting time and work time on each step).
+  * optionally, to reserve the current step (signalling to other users that you are going to do that step).
+  * optionally, to release an existing reservation for the current step.
+  * to complete the current step (and thus moving to the next step).
 * reset a process instance (not normally performed during production running, but useful during process development, testing or (carefully) process admin.
-* delete a process
+* terminate a process (halting processing on a process at its current position, and completing the process as-is).
+* delete a process.
 
 #### How do I see the open tasks for a user or lane?
 
@@ -101,8 +106,8 @@ We provide a prebuilt view called FLOW_TASK_INBOX_VW which exposes currently ava
 
 #### How do I find out more about the API?
 
-in the distribution, look at the flow_api_pkg spec to see how to call the API.  We will add more doc on this in the next few weeks.
+in the distribution, look at the flow_api_pkg spec to see how to call the API.  
 
 #### Is there a way to do a 'flow_previous_step' or undo a step?
 
-We don't currently provide an undo function in the API, and as a step could have performed and committed a transaction in the database, it would be hard to do that.  One way to meet a requirement like this would be to support what are called Compensation Events in a BPMN model - which allows you to specify a process flow for cancelling or rolling back a previously-executed process flow.   We don't have concrete plans to implement compensation events at present, but it could be done without too much difficulty ( - and like all community projects, if you want to add a feature, you are very welcome to support it by either donating time to develop it, or by sponsoring development of the feature by some of the existing team).
+We don't currently provide an undo function in the API, and as a step could have performed and committed a transaction in the database, it would be hard to do that.  It's also not straightforward to drive a BPMN model backwards!  One way to meet a requirement like this would be to support what are called Compensation Events in a BPMN model - which allows you to specify a process flow for cancelling or rolling back a previously-executed process flow.   We don't have plans to implement compensation events at present, but it could be done without too much difficulty ( - and like all community projects, if you want to add a feature, you are very welcome to support it by either donating time to develop it, or by sponsoring development of the feature by some of the existing team).

@@ -17,13 +17,13 @@ wwv_flow_api.create_list(
 ,p_list_status=>'PUBLIC'
 );
 wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(22120966887617321)
+ p_id=>wwv_flow_api.id(34586567175532090)
 ,p_list_item_display_sequence=>10
-,p_list_item_link_text=>'Getting Started'
-,p_list_item_link_target=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
-,p_list_item_icon=>'fa-info-square-o'
+,p_list_item_link_text=>'Dashboard'
+,p_list_item_link_target=>'f?p=&APP_ID.:3:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-pie-chart'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
-,p_list_item_current_for_pages=>'1'
+,p_list_item_current_for_pages=>'3'
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(9900462312126995)
@@ -38,10 +38,10 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12493524976121117621)
 ,p_list_item_display_sequence=>30
 ,p_list_item_link_text=>'Flow Monitor'
-,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.::::'
+,p_list_item_link_target=>'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:RP,RIR:::'
 ,p_list_item_icon=>'fa-sequence'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
-,p_list_item_current_for_pages=>'10'
+,p_list_item_current_for_pages=>'10,8'
 );
 wwv_flow_api.component_end;
 end;

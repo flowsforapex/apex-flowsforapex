@@ -1,0 +1,225 @@
+{
+  "project": "FLOWS4APEX"
+, "version": "01.00.00"
+, "content":
+  [
+    {
+      "base_path": "../"
+    , "search_path": "ddl/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Tables"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "/", "name": "install_scratch.sql", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "data/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Data"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "/", "name": "install_default_config_data.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_en.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_fr.sql", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Packages_Spec"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "plsql/", "name": "flow_types_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_constants_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_api_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_boundary_events.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_bpmn_parser_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_engine_util.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_engine.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_errors.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_expressions.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_gateways.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_globals.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_instances.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_logging.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_plsql_runner_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_process_vars.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_reservations.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_tasks.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_timers_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_usertask_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_p0005_api.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_p0006_api.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_p0007_api.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/manage-flow-instance/plsql/", "name": "flow_plugin_manage_instance.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-step/plsql/", "name": "flow_plugin_manage_instance_step.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-variables/plsql/", "name": "flow_plugin_manage_instance_variables.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/modeler/plsql/", "name": "flow_modeler.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/viewer/plsql/", "name": "flow_viewer.pks", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "views/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Views"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "/", "name": "flow_diagram_categories_lov.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_diagrams_parsed_lov.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_diagrams_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_instances_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_instance_connections_lov.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_instance_details_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_instance_gateways_lov.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_instance_variables_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_subflows_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_task_inbox_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0002_diagrams_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_instances_counter_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_instance_log_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_instance_details_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_subflows_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_variables_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_instances_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_attributes_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_expressions_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_instance_log_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_step_log_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_subflows_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_variable_log_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0014_instance_log_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0014_step_log_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0014_subflows_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0014_variable_log_vw.sql", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Packages_Body"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "plsql/", "name": "flow_api_pkg.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_boundary_events.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_bpmn_parser_pkg.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_engine_util.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_engine.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_errors.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_expressions.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_gateways.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_globals.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_instances.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_logging.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_plsql_runner_pkg.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_process_vars.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_reservations.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_tasks.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_timers_pkg.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_usertask_pkg.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_p0005_api.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_p0006_api.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_p0007_api.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/manage-flow-instance/plsql/", "name": "flow_plugin_manage_instance.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-step/plsql/", "name": "flow_plugin_manage_instance_step.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-variables/plsql/", "name": "flow_plugin_manage_instance_variables.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/modeler/plsql", "name": "flow_modeler.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plugins/viewer/plsql", "name": "flow_viewer.pkb", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "plsql/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Functions"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "engine-app/", "name": "apex_error_handling.sql", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../../"
+    , "search_path": "bpmn_tutorials/"
+    , "build_type": "concat"
+    , "build_path": "src/apex/"
+    , "script_path": "src/apex/supportingObjects"
+    , "script_name": "Examples"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "sql/", "name": "installTut0.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut2.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut3.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut3A.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut4.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut5.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut6.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut7.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut8.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "installTut9.sql", "add_show_errors": false }
+      ]
+    }
+  ]
+}

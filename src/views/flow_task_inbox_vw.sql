@@ -31,7 +31,6 @@ as
         , sbfl_current_tag_name
         , sbfl_last_update
         , sbfl_status
-        , sbfl_next_step_type
         , sbfl_current_lane
         , sbfl_current_lane_name
         , sbfl_reservation

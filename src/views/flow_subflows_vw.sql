@@ -3,9 +3,10 @@ as
    select sbfl.sbfl_id
         , sbfl.sbfl_sbfl_id
         , sbfl.sbfl_prcs_id
-        , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- process instance ref
+        , coalesce( prcs.prcs_name, to_char(sbfl.sbfl_prcs_id)) as sbfl_process_name  -- flow instance ref
         , prcs.prcs_dgrm_id as sbfl_dgrm_id
-        , dgrm.dgrm_name as sbfl_dgrm_name  -- business process name
+        , sbfl.sbfl_dgrm_id as sbfl_sbfl_dgrm_id -- sbfl level dgrm id
+        , dgrm.dgrm_name as sbfl_dgrm_name  -- flow name
         , dgrm.dgrm_version as sbfl_dgrm_version
         , dgrm.dgrm_status as sbfl_dgrm_status
         , dgrm.dgrm_category as sbfl_dgrm_category
@@ -20,7 +21,6 @@ as
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_last_update
         , sbfl.sbfl_status
-        , 'simple-step' as sbfl_next_step_type -- FOR V4 Compatibility.  will be removed in V6
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
         , sbfl.sbfl_process_level

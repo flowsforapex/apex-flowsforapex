@@ -142,43 +142,167 @@ as
     return l_file_name;
   end sanitize_file_name;
 
+  function clob_to_blob(
+    p_clob in clob
+  )
+  return blob
+  is
+    l_blob         BLOB;
+    l_dest_offset  PLS_INTEGER := 1;
+    l_src_offset   PLS_INTEGER := 1;
+    l_lang_context PLS_INTEGER := DBMS_LOB.default_lang_ctx;
+    l_warning      PLS_INTEGER := DBMS_LOB.warn_inconvertible_char;
+  begin
+    dbms_lob.createtemporary(
+      lob_loc => l_blob,
+      cache   => TRUE
+    );
+    dbms_lob.converttoblob(
+      dest_lob      => l_blob,
+      src_clob      => p_clob,
+      amount        => DBMS_LOB.lobmaxsize,
+      dest_offset   => l_dest_offset,
+      src_offset    => l_src_offset, 
+      blob_csid     => DBMS_LOB.default_csid,
+      lang_context  => l_lang_context,
+      warning       => l_warning
+    );
+  
+    return l_blob;
+  end clob_to_blob;
+
   procedure download_file(
       p_dgrm_id in number,
       p_file_name in varchar2,
-      p_download_as in varchar2
+      p_download_as in varchar2,
+      p_multi_file in boolean default false
   )
   is 
-    l_clob clob;
-    l_blob blob;
-    l_buffer varchar2(32767);  
-    l_length integer;
-    l_desc_offset   pls_integer := 1;
-    l_src_offset    pls_integer := 1;
-    l_lang          pls_integer := 0;
-    l_warning       pls_integer := 0;
+    l_clob        clob;
+    l_blob        blob;
+    l_zip_file    blob;
+    l_buffer      varchar2(32767);  
+    l_length      integer;
+    l_desc_offset pls_integer := 1;
+    l_src_offset  pls_integer := 1;
+    l_lang        pls_integer := 0;
+    l_warning     pls_integer := 0;
+    l_mime_type   varchar2(100) := 'application/octet';
+    type r_flow   is record (
+      dgrm_id       flow_diagrams.dgrm_id%type, 
+      dgrm_name     flow_diagrams.dgrm_name%type,
+      dgrm_version  flow_diagrams.dgrm_version%type,
+      dgrm_status   flow_diagrams.dgrm_status%type,
+      dgrm_category flow_diagrams.dgrm_category%type,
+      filename      varchar2(300)
+    );
+    type t_flows  is table of r_flow;
+    l_flows       t_flows;
+    l_json_array  json_array_t;
+    l_json_object json_object_t;
+    l_json_clob   clob;
+    l_sql_clob    clob;
+    l_file_name   varchar2(300);
   begin
-    dbms_lob.createtemporary(l_clob,true);
-    dbms_lob.createtemporary(l_blob,true);
+    l_file_name := p_file_name;
 
-    if (p_download_as = 'BPMN') then
-        l_clob := flow_p0005_api.get_bmpn_content(p_dgrm_id => p_dgrm_id);
-    end if;
-    if (p_download_as = 'SQL') then
-      l_clob := flow_p0005_api.get_sql_script(p_dgrm_id => p_dgrm_id);
+    if ( p_download_as = 'BPMN' ) then
+      l_json_array := json_array_t('[]');
     end if;
 
-    dbms_lob.converttoblob(l_blob, l_clob, dbms_lob.getlength(l_clob), l_desc_offset, l_src_offset, dbms_lob.default_csid, l_lang, l_warning);
-  l_length := dbms_lob.getlength(l_blob);
+    if ( p_multi_file ) then
+      select 
+        dgrm_id, 
+        dgrm_name,
+        dgrm_version,
+        dgrm_status,
+        dgrm_category,
+        dgrm_name||'_'||dgrm_version as filename
+      bulk collect into l_flows
+      from flow_diagrams 
+      where dgrm_id in (
+        select n001
+        from apex_collections
+        where collection_name = 'C_SELECT'
+      );
 
-  owa_util.mime_header('application/octet',false) ;
-  htp.p('Content-length: ' || l_length);
-  htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(p_file_name)||'"');
-  owa_util.http_header_close;
-  wpg_docload.download_file(l_blob);
+    else
+      l_flows := t_flows(r_flow(p_dgrm_id, p_file_name));
+    end if;
 
-  dbms_lob.freetemporary(l_blob);
-  dbms_lob.freetemporary(l_clob);
-  apex_application.stop_apex_engine;
+    for i in 1..l_flows.count()
+    loop
+      if (p_download_as = 'BPMN') then
+          l_clob := flow_p0005_api.get_bmpn_content(p_dgrm_id => l_flows(i).dgrm_id);
+          apex_debug.message(dbms_lob.getlength(l_clob));
+      end if;
+      if (p_download_as = 'SQL') then
+        l_clob := flow_p0005_api.get_sql_script(p_dgrm_id => l_flows(i).dgrm_id);
+      end if;
+
+      l_blob := clob_to_blob(l_clob);
+
+      if ( p_multi_file ) then
+        apex_zip.add_file (
+          p_zipped_blob => l_zip_file,
+          p_file_name   => sanitize_file_name(l_flows(i).filename) || '.' || lower(p_download_as),
+          p_content     => l_blob
+        );
+
+        if ( p_download_as = 'BPMN' ) then
+          l_json_object := json_object_t('{}');
+          l_json_object.put('dgrm_name' ,  l_flows(i).dgrm_name);
+          l_json_object.put('dgrm_version' ,  l_flows(i).dgrm_version);
+          l_json_object.put('dgrm_status' ,  l_flows(i).dgrm_status);
+          l_json_object.put('dgrm_category' ,  l_flows(i).dgrm_category);
+          l_json_object.put('file' ,  sanitize_file_name(l_flows(i).filename) || '.bpmn');
+
+          l_json_array.append(l_json_object);
+        elsif ( p_download_as = 'SQL' ) then
+          l_sql_clob := l_sql_clob||'@"'||sanitize_file_name(l_flows(i).filename) || '.' || lower(p_download_as)||'";'||utl_tcp.crlf;
+        end if;
+      end if;
+    end loop;
+
+    if ( p_multi_file ) then
+      if ( p_download_as = 'BPMN' ) then
+        l_json_clob := treat(l_json_array as json_element_t).to_clob(); 
+
+        l_blob := clob_to_blob(l_json_clob);
+
+        apex_zip.add_file (
+          p_zipped_blob => l_zip_file,
+          p_file_name   => 'import.json',
+          p_content     => l_blob
+        );
+      elsif ( p_download_as = 'SQL' ) then
+        l_sql_clob := 'set define off;' || utl_tcp.crlf || l_sql_clob || utl_tcp.crlf;
+        l_blob := clob_to_blob(l_sql_clob);
+        apex_zip.add_file (
+          p_zipped_blob => l_zip_file,
+          p_file_name   => 'import.sql',
+          p_content     => l_blob
+        );
+      end if;
+
+      apex_zip.finish (
+        p_zipped_blob => l_zip_file 
+      );
+      l_blob := l_zip_file;
+      l_mime_type := 'application/zip';
+
+      l_file_name := 'F4A_'||to_char(systimestamp, 'YYYYMMDD_HH24MISS')||'.zip';
+    end if;
+
+    l_length := dbms_lob.getlength(l_blob);
+
+    owa_util.mime_header(l_mime_type, false) ;
+    htp.p('Content-length: ' || l_length);
+    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(l_file_name)||'"');
+    owa_util.http_header_close;
+    wpg_docload.download_file(l_blob);
+
+    apex_application.stop_apex_engine;
   end download_file;
 
 end flow_p0005_api;

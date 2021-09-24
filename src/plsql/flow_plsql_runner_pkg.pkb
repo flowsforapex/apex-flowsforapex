@@ -19,14 +19,14 @@ as
     return flow_processes.prcs_id%type
   as
   begin
-    return g_current_prcs_id;
+    return flow_globals.process_id;
   end get_current_prcs_id;
 
   function get_current_sbfl_id
     return flow_subflows.sbfl_id%type
   as
   begin
-    return g_current_sbfl_id;
+    return flow_globals.subflow_id;
   end get_current_sbfl_id;
 
   procedure execute_plsql
@@ -35,6 +35,10 @@ as
   )
   as
   begin
+    apex_debug.enter 
+    ('execute_plsql'
+    , 'p_plsql_code', p_plsql_code
+    );
     -- Always wrap code into begin..end
     -- Developers are allowed to omit those if no declaration section needed
 
@@ -58,7 +62,16 @@ as
 
     l_sql_parameters apex_exec.t_parameters;
   begin
-    init_globals( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id );
+    apex_debug.enter 
+    ( 'run_task_script'
+    , 'pi_objt_id', pi_objt_id
+    );
+
+    --init_globals( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id );
+    flow_globals.set_context 
+    ( pi_prcs_id => pi_prcs_id
+    , pi_sbfl_id => pi_sbfl_id 
+    );
 
     for rec in ( select obat.obat_key
                       , obat.obat_vc_value
@@ -97,18 +110,20 @@ as
     end if;
 
   exception
+    when e_plsql_script_requested_stop then 
+      apex_debug.error
+      (
+        p_message => 'User script run by flow_plsql_runner_pkg.run_task_script requested stop.'
+      , p0        => sqlerrm
+      );
+      raise e_plsql_script_requested_stop;     
     when others then
       apex_debug.error
       (
         p_message => 'Error during flow_plsql_runner_pkg.run_task_script. SQLERRM: %s'
       , p0        => sqlerrm
       );
-      apex_error.add_error
-      (
-        p_message          => 'An error occured while processing defined PL/SQL. This is typically caused by an error in the given code.'
-      , p_display_location => apex_error.c_inline_in_notification
-      );
-      raise e_plsql_call_failed;
+      raise e_plsql_script_failed;
   end run_task_script;
 
 end flow_plsql_runner_pkg;

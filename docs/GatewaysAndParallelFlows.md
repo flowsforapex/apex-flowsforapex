@@ -37,7 +37,7 @@ When a subflow reaches an exclusive gateway, the flow engine chooses the forward
 2. Failing that, the Default Path is chosen.  See 'Default Paths on Exclusive Gateways' below.
 3. If no routing is provided, and no default is specified, an error is signalled.
 
-#### Specifying Routing Instructions for an Exclusive Gateway (New in V5.0)
+#### Specifying Routing Instructions for an Exclusive Gateway (New in V5.0, Changes in v21.1)
 
 An exclusive gateway will look for its routing instruction in a process variable named <gateway_bpmn_id>||':route'.
 
@@ -55,8 +55,11 @@ Assuming for the sale of this example that you want to take 'B Route' so that th
 Variable  :  Gateway_0j0mpc0:route
 Value     :  Flow_B   ----(varchar2)
 ```
+There are several ways to set up the process variable to contain your routing instruction:
 
-Typically you would set these routing instructions into a variable as part of a Task step, or you might have a scriptTask that sets it based on a database query.  If it is a user decision, you would create an APEX Page for the user to review some information and make a decision.  If the routing can be looked up or calculated, a scriptTask could run a PL/SQL procedure that does the appropriate query and processing to make the decision.
+- you could set the process variable as part of your processing in an earlier step.  For example, if an earlier task has a manager approve or reject a document, the process step in the application could set up  the routing instruction for a following gateway based on the approval decision. In v5, adding this would be implemented by including a PL/SQL `set_var()` call in APEX page processing; from v21.1, this can be done declaratively using the Flows for APEX manage flow instance variables plugin.
+- you could have a scriptTask step that runs automatically before the gateway to set the routing instruction.
+- you could use a process variable expression defined in BPMN model to set the variable based on a function or a SQL query, etc., defined to execute in the pre-split processing of the gateway. (new from v21.1).
 
 #### Default Paths on Exclusive Gateways (New in V5.0)
 
@@ -86,7 +89,7 @@ It's usually fairly easy to re-write process structure to create balanced gatewa
 
 ![ReWriting Parallel Processes to make them Balanced](images/parallelRewriteLogic.png "ReWriting Processes with Balanced Pairs of Parallel Gateways")
 
-A merging Parallel Gateway can also be used to merge, syncronise, and then re-split the flow -- as in the following diagram.
+A merging Parallel Gateway can also be used to merge, synchronize, and then re-split the flow -- as in the following diagram.
 
 ![Parallel Gateway Merge and Resplit](images/parallelMergeSplit.png "Parallel Gateway Merge and Resplit")
 
@@ -111,11 +114,9 @@ If no closing gateway is incuded, all routes must proceed to their own end event
 
 ![Inclusive Gateway with Separate End Events](images/inclusiveSeparateEnds.png "Inclusive Gateway with Separate End Events")
 
-An Inclusive Gateway cannot act, simultaneosly, as both a Merging / Closing gateway and an Opening Gateway.
+Starting from v21.1, an Inclusive Gateway can now act, simultaneously, as both a Merging / Closing gateway and an Opening Gateway, in the same way that a Parallel Gateway does.  Some experts advise that this is not good BPMN practice as users can get confused by the concept, and so the BPMN Modeler will give you a warning if you include this in your diagram.  But it works!
 
-![Inclusive Gateway can't Merge and Split](images/inclusiveMergeSplit.png "Inclusive Gateway can't Merge and Split")
-
-#### Controlling the Forward Path at an Inclusive Gateway (Changed in V5.0).
+Controlling the Forward Path at an Inclusive Gateway (Changed in V5.0).
 
 When a subflow reaches an exclusive gateway, the flow engine chooses the forward path as follows:
 
@@ -144,7 +145,6 @@ Value     :  Flow_05d0ha9:Flow_0zhby4b   ----(varchar2)
 ```
 
 Typically you would set these routing instructions into a variable as part of a Task step, or you might have a scriptTask that sets it based on a database query.  If it is a user decision, you would create an APEX Page for the user to review some information and make a decision.  If the routing can be looked up or calculated, a scriptTask could run a PL/SQL procedure that does the appropriate query and processing to make the decision.
-
 
 #### Default Paths on Inclusive Gateways (New in V5.0)
 

@@ -1,0 +1,166 @@
+/* color classes */
+.ffa-color--created {
+  background-color: #d9b13b!important;
+  color: #463400!important;
+}
+
+.ffa-color--completed {
+  background-color: #8c9eb0!important;
+  color: #283a4d!important;
+}
+
+.ffa-color--running {
+  background-color: #6aad42!important;
+  color: white!important;
+}
+
+.ffa-color--terminated {
+  background-color: #d76a27!important;
+  color: white!important;
+}
+
+.ffa-color--error {
+  background-color: #d2423b!important;
+  color: white!important;
+}
+
+/* header */
+.apex-logo-img{
+  max-height:25px!important;
+  margin-right:5px;
+}
+
+/* page 2 */
+
+th#action_col, td[headers*="action_col"],
+th#checkbox_col, td[headers*="checkbox_col"]{
+   width: 10px !important;
+}
+
+.a-IRR-header {
+  vertical-align: inherit;
+}
+
+.a-IRR-headerLink{
+   color: inherit !important;
+}
+
+.ffa-dgrm-badge{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status_icon {
+  padding-right: 8px;
+}
+
+.ffa-dgrm-badge .fa, .ffa-dgrm-badge-text{
+  padding: 4px;
+}
+
+/* page 3 */
+
+#flow-instances-per-status a{
+  color: inherit;
+}
+
+/* page 7 */
+
+#deprecate_btn, #release_btn, #archive_btn, #new_version_btn{
+  height: 50px;
+}
+
+.instance-counter-link{
+    cursor: pointer;
+}
+
+td[headers="NB_INSTANCES"]{
+    padding-left: 0px;
+}
+
+/* page 10 */
+
+.flow-running{
+  background-color: rgba(0,0,0,.05);
+}
+
+th#instance_action_col, td[headers*="instance_action_col"],
+th#instance_checkbox_col, td[headers*="instance_checkbox_col"],
+th#subflow_action_col, td[headers*="subflow_action_col"],
+th#subflow_checkbox_col, td[headers*="subflow_checkbox_col"],
+th#view-process, td[headers*="view-process"]{
+    width: 10px !important;
+}
+
+/* page 13*/
+.t-AVPList-label.ffa-highlight-label {
+	padding-top: 30px;
+}
+
+/* badges */
+
+.prcs_status_badge, .prcs_event_badge, .sbfl_status_badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* region display selector fix */
+
+.a-Tabs-panel{
+  display: none;
+}
+
+/* fix for inline dialog in 21.1 */
+
+#instance_action_dialog div.t-Form-labelContainer.col-null {
+  height: 0;
+  padding: 0;
+}
+
+/* page 8 */
+.u-color-44-alert-text{
+  color: #8c9eb0!important;
+}
+.u-color-37-alert-text {
+  color: #d9b13b!important;
+}
+.u-color-35-alert-text{
+  color: #6aad42!important;
+}
+.u-color-38-alert-text{
+  color: #d76a27!important;
+}
+.u-color-39-alert-text{
+  color: #d2423b!important;
+}
+.u-color-44-alert-bg{
+  background-color: rgba(140, 158, 176, 0.15)!important;
+}
+.u-color-37-alert-bg {
+  background-color: rgba(252, 186, 3, 0.15)!important;
+}
+.u-color-35-alert-bg{
+  background-color: rgba(106, 173, 66, 0.15)!important;
+}
+.u-color-38-alert-bg{
+  background-color: rgba(215, 106, 39, 0.15)!important;
+}
+.u-color-39-alert-bg{
+  background-color: rgba(210, 67, 59, 0.15)!important;
+}
+
+/* IR Header with header action*/
+#instance_action_col .a-IRR-headerLabel, 
+#action_col .a-IRR-headerLabel,
+#subflow_action_col .a-IRR-headerLabel,
+#variable_action_col .a-IRR-headerLabel {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+/* Syntax highlight fix for IR */
+.a-IRR-table pre[class*="language-"] {
+	padding: 1em 0 1em 0 !important;
+}

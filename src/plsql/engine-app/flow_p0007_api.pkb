@@ -122,6 +122,11 @@ as
           );
       when 'RELEASE' then
         update flow_diagrams
+           set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated
+         where dgrm_name = pi_dgrm_name
+         and dgrm_status = flow_constants_pkg.gc_dgrm_status_released;
+
+        update flow_diagrams
            set dgrm_status = flow_constants_pkg.gc_dgrm_status_released
          where dgrm_id = pio_dgrm_id
         ;

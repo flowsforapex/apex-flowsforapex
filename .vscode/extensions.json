@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "rohit-gohri.format-code-action",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ]
+}

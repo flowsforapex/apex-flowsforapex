@@ -16,11 +16,11 @@ wwv_flow_api.create_page(
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
 ,p_name=>'Getting Started'
 ,p_alias=>'GETTING-STARTED'
-,p_step_title=>'Getting Started'
+,p_step_title=>'Getting Started - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210224115647'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210924084105'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603774502745437)
@@ -43,7 +43,7 @@ wwv_flow_api.create_page_plug(
 '</ul>',
 '<p>',
 '<h4>Download</h4>',
-'<a href="https://apex.mt-ag.com/en/flowsforapex" target="_blank">apex.mt-ag.com/en/flowsforapex</a>',
+'<a href="http://flowsforapex.mt-ag.com" target="_blank">flowsforapex.mt-ag.com</a>',
 '<p>',
 '<h4>Documentation</h4>',
 '<a href="https://mt-ag.github.io/apex-flowsforapex" target="_blank">Latest Documentation Online</a>',
@@ -52,8 +52,20 @@ wwv_flow_api.create_page_plug(
 'To get you started with modelling flows, try out the preinstalled tutorial flows. For further information on the tutorials have a look <a href="https://mt-ag.github.io/apex-flowsforapex/tutorial.html" target="_blank">here</a>.',
 '<p>',
 '<h4>Demo App</h4>',
-'<p>Take a look at our <a href="https://apex.oracle.com/pls/apex/mt_flows/r/flowsforapexdemo" target="_blank">demo application</a> to see how the integration of a flow can be done.<br />',
+'<p>Take a look at our <a href="https://apex.oracle.com/pls/apex/mtflows/r/flowsforapexdemo" target="_blank">demo application</a> to see how the integration of a flow can be done.<br />',
 'This uses an example Business Process of the ordering and fulfillment process for a webstore selling T Shirts.'))
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(16518361588787101)
+,p_plug_name=>'Getting Started'
+,p_region_template_options=>'#DEFAULT#:t-HeroRegion--hideIcon'
+,p_plug_template=>wwv_flow_api.id(12495589722092880240)
+,p_plug_display_sequence=>20
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_01'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'

@@ -17,12 +17,19 @@ wwv_flow_api.create_page(
 ,p_name=>'Create Flow Instance'
 ,p_alias=>'CREATE_FLOW_INSTANCE'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Create Flow Instance'
+,p_step_title=>'Create Flow Instance - &APP_NAME_TITLE.'
+,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.jQuery("#PopupLov_11_P11_DGRM_ID_dlg").parent(".ui-dialog").on( "dialogopen", function( event, ui ) {',
+'    console.log(event);',
+'    console.log(ui);',
+'} );'))
 ,p_step_template=>wwv_flow_api.id(12495624331342880306)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20210226164311'
+,p_dialog_chained=>'N'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210921172506'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603847781745438)
@@ -62,6 +69,30 @@ wwv_flow_api.create_page_button(
 ,p_icon_css_classes=>'fa-plus'
 );
 wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(6433507492417645)
+,p_name=>'P11_PRCS_ID'
+,p_item_sequence=>40
+,p_item_plug_id=>wwv_flow_api.id(12491866042341262842)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(34631117879575813)
+,p_name=>'P11_BUSINESS_REF'
+,p_item_sequence=>30
+,p_item_plug_id=>wwv_flow_api.id(12491866042341262842)
+,p_prompt=>'Business Reference (Process Variable)'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_is_persistent=>'N'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(12491865492429262836)
 ,p_name=>'P11_PRCS_NAME'
 ,p_is_required=>true
@@ -84,7 +115,7 @@ wwv_flow_api.create_page_item(
 ,p_is_required=>true
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(12491866042341262842)
-,p_prompt=>'Parsed Flow'
+,p_prompt=>'Model'
 ,p_display_as=>'NATIVE_POPUP_LOV'
 ,p_named_lov=>'DIAGRAMS_PARSED_LOV'
 ,p_lov_display_null=>'YES'
@@ -93,6 +124,29 @@ wwv_flow_api.create_page_item(
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
 ,p_lov_display_extra=>'YES'
+,p_plugin_init_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function(options) {',
+'    console.log(options);',
+'    var col, columns = options.columns;',
+'    ',
+'    //options.minWidth = 600;',
+'',
+'    col = columns.DGRM_NAME;',
+'    col.noStretch = false;',
+'',
+'    col = columns.DGRM_STATUS;',
+'    col.width = 100;',
+'    col.noStretch = true;',
+'    ',
+'    col = columns.DGRM_VERSION;',
+'    col.width = 100;',
+'    col.noStretch = true;',
+'    ',
+'    options.persistState = false;',
+'',
+'    ',
+'    return options;',
+'}'))
 ,p_attribute_01=>'POPUP'
 ,p_attribute_02=>'FIRST_ROWSET'
 ,p_attribute_03=>'N'
@@ -106,11 +160,23 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'CREATE_INSTANCE'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'flow_api_pkg.flow_create',
-'( ',
-'  pi_dgrm_id => :p11_dgrm_id',
-', pi_prcs_name => :p11_prcs_name',
-');'))
+'declare',
+'    l_prcs_id flow_processes.prcs_id%type;',
+'begin',
+'    l_prcs_id := flow_api_pkg.flow_create( ',
+'          pi_dgrm_id   => :p11_dgrm_id',
+'        , pi_prcs_name => :p11_prcs_name',
+'    );',
+'    ',
+'    if :P11_BUSINESS_REF  is not null then',
+'        flow_process_vars.set_var( ',
+'              pi_prcs_id   => l_prcs_id',
+'            , pi_var_name  => ''BUSINESS_REF''',
+'            , pi_vc2_value => :P11_BUSINESS_REF',
+'        );',
+'    end if;',
+'    :P11_PRCS_ID := l_prcs_id; ',
+'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_process(
@@ -119,8 +185,9 @@ wwv_flow_api.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
+,p_attribute_01=>'P11_PRCS_ID,P11_PRCS_NAME'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_success_message=>'Instance created.'
+,p_process_success_message=>'&APP_TEXT$APP_INSTANCE_CREATED.'
 );
 wwv_flow_api.component_end;
 end;

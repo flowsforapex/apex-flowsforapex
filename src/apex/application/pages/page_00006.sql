@@ -14,16 +14,16 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_page(
  p_id=>6
 ,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
-,p_name=>'Import Flow'
-,p_alias=>'IMPORT-FLOW'
+,p_name=>'Import'
+,p_alias=>'IMPORT'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Import Flow'
+,p_step_title=>'Import - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'MOKLEIN'
-,p_last_upd_yyyymmddhh24miss=>'20210224143445'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210916113252'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -39,12 +39,12 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(24211779219956101)
 ,p_plug_name=>'Import Warning'
-,p_region_template_options=>'#DEFAULT#:t-Alert--colorBG:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--info:t-Alert--accessibleHeading'
+,p_region_template_options=>'#DEFAULT#:t-Alert--colorBG:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--info:t-Alert--accessibleHeading:margin-top-none:margin-bottom-none'
 ,p_plug_template=>wwv_flow_api.id(12495613507239880288)
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_01'
-,p_plug_source=>'We encourage you to import flow that were built using Flows for APEX to make sure that they can be run by the engine.'
+,p_plug_source=>'We encourage you to import models that were built using Flows for APEX to make sure that they can be run by the engine.'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
@@ -102,7 +102,8 @@ wwv_flow_api.create_page_item(
 ,p_item_default=>'file'
 ,p_prompt=>'Import From'
 ,p_display_as=>'NATIVE_RADIOGROUP'
-,p_lov=>'STATIC2:File;file,Text;text'
+,p_named_lov=>'P6_IMPORT_FROM'
+,p_lov=>'.'||wwv_flow_api.id(11250367144948655)||'.'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--radioButtonGroup'
 ,p_lov_display_extra=>'NO'
@@ -121,8 +122,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(19001062236190895)
 ,p_name=>'P6_DGRM_NAME'
-,p_is_required=>true
-,p_item_sequence=>30
+,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
 ,p_prompt=>'Name'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
@@ -155,8 +155,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(19001891912190900)
 ,p_name=>'P6_DGRM_VERSION'
-,p_is_required=>true
-,p_item_sequence=>40
+,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
 ,p_item_default=>'0'
 ,p_prompt=>'Version'
@@ -173,7 +172,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(19002654728190900)
 ,p_name=>'P6_DGRM_CATEGORY'
-,p_item_sequence=>20
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
 ,p_prompt=>'Category'
 ,p_display_as=>'NATIVE_POPUP_LOV'
@@ -192,10 +191,10 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(19018652597332904)
-,p_name=>'P6_BPMN_FILE'
+,p_name=>'P6_FILE'
 ,p_item_sequence=>80
 ,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
-,p_prompt=>'BPMN File'
+,p_prompt=>'File'
 ,p_display_as=>'NATIVE_FILE'
 ,p_cSize=>30
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
@@ -216,6 +215,61 @@ wwv_flow_api.create_page_item(
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'APPLICATION'
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(34632505849575827)
+,p_name=>'P6_MODE'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(19000369704190884)
+,p_item_default=>'single'
+,p_prompt=>'Mode'
+,p_display_as=>'NATIVE_RADIOGROUP'
+,p_named_lov=>'P6_MODE'
+,p_lov=>'.'||wwv_flow_api.id(13102745982982601)||'.'
+,p_grid_label_column_span=>0
+,p_field_template=>wwv_flow_api.id(12495523145758880138)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--xlarge:t-Form-fieldContainer--radioButtonGroup'
+,p_lov_display_extra=>'NO'
+,p_escape_on_http_output=>'N'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+'    <li>One Model: Import a single model by providing all the attributes</li>',
+'    <li>Multiple Models: Import several models by providing a zip file*</li>',
+'</ul>',
+'<p>',
+'    * The zip file must contain:',
+'    <ul>',
+'        <li>The bpmn files to import</li>',
+'        <li>An import.json file which is an array of objects (see example below) with the following attributes:',
+'            <ul>',
+'                <li>dgrm_name: The model''s name</li>',
+'                <li>dgrm_version: The model''s version</li>',
+'                <li>dgrm_category: The model''s category</li>',
+'                <li>file: The name of the bpmn file in the archive</li>',
+'            </ul>',
+'        </li>',
+'    </ul>',
+'Example of an import.json file with two models<br>',
+'<pre><code>[',
+'  {',
+'    "dgrm_name": "The Pizza Collaboration",',
+'    "dgrm_version": "0",',
+'    "dgrm_status": "draft",',
+'    "dgrm_category": null,',
+'    "file": "The Pizza Collaboration_0.bpmn"',
+'  },',
+'  {',
+'    "dgrm_name": "Holidays",',
+'    "dgrm_version": "0",',
+'    "dgrm_status": "draft",',
+'    "dgrm_category": null,',
+'    "file": "Holidays_0.bpmn"',
+'  }',
+']',
+'</code></pre>',
+'</p>'))
+,p_attribute_01=>'2'
+,p_attribute_02=>'NONE'
+);
 wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(19023151364332949)
 ,p_validation_name=>'DGRM_CONTENT is not null'
@@ -233,12 +287,11 @@ wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(19023037485332948)
 ,p_validation_name=>'File is not null'
 ,p_validation_sequence=>20
-,p_validation=>'return flow_p0006_api.is_file_uploaded(pi_file_name => :P6_BPMN_FILE);'
+,p_validation=>'return flow_p0006_api.is_file_uploaded(pi_file_name => :P6_FILE);'
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please select a #LABEL#.'
-,p_validation_condition=>'P6_IMPORT_FROM'
-,p_validation_condition2=>'file'
-,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MULTIPLE_FILES = ''multi'''
+,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(19018652597332904)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
@@ -250,12 +303,52 @@ wwv_flow_api.create_page_validation(
 'return flow_p0006_api.is_valid_xml(',
 '        pi_import_from => :P6_IMPORT_FROM,',
 '        pi_dgrm_content => :P6_DGRM_CONTENT,',
-'        pi_file_name => :P6_BPMN_FILE',
+'        pi_file_name => :P6_FILE',
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please check the flow provided.'
-,p_validation_condition_type=>'NOT_DISPLAYING_INLINE_VALIDATION_ERRORS'
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''single'''
+,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(34633435811575836)
+,p_validation_name=>'Validate ZIP'
+,p_validation_sequence=>40
+,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_p0006_api.is_valid_multi_file_archive(',
+'        pi_file_name => :P6_FILE',
+'    );'))
+,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''multi'''
+,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(34633545177575837)
+,p_validation_name=>'DGRM_NAME is not null'
+,p_validation_sequence=>50
+,p_validation=>'P6_DGRM_NAME'
+,p_validation_type=>'ITEM_NOT_NULL'
+,p_error_message=>'#LABEL# must have some value.'
+,p_validation_condition=>'P6_MODE'
+,p_validation_condition2=>'single'
+,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_associated_item=>wwv_flow_api.id(19001062236190895)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(34633648852575838)
+,p_validation_name=>'DGRM_VERSION is not null'
+,p_validation_sequence=>60
+,p_validation=>'P6_DGRM_VERSION'
+,p_validation_type=>'ITEM_NOT_NULL'
+,p_error_message=>'#LABEL# must have some value.'
+,p_validation_condition=>'P6_MODE'
+,p_validation_condition2=>'single'
+,p_validation_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_associated_item=>wwv_flow_api.id(19001891912190900)
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(10431642957468050)
@@ -287,7 +380,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'Y'
 ,p_action=>'NATIVE_SHOW'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P6_BPMN_FILE'
+,p_affected_elements=>'P6_FILE'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(19018463856332902)
@@ -307,7 +400,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'Y'
 ,p_action=>'NATIVE_HIDE'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P6_BPMN_FILE'
+,p_affected_elements=>'P6_FILE'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(24211903521956103)
@@ -329,19 +422,85 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'apex.message.confirm( apex.lang.getMessage("FLOW_OVERWRITE_WARN"), function( okPressed ) {',
+'apex.message.confirm( apex.lang.getMessage("APP_OVERWRITE_WARN"), function( okPressed ) {',
 '    if( !okPressed ) {',
 '        apex.item("P6_FORCE_OVERWRITE").setValue("N");',
 '    }',
 '});',
 ''))
 );
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(34632685881575828)
+,p_name=>'Change Mode'
+,p_event_sequence=>30
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P6_MODE'
+,p_condition_element=>'P6_MODE'
+,p_triggering_condition_type=>'EQUALS'
+,p_triggering_expression=>'multi'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(34633042798575832)
+,p_event_id=>wwv_flow_api.id(34632685881575828)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P6_IMPORT_FROM'
+,p_attribute_01=>'STATIC_ASSIGNMENT'
+,p_attribute_02=>'file'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(34632715356575829)
+,p_event_id=>wwv_flow_api.id(34632685881575828)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P6_DGRM_CATEGORY,P6_DGRM_NAME,P6_DGRM_VERSION,P6_IMPORT_FROM,P6_DGRM_CONTENT'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(34632977015575831)
+,p_event_id=>wwv_flow_api.id(34632685881575828)
+,p_event_result=>'FALSE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P6_DGRM_CATEGORY,P6_DGRM_NAME,P6_DGRM_VERSION,P6_IMPORT_FROM'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(34633150335575833)
+,p_event_id=>wwv_flow_api.id(34632685881575828)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(19019773259332915)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(34633301884575835)
+,p_event_id=>wwv_flow_api.id(34632685881575828)
+,p_event_result=>'FALSE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(19019773259332915)
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(19018865821332906)
 ,p_process_sequence=>10
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'Upload & Parse'
+,p_process_name=>'Upload & Parse (Single Flow)'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_dgrm_id flow_diagrams.dgrm_id%type;',
@@ -352,7 +511,7 @@ wwv_flow_api.create_page_process(
 '        pi_dgrm_category => :P6_DGRM_CATEGORY,',
 '        pi_dgrm_version => :P6_DGRM_VERSION,',
 '        pi_dgrm_content => :P6_DGRM_CONTENT,',
-'        pi_file_name => :P6_BPMN_FILE,',
+'        pi_file_name => :P6_FILE,',
 '        pi_force_overwrite => :P6_FORCE_OVERWRITE',
 '    );',
 '    :P6_DGRM_ID := l_dgrm_id;',
@@ -360,11 +519,35 @@ wwv_flow_api.create_page_process(
 ''))
 ,p_process_error_message=>'Flow already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_success_message=>'Flow imported.'
+,p_process_when=>'P6_MODE'
+,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_process_when2=>'single'
+,p_process_success_message=>'Model imported.'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(34633718670575839)
+,p_process_sequence=>20
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'Upload & Parse (Multiple Flows)'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'begin',
+'    flow_p0006_api.multiple_flow_import(',
+'        pi_file_name => :P6_FILE,',
+'        pi_force_overwrite => :P6_FORCE_OVERWRITE',
+'    );',
+'end;',
+''))
+,p_process_error_message=>'Model already exists. Use force orverwrite.'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'P6_MODE'
+,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_process_when2=>'multiple'
+,p_process_success_message=>'Model imported.'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(19019994508332917)
-,p_process_sequence=>20
+,p_process_sequence=>30
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_SESSION_STATE'
 ,p_process_name=>'Clear Page'
@@ -375,7 +558,7 @@ wwv_flow_api.create_page_process(
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(19008825550190910)
-,p_process_sequence=>30
+,p_process_sequence=>40
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'

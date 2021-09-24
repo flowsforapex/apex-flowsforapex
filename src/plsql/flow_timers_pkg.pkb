@@ -2,6 +2,12 @@
 create or replace package body flow_timers_pkg
 as
 
+
+  lock_timeout exception;
+  pragma exception_init (lock_timeout, -3006);
+
+  e_invalid_duration exception;
+
   function timer_exists
   (
     pi_timr_id in flow_timers.timr_id%type
@@ -17,6 +23,56 @@ as
     return ( l_cnt = 1 );
   end timer_exists;
 
+  procedure lock_timer
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  )
+  as
+    cursor c_lock is 
+      select timr.timr_id 
+        from flow_timers timr
+       where timr.timr_prcs_id = pi_prcs_id
+         and timr.timr_sbfl_id = pi_sbfl_id
+      for update of timr.timr_id wait 2;
+  begin
+    open c_lock;
+    close c_lock;
+  exception
+    when lock_timeout then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'timer-lock-timeout'
+      , p0 => pi_sbfl_id         
+      );
+      -- $F4AMESSAGE 'timer-lock-timeout' || 'Timer for subflow %0 currently locked by another user.  Try again later.'
+  end lock_timer;
+
+  procedure lock_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  as
+    cursor c_lock is 
+      select timr.timr_id 
+        from flow_timers timr
+       where timr.timr_prcs_id = pi_prcs_id
+       order by timr.timr_id
+      for update of timr.timr_id;
+  begin
+    open c_lock;
+    close c_lock;
+  exception
+  when lock_timeout then
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_message_key    => 'timers-lock-timeout'
+    , p0 => pi_prcs_id        
+    );
+    -- $F4AMESSAGE 'timers-lock-timeout' || 'Timers for process %0 currently locked by another user.  Try again later.'
+  end lock_process_timers;
+
   procedure get_timer_definition
   (
     pi_prcs_id    in         flow_processes.prcs_id%type
@@ -25,12 +81,15 @@ as
   , po_timer_def  out nocopy flow_object_attributes.obat_vc_value%type
   )
   is
-    l_objt_with_timer     flow_objects.objt_id%type;
+    l_objt_with_timer             flow_objects.objt_id%type;
+    l_objt_with_timer_bpmn_id     flow_objects.objt_bpmn_id%type;
   begin
     -- get objt that timers are attached to (object or attached boundaryEvent)
     begin 
       select objt.objt_id
+           , objt.objt_bpmn_id
         into l_objt_with_timer
+           , l_objt_with_timer_bpmn_id
         from flow_subflows sbfl
         join flow_processes prcs
           on prcs.prcs_id = sbfl.sbfl_prcs_id
@@ -63,17 +122,19 @@ as
           ;
         exception
           when no_data_found then
-            apex_error.add_error
-            ( 
-              p_message => 'Error finding object with timer in get_timer_definition. Subflow '||pi_sbfl_id||' .'
-            , p_display_location => apex_error.c_on_error_page
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => pi_prcs_id
+            , pi_sbfl_id        => pi_sbfl_id
+            , pi_message_key    => 'timer-object-not-found'
+            , p0 => pi_sbfl_id          
             );
+            -- $F4AMESSAGE 'timer-object-not-found' || 'Object with timer not found in get_timer_definition. Subflow %0.'
         end;
     end;
     apex_debug.info
     (
       p_message => 'get_timer_definition.  Getting timer definition for object %s on subflow %s'
-    , p0        => l_objt_with_timer
+    , p0        => l_objt_with_timer_bpmn_id
     , p1        => pi_sbfl_id
     );
 
@@ -96,112 +157,107 @@ as
     end loop;
 
     if po_timer_type is null or po_timer_def is null then
-      apex_error.add_error
-      ( p_message          => apex_string.format
-                              ( 
-                                p_message =>'Incomplete timer definitions for object %s. Type: %s; Value: %s'
-                              , p0        => l_objt_with_timer
-                              , p1        => coalesce(po_timer_type, '!NULL!')
-                              , p2        => coalesce(po_timer_def, '!NULL!')
-                              )
-      , p_display_location => apex_error.c_on_error_page
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'timer-incomplete-definition'
+      , p0 => l_objt_with_timer_bpmn_id         
+	    , p1 => coalesce(po_timer_type, '!NULL!')
+      , p2 => coalesce(po_timer_def, '!NULL!')
       );
+      -- $F4AMESSAGE 'timer-incomplete-definition' || 'Incomplete timer definitions for object %0. Type: %1; Value: %2'
+    elsif po_timer_type = flow_constants_pkg.gc_timer_type_cycle then
+      -- cycle timers disabled in v21.1 until redone in future release
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'timer-cycle-unsupported'
+      , p0 => l_objt_with_timer_bpmn_id         
+      );
+      -- $F4AMESSAGE 'timer-cycle-unsupported' || 'Cycle Timer defined for object %0 not currently supported.'
     end if;
   end get_timer_definition;
 
   procedure step_timers
   as
-    type t_timer_tab is table of flow_timers%rowtype;
-    l_timers t_timer_tab;
-    l_run_now boolean;
-  begin
-    select *
-      bulk collect into l_timers
-      from flow_timers
-     where timr_status in ( c_created, c_active )
-     order by timr_created_on
-    ;
-    for i in 1..l_timers.count loop
-      l_run_now := false;
-      begin
-        -- first part is deciding if timer should run now
-        -- and updates status on respective timer
-        case l_timers(i).timr_type
-          when flow_constants_pkg.gc_timer_type_cycle then
-            if (   l_timers(i).timr_start_on
-                 + ( l_timers(i).timr_interval_ym * coalesce( l_timers(i).timr_run_count, 1 ) )
-                 + ( l_timers(i).timr_interval_ds * coalesce( l_timers(i).timr_run_count, 1 ) )
-               ) <= systimestamp
-            then
-              l_run_now := true;
-              update flow_timers
-                 set timr_last_run = systimestamp
-                   , timr_run_count = timr_run_count + 1
-                   , timr_status = case when timr_run_count + 1 = timr_repeat_times then c_ended else c_active end
-               where timr_id = l_timers(i).timr_id
-              ;
-            end if;
-          else
-            if l_timers(i).timr_start_on <= systimestamp then
-              l_run_now := true;
-              update flow_timers
-                 set timr_last_run = systimestamp
-                   , timr_run_count = timr_run_count + 1
-                   , timr_status = c_ended
-               where timr_id = l_timers(i).timr_id
-              ;
-            end if;
-        end case;
+    e_resource_timeout      exception;
+    pragma                  exception_init(e_resource_timeout, -30006);
 
-        -- Timer should run now
-        -- We apply couple of safeguards here
-        -- Verifying if timer still in flow_timers table
-        -- and checking if the connected subflow is still there
-        if l_run_now then
-          if timer_exists( pi_timr_id => l_timers(i).timr_id ) then
-            if flow_engine.check_subflow_exists
-                ( 
-                  p_process_id => l_timers(i).timr_prcs_id
-                , p_subflow_id => l_timers(i).timr_sbfl_id
-                ) 
-            then
-              flow_engine.flow_handle_event
-              (
-                p_process_id => l_timers(i).timr_prcs_id
-              , p_subflow_id => l_timers(i).timr_sbfl_id
-              );
-            else
-              apex_debug.warn
-              (
-                p_message => 'Timer with ID %s tried to trigger non existing subflow. Process: %s; Subflow: %s'
-              , p0        => l_timers(i).timr_id
-              , p1        => l_timers(i).timr_prcs_id
-              , p2        => l_timers(i).timr_sbfl_id
-              );
-            end if;
-          else
-            apex_debug.info
-            (
-              p_message => 'Timer with ID %s does not exist anymore, skipping.'
-            , p0        => l_timers(i).timr_id
-            );
-          end if;
-        end if;
-      exception
+    l_timers                flow_timers%rowtype;
+    l_run_time              flow_timers.timr_last_run%type := systimestamp;
+    l_new_status            flow_timers.timr_status%type;
+  begin
+    loop -- until no records found
+      -- could add a functional index on flow_timers to improve performance of this query
+      -- eg. create index flow_timr_n1 on flow_timers (
+      --          case when timr_status in ( 'C', 'A' ) then coalesce( timr_last_run, timr_created_on ) end);
+      select * into l_timers
+        from flow_timers
+       where rowid in (
+          select max(rowid) keep (dense_rank first order by coalesce( timr_last_run, timr_created_on )) trowid
+            from flow_timers
+           where case when timr_status in ( c_created, c_active ) then 
+                           coalesce( timr_last_run, timr_created_on ) end < l_run_time 
+             and case timr_type
+                 when flow_constants_pkg.gc_timer_type_cycle then
+                      timr_start_on
+                        + ( timr_interval_ym * coalesce( timr_run_count, 1 ) )
+                        + ( timr_interval_ds * coalesce( timr_run_count, 1 ) )
+                 else timr_start_on 
+              end <= l_run_time
+          )
+      for update wait 5
+      ;
+      
+      case l_timers.timr_type when flow_constants_pkg.gc_timer_type_cycle then 
+        l_new_status := case when l_timers.timr_run_count + 1 = l_timers.timr_repeat_times then c_ended else c_active end;
+      else 
+        l_new_status := c_ended;
+      end case;
+
+      update flow_timers
+      set timr_last_run = systimestamp
+          , timr_run_count = timr_run_count + 1
+          , timr_status = l_new_status
+      where timr_id = l_timers.timr_id
+      ;
+              
+      begin
+      -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
+      -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
+      -- to delete the timer through a cascade delete.
+        flow_engine.flow_handle_event
+        (
+          p_process_id => l_timers.timr_prcs_id
+        , p_subflow_id => l_timers.timr_sbfl_id
+        );
+      exception 
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
         when others then
-          apex_debug.error
-          (
-            p_message => 'Timer with ID %s did not work. Check logs.'
-          , p0        => l_timers(i).timr_id
-          );
-          update flow_timers
-             set timr_status = c_broken
-           where timr_id = l_timers(i).timr_id
-          ;
+        update flow_timers
+          set timr_status = c_broken
+        where timr_id = l_timers.timr_id
+        ;
+        flow_errors.handle_instance_error
+        ( pi_prcs_id    => l_timers.timr_prcs_id
+        , pi_sbfl_id    => l_timers.timr_sbfl_id
+        , pi_message_key => 'timer-broken'
+        , p0 => l_timers.timr_id
+        , p1 => l_timers.timr_prcs_id
+        , p2 => l_timers.timr_sbfl_id
+        );
+        -- $F4AMESSAGE 'timer-broken' || 'Timer %0 broken in process %1 , subflow : %2.  See error_info.'
       end;
+      commit;
     end loop;
+    exception 
+      when no_data_found then return;
+      when e_resource_timeout then
+        -- record requiring update is locked by another process, could put some logging in here
+        rollback;
+        return;
+
   end step_timers;
 
   procedure get_duration
@@ -252,10 +308,14 @@ as
 
     l_ds_part := l_ds_part || l_after_t;
 
-    out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
-    out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
+    if l_ym_part is not null or l_ds_part is not null then
+      out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
+      out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
 
-    out_start_ts  := coalesce( in_start_ts, systimestamp ) + out_interv_ym + out_interv_ds;
+      out_start_ts  := coalesce( in_start_ts, systimestamp ) + out_interv_ym + out_interv_ds;
+    else
+      raise e_invalid_duration;
+    end if;
 
   end get_duration;
 
@@ -277,6 +337,11 @@ as
     l_timer_type flow_object_attributes.obat_vc_value%type;
     l_timer_def  flow_object_attributes.obat_vc_value%type;
   begin
+    apex_debug.enter 
+    ( 'start_timer'
+    , 'prcs_id', pi_prcs_id
+    , 'sbfl_id', pi_sbfl_id
+    );
     get_timer_definition
     (
       pi_prcs_id    => pi_prcs_id
@@ -286,7 +351,7 @@ as
     );
     apex_debug.info
     (
-      p_message => 'starting timer on subflow %s, type %s, def %s'
+      p_message => 'starting timer on subflow %0, type %1, def %2'
     , p0        => pi_sbfl_id
     , p1        => l_timer_type
     , p2        => l_timer_def
@@ -344,11 +409,15 @@ as
         , out_interv_ds => l_parsed_duration_ds
         );
       else
-        apex_error.add_error
-        ( 
-          p_message => 'No timer definitions found in start_timer on subflow '||pi_sbfl_id||' type '||l_timer_type||' def '||l_timer_def
-        , p_display_location => apex_error.c_on_error_page
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'timer-incomplete-definition'
+        , p0 => pi_sbfl_id         
+	      , p1 => l_timer_type
+        , p2 => l_timer_def
         );
+        -- $F4AMESSAGE 'timer-incomplete-definition' || 'Incomplete timer definitions for object %0. Type: %1; Value: %2'
     end case;
 
     insert into flow_timers
@@ -376,6 +445,18 @@ as
       , l_repeat_times
       )
     ;
+  exception
+    when e_invalid_duration then
+      flow_errors.handle_instance_error
+      (
+        pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'timer_definition_error'
+      , p0             => pi_prcs_id
+      , p1             => pi_sbfl_id
+      , p2             => l_timer_type
+      , p3             => l_timer_def
+      );
   end start_timer;
 
 /******************************************************************************

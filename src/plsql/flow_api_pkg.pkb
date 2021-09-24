@@ -19,24 +19,6 @@ as
          
     return l_dgrm_name;
   end get_dgrm_name;
-  
-  function get_dgrm_id    --- FFA50 currently also exists in flow_engine - delete once function next_multistep_exists deleted
-  (
-    p_prcs_id in flow_processes.prcs_id%type
-  ) return flow_processes.prcs_dgrm_id%type
-  as
-    l_prcs_dgrm_id flow_processes.prcs_dgrm_id%type;
-  begin
-    
-    select prcs.prcs_dgrm_id
-      into l_prcs_dgrm_id
-      from flow_processes prcs
-     where prcs.prcs_id = p_prcs_id
-    ;
-    
-    return l_prcs_dgrm_id;
-    
-  end get_dgrm_id;
 
   function flow_create
   (
@@ -71,22 +53,23 @@ as
               ;
           exception
             when no_data_found then
-                apex_error.add_error
-                ( p_message => 'Cannot find released diagram or draft version 0 of diagram- please specify a version or diagram_id'
-                , p_display_location => apex_error.c_on_error_page
-                );  
+              flow_errors.handle_general_error
+              ( pi_message_key => 'version-no-rel-or-draft-v0'
+              );
+              -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
           end;
       end;            
     else -- dgrm_version was specified
       select dgrm_id
         into l_dgrm_id
         from flow_diagrams
-        where dgrm_name = pi_dgrm_name
+       where dgrm_name = pi_dgrm_name
+         and dgrm_version = pi_dgrm_version
       ;
     end if;
 
     return
-      flow_engine.flow_create
+      flow_instances.create_process
       (
         p_dgrm_id   => l_dgrm_id
       , p_prcs_name => pi_prcs_name
@@ -103,7 +86,7 @@ as
   is
     l_ret flow_processes.prcs_id%type;
   begin
-    return flow_engine.flow_create
+    return flow_instances.create_process
            ( p_dgrm_id => pi_dgrm_id
            , p_prcs_name => pi_prcs_name
            )
@@ -137,227 +120,150 @@ as
     l_prcs_id flow_processes.prcs_id%type;
   begin
     l_prcs_id :=
-      flow_engine.flow_create
+      flow_instances.create_process
       (
         p_dgrm_id   => pi_dgrm_id
       , p_prcs_name => pi_prcs_name
       );
   end flow_create;
 
-  function next_multistep_exists 
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return boolean
-  -- returns true if next step requires a choice of direction (i.e., has a tag of
-  -- - an Opening Exclusive Gateway
-  -- - an Opening Optional Gateway
-  is
-    l_next_count number;
-    l_dgrm_id    flow_diagrams.dgrm_id%type;
-    l_return     boolean;
-  begin
-    apex_debug.message(p_message => 'Begin next_multistep_exists', p_level => 3) ;
-    
-    if (p_subflow_id is not null and p_process_id is not null) then
+  procedure flow_start
+    ( p_process_id in flow_processes.prcs_id%type
+    )
+    is
+    begin  
+        apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
 
-      l_dgrm_id := get_dgrm_id( p_prcs_id => p_process_id );
-      
-      select count(*)                        
-        into l_next_count
-        from flow_connections conn
-        join flow_objects objt
-          on objt.objt_id = conn.conn_src_objt_id
-         and conn.conn_dgrm_id = objt.objt_dgrm_id
-         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
-       where conn.conn_dgrm_id = l_dgrm_id
-         and objt.objt_bpmn_id = ( select sbfl.sbfl_current
-                                     from flow_subflows sbfl
-                                    where sbfl.sbfl_prcs_id = p_process_id
-                                      and sbfl.sbfl_id = p_subflow_id
-                                 )
-      ;
-      
-      l_return := ( l_next_count > 1 );
-    else
-      l_return := false;
-    end if;
-    
-    return l_return;
-  end next_multistep_exists;
-
-  function next_multistep_exists_yn 
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  ) return varchar2
-  is
-      l_ret boolean;
-  begin
-      l_ret := next_multistep_exists
-              ( p_process_id => p_process_id
-              , p_subflow_id => p_subflow_id
-              );
-      if l_ret = true
-      then
-          return 'y';
-      else 
-          return 'n';
-      end if;
-  end next_multistep_exists_yn;
-
-  function next_step_type
-  (
-    p_sbfl_id in flow_subflows.sbfl_id%type
-  ) return varchar2
-  /*
-  This function was required in F4A V4.x only, and is included in V5.x only to prevent any apps breaking.
-  It was required to tell the UI whether the next step was a normal step, single choiuce, or multi choice.
-  As Inclusive and Exclusive Gateways do not stop for user input in V5, this is unnecessary.
-  This now always returns gc-step = 'simple-step'
-  For removal in F4A V6.0
-  */
-  as
-  begin
-    return gc_step;
-  end next_step_type;
-
-procedure flow_start
-  ( p_process_id in flow_processes.prcs_id%type
-  )
-  is
-    l_process_status  flow_processes.prcs_status%type;
-  begin  
-      apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
-      -- check the process isn't already running and return error if it is
-      begin
-        select prcs.prcs_status
-          into l_process_status
-          from flow_processes prcs 
-        where prcs.prcs_id = p_process_id
-        ;
-        if l_process_status != 'created' then
-          apex_error.add_error
-          ( p_message => 'You tried to start a process that is already running'
-          , p_display_location => apex_error.c_on_error_page
-          );  
-        end if;
-      exception
-        when no_data_found then
-          apex_error.add_error
-          ( p_message => 'You tried to start a non-existant process.'
-          , p_display_location => apex_error.c_on_error_page
-          );  
-        when too_many_rows then
-          apex_error.add_error
-          ( p_message => 'Multiple copies of the process already running'
-          , p_display_location => apex_error.c_on_error_page
-          );  
-      end;
-      flow_engine.flow_start_process 
+        flow_globals.set_context
+        ( pi_prcs_id => p_process_id
+        );
+  
+        flow_instances.start_process 
         ( p_process_id => p_process_id
         );
-end flow_start;
+  end flow_start;
 
-procedure flow_reserve_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-, p_reservation   in flow_subflows.sbfl_reservation%type
-)
-is 
-begin
-
-  flow_engine.flow_reserve_step
-  ( p_process_id  => p_process_id
-  , p_subflow_id  => p_subflow_id
-  , p_reservation => p_reservation
-  );
-end flow_reserve_step;
-
-procedure flow_release_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-)
-is 
-begin
-
-  flow_engine.flow_release_step
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  );
-end flow_release_step;
-
-procedure flow_complete_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-)
-is 
-begin
-
-  flow_engine.flow_complete_step
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  );
-end flow_complete_step;
-
-procedure flow_next_step
-( p_process_id    in flow_processes.prcs_id%type
-, p_subflow_id    in flow_subflows.sbfl_id%type
-, p_forward_route in varchar2 default null 
-)
-is 
-begin
--- FFA50 Remove from here...
-  if p_forward_route is not null 
-  then
-        apex_error.add_error
-          ( p_message => 'Application Error: p_forward_route should not be specified on flow_next_step in V5.0'
-          , p_display_location => apex_error.c_on_error_page
-          );
-  end if;
-
-  flow_engine.flow_complete_step
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_forward_route => null);   -- FFA 41 remove this and only pass null once next_branch removed
--- FFA50 ....to here
-/* FFA50  replace procedure with this before release
-          apex_error.add_error
-          ( p_message => 'Flow_next_step replaced by flow_complete_step for Flows for Apex V5.  See Documentation '
-          , p_display_location => apex_error.c_on_error_page
-          );
-
-*/
-end flow_next_step;
-
-
-procedure flow_next_branch  
-  ( p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_branch_name in varchar2
+  procedure flow_reserve_step
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_reservation   in flow_subflows.sbfl_reservation%type
   )
-  is
+  is 
   begin
-          apex_error.add_error
-          ( p_message => 'Flow_next_branch removed for Flows for Apex V5.  See Documentation '
-          , p_display_location => apex_error.c_on_error_page
-          );
-  end flow_next_branch; 
+
+    flow_reservations.reserve_step
+    ( p_process_id  => p_process_id
+    , p_subflow_id  => p_subflow_id
+    , p_reservation => p_reservation
+    );
+  end flow_reserve_step;
+
+  procedure flow_release_step
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin
+
+    flow_reservations.release_step
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );
+  end flow_release_step;
+
+  procedure flow_start_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin
+    flow_engine.start_step
+    ( p_process_id  => p_process_id
+    , p_subflow_id  => p_subflow_id
+    );
+  end flow_start_step;
+
+  procedure flow_restart_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  )
+  is 
+  begin 
+    flow_globals.set_context
+    ( pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    );
+    flow_engine.restart_step
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_comment => p_comment
+    );
+  end flow_restart_step;
+
+
+  procedure flow_complete_step
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  )
+  is 
+  begin
+    flow_globals.set_context
+    ( pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    );
+    flow_engine.flow_complete_step
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_recursive_call => false
+    );
+end flow_complete_step;
 
   procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
-    apex_debug.message(p_message => 'Begin flow_reset', p_level => 3) ;
-    flow_engine.flow_reset (p_process_id => p_process_id);
+    apex_debug.enter 
+    ( p_routine_name => 'flow_reset'
+    );
+    flow_instances.reset_process 
+    ( p_process_id  => p_process_id
+    , p_comment     => p_comment
+    );
   end flow_reset;
 
-  procedure flow_delete
-  ( p_process_id in flow_processes.prcs_id%type
+  procedure flow_terminate
+  ( p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   )
   is
   begin
-    apex_debug.message(p_message => 'Begin flow_delete', p_level => 3) ;
-    flow_engine.flow_delete (p_process_id => p_process_id);
+    apex_debug.enter 
+    ( p_routine_name => 'flow_terminate'
+    );
+    flow_instances.terminate_process 
+    ( p_process_id => p_process_id
+    , p_comment    => p_comment
+    );
+  end flow_terminate;
+
+  procedure flow_delete
+  ( p_process_id  in flow_processes.prcs_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+  )
+  is
+  begin
+    apex_debug.enter
+    (p_routine_name => 'flow_delete'
+    );
+    flow_instances.delete_process 
+    ( p_process_id => p_process_id
+    , p_comment    => p_comment
+    );
   end flow_delete;
 
   function get_current_usertask_url
@@ -368,7 +274,7 @@ procedure flow_next_branch
   as
     l_objt_id flow_objects.objt_id%type;
   begin
-    apex_debug.trace( p_message => 'Entering GET_CURRENT_USERTASK_URL' );
+    apex_debug.trace ( p_message => 'Entering GET_CURRENT_USERTASK_URL' );
 
     select objt.objt_id
       into l_objt_id
@@ -393,6 +299,39 @@ procedure flow_next_branch
       , pi_objt_id => l_objt_id
       );
   end get_current_usertask_url;
+
+  function message
+  ( p_message_key    in varchar2
+  , p_lang            in varchar2 default 'en'
+  , p0                in varchar2 default null
+  , p1                in varchar2 default null
+  , p2                in varchar2 default null
+  , p3                in varchar2 default null
+  , p4                in varchar2 default null
+  , p5                in varchar2 default null
+  , p6                in varchar2 default null
+  , p7                in varchar2 default null
+  , p8                in varchar2 default null
+  , p9                in varchar2 default null
+  ) return varchar2
+  is
+  begin
+    return flow_errors.make_error_message
+           ( pi_message_key => p_message_key
+           , pi_lang        => p_lang
+           , p0   => p0
+           , p1   => p1
+           , p2   => p2
+           , p3   => p3
+           , p4   => p4
+           , p5   => p5
+           , p6   => p6
+           , p7   => p7
+           , p8   => p8
+           , p9   => p9
+           );
+
+  end message;
 
 end flow_api_pkg;
 /
