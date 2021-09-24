@@ -14,8 +14,8 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_flow(
  p_id=>wwv_flow.g_flow_id
 ,p_owner=>nvl(wwv_flow_application_install.get_schema,'FLOWS4APEX')
-,p_name=>nvl(wwv_flow_application_install.get_application_name,'FLOWS211')
-,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'FLOWS211')
+,p_name=>nvl(wwv_flow_application_install.get_application_name,'Flows for APEX')
+,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'FLOWS4APEX')
 ,p_page_view_logging=>'YES'
 ,p_page_protection_enabled_y_n=>'Y'
 ,p_checksum_salt=>'15B753D68F7A5467E3DD14853F094D31FD5E3C9E459C8DD99A84BD40F714D421'
@@ -53,8 +53,8 @@ wwv_flow_api.create_flow(
 ,p_error_handling_function=>'apex_error_handling'
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Workflow'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210924084105'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20210924093046'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>884
 ,p_ui_type_name => null

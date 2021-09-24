@@ -12,6 +12,7 @@ drop view flow_p0010_branches_vw;
 drop view flow_p0010_routes_vw;
 
 drop package flow_p0010_api;
+drop package flow_bpmn_modeler;
 
 PROMPT >> Create new tables
 CREATE TABLE flow_object_expressions (
