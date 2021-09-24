@@ -26,7 +26,7 @@
 - Adds a built-in process variable BUSINESS_REF to link a flow instance to its underlying business object.
 - Adds a configuration option to allow editing of models in a development environment without strict versioning enforcement.
 - Makes process_id and subflow_id available to scripts and expressions through flow_globals.
-- Enhances the Holiday Approval demo app to show off some new capabilities.
+- New sample app "Expense Claims".
 - Modifies behaviour of flow_reset to delete all non-built-in process variables.
 - Disables (non-operative) cycle timers from all timer event types.
 - Allows Inclusive Gateways to be used as 'merge-then-resplit' gateways.
