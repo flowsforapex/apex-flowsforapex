@@ -63,14 +63,6 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_globals.pkb
 @plsql/flow_errors.pkb
 
-PROMPT >> Installing Initial Engine Data
-PROMPT >> =============================
-PROMPT >> 
-
-@data/install_default_config_data.sql
-@data/install_engine_messages_en.sql
-@data/install_engine_messages_fr.sql
-
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
@@ -130,6 +122,12 @@ PROMPT >> Viewer Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
 
+PROMPT >> Installing Initial Engine Data
+PROMPT >> =============================
+PROMPT >> 
+@data/install_default_config_data.sql
+@data/install_engine_messages_en.sql
+@data/install_engine_messages_fr.sql
 
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object

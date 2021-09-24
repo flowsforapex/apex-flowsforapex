@@ -130,6 +130,13 @@ PROMPT >> Process Plugin Objects
 @plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pks
 @plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pkb
 
+PROMPT >> Installing Initial Engine Data
+PROMPT >> =============================
+PROMPT >> 
+@data/install_default_config_data.sql
+@data/install_engine_messages_en.sql
+@data/install_engine_messages_fr.sql
+
 PROMPT >> Checking for invalid Objects
   select object_type || ': ' || object_name as invalid_object
     from user_objects
