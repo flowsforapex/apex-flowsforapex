@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210923190939'
+,p_last_upd_yyyymmddhh24miss=>'20210924123331'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -662,8 +662,7 @@ wwv_flow_api.create_page_validation(
 '    into l_version_exists',
 '    from flow_diagrams',
 '    where dgrm_name = l_dgrm_name',
-'    and dgrm_version = :P2_NEW_VERSION',
-'    and dgrm_status = ''draft''; ',
+'    and dgrm_version = :P2_NEW_VERSION; ',
 '    ',
 '    if (l_version_exists > 0) then',
 '        l_err := apex_lang.message(',
@@ -704,8 +703,7 @@ wwv_flow_api.create_page_validation(
 '        into l_flow_exists',
 '        from flow_diagrams',
 '        where dgrm_name = l_dgrm_name',
-'        and dgrm_version = ''0''',
-'        and dgrm_status = ''draft'';',
+'        and dgrm_version = ''0'';',
 '',
 '        if (l_flow_exists > 0) then',
 '            l_err := apex_lang.message(',
@@ -738,8 +736,7 @@ wwv_flow_api.create_page_validation(
 '    into l_version_exists',
 '    from flow_diagrams',
 '    where dgrm_name = :P2_NEW_NAME',
-'    and dgrm_version = ''0''',
-'    and dgrm_status = ''draft'';',
+'    and dgrm_version = ''0'';',
 '    ',
 '    if (l_version_exists > 0) then',
 '        l_err := apex_lang.message(',
