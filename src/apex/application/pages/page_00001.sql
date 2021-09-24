@@ -19,8 +19,8 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Getting Started - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'SHAKEEB.RAHMAN@ORACLE.COM'
-,p_last_upd_yyyymmddhh24miss=>'20210920041603'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20210924084105'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603774502745437)
@@ -43,7 +43,7 @@ wwv_flow_api.create_page_plug(
 '</ul>',
 '<p>',
 '<h4>Download</h4>',
-'<a href="https://apex.mt-ag.com/en/flowsforapex" target="_blank">apex.mt-ag.com/en/flowsforapex</a>',
+'<a href="http://flowsforapex.mt-ag.com" target="_blank">flowsforapex.mt-ag.com</a>',
 '<p>',
 '<h4>Documentation</h4>',
 '<a href="https://mt-ag.github.io/apex-flowsforapex" target="_blank">Latest Documentation Online</a>',

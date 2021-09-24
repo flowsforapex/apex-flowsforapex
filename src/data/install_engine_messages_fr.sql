@@ -463,6 +463,6 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plugin-diagram-has-changed',
 'fr',
-'Le modlèle a changé, annuler les changements?'
+'Le modèle a changé, annuler les changements?'
 );
  
