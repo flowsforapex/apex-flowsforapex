@@ -38,11 +38,11 @@ begin
 
   if l_app_id is null then
     apex_application_install.generate_application_id;
-    apex_application_install.generate_offset;
   else
     apex_application_install.set_application_id( p_application_id => l_app_id );
   end if;
 
+  apex_application_install.generate_offset;
   apex_application_install.set_schema( p_schema => '^parsing_schema.' );
   apex_application_install.set_application_alias( p_application_alias => '^app_alias.' );
   apex_application_install.set_application_name( p_application_name => '^app_name.' );
@@ -51,6 +51,17 @@ end;
 
 PROMPT >> Install Application
 @apex/install.sql
+
+PROMPT >> Publish Translated Applications
+begin
+  apex_lang.publish_application
+  (
+    p_application_id => apex_application_install.get_application_id
+  , p_language => 'fr'
+  );
+  commit;
+end;
+/
 
 PROMPT >> Finished Installation of Flows4APEX
 PROMPT >> ====================================
