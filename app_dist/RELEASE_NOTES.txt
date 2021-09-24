@@ -28,7 +28,7 @@ HISTORY
   - Introduces model-based declarative process variable expressions to set process variables before and after each step.
   - Introduces 3 process plugins to ease application integration:
     - Manage Flow Instance, for controlling instance creation, starting, termination, reset and deletion.
-    - Manage Flow Instance Step, for controlling step statrt, reservation, release and completion.
+    - Manage Flow Instance Step, for controlling step start, reservation, release and completion.
     - Manage Flow Instance Variables, for transferring process variable content to and from APEX page items. 
   - Introduces Transaction Safety, making each process step a separate database transaction.
   - Introduces new Instance Status of 'error' and 'terminated' to signal abnormal instance conditions.
@@ -38,6 +38,7 @@ HISTORY
   - Major upgrade of the Flow Engine Application, with enhancements to the modeler, viewer, and the app UI.
     - App: enhanced UI, including support for dark mode
     - App: Flow Monitor additionally supports side-by-side and multi-monitor support for administering larger systems.
+    - App: Multiple models export/import
     - Modeler: Properties panel can now be expanded by dragging
     - Modeler: Supports Cut, paste, zoom, keyboard shortcuts, and save of model components
     - Viewer: Clicking on an object opens pop-up containing definition, status and history.
