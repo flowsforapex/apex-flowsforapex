@@ -97,10 +97,6 @@ as
             ;
       exception
         when no_data_found then
-          /*apex_error.add_error
-          ( p_message => 'Please specify the connection ID for process variable '||pi_objt_bpmn_id||':route or specify a default route for the gateway.'
-          , p_display_location => apex_error.c_on_error_page
-          );*/
           flow_errors.handle_instance_error
           ( pi_prcs_id        => pi_process_id
           , pi_sbfl_id        => pi_subflow_id
@@ -109,10 +105,6 @@ as
           );
       -- $F4AMESSAGE 'gateway-no-route' || 'No gateway routing instruction provided in variable %0 and model contains no default route.'  
         when too_many_rows then
-          /*apex_error.add_error
-          ( p_message => 'More than one default route specified on Gateway '||pi_objt_bpmn_id
-          , p_display_location => apex_error.c_on_error_page
-          );*/
           flow_errors.handle_instance_error
           ( pi_prcs_id        => pi_process_id
           , pi_sbfl_id        => pi_subflow_id
@@ -250,24 +242,12 @@ as
       else 
         -- unable to lock parent 'split' subflow.
         -- exception already handled in lock_subflow so no need to throw an error here.
-        /*apex_error.add_error
-        ( p_message => 'Unable to lock split parent subflow '||p_subflow_id||' before merge.  Select for update timed out'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         -- has step errors from locking
         flow_errors.set_error_status
         ( pi_prcs_id => p_process_id
         , pi_sbfl_id => p_sbfl_info.sbfl_sbfl_id
         );
       end if;
-      /*-- start new tx by locking parent subflow
-      if not flow_engine_util.lock_subflow(p_sbfl_info.sbfl_sbfl_id) then
-        -- unable to lock parent 'split' subflow.
-        apex_error.add_error
-        ( p_message => 'Unable to lock split parent subflow '||p_subflow_id||' after merge.  Select for update timed out'
-        , p_display_location => apex_error.c_on_error_page
-        );
-      end if;*/
     end if; 
     return l_gateway_forward_status;
   end gateway_merge;

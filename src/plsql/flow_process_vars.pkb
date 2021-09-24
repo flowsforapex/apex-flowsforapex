@@ -53,10 +53,6 @@ begin
 exception
   when others
   then
-    /*apex_error.add_error
-    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-    , p_display_location => apex_error.c_on_error_page
-    );*/
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -117,10 +113,6 @@ begin
 exception
   when others
   then
-    /*apex_error.add_error
-    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-    , p_display_location => apex_error.c_on_error_page
-    );*/
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -181,10 +173,6 @@ begin
 exception
   when others
   then
-    /*apex_error.add_error
-    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-    , p_display_location => apex_error.c_on_error_page
-    );*/
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -244,10 +232,6 @@ begin
 exception
   when others
   then
-    /*apex_error.add_error
-    ( p_message => 'Error '||l_action||' process variable '||pi_var_name||' for process id '||pi_prcs_id||'.'
-    , p_display_location => apex_error.c_on_error_page
-    );*/
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -279,10 +263,6 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      /*apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'var-set-error'
@@ -314,10 +294,6 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      /*apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'var-set-error'
@@ -349,10 +325,6 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      /*apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'var-set-error'
@@ -384,10 +356,6 @@ begin
 exception
   when no_data_found then
     if pi_exception_on_null then
-      /*apex_error.add_error
-      ( p_message => 'Process variable '||pi_var_name||' for process id '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'var-set-error'
@@ -429,10 +397,6 @@ begin
   );
 exception
   when  no_data_found then
-      /*apex_error.add_error
-      ( p_message          => 'Process variable '||pi_var_name||' in process '||pi_prcs_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'var-set-error'
@@ -442,10 +406,6 @@ exception
       );
       -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
   when lock_timeout then
-    /*apex_error.add_error
-    ( p_message => 'Process variable '||pi_var_name||' in process '||pi_prcs_id||' already locked by another user. Try to start your task later.'
-    , p_display_location => apex_error.c_on_error_page
-    );*/
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_message_key    => 'var-set-error'

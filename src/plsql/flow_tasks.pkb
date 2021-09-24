@@ -73,7 +73,6 @@ as
     ( 'process_task'
     , 'object: ', p_step_info.target_objt_tag 
     );
-
     -- set boundaryEvent Timers, if any
     flow_boundary_events.set_boundary_timers
     ( p_process_id => p_process_id
@@ -96,8 +95,6 @@ as
     ( 'process_userTask'
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
-
-
     -- set boundaryEvent Timers, if any
     flow_boundary_events.set_boundary_timers 
     ( p_process_id => p_process_id
@@ -146,14 +143,6 @@ as
       apex_debug.info 
       ( p_message => 'Rollback initiated after script failed in plsql script runner'
       );
-      /*handle_script_error
-      ( p_process_id    => p_process_id
-      , p_subflow_id    => p_subflow_id
-      , p_script_object => p_step_info.target_objt_ref
-      , p_error_type    => 'failed'
-      , p_error_stack   => 'error stack to be added'
-      );
-      commit;*/
       flow_errors.handle_instance_error
       ( pi_prcs_id        => p_process_id
       , pi_sbfl_id        => p_subflow_id
@@ -162,20 +151,11 @@ as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
-
     when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
-      );
-      /*handle_script_error
-      ( p_process_id    => p_process_id
-      , p_subflow_id    => p_subflow_id
-      , p_script_object => p_step_info.target_objt_ref
-      , p_error_type    => 'stop_engine'
-      , p_error_stack   => 'error stack to be added'
-      );
-      commit;  */  
+      ); 
       flow_errors.handle_instance_error
       ( pi_prcs_id        => p_process_id
       , pi_sbfl_id        => p_subflow_id
@@ -184,7 +164,6 @@ as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: ScriptTask %1 requested processing stop - see event log.'
-
   end process_scriptTask;
 
   procedure process_serviceTask --- note NOT CURRENTLY BEING USED FOR SERVICETASKS - USING process_scriptTask
@@ -199,8 +178,6 @@ as
     ( 'process_serviceTask'
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
-
-
     -- current implementation is limited to one serviceTask type, which is for apex message template sent from user defined PL/SQL script
     -- future serviceTask types could include text message, tweet, AOP document via email, etc.
     -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).

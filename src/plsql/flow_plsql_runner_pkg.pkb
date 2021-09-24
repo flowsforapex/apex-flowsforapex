@@ -116,11 +116,6 @@ as
         p_message => 'User script run by flow_plsql_runner_pkg.run_task_script requested stop.'
       , p0        => sqlerrm
       );
-      /*apex_error.add_error
-      (
-        p_message          => 'User script run by flow_plsql_runner_pkg.run_task_script requested stop.'
-      , p_display_location => apex_error.c_inline_in_notification
-      );*/
       raise e_plsql_script_requested_stop;     
     when others then
       apex_debug.error
@@ -128,11 +123,6 @@ as
         p_message => 'Error during flow_plsql_runner_pkg.run_task_script. SQLERRM: %s'
       , p0        => sqlerrm
       );
- /*     apex_error.add_error
-      (
-        p_message          => 'An error occured while processing user-defined PL/SQL. This is typically caused by an error in the given code.'
-      , p_display_location => apex_error.c_inline_in_notification
-      ); */
       raise e_plsql_script_failed;
   end run_task_script;
 

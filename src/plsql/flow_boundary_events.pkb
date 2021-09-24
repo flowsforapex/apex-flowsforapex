@@ -191,10 +191,6 @@ is
     close c;
   exception 
     when lock_timeout then
-      /*apex_error.add_error
-      ( p_message => 'Child Boundary Subflows or Timers of '||p_subflow_id||' currently locked by another user.  Retry your transaction later.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id     => p_process_id
       , pi_sbfl_id     => p_subflow_id
@@ -332,10 +328,6 @@ exception
          po_interrupting := 0;
       end if;
   when too_many_rows then
-      /*apex_error.add_error
-      ( p_message => 'More than one '||pi_sub_tag_name||' boundaryEvent found on sub process.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_instance_error
       ( pi_prcs_id     => l_process_id
       , pi_sbfl_id     => pi_par_sbfl
@@ -379,10 +371,6 @@ begin
   , po_interrupting => l_interrupting
   );
   if l_next_objt is null then
-    /*apex_error.add_error
-    ( p_message => 'No boundaryEvent of type '||p_step_info.target_objt_subtag||' found to catch event.'
-    , p_display_location => apex_error.c_on_error_page
-    );*/
     flow_errors.handle_instance_error
     ( pi_prcs_id     => p_process_id
     , pi_sbfl_id     => p_subflow_id
@@ -481,7 +469,7 @@ begin
             , p_subflow_id => p_subflow_id
             );
         end if;
-        
+
         -- step forward from boundary event
         flow_engine.flow_complete_step 
         ( p_process_id => p_process_id
@@ -494,15 +482,7 @@ begin
         , pi_sbfl_id => p_subflow_id
         );
       end if;
-
-      --switching back to main subflow so clear error flag before proceeding
-      --flow_globals.set_step_error ( p_has_error  =>  false);
-      
-
     end if;
-
-
-
   end process_boundary_event;
 
 

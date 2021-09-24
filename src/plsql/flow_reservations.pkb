@@ -49,10 +49,6 @@ as
 
   exception
     when no_data_found then
-        /*apex_error.add_error
-        ( p_message => 'Reservation unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_general_error
         ( pi_message_key    => 'reservation-failed-not-found'
         , p0 => p_subflow_id         
@@ -61,10 +57,6 @@ as
         );
         -- $F4AMESSAGE 'reservation-failed-not-found' || 'Reservation for %2 unsuccessful.  Subflow %0 in Process %1 not found.'
     when e_reserved_by_other then
-        /*apex_error.add_error
-        ( p_message => 'Reservation unsuccessful.  Step already reserved by another user.'
-        , p_display_location => apex_error.c_on_error_page
-        ); */
         flow_errors.handle_general_error
         ( pi_message_key    => 'reservation-by-other_user'
         , p0 => p_reservation
@@ -72,19 +64,11 @@ as
         );
         -- $F4AMESSAGE 'reservation-by-other_user' || 'Reservation for %0 unsuccessful.  Step already reserved by another user (%1).'           
     when e_reserved_by_same then
-        /*apex_error.add_error
-        ( p_message => 'Reservation already placed on next task.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_general_error
         ( pi_message_key    => 'reservation-already-placed'
         );
         -- $F4AMESSAGE 'reservation-already-placed' || 'Reservation already placed on next task for you.'
     when lock_timeout then
-        /*apex_error.add_error
-        ( p_message => 'Subflow '||p_subflow_id||' currently locked by another user.  Try your reservation again later.'
-        , p_display_location => apex_error.c_on_error_page
-        );*/
         flow_errors.handle_general_error
         ( pi_message_key    => 'reservation-lock-timeout'
         );
@@ -128,10 +112,6 @@ as
 
   exception
     when no_data_found then
-      /*apex_error.add_error
-      ( p_message => 'Reservation release unsuccessful.  Subflow '||p_subflow_id||' in Process '||p_process_id||' not found.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_general_error
       ( pi_message_key    => 'reservation-release-not-found'
       , p0 => p_subflow_id
@@ -139,10 +119,6 @@ as
       );
       -- $F4AMESSAGE 'reservation-release-not-found' || 'Reservation release unsuccessful.  Subflow %0 in Process %1 not found.'
     when lock_timeout then
-      /*apex_error.add_error
-      ( p_message => 'Subflow '||p_subflow_id||' currently locked by another user.  Try to release your reservation later.'
-      , p_display_location => apex_error.c_on_error_page
-      );*/
       flow_errors.handle_general_error
       ( pi_message_key    => 'reservation-lock-timeout'
       , p0 => p_subflow_id
