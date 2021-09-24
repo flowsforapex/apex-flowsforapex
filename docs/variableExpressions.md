@@ -14,7 +14,7 @@ Process Variable Expressions are defined in the Flow Modeler, and processed in t
 
 Static assignment allows you to set a variable with a static value supplied in the model.
 
-Data-types Supported:  varchar2, number, date, clob
+Data-types Supported:  varchar2, number, date
 
 Substitutions Allowed: The static string can contain Flows for APEX substitution variables, including `&F4A$process_id.`, `&F4A$subflow_id.`, `&F4A$<process_var_name>.`
 
@@ -93,7 +93,7 @@ Variable expressions are, in general, triggered before and after each object in 
 
 - For Task-type BPMN objects, ( i.e., bpmn:task, bpmn:scriptTask, bpmn:manualTask, bpmn:serviceTask, bpmn:userTask), variable expressions can be executed ***before-task*** and ***after-task***.
 - For Gateway type BPMN objects, ( i.e., bpmn:exclusiveGateway, bpmn:inclusiveGateway, bpmn:parallel Gateway, and bpmn:eventBasedGateway), variable expressions can operate **before-split**** and **after-merge****.
-- For Event-type BPMN objects (i.e., bpmn:startEvent, bpmn:endEvent, bpmn:intermediateCatchEvent, bpmn:intermediateThrowEvents, bpmn:boundaryEvents), variable expressions can be evaluated ***on-event***.  In addition, as there can be a long interval between a timer event becoming current and the timer firing, timer events can be triggered when they become current using the ***before-event*** triggering point.
+- For Event-type BPMN objects (i.e., bpmn:startEvent, bpmn:endEvent, bpmn:intermediateCatchEvent, bpmn:intermediateThrowEvents, bpmn:boundaryEvents), variable expressions can be evaluated ***on-event***.  In addition, as there can be a long interval between a timer event becoming current and the timer firing, timer-based events can be triggered when they become current using the ***before-event*** triggering point.
 
 ### Handling Errors in Variable Expressions
 
@@ -102,4 +102,4 @@ If errors occur while processing process variable expressions, the behaviour dep
 
 - if the error is in the user's current step, Flows for APEX will present an error message to the user, and typically not allow the user's current transaction to complete.
 - if the error is in a step triggered by the user's current step, for example in a gateway or a scriptTask following on from the user's current task, the user's transaction will be allowed to proceed;  any following steps that complete successfully will complete, but the step containing the error will be put into `error` status and will rollback.  After an administrator fixes the underlying problem, the failed step can be restarted from the Flow Monitor.
-
+- if the error occurs when evaluating an expression in the on-event set of a Timer-based event, such as a Timer Start, a Timer Intermediate Catch Event, or a Timer Boundary Event, the step will be put into `error` status, and will rollback to the point at which the timer fired.  After the administrator fixes the underlying problem, the step can be restarted.  The restart will be immediate, i.e., the timer is not re-run, and will run the on-event expression set before stepping forward to the next step of the process model.

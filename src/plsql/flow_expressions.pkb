@@ -111,16 +111,7 @@ as
         , pi_sbfl_id        => pi_sbfl_id
         , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
         , pi_expr_set       => pi_expression.expr_set
-        );
-    when flow_constants_pkg.gc_prov_var_type_clob then
-        flow_process_vars.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_clob_value     => l_expression_text
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        );  
+        ); 
     end case;
   exception
     when e_var_exp_date_format_error then
