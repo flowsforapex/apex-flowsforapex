@@ -12,11 +12,11 @@ All sub processes currently are embedded sub processes.  Global sub processes, w
 
 ### Creating Sub Processes
 
-Sub Processes are created using the modeller, as usual.
+Sub Processes are created using the modeler, as usual.
 
 ### Boundary Events on Sub Processes
 
-Starting with Flows for APEX V5.0, Sub Processes can have Timer, Error ad Escalation Boundary Events added to them.  See [Behaviour Of Boundary Events in SubProcesses](behaviourOfBoundaryEventsinSubProcesses.md)
+Starting with Flows for APEX V5.0, Sub Processes can have Timer, Error ad Escalation Boundary Events added to them.  See [Behavior Of Boundary Events in SubProcesses](behaviourOfBoundaryEventsinSubProcesses.md)
 
 ### Terminate End Events in Sub Processes
 
@@ -46,8 +46,8 @@ Processing in the SubProcess starts on a new subflow, which is running at the su
 
 Subflows inside a sub process can themselves split at parallel or inclusive gateways, creating new subflows running at the sub process level.  They can also start a new child sub process -- in which case the new parent sub process gets status 'In Subprocess', and its new child starts new subflows at the new sub process level.
 
-For a sub process to complete normally, all subflows running at the subprocess level must complete by reaching end events.  When the last runing subflow in a process level completes normally, the subprocess has completed, and processing continues on its parent subflow.
+For a sub process to complete normally, all subflows running at the subprocess level must complete by reaching end events.  When the last running subflow in a process level completes normally, the subprocess has completed, and processing continues on its parent subflow.
 
 If a subflow triggers a non-interrupting boundary event, it will cause a new subflow to start on its parent's process level.
 
-If a subflow triggers an interrupting boundary event, for example an error event or an interupting timer or interrupting escalation, all processing inside the subprocess is stopped, and the subprocess' parent subflow continues on the path forward from the boundary event, if defined.
+If a subflow triggers an interrupting boundary event, for example an error event or an interrupting timer or interrupting escalation, all processing inside the subprocess is stopped, and the subprocess' parent subflow continues on the path forward from the boundary event, if defined.

@@ -4,7 +4,7 @@
 
 Systems using workflow will often have users spread across different timezones, and need to handle the issues that arise from that.
 
-Oracle timestamps provide several different approaches for handling multiple timezones.  This short note documents the approach that we have taken in the Flows for APEX engine, how we have handled that in the Flows for APEX application (the 'Engine Appplication'), and suggests how you should handle this in any applications that you develop for Flows for APEX.
+Oracle timestamps provide several different approaches for handling multiple timezones.  This short note documents the approach that we have taken in the Flows for APEX engine, how we have handled that in the Flows for APEX application (the 'Engine Application'), and suggests how you should handle this in any applications that you develop for Flows for APEX.
 
 ### Timestamps in the Database
 
@@ -45,5 +45,3 @@ end as lgpr_prcs_event_icon
 from flow_instance_event_log lgpr
 with read only;
 ```
-
-

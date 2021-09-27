@@ -14,15 +14,15 @@ A *Flow* or Business Process is defined using a BPMN Diagram, which is identifie
 
 ![Order Shipment Process](images/ShipmentProcess.png)
 
-A *Flow Instance* is one occurance of this Flow or business process.  Building on our Shipping example, this process model would be followed for all orders.  There would be one Flow Instance followed for each order processed.
+A *Flow Instance* is one occurence of this Flow or business process.  Building on our Shipping example, this process model would be followed for all orders.  There would be one Flow Instance followed for each order processed.
 
 Within that flow instance, there could be one or more *subflows* running at any time.  Each *subflow* is a branch of the process tree.  Continuing to build our example, the process instance starts with a single subflow running. Once it passes the first object, a parallel gateway, there would then be two subflows running - one with 'Decide if ...' activity as the next activity, and a second with 'Package Goods' as it's first activity.
 
-As the flow instance continues, additional subflows can be added, multiple subflows can be synchronised and combined into one, and subflows can end.  Subflows are transient objects that are created as they are required, processed, and deleted once they are finished with.
+As the flow instance continues, additional subflows can be added, multiple subflows can be synchronized and combined into one, and subflows can end.  Subflows are transient objects that are created as they are required, processed, and deleted once they are finished with.
 
 As the process continues, and each object is completed, a record of object completion is kept in the FLOW_SUBFLOW_LOG table.  This is used to show step completion in the BPMN viewer plugin.  In addition, flow, instance, step, and variable events are logged into a series of event log tables for process monitoring and auditing purposes.
 
-### Subflow Behaviour
+### Subflow Behavior
 
 #### Process Instance Creation
 
