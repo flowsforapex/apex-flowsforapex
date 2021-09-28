@@ -96,12 +96,26 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Plus d''un lien correspond à l''événement %0.'
 );
-  
+ 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'logging-instance-event',
-'fr',
-'Flux - Erreur interne - %0 event'
+'en',
+'Flows - Erreur interne lors de l''enregistrement d''un évènement d''instance'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'logging-step-event',
+'en',
+'Flows - Erreur interne lors de l''enregistrement d''un évènement d''étape'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'logging-variable-event',
+'en',
+'Flows - Erreur interne lors de l''enregistrement d''un évènement de variable'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
