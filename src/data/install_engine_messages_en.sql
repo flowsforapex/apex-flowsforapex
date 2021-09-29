@@ -101,10 +101,23 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'logging-instance-event',
 'en',
-'Flows - Internal error logging %0 event'
+'Flows - Internal error while logging an Instance Event'
 );
  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'logging-step-event',
+'en',
+'Flows - Internal error while logging a Step Event'
+);
 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'logging-variable-event',
+'en',
+'Flows - Internal error while logging a Variable Event'
+);
+ 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'process-lock-timeout',

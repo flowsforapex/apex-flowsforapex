@@ -56,9 +56,8 @@ as
     when others then
       flow_errors.handle_general_error
       ( pi_message_key => 'logging-instance-event'
-      , p0 => 'instance'
       );
-      -- $F4AMESSAGE 'logging-instance-event' || 'Flows - Internal error logging %0 event'
+      -- $F4AMESSAGE 'logging-instance-event' || 'Flows - Internal error while logging an Instance Event'
       raise;
   end log_instance_event;
 
@@ -134,10 +133,9 @@ as
   exception
     when others then
       flow_errors.handle_general_error
-      ( pi_message_key => 'logging-instance-event'
-      , p0 => 'step'
+      ( pi_message_key => 'logging-step-event'
       );
-      -- $F4AMESSAGE 'logging-instance-event' || 'Flows - Internal error logging %0 event'
+      -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
       raise;
   end log_step_completion;
 
@@ -186,10 +184,9 @@ as
   exception
     when others then
       flow_errors.handle_general_error
-      ( pi_message_key => 'logging-instance-event'
-      , p0 => 'variable'
+      ( pi_message_key => 'logging-variable-event'
       );
-      -- $F4AMESSAGE 'logging-instance-event' || 'Flows - Internal error logging %0 event'
+      -- $F4AMESSAGE 'logging-variable-event' || 'Flows - Internal error while logging a Variable Event'
       raise;
   end log_variable_event;
 
