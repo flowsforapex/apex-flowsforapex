@@ -4,12 +4,11 @@ A business process instance typically runs for some extended period of time, and
 
 Executing a process typically requires the process to have its own variable system that allows the process to manage process state for the duration of the business process instance, and which is separate from the data stored in the underlying objects that the process acts on.
 
-The Flows for APEX Process Variable system is a flexible, persistant process variable system that allows you to create and use variables for the lifetime of  your process instance.
+The Flows for APEX Process Variable system is a flexible, persistent process variable system that allows you to create and use variables for the lifetime of  your process instance.
 
 All process variables are accessed through the setters and getters provided in the `flow_process_vars` package.
 
 The process variable system allows you to create process variables identified by an arbitrary name and the process_ID of their process instance.
-
 
 #### Data Types
 
@@ -123,4 +122,3 @@ or serviceTask procedure using the setters and getters above.
 Process variables can be substituted into the definition string for Timers.  [See doc](usingTimerEvents.md)
 
 Your application can set and get process variables by calling the appropriate setters and getters, as required.
-

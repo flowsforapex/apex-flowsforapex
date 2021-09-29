@@ -2,7 +2,7 @@
 
 ### Introduction
 
-BPMN provides features to model who is performing activities and tasks in a modelled business process.
+BPMN provides features to model who is performing activities and tasks in a modeled business process.
 
 ### Current Support
 
@@ -21,7 +21,7 @@ Processes which are defined with multiple pools use message flows and signal flo
 Flows for APEX does not currently support processes using message flows and signal flows, and so multi-pool diagrams cannot currently be run.
 
 ![Message Flow between Pools not Supported](images/processWithMultiplePools.png "Message Flow between Pools not Supported")
-This example models (correctly, in BPMN terms!) the customer and company in separate pools.  However, Flows for APEX cannot currently handle the messageflows across pool boundaries.  Sequence flows have to be contained inside a pool.
+This example models (correctly, in BPMN terms!) the customer and company in separate pools.  However, Flows for APEX cannot currently handle messageflow across pool boundaries.  sequenceFlow has to be contained inside a pool.
 
 ### Multi User Pools and Task Reservation
 
@@ -33,7 +33,7 @@ A task reservation can also be explicitly released by calling `flow_api_pkg.flow
 
 Reservation only applies to the current step on a subflow, and is implicitly released when the step is completed and the process continues to the next step, i.e., when `flow_api_pkg.flow_complete_step` is called.
 
-The Flows For APEX Task Reservation is a light weight mechanism to signal to others that this task is reserved and will be worked on by the reserving user.  Out of the box, IT IS NOT A SECURITY MECHANISM to prevent unauthorised users from working on a task.  YOU SHOUD NOT RELY ON THIS MECHANISM TO CONTROL TASK AUTHORIZATION OR OTHER ACCESS CONTROL OBJECTIVES.
+The Flows For APEX Task Reservation is a light weight mechanism to signal to others that this task is reserved and will be worked on by the reserving user.  Out of the box, IT IS NOT A SECURITY MECHANISM to prevent unauthorized users from working on a task.  YOU SHOUD NOT RELY ON THIS MECHANISM TO CONTROL TASK AUTHORIZATION OR OTHER ACCESS CONTROL OBJECTIVES.
 
 As part of your application design, you might want to wrap these procedures with your own application-specific controls to implement control on who can reserve (and for whom), and who can release reservations.
 

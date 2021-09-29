@@ -2,9 +2,9 @@
 
 ### Summary
 
-🆕 Flows for APEX v21.1 introduces a transactional model which changes behaviour from earlier releases.
+🆕 Flows for APEX v21.1 introduces a transactional model which changes behavior from earlier releases.
 
-Prior to v21.1, the Flows for APEX engine would execute as many forward steps as it could, stopping when it reached either an aynchronous (waiting) task requiring user input, or hit an error.  All of the processing would be inside the user's current APEX transaction, which would be committed by APEX at the end of processing;  any error inside the process would cause an error message to be presented to the user, and the entire transaction would be rolled back.  When errors occurred in forward steps, this resulted, for example,  in a user working on process step A being unable to complete step A because of an error in the following step B or Step C, which was being run automatically as a scriptTask.
+Prior to v21.1, the Flows for APEX engine would execute as many forward steps as it could, stopping when it reached either an asynchronous (waiting) task requiring user input, or hit an error.  All of the processing would be inside the user's current APEX transaction, which would be committed by APEX at the end of processing;  any error inside the process would cause an error message to be presented to the user, and the entire transaction would be rolled back.  When errors occurred in forward steps, this resulted, for example,  in a user working on process step A being unable to complete step A because of an error in the following step B or Step C, which was being run automatically as a scriptTask.
 
 Flows for APEX v21.1 still continues forward until it reaches an asynchronous (user) task, or it his an error.  However, it introduces a transaction model where each process step is either committed when it is complete, or an error occurs -- it which case the process is put into `error` status and any work in the error step is rolled back.  If an error occurs, information about the error is available from the Flows for APEX application, and the step can be restarted after any underlying error has been resolved.
 
@@ -14,7 +14,7 @@ A BPMN Process Model represents a process, which is made up of a sequence of pro
 
 ### Flows for APEX Transaction Model
 
-Each step that proceses a bpmn Task (task, userTask, scriptTask, manualTask, serviceTask) can be broken into 3 phases:
+Each step that processes a bpmn Task (task, userTask, scriptTask, manualTask, serviceTask) can be broken into 3 phases:
 
 1. Pre-Task Phase: prepares the new step for processing by:
    1. locking the subflow and required related objects.
@@ -69,6 +69,5 @@ Flows for APEX handles errors appropriately to the step it is being used on.
 
 In general, two (or more) users shouldn't be completing the same step of a process at the same time, as only one will be able to perform the task and move the model forwards.
 
-Applications should handle collision control by using the Reservation mechanism before a user starts work on their task, signalling to other users that they are working on a task.
-
+Applications should handle collision control by using the Reservation mechanism before a user starts work on their task, signaling to other users that they are working on a task.
 

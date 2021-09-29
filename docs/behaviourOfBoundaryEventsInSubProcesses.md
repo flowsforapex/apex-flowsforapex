@@ -1,10 +1,10 @@
 # Behavior of Boundary Events in Sub-Processes (New in V5.0)
 
-This is where things get a little complex - but understanding and mastering boundary events will help you build powerful business processes without getting distracted by all of the painful details of handing process errors, escalation, and all of those other things that turn your simple process model into spagetti!
+This is where things get a little complex - but understanding and mastering boundary events will help you build powerful business processes without getting distracted by all of the painful details of handing process errors, escalation, and all of those other things that turn your simple process model into spaghetti!
 
 One of the good practice modeling concepts  in BPMN is to focus the model on the usual, happy-case path.  So your model should flow, left to right, along the happy case scenario.  The mess of error handling and special cases should be abstracted to the top and bottom of your model.
 
-Boundary Events come in several flavours, to handle:
+Boundary Events come in several flavors, to handle:
 
 - process errors
 - process escalation
@@ -12,7 +12,7 @@ Boundary Events come in several flavours, to handle:
 - reminders
 - interruptions
 
-Boundary Events can be attached to tasks (and task like activities) and to sub-processes.  This section covers behaviour of boundary events when applied to sub-processes only.
+Boundary Events can be attached to tasks (and task like activities) and to sub-processes.  This section covers behavior of boundary events when applied to sub-processes only.
 
 ### Error EndEvents and Error Boundary Events.
 
@@ -22,7 +22,7 @@ This process has a SubProcess A.  In the sub-process, there is an exclusive gate
 
 Note that an error in this context is a *process error*, not a technical error in the application -- which would be handled by the application technology.
 
-Behaviour is:
+Behavior is:
 
 - An Error End always interrupts processing in the sub-process.  Processing in the sub-process, and any of its running child sub-processes, are terminated.
 - Terminated objects are not marked as having been completed on the progress chart.
@@ -43,7 +43,7 @@ Timer Boundary Events can be *interrupting* or *non-interrupting*.
 A more complex example of how these can be used together is shown below.
 
 ![Timer Boundary Event Example](images/timerBoundaryConditionsExample.png "Timer Boundary Event Example")
-In this example, sub-Process B has 3 boundaryEvents attached to it.  In addition to the Error Exit Event and corresponding Error Boundary Event for handling the error in the parent process, there are 2 timer booundary events.
+In this example, sub-Process B has 3 boundaryEvents attached to it.  In addition to the Error Exit Event and corresponding Error Boundary Event for handling the error in the parent process, there are 2 timer boundary events.
 
 The Reminder Timer is set to fire after 2 days.  This is a non-interrupting timer.  When it fires, a reminder is sent to the user on a new subflow.  If Task B is completed before the boundary timer fires, the timer is terminated.  If the reminder timer fires, it starts a new subflow with Send Reminder as it's next task; Once the timer has fired, the subflow will continue to exist after the attached parent task (B) has been completed.
 

@@ -1,6 +1,6 @@
 ## Flows for APEX Tutorial
 
-We've created a series of short tutorials to take developers through the basics of creating and running a business process model in BPMN, using the <b><i>Flows for APEX</i></b> Modeller and Flow Monitor.
+We've created a series of short tutorials to take developers through the basics of creating and running a business process model in BPMN, using the <b><i>Flows for APEX</i></b> Flow Modeler and Flow Monitor.
 
 If you work through these 10 quick tutorials, you'll be able to use <b><i>Flows for APEX</i></b> to model your business processes, and then execute processes in APEX.
 Each tutorial is a Flows for APEX model that explains how it runs and how it is constructed.
@@ -13,16 +13,16 @@ Each tutorial is a Flows for APEX model that explains how it runs and how it is 
 * Tutorial 3 - Inclusive Gateways - but not always all of the parallel sections...
 * Tutorial 3A - Using Variable Expressions to set Process Variables from your Model 🆕
 * Tutorial 4 - Tasks Get your Work Done - How to call APEX pages, scripts, and send emails in your process
-* Tutorial 5 - Sub Processes - Encapsulating part of yiour process into a sub Process
-* Tutorial 6 - Errors and Escalatiuons - How to handle things needing help or going wrong in your process
+* Tutorial 5 - Sub Processes - Encapsulating part of your process into a sub Process
+* Tutorial 6 - Errors and Escalations - How to handle things needing help or going wrong in your process
 * Tutorial 7 - It's about Time - Adding timers to create reminders, process closing flows, process timeouts, etc.,
-* Tutorial 8 - Lanes and Reservations - modelling who does what
+* Tutorial 8 - Lanes and Reservations - modeling who does what
 
 Each tutorial is a Flows for APEX model that explains how it runs and how it is constructed.  You can open each model in the Process Modeler, to see how it has been configured.  You can modify and save your own copy of the model if you want to experiment.  And you can execute the model using the Flow Monitor, stepping through the model, step by step.</p>
 
 ### Installing the Tutorials
 
-If you are running the tutorials on your own system, you might need to run the tutorial installatiuon script first to install the tutorials.  Look in the distribution files for \bpmn_tutorials\install_tutorials.sql, which can be run from SQLDeveloper, SQLcl, etc.
+If you are running the tutorials on your own system, you might need to run the tutorial installation script first to install the tutorials.  Look in the distribution files for \bpmn_tutorials\install_tutorials.sql, which can be run from SQLDeveloper, SQLcl, etc.
 
 ### Getting Started in the FlowsforAPEX Application
 
@@ -43,7 +43,7 @@ If you wish to re-run the model, you can return to the Flow Instances tab, and c
 
 #### Next Steps
 
-Now you've got the basics of how to build a process model using BPMN for <b><i>Flows for APEX</i></b>, take a look at our demo application.  This uses an example Business Process of the ordering and fulfillment process for a webstore selling T Shirts.
+Now you've got the basics of how to build a process model using BPMN for <b><i>Flows for APEX</i></b>, take a look at our demo application.  This uses an example Business Process of the ordering and fulfillment process for a web store selling T Shirts.
 Before you go to the demo app, you can look at the process model for our Order Shipping process.  Just like you did for the tutorial models above, look for our model called 'Shipment_Process' in the Process Modeler.
 You can step through this process model using the Flow Monitor, if you want.
 

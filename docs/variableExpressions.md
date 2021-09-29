@@ -31,7 +31,7 @@ Data-types Supported:  varchar2, number, date, clob
 
 Substitutions Allowed:  none
 
-Format issues: None.  Process Variables are copied in-type from the source prrocess variable to the destination process variable.
+Format issues: None.  Process Variables are copied in-type from the source process variable to the destination process variable.
 
 #### 3. SQL Returning Single Value
 
@@ -41,11 +41,18 @@ Data-types Supported:  varchar2, number, date
 
 Substitutions Allowed: The query definition can contain Flows for APEX substitution variables, including `&F4A$process_id.`, `&F4A$subflow_id.`, `&F4A$<process_var_name>.`
 
-Format issues:  The query must return a value of the correct type to match the variable.  A query returning no data will result in the vaeriable being set to `null`.
+Format issues:  The query must return a value of the correct type to match the variable.  A query returning no data will result in the variable being set to `null`.
 
 Example:
 
-1. Variable King_Job defined as varchar2 with SQL query as select job from emp where ename = 'KING';  creates a varchar2 variable with content PRESIDENT.
+1. Variable King_Job defined as varchar2 with SQL query as 
+
+```sql
+select job 
+  from emp 
+ where ename = 'KING';
+```
+creates a varchar2 variable with content PRESIDENT.
 
 #### 4. SQL Returning Delimited List
 
@@ -59,7 +66,15 @@ Format issues:  The query must return zero or more varchar2 values, which will b
 
 Example:
 
-1. Variable Sales_staff defined as select ename from emp where deptno = 30 creates a variable Sales-staff of type varchar2 with content BLAKE:ALLEN:WARD:MARTIN:TURNER:JAMES
+1. Variable Sales_staff defined as 
+
+```sql
+select ename 
+  from emp 
+ where deptno = 30 
+```
+
+creates a variable Sales-staff of type varchar2 with content BLAKE:ALLEN:WARD:MARTIN:TURNER:JAMES
 
 #### 5. Expression
 
@@ -107,7 +122,7 @@ The current Process ID and Subflow ID are made available to you to use inside an
 ### Handling Errors in Variable Expressions
 
 Variable expression evaluation can fail if the expression definition contains an error, if they encounter data that is incorrect or not in the expected format, or for other reasons.
-If errors occur while processing process variable expressions, the behaviour depends on whether the failing expression is in the user's current step, or on a later step that has been automatically triggered by completing the current step.
+If errors occur while processing process variable expressions, the behavior depends on whether the failing expression is in the user's current step, or on a later step that has been automatically triggered by completing the current step.
 
 - if the error is in the user's current step, Flows for APEX will present an error message to the user, and typically not allow the user's current transaction to complete.
 - if the error is in a step triggered by the user's current step, for example in a gateway or a scriptTask following on from the user's current task, the user's transaction will be allowed to proceed;  any following steps that complete successfully will complete, but the step containing the error will be put into `error` status and will rollback.  After an administrator fixes the underlying problem, the failed step can be restarted from the Flow Monitor.

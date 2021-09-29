@@ -32,7 +32,7 @@ Probably.  However, we haven't done any feature comparison with Oracle Workflow.
 
 #### What kind of approval mechanisms can be built into a process flow?
 
-The Flows for APEX modeler allows you to create any sort of approval mechanism or hierarchy, using the gaphical process designer.  The limit here is your ability to model in BPMN.
+The Flows for APEX modeler allows you to create any sort of approval mechanism or hierarchy, using the graphical process designer.  The limit here is your ability to model in BPMN.
 
 #### Can I have a loop in my process?
 
@@ -93,7 +93,7 @@ The Flows for APEX API is a simple PL/SQL API that allows you to do the followin
 * the process progression calls:
 
   * optionally, to signal work is starting on the current task (this is just used for performance management, to distinguish between waiting time and work time on each step).
-  * optionally, to reserve the current step (signalling to other users that you are going to do that step).
+  * optionally, to reserve the current step (signaling to other users that you are going to do that step).
   * optionally, to release an existing reservation for the current step.
   * to complete the current step (and thus moving to the next step).
 * reset a process instance (not normally performed during production running, but useful during process development, testing or (carefully) process admin.
@@ -106,7 +106,7 @@ We provide a prebuilt view called FLOW_TASK_INBOX_VW which exposes currently ava
 
 #### How do I find out more about the API?
 
-in the distribution, look at the flow_api_pkg spec to see how to call the API.  
+in the distribution, look at the flow_api_pkg spec to see how to call the API.
 
 #### Is there a way to do a 'flow_previous_step' or undo a step?
 
