@@ -6,11 +6,11 @@ If you are running a process in a production environment, what happens when you 
 
 Process Versioning is a set of features that help you manage these issues.
 
-Each Process Diagram is identified by the process diagram name and version.  The version is freetext, and can support any version numbering scheme that you want.
+Each Process Diagram is identified by the process diagram name and version.  The version is free-text, and can support any version numbering scheme that you want.
 
 A Process Diagram also has a status.  A diagram would normally start off with a status of `draft`.  You might then edit this, save it again (without changing the version), then run it to test your process.  You might go through this cycle several times, edit, save, test...until you have a working process.  You can do anything to a `draft` document.
 
-Once you have a tested process diagram that is ready for production use, you can change it's status to `released`.  A released document can no longer be edited.  Only one version of a process diagram name can exist in `released` status at any one point in time. If you start a process instance without specifying a version, Flows for APEX will start the version that is in `released` status.
+Once you have a tested process diagram that is ready for production use, you can change its status to `released`.  A released document can no longer be edited.  Only one version of a process diagram name can exist in `released` status at any one point in time. If you start a process instance without specifying a version, Flows for APEX will start the version that is in `released` status.
 
 If you want to change the process, you would create a new version of the process diagram.  You can copy a diagram of any status to create your new version.  This new version would start with a status of `draft` while you edit and test it.  Once you are ready to move this new process diagram into production, you then change the status of the old process diagram to `deprecated` and change your new diagram to a status of `released`.  The new `released` process diagram will now be used to start any process instances.  Any process instances that are still running (in-flight) will continue to use the now `deprecated` process diagram that they were started with.
 
@@ -24,17 +24,17 @@ Most Flows for APEX users with production systems will need to use Process Versi
 
 ### Status Rules
 
-| status | draft | released | deprecated | archived |
-| :--- | :---: | :---: | :---: | :---: |
-| create a new diagram | ✔️ | - | - | - |
-|  can edit diagram |  ✔️ | 🛑   | 🛑  |  🛑 |
-| can delete diagram |  ✔️ | 🛑   | 🛑  |  ✔️ |
-|  start a new instance |  ✔️ |  ✔️ | 🛑  |  🛑 |
-| continue to run an existing instance | ✔️ | ✔️ | ✔️ |🛑  |
-| can be copied to a new version | ✔️ | ✔️ | ✔️ | ✔️ |
-| can be exported | ✔️ | ✔️ | ✔️ | ✔️ |
+
+| status                               | draft | released | deprecated | archived |
+| :------------------------------------- | :-----: | :--------: | :----------: | :--------: |
+| create a new diagram                 | ✔️ |    -    |     -     |    -    |
+| can edit diagram                     | ✔️ |    🛑    |     🛑     |    🛑    |
+| can delete diagram                   | ✔️ |    🛑    |     🛑     |   ✔️   |
+| start a new instance                 | ✔️ |   ✔️   |     🛑     |    🛑    |
+| continue to run an existing instance | ✔️ |   ✔️   |    ✔️    |    🛑    |
+| can be copied to a new version       | ✔️ |   ✔️   |    ✔️    |   ✔️   |
+| can be exported                      | ✔️ |   ✔️   |    ✔️    |   ✔️   |
 
 #### Application changes when processes change
 
 Depending upon the nature of changes that you make between process diagrams, your applications might need to be aware of the process version.
-

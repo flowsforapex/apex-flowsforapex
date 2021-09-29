@@ -9,15 +9,15 @@ In Flows for APEX, BPMN diagrams should use explicit Gateway objects to control 
 - Exclusive Gateways - where 1 forward path is chosen out of several possible options.
 - Parallel Gateways - where several forward paths are defined and ALL execute, creating multiple parallel flows.  At the end of a parallel section, the flows wait for each other at a closing Parallel Gateway before continuing as a single forward path.
 - Inclusive Gateway - where one or more forward paths are chosen to operate in parallel.  At the end of a parallel section, the flows wait for each other at a second, closing Parallel Gateway before the process continues forward on a single path.
-- Event-based Gateway - where the forward process flow continues down one of seberal paths, depending on which path an Event occurs on first.  These are covered in more details in the Events documentation.
+- Event-based Gateway - where the forward process flow continues down one of several paths, depending on which path an Event occurs on first.  These are covered in more details in the Events documentation.
 
 Flows for APEX does not currently support the BPMN Complex Gateway type.
 
 #### Explicit Gateway Definitions Only
 
-Except for certain exceptions decribed below, sequence flows that cause flows to split or change direction must be implicitly modelled with Gateway objects.
+Except for certain exceptions described below, sequence flows that cause flows to split or change direction must be implicitly modeled with Gateway objects.
 
-Implicit process flow splits, or flow control decisions using flow conditions, are not supported.  These process structures can easily be modelled using the gateway types that are available.
+Implicit process flow splits, or flow control decisions using flow conditions, are not supported.  These process structures can easily be modeled using the gateway types that are available.
 
 ![No Implicit Gateways](images/noImplicitGateways.png "No Implicit Gateways")
 
@@ -35,7 +35,7 @@ When a subflow reaches an exclusive gateway, the flow engine chooses the forward
 
 1. If a routing instruction is provided, it will take that path.  See 'Specifying a Routing Instruction Below'.
 2. Failing that, the Default Path is chosen.  See 'Default Paths on Exclusive Gateways' below.
-3. If no routing is provided, and no default is specified, an error is signalled.
+3. If no routing is provided, and no default is specified, an error is signaled.
 
 #### Specifying Routing Instructions for an Exclusive Gateway (New in V5.0, Changes in v21.1)
 
@@ -71,17 +71,17 @@ At a Parallel Gateway, all forward paths proceed in parallel with their own subf
 
 ![Split and re-Merged Parallel Flows](images/closedParallelGateway.png "Split and Merge Parallel Gateway")
 
-Adding a second Parallel Gateway causes the parallel workflows to merge and re-synchronise.  In the diagram above, Path A, Path B and Path C all wait at the Merging Parallel Gateway until all three paths have completed, before a single path proceeds to task D.
+Adding a second Parallel Gateway causes the parallel workflows to merge and re-synchronize.  In the diagram above, Path A, Path B and Path C all wait at the Merging Parallel Gateway until all three paths have completed, before a single path proceeds to task D.
 
-A parallel workflow does not have to re-merge and re-synchronise.  You can have all of the forward paths proceed to their own process end events, so shown in this diagram.
+A parallel workflow does not have to re-merge and re-synchronize.  You can have all of the forward paths proceed to their own process end events, so shown in this diagram.
 
 ![Split and Continue Parallel Flows](images/parallelSeparateEnds.png "Split and Continue to Separate Ends")
 
-Note, however, that merging and synchronisation has to occur either for all of the parallel flows, or for none of them.  Having 2 of the forward paths re-merge, but one continue to it's own end -- as shown in the diagram below - is not supported.
+Note, however, that merging and synchronization has to occur either for all of the parallel flows, or for none of them.  Having 2 of the forward paths re-merge, but one continue to it's own end -- as shown in the diagram below - is not supported.
 
 ![Non Balanced Parallel Flows](images/parallelSplitClosure.png "Split and non-Balanced Ends")
 
-A parallel workflow that merges should usually be merged with an explicit merge / re-synchronise gateway.  The following scenario shows an implicit merger, without a closing Parallel Gateway.  If you created this workflow, note that all of the parallel paths will continue to execute Task D and then end.  So D would be executed 3 times.  While you might have a business process where this is the desired behaviour, this is likely to be unusual!
+A parallel workflow that merges should usually be merged with an explicit merge / re-synchronize gateway.  The following scenario shows an implicit merger, without a closing Parallel Gateway.  If you created this workflow, note that all of the parallel paths will continue to execute Task D and then end.  So D would be executed 3 times.  While you might have a business process where this is the desired behavior, this is likely to be unusual!
 
 ![Implicit Mergers](images/parallelNoClosureA.png "Implicit Merger")
 
@@ -91,7 +91,7 @@ It's usually fairly easy to re-write process structure to create balanced gatewa
 
 A merging Parallel Gateway can also be used to merge, synchronize, and then re-split the flow -- as in the following diagram.
 
-![Parallel Gateway Merge and Resplit](images/parallelMergeSplit.png "Parallel Gateway Merge and Resplit")
+![Parallel Gateway Merge and Re-split](images/parallelMergeSplit.png "Parallel Gateway Merge and Re-split")
 
 Flows for APEX does not support a standalone parallel gateway as a merging event.  Merging can only be done for workflows that were earlier split by an equal Parallel Gateway.
 
@@ -101,16 +101,16 @@ An Inclusive Gateway allows one or more of the possible forward paths to occur, 
 
 ![Typical Inclusive Gateway Process](images/inclusiveClosed.png "Typical Inclusive Gateway Process")
 
-In this example, the business process of a manufacturer allows goods to be shipped by air, by sea, and to have additional consumer packaging added.  One, two, or all three of these options can be chosen.  Thec processes merge / re-synchronise at the matching closing Inclusive Gateway, labelled "ABC Merge", before proceeding to task E.
+In this example, the business process of a manufacturer allows goods to be shipped by air, by sea, and to have additional consumer packaging added.  One, two, or all three of these options can be chosen.  The processes merge / re-synchronize at the matching closing Inclusive Gateway, labelled "ABC Merge", before proceeding to task E.
 
 Like with Parallel Gateways, Inclusive Gateways must either:
 
 - occur in a balanced pair, where all of the options start at one opening Inclusive Gateway and then all end at a matching closing / merging Inclusive Gateway, or
-- start with an Inclusive Gateway, and then all of the optional parral paths proceed to their own end events.
+- start with an Inclusive Gateway, and then all of the optional parallel paths proceed to their own end events.
 
-At the merging / closing Inclusive Gateway, all routes that were started must complete at the gateway before the single forward path commences.  This re-sychronises the overall process before it continues.
+At the merging / closing Inclusive Gateway, all routes that were started must complete at the gateway before the single forward path commences.  This re-synchronizes the overall process before it continues.
 
-If no closing gateway is incuded, all routes must proceed to their own end events, as in the diagram below.
+If no closing gateway is included, all routes must proceed to their own end events, as in the diagram below.
 
 ![Inclusive Gateway with Separate End Events](images/inclusiveSeparateEnds.png "Inclusive Gateway with Separate End Events")
 
@@ -122,7 +122,7 @@ When a subflow reaches an exclusive gateway, the flow engine chooses the forward
 
 1. If a routing instruction is provided, it will take those paths.  See 'Specifying a Routing Instruction Below'.
 2. Failing that, the Default Path is chosen.  See 'Default Paths on Exclusive Gateways' below.
-3. If no routing is provided, and no default is specified, an error is signalled.
+3. If no routing is provided, and no default is specified, an error is signaled.
 
 #### Specifying Routing Instructions for an Inclusive Gateway (New in V5.0)
 

@@ -1,6 +1,6 @@
 ### Using Tasks to Implement Your Process
 
-In your BPMN process, it is the Task objects that actually do the work!  Starting with Flows for APEX V5.0, tasks can be modelled with specialty task objects that call  APEX pages, run scripts, and send messages.  This section describes those tasks and how to use and configure them.
+In your BPMN process, it is the Task objects that actually do the work!  Starting with Flows for APEX V5.0, tasks can be modeled with specialty task objects that call  APEX pages, run scripts, and send messages.  This section describes those tasks and how to use and configure them.
 
 ![task types](images/taskTypes.png "Task types")
 
@@ -8,11 +8,11 @@ In your BPMN process, it is the Task objects that actually do the work!  Startin
 
 ###### 1. bpmn:task - Task
 
-This is the standard bpmn task.  It has no special behaviour when a process is executed.
+This is the standard bpmn task.  It has no special behavior when a process is executed.
 
 ###### 2. bpmn:userTask - Calls an APEX Page
 
-userTask objects can be used to call an APEX page.  usertasks are configured in the APEX tab of the Flows for APEX modeler properties panel with the information required to call an APEX page.  This configuration will be familiar to anyone who has configured APEX menus.
+userTask objects can be used to call an APEX page.  userTasks are configured in the APEX tab of the Flows for APEX modeler properties panel with the information required to call an APEX page.  This configuration will be familiar to anyone who has configured APEX menus.
 
 ![configuration of userTasks](images/configureUserTask.png "configuring userTasks in the Flows for APEX modeler")
 
@@ -48,7 +48,7 @@ Process variables and pseudo variables are available inside your PL/SQL procedur
   flow_global.subflow_id
   ```
 
-In earlier versions of Flows for APEX, prior to v21.1, you could have done this using the syntax flow_plsql_runner_package.g_current_prcs_id, which is now deprecated.
+In earlier versions of Flows for APEX, prior to v21.1, you could have done this using the syntax flow_plsql_runner_pkg.g_current_prcs_id, which is now deprecated.
 
 For example, where we have a process variable ordr_id that is used to link our business process to its subject order, we can retrieve the order ID inside our procedure using the following code snippet:
 
@@ -59,7 +59,7 @@ l_order_id   := flow_process_vars.get_var_vc2(pi_prcs_id => l_process_id, pi_var
 
 APEX Page Item values are available to your procedure if you opt to bind them into your process in the modeler.  By default, they are not available.
 
-Note that, depending upon your process, a scriptTask might not be executed from the context of an APEX page, and so APEX items might not be available.  This would occur if a script is run later, after another user has performed part of the process, or if a task operates as a result of, for example, a timer firing.  If this is the case, you should use Flows for APEX process variables to provide a variable system that is perisant for the life of your business process, rather than APEX page variables which only persist during a user session.
+Note that, depending upon your process, a scriptTask might not be executed from the context of an APEX page, and so APEX items might not be available.  This would occur if a script is run later, after another user has performed part of the process, or if a task operates as a result of, for example, a timer firing.  If this is the case, you should use Flows for APEX process variables to provide a variable system that is persistent for the life of your business process, rather than APEX page variables which only persist during a user session.
 
 ###### 4. bpmn:serviceTask - for sending email
 

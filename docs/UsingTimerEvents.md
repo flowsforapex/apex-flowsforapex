@@ -39,7 +39,7 @@ In the example below, task C has an attached interrupting timer.  If task C is c
 ## Non Interrupting Timer Boundary Events
 
 These can be set on a task, a userTask, or a subProcess.  When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task continues, and a new subflow starts to operate in parallel to execute the 'reminder' path.  The new 'reminder path' performs a task_complete on the boundary event, moving the process on to the first task on that path.
-Non-Interupting Timer Boundary Events are used to implement reminder processes, or to start time-delayed parallel process paths.  If the underlying task completes before the timer fires, the 'reminder path' timer and associated subflow are deleted.
+Non-Interrupting Timer Boundary Events are used to implement reminder processes, or to start time-delayed parallel process paths.  If the underlying task completes before the timer fires, the 'reminder path' timer and associated subflow are deleted.
 Multiple non-interrupting timer events can be set on a single task, userTask, or subProcess.
 In the example above, task A has one non-interrupting boundary timer attached to it.  If task A is not completed in the given 20 seconds, the timer fires - which starts task 'A Reminder' on a parallel subflow to the main subflow.
 
@@ -90,7 +90,7 @@ Under Timer, select the type of timer you want.  Under Timer Definition, specifi
   PT5M represents 5 minutes.
   PT30S represents 30 seconds.
   ```
-- Cycle Timer: specifies the date/time for an initial run and then definied intervals for repitition.  **__Although they can be specified in the Flow Modeler, Cycle Timers are not currently supported in Flows for APEX.__**
+- Cycle Timer: specifies the date/time for an initial run and then defined intervals for repetition.  **__Although they can be specified in the Flow Modeler, Cycle Timers are not currently supported in Flows for APEX.__**
 
   To start a process repetitively, use APEX Automations.
 
@@ -104,7 +104,7 @@ Under Timer, select the type of timer you want.  Under Timer Definition, specifi
 
 Starting in V5 (5.0.1), the timer definition defined in your process diagram can be a Flows for APEX process variable.  This provides considerable process flexibility, especially with Date type timers.
 
-To specify a process variable in the BPMN Modeller - Properties Panel, you specify the variable with &F4A$ prefix and a period (.) suffix.  So the process variable
+To specify a process variable in the BPMN Modeler - Properties Panel, you specify the variable with &F4A$ prefix and a period (.) suffix.  So the process variable
 
 ```
 my_timer    could be specified as &F4A$my_timer.
@@ -114,7 +114,7 @@ For a Timer Definition Type 'Date', the process variable should be of type DATE.
 
 For a Timer Definition Type of 'Duration' or 'Cycle', the process variable should be of type VARCHAR2.
 
-In the following example, a scriptTask is used to calculate a process variable, `nextClosePlus2D`, which contains the date of the company's next finacial close plus 2 days.  This variable is then used to set an Intermediate Timer Catch Event.  The Timer on this event is set to fire at `nextClosePlus2D`.  You can see how this has been specified on the Timer Definition, using the Flows for APEX process variable substitution syntax.
+In the following example, a scriptTask is used to calculate a process variable, `nextClosePlus2D`, which contains the date of the company's next financial close plus 2 days.  This variable is then used to set an Intermediate Timer Catch Event.  The Timer on this event is set to fire at `nextClosePlus2D`.  You can see how this has been specified on the Timer Definition, using the Flows for APEX process variable substitution syntax.
 
 ![Using Process Variables in Timer Event](images/usingProcessVarsInTimerDefs.png "Using Process Variables for Timer Event")
 
