@@ -13,9 +13,11 @@ A BPMN business process step is a similar concept:  requesting  to complete the 
 
 In a typical implementation of a business process, each activity in the Process Model would be implemented as a database transaction.  Sometimes a step might do several database transactions, but then the step would be responsible for managing the coordination of transactions within a step.  But a  transaction shouldn't normally span multiple process steps.
 
-The intended use case for Flows for APEX is that a database transaction boundary and a step boundary occur together.
+The intended use case for Flows for APEX is that all of your database activities (inserts, updates, deletes) that make up a process step,  **and** all of the Flow engine work required to facilitate a process step -  all occur together in a single database transaction.  This means that the entire process step is committed into the database, or is rolled back if something interrupts processing.
 
 ### Flows for APEX Transaction Model
+
+![Process Step Phases](images/transaction-step-phases2.png)
 
 Each step that processes a bpmn Task (task, userTask, scriptTask, manualTask, serviceTask) can be broken into 3 phases:
 
@@ -51,17 +53,19 @@ Let's look in detail at what happens at a very simple 3-step process for process
 
 ![Example Vacation Request Model](images/transactions-example1.png)
 
-When the Process Instance starts, it moves forward to Step A, which requires the user to complete a form.  Task A is *asynchronous*, in that user task A waits for user input and for the user to complete the task before proceeding.
+When the Process Instance starts, it moves forward to Step A, which requires the user to complete a form.  Task A is *asynchronous*, in that user task A waits for user input and for the user to complete the task before proceeding.  The next diagram shows a very simoplified view of the transactions that the APEX forms and the PL/SQL script might be using to update the database, along with the points at which these might be committed to the database - the transaction boundaries.
+
+![Example Vacation Request Model](images/transactions-example-1a.png)
 
 #### Going from Step A to Step B
 
-Let's look in detail at what happens from the point where the user is completing a form in APEX to apply for their vacation.
+Let's look in detail at what happens from the point where the user is completing a form in APEX to apply for their vacation, and we are using Flows for APEX to control the process flow.
 
 We start with the user working on her vacation application, part of Step A, which she is doing by completing an APEX form page.
 
 - when the user submits the page for processing, APEX will perform Page Processing:
   
-  - this will do Standard Page Processing (DML) Operations to update the database
+  - this will do Standard Page Processing (DML) Operations to update the database (the `insert into vacation_requests...`)
   - and directly, or using the Flow Instance Step Operations plugin, the app issues a `flow_complete_step` call to the Flows for APEX engine.
 - Flows for APEX will then perform its Post-Step Phase operations for Step A.  These prepare for moving to the next Process Step by:
   
@@ -130,23 +134,29 @@ Errors occur for a variety of reasons, that can include:
 - errors in process variable expressions, defined in your model
 - process variables containing unexpected data
 - other unexpected data / data quality issues.
-
-![subflowWithError](images/subflowInError.png "Showing Errors on a Subflow")
-
 Flows for APEX handles errors appropriately to the step it is being used on.
 
 - if an error occurs in the user's current step of a process, such that the user's current step cannot be completed, an error message is returned to the user as soon as it is detected, and the current step does not complete.  This would occur in the Post-Task Phase of the current step - i.e., in the first Post-Task Phase processed immediately after sending a `flow_complete_step` request.
+
+![Showing Errors In the Current Step](images/transactions-error1.png "Showing Errors In the Current Step")
+
 - Once the user's current step has completed its immediate Post-Task Phase and the current step has been committed to the database, any errors that occur will be in a Subsequent Step.  There might be additional Subsequent Steps if the subflow then processes synchronous tasks, such as scriptTasks or serviceTasks, or gateways or event handlers.
+
+![Showing Errors In the Next Step](images/transactions-error2.png "Showing Errors In the Next Step")
+
 - Any errors that occur when a Subsequent Step is being processed will not return an error message to the user performing the Current Step.  Instead:
   - the error will be logged in the Instance Event Log.
-  - the Subsequent Step will be rolled back to the beginning.
+  - the Subsequent Step will be rolled back to the beginning of the Step.
   - the subflow containing the error will be put into `error` status.
   - the Flow Instance containing the error will be put into `error` status.
+    
+    ![subflowWithError](images/subflowInError.png "Showing Errors on a Subflow")
+    
   - after finding and fixing the source of the error, the Subsequent Step can be restarted from the Flows for APEX application, or from the API using the `flow_restart_step` call.
 
 ### Problems to Avoid in Your Application
 
-The transaction model described in great detail above ties database transactions and process steps together -- which will normally be the required behavior.  Flows for APEX and APEX itself effectively work together to commit \transactions and process steps at the required points of the transaction / step.  Note that it is Flows for APEX that knows when the process step boundaries occur, and which commits transactions at process step boundaries.
+The transaction model described in great detail above ties your custom database operations and the process step together so that application and process engine work together within the same database transaction -- which will normally be the required behavior.  Flows for APEX and APEX itself effectively work together to commit transactions and process steps at the required points of the transaction / step.  Note that it is Flows for APEX that knows when the process step boundaries occur, and which commits transactions at process step boundaries.
 
 ![Setting Instance Operations inside APEX Page Processing Correctly](images/transactions-apex-designer1.png "Setting Instance Operations inside APEX Page Processing Correctly") ![Setting Instance Operations inside APEX Page Processing](images/transactions-apex-designer2.png "Setting Instance Operations inside APEX Page Processing Badly")
 
