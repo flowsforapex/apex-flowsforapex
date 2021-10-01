@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v21.1                 *
+*            Flows for APEX v21.1.1               *
 *          Installation instructions              *
 *                                                 *
 *                                                 *
@@ -18,13 +18,23 @@ PREREQUISITES
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "FLOWSFORAPEX_APEX201_984339_UTF8_V21.1.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "FLOWSFORAPEX_APEX201_984339_UTF8_V21.1.1.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
+- Refresh the theme when installing the app in APEX versions 20.2 or higher
 - Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEX211_SAMPLE_APP_EXPENSE_CLAIMS_EN_APEX201_984341_UTF8_V1.0.sql"
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
 
+MIGRATING EXISTING INSTALLATIONS
+- Always backup your existing installation first
+- Download the source code at https://github.com/mt-ag/apex-flowsforapex
+- Start sqlcl und connect with the workspace schema where Flows for APEX is installed
+- Run migrate_all.sql
+Please be aware that you can only migrate to the subsequent release (ie. 21.1 to 21.1.1 or 5.1.2 to 21.1, but not 5.1.2 to 21.1.1)
+
 HISTORY
+* v21.1.1
+
 * v21.1
   - Introduces model-based declarative process variable expressions to set process variables before and after each step.
   - Introduces 3 process plugins to ease application integration:
