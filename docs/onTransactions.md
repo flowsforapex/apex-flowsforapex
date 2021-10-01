@@ -53,7 +53,7 @@ Let's look in detail at what happens at a very simple 3-step process for process
 
 ![Example Vacation Request Model](images/transactions-example1.png)
 
-When the Process Instance starts, it moves forward to Step A, which requires the user to complete a form.  Task A is *asynchronous*, in that user task A waits for user input and for the user to complete the task before proceeding.  The next diagram shows a very simoplified view of the transactions that the APEX forms and the PL/SQL script might be using to update the database, along with the points at which these might be committed to the database - the transaction boundaries.
+When the Process Instance starts, it moves forward to Step A, which requires the user to complete a form.  Task A is *asynchronous*, in that user task A waits for user input and for the user to complete the task before proceeding.  The next diagram shows a very simplified view of the transactions that the APEX forms and the PL/SQL script might be using to update the database, along with the points at which these might be committed to the database - the transaction boundaries.
 
 ![Example Vacation Request Model](images/transactions-example-1a.png)
 
