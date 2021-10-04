@@ -62,7 +62,7 @@ create or replace PACKAGE BODY flow_notif_pkg AS
         END IF;
       -- Get template fields
 
-        dbms_lob.createtemporary(l_templ_content_all, true);
+        sys.dbms_lob.createtemporary(l_templ_content_all, true);
         FOR c1_row IN c1 LOOP dbms_lob.append(l_templ_content_all, c1_row.colvalue);
         END LOOP;
       -- Extract tags
@@ -76,7 +76,7 @@ create or replace PACKAGE BODY flow_notif_pkg AS
         l_templ_tags_temp := l_templ_tags_all;
         l_templ_tags_all := l_templ_tags_all MULTISET UNION DISTINCT l_templ_tags_temp;
       -- Get process values
-        dbms_lob.createtemporary(l_p_placeholders, true);
+        sys.dbms_lob.createtemporary(l_p_placeholders, true);
         FOR i IN 1..l_templ_tags_all.count LOOP BEGIN
             SELECT
                 prov_var_name,
@@ -99,7 +99,7 @@ create or replace PACKAGE BODY flow_notif_pkg AS
                 prov_var_name = l_templ_tags_all(i);
          -- Prepare placeholders
 
-            dbms_lob.append(l_p_placeholders,
+            sys.dbms_lob.append(l_p_placeholders,
                 CASE i
                     WHEN l_first_record THEN
                         '{'
@@ -116,17 +116,17 @@ create or replace PACKAGE BODY flow_notif_pkg AS
         END;
         END LOOP;
 
-        dbms_lob.append(l_p_placeholders, '}');
+        sys.dbms_lob.append(l_p_placeholders, '}');
       
         apex_mail.send(p_to => 'fs@frasit.com'/*Parameter TBD*/, p_template_static_id => p_template_ident, p_placeholders => l_p_placeholders);
 
-        dbms_lob.freetemporary(l_templ_content_all);
-        dbms_lob.freetemporary(l_p_placeholders);
+        sys.dbms_lob.freetemporary(l_templ_content_all);
+        sys.dbms_lob.freetemporary(l_p_placeholders);
         p_return_code := 0;
     EXCEPTION
         WHEN OTHERS THEN
-            dbms_lob.freetemporary(l_templ_content_all);
-            dbms_lob.freetemporary(l_p_placeholders);
+            sys.dbms_lob.freetemporary(l_templ_content_all);
+            sys.dbms_lob.freetemporary(l_p_placeholders);
             p_return_code := 1;
             RAISE;
     END send_notification;
