@@ -14,7 +14,7 @@ A *Flow* or Business Process is defined using a BPMN Diagram, which is identifie
 
 ![Order Shipment Process](images/ShipmentProcess.png)
 
-A *Flow Instance* is one occurence of this Flow or business process.  Building on our Shipping example, this process model would be followed for all orders.  There would be one Flow Instance followed for each order processed.
+A *Flow Instance* is one occurrence of this Flow or business process.  Building on our Shipping example, this process model would be followed for all orders.  There would be one Flow Instance followed for each order processed.
 
 Within that flow instance, there could be one or more *subflows* running at any time.  Each *subflow* is a branch of the process tree.  Continuing to build our example, the process instance starts with a single subflow running. Once it passes the first object, a parallel gateway, there would then be two subflows running - one with 'Decide if ...' activity as the next activity, and a second with 'Package Goods' as it's first activity.
 
@@ -56,14 +56,14 @@ When a subflow reaches an Exclusive Gateway, it just continues along on the chos
 
 #### Action at a Parallel Gateway
 
-An opening Parallel Gateway acts as the launch point for multiple forward paths.  Unless each forward path continues to its own End Event, the parallel paths all meet at a closing, or synchronising parallel gateway later in the process.
+An opening Parallel Gateway acts as the launch point for multiple forward paths.  Unless each forward path continues to its own End Event, the parallel paths all meet at a closing, or synchronizing parallel gateway later in the process.
 
 At an opening Parallel Gateway:
 
 - the incoming subflow is suspended with a status of `split`.
 - a new child subflow is created for each of the forward paths.  Each child subflow has a starting object set to the Gateway, last completed object set to the Gateway, and a `flow_complete_step` is performed to move it onto the first object in that subflow.
 
-A merging Parallel Gateway has to sychronise the parallel child subflows, and once all of the parallel child subflows have completed (reached the Gateway), then causes the process to move forwards again on a single branch.  This then acts as a merge and a sychronisation of the child subflows back into the parent.
+A merging Parallel Gateway has to synchronize the parallel child subflows, and once all of the parallel child subflows have completed (reached the Gateway), then causes the process to move forwards again on a single branch.  This then acts as a merge and a synchronization of the child subflows back into the parent.
 
 At a merging Parallel Gateway:
 
@@ -75,7 +75,7 @@ At a combined merging and reopening Parallel Gateway, all of the incoming child 
 
 #### Action at an Inclusive Gateway
 
-An opening Inclusive Gateway acts as the launch point for one or more forward paths, depending upon meeting the conditions required for each path.  Unless each forward path continues to its own End Event, the parallel paths all meet at a closing, or synchronising parallel gateway later in the process.
+An opening Inclusive Gateway acts as the launch point for one or more forward paths, depending upon meeting the conditions required for each path.  Unless each forward path continues to its own End Event, the parallel paths all meet at a closing, or synchronizing parallel gateway later in the process.
 
 The basic subflow mechanism is similar to that for a parallel gateway, described above.
 
@@ -128,7 +128,7 @@ At the end of a sub process, if there are no other active subflows, the sub proc
 
 At the end of a process, the engine checks whether there are any other subflows still active.  If not, the Process Instance has completed and the Process has its process status set to `completed`.
 
-If the End Event is a Terminating End Event inside a SubProcess, all processing on the subflow and all other subflows inside the SubProcess, including any lower level SubProcesses, is terminated and the parent subflow progesses to the object after the SubProcess.
+If the End Event is a Terminating End Event inside a SubProcess, all processing on the subflow and all other subflows inside the SubProcess, including any lower level SubProcesses, is terminated and the parent subflow progresses to the object after the SubProcess.
 
 If the End Event is a Terminating End Event in the top level of a Flow, all processing of the Flow Instance stops.  Depending on the definition of the Terminating End Event in the BPMN model, you can control whether the Flow Instance is marked as `terminated` or `completed`.  If you use a Terminate End Event in your model to trap a process error, you can set the resulting Instance status as `terminated` so that an administrator is aware that the process instance did not run to its normal, successful solution.
 
@@ -167,9 +167,9 @@ When a process is reset:
 
 - any event handlers, such as timers, are terminated.
 - any current subflows are removed.
-- process progress is reset to the begining, showing which objects were completed when the process ran.
+- process progress is reset to the beginning, showing which objects were completed when the process ran.
 - any process variables attached to the instance, except for built-ins like BUSINESS_REF, are deleted.
-- **Note that this behaviour has changed in v21 - previously all process variables were retained on a reset.**
+- **Note that this behavior has changed in v21 - previously all process variables were retained on a reset.**
 - the process status is reset to `created`.
 - the reset is logged in the instance event log, if logging is enabled.
 
