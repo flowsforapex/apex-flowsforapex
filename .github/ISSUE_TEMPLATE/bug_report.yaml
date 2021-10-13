@@ -1,0 +1,63 @@
+name: Bug report
+description: Report a bug you've found
+title: "[bug]: "
+labels: "bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: dropdown
+    id: flows4apex_version
+    attributes:
+      label: Flows for APEX version
+      options:
+        - 5.1.1
+        - 5.1.2
+        - 21.1
+    validations:
+      required: true
+  - type: dropdown
+    id: oracle_db_version
+    attributes:
+      label: Oracle Database version
+      description: We only support Oracle Database 12.2 and higher
+      options:
+        - 12.1 and lower (unsupported)
+        - 12.2
+        - 18
+        - 19
+        - 21
+    validations:
+      required: true
+  - type: dropdown
+    id: oracle_apex_version
+    attributes:
+      label: Oracle APEX version
+      description: We only support Oracle APEX 20.1 and higher
+      options:
+        - 19.2 and lower (unsupported)
+        - 20.1
+        - 20.2
+        - 21.1
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: |
+        A clear and concise description of what the bug is.
+        If applicable, add screenshots to help explain your problem.
+    validations:
+      required: true
+  - type: textarea
+    id: step-to-reproduce
+    attributes:
+      label: Steps to reproduce 
+      description: Help us to reproduce your issue by adding details of the different steps.
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behaviour
+      description: A clear and concise description of what you expected to happen.

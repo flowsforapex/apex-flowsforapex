@@ -1,0 +1,27 @@
+
+name: Feature request
+description: Suggest an idea for this project
+title: "[enhancement]: "
+labels: "enhancement"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+        Please make sure you have tested the latest version of *Flows for APEX*
+  - type: textarea
+    id: describe-feature
+    attributes:
+      label: Feature description
+      description: Please describe the functionality in as much detail as possible. If it's relevant, you can add screenshots here. 
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the feature request here.
