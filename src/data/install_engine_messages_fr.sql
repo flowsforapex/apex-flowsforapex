@@ -309,7 +309,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-set-error',
 'fr',
-'Erreur %0 variable de processus %1 pour l''ID de processus %1.'
+'Erreur %0 variable de processus %1 pour l''ID de processus %2.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

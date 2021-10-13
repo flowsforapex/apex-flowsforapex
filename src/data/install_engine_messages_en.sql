@@ -311,7 +311,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-set-error',
 'en',
-'Error %0 process variable %1 for process id %1.'
+'Error %0 process variable %1 for process id %2.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
