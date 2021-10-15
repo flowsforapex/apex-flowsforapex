@@ -960,6 +960,7 @@ begin
       , p0 => p_subflow_id
       );
       -- $F4AMESSAGE 'no_next_step_found' || 'No Next Step Found on subflow %0.  Check your process diagram.'
+    when too_many_rows then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => p_process_id
       , pi_sbfl_id        => p_subflow_id
