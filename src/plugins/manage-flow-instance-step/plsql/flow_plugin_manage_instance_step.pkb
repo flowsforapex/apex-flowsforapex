@@ -330,6 +330,17 @@ create or replace package body flow_plugin_manage_instance_step as
               p_process_id => l_process_id
             , p_subflow_id => l_subflow_id
          );
+      elsif ( l_attribute5 = 'start' ) then
+         apex_debug.info(
+              p_message => '...Start Step - Flow Instance Id %s - Subflow Id %s'
+            , p0        => l_process_id
+            , p1        => l_subflow_id
+         );
+
+         flow_api_pkg.flow_start_step(
+              p_process_id => l_process_id
+            , p_subflow_id => l_subflow_id
+         );
       end if;
 
       -- Return Flow Instance Id and Subflow Id in the APEX items provided
