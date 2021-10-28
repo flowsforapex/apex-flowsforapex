@@ -430,7 +430,9 @@ function addProcessVariable(action, focusElement){
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
-        data.x05 = apex.item("P8_CONNECTION").getValue();
+        var selectOption = apex.item("P8_SELECT_OPTION").getValue();
+        var route = selectOption === "single" ? apex.item("P8_CONNECTION").getValue() : apex.item("P8_CONNECTION").getValue().join(":");
+        data.x05 = selectOption = route;
       } else {
         data.x03 = apex.item("P8_PROV_VAR_NAME").getValue();
         data.x04 = apex.item("P8_PROV_VAR_TYPE").getValue();
@@ -498,7 +500,9 @@ function updateProcessVariable(action, focusElement){
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
-        data.x05 = apex.item("P8_CONNECTION").getValue();
+        var selectOption = apex.item("P8_SELECT_OPTION").getValue();
+        var route = selectOption === "single" ? apex.item("P8_CONNECTION").getValue() : apex.item("P8_CONNECTION").getValue().join(":");
+        data.x05 = selectOption = route;
       } else {
         data.x03 = apex.item("P8_PROV_VAR_NAME").getValue();
         data.x04 = apex.item("P8_PROV_VAR_TYPE").getValue();
