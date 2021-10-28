@@ -100,21 +100,21 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'logging-instance-event',
-'en',
+'fr',
 'Flows - Erreur interne lors de l''enregistrement d''un évènement d''instance'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'logging-step-event',
-'en',
+'fr',
 'Flows - Erreur interne lors de l''enregistrement d''un évènement d''étape'
 );
 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'logging-variable-event',
-'en',
+'fr',
 'Flows - Erreur interne lors de l''enregistrement d''un évènement de variable'
 );
  
