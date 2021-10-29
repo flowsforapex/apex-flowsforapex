@@ -85,7 +85,8 @@ Reservation is not an authorization control, and is not security relevant / enfo
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_reservation   in flow_subflows.sbfl_reservation%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type
+  , p_reservation   in flow_subflows.sbfl_reservation%type default null
   );  
 /***
 Procedure flow_release_step
@@ -96,6 +97,7 @@ Flow_release_step releases a previously made reservation.
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   ); 
 /***
 Procedure flow_start_step
@@ -109,6 +111,7 @@ Despite being optional, a well formed, best-practice application will use this c
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   );
 
 /*** Procedure flow_restart_step
@@ -122,6 +125,7 @@ It should only be used on a subflow having a status of 'error'
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   );
 
@@ -136,6 +140,7 @@ is used to move a process forward, regardless of the object type.
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   ); 
 
 /***

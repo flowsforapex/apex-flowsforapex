@@ -137,6 +137,7 @@ CREATE TABLE flow_subflows (
     sbfl_route            VARCHAR2(100 CHAR),
     sbfl_last_completed   VARCHAR2(50 CHAR),
     sbfl_current          VARCHAR2(50 CHAR),
+    sbfl_step_key         VARCHAR2(20 CHAR), /*make not null before shipping*/
     sbfl_status           VARCHAR2(20 CHAR),
     sbfl_became_current   TIMESTAMP WITH TIME ZONE,
     sbfl_work_started     TIMESTAMP WITH TIME ZONE,

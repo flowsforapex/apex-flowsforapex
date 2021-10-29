@@ -146,6 +146,7 @@ as
   procedure flow_reserve_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   , p_reservation   in flow_subflows.sbfl_reservation%type
   )
   is 
@@ -161,6 +162,7 @@ as
   procedure flow_release_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   )
   is 
   begin
@@ -175,6 +177,7 @@ as
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   )
   is 
   begin
@@ -188,6 +191,7 @@ as
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   )
   is 
@@ -207,6 +211,7 @@ as
   procedure flow_complete_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   )
   is 
   begin
