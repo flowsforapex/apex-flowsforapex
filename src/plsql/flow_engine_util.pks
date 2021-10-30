@@ -40,6 +40,12 @@ as
   , p_lock_process  in boolean default false
   ) return flow_subflows%rowtype;
 
+  function step_key
+  ( pi_sbfl_id        in flow_subflows.sbfl_id%type
+  , pi_current        in flow_subflows.sbfl_current%type
+  , pi_became_current in flow_subflows.sbfl_became_current%type
+  ) return flow_subflows.sbfl_step_key%type;
+
   procedure subflow_complete
   ( p_process_id        in flow_processes.prcs_id%type
   , p_subflow_id        in flow_subflows.sbfl_id%type

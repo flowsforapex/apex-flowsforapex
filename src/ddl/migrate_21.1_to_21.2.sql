@@ -22,4 +22,6 @@ update flow_subflows
 
 alter table flow_subflows modify (sbfl_step_key not null); 
 /
-                             
+-- put migrated systems into legacy mode for step keys
+insert into flow_configuration (cfig_key, cfig_value) values ('duplicate_step_prevention','legacy');
+

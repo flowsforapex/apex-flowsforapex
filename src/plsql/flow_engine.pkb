@@ -1281,6 +1281,8 @@ is
   l_sbfl_rec              flow_subflows%rowtype;
   l_step_info             flow_types_pkg.flow_step_info;
   l_dgrm_id               flow_diagrams.dgrm_id%type;
+  l_timestamp             flow_subflows.sbfl_became_current%type;
+  l_step_key              flow_subflows.sbfl_step_key%type;
  -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
   apex_debug.enter 
@@ -1345,13 +1347,20 @@ begin
     , p1        => l_sbfl_rec.sbfl_current
     );
   else
+    l_timestamp := systimestamp;
+    l_step_key  := flow_engine_util.step_key ( pi_sbfl_id         => p_subflow_id
+                                             , pi_current         => l_step_info.target_objt_ref
+                                             , pi_became_current  => l_timestamp
+                                             );
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
       set sbfl.sbfl_current = l_step_info.target_objt_ref
         , sbfl.sbfl_last_completed = l_sbfl_rec.sbfl_current
-        , sbfl_became_current = systimestamp
+        , sbfl.sbfl_became_current = l_timestamp
+        , sbfl.sbfl_step_key = l_step_key
         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-        , sbfl_work_started = null
+        , sbfl.sbfl_work_started = null
+        , sbfl.sbfl_last_update = l_timestamp
     where sbfl.sbfl_prcs_id = p_process_id
       and sbfl.sbfl_id = p_subflow_id
     ;

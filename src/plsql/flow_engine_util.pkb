@@ -41,6 +41,22 @@ as
       return p_default_value;
   end get_config_value;
 
+  function step_key
+  ( pi_sbfl_id        in flow_subflows.sbfl_id%type
+  , pi_current        in flow_subflows.sbfl_current%type
+  , pi_became_current in flow_subflows.sbfl_became_current%type
+  ) return flow_subflows.sbfl_step_key%type
+  is
+  begin
+    return substr( apex_util.get_hash ( apex_t_varchar2( pi_sbfl_id
+                                                       , pi_current
+                                                       , pi_became_current
+                                                       ) 
+                                      )
+                  , 1 , 10 
+                  );
+  end step_key;
+
   function check_subflow_exists
   ( 
     p_process_id in flow_processes.prcs_id%type
@@ -222,13 +238,17 @@ procedure get_number_of_connections
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_subflows.sbfl_id%type
   is 
-    l_ret flow_subflows.sbfl_id%type;
+    l_ret             flow_subflows.sbfl_id%type;
+    l_timestamp       flow_subflows.sbfl_became_current%type;
+    l_process_level   flow_subflows.sbfl_process_level%type := p_parent_sbfl_proc_level;
+    l_step_key        flow_subflows.sbfl_step_key%type;
   begin
     apex_debug.enter 
     ( 'subflow_start'
     , 'Process', p_process_id
     , 'Parent Subflow', p_parent_subflow 
     );
+    l_timestamp := systimestamp;
     insert
       into flow_subflows
          ( sbfl_prcs_id
@@ -250,25 +270,45 @@ procedure get_number_of_connections
          , p_starting_object
          , p_route
          , p_last_completed
-         , systimestamp
+         , l_timestamp
          , p_current_object
          , p_status
-         , systimestamp
+         , l_timestamp
          , p_dgrm_id
          )
     returning sbfl_id into l_ret
     ;
-    if p_new_proc_level then
+/*
         -- starting new subprocess.  Set sbfl_process_level to new sbfl_id
         update flow_subflows
            set sbfl_process_level = l_ret
          where sbfl_id = l_ret
         ;
+    end if;*/
+
+    l_step_key := flow_engine_util.step_key( pi_sbfl_id        => l_ret 
+                                           , pi_current        => p_current_object  
+                                           , pi_became_current => l_timestamp 
+                                           );
+
+    if p_new_proc_level then
+        -- starting new subprocess.  Reset sbfl_process_level to new sbfl_id
+        l_process_level := l_ret;
     end if;
+
+    update flow_subflows
+       set sbfl_process_level = l_process_level
+         , sbfl_step_key = flow_engine_util.step_key( pi_sbfl_id        => l_ret 
+                                                    , pi_current        => p_current_object  
+                                                    , pi_became_current => l_timestamp 
+                                                    )
+     where sbfl_id = l_ret;
+
     apex_debug.info
-    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1'
+    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2'
     , p0        => p_process_id
     , p1        => l_ret 
+    , p2        => l_step_key
     );
     return l_ret;
   end subflow_start;

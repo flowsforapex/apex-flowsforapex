@@ -275,6 +275,7 @@ end flow_complete_step;
   (
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   ) return varchar2
   as
     l_objt_id flow_objects.objt_id%type;
@@ -299,9 +300,10 @@ end flow_complete_step;
     return 
       flow_usertask_pkg.get_url
       (
-        pi_prcs_id => p_process_id
-      , pi_sbfl_id => p_subflow_id
-      , pi_objt_id => l_objt_id
+        pi_prcs_id  => p_process_id
+      , pi_sbfl_id  => p_subflow_id
+      , pi_step_key => p_step_key
+      , pi_objt_id  => l_objt_id
       );
   end get_current_usertask_url;
 

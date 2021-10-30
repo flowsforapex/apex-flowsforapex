@@ -453,7 +453,7 @@ end delete_var;
   (
     pi_prcs_id  in flow_processes.prcs_id%type
   , pi_sbfl_id  in flow_subflows.sbfl_id%type
-  , pi_step_key in flow_subflows.sbfl_step_key%type
+  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   , pio_string  in out nocopy varchar2
   )
   as

@@ -17,6 +17,7 @@ as
        , sbfl.sbfl_last_completed_name
        , sbfl.sbfl_current
        , sbfl.sbfl_current_name 
+       , sbfl.sbfl_step_key
        , sbfl.sbfl_current_tag_name
        , sbfl.sbfl_starting_object
        , sbfl.sbfl_starting_object_name 
