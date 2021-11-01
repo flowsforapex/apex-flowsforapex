@@ -63,6 +63,20 @@ as
 
   --serviceTask
   --gc_apex_servicetask_insertemail     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertEmail';
+  gc_apex_serviceTask_from           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-from';
+  gc_apex_serviceTask_to             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-to';
+  gc_apex_serviceTask_cc             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-cc';
+  gc_apex_serviceTask_bcc            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-bcc';
+  gc_apex_serviceTask_reply_to       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-reply-to';
+  gc_apex_serviceTask_use_template   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-use-template';
+  gc_apex_serviceTask_app_alias      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-app-alias';
+  gc_apex_serviceTask_template_id    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-template-id';
+  gc_apex_serviceTask_placeholders   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-placeholders';
+  gc_apex_serviceTask_send_immediate constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-send-immediate';
+  gc_apex_serviceTask_subject        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-subject';
+  gc_apex_serviceTask_body           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-body';
+  gc_apex_serviceTask_body_html      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-body-html';
+  gc_apex_serviceTask_attachments    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-attachments';
 
   --scriptTask
   gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';

@@ -1239,7 +1239,7 @@ begin
          , p_step_info => p_step_info
          );
     when  flow_constants_pkg.gc_bpmn_servicetask then 
-    flow_tasks.process_scriptTask
+        flow_tasks.process_serviceTask
          ( p_process_id => p_sbfl_rec.sbfl_prcs_id
          , p_subflow_id => p_sbfl_rec.sbfl_id
          , p_sbfl_info => p_sbfl_rec

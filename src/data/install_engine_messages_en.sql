@@ -482,3 +482,38 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'en',
 'Model has changed. Discard changes?'
 );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-from',
+'en',
+'Process %0: ServiceTask %1 failed: attribute from not define. Please check the model.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-to',
+'en',
+'Process %0: ServiceTask %1 failed: attribute to not define. Please check the model.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-template',
+'en',
+'Process %0: ServiceTask %1 failed: attribute template not define. Please check the model.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-body',
+'en',
+'Process %0: ServiceTask %1 failed: attribute body not define. Please check the model.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-failed',
+'en',
+'Process %0: ServiceTask %1 failed see error log and check the model.'
+);

@@ -480,3 +480,37 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Le modèle a changé, annuler les changements?'
 );
  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-from',
+'fr',
+'Processus %0 Tâche de service %1 en erreur: attribut De non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-to',
+'fr',
+'Processus %0 Tâche de service %1 en erreur:attribut To non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-template',
+'fr',
+'Processus %0 Tâche de service %1 en erreur: attribut Template non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-body',
+'fr',
+'Processus %0 Tâche de service %1 en erreur: attribut Corps non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-failed',
+'fr',
+'Processus %0 Tâche de service %1 en erreur: voir le journal pour plus de détail et vérifier le modèle.'
+);

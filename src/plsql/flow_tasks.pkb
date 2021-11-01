@@ -189,7 +189,13 @@ as
     , p_called_internally => true
     );
 
-    flow_plsql_runner_pkg.run_task_script
+    /*flow_plsql_runner_pkg.run_task_script
+    ( pi_prcs_id => p_process_id
+    , pi_sbfl_id => p_subflow_id
+    , pi_objt_id => p_step_info.target_objt_id
+    );*/
+
+    flow_notifications.send_email
     ( pi_prcs_id => p_process_id
     , pi_sbfl_id => p_subflow_id
     , pi_objt_id => p_step_info.target_objt_id
@@ -201,9 +207,66 @@ as
     );
 
   exception
-    when others then
+    when flow_notifications.e_email_no_from then 
       rollback;
-      raise flow_plsql_runner_pkg.e_plsql_script_failed;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after from attribute not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'email-no-from'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_notifications.e_email_no_to then 
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after to attribute not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'email-no-to'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_notifications.e_email_no_template then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after template or app_alias attributes not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'email-no-template'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      ); 
+    when flow_notifications.e_email_no_body then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after body attribute not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'email-no-body'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_notifications.e_email_failed then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after send_email failed in service task'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'email-failed'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );
   end process_serviceTask;
 
   procedure process_manualTask
