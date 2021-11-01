@@ -11,7 +11,8 @@ PROMPT >> Create new tables
 
 PROMPT >> Modify existing tables
 
-ALTER TABLE flow_subflows add column sbfl_step_key varchar2(20);
+ALTER TABLE flow_subflows add  sbfl_step_key varchar2(20);
+ALTER TABLE flow_timers add  timr_step_key varchar2(20);
 
 PROMPT >> Data migration
 

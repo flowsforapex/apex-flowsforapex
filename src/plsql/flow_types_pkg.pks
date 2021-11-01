@@ -21,5 +21,11 @@ as
   , target_objt_subtag flow_objects.objt_sub_tag_name%type
   );
 
+  type t_subflow_context is record
+  ( sbfl_id           flow_subflows.sbfl_id%type
+  , step_key          flow_subflows.sbfl_step_key%type
+  , route             flow_subflows.sbfl_route%type
+  );
+
 end flow_types_pkg;
 /

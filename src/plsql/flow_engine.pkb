@@ -97,9 +97,11 @@ begin
       where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
       ;
+      -- pass the step_key through unchanged & use on the receiving ICE
       flow_complete_step
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
+      , p_step_key   => p_sbfl_info.sbfl_step_key
       );
     else
       apex_debug.error(p_message  => 'error finding matching link object found');    
@@ -126,6 +128,7 @@ end flow_process_link_event;
     l_exit_type             flow_objects.objt_sub_tag_name%type default null;
     l_remaining_subflows    number;
     l_process_end_status    flow_processes.prcs_status%type;
+    l_parent_step_key       flow_subflows.sbfl_step_key%type;
   begin
     apex_debug.enter 
     ( 'process_endEvent'
@@ -232,8 +235,10 @@ end flow_process_link_event;
         begin
           select boundary_objt.objt_bpmn_id
                , subproc_objt.objt_bpmn_id
+               , par_sbfl.sbfl_step_key
             into l_boundary_event
                , l_subproc_objt
+               , l_parent_step_key
             from flow_objects boundary_objt
             join flow_objects subproc_objt
               on subproc_objt.objt_bpmn_id = boundary_objt.objt_attached_to
@@ -292,11 +297,9 @@ end flow_process_link_event;
       elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
         -- this can be interrupting or non-interupting
         flow_boundary_events.process_boundary_event
-        ( p_process_id    => p_process_id
-        , p_subflow_id    => p_subflow_id
+        ( p_sbfl_info     => p_sbfl_info
         , p_step_info     => p_step_info
         , p_par_sbfl      => l_sbfl_id_par
-        , p_process_level => p_sbfl_info.sbfl_process_level
         );
       elsif p_step_info.target_objt_subtag is null then 
         -- normal end event
@@ -318,6 +321,7 @@ end flow_process_link_event;
         flow_complete_step 
         ( p_process_id => p_process_id
         , p_subflow_id => l_sbfl_id_par
+        , p_step_key   => l_parent_step_key
         );  
         apex_debug.info ('SubProcess Completed: Process level %0', p_sbfl_info.sbfl_process_level );
 
@@ -333,7 +337,7 @@ end flow_process_link_event;
     )
   is
     l_target_objt_sub        flow_objects.objt_bpmn_id%type; --target object in subprocess
-    l_sbfl_id_sub            flow_subflows.sbfl_id%type;   
+    l_sbfl_context_sub       flow_types_pkg.t_subflow_context;   
   begin
     apex_debug.enter 
     ( 'process_subprocess'
@@ -364,7 +368,7 @@ end flow_process_link_event;
         -- $F4AMESSAGE 'subProcess-too-many-starts' || 'More than one Sub-Process Start found.'  
     end;
     -- start subflow for the sub-process
-    l_sbfl_id_sub := 
+    l_sbfl_context_sub := 
       flow_engine_util.subflow_start
       ( p_process_id => p_process_id
       , p_parent_subflow => p_subflow_id
@@ -402,15 +406,16 @@ end flow_process_link_event;
         ( pi_objt_bpmn_id => l_target_objt_sub  
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
-        , pi_sbfl_id      => l_sbfl_id_sub
+        , pi_sbfl_id      => l_sbfl_context_sub.sbfl_id
         );
 
         if not flow_globals.get_step_error then 
 
           -- check again for any errors from expressions before stepping into sub_process
           flow_complete_step   
-          ( p_process_id => p_process_id
-          , p_subflow_id => l_sbfl_id_sub
+          ( p_process_id    => p_process_id
+          , p_subflow_id    => l_sbfl_context_sub.sbfl_id
+          , p_step_key      => l_sbfl_context_sub.step_key
           , p_forward_route => null
           );
         end if;
@@ -419,10 +424,7 @@ end flow_process_link_event;
   end process_subProcess; 
 
   procedure process_intermediateCatchEvent
-  ( 
-    p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_sbfl_info  in flow_subflows%rowtype
+  ( p_sbfl_info  in flow_subflows%rowtype
   , p_step_info  in flow_types_pkg.flow_step_info
   )
   is 
@@ -443,13 +445,14 @@ end flow_process_link_event;
            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
            , sbfl.sbfl_last_update = systimestamp
            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_timer
-       where sbfl.sbfl_id = p_subflow_id
-         and sbfl.sbfl_prcs_id = p_process_id
+       where sbfl.sbfl_id = p_sbfl_info.sbfl_id
+         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
       flow_timers_pkg.start_timer
       ( 
-        pi_prcs_id => p_process_id
-      , pi_sbfl_id => p_subflow_id
+        pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id  => p_sbfl_info.sbfl_id
+      , pi_step_key => p_sbfl_info.sbfl_step_key
       );
     else
       -- not a timer.  Just set it to running for now.  (other types to be implemented later)
@@ -459,17 +462,14 @@ end flow_process_link_event;
            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
            , sbfl.sbfl_last_update = systimestamp
            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-       where sbfl.sbfl_id = p_subflow_id
-         and sbfl.sbfl_prcs_id = p_process_id
+       where sbfl.sbfl_id = p_sbfl_info.sbfl_id
+         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
     end if;
   end process_intermediateCatchEvent;
 
   procedure process_intermediateThrowEvent
-  ( 
-    p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_sbfl_info     in flow_subflows%rowtype
+  ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
@@ -485,8 +485,8 @@ end flow_process_link_event;
     flow_expressions.process_expressions
     ( pi_objt_id      => p_step_info.target_objt_id  
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
-    , pi_prcs_id      => p_process_id
-    , pi_sbfl_id      => p_subflow_id
+    , pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+    , pi_sbfl_id      => p_sbfl_info.sbfl_id
     );
 
     if p_step_info.target_objt_subtag is null then
@@ -496,17 +496,18 @@ end flow_process_link_event;
           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
           , sbfl.sbfl_last_update = systimestamp
           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-      where sbfl.sbfl_id = p_subflow_id
-          and sbfl.sbfl_prcs_id = p_process_id
+      where sbfl.sbfl_id = p_sbfl_info.sbfl_id
+          and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
       flow_complete_step
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
+      ( p_process_id => p_sbfl_info.sbfl_prcs_id
+      , p_subflow_id => p_sbfl_info.sbfl_id
+      , p_step_key   => p_sbfl_info.sbfl_step_key
       );
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_link_event_definition then
       flow_process_link_event
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
+      ( p_process_id => p_sbfl_info.sbfl_prcs_id
+      , p_subflow_id => p_sbfl_info.sbfl_id
       , p_sbfl_info  => p_sbfl_info
       , p_step_info  => p_step_info
       );   
@@ -517,28 +518,26 @@ end flow_process_link_event;
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
             , sbfl.sbfl_last_update = systimestamp
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-        where sbfl.sbfl_id = p_subflow_id
-          and sbfl.sbfl_prcs_id = p_process_id
+        where sbfl.sbfl_id = p_sbfl_info.sbfl_id
+          and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
       -- get the subProcess event in the parent level
       l_par_sbfl := flow_engine_util.get_subprocess_parent_subflow
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
+      ( p_process_id => p_sbfl_info.sbfl_prcs_id
+      , p_subflow_id => p_sbfl_info.sbfl_id
       , p_current => p_step_info.target_objt_ref
       );
       -- escalate it to the boundary Event
       flow_boundary_events.process_boundary_event
-      ( p_process_id    => p_process_id
-      , p_subflow_id    => p_subflow_id
+      ( p_sbfl_info     => p_sbfl_info
       , p_step_info     => p_step_info
       , p_par_sbfl      => l_par_sbfl
-      , p_process_level => p_sbfl_info.sbfl_process_level
       );  
     else 
       --- other type of intermediateThrowEvent that is not currently supported
       flow_errors.handle_instance_error
-      ( pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => p_subflow_id
+      ( pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id     => p_sbfl_info.sbfl_id
       , pi_message_key => 'ITE-unsupported-type'
       , p0 => p_sbfl_info.sbfl_current
       );
@@ -564,6 +563,8 @@ is
     l_child_starting_object flow_subflows.sbfl_starting_object%type;
     l_dgrm_id               flow_diagrams.dgrm_id%type;
     l_parent_sbfl           flow_subflows.sbfl_id%type;
+    l_timestamp             flow_subflows.sbfl_became_current%type;
+    l_forward_step_key      flow_subflows.sbfl_step_key%type;
     l_return                varchar2(50);
 begin
     -- called from any event that has cleared (so expired timer, received message or signal, etc) to move eBG forwards
@@ -588,12 +589,12 @@ begin
          and sbfl.sbfl_prcs_id = p_process_id
          and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
           ;
-     exception
+    exception
        when no_data_found then
         -- gateway aready cleared
          raise; 
-     end;
-     -- make the incoming (main) (split) parent subflow proceed along the path of the cleared event.clear(
+    end;
+    -- make the incoming (main) (split) parent subflow proceed along the path of the cleared event.clear(
     l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
      select conn.conn_id
           , sbfl.sbfl_current
@@ -613,12 +614,21 @@ begin
       where sbfl.sbfl_id = p_cleared_subflow_id
         and prcs.prcs_id = p_process_id
         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
-          ;
+          ; 
+    -- generate a step key & insert in the update...use later
+    l_timestamp := systimestamp;
+    l_forward_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_parent_subflow_id
+                                                    , pi_current => l_current_object
+                                                    , pi_became_current => l_timestamp 
+                                                    );
+
      update flow_subflows sbfl
         set sbfl_status = flow_constants_pkg.gc_sbfl_status_running
           , sbfl_current = l_current_object
           , sbfl_last_completed = l_child_starting_object
-          , sbfl_last_update = systimestamp
+          , sbfl_last_update = l_timestamp
+          , sbfl_became_current = l_timestamp
+          , sbfl_step_key = l_forward_step_key
       where sbfl.sbfl_prcs_id = p_process_id
         and sbfl.sbfl_id = p_parent_subflow_id
         and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
@@ -662,6 +672,7 @@ begin
     flow_complete_step           
     ( p_process_id => p_process_id
     , p_subflow_id => p_parent_subflow_id
+    , p_step_key   => l_forward_step_key
     , p_forward_route => null
     );
 end handle_event_gateway_event;
@@ -669,6 +680,7 @@ end handle_event_gateway_event;
 procedure handle_intermediate_catch_event
   ( p_process_id   in flow_processes.prcs_id%type
   , p_subflow_id   in flow_subflows.sbfl_id%type
+  , p_step_key     in flow_subflows.sbfl_step_key%type
   , p_current_objt in flow_subflows.sbfl_current%type
   ) 
 is
@@ -676,6 +688,7 @@ begin
   apex_debug.enter
   ( 'handle_intermediate_catch_event'
   , 'Subflow', p_subflow_id
+  , 'Step Key', p_step_key
   );
   update flow_subflows sbfl 
      set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
@@ -702,6 +715,7 @@ begin
     flow_complete_step 
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
     , p_forward_route => null
     );
   end if;  
@@ -710,6 +724,7 @@ end handle_intermediate_catch_event;
 procedure flow_handle_event
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
+  , p_step_key   in flow_subflows.sbfl_step_key%type
   ) 
 is
   l_parent_subflow        flow_subflows.sbfl_id%type;
@@ -764,6 +779,7 @@ begin
       (
         p_process_id   => p_process_id
       , p_subflow_id   => p_subflow_id
+      , p_step_key     => p_step_key
       , p_current_objt => l_sbfl_current
       );
     elsif l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_subprocess
@@ -814,6 +830,7 @@ begin
         (
           p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
+        , p_step_key   => p_step_key
         , p_current_objt => l_sbfl_current
         );
       end if;
@@ -1163,23 +1180,17 @@ begin
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_exclusive then
       flow_gateways.process_exclusiveGateway
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_inclusive then
       flow_gateways.process_para_incl_Gateway
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_parallel then
       flow_gateways.process_para_incl_Gateway
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          ); 
     when flow_constants_pkg.gc_bpmn_subprocess then
@@ -1191,58 +1202,42 @@ begin
          ); 
     when flow_constants_pkg.gc_bpmn_gateway_event_based then
         flow_gateways.process_eventBasedGateway
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          ); 
     when  flow_constants_pkg.gc_bpmn_intermediate_catch_event then 
         flow_engine.process_intermediateCatchEvent
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          ); 
     when  flow_constants_pkg.gc_bpmn_intermediate_throw_event then 
         flow_engine.process_intermediateThrowEvent
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          ); 
     when  flow_constants_pkg.gc_bpmn_task then 
         flow_tasks.process_task
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );
     when  flow_constants_pkg.gc_bpmn_usertask then
         flow_tasks.process_userTask
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );
     when  flow_constants_pkg.gc_bpmn_scripttask then 
         flow_tasks.process_scriptTask
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         (p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );
     when  flow_constants_pkg.gc_bpmn_manualtask then 
         flow_tasks.process_manualTask
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );
     when  flow_constants_pkg.gc_bpmn_servicetask then 
     flow_tasks.process_scriptTask
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
+         ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );
     end case;
@@ -1272,7 +1267,8 @@ end run_step;
 
 procedure flow_complete_step
 ( p_process_id        in flow_processes.prcs_id%type
-, p_subflow_id        in flow_subflows.sbfl_id%type
+, p_subflow_id        in flow_subflows.sbfl_id%type 
+, p_step_key          in flow_subflows.sbfl_step_key%type default null
 , p_forward_route     in flow_connections.conn_bpmn_id%type default null
 , p_log_as_completed  in boolean default true
 , p_recursive_call    in boolean default true
@@ -1289,6 +1285,7 @@ begin
   ( 'flow_complete_step'
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
+  , 'Step Key', p_step_key
   , 'recursive_call', case when p_recursive_call then 
                                                     'true' 
                                                  else 

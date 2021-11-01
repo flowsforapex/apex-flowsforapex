@@ -62,9 +62,7 @@ as
 
 
   procedure process_task
-    ( p_process_id    in flow_processes.prcs_id%type
-    , p_subflow_id    in flow_subflows.sbfl_id%type
-    , p_sbfl_info     in flow_subflows%rowtype
+    ( p_sbfl_info     in flow_subflows%rowtype
     , p_step_info     in flow_types_pkg.flow_step_info
     )
   is
@@ -75,15 +73,13 @@ as
     );
     -- set boundaryEvent Timers, if any
     flow_boundary_events.set_boundary_timers
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
     );  
   end process_task;
 
   procedure process_userTask
-    ( p_process_id    in flow_processes.prcs_id%type
-    , p_subflow_id    in flow_subflows.sbfl_id%type
-    , p_sbfl_info     in flow_subflows%rowtype
+    ( p_sbfl_info     in flow_subflows%rowtype
     , p_step_info     in flow_types_pkg.flow_step_info
     )
   is 
@@ -97,15 +93,13 @@ as
     );
     -- set boundaryEvent Timers, if any
     flow_boundary_events.set_boundary_timers 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
     );  
   end process_userTask;
 
   procedure process_scriptTask
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_sbfl_info     in flow_subflows%rowtype
+  ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
@@ -121,20 +115,21 @@ as
   
     -- set work started time
     flow_engine.start_step 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
     , p_called_internally => true
     );
     
     flow_plsql_runner_pkg.run_task_script(
-      pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
+      pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+    , pi_sbfl_id => p_sbfl_info.sbfl_id
     , pi_objt_id => p_step_info.target_objt_id
     );
 
     flow_engine.flow_complete_step 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id 
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_step_key   => p_sbfl_info.sbfl_step_key
     );
 
   exception
@@ -144,10 +139,10 @@ as
       ( p_message => 'Rollback initiated after script failed in plsql script runner'
       );
       flow_errors.handle_instance_error
-      ( pi_prcs_id        => p_process_id
-      , pi_sbfl_id        => p_subflow_id
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
       , pi_message_key    => 'plsql_script_failed'
-      , p0 => p_process_id
+      , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
@@ -157,19 +152,17 @@ as
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
       ); 
       flow_errors.handle_instance_error
-      ( pi_prcs_id        => p_process_id
-      , pi_sbfl_id        => p_subflow_id
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
       , pi_message_key    => 'plsql_script_requested_stop'
-      , p0 => p_process_id
+      , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: ScriptTask %1 requested processing stop - see event log.'
   end process_scriptTask;
 
   procedure process_serviceTask --- note NOT CURRENTLY BEING USED FOR SERVICETASKS - USING process_scriptTask
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_sbfl_info     in flow_subflows%rowtype
+  ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
@@ -184,20 +177,21 @@ as
     -- future implementations could include async serviceTask, where message generation is queued, or non-email services
 
     flow_engine.start_step 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
     , p_called_internally => true
     );
 
     flow_plsql_runner_pkg.run_task_script
-    ( pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
+    ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+    , pi_sbfl_id => p_sbfl_info.sbfl_id
     , pi_objt_id => p_step_info.target_objt_id
     );
 
     flow_engine.flow_complete_step 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id 
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id 
+    , p_step_key   => p_sbfl_info.sbfl_step_key
     );
 
   exception
@@ -207,9 +201,7 @@ as
   end process_serviceTask;
 
   procedure process_manualTask
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_sbfl_info     in flow_subflows%rowtype
+  ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
@@ -224,8 +216,8 @@ as
 
     -- set boundaryEvent Timers, if any
     flow_boundary_events.set_boundary_timers 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
     );  
   end process_manualTask;
   

@@ -236,12 +236,11 @@ procedure get_number_of_connections
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
-    ) return flow_subflows.sbfl_id%type
+    ) return flow_types_pkg.t_subflow_context
   is 
-    l_ret             flow_subflows.sbfl_id%type;
-    l_timestamp       flow_subflows.sbfl_became_current%type;
-    l_process_level   flow_subflows.sbfl_process_level%type := p_parent_sbfl_proc_level;
-    l_step_key        flow_subflows.sbfl_step_key%type;
+    l_timestamp           flow_subflows.sbfl_became_current%type;
+    l_process_level       flow_subflows.sbfl_process_level%type := p_parent_sbfl_proc_level;
+    l_new_subflow_context flow_types_pkg.t_subflow_context;
   begin
     apex_debug.enter 
     ( 'subflow_start'
@@ -276,41 +275,34 @@ procedure get_number_of_connections
          , l_timestamp
          , p_dgrm_id
          )
-    returning sbfl_id into l_ret
+    returning sbfl_id into l_new_subflow_context.sbfl_id
     ;
-/*
-        -- starting new subprocess.  Set sbfl_process_level to new sbfl_id
-        update flow_subflows
-           set sbfl_process_level = l_ret
-         where sbfl_id = l_ret
-        ;
-    end if;*/
-
-    l_step_key := flow_engine_util.step_key( pi_sbfl_id        => l_ret 
-                                           , pi_current        => p_current_object  
-                                           , pi_became_current => l_timestamp 
-                                           );
 
     if p_new_proc_level then
-        -- starting new subprocess.  Reset sbfl_process_level to new sbfl_id
-        l_process_level := l_ret;
+      -- starting new subprocess.  Reset sbfl_process_level to new sbfl_id
+      l_process_level := l_new_subflow_context.sbfl_id;
+    else
+       l_process_level := p_parent_sbfl_proc_level;
     end if;
+
+    l_new_subflow_context.step_key := flow_engine_util.step_key
+                                      ( pi_sbfl_id        => l_new_subflow_context.sbfl_id 
+                                      , pi_current        => p_current_object  
+                                      , pi_became_current => l_timestamp 
+                                      );
 
     update flow_subflows
        set sbfl_process_level = l_process_level
-         , sbfl_step_key = flow_engine_util.step_key( pi_sbfl_id        => l_ret 
-                                                    , pi_current        => p_current_object  
-                                                    , pi_became_current => l_timestamp 
-                                                    )
-     where sbfl_id = l_ret;
+         , sbfl_step_key      = l_new_subflow_context.step_key
+     where sbfl_id = l_new_subflow_context.sbfl_id;
 
     apex_debug.info
     ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2'
     , p0        => p_process_id
-    , p1        => l_ret 
-    , p2        => l_step_key
+    , p1        => l_new_subflow_context.sbfl_id
+    , p2        => l_new_subflow_context.step_key
     );
-    return l_ret;
+    return l_new_subflow_context;
   end subflow_start;
 
   procedure terminate_level

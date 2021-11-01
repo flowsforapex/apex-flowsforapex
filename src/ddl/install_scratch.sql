@@ -154,6 +154,7 @@ CREATE TABLE flow_timers (
     NOT NULL,
     timr_prcs_id       NUMBER NOT NULL,
     timr_sbfl_id       NUMBER NOT NULL,
+    time_step_key      VARCHAR2(20 CHAR),
     timr_type          VARCHAR2(50 CHAR) NOT NULL,
     timr_last_run      TIMESTAMP WITH TIME ZONE,
     timr_run_count     NUMBER DEFAULT 0 NOT NULL,
