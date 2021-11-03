@@ -1,6 +1,9 @@
 create or replace package body flow_notifications
 as
-  g_workspace varchar2(100) := 'FLOWS211';
+  g_workspace varchar2(100) := flow_engine_util.get_config_value(
+                                   p_config_key    => 'default_workspace'
+                                 , p_default_value => flow_constants_pkg.gc_config_default_default_workspace
+                               );
 
   procedure send_email(
       pi_prcs_id in flow_processes.prcs_id%type
@@ -29,6 +32,7 @@ as
       type t_attachments is table of t_attachment;
       l_attachments      t_attachments;
       l_application_id   number;
+      l_session          varchar2(20) := v('APP_SESSION');
     begin
       apex_debug.enter 
       ( 'send_email'
@@ -45,77 +49,79 @@ as
           , obat.obat_vc_value
           from flow_object_attributes obat
       where obat.obat_objt_id = pi_objt_id
-          and obat.obat_key in ( flow_constants_pkg.gc_apex_serviceTask_from,
-                                 flow_constants_pkg.gc_apex_serviceTask_to,            
-                                 flow_constants_pkg.gc_apex_serviceTask_cc,            
-                                 flow_constants_pkg.gc_apex_serviceTask_bcc,     
-                                 flow_constants_pkg.gc_apex_serviceTask_reply_to,      
-                                 flow_constants_pkg.gc_apex_serviceTask_use_template,  
-                                 flow_constants_pkg.gc_apex_serviceTask_app_alias,
-                                 flow_constants_pkg.gc_apex_serviceTask_template_id,   
-                                 flow_constants_pkg.gc_apex_serviceTask_placeholders,
-                                 flow_constants_pkg.gc_apex_serviceTask_send_immediate,
-                                 flow_constants_pkg.gc_apex_serviceTask_subject,
-                                 flow_constants_pkg.gc_apex_serviceTask_body,
-                                 flow_constants_pkg.gc_apex_serviceTask_body_html,
-                                 flow_constants_pkg.gc_apex_serviceTask_attachments
+          and obat.obat_key in ( flow_constants_pkg.gc_apex_servicetask_from,
+                                 flow_constants_pkg.gc_apex_servicetask_to,            
+                                 flow_constants_pkg.gc_apex_servicetask_cc,            
+                                 flow_constants_pkg.gc_apex_servicetask_bcc,     
+                                 flow_constants_pkg.gc_apex_servicetask_reply_to,      
+                                 flow_constants_pkg.gc_apex_servicetask_use_template,  
+                                 flow_constants_pkg.gc_apex_servicetask_app_alias,
+                                 flow_constants_pkg.gc_apex_servicetask_template_id,   
+                                 flow_constants_pkg.gc_apex_servicetask_placeholders,
+                                 flow_constants_pkg.gc_apex_servicetask_send_immediate,
+                                 flow_constants_pkg.gc_apex_servicetask_subject,
+                                 flow_constants_pkg.gc_apex_servicetask_body,
+                                 flow_constants_pkg.gc_apex_servicetask_body_html,
+                                 flow_constants_pkg.gc_apex_servicetask_attachments
                               )
       )
       loop
         case rec.obat_key
-          when flow_constants_pkg.gc_apex_serviceTask_from then
-          l_from := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_from );
-          when flow_constants_pkg.gc_apex_serviceTask_to then
-          l_to := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_to );
-          when flow_constants_pkg.gc_apex_serviceTask_cc then
-          l_cc := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_cc );
-          when flow_constants_pkg.gc_apex_serviceTask_bcc then
-          l_bcc := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_bcc );
-          when flow_constants_pkg.gc_apex_serviceTask_reply_to then
-          l_reply_to := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_reply_to );
-          when flow_constants_pkg.gc_apex_serviceTask_use_template then
-          l_use_template := rec.obat_vc_value;
-          when flow_constants_pkg.gc_apex_serviceTask_app_alias then
-          l_app_alias := rec.obat_vc_value;
-          when flow_constants_pkg.gc_apex_serviceTask_template_id then
-          l_template_id := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_template_id );
-          when flow_constants_pkg.gc_apex_serviceTask_placeholders then
-          l_placeholders := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_placeholders );
-          when flow_constants_pkg.gc_apex_serviceTask_send_immediate then
-          l_immediate := rec.obat_vc_value;
-          when flow_constants_pkg.gc_apex_serviceTask_subject then
-          l_subject := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_subject );
-          when flow_constants_pkg.gc_apex_serviceTask_body then
-          l_body := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body );
-          when flow_constants_pkg.gc_apex_serviceTask_body_html then
-          l_body_html := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body_html );
-          when flow_constants_pkg.gc_apex_serviceTask_attachments then
-          l_attachment_query := rec.obat_vc_value;
-          flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_attachment_query );
-          else
+          when flow_constants_pkg.gc_apex_servicetask_from then
+            l_from := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_from );
+          when flow_constants_pkg.gc_apex_servicetask_to then
+            l_to := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_to );
+          when flow_constants_pkg.gc_apex_servicetask_cc then
+            l_cc := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_cc );
+          when flow_constants_pkg.gc_apex_servicetask_bcc then
+            l_bcc := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_bcc );
+          when flow_constants_pkg.gc_apex_servicetask_reply_to then
+            l_reply_to := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_reply_to );
+          when flow_constants_pkg.gc_apex_servicetask_use_template then
+            l_use_template := rec.obat_vc_value;
+          when flow_constants_pkg.gc_apex_servicetask_app_alias then
+            l_app_alias := rec.obat_vc_value;
+          when flow_constants_pkg.gc_apex_servicetask_template_id then
+            l_template_id := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_template_id );
+          when flow_constants_pkg.gc_apex_servicetask_placeholders then
+            l_placeholders := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_placeholders );
+          when flow_constants_pkg.gc_apex_servicetask_send_immediate then
+            l_immediate := rec.obat_vc_value;
+          when flow_constants_pkg.gc_apex_servicetask_subject then
+            l_subject := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_subject );
+          when flow_constants_pkg.gc_apex_servicetask_body then
+            l_body := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body );
+          when flow_constants_pkg.gc_apex_servicetask_body_html then
+            l_body_html := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body_html );
+          when flow_constants_pkg.gc_apex_servicetask_attachments then
+            l_attachment_query := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_attachment_query );
+        else
           null;
         end case;
       end loop;
 
       -- Raise error if needed
+      -- no sender
       if l_from is null then
         raise e_email_no_from;
       end if;
+      --no recipient
       if l_to is null then
         raise e_email_no_to;
       end if;
 
-      if ( v('APP_SESSION') is null ) then
+      if ( l_session is null ) then
         if l_app_alias is null then
           l_workspace := g_workspace;
         else
@@ -134,24 +140,22 @@ as
           raise e_email_no_template;
         end if;
 
-        if ( v('APP_SESSION') is null ) then
-              
+        if ( l_session is null ) then
           select application_id
           into l_application_id
           from apex_applications
           where alias = l_app_alias;
-
         end if;
 
         l_mail_id := apex_mail.send(
           p_template_static_id => l_template_id,
-          p_placeholders => l_placeholders,
-          p_to => l_to,
-          p_cc => l_cc,
-          p_bcc => l_bcc,
-          p_from => l_from,
-          p_replyto => l_reply_to,
-          p_application_id => l_application_id
+          p_placeholders       => l_placeholders,
+          p_to                 => l_to,
+          p_cc                 => l_cc,
+          p_bcc                => l_bcc,
+          p_from               => l_from,
+          p_replyto            => l_reply_to,
+          p_application_id     => l_application_id
         );
 
       else
@@ -180,14 +184,12 @@ as
 
         for i in 1..l_attachments.count()
         loop
-
           apex_mail.add_attachment(
-              p_mail_id    => l_mail_id,
-              p_attachment => l_attachments(i).blob_content,
-              p_filename   => l_attachments(i).file_name,
-              p_mime_type  => l_attachments(i).mime_type
+            p_mail_id    => l_mail_id,
+            p_attachment => l_attachments(i).blob_content,
+            p_filename   => l_attachments(i).file_name,
+            p_mime_type  => l_attachments(i).mime_type
           );
-
         end loop;
       end if;
 
