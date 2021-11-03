@@ -652,9 +652,9 @@ as
                xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
              , '*' passing pi_laneset_xml
                columns
-                 lane_id   varchar2(50 char) path '@id'
-               , lane_name varchar2(50 char) path '@name'
-               , lane_type varchar2(50 char) path 'name()'
+                 lane_id   varchar2(50  char) path '@id'
+               , lane_name varchar2(200 char) path '@name'
+               , lane_type varchar2(50  char) path 'name()'
                , child_elements xmltype path '*'
              ) lanes
     ) loop
@@ -909,14 +909,14 @@ as
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                        , '*' passing pi_xml
                          columns
-                           steps_type         varchar2(50 char)  path 'name()'
+                           steps_type         varchar2(50  char) path 'name()'
                          , steps_name         varchar2(200 char) path '@name'
-                         , steps_id           varchar2(50 char)  path '@id'
-                         , source_ref         varchar2(50 char)  path '@sourceRef'
-                         , target_ref         varchar2(50 char)  path '@targetRef'
-                         , default_conn       varchar2(50 char)  path '@default'
-                         , attached_to        varchar2(50 char)  path '@attachedToRef'
-                         , interrupting       varchar2(50 char)  path '@cancelActivity'
+                         , steps_id           varchar2(50  char) path '@id'
+                         , source_ref         varchar2(50  char) path '@sourceRef'
+                         , target_ref         varchar2(50  char) path '@targetRef'
+                         , default_conn       varchar2(50  char) path '@default'
+                         , attached_to        varchar2(50  char) path '@attachedToRef'
+                         , interrupting       varchar2(50  char) path '@cancelActivity'
                          , child_elements     xmltype            path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
                          , extension_elements xmltype            path 'bpmn:extensionElements'
                        ) steps
@@ -1012,12 +1012,12 @@ as
                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                       , '/bpmn:definitions/bpmn:process' passing pi_xml
                         columns
-                          proc_id        varchar2(50 char) path '@id'
-                        , proc_type      varchar2(50 char) path 'name()'
-                        , proc_name      varchar2(50 char) path '@name'
-                        , proc_steps     xmltype           path '* except bpmn:subProcess'
-                        , proc_sub_procs xmltype           path 'bpmn:subProcess'
-                        , proc_laneset   xmltype           path 'bpmn:laneSet'
+                          proc_id        varchar2(50  char) path '@id'
+                        , proc_type      varchar2(50  char) path 'name()'
+                        , proc_name      varchar2(200 char) path '@name'
+                        , proc_steps     xmltype            path '* except bpmn:subProcess'
+                        , proc_sub_procs xmltype            path 'bpmn:subProcess'
+                        , proc_laneset   xmltype            path 'bpmn:laneSet'
                       ) proc
                  )
       loop
@@ -1064,11 +1064,11 @@ as
                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                       , 'bpmn:subProcess' passing pi_xml
                         columns
-                          proc_id        varchar2(50 char) path '@id'
-                        , proc_name      varchar2(50 char) path '@name'
-                        , proc_type      varchar2(50 char) path 'name()'
-                        , proc_steps     xmltype           path '* except bpmn:subProcess'
-                        , proc_sub_procs xmltype           path 'bpmn:subProcess'
+                          proc_id        varchar2(50  char) path '@id'
+                        , proc_name      varchar2(200 char) path '@name'
+                        , proc_type      varchar2(50  char) path 'name()'
+                        , proc_steps     xmltype            path '* except bpmn:subProcess'
+                        , proc_sub_procs xmltype            path 'bpmn:subProcess'
                       ) proc
                  )
       loop
@@ -1127,11 +1127,11 @@ as
                           xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                         , '/bpmn:definitions/bpmn:collaboration/*' passing pi_xml
                           columns
-                            colab_id      varchar2(50 char)  path '@id'
+                            colab_id      varchar2(50  char)  path '@id'
                           , colab_name    varchar2(200 char) path '@name'
-                          , colab_type    varchar2(50 char)  path 'name()'
-                          , colab_src_ref varchar2(50 char)  path '@sourceRef'
-                          , colab_tgt_ref varchar2(50 char)  path '@targetRef'
+                          , colab_type    varchar2(50  char)  path 'name()'
+                          , colab_src_ref varchar2(50  char)  path '@sourceRef'
+                          , colab_tgt_ref varchar2(50  char)  path '@targetRef'
                         ) colab
     ) loop
 
