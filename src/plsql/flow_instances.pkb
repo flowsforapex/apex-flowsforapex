@@ -188,8 +188,9 @@ as
       if not flow_globals.get_step_error then 
         flow_timers_pkg.start_timer
         (
-          pi_prcs_id => p_process_id
-        , pi_sbfl_id => l_main_subflow.sbfl_id
+          pi_prcs_id    => p_process_id
+        , pi_sbfl_id    => l_main_subflow.sbfl_id
+        , pi_step_key   => l_main_subflow.step_key
         ); 
       end if;       
 

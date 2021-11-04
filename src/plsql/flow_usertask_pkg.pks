@@ -7,7 +7,7 @@ as
     pi_prcs_id in flow_processes.prcs_id%type
   , pi_sbfl_id in flow_subflows.sbfl_id%type
   , pi_objt_id in flow_objects.objt_id%type
-  , pi_step_key in flow_subflows.sbfl_step_key%type
+  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   ) return varchar2;
 
 end flow_usertask_pkg;
