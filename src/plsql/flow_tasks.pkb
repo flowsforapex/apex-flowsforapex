@@ -173,6 +173,7 @@ as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
+    l_servicetask_type flow_object_attributes.obat_vc_value%type;
   begin
     apex_debug.enter 
     ( 'process_serviceTask'
@@ -189,17 +190,70 @@ as
     , p_called_internally => true
     );
 
-    /*flow_plsql_runner_pkg.run_task_script
-    ( pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
-    , pi_objt_id => p_step_info.target_objt_id
-    );*/
+    select obat.obat_vc_value
+    into l_servicetask_type
+    from flow_object_attributes obat
+    where obat.obat_objt_id = p_step_info.target_objt_id
+      and obat.obat_key = flow_constants_pkg.gc_apex_servicetask_type;
 
-    flow_notifications.send_email
-    ( pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
-    , pi_objt_id => p_step_info.target_objt_id
-    );
+    case l_servicetask_type
+      when 'executePlsql' then
+        flow_plsql_runner_pkg.run_task_script
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'sendEmail' then
+        flow_notifications.send_email
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'slackNotification' then
+        flow_notifications.send_slack_message
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'teamsNotification' then
+        flow_notifications.send_teams_message
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'gchatNotification' then
+        flow_notifications.send_gchat_message
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'twilioSMS' then
+        flow_notifications.twilio_send_sms
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'dropbox' then
+        flow_notifications.upload_file_to_dropbox
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'oci' then
+        flow_notifications.upload_file_to_oci
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'onedrive' then
+        flow_notifications.upload_file_to_onedrive
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      else
+        null;
+    end case;
 
     flow_engine.flow_complete_step 
     ( p_process_id => p_process_id
