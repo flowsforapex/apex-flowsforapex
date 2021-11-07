@@ -52,6 +52,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'engine-util-sbfl-not-in-prcs',
 'fr',
+'Erreur applicative: L''ID du sous-flux fourni ( %0 ) existe mais n''est pas un enfant de l''ID de processus fourni ( %1 ).'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'engine-util-sbfl-not-found',
+'fr',
 'L''ID du sous-flux fourni ( %0 ) est introuvable. Vérifiez les événements du processus qui ont modifié le flux du processus (délais, erreurs, escalades).'
 );
  
@@ -182,6 +189,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
+'reservation-incorrect-step-key',
+'fr',
+'Task is no longer current, probably already completed.  Please refresh your Inbox.'
+); 
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
 'reservation-lock-timeout',
 'fr',
 'Sous-flux actuellement verrouillé (non reservé) par un autre utilisteur. Veuillez réessayez ultérieurement.'
@@ -249,7 +263,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Début de l''enregistrement des temps de travail non réussi. Le sous-flux %0 du processus %1 est introuvable.'
 );
- 
+  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'step-key-incorrect',
+'fr',
+'This Process Step has already occurred.  (Incorrect step key %0 supplied while exopecting step key %1).'
+); 
+
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'subProcess-no-start',

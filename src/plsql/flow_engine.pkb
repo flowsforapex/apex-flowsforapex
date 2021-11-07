@@ -122,7 +122,7 @@ end flow_process_link_event;
     , p_step_info     in flow_types_pkg.flow_step_info
     )
   is
-    l_sbfl_id_par           flow_subflows.sbfl_id%type;  
+    l_sbfl_context_par      flow_types_pkg.t_subflow_context;  
     l_boundary_event        flow_objects.objt_bpmn_id%type;
     l_subproc_objt          flow_objects.objt_bpmn_id%type;
     l_exit_type             flow_objects.objt_sub_tag_name%type default null;
@@ -137,7 +137,7 @@ end flow_process_link_event;
     );
     --next step can be either end of process or sub-process returning to its parent
     -- get parent subflow
-    l_sbfl_id_par := flow_engine_util.get_subprocess_parent_subflow
+    l_sbfl_context_par := flow_engine_util.get_subprocess_parent_subflow
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
       , p_current    => p_sbfl_info.sbfl_current
@@ -192,12 +192,14 @@ end flow_process_link_event;
         , p_process_level  => p_sbfl_info.sbfl_process_level
         );
       elsif p_step_info.target_objt_subtag is null then
+        -- top process level but not a terminate end...
         flow_engine_util.subflow_complete
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
         );
         l_process_end_status := flow_constants_pkg.gc_prcs_status_completed;
       end if;
+
       -- check if there are ANY remaining subflows.  If not, close process
       select count(*)
         into l_remaining_subflows
@@ -205,7 +207,7 @@ end flow_process_link_event;
        where sbfl.sbfl_prcs_id = p_process_id;
       
       if l_remaining_subflows = 0 then 
-        -- No remaining subflows so process has completed
+        -- No remaining subflows so process instance has completed
         update flow_processes prcs 
            set prcs.prcs_status = l_process_end_status
              , prcs.prcs_last_update = systimestamp
@@ -225,10 +227,11 @@ end flow_process_link_event;
     else  
       -- in a sub-process
       apex_debug.info
-      ( p_message => 'Next Step is Sub-Process End %0 of type %1 . Parent Subflow : %2'
+      ( p_message => 'Next Step is Sub-Process End %0 of type %1 . Parent Subflow : %2 Parent Step Key: %3'
       , p0        => p_step_info.target_objt_ref
       , p1        => p_step_info.target_objt_subtag
-      , p2        => l_sbfl_id_par
+      , p2        => l_sbfl_context_par.sbfl_id
+      , p3        => l_sbfl_context_par.step_key
       ); 
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_error_event_definition then
         -- error exit event - return to errorBoundaryEvent if it exists and if not to normal exit
@@ -248,18 +251,18 @@ end flow_process_link_event;
               on par_sbfl.sbfl_prcs_id = prcs.prcs_id
              and prcs.prcs_dgrm_id = boundary_objt.objt_dgrm_id
              and prcs.prcs_dgrm_id = subproc_objt.objt_dgrm_id
-           where par_sbfl.sbfl_id = l_sbfl_id_par
+           where par_sbfl.sbfl_id = l_sbfl_context_par.sbfl_id
              and par_sbfl.sbfl_prcs_id = p_process_id
              and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_error_event_definition
           ;
           -- first remove any non-interrupting timers that are on the parent event
-          flow_boundary_events.unset_boundary_timers (p_process_id, l_sbfl_id_par);
+          flow_boundary_events.unset_boundary_timers (p_process_id, l_sbfl_context_par.sbfl_id);
           -- set current event on parent process to the error Boundary Event
           update flow_subflows sbfl
           set sbfl.sbfl_current = l_boundary_event
             , sbfl.sbfl_last_completed = l_subproc_objt  -- is this done in next_step?
             , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-          where sbfl.sbfl_id = l_sbfl_id_par
+          where sbfl.sbfl_id = l_sbfl_context_par.sbfl_id
             and sbfl.sbfl_prcs_id = p_process_id
             ;
           -- execute the on-event expressions for the boundary event
@@ -289,20 +292,22 @@ end flow_process_link_event;
         );
 
       elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
+        -- sub process terminate end
         -- stop processing in sub process and all children
         flow_engine_util.terminate_level
         ( p_process_id    => p_process_id
         , p_process_level => p_sbfl_info.sbfl_process_level
         ); 
       elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
+        -- sub process escalation end
         -- this can be interrupting or non-interupting
         flow_boundary_events.process_boundary_event
         ( p_sbfl_info     => p_sbfl_info
         , p_step_info     => p_step_info
-        , p_par_sbfl      => l_sbfl_id_par
+        , p_par_sbfl      => l_sbfl_context_par.sbfl_id
         );
       elsif p_step_info.target_objt_subtag is null then 
-        -- normal end event
+        -- sub process - normal end event
         flow_engine_util.subflow_complete
         ( p_process_id => p_process_id
         , p_subflow_id => p_subflow_id
@@ -318,13 +323,13 @@ end flow_process_link_event;
         
       if l_remaining_subflows = 0 then 
         -- No remaining subflows so subprocess has completed - return to parent and do next step
-        flow_complete_step 
-        ( p_process_id => p_process_id
-        , p_subflow_id => l_sbfl_id_par
-        , p_step_key   => l_parent_step_key
-        );  
         apex_debug.info ('SubProcess Completed: Process level %0', p_sbfl_info.sbfl_process_level );
 
+        flow_complete_step 
+        ( p_process_id => p_process_id
+        , p_subflow_id => l_sbfl_context_par.sbfl_id
+        , p_step_key   => l_sbfl_context_par.step_key
+        );  
       end if;
     end if; 
   end process_endEvent;
@@ -473,7 +478,7 @@ end flow_process_link_event;
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
-    l_par_sbfl    flow_subflows.sbfl_id%type;
+    l_par_sbfl    flow_types_pkg.t_subflow_context;
   begin
     -- currently only supports none Intermediate throw event (used as a process state marker)
     -- but this might later have a case type = timer, message, etc. ....
@@ -531,8 +536,8 @@ end flow_process_link_event;
       flow_boundary_events.process_boundary_event
       ( p_sbfl_info     => p_sbfl_info
       , p_step_info     => p_step_info
-      , p_par_sbfl      => l_par_sbfl
-      );  
+      , p_par_sbfl      => l_par_sbfl.sbfl_id
+      ); 
     else 
       --- other type of intermediateThrowEvent that is not currently supported
       flow_errors.handle_instance_error
@@ -1285,7 +1290,7 @@ begin
   ( 'flow_complete_step'
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
-  , 'Step Key', p_step_key
+  , 'Supplied Step Key', p_step_key
   , 'recursive_call', case when p_recursive_call then 
                                                     'true' 
                                                  else 
@@ -1300,33 +1305,41 @@ begin
   , p_lock_process => false 
   , p_lock_subflow => true
   );
-  -- if subflow has any associated non-interrupting timers on current object, lock the subflows and timers
-  -- (other boundary event types only create a subflow when they fire)
-  if l_sbfl_rec.sbfl_has_events like '%:CNT%' then 
-    flow_boundary_events.lock_child_boundary_timers
+
+  -- check step key is valid
+  if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
+                                    , pi_sbfl_id  => p_subflow_id
+                                    , pi_step_key_supplied  => p_step_key
+                                    , pi_step_key_required  => l_sbfl_rec.sbfl_step_key) then 
+    -- step key is valid 
+    -- if subflow has any associated non-interrupting timers on current object, lock the subflows and timers
+    -- (other boundary event types only create a subflow when they fire)
+    if l_sbfl_rec.sbfl_has_events like '%:CNT%' then 
+      flow_boundary_events.lock_child_boundary_timers
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      , p_parent_objt_bpmn_id => l_sbfl_rec.sbfl_current 
+      ); 
+    end if;
+    -- lock associated timers for interrupting boundary events
+    if l_sbfl_rec.sbfl_has_events like '%:S_T%' then 
+      flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
+    end if;
+
+    -- Find next subflow step
+    l_step_info := get_next_step_info 
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
-    , p_parent_objt_bpmn_id => l_sbfl_rec.sbfl_current 
-    ); 
-  end if;
-  -- lock associated timers for interrupting boundary events
-  if l_sbfl_rec.sbfl_has_events like '%:S_T%' then 
-    flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
-  end if;
+    , p_forward_route => p_forward_route
+    );
 
-  -- Find next subflow step
-  l_step_info := get_next_step_info 
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_forward_route => p_forward_route
-  );
-
-  -- complete the current step by doing the post-step operations
-  finish_current_step
-  ( p_sbfl_rec => l_sbfl_rec
-  , p_current_step_tag => l_step_info.source_objt_tag
-  , p_log_as_completed => p_log_as_completed
-  );
+    -- complete the current step by doing the post-step operations
+    finish_current_step
+    ( p_sbfl_rec => l_sbfl_rec
+    , p_current_step_tag => l_step_info.source_objt_tag
+    , p_log_as_completed => p_log_as_completed
+    );
+  end if; -- step key valid
 
   -- end of post-step operations for previous step
   if flow_globals.get_step_error then
@@ -1417,6 +1430,7 @@ begin
   procedure start_step -- just (optionally) records the start time gpr work on the current step
     ( p_process_id         in flow_processes.prcs_id%type
     , p_subflow_id         in flow_subflows.sbfl_id%type
+    , p_step_key           in flow_subflows.sbfl_step_key%type default null
     , p_called_internally  in boolean default false
     )
   is
@@ -1426,6 +1440,7 @@ begin
     ( 'start_step'
     , 'Subflow ', p_subflow_id
     , 'Process ', p_process_id 
+    , 'Step Key', p_step_key
     );
     -- subflow should already be locked when calling internally
     if not p_called_internally then 
@@ -1438,22 +1453,29 @@ begin
          for update of sbfl_work_started wait 3
       ;
     end if;
-    -- set the start time if null
-    if l_existing_start is null then
-      update flow_subflows sbfl
-        set sbfl_work_started = systimestamp
-      where sbfl_prcs_id = p_process_id
-        and sbfl_id = p_subflow_id
-      ;
-      -- commit reservation if this is an external call
-      if not p_called_internally then 
-        commit;
+    -- check the step key
+    if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
+                                      , pi_sbfl_id  => p_subflow_id
+                                      , pi_step_key_supplied  => p_step_key
+                                      ) 
+    then 
+      -- set the start time if null
+      if l_existing_start is null then
+        update flow_subflows sbfl
+          set sbfl_work_started = systimestamp
+        where sbfl_prcs_id = p_process_id
+          and sbfl_id = p_subflow_id
+        ;
+        -- commit reservation if this is an external call
+        if not p_called_internally then 
+          commit;
+        end if;
       end if;
     end if;
   exception
     when no_data_found then
       flow_errors.handle_general_error
-      ( pi_message_key => 'restart-no-error'
+      ( pi_message_key => 'startwork-sbfl-not-found'
       , p0 => p_subflow_id
       , p1 => p_process_id
       );
@@ -1469,6 +1491,7 @@ begin
 procedure restart_step
   ( p_process_id          in flow_processes.prcs_id%type
   , p_subflow_id          in flow_subflows.sbfl_id%type
+  , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
   )
 is 
@@ -1499,58 +1522,66 @@ begin
       );
       -- $F4AMESSAGE 'restart-no-error' || 'No Current Error Found.  Check your process diagram.'  
   end if;
-  -- set up step context
-  l_step_info :=  get_restart_step_info
-                  ( p_process_id => p_process_id
-                  , p_subflow_id => p_subflow_id
-                  , p_current_bpmn_id => l_sbfl_rec.sbfl_current
-                  );
-  -- set subflow status to running
-  update flow_subflows sbfl
-     set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-       , sbfl_last_update = systimestamp
-   where sbfl.sbfl_prcs_id = p_process_id
-     and sbfl.sbfl_id = p_subflow_id
-  ;
-  -- log the restart
-  flow_logging.log_instance_event
-  ( p_process_id    => p_process_id
-  , p_event         => flow_constants_pkg.gc_prcs_event_restart_step
-  , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
-  , p_comment       => 'restart step '||l_sbfl_rec.sbfl_current||'. Comment: '||p_comment
-  );
-  -- see if instance can be reset to running
-  select count(sbfl_id)
-    into l_num_error_subflows
-    from flow_subflows sbfl 
-   where sbfl.sbfl_prcs_id = p_process_id
-     and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error 
-  ;
-  if l_num_error_subflows = 0 then
-    update flow_processes prcs
-       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
-     where prcs.prcs_id = p_process_id
+  
+  if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
+                                    , pi_sbfl_id  => p_subflow_id
+                                    , pi_step_key_supplied  => p_step_key
+                                    ) 
+  then 
+    -- valid step key was supplied
+    -- set up step context
+    l_step_info :=  get_restart_step_info
+                    ( p_process_id => p_process_id
+                    , p_subflow_id => p_subflow_id
+                    , p_current_bpmn_id => l_sbfl_rec.sbfl_current
+                    );
+    -- set subflow status to running
+    update flow_subflows sbfl
+       set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+         , sbfl_last_update = systimestamp
+     where sbfl.sbfl_prcs_id = p_process_id
+       and sbfl.sbfl_id = p_subflow_id
     ;
+    -- log the restart
     flow_logging.log_instance_event
     ( p_process_id    => p_process_id
+    , p_event         => flow_constants_pkg.gc_prcs_event_restart_step
     , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
-    , p_event         => flow_constants_pkg.gc_prcs_status_running
+    , p_comment       => 'restart step '||l_sbfl_rec.sbfl_current||'. Comment: '||p_comment
     );
-  end if;
+    -- see if instance can be reset to running
+    select count(sbfl_id)
+      into l_num_error_subflows
+      from flow_subflows sbfl 
+     where sbfl.sbfl_prcs_id = p_process_id
+       and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error 
+    ;
+    if l_num_error_subflows = 0 then
+      update flow_processes prcs
+         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
+       where prcs.prcs_id = p_process_id
+      ;
+      flow_logging.log_instance_event
+      ( p_process_id    => p_process_id
+      , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
+      , p_event         => flow_constants_pkg.gc_prcs_status_running
+      );
+    end if;
 
-  if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
-    -- restart object contains a timer.  run var exps and step forward immediately
-    restart_failed_timer_step
-    ( p_sbfl_rec => l_sbfl_rec
-    , p_step_info => l_step_info
-    );
-  else
-    -- all other object types.  restart current task
-    run_step 
-    ( p_sbfl_rec => l_sbfl_rec
-    , p_step_info => l_step_info
-    );
-  end if;
+    if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
+      -- restart object contains a timer.  run var exps and step forward immediately
+      restart_failed_timer_step
+      ( p_sbfl_rec => l_sbfl_rec
+      , p_step_info => l_step_info
+      );
+    else
+      -- all other object types.  restart current task
+      run_step 
+      ( p_sbfl_rec => l_sbfl_rec
+      , p_step_info => l_step_info
+      );
+    end if;
+  end if;  -- valid step key
 
   -- commit or rollback based on errors
   if flow_globals.get_step_error then

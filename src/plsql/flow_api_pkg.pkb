@@ -156,6 +156,7 @@ as
     ( p_process_id  => p_process_id
     , p_subflow_id  => p_subflow_id
     , p_reservation => p_reservation
+    , p_step_key    => p_step_key
     );
   end flow_reserve_step;
 
@@ -170,6 +171,7 @@ as
     flow_reservations.release_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
     );
   end flow_release_step;
 
@@ -184,6 +186,7 @@ as
     flow_engine.start_step
     ( p_process_id  => p_process_id
     , p_subflow_id  => p_subflow_id
+    , p_step_key    => p_step_key
     );
   end flow_start_step;
 
@@ -203,7 +206,8 @@ as
     flow_engine.restart_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
-    , p_comment => p_comment
+    , p_step_key   => p_step_key
+    , p_comment    => p_comment
     );
   end flow_restart_step;
 
@@ -222,6 +226,7 @@ as
     flow_engine.flow_complete_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
     , p_recursive_call => false
     );
 end flow_complete_step;

@@ -379,6 +379,7 @@ as
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_unfinished_subflows   number;
     l_forward_routes            varchar2(2000);
+    l_step_key                  flow_subflows.sbfl_step_key%type;
 /*    l_new_subflows              t_new_sbfls := t_new_sbfls();
     l_new_subflow               flow_types_pkg.t_subflow_context; */ -- think these not used
   begin
@@ -483,11 +484,17 @@ as
           where sbfl.sbfl_id = l_sbfl_id
             and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
         ;
+        -- get step key from parent 
+        select sbfl.sbfl_step_key
+          into l_step_key
+          from flow_subflows sbfl
+         where sbfl.sbfl_id = l_sbfl_id; 
+
         -- step into first step on the new path
         flow_engine.flow_complete_step   
         ( p_process_id => p_sbfl_info.sbfl_prcs_id
         , p_subflow_id => l_sbfl_id
-        , p_step_key   => p_sbfl_info.sbfl_step_key
+        , p_step_key   => l_step_key
         , p_forward_route => null
         );
       end if;  -- single path

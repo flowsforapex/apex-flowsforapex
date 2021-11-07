@@ -4,6 +4,8 @@ as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  g_step_keys_enforced    boolean;
+
   function get_dgrm_id
   (
     p_prcs_id in flow_processes.prcs_id%type
@@ -57,6 +59,49 @@ as
                   );
   end step_key;
 
+  function step_key_valid
+  ( pi_prcs_id              in flow_processes.prcs_id%type
+  , pi_sbfl_id              in flow_subflows.sbfl_id%type
+  , pi_step_key_supplied    in flow_subflows.sbfl_step_key%type
+  , pi_step_key_required    in flow_subflows.sbfl_step_key%type default null
+  ) return boolean
+  is 
+    l_step_key_required   flow_subflows.sbfl_step_key%type := pi_step_key_required;
+  begin
+    if pi_step_key_required is null then
+
+      select sbfl.sbfl_step_key
+        into l_step_key_required
+        from flow_subflows sbfl
+       where sbfl.sbfl_id = pi_sbfl_id
+         and sbfl.sbfl_prcs_id = pi_prcs_id
+      ;
+    end if;
+
+    apex_debug.info 
+    ( p_message => 'Step Key Required: %0  Step Key Supplied: %1'
+    , p0 => l_step_key_required
+    , p1 => pi_step_key_supplied
+    );
+
+    if pi_step_key_supplied = l_step_key_required then
+      return true;
+    elsif (pi_step_key_supplied is null 
+           and not g_step_keys_enforced) then
+      return true;
+    else
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'step-key-incorrect'
+      , p0 => nvl(pi_step_key_supplied, '<null>')
+      , p1 => l_step_key_required
+      );
+      -- $F4AMESSAGE 'step-key-incorrect' || 'This Process Step has already occurred.  (Incorrect step key %0 supplied while exopecting step key %1).' 
+      return false;
+    end if;
+  end step_key_valid;
+
   function check_subflow_exists
   ( 
     p_process_id in flow_processes.prcs_id%type
@@ -79,9 +124,9 @@ function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_current    in flow_objects.objt_bpmn_id%type -- an object in the subprocess
-  ) return number
+  ) return flow_types_pkg.t_subflow_context
   is
-    l_parent_subflow          flow_subflows.sbfl_id%type;
+    l_parent_subflow          flow_types_pkg.t_subflow_context;
     l_parent_subproc_activity flow_objects.objt_bpmn_id%type;
     l_dgrm_id                 flow_diagrams.dgrm_id%type;
   begin
@@ -100,7 +145,9 @@ function get_subprocess_parent_subflow
     -- try to get parent subflow
     begin
       select sbfl.sbfl_id
-        into l_parent_subflow
+           , sbfl.sbfl_step_key
+        into l_parent_subflow.sbfl_id
+           , l_parent_subflow.step_key
         from flow_subflows sbfl
        where sbfl.sbfl_current = l_parent_subproc_activity
          and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
@@ -221,7 +268,7 @@ procedure get_number_of_connections
       , p0 => p_subflow_id
       );
       return null;
-      -- $F4AMESSAGE 'engine-util-sbfl-not-in-prcs' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
   end get_subflow_info;
 
   function subflow_start
@@ -454,6 +501,16 @@ procedure get_number_of_connections
       -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
       return false;
   end lock_subflow;
+
+  -- initialise step key enforcement parameter
+
+  begin
+    g_step_keys_enforced :=  (  flow_engine_util.get_config_value
+                                ( p_config_key => flow_constants_pkg.gc_config_dup_step_prevention
+                                , p_default_value => flow_constants_pkg.gc_config_default_dup_step_prevention 
+                                )
+                                = flow_constants_pkg.gc_config_dup_step_prevention_strict
+                             );
 
 end flow_engine_util;
 /

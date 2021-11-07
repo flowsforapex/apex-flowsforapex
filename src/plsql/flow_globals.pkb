@@ -26,20 +26,20 @@ as
   ( p_has_error  in boolean default false)
   is
   begin
-    apex_debug.enter
+    /*apex_debug.enter
     ( 'set_step_error'
     , 'p_has_error', case when p_has_error then 'true' else 'false' end
-    );
+    );*/
     g_error_on_step := p_has_error;
   end set_step_error;
 
   function get_step_error return boolean
   is
   begin
-    apex_debug.enter
+    /*apex_debug.enter
     ( 'get_step_error'
     , 'g_error_on_step', case when g_error_on_step then 'true' else 'false' end
-    );
+    );*/
     return g_error_on_step;
   end get_step_error; 
 
