@@ -98,6 +98,8 @@ as
   gc_apex_servicetask_microsoft_site   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-site';
   gc_apex_servicetask_microsoft_folder constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-folder';
   gc_apex_servicetask_microsoft_files  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-files';
+  -- dropbox
+  gc_apex_servicetask_dropbox_files    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'dropbox-files';
  
   --scriptTask
   gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';

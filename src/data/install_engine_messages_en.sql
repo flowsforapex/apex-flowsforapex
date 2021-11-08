@@ -517,3 +517,10 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'en',
 'Process %0: ServiceTask %1 failed see error log and check the model.'
 );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'service_task_ws_error',
+'en',
+'Process %0: ServiceTask %1 HTTP call failed with status code %2.See process variable %3 to view the WS response.'
+);

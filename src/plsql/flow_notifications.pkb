@@ -4,6 +4,34 @@ as
                                    p_config_key    => 'default_workspace'
                                  , p_default_value => flow_constants_pkg.gc_config_default_default_workspace
                                );
+  
+  procedure raise_service_error(
+      pi_prcs_id       in flow_processes.prcs_id%type
+    , pi_sbfl_id       in flow_subflows.sbfl_id%type
+    , pi_objt_id       in flow_objects.objt_id%type
+    , pi_http_code     in number
+    , pi_http_response in clob
+  )
+  is
+    pragma         autonomous_transaction;
+    l_var_name     flow_process_variables.prov_var_name%type;
+    l_objt_bmpn_id flow_objects.objt_bpmn_id%type;
+  begin
+    select objt_bpmn_id
+    into l_objt_bmpn_id
+    from flow_objects
+    where objt_id = pi_objt_id;
+
+    l_var_name := l_objt_bmpn_id || '_ws_response';
+
+    flow_process_vars.set_var(
+      pi_prcs_id    => pi_prcs_id, 
+      pi_var_name   => l_var_name, 
+      pi_clob_value => pi_http_response
+    );
+    commit;
+    raise e_ws_error;
+  end;
 
   procedure send_email(
       pi_prcs_id in flow_processes.prcs_id%type
@@ -295,8 +323,19 @@ as
         p_body => l_body.to_Clob()
       );
 
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);
+      if apex_web_service.g_status_code != 200 then
+        raise e_ws_error;
+      end if;
+
+    exception 
+      when e_ws_error then
+        flow_notifications.raise_service_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
     end send_slack_message;
 
     procedure send_teams_message(
@@ -350,8 +389,19 @@ as
         p_body => l_teams_message
       );
  
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);
+      if apex_web_service.g_status_code != 200 then
+        raise e_ws_error;
+      end if;
+
+    exception 
+      when e_ws_error then
+        flow_notifications.raise_service_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
     end send_teams_message;
 
     procedure send_gchat_message(
@@ -405,8 +455,19 @@ as
         p_body => l_gchat_message
       );
  
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);
+      if apex_web_service.g_status_code != 200 then
+        raise e_ws_error;
+      end if;
+
+    exception 
+      when e_ws_error then
+        flow_notifications.raise_service_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
     end send_gchat_message;
 
     procedure twilio_send_sms(
@@ -472,10 +533,20 @@ as
         p_parm_value => apex_util.string_to_table( l_twilio_message || ':' || l_twilio_messaging_service || ':' || l_twilio_to ),
         p_credential_static_id => 'Twilio'
       );
+    
+      if apex_web_service.g_status_code != 201 then
+        raise e_ws_error;
+      end if;
 
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);
-
+    exception 
+      when e_ws_error then
+        flow_notifications.raise_service_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
     end twilio_send_sms;
 
 
@@ -484,7 +555,8 @@ as
       , pi_sbfl_id in flow_subflows.sbfl_id%type
       , pi_objt_id in flow_objects.objt_id%type
     )
-    is
+    is 
+      l_context            apex_exec.t_context;
       l_refresh_token      varchar2(4000) := 'RFUqrAw3AFMAAAAAAAAAASJi95QUob-OJB_HnN1eujw6Cx0d68dSMD9_ITotOb-g';
       l_acess_token        varchar2(4000);
       l_token_url          varchar2(200) := 'https://api.dropboxapi.com/oauth2/token';
@@ -523,9 +595,6 @@ as
           p_credential_static_id => 'Dropbox_Basic'
         );
 
-        flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'TOKEN_CODE', pi_num_value => apex_web_service.g_status_code);
-        flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'TOKEN_RESPONSE', pi_clob_value => l_response); 
-
         if (apex_web_service.g_status_code = 200) then
           l_obj := json_object_t(l_response);
           l_acess_token := l_obj.get_String('access_token');
@@ -535,6 +604,8 @@ as
               p_client_id             => 'Authorization',
               p_client_secret         => 'Bearer ' || l_acess_token 
           );
+        else
+          raise e_ws_error;
         end if;
       end if;
 
@@ -542,24 +613,47 @@ as
       from apex_application_files
       where id = '6422679803629985005']';
 
-      execute immediate l_file_query into l_file_name, l_blob_content;
-      
-      apex_web_service.g_request_headers.delete();
-      apex_web_service.g_request_headers(1).name := 'Content-Type';  
-      apex_web_service.g_request_headers(1).value := 'application/octet-stream';
-      apex_web_service.g_request_headers(2).name := 'Dropbox-API-Arg';  
-      apex_web_service.g_request_headers(2).value := '{"path":"' || l_file_name || '"}';
-      
-      l_response := apex_web_service.make_rest_request(
-          p_url => l_upload_url,
-          p_http_method => 'POST',
-          p_body_blob => l_blob_content,
-          p_credential_static_id => 'Dropbox_Bearer'
+      l_context         := 
+        apex_exec.open_query_context(
+            p_location   => apex_exec.c_location_local_db
+         , p_sql_query  => l_file_query
         );
 
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);  
+      while apex_exec.next_row(l_context) loop
+        l_file_name    := apex_exec.get_varchar2( l_context, 1 );
+        l_blob_content := apex_exec.get_blob( l_context, 2);
 
+        apex_web_service.g_request_headers.delete();
+        apex_web_service.g_request_headers(1).name := 'Content-Type';  
+        apex_web_service.g_request_headers(1).value := 'application/octet-stream';
+        apex_web_service.g_request_headers(2).name := 'Dropbox-API-Arg';  
+        apex_web_service.g_request_headers(2).value := '{"path":"' || l_file_name || '"}';
+        
+        l_response := apex_web_service.make_rest_request(
+            p_url => l_upload_url,
+            p_http_method => 'POST',
+            p_body_blob => l_blob_content,
+            p_credential_static_id => 'Dropbox_Bearer'
+          );
+
+        if apex_web_service.g_status_code != 200 then
+          raise e_ws_error;
+        end if;
+      end loop;
+
+    exception 
+      when e_ws_error then
+        apex_exec.close( l_context );
+        flow_notifications.raise_service_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
+      when others then  
+        apex_exec.close( l_context );
+        raise;
     end upload_file_to_dropbox;
 
     procedure upload_file_to_oci(  
@@ -568,6 +662,7 @@ as
       , pi_objt_id in flow_objects.objt_id%type
     )
     is
+      l_context            apex_exec.t_context;
       l_upload_url         varchar2(200) := 'https://objectstorage.eu-frankfurt-1.oraclecloud.com/n/frhgzrirrszr/';
       l_bucket_name        varchar2(200) := 'apex_file_storage';
       l_response           clob;
@@ -590,23 +685,46 @@ as
       from apex_application_files
       where id = '6422679803629985005']';
 
-      execute immediate l_file_query into l_file_name, l_mime_type, l_blob_content;
-      
-      apex_web_service.g_request_headers.delete();
-      apex_web_service.g_request_headers(1).name := 'Content-Type';  
-      apex_web_service.g_request_headers(1).value := l_mime_type;
-      
-      l_response := apex_web_service.make_rest_request(
-          p_url => l_upload_url || 'b/' || l_bucket_name || '/o/' || apex_util.url_encode(l_file_name),
-          p_http_method => 'PUT',
-          p_body_blob => l_blob_content,
-          p_credential_static_id => 'OCI_API_ACCESS'
+      l_context         := 
+        apex_exec.open_query_context(
+            p_location   => apex_exec.c_location_local_db
+         , p_sql_query  => l_file_query
         );
 
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-      flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);  
-
+      while apex_exec.next_row(l_context) loop
+        l_file_name    := apex_exec.get_varchar2( l_context, 1 );
+        l_mime_type    := apex_exec.get_varchar2( l_context, 2 );
+        l_blob_content := apex_exec.get_blob( l_context, 3);
       
+        apex_web_service.g_request_headers.delete();
+        apex_web_service.g_request_headers(1).name := 'Content-Type';  
+        apex_web_service.g_request_headers(1).value := l_mime_type;
+      
+        l_response := apex_web_service.make_rest_request(
+            p_url => l_upload_url || 'b/' || l_bucket_name || '/o/' || apex_util.url_encode(l_file_name),
+            p_http_method => 'PUT',
+            p_body_blob => l_blob_content,
+            p_credential_static_id => 'OCI_API_ACCESS'
+          );
+
+        if apex_web_service.g_status_code != 200 then
+          raise e_ws_error;
+        end if;
+      end loop;
+  
+    exception 
+      when e_ws_error then
+        apex_exec.close( l_context );
+        flow_notifications.raise_service_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
+      when others then  
+        apex_exec.close( l_context );
+        raise;
     end upload_file_to_oci;
 
     procedure upload_file_to_onedrive(
@@ -637,7 +755,6 @@ as
       l_microsoft_files    flow_object_attributes.obat_vc_value%type;  
       l_site_id            varchar2(500);
     begin
-      apex_debug.message('>>> start');
       for rec in (
       select obat.obat_key
           , obat.obat_vc_value
@@ -669,29 +786,19 @@ as
         end case;
       end loop;
 
-      apex_debug.message('>>> l_microsoft_tenant '|| l_microsoft_tenant);
-      apex_debug.message('>>> l_microsoft_site '|| l_microsoft_site);
-      apex_debug.message('>>> l_microsoft_folder '|| l_microsoft_folder);
-      apex_debug.message('>>> l_microsoft_files '|| l_microsoft_files);
-
       if ( l_session is null ) then
         l_workspace := g_workspace;
         l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
         apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
       end if;
 
-      apex_debug.message('>>> workspace ok');
-
       select (sysdate - last_updated_on) * 24 * 60 * 60
       into l_last_token_refresh
       from apex_workspace_credentials
       where static_id = 'Microsoft_Bearer';
 
-      apex_debug.message('>>> l_last_token_refresh ' || l_last_token_refresh);
-
       if l_last_token_refresh > 3500 then
         --need refresh
-        apex_debug.message('>>> token need refresh '); 
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';  
         apex_web_service.g_request_headers(1).value := 'application/x-www-form-urlencoded';
@@ -704,9 +811,6 @@ as
           p_credential_static_id => 'Microsoft_Basic'
         );
         
-        flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-        flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);  
-
         if (apex_web_service.g_status_code = 200) then
           l_object := json_object_t(l_response);
           l_acess_token := l_object.get_String('access_token');
@@ -716,10 +820,10 @@ as
               p_client_id             => 'Authorization',
               p_client_secret         => 'Bearer ' || l_acess_token 
           );
+        else
+          raise e_ws_error;
         end if;
       end if;
-
-      apex_debug.message('>>> token ok or refreshed'); 
 
       --Find the site id
       apex_web_service.g_request_headers.delete();
@@ -743,9 +847,9 @@ as
           --to do raise error
           null;
         end if;
+      else
+        raise e_ws_error;
       end if;
-
-      apex_debug.message('>>> l_site_id '||l_site_id);
 
       --Check if folder exists
       --raise error if not
@@ -777,11 +881,24 @@ as
               p_credential_static_id => 'Microsoft_Bearer'
             );
 
-          flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'CODE', pi_num_value => apex_web_service.g_status_code);
-          flow_process_vars.set_var(pi_prcs_id => pi_prcs_id, pi_var_name => 'RESPONSE', pi_clob_value => l_response);  
+          if apex_web_service.g_status_code != 200 then
+            raise e_ws_error;
+          end if;
          end loop;
          apex_exec.close(l_context);
-         apex_debug.message('>>> upload complete');
+    exception 
+      when e_ws_error then
+        apex_exec.close( l_context );
+        flow_notifications.raise_service_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
+      when others then  
+        apex_exec.close( l_context );
+        raise;
     end upload_file_to_onedrive;
 
 end flow_notifications;

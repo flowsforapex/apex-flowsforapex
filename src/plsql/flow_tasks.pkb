@@ -321,6 +321,20 @@ as
       , p0 => p_process_id
       , p1 => p_step_info.target_objt_ref
       );
+    when flow_notifications.e_ws_error then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after ws call failed in service task'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'service_task_ws_error'
+      , p0 => p_process_id
+      , p1 => p_subflow_id
+      , p2 => apex_web_service.g_status_code
+      , p3 => p_step_info.target_objt_ref || '_ws_error'
+      );
   end process_serviceTask;
 
   procedure process_manualTask
