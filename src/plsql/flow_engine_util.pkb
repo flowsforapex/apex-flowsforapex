@@ -50,13 +50,15 @@ as
   ) return flow_subflows.sbfl_step_key%type
   is
   begin
-    return substr( apex_util.get_hash ( apex_t_varchar2( pi_sbfl_id
+  /*  return substr( apex_util.get_hash ( apex_t_varchar2( pi_sbfl_id
                                                        , pi_current
                                                        , pi_became_current
                                                        ) 
                                       )
                   , 1 , 10 
-                  );
+                  );*/
+      -- alternate step_key generator which should be faster...
+      return sys.dbms_random.string('A', 10);
   end step_key;
 
   function step_key_valid
