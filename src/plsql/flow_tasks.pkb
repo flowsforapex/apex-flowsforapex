@@ -117,6 +117,7 @@ as
     flow_engine.start_step 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_step_key   => p_sbfl_info.sbfl_step_key
     , p_called_internally => true
     );
     
@@ -179,6 +180,7 @@ as
     flow_engine.start_step 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_step_key   => p_sbfl_info.sbfl_step_key
     , p_called_internally => true
     );
 
