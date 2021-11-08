@@ -94,7 +94,7 @@ as
       ( pi_prcs_id     => pi_prcs_id
       , pi_sbfl_id     => pi_sbfl_id
       , pi_message_key => 'step-key-incorrect'
-      , p0 => nvl(pi_step_key_supplied, '<null>')
+      , p0 => nvl(pi_step_key_supplied, '"null"')
       , p1 => l_step_key_required
       );
       -- $F4AMESSAGE 'step-key-incorrect' || 'This Process Step has already occurred.  (Incorrect step key %0 supplied while exopecting step key %1).' 

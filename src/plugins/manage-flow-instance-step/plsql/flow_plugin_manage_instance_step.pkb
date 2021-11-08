@@ -35,18 +35,8 @@ create or replace package body flow_plugin_manage_instance_step as
             p_message => '......Query'
          );
          apex_debug.log_long_message(
-              p_message => p_process.attribute_03
+              p_message => p_process.attribute_04
             , p_level   => apex_debug.c_log_level_info
-         );
-      elsif p_process.attribute_01 = 'static'  then
-         apex_debug.info(
-              p_message => '......Static value: %s'
-            , p0        => p_process.attribute_04
-         );
-      elsif p_process.attribute_01 = 'component' then
-        apex_debug.info(
-            p_message => '......Component Setting: %s'
-            , p0        => p_plugin.attribute_01
          );
       end if;
 

@@ -191,7 +191,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'reservation-incorrect-step-key',
 'fr',
-'Task is no longer current, probably already completed.  Please refresh your Inbox.'
+'La tâche n''est plus en cours, elle est probablement déjà terminée.  Veuillez rafraîchir votre liste de tâches.'
 ); 
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -268,7 +268,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'step-key-incorrect',
 'fr',
-'This Process Step has already occurred.  (Incorrect step key %0 supplied while exopecting step key %1).'
+'Cette étape de processus a déjà été réalisée.  (Clé d''étape fournie incorrecte %0, clé d''étape attendue %1).'
 ); 
 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

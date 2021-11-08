@@ -269,7 +269,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'step-key-incorrect',
 'en',
-'This Process Step has already occurred.  (Incorrect step key %0 supplied while exopecting step key %1).'
+'This Process Step has already occurred.  (Incorrect step key %0 supplied while expecting step key %1).'
 ); 
 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
