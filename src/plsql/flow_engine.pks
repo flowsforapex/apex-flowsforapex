@@ -5,10 +5,12 @@ as
   procedure flow_handle_event
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key     in flow_subflows.sbfl_step_key%type
   ); 
 procedure flow_complete_step
   ( p_process_id        in flow_processes.prcs_id%type
   , p_subflow_id        in flow_subflows.sbfl_id%type
+  , p_step_key          in flow_subflows.sbfl_step_key%type default null
   , p_forward_route     in flow_connections.conn_bpmn_id%type default null   
   , p_log_as_completed  in boolean default true
   , p_recursive_call    in boolean default true
@@ -17,12 +19,14 @@ procedure flow_complete_step
 procedure start_step
   ( p_process_id          in flow_processes.prcs_id%type
   , p_subflow_id          in flow_subflows.sbfl_id%type
+  , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_called_internally   in boolean default false
   );
 
 procedure restart_step
   ( p_process_id          in flow_processes.prcs_id%type
   , p_subflow_id          in flow_subflows.sbfl_id%type
+  , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
   );
   

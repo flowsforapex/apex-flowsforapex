@@ -18,6 +18,7 @@ as
         , coalesce( objt_last.objt_name, sbfl.sbfl_last_completed ) as sbfl_last_completed_name
         , sbfl.sbfl_current
         , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as sbfl_current_name
+        , sbfl.sbfl_step_key
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_last_update
         , sbfl.sbfl_status

@@ -23,7 +23,7 @@ as
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_current    in flow_objects.objt_bpmn_id%type -- an object in the subprocess
-  ) return number;
+  ) return flow_types_pkg.t_subflow_context;
 
   procedure get_number_of_connections
   ( pi_dgrm_id                  in flow_diagrams.dgrm_id%type
@@ -39,6 +39,19 @@ as
   , p_lock_subflow  in boolean default false
   , p_lock_process  in boolean default false
   ) return flow_subflows%rowtype;
+
+  function step_key
+  ( pi_sbfl_id        in flow_subflows.sbfl_id%type
+  , pi_current        in flow_subflows.sbfl_current%type
+  , pi_became_current in flow_subflows.sbfl_became_current%type
+  ) return flow_subflows.sbfl_step_key%type;
+
+  function step_key_valid
+  ( pi_prcs_id              in flow_processes.prcs_id%type
+  , pi_sbfl_id              in flow_subflows.sbfl_id%type
+  , pi_step_key_supplied    in flow_subflows.sbfl_step_key%type
+  , pi_step_key_required    in flow_subflows.sbfl_step_key%type default null
+  ) return boolean;
 
   procedure subflow_complete
   ( p_process_id        in flow_processes.prcs_id%type
@@ -62,7 +75,7 @@ as
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
-    ) return flow_subflows.sbfl_id%type
+    ) return flow_types_pkg.t_subflow_context
     ;
 
   function lock_subflow

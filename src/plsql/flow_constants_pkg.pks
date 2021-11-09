@@ -83,6 +83,7 @@ as
   gc_substitution_postfix             constant flow_types_pkg.t_single_vc2          := '.';
   gc_substitution_process_id          constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_ID';
   gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
+  gc_substitution_step_key            constant flow_types_pkg.t_bpmn_attributes_key := 'STEP_KEY';
   gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$(\w*)\.';
 
   -- Diagram Versioning Status
@@ -155,6 +156,8 @@ as
   gc_config_logging_level             constant varchar2(50 char) := 'logging_level';
   gc_config_logging_hide_userid       constant varchar2(50 char) := 'logging_hide_userid';
   gc_config_logging_language          constant varchar2(50 char) := 'logging_language';
+  gc_config_engine_app_mode           constant varchar2(50 char) := 'engine_app_mode';
+  gc_config_dup_step_prevention       constant varchar2(50 char) := 'duplicate_step_prevention';
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
@@ -164,6 +167,9 @@ as
   gc_config_logging_level_full        constant varchar2(2000 char) := 'full';      -- secure + variable changes
   gc_config_engine_app_mode_dev       constant varchar2(2000 char) := 'development';
   gc_config_engine_app_mode_prod      constant varchar2(2000 char) := 'production';
+  gc_config_dup_step_prevention_legacy constant varchar2(2000 char) := 'legacy';   -- null step key allowed
+  gc_config_dup_step_prevention_strict constant varchar2(2000 char) := 'strict';   -- step key enforced
+
 
 -- Config Parameter Default Values
 
@@ -171,6 +177,7 @@ as
   gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
   gc_config_default_logging_language          constant varchar2(2000 char) := 'en';
   gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
+  gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
 
 
 

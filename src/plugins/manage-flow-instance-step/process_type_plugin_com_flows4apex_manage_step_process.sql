@@ -28,7 +28,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   16:49 Friday October 15, 2021
+--   Date and Time:   15:03 Monday November 8, 2021
 --   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -57,7 +57,7 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
-,p_version_identifier=>'21.1.1'
+,p_version_identifier=>'21.2'
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -160,17 +160,18 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
 ,p_sql_min_column_count=>2
-,p_sql_max_column_count=>2
+,p_sql_max_column_count=>3
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_api.id(84120779080130975)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>SQL Query which returns one row with two columns:</p>',
+'<p>SQL Query which returns one row with two or three columns:</p>',
 '<ul>',
 '<li>First column needs to contain the Instance Id (prcs_id)</li>',
 '<li>Second column needs to contain the Subflow Id (sbfl_id)</li>',
+'<li>Third column can contain the Step Key (step_key)</li>',
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
@@ -210,14 +211,6 @@ wwv_flow_api.create_plugin_attr_value(
 ,p_display_value=>'Release Step'
 ,p_return_value=>'release'
 ,p_help_text=>'This option is used to release a Flow Instance Step.'
-);
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(57300899347716345)
-,p_plugin_attribute_id=>wwv_flow_api.id(84126966970138117)
-,p_display_sequence=>40
-,p_display_value=>'Start Step'
-,p_return_value=>'start'
-,p_help_text=>'This option is used to inidcate that the work is started for Flow Instance Step.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(84123361724130977)
@@ -355,6 +348,30 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>false
 ,p_is_translatable=>false
 ,p_help_text=>'Provide APEX items to return Flow Instance and Subflow ID.'
+);
+wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(65965305521567657)
+,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>12
+,p_display_sequence=>35
+,p_prompt=>'Step Key'
+,p_attribute_type=>'PAGE ITEM'
+,p_is_required=>false
+,p_is_translatable=>false
+,p_depending_on_attribute_id=>wwv_flow_api.id(84120779080130975)
+,p_depending_on_has_to_exist=>true
+,p_depending_on_condition_type=>'EQUALS'
+,p_depending_on_expression=>'item'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>APEX Item that contains the Flow Instance step_key.</p>',
+'',
+'<p>This could typically be: </p>',
+'<ul>',
+'<li>An Application Item, often named STEP_KEY.</li>',
+'<li>A Global Page Item, for example P0_STEP_KEY.</li>',
+'<li>A Page Item on your page.</li>',
+'</ul>'))
 );
 end;
 /

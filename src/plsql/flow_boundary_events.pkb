@@ -9,7 +9,7 @@ is
   , p_subflow_id    in flow_subflows.sbfl_id%type
   )
   is 
-    l_new_non_int_timer_sbfl  flow_subflows.sbfl_id%type;
+    l_new_non_int_timer_sbfl  flow_types_pkg.t_subflow_context;
     l_parent_tag              varchar2(50);
   begin
     apex_debug.enter 
@@ -75,20 +75,20 @@ is
           ( pi_objt_id     => boundary_timers.objt_id
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
-          , pi_sbfl_id     => l_new_non_int_timer_sbfl
+          , pi_sbfl_id     => l_new_non_int_timer_sbfl.sbfl_id
           );
           -- test for any step errors
           if not flow_globals.get_step_error then 
             flow_timers_pkg.start_timer
             ( pi_prcs_id => p_process_id
-            , pi_sbfl_id => l_new_non_int_timer_sbfl
+            , pi_sbfl_id => l_new_non_int_timer_sbfl.sbfl_id
             );
             -- test again for any step errors
             if not flow_globals.get_step_error then 
               -- set timer flag on child (Self, Noninterrupting, Timer)
               update flow_subflows sbfl
                   set sbfl.sbfl_has_events = sbfl.sbfl_has_events||':SNT'
-                where sbfl.sbfl_id = l_new_non_int_timer_sbfl
+                where sbfl.sbfl_id = l_new_non_int_timer_sbfl.sbfl_id
                   and sbfl.sbfl_prcs_id = p_process_id
               ;
               l_parent_tag := ':CNT';  -- (Child, Noninterrupting, Timer)
@@ -209,6 +209,8 @@ is
     l_parent_objt_tag        flow_objects.objt_tag_name%type;
     l_parent_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
     l_child_process_level    flow_subflows.sbfl_process_level%type;
+    l_step_key               flow_subflows.sbfl_step_key%type;
+    l_timestamp              flow_subflows.sbfl_became_current%type;
   begin
     apex_debug.enter 
     ( 'handle_interrupting_boundary_event'
@@ -257,12 +259,20 @@ is
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );
+    -- generate a step key & insert in the update...use later
+    l_timestamp := systimestamp;
+    l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_subflow_id
+                                            , pi_current => l_boundary_objt_bpmn_id
+                                            , pi_became_current => l_timestamp 
+                                            );
     -- switch processing onto boundaryEvent path and do next step
     update flow_subflows sbfl
        set sbfl.sbfl_current = l_boundary_objt_bpmn_id
          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
          , sbfl.sbfl_last_completed = l_parent_objt_bpmn_id
-         , sbfl.sbfl_last_update = systimestamp 
+         , sbfl.sbfl_became_current = l_timestamp
+         , sbfl.sbfl_step_key = l_step_key
+         , sbfl.sbfl_last_update = l_timestamp 
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
     ;
@@ -284,7 +294,8 @@ is
       -- If not, step off on new path...
       flow_engine.flow_complete_step 
       ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
+      , p_subflow_id => p_subflow_id 
+      , p_step_key => l_step_key
       );
     end if;
 
@@ -338,27 +349,28 @@ exception
 end get_boundary_event;
 
 procedure process_boundary_event
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
+  ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   , p_par_sbfl      in flow_subflows.sbfl_id%type
-  , p_process_level in flow_subflows.sbfl_process_level%type
   )
 is 
   l_next_objt             flow_objects.objt_bpmn_id%type;
   l_interrupting          flow_objects.objt_interrupting%type;
-  l_new_sbfl              flow_subflows.sbfl_id%type;
+  l_new_sbfl              flow_types_pkg.t_subflow_context;
   l_parent_processs_level flow_subflows.sbfl_process_level%type;
   l_parent_dgrm_id        flow_diagrams.dgrm_id%type;
+  l_parent_step_key       flow_subflows.sbfl_step_key%type;
+  l_timestamp             flow_subflows.sbfl_became_current%type;
+  l_step_key              flow_subflows.sbfl_step_key%type;
 begin 
   apex_debug.enter 
   ( 'process_boundary_event'
-  , 'subflow', p_subflow_id
+  , 'subflow', p_sbfl_info.sbfl_id
   );
   -- set the throwing event to completed
   flow_logging.log_step_completion   
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
+  ( p_process_id => p_sbfl_info.sbfl_prcs_id
+  , p_subflow_id => p_sbfl_info.sbfl_id
   , p_completed_object => p_step_info.target_objt_ref
   );
   -- find matching boundary event of its type
@@ -372,8 +384,8 @@ begin
   );
   if l_next_objt is null then
     flow_errors.handle_instance_error
-    ( pi_prcs_id     => p_process_id
-    , pi_sbfl_id     => p_subflow_id
+    ( pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
+    , pi_sbfl_id     => p_sbfl_info.sbfl_id
     , pi_message_key => 'boundary-event-no-catch-found'
     , p0 => p_step_info.target_objt_subtag
     );
@@ -381,33 +393,43 @@ begin
   end if;
   if l_interrupting = 1 then
     -- first remove any non-interrupting timers that are on the parent event
-    unset_boundary_timers (p_process_id, p_par_sbfl);
+    unset_boundary_timers (p_sbfl_info.sbfl_prcs_id, p_par_sbfl);
     -- stop processing in sub process and all child levels
     flow_engine_util.terminate_level
-    ( p_process_id => p_process_id
-    , p_process_level => p_process_level
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_process_level => p_sbfl_info.sbfl_process_level
     );        
+    -- generate a step key & insert in the update...use later
+    l_timestamp := systimestamp;
+    l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => l_next_objt
+                                            , pi_current => l_next_objt
+                                            , pi_became_current => l_timestamp 
+                                            );
     -- set parent subflow to boundary event and do flow_complete_step
     update flow_subflows sbfl
         set sbfl.sbfl_current = l_next_objt
           , sbfl.sbfl_last_completed = p_step_info.target_objt_ref 
           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+          , sbfl.sbfl_became_current = l_timestamp
+          , sbfl.sbfl_step_key = l_step_key
+          , sbfl_last_update = l_timestamp
       where sbfl.sbfl_id = p_par_sbfl
-        and sbfl.sbfl_prcs_id = p_process_id
+        and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
     ;
     -- process on-event expressions for boundary event
     flow_expressions.process_expressions
     ( pi_objt_bpmn_id => l_next_objt  
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
-    , pi_prcs_id      => p_process_id
+    , pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
     , pi_sbfl_id      => p_par_sbfl
     );
 
     if p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_intermediate_throw_event  
     then 
       flow_engine.flow_complete_step
-      ( p_process_id => p_process_id
+      ( p_process_id => p_sbfl_info.sbfl_prcs_id
       , p_subflow_id => p_par_sbfl
+      , p_step_key   => l_step_key
       ); 
     end if;
 
@@ -419,14 +441,14 @@ begin
            , l_parent_dgrm_id
         from flow_subflows par_sbfl
         where par_sbfl.sbfl_id = p_par_sbfl
-          and par_sbfl.sbfl_prcs_id = p_process_id
+          and par_sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
           ;
 
       -- fork first, then procced on main, then step off on child
 
       -- start new subflow starting at the boundary event and step to next task
       l_new_sbfl := flow_engine_util.subflow_start
-      ( p_process_id => p_process_id
+      ( p_process_id => p_sbfl_info.sbfl_prcs_id
       , p_parent_subflow => p_par_sbfl
       , p_starting_object => l_next_objt
       , p_current_object => l_next_objt
@@ -447,8 +469,8 @@ begin
       flow_expressions.process_expressions
       ( pi_objt_bpmn_id => l_next_objt  
       , pi_set          => flow_constants_pkg.gc_expr_set_on_event
-      , pi_prcs_id      => p_process_id
-      , pi_sbfl_id      => l_new_sbfl
+      , pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id      => l_new_sbfl.sbfl_id
       );     
 
       if not flow_globals.get_step_error then
@@ -458,28 +480,30 @@ begin
         then 
             -- do next_step on triggering subflow if an ITE 
             flow_engine.flow_complete_step 
-            ( p_process_id => p_process_id
-            , p_subflow_id => p_subflow_id
+            ( p_process_id => p_sbfl_info.sbfl_prcs_id
+            , p_subflow_id => p_sbfl_info.sbfl_id 
+            , p_step_key   => p_sbfl_info.sbfl_step_key
             );
         elsif p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_end_event  
         then
             -- normal end event
             flow_engine_util.subflow_complete
-            ( p_process_id => p_process_id
-            , p_subflow_id => p_subflow_id
+            ( p_process_id => p_sbfl_info.sbfl_prcs_id
+            , p_subflow_id => p_sbfl_info.sbfl_id
             );
         end if;
 
         -- step forward from boundary event
         flow_engine.flow_complete_step 
-        ( p_process_id => p_process_id
-        , p_subflow_id => l_new_sbfl
+        ( p_process_id => p_sbfl_info.sbfl_prcs_id
+        , p_subflow_id => l_new_sbfl.sbfl_id
+        , p_step_key   => l_new_sbfl.step_key
         );
       else
         -- set errort status on instance and subflow
         flow_errors.set_error_status
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
+        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+        , pi_sbfl_id => p_sbfl_info.sbfl_id
         );
       end if;
     end if;

@@ -81,7 +81,8 @@ as
         end if;
       end if;
     else
-      apex_debug.message( p_message => 'Action: %s, PRCS: %s, SBFL: %s', p0 => apex_application.g_x01, p1 => apex_application.g_x02, p2 => apex_application.g_x03 );
+      apex_debug.message( p_message => 'Action: %0, PRCS: %1, SBFL: %2, STEP KEY: %3', p0 => apex_application.g_x01, 
+      p1 => apex_application.g_x02, p2 => apex_application.g_x03 , p3 => apex_application.g_x04);
 
       if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
         select prcs_status
@@ -122,6 +123,7 @@ as
           (
             p_process_id    => apex_application.g_x02
           , p_subflow_id    => apex_application.g_x03
+          , p_step_key      => apex_application.g_x04
           );
         when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 

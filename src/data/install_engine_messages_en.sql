@@ -52,6 +52,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'engine-util-sbfl-not-in-prcs',
 'en',
+'Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 ).'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'engine-util-sbfl-not-found',
+'en',
 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'
 );
  
@@ -183,6 +190,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
+'reservation-incorrect-step-key',
+'en',
+'Task is no longer current, probably already completed.  Please refresh your Inbox.'
+); 
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
 'reservation-lock-timeout',
 'en',
 'Subflow currently locked (not reserved) by another user.  Try your reservation again later.'
@@ -251,6 +265,13 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'Start Work time recording unsuccessful.  Subflow %0 in Process %1 not found.'
 );
  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'step-key-incorrect',
+'en',
+'This Process Step has already occurred.  (Incorrect step key %0 supplied while expecting step key %1).'
+); 
+
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'subProcess-no-start',

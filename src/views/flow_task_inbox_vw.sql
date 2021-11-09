@@ -18,13 +18,15 @@ as
         , sbfl_last_completed_name
         , sbfl_current
         , sbfl_current_name
+        , sbfl_step_key
         , case sbfl_current_tag_name
             when 'bpmn:userTask' then
               flow_usertask_pkg.get_url
               (
-                pi_prcs_id => sbfl_prcs_id
-              , pi_sbfl_id => sbfl_id
-              , pi_objt_id => sbfl_current_objt_id
+                pi_prcs_id  => sbfl_prcs_id
+              , pi_sbfl_id  => sbfl_id
+              , pi_objt_id  => sbfl_current_objt_id
+              , pi_step_key => sbfl_step_key
               )
             else null
           end link_text

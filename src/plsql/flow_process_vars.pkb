@@ -451,9 +451,10 @@ end delete_var;
 
   procedure do_substitution
   (
-    pi_prcs_id in flow_processes.prcs_id%type
-  , pi_sbfl_id in flow_subflows.sbfl_id%type
-  , pio_string in out nocopy varchar2
+    pi_prcs_id  in flow_processes.prcs_id%type
+  , pi_sbfl_id  in flow_subflows.sbfl_id%type
+  , pi_step_key in flow_subflows.sbfl_step_key%type default null
+  , pio_string  in out nocopy varchar2
   )
   as
     l_f4a_substitutions apex_t_varchar2;
@@ -488,6 +489,8 @@ end delete_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_prcs_id );
           when flow_constants_pkg.gc_substitution_subflow_id then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
+          when flow_constants_pkg.gc_substitution_step_key then
+            pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
           else
             -- own implementation of get_vc_var
             -- Reason:

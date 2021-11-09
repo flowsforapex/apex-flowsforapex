@@ -230,6 +230,7 @@ as
         (
           p_process_id => l_timers.timr_prcs_id
         , p_subflow_id => l_timers.timr_sbfl_id
+        , p_step_key   => l_timers.timr_step_key
         );
       exception 
         -- Some exception happened during processing the timer
@@ -325,8 +326,9 @@ as
 
   procedure start_timer
   (
-    pi_prcs_id in flow_processes.prcs_id%type
-  , pi_sbfl_id in flow_subflows.sbfl_id%type
+    pi_prcs_id  in flow_processes.prcs_id%type
+  , pi_sbfl_id  in flow_subflows.sbfl_id%type 
+  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   )
   as
     l_parsed_ts           flow_timers.timr_start_on%type;
@@ -341,6 +343,7 @@ as
     ( 'start_timer'
     , 'prcs_id', pi_prcs_id
     , 'sbfl_id', pi_sbfl_id
+    , 'step_key', pi_step_key
     );
     get_timer_definition
     (
@@ -424,6 +427,7 @@ as
       (
         timr_prcs_id
       , timr_sbfl_id
+      , timr_step_key
       , timr_type
       , timr_created_on
       , timr_status
@@ -436,6 +440,7 @@ as
       (
         pi_prcs_id
       , pi_sbfl_id
+      , pi_step_key
       , l_timer_type
       , systimestamp
       , c_created
