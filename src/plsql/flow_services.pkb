@@ -1,11 +1,35 @@
-create or replace package body flow_notifications
+create or replace package body flow_services
 as
   g_workspace varchar2(100) := flow_engine_util.get_config_value(
                                    p_config_key    => 'default_workspace'
                                  , p_default_value => flow_constants_pkg.gc_config_default_default_workspace
                                );
+  g_twilio_web_credential_id varchar2(100) := 'Twilio';
+
+  g_dropbox_token_url               varchar2(100) := 'https://api.dropboxapi.com/oauth2/token';
+  g_dropbox_base_url                varchar2(100) := 'https://content.dropboxapi.com/2';
+  g_dropbox_basic_web_credential_id varchar2(100) := 'Dropbox_Basic';
+  g_dropbox_bearer_web_credential_id varchar2(100) := 'Dropbox_Bearer';
+
+  g_oci_base_url          varchar2(100) := 'https://objectstorage.%s.com/n/%s/';
+  g_oci_web_credential_id varchar2(100) := 'OCI_API_ACCESS'; 
+
+  g_microsoft_token_url                varchar2(100) := 'https://login.microsoftonline.com/%s/oauth2/v2.0/token';
+  g_microsoft_base_url                 varchar2(100) := 'https://graph.microsoft.com/v1.0';
+  g_microsoft_basic_web_credential_id  varchar2(100) := 'Microsoft_Basic';
+  g_microsoft_bearer_web_credential_id varchar2(100) := 'Microsoft_Bearer';
+
+  g_google_base_url                    varchar2(100) := 'https://www.googleapis.com';
+  g_google_token_url                   varchar2(100) := 'https://oauth2.googleapis.com/token';
+  g_google_bearer_web_credential_id    varchar2(100) := 'Google_Bearer';
   
-  procedure raise_service_error(
+  -- Store that outside in a config value. Way to encrypt it?
+  g_dropbox_refresh_token varchar2(200) := 'RFUqrAw3AFMAAAAAAAAAASJi95QUob-OJB_HnN1eujw6Cx0d68dSMD9_ITotOb-g';
+  g_google_service_account             varchar2(100) := 'flows-for-apex@flows-for-apex-331308.iam.gserviceaccount.com';
+  g_goole_private_key                  varchar2(2000) := 'MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDLpYulbtic8ToPzn1JDFJ4ECZo2MAjuQw7XLzjrudnzbJJQzL4J022XaYwlfAgubrGW4t1PGqXh3z622kSGwy1fKqZJOGxfOgy+1WDjSrgJakcUzipfn7bQXy7ftA0u6/hblZKBQCk2fr1+orLLOCOAOYZyG+IM/WmYbnpy1mM6JgIgISuPB6qWjiouNWSAQNv9SAa7K5w3K2tcz7/OCR+dNMPjGYq4BHbHwf8W4QDtDMxqtUORDXJJ4zXp3sAtlis0ViSQWp0MZxFpwckv6SQ55PHUjl3ISyDVogq2i/kaU3NT6qmeE7xmYCzZ7SoGAY3+UZknn+HQ1qQ4ET7YzajAgMBAAECggEAUSoBpkWvf52FDpe1x09p7wBAzrjUm2g9P8uOXRBwmiaZUCnAPrcreeuJOQQJWIGttzD1PByAPzR402JvVhAB2LN/KtpQOXUW9nrFclDpLbzU0b05cBRCaxCGrhO018+WIbrgGVA1GX7nTvI0LxYLyY0CKHSCPz62QUHh3xR09HtpWpuks+C8hyHHz3tS98pyG8OQ/G0frE1EQ3GL9RF4eVvmGUKMDAEzvYY8yWLCOmt7Ic6DOpyuzKhTtKCxjD0BSDkrVhiPJoVSPuAfE8r1grOQVHWN7bETnwkgDMt5VCHQSoKGXuRHwEFrWxchFQERX9k99TsYbpPlZ+ML8ce8gQKBgQDl0xVX0nVJmDzje/yNkt8l9HG43gZzWD+eYngxC6nDhVlKmXSt6V7bgSk3SYTTXZTeqmlFwvgmf/JYJK+TmErEdsTZzPnzFT/I3hsj3LGwRosr2SsuCb+7Wh9/jfkL6dLfdqZeOAbfGXNS2FeVei+/PAsnU3ue/l1C6Zmnqqk/awKBgQDi1zPTjqYh6UfrE8VuTqml6MHtADsHBQqq7K2YClHLRAWpp8vtHds5+HsBtPXIRvVT7XuwSufrcM/mZmZRwiHmfNOdb2KLN4pSEdLx58AVPpbePysFH3QXEeGoMTEOV6BYa6Wa0yuq60ThIQ5vMVYQPy2TC99kKg/YL07jXTxLqQKBgQDf9hCRcaUcX7/OS0/0wtC0kv6TkcGle7UbaogH+36m63b1TI+4vnfS3o5Es189/q8JQfWupu3dzsdif/WdlkYeKENyn95ftTBgVZkLHJEH3+bVhx8eESAHui6Bxd+RbX4yh9Recqi3lnycmfjX0Kdg62lPHHqWmPhXMX+sNZITGwKBgF1lK3J0LhSSPskb59LF0nV7wrR4vtTiD4VWUxbhUNH23LoAWybyfvt8QfDu968RABshEScBgEFgvkhnasNIwbprNJmCbblSEcI+knKE74IPtgAlU+oVDDAfbaBZOJBmJZ+iGpoHTdhea4qhmJbRYlToHjSH098irkldGQblsViZAoGAL+uRqpYDbW7K/afPLbBggM7g1/BmDhkdmVoSe06/pj0Fh1ZpBEXZTeYO1p8+6zTUJA6jSpZazzD1SlrKMPu1i9++j8ZUdktaXrOPVCUCm0zIAR33nYls0f2yMfMvJJIuQ9DGpKGhFWt935NzhLYdXZWD+oCQQqCP9KWnpCL0Kkk=';
+
+
+  procedure raise_ws_error(
       pi_prcs_id       in flow_processes.prcs_id%type
     , pi_sbfl_id       in flow_subflows.sbfl_id%type
     , pi_objt_id       in flow_objects.objt_id%type
@@ -33,6 +57,36 @@ as
     raise e_ws_error;
   end;
 
+  procedure set_workspace_id(
+    p_workspace_name in varchar2
+  )
+  is
+    l_workspace_id number;
+  begin
+    l_workspace_id := apex_util.find_security_group_id (p_workspace => p_workspace_name);
+    apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+  end set_workspace_id;
+
+  function base64URL_encode( p_raw in raw )
+    return varchar2
+  is
+    l_rv varchar2(32767);
+  begin
+    l_rv := utl_raw.cast_to_varchar2( utl_encode.base64_encode( p_raw ) );
+    l_rv := replace( l_rv, '+', '-' );
+    l_rv := replace( l_rv, '/', '_' );
+    l_rv := replace( l_rv, chr(10), '' );
+    l_rv := replace( l_rv, chr(13), '' );
+    return rtrim( l_rv, '=' );
+  end base64URL_encode;
+
+  function base64URL_encode( p_txt in varchar2 )
+  return varchar2
+  is
+  begin
+    return base64URL_encode( p_raw => utl_raw.cast_to_raw( p_txt ) );
+  end base64URL_encode;
+
   procedure send_email(
       pi_prcs_id in flow_processes.prcs_id%type
     , pi_sbfl_id in flow_subflows.sbfl_id%type
@@ -53,13 +107,12 @@ as
       l_body             flow_object_attributes.obat_vc_value%type;
       l_body_html        flow_object_attributes.obat_vc_value%type;
       l_attachment_query flow_object_attributes.obat_vc_value%type;
-      l_workspace_id     number;
-      l_workspace        varchar2(100);
       l_mail_id          number;
       type t_attachment  is record (file_name varchar2(200), mime_type varchar2(200), blob_content blob );
       type t_attachments is table of t_attachment;
       l_attachments      t_attachments;
       l_application_id   number;
+      l_workspace        varchar2(100);
       l_session          varchar2(20) := v('APP_SESSION');
     begin
       apex_debug.enter 
@@ -159,8 +212,7 @@ as
           where alias = l_app_alias;
         end if;
 
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
       if (l_use_template = 'true') then
@@ -255,7 +307,7 @@ as
     when others then
       apex_debug.error
       (
-        p_message => 'Error during flow_notifications.send_email. SQLERRM: %s'
+        p_message => 'Error during flow_services.send_email. SQLERRM: %s'
       , p0        => sqlerrm
       );
       raise e_email_failed;
@@ -273,7 +325,6 @@ as
       l_slack_message flow_object_attributes.obat_vc_value%type;
       l_response      clob;
       l_session       varchar2(20) := v('APP_SESSION');
-      l_workspace_id  number;
       l_workspace     varchar2(100);
       l_body          json_object_t;
     begin
@@ -305,8 +356,7 @@ as
 
       if ( l_session is null ) then
         l_workspace := g_workspace;
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
       apex_web_service.g_request_headers.delete();
@@ -329,7 +379,7 @@ as
 
     exception 
       when e_ws_error then
-        flow_notifications.raise_service_error(
+        flow_services.raise_ws_error(
           pi_prcs_id       => pi_prcs_id
         , pi_sbfl_id       => pi_sbfl_id
         , pi_objt_id       => pi_objt_id
@@ -348,7 +398,6 @@ as
       l_teams_message flow_object_attributes.obat_vc_value%type;
       l_response      clob;
       l_session       varchar2(20) := v('APP_SESSION');
-      l_workspace_id  number;
       l_workspace     varchar2(100);
     begin
       for rec in (
@@ -375,8 +424,7 @@ as
       
       if ( l_session is null ) then
         l_workspace := g_workspace;
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
       apex_web_service.g_request_headers.delete();
@@ -395,7 +443,7 @@ as
 
     exception 
       when e_ws_error then
-        flow_notifications.raise_service_error(
+        flow_services.raise_ws_error(
           pi_prcs_id       => pi_prcs_id
         , pi_sbfl_id       => pi_sbfl_id
         , pi_objt_id       => pi_objt_id
@@ -414,7 +462,6 @@ as
       l_gchat_message flow_object_attributes.obat_vc_value%type;
       l_response            clob;
       l_session             varchar2(20) := v('APP_SESSION');
-      l_workspace_id        number;
       l_workspace           varchar2(100);
     begin
       for rec in (
@@ -441,8 +488,7 @@ as
       
       if ( l_session is null ) then
         l_workspace := g_workspace;
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
       apex_web_service.g_request_headers.delete();
@@ -461,7 +507,7 @@ as
 
     exception 
       when e_ws_error then
-        flow_notifications.raise_service_error(
+        flow_services.raise_ws_error(
           pi_prcs_id       => pi_prcs_id
         , pi_sbfl_id       => pi_sbfl_id
         , pi_objt_id       => pi_objt_id
@@ -482,7 +528,6 @@ as
       l_twilio_message           flow_object_attributes.obat_vc_value%type;
       l_response                 clob;
       l_session                  varchar2(20) := v('APP_SESSION');
-      l_workspace_id             number;
       l_workspace                varchar2(100);
     begin
       for rec in (
@@ -518,8 +563,7 @@ as
 
       if ( l_session is null ) then
         l_workspace := g_workspace;
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
       apex_web_service.g_request_headers.delete();
@@ -531,7 +575,7 @@ as
         p_http_method => 'POST',
         p_parm_name => apex_util.string_to_table( 'Body:MessagingServiceSid:To' ),
         p_parm_value => apex_util.string_to_table( l_twilio_message || ':' || l_twilio_messaging_service || ':' || l_twilio_to ),
-        p_credential_static_id => 'Twilio'
+        p_credential_static_id => g_twilio_web_credential_id
       );
     
       if apex_web_service.g_status_code != 201 then
@@ -540,7 +584,7 @@ as
 
     exception 
       when e_ws_error then
-        flow_notifications.raise_service_error(
+        flow_services.raise_ws_error(
           pi_prcs_id       => pi_prcs_id
         , pi_sbfl_id       => pi_sbfl_id
         , pi_objt_id       => pi_objt_id
@@ -557,27 +601,31 @@ as
     )
     is 
       l_context            apex_exec.t_context;
-      l_refresh_token      varchar2(4000) := 'RFUqrAw3AFMAAAAAAAAAASJi95QUob-OJB_HnN1eujw6Cx0d68dSMD9_ITotOb-g';
       l_acess_token        varchar2(4000);
-      l_token_url          varchar2(200) := 'https://api.dropboxapi.com/oauth2/token';
-      l_upload_url         varchar2(200) := 'https://content.dropboxapi.com/2/files/upload';
       l_last_token_refresh number;
       l_response           clob;
       l_session            varchar2(20) := v('APP_SESSION');
-      l_workspace_id       number;
       l_workspace          varchar2(100); 
       l_obj                json_object_t;
       l_file_name          varchar2(4000);
       l_blob_content       blob;
-      l_file_query         varchar2(4000);
+      l_dropbox_files      flow_object_attributes.obat_vc_value%type;
     begin
+
+      select obat.obat_vc_value
+      into l_dropbox_files
+          from flow_object_attributes obat
+      where obat.obat_objt_id = pi_objt_id
+          and obat.obat_key = flow_constants_pkg.gc_apex_servicetask_dropbox_files;
+
+      flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_dropbox_files );
 
       if ( l_session is null ) then
         l_workspace := g_workspace;
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
+      -- Dropbox access token have a validity of 4 hours
       select (sysdate - last_updated_on) * 24 * 60 * 60
       into l_last_token_refresh
       from apex_workspace_credentials
@@ -588,11 +636,11 @@ as
         apex_web_service.g_request_headers.delete();
 
         l_response := apex_web_service.make_rest_request(
-          p_url => l_token_url,
+          p_url => g_dropbox_token_url,
           p_http_method => 'POST',
           p_parm_name => apex_util.string_to_table( 'grant_type:refresh_token' ),
-          p_parm_value => apex_util.string_to_table( 'refresh_token' || ':' || l_refresh_token ),
-          p_credential_static_id => 'Dropbox_Basic'
+          p_parm_value => apex_util.string_to_table( 'refresh_token' || ':' || g_dropbox_refresh_token ),
+          p_credential_static_id => g_dropbox_basic_web_credential_id
         );
 
         if (apex_web_service.g_status_code = 200) then
@@ -600,7 +648,7 @@ as
           l_acess_token := l_obj.get_String('access_token');
         
           apex_credential.set_persistent_credentials (
-              p_credential_static_id  => 'Dropbox_Bearer',
+              p_credential_static_id  => g_dropbox_bearer_web_credential_id,
               p_client_id             => 'Authorization',
               p_client_secret         => 'Bearer ' || l_acess_token 
           );
@@ -609,14 +657,10 @@ as
         end if;
       end if;
 
-      l_file_query := q'[select '/logo/logo_' ||to_char(sysdate, 'YYYYMMDD_HH24MISS') ||'.png', blob_content
-      from apex_application_files
-      where id = '6422679803629985005']';
-
       l_context         := 
         apex_exec.open_query_context(
             p_location   => apex_exec.c_location_local_db
-         , p_sql_query  => l_file_query
+         , p_sql_query  => l_dropbox_files
         );
 
       while apex_exec.next_row(l_context) loop
@@ -630,10 +674,10 @@ as
         apex_web_service.g_request_headers(2).value := '{"path":"' || l_file_name || '"}';
         
         l_response := apex_web_service.make_rest_request(
-            p_url => l_upload_url,
+            p_url => g_dropbox_base_url || '/files/upload',
             p_http_method => 'POST',
             p_body_blob => l_blob_content,
-            p_credential_static_id => 'Dropbox_Bearer'
+            p_credential_static_id => g_dropbox_bearer_web_credential_id
           );
 
         if apex_web_service.g_status_code != 200 then
@@ -644,7 +688,7 @@ as
     exception 
       when e_ws_error then
         apex_exec.close( l_context );
-        flow_notifications.raise_service_error(
+        flow_services.raise_ws_error(
           pi_prcs_id       => pi_prcs_id
         , pi_sbfl_id       => pi_sbfl_id
         , pi_objt_id       => pi_objt_id
@@ -663,32 +707,64 @@ as
     )
     is
       l_context            apex_exec.t_context;
-      l_upload_url         varchar2(200) := 'https://objectstorage.eu-frankfurt-1.oraclecloud.com/n/frhgzrirrszr/';
+      l_base_url           varchar2(200);
       l_bucket_name        varchar2(200) := 'apex_file_storage';
       l_response           clob;
       l_session            varchar2(20) := v('APP_SESSION');
-      l_workspace_id       number;
       l_workspace          varchar2(100); 
       l_file_name          varchar2(4000);
       l_mime_type          varchar(200);
       l_blob_content       blob;
-      l_file_query         varchar2(4000);
+      l_oci_region         flow_object_attributes.obat_vc_value%type;
+      l_oci_namespace      flow_object_attributes.obat_vc_value%type;
+      l_oci_bucket_name    flow_object_attributes.obat_vc_value%type;
+      l_oci_files          flow_object_attributes.obat_vc_value%type;
     begin
+      for rec in (
+      select obat.obat_key
+          , obat.obat_vc_value
+          from flow_object_attributes obat
+      where obat.obat_objt_id = pi_objt_id
+          and obat.obat_key in ( flow_constants_pkg.gc_apex_servicetask_oci_region,
+                                 flow_constants_pkg.gc_apex_servicetask_oci_namespace,
+                                 flow_constants_pkg.gc_apex_servicetask_oci_bucket_name,           
+                                 flow_constants_pkg.gc_apex_servicetask_oci_files
+                              )
+      )
+      loop
+        case rec.obat_key
+          when flow_constants_pkg.gc_apex_servicetask_oci_region then
+            l_oci_region := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_oci_region );
+          when flow_constants_pkg.gc_apex_servicetask_oci_namespace then
+            l_oci_namespace := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_oci_namespace );
+          when flow_constants_pkg.gc_apex_servicetask_oci_bucket_name then
+            l_oci_bucket_name := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_oci_bucket_name );
+          when flow_constants_pkg.gc_apex_servicetask_oci_files then
+            l_oci_files := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_oci_files );
+          else
+          null;
+        end case;
+      end loop;
 
       if ( l_session is null ) then
         l_workspace := g_workspace;
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
-      l_file_query := q'[select 'logo_' ||to_char(sysdate, 'YYYYMMDD_HH24MISS') ||'.png', 'image/png', blob_content
-      from apex_application_files
-      where id = '6422679803629985005']';
+      l_base_url := apex_string.format(
+          p_message => g_oci_base_url
+        , p0        => l_oci_region
+        , p1        => l_oci_namespace
+      );
 
       l_context         := 
         apex_exec.open_query_context(
             p_location   => apex_exec.c_location_local_db
-         , p_sql_query  => l_file_query
+         , p_sql_query  => l_oci_files
         );
 
       while apex_exec.next_row(l_context) loop
@@ -701,10 +777,10 @@ as
         apex_web_service.g_request_headers(1).value := l_mime_type;
       
         l_response := apex_web_service.make_rest_request(
-            p_url => l_upload_url || 'b/' || l_bucket_name || '/o/' || apex_util.url_encode(l_file_name),
+            p_url => l_base_url || 'b/' || l_oci_bucket_name || '/o/' || apex_util.url_encode(l_file_name),
             p_http_method => 'PUT',
             p_body_blob => l_blob_content,
-            p_credential_static_id => 'OCI_API_ACCESS'
+            p_credential_static_id => g_oci_web_credential_id
           );
 
         if apex_web_service.g_status_code != 200 then
@@ -715,7 +791,7 @@ as
     exception 
       when e_ws_error then
         apex_exec.close( l_context );
-        flow_notifications.raise_service_error(
+        flow_services.raise_ws_error(
           pi_prcs_id       => pi_prcs_id
         , pi_sbfl_id       => pi_sbfl_id
         , pi_objt_id       => pi_objt_id
@@ -735,13 +811,10 @@ as
     is
       l_context            apex_exec.t_context;
       l_acess_token        varchar2(4000);
-      l_token_base_url     varchar2(200) := 'https://login.microsoftonline.com';
-      l_token_endpoint     varchar2(200) := '/oauth2/v2.0/token';
-      l_base_url           varchar2(200) := 'https://graph.microsoft.com/v1.0';
+      l_token_url          varchar2(200);
       l_last_token_refresh number;
       l_response           clob;
       l_session            varchar2(20) := v('APP_SESSION');
-      l_workspace_id       number;
       l_workspace          varchar2(100); 
       l_object             json_object_t;
       l_array              json_array_t;
@@ -768,7 +841,6 @@ as
       )
       loop
         case rec.obat_key
-        
           when flow_constants_pkg.gc_apex_servicetask_microsoft_tenant then
             l_microsoft_tenant := rec.obat_vc_value;
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_microsoft_tenant );
@@ -788,27 +860,31 @@ as
 
       if ( l_session is null ) then
         l_workspace := g_workspace;
-        l_workspace_id := apex_util.find_security_group_id (p_workspace => l_workspace);
-        apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
+        set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
       select (sysdate - last_updated_on) * 24 * 60 * 60
       into l_last_token_refresh
       from apex_workspace_credentials
-      where static_id = 'Microsoft_Bearer';
+      where static_id = g_microsoft_bearer_web_credential_id;
 
+      -- Microsoft access token are valid for 1 hour
       if l_last_token_refresh > 3500 then
+        l_token_url := apex_string.format(
+            p_message => g_microsoft_token_url
+          , p0        => l_microsoft_tenant
+        );
         --need refresh
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';  
         apex_web_service.g_request_headers(1).value := 'application/x-www-form-urlencoded';
 
         l_response := apex_web_service.make_rest_request(
-          p_url => l_token_base_url|| '/' || l_microsoft_tenant || l_token_endpoint,
+          p_url => l_token_url,
           p_http_method => 'POST',
           p_parm_name => apex_util.string_to_table( 'grant_type:scope' ),
           p_parm_value => apex_util.string_to_table( 'client_credentials,https://graph.microsoft.com/.default', ',' ),
-          p_credential_static_id => 'Microsoft_Basic'
+          p_credential_static_id => g_microsoft_basic_web_credential_id
         );
         
         if (apex_web_service.g_status_code = 200) then
@@ -816,7 +892,7 @@ as
           l_acess_token := l_object.get_String('access_token');
         
           apex_credential.set_persistent_credentials (
-              p_credential_static_id  => 'Microsoft_Bearer',
+              p_credential_static_id  => g_microsoft_bearer_web_credential_id,
               p_client_id             => 'Authorization',
               p_client_secret         => 'Bearer ' || l_acess_token 
           );
@@ -828,11 +904,11 @@ as
       --Find the site id
       apex_web_service.g_request_headers.delete();
       l_response := apex_web_service.make_rest_request(
-        p_url => l_base_url || '/sites',
+        p_url => g_microsoft_base_url || '/sites',
         p_http_method => 'GET',
         p_parm_name => apex_util.string_to_table( 'select:search' ),
         p_parm_value => apex_util.string_to_table( 'name,id:' || l_microsoft_site ),
-        p_credential_static_id => 'Microsoft_Bearer'
+        p_credential_static_id => g_microsoft_bearer_web_credential_id
       );
 
       if (apex_web_service.g_status_code = 200) then
@@ -869,7 +945,7 @@ as
           apex_web_service.g_request_headers(1).value := 'application/json';
             
           l_response := apex_web_service.make_rest_request(
-              p_url => l_base_url 
+              p_url => g_microsoft_base_url 
                        || '/sites/' 
                        || l_site_id 
                        || '/drive/root:/' 
@@ -878,7 +954,7 @@ as
                        || ':/content',
               p_http_method => 'PUT',
               p_body_blob => l_blob_content,
-              p_credential_static_id => 'Microsoft_Bearer'
+              p_credential_static_id => g_microsoft_bearer_web_credential_id
             );
 
           if apex_web_service.g_status_code != 200 then
@@ -889,7 +965,7 @@ as
     exception 
       when e_ws_error then
         apex_exec.close( l_context );
-        flow_notifications.raise_service_error(
+        flow_services.raise_ws_error(
           pi_prcs_id       => pi_prcs_id
         , pi_sbfl_id       => pi_sbfl_id
         , pi_objt_id       => pi_objt_id
@@ -901,5 +977,204 @@ as
         raise;
     end upload_file_to_onedrive;
 
-end flow_notifications;
+    procedure upload_file_to_gdrive(  
+        pi_prcs_id in flow_processes.prcs_id%type
+      , pi_sbfl_id in flow_subflows.sbfl_id%type
+      , pi_objt_id in flow_objects.objt_id%type
+    )
+    is
+      l_context            apex_exec.t_context;
+      l_acess_token        varchar2(4000);
+      l_last_token_refresh number;
+      l_response           clob;
+      l_session            varchar2(20) := v('APP_SESSION');
+      l_workspace          varchar2(100); 
+      l_object             json_object_t;
+      l_array              json_array_t;
+      l_element            json_element_t;
+      l_file_name          varchar2(4000);
+      l_mime_type          varchar2(4000);
+      l_blob_content       blob;
+      l_gdrive_folder_id   flow_object_attributes.obat_vc_value%type;
+      l_gdrive_files       flow_object_attributes.obat_vc_value%type;  
+      l_header             varchar2(1000);
+      l_payload            varchar2(1000);
+      l_sign               varchar2(1000);
+      l_token              varchar2(1000);
+      l_header_name        varchar2(1000);
+      l_header_value       varchar2(1000);
+      l_upload_location    varchar2(1000);
+    begin
+      for rec in (
+      select obat.obat_key
+          , obat.obat_vc_value
+          from flow_object_attributes obat
+      where obat.obat_objt_id = pi_objt_id
+          and obat.obat_key in ( flow_constants_pkg.gc_apex_servicetask_gdrive_folder_id,
+                                 flow_constants_pkg.gc_apex_servicetask_gdrive_files  
+                              )
+      )
+      loop
+        case rec.obat_key
+          when flow_constants_pkg.gc_apex_servicetask_gdrive_folder_id then
+            l_gdrive_folder_id := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_gdrive_folder_id );
+          when flow_constants_pkg.gc_apex_servicetask_gdrive_files then
+            l_gdrive_files := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_gdrive_files );
+          else
+          null;
+        end case;
+      end loop;
+
+      if ( l_session is null ) then
+        l_workspace := g_workspace;
+        set_workspace_id(p_workspace_name => l_workspace);
+      end if;
+
+      select (sysdate - last_updated_on) * 24 * 60 * 60
+      into l_last_token_refresh
+      from apex_workspace_credentials
+      where static_id = g_google_bearer_web_credential_id;
+
+      -- Google access token are valid for 1 hour
+      if l_last_token_refresh > 3500 then
+        --jwt token generation
+        l_header := base64URL_encode( p_txt => '{"alg":"RS256","typ":"JWT"}' );
+        l_payload  := base64URL_encode( p_txt =>'{'||
+                '"iss":"' || g_google_service_account ||'",'||
+                '"scope":"https://www.googleapis.com/auth/drive",' ||
+                '"aud":"https://oauth2.googleapis.com/token",'||
+                '"exp":'||to_char(round((CAST(sys_extract_utc(SYSTIMESTAMP) AS DATE) - to_date('1970-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss'))*24*60*60) + 3600)||','||
+                '"iat":'||to_char(round((CAST(sys_extract_utc(SYSTIMESTAMP) AS DATE) - to_date('1970-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss'))*24*60*60)) ||
+                '}' );    
+        l_sign := base64URL_encode( p_raw => as_crypto.sign( utl_raw.cast_to_raw( l_header || '.' || l_payload )
+                                                     , utl_raw.cast_to_raw( g_goole_private_key ), as_crypto.KEY_TYPE_RSA, as_crypto.SIGN_SHA256_RSA ) );
+        l_token := l_header || '.' || l_payload || '.' || l_sign;
+
+        apex_web_service.g_request_headers.delete();
+        apex_web_service.g_request_headers(1).name := 'Content-Length';
+        apex_web_service.g_request_headers(1).value := 0;
+        /*apex_web_service.g_request_headers(2).name := 'Content-Type';
+        apex_web_service.g_request_headers(2).value := 'application/json';*/
+        apex_debug.message(l_token);
+
+        l_response := apex_web_service.make_rest_request(
+          p_url => g_google_token_url || '?grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion='||l_token,
+          p_body => empty_clob(),
+          p_http_method => 'POST'
+        );
+        
+        apex_debug.log_long_message(l_response);
+        if (apex_web_service.g_status_code = 200) then
+          l_object := json_object_t(l_response);
+          l_acess_token := l_object.get_String('access_token');
+          --l_acess_token := replace(l_acess_token, '.', '');
+          apex_debug.message(l_acess_token);
+        
+          apex_credential.set_persistent_credentials (
+              p_credential_static_id  => g_google_bearer_web_credential_id,
+              p_client_id             => 'Authorization',
+              p_client_secret         => 'Bearer ' || l_acess_token 
+          );
+        else
+          raise e_ws_error;
+        end if;
+      end if;
+
+      --Check if folder exist
+      apex_web_service.g_request_headers.delete();
+      l_response := apex_web_service.make_rest_request(
+        p_url => g_google_base_url || '/drive/v3/files/' || l_gdrive_folder_id,
+        p_http_method => 'GET',
+        p_parm_name => apex_util.string_to_table( 'supportsAllDrives'),
+        p_parm_value => apex_util.string_to_table( 'true'),
+        p_credential_static_id => g_google_bearer_web_credential_id
+      );
+
+      if (apex_web_service.g_status_code != 200) then
+        raise e_ws_error;
+      end if;
+      
+      l_context         := 
+        apex_exec.open_query_context(
+            p_location   => apex_exec.c_location_local_db
+          , p_sql_query  => l_gdrive_files
+        );
+
+        while apex_exec.next_row(l_context) loop
+          l_file_name    := apex_exec.get_varchar2( l_context, 1 );
+          l_mime_type    := apex_exec.get_varchar2( l_context, 2 );
+          l_blob_content := apex_exec.get_blob( l_context, 3 );
+          apex_debug.message('file '||l_file_name);
+
+          apex_web_service.g_request_headers.delete();
+          apex_web_service.g_request_headers(1).name := 'Content-Type';  
+          apex_web_service.g_request_headers(1).value := 'application/json';
+
+          l_object := json_object_t('{}');
+          l_object.put('name', l_file_name);
+          l_object.put('mimeType', l_mime_type);
+          l_array := json_array_t('[]');
+          l_array.append(l_gdrive_folder_id);
+          l_object.put('parents', l_array);
+            
+          l_response := apex_web_service.make_rest_request(
+              p_url => g_google_base_url || '/upload/drive/v3/files',
+              p_http_method => 'POST',
+              p_parm_name => apex_string.string_to_table('uploadType:supportsAllDrives'),
+              p_parm_value => apex_string.string_to_table('resumable:true'),
+              p_body => l_object.to_Clob(),
+              p_credential_static_id => g_google_bearer_web_credential_id
+            );
+
+          if apex_web_service.g_status_code != 200 then
+            raise e_ws_error;
+          end if;
+          
+          -- get location header
+          for i in 1.. apex_web_service.g_headers.count loop
+            l_header_name := apex_web_service.g_headers(i).name;
+            l_header_value := apex_web_service.g_headers(i).value;
+            if l_header_name = 'X-GUploader-UploadID' then
+              exit;
+            end if;
+          end loop;
+
+          --Upload the file
+          apex_web_service.g_request_headers.delete();
+          apex_web_service.g_request_headers(1).name := 'Content-Type';  
+          apex_web_service.g_request_headers(1).value := l_mime_type;
+          apex_web_service.g_request_headers(2).name := 'Content-Length';  
+          apex_web_service.g_request_headers(2).value := dbms_lob.getlength( l_blob_content );
+
+          l_response := apex_web_service.make_rest_request(
+              p_url => g_google_base_url || '/upload/drive/v3/files?uploadType=resumable&supportsAllDrives=true&upload_id=' || l_header_value,
+              p_http_method => 'PUT',
+              p_body_blob => l_blob_content,
+              p_credential_static_id => g_google_bearer_web_credential_id
+            );
+          
+          if apex_web_service.g_status_code != 200 then
+            raise e_ws_error;
+          end if;
+
+        end loop;
+        apex_exec.close(l_context);
+    exception 
+      when e_ws_error then
+        apex_exec.close( l_context );
+        flow_services.raise_ws_error(
+          pi_prcs_id       => pi_prcs_id
+        , pi_sbfl_id       => pi_sbfl_id
+        , pi_objt_id       => pi_objt_id
+        , pi_http_code     => apex_web_service.g_status_code
+        , pi_http_response => l_response
+        );
+      when others then  
+        apex_exec.close( l_context );
+        raise;
+    end upload_file_to_gdrive;
+
+end flow_services;
 /

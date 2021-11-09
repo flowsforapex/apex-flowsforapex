@@ -100,7 +100,15 @@ as
   gc_apex_servicetask_microsoft_files  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-files';
   -- dropbox
   gc_apex_servicetask_dropbox_files    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'dropbox-files';
- 
+  -- oci
+  gc_apex_servicetask_oci_region        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-region';
+  gc_apex_servicetask_oci_namespace     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-namespace';
+  gc_apex_servicetask_oci_bucket_name   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-bucket-name';
+  gc_apex_servicetask_oci_files         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-files';
+  -- google drive
+  gc_apex_servicetask_gdrive_folder_id constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'gdrive-folder-id';
+  gc_apex_servicetask_gdrive_files     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'gdrive-files';
+
   --scriptTask
   gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
   gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
