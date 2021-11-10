@@ -36,6 +36,7 @@ as
             (
               p_process_id => apex_application.g_f01(i)
             , p_subflow_id => apex_application.g_f02(i)
+            , p_step_key   => apex_application.g_f03(i)
             , p_reservation => coalesce(apex_application.g_x02, V('APP_USER'))
             );
           when 'BULK-RELEASE-STEP' then
@@ -43,18 +44,21 @@ as
             (
               p_process_id => apex_application.g_f01(i)
             , p_subflow_id => apex_application.g_f02(i)
+            , p_step_key   => apex_application.g_f03(i)
             );        
           when 'BULK-COMPLETE-STEP' then
             flow_api_pkg.flow_complete_step
             (
               p_process_id => apex_application.g_f01(i)
             , p_subflow_id => apex_application.g_f02(i)
+            , p_step_key   => apex_application.g_f03(i)
             );
           when 'BULK-RESTART-STEP' then 
             flow_api_pkg.flow_restart_step 
             (
               p_process_id => apex_application.g_f01(i)
             , p_subflow_id => apex_application.g_f02(i)
+            , p_step_key   => apex_application.g_f03(i)
             , p_comment       => apex_application.g_x02           
             );
           when 'BULK-DELETE-PROCESS-VARIABLE' then 
@@ -108,7 +112,8 @@ as
           (
             p_process_id => apex_application.g_x02
           , p_subflow_id => apex_application.g_x03
-          , p_reservation => coalesce(apex_application.g_x04, V('APP_USER'))
+          , p_step_key   => apex_application.g_x04
+          , p_reservation => coalesce(apex_application.g_x05, V('APP_USER'))
           );
         when 'TERMINATE-FLOW-INSTANCE' then 
           flow_api_pkg.flow_terminate ( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
@@ -117,6 +122,7 @@ as
           (
             p_process_id => apex_application.g_x02
           , p_subflow_id => apex_application.g_x03
+          , p_step_key   => apex_application.g_x04
           );    
         when 'COMPLETE-STEP' then
           flow_api_pkg.flow_complete_step
@@ -130,7 +136,8 @@ as
           (
             p_process_id    => apex_application.g_x02
           , p_subflow_id    => apex_application.g_x03
-          , p_comment       => apex_application.g_x04       
+          , p_step_key      => apex_application.g_x04
+          , p_comment       => apex_application.g_x05       
           );
         when 'FLOW-INSTANCE-AUDIT' then
           l_url := apex_page.get_url(

@@ -28,8 +28,8 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#:t-Dialog--noPadding'
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210923184111'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20211110102722'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(16968778051177917)
@@ -529,6 +529,15 @@ wwv_flow_api.create_worksheet_column(
 ,p_heading_alignment=>'LEFT'
 ,p_tz_dependent=>'N'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(62704084243232510)
+,p_db_column_name=>'SBFL_STEP_KEY'
+,p_display_order=>110
+,p_column_identifier=>'K'
+,p_column_label=>'Step Key'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(5544387693437777)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -536,7 +545,8 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'55444'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'SBFL_ID:SBFL_PROCESS_LEVEL:CURRENT_OBJECT:SBFL_BECAME_CURRENT:SBFL_WORK_STARTED:SBFL_LAST_UPDATE:'
+,p_display_rows=>10
+,p_report_columns=>'SBFL_ID:SBFL_STEP_KEY:SBFL_PROCESS_LEVEL:CURRENT_OBJECT:SBFL_BECAME_CURRENT:SBFL_WORK_STARTED:SBFL_LAST_UPDATE:'
 ,p_sort_column_1=>'SBFL_LAST_UPDATE'
 ,p_sort_direction_1=>'DESC'
 );

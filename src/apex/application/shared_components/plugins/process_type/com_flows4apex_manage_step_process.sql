@@ -12,7 +12,7 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_plugin(
- p_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151286992364012459)
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_name=>'COM.FLOWS4APEX.MANAGE_STEP.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance Step'
@@ -23,12 +23,12 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
-,p_version_identifier=>'21.1'
+,p_version_identifier=>'21.2'
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84120779080130975)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151287222331012470)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -53,24 +53,24 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Specify which method you will use to supply the Flow Instance context (process_id and subflow_id)?</p>'))
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84121224149130975)
-,p_plugin_attribute_id=>wwv_flow_api.id(84120779080130975)
+ p_id=>wwv_flow_api.id(151287667400012470)
+,p_plugin_attribute_id=>wwv_flow_api.id(151287222331012470)
 ,p_display_sequence=>10
 ,p_display_value=>'In Page Items'
 ,p_return_value=>'item'
 ,p_help_text=>'Use this when the Flow Instance context (process_id and subflow_id) are stored in APEX Page Items.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84121732755130977)
-,p_plugin_attribute_id=>wwv_flow_api.id(84120779080130975)
+ p_id=>wwv_flow_api.id(151288176006012472)
+,p_plugin_attribute_id=>wwv_flow_api.id(151287222331012470)
 ,p_display_sequence=>20
 ,p_display_value=>'from SQL Query'
 ,p_return_value=>'sql'
 ,p_help_text=>'Use this when the Flow Instance context (process_id and subflow_id) are to be returned by a SQL Query.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84122149812130977)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151288593063012472)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
@@ -78,7 +78,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84120779080130975)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151287222331012470)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
@@ -93,8 +93,8 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84122625252130977)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151289068503012472)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
@@ -102,7 +102,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84120779080130975)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151287222331012470)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
@@ -117,8 +117,8 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84122989849130977)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151289433100012472)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>40
@@ -126,22 +126,23 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
 ,p_sql_min_column_count=>2
-,p_sql_max_column_count=>2
+,p_sql_max_column_count=>3
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84120779080130975)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151287222331012470)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>SQL Query which returns one row with two columns:</p>',
+'<p>SQL Query which returns one row with two or three columns:</p>',
 '<ul>',
 '<li>First column needs to contain the Instance Id (prcs_id)</li>',
 '<li>Second column needs to contain the Subflow Id (sbfl_id)</li>',
+'<li>Third column can contain the Step Key (step_key)</li>',
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84126966970138117)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151293410221019612)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>5
 ,p_display_sequence=>5
@@ -154,32 +155,32 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>'Allows you to define the action you want to apply to the Flow Instance.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84127317764141302)
-,p_plugin_attribute_id=>wwv_flow_api.id(84126966970138117)
+ p_id=>wwv_flow_api.id(151293761015022797)
+,p_plugin_attribute_id=>wwv_flow_api.id(151293410221019612)
 ,p_display_sequence=>10
 ,p_display_value=>'Complete Step'
 ,p_return_value=>'complete'
 ,p_help_text=>'This option is used to complete a Flow Instance Step.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84127665520143578)
-,p_plugin_attribute_id=>wwv_flow_api.id(84126966970138117)
+ p_id=>wwv_flow_api.id(151294108771025073)
+,p_plugin_attribute_id=>wwv_flow_api.id(151293410221019612)
 ,p_display_sequence=>20
 ,p_display_value=>'Reserve Step'
 ,p_return_value=>'reserve'
 ,p_help_text=>'This option is used to reserve a Flow Instance Step.'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84128097279145642)
-,p_plugin_attribute_id=>wwv_flow_api.id(84126966970138117)
+ p_id=>wwv_flow_api.id(151294540530027137)
+,p_plugin_attribute_id=>wwv_flow_api.id(151293410221019612)
 ,p_display_sequence=>30
 ,p_display_value=>'Release Step'
 ,p_return_value=>'release'
 ,p_help_text=>'This option is used to release a Flow Instance Step.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84123361724130977)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151289804975012472)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>6
 ,p_display_sequence=>60
@@ -188,7 +189,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>false
 ,p_default_value=>'N'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84126966970138117)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151293410221019612)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'complete'
@@ -204,8 +205,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Set the switch to ''On'' to set up routing for a future Inclusive Gateway or Exclusive Gateway.</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84123760208130977)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151290203459012472)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>7
 ,p_display_sequence=>70
@@ -213,7 +214,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'TEXT'
 ,p_is_required=>false
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84123361724130977)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151289804975012472)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -224,8 +225,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>The plug-in will create a Flows for APEX Process Variable with a name of this field with '':route'' appended to it, as required by the gateway.</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84124236662130977)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151290679913012472)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>8
 ,p_display_sequence=>80
@@ -233,7 +234,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'TEXT'
 ,p_is_required=>true
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84123361724130977)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151289804975012472)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -261,8 +262,8 @@ wwv_flow_api.create_plugin_attribute(
 '<ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84124566302130977)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(151291009553012472)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>9
 ,p_display_sequence=>90
@@ -271,7 +272,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>false
 ,p_default_value=>'N'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84126966970138117)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151293410221019612)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'complete'
@@ -284,8 +285,8 @@ wwv_flow_api.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(94220399897725747)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(161386843148607242)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>10
 ,p_display_sequence=>100
@@ -293,7 +294,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'TEXT'
 ,p_is_required=>true
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84126966970138117)
+,p_depending_on_attribute_id=>wwv_flow_api.id(151293410221019612)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'reserve'
@@ -303,8 +304,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>'Use this to define the value for the reservation.'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(100854549299010270)
-,p_plugin_id=>wwv_flow_api.id(84120549113130964)
+ p_id=>wwv_flow_api.id(168020992549891765)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>11
 ,p_display_sequence=>110
@@ -313,6 +314,30 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>false
 ,p_is_translatable=>false
 ,p_help_text=>'Provide APEX items to return Flow Instance and Subflow ID.'
+);
+wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(133131748772449152)
+,p_plugin_id=>wwv_flow_api.id(151286992364012459)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>12
+,p_display_sequence=>35
+,p_prompt=>'Step Key'
+,p_attribute_type=>'PAGE ITEM'
+,p_is_required=>false
+,p_is_translatable=>false
+,p_depending_on_attribute_id=>wwv_flow_api.id(151287222331012470)
+,p_depending_on_has_to_exist=>true
+,p_depending_on_condition_type=>'EQUALS'
+,p_depending_on_expression=>'item'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>APEX Item that contains the Flow Instance step_key.</p>',
+'',
+'<p>This could typically be: </p>',
+'<ul>',
+'<li>An Application Item, often named STEP_KEY.</li>',
+'<li>A Global Page Item, for example P0_STEP_KEY.</li>',
+'<li>A Page Item on your page.</li>',
+'</ul>'))
 );
 wwv_flow_api.component_end;
 end;

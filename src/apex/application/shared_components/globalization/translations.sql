@@ -2543,28 +2543,28 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<h2>Flows for APEX</h2>',
-unistr('<h3>Un syst\00E8me de flux de processus low code pour APEX bas\00E9 sur BPMN.</h3>'),
-unistr('<h4> Fonctionnalit\00E9s</h4>'),
+'<h3>A Low code, BPMN-based Process Flow system for APEX.</h3>',
+'<h4> Features</h4>',
 '<ul>',
-unistr('<li>Flows for APEX permet aux d\00E9veloppeurs APEX de mod\00E9liser et d''ex\00E9cuter des flux de processus dans des applications APEX en utilisant une combinaison de conception visuelle de processus et de techniques low code.</li>'),
-unistr('<li>Con\00E7u principalement pour les d\00E9veloppeurs APEX, Flows for APEX utilise des technologies qui vous sont famili\00E8res - APEX, PL/SQL et SQL - pour cr\00E9er des flux de processus puissants et flexibles dans votre environnement APEX.</li>'),
-unistr('<li>Utilis\00E9 pour cr\00E9er et ex\00E9cuter un flux de processus de pages APEX, de scripts PL/SQL, d''envoi d\2019e-mail.</li>'),
-unistr('<li> La d\00E9finition sch\00E9matique du processus peut \00E9galement \00EAtre comprise et modifi\00E9e par les utilisateurs m\00E9tiers afin d''accroitre la flexibilit\00E9 de l''entreprise. Flows for APEX utilise le format BPMN (Business Process Modeling Notation) V2.</li>'),
-unistr('<li>D\00E9velopp\00E9 pour la communaut\00E9 APEX et publi\00E9 sous licence libre (MIT).</li>'),
+'<li>Flows for APEX enables APEX developers to model and run process flows in APEX using a combination of visual process design and low-code techniques.</li>',
+'<li>Designed primarily for APEX developers, Flows for APEX uses the technologies that you are already familiar with - APEX, PL/SQL, and SQL - to create powerful and flexible process flows in your APEX environment.</li>',
+'<li>Used to create and execute a process flow of APEX pages, PL/SQL scripts, send email.</li>',
+'<li> The low-code diagrammatic process definition can also be understood and edited by business users to increase business flexibility.  Flows use the Business Process Modeling Notation (BPMN) V2 style</li>',
+'<li>Built as an APEX community project, and released on an open source, MIT licence.</li>',
 '</ul>',
 '<p>',
-unistr('<h4>T\00E9l\00E9charger</h4>'),
-'<a href="http://flowsforapex.mt-ag.com" target="_blank">flowsforapex.mt-ag.com</a>',
+'<h4>Download</h4>',
+'<a href="https://flowsforapex.org" target="_blank">flowsforapex.org</a>',
 '<p>',
 '<h4>Documentation</h4>',
-unistr('<a href="https://mt-ag.github.io/apex-flowsforapex" target="_blank">Derni\00E8re documentation en ligne</a>'),
+'<a href="https://flowsforapex.org/latest/getting-started/" target="_blank">Latest Documentation Online</a>',
 '<p>',
-'<h4>Tutoriels BPMN</h4>',
-unistr('Pour bien d\00E9marrer avec la mod\00E9lisation des flux, essayez les tutoriels pr\00E9install\00E9s. Pour plus d''informations sur les tutoriels, cliquez <a href="https://mt-ag.github.io/apex-flowsforapex/tutorial.html" target="_blank">ici</a>.'),
+'<h4>BPMN Tutorials</h4>',
+'To get you started with modelling flows, try out the preinstalled tutorial flows. For further information on the tutorials have a look <a href="https://flowsforapex.org/latest/tutorials/" target="_blank">here</a>.',
 '<p>',
-unistr('<h4>Application de d\00E9monstration</h4>'),
-unistr('<p>Consultez notre <a href="https://apex.oracle.com/pls/apex/mtflows/r/flowsforapexdemo" target="_blank">application de d\00E9monstration</a> pour voir comment l''int\00E9gration d''un flux de processus peut \00EAtre effectu\00E9e.<br />'),
-unistr('Il s''agit d''un exemple de processus de commande et d''exp\00E9dition pour une boutique de vente en ligne de T-shirts.')))
+'<h4>Demo App</h4>',
+'<p>Take a look at our <a href="https://apex.oracle.com/pls/apex/mtflows/r/flowsforapexdemo" target="_blank">demo application</a> to see how the integration of a flow can be done.<br />',
+'This uses an example Business Process of the ordering and fulfillment process for a webstore selling T Shirts.'))
 ,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<h2>Flows for APEX</h2>',
 '<h3>A Low code, BPMN-based Process Flow system for APEX.</h3>',
@@ -2578,13 +2578,13 @@ unistr('Il s''agit d''un exemple de processus de commande et d''exp\00E9dition p
 '</ul>',
 '<p>',
 '<h4>Download</h4>',
-'<a href="http://flowsforapex.mt-ag.com" target="_blank">flowsforapex.mt-ag.com</a>',
+'<a href="https://flowsforapex.org" target="_blank">flowsforapex.org</a>',
 '<p>',
 '<h4>Documentation</h4>',
-'<a href="https://mt-ag.github.io/apex-flowsforapex" target="_blank">Latest Documentation Online</a>',
+'<a href="https://flowsforapex.org/latest/getting-started/" target="_blank">Latest Documentation Online</a>',
 '<p>',
 '<h4>BPMN Tutorials</h4>',
-'To get you started with modelling flows, try out the preinstalled tutorial flows. For further information on the tutorials have a look <a href="https://mt-ag.github.io/apex-flowsforapex/tutorial.html" target="_blank">here</a>.',
+'To get you started with modelling flows, try out the preinstalled tutorial flows. For further information on the tutorials have a look <a href="https://flowsforapex.org/latest/tutorials/" target="_blank">here</a>.',
 '<p>',
 '<h4>Demo App</h4>',
 '<p>Take a look at our <a href="https://apex.oracle.com/pls/apex/mtflows/r/flowsforapexdemo" target="_blank">demo application</a> to see how the integration of a flow can be done.<br />',
@@ -2678,18 +2678,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'apex_lang.emit_language_selector_list;'
 ,p_translate_from_text=>'apex_lang.emit_language_selector_list;'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9074194518000480)
 ,p_translated_flow_id=>100001
@@ -2713,6 +2701,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>unistr('Red\00E9marrer')
 ,p_translate_from_text=>'Re-start'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9074566408000480)
@@ -3581,18 +3581,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'Dialogue de recherche'
 ,p_translate_from_text=>'Search Dialog'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9089091764000594)
 ,p_translated_flow_id=>100001
@@ -3616,6 +3604,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'</div>'
 ,p_translate_from_text=>'</div>'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9089463471000604)
@@ -4428,18 +4428,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'Sous-flux'
 ,p_translate_from_text=>'Subflow'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9103219578000768)
 ,p_page_id=>13
@@ -4465,6 +4453,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Utilisateur'
 ,p_translate_from_text=>'User'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9103614485000768)
@@ -5326,18 +5326,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>unistr('R\00E9servation')
 ,p_translate_from_text=>'Reservation'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9117053694000777)
 ,p_page_id=>14
@@ -5363,6 +5351,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Lgsf Prcs Id'
 ,p_translate_from_text=>'Lgsf Prcs Id'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9117438373000778)
@@ -6248,18 +6248,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>unistr('Compl\00E9t\00E9')
 ,p_translate_from_text=>'Completed'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9131639580000790)
 ,p_page_id=>13
@@ -6285,6 +6273,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Nom'
 ,p_translate_from_text=>'Name'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9132089397000791)
@@ -7146,18 +7146,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'Niveau du processus'
 ,p_translate_from_text=>'Process Level'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9145460524000798)
 ,p_page_id=>14
@@ -7183,6 +7171,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>unistr('Statut une fois termin\00E9')
 ,p_translate_from_text=>'Status When Complete'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9145898739000798)
@@ -8034,18 +8034,6 @@ wwv_flow_api.create_translation(
 '    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
 '</button>'))
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9159235612000809)
 ,p_page_id=>8
@@ -8061,6 +8049,7 @@ wwv_flow_api.create_translation(
 'data-menu="subflow_row_action_menu"',
 'data-prcs="#SBFL_PRCS_ID#"',
 'data-sbfl="#SBFL_ID#"',
+'data-key = "#SBFL_STEP_KEY#"',
 'data-status="#SBFL_STATUS#"',
 'data-reservation="#SBFL_RESERVATION#">',
 '    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
@@ -8070,10 +8059,23 @@ wwv_flow_api.create_translation(
 'data-menu="subflow_row_action_menu"',
 'data-prcs="#SBFL_PRCS_ID#"',
 'data-sbfl="#SBFL_ID#"',
+'data-key = "#SBFL_STEP_KEY#"',
 'data-status="#SBFL_STATUS#"',
 'data-reservation="#SBFL_RESERVATION#">',
 '    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
 '</button>'))
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9159424626000810)
@@ -8189,18 +8191,6 @@ wwv_flow_api.create_translation(
 ,p_translate_from_text=>'Flows for APEX - Manage Flow Instance Variables'
 );
 wwv_flow_api.create_translation(
- p_id=>wwv_flow_api.id(9160785152000991)
-,p_translated_flow_id=>100001
-,p_translate_to_id=>wwv_flow_api.id(84120549113130964.100001)
-,p_translate_from_id=>wwv_flow_api.id(84120549113130964)
-,p_translate_column_id=>237
-,p_translate_to_lang_code=>'fr'
-,p_translation_specific_to_item=>'NO'
-,p_template_translatable=>'N'
-,p_translate_to_text=>'Flows for APEX - Manage Flow Instance Step'
-,p_translate_from_text=>'Flows for APEX - Manage Flow Instance Step'
-);
-wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9160932952000991)
 ,p_translated_flow_id=>100001
 ,p_translate_to_id=>wwv_flow_api.id(83835043114354543.100001)
@@ -8247,18 +8237,6 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Process used to Manage <i>Flows for APEX</i> Flow Instance Variable(s). The plug-in allows you to get or set variable(s).'
 ,p_translate_from_text=>'Process used to Manage <i>Flows for APEX</i> Flow Instance Variable(s). The plug-in allows you to get or set variable(s).'
-);
-wwv_flow_api.create_translation(
- p_id=>wwv_flow_api.id(9161784282000994)
-,p_translated_flow_id=>100001
-,p_translate_to_id=>wwv_flow_api.id(84120549113130964.100001)
-,p_translate_from_id=>wwv_flow_api.id(84120549113130964)
-,p_translate_column_id=>238
-,p_translate_to_lang_code=>'fr'
-,p_translation_specific_to_item=>'NO'
-,p_template_translatable=>'N'
-,p_translate_to_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
-,p_translate_from_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9161932537001022)
@@ -8948,18 +8926,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'Y'
 ,p_translate_from_text=>'Y'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9172690683001052)
 ,p_page_id=>8
@@ -9037,6 +9003,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Y'
 ,p_translate_from_text=>'Y'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9173833361001053)
@@ -9935,18 +9913,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'TEXT'
 ,p_translate_from_text=>'TEXT'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9187889639001069)
 ,p_page_id=>6
@@ -10024,6 +9990,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Y'
 ,p_translate_from_text=>'Y'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9189037565001069)
@@ -10837,18 +10815,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'MODIFY_DIAGRAM'
 ,p_translate_from_text=>'MODIFY_DIAGRAM'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9199348508001110)
 ,p_page_id=>7
@@ -10945,6 +10911,18 @@ wwv_flow_api.create_translation(
 '});',
 '',
 'Prism.highlightAll();'))
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9200313152001111)
@@ -11716,18 +11694,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'DIALOG_RETURN_ITEM'
 ,p_translate_from_text=>'DIALOG_RETURN_ITEM'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9207566344001114)
 ,p_page_id=>10
@@ -11834,6 +11800,18 @@ wwv_flow_api.create_translation(
 '        dataType: "text"                     ',
 '    }',
 ');'))
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9208549293001115)
@@ -12566,18 +12544,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'P12_PRCS_ID'
 ,p_translate_from_text=>'P12_PRCS_ID'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9217142476001134)
 ,p_page_id=>12
@@ -12694,6 +12660,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Y'
 ,p_translate_from_text=>'Y'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9218945229001137)
@@ -13544,18 +13522,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'HTML'
 ,p_translate_from_text=>'HTML'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9232947188001177)
 ,p_page_id=>2
@@ -13672,6 +13638,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'HTML'
 ,p_translate_from_text=>'HTML'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9234756202001178)
@@ -14491,18 +14469,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'new-flow-version'
 ,p_translate_from_text=>'new-flow-version'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9248730703001324)
 ,p_translated_flow_id=>100001
@@ -14598,6 +14564,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'open-flow-instance-details'
 ,p_translate_from_text=>'open-flow-instance-details'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9250362290001325)
@@ -14961,12 +14939,12 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" ',
-'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-action="#QUICK_ACTION#">',
+'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#">',
 '    <span aria-hidden="true" class="t-Icon t-Icon--left fa #QUICK_ACTION_ICON#"></span>#QUICK_ACTION_LABEL#',
 '</button>'))
 ,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" ',
-'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-action="#QUICK_ACTION#">',
+'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#">',
 '    <span aria-hidden="true" class="t-Icon t-Icon--left fa #QUICK_ACTION_ICON#"></span>#QUICK_ACTION_LABEL#',
 '</button>'))
 );
@@ -15401,18 +15379,6 @@ unistr('    <li><strong>full</strong> - enregistre les \00E9v\00E9nements relati
 '    <li><strong>full</strong> - logs model, instance and process variable events		</li>',
 '</ul>'))
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(11921968066469783)
 ,p_page_id=>9
@@ -15485,6 +15451,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'Y'
 ,p_translate_to_text=>'Journalisation'
 ,p_translate_from_text=>'Logging'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(13104762718987260)
@@ -16291,18 +16269,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'ID du processus'
 ,p_translate_from_text=>'Process ID'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(15507878993142502)
 ,p_page_id=>8
@@ -16380,6 +16346,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>unistr('\00C9v\00E9nement')
 ,p_translate_from_text=>'Event'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(15509084434142503)
@@ -17196,18 +17174,6 @@ wwv_flow_api.create_translation(
 ,p_translate_to_text=>'Y'
 ,p_translate_from_text=>'Y'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(16989655952206214)
 ,p_page_id=>7
@@ -17285,6 +17251,18 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'Y'
 ,p_translate_to_text=>unistr('\00C9v\00E8nements de l''\00E9tape')
 ,p_translate_from_text=>'Step Events'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(17101967390044392)
@@ -17761,6 +17739,207 @@ wwv_flow_api.create_translation(
 '    <i class="#PRCS_DGRM_STATUS_ICON#"></i>',
 '    <span class="ffa-dgrm-badge-text">#PRCS_DGRM_STATUS#</span>',
 '</div>'))
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67375005163923668)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704280409232512.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704280409232512)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('\00C9tapes - pr\00E9vention des actions en double')
+,p_translate_from_text=>'Duplicate Step Prevention'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67375131759923693)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704132398232511.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704132398232511)
+,p_translate_column_id=>20
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'Y'
+,p_translate_to_text=>'Moteur'
+,p_translate_from_text=>'Engine'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67375278639923985)
+,p_page_id=>14
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704084243232510.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704084243232510)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Cl\00E9 de l''\00E9tape')
+,p_translate_from_text=>'Step Key'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67375310114923996)
+,p_page_id=>13
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62703949642232509.100001)
+,p_translate_from_id=>wwv_flow_api.id(62703949642232509)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Cl\00E9 de l''\00E9tape')
+,p_translate_from_text=>'Step Key'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67375516328923998)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62703712227232507.100001)
+,p_translate_from_id=>wwv_flow_api.id(62703712227232507)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Cl\00E9 de l''\00E9tape')
+,p_translate_from_text=>'Step Key'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67375765069924003)
+,p_page_id=>14
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704084243232510.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704084243232510)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Cl\00E9 de l''\00E9tape')
+,p_translate_from_text=>'Step Key'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67375984391924003)
+,p_page_id=>13
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62703949642232509.100001)
+,p_translate_from_id=>wwv_flow_api.id(62703949642232509)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Cl\00E9 de l''\00E9tape')
+,p_translate_from_text=>'Step Key'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67376116374924003)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62703712227232507.100001)
+,p_translate_from_id=>wwv_flow_api.id(62703712227232507)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Cl\00E9 de l''\00E9tape')
+,p_translate_from_text=>'Step Key'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67376567994924214)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(151286992364012459.100001)
+,p_translate_from_id=>wwv_flow_api.id(151286992364012459)
+,p_translate_column_id=>237
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Flows for APEX - Manage Flow Instance Step'
+,p_translate_from_text=>'Flows for APEX - Manage Flow Instance Step'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67376766684924217)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(151286992364012459.100001)
+,p_translate_from_id=>wwv_flow_api.id(151286992364012459)
+,p_translate_column_id=>238
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
+,p_translate_from_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67377040590924273)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704280409232512.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704280409232512)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'2'
+,p_translate_from_text=>'2'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67377263624924278)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704280409232512.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704280409232512)
+,p_translate_column_id=>269
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'NONE'
+,p_translate_from_text=>'NONE'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67377446509924381)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704132398232511.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704132398232511)
+,p_translate_column_id=>308
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67377525210924385)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704132398232511.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704132398232511)
+,p_translate_column_id=>309
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'HTML'
+,p_translate_from_text=>'HTML'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(67380271054002940)
+,p_page_id=>9
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62704280409232512.100001)
+,p_translate_from_id=>wwv_flow_api.id(62704280409232512)
+,p_translate_column_id=>458
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+unistr('    <li><strong>legacy</strong> (default) - le moteur n''utilise pas la cl\00E9 d''\00E9tape pour pr\00E9venir les actions en double sur une \00E9tape</li>'),
+unistr('    <li><strong>strict</strong> - le moteur utilise la cl\00E9 d''\00E9tape pour pr\00E9venir les actions en double sur une \00E9tape</li>'),
+'</ul>'))
+,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<ul>',
+'    <li><strong>legacy</strong> (default) - the engine does not use the step key to prevent duplicate action on a single step</li>',
+'    <li><strong>strict</strong> - the engine uses the step key to avoid duplicate actions on a single step.</li>',
+'</ul>'))
 );
 wwv_flow_api.component_end;
 end;
