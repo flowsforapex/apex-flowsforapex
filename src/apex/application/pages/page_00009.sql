@@ -24,7 +24,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20211110104541'
+,p_last_upd_yyyymmddhh24miss=>'20211111182245'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(8027146440825640)
@@ -179,8 +179,9 @@ wwv_flow_api.create_page_item(
 ,p_lov_display_extra=>'YES'
 ,p_inline_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li><strong>legacy</strong> (default) - the engine does not use the step key to prevent duplicate action on a single step</li>',
-'    <li><strong>strict</strong> - the engine uses the step key to avoid duplicate actions on a single step.</li>',
+'    <li><strong>legacy</strong> - Use this option only to support applications that have been developped with Flows for APEX 21.1 and lower without additional development. The engine does not use the step key to prevent duplicate action on a single s'
+||'tep.</li>',
+'    <li><strong>strict</strong> (recommended) - Use this option for new development and/or fully migrated application. The engine uses the step key to avoid duplicate actions on a single step.</li>',
 '</ul>'))
 ,p_attribute_01=>'2'
 ,p_attribute_02=>'NONE'

@@ -17932,13 +17932,15 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-unistr('    <li><strong>legacy</strong> (default) - le moteur n''utilise pas la cl\00E9 d''\00E9tape pour pr\00E9venir les actions en double sur une \00E9tape</li>'),
-unistr('    <li><strong>strict</strong> - le moteur utilise la cl\00E9 d''\00E9tape pour pr\00E9venir les actions en double sur une \00E9tape</li>'),
+unistr('    <li><strong>legacy</strong> - Utilisez cette option uniquement pour prendre en charge les applications qui ont \00E9t\00E9 d\00E9velopp\00E9es avec Flows for APEX 21.1 et inf\00E9rieur sans d\00E9veloppement suppl\00E9mentaire. Le moteur n''utilise pas la cl\00E9 d''\00E9tape pour \00E9v')
+||unistr('iter les actions en double sur une \00E9tape.</li>'),
+unistr('    <li><strong>strict</strong> (recommended) - Utilisez cette option pour les nouveaux d\00E9veloppements et/ou les applications enti\00E8rement migr\00E9es. Le moteur utilise la cl\00E9 d''\00E9tape pour \00E9viter les actions en double sur une \00E9tape.</li>'),
 '</ul>'))
 ,p_translate_from_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<ul>',
-'    <li><strong>legacy</strong> (default) - the engine does not use the step key to prevent duplicate action on a single step</li>',
-'    <li><strong>strict</strong> - the engine uses the step key to avoid duplicate actions on a single step.</li>',
+'    <li><strong>legacy</strong> - Use this option only to support applications that have been developped with Flows for APEX 21.1 and lower without additional development. The engine does not use the step key to prevent duplicate action on a single s'
+||'tep.</li>',
+'    <li><strong>strict</strong> (recommended) - Use this option for new development and/or fully migrated application. The engine uses the step key to avoid duplicate actions on a single step.</li>',
 '</ul>'))
 );
 wwv_flow_api.component_end;
