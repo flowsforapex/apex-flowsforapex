@@ -364,6 +364,8 @@ as
         );
       end if;
     end loop;
+    -- reset step_had_error flag
+    flow_globals.set_step_error ( p_has_error => false);
   end gateway_split;
 
   procedure process_para_incl_Gateway
