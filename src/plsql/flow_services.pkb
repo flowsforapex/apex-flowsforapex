@@ -24,9 +24,9 @@ as
   g_google_bearer_web_credential_id    varchar2(100) := 'Google_Bearer';
   
   -- Store that outside in a config value. Way to encrypt it?
-  g_dropbox_refresh_token varchar2(200) := 'RFUqrAw3AFMAAAAAAAAAASJi95QUob-OJB_HnN1eujw6Cx0d68dSMD9_ITotOb-g';
-  g_google_service_account             varchar2(100) := 'flows-for-apex@flows-for-apex-331308.iam.gserviceaccount.com';
-  g_goole_private_key                  varchar2(2000) := 'MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDLpYulbtic8ToPzn1JDFJ4ECZo2MAjuQw7XLzjrudnzbJJQzL4J022XaYwlfAgubrGW4t1PGqXh3z622kSGwy1fKqZJOGxfOgy+1WDjSrgJakcUzipfn7bQXy7ftA0u6/hblZKBQCk2fr1+orLLOCOAOYZyG+IM/WmYbnpy1mM6JgIgISuPB6qWjiouNWSAQNv9SAa7K5w3K2tcz7/OCR+dNMPjGYq4BHbHwf8W4QDtDMxqtUORDXJJ4zXp3sAtlis0ViSQWp0MZxFpwckv6SQ55PHUjl3ISyDVogq2i/kaU3NT6qmeE7xmYCzZ7SoGAY3+UZknn+HQ1qQ4ET7YzajAgMBAAECggEAUSoBpkWvf52FDpe1x09p7wBAzrjUm2g9P8uOXRBwmiaZUCnAPrcreeuJOQQJWIGttzD1PByAPzR402JvVhAB2LN/KtpQOXUW9nrFclDpLbzU0b05cBRCaxCGrhO018+WIbrgGVA1GX7nTvI0LxYLyY0CKHSCPz62QUHh3xR09HtpWpuks+C8hyHHz3tS98pyG8OQ/G0frE1EQ3GL9RF4eVvmGUKMDAEzvYY8yWLCOmt7Ic6DOpyuzKhTtKCxjD0BSDkrVhiPJoVSPuAfE8r1grOQVHWN7bETnwkgDMt5VCHQSoKGXuRHwEFrWxchFQERX9k99TsYbpPlZ+ML8ce8gQKBgQDl0xVX0nVJmDzje/yNkt8l9HG43gZzWD+eYngxC6nDhVlKmXSt6V7bgSk3SYTTXZTeqmlFwvgmf/JYJK+TmErEdsTZzPnzFT/I3hsj3LGwRosr2SsuCb+7Wh9/jfkL6dLfdqZeOAbfGXNS2FeVei+/PAsnU3ue/l1C6Zmnqqk/awKBgQDi1zPTjqYh6UfrE8VuTqml6MHtADsHBQqq7K2YClHLRAWpp8vtHds5+HsBtPXIRvVT7XuwSufrcM/mZmZRwiHmfNOdb2KLN4pSEdLx58AVPpbePysFH3QXEeGoMTEOV6BYa6Wa0yuq60ThIQ5vMVYQPy2TC99kKg/YL07jXTxLqQKBgQDf9hCRcaUcX7/OS0/0wtC0kv6TkcGle7UbaogH+36m63b1TI+4vnfS3o5Es189/q8JQfWupu3dzsdif/WdlkYeKENyn95ftTBgVZkLHJEH3+bVhx8eESAHui6Bxd+RbX4yh9Recqi3lnycmfjX0Kdg62lPHHqWmPhXMX+sNZITGwKBgF1lK3J0LhSSPskb59LF0nV7wrR4vtTiD4VWUxbhUNH23LoAWybyfvt8QfDu968RABshEScBgEFgvkhnasNIwbprNJmCbblSEcI+knKE74IPtgAlU+oVDDAfbaBZOJBmJZ+iGpoHTdhea4qhmJbRYlToHjSH098irkldGQblsViZAoGAL+uRqpYDbW7K/afPLbBggM7g1/BmDhkdmVoSe06/pj0Fh1ZpBEXZTeYO1p8+6zTUJA6jSpZazzD1SlrKMPu1i9++j8ZUdktaXrOPVCUCm0zIAR33nYls0f2yMfMvJJIuQ9DGpKGhFWt935NzhLYdXZWD+oCQQqCP9KWnpCL0Kkk=';
+  g_dropbox_refresh_token varchar2(200) := '';
+  g_google_service_account             varchar2(100) := '';
+  g_goole_private_key                  varchar2(2000) := '';
 
 
   procedure raise_ws_error(
@@ -313,6 +313,146 @@ as
       raise e_email_failed;
 
     end send_email;
+
+    procedure call_rest_data_source(
+        pi_prcs_id in flow_processes.prcs_id%type
+      , pi_sbfl_id in flow_subflows.sbfl_id%type
+      , pi_objt_id in flow_objects.objt_id%type
+    )
+    is
+      l_session              varchar2(20) := v('APP_SESSION');
+      l_workspace            varchar2(100);
+      l_params               apex_exec.t_parameters;
+      l_response             clob;
+      l_app_alias            flow_object_attributes.obat_vc_value%type;
+      l_rest_data_source_id  flow_object_attributes.obat_vc_value%type;
+      l_operation            flow_object_attributes.obat_vc_value%type;
+      l_url_pattern          flow_object_attributes.obat_vc_value%type;
+      l_expected_status_code flow_object_attributes.obat_vc_value%type;
+      l_response_param       flow_object_attributes.obat_vc_value%type;
+      l_var_name             flow_process_variables.prov_var_name%type;
+      l_objt_bmpn_id         flow_objects.objt_bpmn_id%type;
+    begin
+      /*if ( l_session is null ) then
+        if l_app_alias is null then
+          l_workspace := g_workspace;
+        else
+          select workspace 
+          into l_workspace
+          from apex_applications
+          where alias = l_app_alias;
+        end if;
+        set_workspace_id(p_workspace_name => l_workspace);
+      end if;
+
+      --Loop through the parameter
+      for rec in (
+        select parm_name, parm_value
+        from flow_xxx
+        where objt_id = pi_objt_id
+      ) 
+      loop
+        apex_exec.add_parameter( l_params, rec.parm_name, rec.parm_value );
+      end loop;
+
+      --Call service
+      apex_exec.execute_rest_source(
+        p_static_id        => l_rest_data_source_id,
+        p_operation        => l_operation,
+        p_url_pattern      => l_url_pattern
+        p_parameters       => l_params 
+      );
+
+      if apex_web_service.g_status_code != l_expected_status_code then
+        raise e_ws_error;
+      end if;
+
+      --Get response body
+      l_response := apex_exec.get_parameter_clob( l_params, l_response_param );
+
+      select objt_bpmn_id
+      into l_objt_bmpn_id
+      from flow_objects
+      where objt_id = pi_objt_id;
+
+      l_var_name := l_objt_bmpn_id || '_ws_response';
+
+      flow_process_vars.set_var(
+        pi_prcs_id    => pi_prcs_id, 
+        pi_var_name   => l_var_name, 
+        pi_clob_value => l_response
+      );
+      */
+      null;
+
+    exception 
+      when e_ws_error then
+        flow_services.raise_ws_error(
+            pi_prcs_id       => pi_prcs_id
+          , pi_sbfl_id       => pi_sbfl_id
+          , pi_objt_id       => pi_objt_id
+          , pi_http_code     => apex_web_service.g_status_code
+          , pi_http_response => l_response
+        );
+    end call_rest_data_source;
+
+    procedure call_ws(
+        pi_prcs_id in flow_processes.prcs_id%type
+      , pi_sbfl_id in flow_subflows.sbfl_id%type
+      , pi_objt_id in flow_objects.objt_id%type
+    )
+    is
+      l_session              varchar2(20) := v('APP_SESSION');
+      l_workspace            varchar2(100);
+      l_response             clob;
+      l_app_alias            flow_object_attributes.obat_vc_value%type;
+      l_rest_data_source_id  flow_object_attributes.obat_vc_value%type;
+      l_operation            flow_object_attributes.obat_vc_value%type;
+      l_url_pattern          flow_object_attributes.obat_vc_value%type;
+      l_expected_status_code flow_object_attributes.obat_vc_value%type;
+      l_response_param       flow_object_attributes.obat_vc_value%type;
+      l_var_name             flow_process_variables.prov_var_name%type;
+      l_objt_bmpn_id         flow_objects.objt_bpmn_id%type;
+      l_i                    number;
+    begin
+      -- Required for web credential
+      /*if l_app_alias is not null then
+        select workspace 
+        into l_workspace
+        from apex_applications
+        where alias = l_app_alias;
+
+        set_workspace_id(p_workspace_name => l_workspace);
+      end if;
+
+      --Loop for headers
+      apex_web_service.g_request_headers.delete();
+      l_i := 1;
+      for rec in (
+        select header_name, header_value
+        from xxx
+        where objt_id = pi_objt_id
+      )
+      loop
+        apex_web_service.g_request_headers(l_i).name := rec.header_name;
+        apex_web_service.g_request_headers(l_i).value := rec.header_value;
+        l_i := l_i + 1;
+      end loop;
+
+      l_response := apex_web_service.make_rest_request(
+          p_url => l_url
+        , p_http_method => l_http_method
+        , p_body => l_payload
+        , p_credential_static_id => l_crendential
+      );
+      */
+      null;
+
+        
+
+    end call_ws;
+
+
 
     procedure send_slack_message(
         pi_prcs_id in flow_processes.prcs_id%type
