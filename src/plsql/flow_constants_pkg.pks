@@ -72,9 +72,28 @@ as
   --terminateEndEvent
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
 
+  -- Oracle format timer definitions
+  gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
+  gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';
+  gc_timer_type_oracle_cycle          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleCycle';
+
+  gc_timer_tag_oracle_date            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
+  gc_timer_tag_oracle_date_mask       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleFormatMask';
+  gc_timer_tag_oracle_duration        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';
+  gc_timer_tag_start_interval         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startInterval';
+  gc_timer_tag_repeat_interval        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatInterval';
+  gc_timer_tag_max_repeats            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRepeats';
+
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
+  gc_timer_oracle_date_key            constant flow_types_pkg.t_bpmn_id := 'oracleDate';
+  gc_timer_oracle_date_mask_key       constant flow_types_pkg.t_bpmn_id := 'oracleFormatMask';
+  gc_timer_oracle_duration_key        constant flow_types_pkg.t_bpmn_id := 'oracleDuration';
+  gc_timer_start_interval_key         constant flow_types_pkg.t_bpmn_id := 'startInterval';
+  gc_timer_repeat_interval_key        constant flow_types_pkg.t_bpmn_id := 'repeatInterval';
+  gc_timer_max_repeats_key            constant flow_types_pkg.t_bpmn_id := 'maxRepeats';
+  
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
   -- Flows 4 APEX Substitution Strings

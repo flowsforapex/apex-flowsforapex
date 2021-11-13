@@ -80,8 +80,9 @@ is
           -- test for any step errors
           if not flow_globals.get_step_error then 
             flow_timers_pkg.start_timer
-            ( pi_prcs_id => p_process_id
-            , pi_sbfl_id => l_new_non_int_timer_sbfl.sbfl_id
+            ( pi_prcs_id  => p_process_id
+            , pi_sbfl_id  => l_new_non_int_timer_sbfl.sbfl_id
+            , pi_step_key => l_new_non_int_timer_sbfl.step_key
             );
             -- test again for any step errors
             if not flow_globals.get_step_error then 
