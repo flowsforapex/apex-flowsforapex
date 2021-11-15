@@ -209,54 +209,6 @@ as
         , pi_sbfl_id => p_subflow_id
         , pi_objt_id => p_step_info.target_objt_id
         );
-      when 'slackNotification' then
-        flow_services.send_slack_message
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      when 'teamsNotification' then
-        flow_services.send_teams_message
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      when 'gchatNotification' then
-        flow_services.send_gchat_message
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      when 'twilioSMS' then
-        flow_services.twilio_send_sms
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      when 'dropbox' then
-        flow_services.upload_file_to_dropbox
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      when 'oci' then
-        flow_services.upload_file_to_oci
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      when 'onedrive' then
-        flow_services.upload_file_to_onedrive
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      when 'gdrive' then
-        flow_services.upload_file_to_gdrive
-        ( pi_prcs_id => p_process_id
-        , pi_sbfl_id => p_subflow_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
       else
         null;
     end case;
@@ -326,20 +278,6 @@ as
       , pi_message_key    => 'email-failed'
       , p0 => p_process_id
       , p1 => p_step_info.target_objt_ref
-      );
-    when flow_services.e_ws_error then
-      rollback;
-      apex_debug.info 
-      ( p_message => 'Rollback initiated after ws call failed in service task'
-      );
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => p_process_id
-      , pi_sbfl_id        => p_subflow_id
-      , pi_message_key    => 'service_task_ws_error'
-      , p0 => p_process_id
-      , p1 => p_subflow_id
-      , p2 => apex_web_service.g_status_code
-      , p3 => p_step_info.target_objt_ref || '_ws_error'
       );
   end process_serviceTask;
 

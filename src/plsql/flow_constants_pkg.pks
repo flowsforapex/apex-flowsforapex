@@ -78,36 +78,6 @@ as
   gc_apex_servicetask_body           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-body';
   gc_apex_servicetask_body_html      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-body-html';
   gc_apex_servicetask_attachments    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'email-attachments';
-  -- slack
-  gc_apex_servicetask_slack_url      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'slack-url';
-  gc_apex_servicetask_slack_channel  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'slack-channel';
-  gc_apex_servicetask_slack_message  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'slack-message';
-  -- teams
-  gc_apex_servicetask_teams_url      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'teams-url';
-  gc_apex_servicetask_teams_message  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'teams-message';
-  -- google chat
-  gc_apex_servicetask_gchat_url      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'gchat-url';
-  gc_apex_servicetask_gchat_message  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'gchat-message';
-  -- twilio
-  gc_apex_servicetask_twilio_url               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'twilio-url';
-  gc_apex_servicetask_twilio_messaging_service constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'twilio-messaging-service';
-  gc_apex_servicetask_twilio_to                constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'twilio-to';
-  gc_apex_servicetask_twilio_message           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'twilio-message';
-  -- onedrive
-  gc_apex_servicetask_microsoft_tenant constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-tenant';
-  gc_apex_servicetask_microsoft_site   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-site';
-  gc_apex_servicetask_microsoft_folder constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-folder';
-  gc_apex_servicetask_microsoft_files  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'microsoft-files';
-  -- dropbox
-  gc_apex_servicetask_dropbox_files    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'dropbox-files';
-  -- oci
-  gc_apex_servicetask_oci_region        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-region';
-  gc_apex_servicetask_oci_namespace     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-namespace';
-  gc_apex_servicetask_oci_bucket_name   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-bucket-name';
-  gc_apex_servicetask_oci_files         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oci-files';
-  -- google drive
-  gc_apex_servicetask_gdrive_folder_id constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'gdrive-folder-id';
-  gc_apex_servicetask_gdrive_files     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'gdrive-files';
 
   --scriptTask
   gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
