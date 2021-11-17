@@ -22,7 +22,7 @@ as
        , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
        , null as actions   
-       , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
+       , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-key="'|| sbfl.sbfl_step_key ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
         , case 
             when sbfl.sbfl_status = 'error' then 'fa-redo-arrow'
             when sbfl.sbfl_status = 'running' then 'fa-sign-out'

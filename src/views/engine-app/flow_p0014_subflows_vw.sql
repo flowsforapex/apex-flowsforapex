@@ -2,6 +2,7 @@ create or replace view flow_p0014_subflows_vw
 as
   select distinct sbfl.sbfl_id
                 , sbfl.sbfl_prcs_id
+                , sbfl.sbfl_step_key
                 , sbfl.sbfl_process_level
                 , sbfl.sbfl_last_completed
                 , coalesce(objt.objt_name, sbfl.sbfl_current) as current_object

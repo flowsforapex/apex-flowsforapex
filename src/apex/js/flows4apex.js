@@ -42,7 +42,8 @@ function getSubflowData(action, element){
   return {
     "x01": action,
     "x02": apex.jQuery( element ).attr("data-prcs"),
-    "x03": apex.jQuery( element ).attr("data-sbfl")
+    "x03": apex.jQuery( element ).attr("data-sbfl"),
+    "x04": apex.jQuery( element ).attr("data-key")
   };
 }
 
@@ -50,7 +51,8 @@ function getBulkSubflowData(action){
   return {
     "x01": action,
     "f01": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "data-prcs" ),
-    "f02": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "value" )
+    "f02": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "value" ),
+    "f03": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "data-key" )
   };
 }
 
@@ -65,7 +67,10 @@ function openModalConfirmWithComment( action, element, confirmMessageKey, titleK
   apex
     .jQuery( "#confirm-btn" )
     .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
-    apex
+  apex
+    .jQuery( "#confirm-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+  apex
     .jQuery( "#confirm-btn" )
     .attr( "data-name", apex.jQuery( element ).attr( "data-name" ) );
   apex.theme.openRegion( "instance_action_dialog" );
@@ -646,7 +651,7 @@ function restartStep( action, element){
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
     var data = getSubflowData(action, element);
-    data.x04 = getConfirmComment();
+    data.x05 = getConfirmComment();
     var options = {};
     options.messageKey = "APP_SUBLFOW_RESTARTED";
     options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
@@ -679,6 +684,9 @@ function openReservationDialog(action, element){
   apex
     .jQuery( "#reserve-step-btn" )
     .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+  apex
+    .jQuery( "#reserve-step-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
   apex.theme.openRegion( "reservation_dialog" );
 }
 
@@ -686,7 +694,7 @@ function reserveStep( action, element ){
   if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "reservation_dialog" );
     var data = getSubflowData(action, element);
-    data.x04 = apex.item("P8_RESERVATION").getValue();
+    data.x05 = apex.item("P8_RESERVATION").getValue();
 
     var options = {};
     options.refreshRegion = ["subflows"];
