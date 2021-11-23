@@ -369,6 +369,38 @@ exception
     end if;
 end get_var_clob;
 
+-- get type of a variable
+
+function get_var_type
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_type%type
+is 
+   l_var_type  flow_process_variables.prov_var_clob%type;
+begin 
+   select prov.prov_var_type
+     into l_var_type
+     from flow_process_variables prov
+    where prov.prov_prcs_id = pi_prcs_id
+      and prov.prov_var_name = pi_var_name
+        ;
+   return l_var_type;
+exception
+  when no_data_found then
+    if pi_exception_on_null then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-get-error'      
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
+    else
+      return null;
+    end if;
+end get_var_type;
+
 -- delete a variable
 
 procedure delete_var 
