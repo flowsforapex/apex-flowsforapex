@@ -62,7 +62,7 @@ is
           , p_parent_subflow => p_subflow_id
           , p_starting_object => boundary_timers.objt_bpmn_id
           , p_current_object => boundary_timers.objt_bpmn_id
-          , p_route => 'boundary_timer'
+          , p_route => 'from boundary event - run 0'
           , p_last_completed => boundary_timers.parent_current_object 
           , p_status => flow_constants_pkg.gc_sbfl_status_waiting_timer
           , p_parent_sbfl_proc_level => boundary_timers.sbfl_process_level
@@ -80,8 +80,9 @@ is
           -- test for any step errors
           if not flow_globals.get_step_error then 
             flow_timers_pkg.start_timer
-            ( pi_prcs_id => p_process_id
-            , pi_sbfl_id => l_new_non_int_timer_sbfl.sbfl_id
+            ( pi_prcs_id  => p_process_id
+            , pi_sbfl_id  => l_new_non_int_timer_sbfl.sbfl_id
+            , pi_step_key => l_new_non_int_timer_sbfl.step_key
             );
             -- test again for any step errors
             if not flow_globals.get_step_error then 

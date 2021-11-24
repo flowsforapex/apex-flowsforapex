@@ -726,10 +726,63 @@ begin
   end if;  
 end handle_intermediate_catch_event;
 
+procedure create_repeat_subflow 
+  ( p_process_id      in flow_processes.prcs_id%type
+  , p_last_subflow_id in flow_subflows.sbfl_id%type
+  , p_timr_id         in flow_timers.timr_id%type default null
+  , p_next_run        in flow_timers.timr_run%type default null
+  )
+is
+  l_new_subflow_context  flow_types_pkg.t_subflow_context;
+  l_last_subflow         flow_subflows%rowtype;
+begin
+  select * 
+    into l_last_subflow
+    from flow_subflows
+   where sbfl_id = p_last_subflow_id
+     and sbfl_prcs_id = p_process_id
+  ;
+
+  l_new_subflow_context := flow_engine_util.subflow_start
+          (
+            p_process_id      => p_process_id
+          , p_parent_subflow  => l_last_subflow.sbfl_sbfl_id
+          , p_starting_object => l_last_subflow.sbfl_starting_object
+          , p_current_object  => l_last_subflow.sbfl_starting_object
+          , p_route           => 'from boundary event - run '||to_char(p_next_run)
+          , p_last_completed  => l_last_subflow.sbfl_last_completed
+          , p_status          => flow_constants_pkg.gc_sbfl_status_waiting_timer
+          , p_parent_sbfl_proc_level => l_last_subflow.sbfl_process_level
+          , p_dgrm_id                => l_last_subflow.sbfl_dgrm_id
+          );
+
+  flow_timers_pkg.start_timer
+  ( pi_prcs_id  => p_process_id
+  , pi_sbfl_id  => l_new_subflow_context.sbfl_id
+  , pi_step_key => l_new_subflow_context.step_key
+  , pi_timr_id  => p_timr_id
+  , pi_run      => p_next_run
+  );
+
+  if not flow_globals.get_step_error then 
+      -- set timer flag on child (Self, Noninterrupting, Timer)
+      update flow_subflows sbfl
+          set sbfl.sbfl_has_events = sbfl.sbfl_has_events||':SNT'
+        where sbfl.sbfl_id = l_new_subflow_context.sbfl_id
+          and sbfl.sbfl_prcs_id = p_process_id
+      ;
+  end if;
+    
+
+
+end create_repeat_subflow;
+
 procedure flow_handle_event
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_step_key   in flow_subflows.sbfl_step_key%type
+  , p_timr_id    in flow_timers.timr_id%type default null
+  , p_run        in flow_timers.timr_run%type default null
   ) 
 is
   l_parent_subflow        flow_subflows.sbfl_id%type;
@@ -777,9 +830,26 @@ begin
        and sbfl.sbfl_prcs_id = p_process_id
         ;
 
-    if l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_start_event   -- startEvent with associated event.
-                               , flow_constants_pkg.gc_bpmn_boundary_event  ) then
-      -- required functionality same as iCE currently
+    if l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_start_event then
+      -- startEvent with associated event.
+      handle_intermediate_catch_event -- startEvent behaves same as ICE
+      (
+        p_process_id   => p_process_id
+      , p_subflow_id   => p_subflow_id
+      , p_step_key     => p_step_key
+      , p_current_objt => l_sbfl_current
+      );
+     elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event then
+      -- if a repeating cycle timer, start next cycle before handling
+      if p_timr_id is not null and p_run is not null then
+        create_repeat_subflow 
+        ( p_process_id      => p_process_id
+        , p_last_subflow_id => p_subflow_id
+        , p_timr_id         => p_timr_id
+        , p_next_run        => p_run + 1
+        );
+      end if;
+      -- Non-Interrupting Timer Boundary Event has required functionality same as iCE currently
       handle_intermediate_catch_event 
       (
         p_process_id   => p_process_id
