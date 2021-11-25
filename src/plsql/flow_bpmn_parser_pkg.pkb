@@ -874,6 +874,86 @@ as
     end loop;
   end parse_process_variables;
 
+  procedure parse_page_items
+  (
+    pi_bpmn_id         in flow_types_pkg.t_bpmn_id
+  , pi_page_items_xml   in xmltype
+  )
+  as
+    l_itemNames  varchar2(4000);
+    l_itemValues varchar2(4000);
+  begin
+    for rec in (
+                select items.itemName
+                     , items.itemValue
+                  from xmltable
+                       (
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'http://www.apex.mt-ag.com' as "apex" )
+                       , '*' passing pi_page_items_xml
+                         columns
+                           itemName  varchar2(50 char) path 'apex:itemName'
+                         , itemValue varchar2(50 char) path 'apex:itemValue'
+                       ) items
+               )
+    loop
+      l_itemNames  := l_itemNames || rec.itemName || ',';
+      l_itemValues := l_itemValues || rec.itemValue || ',';
+    end loop;
+    register_object_attributes
+    (
+      pi_objt_bpmn_id      => pi_bpmn_id
+    , pi_obat_key          => flow_constants_pkg.gc_apex_usertask_item
+    , pi_obat_vc_value     => rtrim(l_itemNames, ',')
+    );
+    register_object_attributes
+    (
+      pi_objt_bpmn_id      => pi_bpmn_id
+    , pi_obat_key          =>flow_constants_pkg.gc_apex_usertask_value
+    , pi_obat_vc_value     => rtrim(l_itemValues, ',')
+    );
+  end parse_page_items;
+
+  procedure parse_task_subtype
+  (
+    pi_bpmn_id     in flow_types_pkg.t_bpmn_id
+  , pi_subtype_xml in xmltype
+  )
+  as
+  begin
+
+    for rec in (
+                select props.prop_name
+                     , props.prop_value
+                     , props.prop_children
+                  from xmltable
+                       (
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'http://www.apex.mt-ag.com' as "apex")
+                       , '*' passing pi_subtype_xml
+                         columns
+                           prop_name     varchar2(50 char)    path 'name()'
+                         , prop_value    varchar2(4000 char)  path 'text()'
+                         , prop_children xmltype              path '* except bpmn:incoming except bpmn:outgoing'
+                       ) props
+               )
+    loop
+      if rec.prop_name = flow_constants_pkg.gc_apex_usertask_pageItems then
+        parse_page_items
+        (
+          pi_bpmn_id        => pi_bpmn_id
+        , pi_page_items_xml => rec.prop_children
+        );
+      else
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_obat_key          => rec.prop_name
+        , pi_obat_vc_value     => rec.prop_value
+        );
+      end if;
+    end loop;
+  end parse_task_subtype;
+
   procedure parse_extension_elements
   (
     pi_bpmn_id       in flow_types_pkg.t_bpmn_id
@@ -882,7 +962,7 @@ as
   as
   begin
     for rec in (
-                select replace(extension_type, 'apex:') as extension_type
+                select extension_type
                      , extension_data
                   from xmltable
                        (
@@ -895,18 +975,30 @@ as
                )
     loop
       -- Process Variables
-      if rec.extension_type in ( flow_constants_pkg.gc_expr_set_before_task, flow_constants_pkg.gc_expr_set_after_task
-                               , flow_constants_pkg.gc_expr_set_before_split, flow_constants_pkg.gc_expr_set_after_merge
-                               , flow_constants_pkg.gc_expr_set_before_event, flow_constants_pkg.gc_expr_set_on_event
-                               )
+      if replace(rec.extension_type, 'apex:') in ( flow_constants_pkg.gc_expr_set_before_task, flow_constants_pkg.gc_expr_set_after_task
+                                                 , flow_constants_pkg.gc_expr_set_before_split, flow_constants_pkg.gc_expr_set_after_merge
+                                                 , flow_constants_pkg.gc_expr_set_before_event, flow_constants_pkg.gc_expr_set_on_event
+                                                 )
       then
         parse_process_variables
         (
           pi_bpmn_id         => pi_bpmn_id
-        , pi_execution_point => rec.extension_type
+        , pi_execution_point => replace(rec.extension_type, 'apex:')
         , pi_proc_vars_xml   => rec.extension_data
         );
-      end if;      
+      -- Task Subtypes
+      elsif rec.extension_type in ( flow_constants_pkg.gc_apex_usertask_apexPage
+                                  , flow_constants_pkg.gc_apex_usertask_externalUrl
+                                  , flow_constants_pkg.gc_apex_servicetask_sendMail
+                                  , flow_constants_pkg.gc_apex_scripttask_executePlsql
+                                  )
+      then
+        parse_task_subtype
+        (
+          pi_bpmn_id     => pi_bpmn_id
+        , pi_subtype_xml => rec.extension_data
+        );
+      end if;
     end loop;
   end parse_extension_elements;
 
