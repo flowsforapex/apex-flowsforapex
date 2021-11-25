@@ -713,127 +713,6 @@ as
     return l_return;
   end find_subtag_name;
 
-  procedure parse_child_elements
-  (
-    pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
-  , pi_xml          in xmltype
-  )
-  as
-    l_child_type         flow_types_pkg.t_bpmn_id;
-    l_child_id           flow_types_pkg.t_bpmn_id;
-    l_child_value        flow_object_attributes.obat_vc_value%type;
-    l_child_details      xmltype;
-    l_detail_type        flow_types_pkg.t_bpmn_id;
-    l_detail_id          flow_types_pkg.t_bpmn_id;
-    l_detail_value       flow_object_attributes.obat_vc_value%type;
-  begin
-
-    for rec in (
-                select children.child_type
-                     , children.child_id
-                     , children.child_value
-                     , children.child_details
-                  from xmltable
-                       (
-                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                                      , 'http://www.apex.mt-ag.com' as "apex")
-                       , '*' passing pi_xml
-                         columns
-                           child_type     varchar2(50 char)    path 'name()'
-                         , child_id       varchar2(50 char)    path '@id'
-                         , child_value    varchar2(4000 char)  path 'text()'
-                         , child_details  xmltype              path '* except bpmn:incoming except bpmn:outgoing'
-                       ) children
-               )
-    loop
-
-      if rec.child_details is null then
-        -- register the child which does not have details
-        if rec.child_value is not null then
-          -- if needed distinguish here between different attributes
-          register_object_attributes
-          (
-            pi_objt_bpmn_id      => pi_objt_bpmn_id
-          , pi_obat_key          => rec.child_type
-          , pi_obat_vc_value     => rec.child_value
-        );
-        end if;
-      else
-        -- register the child which has details
-        if rec.child_type = flow_constants_pkg.gc_bpmn_timer_event_definition then
-    	  begin
-    	    select details.detail_type
-    			 , details.detail_id
-    			 , details.detail_value
-              into l_detail_type
-                 , l_detail_id
-                 , l_detail_value
-              from xmltable
-                   (
-                     xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                   , '*' passing rec.child_details
-                     columns
-                       detail_type        varchar2(50 char)    path 'name()'
-                     , detail_id          varchar2(50 char)    path '@id'
-                     , detail_value       varchar2(4000 char)  path 'text()'
-                     , extension_elements xmltype              path 'bpmn:extensionElements'
-                   ) details;
-          end;
-          
-          -- register the timer type
-          register_object_attributes
-          (
-            pi_objt_bpmn_id      => pi_objt_bpmn_id
-          , pi_objt_sub_tag_name => rec.child_type
-          , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
-          , pi_obat_vc_value     => l_detail_type
-          );
-
-          -- if standard type just register value inside tag
-
-          -- register the timer definition
-          register_object_attributes
-          (
-            pi_objt_bpmn_id      => pi_objt_bpmn_id
-          , pi_objt_sub_tag_name => rec.child_type
-          , pi_obat_key          => flow_constants_pkg.gc_timer_def_key
-          , pi_obat_vc_value     => l_detail_value
-          );
-		
-          -- else if custom (Flows) type then all processing is done by using the extension element
-          -- probably the specific time extension elements processing
-
-        elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
-          select details.detail_type
-               , details.detail_value
-            into l_detail_type
-               , l_detail_value
-            from xmltable
-                 (
-                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                 , '*' passing rec.child_details
-                   columns
-                     detail_type  varchar2(50 char) path   'name()'
-                   , detail_value varchar2(4000 char) path 'text()'
-                 ) details
-          ;
-          if l_detail_type = flow_constants_pkg.gc_apex_process_status then
-            register_object_attributes
-            (
-              pi_objt_bpmn_id      => pi_objt_bpmn_id
-            , pi_objt_sub_tag_name => rec.child_type
-            , pi_obat_key          => flow_constants_pkg.gc_terminate_result
-            , pi_obat_vc_value     => l_detail_value
-            );
-          end if;
-	    end if;
-
-      end if;
-
-    end loop;
-
-  end parse_child_elements;
-
   procedure parse_process_variables
   (
     pi_bpmn_id         in flow_types_pkg.t_bpmn_id
@@ -937,7 +816,7 @@ as
                        ) props
                )
     loop
-      if rec.prop_name = flow_constants_pkg.gc_apex_usertask_pageItems then
+      if rec.prop_name = flow_constants_pkg.gc_apex_usertask_page_items then
         parse_page_items
         (
           pi_bpmn_id        => pi_bpmn_id
@@ -953,6 +832,39 @@ as
       end if;
     end loop;
   end parse_task_subtype;
+
+  procedure parse_custom_timers
+  (
+    pi_bpmn_id     in flow_types_pkg.t_bpmn_id
+  , pi_subtype_xml in xmltype
+  )
+  as
+  begin
+
+    for rec in (
+                select props.prop_name
+                     , props.prop_value
+                     , props.prop_children
+                  from xmltable
+                       (
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'http://www.apex.mt-ag.com' as "apex")
+                       , '*' passing pi_subtype_xml
+                         columns
+                           prop_name     varchar2(50 char)    path 'name()'
+                         , prop_value    varchar2(4000 char)  path 'text()'
+                         , prop_children xmltype              path '* except bpmn:incoming except bpmn:outgoing'
+                       ) props
+               )
+    loop
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_obat_key          => rec.prop_name
+        , pi_obat_vc_value     => rec.prop_value
+        );
+    end loop;
+  end parse_custom_timers;
 
   procedure parse_extension_elements
   (
@@ -987,10 +899,10 @@ as
         , pi_proc_vars_xml   => rec.extension_data
         );
       -- Task Subtypes
-      elsif rec.extension_type in ( flow_constants_pkg.gc_apex_usertask_apexPage
-                                  , flow_constants_pkg.gc_apex_usertask_externalUrl
-                                  , flow_constants_pkg.gc_apex_servicetask_sendMail
-                                  , flow_constants_pkg.gc_apex_scripttask_executePlsql
+      elsif rec.extension_type in ( flow_constants_pkg.gc_apex_usertask_apex_page
+                                  , flow_constants_pkg.gc_apex_usertask_external_url
+                                  , flow_constants_pkg.gc_apex_servicetask_send_mail
+                                  , flow_constants_pkg.gc_apex_scripttask_execute_plsql
                                   )
       then
         parse_task_subtype
@@ -998,9 +910,157 @@ as
           pi_bpmn_id     => pi_bpmn_id
         , pi_subtype_xml => rec.extension_data
         );
+      -- Custom Timers
+      elsif rec.extension_type in ( flow_constants_pkg.gc_timer_type_oracle_date
+                                  , flow_constants_pkg.gc_timer_type_oracle_duration
+                                  , flow_constants_pkg.gc_timer_type_oracle_cycle
+                                  )
+      then
+        -- register the timer type
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_objt_sub_tag_name => flow_constants_pkg.gc_bpmn_timer_event_definition
+        , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
+        , pi_obat_vc_value     => rec.extension_type
+        );
+        -- parse properties
+        parse_custom_timers
+        (
+          pi_bpmn_id     => pi_bpmn_id
+        , pi_subtype_xml => rec.extension_data
+        );
       end if;
     end loop;
   end parse_extension_elements;
+
+  procedure parse_child_elements
+  (
+    pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
+  , pi_xml          in xmltype
+  )
+  as
+    l_child_type         flow_types_pkg.t_bpmn_id;
+    l_child_id           flow_types_pkg.t_bpmn_id;
+    l_child_value        flow_object_attributes.obat_vc_value%type;
+    l_child_details      xmltype;
+    l_detail_type        flow_types_pkg.t_bpmn_id;
+    l_detail_id          flow_types_pkg.t_bpmn_id;
+    l_detail_value       flow_object_attributes.obat_vc_value%type;
+  begin
+
+    for rec in (
+                select children.child_type
+                     , children.child_id
+                     , children.child_value
+                     , children.child_details
+                     , children.extension_elements
+                  from xmltable
+                       (
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'http://www.apex.mt-ag.com' as "apex")
+                       , '*' passing pi_xml
+                         columns
+                           child_type         varchar2(50 char)    path 'name()'
+                         , child_id           varchar2(50 char)    path '@id'
+                         , child_value        varchar2(4000 char)  path 'text()'
+                         , child_details      xmltype              path '* except bpmn:incoming except bpmn:outgoing'
+                         , extension_elements xmltype              path 'bpmn:extensionElements'
+                       ) children
+               )
+    loop
+
+      if rec.child_details is null then
+        -- register the child which does not have details
+        if rec.child_value is not null then
+          -- if needed distinguish here between different attributes
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_objt_bpmn_id
+          , pi_obat_key          => rec.child_type
+          , pi_obat_vc_value     => rec.child_value
+        );
+        end if;
+      else
+        -- register the child which has details
+        if rec.child_type = flow_constants_pkg.gc_bpmn_timer_event_definition then
+          -- if custom (Flows) type then all processing is done by using the extension element
+          if rec.extension_elements is not null then
+            parse_extension_elements
+            ( 
+              pi_bpmn_id       => pi_objt_bpmn_id
+            , pi_extension_xml => rec.extension_elements
+            );
+          else
+            begin
+              select details.detail_type
+              , details.detail_id
+              , details.detail_value
+                  into l_detail_type
+                    , l_detail_id
+                    , l_detail_value
+                  from xmltable
+                      (
+                        xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                      , '*' passing rec.child_details
+                        columns
+                          detail_type        varchar2(50 char)    path 'name()'
+                        , detail_id          varchar2(50 char)    path '@id'
+                        , detail_value       varchar2(4000 char)  path 'text()'
+                        --, extension_elements xmltype              path 'bpmn:extensionElements'
+                      ) details;
+            end;
+
+            -- register the timer type
+            register_object_attributes
+            (
+              pi_objt_bpmn_id      => pi_objt_bpmn_id
+            , pi_objt_sub_tag_name => rec.child_type
+            , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
+            , pi_obat_vc_value     => l_detail_type
+            );
+
+            -- if standard type just register value inside tag
+
+            -- register the timer definition
+            register_object_attributes
+            (
+              pi_objt_bpmn_id      => pi_objt_bpmn_id
+            , pi_objt_sub_tag_name => rec.child_type
+            , pi_obat_key          => flow_constants_pkg.gc_timer_def_key
+            , pi_obat_vc_value     => l_detail_value
+            );
+          end if;
+        elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
+          select details.detail_type
+               , details.detail_value
+            into l_detail_type
+               , l_detail_value
+            from xmltable
+                 (
+                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                 , '*' passing rec.child_details
+                   columns
+                     detail_type  varchar2(50 char) path   'name()'
+                   , detail_value varchar2(4000 char) path 'text()'
+                 ) details
+          ;
+          if l_detail_type = flow_constants_pkg.gc_apex_process_status then
+            register_object_attributes
+            (
+              pi_objt_bpmn_id      => pi_objt_bpmn_id
+            , pi_objt_sub_tag_name => rec.child_type
+            , pi_obat_key          => flow_constants_pkg.gc_terminate_result
+            , pi_obat_vc_value     => l_detail_value
+            );
+          end if;
+	    end if;
+
+      end if;
+
+    end loop;
+
+  end parse_child_elements;
 
   procedure parse_steps
   (
