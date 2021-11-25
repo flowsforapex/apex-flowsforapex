@@ -288,7 +288,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'timer-broken',
 'fr',
-'Minuteur %0 en erreur dans le processus %1 , sous-flux : %2.  Voir error_info.'
+'Minuteur %0 cycle %4 en erreur dans le processus %1 , sous-flux : %2.  Voir error_info.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -302,7 +302,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'timer-incomplete-definition',
 'fr',
-'Définition incomplète du minuteur de l''objet %0. Type: %1; Valeur: %2'
+'Définition incomplète du minuteur de l''objet %0. Type: %1; Valeur1: %2 Valeur2: %3 Valeur3: %4'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

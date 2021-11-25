@@ -42,9 +42,25 @@ create or replace package flow_timers_pkg as
     pi_prcs_id    in flow_processes.prcs_id%type
   , pi_sbfl_id    in flow_subflows.sbfl_id%type
   , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 0 -- 0 original, 1-> repeats
+  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
   , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
   );
+
+/******************************************************************************
+  reschedule_timer
+    change the time that a timer is scheduled to fire to a new time, or now.
+******************************************************************************/
+
+procedure reschedule_timer
+(
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
+  , p_is_immediate  in boolean default false
+  , p_new_timestamp in flow_timers.timr_start_on%type default null
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+);
+
 
 /******************************************************************************
   expire_timer

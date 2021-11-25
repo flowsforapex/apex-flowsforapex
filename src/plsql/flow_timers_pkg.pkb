@@ -14,9 +14,10 @@ as
   , oracle_date           flow_object_attributes.obat_vc_value%type
   , oracle_format_mask    flow_object_attributes.obat_vc_value%type
   , oracle_duration_ds    flow_object_attributes.obat_vc_value%type
+  , oracle_duration_ym    flow_object_attributes.obat_vc_value%type
   , start_interval_ds     flow_object_attributes.obat_vc_value%type
   , repeat_interval_ds    flow_object_attributes.obat_vc_value%type
-  , max_repeats           flow_object_attributes.obat_vc_value%type
+  , max_runs              flow_object_attributes.obat_vc_value%type
   );
 
   function timer_exists
@@ -159,10 +160,11 @@ as
                                         , flow_constants_pkg.gc_timer_def_key 
                                         , flow_constants_pkg.gc_timer_oracle_date_key
                                         , flow_constants_pkg.gc_timer_oracle_date_mask_key
-                                        , flow_constants_pkg.gc_timer_oracle_duration_key
-                                        , flow_constants_pkg.gc_timer_start_interval_key
-                                        , flow_constants_pkg.gc_timer_repeat_interval_key
-                                        , flow_constants_pkg.gc_timer_max_repeats_key
+                                        , flow_constants_pkg.gc_timer_oracle_durationDS_key
+                                        , flow_constants_pkg.gc_timer_oracle_durationYM_key
+                                        , flow_constants_pkg.gc_timer_start_intervalDS_key
+                                        , flow_constants_pkg.gc_timer_repeat_intervalDS_key
+                                        , flow_constants_pkg.gc_timer_max_runs_key
                                         )
                )
     loop
@@ -175,14 +177,16 @@ as
           l_timer_def.oracle_date := rec.obat_vc_value;
         when flow_constants_pkg.gc_timer_oracle_date_mask_key then
           l_timer_def.oracle_format_mask := rec.obat_vc_value;
-        when flow_constants_pkg.gc_timer_oracle_duration_key then
+        when flow_constants_pkg.gc_timer_oracle_durationDS_key then
           l_timer_def.oracle_duration_ds := rec.obat_vc_value;
-        when flow_constants_pkg.gc_timer_start_interval_key  then
+        when flow_constants_pkg.gc_timer_oracle_durationYM_key then
+          l_timer_def.oracle_duration_ym := rec.obat_vc_value;
+        when flow_constants_pkg.gc_timer_start_intervalDS_key  then
           l_timer_def.start_interval_ds := rec.obat_vc_value;
-        when flow_constants_pkg.gc_timer_repeat_interval_key then
+        when flow_constants_pkg.gc_timer_repeat_intervalDS_key then
           l_timer_def.repeat_interval_ds  := rec.obat_vc_value;
-        when flow_constants_pkg.gc_timer_max_repeats_key then
-          l_timer_def.max_repeats  := rec.obat_vc_value;
+        when flow_constants_pkg.gc_timer_max_runs_key then
+          l_timer_def.max_runs  := rec.obat_vc_value;
         else
           null;
       end case;
@@ -203,12 +207,13 @@ as
        or 
        ( l_timer_def.timer_type = flow_constants_pkg.gc_timer_type_oracle_duration
          and  l_timer_def.oracle_duration_ds is null 
+         and  l_timer_def.oracle_duration_ym is null
        )
        or 
        ( l_timer_def.timer_type = flow_constants_pkg.gc_timer_type_oracle_cycle
          and  (l_timer_def.start_interval_ds is null 
               or l_timer_def.repeat_interval_ds is null 
-               )  -- note - maxRepeats is allowed to be null (means no limit)
+               )  -- note - maxRuns is allowed to be null (means no limit)
        )
     then
       flow_errors.handle_instance_error
@@ -216,20 +221,14 @@ as
       , pi_sbfl_id        => pi_sbfl_id
       , pi_message_key    => 'timer-incomplete-definition'
       , p0 => l_objt_with_timer_bpmn_id         
-	    , p1 => coalesce(l_timer_def.timer_type, '!NULL!')
-      , p2 => coalesce(l_timer_def.timer_definition, '!NULL!')
+	    , p1 => coalesce ( l_timer_def.timer_type,  '!NULL!')
+      , p2 => coalesce ( l_timer_def.timer_definition, l_timer_def.oracle_date
+                       , l_timer_def.oracle_duration_ds, l_timer_def.start_interval_ds , '!NULL!')
+      , p3 => coalesce ( l_timer_def.oracle_format_mask
+                       , l_timer_def.oracle_duration_ym, l_timer_def.repeat_interval_ds,'!NULL!')
+      , p4 => coalesce ( l_timer_def.max_runs,'!NULL!')                       
       );
-      -- $F4AMESSAGE 'timer-incomplete-definition' || 'Incomplete timer definitions for object %0. Type: %1; Value: %2'
-/*    elsif l_timer_def.timer_type = flow_constants_pkg.gc_timer_type_cycle then
-      -- cycle timers disabled in v21.1 until redone in future release
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_message_key    => 'timer-cycle-unsupported'
-      , p0 => l_objt_with_timer_bpmn_id         
-      );
-      -- $F4AMESSAGE 'timer-cycle-unsupported' || 'Cycle Timer defined for object %0 not currently supported.'
-*/
+      -- $F4AMESSAGE 'timer-incomplete-definition' || 'Incomplete timer definitions for object %0. Type: %1; Value1: %2 Value2: %3  Value3: %4'
     end if;
     return l_timer_def;
   end get_timer_definition;
@@ -255,20 +254,19 @@ as
           select max(rowid) keep (dense_rank first order by coalesce( timr_last_run, timr_created_on )) trowid
             from flow_timers
            where timr_status = c_created
-             and coalesce( timr_last_run, timr_created_on )  < l_run_time 
+             --and coalesce( timr_last_run, timr_created_on )  < l_run_time 
              and timr_start_on <= l_run_time
           )
       for update wait 5
       ;
       
-/*
-
       update flow_timers
       set timr_last_run = systimestamp
           , timr_status = c_ended
       where timr_id = l_timers.timr_id
+        and timr_run = l_timers.timr_run
       ;
-*/              
+            
       begin
       -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
       -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
@@ -300,6 +298,7 @@ as
         update flow_timers
           set timr_status = c_broken
         where timr_id = l_timers.timr_id
+          and timr_run = l_timers.timr_run
         ;
         flow_errors.handle_instance_error
         ( pi_prcs_id    => l_timers.timr_prcs_id
@@ -308,8 +307,9 @@ as
         , p0 => l_timers.timr_id
         , p1 => l_timers.timr_prcs_id
         , p2 => l_timers.timr_sbfl_id
+        , p3 => l_timers.timr_run
         );
-        -- $F4AMESSAGE 'timer-broken' || 'Timer %0 broken in process %1 , subflow : %2.  See error_info.'
+        -- $F4AMESSAGE 'timer-broken' || 'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
       end;
       commit;
     end loop;
@@ -418,7 +418,7 @@ as
     , p2        => coalesce( l_timer_def.timer_definition , l_timer_def.oracle_date
                            , l_timer_def.oracle_duration_DS,  l_timer_def.start_Interval_DS , '<null>')
     , p3        => coalesce( l_timer_def.oracle_format_mask, l_timer_def.repeat_interval_ds, '<null>')
-    , p4        => coalesce( l_timer_def.max_Repeats, '<null>')
+    , p4        => coalesce( l_timer_def.max_runs, '<null>')
     );
 
     case l_timer_def.timer_type
@@ -510,7 +510,7 @@ as
 
         if upper(substr(l_timer_def.oracle_date,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
           case flow_process_vars.get_var_type ( pi_prcs_id  => pi_prcs_id
-                                              , pi_var_name => substr(l_timer_def.oracle_daten,6,length(l_timer_def.oracle_date)-6)
+                                              , pi_var_name => substr(l_timer_def.oracle_date,6,length(l_timer_def.oracle_date)-6)
                                               )
           when flow_constants_pkg.gc_prov_var_type_date then
               -- substitution parameter is a date process var = already an Oracle date
@@ -537,26 +537,39 @@ as
           l_parsed_ts := to_timestamp ( l_timer_def.oracle_date, l_timer_def.oracle_format_mask);
         end if;
       when flow_constants_pkg.gc_timer_type_oracle_duration then 
-        if upper(substr(l_timer_def.oracle_date,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
+        if upper(substr(l_timer_def.oracle_duration_ds,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
         
-          l_parsed_ts := systimestamp + to_dsinterval ( flow_process_vars.get_var_vc2
+          l_parsed_duration_ds :=  to_dsinterval ( nvl ( flow_process_vars.get_var_vc2
                                                               ( pi_prcs_id => pi_prcs_id
-                                                              , pi_var_name => substr ( l_timer_def.oracle_duration , 6
-                                                                                      , length(l_timer_def.oracle_duration ) - 6
+                                                              , pi_var_name => substr ( l_timer_def.oracle_duration_ds , 6
+                                                                                      , length(l_timer_def.oracle_duration_ds ) - 6
                                                                                       )
-                                                              )
-                                                      );
+                                                              ) , '000 00:00:00' )
+                                                  );
         else  
-        
-          l_parsed_ts := systimestamp + to_dsinterval(l_timer_def.oracle_duration_ds);
+          l_parsed_duration_ds := to_dsinterval ( nvl ( l_timer_def.oracle_duration_ds , '000 00:00:00') );
         end if;
+
+        if upper(substr(l_timer_def.oracle_duration_ym,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
+        
+          l_parsed_duration_ym :=  to_yminterval ( nvl( flow_process_vars.get_var_vc2
+                                                              ( pi_prcs_id => pi_prcs_id
+                                                              , pi_var_name => substr ( l_timer_def.oracle_duration_ym , 6
+                                                                                      , length(l_timer_def.oracle_duration_ym ) - 6
+                                                                                      )
+                                                              ), '0-0')
+                                                  );
+        else  
+          l_parsed_duration_ym := to_yminterval ( nvl( l_timer_def.oracle_duration_ym, '0-0') );
+        end if;
+        l_parsed_ts := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
 
       when flow_constants_pkg.gc_timer_type_oracle_cycle then
 
         l_parsed_ts           := systimestamp + to_dsinterval ( l_timer_def.start_interval_ds );
         l_parsed_duration_ym  := to_yminterval ('0-0');  -- UI currently does not allow YM input so set to 0
         l_parsed_duration_ds  := to_dsinterval ( l_timer_def.repeat_interval_ds );
-        l_repeat_times        := to_number ( l_timer_def.max_repeats );
+        l_repeat_times        := to_number ( l_timer_def.max_runs );
       else
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
@@ -588,7 +601,7 @@ as
         pi_prcs_id
       , pi_sbfl_id
       , pi_step_key
-      , 0
+      , 1
       , l_timer_def.timer_type
       , systimestamp
       , c_created
@@ -617,7 +630,7 @@ as
     pi_prcs_id    in flow_processes.prcs_id%type
   , pi_sbfl_id    in flow_subflows.sbfl_id%type 
   , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 0 -- 0 original, 1-> repeats
+  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
   , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
@@ -676,7 +689,7 @@ as
     pi_prcs_id    in flow_processes.prcs_id%type
   , pi_sbfl_id    in flow_subflows.sbfl_id%type 
   , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 0 -- 1 original, 2-> repeats
+  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
   , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
@@ -694,14 +707,14 @@ as
     , 'timr_id (repeats)', pi_timr_id
     , 'timer run', pi_run
     );
-    if pi_run = 0 and pi_timr_id is null then
+    if pi_run = 1 and pi_timr_id is null then
       -- starting the first run of a new timer
       start_new_timer
       ( pi_prcs_id   => pi_prcs_id   
       , pi_sbfl_id   => pi_sbfl_id  
       , pi_step_key  => pi_step_key 
       );
-    elsif pi_run > 0 and pi_timr_id is not null then
+    elsif pi_run > 1 and pi_timr_id is not null then
         -- starting a repeat cycle of a existing timer (on a new sbfl)
       start_repeat_timer
       ( pi_prcs_id   => pi_prcs_id   
@@ -722,6 +735,106 @@ as
         -- $F4AMESSAGE 'timer-internal-error' || 'Timer internal error  for object %0. Type: %1; Value: %2'
     end if;
   end start_timer;
+
+/******************************************************************************
+  RESCHEDULE_TIMER
+*******************************************************************************/
+
+procedure reschedule_timer
+(
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
+  , p_is_immediate  in boolean default false
+  , p_new_timestamp in flow_timers.timr_start_on%type default null
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+)
+is
+  l_timer_rec       flow_timers%rowtype;
+  e_bad_new_timer   exception;
+  l_current_object  flow_subflows.sbfl_current%type;
+begin
+  apex_debug.enter 
+  ( 'reschedule_timer'
+  , 'Process ID',  p_process_id
+  , 'Subflow ID', p_subflow_id
+  , 'Step Key', p_step_key
+  , 'Immediate', case when p_is_immediate then 'true' else 'false' end
+  , 'New Timestamp', p_new_timestamp
+  );
+  -- lock the timer
+  select *
+    into l_timer_rec
+    from flow_timers timr 
+   where timr.timr_prcs_id = p_process_id
+     and timr.timr_sbfl_id = p_subflow_id
+     for update wait 5
+  ;
+  if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
+                                    , pi_sbfl_id  => p_subflow_id
+                                    , pi_step_key_supplied  => p_step_key
+                                    , pi_step_key_required  => l_timer_rec.timr_step_key) then 
+    if p_is_immediate then
+      l_timer_rec.timr_start_on := systimestamp;
+    elsif p_new_timestamp >= systimestamp then
+      l_timer_rec.timr_start_on := p_new_timestamp;
+    elsif not p_is_immediate  and p_new_timestamp is null then
+      raise e_bad_new_timer;
+    end if;
+
+    update flow_timers
+       set timr_start_on = l_timer_rec.timr_start_on
+     where timr_id = l_timer_rec.timr_id
+       and timr_run = l_timer_rec.timr_run
+    ;
+
+    select sbfl.sbfl_current
+      into l_current_object
+      from flow_subflows sbfl
+     where sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
+    ;
+
+    flow_logging.log_instance_event
+    ( p_process_id  => p_process_id
+    , p_objt_bpmn_id  => l_current_object
+    , p_event  => flow_constants_pkg.gc_prcs_event_rescheduled
+    , p_comment  => p_comment
+    );
+
+  end if;
+exception
+  when no_data_found then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => p_subflow_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+  when lock_timeout then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'timeout_locking_subflow'
+      , p0 => p_subflow_id
+      );
+      -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Retry your transaction later.'  
+  when e_bad_new_timer then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_sbfl_id        => p_subflow_id
+        , pi_message_key    => 'timer-incomplete-definition'
+        , p0 => p_subflow_id       
+	      , p1 => case when p_is_immediate then 'true' else 'false' end
+        , p2 => p_new_timestamp
+        );
+        -- $F4AMESSAGE 'timer-incomplete-definition' || 'Incomplete timer definitions for object %0. Type: %1; Value: %2'
+
+end reschedule_timer;
+
+
+
 
 /******************************************************************************
   EXPIRE_TIMER

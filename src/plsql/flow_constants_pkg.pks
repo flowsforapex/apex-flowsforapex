@@ -79,20 +79,22 @@ as
 
   gc_timer_tag_oracle_date            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
   gc_timer_tag_oracle_date_mask       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleFormatMask';
-  gc_timer_tag_oracle_duration        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';
-  gc_timer_tag_start_interval         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startInterval';
-  gc_timer_tag_repeat_interval        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatInterval';
-  gc_timer_tag_max_repeats            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRepeats';
+  gc_timer_tag_oracle_duration_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDurationDS';
+  gc_timer_tag_oracle_duration_ym     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDurationYM';
+  gc_timer_tag_start_interval_ds      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startIntervalDS';
+  gc_timer_tag_repeat_interval_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
+  gc_timer_tag_max_runs               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
   gc_timer_oracle_date_key            constant flow_types_pkg.t_bpmn_id := 'oracleDate';
   gc_timer_oracle_date_mask_key       constant flow_types_pkg.t_bpmn_id := 'oracleFormatMask';
-  gc_timer_oracle_duration_key        constant flow_types_pkg.t_bpmn_id := 'oracleDuration';
-  gc_timer_start_interval_key         constant flow_types_pkg.t_bpmn_id := 'startInterval';
-  gc_timer_repeat_interval_key        constant flow_types_pkg.t_bpmn_id := 'repeatInterval';
-  gc_timer_max_repeats_key            constant flow_types_pkg.t_bpmn_id := 'maxRepeats';
+  gc_timer_oracle_durationDS_key      constant flow_types_pkg.t_bpmn_id := 'oracleDurationDS';
+  gc_timer_oracle_durationYM_key      constant flow_types_pkg.t_bpmn_id := 'oracleDurationYM';
+  gc_timer_start_intervalDS_key       constant flow_types_pkg.t_bpmn_id := 'startIntervalDS';
+  gc_timer_repeat_intervalDS_key      constant flow_types_pkg.t_bpmn_id := 'repeatIntervalDS';
+  gc_timer_max_runs_key               constant flow_types_pkg.t_bpmn_id := 'maxRuns';
   
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
@@ -139,6 +141,7 @@ as
   gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
   gc_prcs_event_restart_step         constant  varchar2(20 char) := 'restart step';
   gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
+  gc_prcs_event_rescheduled          constant  varchar2(20 char) := 'rescheduled';
 
   -- Process Variable Datatypes
 
