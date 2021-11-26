@@ -11146,7 +11146,7 @@ wwv_flow_api.create_translation(
 '',
 'apex.jQuery(".subflow-actions-btn").each(function(){',
 '  var sbflStatus = apex.jQuery(this).data("status");',
-'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" ? false : true );',
+'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" ? false : true );',
 '});',
 '',
 '$("td[headers*=subflow_status_col]").each(function() {',
@@ -11171,7 +11171,7 @@ wwv_flow_api.create_translation(
 '',
 'apex.jQuery(".subflow-actions-btn").each(function(){',
 '  var sbflStatus = apex.jQuery(this).data("status");',
-'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" ? false : true );',
+'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" ? false : true );',
 '});',
 '',
 '$("td[headers*=subflow_status_col]").each(function() {',
@@ -15737,8 +15737,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span>'
-,p_translate_from_text=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span>'
+,p_translate_to_text=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span><span class="sbfl_timer_start">#TIMER_STATUS_INFO#</span>'
+,p_translate_from_text=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span><span class="sbfl_timer_start">#TIMER_STATUS_INFO#</span>'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(13107836998987371)
@@ -17942,6 +17942,350 @@ unistr('    <li><strong>strict</strong> (recommended) - Utilisez cette option po
 ||'tep.</li>',
 '    <li><strong>strict</strong> (recommended) - Use this option for new development and/or fully migrated application. The engine uses the step key to avoid duplicate actions on a single step.</li>',
 '</ul>'))
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73515508910251639)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707677337232546.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707677337232546)
+,p_translate_column_id=>13
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Reprogrammation minuteur'
+,p_translate_from_text=>'Reschedule Timer'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73515682573251645)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73479633336995802.100001)
+,p_translate_from_id=>wwv_flow_api.id(73479633336995802)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Commentaire'
+,p_translate_from_text=>'Comment'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73515892329251645)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707843061232548.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707843061232548)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Reprogrammer le minuteur \00E0')
+,p_translate_from_text=>'Reschedule timer at'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73516057529251645)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707796384232547.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707796384232547)
+,p_translate_column_id=>14
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Reprogrammer le minuteur maintenant'
+,p_translate_from_text=>'Reschedule timer now'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73516233152251670)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707563129232545.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707563129232545)
+,p_translate_column_id=>20
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'Y'
+,p_translate_to_text=>'Reprogrammation minuteur'
+,p_translate_from_text=>'Reschedule Timer'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73516355603251700)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73474805704863264.100001)
+,p_translate_from_id=>wwv_flow_api.id(73474805704863264)
+,p_translate_column_id=>28
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Reprogrammer'
+,p_translate_from_text=>'Reschedule'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73516595415251700)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73510569356145167.100001)
+,p_translate_from_id=>wwv_flow_api.id(73510569356145167)
+,p_translate_column_id=>28
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'-'
+,p_translate_from_text=>'-'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73516760467251700)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73510888958146465.100001)
+,p_translate_from_id=>wwv_flow_api.id(73510888958146465)
+,p_translate_column_id=>28
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Reprogrammer'
+,p_translate_from_text=>'Reschedule'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73516986885251701)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73474529421861842.100001)
+,p_translate_from_id=>wwv_flow_api.id(73474529421861842)
+,p_translate_column_id=>28
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'-'
+,p_translate_from_text=>'-'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73517148321252095)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707325166232543.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707325166232543)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Minuteur d\00E9marre \00E0')
+,p_translate_from_text=>'Timer Start On'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73517277002252095)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707438405232544.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707438405232544)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Timer Status Info'
+,p_translate_from_text=>'Timer Status Info'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73517450365252103)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707325166232543.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707325166232543)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Minuteur d\00E9marre \00E0')
+,p_translate_from_text=>'Timer Start On'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73517673825252103)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707438405232544.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707438405232544)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Timer Status Info'
+,p_translate_from_text=>'Timer Status Info'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73517900632252509)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73479633336995802.100001)
+,p_translate_from_id=>wwv_flow_api.id(73479633336995802)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Y'
+,p_translate_from_text=>'Y'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73518000011252509)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707796384232547.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707796384232547)
+,p_translate_column_id=>268
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'APPLICATION'
+,p_translate_from_text=>'APPLICATION'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73518246130252515)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73479633336995802.100001)
+,p_translate_from_id=>wwv_flow_api.id(73479633336995802)
+,p_translate_column_id=>269
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73518435689252515)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707843061232548.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707843061232548)
+,p_translate_column_id=>269
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'+0d'
+,p_translate_from_text=>'+0d'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73518694777252520)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73479633336995802.100001)
+,p_translate_from_id=>wwv_flow_api.id(73479633336995802)
+,p_translate_column_id=>270
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73518838211252525)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73479633336995802.100001)
+,p_translate_from_id=>wwv_flow_api.id(73479633336995802)
+,p_translate_column_id=>271
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'BOTH'
+,p_translate_from_text=>'BOTH'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73519077047252525)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707843061232548.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707843061232548)
+,p_translate_column_id=>271
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'both'
+,p_translate_from_text=>'both'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73519256776252528)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707843061232548.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707843061232548)
+,p_translate_column_id=>272
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73519438185252535)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707843061232548.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707843061232548)
+,p_translate_column_id=>274
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'NONE'
+,p_translate_from_text=>'NONE'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73519621611252662)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707563129232545.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707563129232545)
+,p_translate_column_id=>308
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'N'
+,p_translate_from_text=>'N'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73519783355252667)
+,p_page_id=>8
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(62707563129232545.100001)
+,p_translate_from_id=>wwv_flow_api.id(62707563129232545)
+,p_translate_column_id=>309
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'HTML'
+,p_translate_from_text=>'HTML'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73519912200252917)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73474805704863264.100001)
+,p_translate_from_id=>wwv_flow_api.id(73474805704863264)
+,p_translate_column_id=>376
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'reschedule-timer'
+,p_translate_from_text=>'reschedule-timer'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(73520080747252917)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(73510888958146465.100001)
+,p_translate_from_id=>wwv_flow_api.id(73510888958146465)
+,p_translate_column_id=>376
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'bulk-reschedule-timer'
+,p_translate_from_text=>'bulk-reschedule-timer'
 );
 wwv_flow_api.component_end;
 end;

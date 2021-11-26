@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20211110102831'
+,p_last_upd_yyyymmddhh24miss=>'20211126151112'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -730,7 +730,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>60
 ,p_column_identifier=>'F'
 ,p_column_label=>'Status'
-,p_column_html_expression=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span>'
+,p_column_html_expression=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span><span class="sbfl_timer_start">#TIMER_STATUS_INFO#</span>'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'subflow_status_col'
@@ -855,6 +855,25 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(62707325166232543)
+,p_db_column_name=>'SBFL_TIMR_START_ON'
+,p_display_order=>180
+,p_column_identifier=>'S'
+,p_column_label=>'Timer Start On'
+,p_column_type=>'DATE'
+,p_heading_alignment=>'LEFT'
+,p_tz_dependent=>'N'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(62707438405232544)
+,p_db_column_name=>'TIMER_STATUS_INFO'
+,p_display_order=>190
+,p_column_identifier=>'T'
+,p_column_label=>'Timer Status Info'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(8498061205860315)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -862,18 +881,18 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'59631'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION:'
+,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(67168606271895034)
+ p_id=>wwv_flow_api.id(73521141128311909)
 ,p_report_id=>wwv_flow_api.id(8498061205860315)
 ,p_condition_type=>'FILTER'
 ,p_allow_delete=>'Y'
 ,p_column_name=>'SBFL_STATUS'
 ,p_operator=>'in'
-,p_expr=>'running,error'
-,p_condition_sql=>'"SBFL_STATUS" in (#APXWS_EXPR_VAL1#, #APXWS_EXPR_VAL2#)'
-,p_condition_display=>'#APXWS_COL_NAME# #APXWS_OP_NAME# ''running, error''  '
+,p_expr=>'running,error,waiting for timer'
+,p_condition_sql=>'"SBFL_STATUS" in (#APXWS_EXPR_VAL1#, #APXWS_EXPR_VAL2#, #APXWS_EXPR_VAL3#)'
+,p_condition_display=>'#APXWS_COL_NAME# #APXWS_OP_NAME# ''running, error, waiting for timer''  '
 ,p_enabled=>'Y'
 );
 wwv_flow_api.create_page_plug(
@@ -945,6 +964,18 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(13245209048329626)
 ,p_plug_name=>'Instance Action'
@@ -958,18 +989,6 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(13891898475964091)
@@ -985,6 +1004,19 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source_type=>'NATIVE_LIST'
 ,p_list_template_id=>wwv_flow_api.id(12495525309455880143)
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(62707563129232545)
+,p_plug_name=>'Reschedule Timer'
+,p_region_name=>'reschedule_timer_dialog'
+,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
+,p_plug_template=>wwv_flow_api.id(12495608896288880263)
+,p_plug_display_sequence=>90
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6133652177393567089)
@@ -1139,6 +1171,22 @@ wwv_flow_api.create_page_button(
 ,p_button_css_classes=>'js-actionButton'
 ,p_icon_css_classes=>'fa-info-circle-o'
 ,p_button_cattributes=>'data-action="flow-instance-audit" data-prcs="&P8_PRCS_ID." data-name="&P8_PRCS_NAME."'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(62707677337232546)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_button_name=>'RESCHEDULE_TIMER'
+,p_button_static_id=>'reschedule-timer-btn'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_is_hot=>'Y'
+,p_button_image_alt=>'Reschedule Timer'
+,p_button_position=>'REGION_TEMPLATE_NEXT'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'js-actionButton'
+,p_button_cattributes=>'data-action="" data-prcs="" data-sbfl="" data-key=""'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5978892614464469)
@@ -1576,6 +1624,54 @@ wwv_flow_api.create_page_item(
 ,p_attribute_03=>'N'
 ,p_attribute_04=>'BOTH'
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(62707796384232547)
+,p_name=>'P8_RESCHEDULE_TIMER_NOW'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_item_default=>'Y'
+,p_prompt=>'Reschedule timer now'
+,p_display_as=>'NATIVE_YES_NO'
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_01=>'APPLICATION'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(62707843061232548)
+,p_name=>'P8_RESCHEDULE_TIMER_AT'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_prompt=>'Reschedule timer at'
+,p_format_mask=>'&APP_DATE_TIME_FORMAT.'
+,p_display_as=>'NATIVE_DATE_PICKER'
+,p_cSize=>30
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_02=>'+0d'
+,p_attribute_04=>'both'
+,p_attribute_05=>'N'
+,p_attribute_07=>'NONE'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(73479633336995802)
+,p_name=>'P8_RESCHEDULE_TIMER_COMMENT'
+,p_item_sequence=>30
+,p_item_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_prompt=>'Comment'
+,p_display_as=>'NATIVE_TEXTAREA'
+,p_cSize=>30
+,p_cMaxlength=>2000
+,p_cHeight=>5
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_01=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_03=>'N'
+,p_attribute_04=>'BOTH'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5996686614464519)
 ,p_name=>'Subflows Report refreshed - Mark currently running'
@@ -1600,7 +1696,7 @@ wwv_flow_api.create_page_da_action(
 '',
 'apex.jQuery(".subflow-actions-btn").each(function(){',
 '  var sbflStatus = apex.jQuery(this).data("status");',
-'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" ? false : true );',
+'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" ? false : true );',
 '});',
 '',
 '$("td[headers*=subflow_status_col]").each(function() {',
@@ -1806,6 +1902,18 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'BUTTON'
 ,p_affected_button_id=>wwv_flow_api.id(5955186680464411)
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6002207343464522)
 ,p_name=>'Display Button Based on Gateway Type'
@@ -1907,18 +2015,6 @@ wwv_flow_api.create_page_da_action(
 '        dataType: "text"                     ',
 '    }',
 ');'))
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6007809031464526)
@@ -2267,6 +2363,38 @@ wwv_flow_api.create_page_da_action(
 '});',
 '',
 'Prism.highlightAll();'))
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(62707920017232549)
+,p_name=>'Change Set Now'
+,p_event_sequence=>360
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P8_RESCHEDULE_TIMER_NOW'
+,p_condition_element=>'P8_RESCHEDULE_TIMER_NOW'
+,p_triggering_condition_type=>'EQUALS'
+,p_triggering_expression=>'Y'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(62708058684232550)
+,p_event_id=>wwv_flow_api.id(62707920017232549)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P8_RESCHEDULE_TIMER_AT'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(73479552347995801)
+,p_event_id=>wwv_flow_api.id(62707920017232549)
+,p_event_result=>'FALSE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P8_RESCHEDULE_TIMER_AT'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(5987781654464507)

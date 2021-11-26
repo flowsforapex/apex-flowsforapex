@@ -55,6 +55,21 @@ wwv_flow_api.create_list_item(
 ,p_list_text_01=>'release-step'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(73474529421861842)
+,p_list_item_display_sequence=>60
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(73474805704863264)
+,p_list_item_display_sequence=>70
+,p_list_item_link_text=>'Reschedule'
+,p_list_item_icon=>'fa-clock-o'
+,p_list_text_01=>'reschedule-timer'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
 wwv_flow_api.component_end;
 end;
 /
