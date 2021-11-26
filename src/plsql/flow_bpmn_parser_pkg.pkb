@@ -816,12 +816,14 @@ as
                        ) props
                )
     loop
+      -- User Task: nested page items
       if rec.prop_name = flow_constants_pkg.gc_apex_usertask_page_items then
         parse_page_items
         (
           pi_bpmn_id        => pi_bpmn_id
         , pi_page_items_xml => rec.prop_children
         );
+      -- long-value properties: store in clob column
       elsif rec.prop_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
                              , flow_constants_pkg.gc_apex_servicetask_body_text
                              , flow_constants_pkg.gc_apex_servicetask_body_html
@@ -833,7 +835,8 @@ as
           pi_objt_bpmn_id      => pi_bpmn_id
         , pi_obat_key          => rec.prop_name
         , pi_obat_clob_value   => rec.prop_value
-        );      
+        );
+      -- store varchar values   
       else
         register_object_attributes
         (
@@ -1003,6 +1006,7 @@ as
               pi_bpmn_id       => pi_objt_bpmn_id
             , pi_extension_xml => rec.extension_elements
             );
+          -- if standard type just register value inside tag
           else
             begin
               select details.detail_type
@@ -1032,8 +1036,6 @@ as
             , pi_obat_vc_value     => l_detail_type
             );
 
-            -- if standard type just register value inside tag
-
             -- register the timer definition
             register_object_attributes
             (
@@ -1043,6 +1045,7 @@ as
             , pi_obat_vc_value     => l_detail_value
             );
           end if;
+        -- custom processStatus attribute on terminateEndEvents
         elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
           select details.detail_type
                , details.detail_value
@@ -1114,7 +1117,6 @@ as
     loop
 
       if rec.source_ref is null then -- assume objects don't have a sourceRef attribute
-
 
         -- Parse additional information from child elements
         -- relevant for e.g. terminateEndEvent
