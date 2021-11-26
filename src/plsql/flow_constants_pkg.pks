@@ -53,18 +53,42 @@ as
 
   -- APEX Extensions to BPMN
   -- userTask
-  gc_apex_usertask_application        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-application';
-  gc_apex_usertask_page               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-page';
-  gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-request';
-  gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-cache';
-  gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-item';
-  gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-value';
-  gc_apex_usertask_inserturl          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-insertUrl';
+  gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexPage';
+  gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'externalUrl';
+
+  gc_apex_usertask_application_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
+  gc_apex_usertask_page_id            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
+  gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'request';
+  gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'cache';
+
+  gc_apex_usertask_page_items          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
+  --gc_apex_usertask_page_item          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItem';
+  gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemName';
+  gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemValue';
+
+  gc_apex_usertask_url                constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'url';
 
   --serviceTask
-  --gc_apex_servicetask_insertemail     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertEmail';
+  gc_apex_servicetask_send_mail       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sendMail';
+
+  gc_apex_servicetask_email_from      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailFrom';
+  gc_apex_servicetask_email_to        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailTo';
+  gc_apex_servicetask_email_cc        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailCC';
+  gc_apex_servicetask_email_bcc       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailBCC';
+  gc_apex_servicetask_email_reply_to  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailReplyTo';
+  gc_apex_servicetask_use_template    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'useTemplate';
+  gc_apex_servicetask_application_id  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
+  gc_apex_servicetask_template_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'templateId';
+  gc_apex_servicetask_placeholder     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'placeholder';
+  gc_apex_servicetask_subject         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'subject';
+  gc_apex_servicetask_body_text       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyText';
+  gc_apex_servicetask_body_html       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyHTML';
+  gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
+  gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
 
   --scriptTask
+  gc_apex_scripttask_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
+
   gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
   gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
   gc_apex_scripttask_auto_binds       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
@@ -77,24 +101,17 @@ as
   gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';
   gc_timer_type_oracle_cycle          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleCycle';
 
-  gc_timer_tag_oracle_date            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
-  gc_timer_tag_oracle_date_mask       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleFormatMask';
-  gc_timer_tag_oracle_duration_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDurationDS';
-  gc_timer_tag_oracle_duration_ym     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDurationYM';
-  gc_timer_tag_start_interval_ds      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startIntervalDS';
-  gc_timer_tag_repeat_interval_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
-  gc_timer_tag_max_runs               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
+  gc_apex_timer_date                  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'date';
+  gc_apex_timer_format_mask           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'formatMask';
+  gc_apex_timer_interval_ym           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'intervalYM';
+  gc_apex_timer_interval_ds           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'intervalDS';
+  gc_apex_timer_start_interval_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startIntervalDS';
+  gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
+  gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
-  gc_timer_oracle_date_key            constant flow_types_pkg.t_bpmn_id := 'oracleDate';
-  gc_timer_oracle_date_mask_key       constant flow_types_pkg.t_bpmn_id := 'oracleFormatMask';
-  gc_timer_oracle_durationDS_key      constant flow_types_pkg.t_bpmn_id := 'oracleDurationDS';
-  gc_timer_oracle_durationYM_key      constant flow_types_pkg.t_bpmn_id := 'oracleDurationYM';
-  gc_timer_start_intervalDS_key       constant flow_types_pkg.t_bpmn_id := 'startIntervalDS';
-  gc_timer_repeat_intervalDS_key      constant flow_types_pkg.t_bpmn_id := 'repeatIntervalDS';
-  gc_timer_max_runs_key               constant flow_types_pkg.t_bpmn_id := 'maxRuns';
   
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
