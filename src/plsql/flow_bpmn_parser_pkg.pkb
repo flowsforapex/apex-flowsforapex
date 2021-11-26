@@ -792,7 +792,7 @@ as
     );
   end parse_page_items;
 
-  procedure parse_task_subtype
+  procedure parse_task_subtypes
   (
     pi_bpmn_id     in flow_types_pkg.t_bpmn_id
   , pi_subtype_xml in xmltype
@@ -822,6 +822,18 @@ as
           pi_bpmn_id        => pi_bpmn_id
         , pi_page_items_xml => rec.prop_children
         );
+      elsif rec.prop_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
+                             , flow_constants_pkg.gc_apex_servicetask_body_text
+                             , flow_constants_pkg.gc_apex_servicetask_body_html
+                             , flow_constants_pkg.gc_apex_scripttask_plsql_code
+                             )
+      then
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_obat_key          => rec.prop_name
+        , pi_obat_clob_value   => rec.prop_value
+        );      
       else
         register_object_attributes
         (
@@ -831,7 +843,7 @@ as
         );
       end if;
     end loop;
-  end parse_task_subtype;
+  end parse_task_subtypes;
 
   procedure parse_custom_timers
   (
@@ -905,7 +917,7 @@ as
                                   , flow_constants_pkg.gc_apex_scripttask_execute_plsql
                                   )
       then
-        parse_task_subtype
+        parse_task_subtypes
         (
           pi_bpmn_id     => pi_bpmn_id
         , pi_subtype_xml => rec.extension_data
