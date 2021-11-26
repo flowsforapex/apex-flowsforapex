@@ -219,6 +219,28 @@ as
     );
 
   exception
+    when flow_services.e_no_default_workspace then
+      rollback;
+      apex_debug.info( p_message => 'Rollback initiated after default workspace empty'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'no-default-workspace'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_services.e_wrong_default_workspace then
+      rollback;
+      apex_debug.info( p_message => 'Rollback initiated after from default workspace not valid'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => p_subflow_id
+      , pi_message_key    => 'wrong-default-workspace'
+      , p0 => p_process_id
+      , p1 => p_step_info.target_objt_ref
+      );
     when flow_services.e_email_no_from then 
       rollback;
       apex_debug.info 

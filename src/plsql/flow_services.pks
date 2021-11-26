@@ -1,7 +1,8 @@
 create or replace package flow_services
   authid current_user
 as
-
+  e_no_default_workspace exception;
+  e_wrong_default_workspace exception;
   e_email_no_from exception;
   e_email_no_to exception;
   e_email_no_template exception;

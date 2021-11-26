@@ -12,6 +12,9 @@ as
     l_workspace_id number;
   begin
     l_workspace_id := apex_util.find_security_group_id (p_workspace => p_workspace_name);
+    if (l_workspace_id is null) then
+      raise e_wrong_default_workspace;
+    end if;
     apex_util.set_security_group_id (p_security_group_id => l_workspace_id);
   end set_workspace_id;
 
@@ -133,6 +136,9 @@ as
       if ( l_session is null ) then
         if l_app_alias is null then
           l_workspace := g_workspace;
+          if (l_workspace is null) then
+            raise e_no_default_workspace;
+          end if;
         else
           select workspace 
           into l_workspace
@@ -204,6 +210,20 @@ as
       end if;
     
     exception
+    when e_no_default_workspace then
+      apex_debug.error
+      (
+        p_message => 'Default workspace is empty'
+      , p0        => sqlerrm
+      );
+      raise e_no_default_workspace;
+    when e_wrong_default_workspace then
+      apex_debug.error
+      (
+        p_message => 'Default workspace is not valid'
+      , p0        => sqlerrm
+      );
+      raise e_wrong_default_workspace;
     when e_email_no_from then 
       apex_debug.error
       (
