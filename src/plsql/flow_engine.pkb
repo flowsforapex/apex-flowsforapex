@@ -1180,6 +1180,7 @@ begin
     flow_complete_step
     ( p_process_id => p_sbfl_rec.sbfl_prcs_id
     , p_subflow_id => p_sbfl_rec.sbfl_id
+    , p_step_key   => p_sbfl_rec.sbfl_step_key
     );
   end if;
 
