@@ -19,6 +19,7 @@ as
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
          end as sbfl_status_icon
+       , sbfl.timr_start_on as sbfl_timr_start_on
        , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
        , null as actions   

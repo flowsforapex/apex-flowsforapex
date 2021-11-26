@@ -1,6 +1,6 @@
 create or replace package flow_logging
 accessible by ( flow_engine, flow_instances, flow_process_vars, flow_expressions 
-              , flow_boundary_events, flow_gateways, flow_tasks, flow_errors
+              , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
               )
 as
 
