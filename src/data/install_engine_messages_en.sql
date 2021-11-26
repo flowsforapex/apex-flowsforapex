@@ -290,7 +290,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'timer-broken',
 'en',
-'Timer %0 broken in process %1 , subflow : %2.  See error_info.'
+'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -304,7 +304,7 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'timer-incomplete-definition',
 'en',
-'Incomplete timer definitions for object %0. Type: %1; Value: %2'
+'Incomplete timer definitions for object %0. Type: %1; Value1: %2 Value2: %3  Value3: %4'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
