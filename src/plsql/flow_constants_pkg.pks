@@ -105,8 +105,8 @@ as
   gc_apex_timer_format_mask           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'formatMask';
   gc_apex_timer_interval_ym           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'intervalYM';
   gc_apex_timer_interval_ds           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'intervalDS';
-  gc_apex_timer_start_interval        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startInterval';
-  gc_apex_timer_repeat_interval       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatInterval';
+  gc_apex_timer_start_interval_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startIntervalDS';
+  gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
   gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
