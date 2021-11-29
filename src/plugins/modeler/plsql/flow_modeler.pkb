@@ -21,6 +21,7 @@ as
     sys.htp.p( '<div id="' || p_region.static_id || '_modeler" class="flows4apex-modeler ' || v('THEME_PLUGIN_CLASS') || '">' );
     sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="canvas"></div>' );
     sys.htp.p( '<div id="' || p_region.static_id || '_properties" class="properties-panel-parent"></div>' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_dialogContainer" class="dialog-container"></div>' );
     sys.htp.p( '</div>' );
 
     apex_javascript.add_onload_code
