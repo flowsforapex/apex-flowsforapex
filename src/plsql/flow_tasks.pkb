@@ -208,6 +208,99 @@ as
     );
 
   exception
+    when flow_services.e_no_default_workspace then
+      rollback;
+      apex_debug.info( p_message => 'Rollback initiated after default workspace empty'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'no-default-workspace'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_services.e_wrong_default_workspace then
+      rollback;
+      apex_debug.info( p_message => 'Rollback initiated after default workspace not valid'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'wrong-default-workspace'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_services.e_workspace_not_found then
+      rollback;
+      apex_debug.info( p_message => 'Rollback initiated after workspace not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'workspace-not-found'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_services.e_email_no_from then 
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after from attribute not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'email-no-from'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_services.e_email_no_to then 
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after to attribute not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'email-no-to'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_services.e_email_no_template then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after template or app_alias attributes not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'email-no-template'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      ); 
+    when flow_services.e_email_no_body then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after body attribute not found'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'email-no-body'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+    when flow_services.e_email_failed then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after send_email failed in service task'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'email-failed'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
     when others then
       rollback;
       raise flow_plsql_runner_pkg.e_plsql_script_failed;
