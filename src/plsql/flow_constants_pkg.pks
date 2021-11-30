@@ -217,7 +217,7 @@ as
   gc_config_default_logging_language          constant varchar2(2000 char) := 'en';
   gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
-
+  gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
 
 
   -- Default XML for new diagrams
