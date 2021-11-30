@@ -184,11 +184,22 @@ as
     , p_called_internally => true
     );
 
-    flow_plsql_runner_pkg.run_task_script
-    ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-    , pi_sbfl_id => p_sbfl_info.sbfl_id
-    , pi_objt_id => p_step_info.target_objt_id
-    );
+    case p_step_info.target_objt_subtag
+      when 'executePlsql' then
+        flow_plsql_runner_pkg.run_task_script
+        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+        , pi_sbfl_id => p_sbfl_info.sbfl_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      when 'sendMail' then
+        flow_services.send_email
+        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+        , pi_sbfl_id => p_sbfl_info.sbfl_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      else
+        null;
+    end case;
 
     flow_engine.flow_complete_step 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
