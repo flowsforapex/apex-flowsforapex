@@ -264,7 +264,7 @@ as
     loop
         fetch c_templates into l_template;
         exit when c_templates%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_template.name || '","value":"' || l_template.email_template_id || '"},';
+        l_result := l_result || '{"name":"' || l_template.name || '","value":"' || l_template.static_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
