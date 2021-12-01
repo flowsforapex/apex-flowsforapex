@@ -742,6 +742,55 @@ function bulkReleaseStep( action ){
   });
 }
 
+function rescheduleTimer ( action, element ){
+  if ( apex.jQuery( "#reschedule_timer_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "reschedule_timer_dialog" );
+    var data = getSubflowData(action, element);
+    data.x05 = apex.item("P8_RESCHEDULE_TIMER_NOW").getValue();
+    data.x06 = apex.item( "P8_RESCHEDULE_TIMER_AT" ).getValue();
+    data.x07 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
+       
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    sendToServer(data, options);
+  } else {
+    openRescheduleTimerDialog( action, element );
+  }
+}
+
+function bulkRescheduleTimer ( action ){
+  if ( apex.jQuery( "#reschedule_timer_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "reschedule_timer_dialog" );
+    var data = getBulkSubflowData(action);
+    data.x02 = apex.item("P8_RESCHEDULE_TIMER_NOW").getValue();
+    data.x03 = apex.item( "P8_RESCHEDULE_TIMER_AT" ).getValue();
+    data.x04 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
+       
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    sendToServer(data, options);
+  } else {
+    openRescheduleTimerDialog( action, null );
+  }
+}
+
+function openRescheduleTimerDialog(action, element){
+  apex.item( "P8_RESCHEDULE_TIMER_NOW" ).setValue( "Y" );
+  apex.item( "P8_RESCHEDULE_TIMER_AT" ).setValue( "" );
+  apex.item("P8_RESCHEDULE_TIMER_COMMENT").setValue("");
+  apex.jQuery( "#reschedule-timer-btn" ).attr( "data-action", action );
+  apex
+    .jQuery( "#reschedule-timer-btn" )
+    .attr( "data-prcs", apex.jQuery( element ).attr( "data-prcs" ) );
+  apex
+    .jQuery( "#reschedule-timer-btn" )
+    .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+  apex
+    .jQuery( "#reschedule-timer-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+  apex.theme.openRegion( "reschedule_timer_dialog" );
+}
+
 function markAsCurrent(prcsId){
   var processRows = apex.jQuery( "#flow-instances td" );
   var selectedProcess = prcsId;
@@ -911,6 +960,18 @@ function initActions(){
           name: "bulk-delete-process-variable",
           action: function ( event, focusElement ) {
             bulkDeleteProcessVariable( this.name );
+          }
+        },
+        {
+          name: "reschedule-timer",
+          action: function( event, focusElement ) {
+            rescheduleTimer( this.name, focusElement );
+          }
+        },
+        {
+          name: "bulk-reschedule-timer",
+          action: function( event, focusElement ) {
+            bulkRescheduleTimer( this.name);
           }
         }
       ] );
@@ -1290,6 +1351,10 @@ function initPage8() {
                 .jQuery( "#subflows .a-IRR-tableContainer" )
                 .find( 'input[name="f02"][data-reservation!=""]:checked' )
                 .length > 0
+              || apex
+              .jQuery( "#subflows .a-IRR-tableContainer" )
+              .find( 'input[name="f02"][data-status!="running"]:checked' )
+              .length > 0
             ) {
               item.disabled = true;
             }
@@ -1298,8 +1363,18 @@ function initPage8() {
             if (
               apex
                 .jQuery( "#subflows .a-IRR-tableContainer" )
-                .find( 'input[name="f02"][data-reservation=""]:checked' ).length >
-              0
+                .find( 'input[name="f02"][data-reservation=""]:checked' )
+                .length > 0
+            ) {
+              item.disabled = true;
+            }
+          }
+          if ( item.action === "bulk-reschedule-timer" ) {
+            if (
+              apex
+                .jQuery( "#subflows .a-IRR-tableContainer" )
+                .find( 'input[name="f02"][data-status!="waiting for timer"]:checked' )
+                .length > 0
             ) {
               item.disabled = true;
             }
@@ -1335,6 +1410,9 @@ function initPage8() {
               subflReservation !== "" && sbflStatus === "running"
                 ? false
                 : true;
+          }
+          if ( item.action === "change-timer" ) {
+            item.disabled = sbflStatus === "waiting for timer" ? false : true;
           }
           return item;
         } );

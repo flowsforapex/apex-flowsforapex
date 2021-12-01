@@ -66,6 +66,15 @@ as
               pi_prcs_id => apex_application.g_f01(i)
             , pi_var_name => apex_application.g_f02(i)
           );
+          when 'BULK-RESCHEDULE-TIMER' then
+          flow_api_pkg.flow_reschedule_timer(
+              p_process_id    => apex_application.g_f01(i)
+            , p_subflow_id    => apex_application.g_f02(i)
+            , p_step_key      => apex_application.g_f03(i)
+            , p_is_immediate  => case apex_application.g_x02 when 'Y' then true end
+            , p_new_timestamp => case apex_application.g_x03 when 'N' then to_timestamp(apex_application.g_x06, v('APP_NLS_TIMESTAMP_FORMAT')) end
+            , p_comment       => apex_application.g_x04
+          );
           else
             apex_error.add_error
             (
@@ -207,6 +216,15 @@ as
           flow_process_vars.delete_var(
             pi_prcs_id => apex_application.g_x02
             , pi_var_name => apex_application.g_x03
+          );
+        when 'RESCHEDULE-TIMER' then
+          flow_api_pkg.flow_reschedule_timer(
+              p_process_id    => apex_application.g_x02
+            , p_subflow_id    => apex_application.g_x03
+            , p_step_key      => apex_application.g_x04
+            , p_is_immediate  => case apex_application.g_x05 when 'Y' then true end
+            , p_new_timestamp => case apex_application.g_x05 when 'N' then to_timestamp(apex_application.g_x06, v('APP_NLS_TIMESTAMP_FORMAT')) end
+            , p_comment       => apex_application.g_x07
           );
         else
           apex_error.add_error

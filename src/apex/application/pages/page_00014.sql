@@ -29,7 +29,7 @@ wwv_flow_api.create_page(
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20211110102722'
+,p_last_upd_yyyymmddhh24miss=>'20211126143202'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(16968778051177917)
@@ -166,6 +166,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'G'
 ,p_column_label=>'Became Current'
 ,p_column_type=>'DATE'
+,p_heading_alignment=>'LEFT'
 ,p_tz_dependent=>'N'
 );
 wwv_flow_api.create_worksheet_column(

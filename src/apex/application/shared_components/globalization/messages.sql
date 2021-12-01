@@ -469,6 +469,19 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(73507335747013782)
+,p_name=>'APP_RESCHEDULE_TIMER'
+,p_message_text=>'Reschedule'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(73507571960022143)
+,p_name=>'APP_RESCHEDULE_TIMER'
+,p_message_language=>'fr'
+,p_message_text=>'Reprogrammer'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34715720510433885)
 ,p_name=>'APP_RESET_INSTANCE'
 ,p_message_text=>'Reset Flow Instance'
