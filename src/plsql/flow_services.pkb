@@ -102,6 +102,7 @@ as
             l_template_id := rec.obat_vc_value;
           when flow_constants_pkg.gc_apex_servicetask_placeholder then
             l_placeholders := rec.obat_clob_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_placeholders );
           when flow_constants_pkg.gc_apex_servicetask_immediately then
             l_immediate := rec.obat_vc_value;
           when flow_constants_pkg.gc_apex_servicetask_subject then
@@ -109,8 +110,10 @@ as
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_subject );
           when flow_constants_pkg.gc_apex_servicetask_body_text then
             l_body := rec.obat_clob_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body );
           when flow_constants_pkg.gc_apex_servicetask_body_html then
             l_body_html := rec.obat_clob_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body_html );
           when flow_constants_pkg.gc_apex_servicetask_attachment then
             l_attachment_query := rec.obat_vc_value;
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_attachment_query );
