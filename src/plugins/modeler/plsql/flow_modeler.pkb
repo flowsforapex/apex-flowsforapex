@@ -274,9 +274,8 @@ as
     v_cur int;
     v_command varchar2(100);
     v_input varchar2(4000);
-    l_result clob;
+    l_result clob := '{"message":""}';
   begin
-    apex_debug.info(apex_application.g_x03);
     if (apex_application.g_x02 is not null) then
         case apex_application.g_x03
         when 'sql' then
@@ -307,8 +306,8 @@ as
                     when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '"}';
                 end;
         end case;
-        htp.p(l_result);
     end if;
+    htp.p(l_result);
   end parse_code;
   function ajax
   (
