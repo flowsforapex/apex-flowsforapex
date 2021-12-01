@@ -31,13 +31,13 @@ as
 
   procedure execute_plsql
   (
-    p_plsql_code in varchar2
+    p_plsql_code in clob
   )
   as
   begin
     apex_debug.enter 
     ('execute_plsql'
-    , 'p_plsql_code', p_plsql_code
+    , 'p_plsql_code', dbms_lob.substr(p_plsql_code, 2000, 1)
     );
     -- Always wrap code into begin..end
     -- Developers are allowed to omit those if no declaration section needed
@@ -57,7 +57,7 @@ as
   )
   as
     l_use_apex_exec boolean := false;
-    l_plsql_code    flow_object_attributes.obat_vc_value%type;
+    l_plsql_code    flow_object_attributes.obat_clob_value%type;
     l_do_autobind   boolean := false;
 
     l_sql_parameters apex_exec.t_parameters;
@@ -75,6 +75,7 @@ as
 
     for rec in ( select obat.obat_key
                       , obat.obat_vc_value
+                      , obat.obat_clob_value
                    from flow_object_attributes obat
                   where obat.obat_objt_id = pi_objt_id
                     and obat.obat_key in ( flow_constants_pkg.gc_apex_scripttask_engine
@@ -87,7 +88,7 @@ as
         when flow_constants_pkg.gc_apex_scripttask_engine then
           l_use_apex_exec := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
         when flow_constants_pkg.gc_apex_scripttask_plsql_code then
-          l_plsql_code := rec.obat_vc_value;
+          l_plsql_code := rec.obat_clob_value;
         when flow_constants_pkg.gc_apex_scripttask_auto_binds then
           l_do_autobind := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
         else
