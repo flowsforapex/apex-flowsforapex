@@ -500,13 +500,6 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Le modèle a changé, annuler les changements?'
 );
- 
-insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
- values (
-'no-default-workspace',
-'fr',
-'Processus %0 : la tâche de service %1 a échoué : pas d''espace de travail par défaut défini dans le paramètre de configuration.'
- );
 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (

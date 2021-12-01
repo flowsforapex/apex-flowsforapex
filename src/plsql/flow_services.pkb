@@ -5,6 +5,11 @@ as
                                  , p_default_value => flow_constants_pkg.gc_config_default_default_workspace
                                );
 
+  g_email_sender varchar2(100) := flow_engine_util.get_config_value(
+                                   p_config_key    => 'default_email_sender'
+                                 , p_default_value => ''  
+                               );
+
   procedure set_workspace_id(
     p_workspace_name in varchar2
   )
@@ -124,10 +129,14 @@ as
         end case;
       end loop;
 
+      if l_from is null then
+        l_from := g_email_sender;
+      end if;
+
       -- Raise error if needed
       -- no sender
       if l_from is null then
-        raise e_email_no_from;
+          raise e_email_no_from;
       end if;
       --no recipient
       if l_to is null then
@@ -148,11 +157,7 @@ as
             raise e_workspace_not_found;
           end;
         else
-          l_workspace := g_workspace;
-          if (l_workspace is null) then
-            raise e_no_default_workspace;
-          end if;
-          
+          l_workspace := g_workspace;         
         end if;
 
         set_workspace_id(p_workspace_name => l_workspace);
@@ -214,13 +219,6 @@ as
       end if;
     
     exception
-    when e_no_default_workspace then
-      apex_debug.error
-      (
-        p_message => 'Default workspace is empty'
-      , p0        => sqlerrm
-      );
-      raise e_no_default_workspace;
     when e_wrong_default_workspace then
       apex_debug.error
       (

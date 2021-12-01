@@ -7,3 +7,4 @@ insert into flow_configuration (cfig_key, cfig_value) values ('duplicate_step_pr
 insert into flow_configuration (cfig_key, cfig_value) values ('version_initial_installed','21.1');
 insert into flow_configuration (cfig_key, cfig_value) values ('version_now_installed','21.1');
 insert into flow_configuration (cfig_key, cfig_value) values ('default_workspace', 'FLOWS4APEX');
+insert into flow_configuration (cfig_key, cfig_value) values ('default_email_sender', '');
