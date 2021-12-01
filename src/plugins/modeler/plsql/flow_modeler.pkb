@@ -192,7 +192,7 @@ as
   procedure get_applications
   as
     l_result clob;
-    cursor c_applications is select * from apex_applications;
+    cursor c_applications is select * from apex_applications order by application_name;
     l_application apex_applications%rowtype;
   begin
     l_result := '[';
@@ -208,7 +208,7 @@ as
   procedure get_pages
   as
     l_result clob;
-    cursor c_pages is select * from apex_application_pages where application_id = apex_application.g_x02;
+    cursor c_pages is select * from apex_application_pages where application_id = apex_application.g_x02 order by page_name;
     l_page apex_application_pages%rowtype;
   begin
     l_result := '[';
@@ -224,7 +224,7 @@ as
   procedure get_items
   as
     l_result clob;
-    cursor c_items is select * from apex_application_page_items where application_id = apex_application.g_x02 and page_id = apex_application.g_x03;
+    cursor c_items is select * from apex_application_page_items where application_id = apex_application.g_x02 and page_id = apex_application.g_x03 order by item_name;
     l_item apex_application_page_items%rowtype;
   begin
     l_result := '[';
@@ -240,10 +240,10 @@ as
   procedure get_applications_mail
   as
     l_result clob;
-    cursor c_applications is select * from apex_applications where application_id in (select application_id from apex_appl_email_templates);
+    cursor c_applications is select * from apex_applications where application_id in (select application_id from apex_appl_email_templates) order by application_name;
     l_application apex_applications%rowtype;
   begin
-    l_result := '[';
+    l_result := '[{"name":"","value":""},';
     open c_applications;
     loop
         fetch c_applications into l_application;
@@ -256,10 +256,10 @@ as
   procedure get_templates
   as
     l_result clob;
-    cursor c_templates is select * from apex_appl_email_templates where application_id = apex_application.g_x02;
+    cursor c_templates is select * from apex_appl_email_templates where application_id = apex_application.g_x02 order by name;
     l_template apex_appl_email_templates%rowtype;
   begin
-    l_result := '[';
+    l_result := '[{"name":"","value":""},';
     open c_templates;
     loop
         fetch c_templates into l_template;
@@ -269,6 +269,47 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_templates;
+  procedure parse_code
+  as
+    v_cur int;
+    v_command varchar2(100);
+    v_input varchar2(4000);
+    l_result clob;
+  begin
+    apex_debug.info(apex_application.g_x03);
+    if (apex_application.g_x02 is not null) then
+        case apex_application.g_x03
+        when 'sql' then
+            v_command := upper(substr(apex_application.g_x02, 1,instr(apex_application.g_x02,' ') - 1));
+            if v_command in ( 'ALTER', 'COMPUTE', 'CREATE', 'DROP', 'GRANT', 'REVOKE') then
+                l_result := '{"message":"Forbidden DDL statement"}';
+            elsif v_command in ( 'SELECT', 'INSERT', 'UPDATE', 'DELETE' ) then
+                v_input := rtrim(apex_application.g_x02, ';');
+                begin
+                    v_cur := dbms_sql.open_cursor();
+                    dbms_sql.parse(v_cur, v_input, dbms_sql.native);
+                    dbms_sql.close_cursor(v_cur);
+                    l_result := '{"message":"Validation successful"}';
+                exception
+                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '"}';
+                end;
+            else
+                l_result := '{"message":"Unparsable SQL"}';
+            end if;
+        when 'plsql' then
+            v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
+            begin
+                    v_cur := dbms_sql.open_cursor();
+                    dbms_sql.parse(v_cur, v_input, dbms_sql.native);
+                    dbms_sql.close_cursor(v_cur);
+                    l_result := '{"message":"Validation successful"}';
+                exception
+                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '"}';
+                end;
+        end case;
+        htp.p(l_result);
+    end if;
+  end parse_code;
   function ajax
   (
     p_region              in  apex_plugin.t_region
@@ -286,6 +327,7 @@ as
       when 'GET_ITEMS' then get_items;
       when 'GET_APPLICATIONS_MAIL' then get_applications_mail;
       when 'GET_TEMPLATES' then get_templates;
+      when 'PARSE_CODE' then parse_code;
       else null;
     end case;
     return l_return;
