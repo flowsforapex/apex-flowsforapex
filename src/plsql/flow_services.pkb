@@ -98,8 +98,10 @@ as
             l_use_template := rec.obat_vc_value;
           when flow_constants_pkg.gc_apex_servicetask_application_id then
             l_application_id := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_application_id );
           when flow_constants_pkg.gc_apex_servicetask_template_id then
             l_template_id := rec.obat_vc_value;
+            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_template_id );
           when flow_constants_pkg.gc_apex_servicetask_placeholder then
             l_placeholders := rec.obat_clob_value;
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_placeholders );
