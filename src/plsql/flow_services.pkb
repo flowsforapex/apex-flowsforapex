@@ -133,12 +133,7 @@ as
       -- Useful for timers
       if ( l_session is null ) then
 
-        if l_use_template = 'false' then
-          l_workspace := g_workspace;
-          if (l_workspace is null) then
-            raise e_no_default_workspace;
-          end if;
-        else
+        if l_use_template = 'true' then
           begin
             select workspace 
             into l_workspace
@@ -147,6 +142,12 @@ as
           exception when no_data_found then
             raise e_workspace_not_found;
           end;
+        else
+          l_workspace := g_workspace;
+          if (l_workspace is null) then
+            raise e_no_default_workspace;
+          end if;
+          
         end if;
 
         set_workspace_id(p_workspace_name => l_workspace);
