@@ -920,6 +920,14 @@ as
                                   , flow_constants_pkg.gc_apex_scripttask_execute_plsql
                                   )
       then
+      -- register the task type
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_obat_key          => flow_constants_pkg.gc_task_type_key
+        , pi_obat_vc_value     => rec.extension_type
+        );
+        -- parse properties
         parse_task_subtypes
         (
           pi_bpmn_id     => pi_bpmn_id
