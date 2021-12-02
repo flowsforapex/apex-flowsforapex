@@ -34,10 +34,10 @@ as
       l_cc               flow_object_attributes.obat_vc_value%type;
       l_bcc              flow_object_attributes.obat_vc_value%type;
       l_reply_to         flow_object_attributes.obat_vc_value%type;
-      l_use_template     flow_object_attributes.obat_vc_value%type;
+      l_use_template     boolean := false;
       l_template_id      flow_object_attributes.obat_vc_value%type;
       l_placeholders     flow_object_attributes.obat_clob_value%type;
-      l_immediate        flow_object_attributes.obat_vc_value%type;
+      l_immediate        boolean := false;
       l_application_id   flow_object_attributes.obat_vc_value%type;
       l_subject          flow_object_attributes.obat_vc_value%type;
       l_body             flow_object_attributes.obat_clob_value%type;
@@ -59,7 +59,7 @@ as
       ( pi_prcs_id => pi_prcs_id
       , pi_sbfl_id => pi_sbfl_id 
       );
-
+      
       for rec in (
       select obat.obat_key
           , obat.obat_vc_value
@@ -100,7 +100,7 @@ as
             l_reply_to := rec.obat_vc_value;
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_reply_to );
           when flow_constants_pkg.gc_apex_servicetask_use_template then
-            l_use_template := rec.obat_vc_value;
+            l_use_template := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
           when flow_constants_pkg.gc_apex_servicetask_application_id then
             l_application_id := rec.obat_vc_value;
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_application_id );
@@ -111,7 +111,7 @@ as
             l_placeholders := rec.obat_clob_value;
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_placeholders );
           when flow_constants_pkg.gc_apex_servicetask_immediately then
-            l_immediate := rec.obat_vc_value;
+            l_immediate := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
           when flow_constants_pkg.gc_apex_servicetask_subject then
             l_subject := rec.obat_vc_value;
             flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_subject );
@@ -147,7 +147,7 @@ as
       -- Useful for timers
       if ( l_session is null ) then
 
-        if l_use_template = 'true' then
+        if ( l_use_template ) then
           begin
             select workspace 
             into l_workspace
@@ -163,7 +163,7 @@ as
         set_workspace_id(p_workspace_name => l_workspace);
       end if;
 
-      if (l_use_template = 'true') then
+      if ( l_use_template ) then
         if l_application_id is null or l_template_id is null then
           raise e_email_no_template;
         end if;
@@ -214,7 +214,7 @@ as
         end loop;
       end if;
 
-      if (l_immediate = 'true') then
+      if (l_immediate ) then
         apex_mail.push_queue;
       end if;
     
