@@ -196,7 +196,8 @@ as
       dgrm_category flow_diagrams.dgrm_category%type,
       filename      varchar2(300)
     );
-    type t_flows  is table of r_flow;
+    type t_flows  is table of r_flow index by binary_integer;
+    l_flow        r_flow;
     l_flows       t_flows;
     l_json_array  json_array_t;
     l_json_object json_object_t;
@@ -227,7 +228,8 @@ as
       );
 
     else
-      l_flows := t_flows(r_flow(p_dgrm_id, p_file_name));
+      l_flow.dgrm_id := p_dgrm_id;
+      l_flows(1) := l_flow;
     end if;
 
     for i in 1..l_flows.count()
