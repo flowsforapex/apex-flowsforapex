@@ -1,6 +1,29 @@
 create or replace package body flow_tasks
 as 
 
+  -- example to get taskType info from object_attributes
+  function get_task_type
+  (
+    pi_objt_id in flow_objects.objt_id%type
+  )
+    return flow_object_attributes.obat_vc_value%type
+  as
+    l_return flow_object_attributes.obat_vc_value%type;
+  begin
+
+    select obat_vc_value
+      into l_return
+      from flow_object_attributes
+     where obat_objt_id = pi_objt_id
+       and obat_key = flow_constants_pkg.gc_task_type_key
+    ;
+
+    return l_return;
+  exception
+    when no_data_found then
+      -- should probably be logged as a warning...
+      return null;
+  end get_task_type;
 
   procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error
   ( p_process_id    in flow_processes.prcs_id%type
@@ -184,7 +207,7 @@ as
     , p_called_internally => true
     );
 
-    case p_step_info.target_objt_subtag
+    case get_task_type( p_step_info.target_objt_id )
       when 'executePlsql' then
         flow_plsql_runner_pkg.run_task_script
         ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id

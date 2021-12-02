@@ -113,6 +113,8 @@ as
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
   
+  gc_task_type_key                    constant flow_types_pkg.t_bpmn_id := 'taskType';
+
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
   -- Flows 4 APEX Substitution Strings
