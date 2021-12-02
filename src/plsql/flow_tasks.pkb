@@ -21,7 +21,11 @@ as
     return l_return;
   exception
     when no_data_found then
-      -- should probably be logged as a warning...
+      apex_debug.warn
+      (
+        p_message => 'No task type found for object %s'
+      , p0        =>  pi_objt_id
+      );
       return null;
   end get_task_type;
 
@@ -208,13 +212,13 @@ as
     );
 
     case get_task_type( p_step_info.target_objt_id )
-      when 'executePlsql' then
+      when flow_constants_pkg.gc_apex_task_execute_plsql then
         flow_plsql_runner_pkg.run_task_script
         ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
         , pi_sbfl_id => p_sbfl_info.sbfl_id
         , pi_objt_id => p_step_info.target_objt_id
         );
-      when 'sendMail' then
+      when flow_constants_pkg.gc_apex_servicetask_send_mail then
         flow_services.send_email
         ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
         , pi_sbfl_id => p_sbfl_info.sbfl_id
@@ -313,9 +317,31 @@ as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
-    when others then
+    when flow_plsql_runner_pkg.e_plsql_script_failed then
       rollback;
-      raise flow_plsql_runner_pkg.e_plsql_script_failed;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script failed in plsql script runner'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'plsql_script_failed'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
+    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
+      ); 
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'plsql_script_requested_stop'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );  
   end process_serviceTask;
 
   procedure process_manualTask

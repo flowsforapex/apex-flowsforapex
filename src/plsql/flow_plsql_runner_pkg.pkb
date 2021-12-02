@@ -78,18 +78,18 @@ as
                       , obat.obat_clob_value
                    from flow_object_attributes obat
                   where obat.obat_objt_id = pi_objt_id
-                    and obat.obat_key in ( flow_constants_pkg.gc_apex_scripttask_engine
-                                         , flow_constants_pkg.gc_apex_scripttask_plsql_code
-                                         , flow_constants_pkg.gc_apex_scripttask_auto_binds
+                    and obat.obat_key in ( flow_constants_pkg.gc_apex_task_plsql_engine
+                                         , flow_constants_pkg.gc_apex_task_plsql_code
+                                         , flow_constants_pkg.gc_apex_task_plsql_auto_binds
                                          )
                )
     loop
       case rec.obat_key
-        when flow_constants_pkg.gc_apex_scripttask_engine then
+        when flow_constants_pkg.gc_apex_task_plsql_engine then
           l_use_apex_exec := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
-        when flow_constants_pkg.gc_apex_scripttask_plsql_code then
+        when flow_constants_pkg.gc_apex_task_plsql_code then
           l_plsql_code := rec.obat_clob_value;
-        when flow_constants_pkg.gc_apex_scripttask_auto_binds then
+        when flow_constants_pkg.gc_apex_task_plsql_auto_binds then
           l_do_autobind := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
         else
           null;

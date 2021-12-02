@@ -150,14 +150,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_failed',
 'en',
-'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
+'Process %0: Task %1 failed due to PL/SQL error - see event log.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_requested_stop',
 'en',
-'Process %0: ScriptTask %1 requested processing stop - see event log.'										  
+'Process %0: Task %1 requested processing stop - see event log.'										  
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

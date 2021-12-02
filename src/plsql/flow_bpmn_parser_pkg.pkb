@@ -827,7 +827,7 @@ as
       elsif rec.prop_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
                              , flow_constants_pkg.gc_apex_servicetask_body_text
                              , flow_constants_pkg.gc_apex_servicetask_body_html
-                             , flow_constants_pkg.gc_apex_scripttask_plsql_code
+                             , flow_constants_pkg.gc_apex_task_plsql_code
                              )
       then
         register_object_attributes
@@ -917,7 +917,7 @@ as
       elsif rec.extension_type in ( flow_constants_pkg.gc_apex_usertask_apex_page
                                   , flow_constants_pkg.gc_apex_usertask_external_url
                                   , flow_constants_pkg.gc_apex_servicetask_send_mail
-                                  , flow_constants_pkg.gc_apex_scripttask_execute_plsql
+                                  , flow_constants_pkg.gc_apex_task_execute_plsql
                                   )
       then
       -- register the task type

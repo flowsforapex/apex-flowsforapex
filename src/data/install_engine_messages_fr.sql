@@ -150,14 +150,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_failed',
 'fr',
-'Processus %0 : Tâche de script %1 a échoué en raison d''une erreur PL/SQL - voir le journal des événements.'
+'Processus %0 : la tâche %1 a échoué en raison d''une erreur PL/SQL - voir le journal des événements.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_requested_stop',
 'fr',
-'Processus %0: Tâche de script %1 arrêt du traitement demandé - voir le journal des événements.'
+'Processus %0: Tâche %1 arrêt du traitement demandé - voir le journal des événements.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
