@@ -192,7 +192,7 @@
               id: this.regionId,
               data: {
                 id: this.diagramId,
-                content: xml.replaceAll( '"', "'" ),
+                content: xml,
               },
             },
           ],
