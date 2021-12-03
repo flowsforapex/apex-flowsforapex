@@ -920,6 +920,14 @@ as
                                   , flow_constants_pkg.gc_apex_scripttask_execute_plsql
                                   )
       then
+      -- register the task type
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_obat_key          => flow_constants_pkg.gc_task_type_key
+        , pi_obat_vc_value     => rec.extension_type
+        );
+        -- parse properties
         parse_task_subtypes
         (
           pi_bpmn_id     => pi_bpmn_id
@@ -1376,6 +1384,13 @@ as
       from flow_diagrams
      where dgrm_id = g_dgrm_id
     ;
+
+    -- migrate old diagrams
+    if(flow_migrate_xml_pkg.migrate_xml(p_dgrm_content => l_dgrm_content)) then
+      update flow_diagrams
+      set dgrm_content = l_dgrm_content
+      where dgrm_id = g_dgrm_id;
+    end if;
 
     -- parse out collaboration part first
     parse_collaboration( pi_xml => xmltype(l_dgrm_content) );
