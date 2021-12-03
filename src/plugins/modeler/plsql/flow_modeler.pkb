@@ -274,7 +274,7 @@ as
     l_placeholders apex_t_varchar2;
   begin
     with email_content as (
-      select subject||text_template||html_body||html_footer||html_header||html_template as d
+      select subject||text_template||html_body||html_footer||html_header as d
       from apex_appl_email_templates
       where application_id = apex_application.g_x02 
       and static_id = apex_application.g_x03
