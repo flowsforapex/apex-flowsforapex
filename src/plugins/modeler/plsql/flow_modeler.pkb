@@ -269,6 +269,36 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_templates;
+  procedure get_json_placeholders
+  as
+    l_placeholders apex_t_varchar2;
+  begin
+    with email_content as (
+      select subject||text_template||html_body||html_footer||html_header||html_template as d
+      from apex_appl_email_templates
+      where application_id = apex_application.g_x02 
+      and static_id = apex_application.g_x03
+   ),
+   placeholders as (
+      select distinct to_char(regexp_substr(ec.d, '\#(.*?)\#', 1, level, NULL, 1)) AS placeholder
+      from email_content ec
+      connect by level <= length(regexp_replace(ec.d, '\#(.*?)\#')) + 1
+   ) 
+   select p.placeholder
+   bulk collect into l_placeholders
+   from placeholders p
+   where p.placeholder is not null
+   order by p.placeholder;
+
+   apex_json.initialize_clob_output;
+   apex_json.open_object;
+   for i in 1..l_placeholders.count()
+   loop
+      apex_json.write(p_name => l_placeholders(i), p_value => '', p_write_null => true);
+   end loop;
+   apex_json.close_object;
+   apex_json.free_output;
+  end get_json_placeholders;
   procedure parse_code
   as
     v_cur int;
