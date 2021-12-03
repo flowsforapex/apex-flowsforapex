@@ -290,14 +290,12 @@ as
    where p.placeholder is not null
    order by p.placeholder;
 
-   apex_json.initialize_clob_output;
    apex_json.open_object;
    for i in 1..l_placeholders.count()
    loop
       apex_json.write(p_name => l_placeholders(i), p_value => '', p_write_null => true);
    end loop;
    apex_json.close_object;
-   apex_json.free_output;
   end get_json_placeholders;
   procedure parse_code
   as
