@@ -21,7 +21,14 @@
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
         bpmnModeler.customModules.styleModule,
+        bpmnModeler.customModules.xmlModule,
+        bpmnModeler.customModules.AddExporter
       ];
+
+      this.exporter = {
+        name: 'Flows for APEX',
+        version: '21.2.0',
+      };
 
       this.moddleExtensions = {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor,
@@ -45,6 +52,7 @@
         moddleExtensions: this.moddleExtensions,
         linting: this.linting,
         bpmnRenderer: this.bpmnRenderer,
+        exporter: this.exporter,
       } );
 
       // prevent click events from bubbling up the dom
@@ -89,7 +97,13 @@
       var that = this;
       const bpmnModeler$ = this.bpmnModeler$;
       try {
-        const result = await bpmnModeler$.importXML( this.diagramContent );
+        var result = await bpmnModeler$.importXML( this.diagramContent );
+
+        if (bpmnModeler$._definitions && bpmnModeler$._definitions.exporter === 'Flows for APEX' && bpmnModeler$._definitions.exporterVersion != '21.2.0') {
+            const refactored = bpmnModeler$.get('xmlModule').refactorDiagram(this.diagramContent);
+            result = await bpmnModeler$.importXML(refactored);
+          }
+
         const { warnings } = result;
 
         if ( warnings.length > 0 ) {
@@ -178,7 +192,7 @@
               id: this.regionId,
               data: {
                 id: this.diagramId,
-                content: xml.replaceAll( '"', "'" ),
+                content: xml,
               },
             },
           ],

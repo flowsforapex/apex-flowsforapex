@@ -9,19 +9,18 @@
 
 .properties-panel-parent {
   position: absolute;
-  top: 0;
+  top: 20px;
   bottom: 0;
-  right: 0;
+  right: 20px;
   width: 260px;
   min-width: 260px;
   max-width: 50%;
   z-index: 10;
-  border-left: 1px solid #ccc;
+  border: 1px solid #ccc;
   overflow: auto;
   display: block;
-  height: 100%;
+  height: 90%;
   background-color: #f0f0f0;
-  box-sizing: content-box;
 }
 .properties-panel-parent:empty {
   display: none;
