@@ -650,7 +650,9 @@ button.dialog.fa {
 .bpp-properties-entry[data-entry="quickpick-process-id"],
 .bpp-properties-entry[data-entry="quickpick-subflow-id"],
 .bpp-properties-entry[data-entry="quickpick-step-key"],
-.bpp-properties-entry[data-entry="quickpick-business-ref"] {
+.bpp-properties-entry[data-entry="quickpick-business-ref"],
+.bpp-properties-entry[data-entry="placeholderEditor"],
+.bpp-properties-entry[data-entry="quickpick-placeholder"] {
   display: inline-block;
   margin: 0 12px 0 0;
 }

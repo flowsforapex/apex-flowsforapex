@@ -355,6 +355,7 @@ as
       when 'GET_APPLICATIONS_MAIL' then get_applications_mail;
       when 'GET_TEMPLATES' then get_templates;
       when 'PARSE_CODE' then parse_code;
+      when 'GET_JSON_PLACEHOLDERS' then get_json_placeholders;
       else null;
     end case;
     return l_return;
