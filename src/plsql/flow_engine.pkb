@@ -1312,7 +1312,7 @@ begin
          , p_step_info => p_step_info
          );
     when  flow_constants_pkg.gc_bpmn_servicetask then 
-    flow_tasks.process_scriptTask
+    flow_tasks.process_serviceTask
          ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );

@@ -1,4 +1,3 @@
-
 create or replace package body flow_timers_pkg
 as
 
@@ -259,14 +258,14 @@ as
           )
       for update wait 5
       ;
-      
+
       update flow_timers
       set timr_last_run = systimestamp
           , timr_status = c_ended
       where timr_id = l_timers.timr_id
         and timr_run = l_timers.timr_run
       ;
-            
+
       begin
       -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
       -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
@@ -538,7 +537,7 @@ as
         end if;
       when flow_constants_pkg.gc_timer_type_oracle_duration then 
         if upper(substr(l_timer_def.oracle_duration_ds,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
-        
+
           l_parsed_duration_ds :=  to_dsinterval ( nvl ( flow_process_vars.get_var_vc2
                                                               ( pi_prcs_id => pi_prcs_id
                                                               , pi_var_name => substr ( l_timer_def.oracle_duration_ds , 6
@@ -551,7 +550,7 @@ as
         end if;
 
         if upper(substr(l_timer_def.oracle_duration_ym,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
-        
+
           l_parsed_duration_ym :=  to_yminterval ( nvl( flow_process_vars.get_var_vc2
                                                               ( pi_prcs_id => pi_prcs_id
                                                               , pi_var_name => substr ( l_timer_def.oracle_duration_ym , 6
