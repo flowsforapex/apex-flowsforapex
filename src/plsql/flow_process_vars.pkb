@@ -29,7 +29,7 @@ begin
       );      
   exception
     when dup_val_on_index then
-      l_action := 'updating';
+      l_action := 'var-update-error';
       update flow_process_variables prov 
          set prov.prov_var_vc2 = pi_vc2_value
        where prov.prov_prcs_id = pi_prcs_id
@@ -38,7 +38,7 @@ begin
            ;
     when others
     then
-      l_action := 'creating';
+      l_action := 'var-set-error';
       raise;
   end;
   flow_logging.log_variable_event
@@ -56,12 +56,12 @@ exception
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => 'var-set-error'
-    , p0 => l_action         
-    , p1 => pi_var_name
-    , p2 => pi_prcs_id
+    , pi_message_key    => l_action
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
     );
-    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
+    -- $F4AMESSAGE 'var-update-error' || 'Error updating process variable %0 for process id %1.'   
 end set_var;
 
 procedure set_var
@@ -89,7 +89,7 @@ begin
       );
   exception
     when dup_val_on_index then
-      l_action := 'updating';
+      l_action := 'var-update-error';
       update flow_process_variables prov 
          set prov.prov_var_num = pi_num_value
        where prov.prov_prcs_id = pi_prcs_id
@@ -98,7 +98,7 @@ begin
            ;
     when others
     then
-      l_action := 'creating';
+      l_action := 'var-set-error';
       raise;
   end;
   flow_logging.log_variable_event
@@ -116,12 +116,12 @@ exception
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => 'var-set-error'
-    , p0 => l_action         
-    , p1 => pi_var_name
-    , p2 => pi_prcs_id
+    , pi_message_key    => l_action         
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
     );
-    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
+    -- $F4AMESSAGE 'var-update-error' || 'Error updating process variable %0 for process id %1.'   
 end set_var;
 
 procedure set_var
@@ -149,7 +149,7 @@ begin
       );
   exception
     when dup_val_on_index then
-      l_action := 'updating';
+      l_action := 'var-update-error';
       update flow_process_variables prov 
          set prov.prov_var_date = pi_date_value
        where prov.prov_prcs_id = pi_prcs_id
@@ -158,7 +158,7 @@ begin
            ;
     when others
     then
-      l_action := 'creating';
+      l_action := 'var-set-error';
       raise;
   end;
   flow_logging.log_variable_event
@@ -176,12 +176,12 @@ exception
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => 'var-set-error'
-    , p0 => l_action         
-    , p1 => pi_var_name
-    , p2 => pi_prcs_id
+    , pi_message_key    => l_action         
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
     );
-    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
+    -- $F4AMESSAGE 'var-update-error' || 'Error updating process variable %0 for process id %1.'   
 end set_var;
 
 procedure set_var
@@ -217,7 +217,7 @@ begin
            ;
     when others
     then
-      l_action := 'creating';
+      l_action := 'var-set-error';
       raise;
   end;
   flow_logging.log_variable_event
@@ -235,12 +235,11 @@ exception
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => 'var-set-error'
-    , p0 => l_action         
-    , p1 => pi_var_name
-    , p2 => pi_prcs_id
+    , pi_message_key    => l_action         
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
     );
-    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
 end set_var;
 
 -- getters return
@@ -265,12 +264,11 @@ exception
     if pi_exception_on_null then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-set-error'
-      , p0 => 'getting'       
-      , p1 => pi_var_name
-      , p2 => pi_prcs_id
+      , pi_message_key    => 'var-get-error'      
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
       );
-    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
     else
       return null;
     end if;
@@ -296,12 +294,11 @@ exception
     if pi_exception_on_null then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-set-error'
-      , p0 => 'getting'         
-      , p1 => pi_var_name
-      , p2 => pi_prcs_id
+      , pi_message_key    => 'var-get-error'      
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
       );
-      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
     else
       return null;
     end if;
@@ -327,12 +324,11 @@ exception
     if pi_exception_on_null then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-set-error'
-      , p0 => 'getting'        
-      , p1 => pi_var_name
-      , p2 => pi_prcs_id
+      , pi_message_key    => 'var-get-error'      
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
       );
-      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
     else
       return null;
     end if;
@@ -358,12 +354,11 @@ exception
     if pi_exception_on_null then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-set-error'
-      , p0 => 'getting'       
-      , p1 => pi_var_name
-      , p2 => pi_prcs_id
+      , pi_message_key    => 'var-get-error'      
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
       );
-      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
     else
       return null;
     end if;
@@ -431,21 +426,19 @@ exception
   when  no_data_found then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-set-error'
-      , p0 => 'deleting'         
-      , p1 => pi_var_name
-      , p2 => pi_prcs_id
+      , pi_message_key    => 'var-delete-error'        
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
       );
-      -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+      -- $F4AMESSAGE 'var-delete-error' || 'Error deleting process variable %0 for process id %1.'
   when lock_timeout then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
-    , pi_message_key    => 'var-set-error'
-    , p0 => 'locking'        
-    , p1 => pi_var_name
-    , p2 => pi_prcs_id
+    , pi_message_key    => 'var-lock-error'       
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
     );
-    -- $F4AMESSAGE 'var-set-error' || 'Error %0 process variable %1 for process id %1.'
+    -- $F4AMESSAGE 'var-lock-error' || 'Error locking process variable %0 for process id %1.'
 end delete_var;
 
 -- special cases / built-in standard variables
