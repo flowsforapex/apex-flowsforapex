@@ -85,13 +85,13 @@ as
   gc_apex_servicetask_body_html       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyHTML';
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
+   
+  -- execute PL/SQL tasks
+  gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
 
-  --scriptTask
-  gc_apex_scripttask_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
-
-  gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
-  gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
-  gc_apex_scripttask_auto_binds       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
+  gc_apex_task_plsql_engine     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
+  gc_apex_task_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
+  gc_apex_task_plsql_auto_binds constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
 
   --terminateEndEvent
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
@@ -113,6 +113,8 @@ as
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
   
+  gc_task_type_key                    constant flow_types_pkg.t_bpmn_id := 'taskType';
+
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
   -- Flows 4 APEX Substitution Strings
@@ -217,7 +219,7 @@ as
   gc_config_default_logging_language          constant varchar2(2000 char) := 'en';
   gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
-
+  gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
 
 
   -- Default XML for new diagrams

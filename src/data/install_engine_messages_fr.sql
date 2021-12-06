@@ -150,14 +150,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_failed',
 'fr',
-'Processus %0 : Tâche de script %1 a échoué en raison d''une erreur PL/SQL - voir le journal des événements.'
+'Processus %0 : la tâche %1 a échoué en raison d''une erreur PL/SQL - voir le journal des événements.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_requested_stop',
 'fr',
-'Processus %0: Tâche de script %1 arrêt du traitement demandé - voir le journal des événements.'
+'Processus %0: Tâche %1 arrêt du traitement demandé - voir le journal des événements.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -500,4 +500,52 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Le modèle a changé, annuler les changements?'
 );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'wrong-default-workspace',
+'fr',
+'Processus %0 : la tâche de service %1 a échoué : l''espace de travail par défaut défini dans le paramètre de configuration n''est pas valide.'
+ );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'workspace-not-found',
+'fr',
+'Processus %0 : la tâche de service %1 a échoué : impossible de trouver l''espace de travail associé à l''aplication définie dans le diagramme. Veuillez vérifier le modèle.'
+ );
  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-from',
+'fr',
+'Processus %0 : la tâche de service %1 a échoué : attribut De non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-to',
+'fr',
+'Processus %0 : la tâche de service %1 a échoué : attribut To non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-template',
+'fr',
+'Processus %0 : la tâche de service %1 a échoué : attribut Template non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-body',
+'fr',
+'Processus %0 : la tâche de service %1 a échoué : attribut Corps non défini. Veuillez vérifier le modèle.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-failed',
+'fr',
+'Processus %0 : la tâche de service %1 a échoué : voir le journal pour plus de détail et vérifier le modèle.'
+);

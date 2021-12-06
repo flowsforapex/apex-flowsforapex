@@ -150,14 +150,14 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_failed',
 'en',
-'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
+'Process %0: Task %1 failed due to PL/SQL error - see event log.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'plsql_script_requested_stop',
 'en',
-'Process %0: ScriptTask %1 requested processing stop - see event log.'										  
+'Process %0: Task %1 requested processing stop - see event log.'										  
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -502,4 +502,53 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'plugin-diagram-has-changed',
 'en',
 'Model has changed. Discard changes?'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'wrong-default-workspace',
+'en',
+'Process %0: ServiceTask %1 failed: the default workspace defined in the configuration parameter is not valid.'
+ );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'workspace-not-found',
+'en',
+'Process %0: ServiceTask %1 failed: unable to find the workspace associated with the application id defined in the diagram. Please check the model.'
+ );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-from',
+'en',
+'Process %0: ServiceTask %1 failed: attribute "From" and default email sender are not defined. Please check the model and or the configuration parameter.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-to',
+'en',
+'Process %0: ServiceTask %1 failed: attribute "To" not defined. Please check the model.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-template',
+'en',
+'Process %0: ServiceTask %1 failed: attribute "Template" not defined. Please check the model.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-no-body',
+'en',
+'Process %0: ServiceTask %1 failed: attribute "Body" not defined. Please check the model.'
+);
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-failed',
+'en',
+'Process %0: ServiceTask %1 failed see error log and check the model.'
 );
