@@ -159,8 +159,8 @@ as
                                         , flow_constants_pkg.gc_timer_def_key 
                                         , flow_constants_pkg.gc_apex_timer_date
                                         , flow_constants_pkg.gc_apex_timer_format_mask
-                                        , flow_constants_pkg.gc_apex_timer_interval_ds
                                         , flow_constants_pkg.gc_apex_timer_interval_ym
+                                        , flow_constants_pkg.gc_apex_timer_interval_ds
                                         , flow_constants_pkg.gc_apex_timer_start_interval_ds
                                         , flow_constants_pkg.gc_apex_timer_repeat_interval_ds
                                         , flow_constants_pkg.gc_apex_timer_max_runs
@@ -176,10 +176,10 @@ as
           l_timer_def.oracle_date := rec.obat_vc_value;
         when flow_constants_pkg.gc_apex_timer_format_mask then
           l_timer_def.oracle_format_mask := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_interval_ds then
-          l_timer_def.oracle_duration_ds := rec.obat_vc_value;
         when flow_constants_pkg.gc_apex_timer_interval_ym then
           l_timer_def.oracle_duration_ym := rec.obat_vc_value;
+        when flow_constants_pkg.gc_apex_timer_interval_ds then
+          l_timer_def.oracle_duration_ds := rec.obat_vc_value;
         when flow_constants_pkg.gc_apex_timer_start_interval_ds  then
           l_timer_def.start_interval_ds := rec.obat_vc_value;
         when flow_constants_pkg.gc_apex_timer_repeat_interval_ds then
