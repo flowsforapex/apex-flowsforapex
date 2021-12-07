@@ -1,35 +1,11 @@
 create or replace package body flow_migrate_xml_pkg
 as
 
-  function is_flows_export(
-    p_domdoc dbms_xmldom.DOMDocument
-  ) return boolean
-  as
-    l_exporter varchar2(50);
-    l_domnodelist dbms_xmldom.DOMNodeList;
-    l_domnode dbms_xmldom.DOMNode;
-    l_domelement dbms_xmldom.DOMElement;
-  begin
-    l_domnodelist := dbms_xmldom.getelementsbytagname(
-      doc => p_domdoc
-    , tagname => 'definitions'
-    );
-    for i in 0 .. dbms_xmldom.getlength(l_domnodelist) - 1
-      loop
-        l_domnode := dbms_xmldom.item(l_domnodelist, i);
-        l_domelement := dbms_xmldom.makeelement(l_domnode);
-        l_exporter := dbms_xmldom.getattribute(
-                      elem => l_domelement
-                    , name => 'exporter'
-                    );
-      end loop;    
-    return l_exporter = 'Flows for APEX';
-  end is_flows_export;
-
   function is_exporter_version_current(
     p_domdoc dbms_xmldom.DOMDocument
   ) return boolean
   as
+    l_exporter varchar2(50);
     l_exporter_version varchar2(10);
     l_domnodelist dbms_xmldom.DOMNodeList;
     l_domnode dbms_xmldom.DOMNode;
@@ -43,12 +19,16 @@ as
       loop
         l_domnode := dbms_xmldom.item(l_domnodelist, i);
         l_domelement := dbms_xmldom.makeelement(l_domnode);
+        l_exporter := dbms_xmldom.getattribute(
+                        elem => l_domelement
+                      , name => 'exporter'
+                      );
         l_exporter_version := dbms_xmldom.getattribute(
                               elem => l_domelement
                             , name => 'exporterVersion'
                             );
       end loop;    
-    return l_exporter_version = flow_constants_pkg.gc_version;
+    return (l_exporter = 'Flows for APEX' and l_exporter_version = flow_constants_pkg.gc_version);
   end is_exporter_version_current;
   
   procedure set_exporter_version(
@@ -191,52 +171,206 @@ as
     l_data := XMLTYPE(p_dgrm_content);
     l_domdoc := dbms_xmldom.newDOMDocument(l_data);
 
-    -- retrieve exporter
-    if is_flows_export(l_domdoc) then
-      -- retrieve exporter version
-      if not is_exporter_version_current(l_domdoc) then
+    -- retrieve exporter version
+    if not is_exporter_version_current(l_domdoc) then
 
-        -- get tags
-        l_domnodelist := dbms_xmldom.getelementsbytagname(
-          doc => l_domdoc
-        , tagname => '*'
-        );
-    
-        -- loop over all tags
-        for i in 0 .. dbms_xmldom.getlength(l_domnodelist) - 1
-        loop
-          l_domnode := dbms_xmldom.item(l_domnodelist, i);
-          case
-            -- user tasks
-            when dbms_xmldom.getnodename(l_domnode) = 'bpmn:userTask' then
+      -- get tags
+      l_domnodelist := dbms_xmldom.getelementsbytagname(
+        doc => l_domdoc
+      , tagname => '*'
+      );
+  
+      -- loop over all tags
+      for i in 0 .. dbms_xmldom.getlength(l_domnodelist) - 1
+      loop
+        l_domnode := dbms_xmldom.item(l_domnodelist, i);
+        case
+          -- user tasks
+          when dbms_xmldom.getnodename(l_domnode) = 'bpmn:userTask' then
+            l_domelement := dbms_xmldom.makeelement(l_domnode);
+            -- set task type attribute
+            dbms_xmldom.setattribute(
+              elem => l_domelement
+            , name => 'apex:type'
+            , newValue => 'apexPage'
+            , ns => 'http://www.apex.mt-ag.com'
+            );
+            -- create extension element node 
+            l_extension_node := dbms_xmldom.makenode( 
+              elem => dbms_xmldom.createelement( 
+                  doc => l_domdoc
+                , tagName => 'bpmn:extensionElements'
+                , ns => 'http://www.omg.org/spec/BPMN/20100524/MODEL'
+                )
+            );
+            -- append
+            l_extension_node := dbms_xmldom.appendchild(
+              n => l_domnode
+            , newchild => l_extension_node
+            );
+            -- create apex page node 
+            l_task_type_node := dbms_xmldom.makenode( 
+              elem => dbms_xmldom.createelement( 
+                doc => l_domdoc
+              , tagName => 'apex:apexPage'
+              , ns => 'http://www.apex.mt-ag.com'
+              ) 
+            );
+            -- append
+            l_task_type_node := dbms_xmldom.appendchild(
+              n => l_extension_node
+            , newchild => l_task_type_node
+            );  
+            -- get child nodes
+            l_children := dbms_xmldom.getchildnodes(l_domnode);
+            l_children_count := dbms_xmldom.getlength(l_children);
+            -- loop over child nodes
+            for j in 0 .. l_children_count - 1
+            loop
+              l_child_node := dbms_xmldom.item(l_children, j);
+              case dbms_xmldom.getnodename(l_child_node)
+                when 'apex:apex-application' then
+                  l_ext_child_tag_name := 'apex:applicationId';
+                when 'apex:apex-page' then
+                  l_ext_child_tag_name := 'apex:pageId';
+                when 'apex:apex-request' then
+                  l_ext_child_tag_name := 'apex:request';
+                when 'apex:apex-cache' then
+                  l_ext_child_tag_name := 'apex:cache';
+                when 'apex:apex-item' then
+                  l_ext_child_tag_name := '';
+                  -- get text
+                  l_items := dbms_xmldom.getnodevalue(dbms_xmldom.getfirstchild(l_child_node));
+                  -- remove old child
+                  l_child_node := dbms_xmldom.removechild(
+                    n => l_domnode
+                  , oldchild => l_child_node
+                  ); 
+                when 'apex:apex-value' then
+                  l_ext_child_tag_name := '';
+                  -- get text
+                  l_values := dbms_xmldom.getnodevalue(dbms_xmldom.getfirstchild(l_child_node));
+                  -- remove old child
+                  l_child_node := dbms_xmldom.removechild(
+                    n => l_domnode
+                  , oldchild => l_child_node
+                  ); 
+                else
+                  l_ext_child_tag_name := '';
+              end case;
+              if length(l_ext_child_tag_name) > 0 then
+                  -- create new child element node 
+                  l_ext_child_node := dbms_xmldom.makenode( 
+                    elem => dbms_xmldom.createelement( 
+                              doc => l_domdoc
+                            , tagName => l_ext_child_tag_name
+                            , ns => 'http://www.apex.mt-ag.com'
+                            ) 
+                  );
+                  -- get text node
+                  l_child_text_node := dbms_xmldom.getfirstchild(l_child_node);
+                  -- add text node
+                  l_child_text_node := dbms_xmldom.appendchild(
+                    n => l_ext_child_node
+                  , newchild => l_child_text_node
+                  );
+                  -- append
+                  l_ext_child_node := dbms_xmldom.appendchild(
+                    n => l_task_type_node
+                  , newchild => l_ext_child_node
+                  );
+                  -- remove old child
+                  l_child_node := dbms_xmldom.removechild(
+                    n => l_domnode
+                  , oldchild => l_child_node
+                  );  
+              end if;
+            end loop;
+            -- add page items
+            if (length(l_items) > 0 or length(l_values) > 0) then
+              -- create new page items node 
+              l_ext_child_node := dbms_xmldom.makenode( 
+                elem => dbms_xmldom.createelement( 
+                          doc => l_domdoc
+                        , tagName => 'apex:pageItems'
+                        , ns => 'http://www.apex.mt-ag.com'
+                        )
+              );
+              -- append
+              l_ext_child_node := dbms_xmldom.appendchild(
+                n => l_task_type_node
+              , newchild => l_ext_child_node
+              );
+              l_items_arr := apex_string.split(p_str => l_items, p_sep => ',');
+              l_values_arr := apex_string.split(p_str => l_values, p_sep => ',');
+              l_valid_items := least(l_items_arr.count, l_values_arr.count);
+              for i in 1 .. l_valid_items
+              loop
+                append_page_item(
+                  p_domdoc => l_domdoc
+                , p_page_items => l_ext_child_node
+                , p_item_name => l_items_arr(i)
+                , p_item_value => l_values_arr(i)
+                );
+              end loop;
+              -- item names without values
+              if l_items_arr.count > l_valid_items then
+                for i in l_valid_items+1 .. l_items_arr.count
+                loop
+                  append_page_item(
+                    p_domdoc => l_domdoc
+                  , p_page_items => l_ext_child_node
+                  , p_item_name => l_items_arr(i)
+                  , p_item_value => ''
+                  );
+                end loop;
+              end if;    
+              -- item values without names
+              if l_values_arr.count > l_valid_items then
+                for i in l_valid_items+1 .. l_values_arr.count
+                loop
+                  append_page_item(
+                    p_domdoc => l_domdoc
+                  , p_page_items => l_ext_child_node
+                  , p_item_name => ''
+                  , p_item_value => l_values_arr(i)
+                  );
+                end loop;
+              end if;    
+              -- reset variables
+              l_items := null;
+              l_values := null;
+            end if;
+            -- script + service tasks
+          when dbms_xmldom.getnodename(l_domnode) = 'bpmn:scriptTask' or dbms_xmldom.getnodename(l_domnode) = 'bpmn:serviceTask' then  
               l_domelement := dbms_xmldom.makeelement(l_domnode);
               -- set task type attribute
               dbms_xmldom.setattribute(
                 elem => l_domelement
               , name => 'apex:type'
-              , newValue => 'apexPage'
+              , newValue => 'executePlsql'
               , ns => 'http://www.apex.mt-ag.com'
               );
               -- create extension element node 
               l_extension_node := dbms_xmldom.makenode( 
                 elem => dbms_xmldom.createelement( 
-                    doc => l_domdoc
-                  , tagName => 'bpmn:extensionElements'
-                  , ns => 'http://www.omg.org/spec/BPMN/20100524/MODEL'
-                  )
+                          doc => l_domdoc
+                        , tagName => 'bpmn:extensionElements'
+                        , ns => 'http://www.omg.org/spec/BPMN/20100524/MODEL'
+                        )
               );
               -- append
               l_extension_node := dbms_xmldom.appendchild(
                 n => l_domnode
               , newchild => l_extension_node
               );
-              -- create apex page node 
+              -- create execute Plsql node 
               l_task_type_node := dbms_xmldom.makenode( 
                 elem => dbms_xmldom.createelement( 
-                  doc => l_domdoc
-                , tagName => 'apex:apexPage'
-                , ns => 'http://www.apex.mt-ag.com'
-                ) 
+                          doc => l_domdoc
+                        , tagName => 'apex:executePlsql'
+                        , ns => 'http://www.apex.mt-ag.com'
+                        )
               );
               -- append
               l_task_type_node := dbms_xmldom.appendchild(
@@ -251,217 +385,58 @@ as
               loop
                 l_child_node := dbms_xmldom.item(l_children, j);
                 case dbms_xmldom.getnodename(l_child_node)
-                  when 'apex:apex-application' then
-                    l_ext_child_tag_name := 'apex:applicationId';
-                  when 'apex:apex-page' then
-                    l_ext_child_tag_name := 'apex:pageId';
-                  when 'apex:apex-request' then
-                    l_ext_child_tag_name := 'apex:request';
-                  when 'apex:apex-cache' then
-                    l_ext_child_tag_name := 'apex:cache';
-                  when 'apex:apex-item' then
-                    l_ext_child_tag_name := '';
-                    -- get text
-                    l_items := dbms_xmldom.getnodevalue(dbms_xmldom.getfirstchild(l_child_node));
-                    -- remove old child
-                    l_child_node := dbms_xmldom.removechild(
-                      n => l_domnode
-                    , oldchild => l_child_node
-                    ); 
-                  when 'apex:apex-value' then
-                    l_ext_child_tag_name := '';
-                    -- get text
-                    l_values := dbms_xmldom.getnodevalue(dbms_xmldom.getfirstchild(l_child_node));
-                    -- remove old child
-                    l_child_node := dbms_xmldom.removechild(
-                      n => l_domnode
-                    , oldchild => l_child_node
-                    ); 
+                  when 'apex:engine' then
+                    l_ext_child_tag_name := 'apex:engine';
+                  when 'apex:autoBinds' then
+                    l_ext_child_tag_name := 'apex:autoBinds';
+                  when 'apex:plsqlCode' then
+                    l_ext_child_tag_name := 'apex:plsqlCode';
                   else
                     l_ext_child_tag_name := '';
                 end case;
                 if length(l_ext_child_tag_name) > 0 then
-                    -- create new child element node 
-                    l_ext_child_node := dbms_xmldom.makenode( 
-                      elem => dbms_xmldom.createelement( 
-                                doc => l_domdoc
-                              , tagName => l_ext_child_tag_name
-                              , ns => 'http://www.apex.mt-ag.com'
-                              ) 
-                    );
-                    -- get text node
-                    l_child_text_node := dbms_xmldom.getfirstchild(l_child_node);
-                    -- add text node
-                    l_child_text_node := dbms_xmldom.appendchild(
-                      n => l_ext_child_node
-                    , newchild => l_child_text_node
-                    );
-                    -- append
-                    l_ext_child_node := dbms_xmldom.appendchild(
-                      n => l_task_type_node
-                    , newchild => l_ext_child_node
-                    );
-                    -- remove old child
-                    l_child_node := dbms_xmldom.removechild(
-                      n => l_domnode
-                    , oldchild => l_child_node
-                    );  
+                  -- create new child node 
+                  l_ext_child_node := dbms_xmldom.makenode( 
+                    elem => dbms_xmldom.createelement( 
+                              doc => l_domdoc
+                            , tagName => l_ext_child_tag_name
+                            , ns => 'http://www.apex.mt-ag.com'
+                            )
+                  );
+                  -- get text node
+                  l_child_text_node := dbms_xmldom.getfirstchild(l_child_node);
+                  -- add text node
+                  l_child_text_node := dbms_xmldom.appendchild(
+                    n => l_ext_child_node
+                  , newchild => l_child_text_node
+                  );
+                  -- append
+                  l_ext_child_node := dbms_xmldom.appendchild(
+                    n => l_task_type_node
+                  , newchild => l_ext_child_node
+                  );
+                  -- remove old child
+                  l_child_node := dbms_xmldom.removechild(
+                    n => l_domnode
+                  , oldchild => l_child_node
+                  );  
                 end if;
               end loop;
-              -- add page items
-              if (length(l_items) > 0 or length(l_values) > 0) then
-                -- create new page items node 
-                l_ext_child_node := dbms_xmldom.makenode( 
-                  elem => dbms_xmldom.createelement( 
-                            doc => l_domdoc
-                          , tagName => 'apex:pageItems'
-                          , ns => 'http://www.apex.mt-ag.com'
-                          )
-                );
-                -- append
-                l_ext_child_node := dbms_xmldom.appendchild(
-                  n => l_task_type_node
-                , newchild => l_ext_child_node
-                );
-                l_items_arr := apex_string.split(p_str => l_items, p_sep => ',');
-                l_values_arr := apex_string.split(p_str => l_values, p_sep => ',');
-                l_valid_items := least(l_items_arr.count, l_values_arr.count);
-                for i in 1 .. l_valid_items
-                loop
-                  append_page_item(
-                    p_domdoc => l_domdoc
-                  , p_page_items => l_ext_child_node
-                  , p_item_name => l_items_arr(i)
-                  , p_item_value => l_values_arr(i)
-                  );
-                end loop;
-                -- item names without values
-                if l_items_arr.count > l_valid_items then
-                  for i in l_valid_items+1 .. l_items_arr.count
-                  loop
-                    append_page_item(
-                      p_domdoc => l_domdoc
-                    , p_page_items => l_ext_child_node
-                    , p_item_name => l_items_arr(i)
-                    , p_item_value => ''
-                    );
-                  end loop;
-                end if;    
-                -- item values without names
-                if l_values_arr.count > l_valid_items then
-                  for i in l_valid_items+1 .. l_values_arr.count
-                  loop
-                    append_page_item(
-                      p_domdoc => l_domdoc
-                    , p_page_items => l_ext_child_node
-                    , p_item_name => ''
-                    , p_item_value => l_values_arr(i)
-                    );
-                  end loop;
-                end if;    
-                -- reset variables
-                l_items := null;
-                l_values := null;
-              end if;
-              -- script + service tasks
-            when dbms_xmldom.getnodename(l_domnode) = 'bpmn:scriptTask' or dbms_xmldom.getnodename(l_domnode) = 'bpmn:serviceTask' then  
-                l_domelement := dbms_xmldom.makeelement(l_domnode);
-                -- set task type attribute
-                dbms_xmldom.setattribute(
-                  elem => l_domelement
-                , name => 'apex:type'
-                , newValue => 'executePlsql'
-                , ns => 'http://www.apex.mt-ag.com'
-                );
-                -- create extension element node 
-                l_extension_node := dbms_xmldom.makenode( 
-                  elem => dbms_xmldom.createelement( 
-                            doc => l_domdoc
-                          , tagName => 'bpmn:extensionElements'
-                          , ns => 'http://www.omg.org/spec/BPMN/20100524/MODEL'
-                          )
-                );
-                -- append
-                l_extension_node := dbms_xmldom.appendchild(
-                  n => l_domnode
-                , newchild => l_extension_node
-                );
-                -- create execute Plsql node 
-                l_task_type_node := dbms_xmldom.makenode( 
-                  elem => dbms_xmldom.createelement( 
-                            doc => l_domdoc
-                          , tagName => 'apex:executePlsql'
-                          , ns => 'http://www.apex.mt-ag.com'
-                          )
-                );
-                -- append
-                l_task_type_node := dbms_xmldom.appendchild(
-                  n => l_extension_node
-                , newchild => l_task_type_node
-                );  
-                -- get child nodes
-                l_children := dbms_xmldom.getchildnodes(l_domnode);
-                l_children_count := dbms_xmldom.getlength(l_children);
-                -- loop over child nodes
-                for j in 0 .. l_children_count - 1
-                loop
-                  l_child_node := dbms_xmldom.item(l_children, j);
-                  case dbms_xmldom.getnodename(l_child_node)
-                    when 'apex:engine' then
-                      l_ext_child_tag_name := 'apex:engine';
-                    when 'apex:autoBinds' then
-                      l_ext_child_tag_name := 'apex:autoBinds';
-                    when 'apex:plsqlCode' then
-                      l_ext_child_tag_name := 'apex:plsqlCode';
-                    else
-                      l_ext_child_tag_name := '';
-                  end case;
-                  if length(l_ext_child_tag_name) > 0 then
-                    -- create new child node 
-                    l_ext_child_node := dbms_xmldom.makenode( 
-                      elem => dbms_xmldom.createelement( 
-                                doc => l_domdoc
-                              , tagName => l_ext_child_tag_name
-                              , ns => 'http://www.apex.mt-ag.com'
-                              )
-                    );
-                    -- get text node
-                    l_child_text_node := dbms_xmldom.getfirstchild(l_child_node);
-                    -- add text node
-                    l_child_text_node := dbms_xmldom.appendchild(
-                      n => l_ext_child_node
-                    , newchild => l_child_text_node
-                    );
-                    -- append
-                    l_ext_child_node := dbms_xmldom.appendchild(
-                      n => l_task_type_node
-                    , newchild => l_ext_child_node
-                    );
-                    -- remove old child
-                    l_child_node := dbms_xmldom.removechild(
-                      n => l_domnode
-                    , oldchild => l_child_node
-                    );  
-                  end if;
-                end loop;
-            else null;
-          end case;    
-        end loop;
-    
-        -- set new exporter version
-        set_exporter_version(
-          p_domdoc => l_domdoc
-        , p_exporter_version => flow_constants_pkg.gc_version
-        );
-    
-        dbms_xmldom.writetoclob(
-          doc => l_domdoc 
-        , cl => p_dgrm_content
-        );
-        p_has_changed := true;
-      else
-        p_has_changed := false;
-      end if;
+          else null;
+        end case;    
+      end loop;
+  
+      -- set new exporter version
+      set_exporter_version(
+        p_domdoc => l_domdoc
+      , p_exporter_version => flow_constants_pkg.gc_version
+      );
+  
+      dbms_xmldom.writetoclob(
+        doc => l_domdoc 
+      , cl => p_dgrm_content
+      );
+      p_has_changed := true;
     else
       p_has_changed := false;
     end if;
