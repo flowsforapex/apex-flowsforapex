@@ -21,7 +21,13 @@
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
         bpmnModeler.customModules.styleModule,
+        bpmnModeler.customModules.AddExporter
       ];
+
+      this.exporter = {
+        name: 'Flows for APEX',
+        version: '21.2.0',
+      };
 
       this.moddleExtensions = {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor,
@@ -45,6 +51,7 @@
         moddleExtensions: this.moddleExtensions,
         linting: this.linting,
         bpmnRenderer: this.bpmnRenderer,
+        exporter: this.exporter,
       } );
 
       // prevent click events from bubbling up the dom

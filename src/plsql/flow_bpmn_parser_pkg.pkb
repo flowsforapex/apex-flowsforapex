@@ -1374,6 +1374,7 @@ as
   procedure parse
   as
     l_dgrm_content clob;
+    l_has_changed boolean;
   begin
     -- delete any existing parsed information before parsing again
     cleanup_parsing_tables;
@@ -1386,7 +1387,13 @@ as
     ;
 
     -- migrate old diagrams
-    if(flow_migrate_xml_pkg.migrate_xml(p_dgrm_content => l_dgrm_content)) then
+    flow_migrate_xml_pkg.migrate_xml(
+      p_dgrm_content => l_dgrm_content
+    , p_has_changed => l_has_changed
+    );
+
+    -- update diagram after change
+    if l_has_changed then
       update flow_diagrams
       set dgrm_content = l_dgrm_content
       where dgrm_id = g_dgrm_id;
