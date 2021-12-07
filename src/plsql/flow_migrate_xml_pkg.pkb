@@ -31,8 +31,9 @@ as
     return (l_exporter = 'Flows for APEX' and l_exporter_version = flow_constants_pkg.gc_version);
   end is_exporter_version_current;
   
-  procedure set_exporter_version(
+  procedure set_exporter(
     p_domdoc dbms_xmldom.DOMDocument
+  , p_exporter varchar2
   , p_exporter_version varchar2
   )
   as
@@ -48,6 +49,11 @@ as
       loop
         l_domnode := dbms_xmldom.item(l_domnodelist, i);
         l_domelement := dbms_xmldom.makeelement(l_domnode);
+        dbms_xmldom.setattribute(
+          elem => l_domelement
+        , name => 'exporter'
+        , newValue => p_exporter
+        );
         dbms_xmldom.setattribute(
           elem => l_domelement
         , name => 'exporterVersion'
@@ -426,9 +432,10 @@ as
         end case;    
       end loop;
   
-      -- set new exporter version
-      set_exporter_version(
+      -- set new exporter
+      set_exporter(
         p_domdoc => l_domdoc
+      , p_exporter => 'Flows for APEX'
       , p_exporter_version => flow_constants_pkg.gc_version
       );
   
