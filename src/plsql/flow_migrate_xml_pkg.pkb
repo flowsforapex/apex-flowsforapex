@@ -60,7 +60,7 @@ as
         , newValue => p_exporter_version
         );
       end loop;    
-  end set_exporter_version;
+  end set_exporter;
 
   procedure append_page_item(
     p_domdoc dbms_xmldom.DOMDocument
