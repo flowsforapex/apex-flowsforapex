@@ -1374,6 +1374,7 @@ as
   procedure parse
   as
     l_dgrm_content clob;
+    l_has_changed boolean;
   begin
     -- delete any existing parsed information before parsing again
     cleanup_parsing_tables;
@@ -1384,6 +1385,19 @@ as
       from flow_diagrams
      where dgrm_id = g_dgrm_id
     ;
+
+    -- migrate old diagrams
+    flow_migrate_xml_pkg.migrate_xml(
+      p_dgrm_content => l_dgrm_content
+    , p_has_changed => l_has_changed
+    );
+
+    -- update diagram after change
+    if l_has_changed then
+      update flow_diagrams
+      set dgrm_content = l_dgrm_content
+      where dgrm_id = g_dgrm_id;
+    end if;
 
     -- parse out collaboration part first
     parse_collaboration( pi_xml => xmltype(l_dgrm_content) );
