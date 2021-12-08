@@ -10,6 +10,7 @@ drop package flow_p0006_api;
 drop package flow_p0007_api;
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
+drop package flow_services;
 drop package flow_usertask_pkg;
 drop package flow_tasks;
 drop package flow_boundary_events;
