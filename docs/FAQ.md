@@ -14,7 +14,7 @@ Flows for APEX is based on version 2.0 of BPMN, released in January 2011.  BPMN 
 
 Working through the Flows for APEX tutorial workflows is one way to get started.  They are included in the distributed product, and also hosted on apex.oracle.com (see: https://bit.ly/flowsforapex).
 
-For deeper understanding of BPMN, we'd recommend the following boks:
+For deeper understanding of BPMN, we'd recommend the following books:
 
 * Real-Life BPMN (4th ed): Includes an Introduction to DMN* by Jakob Freund and Bernd Rücker.  Available in hardcopy or on kindle from Amazon.  (English and German versions available).
 * BPMN Method and Style (2nd ed): by Bruce Silver.  Available in hardcopy or on kindle from Amazon.
@@ -25,7 +25,7 @@ Contact the Flows for APEX team if you want to arrange training or consulting su
 
 Database:  Minimum 12.2
 
-APEX: Minimum 20.1.    (We haven't tested on 19.1, and haven't checked whether we use any API's not present before 20.1).
+APEX: Minimum 20.1.   
 
 #### Could this be used as a replacement for the old Oracle Workflow?
 

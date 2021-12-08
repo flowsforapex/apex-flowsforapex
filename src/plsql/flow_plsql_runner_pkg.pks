@@ -18,9 +18,10 @@ as
   
   procedure run_task_script
   (
-    pi_prcs_id in flow_processes.prcs_id%type
-  , pi_sbfl_id in flow_subflows.sbfl_id%type
-  , pi_objt_id in flow_objects.objt_id%type
+    pi_prcs_id  in flow_processes.prcs_id%type
+  , pi_sbfl_id  in flow_subflows.sbfl_id%type
+  , pi_objt_id  in flow_objects.objt_id%type
+  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   );
 
 end flow_plsql_runner_pkg;

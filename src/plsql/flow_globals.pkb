@@ -12,14 +12,15 @@ as
 
 
   procedure set_context
-  ( pi_prcs_id in flow_processes.prcs_id%type
-  , pi_sbfl_id in flow_subflows.sbfl_id%type default null
+  ( pi_prcs_id  in flow_processes.prcs_id%type
+  , pi_sbfl_id  in flow_subflows.sbfl_id%type default null
+  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   )
   is
   begin 
     process_id := pi_prcs_id;
     subflow_id := pi_sbfl_id;
-  
+    step_key   := pi_step_key;
   end set_context;
 
   procedure set_step_error
