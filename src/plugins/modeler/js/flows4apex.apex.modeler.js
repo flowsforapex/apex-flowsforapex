@@ -99,7 +99,7 @@
       try {
         var result = await bpmnModeler$.importXML( this.diagramContent );
 
-        if (bpmnModeler$._definitions && (bpmnModeler$._definitions.exporter !== 'Flows for APEX' || (bpmnModeler$._definitions.exporter !== 'Flows for APEX' && bpmnModeler$._definitions.exporterVersion != '22.1.0'))) {
+        if (bpmnModeler$._definitions && (bpmnModeler$._definitions.exporter !== 'Flows for APEX' || (bpmnModeler$._definitions.exporter === 'Flows for APEX' && bpmnModeler$._definitions.exporterVersion != '22.1.0'))) {
           const refactored = bpmnModeler$.get('xmlModule').refactorDiagram(this.diagramContent);
           result = await bpmnModeler$.importXML(refactored);
         }
