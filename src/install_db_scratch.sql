@@ -12,6 +12,7 @@ PROMPT >> =================
 PROMPT >> Installing Package Specifications
 @plsql/flow_types_pkg.pks
 @plsql/flow_constants_pkg.pks
+@plsql/flow_migrate_xml_pkg.pks
 @plsql/flow_bpmn_parser_pkg.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_engine_util.pks
@@ -55,6 +56,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_instances.pkb
 @plsql/flow_engine.pkb
 @plsql/flow_api_pkg.pkb
+@plsql/flow_migrate_xml_pkg.pkb
 @plsql/flow_bpmn_parser_pkg.pkb
 @plsql/flow_timers_pkg.pkb
 @plsql/flow_usertask_pkg.pkb
