@@ -329,7 +329,7 @@ as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
-      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
+      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PLSQL Script %1 failed due to PL/SQL error - see event log.'
     when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
       rollback;
       apex_debug.info 
@@ -342,6 +342,8 @@ as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );  
+      -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+
   end process_serviceTask;
 
   procedure process_manualTask
@@ -364,6 +366,77 @@ as
     , p_subflow_id => p_sbfl_info.sbfl_id
     );  
   end process_manualTask;
+
+    procedure process_businessRuleTask
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  )
+  is 
+  begin
+    apex_debug.enter 
+    ( 'process_businessRuleTask'
+    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
+    );
+    -- current implementation is limited to one businessRuleTask type, 
+    -- which is to run a user defined PL/SQL script
+    -- future scriptTask types could include DMN or REST calls to other DecisionRule Engines
+    -- current implementation is limited to synchronous script execution (i.e., script is run as part of Flows for APEX process)
+    -- future implementations could include async scriptTasks, where script execution is queued.
+  
+    -- set work started time
+    flow_engine.start_step 
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_step_key   => p_sbfl_info.sbfl_step_key
+    , p_called_internally => true
+    );
+    
+    case get_task_type( p_step_info.target_objt_id )
+      when flow_constants_pkg.gc_apex_task_execute_plsql then
+        flow_plsql_runner_pkg.run_task_script
+        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+        , pi_sbfl_id => p_sbfl_info.sbfl_id
+        , pi_objt_id => p_step_info.target_objt_id
+        );
+      else
+        null;
+    end case;
+    
+    flow_engine.flow_complete_step 
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_step_key   => p_sbfl_info.sbfl_step_key
+    );
+
+  exception
+    when flow_plsql_runner_pkg.e_plsql_script_failed then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script failed in plsql script runner'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'plsql_script_failed'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
+    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
+      ); 
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'plsql_script_requested_stop'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );  
+      -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+  end process_businessRuleTask;
+
   
 end flow_tasks;
 /
