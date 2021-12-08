@@ -19,6 +19,8 @@ Process variables are typed, and are based on Oracle datatypes.  Allowed types a
 - `date`
 - `clob`
 
+There is a function `flow_process_vars.get_var_type()` that returns the type of a process variable.
+
 #### Built-In Variables
 
 Flows for APEX instances contains one built-in process variable that is created for every Instance.
@@ -119,6 +121,6 @@ Process variables can be set or got inside a PL/SQL scriptTask
 or serviceTask procedure using the setters and getters above.
 [See doc](usingTasksToImplementYourProcess.md)
 
-Process variables can be substituted into the definition string for Timers.  [See doc](usingTimerEvents.md)
+Process variables can be substituted into the definition string for Timers.  [See doc](specifyingTimers.md)
 
 Your application can set and get process variables by calling the appropriate setters and getters, as required.
