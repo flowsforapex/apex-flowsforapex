@@ -10,6 +10,8 @@ as
   gc_numbool_false constant number            := 0;
 
   gc_nsmap       constant varchar2(200 char) := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
+  gc_nsbpmn      constant varchar2(200 char) := 'http://www.omg.org/spec/BPMN/20100524/MODEL';
+  gc_nsapex      constant varchar2(200 char) := 'https://flowsforapex.org';
   gc_bpmn_prefix constant varchar2(10 char)  := 'bpmn:';
   gc_apex_prefix constant varchar2(10 char)  := 'apex:';
 
