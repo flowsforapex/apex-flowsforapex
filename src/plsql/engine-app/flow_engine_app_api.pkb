@@ -1,6 +1,13 @@
 create or replace package body flow_engine_app_api
 as
 
+  subtype max_sql_char is varchar2(4000 byte);
+  subtype ora_name_type is varchar2(128 byte);
+
+  C_ITEM_DGRM_ID constant  ora_name_type := 'P2_DGRM_ID';
+  C_ITEM_DGRM_NAME constant  ora_name_type := 'P2_NEW_NAME';
+  C_ITEM_DGRM_VERSION constant  ora_name_type := 'P2_NEW_VERSION';
+
   procedure handle_ajax
   as 
     l_error_occured boolean := false;
@@ -261,6 +268,1196 @@ as
       when others then
         l_error_occured := true;
   end handle_ajax;
+
+
+  function get_objt_list(
+    p_prcs_id flow_processes_vw.prcs_id%type
+  ) return varchar2
+  as
+    l_objt_list varchar2(32767);
+  begin    
+    select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
+      into l_objt_list
+      from flow_objects_vw
+     where objt_dgrm_id = (
+           select prcs_dgrm_id 
+             from flow_processes_vw
+            where prcs_id = p_prcs_id)
+       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
+    return l_objt_list;
+  end get_objt_list;
+       
+
+  function get_objt_sbfl_list(
+    p_prcs_id flow_processes_vw.prcs_id%type
+  ) return varchar2
+  as
+    l_objt_sbfl_list varchar2(32767);
+  begin
+      select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
+        into l_objt_sbfl_list
+        from flow_objects_vw
+       where objt_dgrm_id = (
+             select prcs_dgrm_id 
+               from flow_processes_vw
+              where prcs_id = p_prcs_id)
+         and objt_tag_name = 'bpmn:subProcess';
+    return l_objt_sbfl_list;
+  end get_objt_sbfl_list;
+  
+  
+  function get_objt_name(
+    p_objt_bpmn_id flow_objects_vw.objt_bpmn_id%type
+  ) return varchar2
+  as
+    l_objt_name flow_objects_vw.objt_name%type;
+  begin
+    select distinct objt_name
+      into l_objt_name
+      from flow_objects_vw
+     where objt_bpmn_id = p_objt_bpmn_id;
+    return l_objt_name;
+  end get_objt_name;
+
+
+  procedure set_viewport(
+    p_display_setting in varchar2)
+  as
+  begin
+    apex_util.set_preference('VIEWPORT', p_display_setting);
+  end set_viewport;
+    
+    
+  procedure add_viewport_script
+  as
+    l_script varchar2(4000 byte);
+    l_display_setting varchar2(20 byte);
+  begin
+    -- Initialize
+    l_display_setting := coalesce(apex_util.get_preference('VIEWPORT'),'row');
+    apex_util.set_session_state('P8_DISPLAY_SETTING', l_display_setting);
+    
+    -- Set IDs for the the row divs
+    l_script := q'#apex.jQuery("#flow-reports").parent().attr("id","col1");
+                 apex.jQuery("#flow-monitor").parent().attr("id","col2");#';
+    
+    apex_javascript.add_onload_code(
+      p_code => l_script,
+      p_key  => 'init_viewport');    
+    
+    l_script := null;
+    -- Set view to side-by-side if preference = 'column'
+    case l_display_setting 
+      when 'column' then    
+        l_script := q'#apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( [ "col-12", "col-end" ] );
+                      apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( [ "col-12", "col-start" ] );
+                      apex.jQuery("#col2").appendTo(apex.jQuery("#col1").parent());
+                      apex.jQuery("#flow-monitor").show();
+                      apex.region( "flow-monitor" ).refresh();#';
+      when 'window' then
+        l_script := q'#apex.jQuery("#flow-monitor").hide();
+                       apex.jQuery( "#col1" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );
+                       apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );#';
+    else
+      null;
+    end case;
+    
+    if l_script is not null then
+      apex_javascript.add_onload_code(
+        p_code => l_script,
+        p_key  => 'viewport');
+    end if;
+  end add_viewport_script;
+
+
+  /* page 2 */
+  
+
+  function check_flow_exists(
+    p_dgrm_name in flow_diagrams_vw.dgrm_name%type,
+    p_dgrm_version flow_diagrams_vw.dgrm_version%type)
+  return boolean
+  as
+    l_exists binary_integer;
+  begin
+  
+    select count(*)
+      into l_exists
+      from dual
+     where exists(
+           select null
+             from flow_diagrams_vw
+            where dgrm_name = p_dgrm_name
+              and dgrm_version = p_dgrm_version);
+    return l_exists = 1;
+  end check_flow_exists;
+  
+
+  function validate_flow_exists_bulk
+  return varchar2 
+  as
+    l_err max_sql_char;
+    l_flows apex_t_varchar2;
+    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
+    l_new_version flow_diagrams_vw.dgrm_version%type;
+  begin
+    -- Initialize
+    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
+    l_new_version := v(C_ITEM_DGRM_VERSION);
+    
+    for i in 1 .. l_flows.count loop
+  
+      select dgrm_name 
+        into l_dgrm_name
+        from flow_diagrams_vw
+       where dgrm_id = l_flows(i);
+
+      if check_flow_exists(l_dgrm_name, l_new_version) then
+        l_err := apex_lang.message(
+                   p_name => 'APP_ERR_MODEL_EXIST',
+                   p0 => l_dgrm_name,
+                   p1 => l_new_version);
+      end if;
+      exit when l_err is not null;
+    end loop;
+    return l_err;
+  end validate_flow_exists_bulk;
+
+
+  function validate_flow_exists
+  return varchar2 
+  as
+    l_err max_sql_char;
+    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
+    l_new_version flow_diagrams_vw.dgrm_version%type;
+  begin
+    -- Initialize
+    l_new_version := v(C_ITEM_DGRM_VERSION);
+  
+    select dgrm_name
+      into l_dgrm_name
+      from flow_diagrams_vw
+     where dgrm_id = (select v(C_ITEM_DGRM_ID) from dual);
+    
+    if check_flow_exists(l_dgrm_name, l_new_version) then
+      l_err := apex_lang.message(
+                 p_name => 'APP_ERR_MODEL_EXIST',
+                 p0 => l_dgrm_name,
+                 p1 => l_new_version);
+    end if;
+    return l_err;
+  end validate_flow_exists;
+  
+  
+  function validate_flow_copy_bulk
+  return varchar2 
+  as
+    l_err max_sql_char;
+    l_flows apex_t_varchar2;
+    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
+    l_new_name flow_diagrams_vw.dgrm_name%type;
+    l_new_version flow_diagrams_vw.dgrm_version%type;
+  begin
+    -- Initialize
+    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
+    l_new_name := v(C_ITEM_DGRM_NAME);
+    
+    for i in 1 .. l_flows.count loop
+  
+      select dgrm_name|| ' - ' || l_new_name, dgrm_version
+        into l_new_name, l_new_version
+        from flow_diagrams_vw 
+       where dgrm_id = l_flows(i);
+
+      if check_flow_exists(l_dgrm_name, '0') then
+        l_err := apex_lang.message(
+                   p_name => 'APP_ERR_MODEL_EXIST',
+                   p0 => l_new_name,
+                   p1 => l_new_version);
+      end if;
+      exit when l_err is not null;
+    end loop;
+    return l_err;
+  end validate_flow_copy_bulk;
+  
+  
+  function validate_flow_copy
+  return varchar2 
+  as
+    l_err varchar2(4000);
+    l_version_exists number;    
+    l_new_name flow_diagrams_vw.dgrm_version%type;
+  begin
+    -- Initialize
+    l_new_name := v(C_ITEM_DGRM_NAME);
+    
+    if check_flow_exists(l_new_name, '0') then
+      l_err := apex_lang.message(
+                 p_name => 'APP_ERR_MODEL_EXIST',
+                 p0 => l_new_name,
+                 p1 => '0');
+    end if;
+    return l_err;
+  end validate_flow_copy;
+  
+  
+  procedure copy_selection_to_collection
+  as
+  begin
+    apex_collection.create_or_truncate_collection(p_collection_name => 'C_SELECT' );
+    for i in 1 .. apex_application.g_f01.count() loop
+      apex_collection.add_member(
+         p_collection_name => 'C_SELECT',
+         p_n001 => apex_application.g_f01(i));
+    end loop;
+  end;
+
+  
+  procedure add_new_version
+  as
+    r_diagrams flow_diagrams_vw%rowtype;
+    l_flows apex_t_varchar2;
+    l_dgrm_id flow_diagrams_vw.dgrm_id%type;
+    l_new_version flow_diagrams_vw.dgrm_version%type;
+  begin
+    -- Initialize
+    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
+    l_new_version := v(C_ITEM_DGRM_VERSION);
+    
+    for i in 1 .. l_flows.count loop
+      select * 
+        into r_diagrams
+        from flow_diagrams_vw
+       where dgrm_id = l_flows(i);
+
+      l_dgrm_id := flow_diagram.import_diagram(
+        pi_dgrm_name => r_diagrams.dgrm_name,
+        pi_dgrm_version => l_new_version,
+        pi_dgrm_category => r_diagrams.dgrm_category,
+        pi_dgrm_content => r_diagrams.dgrm_content);
+    end loop;
+    
+  end add_new_version;
+  
+  
+  procedure copy_model
+  as
+    l_flows apex_t_varchar2;
+    l_dgrm_id flow_diagrams_vw.dgrm_id%type;
+    r_diagrams flow_diagrams_vw%rowtype;
+    l_new_name flow_diagrams_vw.dgrm_version%type;
+  begin
+    -- Initialize
+    l_new_name := v(C_ITEM_DGRM_NAME);
+    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
+    
+    for i in 1 .. l_flows.count loop
+      select * 
+        into r_diagrams
+        from flow_diagrams_vw
+       where dgrm_id = l_flows(i);
+
+      l_dgrm_id := flow_diagram.import_diagram(
+        pi_dgrm_name => case when l_flows.count() > 1 then r_diagrams.dgrm_name || ' - ' end || l_new_name,
+        pi_dgrm_version => '0',
+        pi_dgrm_category => r_diagrams.dgrm_category,
+        pi_dgrm_content => r_diagrams.dgrm_content);
+
+    end loop;
+  end copy_model;
+
+
+  /* page 4 */
+
+
+  function get_region_title
+  return varchar2 
+  as
+    l_region_title varchar2(128 byte);
+  begin
+  
+    select dgrm_name || ' (Version: ' || dgrm_version || ', Status: ' || dgrm_status || ')' as d
+      into l_region_title
+      from flow_diagrams_vw
+     where dgrm_id = (select v('P4_DGRM_ID') from dual);
+     
+    return l_region_title;
+  end get_region_title;
+
+
+  /* page 5 */
+
+
+  function get_file_name
+  (
+    p_dgrm_id in number
+  , p_include_version in varchar2
+  , p_include_status in varchar2
+  , p_include_category in varchar2
+  , p_include_last_change_date in varchar2
+  , p_download_as in varchar2
+  ) 
+  return varchar2
+  is
+    l_file_name      varchar2(300 char);
+    l_dgrm_name        flow_diagrams_vw.dgrm_name%type;
+    l_dgrm_version     flow_diagrams_vw.dgrm_version%type;
+    l_dgrm_status      flow_diagrams_vw.dgrm_status%type;
+    l_dgrm_category    flow_diagrams_vw.dgrm_category%type;
+    l_dgrm_last_update flow_diagrams_vw.dgrm_last_update%type;
+  begin
+    select dgrm_name
+         , dgrm_version
+         , dgrm_status
+         , dgrm_category
+         , dgrm_last_update
+      into l_dgrm_name
+         , l_dgrm_version
+         , l_dgrm_status
+         , l_dgrm_category
+         , l_dgrm_last_update
+      from flow_diagrams_vw
+     where dgrm_id = p_dgrm_id
+    ;
+    
+    l_file_name := to_char(sysdate, 'YYYYMMDD-HH24MI') || '_' || l_dgrm_name;
+    
+    if (p_include_category = 'Y' and l_dgrm_category is not null) then
+      l_file_name := l_file_name || '_' || l_dgrm_category;
+    end if;
+    if (p_include_status = 'Y') then
+      l_file_name := l_file_name || '_' || l_dgrm_status;
+    end if;
+    if (p_include_version = 'Y') then
+      l_file_name := l_file_name || '_' || l_dgrm_version;
+    end if;
+    if (p_include_last_change_date = 'Y') then
+      l_file_name := l_file_name || '_' || to_char(l_dgrm_last_update, 'YYYYMMDD-HH24MI');
+    end if;
+    if (p_download_as = 'SQL') then
+      l_file_name := l_file_name || '.sql';
+    end if;
+    if (p_download_as = 'BPMN') then
+      l_file_name := l_file_name || '.bpmn';
+    end if;
+    return l_file_name;
+  end get_file_name;
+
+
+  function get_sql_script(
+      p_dgrm_id in number
+  ) 
+  return clob
+  is
+    l_split_content apex_t_varchar2;
+    l_sql clob;
+    l_buffer varchar2(32767);  
+    r_diagrams flow_diagrams_vw%rowtype;
+  begin 
+    dbms_lob.createtemporary(l_sql,true, DBMS_LOB.CALL);
+    select *
+    into r_diagrams
+    from flow_diagrams_vw
+    where dgrm_id = p_dgrm_id;
+    l_buffer := 'declare'||utl_tcp.crlf;
+    l_buffer := l_buffer||'  l_dgrm_content clob;'||utl_tcp.crlf;
+    l_buffer := l_buffer||'begin'||utl_tcp.crlf;
+    dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
+    l_split_content := apex_string.split(p_str => replace(r_diagrams.dgrm_content,  apex_application.CRLF,  apex_application.LF));
+    l_buffer := '  l_dgrm_content := apex_string.join_clob('||utl_tcp.crlf;
+    l_buffer := l_buffer||'    apex_t_varchar2('||utl_tcp.crlf;
+    dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
+    for i in l_split_content.first..l_split_content.last
+    loop
+      if (i = l_split_content.first) then
+        l_buffer := '      q''['||l_split_content(i)||']'''||utl_tcp.crlf;
+      else
+        l_buffer := '      ,q''['||l_split_content(i)||']'''||utl_tcp.crlf;
+      end if;
+      dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
+    end loop;
+    l_buffer := '  ));';
+    l_buffer := l_buffer||utl_tcp.crlf;
+    l_buffer := l_buffer||'  flow_bpmn_parser_pkg.upload_and_parse('||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_content => l_dgrm_content'||utl_tcp.crlf||');'||utl_tcp.crlf;
+    l_buffer := l_buffer||'end;'||utl_tcp.crlf||'/'||utl_tcp.crlf;
+    dbms_lob.writeappend(l_sql, length(l_buffer), l_buffer);
+    
+    return l_sql;
+  end get_sql_script;
+
+  
+  function get_bmpn_content(
+      p_dgrm_id in number
+  ) return clob
+  is 
+    l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+  begin
+    select dgrm_content
+    into l_dgrm_content
+    from flow_diagrams_vw
+    where dgrm_id = p_dgrm_id;
+    return l_dgrm_content;
+  end get_bmpn_content;
+
+
+  function sanitize_file_name(
+    p_file_name in varchar2
+  )
+  return varchar2
+  is
+    l_file_name varchar2(300 char);
+  begin
+    l_file_name := p_file_name;
+    l_file_name := replace(l_file_name, '/', '_');
+    l_file_name := replace(l_file_name, '\', '_');
+    l_file_name := replace(l_file_name, '*', '_');
+    l_file_name := replace(l_file_name, ':', '_');
+    l_file_name := replace(l_file_name, '?', '_');
+    l_file_name := replace(l_file_name, '|', '_');
+    l_file_name := replace(l_file_name, '<', '_');
+    l_file_name := replace(l_file_name, '>', '_');
+    return l_file_name;
+  end sanitize_file_name;
+
+
+  function clob_to_blob(
+    p_clob in clob
+  )
+  return blob
+  is
+    l_blob         BLOB;
+    l_dest_offset  PLS_INTEGER := 1;
+    l_src_offset   PLS_INTEGER := 1;
+    l_lang_context PLS_INTEGER := DBMS_LOB.default_lang_ctx;
+    l_warning      PLS_INTEGER := DBMS_LOB.warn_inconvertible_char;
+  begin
+    dbms_lob.createtemporary(
+      lob_loc => l_blob,
+      cache   => TRUE
+    );
+    dbms_lob.converttoblob(
+      dest_lob      => l_blob,
+      src_clob      => p_clob,
+      amount        => DBMS_LOB.lobmaxsize,
+      dest_offset   => l_dest_offset,
+      src_offset    => l_src_offset, 
+      blob_csid     => DBMS_LOB.default_csid,
+      lang_context  => l_lang_context,
+      warning       => l_warning
+    );
+  
+    return l_blob;
+  end clob_to_blob;
+
+
+  procedure download_file(
+      p_dgrm_id in number,
+      p_file_name in varchar2,
+      p_download_as in varchar2,
+      p_multi_file in boolean default false
+  )
+  is 
+    l_clob        clob;
+    l_blob        blob;
+    l_zip_file    blob;
+    l_buffer      varchar2(32767);  
+    l_length      integer;
+    l_desc_offset pls_integer := 1;
+    l_src_offset  pls_integer := 1;
+    l_lang        pls_integer := 0;
+    l_warning     pls_integer := 0;
+    l_mime_type   varchar2(100) := 'application/octet';
+    type r_flow   is record (
+      dgrm_id       flow_diagrams_vw.dgrm_id%type, 
+      dgrm_name     flow_diagrams_vw.dgrm_name%type,
+      dgrm_version  flow_diagrams_vw.dgrm_version%type,
+      dgrm_status   flow_diagrams_vw.dgrm_status%type,
+      dgrm_category flow_diagrams_vw.dgrm_category%type,
+      filename      varchar2(300)
+    );
+    type t_flows  is table of r_flow;
+    l_flows       t_flows;
+    l_json_array  json_array_t;
+    l_json_object json_object_t;
+    l_json_clob   clob;
+    l_sql_clob    clob;
+    l_file_name   varchar2(300);
+  begin
+    l_file_name := p_file_name;
+    if ( p_download_as = 'BPMN' ) then
+      l_json_array := json_array_t('[]');
+    end if;
+    if ( p_multi_file ) then
+      select 
+        dgrm_id, 
+        dgrm_name,
+        dgrm_version,
+        dgrm_status,
+        dgrm_category,
+        dgrm_name||'_'||dgrm_version as filename
+      bulk collect into l_flows
+      from flow_diagrams_vw 
+      where dgrm_id in (
+        select n001
+        from apex_collections
+        where collection_name = 'C_SELECT'
+      );
+    else
+      l_flows := t_flows(r_flow(p_dgrm_id, p_file_name));
+    end if;
+    for i in 1..l_flows.count()
+    loop
+      if (p_download_as = 'BPMN') then
+          l_clob := get_bmpn_content(p_dgrm_id => l_flows(i).dgrm_id);
+          apex_debug.message(dbms_lob.getlength(l_clob));
+      end if;
+      if (p_download_as = 'SQL') then
+        l_clob := get_sql_script(p_dgrm_id => l_flows(i).dgrm_id);
+      end if;
+      l_blob := clob_to_blob(l_clob);
+      if ( p_multi_file ) then
+        apex_zip.add_file (
+          p_zipped_blob => l_zip_file,
+          p_file_name   => sanitize_file_name(l_flows(i).filename) || '.' || lower(p_download_as),
+          p_content     => l_blob
+        );
+        if ( p_download_as = 'BPMN' ) then
+          l_json_object := json_object_t('{}');
+          l_json_object.put('dgrm_name' ,  l_flows(i).dgrm_name);
+          l_json_object.put('dgrm_version' ,  l_flows(i).dgrm_version);
+          l_json_object.put('dgrm_status' ,  l_flows(i).dgrm_status);
+          l_json_object.put('dgrm_category' ,  l_flows(i).dgrm_category);
+          l_json_object.put('file' ,  sanitize_file_name(l_flows(i).filename) || '.bpmn');
+          l_json_array.append(l_json_object);
+        elsif ( p_download_as = 'SQL' ) then
+          l_sql_clob := l_sql_clob||'@"'||sanitize_file_name(l_flows(i).filename) || '.' || lower(p_download_as)||'";'||utl_tcp.crlf;
+        end if;
+      end if;
+    end loop;
+    if ( p_multi_file ) then
+      if ( p_download_as = 'BPMN' ) then
+        l_json_clob := treat(l_json_array as json_element_t).to_clob(); 
+        l_blob := clob_to_blob(l_json_clob);
+        apex_zip.add_file (
+          p_zipped_blob => l_zip_file,
+          p_file_name   => 'import.json',
+          p_content     => l_blob
+        );
+      elsif ( p_download_as = 'SQL' ) then
+        l_sql_clob := 'set define off;' || utl_tcp.crlf || l_sql_clob || utl_tcp.crlf;
+        l_blob := clob_to_blob(l_sql_clob);
+        apex_zip.add_file (
+          p_zipped_blob => l_zip_file,
+          p_file_name   => 'import.sql',
+          p_content     => l_blob
+        );
+      end if;
+      apex_zip.finish (
+        p_zipped_blob => l_zip_file 
+      );
+      l_blob := l_zip_file;
+      l_mime_type := 'application/zip';
+      l_file_name := 'F4A_'||to_char(systimestamp, 'YYYYMMDD_HH24MISS')||'.zip';
+    end if;
+    l_length := dbms_lob.getlength(l_blob);
+    owa_util.mime_header(l_mime_type, false) ;
+    htp.p('Content-length: ' || l_length);
+    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(l_file_name)||'"');
+    owa_util.http_header_close;
+    wpg_docload.download_file(l_blob);
+    apex_application.stop_apex_engine;
+  end download_file;
+
+
+  /* page 6 */
+
+
+  function is_file_uploaded(
+        pi_file_name in varchar2
+    )
+    return boolean
+    is
+        l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+        l_err boolean := true;
+    begin
+        begin
+            select to_clob(blob_content)
+            into l_dgrm_content
+            from apex_application_temp_files
+            where name = pi_file_name;
+        exception when no_data_found then
+            l_err := false;
+        end;
+ 
+        return l_err;
+    end is_file_uploaded;
+    
+    
+    function is_valid_xml(
+        pi_import_from in varchar2,
+        pi_dgrm_content in flow_diagrams_vw.dgrm_content%type,
+        pi_file_name in varchar2
+    )
+    return boolean
+    is
+        l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+        l_xmltype xmltype;
+        l_err boolean := true;
+    begin
+        if (pi_import_from = 'text') then
+            l_dgrm_content := pi_dgrm_content;
+        else
+            select to_clob(blob_content)
+            into l_dgrm_content
+            from apex_application_temp_files
+            where name = pi_file_name;
+        end if;
+        begin
+            l_xmltype := xmltype.createXML(l_dgrm_content);
+        exception when others then
+            l_err := false;
+        end;
+        return l_err;
+    end is_valid_xml;
+    
+    
+    function is_valid_multi_file_archive(
+        pi_file_name in varchar2
+    )
+    return varchar2
+    is
+        l_mime_type    apex_application_temp_files.mime_type%type;
+        l_blob_content apex_application_temp_files.blob_content%type;
+        l_error        varchar2(4000);
+        l_files        apex_zip.t_files;
+        l_found_json   boolean := false;
+    begin
+        select mime_type, blob_content
+        into l_mime_type, l_blob_content
+        from apex_application_temp_files
+        where name = pi_file_name;
+        if ( l_mime_type != 'application/zip') then
+            l_error := 'You should provide a valid Flows for APEX zip export file.';
+        else
+            l_files := apex_zip.get_files(
+                p_zipped_blob => l_blob_content
+            );
+            for i in 1..l_files.count loop
+                apex_debug.message(l_files(i));
+                if ( l_files(i) = 'import.json' ) then
+                    l_found_json := true;
+                end if;
+                exit when l_found_json;
+            end loop;
+            if ( l_found_json = false ) then
+                l_error := 'Missing import.json file in the zip export file.';
+            end if;
+        end if;
+        return l_error;
+    end is_valid_multi_file_archive;
+    
+    
+    procedure upload_and_parse(
+        pi_import_from in varchar2,
+        pi_dgrm_name in flow_diagrams_vw.dgrm_name%type,
+        pi_dgrm_category in flow_diagrams_vw.dgrm_category%type,
+        pi_dgrm_version in flow_diagrams_vw.dgrm_version%type,
+        pi_dgrm_content in flow_diagrams_vw.dgrm_content%type,
+        pi_file_name in varchar2,
+        pi_force_overwrite in varchar2
+    ) 
+    is
+        l_dgrm_id flow_diagrams_vw.dgrm_id%type;
+        l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+        l_dgrm_exists number;
+    begin
+        if (pi_import_from = 'text') then
+            l_dgrm_content := pi_dgrm_content;
+        else
+            select to_clob(blob_content)
+            into l_dgrm_content
+            from apex_application_temp_files
+            where name = pi_file_name;
+        end if;
+            
+        l_dgrm_id := flow_diagram.import_diagram(
+            pi_dgrm_name => pi_dgrm_name,
+            pi_dgrm_version => pi_dgrm_version,
+            pi_dgrm_category => pi_dgrm_category,
+            pi_dgrm_content => l_dgrm_content,
+            pi_force_overwrite => pi_force_overwrite);
+        apex_util.set_session_state('P6_DGRM_ID', l_dgrm_id);
+    exception
+      when flow_diagram.diagram_exists then
+        apex_error.add_error(
+            p_message => 'Model already exists.'
+            , p_display_location => apex_error.c_on_error_page);
+      when flow_diagram.diagram_not_draft then
+        apex_error.add_error(
+            p_message => 'Overwrite only possible for draft models.'
+            , p_display_location => apex_error.c_on_error_page);
+    end upload_and_parse;
+    
+    
+    procedure multiple_flow_import(
+        pi_file_name       in varchar2,
+        pi_force_overwrite in varchar2
+    )
+    as
+        l_dgrm_name     flow_diagrams_vw.dgrm_name%type;
+        l_dgrm_category flow_diagrams_vw.dgrm_category%type;
+        l_dgrm_version  flow_diagrams_vw.dgrm_version%type;
+        l_dgrm_content  flow_diagrams_vw.dgrm_content%type;
+        l_file          varchar2(300);
+        l_json_array    json_array_t;
+        l_json_object   json_object_t;
+        l_blob_content  blob;
+        l_json_file     blob;
+        l_bpmn_file     blob;
+        l_clob          clob;
+    begin
+        select blob_content
+        into l_blob_content
+        from apex_application_temp_files
+        where name = pi_file_name;
+        l_json_file := apex_zip.get_file_content(
+            p_zipped_blob => l_blob_content,
+            p_file_name   => 'import.json'
+        );
+        l_json_array := json_array_t.parse(l_json_file);
+        for i in 0..l_json_array.get_size() - 1 loop
+            l_json_object := treat(l_json_array.get(i) as json_object_t);
+            l_dgrm_name     := l_json_object.get_String('dgrm_name');
+            l_dgrm_version  := l_json_object.get_String('dgrm_version');
+            l_dgrm_category := l_json_object.get_String('dgrm_category');
+            l_dgrm_name     := l_json_object.get_String('dgrm_name');
+            l_file          := l_json_object.get_String('file');   
+            l_bpmn_file := apex_zip.get_file_content(
+                p_zipped_blob => l_blob_content,
+                p_file_name   => l_file
+            );
+            select to_clob(l_bpmn_file)
+            into l_clob
+            from dual;
+            
+            upload_and_parse(
+                  pi_import_from => 'text'
+                , pi_dgrm_name => l_dgrm_name
+                , pi_dgrm_category => l_dgrm_category
+                , pi_dgrm_version => l_dgrm_version
+                , pi_dgrm_content => l_clob
+                , pi_file_name => null
+                , pi_force_overwrite => pi_force_overwrite
+            );
+        end loop;
+    end multiple_flow_import;
+
+
+  /* page 7 */
+
+
+  procedure p7_prepare_url
+  as
+    l_url varchar2(2000);
+  begin
+    l_url := apex_page.get_url(
+               p_application => v('APP_ID'),
+               p_page => '13',
+               p_session => v('APP_SESSION'),
+               p_clear_cache => 'RP',
+               p_items => 'P13_DGRM_ID,P13_OBJT_ID,P13_TITLE',
+               p_values => apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03);
+    htp.p(l_url);
+  end p7_prepare_url;
+  
+  
+  function diagram_is_modifiable
+  return boolean
+  as
+  begin
+    return flow_diagram.diagram_is_modifiable(v('P7_DGRM_ID'));
+  end diagram_is_modifiable;
+  
+
+  function validate_new_version
+  return varchar2
+  as
+    l_err varchar2(4000);
+    l_version_exists number;
+    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
+    l_new_version flow_diagrams_vw.dgrm_version%type;
+  begin
+    -- Initialize
+    l_dgrm_name := v('P7_DGRM_NAME');
+    l_new_version := v('P7_NEW_VERSION');
+    
+    
+    if (l_new_version is null) then
+        l_err := apex_lang.message(p_name => 'APEX.PAGE_ITEM_IS_REQUIRED'); --'#LABEL# must have a value';
+    else
+      select count(*)
+        into l_version_exists
+        from flow_diagrams_vw
+       where dgrm_name = l_dgrm_name
+         and dgrm_version = l_new_version;
+        
+      if (l_version_exists > 0) then
+        l_err := apex_lang.message(p_name => 'APP_ERR_MODEL_VERSION_EXIST');
+      end if;
+    end if;
+    return l_err;
+  end validate_new_version;
+  
+
+  procedure p7_process_page(
+    pio_dgrm_id      in out nocopy flow_diagrams_vw.dgrm_id%type,
+    pi_dgrm_name     in flow_diagrams_vw.dgrm_name%type,
+    pi_dgrm_version  in flow_diagrams_vw.dgrm_version%type,
+    pi_dgrm_category in flow_diagrams_vw.dgrm_category%type,
+    pi_new_version   in flow_diagrams_vw.dgrm_version%type,
+    pi_cascade       in varchar2,
+    pi_request       in varchar2)
+  as
+  begin
+    case pi_request
+      when 'CREATE' then
+        pio_dgrm_id := flow_diagram.create_diagram(
+                         pi_dgrm_name => pi_dgrm_name,
+                         pi_dgrm_category => pi_dgrm_category,
+                         pi_dgrm_version => pi_dgrm_version);
+      when 'SAVE' then
+        flow_diagram.edit_diagram(
+          pi_dgrm_id => pio_dgrm_id,
+          pi_dgrm_name => pi_dgrm_name,
+          pi_dgrm_category => pi_dgrm_category,
+          pi_dgrm_version => pi_dgrm_version);
+      when 'DELETE' then
+        flow_diagram.delete_diagram(
+          pi_dgrm_id => pio_dgrm_id,
+          pi_cascade => pi_cascade);
+      when 'ADD_VERSION' then
+        pio_dgrm_id := flow_diagram.add_diagram_version(
+          pi_dgrm_id => pio_dgrm_id,
+          pi_dgrm_version => pi_new_version);
+      when 'RELEASE' then
+        flow_diagram.release_diagram(
+          pi_dgrm_id => pio_dgrm_id);
+      when 'DEPRECATE' then
+        flow_diagram.deprecate_diagram(
+          pi_dgrm_id => pio_dgrm_id);
+      when 'ARCHIVE' then
+        flow_diagram.archive_diagram(
+          pi_dgrm_id => pio_dgrm_id);
+      else
+        raise_application_error(-20002, 'Unknown operation requested.');
+    end case;
+  end p7_process_page;
+  
+  
+  function get_page_title
+  return varchar2
+  as
+    l_page_title varchar2(128 byte);
+  begin
+    case 
+    when v('P7_DGRM_ID') is null then 
+      l_page_title := apex_lang.message(
+                        p_name => 'APP_TITLE_NEW_MODEL');
+    else 
+      l_page_title := apex_lang.message(
+                        p_name => 'APP_TITLE_MODEL',
+                        p0 => v('P7_DGRM_NAME'),
+                        p1 => v('P7_DGRM_VERSION'));
+    end case;
+    return l_page_title;
+  end get_page_title;
+
+
+  /* page 8 */
+
+
+  function check_is_date(
+    pi_value in varchar2,
+    pi_format_mask in varchar2)
+  return varchar2 
+  as
+    l_dummy_date date;
+  begin 
+    l_dummy_date := to_date(pi_value, pi_format_mask);
+    return flow_constants_pkg.gc_true;
+  exception
+    when others then  
+      return flow_constants_pkg.gc_false;
+  end check_is_date;
+
+
+  function check_is_number(
+    pi_value in varchar2)
+  return varchar2 
+  as
+    l_dummy_number number;
+  begin 
+    l_dummy_number := to_number(pi_value);
+    return flow_constants_pkg.gc_true;
+  exception
+    when others then  
+      return flow_constants_pkg.gc_false;
+  end check_is_number;
+  
+  
+  procedure pass_variable
+  as
+    l_prov_prcs_id  flow_process_variables_vw.prov_prcs_id%type;
+    l_prov_var_name flow_process_variables_vw.prov_var_name%type;
+    l_prov_var_type flow_process_variables_vw.prov_var_type%type;
+    l_prov_var_vc2  flow_process_variables_vw.prov_var_vc2%type;
+    l_prov_var_num  flow_process_variables_vw.prov_var_num%type;
+    l_prov_var_date flow_process_variables_vw.prov_var_date%type;
+    l_prov_var_clob flow_process_variables_vw.prov_var_clob%type;
+  begin
+    -- Initialize
+    l_prov_prcs_id := apex_application.g_x01;
+    l_prov_var_name := apex_application.g_x02;
+    l_prov_var_type := apex_application.g_x03;
+    
+    case l_prov_var_type
+      when 'VARCHAR2' then
+        l_prov_var_vc2 := flow_process_vars.get_var_vc2(
+                            pi_prcs_id => l_prov_prcs_id,
+                            pi_var_name =>l_prov_var_name);
+      when 'NUMBER' then
+        l_prov_var_num := flow_process_vars.get_var_num(
+                            pi_prcs_id => l_prov_prcs_id,
+                            pi_var_name =>l_prov_var_name);
+      when 'DATE' then
+        l_prov_var_date := flow_process_vars.get_var_date(
+                             pi_prcs_id => l_prov_prcs_id,
+                             pi_var_name =>l_prov_var_name);
+      when 'CLOB' then
+          l_prov_var_clob := flow_process_vars.get_var_clob(
+                               pi_prcs_id => l_prov_prcs_id,
+                               pi_var_name =>l_prov_var_name);
+    end case;
+    
+    apex_json.open_object;
+    apex_json.write( p_name => 'success', p_value => not apex_error.have_errors_occurred );
+    apex_json.write( p_name => 'vc2_value', p_value => l_prov_var_vc2);
+    apex_json.write( p_name => 'num_value', p_value => to_char(l_prov_var_num));
+    apex_json.write( p_name => 'date_value', p_value => to_char(l_prov_var_date, v('APP_DATE_TIME_FORMAT')));
+    apex_json.write( p_name => 'clob_value', p_value => l_prov_var_clob);
+    apex_json.close_all;
+    
+  end pass_variable;
+  
+  
+  procedure p8_prepare_url
+  as
+    l_url varchar2(2000);
+    l_dgrm_id flow_processes_vw.prcs_dgrm_id%type;
+begin
+    select prcs_dgrm_id 
+      into l_dgrm_id 
+      from flow_processes_vw 
+     where prcs_id = apex_application.g_x01;
+     
+    l_url := apex_page.get_url(
+        p_application => v('APP_ID'),
+        p_page => '13',
+        p_session => v('APP_SESSION'),
+        p_clear_cache => 'RP',
+        p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
+        p_values => l_dgrm_id || ',' || apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03
+    );
+    htp.p(l_url);
+  end p8_prepare_url;
+    
+  
+  function get_connection_select_option
+  return varchar2
+  as
+    l_select_option flow_instance_gateways_lov.select_option%type;
+  begin
+    with params as(
+           select v('P8_GATEWAY') p_gateway,
+                  v('P8_PRCS_ID') p_prcs_id
+             from dual)
+    select /*+ no_merge (p) */ select_option
+      into l_select_option
+      from flow_instance_gateways_lov
+      join params p
+        on objt_bpmn_id = p_gateway
+       and prcs_id = to_number(p_prcs_id);
+    return l_select_option;
+  end get_connection_select_option;
+
+
+  /* page 9 */
+
+
+  function get_logging_language
+  return varchar2 
+  as
+    l_logging_language varchar2(128 byte);
+  begin
+    l_logging_language := flow_engine_util.get_config_value(
+                            p_config_key => 'logging_language',
+                            p_default_value => flow_constants_pkg.gc_config_default_logging_language);
+    return l_logging_language;
+  end get_logging_language;
+
+
+  function get_logging_level
+  return varchar2
+  as
+    l_logging_level varchar2(128 byte);
+  begin
+    l_logging_level := flow_engine_util.get_config_value(
+                         p_config_key => 'logging_level',
+                         p_default_value => flow_constants_pkg.gc_config_default_logging_level);
+    return l_logging_level;
+  end get_logging_level;
+  
+
+  function get_hide_user
+  return varchar2
+  as
+    l_hide_user varchar2(128 byte);
+  begin
+    l_hide_user := flow_engine_util.get_config_value(
+                     p_config_key => 'logging_hide_userid',
+                     p_default_value => flow_constants_pkg.gc_config_default_logging_level);
+    return l_hide_user;
+  end get_hide_user;
+
+
+  function get_engine_app_mode
+  return varchar2
+  as
+    l_engine_app_mode varchar2(128 byte);
+  begin
+    l_engine_app_mode := flow_engine_util.get_config_value(
+                           p_config_key => 'engine_app_mode',
+                           p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode);
+    return l_engine_app_mode;
+  end get_engine_app_mode;
+  
+  
+  -- procedure set_settings
+  -- as
+  -- begin
+  --     flow_engine_util.set_config_value( p_config_key => 'logging_language', p_value => v('P9_LOGGING_LANGUAGE'));
+  --     flow_engine_util.set_config_value( p_config_key => 'logging_level', p_value => v('P9_LOGGING_LEVEL'));
+  --     flow_engine_util.set_config_value( p_config_key => 'logging_hide_userid', p_value => v('P9_LOGGING_HIDE_USERID'));
+  --     flow_engine_util.set_config_value( p_config_key => 'engine_app_mode', p_value => v('P9_ENGINE_APP_MODE'));
+  -- end;
+
+  /* page 10 */
+
+
+  procedure p10_prepare_url
+  as
+    l_url varchar2(2000 byte);
+    l_dgrm_id flow_processes_vw.prcs_dgrm_id%type;
+  begin
+    -- Initialize
+    select prcs_dgrm_id 
+      into l_dgrm_id 
+      from flow_processes_vw
+     where prcs_id = apex_application.g_x01;
+     
+    l_url := apex_page.get_url(
+               p_application => v('APP_ID'),
+               p_page => '13',
+               p_session => v('APP_SESSION'),
+               p_clear_cache => 'RP',
+               p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
+               p_values => l_dgrm_id || ',' || apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03);
+    htp.p(l_url);
+  end p10_prepare_url;
+
+
+  /* page 11 */
+
+
+  procedure create_instance 
+  as
+    l_prcs_id flow_processes_vw.prcs_id%type;
+    l_business_ref flow_process_variables_vw.prov_var_vc2%type;
+  begin
+    -- Initialize
+    l_business_ref := v('P11_BUSINESS_REF');
+    l_prcs_id := flow_api_pkg.flow_create( 
+                   pi_dgrm_id   => v('P11_DGRM_ID'),
+                   pi_prcs_name => v('P11_PRCS_NAME'));
+    
+    if l_business_ref is not null then
+      flow_process_vars.set_var( 
+        pi_prcs_id   => l_prcs_id,
+        pi_var_name  => 'BUSINESS_REF',
+        pi_vc2_value => l_business_ref);
+    end if;
+    apex_util.set_session_state('P11_PRCS_ID', l_prcs_id); 
+  end create_instance;
+
+
+  /* page 12 */
+
+
+  procedure p12_prepare_url
+  as
+    l_url varchar2(2000);
+    l_app number := v('APP_ID');
+    l_session number := v('APP_SESSION');
+  begin    
+    l_url := apex_util.prepare_url(
+               p_url => 'f?p=' || l_app || ':13:' || l_session ||'::NO:RP:P13_PRCS_ID,P13_OBJT_ID,P13_TITLE:'|| apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03,
+               p_checksum_type => 'SESSION');
+    htp.p(l_url);
+  end p12_prepare_url;
+  
+  
+  function get_prcs_name
+  return varchar2
+  as
+    l_prcs_name flow_instances_vw.prcs_name%type;
+  begin
+    select prcs_name 
+      into l_prcs_name
+      from flow_instances_vw 
+     where prcs_id = (select v('P12_PRCS_ID') from dual);
+    return l_prcs_name;
+  end get_prcs_name;
+  
+
+  /* page 13 */
+
+
+  function has_error(
+    pi_prcs_id in flow_subflows_vw.sbfl_prcs_id%type,
+    pi_objt_id in flow_subflows_vw.sbfl_current%type)
+  return boolean 
+  as
+    l_has_error binary_integer;
+  begin
+    select count(*)
+      into l_has_error
+      from flow_subflows_vw
+     where sbfl_prcs_id = pi_prcs_id 
+       and sbfl_current = pi_objt_id
+       and sbfl_status = 'error'
+       and exists (
+           select null
+             from FLOW_P0013_INSTANCE_LOG_VW
+            where lgpr_prcs_id = pi_prcs_id 
+              and lgpr_objt_id = pi_objt_id);
+              
+    return l_has_error = 1;
+  end has_error;
+
 
 end flow_engine_app_api;
 /
