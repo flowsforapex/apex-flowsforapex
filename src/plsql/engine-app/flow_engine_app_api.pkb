@@ -286,24 +286,21 @@ as
        and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
     return l_objt_list;
   end get_objt_list;
-       
 
-  function get_objt_sbfl_list(
-    p_prcs_id flow_processes_vw.prcs_id%type
+
+  function get_objt_list(
+    p_dgrm_id flow_diagrams_vw.dgrm_id%type
   ) return varchar2
   as
-    l_objt_sbfl_list varchar2(32767);
-  begin
-      select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
-        into l_objt_sbfl_list
-        from flow_objects_vw
-       where objt_dgrm_id = (
-             select prcs_dgrm_id 
-               from flow_processes_vw
-              where prcs_id = p_prcs_id)
-         and objt_tag_name = 'bpmn:subProcess';
-    return l_objt_sbfl_list;
-  end get_objt_sbfl_list;
+    l_objt_list varchar2(32767);
+  begin    
+    select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
+      into l_objt_list
+      from flow_objects_vw
+     where objt_dgrm_id = p_dgrm_id
+       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
+    return l_objt_list;
+  end get_objt_list;
   
   
   function get_objt_name(

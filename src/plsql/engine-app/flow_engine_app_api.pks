@@ -9,9 +9,11 @@ as
     p_prcs_id flow_processes_vw.prcs_id%type
   ) return varchar2;
 
-  function get_objt_sbfl_list(
-    p_prcs_id flow_processes_vw.prcs_id%type
+  
+  function get_objt_list(
+    p_dgrm_id flow_diagrams_vw.dgrm_id%type
   ) return varchar2;
+  
   
   function get_objt_name(
     p_objt_bpmn_id flow_objects_vw.objt_bpmn_id%type
