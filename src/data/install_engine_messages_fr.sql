@@ -330,35 +330,35 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-set-error',
 'fr',
-'Erreur XXXX  variable de processus %0 pour l''ID de processus %1.'
+'Erreur de création de la variable de processus %0 pour l''ID de processus %1.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-get-error',
 'en',
-'Erreur XXXX  variable de processus %0 pour l''ID de processus %1.'
+'Erreur de récupération de la variable de processus %0 pour l''ID de processus %1.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-update-error',
 'en',
-'Erreur XXXX  variable de processus %0 pour l''ID de processus %1.'
+'Erreur de mise à jour de la variable de processus %0 pour l''ID de processus %1.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-delete-error',
 'en',
-'Erreur XXXX  variable de processus %0 pour l''ID de processus %1.'
+'Erreur de suppression de la variable de processus %0 pour l''ID de processus %1.'
 );
  
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-lock-error',
 'en',
-'Erreur XXXX  variable de processus %0 pour l''ID de processus %1.'
+'Erreur de verrouillage de la variable de processus %0 pour l''ID de processus %1.'
 ); 
 
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
