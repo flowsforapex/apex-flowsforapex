@@ -25,8 +25,8 @@ Item Values contains a comma-separated list of values to be supplied.  The follo
   &F4A$ is required to be upper case.
   Note the trailing period '.'.
 - Flows for APEX Pseudo Variables.
-  The current Process ID and Subflow ID are also available as pseudo variables.
-  These are specified as `&F4A$PROCESS_ID.` and `&F4A$SUBFLOW_ID.` respectively.
+  The current Process ID, Subflow ID and Step Key for the current task are also available as pseudo variables.
+  These are specified as `&F4A$PROCESS_ID.` , `&F4A$SUBFLOW_ID.` and `&F4A$STEP_KEY.` respectively.
 
 Note that you will need to pass the Process_ID and Subflow_ID to a page if you want the page to initiate a flow_step_complete when it is processed.
 
@@ -42,10 +42,11 @@ Process variables and pseudo variables are available inside your PL/SQL procedur
   Process variables can be retrieved and used inside your procedure, using the flow_process_vars setters and getters.
 - Flows for APEX Pseudo Variables.
   Process ID and Subflow ID are available inside your procedure using following function calls
-  
+
   ```sql
   flow_global.process_id
   flow_global.subflow_id
+  flow_global.step_key
   ```
 
 In earlier versions of Flows for APEX, prior to v21.1, you could have done this using the syntax flow_plsql_runner_pkg.g_current_prcs_id, which is now deprecated.
@@ -68,4 +69,3 @@ Currently serviceTask is used to send email using the same mechanism as scriptTa
 ###### 5. bpmn:manualTasks - for non-IT tasks
 
 manualTasks do not currently have any special functionality and currently behave like a standard bpmn:task objects.
-

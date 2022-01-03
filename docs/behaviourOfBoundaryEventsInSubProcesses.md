@@ -38,7 +38,7 @@ Behavior is:
 Timer Boundary Events can be *interrupting* or *non-interrupting*.
 
 - An *interrupting timer boundary event* can be used to create a "timeout" after a specified time period or at a specified time.  When the timer fires at the specified time, processing of the sub-process and any child sub-processes is interrupted.  The parent subflow continues along the route forward from the interrupting timer boundary event.  You can only have one interrupting timer boundary event attached to an object.
-- A *non-interrupting timer boundary event* can be used to create a reminder after the process step has been started for a specified time period, or at a specified time.  When the timer fires, processing of the parent task continues.  In addition, a new subflow processes tasks on the reminder route.  You can have one or more interrupting timer boundary events attached to an object, firing at different times or triggering different process tasks.
+- A *non-interrupting timer boundary event* can be used to create a reminder after the process step has been started for a specified time period, or at a specified time.  When the timer fires, processing of the parent task continues.  In addition, a new subflow processes tasks on the reminder route.  You can have one or more interrupting timer boundary events attached to an object, firing at different times or triggering different process tasks.  These can also be defined as Cycle Timers, where they repeat at a defined interval, for example, to send a reminder every week to a user for an overdue task.
 
 A more complex example of how these can be used together is shown below.
 

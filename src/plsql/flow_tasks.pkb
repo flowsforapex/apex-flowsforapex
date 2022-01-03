@@ -149,9 +149,10 @@ as
     );
     
     flow_plsql_runner_pkg.run_task_script(
-      pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-    , pi_sbfl_id => p_sbfl_info.sbfl_id
-    , pi_objt_id => p_step_info.target_objt_id
+      pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
+    , pi_sbfl_id  => p_sbfl_info.sbfl_id
+    , pi_objt_id  => p_step_info.target_objt_id
+    , pi_step_key => p_sbfl_info.sbfl_step_key
     );
 
     flow_engine.flow_complete_step 
@@ -189,7 +190,7 @@ as
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: ScriptTask %1 requested processing stop - see event log.'
   end process_scriptTask;
 
-  procedure process_serviceTask --- note NOT CURRENTLY BEING USED FOR SERVICETASKS - USING process_scriptTask
+  procedure process_serviceTask 
   ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
@@ -199,7 +200,7 @@ as
     ( 'process_serviceTask'
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
-    -- current implementation is limited to one serviceTask type, which is for apex message template sent from user defined PL/SQL script
+  
     -- future serviceTask types could include text message, tweet, AOP document via email, etc.
     -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).
     -- future implementations could include async serviceTask, where message generation is queued, or non-email services
@@ -214,9 +215,10 @@ as
     case get_task_type( p_step_info.target_objt_id )
       when flow_constants_pkg.gc_apex_task_execute_plsql then
         flow_plsql_runner_pkg.run_task_script
-        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id => p_sbfl_info.sbfl_id
-        , pi_objt_id => p_step_info.target_objt_id
+        ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
+        , pi_sbfl_id  => p_sbfl_info.sbfl_id
+        , pi_objt_id  => p_step_info.target_objt_id
+        , pi_step_key => p_sbfl_info.sbfl_step_key
         );
       when flow_constants_pkg.gc_apex_servicetask_send_mail then
         flow_services.send_email

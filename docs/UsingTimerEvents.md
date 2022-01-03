@@ -8,20 +8,22 @@ Timers are currently supported on the following event objects:
 
 - Start Event - Timer controls when the process starts.
 - Intermediate Catch Event - the timer delays the process flow and controls when the process moves on to the next event.
-- Timer Boundary Events - interrupting and non-interrupting timer boundary events can be set on tasks, userTask, and subProcess objects to implement reminder, timeout, and period closing processes.  Non-interrupting timer boundary events can fire repetitively. 🆕
+- Timer Boundary Events - interrupting and non-interrupting timer boundary events can be set on tasks, userTask, and subProcess objects to implement reminder, timeout, and period closing processes.  Non-interrupting timer boundary events can fire repetitively to create repeating reminders. 🆕
 - Event Based Gateway.  Timers can be used following an Event Based Gateway.  The Event Based Gateway choses which single path is taken, based on which Event occurs first.
 
 When using timers, the properties viewer window is used to specify the timer type and details.[](#)
 
-The Timer sub-system requires additional database privileges and configuration, so you might need to configure your timer sub-system and check that it is working correctly if you have not used timers before on your system.  Timers use the Oracle DBMS_SCHEDULER mechanism, and initial Flows for APEX set-up requires privilege to create a Job and a Process.
+Initial setup of the Timer sub-system requires additional database privileges and configuration, so you might need to configure your timer sub-system and check that it is working correctly if you have not used timers before on your system.  Timers use the Oracle DBMS_SCHEDULER mechanism, and initial Flows for APEX set-up requires privilege to create a Job and a Process.  Operation of timers inside a business process does not require users to have these privileges.
 
-From v21.2, timers can be specified in ISO 8601 format or in Oracle format. 🆕
+From v22.1, timers can be specified in ISO 8601 format or in Oracle date and interval formats.  [Details of the syntax and substitutions allowed are shown here](specifyingTimers.md).🆕
 
 ## Timer Start Event
 
 The Timer Start Event allows a process start to be delayed so that it occurs at a particular date & time, after a delay, or on a regular scheduled basis.
 
 ![Simple Timer Event Start](images/simpleStartTimer.png "Simple Timer Start Event")
+
+If you want to start a regular, repeating start event -- for example, a process that runs every week to generate a sales report -- you should use APEX automations to create a regular event, and have the Automation start a process instance by calling `flow_api_pkg.create_process()`.
 
 ## Timer Intermediate Catch Event
 
@@ -31,19 +33,21 @@ A Timer Intermediate Catch Event will cause the sequence flow to wait until the 
 
 ## Interrupting Timer Boundary Event
 
-These can be set on a task, a userTask, or a subProcess.  When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task is terminated, and the timer boundary event becomes the current object.  It performs a task_complete on the boundary event, moving the process on to the next step.
+These can be set on a task, a userTask, a manualTask, or a subProcess.
+When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task is terminated, and the timer boundary event becomes the current object.  It performs a task_complete on the boundary event, moving the process on to the next step.
 These are used to perform a business process timeout -- the usual forward path is suspended, and replaced by the timeout process path.  This can also be used to move a process on after a period closes or a review period has completed.
-Only one interrupting timer can be set on a single object.
+Only one interrupting timer can be set on each object.
 In the example below, task C has an attached interrupting timer.  If task C is completed before the timer fires, the timer is removed.  If the timer fires before C has completed, processing switches from the normal path and instead continues with C Timeout as the next task.
 
 ![Timer Boundary Events](images/timerBoundaryEvents.png "Timer Boundary Events")
 
 ## Non Interrupting Timer Boundary Events
 
-These can be set on a task, a userTask, or a subProcess.  When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task continues, and a new subflow starts to operate in parallel to execute the 'reminder' path.  The new 'reminder path' performs a task_complete on the boundary event, moving the process on to the first task on that path.
+These can be set on a task, a userTask, a manualTask, or a subProcess.
+When this object becomes the current task, a timer is started.  If the object is still the current object when the timer fires because it has not yet been completed, the underlying task continues, and a new subflow starts to operate in parallel to execute the 'reminder' path.  The new 'reminder path' performs a task_complete on the boundary event, moving the process on to the first task on that path.
 Non-Interrupting Timer Boundary Events are used to implement reminder processes, or to start time-delayed parallel process paths.  If the underlying task completes before the timer fires, the 'reminder path' timer and associated subflow are deleted.
 Non-Interupting Timer Boundary Events can be configured to fire repetitively, either indefinitely or limited to a specified maximum number of repetitions / cycles.
-Multiple non-interrupting timer events can be set on a single task, userTask, or subProcess.
+Multiple non-interrupting timer events can be set on a single task, userTask, manualTask, or subProcess.
 In the example above, task A has one non-interrupting boundary timer attached to it.  If task A is not completed in the given 20 seconds, the timer fires - which starts task 'A Reminder' on a parallel subflow to the main subflow.
 
 ## Event Based Gateway with Timer
@@ -67,69 +71,3 @@ The timer subsystem requires the parsing schema to have been granted the CREATE 
 In addition, the schema needs to set up a program and a job in the DBMS_SCHEDULER system.
 
 For details, please see the setup file included with the Flows for APEX distribution at /setup/DBMS_SCHEDULER_setup_for_timers.sql.
-
-## Timer Syntax
-
-To define a Timer Event, first drag the Event onto your new process canvas.   Select the 'Change Type' spanner icon on the pop-up menu, and select Timer version of that from the menu.  To then specify the Timer Configuration, use the Properties Panel on the right of the screen.
-
-Timer definitions can be specified in the properties panel as a literal value, or can be specified using a process variable substitution.  Timers can be specified using ISO 8601 syntax, or using more familiar Oracle syntax.
-
-Under Timer, select the type of timer you want.  There are separate options for ISO 8601 and Oracle format time rspecifications.
-
-### ISO Syntax
-
-Under Timer Definition, use the ISO 8601 format for the required time or interval, as below.  A good overview to ISO 8601 date/time format strings can be [found on Wikipedia.](https://en.wikipedia.com/wiki/ISO_8601)
-
-- ISO 8601 Date:  specifies a specific date and time for the process to start.  Date/Time components are listed from broader to more specific, with date components separated by dash ('-') characters, time components separated by colon (':') characters, and an upper-case 'T' character  separating the date from the time components.
-  
-  - Some examples:
-  
-  ```
-  2007-04-05T14:30
-  2021-11-23T07:15:23
-  ```
-
-
-
-```
-You can also specify a date value by creating a Flows for APEX process variable of data datatype, and substituting that.  See below for syntax.
-- Duration:  specifies a delay from the current time or the process to start, using an [ISO 8601 duration](https://en.wikipedia.com/wiki/ISO_8601#Durations) string.  For example:
-```
-
-P3Y6M4DT12H30M5S" represents a duration of "three years, six months, four days, twelve hours, thirty minutes, and five seconds".
-P3M represents 3 months.
-PT5M represents 5 minutes.
-PT30S represents 30 seconds.
-
-```
-- Cycle Timer: specifies the date/time for an initial run and then defined intervals for repetition.  **__Although they can be specified in the Flow Modeler, Cycle Timers are not currently supported in Flows for APEX.__**
-
-To start a process repetitively, use APEX Automations.
-```
-
-```
-
-```
-
-![Timer Event Start](images/timerStartEvent.png "Timer Start Event")
-
-## Substituting Process Variables into Timer Definitions
-
-Starting in V5 (5.0.1), the timer definition defined in your process diagram can be a Flows for APEX process variable.  This provides considerable process flexibility, especially with Date type timers.
-
-To specify a process variable in the BPMN Modeler - Properties Panel, you specify the variable with &F4A$ prefix and a period (.) suffix.  So the process variable
-
-```
-my_timer    could be specified as &F4A$my_timer.
-```
-
-For a Timer Definition Type 'Date', the process variable should be of type DATE.
-
-For a Timer Definition Type of 'Duration' or 'Cycle', the process variable should be of type VARCHAR2.
-
-In the following example, a scriptTask is used to calculate a process variable, `nextClosePlus2D`, which contains the date of the company's next financial close plus 2 days.  This variable is then used to set an Intermediate Timer Catch Event.  The Timer on this event is set to fire at `nextClosePlus2D`.  You can see how this has been specified on the Timer Definition, using the Flows for APEX process variable substitution syntax.
-
-![Using Process Variables in Timer Event](images/usingProcessVarsInTimerDefs.png "Using Process Variables for Timer Event")
-
-Just to keep the example going, our Review process, which is triggered by the Intermediate Timer Catch Event, itself has a non-interrupting timer boundary event set on it.  This acts as a reminder, and is set to fire after a Duration has elapsed after the Review Event became the current task in the process.  This has also been specified using a substitution variable - this time using the variable `managerReminderPeriod`.  If this was, say, 2 days, the process variable `managerReminderPeriod` would be a `varchar2` variable having the value `P2D`.
-

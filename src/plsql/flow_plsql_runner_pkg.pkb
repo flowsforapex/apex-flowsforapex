@@ -51,9 +51,10 @@ as
 
   procedure run_task_script
   (
-    pi_prcs_id in flow_processes.prcs_id%type
-  , pi_sbfl_id in flow_subflows.sbfl_id%type
-  , pi_objt_id in flow_objects.objt_id%type
+    pi_prcs_id  in flow_processes.prcs_id%type
+  , pi_sbfl_id  in flow_subflows.sbfl_id%type
+  , pi_objt_id  in flow_objects.objt_id%type
+  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   )
   as
     l_use_apex_exec boolean := false;
@@ -67,10 +68,10 @@ as
     , 'pi_objt_id', pi_objt_id
     );
 
-    --init_globals( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id );
     flow_globals.set_context 
-    ( pi_prcs_id => pi_prcs_id
-    , pi_sbfl_id => pi_sbfl_id 
+    ( pi_prcs_id  => pi_prcs_id
+    , pi_sbfl_id  => pi_sbfl_id 
+    , pi_step_key => pi_step_key
     );
 
     for rec in ( select obat.obat_key
