@@ -32,8 +32,8 @@ Item Values contains a comma-separated list of values to be supplied.  The follo
   &F4A$ is required to be upper case.
   Note the trailing period '.'.
 - Flows for APEX Pseudo Variables.
-  The current Process ID, Subflow ID, and Step Key are also available as pseudo variables.
-  These are specified as `&F4A$PROCESS_ID.` , `&F4A$SUBFLOW_ID.`  and `&F4A$STEP_KEY.`  respectively.
+  The current Process ID, Subflow ID and Step Key for the current task are also available as pseudo variables.
+  These are specified as `&F4A$PROCESS_ID.` , `&F4A$SUBFLOW_ID.` and `&F4A$STEP_KEY.` respectively.
 
 Note that you will need to pass the Process_ID, Subflow_ID, and Step Key to a page as its context.  The page will need these step the process forward when it is finished, using a flow_step_complete call.
 

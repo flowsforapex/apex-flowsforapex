@@ -332,9 +332,37 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-set-error',
 'en',
-'Error %0 process variable %1 for process id %2.'
+'Error creating process variable %0 for process id %1.'
 );
  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-get-error',
+'en',
+'Error getting process variable %0 for process id %1.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-update-error',
+'en',
+'Error updating process variable %0 for process id %1.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-delete-error',
+'en',
+'Error deleting process variable %0 for process id %1.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-lock-error',
+'en',
+'Error locking process variable %0 for process id %1.'
+);
+
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var_exp_datatype',

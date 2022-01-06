@@ -1,4 +1,4 @@
-PROMPT >> Loading Exported Messages
+bhnuyPROMPT >> Loading Exported Messages
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'ITE-unsupported-type',
@@ -330,9 +330,37 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var-set-error',
 'fr',
-'Erreur %0 variable de processus %1 pour l''ID de processus %2.'
+'Erreur de création de la variable de processus %0 pour l''ID de processus %1.'
 );
  
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-get-error',
+'en',
+'Erreur de récupération de la variable de processus %0 pour l''ID de processus %1.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-update-error',
+'en',
+'Erreur de mise à jour de la variable de processus %0 pour l''ID de processus %1.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-delete-error',
+'en',
+'Erreur de suppression de la variable de processus %0 pour l''ID de processus %1.'
+);
+ 
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'var-lock-error',
+'en',
+'Erreur de verrouillage de la variable de processus %0 pour l''ID de processus %1.'
+); 
+
 insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
  values (
 'var_exp_datatype',

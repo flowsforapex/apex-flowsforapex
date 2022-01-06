@@ -200,8 +200,9 @@ as
   is 
   begin 
     flow_globals.set_context
-    ( pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
+    ( pi_prcs_id  => p_process_id
+    , pi_sbfl_id  => p_subflow_id
+    , pi_step_key => p_step_key
     );
     flow_engine.restart_step
     ( p_process_id => p_process_id
@@ -220,8 +221,9 @@ as
   is 
   begin
     flow_globals.set_context
-    ( pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
+    ( pi_prcs_id  => p_process_id
+    , pi_sbfl_id  => p_subflow_id
+    , pi_step_key => p_step_key
     );
     flow_engine.flow_complete_step
     ( p_process_id => p_process_id

@@ -45,6 +45,7 @@ The diagram below gives a full definition of the BPMN syntax supported in the cu
 - [The Flows for APEX PL/SQL API](FlowsforAPEX_PLSQL_API.md)
 - [The Process Variable System](processVariables.md)
 - [Declarative Process Variable Expressions](variableExpressions.md)🆕
+- [Syntax and Allowed Substitutions for Timer Specifications](specifyingTimers.md)🆕
 - [Event Logging and Audit Trail](eventLoggingAndAuditing.md)🆕
 - [Flows for APEX Configuration Parameters](configurationParameters.md)🆕
 

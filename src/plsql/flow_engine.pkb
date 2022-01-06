@@ -805,8 +805,9 @@ begin
   l_dgrm_id := flow_engine_util.get_dgrm_id (p_prcs_id => p_process_id);
   -- set context for scripts and variable expressions
   flow_globals.set_context
-  ( pi_prcs_id => p_process_id
-  , pi_sbfl_id => p_subflow_id
+  ( pi_prcs_id  => p_process_id
+  , pi_sbfl_id  => p_subflow_id
+  , pi_step_key => p_step_key
   );
   flow_globals.set_is_recursive_step (p_is_recursive_step => true);
   -- initialise step_had_error flag
