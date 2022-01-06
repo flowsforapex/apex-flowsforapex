@@ -22,7 +22,9 @@ as
   procedure set_viewport(
     p_display_setting in varchar2);
 
-  procedure add_viewport_script;
+  procedure add_viewport_script(
+    p_item in varchar2
+  );
 
   /* page 2 */
 

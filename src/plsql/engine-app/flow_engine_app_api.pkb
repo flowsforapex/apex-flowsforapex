@@ -325,17 +325,19 @@ as
   end set_viewport;
     
     
-  procedure add_viewport_script
+  procedure add_viewport_script(
+    p_item in varchar2
+  )
   as
     l_script varchar2(4000 byte);
     l_display_setting varchar2(20 byte);
   begin
     -- Initialize
     l_display_setting := coalesce(apex_util.get_preference('VIEWPORT'),'row');
-    apex_util.set_session_state('P8_DISPLAY_SETTING', l_display_setting);
+    apex_util.set_session_state(p_item, l_display_setting);
     
     -- Set IDs for the the row divs
-    l_script := q'#apex.jQuery("#flow-reports").parent().attr("id","col1");
+    l_script := q'#apex.jQuery("#flow-instances").parent().attr("id","col1");
                  apex.jQuery("#flow-monitor").parent().attr("id","col2");#';
     
     apex_javascript.add_onload_code(
