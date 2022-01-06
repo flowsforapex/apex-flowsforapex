@@ -5,7 +5,7 @@ PROMPT >> Database Objects Installation
 PROMPT >> =============================
 
 PROMPT >> Installing Tables
-ddl/install_scratch.sql
+@ddl/install_scratch.sql
 
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
