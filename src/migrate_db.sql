@@ -31,6 +31,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_process_vars.pks
 @plsql/flow_expressions.pks
 @plsql/flow_usertask_pkg.pks
+@plsql/flow_services.pks
 @plsql/flow_plsql_runner_pkg.pks
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
@@ -65,6 +66,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_bpmn_parser_pkg.pkb
 @plsql/flow_timers_pkg.pkb
 @plsql/flow_usertask_pkg.pkb
+@plsql/flow_services.pkb
 @plsql/flow_plsql_runner_pkg.pkb
 @plsql/flow_logging.pkb
 @plsql/flow_globals.pkb
