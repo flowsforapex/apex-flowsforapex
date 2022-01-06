@@ -1,13 +1,6 @@
 create or replace package body flow_engine_app_api
 as
 
-  subtype max_sql_char is varchar2(4000 byte);
-  subtype ora_name_type is varchar2(128 byte);
-
-  C_ITEM_DGRM_ID constant  ora_name_type := 'P2_DGRM_ID';
-  C_ITEM_DGRM_NAME constant  ora_name_type := 'P2_NEW_NAME';
-  C_ITEM_DGRM_VERSION constant  ora_name_type := 'P2_NEW_VERSION';
-
   procedure handle_ajax
   as 
     l_error_occured boolean := false;
@@ -392,17 +385,17 @@ as
   end check_flow_exists;
   
 
-  function validate_flow_exists_bulk
-  return varchar2 
+  function validate_flow_exists_bulk(
+    pi_dgrm_id_list in varchar2
+  , pi_new_version in flow_diagrams_vw.dgrm_version%type
+  ) return varchar2 
   as
-    l_err max_sql_char;
+    l_err varchar2(4000 byte);
     l_flows apex_t_varchar2;
     l_dgrm_name flow_diagrams_vw.dgrm_name%type;
-    l_new_version flow_diagrams_vw.dgrm_version%type;
   begin
     -- Initialize
-    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
-    l_new_version := v(C_ITEM_DGRM_VERSION);
+    l_flows := apex_string.split(pi_dgrm_id_list, ':');
     
     for i in 1 .. l_flows.count loop
   
@@ -411,11 +404,11 @@ as
         from flow_diagrams_vw
        where dgrm_id = l_flows(i);
 
-      if check_flow_exists(l_dgrm_name, l_new_version) then
+      if check_flow_exists(l_dgrm_name, pi_new_version) then
         l_err := apex_lang.message(
                    p_name => 'APP_ERR_MODEL_EXIST',
                    p0 => l_dgrm_name,
-                   p1 => l_new_version);
+                   p1 => pi_new_version);
       end if;
       exit when l_err is not null;
     end loop;
@@ -423,54 +416,53 @@ as
   end validate_flow_exists_bulk;
 
 
-  function validate_flow_exists
-  return varchar2 
+  function validate_flow_exists(
+    pi_dgrm_id in flow_diagrams.dgrm_id%type
+  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  ) return varchar2 
   as
-    l_err max_sql_char;
+    l_err varchar2(4000 byte);
     l_dgrm_name flow_diagrams_vw.dgrm_name%type;
-    l_new_version flow_diagrams_vw.dgrm_version%type;
   begin
-    -- Initialize
-    l_new_version := v(C_ITEM_DGRM_VERSION);
   
     select dgrm_name
       into l_dgrm_name
       from flow_diagrams_vw
-     where dgrm_id = (select v(C_ITEM_DGRM_ID) from dual);
+     where dgrm_id = pi_dgrm_id;
     
-    if check_flow_exists(l_dgrm_name, l_new_version) then
+    if check_flow_exists(l_dgrm_name, pi_new_version) then
       l_err := apex_lang.message(
                  p_name => 'APP_ERR_MODEL_EXIST',
                  p0 => l_dgrm_name,
-                 p1 => l_new_version);
+                 p1 => pi_new_version);
     end if;
     return l_err;
   end validate_flow_exists;
   
   
-  function validate_flow_copy_bulk
-  return varchar2 
+  function validate_flow_copy_bulk(
+    pi_dgrm_id_list in varchar2
+  , pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  ) return varchar2 
   as
-    l_err max_sql_char;
+    l_err varchar2(4000 byte);
     l_flows apex_t_varchar2;
     l_dgrm_name flow_diagrams_vw.dgrm_name%type;
-    l_new_name flow_diagrams_vw.dgrm_name%type;
   begin
     -- Initialize
-    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
-    l_new_name := v(C_ITEM_DGRM_NAME);
+    l_flows := apex_string.split(pi_dgrm_id_list, ':');
     
     for i in 1 .. l_flows.count loop
   
-      select dgrm_name|| ' - ' || l_new_name
-        into l_new_name
+      select dgrm_name|| ' - ' || pi_new_name
+        into l_dgrm_name
         from flow_diagrams_vw 
        where dgrm_id = l_flows(i);
 
       if check_flow_exists(l_dgrm_name, '0') then
         l_err := apex_lang.message(
                    p_name => 'APP_ERR_MODEL_EXIST',
-                   p0 => l_new_name,
+                   p0 => pi_new_name,
                    p1 => '0');
       end if;
       exit when l_err is not null;
@@ -479,19 +471,16 @@ as
   end validate_flow_copy_bulk;
   
   
-  function validate_flow_copy
-  return varchar2 
+  function validate_flow_copy(
+    pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  ) return varchar2 
   as
-    l_err varchar2(4000);   
-    l_new_name flow_diagrams_vw.dgrm_version%type;
+    l_err varchar2(4000);
   begin
-    -- Initialize
-    l_new_name := v(C_ITEM_DGRM_NAME);
-    
-    if check_flow_exists(l_new_name, '0') then
+    if check_flow_exists(pi_new_name, '0') then
       l_err := apex_lang.message(
                  p_name => 'APP_ERR_MODEL_EXIST',
-                 p0 => l_new_name,
+                 p0 => pi_new_name,
                  p1 => '0');
     end if;
     return l_err;
@@ -510,16 +499,17 @@ as
   end;
 
   
-  procedure add_new_version
+  procedure add_new_version(
+    pi_dgrm_id_list in varchar2
+  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  )
   as
     r_diagrams flow_diagrams_vw%rowtype;
     l_flows apex_t_varchar2;
     l_dgrm_id flow_diagrams_vw.dgrm_id%type;
-    l_new_version flow_diagrams_vw.dgrm_version%type;
   begin
     -- Initialize
-    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
-    l_new_version := v(C_ITEM_DGRM_VERSION);
+    l_flows := apex_string.split(pi_dgrm_id_list, ':');
     
     for i in 1 .. l_flows.count loop
       select * 
@@ -529,7 +519,7 @@ as
 
       l_dgrm_id := flow_diagram.import_diagram(
         pi_dgrm_name => r_diagrams.dgrm_name,
-        pi_dgrm_version => l_new_version,
+        pi_dgrm_version => pi_new_version,
         pi_dgrm_category => r_diagrams.dgrm_category,
         pi_dgrm_content => r_diagrams.dgrm_content);
     end loop;
@@ -537,16 +527,17 @@ as
   end add_new_version;
   
   
-  procedure copy_model
+  procedure copy_model(
+    pi_dgrm_id_list in varchar2
+  , pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  )
   as
     l_flows apex_t_varchar2;
     l_dgrm_id flow_diagrams_vw.dgrm_id%type;
     r_diagrams flow_diagrams_vw%rowtype;
-    l_new_name flow_diagrams_vw.dgrm_version%type;
   begin
     -- Initialize
-    l_new_name := v(C_ITEM_DGRM_NAME);
-    l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
+    l_flows := apex_string.split(pi_dgrm_id_list, ':');
     
     for i in 1 .. l_flows.count loop
       select * 
@@ -555,7 +546,7 @@ as
        where dgrm_id = l_flows(i);
 
       l_dgrm_id := flow_diagram.import_diagram(
-        pi_dgrm_name => case when l_flows.count() > 1 then r_diagrams.dgrm_name || ' - ' end || l_new_name,
+        pi_dgrm_name => case when l_flows.count() > 1 then r_diagrams.dgrm_name || ' - ' end || pi_new_name,
         pi_dgrm_version => '0',
         pi_dgrm_category => r_diagrams.dgrm_category,
         pi_dgrm_content => r_diagrams.dgrm_content);

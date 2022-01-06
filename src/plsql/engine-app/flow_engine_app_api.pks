@@ -28,29 +28,36 @@ as
 
   /* page 2 */
 
-  function validate_flow_exists_bulk
-    return varchar2;
+  function validate_flow_exists_bulk(
+    pi_dgrm_id_list in varchar2
+  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  ) return varchar2;
 
-
-  function validate_flow_exists
-    return varchar2;
+  function validate_flow_exists(
+    pi_dgrm_id in flow_diagrams.dgrm_id%type
+  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  ) return varchar2;
     
-  
-  function validate_flow_copy_bulk
-  return varchar2;
-  
+  function validate_flow_copy_bulk(
+    pi_dgrm_id_list in varchar2
+  , pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  ) return varchar2;
     
-  function validate_flow_copy
-  return varchar2;
-
+  function validate_flow_copy(
+    pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  ) return varchar2;
 
   procedure copy_selection_to_collection;
 
-
-  procedure add_new_version;
+  procedure add_new_version(
+    pi_dgrm_id_list in varchar2
+  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  );
   
-  
-  procedure copy_model;
+  procedure copy_model(
+    pi_dgrm_id_list in varchar2
+  , pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  );
 
   /* page 4 */
 
