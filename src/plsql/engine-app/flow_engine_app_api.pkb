@@ -453,7 +453,6 @@ as
     l_flows apex_t_varchar2;
     l_dgrm_name flow_diagrams_vw.dgrm_name%type;
     l_new_name flow_diagrams_vw.dgrm_name%type;
-    l_new_version flow_diagrams_vw.dgrm_version%type;
   begin
     -- Initialize
     l_flows := apex_string.split(v(C_ITEM_DGRM_ID), ':');
@@ -461,8 +460,8 @@ as
     
     for i in 1 .. l_flows.count loop
   
-      select dgrm_name|| ' - ' || l_new_name, dgrm_version
-        into l_new_name, l_new_version
+      select dgrm_name|| ' - ' || l_new_name
+        into l_new_name
         from flow_diagrams_vw 
        where dgrm_id = l_flows(i);
 
@@ -470,7 +469,7 @@ as
         l_err := apex_lang.message(
                    p_name => 'APP_ERR_MODEL_EXIST',
                    p0 => l_new_name,
-                   p1 => l_new_version);
+                   p1 => '0');
       end if;
       exit when l_err is not null;
     end loop;
@@ -481,8 +480,7 @@ as
   function validate_flow_copy
   return varchar2 
   as
-    l_err varchar2(4000);
-    l_version_exists number;    
+    l_err varchar2(4000);   
     l_new_name flow_diagrams_vw.dgrm_version%type;
   begin
     -- Initialize
@@ -596,7 +594,7 @@ as
   ) 
   return varchar2
   is
-    l_file_name      varchar2(300 char);
+    l_file_name        varchar2(300 char);
     l_dgrm_name        flow_diagrams_vw.dgrm_name%type;
     l_dgrm_version     flow_diagrams_vw.dgrm_version%type;
     l_dgrm_status      flow_diagrams_vw.dgrm_status%type;
@@ -1293,64 +1291,18 @@ begin
 
 
   /* page 9 */
-
-
-  function get_logging_language
-  return varchar2 
-  as
-    l_logging_language varchar2(128 byte);
-  begin
-    l_logging_language := flow_engine_util.get_config_value(
-                            p_config_key => 'logging_language',
-                            p_default_value => flow_constants_pkg.gc_config_default_logging_language);
-    return l_logging_language;
-  end get_logging_language;
-
-
-  function get_logging_level
-  return varchar2
-  as
-    l_logging_level varchar2(128 byte);
-  begin
-    l_logging_level := flow_engine_util.get_config_value(
-                         p_config_key => 'logging_level',
-                         p_default_value => flow_constants_pkg.gc_config_default_logging_level);
-    return l_logging_level;
-  end get_logging_level;
   
 
-  function get_hide_user
-  return varchar2
+  procedure set_settings
   as
-    l_hide_user varchar2(128 byte);
   begin
-    l_hide_user := flow_engine_util.get_config_value(
-                     p_config_key => 'logging_hide_userid',
-                     p_default_value => flow_constants_pkg.gc_config_default_logging_level);
-    return l_hide_user;
-  end get_hide_user;
+      flow_engine_util.set_config_value( p_config_key => 'logging_language', p_value => v('P9_LOGGING_LANGUAGE'));
+      flow_engine_util.set_config_value( p_config_key => 'logging_level', p_value => v('P9_LOGGING_LEVEL'));
+      flow_engine_util.set_config_value( p_config_key => 'logging_hide_userid', p_value => v('P9_LOGGING_HIDE_USERID'));
+      flow_engine_util.set_config_value( p_config_key => 'engine_app_mode', p_value => v('P9_ENGINE_APP_MODE'));
+      flow_engine_util.set_config_value( p_config_key => 'duplicate_step_prevention', p_value => v('P9_DUPLICATE_STEP_PREVENTION'));
+  end;
 
-
-  function get_engine_app_mode
-  return varchar2
-  as
-    l_engine_app_mode varchar2(128 byte);
-  begin
-    l_engine_app_mode := flow_engine_util.get_config_value(
-                           p_config_key => 'engine_app_mode',
-                           p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode);
-    return l_engine_app_mode;
-  end get_engine_app_mode;
-  
-  
-  -- procedure set_settings
-  -- as
-  -- begin
-  --     flow_engine_util.set_config_value( p_config_key => 'logging_language', p_value => v('P9_LOGGING_LANGUAGE'));
-  --     flow_engine_util.set_config_value( p_config_key => 'logging_level', p_value => v('P9_LOGGING_LEVEL'));
-  --     flow_engine_util.set_config_value( p_config_key => 'logging_hide_userid', p_value => v('P9_LOGGING_HIDE_USERID'));
-  --     flow_engine_util.set_config_value( p_config_key => 'engine_app_mode', p_value => v('P9_ENGINE_APP_MODE'));
-  -- end;
 
   /* page 10 */
 

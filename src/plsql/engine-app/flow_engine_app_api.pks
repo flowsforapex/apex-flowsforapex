@@ -154,20 +154,7 @@ as
 
   /* page 9 */
 
-  function get_logging_language
-  return varchar2;
-
-
-  function get_logging_level
-  return varchar2;
-  
-
-  function get_hide_user
-  return varchar2;
-
-
-  function get_engine_app_mode
-  return varchar2;
+  procedure set_settings;
 
   /* page 10 */  
     
