@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220107125329'
+,p_last_upd_yyyymmddhh24miss=>'20220107153141'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -290,7 +290,7 @@ wwv_flow_api.create_page_validation(
 ,p_validation=>'return flow_engine_app_api.is_file_uploaded(pi_file_name => :P6_FILE);'
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please select a #LABEL#.'
-,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MULTIPLE_FILES = ''multi'''
+,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MODE = ''multi'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(19018652597332904)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
@@ -307,7 +307,7 @@ wwv_flow_api.create_page_validation(
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please check the flow provided.'
-,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''single'''
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MODE = ''single'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
@@ -320,7 +320,7 @@ wwv_flow_api.create_page_validation(
 '        pi_file_name => :P6_FILE',
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
-,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''multi'''
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MODE = ''multi'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
