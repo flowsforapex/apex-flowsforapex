@@ -1103,21 +1103,12 @@ as
   ) return varchar2
   as
     l_err varchar2(4000);
-    l_version_exists number;
   begin
     
     if (pi_dgrm_version is null) then
         l_err := apex_lang.message(p_name => 'APEX.PAGE_ITEM_IS_REQUIRED'); --'#LABEL# must have a value';
-    else
-      select count(*)
-        into l_version_exists
-        from flow_diagrams_vw
-       where dgrm_name = pi_dgrm_name
-         and dgrm_version = pi_dgrm_version;
-        
-      if (l_version_exists > 0) then
+    elsif check_flow_exists(pi_dgrm_name, pi_dgrm_version) then
         l_err := apex_lang.message(p_name => 'APP_ERR_MODEL_VERSION_EXIST');
-      end if;
     end if;
     return l_err;
   end validate_new_version;
