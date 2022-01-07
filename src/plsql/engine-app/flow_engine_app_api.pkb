@@ -362,6 +362,52 @@ as
   end add_viewport_script;
 
 
+  procedure p13_get_url(
+    pi_dgrm_id flow_diagrams.dgrm_id%type
+  , pi_objt_id varchar2
+  , pi_title varchar2
+  )
+  as
+    l_url varchar2(2000);
+  begin
+    l_url := apex_page.get_url(
+      p_application => v('APP_ID'),
+      p_page => '13',
+      p_session => v('APP_SESSION'),
+      p_clear_cache => 'RP',
+      p_items => 'P13_DGRM_ID,P13_OBJT_ID,P13_TITLE',
+      p_values => pi_dgrm_id || ',' || pi_objt_id || ',' || pi_title
+    );
+    htp.p(l_url);
+  end p13_get_url;
+
+
+  procedure p13_get_url(
+    pi_prcs_id flow_processes.prcs_id%type
+  , pi_objt_id varchar2
+  , pi_title varchar2
+  )
+  as
+    l_url varchar2(2000);
+    l_dgrm_id flow_processes_vw.prcs_dgrm_id%type;
+  begin
+    select prcs_dgrm_id 
+      into l_dgrm_id 
+      from flow_processes_vw 
+    where prcs_id = pi_prcs_id;
+      
+    l_url := apex_page.get_url(
+      p_application => v('APP_ID'),
+      p_page => '13',
+      p_session => v('APP_SESSION'),
+      p_clear_cache => 'RP',
+      p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
+      p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
+    );
+    htp.p(l_url);
+  end p13_get_url;
+
+
   /* page 2 */
   
 
@@ -1049,21 +1095,6 @@ as
 
 
   /* page 7 */
-
-
-  procedure p7_prepare_url
-  as
-    l_url varchar2(2000);
-  begin
-    l_url := apex_page.get_url(
-               p_application => v('APP_ID'),
-               p_page => '13',
-               p_session => v('APP_SESSION'),
-               p_clear_cache => 'RP',
-               p_items => 'P13_DGRM_ID,P13_OBJT_ID,P13_TITLE',
-               p_values => apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03);
-    htp.p(l_url);
-  end p7_prepare_url;
   
   
   function diagram_is_modifiable(
@@ -1245,28 +1276,6 @@ as
     apex_json.close_all;
     
   end pass_variable;
-  
-  
-  procedure p8_prepare_url
-  as
-    l_url varchar2(2000);
-    l_dgrm_id flow_processes_vw.prcs_dgrm_id%type;
-  begin
-    select prcs_dgrm_id 
-      into l_dgrm_id 
-      from flow_processes_vw 
-     where prcs_id = apex_application.g_x01;
-     
-    l_url := apex_page.get_url(
-        p_application => v('APP_ID'),
-        p_page => '13',
-        p_session => v('APP_SESSION'),
-        p_clear_cache => 'RP',
-        p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
-        p_values => l_dgrm_id || ',' || apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03
-    );
-    htp.p(l_url);
-  end p8_prepare_url;
     
   
   function get_connection_select_option(
@@ -1305,31 +1314,6 @@ as
   end set_settings;
 
 
-  /* page 10 */
-
-
-  procedure p10_prepare_url
-  as
-    l_url varchar2(2000 byte);
-    l_dgrm_id flow_processes_vw.prcs_dgrm_id%type;
-  begin
-    -- Initialize
-    select prcs_dgrm_id 
-      into l_dgrm_id 
-      from flow_processes_vw
-     where prcs_id = apex_application.g_x01;
-     
-    l_url := apex_page.get_url(
-               p_application => v('APP_ID'),
-               p_page => '13',
-               p_session => v('APP_SESSION'),
-               p_clear_cache => 'RP',
-               p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
-               p_values => l_dgrm_id || ',' || apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03);
-    htp.p(l_url);
-  end p10_prepare_url;
-
-
   /* page 11 */
 
 
@@ -1356,19 +1340,6 @@ as
 
 
   /* page 12 */
-
-
-  procedure p12_prepare_url
-  as
-    l_url varchar2(2000);
-    l_app number := v('APP_ID');
-    l_session number := v('APP_SESSION');
-  begin    
-    l_url := apex_util.prepare_url(
-               p_url => 'f?p=' || l_app || ':13:' || l_session ||'::NO:RP:P13_PRCS_ID,P13_OBJT_ID,P13_TITLE:'|| apex_application.g_x01 || ',' || apex_application.g_x02 || ',' || apex_application.g_x03,
-               p_checksum_type => 'SESSION');
-    htp.p(l_url);
-  end p12_prepare_url;
   
   
   function get_prcs_name(

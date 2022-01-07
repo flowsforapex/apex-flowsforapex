@@ -26,6 +26,18 @@ as
     p_item in varchar2
   );
 
+  procedure p13_get_url(
+    pi_dgrm_id flow_diagrams.dgrm_id%type
+  , pi_objt_id varchar2
+  , pi_title varchar2
+  );
+
+  procedure p13_get_url(
+    pi_prcs_id flow_processes.prcs_id%type
+  , pi_objt_id varchar2
+  , pi_title varchar2
+  );
+
   /* page 2 */
 
   function validate_flow_exists_bulk(
@@ -120,8 +132,6 @@ as
   );
 
   /* page 7 */
-
-  procedure p7_prepare_url;
   
   
   function diagram_is_modifiable(
@@ -168,8 +178,6 @@ as
     
   procedure pass_variable;
   
-  procedure p8_prepare_url;
-  
   function get_connection_select_option(
     pi_gateway in flow_objects.objt_bpmn_id%type
   , pi_prcs_id in flow_processes.prcs_id%type
@@ -186,11 +194,6 @@ as
   , pi_duplicate_step_prevention in flow_configuration.cfig_value%type
   );
 
-  /* page 10 */  
-    
-  procedure p10_prepare_url;
-  
-
   /* page 11 */
 
   function create_instance(
@@ -201,8 +204,6 @@ as
   return flow_processes.prcs_id%type;
 
   /* page 12 */
-
-  procedure p12_prepare_url;
   
   function get_prcs_name(
     pi_prcs_id in flow_processes.prcs_id%type
