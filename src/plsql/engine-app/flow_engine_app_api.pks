@@ -26,13 +26,13 @@ as
     p_item in varchar2
   );
 
-  procedure p13_get_url(
+  procedure get_url_p13(
     pi_dgrm_id flow_diagrams.dgrm_id%type
   , pi_objt_id varchar2
   , pi_title varchar2
   );
 
-  procedure p13_get_url(
+  procedure get_url_p13(
     pi_prcs_id flow_processes.prcs_id%type
   , pi_objt_id varchar2
   , pi_title varchar2
@@ -139,7 +139,7 @@ as
   )
   return varchar2;
     
-  procedure p7_process_page
+  procedure process_page_p7
   (
     pio_dgrm_id      in out nocopy flow_diagrams_vw.dgrm_id%type
   , pi_dgrm_name     in flow_diagrams_vw.dgrm_name%type

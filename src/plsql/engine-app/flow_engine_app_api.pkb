@@ -362,7 +362,7 @@ as
   end add_viewport_script;
 
 
-  procedure p13_get_url(
+  procedure get_url_p13(
     pi_dgrm_id flow_diagrams.dgrm_id%type
   , pi_objt_id varchar2
   , pi_title varchar2
@@ -379,10 +379,10 @@ as
       p_values => pi_dgrm_id || ',' || pi_objt_id || ',' || pi_title
     );
     htp.p(l_url);
-  end p13_get_url;
+  end get_url_p13;
 
 
-  procedure p13_get_url(
+  procedure get_url_p13(
     pi_prcs_id flow_processes.prcs_id%type
   , pi_objt_id varchar2
   , pi_title varchar2
@@ -405,7 +405,7 @@ as
       p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
     );
     htp.p(l_url);
-  end p13_get_url;
+  end get_url_p13;
 
 
   /* page 2 */
@@ -1123,7 +1123,7 @@ as
   end validate_new_version;
   
 
-  procedure p7_process_page(
+  procedure process_page_p7(
     pio_dgrm_id      in out nocopy flow_diagrams_vw.dgrm_id%type,
     pi_dgrm_name     in flow_diagrams_vw.dgrm_name%type,
     pi_dgrm_version  in flow_diagrams_vw.dgrm_version%type,
@@ -1165,7 +1165,7 @@ as
       else
         raise_application_error(-20002, 'Unknown operation requested.');
     end case;
-  end p7_process_page;
+  end process_page_p7;
   
   
   function get_page_title(
