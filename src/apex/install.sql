@@ -51,6 +51,8 @@ prompt --install
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
 @@application/shared_components/files/workflow_white_svg.sql
+@@application/shared_components/files/css_21_2_flows4apex_dark_css.sql
+@@application/shared_components/files/css_21_2_flows4apex_light_css.sql
 @@application/shared_components/files/flows_apex_svg.sql
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql

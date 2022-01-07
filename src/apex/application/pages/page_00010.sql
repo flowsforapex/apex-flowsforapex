@@ -27,7 +27,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210923191434'
+,p_last_upd_yyyymmddhh24miss=>'20220107142618'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -774,32 +774,8 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P10_OBJT_LIST'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
-'from FLOW_OBJECTS',
-'where OBJT_DGRM_ID = (select PRCS_DGRM_ID from FLOW_PROCESSES where PRCS_ID = :P10_PRCS_ID)',
-'and not OBJT_TAG_NAME in (''bpmn:process'', ''bpmn:textAnnotation'', ''bpmn:participant'', ''bpmn:laneSet'', ''bpmn:lane'');'))
-,p_attribute_07=>'P10_PRCS_ID'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(6177386168209918)
-,p_event_id=>wwv_flow_api.id(24417684477878735)
-,p_event_result=>'TRUE'
-,p_action_sequence=>40
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P10_OBJT_SBFL_LIST'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
-'from FLOW_OBJECTS',
-'where OBJT_DGRM_ID = (select PRCS_DGRM_ID from FLOW_PROCESSES where PRCS_ID = :P10_PRCS_ID)',
-'and OBJT_TAG_NAME = ''bpmn:subProcess'''))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'flow_engine_app_api.get_objt_list(p_prcs_id => :P10_PRCS_ID)'
 ,p_attribute_07=>'P10_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -853,11 +829,8 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P10_OBJT_NAME'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct OBJT_NAME',
-'from FLOW_OBJECTS',
-'where OBJT_BPMN_ID = :P10_OBJT_BPMN_ID'))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'flow_engine_app_api.get_objt_name(p_objt_bpmn_id => :P10_OBJT_BPMN_ID)'
 ,p_attribute_07=>'P10_OBJT_BPMN_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
@@ -874,11 +847,10 @@ wwv_flow_api.create_page_da_action(
 'var title = $v(''P10_OBJT_BPMN_ID'') + ($v(''P10_OBJT_NAME'').length > 0 ? '' - '' + $v(''P10_OBJT_NAME'') : '''');',
 '',
 'apex.server.process(',
-'    ''PREPARE_URL'',                           ',
+'    ''GET_URL'',                           ',
 '    {',
-'        x01: $v(''P10_PRCS_ID''),',
-'        x02: this.data.element.id,',
-'        x03: title',
+'        x01: this.data.element.id,',
+'        x02: title',
 '    }, ',
 '    {',
 '        success: function (pData)',
@@ -905,9 +877,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- Save user preference',
-'apex_util.set_preference(''VIEWPORT'',:P10_DISPLAY_SETTING);'))
+,p_attribute_01=>'flow_engine_app_api.set_viewport(:P10_DISPLAY_SETTING);'
 ,p_attribute_02=>'P10_DISPLAY_SETTING'
 ,p_wait_for_result=>'Y'
 );
@@ -933,18 +903,6 @@ wwv_flow_api.create_page_da_action(
 '     } else {',
 '     $(''#flow-instances input[type=checkbox][name=f01]'').prop(''checked'',false);',
 ' } '))
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6180087025209945)
@@ -984,50 +942,25 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'apex.actions.invoke("view-flow-instance", "", this.triggeringElement);'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(33735382808406124)
 ,p_process_sequence=>10
 ,p_process_point=>'BEFORE_HEADER'
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Set Viewport for BPMN-Viewer'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- Load user preference for the BPMN-Viewer and set it after the page has fully loaded',
-'declare',
-'    l_script varchar2(4000);',
-'begin',
-'',
-'    -- Set IDs for the the row divs',
-'    l_script := q''#apex.jQuery("#flow-instances").parent().attr("id","col1");',
-'                   apex.jQuery("#flow-monitor").parent().attr("id","col2");#'';',
-'    ',
-'    APEX_JAVASCRIPT.ADD_ONLOAD_CODE (',
-'        p_code => l_script,',
-'        p_key  => ''init_viewport'');',
-'',
-'    :P10_DISPLAY_SETTING := nvl(apex_util.get_preference(''VIEWPORT''),''column'');',
-'    ',
-'    l_script := null;',
-'    -- Set view to side-by-side if preference = ''column''',
-'    if :P10_DISPLAY_SETTING = ''column'' then',
-'    ',
-'        l_script := q''#apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( [ "col-12", "col-end" ] );',
-'                       apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( [ "col-12", "col-start" ] );',
-'                       apex.jQuery("#col2").appendTo(apex.jQuery("#col1").parent());',
-'                       apex.jQuery("#flow-monitor").show();',
-'                       apex.region( "flow-monitor" ).refresh();#'';',
-'     elsif :P10_DISPLAY_SETTING = ''window'' then',
-'        l_script := q''#apex.jQuery("#flow-monitor").hide();',
-'                       apex.jQuery( "#col1" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );',
-'                       apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );#'';',
-'    end if;',
-'    ',
-'    if l_script is not null then',
-'        APEX_JAVASCRIPT.ADD_ONLOAD_CODE (',
-'            p_code => l_script,',
-'            p_key  => ''viewport''',
-'        );',
-'    end if;',
-'end;'))
+,p_process_sql_clob=>'flow_engine_app_api.add_viewport_script(''P10_DISPLAY_SETTING'');'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_process(
@@ -1035,23 +968,13 @@ wwv_flow_api.create_page_process(
 ,p_process_sequence=>20
 ,p_process_point=>'ON_DEMAND'
 ,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'PREPARE_URL'
+,p_process_name=>'GET_URL'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_url varchar2(2000);',
-'    l_dgrm_id flow_processes.prcs_dgrm_id%type;',
-'begin',
-'    select prcs_dgrm_id into l_dgrm_id from flow_processes where prcs_id = apex_application.g_x01;',
-'    l_url := apex_page.get_url(',
-'        p_application => v(''APP_ID''),',
-'        p_page => ''13'',',
-'        p_session => v(''APP_SESSION''),',
-'        p_clear_cache => ''RP'',',
-'        p_items => ''P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE'',',
-'        p_values => l_dgrm_id || '','' || apex_application.g_x01 || '','' || apex_application.g_x02 || '','' || apex_application.g_x03',
-'    );',
-'    htp.p(l_url);',
-'end;'))
+'flow_engine_app_api.get_url_p13(',
+'  pi_prcs_id => :P10_PRCS_ID',
+', pi_objt_id => apex_application.g_x01',
+', pi_title => apex_application.g_x02',
+');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;

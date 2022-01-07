@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch:t-Dialog--noPadding'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210908122244'
+,p_last_upd_yyyymmddhh24miss=>'20220107142627'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6161598858353963900)
@@ -53,16 +53,6 @@ wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(7334819132307030)
 ,p_name=>'P12_OBJT_LIST'
 ,p_item_sequence=>30
-,p_item_plug_id=>wwv_flow_api.id(6161598858353963900)
-,p_use_cache_before_default=>'NO'
-,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-);
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(7335273741307034)
-,p_name=>'P12_OBJT_SBFL_LIST'
-,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_api.id(6161598858353963900)
 ,p_use_cache_before_default=>'NO'
 ,p_display_as=>'NATIVE_HIDDEN'
@@ -110,8 +100,11 @@ wwv_flow_api.create_page_computation(
 ,p_computation_sequence=>10
 ,p_computation_item=>'P12_PRCS_NAME'
 ,p_computation_point=>'BEFORE_HEADER'
-,p_computation_type=>'QUERY'
-,p_computation=>'select prcs_name from flow_instances_vw where prcs_id = :P12_PRCS_ID'
+,p_computation_type=>'PLSQL_EXPRESSION'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_app_api.get_prcs_name(',
+'  pi_prcs_id => :P12_PRCS_ID',
+')'))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(8049983261140649)
@@ -133,32 +126,8 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P12_OBJT_LIST'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
-'from FLOW_OBJECTS',
-'where OBJT_DGRM_ID = (select PRCS_DGRM_ID from FLOW_PROCESSES where PRCS_ID = :P12_PRCS_ID)',
-'and not OBJT_TAG_NAME in (''bpmn:process'', ''bpmn:subProcess'', ''bpmn:textAnnotation'', ''bpmn:participant'', ''bpmn:laneSet'', ''bpmn:lane'');'))
-,p_attribute_07=>'P12_PRCS_ID'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(8052377456140677)
-,p_event_id=>wwv_flow_api.id(8049983261140649)
-,p_event_result=>'TRUE'
-,p_action_sequence=>40
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P12_OBJT_SBFL_LIST'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
-'from FLOW_OBJECTS',
-'where OBJT_DGRM_ID = (select PRCS_DGRM_ID from FLOW_PROCESSES where PRCS_ID = :P12_PRCS_ID)',
-'and OBJT_TAG_NAME = ''bpmn:subProcess'''))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'flow_engine_app_api.get_objt_list(p_prcs_id => :P12_PRCS_ID)'
 ,p_attribute_07=>'P12_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -212,11 +181,8 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P12_OBJT_NAME'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct OBJT_NAME',
-'from FLOW_OBJECTS',
-'where OBJT_BPMN_ID = :P12_OBJT_BPMN_ID'))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'flow_engine_app_api.get_objt_name(p_objt_bpmn_id => :P12_OBJT_BPMN_ID)'
 ,p_attribute_07=>'P12_OBJT_BPMN_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
@@ -233,11 +199,10 @@ wwv_flow_api.create_page_da_action(
 'var title = $v(''P12_OBJT_BPMN_ID'') + ($v(''P12_OBJT_NAME'').length > 0 ? '' - '' + $v(''P12_OBJT_NAME'') : '''');',
 '',
 'apex.server.process(',
-'    ''PREPARE_URL'',                           ',
+'    ''GET_URL'',                           ',
 '    {',
-'        x01: $v(''P12_PRCS_ID''),',
-'        x02: this.data.element.id,',
-'        x03: title',
+'        x01: this.data.element.id,',
+'        x02: title',
 '    }, ',
 '    {',
 '        success: function (pData)',
@@ -248,49 +213,18 @@ wwv_flow_api.create_page_da_action(
 '    }',
 ');'))
 );
-wwv_flow_api.create_page_da_event(
- p_id=>wwv_flow_api.id(8054541383143017)
-,p_name=>'Subflow clicked'
-,p_event_sequence=>30
-,p_triggering_element_type=>'REGION'
-,p_triggering_region_id=>wwv_flow_api.id(6161598858353963900)
-,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'$v(''P12_OBJT_SBFL_LIST'').split('':'').includes(this.data.element.id);'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(8054957080143018)
-,p_event_id=>wwv_flow_api.id(8054541383143017)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var objects = $v(''P12_OBJT_LIST'').split('':'');',
-'$.each(objects, function( index, value ) {',
-'    $( "[data-element-id=''" + value + "'']").css( "cursor", "pointer" );',
-'})'))
-,p_da_action_comment=>'Apply pointer cursor to clickable elements inside opened subflow'
-);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(7335772142307039)
 ,p_process_sequence=>10
 ,p_process_point=>'ON_DEMAND'
 ,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'PREPARE_URL'
+,p_process_name=>'GET_URL'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'    l_url varchar2(2000);',
-'    l_app number := v(''APP_ID'');',
-'    l_session number := v(''APP_SESSION'');',
-'',
-'BEGIN',
-'    l_url := APEX_UTIL.PREPARE_URL(',
-'        p_url => ''f?p='' || l_app || '':13:'' || l_session ||''::NO:RP:P13_PRCS_ID,P13_OBJT_ID,P13_TITLE:''|| apex_application.g_x01 || '','' || apex_application.g_x02 || '','' || apex_application.g_x03,',
-'        p_checksum_type => ''SESSION'');',
-'    htp.p(l_url);',
-'END;'))
+'flow_engine_app_api.get_url_p13(',
+'  pi_prcs_id => :P12_PRCS_ID',
+', pi_objt_id => apex_application.g_x01',
+', pi_title => apex_application.g_x02',
+');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;
