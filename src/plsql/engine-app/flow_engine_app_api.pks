@@ -133,20 +133,12 @@ as
 
   /* page 7 */
   
-  
-  function diagram_is_modifiable(
-    pi_dgrm_id in flow_diagrams.dgrm_id%type
-  )
-  return boolean;
-  
-
   function validate_new_version(
     pi_dgrm_name    in flow_diagrams.dgrm_name%type
   , pi_dgrm_version in flow_diagrams.dgrm_version%type
   )
   return varchar2;
-  
-  
+    
   procedure p7_process_page
   (
     pio_dgrm_id      in out nocopy flow_diagrams_vw.dgrm_id%type

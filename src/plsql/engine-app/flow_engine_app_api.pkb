@@ -1096,15 +1096,6 @@ as
 
   /* page 7 */
   
-  
-  function diagram_is_modifiable(
-    pi_dgrm_id in flow_diagrams.dgrm_id%type
-  ) return boolean
-  as
-  begin
-    return flow_diagram.diagram_is_modifiable(pi_dgrm_id);
-  end diagram_is_modifiable;
-  
 
   function validate_new_version(
     pi_dgrm_name    in flow_diagrams.dgrm_name%type
