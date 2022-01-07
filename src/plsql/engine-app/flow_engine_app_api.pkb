@@ -264,7 +264,7 @@ as
 
 
   function get_objt_list(
-    p_prcs_id flow_processes_vw.prcs_id%type
+    p_prcs_id in flow_processes_vw.prcs_id%type
   ) return varchar2
   as
     l_objt_list varchar2(32767);
@@ -282,7 +282,7 @@ as
 
 
   function get_objt_list(
-    p_dgrm_id flow_diagrams_vw.dgrm_id%type
+    p_dgrm_id in flow_diagrams_vw.dgrm_id%type
   ) return varchar2
   as
     l_objt_list varchar2(32767);
@@ -297,8 +297,8 @@ as
   
   
   function get_objt_name(
-    p_objt_bpmn_id flow_objects_vw.objt_bpmn_id%type
-  ) return varchar2
+    p_objt_bpmn_id in flow_objects_vw.objt_bpmn_id%type
+  ) return flow_objects_vw.objt_name%type
   as
     l_objt_name flow_objects_vw.objt_name%type;
   begin
@@ -366,8 +366,8 @@ as
   
 
   function check_flow_exists(
-    p_dgrm_name in flow_diagrams_vw.dgrm_name%type,
-    p_dgrm_version flow_diagrams_vw.dgrm_version%type)
+    p_dgrm_name    in flow_diagrams_vw.dgrm_name%type,
+    p_dgrm_version in flow_diagrams_vw.dgrm_version%type)
   return boolean
   as
     l_exists binary_integer;
@@ -387,7 +387,7 @@ as
 
   function validate_flow_exists_bulk(
     pi_dgrm_id_list in varchar2
-  , pi_new_version in flow_diagrams_vw.dgrm_version%type
+  , pi_new_version  in flow_diagrams_vw.dgrm_version%type
   ) return varchar2 
   as
     l_err varchar2(4000 byte);
@@ -417,7 +417,7 @@ as
 
 
   function validate_flow_exists(
-    pi_dgrm_id in flow_diagrams.dgrm_id%type
+    pi_dgrm_id     in flow_diagrams.dgrm_id%type
   , pi_new_version in flow_diagrams_vw.dgrm_version%type 
   ) return varchar2 
   as
@@ -442,7 +442,7 @@ as
   
   function validate_flow_copy_bulk(
     pi_dgrm_id_list in varchar2
-  , pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  , pi_new_name     in flow_diagrams_vw.dgrm_name%type 
   ) return varchar2 
   as
     l_err varchar2(4000 byte);
@@ -501,7 +501,7 @@ as
   
   procedure add_new_version(
     pi_dgrm_id_list in varchar2
-  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  , pi_new_version  in flow_diagrams_vw.dgrm_version%type 
   )
   as
     r_diagrams flow_diagrams_vw%rowtype;
@@ -529,7 +529,7 @@ as
   
   procedure copy_model(
     pi_dgrm_id_list in varchar2
-  , pi_new_name in flow_diagrams_vw.dgrm_name%type 
+  , pi_new_name     in flow_diagrams_vw.dgrm_name%type 
   )
   as
     l_flows apex_t_varchar2;
@@ -558,7 +558,9 @@ as
   /* page 4 */
 
 
-  function get_region_title
+  function get_region_title(
+    pi_dgrm_id in flow_diagrams.dgrm_id%type
+  )
   return varchar2 
   as
     l_region_title varchar2(128 byte);
@@ -567,8 +569,8 @@ as
     select dgrm_name || ' (Version: ' || dgrm_version || ', Status: ' || dgrm_status || ')' as d
       into l_region_title
       from flow_diagrams_vw
-     where dgrm_id = (select v('P4_DGRM_ID') from dual);
-     
+     where dgrm_id = pi_dgrm_id;
+
     return l_region_title;
   end get_region_title;
 
@@ -578,12 +580,12 @@ as
 
   function get_file_name
   (
-    p_dgrm_id in number
-  , p_include_version in varchar2
-  , p_include_status in varchar2
-  , p_include_category in varchar2
+    p_dgrm_id                  in number
+  , p_include_version          in varchar2
+  , p_include_status           in varchar2
+  , p_include_category         in varchar2
   , p_include_last_change_date in varchar2
-  , p_download_as in varchar2
+  , p_download_as              in varchar2
   ) 
   return varchar2
   is
@@ -743,10 +745,10 @@ as
 
 
   procedure download_file(
-      p_dgrm_id in number,
-      p_file_name in varchar2,
+      p_dgrm_id     in number,
+      p_file_name   in varchar2,
       p_download_as in varchar2,
-      p_multi_file in boolean default false
+      p_multi_file  in boolean default false
   )
   is 
     l_clob        clob;
@@ -886,9 +888,9 @@ as
     
     
     function is_valid_xml(
-        pi_import_from in varchar2,
+        pi_import_from  in varchar2,
         pi_dgrm_content in flow_diagrams_vw.dgrm_content%type,
-        pi_file_name in varchar2
+        pi_file_name    in varchar2
     )
     return boolean
     is
@@ -949,15 +951,15 @@ as
     end is_valid_multi_file_archive;
     
     
-    procedure upload_and_parse(
-        pi_import_from in varchar2,
-        pi_dgrm_name in flow_diagrams_vw.dgrm_name%type,
-        pi_dgrm_category in flow_diagrams_vw.dgrm_category%type,
-        pi_dgrm_version in flow_diagrams_vw.dgrm_version%type,
-        pi_dgrm_content in flow_diagrams_vw.dgrm_content%type,
-        pi_file_name in varchar2,
+    function upload_and_parse(
+        pi_import_from     in varchar2,
+        pi_dgrm_name       in flow_diagrams_vw.dgrm_name%type,
+        pi_dgrm_category   in flow_diagrams_vw.dgrm_category%type,
+        pi_dgrm_version    in flow_diagrams_vw.dgrm_version%type,
+        pi_dgrm_content    in flow_diagrams_vw.dgrm_content%type,
+        pi_file_name       in varchar2,
         pi_force_overwrite in varchar2
-    ) 
+    ) return flow_diagrams_vw.dgrm_id%type
     is
         l_dgrm_id flow_diagrams_vw.dgrm_id%type;
         l_dgrm_content flow_diagrams_vw.dgrm_content%type;
@@ -978,7 +980,7 @@ as
             pi_dgrm_category => pi_dgrm_category,
             pi_dgrm_content => l_dgrm_content,
             pi_force_overwrite => pi_force_overwrite);
-        apex_util.set_session_state('P6_DGRM_ID', l_dgrm_id);
+        return l_dgrm_id;
     exception
       when flow_diagram.diagram_exists then
         apex_error.add_error(
@@ -996,6 +998,7 @@ as
         pi_force_overwrite in varchar2
     )
     as
+        l_dgrm_id       flow_diagrams.dgrm_id%type;
         l_dgrm_name     flow_diagrams_vw.dgrm_name%type;
         l_dgrm_category flow_diagrams_vw.dgrm_category%type;
         l_dgrm_version  flow_diagrams_vw.dgrm_version%type;
@@ -1032,7 +1035,7 @@ as
             into l_clob
             from dual;
             
-            upload_and_parse(
+            l_dgrm_id := flow_p0006_api.upload_and_parse(
                   pi_import_from => 'text'
                 , pi_dgrm_name => l_dgrm_name
                 , pi_dgrm_category => l_dgrm_category
@@ -1063,35 +1066,32 @@ as
   end p7_prepare_url;
   
   
-  function diagram_is_modifiable
-  return boolean
+  function diagram_is_modifiable(
+    pi_dgrm_id in flow_diagrams.dgrm_id%type
+  ) return boolean
   as
   begin
-    return flow_diagram.diagram_is_modifiable(v('P7_DGRM_ID'));
+    return flow_diagram.diagram_is_modifiable(pi_dgrm_id);
   end diagram_is_modifiable;
   
 
-  function validate_new_version
-  return varchar2
+  function validate_new_version(
+    pi_dgrm_name    in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version in flow_diagrams.dgrm_version%type
+  ) return varchar2
   as
     l_err varchar2(4000);
     l_version_exists number;
-    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
-    l_new_version flow_diagrams_vw.dgrm_version%type;
   begin
-    -- Initialize
-    l_dgrm_name := v('P7_DGRM_NAME');
-    l_new_version := v('P7_NEW_VERSION');
     
-    
-    if (l_new_version is null) then
+    if (pi_dgrm_version is null) then
         l_err := apex_lang.message(p_name => 'APEX.PAGE_ITEM_IS_REQUIRED'); --'#LABEL# must have a value';
     else
       select count(*)
         into l_version_exists
         from flow_diagrams_vw
-       where dgrm_name = l_dgrm_name
-         and dgrm_version = l_new_version;
+       where dgrm_name = pi_dgrm_name
+         and dgrm_version = pi_dgrm_version;
         
       if (l_version_exists > 0) then
         l_err := apex_lang.message(p_name => 'APP_ERR_MODEL_VERSION_EXIST');
@@ -1146,20 +1146,25 @@ as
   end p7_process_page;
   
   
-  function get_page_title
-  return varchar2
+  function get_page_title(
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type
+  , pi_dgrm_name    in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version in flow_diagrams.dgrm_version%type
+  ) return varchar2
   as
     l_page_title varchar2(128 byte);
   begin
     case 
-    when v('P7_DGRM_ID') is null then 
+    when pi_dgrm_id is null then 
       l_page_title := apex_lang.message(
-                        p_name => 'APP_TITLE_NEW_MODEL');
+                        p_name => 'APP_TITLE_NEW_MODEL'
+                      );
     else 
       l_page_title := apex_lang.message(
                         p_name => 'APP_TITLE_MODEL',
-                        p0 => v('P7_DGRM_NAME'),
-                        p1 => v('P7_DGRM_VERSION'));
+                        p0 => pi_dgrm_name,
+                        p1 => pi_dgrm_version
+                      );
     end case;
     return l_page_title;
   end get_page_title;
@@ -1169,7 +1174,7 @@ as
 
 
   function check_is_date(
-    pi_value in varchar2,
+    pi_value       in varchar2,
     pi_format_mask in varchar2)
   return varchar2 
   as
@@ -1246,7 +1251,7 @@ as
   as
     l_url varchar2(2000);
     l_dgrm_id flow_processes_vw.prcs_dgrm_id%type;
-begin
+  begin
     select prcs_dgrm_id 
       into l_dgrm_id 
       from flow_processes_vw 
@@ -1264,21 +1269,18 @@ begin
   end p8_prepare_url;
     
   
-  function get_connection_select_option
-  return varchar2
+  function get_connection_select_option(
+    pi_gateway in flow_objects.objt_bpmn_id%type
+  , pi_prcs_id in flow_processes.prcs_id%type
+  ) return varchar2
   as
     l_select_option flow_instance_gateways_lov.select_option%type;
   begin
-    with params as(
-           select v('P8_GATEWAY') p_gateway,
-                  v('P8_PRCS_ID') p_prcs_id
-             from dual)
-    select /*+ no_merge (p) */ select_option
+    select select_option
       into l_select_option
       from flow_instance_gateways_lov
-      join params p
-        on objt_bpmn_id = p_gateway
-       and prcs_id = to_number(p_prcs_id);
+     where objt_bpmn_id = pi_gateway
+       and prcs_id = pi_prcs_id;
     return l_select_option;
   end get_connection_select_option;
 
@@ -1286,15 +1288,21 @@ begin
   /* page 9 */
   
 
-  procedure set_settings
+  procedure set_settings(
+    pi_logging_language          in flow_configuration.cfig_value%type
+  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_hide_userid       in flow_configuration.cfig_value%type
+  , pi_engine_app_mode           in flow_configuration.cfig_value%type
+  , pi_duplicate_step_prevention in flow_configuration.cfig_value%type
+  )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => 'logging_language', p_value => v('P9_LOGGING_LANGUAGE'));
-      flow_engine_util.set_config_value( p_config_key => 'logging_level', p_value => v('P9_LOGGING_LEVEL'));
-      flow_engine_util.set_config_value( p_config_key => 'logging_hide_userid', p_value => v('P9_LOGGING_HIDE_USERID'));
-      flow_engine_util.set_config_value( p_config_key => 'engine_app_mode', p_value => v('P9_ENGINE_APP_MODE'));
-      flow_engine_util.set_config_value( p_config_key => 'duplicate_step_prevention', p_value => v('P9_DUPLICATE_STEP_PREVENTION'));
-  end;
+      flow_engine_util.set_config_value( p_config_key => 'logging_language', p_value => pi_logging_language);
+      flow_engine_util.set_config_value( p_config_key => 'logging_level', p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => 'logging_hide_userid', p_value => pi_logging_hide_userid);
+      flow_engine_util.set_config_value( p_config_key => 'engine_app_mode', p_value => pi_engine_app_mode);
+      flow_engine_util.set_config_value( p_config_key => 'duplicate_step_prevention', p_value => pi_duplicate_step_prevention);
+  end set_settings;
 
 
   /* page 10 */
@@ -1325,24 +1333,25 @@ begin
   /* page 11 */
 
 
-  procedure create_instance 
+  function create_instance(
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type
+  , pi_prcs_name    in flow_processes.prcs_name%type
+  , pi_business_ref in flow_process_variables.prov_var_vc2%type
+  ) return flow_processes.prcs_id%type
   as
     l_prcs_id flow_processes_vw.prcs_id%type;
-    l_business_ref flow_process_variables_vw.prov_var_vc2%type;
   begin
-    -- Initialize
-    l_business_ref := v('P11_BUSINESS_REF');
     l_prcs_id := flow_api_pkg.flow_create( 
-                   pi_dgrm_id   => v('P11_DGRM_ID'),
-                   pi_prcs_name => v('P11_PRCS_NAME'));
+                   pi_dgrm_id   => pi_dgrm_id,
+                   pi_prcs_name => pi_prcs_name);
     
-    if l_business_ref is not null then
+    if pi_business_ref is not null then
       flow_process_vars.set_var( 
         pi_prcs_id   => l_prcs_id,
         pi_var_name  => 'BUSINESS_REF',
-        pi_vc2_value => l_business_ref);
+        pi_vc2_value => pi_business_ref);
     end if;
-    apex_util.set_session_state('P11_PRCS_ID', l_prcs_id); 
+    return l_prcs_id; 
   end create_instance;
 
 
@@ -1362,15 +1371,16 @@ begin
   end p12_prepare_url;
   
   
-  function get_prcs_name
-  return varchar2
+  function get_prcs_name(
+    pi_prcs_id in flow_processes.prcs_id%type
+  ) return flow_instances_vw.prcs_name%type
   as
     l_prcs_name flow_instances_vw.prcs_name%type;
   begin
     select prcs_name 
       into l_prcs_name
       from flow_instances_vw 
-     where prcs_id = (select v('P12_PRCS_ID') from dual);
+     where prcs_id = pi_prcs_id;
     return l_prcs_name;
   end get_prcs_name;
   
