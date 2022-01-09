@@ -75,7 +75,7 @@ At a combined merging and reopening Parallel Gateway, all of the incoming child 
 
 #### Action at an Inclusive Gateway
 
-An opening Inclusive Gateway acts as the launch point for one or more forward paths, depending upon meeting the conditions required for each path.  Unless each forward path continues to its own End Event, the parallel paths all meet at a closing, or synchronizing parallel gateway later in the process.
+An opening Inclusive Gateway acts as the launch point for one or more forward paths, depending upon meeting the conditions required for each path.  Unless each forward path continues to its own End Event, the parallel paths all meet at a closing, or synchronizing inclusive gateway later in the process.
 
 The basic subflow mechanism is similar to that for a parallel gateway, described above.
 

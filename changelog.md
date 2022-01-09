@@ -1,10 +1,25 @@
 # Flows for APEX - Changelog
 
+## v22.1
+
+- Adds repeating timers for non-interrupting boundary events - facilitating repeated reminders.
+
+- Adds BPMN Business Rules Task type, which can accept user-defined PL/SQL script for linking to credit scoring, ML models or other automated decision tasks.
+  = Adds the ability to declaratively define sending an email from a Service Task
+- Improves Timer Usability, by allowing timers to be specified using Oracle data and interval syntax in addition to ISO 8601 format.
+- Improves multi-user integrity by adding a unique Step Key as part of the context for each process object.
+- Improvements to the Flow Engine Application, with enhancements to the Flow Modeler:
+  - Addition of the Monaco text editor for PL/SQL input to variable expressions and script code entry.
+  - Use of APEX metadata in UI for specifying links to APEX pages and page items.
+- Enhances the step operations plugin so that it can issue the flow_start_step command.
+- Separates private and public calls and views used by the Flow Engine Application to ease reuse by customer apps.
+
+
 ## v21.1
 
 - Introduces model-based declarative process variable expressions to set process variables before and after each step.
 - Introduces 3 process plugins to ease application integration:
-  
+
   - Manage Flow Instance, for controlling instance creation, starting, termination, reset and deletion.
   - Manage Flow Instance Step, for controlling step statrt, reservation, release and completion.
   - Manage Flow Instance Variables, for transferring process variable content to and from APEX page items.
@@ -14,7 +29,7 @@
 - Steps halted with error status can be re-started after an administrator fixes the problem.
 - Introduces Monitoring and Auditing event logs of Instances, instance steps, and process variables
 - Major upgrade of the Flow Engine Application, with enhancements to the modeler, viewer, and the app UI.
-  
+
   - App: enhanced UI, including support for dark mode
   - App: Flow Monitor additionally supports side-by-side and multi-monitor support for administering larger systems.
   - Modeler: Properties panel can now be expanded by dragging
@@ -138,4 +153,3 @@
 ## v1.0
 
 - Initial Release
-

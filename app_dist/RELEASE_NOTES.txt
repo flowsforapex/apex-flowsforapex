@@ -28,12 +28,24 @@ INSTALLING THE APPLICATION
 MIGRATING EXISTING INSTALLATIONS
 - Always backup your existing installation first
 - Download the source code at https://github.com/mt-ag/apex-flowsforapex
-- Start sqlcl und connect with the workspace schema where Flows for APEX is installed
+- Start sqlcl and connect with the workspace schema where Flows for APEX is installed
 - Run migrate_all.sql
 
 Note: please be aware that you can only migrate to the subsequent release (ie. 21.1 to 21.1.1 or 5.1.2 to 21.1, but not 5.1.2 to 21.1.1)
 
 HISTORY
+* v22.1
+  - Adds repeating timers for non-interrupting boundary events - facilitating repeated reminders.
+  - Adds BPMN Business Rules Task type, which can accept user-defined PL/SQL script for linking to credit scoring, ML models or other automated decision tasks.
+  = Adds the ability to declaratively define sending an email from a Service Task 
+  - Improves Timer Usability, by allowing timers to be specified using Oracle data and interval syntax in addition to ISO 8601 format.
+  - Improves multi-user integrity by adding a unique Step Key as part of the context for each process object. 
+  - Improvements to the Flow Engine Application, with enhancements to the Flow Modeler:
+    - Addition of the Monaco text editor for PL/SQL input to variable expressions and script code entry.
+    - Use of APEX metadata in UI for specifying links to APEX pages and page items.
+  - Enhances the step operations plugin so that it can issue the flow_start_step command.
+  - Separates private and public calls and views used by the Flow Engine Application to ease reuse by customer apps.
+
 * v21.1.1
 
 * v21.1
@@ -44,7 +56,7 @@ HISTORY
     - Manage Flow Instance Variables, for transferring process variable content to and from APEX page items. 
   - Introduces Transaction Safety, making each process step a separate database transaction.
   - Introduces new Instance Status of 'error' and 'terminated' to signal abnormal instance conditions.
-  - Introduces new Subflow status of 'error' signalling an abnormal condition.
+  - Introduces new Subflow status of 'error' signaling an abnormal condition.
   - Steps halted with error status can be re-started after an administrator fixes the problem.
   - Introduces Monitoring and Auditing event logs of Instances, instance steps, and process variables
   - Major upgrade of the Flow Engine Application, with enhancements to the modeler, viewer, and the app UI.
