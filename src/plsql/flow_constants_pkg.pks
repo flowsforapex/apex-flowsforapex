@@ -50,6 +50,8 @@ as
   gc_bpmn_servicetask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'serviceTask';
   gc_bpmn_manualtask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'manualTask';
   gc_bpmn_scripttask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
+  gc_bpmn_businessruletask             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'businessRuleTask';
+  
 
   -- APEX Extensions to BPMN
   -- userTask
@@ -199,6 +201,7 @@ as
   gc_config_logging_language          constant varchar2(50 char) := 'logging_language';
   gc_config_engine_app_mode           constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention       constant varchar2(50 char) := 'duplicate_step_prevention';
+  gc_config_timer_max_cycles          constant varchar2(50 char) := 'timer_max_cycles';
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
@@ -220,6 +223,7 @@ as
   gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
   gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_timer_max_cycles          constant varchar2(2000 char) := '1000';
 
 
   -- Default XML for new diagrams

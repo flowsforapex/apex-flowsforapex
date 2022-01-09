@@ -48,6 +48,12 @@ Unless the subflow reaches a Gateway or an Event, the subflow progresses from ob
 
 As it progresses, the subflow's current object and last completed object are updated.
 
+#### Step Keys🆕
+
+A new feature introduced in v22.1 is Subflow Step Keys.  If enabled, the Flows for APEX engine generates a **Step Key** for each process step.  When a user wants to perform a step operation, they must supply the correct step key to the engine for the step operation to be performed.  This prevents more than one user trying to make the same step transition, and by mistake, moving the process forward 2 steps.  The first user will be able to make his step operation and move the process forward one step;  the second user will now be supplying an incorrect key for the new step, and so his operation will (correctly) fail.
+
+Step Keys should be enabled for all new projects, and any legacy applications built with v21 or earlier should adopt Step Keys in their next update.
+
 #### Action at an opening Exclusive Gateway
 
 An opening Exclusive Gateway acts as a decision point, from which the process continues on just one forward path.
@@ -107,6 +113,8 @@ If a sub process itself contains a sub-process object, the same process is repea
 
 If a subflow reaches an object with an attached timer -- such as a Timer Start Event or a Timer Intermediate Catch Event -- the subflow is given a status of `waiting for timer` until the timer has expired and the process can continue, which it does with a status of `running`.
 
+If the timer is a Repeating or Cycle Timer, it can fire multiple times, optionally up to a maximum number of runs.  Each time the timer fires, it will first check if it needs to reschedule another repeat / cycle, before executing the forward path.  If another cycle is required, it will create a new subflow for the next cycle, and set a timer on that subflow at the current time plus the specified cycle interval.
+
 #### Action at an Event Based Gateway
 
 An Event Based Gateway is a decision / gateway event where the single forward path is chosen based on which event occurs first.  Once an event occurs on one of the possible forward paths, all other paths are terminated and the flow continues forward on the one chosen path.
@@ -150,6 +158,7 @@ Timer Non-Interrupting Boundary Event.  When an object has an attached non-inter
 
 - If the parent object completes before the timer fires, the timer and its subflow is deleted before the next object on the subflow becomes current.
 - If the timer fires while the parent is still the current object on its subflow, the forked subflow proceeds to its next object.  If the parent then proceeds on its subflow, the forked boundary event subflow continues until it completes.
+- Timer non-interrupting boundary events can be defined repeating or cycle timers; If so, the engine will create a new subflow for the next run of the timer and set a timer on it, before moving forwards on the forked boundary event subflow.
 
 Non-Timer Non-Interrupting Boundary Events.  For example, a non-interrupting escalation boundary event.  These boundary events only fork off a new subflow if the relevant event event fires.  For example, if a sub process had an attached Non-Interrupting Escalation Boundary Event, the escalation subflow is only created if an escalation event is fired from inside the sub process, which is then caught by the matching boundary event.
 

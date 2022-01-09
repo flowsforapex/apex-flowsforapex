@@ -41,7 +41,7 @@ These comprise:
 
 ### Instance Variable (Process Variable) Operations
 
-Process Variable operations are used to set, get, and delete Process Variables.
+Process Variable operations are used to set, get, and delete Process Variables.  You can also get the type of a Process Variable.
 
 Process Variable operations are contained in the PL/SQL package `flow_process_vars`.
 

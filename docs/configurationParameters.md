@@ -8,7 +8,6 @@ Event logging is currently designed to be configurable, so that an installation 
 
 Logging is configured using Flows for APEX configuration parameters, which are stored in the FLOW_CONFIGURATION table.
 
-
 | parameter           | possible values | behavior                                                                                                                                                                                                   | default |
 | --------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
 | logging_level       | off             | logging is disabled                                                                                                                                                                                        |         |
@@ -24,9 +23,20 @@ Logging is configured using Flows for APEX configuration parameters, which are s
 
 ### Configuring Diagram Versioning
 
-
 | parameter       | possible values | behavior                                                                                                                    | default |
 | ----------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------- | --------- |
 | engine_app_mode | production      | versioning controls are strictly enforced.`released` models cannot be edited and resaved, except by creating a new version. | yes     |
 |                 | development     | versioning controls are not strictly enforced. diagrams in`released` status can be edited and re-saved.                     |         |
 |                 |                 |                                                                                                                             |         |
+
+### General System Configuration
+
+| parameter                 | possible values                                                                                                                                                                                   | behavior                                                                                                                                                                                        | default                   |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| duplicate_step_prevention | strict                                                                                                                                                                                            | requires step keys to be provided on all step operations, thus preventing multiple users from attempting to make the same step transition but instead moving the process forward multiple steps | yes (new installations)   |
+|                           | legacy                                                                                                                                                                                            | allows null step keys.  Incorrect step keys will still cause an error.  Only use this until you migrate your v21 and earlier apps to use Step Keys                                              | only for migrated systems |
+| version_initial_installed | | records the version first installed (do not change)                                                                                                                                               |                                                                                                                                                                                                 |                           |
+| version_now_installed  |   | records the current version installed, after any migrations have occured                                                                                                                          |                                                                                                                                                                                                 |                           |
+| default_workspace       |  | should be set to your default APEX workspace used for Flows for APEX.  This is used as a last-resort for scriptTasks and serviceTasks when creating an APEX session or looking for mail templates |                                                                                                                                                                                                 |                           |
+| default_email_sender     |  | should be set to your default email sender, in case outbound mail serviceTasks do not have a sender defined                                                                                       |                                                                                                                                                                                                 |                           |
+

@@ -805,8 +805,9 @@ begin
   l_dgrm_id := flow_engine_util.get_dgrm_id (p_prcs_id => p_process_id);
   -- set context for scripts and variable expressions
   flow_globals.set_context
-  ( pi_prcs_id => p_process_id
-  , pi_sbfl_id => p_subflow_id
+  ( pi_prcs_id  => p_process_id
+  , pi_sbfl_id  => p_subflow_id
+  , pi_step_key => p_step_key
   );
   flow_globals.set_is_recursive_step (p_is_recursive_step => true);
   -- initialise step_had_error flag
@@ -1249,70 +1250,75 @@ begin
   case (p_step_info.target_objt_tag)
     when flow_constants_pkg.gc_bpmn_end_event then  --next step is either end of process or sub-process returning to its parent
       flow_engine.process_endEvent
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+      , p_subflow_id => p_sbfl_rec.sbfl_id
+      , p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when flow_constants_pkg.gc_bpmn_gateway_exclusive then
       flow_gateways.process_exclusiveGateway
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when flow_constants_pkg.gc_bpmn_gateway_inclusive then
       flow_gateways.process_para_incl_Gateway
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when flow_constants_pkg.gc_bpmn_gateway_parallel then
       flow_gateways.process_para_incl_Gateway
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when flow_constants_pkg.gc_bpmn_subprocess then
       flow_engine.process_subProcess
-         ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-         , p_subflow_id => p_sbfl_rec.sbfl_id
-         , p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      ( p_process_id => p_sbfl_rec.sbfl_prcs_id
+      , p_subflow_id => p_sbfl_rec.sbfl_id
+      , p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when flow_constants_pkg.gc_bpmn_gateway_event_based then
-        flow_gateways.process_eventBasedGateway
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      flow_gateways.process_eventBasedGateway
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when  flow_constants_pkg.gc_bpmn_intermediate_catch_event then 
-        flow_engine.process_intermediateCatchEvent
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      flow_engine.process_intermediateCatchEvent
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when  flow_constants_pkg.gc_bpmn_intermediate_throw_event then 
-        flow_engine.process_intermediateThrowEvent
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         ); 
+      flow_engine.process_intermediateThrowEvent
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      ); 
     when  flow_constants_pkg.gc_bpmn_task then 
-        flow_tasks.process_task
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         );
+      flow_tasks.process_task
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      );
     when  flow_constants_pkg.gc_bpmn_usertask then
-        flow_tasks.process_userTask
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         );
+      flow_tasks.process_userTask
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      );
     when  flow_constants_pkg.gc_bpmn_scripttask then 
-        flow_tasks.process_scriptTask
-         (p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         );
+      flow_tasks.process_scriptTask
+      (p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      );
     when  flow_constants_pkg.gc_bpmn_manualtask then 
-        flow_tasks.process_manualTask
-         ( p_sbfl_info => p_sbfl_rec
-         , p_step_info => p_step_info
-         );
+      flow_tasks.process_manualTask
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      );
     when  flow_constants_pkg.gc_bpmn_servicetask then 
-    flow_tasks.process_serviceTask
+      flow_tasks.process_serviceTask
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      );
+    when  flow_constants_pkg.gc_bpmn_businessruletask then 
+      flow_tasks.process_businessRuleTask
          ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );

@@ -27,5 +27,10 @@ as
   , p_step_info     in flow_types_pkg.flow_step_info
   );
 
+  procedure process_businessRuleTask
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  );
+
 end flow_tasks;
 /

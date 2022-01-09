@@ -8,3 +8,4 @@ insert into flow_configuration (cfig_key, cfig_value) values ('version_initial_i
 insert into flow_configuration (cfig_key, cfig_value) values ('version_now_installed','21.1');
 insert into flow_configuration (cfig_key, cfig_value) values ('default_workspace', 'FLOWS4APEX');
 insert into flow_configuration (cfig_key, cfig_value) values ('default_email_sender', '');
+insert into flow_configuration (cfig_key, cfig_value) values ('timer_max_cycles','1000');

@@ -23,10 +23,13 @@ update flow_subflows
 
 alter table flow_subflows modify (sbfl_step_key not null); 
 
--- put migrated systems into legacy mode for step keys
+-- put migrated systems into legacy mode for step keys and add other new config keys
 insert into flow_configuration (cfig_key, cfig_value) values ('duplicate_step_prevention','legacy');
 insert into flow_configuration (cfig_key, cfig_value) values ('version_initial_installed','unknown');
 insert into flow_configuration (cfig_key, cfig_value) values ('version_now_installed','21.2');
+insert into flow_configuration (cfig_key, cfig_value) values ('default_workspace', 'FLOWS4APEX');
+insert into flow_configuration (cfig_key, cfig_value) values ('default_email_sender', '');
+insert into flow_configuration (cfig_key, cfig_value) values ('timer_max_cycles','1000');
 
 -- migrate table flow_timers to modify PK
 
