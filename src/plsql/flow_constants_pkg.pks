@@ -2,14 +2,18 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '21.2.0';
+  gc_version constant varchar2(10 char) := '22.1.0';
 
+  gc_true          constant varchar2(1 byte) := 'Y';
+  gc_false         constant varchar2(1 byte) := 'N';
   gc_vcbool_true   constant varchar2(10 char) := 'true';
   gc_vcbool_false  constant varchar2(10 char) := 'false';
   gc_numbool_true  constant number            := 1;
   gc_numbool_false constant number            := 0;
 
   gc_nsmap       constant varchar2(200 char) := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
+  gc_nsbpmn      constant varchar2(200 char) := 'http://www.omg.org/spec/BPMN/20100524/MODEL';
+  gc_nsapex      constant varchar2(200 char) := 'https://flowsforapex.org';
   gc_bpmn_prefix constant varchar2(10 char)  := 'bpmn:';
   gc_apex_prefix constant varchar2(10 char)  := 'apex:';
 

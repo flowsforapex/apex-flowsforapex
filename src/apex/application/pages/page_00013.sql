@@ -35,8 +35,8 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#:t-Dialog--noPadding'
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20211126143458'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20220106152502'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -1001,17 +1001,11 @@ wwv_flow_api.create_report_region(
 ' order by lgpr_timestamp',
 ' fetch first 1 rows only'))
 ,p_display_when_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select 1',
-'from flow_subflows',
-'where sbfl_prcs_id = :P13_PRCS_ID ',
-'and sbfl_current = :P13_OBJT_ID',
-'and sbfl_status = ''error''',
-'and exists (',
-'    select 1',
-'    from FLOW_P0013_INSTANCE_LOG_VW',
-'    where lgpr_prcs_id = :P13_PRCS_ID and lgpr_objt_id = :P13_OBJT_ID ',
+'flow_engine_app_api.has_error(',
+'  pi_prcs_id => :P13_PRCS_ID',
+', pi_objt_id => :P13_OBJT_ID',
 ')'))
-,p_display_condition_type=>'EXISTS'
+,p_display_condition_type=>'PLSQL_EXPRESSION'
 ,p_ajax_enabled=>'Y'
 ,p_query_row_template=>wwv_flow_api.id(12495548550946880181)
 ,p_query_num_rows=>15

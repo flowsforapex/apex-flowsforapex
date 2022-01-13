@@ -195,7 +195,7 @@ as
     cursor c_applications is select * from apex_applications order by application_name;
     l_application apex_applications%rowtype;
   begin
-    l_result := '[';
+    l_result := '[{"name":"","value":""},';
     open c_applications;
     loop
         fetch c_applications into l_application;
@@ -211,7 +211,7 @@ as
     cursor c_pages is select * from apex_application_pages where application_id = apex_application.g_x02 order by page_name;
     l_page apex_application_pages%rowtype;
   begin
-    l_result := '[';
+    l_result := '[{"name":"","value":""},';
     open c_pages;
     loop
         fetch c_pages into l_page;
@@ -227,7 +227,7 @@ as
     cursor c_items is select * from apex_application_page_items where application_id = apex_application.g_x02 and page_id = apex_application.g_x03 order by item_name;
     l_item apex_application_page_items%rowtype;
   begin
-    l_result := '[';
+    l_result := '[{"name":"","value":""},';
     open c_items;
     loop
         fetch c_items into l_item;

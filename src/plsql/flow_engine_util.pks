@@ -13,6 +13,12 @@ as
     p_default_value in flow_configuration.cfig_value%type
   ) return flow_configuration.cfig_value%type;
 
+  procedure set_config_value
+  ( 
+    p_config_key in flow_configuration.cfig_key%type,
+    p_value      in flow_configuration.cfig_value%type
+  );
+
   function check_subflow_exists
   (
     p_process_id in flow_processes.prcs_id%type

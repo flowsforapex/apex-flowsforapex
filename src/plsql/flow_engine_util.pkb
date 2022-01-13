@@ -43,6 +43,17 @@ as
       return p_default_value;
   end get_config_value;
 
+  procedure set_config_value
+  (
+    p_config_key in flow_configuration.cfig_key%type
+  , p_value      in flow_configuration.cfig_value%type)
+  as
+  begin
+    update flow_configuration
+       set cfig_value = p_value
+     where cfig_key = p_config_key;
+  end set_config_value;
+
   function step_key
   ( pi_sbfl_id        in flow_subflows.sbfl_id%type
   , pi_current        in flow_subflows.sbfl_current%type

@@ -23,8 +23,8 @@ wwv_flow_api.create_page(
 '    font-size: 1.1rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'FLOWS4APEX'
-,p_last_upd_yyyymmddhh24miss=>'20211111182245'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20220107130905'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(8027146440825640)
@@ -253,24 +253,13 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Set Settings'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    procedure set_config_value(',
-'        p_config_key    in flow_configuration.cfig_key%type',
-'      , p_value         in flow_configuration.cfig_value%type',
-'   )',
-'   is',
-'   begin',
-'       update flow_configuration',
-'          set cfig_value = p_value',
-'        where cfig_key = p_config_key;',
-'   end;',
-'begin',
-'    set_config_value( p_config_key => ''logging_language'', p_value => :P9_LOGGING_LANGUAGE);',
-'    set_config_value( p_config_key => ''logging_level'', p_value => :P9_LOGGING_LEVEL);',
-'    set_config_value( p_config_key => ''logging_hide_userid'', p_value => :P9_LOGGING_HIDE_USERID);',
-'    set_config_value( p_config_key => ''engine_app_mode'', p_value => :P9_ENGINE_APP_MODE);',
-'    set_config_value( p_config_key => ''duplicate_step_prevention'', p_value => :P9_DUPLICATE_STEP_PREVENTION);',
-'end;'))
+'flow_engine_app_api.set_settings(',
+'  pi_logging_language => :P9_LOGGING_LANGUAGE',
+', pi_logging_level => :P9_LOGGING_LEVEL',
+', pi_logging_hide_userid => :P9_LOGGING_HIDE_USERID',
+', pi_engine_app_mode => :P9_ENGINE_APP_MODE',
+', pi_duplicate_step_prevention => :P9_DUPLICATE_STEP_PREVENTION',
+');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when_button_id=>wwv_flow_api.id(8026761271825636)
 ,p_process_success_message=>'Changes saved.'

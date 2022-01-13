@@ -729,7 +729,7 @@ as
                      , expression_value
                   from xmltable
                        (
-                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'http://www.apex.mt-ag.com' as "apex" )
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '*' passing pi_proc_vars_xml
                          columns
                            variable_sequence number              path 'apex:varSequence'
@@ -767,7 +767,7 @@ as
                      , items.itemValue
                   from xmltable
                        (
-                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'http://www.apex.mt-ag.com' as "apex" )
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '*' passing pi_page_items_xml
                          columns
                            itemName  varchar2(50 char) path 'apex:itemName'
@@ -807,7 +807,7 @@ as
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                                      , 'http://www.apex.mt-ag.com' as "apex")
+                                      , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_subtype_xml
                          columns
                            prop_name     varchar2(50 char)    path 'name()'
@@ -863,7 +863,7 @@ as
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                                      , 'http://www.apex.mt-ag.com' as "apex")
+                                      , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_subtype_xml
                          columns
                            prop_name     varchar2(50 char)    path 'name()'
@@ -893,7 +893,7 @@ as
                      , extension_data
                   from xmltable
                        (
-                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'http://www.apex.mt-ag.com' as "apex" )
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '/bpmn:extensionElements/*' passing pi_extension_xml
                          columns
                            extension_type varchar2(50 char) path 'name()'
@@ -981,7 +981,7 @@ as
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                                      , 'http://www.apex.mt-ag.com' as "apex")
+                                      , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_xml
                          columns
                            child_type         varchar2(50 char)    path 'name()'

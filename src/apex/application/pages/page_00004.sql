@@ -24,8 +24,8 @@ wwv_flow_api.create_page(
 'window.f4a.language = ''&BROWSER_LANGUAGE.'';'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210915143223'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20220107132118'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7938399981499706)
@@ -158,11 +158,11 @@ wwv_flow_api.create_page_computation(
 ,p_computation_sequence=>10
 ,p_computation_item=>'P4_REGION_TITLE'
 ,p_computation_point=>'BEFORE_HEADER'
-,p_computation_type=>'QUERY'
+,p_computation_type=>'PLSQL_EXPRESSION'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select dgrm_name || '' (Version: '' || dgrm_version || '', Status: '' || dgrm_status || '')'' as d',
-'  from flow_diagrams',
-' where dgrm_id = :p4_dgrm_id'))
+'flow_engine_app_api.get_region_title(',
+'  pi_dgrm_id => :P4_DGRM_ID',
+')'))
 ,p_compute_when=>'P4_DGRM_ID'
 ,p_compute_when_type=>'ITEM_IS_NOT_NULL'
 );

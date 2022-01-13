@@ -32,7 +32,7 @@ as
   end is_exporter_version_current;
   
   procedure set_exporter(
-    p_domdoc dbms_xmldom.DOMDocument
+    p_domdoc in out dbms_xmldom.DOMDocument
   , p_exporter varchar2
   , p_exporter_version varchar2
   )
@@ -63,7 +63,7 @@ as
   end set_exporter;
 
   procedure append_page_item(
-    p_domdoc dbms_xmldom.DOMDocument
+    p_domdoc in out dbms_xmldom.DOMDocument
   , p_page_items in out dbms_xmldom.DOMNode
   , p_item_name varchar2
   , p_item_value varchar2
@@ -79,7 +79,7 @@ as
       elem => dbms_xmldom.createelement( 
                 doc => p_domdoc
               , tagName => 'apex:pageItem'
-              , ns => 'http://www.apex.mt-ag.com'
+              , ns => flow_constants_pkg.gc_nsapex
               )
     );
     -- append
@@ -92,7 +92,7 @@ as
       elem => dbms_xmldom.createelement( 
                 doc => p_domdoc
               , tagName => 'apex:itemName'
-              , ns => 'http://www.apex.mt-ag.com'
+              , ns => flow_constants_pkg.gc_nsapex
               ) 
     );
     -- create text node
@@ -117,7 +117,7 @@ as
       elem => dbms_xmldom.createelement( 
                 doc => p_domdoc
               , tagName => 'apex:itemValue'
-              , ns => 'http://www.apex.mt-ag.com'
+              , ns => flow_constants_pkg.gc_nsapex
               )
     );
      -- create text node
@@ -138,6 +138,30 @@ as
     , newchild => l_item_value_node
     );
   end append_page_item;    
+
+  procedure update_apex_namespace(
+    p_domdoc in out dbms_xmldom.DOMDocument
+  )
+  as
+    l_domnodelist dbms_xmldom.DOMNodeList;
+    l_domnode dbms_xmldom.DOMNode;
+    l_domelement dbms_xmldom.DOMElement;
+  begin
+    l_domnodelist := dbms_xmldom.getelementsbytagname(
+      doc => p_domdoc
+    , tagname => 'definitions'
+    );
+    for i in 0 .. dbms_xmldom.getlength(l_domnodelist) - 1
+      loop
+        l_domnode := dbms_xmldom.item(l_domnodelist, i);
+        l_domelement := dbms_xmldom.makeelement(l_domnode);
+        dbms_xmldom.setattribute(
+          elem => l_domelement
+        , name => 'xmlns:apex'
+        , newValue => flow_constants_pkg.gc_nsapex
+        );
+      end loop; 
+  end update_apex_namespace;
 
   procedure migrate_xml(
     p_dgrm_content in out clob
@@ -199,14 +223,14 @@ as
               elem => l_domelement
             , name => 'apex:type'
             , newValue => 'apexPage'
-            , ns => 'http://www.apex.mt-ag.com'
+            , ns => flow_constants_pkg.gc_nsapex
             );
             -- create extension element node 
             l_extension_node := dbms_xmldom.makenode( 
               elem => dbms_xmldom.createelement( 
                   doc => l_domdoc
                 , tagName => 'bpmn:extensionElements'
-                , ns => 'http://www.omg.org/spec/BPMN/20100524/MODEL'
+                , ns => flow_constants_pkg.gc_nsbpmn
                 )
             );
             -- append
@@ -219,7 +243,7 @@ as
               elem => dbms_xmldom.createelement( 
                 doc => l_domdoc
               , tagName => 'apex:apexPage'
-              , ns => 'http://www.apex.mt-ag.com'
+              , ns => flow_constants_pkg.gc_nsapex
               ) 
             );
             -- append
@@ -270,7 +294,7 @@ as
                     elem => dbms_xmldom.createelement( 
                               doc => l_domdoc
                             , tagName => l_ext_child_tag_name
-                            , ns => 'http://www.apex.mt-ag.com'
+                            , ns => flow_constants_pkg.gc_nsapex
                             ) 
                   );
                   -- get text node
@@ -299,7 +323,7 @@ as
                 elem => dbms_xmldom.createelement( 
                           doc => l_domdoc
                         , tagName => 'apex:pageItems'
-                        , ns => 'http://www.apex.mt-ag.com'
+                        , ns => flow_constants_pkg.gc_nsapex
                         )
               );
               -- append
@@ -355,14 +379,14 @@ as
                 elem => l_domelement
               , name => 'apex:type'
               , newValue => 'executePlsql'
-              , ns => 'http://www.apex.mt-ag.com'
+              , ns => flow_constants_pkg.gc_nsapex
               );
               -- create extension element node 
               l_extension_node := dbms_xmldom.makenode( 
                 elem => dbms_xmldom.createelement( 
                           doc => l_domdoc
                         , tagName => 'bpmn:extensionElements'
-                        , ns => 'http://www.omg.org/spec/BPMN/20100524/MODEL'
+                        , ns => flow_constants_pkg.gc_nsbpmn
                         )
               );
               -- append
@@ -375,7 +399,7 @@ as
                 elem => dbms_xmldom.createelement( 
                           doc => l_domdoc
                         , tagName => 'apex:executePlsql'
-                        , ns => 'http://www.apex.mt-ag.com'
+                        , ns => flow_constants_pkg.gc_nsapex
                         )
               );
               -- append
@@ -406,7 +430,7 @@ as
                     elem => dbms_xmldom.createelement( 
                               doc => l_domdoc
                             , tagName => l_ext_child_tag_name
-                            , ns => 'http://www.apex.mt-ag.com'
+                            , ns => flow_constants_pkg.gc_nsapex
                             )
                   );
                   -- get text node
@@ -438,6 +462,9 @@ as
       , p_exporter => 'Flows for APEX'
       , p_exporter_version => flow_constants_pkg.gc_version
       );
+
+      -- update apex namespace
+      update_apex_namespace(l_domdoc);
   
       dbms_xmldom.writetoclob(
         doc => l_domdoc 
