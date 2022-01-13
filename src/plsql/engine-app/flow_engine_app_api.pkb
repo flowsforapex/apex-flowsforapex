@@ -1081,7 +1081,7 @@ as
             into l_clob
             from dual;
             
-            l_dgrm_id := flow_p0006_api.upload_and_parse(
+            l_dgrm_id := upload_and_parse(
                   pi_import_from => 'text'
                 , pi_dgrm_name => l_dgrm_name
                 , pi_dgrm_category => l_dgrm_category

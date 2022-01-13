@@ -31,7 +31,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
 @plsql/flow_errors.pks
-
+@plsql/flow_diagram.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -44,6 +44,9 @@ PROMPT >> Installing Views
 @views/flow_instance_connections_lov.sql
 @views/flow_instance_gateways_lov.sql
 @views/flow_diagrams_vw.sql
+@views/flow_objects_vw.sql
+@views/flow_processes_vw.sql
+@views/flow_process_variables_vw.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_process_vars.pkb
@@ -65,17 +68,13 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_logging.pkb
 @plsql/flow_globals.pkb
 @plsql/flow_errors.pkb
-
+@plsql/flow_diagram.pkb
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
 PROMPT >> Global App Package Specifications
 @plsql/engine-app/flow_engine_app_api.pks
-
-PROMPT >> Page API Specifications
-@plsql/engine-app/flow_p0005_api.pks
-@plsql/engine-app/flow_p0006_api.pks
-@plsql/engine-app/flow_p0007_api.pks
+@plsql/engine-app/flow_theme_api.pks
 
 PROMPT >> Global Error Function
 @plsql/engine-app/apex_error_handling.sql;
@@ -103,11 +102,7 @@ PROMPT >> Page Views
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb
-
-PROMPT >> Page API Bodies
-@plsql/engine-app/flow_p0005_api.pkb
-@plsql/engine-app/flow_p0006_api.pkb
-@plsql/engine-app/flow_p0007_api.pkb
+@plsql/engine-app/flow_theme_api.pkb
 
 PROMPT >> Process Plugin Objects
 @plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pks

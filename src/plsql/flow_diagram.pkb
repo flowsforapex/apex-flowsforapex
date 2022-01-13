@@ -2,13 +2,13 @@ create or replace package body flow_diagram
 as
 
   function create_diagram(
-    pi_dgrm_name in flow_diagrams_vw.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams_vw.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams_vw.dgrm_version%type)
-  return flow_diagrams_vw.dgrm_id%type
+    pi_dgrm_name in flow_diagrams.dgrm_name%type,
+    pi_dgrm_category in flow_diagrams.dgrm_category%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type)
+  return flow_diagrams.dgrm_id%type
   as
     l_diagram_exists binary_integer;
-    l_dgrm_id flow_diagrams_vw.dgrm_id%type;
+    l_dgrm_id flow_diagrams.dgrm_id%type;
   begin
     select count(*)
       into l_diagram_exists
@@ -37,9 +37,9 @@ as
 
 
   function add_diagram_version(
-    pi_dgrm_id in flow_diagrams_vw.dgrm_id%type,
-    pi_dgrm_version in flow_diagrams_vw.dgrm_version%type)
-  return flow_diagrams_vw.dgrm_id%type
+    pi_dgrm_id in flow_diagrams.dgrm_id%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type)
+  return flow_diagrams.dgrm_id%type
   as
     l_dgrm_id flow_diagrams.dgrm_id%type;
     r_diagrams flow_diagrams%rowtype;
@@ -64,29 +64,29 @@ as
 
 
   function import_diagram(
-    pi_dgrm_name in flow_diagrams_vw.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams_vw.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams_vw.dgrm_version%type,
-    pi_dgrm_content in flow_diagrams_vw.dgrm_content%type,
+    pi_dgrm_name in flow_diagrams.dgrm_name%type,
+    pi_dgrm_category in flow_diagrams.dgrm_category%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type,
+    pi_dgrm_content in flow_diagrams.dgrm_content%type,
     pi_force_overwrite in varchar2 default flow_constants_pkg.gc_false) 
-  return flow_diagrams_vw.dgrm_id%type
+  return flow_diagrams.dgrm_id%type
   as
     l_dgrm_id flow_diagrams.dgrm_id%type;
     l_dgrm_exists binary_integer;
-    l_dgrm_status flow_diagrams_vw.dgrm_status%type;
+    l_dgrm_status flow_diagrams.dgrm_status%type;
     l_diagram_unknown boolean;
     l_diagram_is_draft boolean;
   begin
     select count(*)
       into l_dgrm_exists
-      from flow_diagrams_vw
+      from flow_diagrams
      where dgrm_name = pi_dgrm_name
        and dgrm_version = pi_dgrm_version;
 
     if (l_dgrm_exists > 0) then
         select dgrm_status
         into l_dgrm_status
-        from flow_diagrams_vw
+        from flow_diagrams
         where dgrm_name = pi_dgrm_name
         and dgrm_version = pi_dgrm_version;
     end if;
@@ -117,7 +117,7 @@ as
   
   
   function diagram_is_modifiable(
-    pi_dgrm_id in flow_diagrams_vw.dgrm_id%type)
+    pi_dgrm_id in flow_diagrams.dgrm_id%type)
   return boolean
   as
     l_dgrm_status flow_diagrams.dgrm_status%type;
@@ -145,7 +145,7 @@ as
 
 
   procedure delete_diagram(
-    pi_dgrm_id in flow_diagrams_vw.dgrm_id%type,
+    pi_dgrm_id in flow_diagrams.dgrm_id%type,
     pi_cascade in varchar2)
   as
   begin
@@ -159,17 +159,17 @@ as
 
 
   procedure edit_diagram(
-    pi_dgrm_id in flow_diagrams_vw.dgrm_id%type,
-    pi_dgrm_name in flow_diagrams_vw.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams_vw.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams_vw.dgrm_version%type)
+    pi_dgrm_id in flow_diagrams.dgrm_id%type,
+    pi_dgrm_name in flow_diagrams.dgrm_name%type,
+    pi_dgrm_category in flow_diagrams.dgrm_category%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type)
   as
-    l_dgrm_category flow_diagrams_vw.dgrm_category%type;
+    l_dgrm_category flow_diagrams.dgrm_category%type;
   begin
     -- get existing category
     select dgrm_category
       into l_dgrm_category
-      from flow_diagrams_vw
+      from flow_diagrams
      where dgrm_id = pi_dgrm_id;
 
     if coalesce(l_dgrm_category, chr(10)) != coalesce(pi_dgrm_category, chr(10) ) then
@@ -178,7 +178,7 @@ as
          set dgrm_category = pi_dgrm_category
        where dgrm_name = (
              select dgrm_name 
-               from flow_diagrams_vw
+               from flow_diagrams
               where dgrm_id = pi_dgrm_id);
     end if;
 
@@ -191,7 +191,7 @@ as
 
 
   procedure release_diagram(
-    pi_dgrm_id in flow_diagrams_vw.dgrm_id%type)
+    pi_dgrm_id in flow_diagrams.dgrm_id%type)
   as
   begin
     update flow_diagrams
@@ -209,7 +209,7 @@ as
 
 
   procedure deprecate_diagram(
-    pi_dgrm_id in flow_diagrams_vw.dgrm_id%type)
+    pi_dgrm_id in flow_diagrams.dgrm_id%type)
   as
   begin
     update flow_diagrams
@@ -219,7 +219,7 @@ as
 
 
   procedure archive_diagram(
-    pi_dgrm_id in flow_diagrams_vw.dgrm_id%type)
+    pi_dgrm_id in flow_diagrams.dgrm_id%type)
   as
   begin
     update flow_diagrams

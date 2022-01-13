@@ -30,6 +30,8 @@ drop package flow_constants_pkg;
 drop package flow_engine_app_api;
 drop package flow_errors;
 drop package flow_globals;
+drop package flow_diagram;
+drop package flow_theme_api;
 
 PROMPT >> Modeler Plugin Objects
 drop package flow_modeler;
@@ -72,6 +74,9 @@ drop view flow_subflows_vw;
 drop view flow_diagram_categories_lov;
 drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
+drop view flow_objects_vw;
+drop view flow_processes_vw;
+drop view flow_process_variables_vw;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
