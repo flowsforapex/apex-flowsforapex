@@ -491,7 +491,7 @@ as
                                             , pi_sbfl_id => pi_sbfl_id
                                             , pio_string => l_timer_def.timer_definition
                                             );
-          l_repeat_def := regexp_substr (l_timer_def.timer_definition, '^R([0-9]*|-1)\/');
+          l_repeat_def := regexp_substr (l_timer_def.timer_definition, '^'||'R([0-9]*|-1)\/'); -- using concatenation to prevent substitution on installation via script
           if l_repeat_def is null then
             raise e_invalid_repeat;
           end if;
