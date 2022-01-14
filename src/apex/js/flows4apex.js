@@ -421,7 +421,11 @@ function getGatewayErrors(){
 }
 
 function addProcessVariable(action, focusElement){ 
-  var gatewayRoute = apex.jQuery(focusElement).attr("data-gateway-route") === "true" ? true : false;
+  var el = focusElement;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(focusElement).closest("button");
+  }
+  var gatewayRoute = apex.jQuery(el).attr("data-gateway-route") === "true" ? true : false;
   var dialogId = gatewayRoute ? "gateway_selector" : "variable_dialog" ;
 
   if ( apex.jQuery( "#" + dialogId ).dialog( "isOpen" ) ) {
@@ -490,8 +494,12 @@ function addProcessVariable(action, focusElement){
   }
 }
 
-function updateProcessVariable(action, focusElement){ 
-  var gatewayRoute = apex.jQuery(focusElement).attr("data-gateway-route") === "true" ? true : false;
+function updateProcessVariable(action, focusElement){
+  var el = focusElement;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(focusElement).closest("button");
+  }
+  var gatewayRoute = apex.jQuery(el).attr("data-gateway-route") === "true" ? true : false;
   var dialogId = gatewayRoute ? "gateway_selector" : "variable_dialog" ;
 
   if ( apex.jQuery( "#" + dialogId ).dialog( "isOpen" ) ) {
