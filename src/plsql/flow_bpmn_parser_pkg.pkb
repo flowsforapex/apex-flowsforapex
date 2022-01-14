@@ -778,18 +778,22 @@ as
       l_itemNames  := l_itemNames || rec.itemName || ',';
       l_itemValues := l_itemValues || rec.itemValue || ',';
     end loop;
-    register_object_attributes
-    (
-      pi_objt_bpmn_id      => pi_bpmn_id
-    , pi_obat_key          => flow_constants_pkg.gc_apex_usertask_item
-    , pi_obat_vc_value     => rtrim(l_itemNames, ',')
-    );
-    register_object_attributes
-    (
-      pi_objt_bpmn_id      => pi_bpmn_id
-    , pi_obat_key          =>flow_constants_pkg.gc_apex_usertask_value
-    , pi_obat_vc_value     => rtrim(l_itemValues, ',')
-    );
+    if length(rtrim(l_itemNames, ',')) > 0 then
+        register_object_attributes
+        (
+        pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_obat_key          => flow_constants_pkg.gc_apex_usertask_item
+        , pi_obat_vc_value     => rtrim(l_itemNames, ',')
+        );
+    end if;
+    if length(rtrim(l_itemValues, ',')) > 0 then
+        register_object_attributes
+        (
+        pi_objt_bpmn_id      => pi_bpmn_id
+        , pi_obat_key          =>flow_constants_pkg.gc_apex_usertask_value
+        , pi_obat_vc_value     => rtrim(l_itemValues, ',')
+        );
+    end if;
   end parse_page_items;
 
   procedure parse_task_subtypes
