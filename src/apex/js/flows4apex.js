@@ -159,7 +159,11 @@ function bulkStartFlowInstance( action ) {
 function resetFlowInstance(action, element){
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
+    var el = element;
+    if ( el.type === undefined || el.type !== "button") {
+      el = apex.jQuery(element).closest("button");
+    }
+    var data = getflowInstanceData(action, el);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -191,7 +195,11 @@ function bulkResetFlowInstance(action, element){
 function terminateFlowInstance(action, element) {
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
+    var el = element;
+    if ( el.type === undefined || el.type !== "button") {
+      el = apex.jQuery(element).closest("button");
+    }
+    var data = getflowInstanceData(action, el);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -223,7 +231,11 @@ function bulkTerminateFlowInstance(action, element) {
 function deleteFlowInstance( action, element ){ 
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
+    var el = element;
+    if ( el.type === undefined || el.type !== "button") {
+      el = apex.jQuery(element).closest("button");
+    }
+    var data = getflowInstanceData(action, el);
     data.x03 = getConfirmComment();
 
     var options = {};
