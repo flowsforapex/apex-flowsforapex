@@ -60,5 +60,6 @@ begin
       pi_dgrm_id => r_diagram.dgrm_id
     );
   end loop;
+  commit;
 end;
 /
