@@ -18,6 +18,7 @@ PROMPT >> =================
 PROMPT >> Installing Package Specifications
 @plsql/flow_types_pkg.pks
 @plsql/flow_constants_pkg.pks
+@plsql/flow_migrate_xml_pkg.pks
 @plsql/flow_bpmn_parser_pkg.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_engine_util.pks
@@ -36,8 +37,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
 @plsql/flow_errors.pks
-
-
+@plsql/flow_diagram.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -50,39 +50,37 @@ PROMPT >> Installing Views
 @views/flow_instance_connections_lov.sql
 @views/flow_instance_gateways_lov.sql
 @views/flow_diagrams_vw.sql
-@views/flow_diagram_categories_lov.sql
+@views/flow_objects_vw.sql
+@views/flow_processes_vw.sql
+@views/flow_process_variables_vw.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_process_vars.pkb
 @plsql/flow_expressions.pkb
 @plsql/flow_reservations.pkb
 @plsql/flow_engine_util.pkb
-@plsql/flow_engine.pkb
-@plsql/flow_instances.pkb
 @plsql/flow_gateways.pkb
 @plsql/flow_boundary_events.pkb
 @plsql/flow_tasks.pkb
+@plsql/flow_services.pkb
+@plsql/flow_instances.pkb
+@plsql/flow_engine.pkb
 @plsql/flow_api_pkg.pkb
+@plsql/flow_migrate_xml_pkg.pkb
 @plsql/flow_bpmn_parser_pkg.pkb
 @plsql/flow_timers_pkg.pkb
 @plsql/flow_usertask_pkg.pkb
-@plsql/flow_services.pkb
 @plsql/flow_plsql_runner_pkg.pkb
 @plsql/flow_logging.pkb
 @plsql/flow_globals.pkb
 @plsql/flow_errors.pkb
-
-
+@plsql/flow_diagram.pkb
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
 PROMPT >> Global App Package Specifications
 @plsql/engine-app/flow_engine_app_api.pks
-
-PROMPT >> Page API Specifications
-@plsql/engine-app/flow_p0005_api.pks
-@plsql/engine-app/flow_p0006_api.pks
-@plsql/engine-app/flow_p0007_api.pks
+@plsql/engine-app/flow_theme_api.pks
 
 PROMPT >> Global Error Function
 @plsql/engine-app/apex_error_handling.sql;
@@ -110,19 +108,7 @@ PROMPT >> Page Views
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb
-
-PROMPT >> Page API Bodies
-@plsql/engine-app/flow_p0005_api.pkb
-@plsql/engine-app/flow_p0006_api.pkb
-@plsql/engine-app/flow_p0007_api.pkb
-
-PROMPT >> Modeler Plugin Objects
-@plugins/modeler/plsql/flow_modeler.pks
-@plugins/modeler/plsql/flow_modeler.pkb
-
-PROMPT >> Modeler Plugin Objects
-@plugins/viewer/plsql/flow_viewer.pks
-@plugins/viewer/plsql/flow_viewer.pkb
+@plsql/engine-app/flow_theme_api.pkb
 
 PROMPT >> Process Plugin Objects
 @plugins/manage-flow-instance/plsql/flow_plugin_manage_instance.pks
@@ -131,6 +117,14 @@ PROMPT >> Process Plugin Objects
 @plugins/manage-flow-instance-step/plsql/flow_plugin_manage_instance_step.pkb
 @plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pks
 @plugins/manage-flow-instance-variables/plsql/flow_plugin_manage_instance_variables.pkb
+
+PROMPT >> Modeler Plugin Objects
+@plugins/modeler/plsql/flow_modeler.pks
+@plugins/modeler/plsql/flow_modeler.pkb
+
+PROMPT >> Modeler Plugin Objects
+@plugins/viewer/plsql/flow_viewer.pks
+@plugins/viewer/plsql/flow_viewer.pkb
 
 PROMPT >> Installing Initial Engine Data
 PROMPT >> =============================
