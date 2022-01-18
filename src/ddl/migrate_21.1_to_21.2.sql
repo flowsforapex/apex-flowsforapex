@@ -49,4 +49,17 @@ delete from flow_process_variables
 alter table flow_process_variables add constraint prov_prcs_fk foreign key (prov_prcs_id)
    references flow_processes (prcs_id)
    on delete cascade;
+
+-- parse all diagrams to refactor xml structure to new extension element syntax + renamed tags
+declare
+    cursor c_diagrams is select dgrm_id from flow_diagrams for update;
+begin
+  for r_diagram in c_diagrams loop
+    flow_bpmn_parser_pkg.parse
+    (
+      pi_dgrm_id => r_diagram.dgrm_id
+    );
+  end loop;
+  commit;
+end;
 /

@@ -466,10 +466,12 @@ as
       -- update apex namespace
       update_apex_namespace(l_domdoc);
   
+      dbms_lob.createtemporary(l_return, false); 
       dbms_xmldom.writetoclob(
         doc => l_domdoc 
-      , cl => p_dgrm_content
+      , cl => l_return
       );
+      p_dgrm_content := l_return;
       p_has_changed := true;
     else
       p_has_changed := false;
