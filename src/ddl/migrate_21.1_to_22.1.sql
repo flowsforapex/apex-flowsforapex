@@ -1,11 +1,14 @@
 /*
-  Migration Script for Release 21.1 to 21.2
+  Migration Script for Release 21.1 to 22.1
 */
 
-PROMPT >> Running DDL for Upgrade from 21.1 to 21.2
+PROMPT >> Running DDL for Upgrade from 21.1 to 22.1
 PROMPT >> -------------------------------------------
 
 PROMPT >> Remove obsolete objects
+drop package flow_p0005_api;
+drop package flow_p0006_api;
+drop package flow_p0007_api;
 
 PROMPT >> Create new tables
 
@@ -26,7 +29,7 @@ alter table flow_subflows modify (sbfl_step_key not null);
 -- put migrated systems into legacy mode for step keys and add other new config keys
 insert into flow_configuration (cfig_key, cfig_value) values ('duplicate_step_prevention','legacy');
 insert into flow_configuration (cfig_key, cfig_value) values ('version_initial_installed','unknown');
-insert into flow_configuration (cfig_key, cfig_value) values ('version_now_installed','21.2');
+insert into flow_configuration (cfig_key, cfig_value) values ('version_now_installed','22.1');
 insert into flow_configuration (cfig_key, cfig_value) values ('default_workspace', 'FLOWS4APEX');
 insert into flow_configuration (cfig_key, cfig_value) values ('default_email_sender', '');
 insert into flow_configuration (cfig_key, cfig_value) values ('timer_max_cycles','1000');
