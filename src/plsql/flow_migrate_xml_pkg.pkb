@@ -299,16 +299,18 @@ as
                   );
                   -- get text node
                   l_child_text_node := dbms_xmldom.getfirstchild(l_child_node);
-                  -- add text node
-                  l_child_text_node := dbms_xmldom.appendchild(
-                    n => l_ext_child_node
-                  , newchild => l_child_text_node
-                  );
-                  -- append
-                  l_ext_child_node := dbms_xmldom.appendchild(
-                    n => l_task_type_node
-                  , newchild => l_ext_child_node
-                  );
+                  if not dbms_xmldom.isnull(l_child_text_node) then
+                      -- add text node
+                      l_child_text_node := dbms_xmldom.appendchild(
+                        n => l_ext_child_node
+                      , newchild => l_child_text_node
+                      );
+                      -- append
+                      l_ext_child_node := dbms_xmldom.appendchild(
+                        n => l_task_type_node
+                      , newchild => l_ext_child_node
+                      );
+                  end if;      
                   -- remove old child
                   l_child_node := dbms_xmldom.removechild(
                     n => l_domnode
@@ -435,16 +437,18 @@ as
                   );
                   -- get text node
                   l_child_text_node := dbms_xmldom.getfirstchild(l_child_node);
-                  -- add text node
-                  l_child_text_node := dbms_xmldom.appendchild(
-                    n => l_ext_child_node
-                  , newchild => l_child_text_node
-                  );
-                  -- append
-                  l_ext_child_node := dbms_xmldom.appendchild(
-                    n => l_task_type_node
-                  , newchild => l_ext_child_node
-                  );
+                  if not dbms_xmldom.isnull(l_child_text_node) then
+                      -- add text node
+                      l_child_text_node := dbms_xmldom.appendchild(
+                        n => l_ext_child_node
+                      , newchild => l_child_text_node
+                      );
+                      -- append
+                      l_ext_child_node := dbms_xmldom.appendchild(
+                        n => l_task_type_node
+                      , newchild => l_ext_child_node
+                      );
+                  end if;      
                   -- remove old child
                   l_child_node := dbms_xmldom.removechild(
                     n => l_domnode
