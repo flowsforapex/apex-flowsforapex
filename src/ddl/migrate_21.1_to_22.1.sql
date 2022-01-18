@@ -6,6 +6,9 @@ PROMPT >> Running DDL for Upgrade from 21.1 to 22.1
 PROMPT >> -------------------------------------------
 
 PROMPT >> Remove obsolete objects
+drop package flow_p0005_api;
+drop package flow_p0006_api;
+drop package flow_p0007_api;
 
 PROMPT >> Create new tables
 
