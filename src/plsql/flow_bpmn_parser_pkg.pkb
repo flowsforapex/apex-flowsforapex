@@ -135,7 +135,7 @@ as
 	  l_obat_rec.obat_date_value := pi_obat_date_value;
 	  l_obat_rec.obat_vc_value   := pi_obat_vc_value;
 	  l_obat_rec.obat_clob_value := pi_obat_clob_value;
-	  
+   
       if not l_objt_obat_idx_exists then
         g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name := pi_objt_sub_tag_name;
 		g_obj_attribs(pi_objt_bpmn_id).obat_tab(1) := l_obat_rec;
@@ -834,20 +834,24 @@ as
                              , flow_constants_pkg.gc_apex_task_plsql_code
                              )
       then
-        register_object_attributes
-        (
-          pi_objt_bpmn_id      => pi_bpmn_id
-        , pi_obat_key          => rec.prop_name
-        , pi_obat_clob_value   => rec.prop_value
-        );
+        if length(rec.prop_value) > 0 then
+          register_object_attributes
+          (
+            pi_objt_bpmn_id      => pi_bpmn_id
+          , pi_obat_key          => rec.prop_name
+          , pi_obat_clob_value   => rec.prop_value
+          );
+        end if;
       -- store varchar values   
       else
-        register_object_attributes
-        (
-          pi_objt_bpmn_id      => pi_bpmn_id
-        , pi_obat_key          => rec.prop_name
-        , pi_obat_vc_value     => rec.prop_value
-        );
+        if length(rec.prop_value) > 0 then
+            register_object_attributes
+            (
+              pi_objt_bpmn_id      => pi_bpmn_id
+            , pi_obat_key          => rec.prop_name
+            , pi_obat_vc_value     => rec.prop_value
+            );
+        end if;
       end if;
     end loop;
   end parse_task_subtypes;
@@ -876,12 +880,14 @@ as
                        ) props
                )
     loop
+      if length(rec.prop_value) > 0 then
         register_object_attributes
         (
           pi_objt_bpmn_id      => pi_bpmn_id
         , pi_obat_key          => rec.prop_name
         , pi_obat_vc_value     => rec.prop_value
         );
+      end if;
     end loop;
   end parse_custom_timers;
 
@@ -1482,4 +1488,4 @@ as
   end update_diagram;
 
 end flow_bpmn_parser_pkg;
-/ 
+/
