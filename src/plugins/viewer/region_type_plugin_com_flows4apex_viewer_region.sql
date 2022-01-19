@@ -28,7 +28,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   07:44 Wednesday January 19, 2022
+--   Date and Time:   12:11 Wednesday January 19, 2022
 --   Exported By:     DAMTHOR
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -62,9 +62,9 @@ wwv_flow_api.create_plugin(
 ,p_standard_attributes=>'SOURCE_LOCATION:AJAX_ITEMS_TO_SUBMIT:NO_DATA_FOUND_MESSAGE:INIT_JAVASCRIPT_CODE:VALUE_ATTRIBUTE'
 ,p_substitute_attributes=>false
 ,p_subscribe_plugin_settings=>true
-,p_version_identifier=>'21.1'
+,p_version_identifier=>'22.1'
 ,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex'
-,p_files_version=>188
+,p_files_version=>191
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(208090759541018765)
