@@ -28,7 +28,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   12:10 Wednesday January 19, 2022
+--   Date and Time:   16:03 Friday January 21, 2022
 --   Exported By:     DAMTHOR
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -58,7 +58,7 @@ wwv_flow_api.create_plugin(
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
 ,p_version_identifier=>'22.1'
-,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex'
+,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(151287222331012470)
