@@ -307,6 +307,18 @@ as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+    when flow_services.e_json_not_valid then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after placeholder JSON object not valid'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'email-placeholder-json-invalid'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
     when flow_services.e_email_failed then
       rollback;
       apex_debug.info 

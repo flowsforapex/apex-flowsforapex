@@ -49,6 +49,7 @@ as
       l_attachments      t_attachments;
       l_workspace        varchar2(100);
       l_session          varchar2(20) := v('APP_SESSION');
+      l_json_object      json_object_t;
     begin
       apex_debug.enter 
       ( 'send_email'
@@ -168,6 +169,16 @@ as
           raise e_email_no_template;
         end if;
 
+        apex_debug.message('sys.dbms_lob.getlength(l_placeholders) ' ||sys.dbms_lob.getlength(l_placeholders));
+        if sys.dbms_lob.getlength(l_placeholders) > 0  then
+          begin
+            l_json_object := json_object_t(l_placeholders);
+          exception
+            when others then
+              raise e_json_not_valid;
+          end;
+        end if;
+
         l_mail_id := apex_mail.send(
           p_template_static_id => l_template_id,
           p_placeholders       => l_placeholders,
@@ -256,7 +267,18 @@ as
       (
         p_message => 'Email service task body is missing'
       );
-      raise e_email_no_body;  
+      raise e_email_no_body;
+    when e_json_not_valid then
+      apex_debug.error
+      (
+        p_message => 'Placeholder JSON object is invalid.'
+      );
+      apex_debug.log_long_message
+      (
+          p_message => l_placeholders
+        , p_level   => apex_debug.c_log_level_error
+      );
+      raise e_json_not_valid;
     when others then
       apex_debug.error
       (
