@@ -77,7 +77,9 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_logging.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_globals.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_errors.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_diagram.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_theme_api.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance/plsql/", "name": "flow_plugin_manage_instance.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-step/plsql/", "name": "flow_plugin_manage_instance_step.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-variables/plsql/", "name": "flow_plugin_manage_instance_variables.pks", "add_show_errors": false }
@@ -110,6 +112,9 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_connections_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_gateways_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_diagrams_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_objects_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_processes_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_process_variables_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0002_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_instances_counter_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_instance_details_vw.sql", "add_show_errors": false }
@@ -165,7 +170,9 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_logging.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_globals.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_errors.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_diagram.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_theme_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance/plsql/", "name": "flow_plugin_manage_instance.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-step/plsql/", "name": "flow_plugin_manage_instance_step.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-variables/plsql/", "name": "flow_plugin_manage_instance_variables.pkb", "add_show_errors": false }
