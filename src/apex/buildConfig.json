@@ -112,9 +112,6 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_connections_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_gateways_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_diagrams_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_objects_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_processes_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_process_variables_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0002_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_instances_counter_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_instance_details_vw.sql", "add_show_errors": false }
