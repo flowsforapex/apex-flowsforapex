@@ -26,6 +26,8 @@ This comprises:
 - `flow_reset` - is used, typically during model development and testing only, to reset an existing Instance to the state it would be at after it was created, but not yet started.  All Process Variables, except built-ins, are deleted.
 - `flow_delete` - is used to remove an Instance from the system.  All instances, subflows, and variables are deleted from the operational system.  If event logging was enabled while the process was running, records in the event logs are maintained for auditing purposes.
 
+In an APEX application, these operations can all be performed by the Flows for APEX - Manage Flow Instance process plugin.
+
 ### Step Operations
 
 Step operations are used to control the current step in the Flow Instance.
@@ -39,6 +41,8 @@ These comprise:
 - `flow_release_step` - is used to remove a reservation (see [documentation on reservations](reservations.md).
 - `flow_complete_step` - is used to tell the flow engine that the current step is complete, and to move the instance forward to the next step.
 
+In an APEX application, these operations can all be performed by the Flows for APEX - Manage Flow Instance Step process plugin.
+
 ### Instance Variable (Process Variable) Operations
 
 Process Variable operations are used to set, get, and delete Process Variables.  You can also get the type of a Process Variable.
@@ -46,5 +50,7 @@ Process Variable operations are used to set, get, and delete Process Variables. 
 Process Variable operations are contained in the PL/SQL package `flow_process_vars`.
 
 The process variable system and its PL/SQL API is [detailed in documentation here](ProcessVariables.md).
+
+In an APEX application, these operations can all be performed by the Flows for APEX - Manage Flow Instance Variables process plugin.
 
 Certain Process Variables are pre-defined with the intention that every Instance is likely to use them, and so having a naming convention and a variable which is accessible both as a Flows for APEX Process Variable and also through pre-defined PL/SQL procedures.  Currently, there is one built-in process variable, `BUSINESS_REF`, which can also be accessed directly through the PL/SQL function `flow_process_vars.get_business_ref()`.

@@ -17,7 +17,6 @@ Typically these are used in the early stages of modeling a business process, but
 userTask objects can be used for an online task to be performed by a user.  Currently, the following userTask types are enabled:
 
 - call an APEX page.
-- call an external URL. 🆕
 
 APEX Page User Tasks:  userTasks are configured in the APEX tab of the Flows for APEX modeler properties panel with the information required to call an APEX page.  This configuration will be familiar to anyone who has configured APEX menus.
 
