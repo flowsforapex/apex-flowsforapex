@@ -13,6 +13,7 @@
   - Use of APEX metadata in UI for specifying links to APEX pages and page items.
 - Enhances the step operations plugin so that it can issue the flow_start_step command.
 - Separates private and public calls and views used by the Flow Engine Application to ease reuse by customer apps.
+- Enhanced the sample app "Expense Claims" to reflect all features added to Flows for APEX 22.1 
 
 
 ## v21.1
