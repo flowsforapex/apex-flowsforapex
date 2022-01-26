@@ -577,3 +577,10 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'fr',
 'Processus %0 : la tâche de service %1 a échoué : voir le journal pour plus de détail et vérifier le modèle.'
 );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-placeholder-json-invalid',
+'fr',
+'Processus %0: la tâche de service %1 a échoué : l''objet JSON des espaces réservés est invalide. Veuillez vérifier le modèle.'
+);
