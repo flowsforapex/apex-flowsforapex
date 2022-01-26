@@ -23,8 +23,8 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
-,p_version_identifier=>'21.2'
-,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex'
+,p_version_identifier=>'22.1'
+,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(151287222331012470)

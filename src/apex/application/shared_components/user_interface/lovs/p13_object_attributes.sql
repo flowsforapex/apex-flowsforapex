@@ -89,6 +89,138 @@ wwv_flow_api.create_static_lov_data(
 ,p_lov_disp_value=>'Timer Definition'
 ,p_lov_return_value=>'timerDefinition'
 );
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35700662160505107)
+,p_lov_disp_sequence=>13
+,p_lov_disp_value=>'Task Type'
+,p_lov_return_value=>'taskType'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35700949683505137)
+,p_lov_disp_sequence=>14
+,p_lov_disp_value=>'From'
+,p_lov_return_value=>'apex:emailFrom'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35701367611505137)
+,p_lov_disp_sequence=>15
+,p_lov_disp_value=>'To'
+,p_lov_return_value=>'apex:emailTo'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35701702285505137)
+,p_lov_disp_sequence=>16
+,p_lov_disp_value=>'CC'
+,p_lov_return_value=>'apex:emailCC'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35702112103505146)
+,p_lov_disp_sequence=>17
+,p_lov_disp_value=>'BCC'
+,p_lov_return_value=>'apex:emailBCC'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35702525554505146)
+,p_lov_disp_sequence=>18
+,p_lov_disp_value=>'Reply To'
+,p_lov_return_value=>'apex:emailReplyTo'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35702928038505146)
+,p_lov_disp_sequence=>19
+,p_lov_disp_value=>'Use Template'
+,p_lov_return_value=>'apex:useTemplate'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35703352692505146)
+,p_lov_disp_sequence=>20
+,p_lov_disp_value=>'Application ID'
+,p_lov_return_value=>'apex:applicationId'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35703713806505147)
+,p_lov_disp_sequence=>21
+,p_lov_disp_value=>'Template ID'
+,p_lov_return_value=>'apex:templateId'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35704108915505147)
+,p_lov_disp_sequence=>22
+,p_lov_disp_value=>'Placeholder'
+,p_lov_return_value=>'apex:placeholder'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35704517220505147)
+,p_lov_disp_sequence=>23
+,p_lov_disp_value=>'Subject'
+,p_lov_return_value=>'apex:subject'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35704978438505147)
+,p_lov_disp_sequence=>24
+,p_lov_disp_value=>'Body'
+,p_lov_return_value=>'apex:bodyText'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35705311456505147)
+,p_lov_disp_sequence=>25
+,p_lov_disp_value=>'HTML Body'
+,p_lov_return_value=>'apex:bodyHTML'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35705730321505148)
+,p_lov_disp_sequence=>26
+,p_lov_disp_value=>'Attachment'
+,p_lov_return_value=>'apex:attachment'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35706161989505149)
+,p_lov_disp_sequence=>27
+,p_lov_disp_value=>'Send Immediatly'
+,p_lov_return_value=>'apex:immediately'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35707717059505149)
+,p_lov_disp_sequence=>31
+,p_lov_disp_value=>'Date'
+,p_lov_return_value=>'apex:date'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35708141249505150)
+,p_lov_disp_sequence=>32
+,p_lov_disp_value=>'Format Mask'
+,p_lov_return_value=>'apex:formatMask'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35708515702505150)
+,p_lov_disp_sequence=>33
+,p_lov_disp_value=>'Interval Year to Month'
+,p_lov_return_value=>'apex:intervalYM'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35708950682505150)
+,p_lov_disp_sequence=>34
+,p_lov_disp_value=>'Interval Day to Second'
+,p_lov_return_value=>'apex:intervalDS'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35709380114505150)
+,p_lov_disp_sequence=>35
+,p_lov_disp_value=>'Time until the timer fires first'
+,p_lov_return_value=>'apex:startIntervalDS'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35709717522505150)
+,p_lov_disp_sequence=>36
+,p_lov_disp_value=>'Time until the timer fires again'
+,p_lov_return_value=>'apex:repeatIntervalDS'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(35710159164505151)
+,p_lov_disp_sequence=>37
+,p_lov_disp_value=>'Max Runs'
+,p_lov_return_value=>'apex:maxRuns'
+);
 wwv_flow_api.component_end;
 end;
 /
