@@ -309,29 +309,38 @@ as
         when 'sql' then
             v_command := upper(substr(apex_application.g_x02, 1,instr(apex_application.g_x02,' ') - 1));
             if v_command in ( 'ALTER', 'COMPUTE', 'CREATE', 'DROP', 'GRANT', 'REVOKE') then
-                l_result := '{"message":"Forbidden DDL statement"}';
+                l_result := '{"message":"Forbidden DDL statement","success":"false"}';
             elsif v_command in ( 'SELECT', 'INSERT', 'UPDATE', 'DELETE' ) then
                 v_input := rtrim(apex_application.g_x02, ';');
                 begin
                     v_cur := dbms_sql.open_cursor();
                     dbms_sql.parse(v_cur, v_input, dbms_sql.native);
                     dbms_sql.close_cursor(v_cur);
-                    l_result := '{"message":"Validation successful"}';
+                    l_result := '{"message":"Validation successful","success":"true"}';
                 exception
-                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '"}';
+                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '","success":"false"}';
                 end;
             else
-                l_result := '{"message":"Unparsable SQL"}';
+                l_result := '{"message":"Unparsable SQL","success":"false"}';
             end if;
         when 'plsql' then
-            v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
+            case apex_application.g_x04
+               when 'plsqlProcess' then
+                  v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
+               when 'plsqlExpression' then
+                  v_input := 'declare dummy varchar2(4000) :='
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
+               when 'plsqlFunctionBody' then
+                  v_input := 'declare function dummy return varchar2 is begin'
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+            end case;
             begin
                     v_cur := dbms_sql.open_cursor();
                     dbms_sql.parse(v_cur, v_input, dbms_sql.native);
                     dbms_sql.close_cursor(v_cur);
-                    l_result := '{"message":"Validation successful"}';
+                    l_result := '{"message":"Validation successful","success":"true"}';
                 exception
-                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '"}';
+                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '","success":"false"}';
                 end;
         end case;
     end if;

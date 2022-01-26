@@ -9,6 +9,7 @@ as
   e_email_no_template exception;
   e_email_no_body exception;
   e_email_failed exception;
+  e_json_not_valid exception;
 
   procedure send_email(
       pi_prcs_id in flow_processes.prcs_id%type

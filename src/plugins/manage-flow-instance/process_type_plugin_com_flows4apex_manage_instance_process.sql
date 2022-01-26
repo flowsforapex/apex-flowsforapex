@@ -15,10 +15,10 @@ begin
 wwv_flow_api.import_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
+,p_default_workspace_id=>63504938970163399
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
+,p_default_owner=>'FLOWS211'
 );
 end;
 /
@@ -28,15 +28,15 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   09:50 Thursday July 22, 2021
---   Exported By:     FLOWS4APEX
+--   Date and Time:   16:03 Friday January 21, 2022
+--   Exported By:     DAMTHOR
 --   Flashback:       0
 --   Export Type:     Component Export
 --   Manifest
 --     PLUGIN: 92418934266670712
 --   Manifest End
 --   Version:         20.1.0.00.13
---   Instance ID:     300193896399987
+--   Instance ID:     250167802641663
 --
 
 begin
@@ -57,8 +57,8 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
-,p_version_identifier=>'1.0'
-,p_about_url=>'https://github.com/mt-ag/apex-flowsforapex	'
+,p_version_identifier=>'22.1'
+,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(92419102522670723)

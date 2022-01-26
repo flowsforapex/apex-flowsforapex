@@ -580,3 +580,10 @@ insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
 'en',
 'Process %0: ServiceTask %1 failed see error log and check the model.'
 );
+
+insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+ values (
+'email-placeholder-json-invalid',
+'en',
+'Process %0: ServiceTask %1 placeholder JSON is invalid.Please check the model.'
+);
