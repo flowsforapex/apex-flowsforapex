@@ -264,17 +264,17 @@ as
 
 
   function get_objt_list(
-    p_prcs_id in flow_processes_vw.prcs_id%type
+    p_prcs_id in flow_processes.prcs_id%type
   ) return varchar2
   as
     l_objt_list varchar2(32767);
   begin    
     select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
       into l_objt_list
-      from flow_objects_vw
+      from flow_objects
      where objt_dgrm_id = (
            select prcs_dgrm_id 
-             from flow_processes_vw
+             from flow_processes
             where prcs_id = p_prcs_id)
        and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
     return l_objt_list;
@@ -282,14 +282,14 @@ as
 
 
   function get_objt_list(
-    p_dgrm_id in flow_diagrams_vw.dgrm_id%type
+    p_dgrm_id in flow_diagrams.dgrm_id%type
   ) return varchar2
   as
     l_objt_list varchar2(32767);
   begin    
     select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
       into l_objt_list
-      from flow_objects_vw
+      from flow_objects
      where objt_dgrm_id = p_dgrm_id
        and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
     return l_objt_list;
@@ -297,14 +297,14 @@ as
   
   
   function get_objt_name(
-    p_objt_bpmn_id in flow_objects_vw.objt_bpmn_id%type
-  ) return flow_objects_vw.objt_name%type
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  ) return flow_objects.objt_name%type
   as
-    l_objt_name flow_objects_vw.objt_name%type;
+    l_objt_name flow_objects.objt_name%type;
   begin
     select distinct objt_name
       into l_objt_name
-      from flow_objects_vw
+      from flow_objects
      where objt_bpmn_id = p_objt_bpmn_id;
     return l_objt_name;
   end get_objt_name;
@@ -389,11 +389,11 @@ as
   )
   as
     l_url varchar2(2000);
-    l_dgrm_id flow_processes_vw.prcs_dgrm_id%type;
+    l_dgrm_id flow_processes.prcs_dgrm_id%type;
   begin
     select prcs_dgrm_id 
       into l_dgrm_id 
-      from flow_processes_vw 
+      from flow_processes 
     where prcs_id = pi_prcs_id;
       
     l_url := apex_page.get_url(
@@ -412,8 +412,8 @@ as
   
 
   function check_flow_exists(
-    p_dgrm_name    in flow_diagrams_vw.dgrm_name%type,
-    p_dgrm_version in flow_diagrams_vw.dgrm_version%type)
+    p_dgrm_name    in flow_diagrams.dgrm_name%type,
+    p_dgrm_version in flow_diagrams.dgrm_version%type)
   return boolean
   as
     l_exists binary_integer;
@@ -424,7 +424,7 @@ as
       from dual
      where exists(
            select null
-             from flow_diagrams_vw
+             from flow_diagrams
             where dgrm_name = p_dgrm_name
               and dgrm_version = p_dgrm_version);
     return l_exists = 1;
@@ -433,12 +433,12 @@ as
 
   function validate_flow_exists_bulk(
     pi_dgrm_id_list in varchar2
-  , pi_new_version  in flow_diagrams_vw.dgrm_version%type
+  , pi_new_version  in flow_diagrams.dgrm_version%type
   ) return varchar2 
   as
     l_err varchar2(4000 byte);
     l_flows apex_t_varchar2;
-    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
+    l_dgrm_name flow_diagrams.dgrm_name%type;
   begin
     -- Initialize
     l_flows := apex_string.split(pi_dgrm_id_list, ':');
@@ -447,7 +447,7 @@ as
   
       select dgrm_name 
         into l_dgrm_name
-        from flow_diagrams_vw
+        from flow_diagrams
        where dgrm_id = l_flows(i);
 
       if check_flow_exists(l_dgrm_name, pi_new_version) then
@@ -464,16 +464,16 @@ as
 
   function validate_flow_exists(
     pi_dgrm_id     in flow_diagrams.dgrm_id%type
-  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  , pi_new_version in flow_diagrams.dgrm_version%type 
   ) return varchar2 
   as
     l_err varchar2(4000 byte);
-    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
+    l_dgrm_name flow_diagrams.dgrm_name%type;
   begin
   
     select dgrm_name
       into l_dgrm_name
-      from flow_diagrams_vw
+      from flow_diagrams
      where dgrm_id = pi_dgrm_id;
     
     if check_flow_exists(l_dgrm_name, pi_new_version) then
@@ -488,12 +488,12 @@ as
   
   function validate_flow_copy_bulk(
     pi_dgrm_id_list in varchar2
-  , pi_new_name     in flow_diagrams_vw.dgrm_name%type 
+  , pi_new_name     in flow_diagrams.dgrm_name%type 
   ) return varchar2 
   as
     l_err varchar2(4000 byte);
     l_flows apex_t_varchar2;
-    l_dgrm_name flow_diagrams_vw.dgrm_name%type;
+    l_dgrm_name flow_diagrams.dgrm_name%type;
   begin
     -- Initialize
     l_flows := apex_string.split(pi_dgrm_id_list, ':');
@@ -502,7 +502,7 @@ as
   
       select dgrm_name|| ' - ' || pi_new_name
         into l_dgrm_name
-        from flow_diagrams_vw 
+        from flow_diagrams 
        where dgrm_id = l_flows(i);
 
       if check_flow_exists(l_dgrm_name, '0') then
@@ -518,7 +518,7 @@ as
   
   
   function validate_flow_copy(
-    pi_new_name in flow_diagrams_vw.dgrm_name%type 
+    pi_new_name in flow_diagrams.dgrm_name%type 
   ) return varchar2 
   as
     l_err varchar2(4000);
@@ -547,12 +547,12 @@ as
   
   procedure add_new_version(
     pi_dgrm_id_list in varchar2
-  , pi_new_version  in flow_diagrams_vw.dgrm_version%type 
+  , pi_new_version  in flow_diagrams.dgrm_version%type 
   )
   as
-    r_diagrams flow_diagrams_vw%rowtype;
+    r_diagrams flow_diagrams%rowtype;
     l_flows apex_t_varchar2;
-    l_dgrm_id flow_diagrams_vw.dgrm_id%type;
+    l_dgrm_id flow_diagrams.dgrm_id%type;
   begin
     -- Initialize
     l_flows := apex_string.split(pi_dgrm_id_list, ':');
@@ -560,7 +560,7 @@ as
     for i in 1 .. l_flows.count loop
       select * 
         into r_diagrams
-        from flow_diagrams_vw
+        from flow_diagrams
        where dgrm_id = l_flows(i);
 
       l_dgrm_id := flow_diagram.import_diagram(
@@ -575,12 +575,12 @@ as
   
   procedure copy_model(
     pi_dgrm_id_list in varchar2
-  , pi_new_name     in flow_diagrams_vw.dgrm_name%type 
+  , pi_new_name     in flow_diagrams.dgrm_name%type 
   )
   as
     l_flows apex_t_varchar2;
-    l_dgrm_id flow_diagrams_vw.dgrm_id%type;
-    r_diagrams flow_diagrams_vw%rowtype;
+    l_dgrm_id flow_diagrams.dgrm_id%type;
+    r_diagrams flow_diagrams%rowtype;
   begin
     -- Initialize
     l_flows := apex_string.split(pi_dgrm_id_list, ':');
@@ -588,7 +588,7 @@ as
     for i in 1 .. l_flows.count loop
       select * 
         into r_diagrams
-        from flow_diagrams_vw
+        from flow_diagrams
        where dgrm_id = l_flows(i);
 
       l_dgrm_id := flow_diagram.import_diagram(
@@ -614,7 +614,7 @@ as
   
     select dgrm_name || ' (Version: ' || dgrm_version || ', Status: ' || dgrm_status || ')' as d
       into l_region_title
-      from flow_diagrams_vw
+      from flow_diagrams
      where dgrm_id = pi_dgrm_id;
 
     return l_region_title;
@@ -636,11 +636,11 @@ as
   return varchar2
   is
     l_file_name        varchar2(300 char);
-    l_dgrm_name        flow_diagrams_vw.dgrm_name%type;
-    l_dgrm_version     flow_diagrams_vw.dgrm_version%type;
-    l_dgrm_status      flow_diagrams_vw.dgrm_status%type;
-    l_dgrm_category    flow_diagrams_vw.dgrm_category%type;
-    l_dgrm_last_update flow_diagrams_vw.dgrm_last_update%type;
+    l_dgrm_name        flow_diagrams.dgrm_name%type;
+    l_dgrm_version     flow_diagrams.dgrm_version%type;
+    l_dgrm_status      flow_diagrams.dgrm_status%type;
+    l_dgrm_category    flow_diagrams.dgrm_category%type;
+    l_dgrm_last_update flow_diagrams.dgrm_last_update%type;
   begin
     select dgrm_name
          , dgrm_version
@@ -652,7 +652,7 @@ as
          , l_dgrm_status
          , l_dgrm_category
          , l_dgrm_last_update
-      from flow_diagrams_vw
+      from flow_diagrams
      where dgrm_id = p_dgrm_id
     ;
     
@@ -688,12 +688,12 @@ as
     l_split_content apex_t_varchar2;
     l_sql clob;
     l_buffer varchar2(32767);  
-    r_diagrams flow_diagrams_vw%rowtype;
+    r_diagrams flow_diagrams%rowtype;
   begin 
     dbms_lob.createtemporary(l_sql,true, DBMS_LOB.CALL);
     select *
     into r_diagrams
-    from flow_diagrams_vw
+    from flow_diagrams
     where dgrm_id = p_dgrm_id;
     l_buffer := 'declare'||utl_tcp.crlf;
     l_buffer := l_buffer||'  l_dgrm_content clob;'||utl_tcp.crlf;
@@ -730,11 +730,11 @@ as
       p_dgrm_id in number
   ) return clob
   is 
-    l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+    l_dgrm_content flow_diagrams.dgrm_content%type;
   begin
     select dgrm_content
     into l_dgrm_content
-    from flow_diagrams_vw
+    from flow_diagrams
     where dgrm_id = p_dgrm_id;
     return l_dgrm_content;
   end get_bmpn_content;
@@ -808,11 +808,11 @@ as
     l_warning     pls_integer := 0;
     l_mime_type   varchar2(100) := 'application/octet';
     type r_flow   is record (
-      dgrm_id       flow_diagrams_vw.dgrm_id%type, 
-      dgrm_name     flow_diagrams_vw.dgrm_name%type,
-      dgrm_version  flow_diagrams_vw.dgrm_version%type,
-      dgrm_status   flow_diagrams_vw.dgrm_status%type,
-      dgrm_category flow_diagrams_vw.dgrm_category%type,
+      dgrm_id       flow_diagrams.dgrm_id%type, 
+      dgrm_name     flow_diagrams.dgrm_name%type,
+      dgrm_version  flow_diagrams.dgrm_version%type,
+      dgrm_status   flow_diagrams.dgrm_status%type,
+      dgrm_category flow_diagrams.dgrm_category%type,
       filename      varchar2(300)
     );
     type t_flows  is table of r_flow index by binary_integer;
@@ -837,7 +837,7 @@ as
         dgrm_category,
         dgrm_name||'_'||dgrm_version as filename
       bulk collect into l_flows
-      from flow_diagrams_vw 
+      from flow_diagrams 
       where dgrm_id in (
         select n001
         from apex_collections
@@ -919,7 +919,7 @@ as
     )
     return boolean
     is
-        l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+        l_dgrm_content flow_diagrams.dgrm_content%type;
         l_err boolean := true;
     begin
         begin
@@ -937,12 +937,12 @@ as
     
     function is_valid_xml(
         pi_import_from  in varchar2,
-        pi_dgrm_content in flow_diagrams_vw.dgrm_content%type,
+        pi_dgrm_content in flow_diagrams.dgrm_content%type,
         pi_file_name    in varchar2
     )
     return boolean
     is
-        l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+        l_dgrm_content flow_diagrams.dgrm_content%type;
         l_xmltype xmltype;
         l_err boolean := true;
     begin
@@ -1001,16 +1001,16 @@ as
     
     function upload_and_parse(
         pi_import_from     in varchar2,
-        pi_dgrm_name       in flow_diagrams_vw.dgrm_name%type,
-        pi_dgrm_category   in flow_diagrams_vw.dgrm_category%type,
-        pi_dgrm_version    in flow_diagrams_vw.dgrm_version%type,
-        pi_dgrm_content    in flow_diagrams_vw.dgrm_content%type,
+        pi_dgrm_name       in flow_diagrams.dgrm_name%type,
+        pi_dgrm_category   in flow_diagrams.dgrm_category%type,
+        pi_dgrm_version    in flow_diagrams.dgrm_version%type,
+        pi_dgrm_content    in flow_diagrams.dgrm_content%type,
         pi_file_name       in varchar2,
         pi_force_overwrite in varchar2
-    ) return flow_diagrams_vw.dgrm_id%type
+    ) return flow_diagrams.dgrm_id%type
     is
-        l_dgrm_id flow_diagrams_vw.dgrm_id%type;
-        l_dgrm_content flow_diagrams_vw.dgrm_content%type;
+        l_dgrm_id flow_diagrams.dgrm_id%type;
+        l_dgrm_content flow_diagrams.dgrm_content%type;
         l_dgrm_exists number;
     begin
         if (pi_import_from = 'text') then
@@ -1047,10 +1047,10 @@ as
     )
     as
         l_dgrm_id       flow_diagrams.dgrm_id%type;
-        l_dgrm_name     flow_diagrams_vw.dgrm_name%type;
-        l_dgrm_category flow_diagrams_vw.dgrm_category%type;
-        l_dgrm_version  flow_diagrams_vw.dgrm_version%type;
-        l_dgrm_content  flow_diagrams_vw.dgrm_content%type;
+        l_dgrm_name     flow_diagrams.dgrm_name%type;
+        l_dgrm_category flow_diagrams.dgrm_category%type;
+        l_dgrm_version  flow_diagrams.dgrm_version%type;
+        l_dgrm_content  flow_diagrams.dgrm_content%type;
         l_file          varchar2(300);
         l_json_array    json_array_t;
         l_json_object   json_object_t;
@@ -1117,11 +1117,11 @@ as
   
 
   procedure process_page_p7(
-    pio_dgrm_id      in out nocopy flow_diagrams_vw.dgrm_id%type,
-    pi_dgrm_name     in flow_diagrams_vw.dgrm_name%type,
-    pi_dgrm_version  in flow_diagrams_vw.dgrm_version%type,
-    pi_dgrm_category in flow_diagrams_vw.dgrm_category%type,
-    pi_new_version   in flow_diagrams_vw.dgrm_version%type,
+    pio_dgrm_id      in out nocopy flow_diagrams.dgrm_id%type,
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type,
+    pi_dgrm_version  in flow_diagrams.dgrm_version%type,
+    pi_dgrm_category in flow_diagrams.dgrm_category%type,
+    pi_new_version   in flow_diagrams.dgrm_version%type,
     pi_cascade       in varchar2,
     pi_request       in varchar2)
   as
@@ -1219,13 +1219,13 @@ as
   
   procedure pass_variable
   as
-    l_prov_prcs_id  flow_process_variables_vw.prov_prcs_id%type;
-    l_prov_var_name flow_process_variables_vw.prov_var_name%type;
-    l_prov_var_type flow_process_variables_vw.prov_var_type%type;
-    l_prov_var_vc2  flow_process_variables_vw.prov_var_vc2%type;
-    l_prov_var_num  flow_process_variables_vw.prov_var_num%type;
-    l_prov_var_date flow_process_variables_vw.prov_var_date%type;
-    l_prov_var_clob flow_process_variables_vw.prov_var_clob%type;
+    l_prov_prcs_id  flow_process_variables.prov_prcs_id%type;
+    l_prov_var_name flow_process_variables.prov_var_name%type;
+    l_prov_var_type flow_process_variables.prov_var_type%type;
+    l_prov_var_vc2  flow_process_variables.prov_var_vc2%type;
+    l_prov_var_num  flow_process_variables.prov_var_num%type;
+    l_prov_var_date flow_process_variables.prov_var_date%type;
+    l_prov_var_clob flow_process_variables.prov_var_clob%type;
   begin
     -- Initialize
     l_prov_prcs_id := apex_application.g_x01;
@@ -1307,7 +1307,7 @@ as
   , pi_business_ref in flow_process_variables.prov_var_vc2%type
   ) return flow_processes.prcs_id%type
   as
-    l_prcs_id flow_processes_vw.prcs_id%type;
+    l_prcs_id flow_processes.prcs_id%type;
   begin
     l_prcs_id := flow_api_pkg.flow_create( 
                    pi_dgrm_id   => pi_dgrm_id,
@@ -1328,9 +1328,9 @@ as
   
   function get_prcs_name(
     pi_prcs_id in flow_processes.prcs_id%type
-  ) return flow_instances_vw.prcs_name%type
+  ) return flow_processes.prcs_name%type
   as
-    l_prcs_name flow_instances_vw.prcs_name%type;
+    l_prcs_name flow_processes.prcs_name%type;
   begin
     select prcs_name 
       into l_prcs_name
@@ -1344,8 +1344,8 @@ as
 
 
   function has_error(
-    pi_prcs_id in flow_subflows_vw.sbfl_prcs_id%type,
-    pi_objt_id in flow_subflows_vw.sbfl_current%type)
+    pi_prcs_id in flow_processes.prcs_id%type,
+    pi_objt_id in flow_subflows.sbfl_current%type)
   return boolean 
   as
     l_has_error binary_integer;
