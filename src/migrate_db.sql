@@ -10,9 +10,6 @@ PROMPT >> =============================
 PROMPT >> Updating Tables
 @ddl/migrate_^from_version._to_^to_version..sql
 
--- need to delete all existing error messages and rerun @data/install_error_messages.sql
--- need to add NEW config parameters
-
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
 PROMPT >> Installing Package Specifications
@@ -123,10 +120,9 @@ PROMPT >> Modeler Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
 
-PROMPT >> Installing Initial Engine Data
+PROMPT >> Installing Engine Data
 PROMPT >> =============================
 PROMPT >> 
-@data/install_default_config_data.sql
 @data/install_engine_messages_en.sql
 @data/install_engine_messages_fr.sql
 
