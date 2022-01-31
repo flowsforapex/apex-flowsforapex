@@ -4,7 +4,7 @@ as
        , case
            when obat_num_value is not null then cast(obat_num_value as varchar2(4000))
            when obat_date_value is not null then cast(obat_date_value as varchar2(4000))
-           when obat_vc_value is not null then obat_vc_value
+           when obat_vc_value is not null then apex_lang.message(obat_vc_value)
            when obat_clob_value is not null then
                case
                    when dbms_lob.getlength(obat_clob_value) > 4000 then DBMS_LOB.SUBSTR(obat_clob_value, 3997) || '...'

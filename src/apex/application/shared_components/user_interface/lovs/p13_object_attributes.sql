@@ -21,31 +21,31 @@ wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15331159536656553)
 ,p_lov_disp_sequence=>1
 ,p_lov_disp_value=>'Application'
-,p_lov_return_value=>'apex:apex-application'
+,p_lov_return_value=>'apex:applicationId'
 );
 wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15331535176656556)
 ,p_lov_disp_sequence=>2
 ,p_lov_disp_value=>'Clear Cache'
-,p_lov_return_value=>'apex:apex-cache'
+,p_lov_return_value=>'apex:cache'
 );
 wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15331901949656556)
 ,p_lov_disp_sequence=>3
 ,p_lov_disp_value=>'Item Values'
-,p_lov_return_value=>'apex:apex-value'
+,p_lov_return_value=>'apex:itemValue'
 );
 wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15332307999656557)
 ,p_lov_disp_sequence=>4
 ,p_lov_disp_value=>'Request'
-,p_lov_return_value=>'apex:apex-request'
+,p_lov_return_value=>'apex:request'
 );
 wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15332751649656557)
 ,p_lov_disp_sequence=>5
 ,p_lov_disp_value=>'Page Items'
-,p_lov_return_value=>'apex:apex-item'
+,p_lov_return_value=>'apex:itemName'
 );
 wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15333170482656557)
@@ -69,7 +69,7 @@ wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15334375925656558)
 ,p_lov_disp_sequence=>9
 ,p_lov_disp_value=>'Page'
-,p_lov_return_value=>'apex:apex-page'
+,p_lov_return_value=>'apex:pageId'
 );
 wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15373450429468526)
