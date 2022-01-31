@@ -208,7 +208,8 @@ as
   procedure get_pages
   as
     l_result clob;
-    cursor c_pages is select * from apex_application_pages where application_id = apex_application.g_x02 order by page_name;
+    l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
+    cursor c_pages is select * from apex_application_pages where application_id = l_application_id order by page_name;
     l_page apex_application_pages%rowtype;
   begin
     l_result := '[{"name":"","value":""},';
@@ -224,7 +225,9 @@ as
   procedure get_items
   as
     l_result clob;
-    cursor c_items is select * from apex_application_page_items where application_id = apex_application.g_x02 and page_id = apex_application.g_x03 order by item_name;
+    l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
+    l_page_id number := cast(apex_application.g_x03 as number default null on conversion error);
+    cursor c_items is select * from apex_application_page_items where application_id = l_application_id and page_id = l_page_id order by item_name;
     l_item apex_application_page_items%rowtype;
   begin
     l_result := '[{"name":"","value":""},';
@@ -256,7 +259,8 @@ as
   procedure get_templates
   as
     l_result clob;
-    cursor c_templates is select * from apex_appl_email_templates where application_id = apex_application.g_x02 order by name;
+    l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
+    cursor c_templates is select * from apex_appl_email_templates where application_id = l_application_id order by name;
     l_template apex_appl_email_templates%rowtype;
   begin
     l_result := '[{"name":"","value":""},';
@@ -272,11 +276,12 @@ as
   procedure get_json_placeholders
   as
     l_placeholders apex_t_varchar2;
+    l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
   begin
     with email_content as (
       select subject||text_template||html_body||html_footer||html_header as d
       from apex_appl_email_templates
-      where application_id = apex_application.g_x02 
+      where application_id = l_application_id 
       and static_id = apex_application.g_x03
    ),
    placeholders as (
@@ -289,7 +294,6 @@ as
    from placeholders p
    where p.placeholder is not null
    order by p.placeholder;
-
    apex_json.open_object;
    for i in 1..l_placeholders.count()
    loop
@@ -309,29 +313,38 @@ as
         when 'sql' then
             v_command := upper(substr(apex_application.g_x02, 1,instr(apex_application.g_x02,' ') - 1));
             if v_command in ( 'ALTER', 'COMPUTE', 'CREATE', 'DROP', 'GRANT', 'REVOKE') then
-                l_result := '{"message":"Forbidden DDL statement"}';
+                l_result := '{"message":"Forbidden DDL statement","success":"false"}';
             elsif v_command in ( 'SELECT', 'INSERT', 'UPDATE', 'DELETE' ) then
                 v_input := rtrim(apex_application.g_x02, ';');
                 begin
                     v_cur := dbms_sql.open_cursor();
                     dbms_sql.parse(v_cur, v_input, dbms_sql.native);
                     dbms_sql.close_cursor(v_cur);
-                    l_result := '{"message":"Validation successful"}';
+                    l_result := '{"message":"Validation successful","success":"true"}';
                 exception
-                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '"}';
+                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '","success":"false"}';
                 end;
             else
-                l_result := '{"message":"Unparsable SQL"}';
+                l_result := '{"message":"Unparsable SQL","success":"false"}';
             end if;
         when 'plsql' then
-            v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
+            case apex_application.g_x04
+               when 'plsqlProcess' then
+                  v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
+               when 'plsqlExpression' then
+                  v_input := 'declare dummy varchar2(4000) :='
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
+               when 'plsqlFunctionBody' then
+                  v_input := 'declare function dummy return varchar2 is begin'
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+            end case;
             begin
                     v_cur := dbms_sql.open_cursor();
                     dbms_sql.parse(v_cur, v_input, dbms_sql.native);
                     dbms_sql.close_cursor(v_cur);
-                    l_result := '{"message":"Validation successful"}';
+                    l_result := '{"message":"Validation successful","success":"true"}';
                 exception
-                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '"}';
+                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '","success":"false"}';
                 end;
         end case;
     end if;
