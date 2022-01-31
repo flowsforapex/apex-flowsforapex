@@ -36,7 +36,7 @@ wwv_flow_api.create_page(
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220126210754'
+,p_last_upd_yyyymmddhh24miss=>'20220131100945'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -537,7 +537,7 @@ wwv_flow_api.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'TABLE'
 ,p_query_table=>'FLOW_P0013_ATTRIBUTES_VW'
-,p_query_where=>'objt_bpmn_id = :P13_OBJT_ID'
+,p_query_where=>'objt_dgrm_id = :P13_DGRM_ID and objt_bpmn_id = :P13_OBJT_ID'
 ,p_include_rowid_column=>false
 ,p_ajax_enabled=>'Y'
 ,p_ajax_items_to_submit=>'P13_OBJT_ID,P13_DGRM_ID'

@@ -17582,6 +17582,30 @@ wwv_flow_api.create_translation(
 ,p_translate_from_text=>'Template ID'
 );
 wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(36513115948207157)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(36503726118653203.100001)
+,p_translate_from_id=>wwv_flow_api.id(36503726118653203)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Envoyer un courriel'
+,p_translate_from_text=>'Send Email'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(36513224194207165)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(36504124271653205.100001)
+,p_translate_from_id=>wwv_flow_api.id(36504124271653205)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Ex\00E9cuter PL/SQL')
+,p_translate_from_text=>'Execute PL/SQL'
+);
+wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(67375005163923668)
 ,p_page_id=>9
 ,p_translated_flow_id=>100001
