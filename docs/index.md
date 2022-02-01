@@ -35,6 +35,7 @@ To run, start with Tutorial 0.  Open the BPMN file in the Flows for APEX Modeler
 - [Using Lanes](UsingLanes.md)
 - [Task Reservation](reservations.md)
 - [Link Events](linkEvents.md)
+- [Upgrading a v21 Flows for APEX App to Flows for APEX v22.1](addingStepKeysToV21app.md)
 
 The diagram below gives a full definition of the BPMN syntax supported in the current release of Flows for APEX.  The diagram is reasonably self-documenting, explaining how each symbol can be used.  The diagram and associated BPMN/XML is included in the shipped BPMN examples.
 

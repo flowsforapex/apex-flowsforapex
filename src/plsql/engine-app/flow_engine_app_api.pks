@@ -6,18 +6,18 @@ as
 
   /* general */
   function get_objt_list(
-    p_prcs_id in flow_processes_vw.prcs_id%type
+    p_prcs_id in flow_processes.prcs_id%type
   ) return varchar2;
 
   
   function get_objt_list(
-    p_dgrm_id in flow_diagrams_vw.dgrm_id%type
+    p_dgrm_id in flow_diagrams.dgrm_id%type
   ) return varchar2;
   
   
   function get_objt_name(
-    p_objt_bpmn_id in flow_objects_vw.objt_bpmn_id%type
-  ) return flow_objects_vw.objt_name%type;
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  ) return flow_objects.objt_name%type;
 
   procedure set_viewport(
     p_display_setting in varchar2);
@@ -42,33 +42,33 @@ as
 
   function validate_flow_exists_bulk(
     pi_dgrm_id_list in varchar2
-  , pi_new_version  in flow_diagrams_vw.dgrm_version%type 
+  , pi_new_version  in flow_diagrams.dgrm_version%type 
   ) return varchar2;
 
   function validate_flow_exists(
     pi_dgrm_id     in flow_diagrams.dgrm_id%type
-  , pi_new_version in flow_diagrams_vw.dgrm_version%type 
+  , pi_new_version in flow_diagrams.dgrm_version%type 
   ) return varchar2;
     
   function validate_flow_copy_bulk(
     pi_dgrm_id_list in varchar2
-  , pi_new_name     in flow_diagrams_vw.dgrm_name%type 
+  , pi_new_name     in flow_diagrams.dgrm_name%type 
   ) return varchar2;
     
   function validate_flow_copy(
-    pi_new_name in flow_diagrams_vw.dgrm_name%type 
+    pi_new_name in flow_diagrams.dgrm_name%type 
   ) return varchar2;
 
   procedure copy_selection_to_collection;
 
   procedure add_new_version(
     pi_dgrm_id_list in varchar2
-  , pi_new_version  in flow_diagrams_vw.dgrm_version%type 
+  , pi_new_version  in flow_diagrams.dgrm_version%type 
   );
   
   procedure copy_model(
     pi_dgrm_id_list in varchar2
-  , pi_new_name     in flow_diagrams_vw.dgrm_name%type 
+  , pi_new_name     in flow_diagrams.dgrm_name%type 
   );
 
   /* page 4 */
@@ -105,7 +105,7 @@ as
     
   function is_valid_xml(
       pi_import_from  in varchar2,
-      pi_dgrm_content in flow_diagrams_vw.dgrm_content%type,
+      pi_dgrm_content in flow_diagrams.dgrm_content%type,
       pi_file_name    in varchar2
   )
   return boolean;
@@ -117,14 +117,14 @@ as
 
   function upload_and_parse(
       pi_import_from     in varchar2,
-      pi_dgrm_name       in flow_diagrams_vw.dgrm_name%type,
-      pi_dgrm_category   in flow_diagrams_vw.dgrm_category%type,
-      pi_dgrm_version    in flow_diagrams_vw.dgrm_version%type,
-      pi_dgrm_content    in flow_diagrams_vw.dgrm_content%type,
+      pi_dgrm_name       in flow_diagrams.dgrm_name%type,
+      pi_dgrm_category   in flow_diagrams.dgrm_category%type,
+      pi_dgrm_version    in flow_diagrams.dgrm_version%type,
+      pi_dgrm_content    in flow_diagrams.dgrm_content%type,
       pi_file_name       in varchar2,
       pi_force_overwrite in varchar2
   )
-  return flow_diagrams_vw.dgrm_id%type;
+  return flow_diagrams.dgrm_id%type;
   
   procedure multiple_flow_import(
       pi_file_name       in varchar2,
@@ -141,11 +141,11 @@ as
     
   procedure process_page_p7
   (
-    pio_dgrm_id      in out nocopy flow_diagrams_vw.dgrm_id%type
-  , pi_dgrm_name     in flow_diagrams_vw.dgrm_name%type
-  , pi_dgrm_version  in flow_diagrams_vw.dgrm_version%type
-  , pi_dgrm_category in flow_diagrams_vw.dgrm_category%type
-  , pi_new_version   in flow_diagrams_vw.dgrm_version%type
+    pio_dgrm_id      in out nocopy flow_diagrams.dgrm_id%type
+  , pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_new_version   in flow_diagrams.dgrm_version%type
   , pi_cascade       in varchar2
   , pi_request       in varchar2
   );
@@ -200,13 +200,13 @@ as
   function get_prcs_name(
     pi_prcs_id in flow_processes.prcs_id%type
   )
-  return flow_instances_vw.prcs_name%type;
+  return flow_processes.prcs_name%type;
 
   /* page 13 */
 
   function has_error(
-    pi_prcs_id in flow_subflows_vw.sbfl_prcs_id%type,
-    pi_objt_id in flow_subflows_vw.sbfl_current%type)
+    pi_prcs_id in flow_processes.prcs_id%type,
+    pi_objt_id in flow_subflows.sbfl_current%type)
   return boolean;
 
 end flow_engine_app_api;

@@ -8,7 +8,7 @@ This github repository is for developers willing to contribute to the upcoming v
 - [Introductory video](https://youtu.be/q77HqPuVN7s)
 - [Introductory slides](https://knowledgebase.mt-ag.com/q/flowsforapex)
 - [Introductory blog post](https://nielsdebr.blogspot.com/2020/06/flows-for-apex.html)
-- [Documentation](https://mt-ag.github.io/apex-flowsforapex/)
+- [Documentation](https://flowsforapex.org/latest/getting-started/)
 
 ## How to contribute as a developer to this project
 

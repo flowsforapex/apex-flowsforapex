@@ -68,7 +68,7 @@ R-1/P6H         represents an unlimited number of events, repeating every 6 hour
 
 ## Oracle-format Date and Interval Syntax. {#Oracle-Syntax}
 
-From v22.1, you can now also use the Oracle format Date and Interval specifications, and for Dates you can also specify the Format Mask.
+From v22.1 onwards, you can also use the Oracle format Date and Interval specifications, and for Dates you can also specify the Format Mask.
 
 For more information on Oracle date / time formats, please see the Oracle SQL Language Reference Manual.
 
@@ -85,8 +85,8 @@ Oracle Dates can be specified as an Oracle-format date and an associated Oracle 
 
 Oracle Durations are specified with two separate components - a Years-Months Interval and a Days-Seconds Interval.  Both must be supplied as a varchar2 string in the required format.  The Timer duration is the sum of both components.
 
-- Interval Years to Months:   The Interval Years-to-Months component is supplied in format `YY-MM`.
-- Interval Days(3) to Seconds: The Interval Days-to-Seconds is supplied in the format `DDD HH24:MI:SS`.
+- Interval Years to Months:   The Interval Years-to-Months component must be supplied in format `YY-MM`.
+- Interval Days(3) to Seconds: The Interval Days-to-Seconds must be supplied in the format `DDD HH24:MI:SS`.
 - Allowed Substitutions:  Each component of an Oracle Duration can optionally be substituted with a Flows for APEX Process Variables using the `&F4A$proc_var_name.` substitution syntax as follows:
 
   - For the Interval YM Component:   A varchar2-typed Process Variable containing a valid Oracle Interval YM using a format mask of `YY-MM`.
@@ -96,8 +96,8 @@ Oracle Durations are specified with two separate components - a Years-Months Int
 
 Oracle Cycle Timers are specified as three separate components:
 
-- Interval to First Firing: The Interval Days(3)-to-Seconds is supplied in the format `DDD HH24:MI:SS`.
-- Interval between Repeat Firings: The Interval Days-to-Seconds is supplied in the format `DDD HH24:MI:SS`.
+- Interval to First Firing: The Interval Days(3)-to-Seconds must be supplied in the format `DDD HH24:MI:SS`.
+- Interval between Repeat Firings: The Interval Days-to-Seconds must be supplied in the format `DDD HH24:MI:SS`.
 - Maximum Number of Runs:  The maximum number of times the timer will fire, in format `nnn`.  If omitted, the timer will continue to fire until cancelled.
 - Allowed Substitutions:  Each component of an Oracle Cycle can optionally be substituted with a Flows for APEX Process Variables using the `&F4A$proc_var_name.` substitution syntax as follows:
 

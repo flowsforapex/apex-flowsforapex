@@ -950,7 +950,7 @@ begin
   -- evaluate and set any post-step variable expressions on the last object
   if p_current_step_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask )
   then 
     flow_expressions.process_expressions
       ( pi_objt_bpmn_id   => p_sbfl_rec.sbfl_current
@@ -1226,7 +1226,7 @@ begin
   -- evaluate and set any pre-step variable expressions on the next object
   if p_step_info.target_objt_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask )
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask )
   then 
     flow_expressions.process_expressions
       ( pi_objt_id     => p_step_info.target_objt_id
