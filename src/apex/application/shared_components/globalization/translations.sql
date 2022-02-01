@@ -4023,8 +4023,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Obat Value'
-,p_translate_from_text=>'Obat Value'
+,p_translate_to_text=>'Value'
+,p_translate_from_text=>'Value'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(9097315519000697)
@@ -15012,8 +15012,8 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'fr'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'#PRETAG##OBAT_VALUE##POSTTAG#'
-,p_translate_from_text=>'#PRETAG##OBAT_VALUE##POSTTAG#'
+,p_translate_to_text=>'#PRETAG# #OBAT_VALUE# #POSTTAG#'
+,p_translate_from_text=>'#PRETAG# #OBAT_VALUE# #POSTTAG#'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(13105398257987292)
@@ -17316,6 +17316,294 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35840121353552583)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35704108915505147.100001)
+,p_translate_from_id=>wwv_flow_api.id(35704108915505147)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Espace r\00E9serv\00E9')
+,p_translate_from_text=>'Placeholder'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35840240661552592)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35708515702505150.100001)
+,p_translate_from_id=>wwv_flow_api.id(35708515702505150)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Intervalle ann\00E9e/mois')
+,p_translate_from_text=>'Interval Year to Month'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35840401921552593)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35702112103505146.100001)
+,p_translate_from_id=>wwv_flow_api.id(35702112103505146)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'BCC'
+,p_translate_from_text=>'BCC'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35840672703552593)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35707717059505149.100001)
+,p_translate_from_id=>wwv_flow_api.id(35707717059505149)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Date'
+,p_translate_from_text=>'Date'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35840815497552593)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35710159164505151.100001)
+,p_translate_from_id=>wwv_flow_api.id(35710159164505151)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Nombre maximal d''ex\00E9cution')
+,p_translate_from_text=>'Max Runs'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35841087151552593)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35709717522505150.100001)
+,p_translate_from_id=>wwv_flow_api.id(35709717522505150)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Temps jusqu''aux d\00E9clenchements suivants')
+,p_translate_from_text=>'Time until the timer fires again'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35841264199552593)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35709380114505150.100001)
+,p_translate_from_id=>wwv_flow_api.id(35709380114505150)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Temps jusqu''au premier d\00E9clenchement du minuteur')
+,p_translate_from_text=>'Time until the timer fires first'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35841464115552593)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35708950682505150.100001)
+,p_translate_from_id=>wwv_flow_api.id(35708950682505150)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Intervalle jour/seconde'
+,p_translate_from_text=>'Interval Day to Second'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35841881332552594)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35708141249505150.100001)
+,p_translate_from_id=>wwv_flow_api.id(35708141249505150)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Masque de format'
+,p_translate_from_text=>'Format Mask'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35842060676552594)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35702525554505146.100001)
+,p_translate_from_id=>wwv_flow_api.id(35702525554505146)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('R\00E9pondre \00E0')
+,p_translate_from_text=>'Reply To'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35842447579552594)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35701702285505137.100001)
+,p_translate_from_id=>wwv_flow_api.id(35701702285505137)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'CC'
+,p_translate_from_text=>'CC'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35842605463552594)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35701367611505137.100001)
+,p_translate_from_id=>wwv_flow_api.id(35701367611505137)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'A'
+,p_translate_from_text=>'To'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35842849582552594)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35706161989505149.100001)
+,p_translate_from_id=>wwv_flow_api.id(35706161989505149)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Envoyer le courriel imm\00E9diatement')
+,p_translate_from_text=>'Send Immediatly'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35843000682552594)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35705311456505147.100001)
+,p_translate_from_id=>wwv_flow_api.id(35705311456505147)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'HTML du corps'
+,p_translate_from_text=>'HTML Body'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35843284368552594)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35703352692505146.100001)
+,p_translate_from_id=>wwv_flow_api.id(35703352692505146)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'ID de l''application'
+,p_translate_from_text=>'Application ID'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35843408237552595)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35700949683505137.100001)
+,p_translate_from_id=>wwv_flow_api.id(35700949683505137)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'De'
+,p_translate_from_text=>'From'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35843639211552595)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35704517220505147.100001)
+,p_translate_from_id=>wwv_flow_api.id(35704517220505147)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Sujet'
+,p_translate_from_text=>'Subject'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35844081254552595)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35705730321505148.100001)
+,p_translate_from_id=>wwv_flow_api.id(35705730321505148)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Pi\00E8ce jointe')
+,p_translate_from_text=>'Attachment'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35844207721552595)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35704978438505147.100001)
+,p_translate_from_id=>wwv_flow_api.id(35704978438505147)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Corps'
+,p_translate_from_text=>'Body'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35844474352552595)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35700662160505107.100001)
+,p_translate_from_id=>wwv_flow_api.id(35700662160505107)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Type de t\00E2che')
+,p_translate_from_text=>'Task Type'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35844681767552595)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35702928038505146.100001)
+,p_translate_from_id=>wwv_flow_api.id(35702928038505146)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Utiliser un mod\00E8le')
+,p_translate_from_text=>'Use Template'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(35844876332552596)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(35703713806505147.100001)
+,p_translate_from_id=>wwv_flow_api.id(35703713806505147)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('ID du mod\00E8le')
+,p_translate_from_text=>'Template ID'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(36513115948207157)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(36503726118653203.100001)
+,p_translate_from_id=>wwv_flow_api.id(36503726118653203)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Envoyer un courriel'
+,p_translate_from_text=>'Send Email'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(36513224194207165)
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(36504124271653205.100001)
+,p_translate_from_id=>wwv_flow_api.id(36504124271653205)
+,p_translate_column_id=>103
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Ex\00E9cuter PL/SQL')
+,p_translate_from_text=>'Execute PL/SQL'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(67375005163923668)
