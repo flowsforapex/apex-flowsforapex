@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v21.1.1               *
+*            Flows for APEX v22.1                 *
 *          Installation instructions              *
 *                                                 *
 ***************************************************
@@ -17,12 +17,12 @@ PREREQUISITES
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "FLOWSFORAPEX_APEX201_984339_UTF8_V21.1.1.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "FLOWSFORAPEX_APEX201_984339_UTF8_V22.1.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
 - Refresh the theme when installing the app in APEX versions 20.2 or higher
   Note: switching the theme style is not supported.
-- Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEX211_SAMPLE_APP_EXPENSE_CLAIMS_EN_APEX201_984341_UTF8_V1.0.sql"
+- Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEX221_SAMPLE_APP_EXPENSE_CLAIMS_EN_APEX201_984341_UTF8_V1.0.sql"
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
 
 MIGRATING EXISTING INSTALLATIONS
@@ -30,25 +30,26 @@ MIGRATING EXISTING INSTALLATIONS
 - Download the source code at https://github.com/mt-ag/apex-flowsforapex
 - Start sqlcl and connect with the workspace schema where Flows for APEX is installed
 - Run migrate_all.sql
-- For Application upgrade/migration issues with Step Keys for existing applications read [docs/Upgrading a v21 Flows for APEX App to Flows for APEX v22.1](addingStepKeysToV21app.md)
 
-Note: please be aware that you can only migrate to the subsequent release (ie. 21.1 to 21.1.1 or 5.1.2 to 21.1, but not 5.1.2 to 21.1.1)
+Migration notes:
+- Please be aware that you can only migrate to the subsequent release (ie. 21.1 to 22.1 or 5.1.2 to 21.1, but not 5.1.2 to 21.1.1)
+- For application upgrade/migration issues with step keys for existing applications read docs/addingStepKeysToV21app.md on Github
+
 
 HISTORY
 * v22.1
   - Adds repeating timers for non-interrupting boundary events - facilitating repeated reminders.
-  - Adds BPMN Business Rules Task type, which can accept user-defined PL/SQL script for linking to credit scoring, ML models or other automated decision tasks.
+  - Adds BPMN type "Business Rules Task", which can accept user-defined PL/SQL script for linking to credit scoring, ML models or other automated decision tasks.
   = Adds the ability to declaratively define sending an email from a Service Task 
   - Improves Timer Usability, by allowing timers to be specified using Oracle data and interval syntax in addition to ISO 8601 format.
   - Improves multi-user integrity by adding a unique Step Key as part of the context for each process object. 
-    - For Application upgrade/migration issues with Step Keys for existing applications read [docs/Upgrading a v21 Flows for APEX App to Flows for APEX v22.1](addingStepKeysToV21app.md)
+    - For application upgrade/migration issues with Step Keys for existing applications read docs/addingStepKeysToV21app.md on Github
   - Improvements to the Flow Engine Application, with enhancements to the Flow Modeler:
     - Addition of the Monaco text editor for PL/SQL input to variable expressions and script code entry.
     - Use of APEX metadata in UI for specifying links to APEX pages and page items.
   - Enhances the step operations plugin so that it can issue the flow_start_step command.
   - Separates private and public calls and views used by the Flow Engine Application to ease reuse by customer apps.
-
-* v21.1.1
+  - Enhanced sample app "Expense Claims" to reflect features added to Flows for APEX 22.1
 
 * v21.1
   - Introduces model-based declarative process variable expressions to set process variables before and after each step.
