@@ -42,14 +42,14 @@ HISTORY
   - Adds BPMN type "Business Rules Task", which can accept user-defined PL/SQL script for linking to credit scoring, ML models or other automated decision tasks.
   = Adds the ability to declaratively define sending an email from a Service Task 
   - Improves Timer Usability, by allowing timers to be specified using Oracle data and interval syntax in addition to ISO 8601 format.
-  - Improves multi-user integrity by adding a unique Step Key as part of the context for each process object. 
+  - Improves multi-user integrity by adding a unique "step key" as part of the context for each process object to prevent lost updates. 
     - For application upgrade/migration issues with Step Keys for existing applications read docs/addingStepKeysToV21app.md on Github
+  - Updated Flow Instance Step plug-in to support the flow_start_step command and step key concept
   - Improvements to the Flow Engine Application, with enhancements to the Flow Modeler:
     - Addition of the Monaco text editor for PL/SQL input to variable expressions and script code entry.
     - Use of APEX metadata in UI for specifying links to APEX pages and page items.
-  - Enhances the step operations plugin so that it can issue the flow_start_step command.
   - Separates private and public calls and views used by the Flow Engine Application to ease reuse by customer apps.
-  - Enhanced sample app "Expense Claims" to reflect features added to Flows for APEX 22.1
+  - Enhanced sample app "Expense Claims" to reflect most features added to Flows for APEX 22.1
 
 * v21.1
   - Introduces model-based declarative process variable expressions to set process variables before and after each step.
