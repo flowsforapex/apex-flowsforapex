@@ -105,6 +105,7 @@ create or replace package body flow_plugin_manage_instance_variables as
       e_types_different         exception;
       e_invalid_number          exception;
       e_invalid_date            exception;
+      e_invalid_json            exception;
 
       --types
       type t_prcs_var is table of varchar2(50) index by varchar2(50);
@@ -191,6 +192,11 @@ create or replace package body flow_plugin_manage_instance_variables as
             apex_exec.close(l_context);
          end if;
 
+         begin
+            l_process_variables := json_array_t(l_json);
+         exception when others then
+            raise e_invalid_json;
+         end;
          
          if ( l_attribute4 = 'set' ) then
             --Check variables types
@@ -215,7 +221,6 @@ create or replace package body flow_plugin_manage_instance_variables as
             end if;
          end if;
 
-         l_process_variables        := json_array_t(l_json);
          for object in 0..l_process_variables.get_size() - 1 loop
             l_process_variable := json_object_t(l_process_variables.get(object));
             l_prcs_var_name    := l_process_variable.get_string('name');
@@ -401,7 +406,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                      else
                         'VARCHAR2'
                   end as item_type
-               , aapi.format_mask format_mask
+               , aapi.format_mask
             from table(apex_string.split(l_attribute7, ',')) items
             left outer join apex_application_page_items aapi
                on aapi.item_name = items.column_value
@@ -412,7 +417,13 @@ create or replace package body flow_plugin_manage_instance_variables as
          )
          loop
             l_items(rec.item_name).item_type   := rec.item_type;
-            l_items(rec.item_name).format_mask := coalesce( rec.format_mask, v('APP_NLS_DATE_FORMAT') );
+            l_items(rec.item_name).format_mask := case rec.item_type 
+                                                     when 'DATE' 
+                                                        then coalesce( rec.format_mask, v('APP_NLS_DATE_FORMAT') )
+                                                     else
+                                                         rec.format_mask
+                                                  end;
+               
          end loop;
 
          -- Loop through variables
@@ -471,7 +482,12 @@ create or replace package body flow_plugin_manage_instance_variables as
                      , p1 => l_prcs_var_type
                      , p2 => case l_attribute4
                                 when 'set' 
-                                   then to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                                   then 
+                                      $if wwv_flow_api.c_current >= 20210415 $then 
+                                         to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )  
+                                      $else                                          
+                                         to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                                      $end
                                  when 'get' 
                                     then flow_process_vars.get_var_num(
                                               pi_prcs_id  => l_prcs_id
@@ -484,7 +500,11 @@ create or replace package body flow_plugin_manage_instance_variables as
                         flow_process_vars.set_var(
                            pi_prcs_id    => l_prcs_id
                            , pi_var_name   => l_prcs_var_name
-                           , pi_num_value  => to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                           , pi_num_value  => $if wwv_flow_api.c_current >= 20210415 $then 
+                                                 to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )  
+                                              $else
+                                                 to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                                              $end
                         );
                      when 'get' then
                         apex_util.set_session_state( 
@@ -604,12 +624,25 @@ create or replace package body flow_plugin_manage_instance_variables as
          );
       when e_invalid_number then
          apex_error.add_error( 
-              p_message => flow_api_pkg.message( p_message_key => 'plugin-variable-not-a-number', p_lang => apex_util.get_session_lang() )
+              p_message => flow_api_pkg.message( 
+                                p_message_key => 'plugin-variable-not-a-number'
+                              , p0            => l_process_variable.get('value').stringify() 
+                              , p_lang        => apex_util.get_session_lang() 
+                           )
             , p_display_location => apex_error.c_on_error_page
          );
       when e_invalid_date then
          apex_error.add_error( 
-              p_message => flow_api_pkg.message( p_message_key => 'plugin-variable-not-a-date', p_lang => apex_util.get_session_lang() )
+              p_message => flow_api_pkg.message( 
+                                p_message_key => 'plugin-variable-not-a-date'
+                              , p0            =>  l_process_variable.get('value').stringify() 
+                              , p_lang        => apex_util.get_session_lang() 
+                           )
+            , p_display_location => apex_error.c_on_error_page
+         );
+      when e_invalid_json then
+         apex_error.add_error( 
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-invalid-json', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
    end execution;

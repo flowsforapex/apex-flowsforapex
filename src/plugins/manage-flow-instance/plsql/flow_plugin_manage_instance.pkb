@@ -109,6 +109,7 @@ create or replace package body flow_plugin_manage_instance as
       --exceptions
       e_missing_version          exception;
       e_incorrect_variable_type  exception;
+      e_invalid_json             exception;
 
       --attributes
       l_attribute1      p_process.attribute_01%type := p_process.attribute_01; -- Action (create/start/create_and_start/reset/delete)
@@ -369,7 +370,11 @@ create or replace package body flow_plugin_manage_instance as
             apex_debug.info(
                p_message => '...Start setting Flow Instance Variable(s)'
             );
-            l_process_variables        := json_array_t(l_json);
+            begin
+               l_process_variables        := json_array_t(l_json);
+            exception when others then
+               raise e_invalid_json;
+            end;
             l_process_variables_count  := l_process_variables.get_size();
             for object in 0..l_process_variables_count - 1 loop
                l_process_variable  := json_object_t(l_process_variables.get(object));
@@ -464,23 +469,27 @@ create or replace package body flow_plugin_manage_instance as
       return l_result;
    exception 
       when e_missing_version then
-         if apex_application.g_debug then
-            apex_debug.error(
-               p_message => '-- Flows4apex - Plug-in configuration issue, diagram selection is done with name and version but version is not provided.'
-            );
-         end if;
+         apex_debug.error(
+            p_message => '-- Flows4apex - Plug-in configuration issue, diagram selection is done with name and version but version is not provided.'
+         );
          apex_error.add_error( 
               p_message => flow_api_pkg.message( p_message_key => 'plugin-model-no-version', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
       when e_incorrect_variable_type then
-         if apex_application.g_debug then
-            apex_debug.error(
-               p_message => '-- Flows4apex - Plug-in configuration issue, process variables JSON contains incorrect variable type.'
-            );
-         end if;
+         apex_debug.error(
+            p_message => '-- Flows4apex - Plug-in configuration issue, process variables JSON contains incorrect variable type.'
+         );
          apex_error.add_error( 
               p_message => flow_api_pkg.message( p_message_key => 'plugin-parsing-json-variables', p_lang => apex_util.get_session_lang() )
+            , p_display_location => apex_error.c_on_error_page
+         );
+      when e_invalid_json then
+         apex_debug.error(
+            p_message => '-- Flows4apex - Plug-in configuration issue, JSON provided is not valid.'
+         );
+         apex_error.add_error( 
+              p_message => flow_api_pkg.message( p_message_key => 'plugin-invalid-json', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
    end execution;
