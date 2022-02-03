@@ -82,7 +82,7 @@ Expression allows you to set a variable to the result of a PL/SQL expression cla
 
 Data-types Supported:  varchar2, number, date
 
-Substitutions Allowed: Substitution is not allowed.  However, `flow_globals.process_id` and `flow_globals.subflow_id` are available to use in your expression.
+Substitutions Allowed: Substitution is not allowed.  However, `flow_globals.process_id`, `flow_globals.subflow_id`, and `flow_globals.business_ref` are available to use in your expression.
 
 Format issues:
 
@@ -95,7 +95,7 @@ Function Body allows you to set a variable to the return value of a PL/SQL funct
 
 Data-types Supported:  varchar2, number, date
 
-Substitutions Allowed: Substitution is not allowed.  However, `flow_globals.process_id` and `flow_globals.subflow_id` are available to use in your function body.
+Substitutions Allowed: Substitution is not allowed.  However, `flow_globals.process_id`, `flow_globals.subflow_id`, and `flow_globals.business_ref` are available to use in your function body.
 
 Format issues:
 
@@ -110,13 +110,15 @@ Variable expressions are, in general, triggered before and after each object in 
 - For Gateway type BPMN objects, ( i.e., bpmn:exclusiveGateway, bpmn:inclusiveGateway, bpmn:parallel Gateway, and bpmn:eventBasedGateway), variable expressions can operate **before-split**** and **after-merge****.
 - For Event-type BPMN objects (i.e., bpmn:startEvent, bpmn:endEvent, bpmn:intermediateCatchEvent, bpmn:intermediateThrowEvents, bpmn:boundaryEvents), variable expressions can be evaluated ***on-event***.  In addition, as there can be a long interval between a timer event becoming current and the timer firing, timer-based events can be triggered when they become current using the ***before-event*** triggering point.
 
-### Referencing Process ID and Subflow ID in an Expression
+### Referencing Process ID, Subflow ID and BUSINESS_REF in an Expression
 
-The current Process ID and Subflow ID are made available to you to use inside an expression or a function body as:
+The current Process ID, Subflow ID and **built-in process variables** are made available to you to use inside an expression or a function body as:
 
 - `flow_globals.process_id`
 
 - `flow_globals.subflow_id`
+
+- `flow_globals.business_ref`
 
 `flow_globals.step_key` is not available inside a function or expression.
 

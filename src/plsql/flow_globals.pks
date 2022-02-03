@@ -5,6 +5,9 @@ as
   subflow_id flow_subflows.sbfl_id%type;
   step_key   flow_subflows.sbfl_step_key%type;
 
+  function business_ref
+  return flow_process_variables.prov_var_vc2%type;
+
   procedure set_context
   ( pi_prcs_id  in flow_processes.prcs_id%type
   , pi_sbfl_id  in flow_subflows.sbfl_id%type default null
