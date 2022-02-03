@@ -1379,6 +1379,7 @@ as
     g_objt_expr.delete;
     g_connections.delete;
     g_objt_lookup.delete;
+    g_default_cons.delete;
   end reset;
 
   procedure parse
