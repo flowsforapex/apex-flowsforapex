@@ -39,7 +39,7 @@ To run, start with Tutorial 0.  Open the BPMN file in the Flows for APEX Modeler
 
 The diagram below gives a full definition of the BPMN syntax supported in the current release of Flows for APEX.  The diagram is reasonably self-documenting, explaining how each symbol can be used.  The diagram and associated BPMN/XML is included in the shipped BPMN examples.
 
-![Full syntax Supported](images/FlowsForAPEXv50FullSyntax.png)
+![Full syntax Supported](images/FlowsForAPEXv22-1FullSyntax.png)
 
 ### Using the Flows for APEX PL/SQL API
 
