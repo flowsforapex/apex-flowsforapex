@@ -57,5 +57,12 @@ as
     return g_is_recursive_step;
   end get_is_recursive_step; 
 
+  function business_ref
+  return flow_process_variables.prov_var_vc2%type
+  is
+  begin
+    return flow_process_vars.get_business_ref (pi_prcs_id => process_id);
+  end business_ref;
+
 end flow_globals;
 /
