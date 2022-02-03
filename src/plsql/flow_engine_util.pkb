@@ -321,6 +321,7 @@ procedure get_number_of_connections
          , sbfl_status
          , sbfl_last_update
          , sbfl_dgrm_id
+         , sbfl_step_key
          )
     values
          ( p_process_id
@@ -334,6 +335,7 @@ procedure get_number_of_connections
          , p_status
          , l_timestamp
          , p_dgrm_id
+         , 'dummy'
          )
     returning sbfl_id into l_new_subflow_context.sbfl_id
     ;

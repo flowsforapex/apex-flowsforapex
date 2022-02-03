@@ -76,7 +76,7 @@ begin
       ,q'[    <bpmn:textAnnotation id="TextAnnotation_1ooxxc0">]'
       ,q'[      <bpmn:text>When you&apos;re happy with this, try the next mini-Tutorial on Gateways....]'
       ,q'[]'
-      ,q'[or look at the Shipping Process business example at https://bit.ly/flowsforapexdemo</bpmn:text>]'
+      ,q'[or look at the Shipping Process business example at https://apex.oracle.com/pls/apex/mtflows/r/flowsforapexdemo</bpmn:text>]'
       ,q'[    </bpmn:textAnnotation>]'
       ,q'[    <bpmn:association id="Association_1tltpuk" sourceRef="Event_0aiip5h" targetRef="TextAnnotation_1ooxxc0"/>]'
       ,q'[  </bpmn:process>]'
