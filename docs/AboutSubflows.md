@@ -58,7 +58,7 @@ Step Keys should be enabled for all new projects, and any legacy applications bu
 
 An opening Exclusive Gateway acts as a decision point, from which the process continues on just one forward path.
 
-When a subflow reaches an Exclusive Gateway, it just continues along on the chosen path.  No additional subflows are created.  Routing instructions are provided for the gateway by setting a process variable named `<bpmn_id_of_gateway>:route` containing the bpmn_id of the required forward paths to be taken.  ([See Gateways And Parallel Flows](GatewaysAndParaaalelFlows.md) for more details and an example.)  If a Process Variable is not found with the routing instructions, the marked default path is taken.
+When a subflow reaches an Exclusive Gateway, it just continues along on the chosen path.  No additional subflows are created.  Routing instructions are provided for the gateway by setting a process variable named `<bpmn_id_of_gateway>:route` containing the bpmn_id of the required forward paths to be taken.  ([See Gateways And Parallel Flows](GatewaysAndParallelFlows.md) for more details and an example.)  If a Process Variable is not found with the routing instructions, the marked default path is taken.
 
 #### Action at a Parallel Gateway
 
