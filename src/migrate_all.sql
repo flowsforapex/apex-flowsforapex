@@ -8,7 +8,7 @@ PROMPT >> Please enter needed Variables
 
 ACCEPT ws_name char default 'FLOWS4APEX' PROMPT 'Enter Workspace Name: [FLOWS4APEX]'
 ACCEPT parsing_schema char default 'FLOWS4APEX' PROMPT 'Enter Parsing Schema: [FLOWS4APEX]'
-ACCEPT app_alias char default 'FLOWS4APEX' PROMPT 'Enter Application Alias: [FLOWS4APEX]'
+ACCEPT app_alias char default 'FLOWS4APEX' PROMPT 'Enter Application Alias (Use current Alias to overwrite existing Application): [FLOWS4APEX]'
 ACCEPT app_name char default 'Flows for APEX' PROMPT 'Enter Application Name: [Flows for APEX]'
 ACCEPT from_version char PROMPT 'Enter current installed release (e.g., 21.1):'
 ACCEPT to_version char PROMPT 'Enter next release to upgrade to (e.g., 22.1):'

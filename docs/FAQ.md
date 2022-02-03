@@ -12,7 +12,7 @@ Flows for APEX is based on version 2.0 of BPMN, released in January 2011.  BPMN 
 
 #### How do I learn more about BPMN?
 
-Working through the Flows for APEX tutorial workflows is one way to get started.  They are included in the distributed product, and also hosted on apex.oracle.com (see: https://bit.ly/flowsforapex).
+Working through the Flows for APEX tutorial workflows is one way to get started.  They are included in the distributed product, and also hosted on apex.oracle.com (see: https://apex.oracle.com/pls/apex/mtflows/r/flowsforapex).
 
 For deeper understanding of BPMN, we'd recommend the following books:
 

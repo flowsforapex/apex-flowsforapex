@@ -259,6 +259,9 @@ as
     
   exception
       when others then
+        apex_json.open_object;
+        apex_json.write( p_name => 'success', p_value => false );
+        apex_json.close_all;
         l_error_occured := true;
   end handle_ajax;
 
