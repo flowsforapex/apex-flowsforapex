@@ -49,7 +49,8 @@ HISTORY
     - Addition of the Monaco text editor for PL/SQL input to variable expressions and script code entry.
     - Use of APEX metadata in UI for specifying links to APEX pages and page items.
   - Separates private and public calls and views used by the Flow Engine Application to ease reuse by customer apps.
-  - Enhanced sample app "Expense Claims" to reflect most features added to Flows for APEX 22.1
+  - Enhanced sample app "Expense Claims" to reflect most features added to Flows for APEX 22.1.
+  - Added flow_globals.step_key and flow_globals.business_ref to get these values.
 
 * v21.1
   - Introduces model-based declarative process variable expressions to set process variables before and after each step.
