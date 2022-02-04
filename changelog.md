@@ -5,7 +5,7 @@
 - Adds repeating timers for non-interrupting boundary events - facilitating repeated reminders.
 
 - Adds BPMN Business Rules Task type, which can accept user-defined PL/SQL script for linking to credit scoring, ML models or other automated decision tasks.
-  = Adds the ability to declaratively define sending an email from a Service Task
+- Adds the ability to declaratively define sending an email from a Service Task
 - Improves Timer Usability, by allowing timers to be specified using Oracle data and interval syntax in addition to ISO 8601 format.
 - Improves multi-user integrity by adding a unique Step Key as part of the context for each process object.
 - Improvements to the Flow Engine Application, with enhancements to the Flow Modeler:
