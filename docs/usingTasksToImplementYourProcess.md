@@ -26,10 +26,11 @@ Page Items contains a comma-separated list of items to be set in the calling pag
 
 Item Values contains a comma-separated list of values to be supplied.  The following items are available to be substituted into the Item Values string at runtime:
 
-- Flows for APEX Process Variables.
+- Flows for APEX Process Variables (of type varchar2).
   These are specified using the syntax `&F4A$<variable_name>.`
   &F4A$ is required to be upper case.
   Note the trailing period '.'.
+  Note also that substitution currently only works on process variables of type `varchar2`, due to format translation issues on dates and numbers.
 - Flows for APEX Pseudo Variables.
   The current Process ID, Subflow ID and Step Key for the current task are also available as pseudo variables.
   These are specified as `&F4A$PROCESS_ID.` , `&F4A$SUBFLOW_ID.` and `&F4A$STEP_KEY.` respectively.
@@ -66,7 +67,7 @@ l_order_id   := flow_process_vars.get_var_vc2
                   pi_var_name => 'ordr_id' );
 ```
 
-APEX Page Item values are available to your procedure if you opt to bind them into your process in the modeler.  By default, they are not available.  Furthermore, using Page Items to pass values from one process step to another is not recommended, and from V22.1 is now deprecated.
+APEX Page Item values are available to your procedure if you opt to bind them into your process in the modeler.  By default, they are not available.  Furthermore, using Page Items to pass values from one process step to another is not recommended, and from V22.1 is now deprecated.  Instead, you should use Process Variables to pass values from one process step to another.
 
 Note that, depending upon your process, a scriptTask might not be executed from the context of an APEX page, and so APEX Page Items might not be available.  This would occur if a script is run (or re-run) later, after another user has performed part of the process, or if a task operates as a result of, for example, a timer firing.  Use of Page Items to pass values between steps also makes your process steps non-restartable in the event of an error.  For all these reasons, you should use Flows for APEX process variables as a variable system that is persistent for the life of your business process, rather than APEX page variables which only persist during a user session.
 
