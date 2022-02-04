@@ -5,9 +5,6 @@ PROMPT >> Functions
 drop function apex_error_handling;
 
 PROMPT >> Packages
-drop package flow_p0005_api;
-drop package flow_p0006_api;
-drop package flow_p0007_api;
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
 drop package flow_services;
@@ -74,9 +71,6 @@ drop view flow_subflows_vw;
 drop view flow_diagram_categories_lov;
 drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
-drop view flow_objects_vw;
-drop view flow_processes_vw;
-drop view flow_process_variables_vw;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
