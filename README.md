@@ -4,10 +4,8 @@ This github repository is for developers willing to contribute to the upcoming v
 
 ## Resources you might find useful
 
-- [Demo and Packaged App](https://apex.mt-ag.com/flowsforapex)
-- [Introductory video](https://youtu.be/q77HqPuVN7s)
-- [Introductory slides](https://knowledgebase.mt-ag.com/q/flowsforapex)
-- [Introductory blog post](https://nielsdebr.blogspot.com/2020/06/flows-for-apex.html)
+- [Demo and Packaged App](https://flowsforapex.org)
+- [Introductory video](https://www.youtube.com/watch?v=xz3EzDk_vQA)
 - [Documentation](https://flowsforapex.org/latest/getting-started/)
 
 ## How to contribute as a developer to this project
