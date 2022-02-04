@@ -48,15 +48,6 @@ begin
 end;
 /
 
-PROMPT >> Migrate all Diagrams to new XML structure (Parse on all)
-begin
-  for rec in ( select dgrm_id from flow_diagrams for update ) loop
-    flow_bpmn_parser_pkg.parse( pi_dgrm_id => rec.dgrm_id );
-  end loop;
-  commit;
-end;
-/
-
 PROMPT >> Add new Flow Configuration Settings ( Duplicate Step Prevention = legacy for migrated systems )
 begin
   insert into flow_configuration (cfig_key, cfig_value) values ('duplicate_step_prevention','legacy');

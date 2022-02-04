@@ -15,18 +15,6 @@ PROMPT >> ============================
 @sql/installTut8.sql
 @sql/installTut9.sql
 
-PROMPT >> Parsing all Tutorial Diagrams
-PROMPT >> =============================
-begin
-  for rec in ( select dgrm_id from flow_diagrams where dgrm_category = 'Tutorials' ) loop
-    flow_bpmn_parser_pkg.parse
-    (
-      pi_dgrm_id => rec.dgrm_id
-    );
-  end loop;
-  commit;
-end;
-/
-
+commit;
 PROMPT >> Tutorial Diagrams Installation finished
 PROMPT >> =======================================
