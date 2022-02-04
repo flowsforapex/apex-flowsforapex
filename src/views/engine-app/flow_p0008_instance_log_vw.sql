@@ -13,6 +13,7 @@ as
            when 'error' then 'fa-exclamation-circle-o'
            when 'reset' then 'fa-undo'
            when 'restart step' then 'fa-undo'
+           when 'rescheduled' then 'fa-clock-o'
          end as lgpr_prcs_event_icon
        , lgpr.lgpr_timestamp at time zone sessiontimezone as lgpr_timestamp
        , lgpr.lgpr_user

@@ -42,7 +42,8 @@ function getSubflowData(action, element){
   return {
     "x01": action,
     "x02": apex.jQuery( element ).attr("data-prcs"),
-    "x03": apex.jQuery( element ).attr("data-sbfl")
+    "x03": apex.jQuery( element ).attr("data-sbfl"),
+    "x04": apex.jQuery( element ).attr("data-key")
   };
 }
 
@@ -50,7 +51,8 @@ function getBulkSubflowData(action){
   return {
     "x01": action,
     "f01": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "data-prcs" ),
-    "f02": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "value" )
+    "f02": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "value" ),
+    "f03": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "data-key" )
   };
 }
 
@@ -65,7 +67,10 @@ function openModalConfirmWithComment( action, element, confirmMessageKey, titleK
   apex
     .jQuery( "#confirm-btn" )
     .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
-    apex
+  apex
+    .jQuery( "#confirm-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+  apex
     .jQuery( "#confirm-btn" )
     .attr( "data-name", apex.jQuery( element ).attr( "data-name" ) );
   apex.theme.openRegion( "instance_action_dialog" );
@@ -154,7 +159,11 @@ function bulkStartFlowInstance( action ) {
 function resetFlowInstance(action, element){
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
+    var el = element;
+    if ( el.type === undefined || el.type !== "button") {
+      el = apex.jQuery(element).closest("button");
+    }
+    var data = getflowInstanceData(action, el);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -186,7 +195,11 @@ function bulkResetFlowInstance(action, element){
 function terminateFlowInstance(action, element) {
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
+    var el = element;
+    if ( el.type === undefined || el.type !== "button") {
+      el = apex.jQuery(element).closest("button");
+    }
+    var data = getflowInstanceData(action, el);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -218,7 +231,11 @@ function bulkTerminateFlowInstance(action, element) {
 function deleteFlowInstance( action, element ){ 
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
+    var el = element;
+    if ( el.type === undefined || el.type !== "button") {
+      el = apex.jQuery(element).closest("button");
+    }
+    var data = getflowInstanceData(action, el);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -416,7 +433,11 @@ function getGatewayErrors(){
 }
 
 function addProcessVariable(action, focusElement){ 
-  var gatewayRoute = apex.jQuery(focusElement).attr("data-gateway-route") === "true" ? true : false;
+  var el = focusElement;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(focusElement).closest("button");
+  }
+  var gatewayRoute = apex.jQuery(el).attr("data-gateway-route") === "true" ? true : false;
   var dialogId = gatewayRoute ? "gateway_selector" : "variable_dialog" ;
 
   if ( apex.jQuery( "#" + dialogId ).dialog( "isOpen" ) ) {
@@ -430,7 +451,9 @@ function addProcessVariable(action, focusElement){
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
-        data.x05 = apex.item("P8_CONNECTION").getValue();
+        var selectOption = apex.item("P8_SELECT_OPTION").getValue();
+        var route = selectOption === "single" ? apex.item("P8_CONNECTION").getValue() : apex.item("P8_CONNECTION").getValue().join(":");
+        data.x05 = selectOption = route;
       } else {
         data.x03 = apex.item("P8_PROV_VAR_NAME").getValue();
         data.x04 = apex.item("P8_PROV_VAR_TYPE").getValue();
@@ -483,8 +506,12 @@ function addProcessVariable(action, focusElement){
   }
 }
 
-function updateProcessVariable(action, focusElement){ 
-  var gatewayRoute = apex.jQuery(focusElement).attr("data-gateway-route") === "true" ? true : false;
+function updateProcessVariable(action, focusElement){
+  var el = focusElement;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(focusElement).closest("button");
+  }
+  var gatewayRoute = apex.jQuery(el).attr("data-gateway-route") === "true" ? true : false;
   var dialogId = gatewayRoute ? "gateway_selector" : "variable_dialog" ;
 
   if ( apex.jQuery( "#" + dialogId ).dialog( "isOpen" ) ) {
@@ -498,7 +525,9 @@ function updateProcessVariable(action, focusElement){
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
-        data.x05 = apex.item("P8_CONNECTION").getValue();
+        var selectOption = apex.item("P8_SELECT_OPTION").getValue();
+        var route = selectOption === "single" ? apex.item("P8_CONNECTION").getValue() : apex.item("P8_CONNECTION").getValue().join(":");
+        data.x05 = selectOption = route;
       } else {
         data.x03 = apex.item("P8_PROV_VAR_NAME").getValue();
         data.x04 = apex.item("P8_PROV_VAR_TYPE").getValue();
@@ -642,7 +671,7 @@ function restartStep( action, element){
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
     var data = getSubflowData(action, element);
-    data.x04 = getConfirmComment();
+    data.x05 = getConfirmComment();
     var options = {};
     options.messageKey = "APP_SUBLFOW_RESTARTED";
     options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
@@ -675,6 +704,9 @@ function openReservationDialog(action, element){
   apex
     .jQuery( "#reserve-step-btn" )
     .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+  apex
+    .jQuery( "#reserve-step-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
   apex.theme.openRegion( "reservation_dialog" );
 }
 
@@ -682,7 +714,7 @@ function reserveStep( action, element ){
   if ( apex.jQuery( "#reservation_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "reservation_dialog" );
     var data = getSubflowData(action, element);
-    data.x04 = apex.item("P8_RESERVATION").getValue();
+    data.x05 = apex.item("P8_RESERVATION").getValue();
 
     var options = {};
     options.refreshRegion = ["subflows"];
@@ -728,6 +760,55 @@ function bulkReleaseStep( action ){
       sendToServer(data, options);
     }
   });
+}
+
+function rescheduleTimer ( action, element ){
+  if ( apex.jQuery( "#reschedule_timer_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "reschedule_timer_dialog" );
+    var data = getSubflowData(action, element);
+    data.x05 = apex.item("P8_RESCHEDULE_TIMER_NOW").getValue();
+    data.x06 = apex.item( "P8_RESCHEDULE_TIMER_AT" ).getValue();
+    data.x07 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
+       
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    sendToServer(data, options);
+  } else {
+    openRescheduleTimerDialog( action, element );
+  }
+}
+
+function bulkRescheduleTimer ( action ){
+  if ( apex.jQuery( "#reschedule_timer_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "reschedule_timer_dialog" );
+    var data = getBulkSubflowData(action);
+    data.x02 = apex.item("P8_RESCHEDULE_TIMER_NOW").getValue();
+    data.x03 = apex.item( "P8_RESCHEDULE_TIMER_AT" ).getValue();
+    data.x04 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
+       
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    sendToServer(data, options);
+  } else {
+    openRescheduleTimerDialog( action, null );
+  }
+}
+
+function openRescheduleTimerDialog(action, element){
+  apex.item( "P8_RESCHEDULE_TIMER_NOW" ).setValue( "Y" );
+  apex.item( "P8_RESCHEDULE_TIMER_AT" ).setValue( "" );
+  apex.item("P8_RESCHEDULE_TIMER_COMMENT").setValue("");
+  apex.jQuery( "#reschedule-timer-btn" ).attr( "data-action", action );
+  apex
+    .jQuery( "#reschedule-timer-btn" )
+    .attr( "data-prcs", apex.jQuery( element ).attr( "data-prcs" ) );
+  apex
+    .jQuery( "#reschedule-timer-btn" )
+    .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+  apex
+    .jQuery( "#reschedule-timer-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+  apex.theme.openRegion( "reschedule_timer_dialog" );
 }
 
 function markAsCurrent(prcsId){
@@ -899,6 +980,18 @@ function initActions(){
           name: "bulk-delete-process-variable",
           action: function ( event, focusElement ) {
             bulkDeleteProcessVariable( this.name );
+          }
+        },
+        {
+          name: "reschedule-timer",
+          action: function( event, focusElement ) {
+            rescheduleTimer( this.name, focusElement );
+          }
+        },
+        {
+          name: "bulk-reschedule-timer",
+          action: function( event, focusElement ) {
+            bulkRescheduleTimer( this.name);
           }
         }
       ] );
@@ -1278,6 +1371,10 @@ function initPage8() {
                 .jQuery( "#subflows .a-IRR-tableContainer" )
                 .find( 'input[name="f02"][data-reservation!=""]:checked' )
                 .length > 0
+              || apex
+              .jQuery( "#subflows .a-IRR-tableContainer" )
+              .find( 'input[name="f02"][data-status!="running"]:checked' )
+              .length > 0
             ) {
               item.disabled = true;
             }
@@ -1286,8 +1383,18 @@ function initPage8() {
             if (
               apex
                 .jQuery( "#subflows .a-IRR-tableContainer" )
-                .find( 'input[name="f02"][data-reservation=""]:checked' ).length >
-              0
+                .find( 'input[name="f02"][data-reservation=""]:checked' )
+                .length > 0
+            ) {
+              item.disabled = true;
+            }
+          }
+          if ( item.action === "bulk-reschedule-timer" ) {
+            if (
+              apex
+                .jQuery( "#subflows .a-IRR-tableContainer" )
+                .find( 'input[name="f02"][data-status!="waiting for timer"]:checked' )
+                .length > 0
             ) {
               item.disabled = true;
             }
@@ -1323,6 +1430,9 @@ function initPage8() {
               subflReservation !== "" && sbflStatus === "running"
                 ? false
                 : true;
+          }
+          if ( item.action === "change-timer" ) {
+            item.disabled = sbflStatus === "waiting for timer" ? false : true;
           }
           return item;
         } );

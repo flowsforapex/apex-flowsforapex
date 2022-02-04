@@ -5,15 +5,14 @@ PROMPT >> Functions
 drop function apex_error_handling;
 
 PROMPT >> Packages
-drop package flow_p0005_api;
-drop package flow_p0006_api;
-drop package flow_p0007_api;
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
+drop package flow_services;
 drop package flow_usertask_pkg;
 drop package flow_tasks;
 drop package flow_boundary_events;
 drop package flow_bpmn_parser_pkg;
+drop package flow_migrate_xml_pkg;
 drop package flow_expressions;
 drop package flow_process_vars;
 drop package flow_instances;
@@ -28,6 +27,8 @@ drop package flow_constants_pkg;
 drop package flow_engine_app_api;
 drop package flow_errors;
 drop package flow_globals;
+drop package flow_diagram;
+drop package flow_theme_api;
 
 PROMPT >> Modeler Plugin Objects
 drop package flow_modeler;

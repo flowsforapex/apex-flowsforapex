@@ -69,6 +69,12 @@ function get_var_clob
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_clob%type;
 
+function get_var_type
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_type%type;
+
 procedure delete_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
@@ -79,6 +85,14 @@ procedure delete_var
 **        SPECIAL CASE / BUILT-IN PROCESS VARIABLES
 **
 ********************************************************************************/ 
+
+procedure set_business_ref
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_vc2_value in flow_process_variables.prov_var_vc2%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
+);
 
 function get_business_ref
 ( pi_prcs_id in flow_processes.prcs_id%type)
@@ -99,7 +113,16 @@ procedure do_substitution
 (
   pi_prcs_id in flow_processes.prcs_id%type
 , pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_step_key in flow_subflows.sbfl_step_key%type default null
 , pio_string in out nocopy varchar2
+);
+
+procedure do_substitution
+(
+  pi_prcs_id in flow_processes.prcs_id%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_step_key in flow_subflows.sbfl_step_key%type default null
+, pio_string in out nocopy clob
 );
 
 end flow_process_vars;

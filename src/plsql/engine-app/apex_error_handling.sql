@@ -28,7 +28,7 @@ begin
             -- Change the message to the generic error message which doesn't expose
             -- any sensitive information.
             l_result.message         := 'An unexpected internal application error has occurred. '||
-                                        'Please fill a bug at  https://github.com/mt-ag/apex-flowsforapex/issues'||
+                                        'Please fill a bug at  https://github.com/flowsforapex/apex-flowsforapex/issues'||
                                         ' for further investigation.';
             l_result.additional_info := null;
         end if;
@@ -68,4 +68,3 @@ begin
     return l_result;
 end apex_error_handling;
 /
-

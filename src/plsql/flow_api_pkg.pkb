@@ -146,6 +146,7 @@ as
   procedure flow_reserve_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   , p_reservation   in flow_subflows.sbfl_reservation%type
   )
   is 
@@ -155,12 +156,14 @@ as
     ( p_process_id  => p_process_id
     , p_subflow_id  => p_subflow_id
     , p_reservation => p_reservation
+    , p_step_key    => p_step_key
     );
   end flow_reserve_step;
 
   procedure flow_release_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   )
   is 
   begin
@@ -168,6 +171,7 @@ as
     flow_reservations.release_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
     );
   end flow_release_step;
 
@@ -175,12 +179,14 @@ as
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   )
   is 
   begin
     flow_engine.start_step
     ( p_process_id  => p_process_id
     , p_subflow_id  => p_subflow_id
+    , p_step_key    => p_step_key
     );
   end flow_start_step;
 
@@ -188,18 +194,21 @@ as
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   )
   is 
   begin 
     flow_globals.set_context
-    ( pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
+    ( pi_prcs_id  => p_process_id
+    , pi_sbfl_id  => p_subflow_id
+    , pi_step_key => p_step_key
     );
     flow_engine.restart_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
-    , p_comment => p_comment
+    , p_step_key   => p_step_key
+    , p_comment    => p_comment
     );
   end flow_restart_step;
 
@@ -207,19 +216,44 @@ as
   procedure flow_complete_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   )
   is 
   begin
     flow_globals.set_context
-    ( pi_prcs_id => p_process_id
-    , pi_sbfl_id => p_subflow_id
+    ( pi_prcs_id  => p_process_id
+    , pi_sbfl_id  => p_subflow_id
+    , pi_step_key => p_step_key
     );
     flow_engine.flow_complete_step
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
     , p_recursive_call => false
     );
-end flow_complete_step;
+  end flow_complete_step;
+
+  procedure flow_reschedule_timer
+  (
+      p_process_id    in flow_processes.prcs_id%type
+    , p_subflow_id    in flow_subflows.sbfl_id%type
+    , p_step_key      in flow_subflows.sbfl_step_key%type default null
+    , p_is_immediate  in boolean default false
+    , p_new_timestamp in flow_timers.timr_start_on%type default null
+    , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  )
+  is
+  begin
+    flow_timers_pkg.reschedule_timer
+    ( 
+      p_process_id    => p_process_id
+    , p_subflow_id    => p_subflow_id
+    , p_step_key      => p_step_key 
+    , p_is_immediate  => p_is_immediate
+    , p_new_timestamp => p_new_timestamp
+    , p_comment       => p_comment
+    );
+  end flow_reschedule_timer;
 
   procedure flow_reset
   ( p_process_id in flow_processes.prcs_id%type
@@ -270,6 +304,7 @@ end flow_complete_step;
   (
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   ) return varchar2
   as
     l_objt_id flow_objects.objt_id%type;
@@ -294,9 +329,10 @@ end flow_complete_step;
     return 
       flow_usertask_pkg.get_url
       (
-        pi_prcs_id => p_process_id
-      , pi_sbfl_id => p_subflow_id
-      , pi_objt_id => l_objt_id
+        pi_prcs_id  => p_process_id
+      , pi_sbfl_id  => p_subflow_id
+      , pi_step_key => p_step_key
+      , pi_objt_id  => l_objt_id
       );
   end get_current_usertask_url;
 

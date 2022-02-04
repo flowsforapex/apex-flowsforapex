@@ -22,8 +22,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210916113252'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20220107153141'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -287,10 +287,10 @@ wwv_flow_api.create_page_validation(
  p_id=>wwv_flow_api.id(19023037485332948)
 ,p_validation_name=>'File is not null'
 ,p_validation_sequence=>20
-,p_validation=>'return flow_p0006_api.is_file_uploaded(pi_file_name => :P6_FILE);'
+,p_validation=>'return flow_engine_app_api.is_file_uploaded(pi_file_name => :P6_FILE);'
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please select a #LABEL#.'
-,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MULTIPLE_FILES = ''multi'''
+,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MODE = ''multi'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(19018652597332904)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
@@ -300,14 +300,14 @@ wwv_flow_api.create_page_validation(
 ,p_validation_name=>'Validate XML'
 ,p_validation_sequence=>30
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'return flow_p0006_api.is_valid_xml(',
+'return flow_engine_app_api.is_valid_xml(',
 '        pi_import_from => :P6_IMPORT_FROM,',
 '        pi_dgrm_content => :P6_DGRM_CONTENT,',
 '        pi_file_name => :P6_FILE',
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please check the flow provided.'
-,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''single'''
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MODE = ''single'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
@@ -316,11 +316,11 @@ wwv_flow_api.create_page_validation(
 ,p_validation_name=>'Validate ZIP'
 ,p_validation_sequence=>40
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'return flow_p0006_api.is_valid_multi_file_archive(',
+'return flow_engine_app_api.is_valid_multi_file_archive(',
 '        pi_file_name => :P6_FILE',
 '    );'))
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
-,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MULTIPLE_FILES = ''multi'''
+,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MODE = ''multi'''
 ,p_validation_condition_type=>'PLSQL_EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
@@ -505,18 +505,17 @@ wwv_flow_api.create_page_process(
 'declare',
 '    l_dgrm_id flow_diagrams.dgrm_id%type;',
 'begin',
-'    l_dgrm_id := flow_p0006_api.upload_and_parse(',
-'        pi_import_from => :P6_IMPORT_FROM,',
-'        pi_dgrm_name => :P6_DGRM_NAME,',
-'        pi_dgrm_category => :P6_DGRM_CATEGORY,',
-'        pi_dgrm_version => :P6_DGRM_VERSION,',
-'        pi_dgrm_content => :P6_DGRM_CONTENT,',
-'        pi_file_name => :P6_FILE,',
-'        pi_force_overwrite => :P6_FORCE_OVERWRITE',
-'    );',
+'    l_dgrm_id := flow_engine_app_api.upload_and_parse(',
+'                     pi_import_from => :P6_IMPORT_FROM,',
+'                     pi_dgrm_name => :P6_DGRM_NAME,',
+'                     pi_dgrm_category => :P6_DGRM_CATEGORY,',
+'                     pi_dgrm_version => :P6_DGRM_VERSION,',
+'                     pi_dgrm_content => :P6_DGRM_CONTENT,',
+'                     pi_file_name => :P6_FILE,',
+'                     pi_force_overwrite => :P6_FORCE_OVERWRITE',
+'                 );',
 '    :P6_DGRM_ID := l_dgrm_id;',
-'end;',
-''))
+'end;'))
 ,p_process_error_message=>'Flow already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MODE'
@@ -531,12 +530,10 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Upload & Parse (Multiple Flows)'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'begin',
-'    flow_p0006_api.multiple_flow_import(',
-'        pi_file_name => :P6_FILE,',
-'        pi_force_overwrite => :P6_FORCE_OVERWRITE',
-'    );',
-'end;',
+'flow_engine_app_api.multiple_flow_import(',
+'    pi_file_name => :P6_FILE,',
+'    pi_force_overwrite => :P6_FORCE_OVERWRITE',
+');',
 ''))
 ,p_process_error_message=>'Model already exists. Use force orverwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'

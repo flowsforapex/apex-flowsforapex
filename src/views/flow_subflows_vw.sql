@@ -18,6 +18,7 @@ as
         , coalesce( objt_last.objt_name, sbfl.sbfl_last_completed ) as sbfl_last_completed_name
         , sbfl.sbfl_current
         , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as sbfl_current_name
+        , sbfl.sbfl_step_key
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_last_update
         , sbfl.sbfl_status
@@ -27,6 +28,10 @@ as
         , sbfl.sbfl_reservation
         , objt_curr.objt_id as sbfl_current_objt_id
         , prcs.prcs_init_ts as sbfl_prcs_init_ts
+        , case sbfl_status 
+          when 'waiting for timer' then timr_start_on
+          else null
+          end as timr_start_on
      from flow_subflows sbfl
      join flow_processes prcs
        on prcs.prcs_id = sbfl.sbfl_prcs_id
@@ -46,5 +51,8 @@ left join flow_objects lane
        on objt_curr.objt_objt_lane_id = lane.objt_id
      join flow_diagrams dgrm 
        on dgrm.dgrm_id = prcs.prcs_dgrm_id
+left join flow_timers timr
+       on timr.timr_prcs_id = sbfl.sbfl_prcs_id
+      and timr.timr_sbfl_id = sbfl.sbfl_id
 with read only
 ;

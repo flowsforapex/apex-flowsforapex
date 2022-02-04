@@ -25,6 +25,84 @@ wwv_flow_api.component_begin (
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36508956348127995)
+,p_name=>'APEX:APEXPAGE'
+,p_message_text=>'APEX Page'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36511098788179216)
+,p_name=>'APEX:APEXPAGE'
+,p_message_language=>'fr'
+,p_message_text=>'Page APEX'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36509146907128987)
+,p_name=>'APEX:EXECUTEPLSQL'
+,p_message_text=>'Execute PL/SQL'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36512273622192431)
+,p_name=>'APEX:EXECUTEPLSQL'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Ex\00E9cuter PL/SQL')
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36509328878129867)
+,p_name=>'APEX:ORACLECYCLE'
+,p_message_text=>'Cycle (Oracle)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36512087946189110)
+,p_name=>'APEX:ORACLECYCLE'
+,p_message_language=>'fr'
+,p_message_text=>'Cycle (Oracle)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36510876716170222)
+,p_name=>'APEX:ORACLEDATE'
+,p_message_text=>'Date (Oracle)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36511889014187351)
+,p_name=>'APEX:ORACLEDATE'
+,p_message_language=>'fr'
+,p_message_text=>'Date (Oracle)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36509739553137614)
+,p_name=>'APEX:ORACLEDURATION'
+,p_message_text=>'Duration (Oracle)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36512825431198969)
+,p_name=>'APEX:ORACLEDURATION'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Dur\00E9e (Oracle)')
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36509583287131032)
+,p_name=>'APEX:SENDMAIL'
+,p_message_text=>'Send Email'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36511468679184975)
+,p_name=>'APEX:SENDMAIL'
+,p_message_language=>'fr'
+,p_message_text=>'Envoyer un courriel'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34717207504480868)
 ,p_name=>'APP_COMPLETE_STEP'
 ,p_message_text=>'Complete'
@@ -469,6 +547,19 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(73507335747013782)
+,p_name=>'APP_RESCHEDULE_TIMER'
+,p_message_text=>'Reschedule'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(73507571960022143)
+,p_name=>'APP_RESCHEDULE_TIMER'
+,p_message_language=>'fr'
+,p_message_text=>'Reprogrammer'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34715720510433885)
 ,p_name=>'APP_RESET_INSTANCE'
 ,p_message_text=>'Reset Flow Instance'
@@ -593,6 +684,51 @@ wwv_flow_api.create_message(
 ,p_message_language=>'fr'
 ,p_message_text=>'Visionneuse de flux (%0)'
 ,p_is_js_message=>true
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36510629773154405)
+,p_name=>'BPMN:TIMECYCLE'
+,p_message_text=>'Cycle (ISO 8601)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36512679665196419)
+,p_name=>'BPMN:TIMECYCLE'
+,p_message_language=>'fr'
+,p_message_text=>'Cycle (ISO 8601)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36510235534150779)
+,p_name=>'BPMN:TIMEDATE'
+,p_message_text=>'Date (ISO 8601)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36512485728194871)
+,p_name=>'BPMN:TIMEDATE'
+,p_message_language=>'fr'
+,p_message_text=>'Date (ISO 8601)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36510489900152295)
+,p_name=>'BPMN:TIMEDURATION'
+,p_message_text=>'Duration (ISO 8601)'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(36513065073200441)
+,p_name=>'BPMN:TIMEDURATION'
+,p_message_language=>'fr'
+,p_message_text=>unistr('Dur\00E9e (ISO 8601)')
 );
 wwv_flow_api.component_end;
 end;

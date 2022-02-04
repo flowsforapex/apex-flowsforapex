@@ -36,7 +36,7 @@ wwv_flow_api.create_page(
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210923184418'
+,p_last_upd_yyyymmddhh24miss=>'20220131100945'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -255,7 +255,10 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'B'
 ,p_column_label=>'Execution'
 ,p_column_type=>'STRING'
+,p_display_text_as=>'LOV_ESCAPE_SC'
 ,p_heading_alignment=>'LEFT'
+,p_rpt_named_lov=>wwv_flow_api.id(15901843917364053)
+,p_rpt_show_filter_lov=>'1'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(16968036863177910)
@@ -282,7 +285,10 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'E'
 ,p_column_label=>'Expression Type'
 ,p_column_type=>'STRING'
+,p_display_text_as=>'LOV_ESCAPE_SC'
 ,p_heading_alignment=>'LEFT'
+,p_rpt_named_lov=>wwv_flow_api.id(15214828485777501)
+,p_rpt_show_filter_lov=>'1'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(16968337862177913)
@@ -531,7 +537,7 @@ wwv_flow_api.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'TABLE'
 ,p_query_table=>'FLOW_P0013_ATTRIBUTES_VW'
-,p_query_where=>'objt_bpmn_id = :P13_OBJT_ID and objt_dgrm_id = :P13_DGRM_ID'
+,p_query_where=>'objt_dgrm_id = :P13_DGRM_ID and objt_bpmn_id = :P13_OBJT_ID'
 ,p_include_rowid_column=>false
 ,p_ajax_enabled=>'Y'
 ,p_ajax_items_to_submit=>'P13_OBJT_ID,P13_DGRM_ID'
@@ -562,27 +568,27 @@ wwv_flow_api.create_report_columns(
 ,p_query_column_id=>2
 ,p_column_alias=>'OBAT_VALUE'
 ,p_column_display_sequence=>2
-,p_column_heading=>'Obat Value'
+,p_column_heading=>'Value'
 ,p_use_as_row_header=>'N'
-,p_column_html_expression=>'#PRETAG##OBAT_VALUE##POSTTAG#'
+,p_column_html_expression=>'#PRETAG# #OBAT_VALUE# #POSTTAG#'
 ,p_disable_sort_column=>'N'
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
 wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(8027732781825646)
+ p_id=>wwv_flow_api.id(35612710217177607)
 ,p_query_column_id=>3
 ,p_column_alias=>'PRETAG'
-,p_column_display_sequence=>4
+,p_column_display_sequence=>5
 ,p_hidden_column=>'Y'
 ,p_display_as=>'WITHOUT_MODIFICATION'
 ,p_derived_column=>'N'
 );
 wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(8027844744825647)
+ p_id=>wwv_flow_api.id(35612852941177608)
 ,p_query_column_id=>4
 ,p_column_alias=>'POSTTAG'
-,p_column_display_sequence=>5
+,p_column_display_sequence=>6
 ,p_hidden_column=>'Y'
 ,p_display_as=>'WITHOUT_MODIFICATION'
 ,p_derived_column=>'N'
@@ -591,8 +597,19 @@ wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(7336800689307050)
 ,p_query_column_id=>5
 ,p_column_alias=>'OBJT_DGRM_ID'
-,p_column_display_sequence=>3
+,p_column_display_sequence=>4
 ,p_hidden_column=>'Y'
+,p_display_when_cond_type=>'NEVER'
+,p_derived_column=>'N'
+);
+wwv_flow_api.create_report_columns(
+ p_id=>wwv_flow_api.id(35612523328177605)
+,p_query_column_id=>6
+,p_column_alias=>'OBJT_BPMN_ID'
+,p_column_display_sequence=>3
+,p_default_sort_column_sequence=>3
+,p_hidden_column=>'Y'
+,p_display_when_cond_type=>'NEVER'
 ,p_derived_column=>'N'
 );
 wwv_flow_api.create_page_plug(
@@ -948,6 +965,15 @@ wwv_flow_api.create_worksheet_column(
 ,p_heading_alignment=>'LEFT'
 ,p_tz_dependent=>'N'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(62703949642232509)
+,p_db_column_name=>'SBFL_STEP_KEY'
+,p_display_order=>160
+,p_column_identifier=>'Q'
+,p_column_label=>'Step Key'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(5132231896296558)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -955,7 +981,8 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'51323'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'SBFL_ID:SBFL_PROCESS_LEVEL:SBFL_CURRENT:SBFL_BECAME_CURRENT:SBFL_WORK_STARTED:SBFL_LAST_UPDATE:SBFL_PRCS_ID'
+,p_display_rows=>10
+,p_report_columns=>'SBFL_ID:SBFL_STEP_KEY:SBFL_PROCESS_LEVEL:SBFL_BECAME_CURRENT:SBFL_WORK_STARTED:SBFL_LAST_UPDATE:'
 ,p_sort_column_1=>'SBFL_LAST_UPDATE'
 ,p_sort_direction_1=>'DESC'
 );
@@ -985,17 +1012,11 @@ wwv_flow_api.create_report_region(
 ' order by lgpr_timestamp',
 ' fetch first 1 rows only'))
 ,p_display_when_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select 1',
-'from flow_subflows',
-'where sbfl_prcs_id = :P13_PRCS_ID ',
-'and sbfl_current = :P13_OBJT_ID',
-'and sbfl_status = ''error''',
-'and exists (',
-'    select 1',
-'    from FLOW_P0013_INSTANCE_LOG_VW',
-'    where lgpr_prcs_id = :P13_PRCS_ID and lgpr_objt_id = :P13_OBJT_ID ',
+'flow_engine_app_api.has_error(',
+'  pi_prcs_id => :P13_PRCS_ID',
+', pi_objt_id => :P13_OBJT_ID',
 ')'))
-,p_display_condition_type=>'EXISTS'
+,p_display_condition_type=>'PLSQL_EXPRESSION'
 ,p_ajax_enabled=>'Y'
 ,p_query_row_template=>wwv_flow_api.id(12495548550946880181)
 ,p_query_num_rows=>15

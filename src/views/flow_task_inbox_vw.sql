@@ -18,13 +18,15 @@ as
         , sbfl_last_completed_name
         , sbfl_current
         , sbfl_current_name
+        , sbfl_step_key
         , case sbfl_current_tag_name
             when 'bpmn:userTask' then
               flow_usertask_pkg.get_url
               (
-                pi_prcs_id => sbfl_prcs_id
-              , pi_sbfl_id => sbfl_id
-              , pi_objt_id => sbfl_current_objt_id
+                pi_prcs_id  => sbfl_prcs_id
+              , pi_sbfl_id  => sbfl_id
+              , pi_objt_id  => sbfl_current_objt_id
+              , pi_step_key => sbfl_step_key
               )
             else null
           end link_text
@@ -34,13 +36,12 @@ as
         , sbfl_current_lane
         , sbfl_current_lane_name
         , sbfl_reservation
-        , ( select prov.prov_var_vc2
-              from flow_process_variables prov
-             where prov.prov_var_name = 'BUSINESS_REF'
-               and prov.prov_var_type = 'VARCHAR2'
-               and prov.prov_prcs_id = sbfl.sbfl_prcs_id
-          ) as sbfl_business_ref
+        , prov.prov_var_vc2 as sbfl_business_ref
      from flow_subflows_vw sbfl
+     left join flow_process_variables prov
+        on prov.prov_prcs_id = sbfl.sbfl_prcs_id
+       and prov.prov_var_name = 'BUSINESS_REF'
+       and prov.prov_var_type = 'VARCHAR2' 
     where sbfl_status = 'running'
 with read only
 ;

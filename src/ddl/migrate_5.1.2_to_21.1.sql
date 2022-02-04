@@ -119,7 +119,7 @@ alter table flow_subflows add constraint sbfl_dgrm_fk foreign key (sbfl_dgrm_id)
 alter table flow_subflows add sbfl_became_current timestamp with time zone;
 alter table flow_subflows add sbfl_work_started timestamp with time zone;
 
-PROMPT >> Datas migration
+PROMPT >> Data migration
 
 -- data migration - copy dgrm_id from flow_processes.prcs_dgrm_id to all flow_subflows rows in that process sbfl_dgrm_id
 begin

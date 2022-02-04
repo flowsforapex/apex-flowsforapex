@@ -2,14 +2,18 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '21.1.0';
+  gc_version constant varchar2(10 char) := '22.1.0';
 
+  gc_true          constant varchar2(1 byte) := 'Y';
+  gc_false         constant varchar2(1 byte) := 'N';
   gc_vcbool_true   constant varchar2(10 char) := 'true';
   gc_vcbool_false  constant varchar2(10 char) := 'false';
   gc_numbool_true  constant number            := 1;
   gc_numbool_false constant number            := 0;
 
   gc_nsmap       constant varchar2(200 char) := 'xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"';
+  gc_nsbpmn      constant varchar2(200 char) := 'http://www.omg.org/spec/BPMN/20100524/MODEL';
+  gc_nsapex      constant varchar2(200 char) := 'https://flowsforapex.org';
   gc_bpmn_prefix constant varchar2(10 char)  := 'bpmn:';
   gc_apex_prefix constant varchar2(10 char)  := 'apex:';
 
@@ -50,31 +54,73 @@ as
   gc_bpmn_servicetask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'serviceTask';
   gc_bpmn_manualtask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'manualTask';
   gc_bpmn_scripttask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
+  gc_bpmn_businessruletask             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'businessRuleTask';
+  
 
   -- APEX Extensions to BPMN
   -- userTask
-  gc_apex_usertask_application        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-application';
-  gc_apex_usertask_page               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-page';
-  gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-request';
-  gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-cache';
-  gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-item';
-  gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-value';
-  gc_apex_usertask_inserturl          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apex-insertUrl';
+  gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexPage';
+  gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'externalUrl';
+
+  gc_apex_usertask_application_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
+  gc_apex_usertask_page_id            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
+  gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'request';
+  gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'cache';
+
+  gc_apex_usertask_page_items          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
+  --gc_apex_usertask_page_item          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItem';
+  gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemName';
+  gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemValue';
+
+  gc_apex_usertask_url                constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'url';
 
   --serviceTask
-  --gc_apex_servicetask_insertemail     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'insertEmail';
+  gc_apex_servicetask_send_mail       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sendMail';
 
-  --scriptTask
-  gc_apex_scripttask_engine           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
-  gc_apex_scripttask_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
-  gc_apex_scripttask_auto_binds       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
+  gc_apex_servicetask_email_from      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailFrom';
+  gc_apex_servicetask_email_to        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailTo';
+  gc_apex_servicetask_email_cc        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailCC';
+  gc_apex_servicetask_email_bcc       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailBCC';
+  gc_apex_servicetask_email_reply_to  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailReplyTo';
+  gc_apex_servicetask_use_template    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'useTemplate';
+  gc_apex_servicetask_application_id  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
+  gc_apex_servicetask_template_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'templateId';
+  gc_apex_servicetask_placeholder     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'placeholder';
+  gc_apex_servicetask_subject         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'subject';
+  gc_apex_servicetask_body_text       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyText';
+  gc_apex_servicetask_body_html       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyHTML';
+  gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
+  gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
+   
+  -- execute PL/SQL tasks
+  gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
+
+  gc_apex_task_plsql_engine     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
+  gc_apex_task_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
+  gc_apex_task_plsql_auto_binds constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'autoBinds';
 
   --terminateEndEvent
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
 
+  -- Oracle format timer definitions
+  gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
+  gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';
+  gc_timer_type_oracle_cycle          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleCycle';
+
+  gc_apex_timer_date                  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'date';
+  gc_apex_timer_format_mask           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'formatMask';
+  gc_apex_timer_interval_ym           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'intervalYM';
+  gc_apex_timer_interval_ds           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'intervalDS';
+  gc_apex_timer_start_interval_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startIntervalDS';
+  gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
+  gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
+
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
+  
+  gc_task_type_key                    constant flow_types_pkg.t_bpmn_id := 'taskType';
+
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
   -- Flows 4 APEX Substitution Strings
@@ -83,6 +129,7 @@ as
   gc_substitution_postfix             constant flow_types_pkg.t_single_vc2          := '.';
   gc_substitution_process_id          constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_ID';
   gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
+  gc_substitution_step_key            constant flow_types_pkg.t_bpmn_attributes_key := 'STEP_KEY';
   gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$(\w*)\.';
 
   -- Diagram Versioning Status
@@ -119,6 +166,7 @@ as
   gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
   gc_prcs_event_restart_step         constant  varchar2(20 char) := 'restart step';
   gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
+  gc_prcs_event_rescheduled          constant  varchar2(20 char) := 'rescheduled';
 
   -- Process Variable Datatypes
 
@@ -155,6 +203,9 @@ as
   gc_config_logging_level             constant varchar2(50 char) := 'logging_level';
   gc_config_logging_hide_userid       constant varchar2(50 char) := 'logging_hide_userid';
   gc_config_logging_language          constant varchar2(50 char) := 'logging_language';
+  gc_config_engine_app_mode           constant varchar2(50 char) := 'engine_app_mode';
+  gc_config_dup_step_prevention       constant varchar2(50 char) := 'duplicate_step_prevention';
+  gc_config_timer_max_cycles          constant varchar2(50 char) := 'timer_max_cycles';
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
@@ -164,6 +215,9 @@ as
   gc_config_logging_level_full        constant varchar2(2000 char) := 'full';      -- secure + variable changes
   gc_config_engine_app_mode_dev       constant varchar2(2000 char) := 'development';
   gc_config_engine_app_mode_prod      constant varchar2(2000 char) := 'production';
+  gc_config_dup_step_prevention_legacy constant varchar2(2000 char) := 'legacy';   -- null step key allowed
+  gc_config_dup_step_prevention_strict constant varchar2(2000 char) := 'strict';   -- step key enforced
+
 
 -- Config Parameter Default Values
 
@@ -171,7 +225,9 @@ as
   gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
   gc_config_default_logging_language          constant varchar2(2000 char) := 'en';
   gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
-
+  gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
+  gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_timer_max_cycles          constant varchar2(2000 char) := '1000';
 
 
   -- Default XML for new diagrams

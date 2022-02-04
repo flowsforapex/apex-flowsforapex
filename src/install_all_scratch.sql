@@ -33,6 +33,8 @@ PROMPT >> Install Application
 
 PROMPT >> Publish Translated Applications
 begin
+  -- Next call might fail if we do not set NUMERIC_CHARACTERS
+  execute immediate q'[alter session set NLS_NUMERIC_CHARACTERS='.,']';
   apex_lang.publish_application(
     p_application_id => apex_application_install.get_application_id,
     p_language => 'fr' 

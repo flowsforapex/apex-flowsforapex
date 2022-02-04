@@ -10,7 +10,7 @@ create or replace package body flow_plugin_manage_instance_step as
            p_message => ' > Process plug-in attributes'
       );
       apex_debug.info(
-           p_message => '...Flow Instance & Subflow define by: %s'
+           p_message => '...Flow Instance, Subflow & Step Key define by: %s'
          , p0        => p_process.attribute_01
       );
 
@@ -25,23 +25,18 @@ create or replace package body flow_plugin_manage_instance_step as
             , p0        => p_process.attribute_03
             , p1        => apex_util.get_session_state(p_item => p_process.attribute_03)
          );
+         apex_debug.info(
+            p_message => '......Step Key Item used: %s - Session state value: %s'
+            , p0        => p_process.attribute_12
+            , p1        => apex_util.get_session_state(p_item => p_process.attribute_12)
+         );
       elsif p_process.attribute_01 = 'sql'  then
          apex_debug.info(
             p_message => '......Query'
          );
          apex_debug.log_long_message(
-              p_message => p_process.attribute_03
+              p_message => p_process.attribute_04
             , p_level   => apex_debug.c_log_level_info
-         );
-      elsif p_process.attribute_01 = 'static'  then
-         apex_debug.info(
-              p_message => '......Static value: %s'
-            , p0        => p_process.attribute_04
-         );
-      elsif p_process.attribute_01 = 'component' then
-        apex_debug.info(
-            p_message => '......Component Setting: %s'
-            , p0        => p_plugin.attribute_01
          );
       end if;
 
@@ -79,29 +74,9 @@ create or replace package body flow_plugin_manage_instance_step as
          );
       elsif ( p_process.attribute_05 = 'reserve' ) then
          apex_debug.info(
-            p_message => '...Reservation define by: %s'
-            , p0        => p_process.attribute_10
-         );
-         if ( p_process.attribute_10 = 'static' ) then
-            apex_debug.info(
-                 p_message => '......Static value: %s'
-               , p0        => p_process.attribute_11
+                 p_message => '......Reserved for: %s'
+               , p0        => p_process.attribute_10
             );
-         elsif ( p_process.attribute_10 = 'item' )  then
-            apex_debug.info(
-               p_message => '......Reservation Item used: %s - Session state value: %s'
-               , p0        => p_process.attribute_12
-               , p1        => apex_util.get_session_state(p_item => p_process.attribute_12)
-            );
-         elsif ( p_process.attribute_10 = 'sql' )  then
-            apex_debug.info(
-               p_message => '......Query'
-            );
-            apex_debug.log_long_message(
-                 p_message => p_process.attribute_13
-               , p_level   => apex_debug.c_log_level_info
-            );
-         end if;
       end if;
 
       if p_process.attribute_11 is not null then
@@ -139,16 +114,19 @@ create or replace package body flow_plugin_manage_instance_step as
       l_attribute8      p_process.attribute_08%type := p_process.attribute_08; -- Route ID
       l_attribute9      p_process.attribute_09%type := p_process.attribute_09; -- Auto branching (Y/N)
       l_attribute10     p_process.attribute_10%type := p_process.attribute_10; -- Reservation 
-      l_attribute11     p_process.attribute_11%type := p_process.attribute_11; -- Return Flow Instance and Subflow ID 
+      l_attribute11     p_process.attribute_11%type := p_process.attribute_11; -- Return Flow Instance and Subflow ID
+      l_attribute12     p_process.attribute_12%type := p_process.attribute_12; -- Step Key  
 
       l_process_id      flow_processes.prcs_id%type;
       l_subflow_id      flow_subflows.sbfl_id%type;
+      l_step_key        flow_subflows.sbfl_step_key%type;
       l_dgrm_id         flow_processes.prcs_dgrm_id%type;
       l_gateway_name    flow_objects.objt_bpmn_id%type;
       l_gateway_exists  number;
       l_context         apex_exec.t_context;
       l_url             varchar2(4000);
       l_split_items     apex_t_varchar2;
+      l_col_count       pls_integer;
 
        type flow_step_info is record (
            dgrm_id            flow_diagrams.dgrm_id%type
@@ -174,19 +152,24 @@ create or replace package body flow_plugin_manage_instance_step as
       apex_debug.info(
          p_message => '...Retrieve FLow Instance Id and Subflow Id'
       );
-      -- Get process Id and subflow Id
+      -- Get process Id, subflow Id and Step key
       if ( l_attribute1 = 'item' ) then
          l_process_id  := apex_util.get_session_state(p_item => l_attribute2);
          l_subflow_id  := apex_util.get_session_state(p_item => l_attribute3);
+         l_step_key    := apex_util.get_session_state(p_item => l_attribute12);
       elsif ( l_attribute1 = 'sql' ) then
          l_context         := apex_exec.open_query_context(
             p_location   => apex_exec.c_location_local_db
           , p_sql_query  => l_attribute4
          );
+         l_col_count := apex_exec.get_column_count(l_context);
 
          while apex_exec.next_row(l_context) loop
             l_process_id  := apex_exec.get_number(l_context, 1);
             l_subflow_id  := apex_exec.get_number(l_context, 2);
+            if ( l_col_count = 3 ) then
+               l_step_key    := apex_exec.get_varchar2(l_context, 3);
+            end if;
          end loop;
          apex_exec.close(l_context);
       end if;
@@ -195,6 +178,8 @@ create or replace package body flow_plugin_manage_instance_step as
       if l_process_id is null or l_subflow_id is null then
          raise e_no_flow;
       end if;
+
+      --Raise error for step key if strict mode
 
       if ( l_attribute5 = 'complete' ) then
          -- Get step informations
@@ -271,14 +256,16 @@ create or replace package body flow_plugin_manage_instance_step as
          end if;
 
          apex_debug.info(
-              p_message => '...Complete Step - Flow Instance Id %s - Subflow Id %s'
+              p_message => '...Complete Step - Flow Instance Id %s - Subflow Id %s - Step Key %s'
             , p0        => l_process_id
             , p1        => l_subflow_id
+            , p2        => l_step_key
          );
          -- Call API to complete the step
          flow_api_pkg.flow_complete_step(
             p_process_id  => l_process_id
          , p_subflow_id  => l_subflow_id
+         , p_step_key    => l_step_key
          );
 
          -- Auto-branching
@@ -308,27 +295,44 @@ create or replace package body flow_plugin_manage_instance_step as
          l_reservation := l_attribute10;
 
          apex_debug.info(
-              p_message => '...Reserve Step - Flow Instance Id %s - Subflow Id %s'
+              p_message => '...Reserve Step - Flow Instance Id %s - Subflow Id %s - Step Key %s'
             , p0        => l_process_id
             , p1        => l_subflow_id
+            , p2        => l_step_key
          );
 
          flow_api_pkg.flow_reserve_step(
             p_process_id    => l_process_id
             , p_subflow_id  => l_subflow_id
+            , p_step_key    => l_step_key
             , p_reservation => l_reservation
          );
 
       elsif ( l_attribute5 = 'release' ) then
          apex_debug.info(
-              p_message => '...Release Step - Flow Instance Id %s - Subflow Id %s'
+              p_message => '...Release Step - Flow Instance Id %s - Subflow Id %s - Step Key %s'
             , p0        => l_process_id
             , p1        => l_subflow_id
+            , p2        => l_step_key
          );
 
          flow_api_pkg.flow_release_step(
               p_process_id => l_process_id
             , p_subflow_id => l_subflow_id
+            , p_step_key   => l_step_key
+         );
+      elsif ( l_attribute5 = 'start' ) then
+         apex_debug.info(
+              p_message => '...Start Step - Flow Instance Id %s - Subflow Id %s - Step Key %s'
+            , p0        => l_process_id
+            , p1        => l_subflow_id
+            , p2        => l_step_key
+         );
+
+         flow_api_pkg.flow_start_step(
+              p_process_id => l_process_id
+            , p_subflow_id => l_subflow_id
+            , p_step_key   => l_step_key
          );
       end if;
 
@@ -367,6 +371,9 @@ create or replace package body flow_plugin_manage_instance_step as
               p_message => flow_api_pkg.message( p_message_key => 'plugin-no-instance-subflow-id', p_lang => apex_util.get_session_lang() )
             , p_display_location => apex_error.c_on_error_page
          );
+      when others then
+         apex_exec.close(l_context);
+         raise;
    end execution;
    
 end flow_plugin_manage_instance_step;

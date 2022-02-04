@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20210923191545'
+,p_last_upd_yyyymmddhh24miss=>'20220114090656'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -67,7 +67,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5684323221037043)
 ,p_plug_name=>'Instance Details'
-,p_region_name=>'flow-reports'
+,p_region_name=>'flow-instances'
 ,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--hideHeader:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>10
@@ -730,7 +730,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>60
 ,p_column_identifier=>'F'
 ,p_column_label=>'Status'
-,p_column_html_expression=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span>'
+,p_column_html_expression=>'<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span><span class="sbfl_timer_start">#TIMER_STATUS_INFO#</span>'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_static_id=>'subflow_status_col'
@@ -764,6 +764,7 @@ wwv_flow_api.create_worksheet_column(
 'data-menu="subflow_row_action_menu"',
 'data-prcs="#SBFL_PRCS_ID#"',
 'data-sbfl="#SBFL_ID#"',
+'data-key = "#SBFL_STEP_KEY#"',
 'data-status="#SBFL_STATUS#"',
 'data-reservation="#SBFL_RESERVATION#">',
 '    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
@@ -820,7 +821,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>'Quick Action'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" ',
-'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-action="#QUICK_ACTION#">',
+'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#">',
 '    <span aria-hidden="true" class="t-Icon t-Icon--left fa #QUICK_ACTION_ICON#"></span>#QUICK_ACTION_LABEL#',
 '</button>'))
 ,p_column_type=>'STRING'
@@ -845,6 +846,34 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'HIDDEN'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(62703712227232507)
+,p_db_column_name=>'SBFL_STEP_KEY'
+,p_display_order=>170
+,p_column_identifier=>'R'
+,p_column_label=>'Step Key'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(62707325166232543)
+,p_db_column_name=>'SBFL_TIMR_START_ON'
+,p_display_order=>180
+,p_column_identifier=>'S'
+,p_column_label=>'Timer Start On'
+,p_column_type=>'DATE'
+,p_heading_alignment=>'LEFT'
+,p_tz_dependent=>'N'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(62707438405232544)
+,p_db_column_name=>'TIMER_STATUS_INFO'
+,p_display_order=>190
+,p_column_identifier=>'T'
+,p_column_label=>'Timer Status Info'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(8498061205860315)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -852,18 +881,18 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'59631'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION::QUICK_ACTION_LABEL:SBFL_STATUS_ICON'
+,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(11261908176020193)
+ p_id=>wwv_flow_api.id(73521141128311909)
 ,p_report_id=>wwv_flow_api.id(8498061205860315)
 ,p_condition_type=>'FILTER'
 ,p_allow_delete=>'Y'
 ,p_column_name=>'SBFL_STATUS'
 ,p_operator=>'in'
-,p_expr=>'running,error'
-,p_condition_sql=>'"SBFL_STATUS" in (#APXWS_EXPR_VAL1#, #APXWS_EXPR_VAL2#)'
-,p_condition_display=>'#APXWS_COL_NAME# #APXWS_OP_NAME# ''running, error''  '
+,p_expr=>'running,error,waiting for timer'
+,p_condition_sql=>'"SBFL_STATUS" in (#APXWS_EXPR_VAL1#, #APXWS_EXPR_VAL2#, #APXWS_EXPR_VAL3#)'
+,p_condition_display=>'#APXWS_COL_NAME# #APXWS_OP_NAME# ''running, error, waiting for timer''  '
 ,p_enabled=>'Y'
 );
 wwv_flow_api.create_page_plug(
@@ -935,6 +964,18 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(13245209048329626)
 ,p_plug_name=>'Instance Action'
@@ -964,17 +1005,18 @@ wwv_flow_api.create_page_plug(
 ,p_list_template_id=>wwv_flow_api.id(12495525309455880143)
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(62707563129232545)
+,p_plug_name=>'Reschedule Timer'
+,p_region_name=>'reschedule_timer_dialog'
+,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
+,p_plug_template=>wwv_flow_api.id(12495608896288880263)
+,p_plug_display_sequence=>90
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6133652177393567089)
@@ -1131,6 +1173,22 @@ wwv_flow_api.create_page_button(
 ,p_button_cattributes=>'data-action="flow-instance-audit" data-prcs="&P8_PRCS_ID." data-name="&P8_PRCS_NAME."'
 );
 wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(62707677337232546)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_button_name=>'RESCHEDULE_TIMER'
+,p_button_static_id=>'reschedule-timer-btn'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
+,p_button_is_hot=>'Y'
+,p_button_image_alt=>'Reschedule Timer'
+,p_button_position=>'REGION_TEMPLATE_NEXT'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'js-actionButton'
+,p_button_cattributes=>'data-action="" data-prcs="" data-sbfl="" data-key=""'
+);
+wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5978892614464469)
 ,p_button_sequence=>20
 ,p_button_plug_id=>wwv_flow_api.id(5681179787037011)
@@ -1159,7 +1217,7 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'js-actionButton'
-,p_button_cattributes=>'data-action="" data-prcs="" data-sbfl="" data-no-update="true"'
+,p_button_cattributes=>'data-action="" data-prcs="" data-sbfl="" data-key="" data-no-update="true"'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(7067605023119721)
@@ -1566,6 +1624,54 @@ wwv_flow_api.create_page_item(
 ,p_attribute_03=>'N'
 ,p_attribute_04=>'BOTH'
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(62707796384232547)
+,p_name=>'P8_RESCHEDULE_TIMER_NOW'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_item_default=>'Y'
+,p_prompt=>'Reschedule timer now'
+,p_display_as=>'NATIVE_YES_NO'
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_01=>'APPLICATION'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(62707843061232548)
+,p_name=>'P8_RESCHEDULE_TIMER_AT'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_prompt=>'Reschedule timer at'
+,p_format_mask=>'&APP_DATE_TIME_FORMAT.'
+,p_display_as=>'NATIVE_DATE_PICKER'
+,p_cSize=>30
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_02=>'+0d'
+,p_attribute_04=>'both'
+,p_attribute_05=>'N'
+,p_attribute_07=>'NONE'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(73479633336995802)
+,p_name=>'P8_RESCHEDULE_TIMER_COMMENT'
+,p_item_sequence=>30
+,p_item_plug_id=>wwv_flow_api.id(62707563129232545)
+,p_prompt=>'Comment'
+,p_display_as=>'NATIVE_TEXTAREA'
+,p_cSize=>30
+,p_cMaxlength=>2000
+,p_cHeight=>5
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_attribute_01=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_03=>'N'
+,p_attribute_04=>'BOTH'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(5996686614464519)
 ,p_name=>'Subflows Report refreshed - Mark currently running'
@@ -1590,7 +1696,7 @@ wwv_flow_api.create_page_da_action(
 '',
 'apex.jQuery(".subflow-actions-btn").each(function(){',
 '  var sbflStatus = apex.jQuery(this).data("status");',
-'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" ? false : true );',
+'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" ? false : true );',
 '});',
 '',
 '$("td[headers*=subflow_status_col]").each(function() {',
@@ -1641,32 +1747,8 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_OBJT_LIST'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
-'from FLOW_OBJECTS',
-'where OBJT_DGRM_ID = (select PRCS_DGRM_ID from FLOW_PROCESSES where PRCS_ID = :P8_PRCS_ID)',
-'and not OBJT_TAG_NAME in (''bpmn:process'', ''bpmn:textAnnotation'', ''bpmn:participant'', ''bpmn:laneSet'', ''bpmn:lane'');'))
-,p_attribute_07=>'P8_PRCS_ID'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(6180336771209948)
-,p_event_id=>wwv_flow_api.id(6011636562464528)
-,p_event_result=>'TRUE'
-,p_action_sequence=>40
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P8_OBJT_SBFL_LIST'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct listagg(OBJT_BPMN_ID, '':'') within group (order by OBJT_BPMN_ID) "OBJT_ID"',
-'from FLOW_OBJECTS',
-'where OBJT_DGRM_ID = (select PRCS_DGRM_ID from FLOW_PROCESSES where PRCS_ID = :P8_PRCS_ID)',
-'and OBJT_TAG_NAME = ''bpmn:subProcess'''))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'flow_engine_app_api.get_objt_list(p_prcs_id => :P8_PRCS_ID)'
 ,p_attribute_07=>'P8_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -1691,6 +1773,8 @@ wwv_flow_api.create_page_da_event(
 ,p_event_sequence=>190
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P8_GATEWAY'
+,p_condition_element=>'P8_GATEWAY'
+,p_triggering_condition_type=>'NOT_NULL'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'change'
 );
@@ -1703,12 +1787,12 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_SELECT_OPTION'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select select_option',
-'from flow_instance_gateways_lov',
-'where objt_bpmn_id = :P8_GATEWAY',
-'and prcs_id = :P8_PRCS_ID'))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_app_api.get_connection_select_option(',
+'  pi_gateway => :P8_GATEWAY',
+', pi_prcs_id => :P8_PRCS_ID',
+')'))
 ,p_attribute_07=>'P8_GATEWAY,P8_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -1828,6 +1912,18 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'BUTTON'
 ,p_affected_button_id=>wwv_flow_api.id(5955186680464411)
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6004548451464524)
 ,p_name=>'Element clicked'
@@ -1862,11 +1958,8 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_OBJT_NAME'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct OBJT_NAME',
-'from FLOW_OBJECTS',
-'where OBJT_BPMN_ID = :P8_OBJT_BPMN_ID'))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'flow_engine_app_api.get_objt_name(p_objt_bpmn_id => :P8_OBJT_BPMN_ID)'
 ,p_attribute_07=>'P8_OBJT_BPMN_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
@@ -1883,11 +1976,10 @@ wwv_flow_api.create_page_da_action(
 'var title = $v(''P8_OBJT_BPMN_ID'') + ($v(''P8_OBJT_NAME'').length > 0 ? '' - '' + $v(''P8_OBJT_NAME'') : '''');',
 '',
 'apex.server.process(',
-'    ''PREPARE_URL'',                           ',
+'    ''GET_URL'',                           ',
 '    {',
-'        x01: $v(''P8_PRCS_ID''),',
-'        x02: this.data.element.id,',
-'        x03: title',
+'        x01: this.data.element.id,',
+'        x02: title',
 '    }, ',
 '    {',
 '        success: function (pData)',
@@ -1907,18 +1999,6 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'change'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(6008377992464526)
 ,p_event_id=>wwv_flow_api.id(6007809031464526)
@@ -1927,8 +2007,7 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- Save user preference',
-'apex_util.set_preference(''VIEWPORT'',:P8_DISPLAY_SETTING);',
+'flow_engine_app_api.set_viewport(:P8_DISPLAY_SETTING);',
 ''))
 ,p_attribute_02=>'P8_DISPLAY_SETTING'
 ,p_wait_for_result=>'Y'
@@ -2095,17 +2174,12 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_PROV_VAR_DATE_VALID'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_date date;',
-'begin',
-'    l_date := to_date( :P8_PROV_VAR_DATE, :APP_DATE_TIME_FORMAT);',
-'    return ''Y'';',
-'exception',
-'    when others then',
-'        return ''N'';',
-'end;'))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_app_api.check_is_date(',
+'  pi_value => :P8_PROV_VAR_DATE',
+', pi_format_mask => :APP_DATE_TIME_FORMAT',
+')'))
 ,p_attribute_07=>'P8_PROV_VAR_DATE'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -2169,17 +2243,11 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_PROV_VAR_NUM_VALID'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_number number;',
-'begin',
-'    l_number := to_number( :P8_PROV_VAR_NUM );',
-'    return ''Y'';',
-'exception',
-'    when others then',
-'        return ''N'';',
-'end;'))
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_app_api.check_is_number(',
+'  pi_value => :P8_PROV_VAR_NUM',
+')'))
 ,p_attribute_07=>'P8_PROV_VAR_NUM'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -2258,51 +2326,45 @@ wwv_flow_api.create_page_da_action(
 '',
 'Prism.highlightAll();'))
 );
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(62707920017232549)
+,p_name=>'Change Set Now'
+,p_event_sequence=>360
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P8_RESCHEDULE_TIMER_NOW'
+,p_condition_element=>'P8_RESCHEDULE_TIMER_NOW'
+,p_triggering_condition_type=>'EQUALS'
+,p_triggering_expression=>'Y'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(62708058684232550)
+,p_event_id=>wwv_flow_api.id(62707920017232549)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P8_RESCHEDULE_TIMER_AT'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(73479552347995801)
+,p_event_id=>wwv_flow_api.id(62707920017232549)
+,p_event_result=>'FALSE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P8_RESCHEDULE_TIMER_AT'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(5987781654464507)
 ,p_process_sequence=>10
 ,p_process_point=>'BEFORE_HEADER'
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Set Viewport for BPMN-Viewer'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- Load user preference for the BPMN-Viewer and set it after the page has fully loaded',
-'declare',
-'    l_script varchar2(4000);',
-'begin',
-'',
-'    -- Set IDs for the the row divs',
-'    l_script := q''#apex.jQuery("#flow-reports").parent().attr("id","col1");',
-'                   apex.jQuery("#flow-monitor").parent().attr("id","col2");#'';',
-'    ',
-'    APEX_JAVASCRIPT.ADD_ONLOAD_CODE (',
-'        p_code => l_script,',
-'        p_key  => ''init_viewport'');',
-'',
-'    :P8_DISPLAY_SETTING := nvl(apex_util.get_preference(''VIEWPORT''),''row'');',
-'',
-'    ',
-'    l_script := null;',
-'    -- Set view to side-by-side if preference = ''column''',
-'    if :P8_DISPLAY_SETTING = ''column'' then',
-'    ',
-'        l_script := q''#apex.jQuery( "#col1" ).addClass( "col-6" ).removeClass( [ "col-12", "col-end" ] );',
-'                       apex.jQuery( "#col2" ).addClass( "col-6" ).removeClass( [ "col-12", "col-start" ] );',
-'                       apex.jQuery("#col2").appendTo(apex.jQuery("#col1").parent());',
-'                       apex.jQuery("#flow-monitor").show();',
-'                       apex.region( "flow-monitor" ).refresh();#'';',
-'     elsif :P8_DISPLAY_SETTING = ''window'' then',
-'        l_script := q''#apex.jQuery("#flow-monitor").hide();',
-'                       apex.jQuery( "#col1" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );',
-'                       apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );#'';',
-'    end if;',
-'    ',
-'    if l_script is not null then',
-'        APEX_JAVASCRIPT.ADD_ONLOAD_CODE (',
-'            p_code => l_script,',
-'            p_key  => ''viewport''',
-'        );',
-'    end if;',
-'end;'))
+,p_process_sql_clob=>'flow_engine_app_api.add_viewport_script(''P8_DISPLAY_SETTING'');'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_process(
@@ -2319,23 +2381,13 @@ wwv_flow_api.create_page_process(
 ,p_process_sequence=>30
 ,p_process_point=>'ON_DEMAND'
 ,p_process_type=>'NATIVE_PLSQL'
-,p_process_name=>'PREPARE_URL'
+,p_process_name=>'GET_URL'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_url varchar2(2000);',
-'    l_dgrm_id flow_processes.prcs_dgrm_id%type;',
-'begin',
-'    select prcs_dgrm_id into l_dgrm_id from flow_processes where prcs_id = apex_application.g_x01;',
-'    l_url := apex_page.get_url(',
-'        p_application => v(''APP_ID''),',
-'        p_page => ''13'',',
-'        p_session => v(''APP_SESSION''),',
-'        p_clear_cache => ''RP'',',
-'        p_items => ''P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE'',',
-'        p_values => l_dgrm_id || '','' || apex_application.g_x01 || '','' || apex_application.g_x02 || '','' || apex_application.g_x03',
-'    );',
-'    htp.p(l_url);',
-'end;'))
+'flow_engine_app_api.get_url_p13(',
+'  pi_prcs_id => :P8_PRCS_ID',
+', pi_objt_id => apex_application.g_x01',
+', pi_title => apex_application.g_x02',
+');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_process(
@@ -2344,47 +2396,7 @@ wwv_flow_api.create_page_process(
 ,p_process_point=>'ON_DEMAND'
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'GET_VARIABLE'
-,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'declare',
-'    l_prov_prcs_id  flow_process_variables.prov_prcs_id%type := apex_application.g_x01;',
-'    l_prov_var_name flow_process_variables.prov_var_name%type := apex_application.g_x02;',
-'    l_prov_var_type flow_process_variables.prov_var_type%type := apex_application.g_x03;',
-'    l_prov_var_vc2  flow_process_variables.prov_var_vc2%type;',
-'    l_prov_var_num  flow_process_variables.prov_var_num%type;',
-'    l_prov_var_date flow_process_variables.prov_var_date%type;',
-'    l_prov_var_clob flow_process_variables.prov_var_clob%type;',
-'begin',
-'    case l_prov_var_type',
-'        when ''VARCHAR2'' then',
-'            l_prov_var_vc2 := flow_process_vars.get_var_vc2(',
-'                  pi_prcs_id => l_prov_prcs_id',
-'                , pi_var_name =>l_prov_var_name',
-'            );',
-'        when ''NUMBER'' then',
-'            l_prov_var_num := flow_process_vars.get_var_num(',
-'                  pi_prcs_id => l_prov_prcs_id',
-'                , pi_var_name =>l_prov_var_name',
-'            );',
-'        when ''DATE'' then',
-'            l_prov_var_date := flow_process_vars.get_var_date(',
-'                  pi_prcs_id => l_prov_prcs_id',
-'                , pi_var_name =>l_prov_var_name',
-'            );',
-'        when ''CLOB'' then',
-'            l_prov_var_clob := flow_process_vars.get_var_clob(',
-'                  pi_prcs_id => l_prov_prcs_id',
-'                , pi_var_name =>l_prov_var_name',
-'            );',
-'    end case;',
-'    ',
-'    apex_json.open_object;',
-'    apex_json.write( p_name => ''success'', p_value => not apex_error.have_errors_occurred );',
-'    apex_json.write( p_name => ''vc2_value'', p_value => l_prov_var_vc2);',
-'    apex_json.write( p_name => ''num_value'', p_value => to_char(l_prov_var_num));',
-'    apex_json.write( p_name => ''date_value'', p_value => to_char(l_prov_var_date, :APP_DATE_TIME_FORMAT));',
-'    apex_json.write( p_name => ''clob_value'', p_value => l_prov_var_clob);',
-'    apex_json.close_all;',
-' end;'))
+,p_process_sql_clob=>'flow_engine_app_api.pass_variable;'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;

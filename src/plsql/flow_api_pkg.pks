@@ -85,6 +85,7 @@ Reservation is not an authorization control, and is not security relevant / enfo
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   , p_reservation   in flow_subflows.sbfl_reservation%type
   );  
 /***
@@ -96,6 +97,7 @@ Flow_release_step releases a previously made reservation.
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   ); 
 /***
 Procedure flow_start_step
@@ -109,6 +111,7 @@ Despite being optional, a well formed, best-practice application will use this c
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   );
 
 /*** Procedure flow_restart_step
@@ -122,6 +125,7 @@ It should only be used on a subflow having a status of 'error'
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   );
 
@@ -136,7 +140,32 @@ is used to move a process forward, regardless of the object type.
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
   ); 
+
+/*** 
+Procedure flow_reschedulule_timer
+flow_reschedule_timer can be called to change the next scheduled time of a timer on a running timer.
+It can change the currently scheduled time to a future time, or can instruct the timer to fire immediately.
+If the Timer event is a single event timer (timer types Date or Duration), it will change the time at which the event is 
+scheduled to occur to the new time.
+If the timer is a Cycle Timer, this changes the time that the next firoing is scheduled to occur.  If later cycles exist, the following cycle will 
+be scheduled at the new firing time + the repeat interval.
+To fire the timer immediately, set p_is_immediate = true.
+To change the firing time to another future time, supply a new timestamp with time zone contaiing the new time.
+A comment can be provided, which is passed to the log file for explanation of any rescheduling.
+*/
+procedure flow_reschedule_timer
+(
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
+  , p_is_immediate  in boolean default false
+  , p_new_timestamp in flow_timers.timr_start_on%type default null
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+
+);
+
 
 /***
 Procedure flow_reset
@@ -190,6 +219,7 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   (
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
+  , p_step_key   in flow_subflows.sbfl_step_key%type default null
   ) return varchar2;
 
   -- message

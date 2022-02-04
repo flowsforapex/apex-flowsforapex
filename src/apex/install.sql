@@ -51,9 +51,13 @@ prompt --install
 @@application/shared_components/files/workflow_black_svg.sql
 @@application/shared_components/files/app_100_logo_svg.sql
 @@application/shared_components/files/workflow_white_svg.sql
+@@application/shared_components/files/css_21_2_flows4apex_dark_css.sql
+@@application/shared_components/files/css_21_2_flows4apex_light_css.sql
+@@application/shared_components/files/flows_apex_svg.sql
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
+@@application/shared_components/logic/application_processes/set_init_theme_mode.sql
 @@application/shared_components/logic/application_processes/switch_theme_mode.sql
 @@application/shared_components/logic/application_processes/reset_theme_mode.sql
 @@application/shared_components/logic/application_processes/css_tricks.sql
@@ -156,9 +160,9 @@ prompt --install
 @@application/shared_components/user_interface/shortcuts/delete_confirm_msg.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
 @@application/shared_components/plugins/region_type/com_flows4apex_modeler_region.sql
-@@application/shared_components/plugins/process_type/com_flows4apex_manage_step_process.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_ins_vars_process.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_instance_process.sql
+@@application/shared_components/plugins/process_type/com_flows4apex_manage_step_process.sql
 @@application/shared_components/plugins/region_type/com_flows4apex_viewer_region.sql
 @@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql

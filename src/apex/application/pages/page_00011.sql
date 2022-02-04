@@ -28,8 +28,8 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495624331342880306)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_chained=>'N'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20210921172506'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20220107131234'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(10603847781745438)
@@ -163,19 +163,12 @@ wwv_flow_api.create_page_process(
 'declare',
 '    l_prcs_id flow_processes.prcs_id%type;',
 'begin',
-'    l_prcs_id := flow_api_pkg.flow_create( ',
-'          pi_dgrm_id   => :p11_dgrm_id',
-'        , pi_prcs_name => :p11_prcs_name',
-'    );',
-'    ',
-'    if :P11_BUSINESS_REF  is not null then',
-'        flow_process_vars.set_var( ',
-'              pi_prcs_id   => l_prcs_id',
-'            , pi_var_name  => ''BUSINESS_REF''',
-'            , pi_vc2_value => :P11_BUSINESS_REF',
-'        );',
-'    end if;',
-'    :P11_PRCS_ID := l_prcs_id; ',
+'    l_prcs_id := flow_engine_app_api.create_instance(',
+'                     pi_dgrm_id => :P11_DGRM_ID',
+'                   , pi_prcs_name => :P11_PRCS_NAME',
+'                   , pi_business_ref => :P11_BUSINESS_REF',
+'                 );',
+'    :P11_PRCS_ID := l_prcs_id;',
 'end;'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );

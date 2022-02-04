@@ -59,7 +59,7 @@ as
     l_objt_bpmn_id          flow_objects.objt_bpmn_id%type;
     l_objt_id               flow_objects.objt_id%type;
     l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
-    l_main_subflow_id       flow_subflows.sbfl_id%type;
+    l_main_subflow          flow_types_pkg.t_subflow_context;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
   begin
     apex_debug.enter
@@ -158,7 +158,7 @@ as
         raise e_unsupported_start_event;
     end case;
 
-    l_main_subflow_id := flow_engine_util.subflow_start 
+    l_main_subflow := flow_engine_util.subflow_start 
       ( p_process_id => p_process_id
       , p_parent_subflow => null
       , p_starting_object => l_objt_bpmn_id
@@ -172,8 +172,9 @@ as
       );
 
     apex_debug.info
-    ( p_message => 'Initial Subflow created %0'
-    , p0 => l_main_subflow_id
+    ( p_message => 'Initial Subflow created %0 with Step Key %1'
+    , p0 => l_main_subflow.sbfl_id
+    , p1 => l_main_subflow.step_key
     );
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
       -- process any before-event variable expressions on the starting object
@@ -181,14 +182,15 @@ as
       ( pi_objt_id     => l_objt_id
       , pi_set         => flow_constants_pkg.gc_expr_set_before_event
       , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => l_main_subflow_id
+      , pi_sbfl_id     => l_main_subflow.sbfl_id
       );
       -- test for any step errors
       if not flow_globals.get_step_error then 
         flow_timers_pkg.start_timer
         (
-          pi_prcs_id => p_process_id
-        , pi_sbfl_id => l_main_subflow_id
+          pi_prcs_id    => p_process_id
+        , pi_sbfl_id    => l_main_subflow.sbfl_id
+        , pi_step_key   => l_main_subflow.step_key
         ); 
       end if;       
 
@@ -199,14 +201,15 @@ as
       ( pi_objt_id     => l_objt_id
       , pi_set         => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => l_main_subflow_id
+      , pi_sbfl_id     => l_main_subflow.sbfl_id
       );
 
       if not flow_globals.get_step_error then 
         -- step into first step
         flow_engine.flow_complete_step  
         ( p_process_id => p_process_id
-        , p_subflow_id => l_main_subflow_id
+        , p_subflow_id => l_main_subflow.sbfl_id
+        , p_step_key   => l_main_subflow.step_key
         , p_forward_route => null
         , p_recursive_call => false
         );
@@ -219,7 +222,7 @@ as
     when e_unsupported_start_event then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => p_process_id
-      , pi_sbfl_id        => l_main_subflow_id
+      , pi_sbfl_id        => l_main_subflow.sbfl_id
       , pi_message_key    => 'start-type-unsupported'
       , p0                => l_objt_sub_tag_name       
       );

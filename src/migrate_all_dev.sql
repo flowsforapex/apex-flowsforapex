@@ -32,5 +32,17 @@ end;
 PROMPT >> Install Application
 @apex/install.sql
 
+PROMPT >> Publish Translated Applications
+begin
+  -- Next call might fail if we do not set NUMERIC_CHARACTERS
+  execute immediate q'[alter session set NLS_NUMERIC_CHARACTERS='.,']';
+  apex_lang.publish_application(
+    p_application_id => 100,
+    p_language => 'fr' 
+  );
+  commit;
+end;
+/
+
 PROMPT >> Finished Installation of Flows4APEX
 PROMPT >> ====================================
