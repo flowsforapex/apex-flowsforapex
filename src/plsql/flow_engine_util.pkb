@@ -81,6 +81,11 @@ as
   is 
     l_step_key_required   flow_subflows.sbfl_step_key%type := pi_step_key_required;
   begin
+    if g_step_keys_enforced then 
+      -- step keys not required - duplicate_step_mode = legacy
+      return true;
+    end if;
+
     if pi_step_key_required is null then
 
       select sbfl.sbfl_step_key
@@ -98,9 +103,6 @@ as
     );
 
     if pi_step_key_supplied = l_step_key_required then
-      return true;
-    elsif (pi_step_key_supplied is null 
-           and not g_step_keys_enforced) then
       return true;
     else
       flow_errors.handle_instance_error
