@@ -81,7 +81,7 @@ as
   is 
     l_step_key_required   flow_subflows.sbfl_step_key%type := pi_step_key_required;
   begin
-    if g_step_keys_enforced then 
+    if not g_step_keys_enforced then 
       -- step keys not required - duplicate_step_mode = legacy
       return true;
     end if;
