@@ -15,7 +15,8 @@ body:
         - 5.1.1
         - 5.1.2
         - 21.1 
-        - 22.1 (development)
+        - 22.1 (latest)
+        - 22.2 (development)
     validations:
       required: true
   - type: dropdown
