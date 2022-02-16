@@ -90,6 +90,7 @@ begin
   end loop;
   commit;
 end;
+/
 
 PROMPT >> Hotfix for issue #425 applied
 PROMPT >> =============================
