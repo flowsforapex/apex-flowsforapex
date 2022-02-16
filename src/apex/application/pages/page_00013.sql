@@ -35,8 +35,8 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#:t-Dialog--noPadding'
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220131100945'
+,p_last_updated_by=>'FLOWS4APEX'
+,p_last_upd_yyyymmddhh24miss=>'20220216103612'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -1009,7 +1009,7 @@ wwv_flow_api.create_report_region(
 '       POSTTAG',
 '  from FLOW_P0013_INSTANCE_LOG_VW',
 ' where lgpr_prcs_id = :P13_PRCS_ID and lgpr_objt_id = :P13_OBJT_ID    ',
-' order by lgpr_timestamp',
+' order by lgpr_timestamp desc',
 ' fetch first 1 rows only'))
 ,p_display_when_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flow_engine_app_api.has_error(',
