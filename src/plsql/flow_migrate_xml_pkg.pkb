@@ -211,16 +211,16 @@ as
       l_new_ext_node     dbms_xmldom.DOMNode;
       l_cur_ext_elements dbms_xmldom.DOMNodeList;
     begin
+        
       l_cur_ext_elements :=
         dbms_xmldom.getchildrenbytagname
         (
           elem => p_elem
-        , name => 'bpmn:extensionElements'
-        , ns   => flow_constants_pkg.gc_nsapex
+        , name => 'extensionElements'
         );
 
-      if dbms_xmldom.getlength(l_cur_ext_elements) = 1 then
-        l_new_ext_node := l_cur_ext_elements(1);
+      if dbms_xmldom.getlength(l_cur_ext_elements) > 0 then
+        l_new_ext_node := dbms_xmldom.item(l_cur_ext_elements, 0);
       else
         -- create extension element node 
         l_new_ext_node :=
@@ -228,8 +228,7 @@ as
             dbms_xmldom.createelement
             ( 
               doc     => p_domdoc
-            , tagName => 'bpmn: extensionElements'
-            , ns      => flow_constants_pkg.gc_nsbpmn
+            , tagName => 'extensionElements'
             )
           );
         -- append
