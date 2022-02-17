@@ -1,3 +1,8 @@
+PROMPT >> Hotfix for issue #423
+PROMPT >> Migration to STEP KEYS from v21.1 or earlier with in-flight process instances
+PROMPT >> =============================================================================
+
+
 create or replace package body flow_engine_util
 as 
 
@@ -531,3 +536,6 @@ procedure get_number_of_connections
 
 end flow_engine_util;
 /
+
+PROMPT >> Hotfix for issue #423 applied
+PROMPT >> =============================
