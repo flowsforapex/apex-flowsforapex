@@ -41,9 +41,10 @@ as
             join flow_objects objt 
               on objt.objt_id = conn.conn_src_objt_id
              and conn.conn_dgrm_id = objt.objt_dgrm_id
-            join flow_processes prcs
-              on prcs.prcs_dgrm_id = conn.conn_dgrm_id
-           where prcs.prcs_id = pi_process_id
+            join flow_subflows sbfl
+              on sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
+           where sbfl.sbfl_prcs_id = pi_process_id
+             and sbfl.sbfl_id = pi_subflow_id
              and objt.objt_bpmn_id = pi_objt_bpmn_id
             )
         loop
@@ -90,12 +91,13 @@ as
           join flow_objects objt 
             on objt.objt_id = conn.conn_src_objt_id
            and conn.conn_dgrm_id = objt.objt_dgrm_id
-          join flow_processes prcs 
-            on prcs.prcs_dgrm_id = conn.conn_dgrm_id
+          join flow_subflows sbfl
+            on sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
          where conn.conn_is_default = 1
+           and sbfl.sbfl_prcs_id = pi_process_id
+           and sbfl.sbfl_id = pi_subflow_id
            and objt.objt_bpmn_id = pi_objt_bpmn_id
-           and prcs.prcs_id = pi_process_id
-            ;
+             ;
       exception
         when no_data_found then
           flow_errors.handle_instance_error

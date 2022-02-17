@@ -247,10 +247,8 @@ end flow_process_link_event;
               on subproc_objt.objt_bpmn_id = boundary_objt.objt_attached_to
             join flow_subflows par_sbfl
               on par_sbfl.sbfl_current = subproc_objt.objt_bpmn_id
-            join flow_processes prcs 
-              on par_sbfl.sbfl_prcs_id = prcs.prcs_id
-             and prcs.prcs_dgrm_id = boundary_objt.objt_dgrm_id
-             and prcs.prcs_dgrm_id = subproc_objt.objt_dgrm_id
+             and par_sbfl.sbfl_dgrm_id = boundary_objt.objt_dgrm_id
+             and par_sbfl.sbfl_dgrm_id = subproc_objt.objt_dgrm_id
            where par_sbfl.sbfl_id = l_sbfl_context_par.sbfl_id
              and par_sbfl.sbfl_prcs_id = p_process_id
              and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_error_event_definition
@@ -566,7 +564,6 @@ is
     l_forward_route         flow_connections.conn_id%type;
     l_current_object        flow_subflows.sbfl_current%type;
     l_child_starting_object flow_subflows.sbfl_starting_object%type;
-    l_dgrm_id               flow_diagrams.dgrm_id%type;
     l_parent_sbfl           flow_subflows.sbfl_id%type;
     l_timestamp             flow_subflows.sbfl_became_current%type;
     l_forward_step_key      flow_subflows.sbfl_step_key%type;
@@ -600,7 +597,7 @@ begin
          raise; 
     end;
     -- make the incoming (main) (split) parent subflow proceed along the path of the cleared event.clear(
-    l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );
+    
      select conn.conn_id
           , sbfl.sbfl_current
           , sbfl.sbfl_starting_object
@@ -610,14 +607,12 @@ begin
        from flow_objects objt
        join flow_subflows sbfl 
          on sbfl.sbfl_current = objt.objt_bpmn_id
-       join flow_processes prcs
-         on sbfl.sbfl_prcs_id = prcs.prcs_id
-        and prcs.prcs_dgrm_id = objt.objt_dgrm_id
+        and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
        join flow_connections conn 
          on conn.conn_src_objt_id = objt.objt_id
-        and conn.conn_dgrm_id = prcs.prcs_dgrm_id
+        and conn.conn_dgrm_id = sbfl.sbfl_dgrm_id
       where sbfl.sbfl_id = p_cleared_subflow_id
-        and prcs.prcs_id = p_process_id
+        and sbfl.sbfl_prcs_id = p_process_id
         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
           ; 
     -- generate a step key & insert in the update...use later
@@ -646,13 +641,11 @@ begin
              , objt.objt_sub_tag_name
           from flow_subflows sbfl
           join flow_objects objt 
-            on sbfl.sbfl_current = objt.objt_bpmn_id
-          join flow_processes prcs
-            on sbfl.sbfl_prcs_id = prcs.prcs_id
-           and objt.objt_dgrm_id = prcs.prcs_dgrm_id
+            on objt.objt_bpmn_id = sbfl.sbfl_current
+           and objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
          where sbfl.sbfl_sbfl_id = p_parent_subflow_id
            and sbfl.sbfl_starting_object = l_child_starting_object
-           and objt.objt_dgrm_id = l_dgrm_id
+           and sbfl.sbfl_prcs_id = p_process_id
       )
       loop
         -- clean up any event handlers (timers, etc.) (add more here when supporting messageEvent, SignalEvent, etc.)
@@ -788,7 +781,6 @@ is
   l_parent_subflow        flow_subflows.sbfl_id%type;
   l_prev_objt_tag_name    flow_objects.objt_tag_name%type;
   l_curr_objt_tag_name    flow_objects.objt_tag_name%type;
-  l_dgrm_id               flow_diagrams.dgrm_id%type;
   l_sbfl_current          flow_subflows.sbfl_current%type;
 begin
   -- currently handles callbacks from flow_timers when a timer fires
@@ -802,7 +794,7 @@ begin
   -- an intermediateCatchEvent (iCE) following an eBG will always have exactly 1 input (from the eBG)
   -- an independant iCE (not following an eBG) can have >1 inputs
   -- so look for preceding eBG.  If previous event not eBG or there are multiple prev events, it did not follow an eBG.
-  l_dgrm_id := flow_engine_util.get_dgrm_id (p_prcs_id => p_process_id);
+
   -- set context for scripts and variable expressions
   flow_globals.set_context
   ( pi_prcs_id  => p_process_id
@@ -883,7 +875,9 @@ begin
           join flow_objects prev_objt 
             on conn.conn_src_objt_id = prev_objt.objt_id
            and conn.conn_dgrm_id = prev_objt.objt_dgrm_id
-         where conn.conn_dgrm_id = l_dgrm_id
+          join flow_subflows sbfl
+            on sbfl.sbfl_dgrm_id = conn.conn_dgrm_id 
+         where sbfl.sbfl_id = p_subflow_id
            and curr_objt.objt_bpmn_id = l_sbfl_current
             ;
       exception

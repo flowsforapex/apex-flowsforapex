@@ -6,24 +6,6 @@ as
 
   g_step_keys_enforced    boolean;
 
-  function get_dgrm_id
-  (
-    p_prcs_id in flow_processes.prcs_id%type
-  ) return flow_processes.prcs_dgrm_id%type
-  as
-    l_prcs_dgrm_id flow_processes.prcs_dgrm_id%type;
-  begin
-    
-    select prcs.prcs_dgrm_id
-      into l_prcs_dgrm_id
-      from flow_processes prcs
-     where prcs.prcs_id = p_prcs_id
-    ;
-    
-    return l_prcs_dgrm_id;
-    
-  end get_dgrm_id;
-
   function get_config_value
   ( 
     p_config_key    in flow_configuration.cfig_key%type
@@ -61,14 +43,7 @@ as
   ) return flow_subflows.sbfl_step_key%type
   is
   begin
-  /*  return substr( apex_util.get_hash ( apex_t_varchar2( pi_sbfl_id
-                                                       , pi_current
-                                                       , pi_became_current
-                                                       ) 
-                                      )
-                  , 1 , 10 
-                  );*/
-      -- alternate step_key generator which should be faster...
+
       return sys.dbms_random.string('A', 10);
   end step_key;
 
@@ -141,19 +116,19 @@ function get_subprocess_parent_subflow
   is
     l_parent_subflow          flow_types_pkg.t_subflow_context;
     l_parent_subproc_activity flow_objects.objt_bpmn_id%type;
-    l_dgrm_id                 flow_diagrams.dgrm_id%type;
   begin
-
-    l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );  
-
     -- get parent bpmn:subProcess object
     select par_objt.objt_bpmn_id
       into l_parent_subproc_activity
       from flow_objects objt
       join flow_objects par_objt
         on par_objt.objt_id = objt.objt_objt_id
+       and par_objt.objt_dgrm_id = objt.objt_dgrm_id
+      join flow_subflows sbfl
+        on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id 
      where objt.objt_bpmn_id = p_current
-       and objt.objt_dgrm_id = l_dgrm_id
+       and sbfl.sbfl_id = p_subflow_id
+       and sbfl.sbfl_prcs_id = p_process_id
     ;
     -- try to get parent subflow
     begin
@@ -387,6 +362,7 @@ procedure get_number_of_connections
             on parent_sbfl.sbfl_current = child_sbfl.sbfl_starting_object
          where parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
            and parent_sbfl.sbfl_process_level = p_process_level
+           and parent_sbfl.sbfl_prcs_id = p_process_id
       )
       loop
         terminate_level
