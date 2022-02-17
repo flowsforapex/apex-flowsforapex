@@ -188,9 +188,6 @@ as
     l_ext_child_node dbms_xmldom.DOMNode;
     l_ext_child_tag_name varchar2(50);
 
-    -- exsiting extensionElements
-    l_old_ext_nodes dbms_xmldom.DOMNodeList;
-
     -- user task
     l_items varchar2(4000);
     l_items_arr apex_t_varchar2;
