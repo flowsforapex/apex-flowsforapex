@@ -174,6 +174,23 @@ procedure get_number_of_connections
     ;
   end get_number_of_connections;
 
+  function get_object_subtag
+  ( p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type  
+  )
+  return varchar2
+  is
+    l_objt_sub_tag_name  flow_objects.objt_bpmn_id%type;
+  begin
+    select objt.objt_sub_tag_name
+      into l_objt_sub_tag_name
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_objt_bpmn_id
+       and objt.objt_dgrm_id = p_dgrm_id
+       ;
+    return l_objt_sub_tag_name;
+  end get_object_subtag;
+
   function get_subflow_info
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type

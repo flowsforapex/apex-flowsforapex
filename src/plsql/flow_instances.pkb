@@ -72,7 +72,7 @@ as
       flow_globals.set_is_recursive_step (p_is_recursive_step => false);
       -- initialise step_had_error flag
       flow_globals.set_step_error ( p_has_error => false);
-
+      -- lock the process
       select prcs.prcs_status
            , prcs.prcs_dgrm_id
         into l_process_status
@@ -102,40 +102,11 @@ as
         );
         -- $F4AMESSAGE 'start-multiple-already-running' || 'You tried to start a process (id %0) with multiple copies already running.' 
     end;
-    begin
-      -- get the starting object 
-      select objt.objt_bpmn_id
-           , objt.objt_sub_tag_name
-           , objt.objt_id
-        into l_objt_bpmn_id
-           , l_objt_sub_tag_name
-           , l_objt_id
-        from flow_objects objt
-        join flow_objects parent
-          on objt.objt_objt_id = parent.objt_id
-       where objt.objt_dgrm_id = l_dgrm_id
-         and parent.objt_dgrm_id = l_dgrm_id
-         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_start_event  
-         and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-      ;
-    exception
-      when too_many_rows then
-        flow_errors.handle_instance_error
-        ( pi_prcs_id        => p_process_id
-        , pi_message_key    => 'start-multiple-start-events'
-        );
-        -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
-      when no_data_found then
-        flow_errors.handle_instance_error
-        ( pi_prcs_id        => p_process_id
-        , pi_message_key    => 'start-no-start-event'
-        );
-        -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
-    end;
-    apex_debug.info
-    ( p_message => 'Found starting object %0'
-    , p0 =>l_objt_bpmn_id
-    );
+    -- find the starting object
+    l_objt_bpmn_id := flow_diagram.get_start_event
+                       ( pi_dgrm_id   => l_dgrm_id
+                       , pi_prcs_id   => p_process_id
+                       );
     -- mark process as running
     update flow_processes prcs
        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
@@ -149,6 +120,11 @@ as
     , p_event      => flow_constants_pkg.gc_prcs_event_started
     );
     -- create the status for new subflow based on start subtype
+    l_objt_sub_tag_name := flow_engine_util.get_object_subtag 
+                           ( p_objt_bpmn_id => l_objt_bpmn_id
+                           , p_dgrm_id      => l_dgrm_id
+                           );
+     
     case
       when l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
         l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
@@ -157,6 +133,8 @@ as
       else
         raise e_unsupported_start_event;
     end case;
+
+    -- start the initial subflow
 
     l_main_subflow := flow_engine_util.subflow_start 
       ( p_process_id => p_process_id
@@ -177,12 +155,13 @@ as
     , p1 => l_main_subflow.step_key
     );
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
+      -- w have a timer start event
       -- process any before-event variable expressions on the starting object
       flow_expressions.process_expressions
-      ( pi_objt_id     => l_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => l_main_subflow.sbfl_id
+      ( pi_objt_bpmn_id   => l_objt_bpmn_id
+      , pi_set            => flow_constants_pkg.gc_expr_set_before_event
+      , pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => l_main_subflow.sbfl_id
       );
       -- test for any step errors
       if not flow_globals.get_step_error then 
@@ -198,10 +177,10 @@ as
       -- plain (none) startEvent
       -- process any variable expressions on the starting object
       flow_expressions.process_expressions
-      ( pi_objt_id     => l_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_on_event
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => l_main_subflow.sbfl_id
+      ( pi_objt_bpmn_id  => l_objt_bpmn_id
+      , pi_set           => flow_constants_pkg.gc_expr_set_on_event
+      , pi_prcs_id       => p_process_id
+      , pi_sbfl_id       => l_main_subflow.sbfl_id
       );
 
       if not flow_globals.get_step_error then 

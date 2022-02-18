@@ -57,5 +57,10 @@ as
   procedure archive_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type);   
 
+  function get_start_event(
+    pi_dgrm_id    in flow_diagrams.dgrm_id%type,
+    pi_prcs_id    in flow_processes.prcs_id%type)
+  return varchar2;
+
 end flow_diagram;
 /

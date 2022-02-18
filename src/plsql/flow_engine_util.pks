@@ -1,5 +1,5 @@
 create or replace package flow_engine_util
--- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging)
+-- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances)
 as 
 
   function get_config_value
@@ -13,6 +13,13 @@ as
     p_config_key in flow_configuration.cfig_key%type,
     p_value      in flow_configuration.cfig_value%type
   );
+
+  function get_object_subtag
+  (
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type  
+  )
+  return varchar2;
 
   function check_subflow_exists
   (
