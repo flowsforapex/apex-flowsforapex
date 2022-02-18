@@ -20,7 +20,8 @@ as
   -- BPMN Keys
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
-
+  gc_bpmn_call_activity                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'callActivity';
+  
   gc_bpmn_start_event                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
   gc_bpmn_end_event                    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'endEvent';
   gc_bpmn_intermediate_throw_event     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'intermediateThrowEvent';
@@ -114,6 +115,11 @@ as
   gc_apex_timer_start_interval_ds     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startIntervalDS';
   gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
   gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
+
+  -- callActivity tags
+  gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
+  gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
+  gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
