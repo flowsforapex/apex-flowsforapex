@@ -27,38 +27,15 @@ as
   , pi_prcs_name in flow_processes.prcs_name%type
   ) return flow_processes.prcs_id%type
   as
-    l_dgrm_id flow_diagrams.dgrm_id%type;
-    l_dgrm_version flow_diagrams.dgrm_version%type;
+    l_dgrm_id         flow_diagrams.dgrm_id%type;
+    l_dgrm_version    flow_diagrams.dgrm_version%type;
   begin
   
     if pi_dgrm_version is null then
-      -- look for the 'released' version of the diagram
-      begin
-          select dgrm_id 
-            into l_dgrm_id
-            from flow_diagrams
-          where dgrm_name = pi_dgrm_name
-            and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
-          ;
-      exception
-        when no_data_found then
-          -- look for the version 0 (default) of 'draft' of the diagram
-          begin
-              select dgrm_id
-                into l_dgrm_id
-                from flow_diagrams
-              where dgrm_name = pi_dgrm_name
-                and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
-                and dgrm_version = '0'
-              ;
-          exception
-            when no_data_found then
-              flow_errors.handle_general_error
-              ( pi_message_key => 'version-no-rel-or-draft-v0'
-              );
-              -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
-          end;
-      end;            
+
+      -- get the released diagram or 'draft' version '0' diagram (or error...)
+      l_dgrm_id := flow_diagram.get_current_diagram ( pi_dgrm_name => pi_dgrm_name );
+
     else -- dgrm_version was specified
       select dgrm_id
         into l_dgrm_id
@@ -314,10 +291,8 @@ as
     select objt.objt_id
       into l_objt_id
       from flow_subflows sbfl
-      join flow_processes prcs
-        on prcs.prcs_id = sbfl.sbfl_prcs_id
       join flow_objects objt
-        on objt.objt_dgrm_id = prcs.prcs_dgrm_id
+        on objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
        and objt.objt_bpmn_id = sbfl.sbfl_current
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
