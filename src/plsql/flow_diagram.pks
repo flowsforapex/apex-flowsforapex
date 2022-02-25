@@ -57,18 +57,5 @@ as
   procedure archive_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type);   
 
-  function get_start_event(
-    pi_dgrm_id    in flow_diagrams.dgrm_id%type,
-    pi_prcs_id    in flow_processes.prcs_id%type)
-  return flow_objects.objt_bpmn_id%type;
-
--- get the current dgrm_id to be used for a diagram name.
--- returns the current 'released' diagram or a 'draft' of version '0' 
-  function get_current_diagram
-    ( pi_dgrm_name  in flow_diagrams.dgrm_name%type
-    , pi_prcs_id    in flow_processes.prcs_id%type default null
-    , pi_sbfl_id    in flow_subflows.sbfl_id%type default null )
-  return flow_diagrams.dgrm_id%type;
-
 end flow_diagram;
 /

@@ -1,6 +1,11 @@
 create or replace package flow_engine_util
--- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances)
+-- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging)
 as 
+
+  function get_dgrm_id
+  (
+    p_prcs_id in flow_processes.prcs_id%type
+  ) return flow_processes.prcs_dgrm_id%type;
 
   function get_config_value
   ( 
@@ -13,13 +18,6 @@ as
     p_config_key in flow_configuration.cfig_key%type,
     p_value      in flow_configuration.cfig_value%type
   );
-
-  function get_object_subtag
-  (
-    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
-  , p_dgrm_id      in flow_diagrams.dgrm_id%type  
-  )
-  return varchar2;
 
   function check_subflow_exists
   (
@@ -49,9 +47,9 @@ as
   ) return flow_subflows%rowtype;
 
   function step_key
-  ( pi_sbfl_id        in flow_subflows.sbfl_id%type default null
-  , pi_current        in flow_subflows.sbfl_current%type default null
-  , pi_became_current in flow_subflows.sbfl_became_current%type default null
+  ( pi_sbfl_id        in flow_subflows.sbfl_id%type
+  , pi_current        in flow_subflows.sbfl_current%type
+  , pi_became_current in flow_subflows.sbfl_became_current%type
   ) return flow_subflows.sbfl_step_key%type;
 
   function step_key_valid
@@ -82,7 +80,6 @@ as
     , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
-    , p_new_scope                 in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_types_pkg.t_subflow_context
     ;
