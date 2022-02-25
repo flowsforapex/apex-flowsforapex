@@ -29,6 +29,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_errors.pks
 @plsql/flow_diagram.pks
 @plsql/flow_subprocesses.pks
+@plsql/flow_call_activities.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -64,6 +65,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_errors.pkb
 @plsql/flow_diagram.pkb
 @plsql/flow_subprocesses.pkb
+@plsql/flow_call_activities.pkb
 
 
 PROMPT >> Installing Engine-App Objects

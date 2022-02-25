@@ -153,6 +153,7 @@ as
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
+  gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
   gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 

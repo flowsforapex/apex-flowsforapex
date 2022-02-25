@@ -178,7 +178,7 @@ as
       );
 
     -- Always do all updates to parent data first before performing any next step in the children.
-    -- Reason: A subflow could immediately disappear if we're stepping through it completly.
+    -- Reason: A subflow could immediately disappear if we're stepping through it completely.
     -- check for any errors on the step
     if not flow_globals.get_step_error then 
       -- set boundaryEvent Timers, if any

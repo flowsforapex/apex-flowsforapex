@@ -49,9 +49,9 @@ as
   ) return flow_subflows%rowtype;
 
   function step_key
-  ( pi_sbfl_id        in flow_subflows.sbfl_id%type
-  , pi_current        in flow_subflows.sbfl_current%type
-  , pi_became_current in flow_subflows.sbfl_became_current%type
+  ( pi_sbfl_id        in flow_subflows.sbfl_id%type default null
+  , pi_current        in flow_subflows.sbfl_current%type default null
+  , pi_became_current in flow_subflows.sbfl_became_current%type default null
   ) return flow_subflows.sbfl_step_key%type;
 
   function step_key_valid
@@ -82,6 +82,7 @@ as
     , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
+    , p_new_scope                 in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_types_pkg.t_subflow_context
     ;
