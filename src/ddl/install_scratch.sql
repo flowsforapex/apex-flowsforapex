@@ -133,8 +133,6 @@ CREATE TABLE flow_subflows (
     sbfl_dgrm_id          NUMBER NOT NULL,
     sbfl_sbfl_id          NUMBER,
     sbfl_process_level    NUMBER,
-    sbfl_calling_sbfl     NUMBER,
-    sbfl_scope            NUMBER,
     sbfl_starting_object  VARCHAR2(50 CHAR),
     sbfl_route            VARCHAR2(100 CHAR),
     sbfl_last_completed   VARCHAR2(50 CHAR),
