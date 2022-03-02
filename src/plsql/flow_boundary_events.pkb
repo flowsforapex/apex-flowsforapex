@@ -402,7 +402,7 @@ begin
     );        
     -- generate a step key & insert in the update...use later
     l_timestamp := systimestamp;
-    l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => l_next_objt
+    l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_sbfl_info.sbfl_id
                                             , pi_current => l_next_objt
                                             , pi_became_current => l_timestamp 
                                             );
