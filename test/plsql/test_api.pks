@@ -30,5 +30,7 @@ create or replace package test_api is
    --%test
    procedure flow_start_step;
 
+   --%test
+   procedure flow_variables;
 
 end test_api;
