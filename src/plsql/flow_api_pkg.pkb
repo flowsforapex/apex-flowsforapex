@@ -1,3 +1,12 @@
+
+/* 
+-- Flows for APEX - flow_api_pkg.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2020-2022.
+--
+-- Created 2020   Moritz Klein - MT AG  
+-- 
+*/
 create or replace package body flow_api_pkg
 as
 
@@ -29,30 +38,27 @@ as
   as
     l_dgrm_id         flow_diagrams.dgrm_id%type;
     l_dgrm_version    flow_diagrams.dgrm_version%type;
+    l_calling_method  flow_object_attributes.obat_vc_value%type;
   begin
   
     if pi_dgrm_version is null then
-
-      -- get the released diagram or 'draft' version '0' diagram (or error...)
-      l_dgrm_id := flow_diagram.get_current_diagram ( pi_dgrm_name => pi_dgrm_name );
-
-    else -- dgrm_version was specified
-      select dgrm_id
-        into l_dgrm_id
-        from flow_diagrams
-       where dgrm_name = pi_dgrm_name
-         and dgrm_version = pi_dgrm_version
-      ;
+      -- this is the former way of calling the latest release
+      l_calling_method := flow_constants_pkg.gc_dgrm_version_latest_version;
+    else
+      -- dgrm_version was specified - use 'namedVersion' call...                                                      
+      l_calling_method := flow_constants_pkg.gc_dgrm_version_named_version;
     end if;
 
-    return
-      flow_instances.create_process
-      (
-        p_dgrm_id   => l_dgrm_id
-      , p_prcs_name => pi_prcs_name
-      )
-    ;
-  
+    -- get the released diagram or 'draft' version '0' diagram (or error...)
+    l_dgrm_id := flow_diagram.get_current_diagram ( pi_dgrm_name            => pi_dgrm_name 
+                                                  , pi_dgrm_calling_method  => l_calling_method
+                                                  , pi_dgrm_version         => pi_dgrm_version
+                                                  );
+
+    return  flow_instances.create_process
+            ( p_dgrm_id   => l_dgrm_id
+            , p_prcs_name => pi_prcs_name
+            );
   end flow_create;
 
   function flow_create

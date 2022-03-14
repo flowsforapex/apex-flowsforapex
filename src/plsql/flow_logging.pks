@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_logging.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
+--
+*/
 create or replace package flow_logging
 accessible by ( flow_engine, flow_instances, flow_process_vars, flow_expressions 
               , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
@@ -17,6 +26,7 @@ as
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_notes             in flow_subflow_log.sflg_notes%type default null
+  , p_calling_objt      in flow_subflow_log.sflg_calling_objt%type default null
   );
 
   procedure log_variable_event -- logs process variable set events

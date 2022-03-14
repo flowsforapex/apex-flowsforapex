@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_engine_util.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created April-2021  Richard Allen (Flowquest) - from flow_engine.pkb
+--
+*/
 create or replace package body flow_engine_util
 as 
 
@@ -308,11 +317,13 @@ procedure get_number_of_connections
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type  --- can remove?
     , p_new_proc_level            in boolean default false
     , p_new_scope                 in boolean default false
+    , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
     l_process_level       flow_subflows.sbfl_process_level%type := p_parent_sbfl_proc_level;
+    l_diagram_level       flow_subflows.sbfl_diagram_level%type := 0;
     l_new_subflow_context flow_types_pkg.t_subflow_context;
     l_scope               flow_subflows.sbfl_scope%type := 0;
     l_level_parent        flow_subflows.sbfl_id%type := 0;
@@ -330,15 +341,17 @@ procedure get_number_of_connections
       l_is_new_level := 'Y';
     end if;
 
-    -- get level, scope, calling subflow for copy down unless this is the initial subflow in a process
+    -- get process level, diagram level, scope, calling subflow for copy down unless this is the initial subflow in a process
     if p_parent_subflow is not null then
       select sbfl.sbfl_process_level
+           , sbfl.sbfl_diagram_level
            , sbfl.sbfl_scope
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
                 when 'N' then sbfl.sbfl_calling_sbfl
              end
         into l_process_level
+           , l_diagram_level
            , l_scope
            , l_level_parent
         from flow_subflows sbfl
@@ -360,6 +373,7 @@ procedure get_number_of_connections
          , sbfl_status
          , sbfl_last_update
          , sbfl_dgrm_id
+         , sbfl_diagram_level
          , sbfl_step_key
          , sbfl_calling_sbfl
          , sbfl_scope
@@ -376,6 +390,7 @@ procedure get_number_of_connections
          , p_status
          , systimestamp
          , p_dgrm_id
+         , l_diagram_level
          , flow_engine_util.step_key
          , l_level_parent
          , l_scope
@@ -388,14 +403,19 @@ procedure get_number_of_connections
       l_process_level := l_new_subflow_context.sbfl_id;
 
       if p_new_scope then
-        -- starting new variable scope.  Reset sbfl_scope to new sbfl_id. (change on callActivity)
+        -- starting new variable scope.  Reset sbfl_scope to new sbfl_id. (change on callActivity (maybe others later...iteration, etc.) )
         l_new_subflow_context.scope := l_new_subflow_context.sbfl_id;
       end if;
 
+      if p_new_diagram then
+        -- starting a new diagram.   set the diagram_level to new sbfl_id (change on new callActivity)
+        l_diagram_level := l_new_subflow_context.sbfl_id;
+      end if;
 
       update flow_subflows
          set sbfl_process_level   = l_process_level
            , sbfl_scope           = l_new_subflow_context.scope
+           , sbfl_diagram_level   = l_diagram_level
        where sbfl_id = l_new_subflow_context.sbfl_id;
 
     end if;

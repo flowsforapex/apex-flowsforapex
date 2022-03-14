@@ -3,7 +3,7 @@
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2020,2022.
 --
--- Created 19-Feb-2022   Richard Allen - Create 
+-- Created 19-Feb-2022   Richard Allen - Oracle  
 --
 */
 
@@ -110,22 +110,12 @@ as
 
     -- find called diagram
 
-    case l_call_definition.dgrm_version_selection 
-    when 'latestVersion' then
-      -- get the 'released' diagram or 'draft' version '0' diagram
-      l_called_dgrm_id := flow_diagram.get_current_diagram 
-                          ( pi_dgrm_name => l_call_definition.dgrm_name
-                          , pi_prcs_id   => p_process_id
-                          , pi_sbfl_id   => p_subflow_id
-                          );
-    when 'namedVersion' then
-      select dgrm_id
-        into l_called_dgrm_id
-        from flow_diagrams
-       where dgrm_name    = l_call_definition.dgrm_name
-         and dgrm_version = l_call_definition.dgrm_version
-      ;
-    end case;
+    l_called_dgrm_id := flow_diagram.get_current_diagram 
+                        ( pi_dgrm_name              => l_call_definition.dgrm_name
+                        , pi_dgrm_calling_method    => l_call_definition.dgrm_version_selection
+                        , pi_dgrm_version           => l_call_definition.dgrm_version
+                        , pi_prcs_id                => p_process_id
+                        );
 
     -- find start object
 
@@ -137,17 +127,18 @@ as
     -- create initial subflow in called activity (set new dgrm id, new scope)
 
     l_called_subflow_context := flow_engine_util.subflow_start 
-      ( p_process_id      => p_process_id
-      , p_parent_subflow  => p_subflow_id
-      , p_starting_object => l_called_start_objt_bpmn_id
-      , p_current_object  => l_called_start_objt_bpmn_id
-      , p_route           => 'main'
-      , p_last_completed  => p_sbfl_info.sbfl_current
-      , p_status          => flow_constants_pkg.gc_sbfl_status_running 
-      , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
-      , p_new_proc_level  => true
-      , p_new_scope       => true
-      , p_dgrm_id         => l_called_dgrm_id
+      ( p_process_id              => p_process_id
+      , p_parent_subflow          => p_subflow_id
+      , p_starting_object         => l_called_start_objt_bpmn_id
+      , p_current_object          => l_called_start_objt_bpmn_id
+      , p_route                   => 'main'
+      , p_last_completed          => p_sbfl_info.sbfl_current
+      , p_status                  => flow_constants_pkg.gc_sbfl_status_running 
+      , p_parent_sbfl_proc_level  => p_sbfl_info.sbfl_process_level
+      , p_new_proc_level          => true
+      , p_new_scope               => true
+      , p_new_diagram             => true
+      , p_dgrm_id                 => l_called_dgrm_id
       );
 
       -- Always do all updates to parent data first before performing any next step in the children.

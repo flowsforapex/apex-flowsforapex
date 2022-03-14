@@ -1,5 +1,10 @@
 /*
   Migration Script for Release 22.1 to 22.2
+
+  Created RAllen  25 Feb 2022
+
+  (c) Copyright Oracle Corporation and/or its affiliates.  2022.
+  
 */
 
 PROMPT >> Running Upgrade from 22.1 to 22.2
@@ -14,11 +19,14 @@ PROMPT >> Prepare Subflows for Call Activities
 */
 
 begin
-  alter table flow_subflows
-  add (
-    sbfl_calling_sbfl number,
-    sbfl_scope        number
-  );
+  execute immediate '
+    alter table flow_subflows
+    add (
+      sbfl_calling_sbfl   number,
+      sbfl_scope          number,
+      sbfl_diagram_level  number
+    )' 
+  ;
 
   update flow_subflows   --- needs more work - see below
   set sbfl_calling_sbfl = 0 
@@ -29,5 +37,17 @@ end;
  -- its only for subproceses, as we won't have any call activities to migrate -- so we can get this with the right query on the objects / connections
  */
 
+  begin
+    execute immediate '
+      alter table flow_subflow_log
+      add (
+        sflg_dgrm_id       NUMBER,
+        sflg_diagram_level NUMBER,
+        sflg_calling_objt  VARCHAR2(50) -- only used on Start Eevents to record Parent
+      )';
+  end;
+
+-- need to add migration
+-- need to set not nulls as appropriate once migrated
 
 PROMPT >> Finished Upgrade from 22.1 to 22.2

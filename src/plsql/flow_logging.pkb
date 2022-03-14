@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_logging.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
+--
+*/
 create or replace package body flow_logging
 as
 
@@ -66,6 +75,7 @@ as
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_notes             in flow_subflow_log.sflg_notes%type default null
+  , p_calling_objt      in flow_subflow_log.sflg_calling_objt%type default null
   )
   is 
   begin
@@ -75,15 +85,23 @@ as
     , sflg_objt_id
     , sflg_sbfl_id
     , sflg_last_updated
+    , sflg_dgrm_id
+    , sflg_diagram_level
+    , sflg_calling_objt
     , sflg_notes
     )
-    values 
-    ( p_process_id
-    , p_completed_object
-    , p_subflow_id
-    , sysdate
-    , p_notes
-    );
+    select p_process_id
+         , p_completed_object
+         , p_subflow_id
+         , sysdate
+         , sbfl.sbfl_dgrm_id
+         , sbfl.sbfl_diagram_level
+         , p_calling_objt
+         , p_notes
+      from flow_subflows sbfl
+     where sbfl.sbfl_id = p_subflow_id
+    ;
+
     -- system event logging
     if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_standard 
                           , flow_constants_pkg.gc_config_logging_level_secure

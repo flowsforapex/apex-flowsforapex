@@ -3,6 +3,8 @@
 --   site:      Oracle Database 12cR2
 --   type:      Oracle Database 12cR2
 
+-- edited by Richard Allen Feb 2022
+-- (c) Copyright, Oracle Corporation and/or its associates.  2020-2022.
 
 
 -- predefined type, no DDL - SDO_GEOMETRY
@@ -121,6 +123,9 @@ CREATE TABLE flow_subflow_log (
     sflg_prcs_id       NUMBER NOT NULL,
     sflg_objt_id       VARCHAR2(50) NOT NULL,
     sflg_sbfl_id       NUMBER NOT NULL,
+    sflg_dgrm_id       NUMBER,
+    sflg_diagram_level NUMBER,
+    sflg_calling_objt  VARCHAR2(50),   -- only used on Start Eevents to record Parent
     sflg_last_updated  DATE,
     sflg_notes         VARCHAR2(200)
 );
@@ -133,6 +138,7 @@ CREATE TABLE flow_subflows (
     sbfl_dgrm_id          NUMBER NOT NULL,
     sbfl_sbfl_id          NUMBER,
     sbfl_process_level    NUMBER,
+    sbfl_diagram_level    NUMBER,
     sbfl_calling_sbfl     NUMBER,
     sbfl_scope            NUMBER,
     sbfl_starting_object  VARCHAR2(50 CHAR),
@@ -147,6 +153,27 @@ CREATE TABLE flow_subflows (
     sbfl_reservation      VARCHAR2(255 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+COMMENT ON COLUMN flow_subflows.sbfl_dgrm_id is
+    'Diagram to be used on this Subflow. For top level process diagrams, this is same as prcs_dgrm_id.  When in a Call Activity, it is the Called Diagram';
+
+COMMENT ON COLUMN flow_subflows.sbfl_sbfl_id is
+    'Parent Subflow of this Subflow.  Note that the parent may no longer exist if is has completed before its child.';
+
+COMMENT ON COLUMN flow_subflows.sbfl_process_level is
+    'Process level of initial subflow in an instance is 0. 
+    On starting a new SubProcess or CallActivity, a new level is started having Process Level = its initial Subflow ID';
+
+COMMENT ON COLUMN flow_subflows.sbfl_diagram_level is 
+    'Diagram level of initial diagram in an instance is 0. 
+    On starting a new CallActivity, a new level is started having Diagram Level = its initial Subflow ID';
+
+COMMENT ON COLUMN flow_subflows.sbfl_calling_sbfl is
+    'At all process levels except 0 (main), this contains the Subflow ID of the parent object in the calling process level';
+
+COMMENT ON COLUMN flow_subflows.scope is
+    'Variable scope to used for variables in this Subflow.  Generally = Diagram Level, except in iteration or other special cases.';
+
 
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_pk PRIMARY KEY ( sbfl_id );
 

@@ -426,6 +426,13 @@ begin
   'fr',
   'Impossible de trouver le diagramme publié ou la version 0 du diagramme - veuillez spécifier une version ou un numéro de diagramme.'
   );
+
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'version-not-found',
+  'fr',
+  'Impossible de trouver la version spécifiée du diagramme. Veuillez vérifier la version.'
+  );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values (

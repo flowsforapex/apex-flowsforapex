@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_constants_pkg.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+--
+-- Created 2020   Moritz Klein - MT AG  
+-- Edited  14-Mar-2022 R Allen, Oracle
+--
+*/
 create or replace package flow_constants_pkg
   authid definer
 as
@@ -120,6 +129,10 @@ as
   gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
   gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
   gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
+
+  -- Diagram calling methods
+  gc_dgrm_version_named_version       constant flow_types_pkg.t_bpmn_attributes_key := 'namedVersion';
+  gc_dgrm_version_latest_version      constant flow_types_pkg.t_bpmn_attributes_key := 'latestVersion';
 
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
