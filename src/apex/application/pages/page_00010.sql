@@ -27,7 +27,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220107142618'
+,p_last_upd_yyyymmddhh24miss=>'20220314123653'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -830,8 +830,12 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P10_OBJT_NAME'
 ,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>'flow_engine_app_api.get_objt_name(p_objt_bpmn_id => :P10_OBJT_BPMN_ID)'
-,p_attribute_07=>'P10_OBJT_BPMN_ID'
+,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_app_api.get_objt_name(',
+'    p_objt_bpmn_id => :P10_OBJT_BPMN_ID',
+'  , p_prcs_id => :P10_PRCS_ID',
+')'))
+,p_attribute_07=>'P10_OBJT_BPMN_ID,P10_PRCS_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'

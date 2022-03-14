@@ -18,6 +18,12 @@ wwv_flow_api.create_list_of_values(
 ,p_location=>'STATIC'
 );
 wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(15331159536656553)
+,p_lov_disp_sequence=>1
+,p_lov_disp_value=>'Application'
+,p_lov_return_value=>'apex:applicationId'
+);
+wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(15331535176656556)
 ,p_lov_disp_sequence=>2
 ,p_lov_disp_value=>'Clear Cache'
