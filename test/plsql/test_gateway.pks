@@ -3,6 +3,8 @@ create or replace package test_gateway is
    --%suite(test_gateway)
    --%rollback(manual)
 
+   -- Need to add tests for completing order
+
    --%test
    procedure exclusive_no_route;
 
@@ -23,5 +25,8 @@ create or replace package test_gateway is
 
    --%test
    procedure parallel;
+
+   --%test
+   procedure event_based;
    
 end test_gateway;

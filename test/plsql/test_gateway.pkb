@@ -7,6 +7,7 @@ create or replace package body test_gateway is
    model_a6 constant varchar2(100) := 'A6 - Inclusive Gateway Default Route';
    model_a7 constant varchar2(100) := 'A7 - Inclusive Gateway Routing';
    model_a8 constant varchar2(100) := 'A8 - Parallel Gateway';
+   model_a9 constant varchar2(100) := 'A9 - Event Based Gateway';
 
    function get_dgrm_id( pi_dgrm_name in varchar2)
    return flow_diagrams.dgrm_id%type
@@ -34,7 +35,7 @@ create or replace package body test_gateway is
 
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
-           pi_dgrm_name => model_a2
+           pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - exclusive_no_route'
       );
 
@@ -83,6 +84,7 @@ create or replace package body test_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
 
+      flow_api_pkg.flow_delete(p_process_id => l_prcs_id);
    end exclusive_no_route;
 
    procedure exclusive_default
@@ -99,7 +101,7 @@ create or replace package body test_gateway is
 
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
-           pi_dgrm_name => model_a3
+           pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - exclusive_default'
       );
 
@@ -169,7 +171,7 @@ create or replace package body test_gateway is
 
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
-           pi_dgrm_name => model_a4
+           pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - exclusive_route_provided'
       );
 
@@ -363,7 +365,7 @@ create or replace package body test_gateway is
 
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
-           pi_dgrm_name => model_a5
+           pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - inclusive_no_route'
       );
 
@@ -427,7 +429,7 @@ create or replace package body test_gateway is
 
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
-           pi_dgrm_name => model_a6
+           pi_dgrm_id => l_dgrm_id
          , pi_prcs_name => 'test - inclusive_default'
       );
 
@@ -1413,5 +1415,119 @@ create or replace package body test_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
    end;
+
+   procedure event_based 
+   is
+      l_prcs_id  flow_processes.prcs_id%type;
+      l_dgrm_id  flow_diagrams.dgrm_id%type;
+      l_sbfl_id flow_subflows.sbfl_id%type;
+      l_step_key flow_subflows.sbfl_step_key%type;
+      l_count_sbfl number;
+      l_actual   sys_refcursor;
+      l_expected sys_refcursor;
+      l_need_wait boolean := true;
+   begin
+      -- get dgrm_id to use for comparaison
+      l_dgrm_id := get_dgrm_id( model_a9 );
+
+      -- create a new instance
+      l_prcs_id := flow_api_pkg.flow_create(
+           pi_dgrm_id => l_dgrm_id
+         , pi_prcs_name => 'test - event_based'
+      );
+
+      flow_api_pkg.flow_start( p_process_id => l_prcs_id );
+      
+      open l_expected for
+         select 
+            l_dgrm_id as prcs_dgrm_id, 
+            'test - event_based' as prcs_name, 
+            flow_constants_pkg.gc_prcs_status_running as prcs_status 
+         from dual;
+
+      open l_actual for
+         select prcs_dgrm_id, prcs_name, prcs_status from flow_processes where prcs_id = l_prcs_id;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+
+      open l_expected for
+         select 
+            l_prcs_id as sbfl_prcs_id, 
+            l_dgrm_id as sbfl_dgrm_id, 
+            'EventGateway' as sbfl_current, 
+            flow_constants_pkg.gc_sbfl_status_split sbfl_status
+         from dual
+         union
+         select 
+            l_prcs_id as sbfl_prcs_id, 
+            l_dgrm_id as sbfl_dgrm_id, 
+            'TimerA' as sbfl_current, 
+            flow_constants_pkg.gc_sbfl_status_waiting_timer sbfl_status 
+         from dual
+         union
+         select 
+            l_prcs_id as sbfl_prcs_id, 
+            l_dgrm_id as sbfl_dgrm_id, 
+            'TimerB' as sbfl_current, 
+            flow_constants_pkg.gc_sbfl_status_waiting_timer sbfl_status 
+         from dual;
+
+      open l_actual for
+         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status from flow_subflows where sbfl_prcs_id = l_prcs_id;
+      
+      ut.expect( l_actual ).to_equal( l_expected ).unordered();
+
+      -- wait for timerA 
+      while l_need_wait loop
+         select count(*)
+         into l_count_sbfl
+         from flow_subflows 
+         where sbfl_prcs_id = l_prcs_id;
+         if (l_count_sbfl = 1) then
+            l_need_wait := false;
+         else
+            dbms_session.sleep(1);
+         end if;
+      end loop;
+      
+
+      open l_expected for
+         select 
+            l_prcs_id as sbfl_prcs_id, 
+            l_dgrm_id as sbfl_dgrm_id, 
+            'A' as sbfl_current, 
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status 
+         from dual;
+
+      open l_actual for
+         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status from flow_subflows where sbfl_prcs_id = l_prcs_id;
+      
+      ut.expect( l_actual ).to_equal( l_expected );
+
+      select sbfl_id, sbfl_step_key
+      into l_sbfl_id, l_step_key
+      from flow_subflows
+      where sbfl_prcs_id = l_prcs_id
+      and sbfl_current = 'A';
+      
+      flow_api_pkg.flow_complete_step(
+           p_process_id => l_prcs_id
+         , p_subflow_id => l_sbfl_id
+         , p_step_key   => l_step_key 
+      );
+
+      open l_expected for
+         select 
+            l_dgrm_id as prcs_dgrm_id, 
+            'test - event_based' as prcs_name, 
+            flow_constants_pkg.gc_prcs_status_completed as prcs_status 
+         from dual;
+
+      open l_actual for
+         select prcs_dgrm_id, prcs_name, prcs_status from flow_processes where prcs_id = l_prcs_id;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+     
+   end event_based;
 
 end test_gateway;
