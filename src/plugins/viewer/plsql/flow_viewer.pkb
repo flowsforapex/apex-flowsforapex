@@ -75,14 +75,14 @@ as
     return apex_plugin.t_region_ajax_result
   as
 
-    l_context           apex_exec.t_context;
-    l_diagram_col_idx   pls_integer;
-    l_current_col_idx   pls_integer;
-    l_completed_col_idx pls_integer;
-    l_error_col_idx     pls_integer;
-    l_row_found         boolean;
-    l_column_value_list apex_plugin_util.t_column_value_list2;
-    l_data_type_list    apex_application_global.vc_arr2;
+    l_context              apex_exec.t_context;
+    l_diagram_col_idx      pls_integer;
+    l_current_col_idx      pls_integer;
+    l_completed_col_idx    pls_integer;
+    l_error_col_idx        pls_integer;
+    l_dgrm_id_col_idx      pls_integer;
+    l_calling_dgrm_col_idx pls_integer;
+    l_calling_objt_col_idx pls_integer;
 
     l_current_nodes   apex_t_varchar2;
     l_completed_nodes apex_t_varchar2;
@@ -99,8 +99,7 @@ as
     l_context :=
       apex_exec.open_query_context
       (
-        p_first_row => 1
-      , p_max_rows  => 1
+        p_total_row_count => true
       );
 
     l_diagram_col_idx :=
@@ -138,11 +137,37 @@ as
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
+    
+    l_dgrm_id_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_03
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_number
+      );
+
+    l_calling_dgrm_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_05 
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_number
+      );
+
+    l_calling_objt_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_07 
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_varchar2
+      );
 
     apex_json.open_object;
 
-
-    if apex_exec.next_row( p_context => l_context ) then
+    if apex_exec.get_total_row_count( p_context => l_context ) > 0 then
 
       apex_json.write
       (
@@ -150,74 +175,102 @@ as
       , p_value => true
       );
 
-      apex_json.open_object
+      apex_json.open_array
       (
         p_name => 'data'
       );
-
-      apex_json.write
-      (
-        p_name  => 'diagram'
-      , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
-      );
-
-      apex_json.open_array
-      (
-        p_name => 'current'
-      );
-
-      if l_current_col_idx is not null then
-        l_current_nodes :=
-          apex_string.split
-          (
-            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
-          , p_sep => ':'
-          );
-        
-        for i in 1..l_current_nodes.count loop
-          apex_json.write( p_value => l_current_nodes(i) );
-        end loop;
-      end if;
-
-      apex_json.close_array;
-
-      apex_json.open_array
-      (
-        p_name => 'completed'
-      );
       
-      if l_completed_col_idx is not null then
-        l_completed_nodes :=
-          apex_string.split
-          (
-            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_completed_col_idx )
-          , p_sep => ':'
-          );
-        
-        for i in 1..l_completed_nodes.count loop
-          apex_json.write( p_value => l_completed_nodes(i) );
-        end loop;
-      end if;
+      while apex_exec.next_row( p_context => l_context ) loop
+        apex_json.open_object;
 
+        apex_json.write
+        (
+          p_name  => 'diagramId'
+        , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_dgrm_id_col_idx )
+        );
+
+        apex_json.write
+        (
+          p_name  => 'callingDiagramId'
+        , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_calling_dgrm_col_idx )
+        );
+
+        apex_json.write
+        (
+          p_name  => 'callingObjectId'
+        , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_calling_objt_col_idx )
+        );
+        
+        apex_json.write
+        (
+          p_name  => 'diagram'
+        , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
+        );
+
+        apex_json.open_array
+        (
+          p_name => 'current'
+        );
+
+        if l_current_col_idx is not null then
+          l_current_nodes :=
+            apex_string.split
+            (
+              p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
+            , p_sep => ':'
+            );
+
+          for i in 1..l_current_nodes.count loop
+            apex_json.write( p_value => l_current_nodes(i) );
+          end loop;
+        end if;
+
+        apex_json.close_array;
+
+        apex_json.open_array
+        (
+          p_name => 'completed'
+        );
+      
+        if l_completed_col_idx is not null then
+          l_completed_nodes :=
+            apex_string.split
+            (
+              p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_completed_col_idx )
+            , p_sep => ':'
+            );
+
+          for i in 1..l_completed_nodes.count loop
+            apex_json.write( p_value => l_completed_nodes(i) );
+          end loop;
+        end if;
+
+        apex_json.close_array;
+
+        apex_json.open_array
+        (
+          p_name => 'error'
+        );
+
+        if l_error_col_idx is not null then
+          l_error_nodes :=
+            apex_string.split
+            (
+              p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_error_col_idx )
+            , p_sep => ':'
+            );
+
+          for i in 1..l_error_nodes.count loop
+            apex_json.write( p_value => l_error_nodes(i) );
+          end loop;
+        end if;
+
+        apex_json.close_array;
+
+        apex_json.close_object;
+      end loop;
+      
       apex_json.close_array;
-
-      apex_json.open_array
-      (
-        p_name => 'error'
-      );
-
-      if l_error_col_idx is not null then
-        l_error_nodes :=
-          apex_string.split
-          (
-            p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_error_col_idx )
-          , p_sep => ':'
-          );
-        
-        for i in 1..l_error_nodes.count loop
-          apex_json.write( p_value => l_error_nodes(i) );
-        end loop;
-      end if;
 
     else
       apex_json.write
@@ -228,7 +281,7 @@ as
 
     end if;
 
-    apex_json.close_all;
+    apex_json.close_object;
     return l_return;
   end ajax;
 
