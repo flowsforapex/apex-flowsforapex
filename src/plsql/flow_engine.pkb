@@ -753,7 +753,6 @@ procedure finish_current_step
 , p_log_as_completed  in boolean default true
 )
 is
-  l_parent_objt_bpmn_id     flow_objects.objt_bpmn_id%type;
 begin
   -- runs all of the post-step operations for the old current task (handling post- expressionsa, releasing reservations, etc.)
   apex_debug.enter 
@@ -791,30 +790,12 @@ begin
       , p_subflow_id => p_sbfl_rec.sbfl_id);
   end if;
 
-  if p_current_step_tag = flow_constants_pkg.gc_bpmn_start_event then
-    -- get the calling object in the parent subflow (for bpmn_viewer with call activities)
-    begin
-      select sbfl.sbfl_current
-        into l_parent_objt_bpmn_id
-        from flow_subflows sbfl
-       where sbfl_id = p_sbfl_rec.sbfl_calling_sbfl
-      ;
-    exception
-      when no_data_found then
-        l_parent_objt_bpmn_id := null;
-    end;
-  end if; 
-
   if p_log_as_completed then
     -- log current step as completed before releasing the reservation
     flow_logging.log_step_completion   
     ( p_process_id        => p_sbfl_rec.sbfl_prcs_id
     , p_subflow_id        => p_sbfl_rec.sbfl_id
     , p_completed_object  => p_sbfl_rec.sbfl_current
-    , p_calling_objt      => case p_current_step_tag
-                             when flow_constants_pkg.gc_bpmn_start_event then l_parent_objt_bpmn_id
-                             else null 
-                             end 
     );
   end if;
   -- release subflow reservation

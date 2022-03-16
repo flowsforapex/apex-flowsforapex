@@ -75,7 +75,6 @@ as
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_notes             in flow_subflow_log.sflg_notes%type default null
-  , p_calling_objt      in flow_subflow_log.sflg_calling_objt%type default null
   )
   is 
   begin
@@ -87,7 +86,6 @@ as
     , sflg_last_updated
     , sflg_dgrm_id
     , sflg_diagram_level
-    , sflg_calling_objt
     , sflg_notes
     )
     select p_process_id
@@ -96,7 +94,6 @@ as
          , sysdate
          , sbfl.sbfl_dgrm_id
          , sbfl.sbfl_diagram_level
-         , p_calling_objt
          , p_notes
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id

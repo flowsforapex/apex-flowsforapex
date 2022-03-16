@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_instance_details_vw.sql
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created Nov-2020 Moritz Klein  MT AG  
+--
+*/
 create or replace view flow_instance_details_vw
 as
 with completed_objects as (
@@ -37,6 +46,9 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
 )
   select prcs.prcs_id
        , prcs.prcs_name
+       , prdg.prdg_diagram_level
+       , prdg.prdg_calling_dgrm
+       , prdg.prdg_calling_objt
        , dgrm.dgrm_id
        , dgrm.dgrm_name
        , dgrm.dgrm_version
@@ -46,20 +58,28 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
        , ( select acomp.bpmn_ids
              from all_completed acomp
             where acomp.prcs_id = prcs.prcs_id
+              and acomp.dgrm_id = dgrm.dgrm_id
+              and acomp.diagram_level =  prdg.prdg_diagram_level
          ) as all_completed
        , null as last_completed     -- remove in v22.1
        , ( select acurr.bpmn_ids
              from all_current acurr
             where acurr.prcs_id = prcs.prcs_id
+              and acurr.dgrm_id = dgrm.dgrm_id
+              and acurr.diagram_level =  prdg.prdg_diagram_level
          ) as all_current
        , ( select aerr.bpmn_ids
              from all_errors aerr
             where aerr.prcs_id = prcs.prcs_id
+              and aerr.dgrm_id = dgrm.dgrm_id
+              and aerr.diagram_level =  prdg.prdg_diagram_level
          ) as all_errors
        , prov.prov_var_vc2 as prcs_business_ref
     from flow_processes prcs
+    join flow_instance_diagrams prdg
+      on prdg.prdg_prcs_id = prcs.prcs_id
     join flow_diagrams dgrm
-      on dgrm.dgrm_id = prcs.prcs_dgrm_id
+      on prdg.prdg_dgrm_id = dgrm.dgrm_id
     left join flow_process_variables prov
       on prov.prov_prcs_id = prcs.prcs_id
      and prov.prov_var_name = 'BUSINESS_REF'

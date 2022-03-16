@@ -4,6 +4,7 @@ as
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_current_name as sbfl_current
        , sbfl.sbfl_step_key
+       , sbfl.sbfl_sbfl_dgrm_id
        , sbfl.sbfl_starting_object_name as sbfl_starting_object
        , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update
        , sbfl.sbfl_status

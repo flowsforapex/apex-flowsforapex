@@ -26,7 +26,6 @@ as
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_notes             in flow_subflow_log.sflg_notes%type default null
-  , p_calling_objt      in flow_subflow_log.sflg_calling_objt%type default null
   );
 
   procedure log_variable_event -- logs process variable set events
