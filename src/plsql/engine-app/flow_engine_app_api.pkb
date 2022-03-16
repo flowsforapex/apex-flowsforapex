@@ -325,8 +325,6 @@ as
     select objt_name
       into l_objt_name
       from flow_objects
-      join flow_processes
-        on objt_dgrm_id = prcs_dgrm_id
      where objt_bpmn_id = p_objt_bpmn_id
        and objt_dgrm_id = (select prcs_dgrm_id
                              from flow_processes
