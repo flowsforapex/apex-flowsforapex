@@ -44,6 +44,7 @@
       if ( this.options.enableExpandModule ) {
         this.enabledModules.push( bpmnViewer.customModules.spViewModule );
       }
+      this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
@@ -69,6 +70,8 @@
         widgetName: "bpmnviewer",
         type: "flows4apex.viewer"
       });
+      // set widget reference to viewer module
+      this.bpmnViewer$.get('subProcessModule').setWidget(this);
     },
     loadDiagram: async function() {
       $( "#" + this.canvasId ).show();
@@ -84,6 +87,8 @@
         bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
         bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
         bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+        // trigger load event
+        event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", { diagramId: this.diagramId } );
       } catch (err) {
         apex.debug.error( "Loading Diagram failed.", err, this.diagram );
       }
@@ -111,11 +116,19 @@
         refreshObject: "#" + this.canvasId,
         loadingIndicator: "#" + this.canvasId
       }).then( pData => {
-        if ( pData.found ) {
-          this.diagram   = pData.data.diagram;
-          this.current   = pData.data.current;
-          this.completed = pData.data.completed;
-          this.error     = pData.data.error;
+        if ( pData.found ) {  
+          // get hierarchy
+          this.data = pData.data;
+          // get root diagram
+          var rootDiagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined')
+          // set widget attributes
+          this.index     = pData.data.indexOf(rootDiagram);
+          this.diagramId = rootDiagram.diagramId;
+          this.diagram   = rootDiagram.diagram;
+          this.current   = rootDiagram.current;
+          this.completed = rootDiagram.completed;
+          this.error     = rootDiagram.error;
+          // load diagram
           this.loadDiagram();
         } else {
           $( "#" + this.canvasId ).hide();

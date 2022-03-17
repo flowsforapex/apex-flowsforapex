@@ -486,6 +486,147 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./lib/subProcessModule/SubProcessModule.js":
+/*!**************************************************!*\
+  !*** ./lib/subProcessModule/SubProcessModule.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SubProcessModule)
+/* harmony export */ });
+
+var domQuery = (__webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").query);
+
+const breadcrumb = domQuery('#breadcrumb');
+
+function addToBreadcrumb(label, id) {
+  const span = document.createElement('span');
+
+  if (breadcrumb.childNodes.length === 0) {
+    span.textContent = label;
+  } else {
+    span.textContent = ` > ${label}`;
+  }
+
+  span.dataset.index = id;
+
+  breadcrumb.appendChild(span);
+}
+
+function trimBreadcrumbTo(id) {
+  var flag = false;
+  var removeNodes = [];
+  
+  for (let i = 0; i < breadcrumb.childNodes.length; i++) {
+    if (breadcrumb.childNodes[i].dataset.index === id) {
+      flag = true;
+    }
+    if (flag) {
+      removeNodes.push(breadcrumb.childNodes[i]);
+    }
+  }
+  
+  removeNodes.forEach(n => breadcrumb.removeChild(n));
+}
+
+function SubProcessModule(eventBus, canvas) {
+  
+  this._eventBus = eventBus;
+  this._canvas = canvas;
+
+  breadcrumb.addEventListener('click', (event) => {
+
+    // clicked object
+    var { index } = event.target.dataset;
+
+    // retrieve hierarchy
+    var { data } = this._widget;
+
+    // get new diagram from hierarchy
+    var newDiagram = data[index];
+
+    // trim breadcrumb to clicked entry
+    trimBreadcrumbTo(index);
+
+    // set index to reference new diagram in hierarchy
+    this._widget.index = index;
+    
+    // set new diagram properties
+    this._widget.diagramId = newDiagram.diagramId;
+    this._widget.diagram = newDiagram.diagram;
+    this._widget.current = newDiagram.current;
+    this._widget.completed = newDiagram.completed;
+    this._widget.error = newDiagram.error;
+
+    // invoke loadDiagram of widget
+    this._widget.loadDiagram();
+  });
+
+  eventBus.on('element.click', (event) => {
+    if (event.element.type === 'bpmn:CallActivity') {
+      
+      // clicked object
+      var objectId = event.element.id;
+
+      // retrieve data of current diagram + hierarchy
+      var { diagramId, data, index } = this._widget;
+
+      // add entry to current diagram breadcrump
+      addToBreadcrumb(diagramId, index);
+
+      // get new diagram from hierarchy
+      var newDiagram = data.find(d => d.callingDiagramId === diagramId && d.callingObjectId === objectId);
+
+      // set index to reference new diagram in hierarchy
+      this._widget.index = data.indexOf(newDiagram);
+      
+      // set new diagram properties
+      this._widget.diagramId = newDiagram.diagramId;
+      this._widget.diagram = newDiagram.diagram;
+      this._widget.current = newDiagram.current;
+      this._widget.completed = newDiagram.completed;
+      this._widget.error = newDiagram.error;
+
+      // invoke loadDiagram of widget
+      this._widget.loadDiagram();
+    }
+  });
+}
+
+SubProcessModule.prototype.setWidget = function (widget) {
+  this._widget = widget;
+};
+
+SubProcessModule.$inject = ['eventBus', 'canvas'];
+
+
+/***/ }),
+
+/***/ "./lib/subProcessModule/index.js":
+/*!***************************************!*\
+  !*** ./lib/subProcessModule/index.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SubProcessModule_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SubProcessModule.js */ "./lib/subProcessModule/SubProcessModule.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['subProcessModule'],
+  subProcessModule: ['type', _SubProcessModule_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/bpmn-js/lib/BaseViewer.js":
 /*!************************************************!*\
   !*** ./node_modules/bpmn-js/lib/BaseViewer.js ***!
@@ -25359,21 +25500,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bpmn-js/lib/NavigatedViewer */ "./node_modules/bpmn-js/lib/NavigatedViewer.js");
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
+/* harmony import */ var bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js/lib/NavigatedViewer */ "./node_modules/bpmn-js/lib/NavigatedViewer.js");
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
 /* harmony import */ var _lib_spViewModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/spViewModule */ "./lib/spViewModule/index.js");
 /* harmony import */ var _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lib/styleModule */ "./lib/styleModule/index.js");
+/* harmony import */ var _lib_subProcessModule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./lib/subProcessModule */ "./lib/subProcessModule/index.js");
+
 
 
 
 
 
 var bpmnViewer = {
-  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__["default"],
-  NavigatedViewer: bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_3__["default"],
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_3__["default"],
+  NavigatedViewer: bpmn_js_lib_NavigatedViewer__WEBPACK_IMPORTED_MODULE_4__["default"],
   customModules: {
     spViewModule: _lib_spViewModule__WEBPACK_IMPORTED_MODULE_0__["default"],
     styleModule: _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__["default"],
+    subProcessModule: _lib_subProcessModule__WEBPACK_IMPORTED_MODULE_2__["default"],
   },
 };
 
