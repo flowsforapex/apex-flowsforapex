@@ -15,10 +15,10 @@ begin
 wwv_flow_api.import_begin (
  p_version_yyyy_mm_dd=>'2020.03.31'
 ,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>63504938970163399
+,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
-,p_default_owner=>'FLOWS211'
+,p_default_owner=>'FLOWS4APEX'
 );
 end;
 /
@@ -28,15 +28,15 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   11:48 Tuesday February 1, 2022
---   Exported By:     DAMTHOR
+--   Date and Time:   04:16 Thursday March 17, 2022
+--   Exported By:     FLOWS4APEX
 --   Flashback:       0
 --   Export Type:     Component Export
 --   Manifest
 --     PLUGIN: 3491076719042480277
 --   Manifest End
 --   Version:         20.1.0.00.13
---   Instance ID:     250167802641663
+--   Instance ID:     300193896399987
 --
 
 begin
@@ -103,6 +103,18 @@ wwv_flow_api.create_plugin_attribute(
 'Leave empty if you don''t want to highlight current nodes.'))
 );
 wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(91965596618419000)
+,p_plugin_id=>wwv_flow_api.id(3491076719042480277)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>3
+,p_display_sequence=>30
+,p_prompt=>'Diagram ID'
+,p_attribute_type=>'REGION SOURCE COLUMN'
+,p_is_required=>false
+,p_column_data_types=>'NUMBER'
+,p_is_translatable=>false
+);
+wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(214291768488016984)
 ,p_plugin_id=>wwv_flow_api.id(3491076719042480277)
 ,p_attribute_scope=>'COMPONENT'
@@ -124,6 +136,18 @@ wwv_flow_api.create_plugin_attribute(
 'Leave empty if you don''t want to highlight completed nodes.'))
 );
 wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(91967005391420757)
+,p_plugin_id=>wwv_flow_api.id(3491076719042480277)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>5
+,p_display_sequence=>50
+,p_prompt=>'Calling Diagram ID'
+,p_attribute_type=>'REGION SOURCE COLUMN'
+,p_is_required=>false
+,p_column_data_types=>'NUMBER'
+,p_is_translatable=>false
+);
+wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(214290508958008016)
 ,p_plugin_id=>wwv_flow_api.id(3491076719042480277)
 ,p_attribute_scope=>'COMPONENT'
@@ -143,6 +167,18 @@ wwv_flow_api.create_plugin_attribute(
 'Choose the column holding ID(s) of the error node(s).<br/>',
 'For multiple values verify to use colons as delimiters.<br/>',
 'Leave empty if you don''t want to highlight error nodes.'))
+);
+wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(91968550106422123)
+,p_plugin_id=>wwv_flow_api.id(3491076719042480277)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>7
+,p_display_sequence=>70
+,p_prompt=>'Calling Object ID'
+,p_attribute_type=>'REGION SOURCE COLUMN'
+,p_is_required=>false
+,p_column_data_types=>'VARCHAR2'
+,p_is_translatable=>false
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(52792677223540419)
