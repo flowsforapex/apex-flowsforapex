@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_logging.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
+--
+*/
 create or replace package flow_logging
 accessible by ( flow_engine, flow_instances, flow_process_vars, flow_expressions 
               , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg

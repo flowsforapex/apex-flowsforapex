@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_diagram.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 10-Dec-2021  Dennis Amthor - MT AG  
+--
+*/
 create or replace package body flow_diagram
 as
 
@@ -184,9 +193,10 @@ as
   end get_start_event;
 
   function get_current_diagram
-    ( pi_dgrm_name  in flow_diagrams.dgrm_name%type
-    , pi_prcs_id    in flow_processes.prcs_id%type default null
-    , pi_sbfl_id    in flow_subflows.sbfl_id%type default null
+    ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
+    , pi_dgrm_calling_method    in flow_object_attributes.obat_vc_value%type
+    , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+    , pi_prcs_id                in flow_processes.prcs_id%type default null
     )
   return flow_diagrams.dgrm_id%type
     -- gets the current dgrm_id to be used for a diagram name.
@@ -194,44 +204,65 @@ as
   is
     l_dgrm_id     flow_diagrams.dgrm_id%type;
   begin
-    -- look for the 'released' version of the diagram
-      select dgrm_id 
-        into l_dgrm_id
-        from flow_diagrams
-       where dgrm_name = pi_dgrm_name
-         and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
-      ;
-      return l_dgrm_id;
-  exception
-    when no_data_found then
-      -- look for the version 0 (default) of 'draft' of the diagram
-      begin
-          select dgrm_id
-            into l_dgrm_id
-            from flow_diagrams
-           where dgrm_name = pi_dgrm_name
-             and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
-             and dgrm_version = '0'
-          ;
-          return l_dgrm_id;
+    case pi_dgrm_calling_method 
+    when flow_constants_pkg.gc_dgrm_version_latest_version then
+      begin 
+        -- look for the 'released' version of the diagram
+        select dgrm_id 
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
+        ;
+        return l_dgrm_id;
       exception
         when no_data_found then
-          if pi_prcs_id is null then 
-            -- initial process start so call general error (instance not yet running)
-            flow_errors.handle_general_error
-            ( pi_message_key => 'version-no-rel-or-draft-v0'
-            );
-            -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
-          else 
-            -- callActivity so log an instance error
-            flow_errors.handle_instance_error
-            ( pi_prcs_id     => pi_prcs_id
-            , pi_sbfl_id     => pi_sbfl_id
-            , pi_message_key => 'version-no-rel-or-draft-v0'
-            );
-            -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
-          end if; 
-      end;   
+          -- look for the version 0 (default) of 'draft' of the diagram
+          begin
+            select dgrm_id
+              into l_dgrm_id
+              from flow_diagrams
+             where dgrm_name = pi_dgrm_name
+               and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
+               and dgrm_version = '0'
+            ;
+            return l_dgrm_id;
+          exception
+            when no_data_found then
+              if pi_prcs_id is null then 
+                -- initial process start so call general error (instance not yet running)
+                flow_errors.handle_general_error
+                ( pi_message_key => 'version-no-rel-or-draft-v0'
+                );
+                -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
+              else 
+                -- callActivity so log an instance error
+                flow_errors.handle_instance_error
+                ( pi_prcs_id     => pi_prcs_id
+                , pi_message_key => 'version-no-rel-or-draft-v0'
+                );
+                -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
+              end if; 
+          end;  
+      end;
+
+    when flow_constants_pkg.gc_dgrm_version_named_version then
+      -- dgrm_version was specified
+      begin
+        select dgrm_id
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_version = pi_dgrm_version
+        ;
+      exception
+        when no_data_found then
+          -- initial process start so call general error (instance not yet running)
+          flow_errors.handle_general_error ( pi_message_key => 'version-not-found');
+          -- $F4AMESSAGE 'version-not-found' || 'Cannot find specified diagram version.  Please check version specification.'
+      end;
+    end case;
+    return l_dgrm_id;
   end get_current_diagram;
 
 

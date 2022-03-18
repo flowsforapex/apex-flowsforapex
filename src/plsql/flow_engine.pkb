@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_engine.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2020-2022.
+--
+-- Created 11-Sep-2020  Richard Allen (Flowquest) 
+--
+*/
 create or replace package body flow_engine
 as 
 
@@ -782,11 +791,11 @@ begin
   end if;
 
   if p_log_as_completed then
-    -- log current step as completed before loosing the reservation
+    -- log current step as completed before releasing the reservation
     flow_logging.log_step_completion   
-    ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-    , p_subflow_id => p_sbfl_rec.sbfl_id
-    , p_completed_object => p_sbfl_rec.sbfl_current
+    ( p_process_id        => p_sbfl_rec.sbfl_prcs_id
+    , p_subflow_id        => p_sbfl_rec.sbfl_id
+    , p_completed_object  => p_sbfl_rec.sbfl_current
     );
   end if;
   -- release subflow reservation

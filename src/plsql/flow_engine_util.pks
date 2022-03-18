@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_engine_util.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created April-2021  Richard Allen (Flowquest) - for  MT AG  
+--
+*/
 create or replace package flow_engine_util
 -- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances)
 as 
@@ -83,6 +92,7 @@ as
     , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
     , p_new_proc_level            in boolean default false
     , p_new_scope                 in boolean default false
+    , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_types_pkg.t_subflow_context
     ;
