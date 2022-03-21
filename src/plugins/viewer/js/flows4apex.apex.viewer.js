@@ -70,8 +70,6 @@
         widgetName: "bpmnviewer",
         type: "flows4apex.viewer"
       });
-      // set widget reference to viewer module
-      this.bpmnViewer$.get('subProcessModule').setWidget(this);
     },
     loadDiagram: async function() {
       $( "#" + this.canvasId ).show();
@@ -123,11 +121,12 @@
           var rootDiagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined')
           // set widget attributes
           this.index     = pData.data.indexOf(rootDiagram);
-          this.diagramId = rootDiagram.diagramId;
           this.diagram   = rootDiagram.diagram;
           this.current   = rootDiagram.current;
           this.completed = rootDiagram.completed;
           this.error     = rootDiagram.error;
+          // set widget reference to viewer module
+          this.bpmnViewer$.get('subProcessModule').setWidget(this);
           // load diagram
           this.loadDiagram();
         } else {
