@@ -18,7 +18,8 @@ as
     , p_region => p_region
     );
 
-    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="flows4apex-viewer ' || v('THEME_PLUGIN_CLASS') || '" style="display: none;"><a href="javascript:void(0);" id="breadcrumb"></a></div>' );
+    sys.htp.p( '<div id="breadcrumb"></div>' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="flows4apex-viewer ' || v('THEME_PLUGIN_CLASS') || '" style="display: none;"></div>' );
     sys.htp.p( '<span id="' || p_region.static_id || '_ndf" class="nodatafound" style="display: none;">' || coalesce(p_region.no_data_found_message, 'No data found.') || '</span>' );
 
     apex_javascript.add_onload_code
@@ -83,6 +84,8 @@ as
     l_dgrm_id_col_idx      pls_integer;
     l_calling_dgrm_col_idx pls_integer;
     l_calling_objt_col_idx pls_integer;
+    l_breadcrumb_col_idx   pls_integer;
+    l_allow_view_col_idx   pls_integer;
 
     l_current_nodes   apex_t_varchar2;
     l_completed_nodes apex_t_varchar2;
@@ -164,6 +167,22 @@ as
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
+    l_breadcrumb_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_12 
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_varchar2
+      );
+    l_allow_view_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_13
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_number
+      );
 
     apex_json.open_object;
 
@@ -206,6 +225,20 @@ as
           p_name  => 'diagram'
         , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
         );
+
+        apex_json.write
+        (
+          p_name  => 'breadcrumb'
+        , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_breadcrumb_col_idx )
+        );
+
+        if l_allow_view_col_idx is not null then
+            apex_json.write
+            (
+            p_name  => 'allow'
+            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_allow_view_col_idx )
+            );
+        end if;
 
         apex_json.open_array
         (
