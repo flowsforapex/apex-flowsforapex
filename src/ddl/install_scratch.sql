@@ -170,7 +170,7 @@ COMMENT ON COLUMN flow_subflows.sbfl_diagram_level is
 COMMENT ON COLUMN flow_subflows.sbfl_calling_sbfl is
     'At all process levels except 0 (main), this contains the Subflow ID of the parent object in the calling process level';
 
-COMMENT ON COLUMN flow_subflows.scope is
+COMMENT ON COLUMN flow_subflows.sbfl_scope is
     'Variable scope to used for variables in this Subflow.  Generally = Diagram Level, except in iteration or other special cases.';
 
 
