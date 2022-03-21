@@ -242,6 +242,7 @@ as
     l_new_status            flow_timers.timr_status%type;
     l_timr_id               flow_timers.timr_id%type;
     l_timr_run              flow_timers.timr_run%type;
+    l_apex_session          number;
   begin
     loop -- until no records found
       -- could add a functional index on flow_timers to improve performance of this query
@@ -267,14 +268,19 @@ as
       ;
 
       begin
-      -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
-      -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
-      -- to delete the timer through a cascade delete.
+        -- create an APEX session for the timer operation
+       l_apex_session := flow_engine_util.create_async_apex_session  ( p_process_id => l_timers.timr_prcs_id
+                                                                      , p_subflow_id => l_timers.timr_sbfl_id
+                                                                      );
+
+        -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
+        -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
+        -- to delete the timer through a cascade delete.
         if l_timers.timr_type in  ( flow_constants_pkg.gc_timer_type_cycle
                                   , flow_constants_pkg.gc_timer_type_oracle_cycle 
                                   ) 
         then 
-          -- repeating / cycle timer.  If unlimited or less than max repeats, run again...
+          -- repeating / cycle timer.  If unlimited or less than max repeats, run again...∏
           if l_timers.timr_run < l_timers.timr_repeat_times 
           or l_timers.timr_repeat_times is null then 
             l_timr_id   := l_timers.timr_id;
@@ -292,6 +298,7 @@ as
         , p_timr_id    => l_timr_id
         , p_run        => l_timr_run
         );
+
       exception 
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
@@ -312,6 +319,8 @@ as
         );
         -- $F4AMESSAGE 'timer-broken' || 'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
       end;
+      -- drop the session
+      flow_engine_util.delete_async_apex_session ( p_session_id => l_apex_session );
       commit;
     end loop;
     exception 

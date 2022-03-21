@@ -519,6 +519,88 @@ procedure get_number_of_connections
       return false;
   end lock_subflow;
 
+  function create_async_apex_session
+  ( p_process_id         in flow_processes.prcs_id%type
+  , p_subflow_id         in flow_subflows.sbfl_id%type
+  ) return number
+  is 
+    l_app_id      flow_object_attributes.obat_vc_value%type;
+    l_workspace   flow_object_attributes.obat_vc_value%type;
+    l_page_id     flow_object_attributes.obat_vc_value%type;
+    l_username    flow_object_attributes.obat_vc_value%type;
+    l_session_id  number;
+  begin
+    -- get apex details from process diagram, if they exist
+    for rec in (
+                select obat.obat_key
+                     , obat.obat_vc_value
+                  from flow_object_attributes obat
+                  join flow_objects objt
+                    on objt.objt_id = obat.obat_objt_id
+                  join flow_subflows sbfl
+                    on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+                 where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+                   and sbfl.sbfl_id = p_subflow_id
+                   and obat.obat_key in ( flow_constants_pkg.gc_apex_process_workspace
+                                        , flow_constants_pkg.gc_apex_process_application_id
+                                        , flow_constants_pkg.gc_apex_process_page_id
+                                        , flow_constants_pkg.gc_apex_process_username
+                                        )
+               )
+    loop
+      case rec.obat_key
+        when flow_constants_pkg.gc_apex_process_workspace then
+          l_workspace := rec.obat_vc_value;
+        when flow_constants_pkg.gc_apex_process_application_id then
+          l_app_id    := rec.obat_vc_value;
+        when flow_constants_pkg.gc_apex_process_page_id then
+          l_page_id   := rec.obat_vc_value;
+        when flow_constants_pkg.gc_apex_process_username then
+          l_username  := rec.obat_vc_value;
+        else
+          null;
+      end case;
+    end loop;
+    -- if not get system default values from flow_configuration
+    if l_workspace is null  then l_workspace := get_config_value 
+                                                  ( p_config_key     => flow_constants_pkg.gc_config_default_workspace
+                                                  , p_default_value  => flow_constants_pkg.gc_config_default_default_workspace 
+                                                  );
+    end if;
+    if l_app_id is null     then l_app_id    := get_config_value 
+                                                  ( p_config_key     => flow_constants_pkg.gc_config_default_application 
+                                                  , p_default_value  => flow_constants_pkg.gc_config_default_default_application 
+                                                  );
+    end if;
+    if l_page_id is null   then l_page_id    := get_config_value 
+                                                  ( p_config_key     => flow_constants_pkg.gc_config_default_pageID
+                                                  , p_default_value  => flow_constants_pkg.gc_config_default_default_pageID 
+                                                  );
+    end if;
+    if l_username is null   then l_username  := get_config_value 
+                                                  ( p_config_key     => flow_constants_pkg.gc_config_default_username
+                                                  , p_default_value  => flow_constants_pkg.gc_config_default_default_username 
+                                                  );
+    end if;
+    -- create apex session
+    apex_session.create_session 
+      ( p_app_id   => l_app_id
+      , p_page_id  => l_page_id
+      , p_username => l_username 
+      );
+    return v('APP_SESSION');
+
+  end;
+
+  
+  
+  procedure delete_async_apex_session
+  ( p_session_id         in number)
+  is 
+  begin
+    apex_session.delete_session ( p_session_id => p_session_id);
+  end;
+
   -- initialise step key enforcement parameter
 
   begin

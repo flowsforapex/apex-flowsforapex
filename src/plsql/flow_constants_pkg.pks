@@ -58,6 +58,12 @@ as
   
 
   -- APEX Extensions to BPMN
+  -- bpmnProcess
+  gc_apex_process_workspace           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'workspace';
+  gc_apex_process_application_id      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
+  gc_apex_process_page_id             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
+  gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
+  
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexPage';
   gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'externalUrl';
@@ -206,15 +212,20 @@ as
   gc_config_engine_app_mode           constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention       constant varchar2(50 char) := 'duplicate_step_prevention';
   gc_config_timer_max_cycles          constant varchar2(50 char) := 'timer_max_cycles';
+  gc_config_default_workspace         constant varchar2(50 char) := 'default_workspace';
+  gc_config_default_application       constant varchar2(50 char) := 'default_application';
+  gc_config_default_pageid            constant varchar2(50 char) := 'default_pageid';
+  gc_config_default_username          constant varchar2(50 char) := 'default_username';
+
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
-  gc_config_logging_level_none        constant varchar2(2000 char) := 'none';      -- none
-  gc_config_logging_level_standard    constant varchar2(2000 char) := 'standard';  -- instances and tasks
-  gc_config_logging_level_secure      constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
-  gc_config_logging_level_full        constant varchar2(2000 char) := 'full';      -- secure + variable changes
-  gc_config_engine_app_mode_dev       constant varchar2(2000 char) := 'development';
-  gc_config_engine_app_mode_prod      constant varchar2(2000 char) := 'production';
+  gc_config_logging_level_none         constant varchar2(2000 char) := 'none';      -- none
+  gc_config_logging_level_standard     constant varchar2(2000 char) := 'standard';  -- instances and tasks
+  gc_config_logging_level_secure       constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
+  gc_config_logging_level_full         constant varchar2(2000 char) := 'full';      -- secure + variable changes
+  gc_config_engine_app_mode_dev        constant varchar2(2000 char) := 'development';
+  gc_config_engine_app_mode_prod       constant varchar2(2000 char) := 'production';
   gc_config_dup_step_prevention_legacy constant varchar2(2000 char) := 'legacy';   -- null step key allowed
   gc_config_dup_step_prevention_strict constant varchar2(2000 char) := 'strict';   -- step key enforced
 
@@ -227,7 +238,11 @@ as
   gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
   gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_default_application       constant varchar2(2000 char) := '100';
+  gc_config_default_default_pageID            constant varchar2(2000 char) := '1';
+  gc_config_default_default_username          constant varchar2(2000 char) := 'FLOWS4APEX';
   gc_config_default_timer_max_cycles          constant varchar2(2000 char) := '1000';
+
 
 
   -- Default XML for new diagrams
