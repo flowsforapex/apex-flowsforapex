@@ -1,0 +1,210 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="C08985F5-BCBF-CB81-6D0A-3AE57ABFDEEA" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="FLOW_OBJECT_EXPRESSIONS">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FLOW_OBJECT_EXPRESSIONS</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="EXPR_ID" id="2D282BD1-CCA6-0393-6AB1-987407DF26C2">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
+</Column>
+<Column name="EXPR_OBJT_ID" id="131B625B-4BF3-092E-9333-7D16F7030C46">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_OBJT_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="CBB64D24-566F-1AA0-E718-8884B82CCB5C" referredColumn="E23C9769-34A5-5203-9BE5-C9890CEAEDB8"/>
+</associations>
+</Column>
+<Column name="EXPR_SET" id="4D0CD4BD-A96D-BA66-A6BD-EFA37896E388">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_SET</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<constraintName>EXPR_SET_CK</constraintName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>20 CHAR</dataTypeSize>
+<listOfValues>
+<valueDef value="&apos;afterMerge&apos;" description=""/>
+<valueDef value="&apos;afterTask&apos;" description=""/>
+<valueDef value="&apos;beforeEvent&apos;" description=""/>
+<valueDef value="&apos;beforeSplit&apos;" description=""/>
+<valueDef value="&apos;beforeTask&apos;" description=""/>
+<valueDef value="&apos;onEvent&apos;" description=""/>
+</listOfValues>
+<ownDataTypeParameters>20 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="EXPR_ORDER" id="F814BC5E-EC19-404D-7C10-BFE1C19ADF71">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_ORDER</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="EXPR_VAR_NAME" id="94BFC761-BCF3-0C01-A26F-3058D5D1BE8C">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_VAR_NAME</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="EXPR_VAR_TYPE" id="57438E55-62D3-D6BB-32B4-18A9771DB70E">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_VAR_TYPE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="EXPR_TYPE" id="CB052B67-93A8-2C1B-0448-453BBD79DA3D">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_TYPE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>130 CHAR</dataTypeSize>
+<ownDataTypeParameters>130 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="EXPR_EXPRESSION" id="259D4B91-6D83-6A18-2D79-192D82EBEB42">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_EXPRESSIONS</sourceObjSchema>
+<sourceObjName>EXPR_EXPRESSION</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>4000 CHAR</dataTypeSize>
+<ownDataTypeParameters>4000 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="014B8D27-66D5-8CCF-99E1-E92F0B9B0768" name="EXPR_PK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>EXPR_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2D282BD1-CCA6-0393-6AB1-987407DF26C2"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="2FAB0657-3075-FDD7-0050-397830D499CC" name="EXPR_UK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>EXPR_UK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="131B625B-4BF3-092E-9333-7D16F7030C46"/>
+<colUsage columnID="4D0CD4BD-A96D-BA66-A6BD-EFA37896E388"/>
+<colUsage columnID="F814BC5E-EC19-404D-7C10-BFE1C19ADF71"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="36208140-A2B6-340E-9B8A-BBBBB6FE76D9" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="EXPR_PK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>EXPR_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2D282BD1-CCA6-0393-6AB1-987407DF26C2"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="0C92F392-F9B5-FAED-1BA5-25CF4C35DC32" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="EXPR_UK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>EXPR_UK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="131B625B-4BF3-092E-9333-7D16F7030C46"/>
+<colUsage columnID="4D0CD4BD-A96D-BA66-A6BD-EFA37896E388"/>
+<colUsage columnID="F814BC5E-EC19-404D-7C10-BFE1C19ADF71"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="7F04D149-1683-8312-3926-3876325B09DA" name="EXPR_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="131B625B-4BF3-092E-9333-7D16F7030C46"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
