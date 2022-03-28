@@ -61,6 +61,18 @@ as
                   , p_value     => ( p_region.attribute_11 = 'Y' )
                   , p_add_comma => true
                   ) ||
+                  apex_javascript.add_attribute
+                  (
+                    p_name      => 'addHighlighting'
+                  , p_value     => ( p_region.attribute_09 = 'Y' )
+                  , p_add_comma => true
+                  ) ||    
+                  apex_javascript.add_attribute
+                  (
+                    p_name      => 'useGlobalSubProcessInsight'
+                  , p_value     => ( p_region.attribute_14 = 'Y' )
+                  , p_add_comma => true
+                  ) ||  
                   '"config":' || p_region.init_javascript_code || '({})' ||
                 '})'
     );
@@ -76,16 +88,16 @@ as
     return apex_plugin.t_region_ajax_result
   as
 
-    l_context              apex_exec.t_context;
-    l_diagram_col_idx      pls_integer;
-    l_current_col_idx      pls_integer;
-    l_completed_col_idx    pls_integer;
-    l_error_col_idx        pls_integer;
-    l_dgrm_id_col_idx      pls_integer;
-    l_calling_dgrm_col_idx pls_integer;
-    l_calling_objt_col_idx pls_integer;
-    l_breadcrumb_col_idx   pls_integer;
-    l_allow_view_col_idx   pls_integer;
+    l_context                  apex_exec.t_context;
+    l_diagram_col_idx          pls_integer;
+    l_current_col_idx          pls_integer;
+    l_completed_col_idx        pls_integer;
+    l_error_col_idx            pls_integer;
+    l_dgrm_id_col_idx          pls_integer;
+    l_calling_dgrm_col_idx     pls_integer;
+    l_calling_objt_col_idx     pls_integer;
+    l_breadcrumb_col_idx       pls_integer;
+    l_sub_prcs_insight_col_idx pls_integer;
 
     l_current_nodes   apex_t_varchar2;
     l_completed_nodes apex_t_varchar2;
@@ -175,7 +187,7 @@ as
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
-    l_allow_view_col_idx :=
+    l_sub_prcs_insight_col_idx :=
       apex_exec.get_column_position
       (
         p_context     => l_context
@@ -214,11 +226,13 @@ as
         , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_calling_dgrm_col_idx )
         );
 
-        apex_json.write
-        (
-          p_name  => 'callingObjectId'
-        , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_calling_objt_col_idx )
-        );
+        if l_calling_objt_col_idx is not null then
+            apex_json.write
+            (
+              p_name  => 'callingObjectId'
+            , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_calling_objt_col_idx )
+            );
+        end if;
         
         apex_json.write
         (
@@ -226,17 +240,19 @@ as
         , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
         );
 
-        apex_json.write
-        (
-          p_name  => 'breadcrumb'
-        , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_breadcrumb_col_idx )
-        );
-
-        if l_allow_view_col_idx is not null then
+        if l_breadcrumb_col_idx is not null then
             apex_json.write
             (
-            p_name  => 'allow'
-            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_allow_view_col_idx )
+              p_name  => 'breadcrumb'
+            , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_breadcrumb_col_idx )
+            );
+        end if;
+
+        if l_sub_prcs_insight_col_idx is not null then
+            apex_json.write
+            (
+              p_name  => 'insight'
+            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_sub_prcs_insight_col_idx )
             );
         end if;
 

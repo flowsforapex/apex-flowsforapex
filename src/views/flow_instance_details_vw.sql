@@ -49,9 +49,8 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
        , prdg.prdg_diagram_level as diagram_level
        , prdg.prdg_calling_dgrm as calling_dgrm
        , prdg.prdg_calling_objt as calling_objt
-       , dgrm.dgrm_name || ' (' || dgrm.dgrm_version || ')' ||
-         case when prdg.prdg_calling_objt is not null then ' [' || prdg.prdg_calling_objt || ']'
-         else '' end as breadcrumb
+       , dgrm.dgrm_name || ' (' || dgrm.dgrm_version || ')' as breadcrumb
+       , 1 as sub_prcs_insight
        , dgrm.dgrm_id
        , dgrm.dgrm_name
        , dgrm.dgrm_version

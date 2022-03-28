@@ -497,39 +497,51 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SubProcessModule)
 /* harmony export */ });
-
 var domQuery = (__webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js").query);
 
-const breadcrumb = domQuery('#breadcrumb');
+const breadcrumbContainer = domQuery('#breadcrumb');
 
-function addToBreadcrumb(id, label, callingObjectId) {
-  var anchor = document.createElement('a');
-  anchor.textContent = label;
-  anchor.dataset.index = id;
-  anchor.href = 'javascript:void(0);';
+function addToBreadcrumb(index, label, callingObjectId) {
 
-  if (breadcrumb.childNodes.length > 0) {
-    var span = document.createElement('span');
-    span.textContent = ` > ${callingObjectId} > `;
-    breadcrumb.appendChild(span);
+  var span;
+
+  if (breadcrumbContainer.childNodes.length > 0) {
+    // switch last node to link
+    breadcrumbContainer.lastChild.classList.add('diagram-link');
+    // append delimiter
+    span = document.createElement('span');
+    span.textContent = ' \\ ';
+    breadcrumbContainer.appendChild(span);
   }
 
-  breadcrumb.appendChild(anchor);
+  // create + append new node
+  span = document.createElement('span');
+  span.textContent = label;
+  span.dataset.index = index;
+  if (callingObjectId != null) span.title = `called by ${callingObjectId}`;
+
+  breadcrumbContainer.appendChild(span);
 }
 
-function trimBreadcrumbTo(id) {
+function trimBreadcrumbTo(index) {
   var flag = false;
   var removeNodes = [];
   
-  for (let i = 0; i < breadcrumb.childNodes.length; i++) {
+  for (let i = 0; i < breadcrumbContainer.childNodes.length; i++) {
     if (flag) {
-      removeNodes.push(breadcrumb.childNodes[i]);
-    } else if (breadcrumb.childNodes[i].dataset.index === id) {
+      // add to removable nodes
+      removeNodes.push(breadcrumbContainer.childNodes[i]);
+    } else if (breadcrumbContainer.childNodes[i].dataset.index === index) {
+      // mark as last node
       flag = true;
     }
   }
   
+  // remove subsequent nodes
   removeNodes.forEach(n => breadcrumb.removeChild(n));
+
+  // switch last node to span
+  breadcrumbContainer.lastChild.classList.remove('diagram-link');
 }
 
 function SubProcessModule(eventBus, canvas) {
@@ -537,35 +549,39 @@ function SubProcessModule(eventBus, canvas) {
   this._eventBus = eventBus;
   this._canvas = canvas;
 
-  breadcrumb.addEventListener('click', (event) => {
+  breadcrumbContainer.addEventListener('click', (event) => {
 
-    // clicked object
-    var { index } = event.target.dataset;
+    if (event.target.classList.contains('diagram-link')) {
 
-    // retrieve hierarchy
-    var { data } = this._widget;
+      // clicked object
+      var { index } = event.target.dataset;
 
-    // get new diagram from hierarchy
-    var newDiagram = data[index];
+      // retrieve hierarchy
+      var { data } = this._widget;
 
-    // trim breadcrumb to clicked entry
-    trimBreadcrumbTo(index);
+      // get new diagram from hierarchy
+      var newDiagram = data[index];
 
-    // set index to reference new diagram in hierarchy
-    this._widget.index = index;
-    
-    // set new diagram properties
-    this._widget.diagram = newDiagram.diagram;
-    this._widget.current = newDiagram.current;
-    this._widget.completed = newDiagram.completed;
-    this._widget.error = newDiagram.error;
+      // trim breadcrumb to clicked entry
+      trimBreadcrumbTo(index);
 
-    // invoke loadDiagram of widget
-    this._widget.loadDiagram();
+      // set index to reference new diagram in hierarchy
+      this._widget.index = index;
+      
+      // set new diagram properties
+      this._widget.diagramId = newDiagram.diagramId;
+      this._widget.diagram = newDiagram.diagram;
+      this._widget.current = newDiagram.current;
+      this._widget.completed = newDiagram.completed;
+      this._widget.error = newDiagram.error;
+
+      // invoke loadDiagram of widget
+      this._widget.loadDiagram();
+    }
   });
 
   eventBus.on('element.click', (event) => {
-    if (event.element.type === 'bpmn:CallActivity') {
+    if (event.element.type === 'bpmn:CallActivity' && event.originalEvent.altKey) {
       
       // clicked object
       var objectId = event.element.id;
@@ -579,20 +595,25 @@ function SubProcessModule(eventBus, canvas) {
       // get new diagram from hierarchy
       var newDiagram = data.find(d => d.callingDiagramId === diagramId && d.callingObjectId === objectId);
 
-      // set index to reference new diagram in hierarchy
-      this._widget.index = data.indexOf(newDiagram);
+      // if insight allowed
+      if (newDiagram.insight === 1) {
 
-      // update breadcrumb
-      addToBreadcrumb(data.indexOf(newDiagram), newDiagram.breadcrumb, newDiagram.callingObjectId);
-      
-      // set new diagram properties
-      this._widget.diagram = newDiagram.diagram;
-      this._widget.current = newDiagram.current;
-      this._widget.completed = newDiagram.completed;
-      this._widget.error = newDiagram.error;
+        // set index to reference new diagram in hierarchy
+        this._widget.index = data.indexOf(newDiagram);
 
-      // invoke loadDiagram of widget
-      this._widget.loadDiagram();
+        // update breadcrumb
+        addToBreadcrumb(data.indexOf(newDiagram), newDiagram.breadcrumb, newDiagram.callingObjectId);
+        
+        // set new diagram properties
+        this._widget.diagramId = newDiagram.diagramId;
+        this._widget.diagram = newDiagram.diagram;
+        this._widget.current = newDiagram.current;
+        this._widget.completed = newDiagram.completed;
+        this._widget.error = newDiagram.error;
+
+        // invoke loadDiagram of widget
+        this._widget.loadDiagram();
+      }
     }
   });
 }
@@ -605,6 +626,9 @@ SubProcessModule.prototype.setWidget = function (widget) {
 
   // retrieve data of current diagram
   var { breadcrumb, callingObjectId } = data[index];
+
+  // reset breadcrumb
+  breadcrumbContainer.textContent = '';
 
   // add entry to current diagram breadcrumb
   addToBreadcrumb(index, breadcrumb, callingObjectId);

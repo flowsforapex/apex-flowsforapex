@@ -10,6 +10,8 @@
       refreshOnLoad: false,
       useNavigatedViewer: false,
       enableExpandModule: true,
+      addHighlighting: false,
+      useGlobalSubProcessInsight: false,
       config: {
         currentStyle: {
           "fill": "#6aad42",
@@ -40,11 +42,15 @@
       this.regionId    = this.element[0].id;
       this.canvasId    = this.regionId + "_canvas";
       this.enabledModules = [];
-      this.enabledModules.push(bpmnViewer.customModules.styleModule);
+      if ( this.options.addHighlighting ) {
+        this.enabledModules.push(bpmnViewer.customModules.styleModule);
+      }
       if ( this.options.enableExpandModule ) {
         this.enabledModules.push( bpmnViewer.customModules.spViewModule );
       }
-      this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
+      if ( this.options.useGlobalSubProcessInsight ) {
+        this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
+      }
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
@@ -82,9 +88,11 @@
           apex.debug.warn( "Warnings during XML Import", warnings );
         }
         this.zoom( "fit-viewport" );
-        bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
-        bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
-        bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+        if ( this.options.addHighlighting ) {
+          bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
+          bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
+          bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+        }
         // trigger load event
         event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", { diagramId: this.diagramId } );
       } catch (err) {
@@ -99,8 +107,10 @@
       try {
         const result = await bpmnViewer$.saveSVG({ format: true });
         const { svg } = result;
-        const styledSVG = bpmnViewer$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
-        return styledSVG;
+        if ( this.options.addHighlighting ) {
+          return bpmnViewer$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+        }
+        return svg;
       } catch (err) {
         apex.debug.error( "Get SVG failed.", err );
         throw err;
@@ -114,19 +124,27 @@
         refreshObject: "#" + this.canvasId,
         loadingIndicator: "#" + this.canvasId
       }).then( pData => {
-        if ( pData.found ) {  
+        if ( pData.found ) {
           // get hierarchy
           this.data = pData.data;
           // get root diagram
-          var rootDiagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined')
-          // set widget attributes
-          this.index     = pData.data.indexOf(rootDiagram);
-          this.diagram   = rootDiagram.diagram;
-          this.current   = rootDiagram.current;
-          this.completed = rootDiagram.completed;
-          this.error     = rootDiagram.error;
-          // set widget reference to viewer module
-          this.bpmnViewer$.get('subProcessModule').setWidget(this);
+          var rootDiagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined');
+          // add highlighting
+          if ( this.options.addHighlighting ) {
+            this.current   = rootDiagram.current;
+            this.completed = rootDiagram.completed;
+            this.error     = rootDiagram.error;
+          }
+          // global sub process insight
+          if ( this.options.useGlobalSubProcessInsight ) {
+            // set reference to current diagram
+            this.index = pData.data.indexOf(rootDiagram);
+            // set widget reference to viewer module
+            this.bpmnViewer$.get('subProcessModule').setWidget(this);
+          }
+          // set diagram
+          this.diagram = rootDiagram.diagram;
+          this.diagramId = rootDiagram.diagramId;
           // load diagram
           this.loadDiagram();
         } else {

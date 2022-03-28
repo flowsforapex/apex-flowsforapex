@@ -13,6 +13,11 @@
   padding: 12px;
 }
 
+#breadcrumb .diagram-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 /**
  * custom dark mode colors
  */
