@@ -88,13 +88,5 @@ as
   ( p_subflow_id    in flow_subflows.sbfl_id%type
   ) return boolean;
 
-  function create_async_apex_session
-  ( p_process_id         in flow_processes.prcs_id%type
-  , p_subflow_id         in flow_subflows.sbfl_id%type
-  ) return number;
-
-  procedure delete_async_apex_session
-  ( p_session_id         in number);
-
 end flow_engine_util;
 /

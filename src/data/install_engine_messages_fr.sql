@@ -8,7 +8,35 @@ begin
   'fr',
   'Type d''événement de lancer intermédiaire actuellement non pris en charge rencontré à %0.'
   );
-  
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-invalid_params',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
+  );
+
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-username',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-appid',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-pageid',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'boundary-event-child-lock-to',

@@ -204,6 +204,12 @@ as
   gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'beforeEvent';
   gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'onEvent';
 
+-- ASync Session Parameter Keys
+
+  gc_async_parameter_username          constant flow_types_pkg.t_expr_set := 'username';
+  gc_async_parameter_applicationId     constant flow_types_pkg.t_expr_set := 'applicationId';
+  gc_async_parameter_pageId            constant flow_types_pkg.t_expr_set := 'pageId';
+
 -- Config Parameter Keys
 
   gc_config_logging_level             constant varchar2(50 char) := 'logging_level';
