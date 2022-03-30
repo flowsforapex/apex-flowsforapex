@@ -17,6 +17,9 @@ as
   gc_bpmn_prefix constant varchar2(10 char)  := 'bpmn:';
   gc_apex_prefix constant varchar2(10 char)  := 'apex:';
 
+  ge_invalid_session_params   exception;
+  pragma exception_init (ge_invalid_session_params, -20987);
+
   -- BPMN Keys
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';

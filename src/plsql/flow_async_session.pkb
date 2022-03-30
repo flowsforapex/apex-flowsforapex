@@ -1,8 +1,6 @@
 create or replace package body flow_async_session
 as
 
-  invalid_session_params   exception;
-  pragma exception_init (invalid_session_params, -20987);
 
   procedure set_async_proc_var
   ( p_process_id         in flow_processes.prcs_id%type
@@ -132,6 +130,7 @@ as
     l_username               flow_object_attributes.obat_vc_value%type;
     l_session_id             number;
   begin
+    flow_globals.set_is_recursive_step (p_is_recursive_step => true);
     -- get the current object (and scope) as timer object name
     select sbfl.sbfl_current
   --       , sbfl.sbfl_scope
@@ -189,17 +188,17 @@ as
         , p_page_id  => l_page_id
         , p_username => l_username 
         );
-      return v('APP_SESSION');
     exception
-      when invalid_session_params then
+      when flow_constants_pkg.ge_invalid_session_params then
           flow_errors.handle_instance_error
           ( pi_prcs_id      => p_process_id
           , pi_sbfl_id      => p_subflow_id
           , pi_message_key  => 'async-invalid_params'
           , p0              => l_timer_name
           );
-          raise invalid_session_params;
+          raise flow_constants_pkg.ge_invalid_session_params;
     end;
+    return v('APP_SESSION');
   end;
 
 

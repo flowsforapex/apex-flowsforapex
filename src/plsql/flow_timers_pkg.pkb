@@ -2,10 +2,8 @@ create or replace package body flow_timers_pkg
 as
 
   lock_timeout             exception;
-  invalid_session_params   exception;
   e_invalid_duration       exception;
   pragma exception_init (lock_timeout, -3006);  
-  pragma exception_init (invalid_session_params, -20987);
 
   type t_timer_def is record
   ( timer_type            flow_object_attributes.obat_vc_value%type
@@ -244,6 +242,8 @@ as
     l_timr_run              flow_timers.timr_run%type;
     l_apex_session          number;
   begin
+    -- set error_handling to recursive step mode
+    flow_globals.set_is_recursive_step (p_is_recursive_step => true);
     loop -- until no records found
       -- could add a functional index on flow_timers to improve performance of this query
       -- eg. create index flow_timr_n1 on flow_timers (
@@ -272,9 +272,6 @@ as
         l_apex_session := flow_async_session.create_async_apex_session  ( p_process_id => l_timers.timr_prcs_id
                                                                         , p_subflow_id => l_timers.timr_sbfl_id
                                                                         );
-        if l_apex_session is null then
-          raise invalid_session_params;
-        end if;
 
         -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
         -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
@@ -301,7 +298,11 @@ as
         , p_timr_id    => l_timr_id
         , p_run        => l_timr_run
         );
-
+        -- drop the session
+        if l_apex_session is not null then
+          flow_async_session.delete_async_apex_session ( p_session_id => l_apex_session );
+        end if;
+        commit;
       exception 
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
@@ -321,10 +322,13 @@ as
           , p3 => l_timers.timr_run
           );
           -- $F4AMESSAGE 'timer-broken' || 'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
+          -- set error status on subflow & Process
+          flow_errors.set_error_status ( pi_prcs_id  => l_timers.timr_prcs_id 
+                                       , pi_sbfl_id  => l_timers.timr_sbfl_id
+                                       );
+          commit;
       end;
-      -- drop the session
-      flow_async_session.delete_async_apex_session ( p_session_id => l_apex_session );
-      commit;
+
     end loop;
     exception 
       when no_data_found then return;
