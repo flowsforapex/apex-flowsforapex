@@ -125,26 +125,32 @@
         loadingIndicator: "#" + this.canvasId
       }).then( pData => {
         if ( pData.found ) {
-          // get hierarchy
-          this.data = pData.data;
-          // get root diagram
-          var rootDiagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined');
-          // add highlighting
-          if ( this.options.addHighlighting ) {
-            this.current   = rootDiagram.current;
-            this.completed = rootDiagram.completed;
-            this.error     = rootDiagram.error;
-          }
-          // global sub process insight
+          var diagram;
+          // use call activities
           if ( this.options.useGlobalSubProcessInsight ) {
+            // get hierarchy
+            this.data = pData.data;
+            // get root entry
+            diagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined');
             // set reference to current diagram
-            this.index = pData.data.indexOf(rootDiagram);
+            this.index = pData.data.indexOf(diagram);
+            // 
+            this.diagramId = diagram.diagramId;
             // set widget reference to viewer module
             this.bpmnViewer$.get('subProcessModule').setWidget(this);
           }
-          // set diagram
-          this.diagram = rootDiagram.diagram;
-          this.diagramId = rootDiagram.diagramId;
+          else {
+            // get first (only) entry
+            diagram = pData.data[0];
+          }     
+          // add highlighting
+          if ( this.options.addHighlighting ) {
+            this.current   = diagram.current;
+            this.completed = diagram.completed;
+            this.error     = diagram.error;
+          }
+          // set diagram content
+          this.diagram = diagram.diagram;
           // load diagram
           this.loadDiagram();
         } else {

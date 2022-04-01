@@ -213,18 +213,28 @@ as
       
       while apex_exec.next_row( p_context => l_context ) loop
         apex_json.open_object;
-
+        
         apex_json.write
         (
-          p_name  => 'diagramId'
-        , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_dgrm_id_col_idx )
+          p_name  => 'diagram'
+        , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
         );
 
-        apex_json.write
-        (
-          p_name  => 'callingDiagramId'
-        , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_calling_dgrm_col_idx )
-        );
+        if l_dgrm_id_col_idx is not null then
+            apex_json.write
+            (
+              p_name  => 'diagramId'
+            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_dgrm_id_col_idx )
+            );
+        end if;
+        
+        if l_calling_dgrm_col_idx is not null then
+            apex_json.write
+            (
+              p_name  => 'callingDiagramId'
+            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_calling_dgrm_col_idx )
+            );
+        end if;
 
         if l_calling_objt_col_idx is not null then
             apex_json.write
@@ -233,12 +243,6 @@ as
             , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_calling_objt_col_idx )
             );
         end if;
-        
-        apex_json.write
-        (
-          p_name  => 'diagram'
-        , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
-        );
 
         if l_breadcrumb_col_idx is not null then
             apex_json.write

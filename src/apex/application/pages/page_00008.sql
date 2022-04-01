@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220114090656'
+,p_last_upd_yyyymmddhh24miss=>'20220401151105'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -1043,6 +1043,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_09=>'Y'
 ,p_attribute_10=>'N'
 ,p_attribute_11=>'Y'
+,p_attribute_14=>'N'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5981427830464471)
@@ -1959,8 +1960,12 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_OBJT_NAME'
 ,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>'flow_engine_app_api.get_objt_name(p_objt_bpmn_id => :P8_OBJT_BPMN_ID)'
-,p_attribute_07=>'P8_OBJT_BPMN_ID'
+,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_app_api.get_objt_name(',
+'    p_objt_bpmn_id => :P8_OBJT_BPMN_ID',
+'  , p_prcs_id => :P8_PRCS_ID',
+')'))
+,p_attribute_07=>'P8_OBJT_BPMN_ID,P8_PRCS_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
