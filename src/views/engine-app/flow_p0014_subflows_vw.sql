@@ -14,4 +14,5 @@ as
              from flow_subflows sbfl
              join flow_objects objt
                on sbfl.sbfl_current = objt.objt_bpmn_id
+              and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
 with read only;
