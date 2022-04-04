@@ -51,12 +51,6 @@ as
                   ) ||
                   apex_javascript.add_attribute
                   (
-                    p_name      => 'enableExpandModule'
-                  , p_value     => ( p_region.attribute_10 = 'Y' )
-                  , p_add_comma => true
-                  ) ||
-                  apex_javascript.add_attribute
-                  (
                     p_name      => 'useNavigatedViewer'
                   , p_value     => ( p_region.attribute_11 = 'Y' )
                   , p_add_comma => true
@@ -69,7 +63,7 @@ as
                   ) ||    
                   apex_javascript.add_attribute
                   (
-                    p_name      => 'useGlobalSubProcessInsight'
+                    p_name      => 'enableCallActivities'
                   , p_value     => ( p_region.attribute_14 = 'Y' )
                   , p_add_comma => true
                   ) ||  

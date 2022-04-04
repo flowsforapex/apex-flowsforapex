@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220401151105'
+,p_last_upd_yyyymmddhh24miss=>'20220404112131'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -76,7 +76,6 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'DGRM_CONTENT'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
-,p_attribute_10=>'N'
 ,p_attribute_11=>'N'
 ,p_attribute_14=>'N'
 );

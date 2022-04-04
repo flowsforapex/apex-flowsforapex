@@ -9,9 +9,8 @@
       noDataFoundMessage: "Could not load Diagram",
       refreshOnLoad: false,
       useNavigatedViewer: false,
-      enableExpandModule: true,
       addHighlighting: false,
-      useGlobalSubProcessInsight: false,
+      enableCallActivities: false,
       config: {
         currentStyle: {
           "fill": "#6aad42",
@@ -45,10 +44,7 @@
       if ( this.options.addHighlighting ) {
         this.enabledModules.push(bpmnViewer.customModules.styleModule);
       }
-      if ( this.options.enableExpandModule ) {
-        this.enabledModules.push( bpmnViewer.customModules.spViewModule );
-      }
-      if ( this.options.useGlobalSubProcessInsight ) {
+      if ( this.options.enableCallActivities ) {
         this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
       }
       this.bpmnRenderer = {
@@ -127,7 +123,7 @@
         if ( pData.found ) {
           var diagram;
           // use call activities
-          if ( this.options.useGlobalSubProcessInsight ) {
+          if ( this.options.enableCallActivities ) {
             // get hierarchy
             this.data = pData.data;
             // get root entry
