@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220404112131'
+,p_last_upd_yyyymmddhh24miss=>'20220404124856'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -65,8 +65,8 @@ wwv_flow_api.create_page_plug(
 ,p_plug_display_sequence=>40
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'TABLE'
-,p_query_table=>'FLOW_DIAGRAMS_VW'
-,p_query_where=>'dgrm_id = :p7_dgrm_id'
+,p_query_table=>'FLOW_P0007_VW'
+,p_query_where=>'root_dgrm = :p7_dgrm_id'
 ,p_include_rowid_column=>false
 ,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION'
 ,p_ajax_items_to_submit=>'P7_DGRM_ID'
@@ -74,10 +74,15 @@ wwv_flow_api.create_page_plug(
 ,p_plug_display_condition_type=>'ITEM_IS_NOT_NULL'
 ,p_plug_display_when_condition=>'P7_DGRM_ID'
 ,p_attribute_01=>'DGRM_CONTENT'
+,p_attribute_03=>'DGRM_ID'
+,p_attribute_05=>'CALLING_DGRM'
+,p_attribute_07=>'CALLING_OBJT'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_attribute_11=>'N'
-,p_attribute_14=>'N'
+,p_attribute_12=>'BREADCRUMB'
+,p_attribute_13=>'SUB_PRCS_INSIGHT'
+,p_attribute_14=>'Y'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(34402779943171413)
@@ -662,6 +667,15 @@ wwv_flow_api.create_page_item(
 ,p_inline_help_text=>'Delete associated process instances'
 ,p_attribute_01=>'APPLICATION'
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(44803477939176616)
+,p_name=>'P7_LOADED_DGRM_ID'
+,p_item_sequence=>50
+,p_item_plug_id=>wwv_flow_api.id(28425138174759832)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'N'
+);
 wwv_flow_api.create_page_computation(
  p_id=>wwv_flow_api.id(34403109564171417)
 ,p_computation_sequence=>10
@@ -902,34 +916,64 @@ wwv_flow_api.create_page_da_action(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(16955083547047750)
-,p_name=>'Viewer Refreshed'
+,p_name=>'Viewer Diagram Loaded'
 ,p_event_sequence=>100
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(28425138174759832)
 ,p_bind_type=>'bind'
-,p_bind_event_type=>'apexafterrefresh'
+,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(44803522247176617)
+,p_event_id=>wwv_flow_api.id(16955083547047750)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P7_LOADED_DGRM_ID'
+,p_attribute_01=>'JAVASCRIPT_EXPRESSION'
+,p_attribute_05=>'this.data.diagramId'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(16955942968047775)
 ,p_event_id=>wwv_flow_api.id(16955083547047750)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>30
+,p_action_sequence=>20
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P7_OBJT_LIST'
-,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>'flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_DGRM_ID)'
-,p_attribute_07=>'P7_DGRM_ID'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P7_LOADED_DGRM_ID is not null',
+'then return flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_LOADED_DGRM_ID);',
+'else return flow_engine_app_api.get_objt_list(p_prcs_id => :P7_PRCS_ID);',
+'end if;'))
+,p_attribute_07=>'P7_LOADED_DGRM_ID,P7_DGRM_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(16956960300047776)
 ,p_event_id=>wwv_flow_api.id(16955083547047750)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>50
+,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -945,21 +989,11 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(28425138174759832)
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'$v(''P7_OBJT_LIST'').split('':'').includes(this.data.element.id);'
+,p_triggering_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$v(''P7_OBJT_LIST'').split('':'').includes(this.data.element.id) &&',
+'(this.data.element.type != ''bpmn:CallActivity'' || (this.data.originalEvent.target.tagName != ''path'' && !this.data.originalEvent.target.getAttribute(''transform'')))'))
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(16957799465050250)
@@ -984,13 +1018,21 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P7_OBJT_NAME'
-,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P7_LOADED_DGRM_ID is not null',
+'then return',
 'flow_engine_app_api.get_objt_name(',
 '    p_objt_bpmn_id => :P7_OBJT_BPMN_ID',
-'  , p_dgrm_id => :P7_DGRM_ID',
-')'))
-,p_attribute_07=>'P7_OBJT_BPMN_ID,P7_DGRM_ID'
+'  , p_dgrm_id => :P7_LOADED_DGRM_ID',
+');',
+'else return',
+'flow_engine_app_api.get_objt_name(',
+'    p_objt_bpmn_id => :P7_OBJT_BPMN_ID',
+'  , p_prcs_id => :P7_PRCS_ID',
+');',
+'end if;'))
+,p_attribute_07=>'P7_OBJT_BPMN_ID,P7_LOADED_DGRM_ID,P7_PRCS_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
