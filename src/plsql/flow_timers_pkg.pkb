@@ -839,6 +839,7 @@ begin
 
     update flow_timers
        set timr_start_on = l_timer_rec.timr_start_on
+         , timr_status = c_created
      where timr_id = l_timer_rec.timr_id
        and timr_run = l_timer_rec.timr_run
     ;
