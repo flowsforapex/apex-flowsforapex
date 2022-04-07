@@ -301,6 +301,22 @@ as
    end loop;
    apex_json.close_object;
   end get_json_placeholders;
+  procedure get_usernames
+  as
+    l_result clob;
+    cursor c_users is select * from apex_workspace_apex_users order by user_name;
+    l_user apex_workspace_apex_users%rowtype;
+  begin
+    l_result := '[{"name":"","value":""},';
+    open c_users;
+    loop
+        fetch c_users into l_user;
+        exit when c_users%NOTFOUND;
+        l_result := l_result || '{"name":"' || l_user.user_name || '","value":"' || l_user.user_name || '"},';
+    end loop;
+    l_result := rtrim(l_result, ',') || ']';
+    htp.p(l_result);
+  end get_usernames;
   procedure parse_code
   as
     v_cur int;
@@ -369,6 +385,7 @@ as
       when 'GET_TEMPLATES' then get_templates;
       when 'PARSE_CODE' then parse_code;
       when 'GET_JSON_PLACEHOLDERS' then get_json_placeholders;
+      when 'GET_USERNAMES' then get_usernames;
       else null;
     end case;
     return l_return;
