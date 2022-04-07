@@ -9,6 +9,6 @@ as
        , calling_dgrm
        , calling_objt
        , breadcrumb
-       , sub_prcs_insight
+       , drilldown_allowed
     from flow_instance_details_vw
 with read only;

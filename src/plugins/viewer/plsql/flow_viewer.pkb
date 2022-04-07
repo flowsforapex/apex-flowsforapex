@@ -193,131 +193,150 @@ as
     apex_json.open_object;
 
     if apex_exec.get_total_row_count( p_context => l_context ) > 0 then
-
-      apex_json.write
-      (
-        p_name  => 'found'
-      , p_value => true
-      );
-
-      apex_json.open_array
-      (
-        p_name => 'data'
-      );
-      
-      while apex_exec.next_row( p_context => l_context ) loop
-        apex_json.open_object;
-        
+    
+      -- multiple rows found but call activity option disabled
+      if apex_exec.get_total_row_count( p_context => l_context ) > 1 and p_region.attribute_14 = 'N' then
+          
         apex_json.write
         (
-          p_name  => 'diagram'
-        , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
+          p_name  => 'found'
+        , p_value => false
         );
-
-        if l_dgrm_id_col_idx is not null then
-            apex_json.write
-            (
-              p_name  => 'diagramId'
-            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_dgrm_id_col_idx )
-            );
-        end if;
-        
-        if l_calling_dgrm_col_idx is not null then
-            apex_json.write
-            (
-              p_name  => 'callingDiagramId'
-            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_calling_dgrm_col_idx )
-            );
-        end if;
-
-        if l_calling_objt_col_idx is not null then
-            apex_json.write
-            (
-              p_name  => 'callingObjectId'
-            , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_calling_objt_col_idx )
-            );
-        end if;
-
-        if l_breadcrumb_col_idx is not null then
-            apex_json.write
-            (
-              p_name  => 'breadcrumb'
-            , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_breadcrumb_col_idx )
-            );
-        end if;
-
-        if l_sub_prcs_insight_col_idx is not null then
-            apex_json.write
-            (
-              p_name  => 'insight'
-            , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_sub_prcs_insight_col_idx )
-            );
-        end if;
-
-        apex_json.open_array
+          
+        apex_json.write
         (
-          p_name => 'current'
+          p_name  => 'message'
+        , p_value => flow_api_pkg.message( p_message_key => 'plugin-multiple-rows', p_lang => apex_util.get_session_lang() )
         );
-
-        if l_current_col_idx is not null then
-          l_current_nodes :=
-            apex_string.split
-            (
-              p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
-            , p_sep => ':'
-            );
-
-          for i in 1..l_current_nodes.count loop
-            apex_json.write( p_value => l_current_nodes(i) );
-          end loop;
-        end if;
-
-        apex_json.close_array;
-
-        apex_json.open_array
-        (
-          p_name => 'completed'
-        );
+          
+      else
       
-        if l_completed_col_idx is not null then
-          l_completed_nodes :=
-            apex_string.split
-            (
-              p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_completed_col_idx )
-            , p_sep => ':'
-            );
-
-          for i in 1..l_completed_nodes.count loop
-            apex_json.write( p_value => l_completed_nodes(i) );
-          end loop;
-        end if;
-
-        apex_json.close_array;
+        apex_json.write
+        (
+          p_name  => 'found'
+        , p_value => true
+        );
 
         apex_json.open_array
         (
-          p_name => 'error'
+          p_name => 'data'
         );
 
-        if l_error_col_idx is not null then
-          l_error_nodes :=
-            apex_string.split
-            (
-              p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_error_col_idx )
-            , p_sep => ':'
-            );
+        while apex_exec.next_row( p_context => l_context ) loop
+          apex_json.open_object;
 
-          for i in 1..l_error_nodes.count loop
-            apex_json.write( p_value => l_error_nodes(i) );
-          end loop;
-        end if;
+          apex_json.write
+          (
+            p_name  => 'diagram'
+          , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx )
+          );
+
+          if l_dgrm_id_col_idx is not null then
+              apex_json.write
+              (
+                p_name  => 'diagramId'
+              , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_dgrm_id_col_idx )
+              );
+          end if;
+
+          if l_calling_dgrm_col_idx is not null then
+              apex_json.write
+              (
+                p_name  => 'callingDiagramId'
+              , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_calling_dgrm_col_idx )
+              );
+          end if;
+
+          if l_calling_objt_col_idx is not null then
+              apex_json.write
+              (
+                p_name  => 'callingObjectId'
+              , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_calling_objt_col_idx )
+              );
+          end if;
+
+          if l_breadcrumb_col_idx is not null then
+              apex_json.write
+              (
+                p_name  => 'breadcrumb'
+              , p_value => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_breadcrumb_col_idx )
+              );
+          end if;
+
+          if l_sub_prcs_insight_col_idx is not null then
+              apex_json.write
+              (
+                p_name  => 'insight'
+              , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_sub_prcs_insight_col_idx )
+              );
+          end if;
+
+          apex_json.open_array
+          (
+            p_name => 'current'
+          );
+
+          if l_current_col_idx is not null then
+            l_current_nodes :=
+              apex_string.split
+              (
+                p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_current_col_idx )
+              , p_sep => ':'
+              );
+
+            for i in 1..l_current_nodes.count loop
+              apex_json.write( p_value => l_current_nodes(i) );
+            end loop;
+          end if;
+
+          apex_json.close_array;
+
+          apex_json.open_array
+          (
+            p_name => 'completed'
+          );
+
+          if l_completed_col_idx is not null then
+            l_completed_nodes :=
+              apex_string.split
+              (
+                p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_completed_col_idx )
+              , p_sep => ':'
+              );
+
+            for i in 1..l_completed_nodes.count loop
+              apex_json.write( p_value => l_completed_nodes(i) );
+            end loop;
+          end if;
+
+          apex_json.close_array;
+
+          apex_json.open_array
+          (
+            p_name => 'error'
+          );
+
+          if l_error_col_idx is not null then
+            l_error_nodes :=
+              apex_string.split
+              (
+                p_str => apex_exec.get_varchar2( p_context => l_context, p_column_idx => l_error_col_idx )
+              , p_sep => ':'
+              );
+
+            for i in 1..l_error_nodes.count loop
+              apex_json.write( p_value => l_error_nodes(i) );
+            end loop;
+          end if;
+
+          apex_json.close_array;
+
+          apex_json.close_object;
+        end loop;
 
         apex_json.close_array;
-
-        apex_json.close_object;
-      end loop;
       
-      apex_json.close_array;
+      end if;
 
     else
       apex_json.write
