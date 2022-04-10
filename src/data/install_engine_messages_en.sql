@@ -342,35 +342,35 @@ begin
   values (
   'var-set-error',
   'en',
-  'Error creating process variable %0 for process id %1.'
+  'Error creating process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-get-error',
   'en',
-  'Error getting process variable %0 for process id %1.'
+  'Error getting process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-update-error',
   'en',
-  'Error updating process variable %0 for process id %1.'
+  'Error updating process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-delete-error',
   'en',
-  'Error deleting process variable %0 for process id %1.'
+  'Error deleting process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-lock-error',
   'en',
-  'Error locking process variable %0 for process id %1.'
+  'Error locking process variable %0 for process id %1 in scope %2.'
   );
 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

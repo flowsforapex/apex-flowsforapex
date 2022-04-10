@@ -1,103 +1,61 @@
-create or replace package flow_process_vars
+create or replace package flow_proc_vars
 as 
  /********************************************************************************
 **
-**        PROCESS VARIABLE SYSTEM (get / set / etc)
-**        Process Variable System API for Application Developers
+**        PROCESS VARIABLE SYSTEM (get / set / etc) 
+**        FOR USE ONLY BY THE FLOW ENGINE (PRIVATE TO ENGINE)
 **
 ********************************************************************************/ 
  
--- Set_var - Signature 1a - Set a varchar2 variable using scope (defaulting to 0, top level scope) 
-procedure set_var
-( pi_prcs_id    in flow_processes.prcs_id%type
-, pi_var_name   in flow_process_variables.prov_var_name%type
-, pi_vc2_value  in flow_process_variables.prov_var_vc2%type
-, pi_scope      in flow_process_variables.prov_scope%type default 0
-);
 
--- Set_var - Signature 1b - Set a varchar2 variable using current subflow id 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_vc2_value in flow_process_variables.prov_var_vc2%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 );
-
--- set_var - signature 2a - Set a number variable using scope (defaulting to 0, top level scope) 
-procedure set_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_num_value in flow_process_variables.prov_var_num%type
-, pi_scope in flow_process_variables.prov_scope%type default 0
-);
-
--- Set_var - Signature 2b - Set a number variable using current subflow id 
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_num_value in flow_process_variables.prov_var_num%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
+, pi_scope in flow_process_variables.prov_scope%type default 0
 );
-
--- Set_var - Signature 3a - Set a date variable using scope (defaulting to 0, top level scope) 
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_date_value in flow_process_variables.prov_var_date%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 , pi_scope in flow_process_variables.prov_scope%type default 0
 );
-
--- Set_var - Signature 3b - Set a date variable using current subflow id 
-
-procedure set_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_date_value in flow_process_variables.prov_var_date%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
-);
-
--- Set_var - Signature 4a - Set a CLOB variable using scope (defaulting to 0, top level scope) 
 
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_clob_value in flow_process_variables.prov_var_clob%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
 , pi_scope in flow_process_variables.prov_scope%type default 0
 );
-
--- Set_var - Signature 4b - Set a CLOB variable using current subflow id 
-
-procedure set_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_clob_value in flow_process_variables.prov_var_clob%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
-);
-
 
 -- getters return
 
--- get_var_vc2:  varchar2 type - signature 1
-
 function get_var_vc2
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_vc2%type;
-
--- get_var_vc2:  varchar2 type - signature 2
-
-function get_var_vc2
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
-, pi_exception_on_null in boolean default false
-) return flow_process_variables.prov_var_vc2%type;
-
--- get_var_num:  number type - signature 1
 
 function get_var_num
 ( pi_prcs_id in flow_processes.prcs_id%type
@@ -106,17 +64,6 @@ function get_var_num
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_num%type;
 
--- get_var_num:  number type - signature 2
-
-function get_var_num
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
-, pi_exception_on_null in boolean default false
-) return flow_process_variables.prov_var_num%type;
-
--- get_var_date:  date type - signature 1
-
 function get_var_date
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
@@ -124,36 +71,13 @@ function get_var_date
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_date%type;
 
--- get_var_date:  date type - signature 2
-
-function get_var_date
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
-, pi_exception_on_null in boolean default false
-) return flow_process_variables.prov_var_date%type;
-
-
--- get_var_CLOB:  CLOB type - signature 1
-
 function get_var_clob
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_clob%type;
-
--- get_var_CLOB:  CLOB type - signature 2
-
-function get_var_clob
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
-, pi_exception_on_null in boolean default false
-) return flow_process_variables.prov_var_clob%type;
-
--- get_var_type - signature 1 - by scope, including default scope
-
+  
 function get_var_type
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
@@ -161,29 +85,10 @@ function get_var_type
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_type%type;
 
--- get_var_type - signature 2 - by subflow_id
-
-function get_var_type
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
-, pi_exception_on_null in boolean default false
-) return flow_process_variables.prov_var_type%type;
-
--- delete_var - Signature 1 - by scope, including default scope
-
 procedure delete_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_scope in flow_process_variables.prov_scope%type default 0
-);
-
--- delete_var - Signature 2 - by subflow_id
-
-procedure delete_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
 );
 
 /********************************************************************************
@@ -206,7 +111,7 @@ return flow_process_variables.prov_var_vc2%type;
 
  /********************************************************************************
 **
-**        FOR FLOW_ENGINE USE  - move to flow_proc_vars only?
+**        FOR FLOW_ENGINE USE
 **
 ********************************************************************************/ 
 
@@ -231,5 +136,10 @@ procedure do_substitution
 , pio_string in out nocopy clob
 );
 
-end flow_process_vars;
+function scope_is_valid
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_scope   in flow_subflows.sbfl_scope%type
+) return boolean;
+
+end flow_proc_vars;
 /

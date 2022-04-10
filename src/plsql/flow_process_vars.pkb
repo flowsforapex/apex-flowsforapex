@@ -1,445 +1,604 @@
+/* 
+-- Flows for APEX - flow_process_vars.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2020-2022.
+--
+-- Created september-2020  Richard Allen (Flowquest) 
+-- Edited  April 2022 - Richard Allen (Oracle)
+--
+*/
 create or replace package body flow_process_vars
 as
 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+
+
+-- Signature 1a - set varchar2 process variable with known or default scope
+
 procedure set_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_vc2_value in flow_process_variables.prov_var_vc2%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type default null
-, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
-, pi_expr_set in flow_object_expressions.expr_set%type default null
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_vc2_value  in flow_process_variables.prov_var_vc2%type
+, pi_scope      in flow_process_variables.prov_scope%type default 0
 )
 is 
-  l_action  varchar2(20);
+  l_current     flow_subflows.sbfl_current%type;
 begin
-  begin
-      insert into flow_process_variables 
-      ( prov_prcs_id
-      , prov_var_name
-      , prov_var_type
-      , prov_var_vc2
-      ) values
-      ( pi_prcs_id
-      , pi_var_name
-      , flow_constants_pkg.gc_prov_var_type_varchar2 
-      , pi_vc2_value
-      );      
-  exception
-    when dup_val_on_index then
-      l_action := 'var-update-error';
-      update flow_process_variables prov 
-         set prov.prov_var_vc2 = pi_vc2_value
-       where prov.prov_prcs_id = pi_prcs_id
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_varchar2 
-           ;
-    when others
-    then
-      l_action := 'var-set-error';
-      raise;
-  end;
-  flow_logging.log_variable_event
-  ( p_process_id        => pi_prcs_id
-  , p_var_name          => pi_var_name
-  , p_objt_bpmn_id      => pi_objt_bpmn_id
-  , p_subflow_id        => pi_sbfl_id
-  , p_expr_set          => pi_expr_set
-  , p_var_type          => flow_constants_pkg.gc_prov_var_type_varchar2 
-  , p_var_vc2           => pi_vc2_value
-  );
-exception
-  when others
-  then
-    flow_errors.handle_instance_error
-    ( pi_prcs_id        => pi_prcs_id
-    , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => l_action
-    , p0 => pi_var_name
-    , p1 => pi_prcs_id
-    );
-    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
-    -- $F4AMESSAGE 'var-update-error' || 'Error updating process variable %0 for process id %1.'   
+  -- if scope is not 0, validate
+  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+    -- call internal set_var signature 1
+    flow_proc_vars.set_var
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_var_name     => pi_var_name
+      , pi_vc2_value    => pi_vc2_value
+      , pi_scope        => pi_scope
+      );
+  end if;
 end set_var;
 
+-- signature 1b - set varchar2 process variable using subflow_id for scope
+
 procedure set_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_num_value in flow_process_variables.prov_var_num%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type default null
-, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
-, pi_expr_set in flow_object_expressions.expr_set%type default null
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_vc2_value  in flow_process_variables.prov_var_vc2%type
+, pi_sbfl_id    in flow_subflows.sbfl_id%type 
 )
 is 
-  l_action  varchar2(20);
-begin 
-  begin
-      insert into flow_process_variables 
-      ( prov_prcs_id
-      , prov_var_name
-      , prov_var_type
-      , prov_var_num
-      ) values
-      ( pi_prcs_id
-      , pi_var_name
-      , flow_constants_pkg.gc_prov_var_type_number
-      , pi_num_value
-      );
-  exception
-    when dup_val_on_index then
-      l_action := 'var-update-error';
-      update flow_process_variables prov 
-         set prov.prov_var_num = pi_num_value
-       where prov.prov_prcs_id = pi_prcs_id
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
-           ;
-    when others
-    then
-      l_action := 'var-set-error';
-      raise;
-  end;
-  flow_logging.log_variable_event
-  ( p_process_id        => pi_prcs_id
-  , p_var_name          => pi_var_name
-  , p_objt_bpmn_id      => pi_objt_bpmn_id
-  , p_subflow_id        => pi_sbfl_id
-  , p_expr_set          => pi_expr_set
-  , p_var_type          => flow_constants_pkg.gc_prov_var_type_number
-  , p_var_num           => pi_num_value
-  );
-exception
-  when others
-  then
-    flow_errors.handle_instance_error
-    ( pi_prcs_id        => pi_prcs_id
-    , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => l_action         
-    , p0 => pi_var_name
-    , p1 => pi_prcs_id
+  l_scope       flow_process_variables.prov_scope%type;
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+       , sbfl.sbfl_current
+    into l_scope
+       , l_current
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  -- call internal set_var signature 1
+  flow_proc_vars.set_var
+    ( pi_prcs_id      => pi_prcs_id
+    , pi_var_name     => pi_var_name
+    , pi_vc2_value    => pi_vc2_value
+    , pi_scope        => l_scope
+    , pi_sbfl_id      => pi_sbfl_id
+    , pi_objt_bpmn_id => l_current
     );
-    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
-    -- $F4AMESSAGE 'var-update-error' || 'Error updating process variable %0 for process id %1.'   
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_prcs_id
+      , p1 => pi_sbfl_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
 end set_var;
 
+-- Signature 2a - set number process variable with known or default scope
+
 procedure set_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_num_value  in flow_process_variables.prov_var_num%type
+, pi_scope      in flow_process_variables.prov_scope%type default 0
+)
+is 
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- if scope is not 0, validate
+  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+    -- call internal set_var signature 2
+    flow_proc_vars.set_var
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_var_name     => pi_var_name
+      , pi_num_value    => pi_num_value
+      , pi_scope        => pi_scope
+      );
+  end if;
+end set_var;
+
+-- signature 2b - set number process variable using subflow_id for scope
+
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_num_value  in flow_process_variables.prov_var_num%type
+, pi_sbfl_id    in flow_subflows.sbfl_id%type 
+)
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+       , sbfl.sbfl_current
+    into l_scope
+       , l_current
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  -- call internal set_var signature 2
+  flow_proc_vars.set_var
+    ( pi_prcs_id      => pi_prcs_id
+    , pi_var_name     => pi_var_name
+    , pi_num_value    => pi_num_value
+    , pi_scope        => l_scope
+    , pi_sbfl_id      => pi_sbfl_id
+    , pi_objt_bpmn_id => l_current
+    );
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+end set_var;
+
+-- Signature 3a - set date process variable with known or default scope
+
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
 , pi_date_value in flow_process_variables.prov_var_date%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type default null
-, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
-, pi_expr_set in flow_object_expressions.expr_set%type default null
+, pi_scope      in flow_process_variables.prov_scope%type default 0
 )
 is 
-  l_action  varchar2(20);
-begin 
-  begin
-      insert into flow_process_variables 
-      ( prov_prcs_id
-      , prov_var_name
-      , prov_var_type
-      , prov_var_date
-      ) values
-      ( pi_prcs_id
-      , pi_var_name
-      , flow_constants_pkg.gc_prov_var_type_date
-      , pi_date_value
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- if scope is not 0, validate
+  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+    -- call internal set_var signature 3
+    flow_proc_vars.set_var
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_var_name     => pi_var_name
+      , pi_date_value   => pi_date_value
+      , pi_scope        => pi_scope
       );
-  exception
-    when dup_val_on_index then
-      l_action := 'var-update-error';
-      update flow_process_variables prov 
-         set prov.prov_var_date = pi_date_value
-       where prov.prov_prcs_id = pi_prcs_id
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_date
-           ;
-    when others
-    then
-      l_action := 'var-set-error';
-      raise;
-  end;
-  flow_logging.log_variable_event
-  ( p_process_id        => pi_prcs_id
-  , p_var_name          => pi_var_name
-  , p_objt_bpmn_id      => pi_objt_bpmn_id
-  , p_subflow_id        => pi_sbfl_id
-  , p_expr_set          => pi_expr_set
-  , p_var_type          => flow_constants_pkg.gc_prov_var_type_date 
-  , p_var_date          => pi_date_value
-  );
-exception
-  when others
-  then
-    flow_errors.handle_instance_error
-    ( pi_prcs_id        => pi_prcs_id
-    , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => l_action         
-    , p0 => pi_var_name
-    , p1 => pi_prcs_id
-    );
-    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
-    -- $F4AMESSAGE 'var-update-error' || 'Error updating process variable %0 for process id %1.'   
+  end if;
 end set_var;
 
+-- signature 3b - set date process variable using subflow_id for scope
+
 procedure set_var
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_clob_value in flow_process_variables.prov_var_clob%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type default null
-, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
-, pi_expr_set in flow_object_expressions.expr_set%type default null
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_date_value in flow_process_variables.prov_var_date%type
+, pi_sbfl_id    in flow_subflows.sbfl_id%type 
 )
 is 
-  l_action  varchar2(20);
-begin 
-  begin
-      insert into flow_process_variables 
-      ( prov_prcs_id
-      , prov_var_name
-      , prov_var_type
-      , prov_var_clob
-      ) values
-      ( pi_prcs_id
-      , pi_var_name
-      , flow_constants_pkg.gc_prov_var_type_clob
-      , pi_clob_value
-      );
-  exception
-    when dup_val_on_index then
-      update flow_process_variables prov 
-         set prov.prov_var_clob = pi_clob_value
-       where prov.prov_prcs_id = pi_prcs_id
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_clob
-           ;
-    when others
-    then
-      l_action := 'var-set-error';
-      raise;
-  end;
-  flow_logging.log_variable_event
-  ( p_process_id        => pi_prcs_id
-  , p_var_name          => pi_var_name
-  , p_objt_bpmn_id      => pi_objt_bpmn_id
-  , p_subflow_id        => pi_sbfl_id
-  , p_expr_set          => pi_expr_set
-  , p_var_type          => flow_constants_pkg.gc_prov_var_type_clob 
-  , p_var_clob           => pi_clob_value
-  );
-exception
-  when others
-  then
-    flow_errors.handle_instance_error
-    ( pi_prcs_id        => pi_prcs_id
-    , pi_sbfl_id        => pi_sbfl_id
-    , pi_message_key    => l_action         
-    , p0 => pi_var_name
-    , p1 => pi_prcs_id
+  l_scope       flow_process_variables.prov_scope%type;
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+       , sbfl.sbfl_current
+    into l_scope
+       , l_current
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  -- call internal set_var signature 3
+  flow_proc_vars.set_var
+    ( pi_prcs_id      => pi_prcs_id
+    , pi_var_name     => pi_var_name
+    , pi_date_value   => pi_date_value
+    , pi_scope        => l_scope
+    , pi_sbfl_id      => pi_sbfl_id
+    , pi_objt_bpmn_id => l_current
     );
-    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1.'
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
 end set_var;
+
+-- Signature 4a - set CLOB process variable with known or default scope
+
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_clob_value in flow_process_variables.prov_var_clob%type
+, pi_scope      in flow_process_variables.prov_scope%type default 0
+)
+is 
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- if scope is not 0, validate
+  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+    -- call internal set_var signature 4
+    flow_proc_vars.set_var
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_var_name     => pi_var_name
+      , pi_clob_value   => pi_clob_value
+      , pi_scope        => pi_scope
+      );
+  end if;
+end set_var;
+
+-- signature 4b - set CLOB process variable using subflow_id for scope
+
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_clob_value  in flow_process_variables.prov_var_clob%type
+, pi_sbfl_id    in flow_subflows.sbfl_id%type 
+)
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+       , sbfl.sbfl_current
+    into l_scope
+       , l_current
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  -- call internal set_var signature 4
+  flow_proc_vars.set_var
+    ( pi_prcs_id      => pi_prcs_id
+    , pi_var_name     => pi_var_name
+    , pi_clob_value   => pi_clob_value
+    , pi_scope        => l_scope
+    , pi_sbfl_id      => pi_sbfl_id
+    , pi_objt_bpmn_id => l_current
+    );
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+end set_var;
+
 
 -- getters return
 
+-- get_var_vc2:  varchar2 type - signature 1 - scope (or no scope) supplied
+
 function get_var_vc2
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_exception_on_null in boolean default false
+( pi_prcs_id            in flow_processes.prcs_id%type
+, pi_var_name           in flow_process_variables.prov_var_name%type
+, pi_scope              in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null  in boolean default false
 ) return flow_process_variables.prov_var_vc2%type
 is 
-   po_vc2_value  flow_process_variables.prov_var_vc2%type;
+begin
+  return flow_proc_vars.get_var_vc2
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+end get_var_vc2;
+
+-- get_var_vc2:  varchar2 type - signature 2 - subflow_id supplied
+
+function get_var_vc2
+( pi_prcs_id            in flow_processes.prcs_id%type
+, pi_var_name           in flow_process_variables.prov_var_name%type
+, pi_sbfl_id            in flow_subflows.sbfl_id%type
+, pi_exception_on_null  in boolean default false
+) return flow_process_variables.prov_var_vc2%type
+is 
+  l_scope       flow_process_variables.prov_scope%type;
 begin 
-   select prov.prov_var_vc2
-     into po_vc2_value
-     from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
-        ;
-   return po_vc2_value;
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  return flow_proc_vars.get_var_vc2
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
 exception
   when no_data_found then
-    if pi_exception_on_null then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-get-error'      
-      , p0 => pi_var_name
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
       , p1 => pi_prcs_id
       );
-    -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
-    else
-      return null;
-    end if;
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
 end get_var_vc2;
+
+-- get_var_num:  number type - signature 1 - scope (or no scope) supplied
+
+function get_var_num
+( pi_prcs_id            in flow_processes.prcs_id%type
+, pi_var_name           in flow_process_variables.prov_var_name%type
+, pi_scope              in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null  in boolean default false
+) return flow_process_variables.prov_var_num%type
+is 
+begin
+  return flow_proc_vars.get_var_num
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+end get_var_num;
+
+-- get_var_num:  number type - signature 2 - subflow_id supplied
 
 function get_var_num
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_num%type
-is 
-   po_num_value  flow_process_variables.prov_var_num%type;
+is
+  l_scope       flow_process_variables.prov_scope%type;
 begin 
-   select prov.prov_var_num
-     into po_num_value
-     from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
-        ;
-   return po_num_value;
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  return flow_proc_vars.get_var_num
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
 exception
   when no_data_found then
-    if pi_exception_on_null then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-get-error'      
-      , p0 => pi_var_name
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
       , p1 => pi_prcs_id
       );
-      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
-    else
-      return null;
-    end if;
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
 end get_var_num;
 
+-- get_var_date: date type - signature 1 - scope (or no scope) supplied
+
 function get_var_date
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_var_name in flow_process_variables.prov_var_name%type
-, pi_exception_on_null in boolean default false
+( pi_prcs_id            in flow_processes.prcs_id%type
+, pi_var_name           in flow_process_variables.prov_var_name%type
+, pi_scope              in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null  in boolean default false
 ) return flow_process_variables.prov_var_date%type
 is 
-   po_date_value  flow_process_variables.prov_var_date%type;
+begin
+  return flow_proc_vars.get_var_date
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+end get_var_date;
+
+-- get_var_date: date type - signature 2 - subflow_id supplied
+
+function get_var_date
+( pi_prcs_id            in flow_processes.prcs_id%type
+, pi_var_name           in flow_process_variables.prov_var_name%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_exception_on_null  in boolean default false
+) return flow_process_variables.prov_var_date%type
+is 
+  l_scope       flow_process_variables.prov_scope%type;
 begin 
-   select prov.prov_var_date
-     into po_date_value
-     from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
-        ;
-   return po_date_value;
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  return flow_proc_vars.get_var_date
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
 exception
   when no_data_found then
-    if pi_exception_on_null then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-get-error'      
-      , p0 => pi_var_name
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
       , p1 => pi_prcs_id
       );
-      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
-    else
-      return null;
-    end if;
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
 end get_var_date;
+
+-- get_var_CLOB:  CLOB type - signature 1 - scope (or no scope) supplied
 
 function get_var_clob
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_clob%type
 is 
-   po_clob_value  flow_process_variables.prov_var_clob%type;
-begin 
-   select prov.prov_var_clob
-     into po_clob_value
-     from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
-        ;
-   return po_clob_value;
-exception
-  when no_data_found then
-    if pi_exception_on_null then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-get-error'      
-      , p0 => pi_var_name
-      , p1 => pi_prcs_id
-      );
-      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
-    else
-      return null;
-    end if;
+begin
+  return flow_proc_vars.get_var_clob
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
 end get_var_clob;
 
--- get type of a variable
+-- get_var_CLOB:  CLOB type - signature 2 - subflow_id supplied
+
+function get_var_clob
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_clob%type
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+begin 
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  return flow_proc_vars.get_var_clob
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+end get_var_clob;
+
+-- get type of a variable - signature 1 - with scope including default scope
 
 function get_var_type
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_type%type
 is 
-   l_var_type  flow_process_variables.prov_var_clob%type;
-begin 
-   select prov.prov_var_type
-     into l_var_type
-     from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
-        ;
-   return l_var_type;
-exception
-  when no_data_found then
-    if pi_exception_on_null then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-get-error'      
-      , p0 => pi_var_name
-      , p1 => pi_prcs_id
-      );
-      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1.'
-    else
-      return null;
-    end if;
+begin
+  return flow_proc_vars.get_var_type
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
 end get_var_type;
 
--- delete a variable
+-- get_var_type - signature 2 - subflow_id supplied
+
+function get_var_type
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_type%type
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+begin 
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  return flow_proc_vars.get_var_type
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+end get_var_type;
+
+-- delete a variable - signature 1 - with scope including default scope
 
 procedure delete_var 
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
 )
 is
-  l_var_type   flow_process_variables.prov_var_type%type;
-begin 
-  select prov_var_type
-    into l_var_type
-    from flow_process_variables prov
-   where prov.prov_prcs_id = pi_prcs_id
-     and prov.prov_var_name = pi_var_name
-     for update wait 2;
+begin
+  flow_proc_vars.delete_var
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              );
+end delete_var;
 
-  delete 
-    from flow_process_variables prov
-   where prov.prov_prcs_id = pi_prcs_id
-     and prov.prov_var_name = pi_var_name
+-- get_var_type - signature 2 - subflow_id supplied
+
+procedure delete_var 
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+)
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+begin 
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  flow_logging.log_variable_event
-  ( p_process_id        => pi_prcs_id
-  , p_var_name          => pi_var_name
-  , p_var_type          => l_var_type
-  );
+  flow_proc_vars.delete_var
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              );
 exception
-  when  no_data_found then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'var-delete-error'        
-      , p0 => pi_var_name
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
       , p1 => pi_prcs_id
       );
-      -- $F4AMESSAGE 'var-delete-error' || 'Error deleting process variable %0 for process id %1.'
-  when lock_timeout then
-    flow_errors.handle_instance_error
-    ( pi_prcs_id        => pi_prcs_id
-    , pi_message_key    => 'var-lock-error'       
-    , p0 => pi_var_name
-    , p1 => pi_prcs_id
-    );
-    -- $F4AMESSAGE 'var-lock-error' || 'Error locking process variable %0 for process id %1.'
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
 end delete_var;
+
 
 -- special cases / built-in standard variables
 
@@ -452,8 +611,9 @@ end delete_var;
   )
   is
   begin
-    set_var
+    flow_proc_vars.set_var
     ( pi_prcs_id      => pi_prcs_id
+    , pi_scope        => 0
     , pi_var_name     => flow_constants_pkg.gc_prov_builtin_business_ref
     , pi_vc2_value    => pi_vc2_value
     , pi_sbfl_id      => pi_sbfl_id

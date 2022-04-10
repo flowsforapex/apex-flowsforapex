@@ -345,6 +345,7 @@ ALTER TABLE flow_timers
 
 create table flow_process_variables
 ( prov_prcs_id number not null
+, prov_scope number not null
 , prov_var_name varchar2(50 char) not null
 , prov_var_type varchar2(50 char) not null 
 , prov_var_vc2 varchar2(4000 char)
@@ -353,7 +354,7 @@ create table flow_process_variables
 , prov_var_clob clob
 );
 
-alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_var_name);
+alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name);
 
 
 alter table flow_process_variables add constraint prov_prcs_fk foreign key (prov_prcs_id)
@@ -432,6 +433,7 @@ create table flow_step_event_log
 
 create table flow_variable_event_log
 ( lgvr_prcs_id			    number not null
+, lgvr_scope                number not null
 , lgvr_var_name			    varchar2(50 char) not null
 , lgvr_objt_id			    VARCHAR2(50 char) 
 , lgvr_sbfl_id			    NUMBER
