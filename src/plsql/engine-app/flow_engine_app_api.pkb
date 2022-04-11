@@ -267,6 +267,24 @@ as
 
 
   function get_objt_list(
+    p_prcs_id in flow_processes.prcs_id%type
+  ) return varchar2
+  as
+    l_objt_list varchar2(32767);
+  begin    
+    select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
+      into l_objt_list
+      from flow_objects
+     where objt_dgrm_id = (
+           select prcs_dgrm_id 
+             from flow_processes
+            where prcs_id = p_prcs_id)
+       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
+    return l_objt_list;
+  end get_objt_list;
+
+
+  function get_objt_list(
     p_dgrm_id in flow_diagrams.dgrm_id%type
   ) return varchar2
   as
@@ -276,21 +294,41 @@ as
       into l_objt_list
       from flow_objects
      where objt_dgrm_id = p_dgrm_id
-       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane', 'bpmn:callActivity');
+       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
     return l_objt_list;
   end get_objt_list;
   
   
   function get_objt_name(
     p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type
   ) return flow_objects.objt_name%type
   as
     l_objt_name flow_objects.objt_name%type;
   begin
-    select distinct objt_name
+    select objt_name
       into l_objt_name
       from flow_objects
-     where objt_bpmn_id = p_objt_bpmn_id;
+     where objt_bpmn_id = p_objt_bpmn_id
+       and objt_dgrm_id = p_dgrm_id;
+    return l_objt_name;
+  end get_objt_name;
+
+
+  function get_objt_name(
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_prcs_id      in flow_processes.prcs_id%type
+  ) return flow_objects.objt_name%type
+  as
+    l_objt_name flow_objects.objt_name%type;
+  begin
+    select objt_name
+      into l_objt_name
+      from flow_objects
+     where objt_bpmn_id = p_objt_bpmn_id
+       and objt_dgrm_id = (select prcs_dgrm_id
+                             from flow_processes
+                            where prcs_id = p_prcs_id);
     return l_objt_name;
   end get_objt_name;
 
