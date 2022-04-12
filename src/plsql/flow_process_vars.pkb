@@ -28,9 +28,9 @@ is
   l_current     flow_subflows.sbfl_current%type;
 begin
   -- if scope is not 0, validate
-  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 1
-    flow_proc_vars.set_var
+    flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
       , pi_var_name     => pi_var_name
       , pi_vc2_value    => pi_vc2_value
@@ -61,7 +61,7 @@ begin
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
   -- call internal set_var signature 1
-  flow_proc_vars.set_var
+  flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
     , pi_var_name     => pi_var_name
     , pi_vc2_value    => pi_vc2_value
@@ -93,9 +93,9 @@ is
   l_current     flow_subflows.sbfl_current%type;
 begin
   -- if scope is not 0, validate
-  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 2
-    flow_proc_vars.set_var
+    flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
       , pi_var_name     => pi_var_name
       , pi_num_value    => pi_num_value
@@ -126,7 +126,7 @@ begin
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
   -- call internal set_var signature 2
-  flow_proc_vars.set_var
+  flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
     , pi_var_name     => pi_var_name
     , pi_num_value    => pi_num_value
@@ -158,9 +158,9 @@ is
   l_current     flow_subflows.sbfl_current%type;
 begin
   -- if scope is not 0, validate
-  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 3
-    flow_proc_vars.set_var
+    flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
       , pi_var_name     => pi_var_name
       , pi_date_value   => pi_date_value
@@ -191,7 +191,7 @@ begin
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
   -- call internal set_var signature 3
-  flow_proc_vars.set_var
+  flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
     , pi_var_name     => pi_var_name
     , pi_date_value   => pi_date_value
@@ -223,9 +223,9 @@ is
   l_current     flow_subflows.sbfl_current%type;
 begin
   -- if scope is not 0, validate
-  if flow_proc_vars.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 4
-    flow_proc_vars.set_var
+    flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
       , pi_var_name     => pi_var_name
       , pi_clob_value   => pi_clob_value
@@ -256,7 +256,7 @@ begin
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
   -- call internal set_var signature 4
-  flow_proc_vars.set_var
+  flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
     , pi_var_name     => pi_var_name
     , pi_clob_value   => pi_clob_value
@@ -289,7 +289,7 @@ function get_var_vc2
 ) return flow_process_variables.prov_var_vc2%type
 is 
 begin
-  return flow_proc_vars.get_var_vc2
+  return flow_proc_vars_int.get_var_vc2
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => pi_scope
@@ -315,7 +315,7 @@ begin
    where sbfl.sbfl_id = pi_sbfl_id
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  return flow_proc_vars.get_var_vc2
+  return flow_proc_vars_int.get_var_vc2
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => l_scope
@@ -343,7 +343,7 @@ function get_var_num
 ) return flow_process_variables.prov_var_num%type
 is 
 begin
-  return flow_proc_vars.get_var_num
+  return flow_proc_vars_int.get_var_num
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => pi_scope
@@ -369,7 +369,7 @@ begin
    where sbfl.sbfl_id = pi_sbfl_id
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  return flow_proc_vars.get_var_num
+  return flow_proc_vars_int.get_var_num
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => l_scope
@@ -397,7 +397,7 @@ function get_var_date
 ) return flow_process_variables.prov_var_date%type
 is 
 begin
-  return flow_proc_vars.get_var_date
+  return flow_proc_vars_int.get_var_date
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => pi_scope
@@ -423,7 +423,7 @@ begin
    where sbfl.sbfl_id = pi_sbfl_id
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  return flow_proc_vars.get_var_date
+  return flow_proc_vars_int.get_var_date
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => l_scope
@@ -451,7 +451,7 @@ function get_var_clob
 ) return flow_process_variables.prov_var_clob%type
 is 
 begin
-  return flow_proc_vars.get_var_clob
+  return flow_proc_vars_int.get_var_clob
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => pi_scope
@@ -477,7 +477,7 @@ begin
    where sbfl.sbfl_id = pi_sbfl_id
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  return flow_proc_vars.get_var_clob
+  return flow_proc_vars_int.get_var_clob
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => l_scope
@@ -505,7 +505,7 @@ function get_var_type
 ) return flow_process_variables.prov_var_type%type
 is 
 begin
-  return flow_proc_vars.get_var_type
+  return flow_proc_vars_int.get_var_type
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => pi_scope
@@ -531,7 +531,7 @@ begin
    where sbfl.sbfl_id = pi_sbfl_id
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  return flow_proc_vars.get_var_type
+  return flow_proc_vars_int.get_var_type
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => l_scope
@@ -558,7 +558,7 @@ procedure delete_var
 )
 is
 begin
-  flow_proc_vars.delete_var
+  flow_proc_vars_int.delete_var
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => pi_scope
@@ -582,7 +582,7 @@ begin
    where sbfl.sbfl_id = pi_sbfl_id
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  flow_proc_vars.delete_var
+  flow_proc_vars_int.delete_var
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => l_scope
@@ -611,7 +611,7 @@ end delete_var;
   )
   is
   begin
-    flow_proc_vars.set_var
+    flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
     , pi_scope        => 0
     , pi_var_name     => flow_constants_pkg.gc_prov_builtin_business_ref

@@ -1,3 +1,14 @@
+/* 
+-- Flows for APEX - flow_services.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 21-Nov-2021  Louis Moreaux (Insum, for MT AG) 
+-- Edited  13-Apr-2022 - Richard Allen (Oracle)
+--
+*/
+
 create or replace package body flow_services
 as
   g_workspace varchar2(100) := flow_engine_util.get_config_value(
@@ -50,15 +61,19 @@ as
       l_workspace        varchar2(100);
       l_session          varchar2(20) := v('APP_SESSION');
       l_json_object      json_object_t;
+      l_scope            flow_subflows.sbfl_scope%type;
     begin
       apex_debug.enter 
       ( 'send_email'
       , 'pi_objt_id', pi_objt_id
       );
 
+      l_scope := flow_engine_util.get_scope ( p_subflow_id => pi_prcs_id, p_subflow_id => pi_sbfl_id );
+
       flow_globals.set_context 
       ( pi_prcs_id => pi_prcs_id
       , pi_sbfl_id => pi_sbfl_id 
+      , pi_scope   => l_scope
       );
       
       for rec in (
@@ -87,44 +102,44 @@ as
         case rec.obat_key
           when flow_constants_pkg.gc_apex_servicetask_email_from then
             l_from := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_from );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_from );
           when flow_constants_pkg.gc_apex_servicetask_email_to then
             l_to := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_to );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_to );
           when flow_constants_pkg.gc_apex_servicetask_email_cc then
             l_cc := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_cc );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_cc );
           when flow_constants_pkg.gc_apex_servicetask_email_bcc then
             l_bcc := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_bcc );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_bcc );
           when flow_constants_pkg.gc_apex_servicetask_email_reply_to then
             l_reply_to := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_reply_to );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_reply_to );
           when flow_constants_pkg.gc_apex_servicetask_use_template then
             l_use_template := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
           when flow_constants_pkg.gc_apex_servicetask_application_id then
             l_application_id := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_application_id );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_application_id );
           when flow_constants_pkg.gc_apex_servicetask_template_id then
             l_template_id := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_template_id );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_template_id );
           when flow_constants_pkg.gc_apex_servicetask_placeholder then
             l_placeholders := rec.obat_clob_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_placeholders );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_placeholders );
           when flow_constants_pkg.gc_apex_servicetask_immediately then
             l_immediate := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
           when flow_constants_pkg.gc_apex_servicetask_subject then
             l_subject := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_subject );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_subject );
           when flow_constants_pkg.gc_apex_servicetask_body_text then
             l_body := rec.obat_clob_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_body );
           when flow_constants_pkg.gc_apex_servicetask_body_html then
             l_body_html := rec.obat_clob_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_body_html );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_body_html );
           when flow_constants_pkg.gc_apex_servicetask_attachment then
             l_attachment_query := rec.obat_vc_value;
-            flow_process_vars.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pio_string => l_attachment_query );
+            flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_attachment_query );
         else
           null;
         end case;

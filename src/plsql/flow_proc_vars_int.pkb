@@ -1,4 +1,12 @@
-create or replace package body flow_proc_vars
+/* 
+-- Flows for APEX - flow_proc_vars_int.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+--
+-- Created    12-Apr-2022  Richard Allen (Oracle)
+--
+*/
+create or replace package body flow_proc_vars_int
 as
 
   lock_timeout exception;
@@ -512,7 +520,7 @@ end delete_var;
   )
   is
   begin
-    flow_proc_vars.set_var
+    flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
     , pi_scope        => 0  -- business_ref always set in top level scope
     , pi_var_name     => flow_constants_pkg.gc_prov_builtin_business_ref
@@ -559,6 +567,7 @@ end delete_var;
   (
     pi_prcs_id  in flow_processes.prcs_id%type
   , pi_sbfl_id  in flow_subflows.sbfl_id%type
+  , pi_scope    in flow_subflows.sbfl_scope%type
   , pi_step_key in flow_subflows.sbfl_step_key%type default null
   , pio_string  in out nocopy varchar2
   )
@@ -606,6 +615,7 @@ end delete_var;
                 into l_replacement_value
                 from flow_process_variables prov
                where prov.prov_prcs_id  = pi_prcs_id
+                 and prov.prov_scope    = pi_scope
                  and upper(prov.prov_var_name) = upper(l_f4a_substitutions(i))
               ;
               pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), l_replacement_value );
@@ -624,6 +634,7 @@ end delete_var;
   (
     pi_prcs_id  in flow_processes.prcs_id%type
   , pi_sbfl_id  in flow_subflows.sbfl_id%type
+  , pi_scope    in flow_subflows.sbfl_scope%type
   , pi_step_key in flow_subflows.sbfl_step_key%type default null
   , pio_string  in out nocopy clob
   )
@@ -671,6 +682,7 @@ end delete_var;
                 into l_replacement_value
                 from flow_process_variables prov
                where prov.prov_prcs_id  = pi_prcs_id
+                 and prov.prov_scope    = pi_scope
                  and upper(prov.prov_var_name) = upper(l_f4a_substitutions(i))
               ;
               pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), l_replacement_value );
@@ -685,5 +697,5 @@ end delete_var;
     end if;
   end do_substitution;
 
-end flow_proc_vars;
+end flow_proc_vars_int;
 /

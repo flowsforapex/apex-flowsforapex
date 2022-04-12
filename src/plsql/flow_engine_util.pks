@@ -101,5 +101,10 @@ as
   ( p_subflow_id    in flow_subflows.sbfl_id%type
   ) return boolean;
 
+  function get_scope
+  (  p_process_id  in flow_processes.prcs_id%type
+  ,  p_subflow_id  in flow_subflows.sbfl_id%type
+  ) return flow_subflows.sbfl_scope%type;
+
 end flow_engine_util;
 /

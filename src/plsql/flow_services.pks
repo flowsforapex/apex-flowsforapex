@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_services.pks
+-- 
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 21-Nov-2021  Louis Moreaux (Insum, for MT AG) 
+--
+*/
+
 create or replace package flow_services
   authid current_user
 as

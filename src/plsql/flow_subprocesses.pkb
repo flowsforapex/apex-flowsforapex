@@ -66,6 +66,8 @@ as
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => p_subflow_id
+        , pi_var_scope    => p_sbfl_info.sbfl_scope
+        , pi_expr_scope   => p_sbfl_info.sbfl_scope        
         );
       exception
         when no_data_found then
@@ -203,6 +205,8 @@ as
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => l_sbfl_context_sub.sbfl_id
+        , pi_var_scope    => l_sbfl_context_sub.scope
+        , pi_expr_scope   => l_sbfl_context_sub.scope
         );
 
         if not flow_globals.get_step_error then 

@@ -15,7 +15,7 @@ drop package flow_bpmn_parser_pkg;
 drop package flow_migrate_xml_pkg;
 drop package flow_expressions;
 drop package flow_process_vars;
-drop package flow_proc_vars;
+drop package flow_proc_vars_int;
 drop package flow_instances;
 drop package flow_engine;
 drop package flow_api_pkg;

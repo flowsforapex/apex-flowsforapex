@@ -99,6 +99,7 @@ as
     l_called_dgrm_id            flow_diagrams.dgrm_id%type;
     l_called_start_objt_bpmn_id flow_objects.objt_bpmn_id%type;
     l_called_subflow_context    flow_types_pkg.t_subflow_context;
+    l_calling_sbfl_scope        flow_subflows.sbfl_scope%type;
     l_prdg_id                   flow_instance_diagrams.prdg_id%type;
   begin
     apex_debug.enter 
@@ -121,13 +122,6 @@ as
        and prdg.prdg_calling_objt = p_step_info.target_objt_ref
        for update of prdg.prdg_diagram_level wait 2
     ;
-
-    /*l_called_dgrm_id := flow_diagram.get_current_diagram 
-                        ( pi_dgrm_name              => l_call_definition.dgrm_name
-                        , pi_dgrm_calling_method    => l_call_definition.dgrm_version_selection
-                        , pi_dgrm_version           => l_call_definition.dgrm_version
-                        , pi_prcs_id                => p_process_id
-                        );*/
 
     -- find start object
 
@@ -172,6 +166,7 @@ as
             , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_callactivity
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
+        returning sbfl.sbfl_scope into l_calling_sbfl_scope
         ; 
 
         -- update the instance_calls table with the new diagram_level
@@ -179,19 +174,25 @@ as
            set prdg.prdg_diagram_level = l_called_subflow_context.sbfl_id
          where prdg.prdg_id = l_prdg_id;
 
-/*         -- map inVariables expressions for call
+        -- map inVariables expressions for call (variables in called scope, expressions in calling scope)
         flow_expressions.process_expressions
-        ( pi_objt_bpmn_id => l_target_objt_sub  
-        , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+        ( pi_objt_bpmn_id => p_step_info.target_objt_id 
+        , pi_set          => flow_constants_pkg.gc_expr_set_in_variables
         , pi_prcs_id      => p_process_id
-        , pi_sbfl_id      => l_sbfl_context_sub.sbfl_id
-        );*/
-        -- run on-event expressions for child startEvent
+        , pi_sbfl_id      => l_called_subflow_context.sbfl_id   --- should this be logged on calling or called subflows?  variables only in scope of called...
+        , pi_var_scope    => l_called_subflow_context.scope
+        , pi_expr_scope   => l_calling_sbfl_scope
+        );
+
+
+        -- run on-event expressions for child startEvent (inside called diagram scope)
         flow_expressions.process_expressions
         ( pi_objt_bpmn_id => l_called_start_objt_bpmn_id 
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => l_called_subflow_context.sbfl_id
+        , pi_var_scope    => l_called_subflow_context.scope
+        , pi_expr_scope   => l_called_subflow_context.scope
         );
         if not flow_globals.get_step_error then 
           -- check again for any errors from expressions before stepping forward in the called activity

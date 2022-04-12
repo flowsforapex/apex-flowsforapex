@@ -1,4 +1,13 @@
-create or replace package flow_proc_vars
+/* 
+-- Flows for APEX - flow_proc_vars_int.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+--
+-- Created    12-Apr-2022  Richard Allen (Oracle)
+--
+*/
+
+create or replace package flow_proc_vars_int
 as 
  /********************************************************************************
 **
@@ -122,18 +131,20 @@ procedure delete_all_for_process
 
 procedure do_substitution
 (
-  pi_prcs_id in flow_processes.prcs_id%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
+  pi_prcs_id  in flow_processes.prcs_id%type
+, pi_sbfl_id  in flow_subflows.sbfl_id%type
+, pi_scope    in flow_subflows.sbfl_scope%type
 , pi_step_key in flow_subflows.sbfl_step_key%type default null
-, pio_string in out nocopy varchar2
+, pio_string  in out nocopy varchar2
 );
 
 procedure do_substitution
 (
-  pi_prcs_id in flow_processes.prcs_id%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type
+  pi_prcs_id  in flow_processes.prcs_id%type
+, pi_sbfl_id  in flow_subflows.sbfl_id%type
+, pi_scope    in flow_subflows.sbfl_scope%type
 , pi_step_key in flow_subflows.sbfl_step_key%type default null
-, pio_string in out nocopy clob
+, pio_string  in out nocopy clob
 );
 
 function scope_is_valid
@@ -141,5 +152,5 @@ function scope_is_valid
 , pi_scope   in flow_subflows.sbfl_scope%type
 ) return boolean;
 
-end flow_proc_vars;
+end flow_proc_vars_int;
 /
