@@ -122,18 +122,18 @@
       }).then( pData => {
         if ( pData.found ) {
           var diagram;
+          // show/hide breadcrumb
+          (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
           // use call activities
           if ( this.options.enableCallActivities ) {
-            // get hierarchy
-            this.data = pData.data;
             // get root entry
             diagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined');
-            // set reference to current diagram
+            // set references to hierarchy + current diagram
+            this.data = pData.data;
             this.index = pData.data.indexOf(diagram);
-            // 
             this.diagramId = diagram.diagramId;
             // set widget reference to viewer module
-            this.bpmnViewer$.get('subProcessModule').setWidget(this);
+            this.bpmnViewer$.get('subProcessModule').setWidget(this);  
           }
           else {
             // get first (only) entry
