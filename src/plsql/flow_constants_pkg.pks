@@ -210,15 +210,15 @@ as
   gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
   gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
 
--- Process Variable Expression sets
+-- Process Variable Expression sets and CallActivity in-Out sets
   gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';
   gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'afterTask';
   gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'beforeSplit';
   gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'afterMerge';
   gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'beforeEvent';
   gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'onEvent';
-  gc_expr_set_in_variables            constant flow_types_pkg.t_expr_set := 'inVariables';
-  gc_expr_set_out_variables           constant flow_types_pkg.t_expr_set := 'outVariables';
+  gc_expr_set_in_variables            constant flow_types_pkg.t_expr_set := 'intoCalledActivity';
+  gc_expr_set_out_variables           constant flow_types_pkg.t_expr_set := 'callActivityReturns';
 
 -- Config Parameter Keys
 

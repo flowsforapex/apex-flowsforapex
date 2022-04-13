@@ -22,10 +22,10 @@ PROMPT >> Prepare Subflows for Call Activities
 
 ALTER TABLE flow_object_expressions
     drop CONSTRAINT expr_set_ck;
-    
+
 ALTER TABLE flow_object_expressions
     ADD CONSTRAINT expr_set_ck
-      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge', 'inVariables', 'outVariables') );
+      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge', 'intoCalledActivity', 'callActivityReturns') );
 
 
 begin

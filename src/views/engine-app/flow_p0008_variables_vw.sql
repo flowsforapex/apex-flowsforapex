@@ -5,6 +5,7 @@ as
        prov_prcs_id,
        prov_var_name,
        prov_var_type,
+       prov_scope,
        case
             when prov_var_vc2 is not null then prov_var_vc2
             when prov_var_num is not null then cast(prov_var_num as varchar2(4000))
