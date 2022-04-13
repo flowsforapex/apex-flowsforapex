@@ -616,7 +616,7 @@ begin
   values (
   'plugin-multiple-rows',
   'en',
-  'Mutliple rows found. Please enable the ''Enable Call Activities'' setting in the viewer plugin attributes.'
+  'Multiple rows found. Please enable the ''Enable Call Activities'' setting in the viewer plugin attributes.'
   );
   commit;
 end;
