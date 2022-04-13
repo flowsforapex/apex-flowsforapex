@@ -27,7 +27,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220404112131'
+,p_last_upd_yyyymmddhh24miss=>'20220407122804'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -101,7 +101,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_09=>'Y'
 ,p_attribute_11=>'Y'
 ,p_attribute_12=>'BREADCRUMB'
-,p_attribute_13=>'SUB_PRCS_INSIGHT'
+,p_attribute_13=>'DRILLDOWN_ALLOWED'
 ,p_attribute_14=>'Y'
 );
 wwv_flow_api.create_page_plug(

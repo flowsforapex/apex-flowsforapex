@@ -50,7 +50,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
        , prdg.prdg_calling_dgrm as calling_dgrm
        , prdg.prdg_calling_objt as calling_objt
        , dgrm.dgrm_name || ' (' || dgrm.dgrm_version || ')' as breadcrumb
-       , 1 as sub_prcs_insight
+       , 1 as drilldown_allowed
        , dgrm.dgrm_id
        , dgrm.dgrm_name
        , dgrm.dgrm_version

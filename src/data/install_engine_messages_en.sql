@@ -611,6 +611,13 @@ begin
   'en',
   'Process %0: ServiceTask %1 placeholder JSON is invalid.Please check the model.'
   );
+
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'plugin-multiple-rows',
+  'en',
+  'Multiple rows found. Please enable the ''Enable Call Activities'' setting in the viewer plugin attributes.'
+  );
   commit;
 end;
 /

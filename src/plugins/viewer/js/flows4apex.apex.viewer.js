@@ -1,6 +1,6 @@
 /* global apex, BpmnJS */
 
-(function( $, region, event ){
+(function( $, region, event, message ){
 
   $.widget( "flows4apex.viewer", {
     options: {
@@ -151,7 +151,20 @@
           this.loadDiagram();
         } else {
           $( "#" + this.canvasId ).hide();
-          $( "#" + this.regionId + " span.nodatafound" ).show();
+          if (pData.message) {
+            apex.message.clearErrors();
+            message.showErrors( [
+              {
+                type: "error",
+                location: ["page"],
+                message: pData.message,
+                unsafe: false,
+              },
+            ] );
+          }
+          else {
+            $( "#" + this.regionId + " span.nodatafound" ).show();
+          }
         }
       });
     },
@@ -174,4 +187,4 @@
     }
   })
 
-})( apex.jQuery, apex.region, apex.event );
+})( apex.jQuery, apex.region, apex.event, apex.message );

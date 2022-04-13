@@ -47,6 +47,7 @@ drop package flow_plugin_manage_instance_variables;
 
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;
+drop view flow_p0007_vw;
 drop view flow_p0007_instances_counter_vw;
 drop view flow_p0007_vw;
 drop view flow_p0008_instance_details_vw;
