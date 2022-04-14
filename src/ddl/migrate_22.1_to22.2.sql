@@ -25,7 +25,7 @@ ALTER TABLE flow_object_expressions
 
 ALTER TABLE flow_object_expressions
     ADD CONSTRAINT expr_set_ck
-      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge', 'intoCalledActivity', 'callActivityReturns') );
+      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge', 'inVariables', 'outVariables') );
 
 
 begin

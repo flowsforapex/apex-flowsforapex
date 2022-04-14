@@ -217,8 +217,8 @@ as
   gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'afterMerge';
   gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'beforeEvent';
   gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'onEvent';
-  gc_expr_set_in_variables            constant flow_types_pkg.t_expr_set := 'intoCalledActivity';
-  gc_expr_set_out_variables           constant flow_types_pkg.t_expr_set := 'callActivityReturns';
+  gc_expr_set_in_variables            constant flow_types_pkg.t_expr_set := 'inVariables';
+  gc_expr_set_out_variables           constant flow_types_pkg.t_expr_set := 'outVariables';
 
 -- Config Parameter Keys
 
