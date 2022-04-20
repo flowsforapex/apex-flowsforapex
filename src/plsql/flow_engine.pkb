@@ -238,8 +238,8 @@ end flow_process_link_event;
 
       end if;
     else  
-      -- in a lower process level (subProcess or CallActivity on another diagram) - process the subProcess endEvent
-      flow_subprocesses.process_subprocess_endEvent
+      -- in a lower process level (subProcess or CallActivity on another diagram) - process the Process Level endEvent (ouch)
+      flow_subprocesses.process_process_level_endEvent
         ( p_process_id        => p_process_id
         , p_subflow_id        => p_subflow_id
         , p_sbfl_info         => p_sbfl_info

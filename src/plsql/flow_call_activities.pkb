@@ -38,17 +38,8 @@ as
     return ( l_prcs_dgrm_id != l_sbfl_dgrm_id);
   end;
 
-  procedure process_call_activity_endEvent
-    ( p_process_id    in flow_processes.prcs_id%type
-    , p_subflow_id    in flow_subflows.sbfl_id%type
-    , p_sbfl_info     in flow_subflows%rowtype
-    , p_step_info     in flow_types_pkg.flow_step_info
-    , p_sbfl_context_par  in flow_types_pkg.t_subflow_context
-    )
-  is
-  begin
-    null;
-  end process_call_activity_endEvent;
+  -- Note: process_call_activity_endEvent is performed by flow_subprocesses.process_process_level_endEvent
+
 
   function get_call_definition
     ( pi_call_objt_id       in   flow_objects.objt_id%type
@@ -176,7 +167,7 @@ as
 
         -- map inVariables expressions for call (variables in called scope, expressions in calling scope)
         flow_expressions.process_expressions
-        ( pi_objt_bpmn_id => p_step_info.target_objt_id 
+        ( pi_objt_id => p_step_info.target_objt_id 
         , pi_set          => flow_constants_pkg.gc_expr_set_in_variables
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => l_called_subflow_context.sbfl_id   --- should this be logged on calling or called subflows?  variables only in scope of called...

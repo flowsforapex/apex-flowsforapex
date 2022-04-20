@@ -68,7 +68,7 @@ as
       , 'pi_objt_id', pi_objt_id
       );
 
-      l_scope := flow_engine_util.get_scope ( p_subflow_id => pi_prcs_id, p_subflow_id => pi_sbfl_id );
+      l_scope := flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id );
 
       flow_globals.set_context 
       ( pi_prcs_id => pi_prcs_id
