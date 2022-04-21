@@ -435,18 +435,20 @@ as
             when flow_constants_pkg.gc_prov_var_type_date then
                 -- substitution parameter is a date process var = already an Oracle date
                 l_parsed_ts :=
-                  flow_process_vars.get_var_date
+                  flow_proc_vars_int.get_var_date
                   ( 
                     pi_prcs_id  => pi_prcs_id
                   , pi_var_name => substr(l_timer_def.timer_definition,6,length(l_timer_def.timer_definition)-6)
+                  , pi_scope    => l_scope
                   )
                 ;
             when flow_constants_pkg.gc_prov_var_type_varchar2 then
-                l_parsed_ts := to_timestamp_tz ( flow_process_vars.get_var_vc2
-                                                 ( pi_prcs_id => pi_prcs_id
+                l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
+                                                 ( pi_prcs_id  => pi_prcs_id
                                                  , pi_var_name => substr  ( l_timer_def.timer_definition,6
                                                                           , length(l_timer_def.timer_definition)-6
                                                                           )
+                                                 , pi_scope    => l_scope
                                                  )
                                                 , flow_constants_pkg.gc_prov_default_date_format
                                                 );
@@ -471,10 +473,11 @@ as
           -- ISO 8601 Duration - check for substitution of process variable
           if upper(substr(l_timer_def.timer_definition,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
             l_timer_def.timer_definition :=
-              flow_process_vars.get_var_vc2
+              flow_proc_vars_int.get_var_vc2
               ( 
                 pi_prcs_id  => pi_prcs_id
               , pi_var_name => substr(l_timer_def.timer_definition,6,length(l_timer_def.timer_definition)-6)
+              , pi_scope    => l_scope
               )
             ;
           end if;     

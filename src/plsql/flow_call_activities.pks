@@ -7,6 +7,7 @@
 --
 */
 create or replace package flow_call_activities 
+accessible by ( flow_engine )
 as
 
   procedure process_callActivity

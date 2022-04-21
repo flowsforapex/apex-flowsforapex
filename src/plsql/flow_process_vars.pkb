@@ -634,7 +634,7 @@ end delete_var;
            );
   end get_business_ref;
 
--- group delete for all vars in a process (used at process deletion, process reset)
+/*-- group delete for all vars in a process (used at process deletion, process reset)
 
   procedure delete_all_for_process
   ( pi_prcs_id in flow_processes.prcs_id%type
@@ -781,7 +781,7 @@ end delete_var;
         end case;
       end loop;
     end if;
-  end do_substitution;
+  end do_substitution;*/
 
 end flow_process_vars;
 /

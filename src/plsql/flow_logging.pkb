@@ -43,7 +43,7 @@ as
           , p_objt_bpmn_id
           , prcs.prcs_dgrm_id
           , prcs.prcs_name
-          , flow_process_vars.get_business_ref (p_process_id)  --- 
+          , flow_proc_vars_int.get_business_ref (p_process_id)  --- 
           , p_event
           , systimestamp 
           , case g_logging_hide_userid 

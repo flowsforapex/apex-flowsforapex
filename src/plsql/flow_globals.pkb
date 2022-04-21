@@ -74,7 +74,7 @@ as
   return flow_process_variables.prov_var_vc2%type
   is
   begin
-    return flow_process_vars.get_business_ref (pi_prcs_id => process_id);
+    return flow_proc_vars_int.get_business_ref (pi_prcs_id => process_id);
   end business_ref;
 
 end flow_globals;

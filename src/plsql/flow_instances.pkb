@@ -379,7 +379,7 @@ as
      where sbfl.sbfl_prcs_id = p_process_id
     ;
     -- delete all process variables except the builtins (new behaviour in 21.1)
-    flow_process_vars.delete_all_for_process 
+    flow_proc_vars_int.delete_all_for_process 
     ( pi_prcs_id => p_process_id
     , pi_retain_builtins => true
     );
@@ -537,7 +537,7 @@ as
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
     ;
-    flow_process_vars.delete_all_for_process 
+    flow_proc_vars_int.delete_all_for_process 
     ( pi_prcs_id => p_process_id
     , pi_retain_builtins => false
     );

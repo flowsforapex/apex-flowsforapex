@@ -7,6 +7,7 @@
 --
 */
 create or replace package flow_subprocesses
+accessible by ( flow_engine )
 as
 
   procedure process_process_level_endEvent

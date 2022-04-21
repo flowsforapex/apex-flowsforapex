@@ -219,7 +219,7 @@ return flow_process_variables.prov_var_vc2%type;
 **        FOR FLOW_ENGINE USE  - move to flow_proc_vars only?
 **
 ********************************************************************************/ 
-
+/*
 procedure delete_all_for_process
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_retain_builtins in boolean default false
@@ -240,6 +240,7 @@ procedure do_substitution
 , pi_step_key in flow_subflows.sbfl_step_key%type default null
 , pio_string in out nocopy clob
 );
+*/
 
 end flow_process_vars;
 /

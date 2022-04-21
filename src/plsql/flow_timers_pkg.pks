@@ -1,5 +1,7 @@
 
-create or replace package flow_timers_pkg as
+create or replace package flow_timers_pkg 
+accessible by ( flow_engine, flow_instance, flow_boundary_events, flow_api_pkg )
+as
 /******************************************************************************
  Purpose:
    Provides support to timers in Flows for APEX.

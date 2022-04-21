@@ -9,6 +9,7 @@
 
 create or replace package flow_services
   authid current_user
+  -- accessible by ( flow_tasks )
 as
   e_no_default_workspace exception;
   e_wrong_default_workspace exception;
