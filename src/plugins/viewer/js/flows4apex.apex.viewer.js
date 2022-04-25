@@ -122,31 +122,47 @@
       }).then( pData => {
         if ( pData.found ) {
           var diagram;
-          // show/hide breadcrumb
-          (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
+          var oldLoaded = true;
+
+          // set widget reference to viewer module
+          this.bpmnViewer$.get('subProcessModule').setWidget(this);
+          
           // use call activities
           if ( this.options.enableCallActivities ) {
-            // get root entry
-            diagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined');
+            // show/hide breadcrumb
+            (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
+            // load old diagram (if possible)
+            diagram = pData.data.find(d => d.diagramId === this.diagramId && d.callingDiagramId === this.callingDiagramId && d.callingObjectId === this.callingObjectId);
+            // otherwise: get root entry
+            if (!diagram) {
+              oldLoaded = false;
+              diagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined');
+            } 
             // set references to hierarchy + current diagram
             this.data = pData.data;
-            this.index = pData.data.indexOf(diagram);
             this.diagramId = diagram.diagramId;
-            // set widget reference to viewer module
-            this.bpmnViewer$.get('subProcessModule').setWidget(this);  
+            this.callingDiagramId = diagram.callingDiagramId;
+            this.callingObjectId = diagram.callingObjectId;
+            // reset breadcrumb
+            if (!oldLoaded) this.bpmnViewer$.get('subProcessModule').resetBreadcrumb();
           }
           else {
+            // hide breadcrumb
+            $('#breadcrumb').hide();
             // get first (only) entry
             diagram = pData.data[0];
-          }     
+          }
+
           // add highlighting
           if ( this.options.addHighlighting ) {
             this.current   = diagram.current;
             this.completed = diagram.completed;
             this.error     = diagram.error;
           }
+
           // set diagram content
           this.diagram = diagram.diagram;
+
           // load diagram
           this.loadDiagram();
         } else {

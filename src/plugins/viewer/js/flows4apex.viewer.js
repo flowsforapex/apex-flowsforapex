@@ -111,7 +111,7 @@ var domQuery = (__webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/
 
 const breadcrumbContainer = domQuery('#breadcrumb');
 
-function addToBreadcrumb(index, label, callingObjectId) {
+function addToBreadcrumb(label, diagramId, callingDiagramId, callingObjectId) {
 
   var span;
 
@@ -127,7 +127,11 @@ function addToBreadcrumb(index, label, callingObjectId) {
   // create + append new node
   span = document.createElement('span');
   span.textContent = label;
-  span.dataset.index = index;
+  span.dataset.index = breadcrumbContainer.childNodes.length;
+  span.dataset.diagramId = diagramId;
+  span.dataset.callingDiagramId = callingDiagramId;
+  span.dataset.callingObjectId = callingObjectId;
+
   if (callingObjectId != null) span.title = `called by ${callingObjectId}`;
 
   breadcrumbContainer.appendChild(span);
@@ -164,22 +168,27 @@ function SubProcessModule(eventBus, canvas) {
     if (event.target.classList.contains('diagram-link')) {
 
       // clicked object
-      var { index } = event.target.dataset;
+      var { index, diagramId, callingDiagramId, callingObjectId } = event.target.dataset;
 
       // retrieve hierarchy
       var { data } = this._widget;
 
       // get new diagram from hierarchy
-      var newDiagram = data[index];
+      var newDiagram = data.find(d => 
+        (d.diagramId.toString() === diagramId) && 
+        (d.callingDiagramId === callingDiagramId || (callingDiagramId === 'undefined' && typeof (d.callingDiagramId) === 'undefined')) && 
+        (d.callingObjectId === callingObjectId || (callingObjectId === 'undefined' && typeof (d.callingObjectId) === 'undefined'))
+      );
+
+      console.log('newDiagram', newDiagram);
 
       // trim breadcrumb to clicked entry
       trimBreadcrumbTo(index);
-
-      // set index to reference new diagram in hierarchy
-      this._widget.index = index;
       
       // set new diagram properties
       this._widget.diagramId = newDiagram.diagramId;
+      this._widget.callingDiagramId = newDiagram.callingDiagramId;
+      this._widget.callingObjectId = newDiagram.callingObjectId;
       this._widget.diagram = newDiagram.diagram;
       this._widget.current = newDiagram.current;
       this._widget.completed = newDiagram.completed;
@@ -201,10 +210,7 @@ function SubProcessModule(eventBus, canvas) {
       var objectId = event.element.id;
 
       // retrieve current index + hierarchy
-      var { data, index } = this._widget;
-
-      // retrieve data of current diagram
-      var { diagramId } = data[index];
+      var { data, diagramId } = this._widget;
 
       // get new diagram from hierarchy
       var newDiagram = data.find(d => d.callingDiagramId === diagramId && d.callingObjectId === objectId);
@@ -212,14 +218,19 @@ function SubProcessModule(eventBus, canvas) {
       // if insight allowed
       if (newDiagram.insight === 1) {
 
-        // set index to reference new diagram in hierarchy
-        this._widget.index = data.indexOf(newDiagram);
-
         // update breadcrumb
-        addToBreadcrumb(data.indexOf(newDiagram), newDiagram.breadcrumb, newDiagram.callingObjectId);
+        addToBreadcrumb(
+          newDiagram.breadcrumb,
+          newDiagram.diagramId,
+          newDiagram.callingDiagramId,
+          newDiagram.callingObjectId,
+          newDiagram.callingObjectId
+        );
         
         // set new diagram properties
         this._widget.diagramId = newDiagram.diagramId;
+        this._widget.callingDiagramId = newDiagram.callingDiagramId;
+        this._widget.callingObjectId = newDiagram.callingObjectId;
         this._widget.diagram = newDiagram.diagram;
         this._widget.current = newDiagram.current;
         this._widget.completed = newDiagram.completed;
@@ -234,18 +245,24 @@ function SubProcessModule(eventBus, canvas) {
 
 SubProcessModule.prototype.setWidget = function (widget) {
   this._widget = widget;
+};
 
+SubProcessModule.prototype.resetBreadcrumb = function () {
   // retrieve current index + hierarchy
-  var { data, index } = this._widget;
+  var { data, diagramId, callingDiagramId, callingObjectId } = this._widget;
 
   // retrieve data of current diagram
-  var { breadcrumb, callingObjectId } = data[index];
+  var { breadcrumb } = data.find(d => 
+    d.diagramId === diagramId && 
+    d.callingDiagramId === callingDiagramId && 
+    d.callingObjectId === callingObjectId
+  );
 
   // reset breadcrumb
   breadcrumbContainer.textContent = '';
 
   // add entry to current diagram breadcrumb
-  addToBreadcrumb(index, breadcrumb, callingObjectId);
+  addToBreadcrumb(breadcrumb, diagramId, callingDiagramId, callingObjectId);
 };
 
 SubProcessModule.$inject = ['eventBus', 'canvas'];
