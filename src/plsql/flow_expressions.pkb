@@ -259,7 +259,7 @@ as
     , 'sql text' , pi_expression.expr_expression
     );
 
-    l_sql_text := pi_expression.expr_expression;
+    l_sql_text := rtrim ( pi_expression.expr_expression, ';');
     -- substitute any F4A Process Variables
     flow_proc_vars_int.do_substitution
     ( pi_prcs_id => pi_prcs_id
@@ -420,7 +420,7 @@ as
     , 'expr_var_name', pi_expression.expr_var_name
     , 'sql text' , pi_expression.expr_expression
     );
-    l_sql_text := pi_expression.expr_expression;
+    l_sql_text := rtrim ( pi_expression.expr_expression, ';');
     -- substitute any F4A Process Variables
     flow_proc_vars_int.do_substitution
     ( pi_prcs_id => pi_prcs_id
