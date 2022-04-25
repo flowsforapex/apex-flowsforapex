@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - test_var_exps_in_callActivities.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+--
+-- Created 2022   Richard Allen, Oracle   
+-- 
+*/
+
 create or replace package body test_var_exps_in_callActivities is
 
    model_a11a constant varchar2(100) := 'A11a - Variable Exp Types with CallActivity';
@@ -68,54 +77,56 @@ create or replace package body test_var_exps_in_callActivities is
 
       ut.expect( l_actual ).to_equal( l_expected );
 
+      -- check the  local Variables got created in the calling scope
       open l_expected for
          select
-            l_prcs_id as sbfl_prcs_id,
-            l_dgrm_id as sbfl_dgrm_id,
-            'Activity_StaticVC2' as sbfl_current,
-            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+            'StaticVC2' as prov_var_name,
+            'StaticVC2' as prov_var_vc2, 
+            0 as prov_scope
          from dual
          union
          select
-            l_prcs_id as sbfl_prcs_id,
-            l_dgrm_id as sbfl_dgrm_id,
-            'Activity_ProcVarVC2' as sbfl_current,
-            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+            'CopyStaticVC2' as prov_var_name,
+            'StaticVC2' as prov_var_vc2, 
+            0 as prov_scope
          from dual
          union
          select
-            l_prcs_id as sbfl_prcs_id,
-            l_dgrm_id as sbfl_dgrm_id,
-            'Activity_SQLSingleVC2' as sbfl_current,
-            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+            'SQLSingleVC2' as prov_var_name,
+            'SingleVC2' as prov_var_vc2, 
+            0 as prov_scope
          from dual
          union
          select
-            l_prcs_id as sbfl_prcs_id,
-            l_dgrm_id as sbfl_dgrm_id,
-            'Activity_SQLMultiVC2' as sbfl_current,
-            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+            'SQLMultiVC2' as prov_var_name,
+            'value1:value2:value3' as prov_var_vc2, 
+            0 as prov_scope
          from dual
          union
          select
-            l_prcs_id as sbfl_prcs_id,
-            l_dgrm_id as sbfl_dgrm_id,
-            'Activity_ExpressionVC2' as sbfl_current,
-            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+            'ExpressionVC2' as prov_var_name,
+            'KING is UPPERCASE' as prov_var_vc2,
+            0 as prov_scope
          from dual
          union
          select
-            l_prcs_id as sbfl_prcs_id,
-            l_dgrm_id as sbfl_dgrm_id,
-            'Activity_FuncBodyVC2' as sbfl_current,
-            flow_constants_pkg.gc_sbfl_status_running sbfl_status
-         from dual
-         ;
+            'FuncBodyVC2' as prov_var_name,
+            'January' as prov_var_vc2, 
+            0 as prov_scope
+         from dual;
 
       open l_actual for
-         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status from flow_subflows where sbfl_prcs_id = l_prcs_id;
+         select prov_var_name, prov_var_vc2, prov_scope
+         from flow_process_variables
+         where prov_prcs_id = l_prcs_id
+         and prov_var_type = 'VARCHAR2'
+         and prov_var_name != 'BUSINESS_REF'
+         and prov_scope = 0
+         and prov_var_num is null
+         and prov_var_date is null
+         and prov_var_clob is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
       -- step the process forward into the callActivity.  This will call diagram A11b
       flow_api_pkg.flow_complete_step 
@@ -123,6 +134,7 @@ create or replace package body test_var_exps_in_callActivities is
       , p_subflow_id => l_main_subflow_calling
       , p_step_key   => l_step_key
       );
+
 
       -- get the new subflow id (in called diagram, scope, and step_key so we can step it forward again
       select sbfl_id
@@ -137,7 +149,7 @@ create or replace package body test_var_exps_in_callActivities is
 
       -- 
       -- get the scope variable to show flow_globals.scope works
-
+/*
       open l_expected for 
         select
             'Model11b_scope'      as prov_var_name,
@@ -157,6 +169,9 @@ create or replace package body test_var_exps_in_callActivities is
          and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
+
+*/
+
 
 
       -- check the inVariables got created in the called scope
@@ -187,11 +202,6 @@ create or replace package body test_var_exps_in_callActivities is
          from dual
          union
          select
-            'Called_Invar_ExpressionVC2' as prov_var_name,
-            'KING is UPPERCASE' as prov_var_vc2
-         from dual
-         union
-         select
             'Called_Invar_FuncBodyVC2' as prov_var_name,
             'January' as prov_var_vc2
          from dual;
@@ -207,7 +217,7 @@ create or replace package body test_var_exps_in_callActivities is
          and prov_var_date is null
          and prov_var_clob is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
       -- check the local Variables got created in the called scope
       open l_expected for
@@ -237,11 +247,6 @@ create or replace package body test_var_exps_in_callActivities is
          from dual
          union
          select
-            'VarExp_InCalled_ExpressionVC2' as prov_var_name,
-            'KING is UPPERCASE' as prov_var_vc2
-         from dual
-         union
-         select
             'VarExp_InCalled_FuncBodyVC2' as prov_var_name,
             'January' as prov_var_vc2
          from dual;
@@ -257,8 +262,59 @@ create or replace package body test_var_exps_in_callActivities is
          and prov_var_date is null
          and prov_var_clob is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
+   -- step the process forward back into the callActivity.  This will return to diagram A11a
+      flow_api_pkg.flow_complete_step 
+      ( p_process_id => l_prcs_id
+      , p_subflow_id => l_called_subflow
+      , p_step_key   => l_step_key
+      );
+
+      -- check the outVariables got created in the calling scope
+      open l_expected for
+         select
+            'Called_Outvar_StaticVC2' as prov_var_name,
+            'StaticVC2' as prov_var_vc2
+         from dual
+         union
+         select
+            'Called_Outvar_CopyStaticVC2' as prov_var_name,
+            'StaticVC2' as prov_var_vc2
+         from dual
+         union
+         select
+            'Called_Outvar_SQLSingleVC2' as prov_var_name,
+            'SingleVC2' as prov_var_vc2
+         from dual
+         union
+         select
+            'Called_Outvar_SQLMultiVC2' as prov_var_name,
+            'value1:value2:value3' as prov_var_vc2
+         from dual
+         union
+         select
+            'Called_Outvar_ExpressionVC2' as prov_var_name,
+            'KING is UPPERCASE' as prov_var_vc2
+         from dual
+         union
+         select
+            'Called_Outvar_FuncBodyVC2' as prov_var_name,
+            'January' as prov_var_vc2
+         from dual;
+
+      open l_actual for
+         select prov_var_name, prov_var_vc2
+         from flow_process_variables
+         where prov_prcs_id = l_prcs_id
+         and prov_var_type = 'VARCHAR2'
+         and prov_scope = 0
+         and prov_var_name like 'Called_Outvar_%'
+         and prov_var_num is null
+         and prov_var_date is null
+         and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
    end var_exp_all_types;
 
