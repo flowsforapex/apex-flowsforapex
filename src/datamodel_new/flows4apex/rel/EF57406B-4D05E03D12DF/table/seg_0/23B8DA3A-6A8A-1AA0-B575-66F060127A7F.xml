@@ -1,0 +1,112 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="23B8DA3A-6A8A-1AA0-B575-66F060127A7F" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="FLOW_SUBFLOW_LOG">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FLOW_SUBFLOW_LOG</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="SFLG_PRCS_ID" id="A2D7C3F2-D6B3-4D27-754A-4FAAA22F118A">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_SUBFLOW_LOG</sourceObjSchema>
+<sourceObjName>SFLG_PRCS_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_OBJT_ID" id="4543D4E4-1787-5FC4-5095-DA444D3815CD">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_SUBFLOW_LOG</sourceObjSchema>
+<sourceObjName>SFLG_OBJT_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_SBFL_ID" id="D75FE062-94B7-21E5-717C-39AA9E3E0BB4">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_SUBFLOW_LOG</sourceObjSchema>
+<sourceObjName>SFLG_SBFL_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_DGRM_ID" id="B1138AF1-25A3-FAE8-F7CA-93C8E5FE7EAF">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_SUBFLOW_LOG</sourceObjSchema>
+<sourceObjName>SFLG_DGRM_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_DIAGRAM_LEVEL" id="CBEC19F0-E1B6-8756-6F84-6E6EB88557A7">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_SUBFLOW_LOG</sourceObjSchema>
+<sourceObjName>SFLG_DIAGRAM_LEVEL</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_LAST_UPDATED" id="D8F8A655-2804-5F01-4796-D72B39BECA78">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_SUBFLOW_LOG</sourceObjSchema>
+<sourceObjName>SFLG_LAST_UPDATED</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<ownDataTypeParameters>7,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="SFLG_NOTES" id="6A4D15F3-B1B0-FE57-D31A-DA26F89736B6">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_SUBFLOW_LOG</sourceObjSchema>
+<sourceObjName>SFLG_NOTES</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200 CHAR</dataTypeSize>
+<ownDataTypeParameters>200 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+</Table>

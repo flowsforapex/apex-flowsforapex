@@ -1,0 +1,9 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<UserOraclev10g class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UserOraclev10g" name="FLOWS4APEX" directorySegmentName="seg_0" id="40314575-1F10-5E55-12DC-483465D30CE9">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjName>FLOWS4APEX</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:39 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+</UserOraclev10g>

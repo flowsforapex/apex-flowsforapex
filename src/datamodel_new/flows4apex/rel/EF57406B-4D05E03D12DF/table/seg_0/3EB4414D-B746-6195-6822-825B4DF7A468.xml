@@ -1,0 +1,278 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="3EB4414D-B746-6195-6822-825B4DF7A468" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="FLOW_TIMERS">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FLOW_TIMERS</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="TIMR_ID" id="DD2B82B9-0A88-34F3-6588-693B48F02B24">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_RUN" id="0F9A24EE-46DE-BE63-6EB7-EC07D3F114A6">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_RUN</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<defaultValue>1</defaultValue>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_PRCS_ID" id="791421AC-521A-071B-FC11-598B01C981A8">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_PRCS_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="193895A9-408D-8CF4-B8AF-9B87A36E9840" referredColumn="ED673F46-1DF5-408E-19D5-0150FEC253F9"/>
+</associations>
+</Column>
+<Column name="TIMR_SBFL_ID" id="2E55D8A6-FEBB-EB08-82E4-A6A42F1AF865">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_SBFL_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="2EBAD033-7534-15BB-C436-AE153DA0FDEF" referredColumn="51D9340C-E2B2-2C2C-623F-2422DA8573EE"/>
+</associations>
+</Column>
+<Column name="TIMR_STEP_KEY" id="909642D3-1824-5C3A-824B-33407D0993AA">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_STEP_KEY</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>20 CHAR</dataTypeSize>
+<ownDataTypeParameters>20 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_TYPE" id="81FBB000-4871-0A03-B7A7-0C42F910CD37">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_TYPE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_LAST_RUN" id="D6E6F537-7906-200F-8AE8-F8F2D7717D9D">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_LAST_RUN</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_CREATED_ON" id="06DBA013-864D-35B4-8F22-58001B60C7C7">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_CREATED_ON</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_STATUS" id="015EE4FF-DFC7-DBF7-E897-6259CE83B096">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_STATUS</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<commentInRDBMS><![CDATA[Status of the timer. For the status codes see constant definitions in FLOW_TIMERS_PKG package declaration.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>1 CHAR</dataTypeSize>
+<ownDataTypeParameters>1 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_START_ON" id="21056F4E-50A8-C1A2-4E59-89049A028B21">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_START_ON</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<commentInRDBMS><![CDATA[Expected start datetime.
+Used for both date and duration definitions.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_INTERVAL_YM" id="3F5B5434-1F26-13AC-CDD0-A96F9603FC51">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_INTERVAL_YM</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<commentInRDBMS><![CDATA[Interval YM for cycles.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT048</logicalDatatype>
+<dataTypePrecision>2</dataTypePrecision>
+<dataTypeScale>0</dataTypeScale>
+<ownDataTypeParameters>,2,0</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_INTERVAL_DS" id="C0642147-28FE-5FAC-8581-DFFCD48006B6">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_INTERVAL_DS</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<commentInRDBMS><![CDATA[Interval DS for cycles.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT049</logicalDatatype>
+<dataTypePrecision>2</dataTypePrecision>
+<dataTypeScale>6</dataTypeScale>
+<ownDataTypeParameters>,2,6</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TIMR_REPEAT_TIMES" id="C00119BA-8221-CEE0-D529-965B74379529">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_TIMERS</sourceObjSchema>
+<sourceObjName>TIMR_REPEAT_TIMES</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<commentInRDBMS><![CDATA[Number of runs for cycles.]]></commentInRDBMS>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="BBD5A01F-BFAF-590B-7172-72A8AABABEB1" name="TIMR_PK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>TIMR_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="DD2B82B9-0A88-34F3-6588-693B48F02B24"/>
+<colUsage columnID="0F9A24EE-46DE-BE63-6EB7-EC07D3F114A6"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="2A874F99-40B0-3642-7F02-D3A1274AA332" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="TIMR_PK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>TIMR_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="DD2B82B9-0A88-34F3-6588-693B48F02B24"/>
+<colUsage columnID="0F9A24EE-46DE-BE63-6EB7-EC07D3F114A6"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="97ACD56F-5C5E-A676-B50D-6FF5AA220A51" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="TIMR_PRCS_SBFL_IX">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>TIMR_PRCS_SBFL_IX</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="791421AC-521A-071B-FC11-598B01C981A8"/>
+<colUsage columnID="2E55D8A6-FEBB-EB08-82E4-A6A42F1AF865"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="7A2D4610-0C32-3BD7-ED68-435210FC5E43" name="TIMR_PRCS_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="791421AC-521A-071B-FC11-598B01C981A8"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="5E77E22F-BB13-D2E0-BA1B-40CFD352C974" name="TIMR_SBFL_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2E55D8A6-FEBB-EB08-82E4-A6A42F1AF865"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

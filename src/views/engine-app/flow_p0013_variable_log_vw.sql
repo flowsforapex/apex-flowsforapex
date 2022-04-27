@@ -3,6 +3,7 @@ as
   select lgvr_prcs_id
        , lgvr_objt_id
        , lgvr_var_name
+       , lgvr_scope
        , lgvr_expr_set
        , lgvr_timestamp at time zone sessiontimezone as lgvr_timestamp
        , lgvr_var_type

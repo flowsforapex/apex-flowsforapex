@@ -1,0 +1,78 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_PROCESSES" directorySegmentName="seg_0" id="3DC51FEE-CFE4-D1A6-7A50-0152D2F2150B">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="PRCS_INIT_TS" id="42ADFB6A-8DF3-BAFD-A9CB-31148079362F">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_DGRM_ID" id="7B7ABCCA-D74F-4D79-B11E-4B422AFC8E90">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_LAST_UPDATE" id="BB536AEE-3276-C9E5-BA9F-EE87561C926B">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_NAME" id="BE5794A4-7BC7-52A6-A8E7-E9D58B5C16CA">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="PRCS_ID" id="ED673F46-1DF5-408E-19D5-0150FEC253F9">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="PRCS_STATUS" id="FA914D51-29C9-8C29-681C-28B3505ABE06">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="PRCS_PK" id="BD6BD2FD-8CBC-DB06-D260-F5DA778120FF">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="PRCS_DGRM_FK" id="05009FAF-E7FF-D1E0-F095-6D51E3F1C91A">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="PRCS_PK" id="E4C10945-3FAE-A088-424A-A37920EA0DE3">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<existingIndex>BD6BD2FD-8CBC-DB06-D260-F5DA778120FF</existingIndex>
+<indexSegment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev12c>

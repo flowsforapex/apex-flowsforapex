@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_engine_util.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created April-2021  Richard Allen (Flowquest) - from flow_engine.pkb
+--
+*/
 create or replace package body flow_engine_util
 as 
 
@@ -5,24 +14,6 @@ as
   pragma exception_init (lock_timeout, -3006);
 
   g_step_keys_enforced    boolean;
-
-  function get_dgrm_id
-  (
-    p_prcs_id in flow_processes.prcs_id%type
-  ) return flow_processes.prcs_dgrm_id%type
-  as
-    l_prcs_dgrm_id flow_processes.prcs_dgrm_id%type;
-  begin
-    
-    select prcs.prcs_dgrm_id
-      into l_prcs_dgrm_id
-      from flow_processes prcs
-     where prcs.prcs_id = p_prcs_id
-    ;
-    
-    return l_prcs_dgrm_id;
-    
-  end get_dgrm_id;
 
   function get_config_value
   ( 
@@ -55,20 +46,13 @@ as
   end set_config_value;
 
   function step_key
-  ( pi_sbfl_id        in flow_subflows.sbfl_id%type
-  , pi_current        in flow_subflows.sbfl_current%type
-  , pi_became_current in flow_subflows.sbfl_became_current%type
+  ( pi_sbfl_id        in flow_subflows.sbfl_id%type default null
+  , pi_current        in flow_subflows.sbfl_current%type default null
+  , pi_became_current in flow_subflows.sbfl_became_current%type default null
   ) return flow_subflows.sbfl_step_key%type
   is
   begin
-  /*  return substr( apex_util.get_hash ( apex_t_varchar2( pi_sbfl_id
-                                                       , pi_current
-                                                       , pi_became_current
-                                                       ) 
-                                      )
-                  , 1 , 10 
-                  );*/
-      -- alternate step_key generator which should be faster...
+
       return sys.dbms_random.string('A', 10);
   end step_key;
 
@@ -81,11 +65,6 @@ as
   is 
     l_step_key_required   flow_subflows.sbfl_step_key%type := pi_step_key_required;
   begin
-    if not g_step_keys_enforced then 
-      -- step keys not required - duplicate_step_mode = legacy
-      return true;
-    end if;
-
     if pi_step_key_required is null then
 
       select sbfl.sbfl_step_key
@@ -103,6 +82,9 @@ as
     );
 
     if pi_step_key_supplied = l_step_key_required then
+      return true;
+    elsif (pi_step_key_supplied is null 
+           and not g_step_keys_enforced) then
       return true;
     else
       flow_errors.handle_instance_error
@@ -143,37 +125,26 @@ function get_subprocess_parent_subflow
   is
     l_parent_subflow          flow_types_pkg.t_subflow_context;
     l_parent_subproc_activity flow_objects.objt_bpmn_id%type;
-    l_dgrm_id                 flow_diagrams.dgrm_id%type;
   begin
 
-    l_dgrm_id := flow_engine_util.get_dgrm_id( p_prcs_id => p_process_id );  
-
-    -- get parent bpmn:subProcess object
-    select par_objt.objt_bpmn_id
-      into l_parent_subproc_activity
-      from flow_objects objt
-      join flow_objects par_objt
-        on par_objt.objt_id = objt.objt_objt_id
-     where objt.objt_bpmn_id = p_current
-       and objt.objt_dgrm_id = l_dgrm_id
-    ;
-    -- try to get parent subflow
-    begin
-      select sbfl.sbfl_id
-           , sbfl.sbfl_step_key
-        into l_parent_subflow.sbfl_id
-           , l_parent_subflow.step_key
-        from flow_subflows sbfl
-       where sbfl.sbfl_current = l_parent_subproc_activity
-         and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
-         and sbfl.sbfl_prcs_id = p_process_id
-      ;
-    exception
+    select calling_sbfl.sbfl_id
+         , calling_sbfl.sbfl_step_key
+         , calling_sbfl.sbfl_scope
+      into l_parent_subflow.sbfl_id
+         , l_parent_subflow.step_key
+         , l_parent_subflow.scope
+      from flow_subflows calling_sbfl
+      join flow_subflows called_sbfl
+        on called_sbfl.sbfl_calling_sbfl = calling_sbfl.sbfl_id
+       and called_sbfl.sbfl_prcs_id = calling_sbfl.sbfl_prcs_id
+     where called_sbfl.sbfl_id = p_subflow_id
+       and called_sbfl.sbfl_prcs_id = p_process_id
+       ;
+    return l_parent_subflow;
+  exception
       when no_data_found then
         -- no subflow found running the parent process 
-        l_parent_subflow := null;
-    end;
-    return l_parent_subflow;
+        return null;
   end get_subprocess_parent_subflow;
 
 procedure get_number_of_connections 
@@ -200,6 +171,39 @@ procedure get_number_of_connections
        and conn.conn_dgrm_id = pi_dgrm_id
     ;
   end get_number_of_connections;
+
+  function get_object_subtag
+  ( p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type  
+  )
+  return varchar2
+  is
+    l_objt_sub_tag_name  flow_objects.objt_bpmn_id%type;
+  begin
+    select objt.objt_sub_tag_name
+      into l_objt_sub_tag_name
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_objt_bpmn_id
+       and objt.objt_dgrm_id = p_dgrm_id
+       ;
+    return l_objt_sub_tag_name;
+  end get_object_subtag;
+
+  function get_object_tag
+  ( p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type  
+  ) return flow_objects.objt_tag_name%type
+  is
+    l_objt_tag_name  flow_objects.objt_bpmn_id%type;
+  begin
+    select objt.objt_tag_name
+      into l_objt_tag_name
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_objt_bpmn_id
+       and objt.objt_dgrm_id = p_dgrm_id
+       ;
+    return l_objt_tag_name;
+  end get_object_tag;
 
   function get_subflow_info
   ( p_process_id    in flow_processes.prcs_id%type
@@ -295,21 +299,52 @@ procedure get_number_of_connections
     , p_route                     in flow_subflows.sbfl_route%type
     , p_last_completed            in flow_objects.objt_bpmn_id%type
     , p_status                    in flow_subflows.sbfl_status%type default flow_constants_pkg.gc_sbfl_status_running
-    , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type
+    , p_parent_sbfl_proc_level    in flow_subflows.sbfl_process_level%type  --- can remove?
     , p_new_proc_level            in boolean default false
+    , p_new_scope                 in boolean default false
+    , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
     l_process_level       flow_subflows.sbfl_process_level%type := p_parent_sbfl_proc_level;
+    l_diagram_level       flow_subflows.sbfl_diagram_level%type := 0;
     l_new_subflow_context flow_types_pkg.t_subflow_context;
+    l_scope               flow_subflows.sbfl_scope%type := 0;
+    l_level_parent        flow_subflows.sbfl_id%type := 0;
+    l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
+    l_is_new_scope        varchar2(1 byte) := flow_constants_pkg.gc_false;
   begin
     apex_debug.enter 
     ( 'subflow_start'
     , 'Process', p_process_id
     , 'Parent Subflow', p_parent_subflow 
     );
-    l_timestamp := systimestamp;
+    
+    -- convert boolean in parameters to varchar2 for use in SQL
+    if p_new_proc_level then 
+      l_is_new_level := 'Y';
+    end if;
+
+    -- get process level, diagram level, scope, calling subflow for copy down unless this is the initial subflow in a process
+    if p_parent_subflow is not null then
+      select sbfl.sbfl_process_level
+           , sbfl.sbfl_diagram_level
+           , sbfl.sbfl_scope
+           , case l_is_new_level
+                when 'Y' then p_parent_subflow  
+                when 'N' then sbfl.sbfl_calling_sbfl
+             end
+        into l_process_level
+           , l_diagram_level
+           , l_scope
+           , l_level_parent
+        from flow_subflows sbfl
+       where sbfl.sbfl_id = p_parent_subflow;
+    end if;
+
+    -- create the new subflow
+
     insert
       into flow_subflows
          ( sbfl_prcs_id
@@ -323,48 +358,59 @@ procedure get_number_of_connections
          , sbfl_status
          , sbfl_last_update
          , sbfl_dgrm_id
+         , sbfl_diagram_level
          , sbfl_step_key
+         , sbfl_calling_sbfl
+         , sbfl_scope
          )
     values
          ( p_process_id
          , p_parent_subflow
-         , p_parent_sbfl_proc_level
+         , l_process_level
          , p_starting_object
          , p_route
          , p_last_completed
-         , l_timestamp
+         , systimestamp
          , p_current_object
          , p_status
-         , l_timestamp
+         , systimestamp
          , p_dgrm_id
-         , 'dummy'
+         , l_diagram_level
+         , flow_engine_util.step_key
+         , l_level_parent
+         , l_scope
          )
-    returning sbfl_id into l_new_subflow_context.sbfl_id
-    ;
+    returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
+    ;                                 
 
     if p_new_proc_level then
-      -- starting new subprocess.  Reset sbfl_process_level to new sbfl_id
+      -- starting new subprocess.  Reset sbfl_process_level to new sbfl_id (change on new subProcesss, callActivity)
       l_process_level := l_new_subflow_context.sbfl_id;
-    else
-       l_process_level := p_parent_sbfl_proc_level;
+
+      if p_new_scope then
+        -- starting new variable scope.  Reset sbfl_scope to new sbfl_id. (change on callActivity (maybe others later...iteration, etc.) )
+        l_new_subflow_context.scope := l_new_subflow_context.sbfl_id;
+      end if;
+
+      if p_new_diagram then
+        -- starting a new diagram.   set the diagram_level to new sbfl_id (change on new callActivity)
+        l_diagram_level := l_new_subflow_context.sbfl_id;
+      end if;
+
+      update flow_subflows
+         set sbfl_process_level   = l_process_level
+           , sbfl_scope           = l_new_subflow_context.scope
+           , sbfl_diagram_level   = l_diagram_level
+       where sbfl_id = l_new_subflow_context.sbfl_id;
+
     end if;
 
-    l_new_subflow_context.step_key := flow_engine_util.step_key
-                                      ( pi_sbfl_id        => l_new_subflow_context.sbfl_id 
-                                      , pi_current        => p_current_object  
-                                      , pi_became_current => l_timestamp 
-                                      );
-
-    update flow_subflows
-       set sbfl_process_level = l_process_level
-         , sbfl_step_key      = l_new_subflow_context.step_key
-     where sbfl_id = l_new_subflow_context.sbfl_id;
-
     apex_debug.info
-    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2'
+    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3'
     , p0        => p_process_id
     , p1        => l_new_subflow_context.sbfl_id
     , p2        => l_new_subflow_context.step_key
+    , p3        => l_new_subflow_context.scope
     );
     return l_new_subflow_context;
   end subflow_start;
@@ -389,6 +435,7 @@ procedure get_number_of_connections
             on parent_sbfl.sbfl_current = child_sbfl.sbfl_starting_object
          where parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
            and parent_sbfl.sbfl_process_level = p_process_level
+           and parent_sbfl.sbfl_prcs_id = p_process_id
       )
       loop
         terminate_level
@@ -518,6 +565,32 @@ procedure get_number_of_connections
       -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
       return false;
   end lock_subflow;
+
+  function get_scope
+  (  p_process_id  in flow_processes.prcs_id%type
+  ,  p_subflow_id  in flow_subflows.sbfl_id%type
+  ) return flow_subflows.sbfl_scope%type
+  is
+    l_scope   flow_subflows.sbfl_scope%type;
+  begin
+    select sbfl_scope
+      into l_scope
+      from flow_subflows
+     where sbfl_id = p_subflow_id
+       and sbfl_prcs_id = p_process_id
+    ;
+    return l_scope;
+  exception
+    when no_data_found then 
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => p_subflow_id
+      , p1 => p_process_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).' 
+  end;
 
   -- initialise step key enforcement parameter
 

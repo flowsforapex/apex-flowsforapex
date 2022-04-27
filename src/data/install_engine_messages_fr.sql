@@ -333,35 +333,35 @@ begin
   values (
   'var-set-error',
   'fr',
-  'Erreur de création de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de création de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-get-error',
   'fr',
-  'Erreur de récupération de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de récupération de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-update-error',
   'fr',
-  'Erreur de mise à jour de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de mise à jour de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-delete-error',
   'fr',
-  'Erreur de suppression de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de suppression de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-lock-error',
   'fr',
-  'Erreur de verrouillage de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de verrouillage de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   ); 
 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -425,6 +425,13 @@ begin
   'version-no-rel-or-draft-v0',
   'fr',
   'Impossible de trouver le diagramme publié ou la version 0 du diagramme - veuillez spécifier une version ou un numéro de diagramme.'
+  );
+
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'version-not-found',
+  'fr',
+  'Impossible de trouver la version spécifiée du diagramme. Veuillez vérifier la version.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

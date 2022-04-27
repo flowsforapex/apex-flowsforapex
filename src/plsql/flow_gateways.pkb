@@ -1,11 +1,16 @@
+/* 
+-- Flows for APEX - flow_gateways.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created    06-May-2021  Richard Allen (Flowquest, for MT AG)
+-- Modified   12-Apr-2022  Richard Allen (Oracle)
+--
+*/
+
 create or replace package body flow_gateways
 as 
-
-  /*type t_new_sbfl_rec is record
-  ( sbfl_id   flow_subflows.sbfl_id%type
-  , step_key  flow_subflows.sbfl_step_key%type
-  , route     flow_subflows.sbfl_route%type
-  );*/
 
   type t_new_sbfls is table of flow_types_pkg.t_subflow_context;
 
@@ -26,7 +31,11 @@ as
     l_num_routes            number := 0;
   begin
     -- check if route is in process variable
-    l_forward_route := flow_process_vars.get_var_vc2(pi_process_id, pi_objt_bpmn_id||':route');
+    l_forward_route := flow_proc_vars_int.get_var_vc2 
+                          ( pi_prcs_id  => pi_process_id
+                          , pi_var_name => pi_objt_bpmn_id||':route'
+                          , pi_scope    => flow_engine_util.get_scope (p_process_id => pi_process_id, p_subflow_id => pi_subflow_id)
+                          );
     if l_forward_route is not null
     then
       begin
@@ -208,6 +217,8 @@ as
           , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
           , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
           , pi_sbfl_id     => p_sbfl_info.sbfl_sbfl_id
+          , pi_var_scope   => p_sbfl_info.sbfl_scope
+          , pi_expr_scope  => p_sbfl_info.sbfl_scope
           );
           -- test again for any errors so far - if so, don't commit
           if not flow_globals.get_step_error then 
@@ -432,6 +443,8 @@ as
         , pi_set         => flow_constants_pkg.gc_expr_set_before_split
         , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
         , pi_sbfl_id     => p_sbfl_info.sbfl_id
+        , pi_var_scope   => p_sbfl_info.sbfl_scope
+        , pi_expr_scope  => p_sbfl_info.sbfl_scope
         );        
         -- test for any errors so far - if so, skip finding a route
         if not flow_globals.get_step_error then 
@@ -533,6 +546,8 @@ as
       , pi_set         => flow_constants_pkg.gc_expr_set_before_split
       , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_info.sbfl_id
+      , pi_var_scope   => p_sbfl_info.sbfl_scope
+      , pi_expr_scope  => p_sbfl_info.sbfl_scope
       );
       -- test for any errors so far - if so, skip finding a route
       if not flow_globals.get_step_error then 
@@ -552,6 +567,8 @@ as
       , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
       , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_info.sbfl_id
+      , pi_var_scope   => p_sbfl_info.sbfl_scope
+      , pi_expr_scope  => p_sbfl_info.sbfl_scope
       );      
       -- keep going
       l_forward_route := null;
@@ -605,6 +622,8 @@ as
     , pi_set         => flow_constants_pkg.gc_expr_set_before_split
     , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
     , pi_sbfl_id     => p_sbfl_info.sbfl_id
+    , pi_var_scope   => p_sbfl_info.sbfl_scope
+    , pi_expr_scope  => p_sbfl_info.sbfl_scope
     );
     -- mark parent flow as split
     update flow_subflows sbfl

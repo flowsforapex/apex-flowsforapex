@@ -1,3 +1,14 @@
+/* 
+-- Flows for APEX - flow_usertask_pkg.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2020-2022.
+--
+-- Created 12-Nov-2020  Moritz Klein ( MT AG) 
+-- Edited  13-Apr-2022 - Richard Allen (Oracle)
+--
+*/
+
 create or replace package body flow_usertask_pkg
 as
 
@@ -7,6 +18,7 @@ as
   , pi_sbfl_id  in flow_subflows.sbfl_id%type
   , pi_objt_id  in flow_objects.objt_id%type
   , pi_step_key in flow_subflows.sbfl_step_key%type default null
+  , pi_scope    in flow_subflows.sbfl_scope%type default 0
   ) return varchar2
   as
     l_application flow_object_attributes.obat_vc_value%type;
@@ -43,11 +55,12 @@ as
           l_items := rec.obat_vc_value;
         when flow_constants_pkg.gc_apex_usertask_value then
           l_values := rec.obat_vc_value;
-          flow_process_vars.do_substitution ( pi_prcs_id  => pi_prcs_id
-                                            , pi_sbfl_id  => pi_sbfl_id
-                                            , pi_step_key => pi_step_key
-                                            , pio_string  => l_values 
-                                            );
+          flow_proc_vars_int.do_substitution ( pi_prcs_id  => pi_prcs_id
+                                             , pi_sbfl_id  => pi_sbfl_id
+                                             , pi_step_key => pi_step_key
+                                             , pio_string  => l_values 
+                                             , pi_scope    => pi_scope
+                                             );
         else
           null;
       end case;
