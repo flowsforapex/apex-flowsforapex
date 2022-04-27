@@ -25,9 +25,13 @@ function childrenAttributeToArray(container, children, attribute){
 }
 
 function getflowInstanceData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
   return {
     "x01": action,
-    "x02": apex.jQuery( element ).attr("data-prcs")
+    "x02": apex.jQuery( el ).attr("data-prcs")
   };
 }
 
@@ -39,11 +43,15 @@ function getBulkFlowInstanceData(action){
 }
 
 function getSubflowData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
   return {
     "x01": action,
-    "x02": apex.jQuery( element ).attr("data-prcs"),
-    "x03": apex.jQuery( element ).attr("data-sbfl"),
-    "x04": apex.jQuery( element ).attr("data-key")
+    "x02": apex.jQuery( el ).attr("data-prcs"),
+    "x03": apex.jQuery( el ).attr("data-sbfl"),
+    "x04": apex.jQuery( el ).attr("data-key")
   };
 }
 
@@ -57,22 +65,26 @@ function getBulkSubflowData(action){
 }
 
 function openModalConfirmWithComment( action, element, confirmMessageKey, titleKey ){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
   var pageId = apex.item("pFlowStepId").getValue();
   apex.item( "P" + pageId + "_COMMENT" ).setValue( "" );
   apex.item( "P" + pageId + "_CONFIRM_TEXT" ).setValue( apex.lang.getMessage( confirmMessageKey ) );
   apex.jQuery( "#confirm-btn" ).attr( "data-action", action );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-prcs", apex.jQuery( element ).attr( "data-prcs" ) );
+    .attr( "data-prcs", apex.jQuery( el ).attr( "data-prcs" ) );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+    .attr( "data-sbfl", apex.jQuery( el ).attr( "data-sbfl" ) );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+    .attr( "data-key", apex.jQuery( el ).attr( "data-key" ) );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-name", apex.jQuery( element ).attr( "data-name" ) );
+    .attr( "data-name", apex.jQuery( el ).attr( "data-name" ) );
   apex.theme.openRegion( "instance_action_dialog" );
   apex.util.getTopApex().jQuery(".f4a-dynamic-title").closest(".ui-dialog-content").dialog('option', 'title', apex.lang.getMessage( titleKey ));
 }
@@ -159,11 +171,7 @@ function bulkStartFlowInstance( action ) {
 function resetFlowInstance(action, element){
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var el = element;
-    if ( el.type === undefined || el.type !== "button") {
-      el = apex.jQuery(element).closest("button");
-    }
-    var data = getflowInstanceData(action, el);
+    var data = getflowInstanceData(action, element);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -195,11 +203,7 @@ function bulkResetFlowInstance(action, element){
 function terminateFlowInstance(action, element) {
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var el = element;
-    if ( el.type === undefined || el.type !== "button") {
-      el = apex.jQuery(element).closest("button");
-    }
-    var data = getflowInstanceData(action, el);
+    var data = getflowInstanceData(action, element);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -231,11 +235,7 @@ function bulkTerminateFlowInstance(action, element) {
 function deleteFlowInstance( action, element ){ 
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var el = element;
-    if ( el.type === undefined || el.type !== "button") {
-      el = apex.jQuery(element).closest("button");
-    }
-    var data = getflowInstanceData(action, el);
+    var data = getflowInstanceData(action, element);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -265,11 +265,7 @@ function bulkDeleteFlowInstance( action, element ){
 }
 
 function redirectToFlowInstanceAudit( action, element ){
-  var el = element;
-  if ( el.type === undefined || el.type !== "button") {
-    el = apex.jQuery(element).closest("button");
-  }
-  var data = getflowInstanceData(action, el);
+  var data = getflowInstanceData(action, element);
   data.x03 = apex.jQuery( el ).attr("data-name");
   if ( apex.item("pFlowStepId").getValue() === "10" ) {
     apex.item("P10_PRCS_ID").setValue(data.x02);
@@ -1431,7 +1427,7 @@ function initPage8() {
                 ? false
                 : true;
           }
-          if ( item.action === "change-timer" ) {
+          if ( item.action === "reschedule-timer" ) {
             item.disabled = sbflStatus === "waiting for timer" ? false : true;
           }
           return item;

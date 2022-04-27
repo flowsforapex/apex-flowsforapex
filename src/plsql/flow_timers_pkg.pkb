@@ -103,9 +103,11 @@ as
         into l_objt_with_timer
            , l_objt_with_timer_bpmn_id
         from flow_subflows sbfl
+        join flow_processes prcs
+          on prcs.prcs_id = sbfl.sbfl_prcs_id
         join flow_objects objt
           on objt.objt_bpmn_id = sbfl.sbfl_current
-         and objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+         and objt.objt_dgrm_id = prcs.prcs_dgrm_id
        where sbfl.sbfl_id = pi_sbfl_id
          and sbfl.sbfl_prcs_id = pi_prcs_id
          and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
@@ -117,14 +119,16 @@ as
           select boundary_objt.objt_id
             into l_objt_with_timer
             from flow_subflows sbfl
+            join flow_processes prcs
+              on prcs.prcs_id = sbfl.sbfl_prcs_id
             join flow_objects main_objt
               on main_objt.objt_bpmn_id = sbfl.sbfl_current
-             and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+             and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
             join flow_objects boundary_objt
               on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
-             and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+             and boundary_objt.objt_dgrm_id = prcs.prcs_dgrm_id
            where sbfl.sbfl_id = pi_sbfl_id
-             and sbfl.sbfl_prcs_id = pi_prcs_id
+             and prcs.prcs_id = pi_prcs_id
              and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
              and boundary_objt.objt_interrupting = 1
           ;

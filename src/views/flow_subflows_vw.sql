@@ -30,8 +30,8 @@ as
         , sbfl.sbfl_reservation
         , objt_curr.objt_id as sbfl_current_objt_id
         , prcs.prcs_init_ts as sbfl_prcs_init_ts
-        , case sbfl_status 
-          when 'waiting for timer' then timr_start_on
+        , case sbfl.sbfl_status 
+          when 'waiting for timer' then timr.timr_start_on
           else null
           end as timr_start_on
      from flow_subflows sbfl
@@ -56,5 +56,6 @@ left join flow_objects lane
 left join flow_timers timr
        on timr.timr_prcs_id = sbfl.sbfl_prcs_id
       and timr.timr_sbfl_id = sbfl.sbfl_id
+      and timr.timr_status != 'E'
 with read only
 ;

@@ -15,4 +15,5 @@ as
              from flow_step_event_log lgsf
              join flow_objects objt
                on lgsf.lgsf_objt_id = objt.objt_bpmn_id
+              and lgsf.lgsf_sbfl_dgrm_id = objt.objt_dgrm_id
 with read only;

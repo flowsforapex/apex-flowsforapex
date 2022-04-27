@@ -29,8 +29,7 @@ as
   -- BPMN Keys
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
-  gc_bpmn_call_activity                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'callActivity';
-  
+
   gc_bpmn_start_event                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
   gc_bpmn_end_event                    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'endEvent';
   gc_bpmn_intermediate_throw_event     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'intermediateThrowEvent';
@@ -166,7 +165,6 @@ as
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
-  gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
   gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 

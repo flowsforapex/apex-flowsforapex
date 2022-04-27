@@ -30,9 +30,6 @@ drop package flow_errors;
 drop package flow_globals;
 drop package flow_diagram;
 drop package flow_theme_api;
-drop package flow_subprocesses;
-drop package flow_call_activities;
-
 
 PROMPT >> Modeler Plugin Objects
 drop package flow_modeler;

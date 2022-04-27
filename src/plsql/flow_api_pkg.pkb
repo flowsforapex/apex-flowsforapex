@@ -300,8 +300,10 @@ as
     select objt.objt_id
       into l_objt_id
       from flow_subflows sbfl
+      join flow_processes prcs
+        on prcs.prcs_id = sbfl.sbfl_prcs_id
       join flow_objects objt
-        on objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+        on objt.objt_dgrm_id = prcs.prcs_dgrm_id
        and objt.objt_bpmn_id = sbfl.sbfl_current
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
