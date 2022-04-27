@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flowsforapex.org/database/objt_attributes.schema.json",
+  "title": "JSON Schema Definition for OBJT_ATTRIBUTES column",
+  "description": "Defines how the stored JSON for object attributes should look like",
+  "type": "object",
+  "properties": {
+    "taskType": {
+      "type": "string"
+    },
+    "bpmn": {
+      "type": "object"
+      },
+    "apex": {
+      "type": "object"
+    }
+  }
+}
