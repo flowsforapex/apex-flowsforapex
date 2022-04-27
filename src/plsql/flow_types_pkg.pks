@@ -25,6 +25,7 @@ as
   ( sbfl_id           flow_subflows.sbfl_id%type
   , step_key          flow_subflows.sbfl_step_key%type
   , route             flow_subflows.sbfl_route%type
+  , scope             flow_subflows.sbfl_scope%type
   );
 
 end flow_types_pkg;
