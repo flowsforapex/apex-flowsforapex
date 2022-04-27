@@ -173,6 +173,8 @@ end flow_process_link_event;
     , pi_set         => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id     => p_process_id
     , pi_sbfl_id     => p_subflow_id
+    , pi_var_scope   => p_sbfl_info.sbfl_scope
+    , pi_expr_scope  => p_sbfl_info.sbfl_scope
     );
 
     if p_sbfl_info.sbfl_calling_sbfl = 0 then   
@@ -236,8 +238,8 @@ end flow_process_link_event;
 
       end if;
     else  
-      -- in a lower process level (subProcess or CallActivity on another diagram) - process the subProcess endEvent
-      flow_subprocesses.process_subprocess_endEvent
+      -- in a lower process level (subProcess or CallActivity on another diagram) - process the Process Level endEvent (ouch)
+      flow_subprocesses.process_process_level_endEvent
         ( p_process_id        => p_process_id
         , p_subflow_id        => p_subflow_id
         , p_sbfl_info         => p_sbfl_info
@@ -311,6 +313,8 @@ end flow_process_link_event;
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
     , pi_sbfl_id      => p_sbfl_info.sbfl_id
+    , pi_var_scope    => p_sbfl_info.sbfl_scope
+    , pi_expr_scope   => p_sbfl_info.sbfl_scope
     );
 
     if p_step_info.target_objt_subtag is null then
@@ -503,6 +507,7 @@ procedure handle_intermediate_catch_event
   , p_current_objt in flow_subflows.sbfl_current%type
   ) 
 is
+  l_sbfl_scope    flow_subflows.sbfl_scope%type;
 begin
   apex_debug.enter
   ( 'handle_intermediate_catch_event'
@@ -514,6 +519,7 @@ begin
        , sbfl.sbfl_last_update = systimestamp
    where sbfl.sbfl_prcs_id = p_process_id
      and sbfl.sbfl_id = p_subflow_id
+  returning sbfl_scope into l_sbfl_scope
   ;
   --  process any variable expressions in the OnEvent set
   flow_expressions.process_expressions
@@ -521,6 +527,8 @@ begin
   , pi_set          => flow_constants_pkg.gc_expr_set_on_event
   , pi_prcs_id      => p_process_id
   , pi_sbfl_id      => p_subflow_id
+  , pi_var_scope    => l_sbfl_scope
+  , pi_expr_scope   => l_sbfl_scope
   );
   -- test for any errors so far 
   if flow_globals.get_step_error then 
@@ -619,6 +627,7 @@ begin
   ( pi_prcs_id  => p_process_id
   , pi_sbfl_id  => p_subflow_id
   , pi_step_key => p_step_key
+  , pi_scope    => flow_engine_util.get_scope (p_process_id => p_process_id, p_subflow_id => p_subflow_id)
   );
   flow_globals.set_is_recursive_step (p_is_recursive_step => true);
   -- initialise step_had_error flag
@@ -770,6 +779,8 @@ begin
       , pi_set            => flow_constants_pkg.gc_expr_set_after_task
       , pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
       , pi_sbfl_id        => p_sbfl_rec.sbfl_id
+      , pi_var_scope      => p_sbfl_rec.sbfl_scope
+      , pi_expr_scope     => p_sbfl_rec.sbfl_scope
     );
   end if;
   -- clean up any boundary events left over from the previous activity
@@ -981,6 +992,8 @@ begin
     , pi_set         => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
     , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+    , pi_var_scope   => p_sbfl_rec.sbfl_scope
+    , pi_expr_scope  => p_sbfl_rec.sbfl_scope
   );
   -- test for any errors
   if flow_globals.get_step_error then
@@ -1046,6 +1059,8 @@ begin
       , pi_set         => flow_constants_pkg.gc_expr_set_before_task
       , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_var_scope   => p_sbfl_rec.sbfl_scope
+      , pi_expr_scope  => p_sbfl_rec.sbfl_scope
     );
   elsif p_step_info.target_objt_tag in 
   ( flow_constants_pkg.gc_bpmn_start_event, flow_constants_pkg.gc_bpmn_end_event 
@@ -1057,6 +1072,8 @@ begin
       , pi_set         => flow_constants_pkg.gc_expr_set_before_event
       , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_var_scope   => p_sbfl_rec.sbfl_scope
+      , pi_expr_scope  => p_sbfl_rec.sbfl_scope
     );
   end if;
 

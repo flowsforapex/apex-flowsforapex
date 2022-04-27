@@ -23,6 +23,11 @@ as
     p_value      in flow_configuration.cfig_value%type
   );
 
+  function get_object_tag
+  ( p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type  
+  ) return flow_objects.objt_tag_name%type;
+  
   function get_object_subtag
   (
     p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
@@ -100,6 +105,11 @@ as
   function lock_subflow
   ( p_subflow_id    in flow_subflows.sbfl_id%type
   ) return boolean;
+
+  function get_scope
+  (  p_process_id  in flow_processes.prcs_id%type
+  ,  p_subflow_id  in flow_subflows.sbfl_id%type
+  ) return flow_subflows.sbfl_scope%type;
 
 end flow_engine_util;
 /

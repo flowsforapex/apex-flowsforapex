@@ -5,6 +5,14 @@ as
        prov_prcs_id,
        prov_var_name,
        prov_var_type,
+       prov_scope, 
+       ( select nvl(objt.objt_name, 'Main Diagram')
+           from flow_instance_diagrams prdg 
+         left join flow_objects objt
+             on prdg.prdg_calling_objt = objt.objt_bpmn_id
+            and prdg.prdg_calling_dgrm = objt.objt_dgrm_id
+          where prdg.prdg_diagram_level = prov_scope 
+            and prdg.prdg_prcs_id =prov_prcs_id) as Calling_object,
        case
             when prov_var_vc2 is not null then prov_var_vc2
             when prov_var_num is not null then cast(prov_var_num as varchar2(4000))

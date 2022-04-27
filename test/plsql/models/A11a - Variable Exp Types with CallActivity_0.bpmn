@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_0rxermh" isExecutable="false">
+    <bpmn:startEvent id="Event_0v2q0b0" name="start">
+      <bpmn:outgoing>Flow_1jhtmdh</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1jhtmdh" sourceRef="Event_0v2q0b0" targetRef="Activity_0p5fzzm" />
+    <bpmn:sequenceFlow id="Flow_0vx9jq8" sourceRef="Activity_call_model_11b" targetRef="Event_0b4v5i8" />
+    <bpmn:endEvent id="Event_0b4v5i8" name="end">
+      <bpmn:incoming>Flow_0vx9jq8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_0p5fzzm" name="local step">
+      <bpmn:documentation>expression and function body tests have been set to static so they run, pending fix of issue 444.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>StaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>StaticVC2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>CopyStaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>StaticVC2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>SQLSingleVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select 'SingleVC2'
+from sys.dual</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>4</apex:varSequence>
+            <apex:varName>SQLMultiVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQueryList</apex:varExpressionType>
+            <apex:varExpression>select 'value1' from dual
+union
+select 'value2' from dual
+union
+select 'value3' from dual</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>5</apex:varSequence>
+            <apex:varName>ExpressionVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>KING is UPPERCASE</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>6</apex:varSequence>
+            <apex:varName>FuncBodyVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>January</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jhtmdh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lf7adt</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0lf7adt" sourceRef="Activity_0p5fzzm" targetRef="Activity_call_model_11b" />
+    <bpmn:callActivity id="Activity_call_model_11b" name="Call model 11b" apex:manualInput="false" apex:calledDiagram="A11b - Variable Exp Types with CallActivity" apex:calledDiagramVersionSelection="latestVersion">
+      <bpmn:documentation>Invar and OutVar settings use Function Body and Expression set to Static until Issue 444 fixed.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <apex:inVariables>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Called_Invar_StaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>StaticVC2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>Called_Invar_CopyStaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>StaticVC2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>Called_Invar_SQLSingleVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select 'SingleVC2'
+from dual</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>Called_Invar_SQLMultiVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQueryList</apex:varExpressionType>
+            <apex:varExpression>select 'value1' from dual
+union
+select 'value2' from dual
+union
+select 'value3' from dual</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>4</apex:varSequence>
+            <apex:varName>Called_Invar_ExpressionVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>KING is UPPERCASE</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>5</apex:varSequence>
+            <apex:varName>Called_Invar_FuncBodyVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>January</apex:varExpression>
+          </apex:processVariable>
+        </apex:inVariables>
+        <apex:outVariables>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Called_Outvar_StaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>StaticVC2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>Called_Outvar_CopyStaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>Called_Invar_StaticVC2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>Called_Outvar_SQLSingleVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select 'SingleVC2'
+from dual</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>Called_Outvar_SQLMultiVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQueryList</apex:varExpressionType>
+            <apex:varExpression>select 'value1' from dual
+union
+select 'value2' from dual
+union
+select 'value3' from dual</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>4</apex:varSequence>
+            <apex:varName>Called_Outvar_ExpressionVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>KING is UPPERCASE</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>5</apex:varSequence>
+            <apex:varName>Called_Outvar_FuncBodyVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>January</apex:varExpression>
+          </apex:processVariable>
+        </apex:outVariables>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lf7adt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vx9jq8</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">
+      <bpmndi:BPMNEdge id="Flow_0lf7adt_di" bpmnElement="Flow_0lf7adt">
+        <di:waypoint x="460" y="401" />
+        <di:waypoint x="490" y="401" />
+        <di:waypoint x="490" y="400" />
+        <di:waypoint x="520" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vx9jq8_di" bpmnElement="Flow_0vx9jq8">
+        <di:waypoint x="620" y="400" />
+        <di:waypoint x="672" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jhtmdh_di" bpmnElement="Flow_1jhtmdh">
+        <di:waypoint x="308" y="400" />
+        <di:waypoint x="334" y="400" />
+        <di:waypoint x="334" y="401" />
+        <di:waypoint x="360" y="401" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0v2q0b0_di" bpmnElement="Event_0v2q0b0">
+        <dc:Bounds x="272" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="279" y="425" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0b4v5i8_di" bpmnElement="Event_0b4v5i8">
+        <dc:Bounds x="672" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="681" y="425" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rhm6hz_di" bpmnElement="Activity_0p5fzzm">
+        <dc:Bounds x="360" y="361" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gnkurz_di" bpmnElement="Activity_call_model_11b">
+        <dc:Bounds x="520" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

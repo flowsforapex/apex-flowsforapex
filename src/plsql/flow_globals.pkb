@@ -1,3 +1,14 @@
+/* 
+-- Flows for APEX - flow_globals.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created    25-Aug-2021  Richard Allen (Flowquest, for MT AG)
+-- Modified   12-Apr-2022  Richard Allen (Oracle)
+--
+*/
+
 create or replace package body flow_globals
 as
 
@@ -15,12 +26,14 @@ as
   ( pi_prcs_id  in flow_processes.prcs_id%type
   , pi_sbfl_id  in flow_subflows.sbfl_id%type default null
   , pi_step_key in flow_subflows.sbfl_step_key%type default null
+  , pi_scope    in flow_subflows.sbfl_scope%type default null
   )
   is
   begin 
     process_id := pi_prcs_id;
     subflow_id := pi_sbfl_id;
     step_key   := pi_step_key;
+    scope      := pi_scope;
   end set_context;
 
   procedure set_step_error
@@ -61,7 +74,7 @@ as
   return flow_process_variables.prov_var_vc2%type
   is
   begin
-    return flow_process_vars.get_business_ref (pi_prcs_id => process_id);
+    return flow_proc_vars_int.get_business_ref (pi_prcs_id => process_id);
   end business_ref;
 
 end flow_globals;

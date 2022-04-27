@@ -272,6 +272,8 @@ as
       , pi_set            => flow_constants_pkg.gc_expr_set_before_event
       , pi_prcs_id        => p_process_id
       , pi_sbfl_id        => l_main_subflow.sbfl_id
+      , pi_var_scope      => l_main_subflow.scope
+      , pi_expr_scope     => l_main_subflow.scope
       );
       -- test for any step errors
       if not flow_globals.get_step_error then 
@@ -291,6 +293,8 @@ as
       , pi_set           => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id       => p_process_id
       , pi_sbfl_id       => l_main_subflow.sbfl_id
+      , pi_var_scope     => l_main_subflow.scope
+      , pi_expr_scope    => l_main_subflow.scope      
       );
 
       if not flow_globals.get_step_error then 
@@ -375,7 +379,7 @@ as
      where sbfl.sbfl_prcs_id = p_process_id
     ;
     -- delete all process variables except the builtins (new behaviour in 21.1)
-    flow_process_vars.delete_all_for_process 
+    flow_proc_vars_int.delete_all_for_process 
     ( pi_prcs_id => p_process_id
     , pi_retain_builtins => true
     );
@@ -533,7 +537,7 @@ as
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
     ;
-    flow_process_vars.delete_all_for_process 
+    flow_proc_vars_int.delete_all_for_process 
     ( pi_prcs_id => p_process_id
     , pi_retain_builtins => false
     );

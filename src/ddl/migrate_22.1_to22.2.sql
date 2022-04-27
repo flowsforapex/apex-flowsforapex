@@ -7,16 +7,26 @@
 
 */
 
+
+PROMPT >> Halt DBMS_SCHEDULER job 
+
+
+
 PROMPT >> Running Upgrade from 22.1 to 22.2
 PROMPT >> -------------------------------------------
+
 
 PROMPT >> Prepare Subflows for Call Activities
 
 -- change constraint on flow_object_expressions to add 'inVariables' and 'outVariables'
-/*ALTER TABLE flow_object_expressions
+
+ALTER TABLE flow_object_expressions
+    drop CONSTRAINT expr_set_ck;
+
+ALTER TABLE flow_object_expressions
     ADD CONSTRAINT expr_set_ck
-      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge') );
-*/
+      CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge', 'inVariables', 'outVariables') );
+
 
 begin
   execute immediate '
@@ -43,7 +53,7 @@ end;
       add (
         sflg_dgrm_id       NUMBER,
         sflg_diagram_level NUMBER,
-        sflg_calling_objt  VARCHAR2(50) -- only used on Start Eevents to record Parent
+        sflg_calling_objt  VARCHAR2(50) -- only used on Start Events to record Parent
       )';
   end;
 
@@ -73,4 +83,31 @@ select prcs.prcs_id
 from flow_processes prcs
 ;
 
+
+PROMPT >> Prepare Process Variables for Scoping 
+
+  alter table flow_process_variables
+  add ( prov_scope number );
+
+  alter table flow_variable_event_log
+  add ( lgvr_scope number);
+
+  update flow_process_variables prov
+     set prov.prov_scope = 0;
+
+  update flow_variable_event_log lgvr
+     set lgvr.lgvr_scope = 0;
+
+  alter table flow_process_variables
+    drop constraint prov_pk;
+
+  alter table flow_process_variables
+    modify ( prov_scope not null);
+
+  alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name);
+
+
 PROMPT >> Finished Upgrade from 22.1 to 22.2
+
+
+PROMPT >> Resume DBMS_SCHEDULER job 

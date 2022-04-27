@@ -220,6 +220,22 @@ procedure get_number_of_connections
     return l_objt_sub_tag_name;
   end get_object_subtag;
 
+  function get_object_tag
+  ( p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type  
+  ) return flow_objects.objt_tag_name%type
+  is
+    l_objt_tag_name  flow_objects.objt_bpmn_id%type;
+  begin
+    select objt.objt_tag_name
+      into l_objt_tag_name
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_objt_bpmn_id
+       and objt.objt_dgrm_id = p_dgrm_id
+       ;
+    return l_objt_tag_name;
+  end get_object_tag;
+
   function get_subflow_info
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -580,6 +596,32 @@ procedure get_number_of_connections
       -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
       return false;
   end lock_subflow;
+
+  function get_scope
+  (  p_process_id  in flow_processes.prcs_id%type
+  ,  p_subflow_id  in flow_subflows.sbfl_id%type
+  ) return flow_subflows.sbfl_scope%type
+  is
+    l_scope   flow_subflows.sbfl_scope%type;
+  begin
+    select sbfl_scope
+      into l_scope
+      from flow_subflows
+     where sbfl_id = p_subflow_id
+       and sbfl_prcs_id = p_process_id
+    ;
+    return l_scope;
+  exception
+    when no_data_found then 
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => p_subflow_id
+      , p1 => p_process_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).' 
+  end;
 
   -- initialise step key enforcement parameter
 

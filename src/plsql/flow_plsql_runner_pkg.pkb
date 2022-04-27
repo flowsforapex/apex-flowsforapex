@@ -1,3 +1,13 @@
+/* 
+-- Flows for APEX - flow_plsql_runner_pkg.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2020-2022.
+--
+-- Created    15-Nov-2020  Moritz Klein (MT AG)
+-- Modified   12-Apr-2022  Richard Allen (Oracle)
+--
+*/
 create or replace package body flow_plsql_runner_pkg
 as
 
@@ -72,6 +82,7 @@ as
     ( pi_prcs_id  => pi_prcs_id
     , pi_sbfl_id  => pi_sbfl_id 
     , pi_step_key => pi_step_key
+    , pi_scope    => flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id)
     );
 
     for rec in ( select obat.obat_key

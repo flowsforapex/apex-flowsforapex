@@ -43,7 +43,7 @@ as
           , p_objt_bpmn_id
           , prcs.prcs_dgrm_id
           , prcs.prcs_name
-          , flow_process_vars.get_business_ref (p_process_id)  --- 
+          , flow_proc_vars_int.get_business_ref (p_process_id)  --- 
           , p_event
           , systimestamp 
           , case g_logging_hide_userid 
@@ -156,6 +156,7 @@ as
 
   procedure log_variable_event -- logs process variable set events
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
+  , p_scope             in flow_process_variables.prov_scope%type
   , p_var_name          in flow_process_variables.prov_var_name%type
   , p_objt_bpmn_id      in flow_objects.objt_bpmn_id%type default null
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type default null
@@ -171,6 +172,7 @@ as
     if g_logging_level in (  flow_constants_pkg.gc_config_logging_level_full ) then
       insert into flow_variable_event_log
       ( lgvr_prcs_id  
+      , lgvr_scope
       , lgvr_var_name	  
       , lgvr_objt_id	  
       , lgvr_sbfl_id	  
@@ -184,6 +186,7 @@ as
       )
       values
       ( p_process_id
+      , p_scope
       , p_var_name          
       , p_objt_bpmn_id    
       , p_subflow_id 

@@ -10,7 +10,16 @@
 create or replace package body flow_subprocesses
 as
 
-  procedure process_subprocess_endEvent
+/* -----------------------------------------------------------------------------
+--
+--  process_process_level_endEvent
+--
+--  handles endEvents that complete a process level, e.g., subProcesses and callActivities
+--
+--------------------------------------------------------------------------------
+*/
+
+  procedure process_process_level_endEvent
     ( p_process_id        in flow_processes.prcs_id%type
     , p_subflow_id        in flow_subflows.sbfl_id%type
     , p_sbfl_info         in flow_subflows%rowtype
@@ -22,9 +31,12 @@ as
     l_subproc_objt          flow_objects.objt_bpmn_id%type;
     l_remaining_subflows    number;
     l_parent_step_key       flow_subflows.sbfl_step_key%type;
+    l_par_objt_type         flow_objects.objt_tag_name%type;
+    l_par_dgrm_id           flow_diagrams.dgrm_id%type;
+    l_par_objt_id           flow_objects.objt_id%type;
   begin
     apex_debug.enter
-      ( 'subProcess End Event'
+      ( 'Process Level End Event'
       , 'End Event'       , p_step_info.target_objt_ref
       , 'Event Type'      , p_step_info.target_objt_subtag
       , 'Parent Event'    , p_sbfl_context_par.sbfl_id
@@ -66,6 +78,8 @@ as
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => p_subflow_id
+        , pi_var_scope    => p_sbfl_info.sbfl_scope
+        , pi_expr_scope   => p_sbfl_info.sbfl_scope        
         );
       exception
         when no_data_found then
@@ -80,7 +94,7 @@ as
           );
           -- $F4AMESSAGE 'boundary-event-too-many' || 'More than one %0 boundaryEvent found on sub process.'  
       end;
-      -- stop processing in sub process and all children
+      -- stop processing in process level and all its children levels
       flow_engine_util.terminate_level
       ( p_process_id => p_process_id
       , p_process_level => p_sbfl_info.sbfl_process_level
@@ -107,7 +121,7 @@ as
       , p_subflow_id => p_subflow_id
       );
     end if;
-    -- check if there are ANY remaining subflows in the subProcess.  If not, close process
+    -- check if there are ANY remaining subflows in the process level.  If not, close process
     select count(*)
       into l_remaining_subflows
       from flow_subflows sbfl
@@ -115,15 +129,39 @@ as
        and sbfl.sbfl_process_level = p_sbfl_info.sbfl_process_level;
       
     if l_remaining_subflows = 0 then 
-      -- No remaining subflows so subprocess has completed - return to parent and do next step
-      apex_debug.info ('SubProcess Completed: Process level %0', p_sbfl_info.sbfl_process_level );
+      -- No remaining subflows so process level has completed 
+      select objt.objt_tag_name
+           , par_sbfl.sbfl_dgrm_id
+           , objt.objt_id
+        into l_par_objt_type
+           , l_par_dgrm_id
+           , l_par_objt_id
+        from flow_objects objt
+        join flow_subflows par_sbfl
+          on par_sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+         and par_sbfl.sbfl_current = objt.objt_bpmn_id
+       where par_sbfl.sbfl_id = p_sbfl_context_par.sbfl_id
+      ;
+      if l_par_objt_type = flow_constants_pkg.gc_bpmn_call_activity then
+        -- map outVariables expressions for call return (variables in calling scope, expressions in called scope)
+        flow_expressions.process_expressions
+        ( pi_objt_id      => l_par_objt_id
+        , pi_set          => flow_constants_pkg.gc_expr_set_out_variables
+        , pi_prcs_id      => p_process_id
+        , pi_sbfl_id      => p_sbfl_context_par.sbfl_id   --- should this be logged on calling or called subflows?  variables only in scope of calling...
+        , pi_var_scope    => p_sbfl_context_par.scope
+        , pi_expr_scope   => p_sbfl_info.sbfl_scope
+        );        
+      end if;
+      -- return to parent level and do next step
+      apex_debug.info ('Process Level Completed: Process level %0', p_sbfl_info.sbfl_process_level );
       flow_engine.flow_complete_step 
       ( p_process_id => p_process_id
       , p_subflow_id => p_sbfl_context_par.sbfl_id
       , p_step_key   => p_sbfl_context_par.step_key
       );  
     end if;
-  end process_subprocess_endEvent;
+  end process_process_level_endEvent;
 
   procedure process_subProcess
     ( p_process_id    in flow_processes.prcs_id%type
@@ -203,6 +241,8 @@ as
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => l_sbfl_context_sub.sbfl_id
+        , pi_var_scope    => l_sbfl_context_sub.scope
+        , pi_expr_scope   => l_sbfl_context_sub.scope
         );
 
         if not flow_globals.get_step_error then 

@@ -4,6 +4,8 @@ as
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_step_key
        , sbfl.sbfl_process_level
+       , sbfl.sbfl_diagram_level
+       , sbfl.sbfl_scope
        , sbfl.sbfl_last_completed
        , sbfl.sbfl_current
        , sbfl.sbfl_status

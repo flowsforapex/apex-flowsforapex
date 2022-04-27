@@ -119,6 +119,7 @@ as
 
         flow_globals.set_context
         ( pi_prcs_id => p_process_id
+        , pi_scope   => 0   -- initial scope is always 0
         );
   
         flow_instances.start_process 
@@ -186,6 +187,7 @@ as
     ( pi_prcs_id  => p_process_id
     , pi_sbfl_id  => p_subflow_id
     , pi_step_key => p_step_key
+    , pi_scope    => flow_engine_util.get_scope (p_process_id => p_process_id, p_subflow_id => p_subflow_id)
     );
     flow_engine.restart_step
     ( p_process_id => p_process_id
@@ -207,6 +209,7 @@ as
     ( pi_prcs_id  => p_process_id
     , pi_sbfl_id  => p_subflow_id
     , pi_step_key => p_step_key
+    , pi_scope    => flow_engine_util.get_scope (p_process_id => p_process_id, p_subflow_id => p_subflow_id)
     );
     flow_engine.flow_complete_step
     ( p_process_id => p_process_id

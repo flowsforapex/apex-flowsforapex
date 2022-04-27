@@ -25,15 +25,16 @@ is
              , sbfl.sbfl_dgrm_id as sbfl_dgrm_id
              , sbfl.sbfl_current as parent_current_object
              , objt.objt_id as objt_id
-             , sbfl.sbfl_scope as sbfl_scope
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
-           and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+          join flow_processes prcs 
+            on prcs.prcs_id = sbfl.sbfl_prcs_id
+           and prcs.prcs_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event  
            and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
            and sbfl.sbfl_id = p_subflow_id
-           and sbfl.sbfl_prcs_id = p_process_id
+           and prcs.prcs_id = p_process_id
         )
       loop
         case boundary_timers.objt_interrupting
@@ -44,8 +45,6 @@ is
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
           , pi_sbfl_id     => p_subflow_id
-          , pi_var_scope   => boundary_timers.sbfl_scope
-          , pi_expr_scope  => boundary_timers.sbfl_scope
           );
           -- test for any step errors
           if not flow_globals.get_step_error then 
@@ -77,8 +76,6 @@ is
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
           , pi_sbfl_id     => l_new_non_int_timer_sbfl.sbfl_id
-          , pi_var_scope   => boundary_timers.sbfl_scope
-          , pi_expr_scope  => boundary_timers.sbfl_scope
           );
           -- test for any step errors
           if not flow_globals.get_step_error then 
@@ -132,11 +129,13 @@ is
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
-           and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+          join flow_processes prcs 
+            on prcs.prcs_id = sbfl.sbfl_prcs_id
+           and prcs.prcs_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event  
            and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
            and sbfl.sbfl_id = p_subflow_id
-           and sbfl.sbfl_prcs_id = p_process_id
+           and prcs.prcs_id = p_process_id
         )
       loop
         case boundary_timers.objt_interrupting
@@ -213,7 +212,6 @@ is
     l_child_process_level    flow_subflows.sbfl_process_level%type;
     l_step_key               flow_subflows.sbfl_step_key%type;
     l_timestamp              flow_subflows.sbfl_became_current%type;
-    l_scope                  flow_subflows.sbfl_scope%type;
   begin
     apex_debug.enter 
     ( 'handle_interrupting_boundary_event'
@@ -223,20 +221,20 @@ is
     select boundary_objt.objt_bpmn_id
          , main_objt.objt_tag_name
          , main_objt.objt_bpmn_id
-         , sbfl.sbfl_scope
       into l_boundary_objt_bpmn_id
          , l_parent_objt_tag
          , l_parent_objt_bpmn_id
-         , l_scope
       from flow_subflows sbfl
+      join flow_processes prcs
+        on prcs.prcs_id = sbfl.sbfl_prcs_id
       join flow_objects main_objt
         on main_objt.objt_bpmn_id = sbfl.sbfl_current
-       and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+       and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
       join flow_objects boundary_objt
         on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
-       and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+       and boundary_objt.objt_dgrm_id = prcs.prcs_dgrm_id
      where sbfl.sbfl_id = p_subflow_id
-       and sbfl.sbfl_prcs_id = p_process_id
+       and prcs.prcs_id = p_process_id
        and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
        and boundary_objt.objt_interrupting = 1
         ;
@@ -285,8 +283,6 @@ is
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id      => p_process_id
     , pi_sbfl_id      => p_subflow_id
-    , pi_var_scope    => l_scope
-    , pi_expr_scope   => l_scope
     );
     -- test for errors
     if flow_globals.get_step_error then 
@@ -313,7 +309,6 @@ is
   , pi_sub_tag_name             in  flow_objects.objt_sub_tag_name%type 
   , po_boundary_objt            out flow_objects.objt_bpmn_id%type
   , po_interrupting             out flow_objects.objt_interrupting%type
-  , po_par_sbfl_scope           out flow_subflows.sbfl_scope%type
   )
 is 
   l_process_id    flow_processes.prcs_id%type;
@@ -322,15 +317,15 @@ begin
     select boundary_objt.objt_bpmn_id
          , boundary_objt.objt_interrupting
          , parent_sbfl.sbfl_prcs_id
-         , parent_sbfl.sbfl_scope
       into po_boundary_objt
          , po_interrupting
          , l_process_id
-         , po_par_sbfl_scope
       from flow_objects boundary_objt
       join flow_subflows parent_sbfl
         on parent_sbfl.sbfl_current = boundary_objt.objt_attached_to
-       and parent_sbfl.sbfl_dgrm_id = boundary_objt.objt_dgrm_id
+      join flow_processes prcs
+        on prcs.prcs_id = parent_sbfl.sbfl_prcs_id
+       and prcs.prcs_dgrm_id = boundary_objt.objt_dgrm_id
      where parent_sbfl.sbfl_id = pi_par_sbfl
        and boundary_objt.objt_sub_tag_name = pi_sub_tag_name
        and boundary_objt.objt_dgrm_id = pi_dgrm_id
@@ -364,7 +359,6 @@ is
   l_interrupting          flow_objects.objt_interrupting%type;
   l_new_sbfl              flow_types_pkg.t_subflow_context;
   l_parent_processs_level flow_subflows.sbfl_process_level%type;
-  l_parent_sbfl_scope     flow_subflows.sbfl_scope%type;
   l_parent_dgrm_id        flow_diagrams.dgrm_id%type;
   l_parent_step_key       flow_subflows.sbfl_step_key%type;
   l_timestamp             flow_subflows.sbfl_became_current%type;
@@ -382,13 +376,12 @@ begin
   );
   -- find matching boundary event of its type
   get_boundary_event
-  ( pi_dgrm_id            => p_step_info.dgrm_id
+  ( pi_dgrm_id => p_step_info.dgrm_id
   , pi_throw_objt_bpmn_id => p_step_info.target_objt_ref
-  , pi_par_sbfl           => p_par_sbfl
-  , pi_sub_tag_name       => p_step_info.target_objt_subtag
-  , po_boundary_objt      => l_next_objt
-  , po_interrupting       => l_interrupting
-  , po_par_sbfl_scope     => l_parent_sbfl_scope
+  , pi_par_sbfl => p_par_sbfl
+  , pi_sub_tag_name => p_step_info.target_objt_subtag
+  , po_boundary_objt => l_next_objt
+  , po_interrupting => l_interrupting
   );
   if l_next_objt is null then
     flow_errors.handle_instance_error
@@ -430,8 +423,6 @@ begin
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
     , pi_sbfl_id      => p_par_sbfl
-    , pi_var_scope    => l_parent_sbfl_scope
-    , pi_expr_scope   => l_parent_sbfl_scope
     );
 
     if p_step_info.target_objt_tag = flow_constants_pkg.gc_bpmn_intermediate_throw_event  
@@ -481,8 +472,6 @@ begin
       , pi_set          => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id      => l_new_sbfl.sbfl_id
-      , pi_var_scope    => l_parent_sbfl_scope
-      , pi_expr_scope   => l_parent_sbfl_scope
       );     
 
       if not flow_globals.get_step_error then
