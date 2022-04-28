@@ -19,6 +19,7 @@ as
         , sbfl_current
         , sbfl_current_name
         , sbfl_step_key
+        , sbfl_scope
         , case sbfl_current_tag_name
             when 'bpmn:userTask' then
               flow_usertask_pkg.get_url
@@ -27,6 +28,7 @@ as
               , pi_sbfl_id  => sbfl_id
               , pi_objt_id  => sbfl_current_objt_id
               , pi_step_key => sbfl_step_key
+              , pi_scope    => sbfl_scope
               )
             else null
           end link_text
@@ -42,6 +44,7 @@ as
         on prov.prov_prcs_id = sbfl.sbfl_prcs_id
        and prov.prov_var_name = 'BUSINESS_REF'
        and prov.prov_var_type = 'VARCHAR2' 
+       and prov.prov_scope = 0
     where sbfl_status = 'running'
 with read only
 ;

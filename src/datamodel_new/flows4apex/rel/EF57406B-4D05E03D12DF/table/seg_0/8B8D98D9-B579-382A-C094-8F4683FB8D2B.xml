@@ -1,0 +1,156 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="8B8D98D9-B579-382A-C094-8F4683FB8D2B" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="FLOW_OBJECT_ATTRIBUTES">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FLOW_OBJECT_ATTRIBUTES</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="OBAT_OBJT_ID" id="12123F40-8CB8-3479-31FC-672429075D98">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_ATTRIBUTES</sourceObjSchema>
+<sourceObjName>OBAT_OBJT_ID</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="0A4D65BA-4FF6-0885-E69B-0A46B39AB2DB" referredColumn="E23C9769-34A5-5203-9BE5-C9890CEAEDB8"/>
+</associations>
+</Column>
+<Column name="OBAT_KEY" id="9E59711E-9A3F-9BE2-5B8D-41320C420BF7">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_ATTRIBUTES</sourceObjSchema>
+<sourceObjName>OBAT_KEY</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50 CHAR</dataTypeSize>
+<ownDataTypeParameters>50 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="OBAT_NUM_VALUE" id="0180CF93-AB7D-F441-CB7B-5FE7C5675083">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_ATTRIBUTES</sourceObjSchema>
+<sourceObjName>OBAT_NUM_VALUE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="OBAT_DATE_VALUE" id="37FB4A59-FDC3-0133-AFB9-6CE9919B6464">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_ATTRIBUTES</sourceObjSchema>
+<sourceObjName>OBAT_DATE_VALUE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<dataTypeSize>7</dataTypeSize>
+<ownDataTypeParameters>7,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="OBAT_VC_VALUE" id="4E3D8AF6-4A6A-9D33-C196-97125E091603">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_ATTRIBUTES</sourceObjSchema>
+<sourceObjName>OBAT_VC_VALUE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>4000 CHAR</dataTypeSize>
+<ownDataTypeParameters>4000 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="OBAT_CLOB_VALUE" id="689AF0EC-8433-8E4B-DE1D-99B0C74A6FA2">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_OBJECT_ATTRIBUTES</sourceObjSchema>
+<sourceObjName>OBAT_CLOB_VALUE</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<dataTypeSize>4000</dataTypeSize>
+<ownDataTypeParameters>4000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="1A660362-CD25-4505-C3CD-8C0D3813ABD0" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="OBAT_PK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>OBAT_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="12123F40-8CB8-3479-31FC-672429075D98"/>
+<colUsage columnID="9E59711E-9A3F-9BE2-5B8D-41320C420BF7"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="0EBD6E8B-8E93-4CBF-A126-A79DB53D42F6" name="OBAT_OBJT_FK">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="12123F40-8CB8-3479-31FC-672429075D98"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.constraint.TableLevelConstraint">
+<tableCheckConstraint name="OBAT_CK" directorySegmentName="seg_0" id="EDF0BFC5-07B9-8579-712C-C2BE544ECBC5">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>OBAT_CK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<rule><![CDATA[ ( obat_num_value IS NOT NULL
+                                     AND obat_date_value IS NULL
+                                     AND obat_vc_value IS NULL
+                                     AND obat_clob_value IS NULL )
+                                   OR ( obat_num_value IS NULL
+                                        AND obat_date_value IS NOT NULL
+                                        AND obat_vc_value IS NULL
+                                        AND obat_clob_value IS NULL )
+                                   OR ( obat_num_value IS NULL
+                                        AND obat_date_value IS NULL
+                                        AND obat_vc_value IS NOT NULL
+                                        AND obat_clob_value IS NULL )
+                                   OR ( obat_num_value IS NULL
+                                        AND obat_date_value IS NULL
+                                        AND obat_vc_value IS NULL
+                                        AND obat_clob_value IS NOT NULL ) ]]></rule>
+</tableCheckConstraint>
+</tableCheckConstraints>
+</Table>

@@ -4,6 +4,8 @@ as
                 , sbfl.sbfl_prcs_id
                 , sbfl.sbfl_step_key
                 , sbfl.sbfl_process_level
+                , sbfl.sbfl_diagram_level
+                , sbfl.sbfl_scope
                 , sbfl.sbfl_last_completed
                 , coalesce(objt.objt_name, sbfl.sbfl_current) as current_object
                 , sbfl.sbfl_status

@@ -25,6 +25,8 @@ as
         , lane.objt_bpmn_id as sbfl_current_lane
         , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
         , sbfl.sbfl_process_level
+        , sbfl.sbfl_diagram_level
+        , sbfl.sbfl_scope
         , sbfl.sbfl_reservation
         , objt_curr.objt_id as sbfl_current_objt_id
         , prcs.prcs_init_ts as sbfl_prcs_init_ts
@@ -37,16 +39,16 @@ as
        on prcs.prcs_id = sbfl.sbfl_prcs_id
 left join flow_objects objt_start
        on objt_start.objt_bpmn_id = sbfl.sbfl_starting_object
-      and objt_start.objt_dgrm_id = prcs.prcs_dgrm_id
+      and objt_start.objt_dgrm_id = sbfl.sbfl_dgrm_id
 left join flow_objects objt_curr
        on objt_curr.objt_bpmn_id = sbfl.sbfl_current
-      and objt_curr.objt_dgrm_id = prcs.prcs_dgrm_id
+      and objt_curr.objt_dgrm_id = sbfl.sbfl_dgrm_id
 left join flow_objects objt_last
        on objt_last.objt_bpmn_id = sbfl.sbfl_last_completed
-      and objt_last.objt_dgrm_id = prcs.prcs_dgrm_id
+      and objt_last.objt_dgrm_id = sbfl.sbfl_dgrm_id
 left join flow_connections conn
        on conn.conn_bpmn_id = sbfl.sbfl_route
-      and conn.conn_dgrm_id = prcs.prcs_dgrm_id
+      and conn.conn_dgrm_id = sbfl.sbfl_dgrm_id
 left join flow_objects lane
        on objt_curr.objt_objt_lane_id = lane.objt_id
      join flow_diagrams dgrm 

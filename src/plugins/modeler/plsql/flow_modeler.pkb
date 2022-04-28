@@ -74,7 +74,6 @@ as
       , p_is_required => true
       , p_data_type   => apex_exec.c_data_type_number
       );
-    
     l_col_positions('content') :=
       apex_exec.get_column_position
       (
@@ -141,6 +140,8 @@ as
       );
       apex_json.close_all;
   end load;
+  
+  
   procedure save
   (
     p_region in apex_plugin.t_region
@@ -189,6 +190,8 @@ as
       );
       apex_json.close_all;
   end save;
+  
+  
   procedure get_applications
   as
     l_result clob;
@@ -205,6 +208,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_applications;
+  
+  
   procedure get_pages
   as
     l_result clob;
@@ -222,6 +227,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_pages;
+  
+  
   procedure get_items
   as
     l_result clob;
@@ -240,6 +247,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_items;
+  
+  
   procedure get_applications_mail
   as
     l_result clob;
@@ -256,6 +265,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_applications_mail;
+  
+  
   procedure get_templates
   as
     l_result clob;
@@ -273,6 +284,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_templates;
+  
+  
   procedure get_json_placeholders
   as
     l_placeholders apex_t_varchar2;
@@ -301,6 +314,26 @@ as
    end loop;
    apex_json.close_object;
   end get_json_placeholders;
+  
+  
+  procedure get_diagrams
+  as
+    l_result clob;
+    cursor c_diagrams is select distinct dgrm_name from flow_diagrams;
+    l_diagram flow_diagrams.dgrm_name%type;
+  begin
+    l_result := '[{"name":"","value":""},';
+    open c_diagrams;
+    loop
+        fetch c_diagrams into l_diagram;
+        exit when c_diagrams%NOTFOUND;
+        l_result := l_result || '{"name":"' || l_diagram || '","value":"' || l_diagram || '"},';
+    end loop;
+    l_result := rtrim(l_result, ',') || ']';
+    htp.p(l_result);
+  end get_diagrams;
+  
+  
   procedure parse_code
   as
     v_cur int;
@@ -350,6 +383,8 @@ as
     end if;
     htp.p(l_result);
   end parse_code;
+
+  
   function ajax
   (
     p_region              in  apex_plugin.t_region
@@ -369,6 +404,7 @@ as
       when 'GET_TEMPLATES' then get_templates;
       when 'PARSE_CODE' then parse_code;
       when 'GET_JSON_PLACEHOLDERS' then get_json_placeholders;
+      when 'GET_DIAGRAMS' then get_diagrams;
       else null;
     end case;
     return l_return;

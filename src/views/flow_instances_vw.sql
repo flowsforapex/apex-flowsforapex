@@ -18,4 +18,5 @@ as
       on prov.prov_prcs_id = prcs.prcs_id
      and prov.prov_var_name = 'BUSINESS_REF'
      and prov.prov_var_type = 'VARCHAR2' 
+     and prov.prov_scope = 0
 with read only;

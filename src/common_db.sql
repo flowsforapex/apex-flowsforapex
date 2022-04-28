@@ -9,6 +9,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_types_pkg.pks
 @plsql/flow_constants_pkg.pks
 @plsql/flow_migrate_xml_pkg.pks
+@plsql/flow_parser_util.pks
 @plsql/flow_bpmn_parser_pkg.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_engine_util.pks
@@ -20,10 +21,13 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_instances.pks
 @plsql/flow_engine.pks
 @plsql/flow_reservations.pks
+@plsql/flow_proc_vars_int.pks
 @plsql/flow_process_vars.pks
 @plsql/flow_expressions.pks
 @plsql/flow_usertask_pkg.pks
 @plsql/flow_plsql_runner_pkg.pks
+@plsql/flow_subprocesses.pks
+@plsql/flow_call_activities.pks
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
 @plsql/flow_errors.pks
@@ -42,6 +46,7 @@ PROMPT >> Installing Views
 @views/flow_diagrams_vw.sql
 
 PROMPT >> Installing Package Bodies
+@plsql/flow_proc_vars_int.pkb
 @plsql/flow_process_vars.pkb
 @plsql/flow_expressions.pkb
 @plsql/flow_reservations.pkb
@@ -54,10 +59,13 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_engine.pkb
 @plsql/flow_api_pkg.pkb
 @plsql/flow_migrate_xml_pkg.pkb
+@plsql/flow_parser_util.pkb
 @plsql/flow_bpmn_parser_pkg.pkb
 @plsql/flow_timers_pkg.pkb
 @plsql/flow_usertask_pkg.pkb
 @plsql/flow_plsql_runner_pkg.pkb
+@plsql/flow_subprocesses.pkb
+@plsql/flow_call_activities.pkb
 @plsql/flow_logging.pkb
 @plsql/flow_globals.pkb
 @plsql/flow_errors.pkb
@@ -74,6 +82,7 @@ PROMPT >> Global Error Function
 
 PROMPT >> Page Views
 @views/engine-app/flow_p0002_diagrams_vw.sql
+@views/engine-app/flow_p0007_vw.sql
 @views/engine-app/flow_p0007_instances_counter_vw.sql
 @views/engine-app/flow_p0008_instance_details_vw.sql
 @views/engine-app/flow_p0008_instance_log_vw.sql

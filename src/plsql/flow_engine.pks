@@ -1,6 +1,7 @@
 create or replace package flow_engine
 accessible by (flow_api_pkg, flow_instances, flow_gateways, flow_tasks, 
-               flow_boundary_events, flow_timers_pkg)
+               flow_boundary_events, flow_timers_pkg, flow_subprocesses,
+               flow_call_activities)
 
 as 
   procedure flow_handle_event
