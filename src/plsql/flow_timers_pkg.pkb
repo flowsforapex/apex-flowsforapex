@@ -269,9 +269,9 @@ as
 
       begin
         -- create an APEX session for the timer operation
-        l_apex_session := flow_async_session.create_async_apex_session  ( p_process_id => l_timers.timr_prcs_id
-                                                                        , p_subflow_id => l_timers.timr_sbfl_id
-                                                                        );
+        l_apex_session := flow_apex_session.create_async_session  ( p_process_id => l_timers.timr_prcs_id
+                                                                  , p_subflow_id => l_timers.timr_sbfl_id
+                                                                  );
 
         -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
         -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
@@ -300,7 +300,7 @@ as
         );
         -- drop the session
         if l_apex_session is not null then
-          flow_async_session.delete_async_apex_session ( p_session_id => l_apex_session );
+          flow_apex_session.delete_session ( p_session_id => l_apex_session );
         end if;
         commit;
       exception 
@@ -425,7 +425,7 @@ as
     , 'step_key', pi_step_key
     );
     -- preset async session parameters in proc variables
-    flow_async_session.set_async_proc_vars
+    flow_apex_session.set_async_proc_vars
         ( p_process_id  => pi_prcs_id
         , p_subflow_id  => pi_sbfl_id
         );

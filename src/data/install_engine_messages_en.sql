@@ -11,11 +11,18 @@ begin
     
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
+  'apex-session-params-not-set',
+  'en',
+  'Asynchronous connection details for object %0 need to be set in process variables, diagram async connection details, or system config details.'
+  );
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
   'async-invalid_params',
   'en',
   'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
-  );
-        
+  );    
+       
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'async-no-username',
