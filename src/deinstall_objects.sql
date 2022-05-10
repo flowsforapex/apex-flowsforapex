@@ -15,6 +15,7 @@ drop package flow_bpmn_parser_pkg;
 drop package flow_migrate_xml_pkg;
 drop package flow_expressions;
 drop package flow_process_vars;
+drop package flow_proc_vars_int;
 drop package flow_instances;
 drop package flow_engine;
 drop package flow_api_pkg;
@@ -44,6 +45,7 @@ drop package flow_plugin_manage_instance_variables;
 
 PROMPT >> Views
 drop view flow_p0002_diagrams_vw;
+drop view flow_p0007_vw;
 drop view flow_p0007_instances_counter_vw;
 drop view flow_p0008_instance_details_vw;
 drop view flow_p0008_instance_log_vw;
@@ -86,6 +88,7 @@ drop table flow_process_variables cascade constraints;
 drop table flow_object_expressions cascade constraints;
 drop table flow_flow_event_log cascade constraints;
 drop table flow_instance_event_log cascade constraints;
+drop table flow_instance_diagrams cascade constraints;
 drop table flow_step_event_log cascade constraints;
 drop table flow_variable_event_log cascade constraints;
 drop table flow_configuration cascade constraints;

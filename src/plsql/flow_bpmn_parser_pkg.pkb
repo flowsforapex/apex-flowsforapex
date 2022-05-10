@@ -915,6 +915,7 @@ as
       if replace(rec.extension_type, 'apex:') in ( flow_constants_pkg.gc_expr_set_before_task, flow_constants_pkg.gc_expr_set_after_task
                                                  , flow_constants_pkg.gc_expr_set_before_split, flow_constants_pkg.gc_expr_set_after_merge
                                                  , flow_constants_pkg.gc_expr_set_before_event, flow_constants_pkg.gc_expr_set_on_event
+                                                 , flow_constants_pkg.gc_expr_set_in_variables, flow_constants_pkg.gc_expr_set_out_variables
                                                  )
       then
         parse_process_variables
@@ -1095,6 +1096,62 @@ as
 
   end parse_child_elements;
 
+  procedure parse_call_activity
+  (
+    pi_xml          in xmltype
+  , pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
+  )
+  as
+  begin
+
+    for rec in (
+                select activity.activity_diagram
+                     , activity.activity_versionSelection
+                     , activity.activity_version
+                  from xmltable
+                       (
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'https://flowsforapex.org' as "apex")
+                       , '*' passing pi_xml
+                         columns
+                           activity_diagram          varchar2(50 char) path '@apex:calledDiagram'
+                         , activity_versionSelection varchar2(50 char) path '@apex:calledDiagramVersionSelection'
+                         , activity_version          varchar2(50 char) path '@apex:calledDiagramVersion'
+                       ) activity
+               )
+    loop
+
+      if rec.activity_diagram is not null then
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_objt_bpmn_id
+        , pi_obat_key          => flow_constants_pkg.gc_apex_called_diagram
+        , pi_obat_vc_value     => rec.activity_diagram
+        );
+      end if;
+
+      if rec.activity_versionSelection is not null then
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_objt_bpmn_id
+        , pi_obat_key          => flow_constants_pkg.gc_apex_called_diagram_version_selection
+        , pi_obat_vc_value     => rec.activity_versionSelection
+        );
+      end if;
+
+      if rec.activity_version is not null then
+        register_object_attributes
+        (
+          pi_objt_bpmn_id      => pi_objt_bpmn_id
+        , pi_obat_key          => flow_constants_pkg.gc_apex_called_diagram_version
+        , pi_obat_vc_value     => rec.activity_version
+        );
+      end if;
+
+    end loop;
+
+  end parse_call_activity;
+
   procedure parse_steps
   (
     pi_xml          in xmltype
@@ -1115,6 +1172,7 @@ as
                      , case steps.interrupting when 'false' then 0 else 1 end as interrupting
                      , steps.child_elements
                      , steps.extension_elements
+                     , steps.step
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
@@ -1130,6 +1188,7 @@ as
                          , interrupting       varchar2(50  char) path '@cancelActivity'
                          , child_elements     xmltype            path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
                          , extension_elements xmltype            path 'bpmn:extensionElements'
+                         , step               xmltype            path '.'
                        ) steps
                )
     loop
@@ -1184,6 +1243,14 @@ as
           parse_lanes
           (
             pi_laneset_xml  => rec.child_elements
+          , pi_objt_bpmn_id => rec.steps_id
+          );
+        end if;
+
+        if rec.steps_type = 'bpmn:callActivity' then
+          parse_call_activity
+          (
+            pi_xml          => rec.step
           , pi_objt_bpmn_id => rec.steps_id
           );
         end if;

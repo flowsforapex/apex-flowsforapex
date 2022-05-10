@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="2EBAD033-7534-15BB-C436-AE153DA0FDEF" containerWithKeyObject="3EB4414D-B746-6195-6822-825B4DF7A468" localFKIndex="5E77E22F-BB13-D2E0-BA1B-40CFD352C974" name="TIMR_SBFL_FK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>TIMR_SBFL_FK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<referredTableLongName>FLOWS4APEX.FLOW_SUBFLOWS</referredTableLongName>
+<deleteRule>CASCADE</deleteRule>
+<referredTableID>F1B7ACD6-E93A-E504-2E6C-22AFEC76CF3C</referredTableID>
+<keyObject>CD69CE39-2D2D-495C-A272-7FF4CBECA887</keyObject>
+<referredKeyID>CD69CE39-2D2D-495C-A272-7FF4CBECA887</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>SBFL_ID</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

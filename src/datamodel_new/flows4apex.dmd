@@ -1,0 +1,8 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="flows4apex" id="D613C1C1-F074-010B-A082-75449F171F74" version="3.5">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>D613C1C1-F074-010B-A082-75449F171F74</designId>
+</OSDM_Design>

@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_constants_pkg.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+--
+-- Created 2020   Moritz Klein - MT AG  
+-- Edited  14-Mar-2022 R Allen, Oracle
+--
+*/
 create or replace package flow_constants_pkg
   authid definer
 as
@@ -23,6 +32,7 @@ as
   -- BPMN Keys
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
+  gc_bpmn_call_activity                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'callActivity';
 
   gc_bpmn_start_event                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
   gc_bpmn_end_event                    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'endEvent';
@@ -124,6 +134,15 @@ as
   gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
   gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
+  -- callActivity tags
+  gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
+  gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
+  gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
+
+  -- Diagram calling methods
+  gc_dgrm_version_named_version       constant flow_types_pkg.t_bpmn_attributes_key := 'namedVersion';
+  gc_dgrm_version_latest_version      constant flow_types_pkg.t_bpmn_attributes_key := 'latestVersion';
+
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
@@ -156,6 +175,7 @@ as
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
+  gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
   gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 
@@ -199,13 +219,15 @@ as
   gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
   gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
 
--- Process Variable Expression set := 'BeforeTask';
+-- Process Variable Expression sets and CallActivity in-Out sets
   gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';
   gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'afterTask';
   gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'beforeSplit';
   gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'afterMerge';
   gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'beforeEvent';
   gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'onEvent';
+  gc_expr_set_in_variables            constant flow_types_pkg.t_expr_set := 'inVariables';
+  gc_expr_set_out_variables           constant flow_types_pkg.t_expr_set := 'outVariables';
 
 -- ASync Session Parameter Keys
 

@@ -1,4 +1,12 @@
-create or replace package flow_diagram
+/* 
+-- Flows for APEX - flow_diagram.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 10-Dec-2021  Dennis Amthor - MT AG  
+--
+*/create or replace package flow_diagram
   authid definer
 as
 
@@ -56,6 +64,21 @@ as
 
   procedure archive_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type);   
+
+  function get_start_event(
+    pi_dgrm_id    in flow_diagrams.dgrm_id%type,
+    pi_prcs_id    in flow_processes.prcs_id%type)
+  return flow_objects.objt_bpmn_id%type;
+
+-- get the current dgrm_id to be used for a diagram name.
+-- returns the current 'released' diagram or a 'draft' of version '0' 
+  function get_current_diagram
+    ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
+    , pi_dgrm_calling_method    in flow_object_attributes.obat_vc_value%type
+    , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+    , pi_prcs_id                in flow_processes.prcs_id%type default null
+    )
+  return flow_diagrams.dgrm_id%type;
 
 end flow_diagram;
 /
