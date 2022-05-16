@@ -1,6 +1,6 @@
 
 create or replace package flow_timers_pkg 
-accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg )
+-- accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg )
 as
 /******************************************************************************
  Purpose:

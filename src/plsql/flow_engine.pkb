@@ -682,6 +682,7 @@ begin
                                   , flow_constants_pkg.gc_bpmn_task 
                                   , flow_constants_pkg.gc_bpmn_usertask
                                   , flow_constants_pkg.gc_bpmn_manualtask
+                                  , flow_constants_pkg.gc_bpmn_call_activity
                                   )   -- add any objects that can support timer boundary events here
           -- if any of these events have a timer on them, it must be an interrupting timer.
           -- because non-interupting timers are set on the boundary event itself
@@ -785,9 +786,10 @@ begin
   end if;
   -- clean up any boundary events left over from the previous activity
   if (p_current_step_tag in ( flow_constants_pkg.gc_bpmn_subprocess
-                              , flow_constants_pkg.gc_bpmn_task
-                              , flow_constants_pkg.gc_bpmn_usertask
-                              , flow_constants_pkg.gc_bpmn_manualtask
+                            , flow_constants_pkg.gc_bpmn_call_activity
+                            , flow_constants_pkg.gc_bpmn_task
+                            , flow_constants_pkg.gc_bpmn_usertask
+                            , flow_constants_pkg.gc_bpmn_manualtask
                             ) -- boundary event attachable types
       and p_sbfl_rec.sbfl_has_events is not null )            -- subflow has events attached
   then

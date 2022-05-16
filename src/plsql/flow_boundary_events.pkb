@@ -29,13 +29,11 @@ is
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
-          join flow_processes prcs 
-            on prcs.prcs_id = sbfl.sbfl_prcs_id
-           and prcs.prcs_dgrm_id = objt.objt_dgrm_id
+           and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event  
            and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
            and sbfl.sbfl_id = p_subflow_id
-           and prcs.prcs_id = p_process_id
+           and sbfl.sbfl_prcs_id = p_process_id
         )
       loop
         case boundary_timers.objt_interrupting
@@ -134,13 +132,11 @@ is
           from flow_objects objt
           join flow_subflows sbfl 
             on sbfl.sbfl_current = objt.objt_attached_to
-          join flow_processes prcs 
-            on prcs.prcs_id = sbfl.sbfl_prcs_id
-           and prcs.prcs_dgrm_id = objt.objt_dgrm_id
+           and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event  
            and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
            and sbfl.sbfl_id = p_subflow_id
-           and prcs.prcs_id = p_process_id
+           and sbfl.sbfl_prcs_id = p_process_id
         )
       loop
         case boundary_timers.objt_interrupting
@@ -233,20 +229,19 @@ is
          , l_parent_objt_bpmn_id
          , l_scope
       from flow_subflows sbfl
-      join flow_processes prcs
-        on prcs.prcs_id = sbfl.sbfl_prcs_id
       join flow_objects main_objt
         on main_objt.objt_bpmn_id = sbfl.sbfl_current
-       and main_objt.objt_dgrm_id = prcs.prcs_dgrm_id
+       and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
       join flow_objects boundary_objt
         on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
-       and boundary_objt.objt_dgrm_id = prcs.prcs_dgrm_id
+       and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
      where sbfl.sbfl_id = p_subflow_id
-       and prcs.prcs_id = p_process_id
+       and sbfl.sbfl_prcs_id = p_process_id
        and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
        and boundary_objt.objt_interrupting = 1
         ;
-    if l_parent_objt_tag = flow_constants_pkg.gc_bpmn_subprocess
+    if l_parent_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
+                            , flow_constants_pkg.gc_bpmn_call_activity )
     then
        -- if the boundary event is on a subprocess (rather than a task type), terminate the subprocess level
        -- find the process level inside the subprocess and then stop all processing at that level and below
@@ -336,9 +331,7 @@ begin
       from flow_objects boundary_objt
       join flow_subflows parent_sbfl
         on parent_sbfl.sbfl_current = boundary_objt.objt_attached_to
-      join flow_processes prcs
-        on prcs.prcs_id = parent_sbfl.sbfl_prcs_id
-       and prcs.prcs_dgrm_id = boundary_objt.objt_dgrm_id
+       and parent_sbfl.sbfl_dgrm_id = boundary_objt.objt_dgrm_id
      where parent_sbfl.sbfl_id = pi_par_sbfl
        and boundary_objt.objt_sub_tag_name = pi_sub_tag_name
        and boundary_objt.objt_dgrm_id = pi_dgrm_id
