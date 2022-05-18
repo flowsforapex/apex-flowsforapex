@@ -26,6 +26,7 @@ drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
 drop package flow_engine_app_api;
+drop package flow_apex_session;
 drop package flow_errors;
 drop package flow_globals;
 drop package flow_diagram;

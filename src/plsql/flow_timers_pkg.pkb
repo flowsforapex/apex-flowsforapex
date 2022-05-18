@@ -1,11 +1,9 @@
 create or replace package body flow_timers_pkg
 as
 
-
-  lock_timeout exception;
-  pragma exception_init (lock_timeout, -3006);
-
-  e_invalid_duration exception;
+  lock_timeout             exception;
+  e_invalid_duration       exception;
+  pragma exception_init (lock_timeout, -3006);  
 
   type t_timer_def is record
   ( timer_type            flow_object_attributes.obat_vc_value%type
@@ -242,7 +240,10 @@ as
     l_new_status            flow_timers.timr_status%type;
     l_timr_id               flow_timers.timr_id%type;
     l_timr_run              flow_timers.timr_run%type;
+    l_apex_session          number;
   begin
+    -- set error_handling to recursive step mode
+    flow_globals.set_is_recursive_step (p_is_recursive_step => true);
     loop -- until no records found
       -- could add a functional index on flow_timers to improve performance of this query
       -- eg. create index flow_timr_n1 on flow_timers (
@@ -267,14 +268,19 @@ as
       ;
 
       begin
-      -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
-      -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
-      -- to delete the timer through a cascade delete.
+        -- create an APEX session for the timer operation
+        l_apex_session := flow_apex_session.create_async_session  ( p_process_id => l_timers.timr_prcs_id
+                                                                  , p_subflow_id => l_timers.timr_sbfl_id
+                                                                  );
+
+        -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
+        -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
+        -- to delete the timer through a cascade delete.
         if l_timers.timr_type in  ( flow_constants_pkg.gc_timer_type_cycle
                                   , flow_constants_pkg.gc_timer_type_oracle_cycle 
                                   ) 
         then 
-          -- repeating / cycle timer.  If unlimited or less than max repeats, run again...
+          -- repeating / cycle timer.  If unlimited or less than max repeats, run again...∏
           if l_timers.timr_run < l_timers.timr_repeat_times 
           or l_timers.timr_repeat_times is null then 
             l_timr_id   := l_timers.timr_id;
@@ -292,27 +298,37 @@ as
         , p_timr_id    => l_timr_id
         , p_run        => l_timr_run
         );
+        -- drop the session
+        if l_apex_session is not null then
+          flow_apex_session.delete_session ( p_session_id => l_apex_session );
+        end if;
+        commit;
       exception 
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
         when others then
-        update flow_timers
-          set timr_status = c_broken
-        where timr_id = l_timers.timr_id
-          and timr_run = l_timers.timr_run
-        ;
-        flow_errors.handle_instance_error
-        ( pi_prcs_id    => l_timers.timr_prcs_id
-        , pi_sbfl_id    => l_timers.timr_sbfl_id
-        , pi_message_key => 'timer-broken'
-        , p0 => l_timers.timr_id
-        , p1 => l_timers.timr_prcs_id
-        , p2 => l_timers.timr_sbfl_id
-        , p3 => l_timers.timr_run
-        );
-        -- $F4AMESSAGE 'timer-broken' || 'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
+          update flow_timers
+            set timr_status = c_broken
+          where timr_id = l_timers.timr_id
+            and timr_run = l_timers.timr_run
+          ;
+          flow_errors.handle_instance_error
+          ( pi_prcs_id    => l_timers.timr_prcs_id
+          , pi_sbfl_id    => l_timers.timr_sbfl_id
+          , pi_message_key => 'timer-broken'
+          , p0 => l_timers.timr_id
+          , p1 => l_timers.timr_prcs_id
+          , p2 => l_timers.timr_sbfl_id
+          , p3 => l_timers.timr_run
+          );
+          -- $F4AMESSAGE 'timer-broken' || 'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
+          -- set error status on subflow & Process
+          flow_errors.set_error_status ( pi_prcs_id  => l_timers.timr_prcs_id 
+                                       , pi_sbfl_id  => l_timers.timr_sbfl_id
+                                       );
+          commit;
       end;
-      commit;
+
     end loop;
     exception 
       when no_data_found then return;
@@ -409,6 +425,12 @@ as
     , 'sbfl_id', pi_sbfl_id
     , 'step_key', pi_step_key
     );
+    -- preset async session parameters in proc variables
+    flow_apex_session.set_async_proc_vars
+        ( p_process_id  => pi_prcs_id
+        , p_subflow_id  => pi_sbfl_id
+        );
+    -- set up scheduled firing time
     l_timer_def := get_timer_definition
                   (
                     pi_prcs_id    => pi_prcs_id
@@ -833,6 +855,7 @@ begin
 
     update flow_timers
        set timr_start_on = l_timer_rec.timr_start_on
+         , timr_status = c_created
      where timr_id = l_timer_rec.timr_id
        and timr_run = l_timer_rec.timr_run
     ;

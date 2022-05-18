@@ -114,7 +114,12 @@ as
     ( p_process_id in flow_processes.prcs_id%type
     )
     is
+      l_session_id   number;
     begin  
+        if v('APP_SESSION') is null then
+          l_session_id := flow_apex_session.create_api_session (p_process_id => p_process_id);
+        end if;
+
         apex_debug.message(p_message => 'Begin flow_start', p_level => 3) ;
 
         flow_globals.set_context
@@ -125,6 +130,10 @@ as
         flow_instances.start_process 
         ( p_process_id => p_process_id
         );
+
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
   end flow_start;
 
   procedure flow_reserve_step
@@ -182,7 +191,13 @@ as
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   )
   is 
+    l_session_id   number;
   begin 
+    -- create an APEX session if this has come in from outside APEX
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+    end if;
+
     flow_globals.set_context
     ( pi_prcs_id  => p_process_id
     , pi_sbfl_id  => p_subflow_id
@@ -195,6 +210,10 @@ as
     , p_step_key   => p_step_key
     , p_comment    => p_comment
     );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;
   end flow_restart_step;
 
 
@@ -204,7 +223,13 @@ as
   , p_step_key      in flow_subflows.sbfl_step_key%type default null
   )
   is 
+      l_session_id   number;
   begin
+    -- create an APEX session if this has come in from outside APEX
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+    end if; 
+
     flow_globals.set_context
     ( pi_prcs_id  => p_process_id
     , pi_sbfl_id  => p_subflow_id
@@ -217,6 +242,10 @@ as
     , p_step_key   => p_step_key
     , p_recursive_call => false
     );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;
   end flow_complete_step;
 
   procedure flow_reschedule_timer
