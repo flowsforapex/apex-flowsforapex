@@ -15,7 +15,42 @@ begin
   'en',
   'Currently unsupported type of Intermediate Throw Event encountered at %0 .'
   );
-  
+    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'apex-session-params-not-set',
+  'en',
+  'Asynchronous connection details for object %0 need to be set in process variables, diagram async connection details, or system config details.'
+  );
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-invalid_params',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
+  );    
+       
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-username',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-appid',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-pageid',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'boundary-event-child-lock-to',

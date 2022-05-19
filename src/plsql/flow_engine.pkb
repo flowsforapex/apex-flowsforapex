@@ -992,9 +992,23 @@ begin
   , p0 => p_sbfl_rec.sbfl_id
   , p1 => p_sbfl_rec.sbfl_last_completed
   , p2 => p_sbfl_rec.sbfl_prcs_id
-  );    
-
-  -- evaluate and set any on-event variable expressions from the timer object
+  );   
+  --  Set status to waiting and reschedule the timer with current time.
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update = systimestamp
+           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_timer
+       where sbfl.sbfl_id = p_sbfl_rec.sbfl_id
+         and sbfl.sbfl_prcs_id = p_sbfl_rec.sbfl_prcs_id
+      ;
+      flow_timers_pkg.reschedule_timer
+      ( 
+        p_process_id       => p_sbfl_rec.sbfl_prcs_id
+      , p_subflow_id      => p_sbfl_rec.sbfl_id
+      , p_step_key     => p_sbfl_rec.sbfl_step_key
+      , p_is_immediate  => true
+      , p_comment       => 'Restart Immediate Broken Timer'
+      );
+  /*-- evaluate and set any on-event variable expressions from the timer object
   flow_expressions.process_expressions
     ( pi_objt_id     => p_step_info.target_objt_id
     , pi_set         => flow_constants_pkg.gc_expr_set_on_event
@@ -1011,13 +1025,16 @@ begin
     , pi_sbfl_id => p_sbfl_rec.sbfl_id
     );
   else
-    -- step forward onto next step
+  /*  -- step forward onto next step
     flow_complete_step
     ( p_process_id => p_sbfl_rec.sbfl_prcs_id
     , p_subflow_id => p_sbfl_rec.sbfl_id
     , p_step_key   => p_sbfl_rec.sbfl_step_key
     );
-  end if;
+    -- reschedule  timer to fire in next step cycle
+
+
+  end if;*/
 
 end restart_failed_timer_step;
 

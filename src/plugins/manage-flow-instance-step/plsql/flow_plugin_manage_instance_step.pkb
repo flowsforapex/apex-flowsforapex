@@ -10,7 +10,7 @@ create or replace package body flow_plugin_manage_instance_step as
            p_message => ' > Process plug-in attributes'
       );
       apex_debug.info(
-           p_message => '...Flow Instance, Subflow & Step Key define by: %s'
+           p_message => '...Flow Instance, Subflow and Step Key define by: %s'
          , p0        => p_process.attribute_01
       );
 
