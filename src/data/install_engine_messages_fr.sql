@@ -258,6 +258,13 @@ begin
   'fr',
   'Vous avez essayé de démarrer un processus (id %0) qui est déjà en cours d''exécution.'
   );
+    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) -- NEEDS TRANSLATION
+  values (
+  'start-diagram-calls-itself',
+  'fr',
+  'You tried to start a process with a diagram %0 that includes a callActivity calling itself.'
+  );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (

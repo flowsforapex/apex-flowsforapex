@@ -78,14 +78,16 @@ as
         ( pi_objt_bpmn_id => l_boundary_event  
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
-        , pi_sbfl_id      => p_subflow_id
-        , pi_var_scope    => p_sbfl_info.sbfl_scope
-        , pi_expr_scope   => p_sbfl_info.sbfl_scope        
+        , pi_sbfl_id      => p_sbfl_context_par.sbfl_id
+        , pi_var_scope    => p_sbfl_context_par.scope
+        , pi_expr_scope   => p_sbfl_context_par.scope        
         );
+        l_end_is_interrupted := true;
+
       exception
         when no_data_found then
           -- error exit with no Boundary Event specified -- return to normal exit
-          l_boundary_event := null;
+          l_end_is_interrupted := true;
         when too_many_rows then
           flow_errors.handle_instance_error
           ( pi_prcs_id     => p_process_id
@@ -100,7 +102,13 @@ as
       ( p_process_id => p_process_id
       , p_process_level => p_sbfl_info.sbfl_process_level
       );
-      l_end_is_interrupted := true;
+      -- normal end processing will be ignored but we neeed to step forward on the parent
+      flow_engine.flow_complete_step 
+      ( p_process_id        => p_process_id
+      , p_subflow_id        => p_sbfl_context_par.sbfl_id
+      , p_step_key          => p_sbfl_context_par.step_key
+      , p_log_as_completed  => false
+      );
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
       -- sub process terminate end
       -- stop processing in sub process and all children
@@ -109,6 +117,13 @@ as
       , p_process_level => p_sbfl_info.sbfl_process_level
       ); 
       l_end_is_interrupted := true;
+      -- normal end processing will be ignored but we neeed to step forward on the parent
+      flow_engine.flow_complete_step 
+      ( p_process_id  => p_process_id
+      , p_subflow_id  => p_sbfl_context_par.sbfl_id
+      , p_step_key  => p_sbfl_context_par.step_key
+      , p_log_as_completed  => false
+      );
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
       -- sub process escalation end
       -- this can be interrupting or non-interupting
