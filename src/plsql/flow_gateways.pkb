@@ -605,7 +605,8 @@ as
     , p_step_info  in flow_types_pkg.flow_step_info
     )
   is 
-    l_sbfl_context_sub flow_types_pkg.t_subflow_context;
+    l_new_subflow       flow_types_pkg.t_subflow_context;
+    l_new_subflows      t_new_sbfls := t_new_sbfls();
   begin
     -- eventGateway can have multiple inputs and outputs, but there is no waiting, etc.
     -- incoming subflow continues on the first output path.
@@ -625,15 +626,7 @@ as
     , pi_var_scope   => p_sbfl_info.sbfl_scope
     , pi_expr_scope  => p_sbfl_info.sbfl_scope
     );
-    -- mark parent flow as split
-    update flow_subflows sbfl
-       set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-         , sbfl.sbfl_current = p_step_info.target_objt_ref
-         , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-         , sbfl.sbfl_last_update = systimestamp 
-     where sbfl.sbfl_id = p_sbfl_info.sbfl_id
-       and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
-    ;
+
     -- log gateway as completed here so only logged once
     flow_logging.log_step_completion   
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
@@ -654,8 +647,13 @@ as
                     )
     loop
       -- create new subflows for forward event paths starting here
-      l_sbfl_context_sub :=
-        flow_engine_util.subflow_start
+      -- don't start them yet...
+      apex_debug.info
+      ( p_message => 'starting parallel flow from Event Based Gateway for %0'
+      , p0        => p_step_info.target_objt_tag
+      );
+
+     l_new_subflow :=  flow_engine_util.subflow_start
         ( 
           p_process_id             => p_sbfl_info.sbfl_prcs_id        
         , p_parent_subflow         => p_sbfl_info.sbfl_id       
@@ -663,22 +661,51 @@ as
         , p_current_object         => p_step_info.target_objt_ref          
         , p_route                  => new_path.route         
         , p_last_completed         => p_step_info.target_objt_ref 
-        , p_status                 => flow_constants_pkg.gc_sbfl_status_waiting_event   
+        , p_status                 => flow_constants_pkg.gc_sbfl_status_created   
         , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
         , p_new_proc_level         => false    
         , p_dgrm_id                => p_sbfl_info.sbfl_dgrm_id
         )
       ;
-      -- step into first step on the new path
-      flow_engine.flow_complete_step   
-      (
-        p_process_id        => p_sbfl_info.sbfl_prcs_id
-      , p_subflow_id        => l_sbfl_context_sub.sbfl_id
-      , p_step_key          => l_sbfl_context_sub.step_key
-      , p_forward_route     => new_path.route
-      , p_log_as_completed  => false
-      );
+      l_new_subflow.route   := new_path.route;
+      l_new_subflows.extend;
+      l_new_subflows (l_new_subflows.last) := l_new_subflow;
+    end loop;      
+    -- mark parent flow as split
+    update flow_subflows sbfl
+       set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+         , sbfl.sbfl_current = p_step_info.target_objt_ref
+         , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
+         , sbfl.sbfl_last_update = systimestamp 
+     where sbfl.sbfl_id = p_sbfl_info.sbfl_id
+       and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+    ;
+    -- commit the transaction
+    commit;
+    apex_debug.info ( p_message => 'New Subflow Creation Commited');
+    
+    for new_subflow in 1.. l_new_subflows.count
+    loop
+      -- reset step_had_error flag
+      flow_globals.set_step_error ( p_has_error => false);
+      -- check subflow still exists and lock it(in case earlier loop terminated everything in level)
+      if flow_engine_util.lock_subflow
+        ( p_subflow_id => l_new_subflows(new_subflow).sbfl_id
+        )
+      then    
+        -- step into first step on the new path
+        flow_engine.flow_complete_step   
+        (
+          p_process_id        => p_sbfl_info.sbfl_prcs_id
+        , p_subflow_id        => l_new_subflows(new_subflow).sbfl_id
+        , p_step_key          => l_new_subflows(new_subflow).step_key
+        , p_forward_route     => l_new_subflows(new_subflow).route
+        , p_log_as_completed  => false
+        );
+      end if;
     end loop;
+    -- reset step_had_error flag
+    flow_globals.set_step_error ( p_has_error => false);
   end process_eventBasedGateway;
 
 end flow_gateways;
