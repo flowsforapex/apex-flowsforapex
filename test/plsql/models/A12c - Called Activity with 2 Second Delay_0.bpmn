@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
   <bpmn:process id="Process_2sDelay" name="2sDelay" isExecutable="false">
     <bpmn:documentation>This Process just implements a 2 Second delay via an ICE Timer  then returns.</bpmn:documentation>
     <bpmn:startEvent id="Event_Start2sDelay" name="Start 2s Delay">
@@ -11,6 +11,17 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1l4x6yf" sourceRef="Event_DelayTimer2s" targetRef="Event_End2sDelay" />
     <bpmn:intermediateCatchEvent id="Event_DelayTimer2s" name="Event_DelayTimer2s">
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SetInCalled</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>SetInCalled</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0m5f8c0</bpmn:incoming>
       <bpmn:outgoing>Flow_1l4x6yf</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0lbzuyh">

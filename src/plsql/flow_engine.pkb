@@ -299,10 +299,12 @@ end flow_process_link_event;
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
-    l_par_sbfl    flow_types_pkg.t_subflow_context;
+    l_par_sbfl            flow_types_pkg.t_subflow_context;
+    l_injected_step_key   flow_subflows.sbfl_step_key%type;
+    l_is_interrupting     boolean;
   begin
-    -- currently only supports none Intermediate throw event (used as a process state marker)
-    -- but this might later have a case type = timer, message, etc. ....
+    -- currently  supports none, link, and escalation Intermediate throw event 
+    -- but this might later have other case type =  message throw, etc. ....
     apex_debug.enter 
     ( 'process_IntermediateThrowEvent'
     , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
@@ -340,7 +342,7 @@ end flow_process_link_event;
       , p_step_info  => p_step_info
       );   
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
-      -- make the ITE the current event
+      -- make the ITE the current step
       update  flow_subflows sbfl
           set sbfl.sbfl_current = p_step_info.target_objt_ref
             , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
@@ -349,18 +351,22 @@ end flow_process_link_event;
         where sbfl.sbfl_id = p_sbfl_info.sbfl_id
           and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
-      -- get the subProcess event in the parent level
+      -- find the subProcess event in the parent level
       l_par_sbfl := flow_engine_util.get_subprocess_parent_subflow
       ( p_process_id => p_sbfl_info.sbfl_prcs_id
       , p_subflow_id => p_sbfl_info.sbfl_id
       , p_current => p_step_info.target_objt_ref
       );
       -- escalate it to the boundary Event
-      flow_boundary_events.process_boundary_event
-      ( p_sbfl_info     => p_sbfl_info
-      , p_step_info     => p_step_info
-      , p_par_sbfl      => l_par_sbfl.sbfl_id
+      flow_boundary_events.process_escalation
+      ( pi_sbfl_info        => p_sbfl_info
+      , pi_step_info        => p_step_info
+      , pi_par_sbfl         => l_par_sbfl.sbfl_id
+      , pi_source_type      => flow_constants_pkg.gc_bpmn_intermediate_throw_event
+      , po_step_key         => l_injected_step_key
+      , po_is_interrupting  => l_is_interrupting
       ); 
+
     else 
       --- other type of intermediateThrowEvent that is not currently supported
       flow_errors.handle_instance_error
@@ -687,8 +693,8 @@ begin
           -- if any of these events have a timer on them, it must be an interrupting timer.
           -- because non-interupting timers are set on the boundary event itself
     then
-      -- we have an interrupting boundary event
-      flow_boundary_events.handle_interrupting_boundary_event 
+      -- we have an interrupting timer boundary event
+      flow_boundary_events.handle_interrupting_timer 
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
       );

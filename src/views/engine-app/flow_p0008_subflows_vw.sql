@@ -10,6 +10,7 @@ as
              from flow_objects objt
              join flow_instance_diagrams prdg 
                on prdg.prdg_calling_objt = objt.objt_bpmn_id
+              and prdg.prdg_calling_dgrm = objt.objt_dgrm_id
             where prdg.prdg_diagram_level = sbfl.sbfl_diagram_level ) as Calling_object
        , sbfl.sbfl_starting_object_name as sbfl_starting_object
        , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update

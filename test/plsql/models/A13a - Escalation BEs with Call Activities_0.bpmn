@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
-  <bpmn:process id="Process_Test_CallTimerBE" name="Test Call activity Timer BEs" isExecutable="false">
+  <bpmn:process id="Process_Test_CallEscalationBE" name="Test Call activity Escalation BEs" isExecutable="false">
     <bpmn:startEvent id="Event_Start" name="Start">
       <bpmn:outgoing>Flow_0zxwwl1</bpmn:outgoing>
     </bpmn:startEvent>
@@ -12,7 +12,7 @@
       <bpmn:outgoing>Flow_1x7r972</bpmn:outgoing>
       <bpmn:outgoing>Flow_1lv8x7c</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:task id="Activity_Pre1" name="1. Call with NI Timer">
+    <bpmn:task id="Activity_Pre1" name="1. Call with NI Escalation End Event">
       <bpmn:incoming>Flow_0cpoer2</bpmn:incoming>
       <bpmn:outgoing>Flow_10w8ojy</bpmn:outgoing>
     </bpmn:task>
@@ -27,7 +27,7 @@
       <bpmn:incoming>Flow_0nlbugu</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0nlbugu" sourceRef="Activity_After1" targetRef="Event_01g72f0" />
-    <bpmn:callActivity id="Activity_Call1" name="Call 20s Delay" apex:calledDiagram="A12b - Called Activity with 20 Second Delay" apex:calledDiagramVersionSelection="latestVersion">
+    <bpmn:callActivity id="Activity_Call1" name="Call Escalation End" apex:calledDiagram="A13b - Called Activity with Escalation End" apex:calledDiagramVersionSelection="latestVersion">
       <bpmn:extensionElements>
         <apex:outVariables>
           <apex:processVariable>
@@ -51,13 +51,7 @@
       <bpmn:incoming>Flow_045w6m7</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_045w6m7" sourceRef="Activity_AfterBE1" targetRef="Event_0h7wwkt" />
-    <bpmn:boundaryEvent id="Event_BE1" name="BE1 (10s)" cancelActivity="false" attachedToRef="Activity_Call1">
-      <bpmn:outgoing>Flow_08hr4hb</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1bu9t93">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:task id="Activity_Pre2" name="2. Call with NI Timer">
+    <bpmn:task id="Activity_Pre2" name="2. Call with NI Escalation ITE">
       <bpmn:incoming>Flow_0decwot</bpmn:incoming>
       <bpmn:outgoing>Flow_1tw5tf1</bpmn:outgoing>
     </bpmn:task>
@@ -68,7 +62,7 @@
     <bpmn:endEvent id="Event_1kajgdn" name="End 2">
       <bpmn:incoming>Flow_1j7y650</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Activity_Call2" name="Call 2s Delay" apex:calledDiagram="A12c - Called Activity with 2 Second Delay" apex:calledDiagramVersionSelection="latestVersion">
+    <bpmn:callActivity id="Activity_Call2" name="Call Escalation ITE" apex:calledDiagram="A13c - Called Activity with Escalation ITE" apex:calledDiagramVersionSelection="latestVersion">
       <bpmn:extensionElements>
         <apex:outVariables>
           <apex:processVariable>
@@ -90,19 +84,13 @@
     <bpmn:endEvent id="Event_1b34999" name="End 2 BE">
       <bpmn:incoming>Flow_1r25jfx</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:boundaryEvent id="Event_BE2" name="BE2 (15s)" cancelActivity="false" attachedToRef="Activity_Call2">
-      <bpmn:outgoing>Flow_149kkkj</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_01518wi">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1tw5tf1" sourceRef="Activity_Pre2" targetRef="Activity_Call2" />
     <bpmn:sequenceFlow id="Flow_1fqw7ln" sourceRef="Activity_Call2" targetRef="Activity_After2" />
     <bpmn:sequenceFlow id="Flow_1j7y650" sourceRef="Activity_After2" targetRef="Event_1kajgdn" />
     <bpmn:sequenceFlow id="Flow_149kkkj" sourceRef="Event_BE2" targetRef="Activity_AfterBE2" />
     <bpmn:sequenceFlow id="Flow_1r25jfx" sourceRef="Activity_AfterBE2" targetRef="Event_1b34999" />
     <bpmn:sequenceFlow id="Flow_0decwot" sourceRef="Gateway_Split" targetRef="Activity_Pre2" />
-    <bpmn:task id="Activity_Pre3" name="3. Call with Int Timer">
+    <bpmn:task id="Activity_Pre3" name="3. Call with Int Escalation End Event">
       <bpmn:incoming>Flow_1x7r972</bpmn:incoming>
       <bpmn:outgoing>Flow_1r9fqzi</bpmn:outgoing>
     </bpmn:task>
@@ -113,7 +101,7 @@
     <bpmn:endEvent id="Event_1i9xwb3" name="End 3">
       <bpmn:incoming>Flow_0jatkm1</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Activity_Call3" name="Call 20s Delay" apex:calledDiagram="A12b - Called Activity with 20 Second Delay" apex:calledDiagramVersionSelection="latestVersion">
+    <bpmn:callActivity id="Activity_Call3" name="Call Escalation End" apex:calledDiagram="A13b - Called Activity with Escalation End" apex:calledDiagramVersionSelection="latestVersion">
       <bpmn:extensionElements>
         <apex:outVariables>
           <apex:processVariable>
@@ -135,7 +123,7 @@
     <bpmn:endEvent id="Event_0p8c6tm" name="End 3 BE">
       <bpmn:incoming>Flow_1sgm4rf</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:task id="Activity_Pre4" name="4. Call with Int Timer">
+    <bpmn:task id="Activity_Pre4" name="4. Call with Int Escalation ITE">
       <bpmn:incoming>Flow_1lv8x7c</bpmn:incoming>
       <bpmn:outgoing>Flow_1oinnat</bpmn:outgoing>
     </bpmn:task>
@@ -146,7 +134,7 @@
     <bpmn:endEvent id="Event_13xli8a" name="End 4">
       <bpmn:incoming>Flow_0pwujmc</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Activity_Call4" name="Call 2s Delay" apex:calledDiagram="A12c - Called Activity with 2 Second Delay" apex:calledDiagramVersionSelection="latestVersion">
+    <bpmn:callActivity id="Activity_Call4" name="Call Escalation ITE" apex:calledDiagram="A13c - Called Activity with Escalation ITE" apex:calledDiagramVersionSelection="latestVersion">
       <bpmn:extensionElements>
         <apex:outVariables>
           <apex:processVariable>
@@ -180,37 +168,49 @@
     <bpmn:sequenceFlow id="Flow_1qoumih" sourceRef="Activity_AfterBE4" targetRef="Event_0wd0b8u" />
     <bpmn:sequenceFlow id="Flow_1x7r972" sourceRef="Gateway_Split" targetRef="Activity_Pre3" />
     <bpmn:sequenceFlow id="Flow_1lv8x7c" sourceRef="Gateway_Split" targetRef="Activity_Pre4" />
-    <bpmn:boundaryEvent id="Event_BE3" name="BE3 (10s)" attachedToRef="Activity_Call3">
-      <bpmn:outgoing>Flow_1mc9aqq</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1gzlqse">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
+    <bpmn:boundaryEvent id="Event_BE1" name="BE1" cancelActivity="false" attachedToRef="Activity_Call1">
+      <bpmn:outgoing>Flow_08hr4hb</bpmn:outgoing>
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_127u67a" />
     </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="Event_BE4" name="BE4 (15s)" attachedToRef="Activity_Call4">
+    <bpmn:boundaryEvent id="Event_BE2" name="BE2" cancelActivity="false" attachedToRef="Activity_Call2">
+      <bpmn:outgoing>Flow_149kkkj</bpmn:outgoing>
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_0ag49t4" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_BE3" name="BE3" attachedToRef="Activity_Call3">
+      <bpmn:outgoing>Flow_1mc9aqq</bpmn:outgoing>
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_1hwes4o" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_BE4" name="BE4" attachedToRef="Activity_Call4">
       <bpmn:outgoing>Flow_1yqomjx</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_17qmb7e">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_196yoks" />
     </bpmn:boundaryEvent>
     <bpmn:textAnnotation id="TextAnnotation_1weia9f">
-      <bpmn:text>Timer to Fire</bpmn:text>
+      <bpmn:text>Escalation fires - both paths exist</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1v23lq8" sourceRef="Activity_Pre1" targetRef="TextAnnotation_1weia9f" />
     <bpmn:textAnnotation id="TextAnnotation_0k66fja">
-      <bpmn:text>Call activity to Complete before Timer Fires</bpmn:text>
+      <bpmn:text>Escalation fires - both paths exist.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0rpct1w" sourceRef="Activity_Pre2" targetRef="TextAnnotation_0k66fja" />
     <bpmn:textAnnotation id="TextAnnotation_1iudsxh">
-      <bpmn:text>Timer to Fire</bpmn:text>
+      <bpmn:text>sbfl switches to escalation path.
+Proc Vars not returned from Called Activity</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1yeayev">
-      <bpmn:text>Call activity to Complete before Timer Fires</bpmn:text>
+      <bpmn:text>sbfl switches to escalation path.
+Proc Vars not returned from Called Activity</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0c6cdwg" sourceRef="Activity_Pre3" targetRef="TextAnnotation_1iudsxh" />
     <bpmn:association id="Association_1ay6mzn" sourceRef="Activity_Pre4" targetRef="TextAnnotation_1yeayev" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Test_CallTimerBE">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Test_CallEscalationBE">
+      <bpmndi:BPMNShape id="TextAnnotation_1yeayev_di" bpmnElement="TextAnnotation_1yeayev">
+        <dc:Bounds x="550" y="838" width="160" height="74" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1iudsxh_di" bpmnElement="TextAnnotation_1iudsxh">
+        <dc:Bounds x="550" y="580" width="160" height="62" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1lv8x7c_di" bpmnElement="Flow_1lv8x7c">
         <di:waypoint x="360" y="475" />
         <di:waypoint x="360" y="960" />
@@ -427,56 +427,50 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1weia9f_di" bpmnElement="TextAnnotation_1weia9f">
-        <dc:Bounds x="550" y="70" width="99.99999237060547" height="29.999998092651367" />
+        <dc:Bounds x="550" y="70" width="99.99999237060547" height="53.98896789550781" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0k66fja_di" bpmnElement="TextAnnotation_0k66fja">
-        <dc:Bounds x="550" y="330" width="99.99999237060547" height="67.99632263183594" />
+        <dc:Bounds x="550" y="330" width="99.99999237060547" height="53.98896789550781" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1iudsxh_di" bpmnElement="TextAnnotation_1iudsxh">
-        <dc:Bounds x="550" y="580" width="100" height="30" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1yeayev_di" bpmnElement="TextAnnotation_1yeayev">
-        <dc:Bounds x="550" y="840" width="99.99999237060547" height="67.99632263183594" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1qyje6f_di" bpmnElement="Event_BE4">
+      <bpmndi:BPMNEdge id="Association_1ay6mzn_di" bpmnElement="Association_1ay6mzn">
+        <di:waypoint x="535" y="920" />
+        <di:waypoint x="550" y="903" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0c6cdwg_di" bpmnElement="Association_0c6cdwg">
+        <di:waypoint x="541" y="660" />
+        <di:waypoint x="560" y="642" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_195bygm_di" bpmnElement="Event_BE4">
         <dc:Bounds x="622" y="982" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="578" y="1025" width="48" height="14" />
+          <dc:Bounds x="592" y="1025" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_00ah3ih_di" bpmnElement="Event_BE3">
+      <bpmndi:BPMNShape id="Event_0s04e47_di" bpmnElement="Event_BE3">
         <dc:Bounds x="622" y="722" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="578" y="765" width="48" height="14" />
+          <dc:Bounds x="592" y="765" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0z83bz9_di" bpmnElement="Event_BE2">
+      <bpmndi:BPMNShape id="Event_0mh5nqz_di" bpmnElement="Event_BE2">
         <dc:Bounds x="622" y="472" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="577" y="515" width="48" height="14" />
+          <dc:Bounds x="591" y="515" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0stfolq_di" bpmnElement="Event_BE1">
+      <bpmndi:BPMNShape id="Event_1pz2sxj_di" bpmnElement="Event_BE1">
         <dc:Bounds x="622" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="577" y="255" width="48" height="14" />
+          <dc:Bounds x="591" y="255" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1v23lq8_di" bpmnElement="Association_1v23lq8">
         <di:waypoint x="538" y="150" />
-        <di:waypoint x="586" y="100" />
+        <di:waypoint x="563" y="124" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0rpct1w_di" bpmnElement="Association_0rpct1w">
         <di:waypoint x="538" y="410" />
-        <di:waypoint x="550" y="398" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0c6cdwg_di" bpmnElement="Association_0c6cdwg">
-        <di:waypoint x="538" y="660" />
-        <di:waypoint x="586" y="610" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ay6mzn_di" bpmnElement="Association_1ay6mzn">
-        <di:waypoint x="538" y="920" />
-        <di:waypoint x="550" y="908" />
+        <di:waypoint x="564" y="384" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
