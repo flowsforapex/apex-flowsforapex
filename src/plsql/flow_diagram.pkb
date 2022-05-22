@@ -4,7 +4,8 @@
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
 --
--- Created 10-Dec-2021  Dennis Amthor - MT AG  
+-- Created  10-Dec-2021 Dennis Amthor - MT AG  
+-- Modified 22-May-2022 Moritz Klein - MT AG
 --
 */
 create or replace package body flow_diagram
@@ -194,7 +195,7 @@ as
 
   function get_current_diagram
     ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
-    , pi_dgrm_calling_method    in flow_object_attributes.obat_vc_value%type
+    , pi_dgrm_calling_method    in flow_types_pkg.t_bpmn_attribute_vc2
     , pi_dgrm_version           in flow_diagrams.dgrm_version%type
     , pi_prcs_id                in flow_processes.prcs_id%type default null
     )
