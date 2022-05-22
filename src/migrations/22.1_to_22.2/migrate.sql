@@ -14,6 +14,8 @@ PROMPT >> -------------------------------------------
 
 @@feature-447.sql
 @@feature-172.sql
+@@issue-444.sql
+@@set_flows_version.sql
 
 
 PROMPT >> Finished Schema Upgrade from 22.1 to 22.2
