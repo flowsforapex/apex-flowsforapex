@@ -270,6 +270,13 @@ begin
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
+  'start-diagram-calls-itself',
+  'en',
+  'You tried to start a process with a diagram %0 that includes a callActivity calling itself.'
+  );
+  
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
   'start-multiple-already-running',
   'en',
   'You tried to start a process (id %0) with multiple copies already running.'

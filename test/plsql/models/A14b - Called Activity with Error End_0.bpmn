@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_EscalationEnd" name="Escalation End" isExecutable="false">
+    <bpmn:documentation>This Process just implements an Error Throw from a Error End Event.  It also sets a proc Var which can be returned on a normal ending</bpmn:documentation>
+    <bpmn:startEvent id="Event_Start_Called" name="Start Called">
+      <bpmn:outgoing>Flow_0m5f8c0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0m5f8c0" sourceRef="Event_Start_Called" targetRef="Event_ITE" />
+    <bpmn:sequenceFlow id="Flow_1l4x6yf" sourceRef="Event_ITE" targetRef="Event_End_Called" />
+    <bpmn:intermediateThrowEvent id="Event_ITE" name="Event_ITE">
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SetInCalled</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>SetInCalled</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m5f8c0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l4x6yf</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="Event_End_Called" name="End Called ">
+      <bpmn:incoming>Flow_1l4x6yf</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0sa3yb9" />
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_EscalationEnd">
+      <bpmndi:BPMNEdge id="Flow_1l4x6yf_di" bpmnElement="Flow_1l4x6yf">
+        <di:waypoint x="468" y="460" />
+        <di:waypoint x="522" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m5f8c0_di" bpmnElement="Flow_0m5f8c0">
+        <di:waypoint x="378" y="460" />
+        <di:waypoint x="432" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1p87ip5_di" bpmnElement="Event_Start_Called">
+        <dc:Bounds x="342" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="333" y="485" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1k0wxqe_di" bpmnElement="Event_ITE">
+        <dc:Bounds x="432" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="425" y="485" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08felq6_di" bpmnElement="Event_End_Called">
+        <dc:Bounds x="522" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="516" y="485" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
