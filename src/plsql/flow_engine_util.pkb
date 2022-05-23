@@ -310,6 +310,7 @@ procedure get_number_of_connections
     l_process_level       flow_subflows.sbfl_process_level%type := p_parent_sbfl_proc_level;
     l_diagram_level       flow_subflows.sbfl_diagram_level%type := 0;
     l_new_subflow_context flow_types_pkg.t_subflow_context;
+    l_lane                flow_objects.objt_bpmn_id%type;
     l_scope               flow_subflows.sbfl_scope%type := 0;
     l_level_parent        flow_subflows.sbfl_id%type := 0;
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
@@ -326,11 +327,27 @@ procedure get_number_of_connections
       l_is_new_level := 'Y';
     end if;
 
+    if p_parent_subflow is  null then
+    -- initial subflow in process.   Get starting Lane info. (could be null)
+      select ( select lane_objt.objt_bpmn_id 
+               from flow_objects lane_objt
+               where lane_objt.objt_id      = start_objt.objt_objt_lane_id
+                 and lane_objt.objt_dgrm_id = start_objt.objt_dgrm_id 
+             )
+        into l_lane
+        from flow_objects start_objt
+        join flow_processes prcs
+          on prcs.prcs_dgrm_id = start_objt.objt_dgrm_id 
+       where start_objt.objt_bpmn_id = p_starting_object
+         and prcs.prcs_id = p_process_id
+      ;
+    else
+    -- new subflow in existing process
     -- get process level, diagram level, scope, calling subflow for copy down unless this is the initial subflow in a process
-    if p_parent_subflow is not null then
       select sbfl.sbfl_process_level
            , sbfl.sbfl_diagram_level
            , sbfl.sbfl_scope
+           , sbfl.sbfl_lane
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
                 when 'N' then sbfl.sbfl_calling_sbfl
@@ -338,6 +355,7 @@ procedure get_number_of_connections
         into l_process_level
            , l_diagram_level
            , l_scope
+           , l_lane
            , l_level_parent
         from flow_subflows sbfl
        where sbfl.sbfl_id = p_parent_subflow;
@@ -362,6 +380,7 @@ procedure get_number_of_connections
          , sbfl_step_key
          , sbfl_calling_sbfl
          , sbfl_scope
+         , sbfl_lane
          )
     values
          ( p_process_id
@@ -379,6 +398,7 @@ procedure get_number_of_connections
          , flow_engine_util.step_key
          , l_level_parent
          , l_scope
+         , l_lane
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 
@@ -406,11 +426,12 @@ procedure get_number_of_connections
     end if;
 
     apex_debug.info
-    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3'
+    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4'
     , p0        => p_process_id
     , p1        => l_new_subflow_context.sbfl_id
     , p2        => l_new_subflow_context.step_key
     , p3        => l_new_subflow_context.scope
+    , p4        => l_lane
     );
     return l_new_subflow_context;
   end subflow_start;

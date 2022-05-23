@@ -34,7 +34,8 @@ begin
     add (
       sbfl_calling_sbfl   number,
       sbfl_scope          number,
-      sbfl_diagram_level  number
+      sbfl_diagram_level  number,
+      sbfl_lane           varchar2(255 char)
     )' 
   ;
 
@@ -46,6 +47,8 @@ end;
  - we will need to step through existing prcesses where the process_level != 0, and set the sbfl_calling_sbfl to the calling sbfl
  -- its only for subproceses, as we won't have any call activities to migrate -- so we can get this with the right query on the objects / connections
  */
+
+ /* need to add content to sbfl_lane for all existing subflows at migration */
 
   begin
     execute immediate '

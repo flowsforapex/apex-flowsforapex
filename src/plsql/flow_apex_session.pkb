@@ -78,16 +78,16 @@ as
     l_current                flow_subflows.sbfl_current%type;
     l_sbfl_dgrm_id           flow_subflows.sbfl_dgrm_id%type;
     l_session_parameters     t_session_parameters;
-    -- l_timer_scope            flow_subflows.sbfl_scope%type;   uncomment after merging
+    l_timer_scope            flow_subflows.sbfl_scope%type; 
 
   begin
     -- get the current object (and scope) as timer object name
     select sbfl.sbfl_current
          , sbfl.sbfl_dgrm_id
-  --       , sbfl.sbfl_scope
+         , sbfl.sbfl_scope
       into l_current
          , l_sbfl_dgrm_id
-  --       , l_timer_scope
+         , l_timer_scope
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id      = p_subflow_id
@@ -95,42 +95,39 @@ as
     -- check if required process variables exist in current scope 
     if flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_applicationId
---                                     , pi_scope    => l_timer_scope
+                                     , pi_scope    => l_timer_scope
                                      ) is null  
     or flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_pageId
---                                     , pi_scope    => l_timer_scope
+                                     , pi_scope    => l_timer_scope
                                      ) is null
     or flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_username
---                                     , pi_scope    => l_timer_scope
+                                     , pi_scope    => l_timer_scope
                                      ) is null
     then
       l_session_parameters := get_session_parameters (p_dgrm_id => l_sbfl_dgrm_id);
 
-      flow_process_vars.set_var 
---      flow_proc_var_int.set_var
+      flow_proc_vars_int.set_var
           ( pi_prcs_id      => p_process_id
           , pi_var_name     => l_current || ':' || flow_constants_pkg.gc_async_parameter_applicationId
---          , pi_scope        => l_timer_scope
+          , pi_scope        => l_timer_scope
           , pi_vc2_value    => l_session_parameters.app_id
           , pi_sbfl_id      => p_subflow_id
           , pi_objt_bpmn_id => l_current
           );
-      flow_process_vars.set_var 
---      flow_proc_var_int.set_var
+      flow_proc_vars_int.set_var
           ( pi_prcs_id      => p_process_id
           , pi_var_name     => l_current || ':' || flow_constants_pkg.gc_async_parameter_pageId
---          , pi_scope        => l_timer_scope
+          , pi_scope        => l_timer_scope
           , pi_vc2_value    => l_session_parameters.page_id
           , pi_sbfl_id      => p_subflow_id
           , pi_objt_bpmn_id => l_current
           );
-      flow_process_vars.set_var 
---      flow_proc_var_int.set_var
+      flow_proc_vars_int.set_var
           ( pi_prcs_id      => p_process_id
           , pi_var_name     => l_current || ':' || flow_constants_pkg.gc_async_parameter_username
---          , pi_scope        => l_timer_scope
+          , pi_scope        => l_timer_scope
           , pi_vc2_value    => l_session_parameters.username
           , pi_sbfl_id      => p_subflow_id
           , pi_objt_bpmn_id => l_current
@@ -153,7 +150,7 @@ as
   ) return number
   is 
     l_timer_name             flow_subflows.sbfl_current%type;
-    -- l_timer_scope            flow_subflows.sbfl_scope%type;   uncomment after merging
+    l_timer_scope            flow_subflows.sbfl_scope%type;   
     l_app_id                 flow_object_attributes.obat_vc_value%type;
     l_page_id                flow_object_attributes.obat_vc_value%type;
     l_username               flow_object_attributes.obat_vc_value%type;
@@ -162,28 +159,28 @@ as
     flow_globals.set_is_recursive_step (p_is_recursive_step => true);
     -- get the current object (and scope) as timer object name
     select sbfl.sbfl_current
-  --       , sbfl.sbfl_scope
+         , sbfl.sbfl_scope
       into l_timer_name
-  --       , l_timer_scope
+         , l_timer_scope
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id      = p_subflow_id
     ;
     -- get async process variable details 
-    l_username  := flow_process_vars.get_var_vc2
+    l_username  := flow_proc_vars_int.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_username
---                      , pi_scope     => l_timer_scope
+                      , pi_scope     => l_timer_scope
                       );
-    l_app_id    := flow_process_vars.get_var_vc2
+    l_app_id    := flow_proc_vars_int.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_applicationId
---                      , pi_scope     => l_timer_scope
+                      , pi_scope     => l_timer_scope
                       );
-    l_page_id   := flow_process_vars.get_var_vc2
+    l_page_id   := flow_proc_vars_int.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_pageId
---                      , pi_scope     => l_timer_scope
+                      , pi_scope     => l_timer_scope
                       );         
     -- check all process variables are set in case they have been deleted since timer was set
     if l_username is null then
