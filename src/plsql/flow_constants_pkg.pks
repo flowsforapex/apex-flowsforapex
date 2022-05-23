@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_constants_pkg.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+--
+-- Created 2020   Moritz Klein - MT AG  
+-- Edited  14-Mar-2022 R Allen, Oracle
+--
+*/
 create or replace package flow_constants_pkg
   authid definer
 as
@@ -17,9 +26,13 @@ as
   gc_bpmn_prefix constant varchar2(10 char)  := 'bpmn:';
   gc_apex_prefix constant varchar2(10 char)  := 'apex:';
 
+  ge_invalid_session_params   exception;
+  pragma exception_init (ge_invalid_session_params, -20987);
+
   -- BPMN Keys
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
+  gc_bpmn_call_activity                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'callActivity';
 
   gc_bpmn_start_event                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
   gc_bpmn_end_event                    constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'endEvent';
@@ -58,6 +71,12 @@ as
   
 
   -- APEX Extensions to BPMN
+  -- bpmnProcess
+  gc_apex_process_workspace           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'workspace';
+  gc_apex_process_application_id      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
+  gc_apex_process_page_id             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
+  gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
+  
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexPage';
   gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'externalUrl';
@@ -115,6 +134,15 @@ as
   gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
   gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
+  -- callActivity tags
+  gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
+  gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
+  gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
+
+  -- Diagram calling methods
+  gc_dgrm_version_named_version       constant flow_types_pkg.t_bpmn_attributes_key := 'namedVersion';
+  gc_dgrm_version_latest_version      constant flow_types_pkg.t_bpmn_attributes_key := 'latestVersion';
+
   -- Special Keys from FLOW_OBJECT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
@@ -147,6 +175,7 @@ as
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
+  gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
   gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 
@@ -190,13 +219,21 @@ as
   gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
   gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
 
--- Process Variable Expression set := 'BeforeTask';
+-- Process Variable Expression sets and CallActivity in-Out sets
   gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';
   gc_expr_set_after_task              constant flow_types_pkg.t_expr_set := 'afterTask';
   gc_expr_set_before_split            constant flow_types_pkg.t_expr_set := 'beforeSplit';
   gc_expr_set_after_merge             constant flow_types_pkg.t_expr_set := 'afterMerge';
   gc_expr_set_before_event            constant flow_types_pkg.t_expr_set := 'beforeEvent';
   gc_expr_set_on_event                constant flow_types_pkg.t_expr_set := 'onEvent';
+  gc_expr_set_in_variables            constant flow_types_pkg.t_expr_set := 'inVariables';
+  gc_expr_set_out_variables           constant flow_types_pkg.t_expr_set := 'outVariables';
+
+-- ASync Session Parameter Keys
+
+  gc_async_parameter_username          constant flow_types_pkg.t_expr_set := 'username';
+  gc_async_parameter_applicationId     constant flow_types_pkg.t_expr_set := 'applicationId';
+  gc_async_parameter_pageId            constant flow_types_pkg.t_expr_set := 'pageId';
 
 -- Config Parameter Keys
 
@@ -206,15 +243,20 @@ as
   gc_config_engine_app_mode           constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention       constant varchar2(50 char) := 'duplicate_step_prevention';
   gc_config_timer_max_cycles          constant varchar2(50 char) := 'timer_max_cycles';
+  gc_config_default_workspace         constant varchar2(50 char) := 'default_workspace';
+  gc_config_default_application       constant varchar2(50 char) := 'default_application';
+  gc_config_default_pageid            constant varchar2(50 char) := 'default_pageid';
+  gc_config_default_username          constant varchar2(50 char) := 'default_username';
+
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
-  gc_config_logging_level_none        constant varchar2(2000 char) := 'none';      -- none
-  gc_config_logging_level_standard    constant varchar2(2000 char) := 'standard';  -- instances and tasks
-  gc_config_logging_level_secure      constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
-  gc_config_logging_level_full        constant varchar2(2000 char) := 'full';      -- secure + variable changes
-  gc_config_engine_app_mode_dev       constant varchar2(2000 char) := 'development';
-  gc_config_engine_app_mode_prod      constant varchar2(2000 char) := 'production';
+  gc_config_logging_level_none         constant varchar2(2000 char) := 'none';      -- none
+  gc_config_logging_level_standard     constant varchar2(2000 char) := 'standard';  -- instances and tasks
+  gc_config_logging_level_secure       constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
+  gc_config_logging_level_full         constant varchar2(2000 char) := 'full';      -- secure + variable changes
+  gc_config_engine_app_mode_dev        constant varchar2(2000 char) := 'development';
+  gc_config_engine_app_mode_prod       constant varchar2(2000 char) := 'production';
   gc_config_dup_step_prevention_legacy constant varchar2(2000 char) := 'legacy';   -- null step key allowed
   gc_config_dup_step_prevention_strict constant varchar2(2000 char) := 'strict';   -- step key enforced
 
@@ -227,7 +269,11 @@ as
   gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
   gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_default_application       constant varchar2(2000 char) := '100';
+  gc_config_default_default_pageID            constant varchar2(2000 char) := '1';
+  gc_config_default_default_username          constant varchar2(2000 char) := 'FLOWS4APEX';
   gc_config_default_timer_max_cycles          constant varchar2(2000 char) := '1000';
+
 
 
   -- Default XML for new diagrams

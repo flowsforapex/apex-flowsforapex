@@ -1,0 +1,129 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_OBJECTS" directorySegmentName="seg_0" id="77F15569-A685-AB2D-E95E-8E6997DB6AED">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="OBJT_BPMN_ID" id="06BE62E7-DE01-16DD-ED4F-EE465E512086">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_TAG_NAME" id="0D02CF75-90B5-7D0D-587C-878DB0AD0101">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_OBJT_ID" id="0DAFB33D-BF2C-E33D-003D-4F7885C4FD7B">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_ATTACHED_TO" id="0E52E308-50BC-0013-488C-8A8A2432EF02">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_DGRM_ID" id="1AE399AE-A7C5-2E36-CB3A-5EEF8BBD370A">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_NAME" id="639B59E5-B43E-EAEC-E852-1D96317672B6">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_OBJT_LANE_ID" id="729BDD22-DFDB-215B-EE56-7428647C12A7">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_INTERRUPTING" id="77D2ABD6-C703-CBE8-171B-CF9D0AA99CE8">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_SUB_TAG_NAME" id="872E6C1C-B6EC-C062-2C2A-AE325C327B33">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="OBJT_ID" id="E23C9769-34A5-5203-9BE5-C9890CEAEDB8">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="OBJT_PK" id="4E245B72-D37B-4410-37D4-EF0549A1E250">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+</IndexProxy>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="OBJT_UK" id="EEAC58F1-D096-BB6E-E20C-F933A68C19E7">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="OBJT_DGRM_FK" id="5311BEFB-7AFE-52FB-2C59-7A58653CC81F">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="OBJT_OBJT_FK" id="852BC1FF-7F02-2EE4-5D4A-2FDD784D8FC3">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="OBJT_OBJT_LANE_FK" id="C2EE20C7-818C-493C-3DF9-87E8EAC5A4BD">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="OBJT_PK" id="BADBEB59-26B5-A0AF-7453-6ED49D4DB6B8">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<existingIndex>4E245B72-D37B-4410-37D4-EF0549A1E250</existingIndex>
+<indexSegment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="OBJT_UK" id="3DFE931B-DB12-9F85-DF40-ED0419B56CF2">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<existingIndex>EEAC58F1-D096-BB6E-E20C-F933A68C19E7</existingIndex>
+<indexSegment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev12c>

@@ -1,0 +1,153 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_SUBFLOWS" directorySegmentName="seg_0" id="F1B7ACD6-E93A-E504-2E6C-22AFEC76CF3C">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="SBFL_LAST_UPDATE" id="04195B1F-4D7E-AFAA-4505-1330B36F7CE7">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_DIAGRAM_LEVEL" id="1EF78982-AC35-309E-7CB6-6039E7D64DA2">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_WORK_STARTED" id="348CB5CC-6AEA-616E-23CB-AA10A14A9DC5">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_ROUTE" id="39170546-C11C-D256-F120-3E49BD59BE0F">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_SBFL_ID" id="3B9E793F-8666-F506-78B3-894A8DF4CFEC">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_ID" id="51D9340C-E2B2-2C2C-623F-2422DA8573EE">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="SBFL_BECAME_CURRENT" id="5F95C666-7290-EE2F-DE94-5409AB6DDA0B">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_HAS_EVENTS" id="64B50936-B054-99AA-4CD3-EE320342E527">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_SCOPE" id="6CE6008D-C27A-7468-0209-5C7833628B60">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_CURRENT" id="9162771F-726C-0797-C913-CED22863E8F1">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_CALLING_SBFL" id="921DA0FE-D2BB-D0C2-714B-77489BC0B85D">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_STARTING_OBJECT" id="9932A786-CFAB-B2B6-962A-5B72B5C0F9AC">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_DGRM_ID" id="A6C85C0B-3FA0-96A7-2750-052DAF8B895F">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_STATUS" id="B3F4CC7F-04B2-12B4-1AB1-73E91641995C">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_PROCESS_LEVEL" id="B466653D-B7C8-44B4-84BE-FD1299AF7A75">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_RESERVATION" id="B6E429D9-CEB8-3889-DA1D-3683BEB3354E">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_STEP_KEY" id="D7763491-57F2-D218-05F0-0C997B45CE51">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_LAST_COMPLETED" id="D81E0DFA-2184-444B-1B4D-308A04FD890E">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SBFL_PRCS_ID" id="F57D08D3-CC12-D107-7A8E-165A9D5D9E09">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="SBFL_PK" id="EC817229-1A0E-B21E-84F2-87301EA0D244">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="SBFL_PRCS_FK" id="5884CF95-314A-E384-71BF-F3196BD4C1BB">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="SBFL_DGRM_FK" id="D15F8260-E44A-A2C7-7E08-997965AB40AF">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="SBFL_PARENT_SBFL_FK" id="EDEE256C-8A49-7F2C-F77D-531805233F51">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="SBFL_PK" id="CD69CE39-2D2D-495C-A272-7FF4CBECA887">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<existingIndex>EC817229-1A0E-B21E-84F2-87301EA0D244</existingIndex>
+<indexSegment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev12c>

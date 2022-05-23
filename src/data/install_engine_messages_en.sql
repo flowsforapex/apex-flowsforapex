@@ -1,4 +1,11 @@
-PROMPT >> Resetting Engine Messages to initial state (English)
+/* 
+-- Flows for APEX - install_engine_messages_en.sql
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2021,2022.
+--
+-- Created Sep-2021   Richard Allen - Flowquest 
+--
+*/PROMPT >> Resetting Engine Messages to initial state (English)
 begin
   delete from flow_messages where fmsg_lang = 'en';
 
@@ -8,7 +15,42 @@ begin
   'en',
   'Currently unsupported type of Intermediate Throw Event encountered at %0 .'
   );
-  
+    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'apex-session-params-not-set',
+  'en',
+  'Asynchronous connection details for object %0 need to be set in process variables, diagram async connection details, or system config details.'
+  );
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-invalid_params',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
+  );    
+       
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-username',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-appid',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'async-no-pageid',
+  'en',
+  'Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'boundary-event-child-lock-to',
@@ -335,35 +377,35 @@ begin
   values (
   'var-set-error',
   'en',
-  'Error creating process variable %0 for process id %1.'
+  'Error creating process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-get-error',
   'en',
-  'Error getting process variable %0 for process id %1.'
+  'Error getting process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-update-error',
   'en',
-  'Error updating process variable %0 for process id %1.'
+  'Error updating process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-delete-error',
   'en',
-  'Error deleting process variable %0 for process id %1.'
+  'Error deleting process variable %0 for process id %1 in scope %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-lock-error',
   'en',
-  'Error locking process variable %0 for process id %1.'
+  'Error locking process variable %0 for process id %1 in scope %2.'
   );
 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -427,6 +469,13 @@ begin
   'version-no-rel-or-draft-v0',
   'en',
   'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
+  );
+  
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'version-not-found',
+  'en',
+  'Cannot find specified diagram version.  Please check version specification.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -596,6 +645,13 @@ begin
   'email-placeholder-json-invalid',
   'en',
   'Process %0: ServiceTask %1 placeholder JSON is invalid.Please check the model.'
+  );
+
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'plugin-multiple-rows',
+  'en',
+  'Multiple rows found. Please enable the ''Enable Call Activities'' setting in the viewer plugin attributes.'
   );
   commit;
 end;

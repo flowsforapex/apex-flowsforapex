@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<ProcessModel class="oracle.dbtools.crest.model.design.process.ProcessModel" name="Process Model" id="6BBEFEE3-DF35-4CEE-5C41-7B253F8B17FE">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:47:24 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<shouldBeOpen>false</shouldBeOpen>
+</ProcessModel>

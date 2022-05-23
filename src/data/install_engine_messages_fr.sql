@@ -8,7 +8,41 @@ begin
   'fr',
   'Type d''événement de lancer intermédiaire actuellement non pris en charge rencontré à %0.'
   );
-  
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) -- NEEDS TRANSLATION
+  values (
+  'async-invalid-params',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
+  );
+
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) -- NEEDS TRANSLATION
+  values (
+  'apex-session-params-not-set',
+  'fr',
+  'Async connection details for object %0 need to be set in process variables, diagram async connection details, or system config details.'
+  );
+   
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) -- NEEDS TRANSLATION
+  values (
+  'async-no-username',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) -- NEEDS TRANSLATION
+  values (
+  'async-no-appid',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
+      
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) -- NEEDS TRANSLATION
+  values (
+  'async-no-pageid',
+  'fr',
+  'Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.'
+  );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'boundary-event-child-lock-to',
@@ -333,35 +367,35 @@ begin
   values (
   'var-set-error',
   'fr',
-  'Erreur de création de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de création de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-get-error',
   'fr',
-  'Erreur de récupération de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de récupération de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-update-error',
   'fr',
-  'Erreur de mise à jour de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de mise à jour de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-delete-error',
   'fr',
-  'Erreur de suppression de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de suppression de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var-lock-error',
   'fr',
-  'Erreur de verrouillage de la variable de processus %0 pour l''ID de processus %1.'
+  'Erreur de verrouillage de la variable de processus %0 pour l''ID de processus %1 avec la portée %2.'
   ); 
 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -425,6 +459,13 @@ begin
   'version-no-rel-or-draft-v0',
   'fr',
   'Impossible de trouver le diagramme publié ou la version 0 du diagramme - veuillez spécifier une version ou un numéro de diagramme.'
+  );
+
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values (
+  'version-not-found',
+  'fr',
+  'Impossible de trouver la version spécifiée du diagramme. Veuillez vérifier la version.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

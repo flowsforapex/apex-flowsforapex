@@ -1,0 +1,125 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="FLOW_CONNECTIONS" directorySegmentName="seg_0" id="EEAF50D8-7FF8-1BD0-EF6D-6DECDD8C3A97">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="CONN_ID" id="2B49C03B-0662-F578-E567-83A637A9C267">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="CONN_TGT_OBJT_ID" id="3A9AB7BE-1598-D549-3F2B-B920E314C9F5">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_IS_DEFAULT" id="55B47C79-B2BB-3970-0B93-7B9BE834B7F1">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<defaultValue>0</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="CONN_BPMN_ID" id="59F7BA19-E4C7-E601-8846-6A7D22D49D07">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_ORIGIN" id="7AC99319-6B1A-B4CB-5A7B-E0BB499C2F51">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_NAME" id="7D58067B-13F7-4402-11AA-8A9338949BBA">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_TAG_NAME" id="86B118E4-04B4-5850-694A-882109087B96">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_SRC_OBJT_ID" id="A99A4241-75FF-2546-F6E5-7D3C30A06B50">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CONN_DGRM_ID" id="F9755E24-ED1A-0BA0-AEFA-F0F7ED28235D">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="CONN_PK" id="B11579FB-F1C4-D593-39B4-B12F103DC095">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+</IndexProxy>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="CONN_UK" id="B7369A46-ECA0-E98A-8AE2-D6C306C719A4">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<schemaObject>549DA49B-A597-581F-78D0-F8DF9FC01D6F</schemaObject>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="CONN_SRC_OBJT_FK" id="2C10F3F1-AE90-BA0C-2837-9DF68E339DC3">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="CONN_DGRM_FK" id="4785082B-D296-E201-B25D-FC5A9A9779B8">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="CONN_TGT_OBJT_FK" id="DC8375FD-FECB-860B-C351-D9B28F3D4961">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="CONN_PK" id="BEE1862F-06C2-F883-DE19-CFC52D94521D">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<existingIndex>B11579FB-F1C4-D593-39B4-B12F103DC095</existingIndex>
+<indexSegment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="CONN_UK" id="232F309B-5087-394E-5EC4-4FD886678E6A">
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<segment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</segment>
+<tableSpace>95E19909-5EB1-EF09-B773-775254E1711C</tableSpace>
+<existingIndex>B7369A46-ECA0-E98A-8AE2-D6C306C719A4</existingIndex>
+<indexSegment>756948F3-406C-5CF2-A89D-1AE266B1B4B4</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev12c>

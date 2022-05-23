@@ -1,0 +1,88 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="BCC3480F-159B-A178-0AB7-73F85E491D96" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="FLOW_MESSAGES">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FLOW_MESSAGES</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="FMSG_MESSAGE_KEY" id="52CF029E-B1F5-61BC-9C65-8F17281ED4F2">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_MESSAGES</sourceObjSchema>
+<sourceObjName>FMSG_MESSAGE_KEY</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>30 CHAR</dataTypeSize>
+<ownDataTypeParameters>30 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="FMSG_LANG" id="CFACD05E-9614-2F6D-65DB-5963C60A8424">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_MESSAGES</sourceObjSchema>
+<sourceObjName>FMSG_LANG</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>10 CHAR</dataTypeSize>
+<ownDataTypeParameters>10 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="FMSG_MESSAGE_CONTENT" id="CDB886C6-4789-9D3A-F020-FD1B90EAF944">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOW_MESSAGES</sourceObjSchema>
+<sourceObjName>FMSG_MESSAGE_CONTENT</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:40 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>2000 CHAR</dataTypeSize>
+<ownDataTypeParameters>2000 CHAR,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="E01C0D4D-EE96-4892-5B8F-B964B4C81B29" name="FMSG_PK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FMSG_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:42 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="52CF029E-B1F5-61BC-9C65-8F17281ED4F2"/>
+<colUsage columnID="CFACD05E-9614-2F6D-65DB-5963C60A8424"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="5F252FE3-D6B1-62EB-0513-FAFAC259117C" schemaObject="549DA49B-A597-581F-78D0-F8DF9FC01D6F" name="FMSG_PK">
+<sourceConnName>mt_flows_dev.flows4apex</sourceConnName>
+<sourceObjSchema>FLOWS4APEX</sourceObjSchema>
+<sourceObjName>FMSG_PK</sourceObjName>
+<createdBy>moklein</createdBy>
+<createdTime>2022-03-21 15:49:41 UTC</createdTime>
+<ownerDesignName>flows4apex</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="52CF029E-B1F5-61BC-9C65-8F17281ED4F2"/>
+<colUsage columnID="CFACD05E-9614-2F6D-65DB-5963C60A8424"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

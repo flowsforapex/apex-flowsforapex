@@ -1,11 +1,9 @@
 create or replace package body flow_timers_pkg
 as
 
-
-  lock_timeout exception;
-  pragma exception_init (lock_timeout, -3006);
-
-  e_invalid_duration exception;
+  lock_timeout             exception;
+  e_invalid_duration       exception;
+  pragma exception_init (lock_timeout, -3006);  
 
   type t_timer_def is record
   ( timer_type            flow_object_attributes.obat_vc_value%type
@@ -242,7 +240,10 @@ as
     l_new_status            flow_timers.timr_status%type;
     l_timr_id               flow_timers.timr_id%type;
     l_timr_run              flow_timers.timr_run%type;
+    l_apex_session          number;
   begin
+    -- set error_handling to recursive step mode
+    flow_globals.set_is_recursive_step (p_is_recursive_step => true);
     loop -- until no records found
       -- could add a functional index on flow_timers to improve performance of this query
       -- eg. create index flow_timr_n1 on flow_timers (
@@ -267,14 +268,19 @@ as
       ;
 
       begin
-      -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
-      -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
-      -- to delete the timer through a cascade delete.
+        -- create an APEX session for the timer operation
+        l_apex_session := flow_apex_session.create_async_session  ( p_process_id => l_timers.timr_prcs_id
+                                                                  , p_subflow_id => l_timers.timr_sbfl_id
+                                                                  );
+
+        -- ideally the flow_engine should lock the subflow and this procedure should handle the resource 
+        -- timeout, deadlock and not found exceptions. This would happen if the subflow is locked waiting 
+        -- to delete the timer through a cascade delete.
         if l_timers.timr_type in  ( flow_constants_pkg.gc_timer_type_cycle
                                   , flow_constants_pkg.gc_timer_type_oracle_cycle 
                                   ) 
         then 
-          -- repeating / cycle timer.  If unlimited or less than max repeats, run again...
+          -- repeating / cycle timer.  If unlimited or less than max repeats, run again...∏
           if l_timers.timr_run < l_timers.timr_repeat_times 
           or l_timers.timr_repeat_times is null then 
             l_timr_id   := l_timers.timr_id;
@@ -292,27 +298,37 @@ as
         , p_timr_id    => l_timr_id
         , p_run        => l_timr_run
         );
+        -- drop the session
+        if l_apex_session is not null then
+          flow_apex_session.delete_session ( p_session_id => l_apex_session );
+        end if;
+        commit;
       exception 
         -- Some exception happened during processing the timer
         -- We trap it here and mark respective timer as broken.
         when others then
-        update flow_timers
-          set timr_status = c_broken
-        where timr_id = l_timers.timr_id
-          and timr_run = l_timers.timr_run
-        ;
-        flow_errors.handle_instance_error
-        ( pi_prcs_id    => l_timers.timr_prcs_id
-        , pi_sbfl_id    => l_timers.timr_sbfl_id
-        , pi_message_key => 'timer-broken'
-        , p0 => l_timers.timr_id
-        , p1 => l_timers.timr_prcs_id
-        , p2 => l_timers.timr_sbfl_id
-        , p3 => l_timers.timr_run
-        );
-        -- $F4AMESSAGE 'timer-broken' || 'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
+          update flow_timers
+            set timr_status = c_broken
+          where timr_id = l_timers.timr_id
+            and timr_run = l_timers.timr_run
+          ;
+          flow_errors.handle_instance_error
+          ( pi_prcs_id    => l_timers.timr_prcs_id
+          , pi_sbfl_id    => l_timers.timr_sbfl_id
+          , pi_message_key => 'timer-broken'
+          , p0 => l_timers.timr_id
+          , p1 => l_timers.timr_prcs_id
+          , p2 => l_timers.timr_sbfl_id
+          , p3 => l_timers.timr_run
+          );
+          -- $F4AMESSAGE 'timer-broken' || 'Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.'
+          -- set error status on subflow & Process
+          flow_errors.set_error_status ( pi_prcs_id  => l_timers.timr_prcs_id 
+                                       , pi_sbfl_id  => l_timers.timr_sbfl_id
+                                       );
+          commit;
       end;
-      commit;
+
     end loop;
     exception 
       when no_data_found then return;
@@ -401,6 +417,7 @@ as
     l_timer_def           t_timer_def;
     l_time_string         varchar2(20);
     e_invalid_repeat      exception;
+    l_scope               flow_subflows.sbfl_scope%type;
   begin
     apex_debug.enter 
     ( 'start_new_timer'
@@ -408,6 +425,12 @@ as
     , 'sbfl_id', pi_sbfl_id
     , 'step_key', pi_step_key
     );
+    -- preset async session parameters in proc variables
+    flow_apex_session.set_async_proc_vars
+        ( p_process_id  => pi_prcs_id
+        , p_subflow_id  => pi_sbfl_id
+        );
+    -- set up scheduled firing time
     l_timer_def := get_timer_definition
                   (
                     pi_prcs_id    => pi_prcs_id
@@ -423,29 +446,35 @@ as
     , p3        => coalesce( l_timer_def.oracle_format_mask, l_timer_def.repeat_interval_ds, '<null>')
     , p4        => coalesce( l_timer_def.max_runs, '<null>')
     );
+
+    l_scope := flow_engine_util.get_scope (p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id );
+
     begin
       case l_timer_def.timer_type
         when flow_constants_pkg.gc_timer_type_date then
           -- ISO 8601 date - check for substitution of process variable
           if upper(substr(l_timer_def.timer_definition,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
-            case flow_process_vars.get_var_type ( pi_prcs_id  => pi_prcs_id
-                                                , pi_var_name => substr(l_timer_def.timer_definition,6,length(l_timer_def.timer_definition)-6)
+            case flow_proc_vars_int.get_var_type ( pi_prcs_id  => pi_prcs_id
+                                                 , pi_var_name => substr(l_timer_def.timer_definition,6,length(l_timer_def.timer_definition)-6)
+                                                 , pi_scope    => l_scope
                                                 )
             when flow_constants_pkg.gc_prov_var_type_date then
                 -- substitution parameter is a date process var = already an Oracle date
                 l_parsed_ts :=
-                  flow_process_vars.get_var_date
+                  flow_proc_vars_int.get_var_date
                   ( 
                     pi_prcs_id  => pi_prcs_id
                   , pi_var_name => substr(l_timer_def.timer_definition,6,length(l_timer_def.timer_definition)-6)
+                  , pi_scope    => l_scope
                   )
                 ;
             when flow_constants_pkg.gc_prov_var_type_varchar2 then
-                l_parsed_ts := to_timestamp_tz ( flow_process_vars.get_var_vc2
-                                                 ( pi_prcs_id => pi_prcs_id
+                l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
+                                                 ( pi_prcs_id  => pi_prcs_id
                                                  , pi_var_name => substr  ( l_timer_def.timer_definition,6
                                                                           , length(l_timer_def.timer_definition)-6
                                                                           )
+                                                 , pi_scope    => l_scope
                                                  )
                                                 , flow_constants_pkg.gc_prov_default_date_format
                                                 );
@@ -470,10 +499,11 @@ as
           -- ISO 8601 Duration - check for substitution of process variable
           if upper(substr(l_timer_def.timer_definition,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
             l_timer_def.timer_definition :=
-              flow_process_vars.get_var_vc2
+              flow_proc_vars_int.get_var_vc2
               ( 
                 pi_prcs_id  => pi_prcs_id
               , pi_var_name => substr(l_timer_def.timer_definition,6,length(l_timer_def.timer_definition)-6)
+              , pi_scope    => l_scope
               )
             ;
           end if;     
@@ -487,16 +517,17 @@ as
           );
         when flow_constants_pkg.gc_timer_type_cycle then
           -- ISO 8601 Cycle - check for substitution of process variable
-          flow_process_vars.do_substitution ( pi_prcs_id => pi_prcs_id
-                                            , pi_sbfl_id => pi_sbfl_id
-                                            , pio_string => l_timer_def.timer_definition
-                                            );
+          flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id
+                                             , pi_sbfl_id => pi_sbfl_id
+                                             , pi_scope   => l_scope
+                                             , pio_string => l_timer_def.timer_definition
+                                             );
           l_repeat_def := regexp_substr (l_timer_def.timer_definition, '^'||'R([0-9]*|-1)\/'); -- using concatenation to prevent substitution on installation via script
           if l_repeat_def is null then
             raise e_invalid_repeat;
           end if;
           l_repeat_times := substr ( l_timer_def.timer_definition, 2
-                                   ,  instr( l_timer_def.timer_definition, '/', 1, 1 ) - 2 
+                                   , instr( l_timer_def.timer_definition, '/', 1, 1 ) - 2 
                                    );
           if l_repeat_times = -1 or l_repeat_times is null then 
             -- ISO8601 repeat -1 means unlimited so set repeat_times to max cycles
@@ -523,26 +554,29 @@ as
         when flow_constants_pkg.gc_timer_type_oracle_date then
 
           if upper(substr(l_timer_def.oracle_date,1,5)) = flow_constants_pkg.gc_substitution_prefix || flow_constants_pkg.gc_substitution_flow_identifier then
-            case flow_process_vars.get_var_type ( pi_prcs_id  => pi_prcs_id
-                                                , pi_var_name => substr(l_timer_def.oracle_date,6,length(l_timer_def.oracle_date)-6)
-                                                )
+            case flow_proc_vars_int.get_var_type ( pi_prcs_id  => pi_prcs_id
+                                                 , pi_var_name => substr(l_timer_def.oracle_date,6,length(l_timer_def.oracle_date)-6)
+                                                 , pi_scope    => l_scope
+                                                 )
             when flow_constants_pkg.gc_prov_var_type_date then
                 -- substitution parameter is a date process var = already an Oracle date
                 l_parsed_ts :=
-                  flow_process_vars.get_var_date
+                  flow_proc_vars_int.get_var_date
                   ( 
                     pi_prcs_id  => pi_prcs_id
                   , pi_var_name => substr(l_timer_def.oracle_date,6,length(l_timer_def.oracle_date)-6)
+                  , pi_scope    => l_scope
                   )
                 ;
             when flow_constants_pkg.gc_prov_var_type_varchar2 then
                 -- substitution parameter is a vc2 - use the specified format mask
-                l_parsed_ts := to_timestamp_tz ( flow_process_vars.get_var_vc2
-                                                 ( pi_prcs_id => pi_prcs_id
-                                                 , pi_var_name => substr  ( l_timer_def.oracle_date,6
-                                                                          , length(l_timer_def.oracle_date)-6
-                                                                          )
-                                                 )
+                l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
+                                                  ( pi_prcs_id  => pi_prcs_id
+                                                  , pi_var_name => substr  ( l_timer_def.oracle_date,6
+                                                                           , length(l_timer_def.oracle_date)-6
+                                                                           )
+                                                  , pi_scope    => l_scope
+                                                  )
                                                 , l_timer_def.oracle_format_mask
                                                 );
             end case;
@@ -552,34 +586,39 @@ as
           end if;
         when flow_constants_pkg.gc_timer_type_oracle_duration then 
           -- handle possible vc2-typed subsitutions for both parameters
-          flow_process_vars.do_substitution ( pi_prcs_id => pi_prcs_id
-                                            , pi_sbfl_id => pi_sbfl_id
-                                            , pio_string => l_timer_def.oracle_duration_ds
-                                            );
-          flow_process_vars.do_substitution ( pi_prcs_id => pi_prcs_id
-                                            , pi_sbfl_id => pi_sbfl_id
-                                            , pio_string => l_timer_def.oracle_duration_ym
-                                            );
+          flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id
+                                             , pi_sbfl_id => pi_sbfl_id
+                                             , pio_string => l_timer_def.oracle_duration_ds
+                                             , pi_scope   => l_scope
+                                             );
+          flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id
+                                             , pi_sbfl_id => pi_sbfl_id
+                                             , pio_string => l_timer_def.oracle_duration_ym
+                                             , pi_scope   => l_scope
+                                             );
           l_parsed_duration_ds := to_dsinterval ( nvl ( l_timer_def.oracle_duration_ds , '000 00:00:00') );
           l_parsed_duration_ym := to_yminterval ( nvl( l_timer_def.oracle_duration_ym, '0-0') );
           l_parsed_ts := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
 
         when flow_constants_pkg.gc_timer_type_oracle_cycle then
           -- oracle cycle timer - all 3 parameters can be substituted with vc2-type proc var
-          flow_process_vars.do_substitution ( pi_prcs_id => pi_prcs_id
-                                            , pi_sbfl_id => pi_sbfl_id
-                                            , pio_string => l_timer_def.start_interval_ds
-                                            );
-          flow_process_vars.do_substitution ( pi_prcs_id => pi_prcs_id
-                                            , pi_sbfl_id => pi_sbfl_id
-                                            , pio_string => l_timer_def.repeat_interval_ds
-                                            ); 
+          flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id
+                                             , pi_sbfl_id => pi_sbfl_id
+                                             , pi_scope   => l_scope
+                                             , pio_string => l_timer_def.start_interval_ds
+                                             );
+          flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id
+                                             , pi_sbfl_id => pi_sbfl_id
+                                             , pi_scope   => l_scope
+                                             , pio_string => l_timer_def.repeat_interval_ds
+                                             ); 
           if l_timer_def.max_runs is not null then            
-            flow_process_vars.do_substitution ( pi_prcs_id => pi_prcs_id
-                                            , pi_sbfl_id => pi_sbfl_id
-                                            , pio_string => l_timer_def.max_runs
-                                            );                                                       
-            l_repeat_times        := to_number ( l_timer_def.max_runs );
+            flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id
+                                               , pi_sbfl_id => pi_sbfl_id
+                                               , pi_scope   => l_scope
+                                               , pio_string => l_timer_def.max_runs
+                                               );                                                       
+            l_repeat_times  := to_number ( l_timer_def.max_runs );
           else
             l_repeat_times := flow_engine_util.get_config_value 
                               ( p_config_key    => flow_constants_pkg.gc_config_timer_max_cycles
@@ -816,6 +855,7 @@ begin
 
     update flow_timers
        set timr_start_on = l_timer_rec.timr_start_on
+         , timr_status = c_created
      where timr_id = l_timer_rec.timr_id
        and timr_run = l_timer_rec.timr_run
     ;

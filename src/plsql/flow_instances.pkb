@@ -1,3 +1,12 @@
+/* 
+-- Flows for APEX - flow_instances.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
+--
+*/
 create or replace package body flow_instances 
 as
 
@@ -6,6 +15,104 @@ as
   pragma exception_init (lock_timeout, -3006);
 
   e_unsupported_start_event exception;
+
+  type t_call_def is record
+    ( dgrm_name              flow_diagrams.dgrm_name%type
+    , dgrm_version           flow_diagrams.dgrm_version%type
+    , dgrm_id                flow_diagrams.dgrm_id%type
+    , dgrm_version_selection flow_object_attributes.obat_vc_value%type
+    );
+
+  procedure find_nested_calls
+    ( p_dgrm_id  flow_diagrams.dgrm_id%type
+    , p_prcs_id  flow_processes.prcs_id%type
+    )
+  is 
+    l_child_dgrm_id                         flow_diagrams.dgrm_id%type;
+    l_call_def                              t_call_def;
+  begin
+    for call_activity in (
+      select objt.objt_bpmn_id, objt.objt_id
+        from flow_objects objt
+       where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_call_activity
+         and objt.objt_dgrm_id = p_dgrm_id
+      )
+    loop
+      -- find object attributes defining called diagram
+        l_call_def := null;
+        for rec in (
+                    select obat.obat_key
+                         , obat.obat_vc_value
+                      from flow_object_attributes obat
+                     where obat.obat_objt_id = call_activity.objt_id
+                       and obat.obat_key in ( flow_constants_pkg.gc_apex_called_diagram
+                                            , flow_constants_pkg.gc_apex_called_diagram_version
+                                            , flow_constants_pkg.gc_apex_called_diagram_version_selection
+                                            )
+                   )
+        loop
+          case rec.obat_key
+            when flow_constants_pkg.gc_apex_called_diagram then
+              l_call_def.dgrm_name := rec.obat_vc_value;
+            when flow_constants_pkg.gc_apex_called_diagram_version_selection then
+              l_call_def.dgrm_version_selection := rec.obat_vc_value;
+            when flow_constants_pkg.gc_apex_called_diagram_version then
+              l_call_def.dgrm_version := rec.obat_vc_value;
+            else
+              null;
+          end case;
+        end loop;
+
+      -- get the diagram id
+      l_call_def.dgrm_id := flow_diagram.get_current_diagram
+                              ( pi_dgrm_name            => l_call_def.dgrm_name
+                              , pi_dgrm_calling_method  => l_call_def.dgrm_version_selection
+                              , pi_dgrm_version         => l_call_def.dgrm_version
+                              , pi_prcs_id              => p_prcs_id
+                              );
+
+      -- insert an instance_diagram record
+      insert into flow_instance_diagrams
+      ( prdg_prcs_id
+      , prdg_dgrm_id
+      , prdg_calling_dgrm
+      , prdg_calling_objt
+      )
+      values 
+      ( p_prcs_id
+      , l_call_def.dgrm_id
+      , p_dgrm_id
+      , call_activity.objt_bpmn_id
+      );
+      -- find any nested calls in child
+      find_nested_calls ( p_dgrm_id => l_call_def.dgrm_id
+                        , p_prcs_id => p_prcs_id
+                        );
+    end loop; 
+  end find_nested_calls;
+
+  procedure create_call_structure
+    ( p_prcs_id  in flow_processes.prcs_id%type
+    , p_dgrm_id  in flow_diagrams.dgrm_id%type
+    )
+  is 
+  begin
+    -- put top level diagram into the call structure
+    insert into flow_instance_diagrams
+      ( prdg_prcs_id
+      , prdg_dgrm_id
+      , prdg_diagram_level
+      )
+      values 
+      ( p_prcs_id
+      , p_dgrm_id
+      , 0
+      );
+    -- find any nested calls 
+    find_nested_calls ( p_dgrm_id => p_dgrm_id
+                      , p_prcs_id => p_prcs_id
+                      );
+  end create_call_structure;
 
   function create_process
     ( p_dgrm_id   in flow_diagrams.dgrm_id%type
@@ -35,6 +142,9 @@ as
           )
       returning prcs.prcs_id into l_ret
     ;
+    -- build the call structure for the process instance and any diagram calls 
+    create_call_structure ( p_prcs_id => l_ret, p_dgrm_id => p_dgrm_id);
+
     -- log the process creation
     flow_logging.log_instance_event
     ( p_process_id => l_ret
@@ -179,10 +289,12 @@ as
     if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
       -- process any before-event variable expressions on the starting object
       flow_expressions.process_expressions
-      ( pi_objt_id     => l_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_before_event
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => l_main_subflow.sbfl_id
+      ( pi_objt_bpmn_id   => l_objt_bpmn_id
+      , pi_set            => flow_constants_pkg.gc_expr_set_before_event
+      , pi_prcs_id        => p_process_id
+      , pi_sbfl_id        => l_main_subflow.sbfl_id
+      , pi_var_scope      => l_main_subflow.scope
+      , pi_expr_scope     => l_main_subflow.scope
       );
       -- test for any step errors
       if not flow_globals.get_step_error then 
@@ -198,10 +310,12 @@ as
       -- plain (none) startEvent
       -- process any variable expressions on the starting object
       flow_expressions.process_expressions
-      ( pi_objt_id     => l_objt_id
-      , pi_set         => flow_constants_pkg.gc_expr_set_on_event
-      , pi_prcs_id     => p_process_id
-      , pi_sbfl_id     => l_main_subflow.sbfl_id
+      ( pi_objt_bpmn_id  => l_objt_bpmn_id
+      , pi_set           => flow_constants_pkg.gc_expr_set_on_event
+      , pi_prcs_id       => p_process_id
+      , pi_sbfl_id       => l_main_subflow.sbfl_id
+      , pi_var_scope     => l_main_subflow.scope
+      , pi_expr_scope    => l_main_subflow.scope      
       );
 
       if not flow_globals.get_step_error then 
@@ -236,15 +350,17 @@ as
   is
     l_return_code   number;
     cursor c_lock_all is 
-        select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated
+        select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg_id
           from flow_subflows sbfl
           join flow_processes prcs
             on prcs.prcs_id = sbfl.sbfl_prcs_id 
           join flow_subflow_log sflg 
             on prcs.prcs_id = sflg.sflg_prcs_id
+          join flow_instance_diagrams prdg
+            on prcs.prcs_id = prdg.prdg_prcs_id
           where prcs.prcs_id = p_process_id
           order by sbfl.sbfl_process_level, sbfl.sbfl_id
-            for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2
+            for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id wait 2
     ;
   begin
     apex_debug.enter
@@ -284,11 +400,17 @@ as
      where sbfl.sbfl_prcs_id = p_process_id
     ;
     -- delete all process variables except the builtins (new behaviour in 21.1)
-    flow_process_vars.delete_all_for_process 
+    flow_proc_vars_int.delete_all_for_process 
     ( pi_prcs_id => p_process_id
     , pi_retain_builtins => true
     );
-
+    -- reset the instance diagrams / call structure
+    update flow_instance_diagrams prdg
+    set prdg.prdg_diagram_level = null
+    where prdg.prdg_prcs_id = p_process_id
+      and prdg.prdg_diagram_level != 0
+    ;
+    -- reset the process status to 'created'
     update flow_processes prcs
        set prcs.prcs_last_update = systimestamp
          , prcs.prcs_status = flow_constants_pkg.gc_prcs_status_created
@@ -382,22 +504,24 @@ as
   is
     l_return_code   number;
     cursor c_lock_all is 
-      select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated
+      select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id
         from flow_subflows sbfl
         join flow_processes prcs
           on prcs.prcs_id = sbfl.sbfl_prcs_id 
         join flow_subflow_log sflg 
           on prcs.prcs_id = sflg.sflg_prcs_id
+        join flow_instance_diagrams prdg
+          on prcs.prcs_id = prdg.prdg_prcs_id
        where prcs.prcs_id = p_process_id
        order by sbfl.sbfl_process_level, sbfl.sbfl_id
-         for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated wait 2;
+         for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id wait 2;
   begin
     apex_debug.enter
     ( 'delete_process'
     , 'process_id', p_process_id
     );
     begin 
-      -- lock all timers, logs, subflows and the process
+      -- lock all timers, logs, subflows, instance diagrams and the process
       open c_lock_all;
       flow_timers_pkg.lock_process_timers
       ( pi_prcs_id => p_process_id
@@ -434,10 +558,14 @@ as
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
     ;
-    flow_process_vars.delete_all_for_process 
+    flow_proc_vars_int.delete_all_for_process 
     ( pi_prcs_id => p_process_id
     , pi_retain_builtins => false
     );
+    delete 
+      from flow_instance_diagrams prdg
+     where prdg_prcs_id = p_process_id
+    ;
     delete
       from flow_processes prcs
      where prcs.prcs_id = p_process_id

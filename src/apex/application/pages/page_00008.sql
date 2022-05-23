@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220114090656'
+,p_last_upd_yyyymmddhh24miss=>'20220407123354'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -1037,12 +1037,17 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_no_data_found=>'No process selected'
 ,p_attribute_01=>'DGRM_CONTENT'
 ,p_attribute_02=>'ALL_CURRENT'
+,p_attribute_03=>'DGRM_ID'
 ,p_attribute_04=>'ALL_COMPLETED'
+,p_attribute_05=>'CALLING_DGRM'
 ,p_attribute_06=>'ALL_ERRORS'
+,p_attribute_07=>'CALLING_OBJT'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'Y'
-,p_attribute_10=>'N'
 ,p_attribute_11=>'Y'
+,p_attribute_12=>'BREADCRUMB'
+,p_attribute_13=>'DRILLDOWN_ALLOWED'
+,p_attribute_14=>'Y'
 );
 wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(5981427830464471)
@@ -1625,6 +1630,15 @@ wwv_flow_api.create_page_item(
 ,p_attribute_04=>'BOTH'
 );
 wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(44803138381176613)
+,p_name=>'P8_LOADED_DGRM_ID'
+,p_item_sequence=>60
+,p_item_plug_id=>wwv_flow_api.id(6133652177393567089)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(62707796384232547)
 ,p_name=>'P8_RESCHEDULE_TIMER_NOW'
 ,p_item_sequence=>10
@@ -1716,12 +1730,12 @@ wwv_flow_api.create_page_da_action(
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6011636562464528)
-,p_name=>'Viewer Refreshed'
+,p_name=>'Viewer Diagram Loaded'
 ,p_event_sequence=>160
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(6133652177393567089)
 ,p_bind_type=>'bind'
-,p_bind_event_type=>'apexafterrefresh'
+,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(6012103981464528)
@@ -1739,17 +1753,35 @@ wwv_flow_api.create_page_da_action(
 '}'))
 );
 wwv_flow_api.create_page_da_action(
- p_id=>wwv_flow_api.id(6006917102464525)
+ p_id=>wwv_flow_api.id(44803077743176612)
 ,p_event_id=>wwv_flow_api.id(6011636562464528)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P8_LOADED_DGRM_ID'
+,p_attribute_01=>'JAVASCRIPT_EXPRESSION'
+,p_attribute_05=>'this.data.diagramId'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(6006917102464525)
+,p_event_id=>wwv_flow_api.id(6011636562464528)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_OBJT_LIST'
-,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>'flow_engine_app_api.get_objt_list(p_prcs_id => :P8_PRCS_ID)'
-,p_attribute_07=>'P8_PRCS_ID'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P8_LOADED_DGRM_ID is not null',
+'then return flow_engine_app_api.get_objt_list(p_dgrm_id => :P8_LOADED_DGRM_ID);',
+'else return flow_engine_app_api.get_objt_list(p_prcs_id => :P8_PRCS_ID);',
+'end if;'))
+,p_attribute_07=>'P8_LOADED_DGRM_ID,P8_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
@@ -1880,6 +1912,18 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'BUTTON'
 ,p_affected_button_id=>wwv_flow_api.id(5955186680464411)
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6002207343464522)
 ,p_name=>'Display Button Based on Gateway Type'
@@ -1912,18 +1956,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'BUTTON'
 ,p_affected_button_id=>wwv_flow_api.id(5955186680464411)
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6004548451464524)
 ,p_name=>'Element clicked'
@@ -1931,7 +1963,9 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(6133652177393567089)
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'$v(''P8_OBJT_LIST'').split('':'').includes(this.data.element.id);'
+,p_triggering_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$v(''P8_OBJT_LIST'').split('':'').includes(this.data.element.id) &&',
+'(this.data.element.type != ''bpmn:CallActivity'' || (this.data.originalEvent.target.tagName != ''path'' && !this.data.originalEvent.target.getAttribute(''transform'')))'))
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
 );
@@ -1958,9 +1992,21 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_OBJT_NAME'
-,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>'flow_engine_app_api.get_objt_name(p_objt_bpmn_id => :P8_OBJT_BPMN_ID)'
-,p_attribute_07=>'P8_OBJT_BPMN_ID'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P8_LOADED_DGRM_ID is not null',
+'then return',
+'flow_engine_app_api.get_objt_name(',
+'    p_objt_bpmn_id => :P8_OBJT_BPMN_ID',
+'  , p_dgrm_id => :P8_LOADED_DGRM_ID',
+');',
+'else return',
+'flow_engine_app_api.get_objt_name(',
+'    p_objt_bpmn_id => :P8_OBJT_BPMN_ID',
+'  , p_prcs_id => :P8_PRCS_ID',
+');',
+'end if;'))
+,p_attribute_07=>'P8_OBJT_BPMN_ID,P8_LOADED_DGRM_ID,P8_PRCS_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
