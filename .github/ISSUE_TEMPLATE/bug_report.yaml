@@ -52,8 +52,8 @@ body:
       label: Have you used the BPMN-Linter in Flow Designer to Validate your Diagram?
       description: Please validate your BPMN model using the BPMN Linting tool (the grey button at the bottom of the Flow Modeler) to make sure your model does not contain any errors before logging an issue.
       options:
-        - Yes
-        - No
+        - 'Yes'
+        - 'No'
     validations:
       required: true
   - type: textarea
