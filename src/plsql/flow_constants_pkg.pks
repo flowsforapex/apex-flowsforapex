@@ -30,6 +30,11 @@ as
   pragma exception_init (ge_invalid_session_params, -20987);
 
   -- BPMN Keys
+  gc_bpmn_participant                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'participant';
+  gc_bpmn_collaboration                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'collaboration';
+  gc_bpmn_lane_set                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'laneSet';
+  gc_bpmn_lane                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'lane';
+
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
   gc_bpmn_call_activity                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'callActivity';
