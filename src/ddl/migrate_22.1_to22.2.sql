@@ -35,7 +35,8 @@ begin
       sbfl_calling_sbfl   number,
       sbfl_scope          number,
       sbfl_diagram_level  number,
-      sbfl_lane           varchar2(255 char)
+      sbfl_lane           varchar2(50 char)
+      sbfl_lane_name      varchar2(200 char)
     )' 
   ;
 
