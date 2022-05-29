@@ -6,10 +6,20 @@
 --
 -- Created    15-Nov-2020  Moritz Klein (MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
+-- Modified   20-May-2022  Moritz Klein (MT AG)
 --
 */
 create or replace package body flow_plsql_runner_pkg
 as
+
+  type t_runner_config is
+    record
+    (
+      use_apex_exec varchar2(1) default 'N'
+    , do_autobinds  varchar2(1) default 'N'
+    , plsql_code    clob
+    )
+  ;
 
   g_current_prcs_id flow_processes.prcs_id%type;
   g_current_sbfl_id flow_subflows.sbfl_id%type;
@@ -59,6 +69,33 @@ as
     ;
   end execute_plsql;
 
+  procedure get_runner_config
+  (
+    pi_objt_id        in flow_objects.objt_id%type
+  , po_use_apex_exec out nocopy boolean
+  , po_do_autobinds  out nocopy boolean
+  , po_plsql_code    out nocopy clob
+  )
+  as
+    l_plain_json  clob;
+    l_json_config sys.json_object_t;
+    l_code_json   sys.json_array_t;
+  begin
+    select json_query( objt.objt_attributes format json, '$.apex' returning clob ) as json_data
+      into l_plain_json
+      from flow_objects objt
+     where objt.objt_id = pi_objt_id
+    ;
+
+    l_json_config    := sys.json_object_t( l_plain_json );
+    po_use_apex_exec := coalesce( l_json_config.get_boolean( 'engine' ), false );
+    po_do_autobinds  := coalesce( l_json_config.get_boolean( 'autoBinds' ), false );
+    l_code_json      := l_json_config.get_array( 'plsqlCode' );
+    for i in 0..l_code_json.get_size - 1 loop
+      po_plsql_code := po_plsql_code || l_code_json.get_string( i ) || apex_application.lf;
+    end loop;
+  end get_runner_config;
+
   procedure run_task_script
   (
     pi_prcs_id  in flow_processes.prcs_id%type
@@ -68,7 +105,7 @@ as
   )
   as
     l_use_apex_exec boolean := false;
-    l_plsql_code    flow_object_attributes.obat_clob_value%type;
+    l_plsql_code    clob;
     l_do_autobind   boolean := false;
 
     l_sql_parameters apex_exec.t_parameters;
@@ -85,28 +122,13 @@ as
     , pi_scope    => flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id)
     );
 
-    for rec in ( select obat.obat_key
-                      , obat.obat_vc_value
-                      , obat.obat_clob_value
-                   from flow_object_attributes obat
-                  where obat.obat_objt_id = pi_objt_id
-                    and obat.obat_key in ( flow_constants_pkg.gc_apex_task_plsql_engine
-                                         , flow_constants_pkg.gc_apex_task_plsql_code
-                                         , flow_constants_pkg.gc_apex_task_plsql_auto_binds
-                                         )
-               )
-    loop
-      case rec.obat_key
-        when flow_constants_pkg.gc_apex_task_plsql_engine then
-          l_use_apex_exec := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
-        when flow_constants_pkg.gc_apex_task_plsql_code then
-          l_plsql_code := rec.obat_clob_value;
-        when flow_constants_pkg.gc_apex_task_plsql_auto_binds then
-          l_do_autobind := ( rec.obat_vc_value = flow_constants_pkg.gc_vcbool_true );
-        else
-          null;
-      end case;
-    end loop;
+    get_runner_config
+    (
+      pi_objt_id       => pi_objt_id
+    , po_use_apex_exec => l_use_apex_exec
+    , po_do_autobinds  => l_do_autobind
+    , po_plsql_code    => l_plsql_code
+    );
 
     if l_use_apex_exec then
       apex_exec.execute_plsql

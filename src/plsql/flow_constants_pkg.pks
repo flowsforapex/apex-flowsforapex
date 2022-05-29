@@ -69,6 +69,7 @@ as
   gc_bpmn_scripttask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
   gc_bpmn_businessruletask             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'businessRuleTask';
   
+  gc_bpmn_text                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'text';
 
   -- APEX Extensions to BPMN
   -- bpmnProcess

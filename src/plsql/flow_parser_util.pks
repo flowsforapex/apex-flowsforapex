@@ -66,16 +66,13 @@ as
   , pi_key              in varchar2
   );
 
-  function get_lines_array
+  procedure property_to_json
   (
-    pi_str in clob
-  ) return sys.json_array_t;
-
-  procedure split_property_name
-  (
-    pi_prop_name in  varchar2
-  , po_namespace out varchar2
-  , po_attribute out varchar2
+    pi_property_name  in varchar2
+  , pi_value          in clob
+  , po_namespace     out nocopy varchar2
+  , po_key           out nocopy varchar2
+  , po_json_element  out nocopy sys.json_element_t
   );
 
 end flow_parser_util;

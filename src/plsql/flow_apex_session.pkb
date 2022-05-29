@@ -2,9 +2,9 @@ create or replace package body flow_apex_session
 as
 
   type t_session_parameters    is record 
-  ( app_id                 flow_object_attributes.obat_vc_value%type
-  , page_id                flow_object_attributes.obat_vc_value%type
-  , username               flow_object_attributes.obat_vc_value%type
+  ( app_id   flow_types_pkg.t_bpmn_attribute_vc2
+  , page_id  flow_types_pkg.t_bpmn_attribute_vc2
+  , username flow_types_pkg.t_bpmn_attribute_vc2
   );
   e_apex_session_missing_param exception;
 
@@ -16,37 +16,28 @@ as
     l_var_value             flow_subflows.sbfl_current%type;
     l_session_parameters    t_session_parameters;
   begin
-    -- set using process attribute
-    for rec in (
-                select obat.obat_key
-                     , obat.obat_vc_value
-                  from flow_object_attributes obat
-                  join flow_objects process_objt
-                    on process_objt.objt_id = obat.obat_objt_id
-                 where process_objt.objt_dgrm_id = p_dgrm_id
-                   and process_objt.objt_objt_id is null
-                   and process_objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-                   and obat.obat_key in ( flow_constants_pkg.gc_apex_process_application_id
-                                        , flow_constants_pkg.gc_apex_process_page_id  
-                                        , flow_constants_pkg.gc_apex_process_username
-                                        )
-               )
-    loop
-      case rec.obat_key
-        when flow_constants_pkg.gc_apex_process_application_id then
-          l_session_parameters.app_id := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_process_page_id  then
-          l_session_parameters.page_id := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_process_username then
-          l_session_parameters.username := rec.obat_vc_value;
-        else
-          null;
-      end case;
-    end loop;
+  
+    select jt.app_id
+         , jt.page_id
+         , jt.username
+      into l_session_parameters
+      from flow_objects objt
+         , json_table( objt.objt_attributes, '$.apex'
+             columns
+               app_id   varchar2(4000) path '$.applicationId'
+             , page_id  varchar2(4000) path '$.pageId'
+             , username varchar2(4000) path '$.username'
+           ) jt
+     where objt.objt_dgrm_id = p_dgrm_id
+       and objt.objt_objt_id is null
+       and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+    ;
 
-    if ( l_session_parameters.app_id is null or l_session_parameters.page_id is null 
-       or l_session_parameters.username is null ) then
-      -- attribute not set at process diagram leve - try system config
+    if (  l_session_parameters.app_id is null
+       or l_session_parameters.page_id is null 
+       or l_session_parameters.username is null
+       ) then
+      -- attribute not set at process diagram level - try system config
       l_session_parameters.app_id   := flow_engine_util.get_config_value 
                         ( p_config_key    => flow_constants_pkg.gc_config_default_application
                         , p_default_value => null
@@ -61,9 +52,10 @@ as
                         );
     end if;
 
-    if ( l_session_parameters.app_id is null or l_session_parameters.page_id is null 
-       or l_session_parameters.username is null ) 
-    then
+    if (  l_session_parameters.app_id is null
+       or l_session_parameters.page_id is null 
+       or l_session_parameters.username is null
+       ) then
       -- attribute not set at system config level - throw error   
       raise e_apex_session_missing_param;
     end if;
@@ -78,16 +70,16 @@ as
     l_current                flow_subflows.sbfl_current%type;
     l_sbfl_dgrm_id           flow_subflows.sbfl_dgrm_id%type;
     l_session_parameters     t_session_parameters;
-    -- l_timer_scope            flow_subflows.sbfl_scope%type;   uncomment after merging
+    l_timer_scope            flow_subflows.sbfl_scope%type;
 
   begin
     -- get the current object (and scope) as timer object name
     select sbfl.sbfl_current
          , sbfl.sbfl_dgrm_id
-  --       , sbfl.sbfl_scope
+         , sbfl.sbfl_scope
       into l_current
          , l_sbfl_dgrm_id
-  --       , l_timer_scope
+         , l_timer_scope
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id      = p_subflow_id
@@ -95,42 +87,39 @@ as
     -- check if required process variables exist in current scope 
     if flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_applicationId
---                                     , pi_scope    => l_timer_scope
+                                     , pi_scope    => l_timer_scope
                                      ) is null  
     or flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_pageId
---                                     , pi_scope    => l_timer_scope
+                                     , pi_scope    => l_timer_scope
                                      ) is null
     or flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_username
---                                     , pi_scope    => l_timer_scope
+                                     , pi_scope    => l_timer_scope
                                      ) is null
     then
       l_session_parameters := get_session_parameters (p_dgrm_id => l_sbfl_dgrm_id);
 
-      flow_process_vars.set_var 
---      flow_proc_var_int.set_var
+      flow_proc_vars_int.set_var
           ( pi_prcs_id      => p_process_id
           , pi_var_name     => l_current || ':' || flow_constants_pkg.gc_async_parameter_applicationId
---          , pi_scope        => l_timer_scope
+          , pi_scope        => l_timer_scope
           , pi_vc2_value    => l_session_parameters.app_id
           , pi_sbfl_id      => p_subflow_id
           , pi_objt_bpmn_id => l_current
           );
-      flow_process_vars.set_var 
---      flow_proc_var_int.set_var
+      flow_proc_vars_int.set_var
           ( pi_prcs_id      => p_process_id
           , pi_var_name     => l_current || ':' || flow_constants_pkg.gc_async_parameter_pageId
---          , pi_scope        => l_timer_scope
+          , pi_scope        => l_timer_scope
           , pi_vc2_value    => l_session_parameters.page_id
           , pi_sbfl_id      => p_subflow_id
           , pi_objt_bpmn_id => l_current
           );
-      flow_process_vars.set_var 
---      flow_proc_var_int.set_var
+      flow_proc_vars_int.set_var
           ( pi_prcs_id      => p_process_id
           , pi_var_name     => l_current || ':' || flow_constants_pkg.gc_async_parameter_username
---          , pi_scope        => l_timer_scope
+          , pi_scope        => l_timer_scope
           , pi_vc2_value    => l_session_parameters.username
           , pi_sbfl_id      => p_subflow_id
           , pi_objt_bpmn_id => l_current
@@ -153,18 +142,18 @@ as
   ) return number
   is 
     l_timer_name             flow_subflows.sbfl_current%type;
-    -- l_timer_scope            flow_subflows.sbfl_scope%type;   uncomment after merging
-    l_app_id                 flow_object_attributes.obat_vc_value%type;
-    l_page_id                flow_object_attributes.obat_vc_value%type;
-    l_username               flow_object_attributes.obat_vc_value%type;
+    l_timer_scope            flow_subflows.sbfl_scope%type;
+    l_app_id                 flow_types_pkg.t_bpmn_attribute_vc2;
+    l_page_id                flow_types_pkg.t_bpmn_attribute_vc2;
+    l_username               flow_types_pkg.t_bpmn_attribute_vc2;
     l_session_id             number;
   begin
     flow_globals.set_is_recursive_step (p_is_recursive_step => true);
     -- get the current object (and scope) as timer object name
     select sbfl.sbfl_current
-  --       , sbfl.sbfl_scope
+         , sbfl.sbfl_scope
       into l_timer_name
-  --       , l_timer_scope
+         , l_timer_scope
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id      = p_subflow_id
@@ -173,17 +162,17 @@ as
     l_username  := flow_process_vars.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_username
---                      , pi_scope     => l_timer_scope
+                      , pi_scope     => l_timer_scope
                       );
     l_app_id    := flow_process_vars.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_applicationId
---                      , pi_scope     => l_timer_scope
+                      , pi_scope     => l_timer_scope
                       );
     l_page_id   := flow_process_vars.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_pageId
---                      , pi_scope     => l_timer_scope
+                      , pi_scope     => l_timer_scope
                       );         
     -- check all process variables are set in case they have been deleted since timer was set
     if l_username is null then
@@ -299,3 +288,4 @@ as
   end;
 
 end flow_apex_session;
+/

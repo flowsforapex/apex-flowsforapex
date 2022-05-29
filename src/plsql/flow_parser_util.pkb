@@ -2,6 +2,25 @@ create or replace package body flow_parser_util
 as
 
   -- Private Methods
+  procedure split_property_name
+  (
+    pi_property_name  in        varchar2
+  , po_namespace     out nocopy varchar2
+  , po_key           out nocopy varchar2
+  )
+  as
+    l_token_pos pls_integer;
+  begin
+    l_token_pos := instr( pi_property_name, ':' );
+    if l_token_pos is not null then
+      po_namespace := substr( pi_property_name, 1, instr(pi_property_name, ':') - 1);
+      po_key       := substr( pi_property_name, instr(pi_property_name, ':') + 1 );
+    else
+      po_namespace := null;
+      po_key       := pi_property_name;
+    end if;
+
+  end split_property_name;
 
   -- Public Methods
   procedure guarantee_apex_object
@@ -43,7 +62,7 @@ as
   begin
     -- Initialize the main object if not done already
     pio_objt_attributes := coalesce( pio_objt_attributes, sys.json_object_t() );
-    -- Create empty "bpmn" object if not existing
+    -- Create empty "pi_key" object if not existing
     if not pio_objt_attributes.has( pi_key ) then
       pio_objt_attributes.put( pi_key, sys.json_object_t() );
     end if;
@@ -68,30 +87,42 @@ as
   begin
     l_values := apex_string.split( p_str => pi_str );
     for i in 1..l_values.count loop
-      l_return.append( l_values(i) );
+      if l_values(i) is not null then
+        l_return.append( l_values(i) );
+      else -- seems awkward, but this gives you an empty string instead of null into the JSON
+        l_return.append( '' );
+      end if;
     end loop;
     return l_return;
   end get_lines_array;
 
-  procedure split_property_name
+  procedure property_to_json
   (
-    pi_prop_name in         varchar2
-  , po_namespace out nocopy varchar2
-  , po_attribute out nocopy varchar2
+    pi_property_name  in        varchar2
+  , pi_value          in        clob
+  , po_namespace     out nocopy varchar2
+  , po_key           out nocopy varchar2
+  , po_json_element  out nocopy sys.json_element_t
   )
   as
-    l_token_pos pls_integer;
   begin
-    l_token_pos := instr( pi_prop_name, ':' );
-    if l_token_pos is not null then
-      po_namespace := substr( pi_prop_name, 1, instr(pi_prop_name, ':') - 1);
-      po_attribute := substr( pi_prop_name, instr(pi_prop_name, ':') + 1 );
-    else
-      po_namespace := null;
-      po_attribute := pi_prop_name;
-    end if;
 
-  end split_property_name;
+    split_property_name
+    (
+      pi_property_name => pi_property_name
+    , po_namespace     => po_namespace
+    , po_key           => po_key
+    );
+
+    if pi_property_name in ( flow_constants_pkg.gc_apex_task_plsql_code
+                           , flow_constants_pkg.gc_bpmn_text
+                           )
+    then
+      po_json_element := get_lines_array( pi_str => pi_value );
+    else
+      null;
+    end if; 
+  end property_to_json;
 
 end flow_parser_util;
 /

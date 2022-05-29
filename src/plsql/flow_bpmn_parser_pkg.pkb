@@ -48,6 +48,7 @@ as
     l_namespace        flow_types_pkg.t_vc200;
     l_attribute        flow_types_pkg.t_vc200;
     l_namespace_object sys.json_object_t;
+    l_json_element     sys.json_element_t;
   begin
 
     if not g_objects.exists( pi_objt_bpmn_id ) then
@@ -55,11 +56,13 @@ as
       g_objects(pi_objt_bpmn_id).objt_attributes := sys.json_object_t();
     end if;
 
-    flow_parser_util.split_property_name
+    flow_parser_util.property_to_json
     (
-      pi_prop_name => pi_attribute_name
-    , po_namespace => l_namespace
-    , po_attribute => l_attribute
+      pi_property_name => pi_attribute_name
+    , pi_value         => pi_value
+    , po_namespace     => l_namespace
+    , po_key           => l_attribute
+    , po_json_element  => l_json_element
     );
 
     if l_namespace is not null then
@@ -69,9 +72,14 @@ as
       , pi_key              => l_namespace
       );
       l_namespace_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( l_namespace );
-      l_namespace_object.put( l_attribute, pi_value );
     else
-      g_objects(pi_objt_bpmn_id).objt_attributes.put( l_attribute, pi_value );
+      l_namespace_object := g_objects(pi_objt_bpmn_id).objt_attributes;
+    end if;
+
+    if l_json_element is not null then
+      l_namespace_object.put( l_attribute, l_json_element );
+    else
+      l_namespace_object.put( l_attribute, pi_value );
     end if;
 
   end register_object_attribute;
@@ -609,8 +617,8 @@ as
   , pi_page_items_xml  in xmltype
   )
   as
-    l_items  sys.json_array_t := sys.json_array_t();
-    l_values sys.json_array_t := sys.json_array_t();
+    l_page_item   sys.json_object_t;
+    l_page_items  sys.json_array_t := sys.json_array_t();
     l_apex_object sys.json_object_t;
   begin
     for rec in (
@@ -626,15 +634,16 @@ as
                        ) items
                )
     loop
-      l_items.append( rec.item_name );
-      l_values.append( rec.item_value );
+      l_page_item := sys.json_object_t();
+      l_page_item.put( 'name', rec.item_name );
+      l_page_item.put( 'value', rec.item_value );
+      l_page_items.append( l_page_item );
     end loop;
     flow_parser_util.guarantee_apex_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes);
 
     -- Complex JSON types are handled by reference
     l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
-    l_apex_object.put( 'itemName', l_items );
-    l_apex_object.put( 'itemValue', l_values );
+    l_apex_object.put( 'pageItems', l_page_items );
   end parse_page_items;
 
   procedure parse_task_subtypes
@@ -645,7 +654,7 @@ as
   as
     l_namespace        flow_types_pkg.t_vc200;
     l_attribute        flow_types_pkg.t_vc200;
-    l_value_arr        sys.json_array_t;
+    l_json_element     sys.json_element_t;
     l_namespace_object sys.json_object_t;
   begin
 
@@ -665,29 +674,32 @@ as
                        ) props
                )
     loop
-      -- User Task: nested page items
+      -- User Task: nested page items are handled separately
       if rec.prop_name = flow_constants_pkg.gc_apex_usertask_page_items then
         parse_page_items
         (
           pi_bpmn_id        => pi_bpmn_id
         , pi_page_items_xml => rec.prop_children
         );
-      -- if any other property has a value, store everything as array of lines
-      -- The runtime later needs to decide whether the joined result needs to be CLOB or VC2
       elsif length(rec.prop_value) > 0 then
-        flow_parser_util.split_property_name
+        flow_parser_util.property_to_json
         (
-          pi_prop_name => rec.prop_name
-        , po_namespace => l_namespace
-        , po_attribute => l_attribute
+          pi_property_name => rec.prop_name
+        , pi_value         => rec.prop_value
+        , po_namespace     => l_namespace
+        , po_key           => l_attribute
+        , po_json_element  => l_json_element
         );
 
-        l_value_arr := flow_parser_util.get_lines_array( pi_str => rec.prop_value );
         flow_parser_util.guarantee_named_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
         l_namespace_object := g_objects(pi_bpmn_id).objt_attributes.get_object( l_namespace );
-        l_namespace_object.put( l_attribute, l_value_arr );
+        if l_json_element is not null then
+          l_namespace_object.put( l_attribute, l_json_element );
+        else
+          l_namespace_object.put( l_attribute, rec.prop_value );
+        end if;
+      --Empty properties will not be stored
       else
-        --Empty properties will not be stored
         null;
       end if;
     end loop;
@@ -702,6 +714,7 @@ as
     l_namespace        flow_types_pkg.t_vc200;
     l_attribute        flow_types_pkg.t_vc200;
     l_namespace_object sys.json_object_t;
+    l_json_element     sys.json_element_t;
   begin
 
     for rec in (
@@ -721,16 +734,22 @@ as
                )
     loop
       if length(rec.prop_value) > 0 then
-        flow_parser_util.split_property_name
+        flow_parser_util.property_to_json
         (
-          pi_prop_name => rec.prop_name
-        , po_namespace => l_namespace
-        , po_attribute => l_attribute
+          pi_property_name => rec.prop_name
+        , pi_value         => rec.prop_value
+        , po_namespace     => l_namespace
+        , po_key           => l_attribute
+        , po_json_element  => l_json_element
         );
-        flow_parser_util.guarantee_named_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
 
+        flow_parser_util.guarantee_named_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
         l_namespace_object := g_objects(pi_bpmn_id).objt_attributes.get_object( l_namespace );
-        l_namespace_object.put( l_attribute, rec.prop_value );
+        if l_json_element is not null then
+          l_namespace_object.put( l_attribute, l_json_element );
+        else
+          l_namespace_object.put( l_attribute, rec.prop_value );
+        end if;
       end if;
     end loop;
   end parse_custom_timers;
