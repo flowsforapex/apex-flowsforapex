@@ -109,13 +109,16 @@ procedure delete_var
 procedure set_business_ref
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_vc2_value in flow_process_variables.prov_var_vc2%type
+, pi_scope in flow_subflows.sbfl_scope%type default 0
 , pi_sbfl_id in flow_subflows.sbfl_id%type default null
 , pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
 , pi_expr_set in flow_object_expressions.expr_set%type default null
 );
 
 function get_business_ref
-( pi_prcs_id in flow_processes.prcs_id%type)
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_scope   in flow_subflows.sbfl_scope%type default 0
+)
 return flow_process_variables.prov_var_vc2%type;
 
  /********************************************************************************

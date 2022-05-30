@@ -602,35 +602,75 @@ end delete_var;
 
 -- special cases / built-in standard variables
 
+-- set_business_ref - signature 1 - in scope 0 or in a known scope
+
   procedure set_business_ref
-  ( pi_prcs_id in flow_processes.prcs_id%type
-  , pi_vc2_value in flow_process_variables.prov_var_vc2%type
-  , pi_sbfl_id in flow_subflows.sbfl_id%type default null
-  , pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
-  , pi_expr_set in flow_object_expressions.expr_set%type default null
+  ( pi_prcs_id    in flow_processes.prcs_id%type
+  , pi_vc2_value  in flow_process_variables.prov_var_vc2%type
+  , pi_scope      in flow_subflows.sbfl_scope%type default 0
   )
   is
   begin
-    flow_proc_vars_int.set_var
+    flow_proc_vars_int.set_business_ref
     ( pi_prcs_id      => pi_prcs_id
-    , pi_scope        => 0
-    , pi_var_name     => flow_constants_pkg.gc_prov_builtin_business_ref
+    , pi_scope        => pi_scope
     , pi_vc2_value    => pi_vc2_value
-    , pi_sbfl_id      => pi_sbfl_id
-    , pi_objt_bpmn_id => pi_objt_bpmn_id
-    , pi_expr_set     => pi_expr_set
     );
   end set_business_ref;
 
+-- set_business_ref - signature 2 - in scope determined by given subflow id
+
+  procedure set_business_ref
+  ( pi_prcs_id    in flow_processes.prcs_id%type
+  , pi_vc2_value  in flow_process_variables.prov_var_vc2%type
+  , pi_sbfl_id    in flow_subflows.sbfl_id%type
+  )
+  is
+    l_scope  flow_subflows.sbfl_scope%type;
+  begin
+    l_scope := flow_engine_util.get_scope
+                 ( p_process_id => pi_prcs_id
+                 , p_subflow_id => pi_sbfl_id
+                 );
+    flow_proc_vars_int.set_business_ref
+    ( pi_prcs_id      => pi_prcs_id
+    , pi_scope        => l_scope
+    , pi_vc2_value    => pi_vc2_value
+    );
+  end set_business_ref;
+
+-- get_business_ref - signature 1 - in scope 0 or in a known scope
+
   function get_business_ref
   ( pi_prcs_id in flow_processes.prcs_id%type
+  , pi_scope in flow_subflows.sbfl_scope%type default 0
   )
   return flow_process_variables.prov_var_vc2%type
   is 
   begin
-    return get_var_vc2 
+    return flow_proc_vars_int.get_business_ref 
            ( pi_prcs_id => pi_prcs_id
-           , pi_var_name => flow_constants_pkg.gc_prov_builtin_business_ref
+           , pi_scope   => pi_scope
+           );
+  end get_business_ref;
+
+-- get_business_ref - signature 2 - in scope determined by given subflow id
+
+  function get_business_ref
+  ( pi_prcs_id    in flow_processes.prcs_id%type
+  , pi_sbfl_id    in flow_subflows.sbfl_id%type
+  )
+  return flow_process_variables.prov_var_vc2%type
+  is
+    l_scope  flow_subflows.sbfl_scope%type;
+  begin
+    l_scope := flow_engine_util.get_scope
+                 ( p_process_id => pi_prcs_id
+                 , p_subflow_id => pi_sbfl_id
+                 );
+    return flow_proc_vars_int.get_business_ref 
+           ( pi_prcs_id => pi_prcs_id
+           , pi_scope   => l_scope
            );
   end get_business_ref;
 

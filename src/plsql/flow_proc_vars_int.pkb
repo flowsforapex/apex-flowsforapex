@@ -514,6 +514,7 @@ end delete_var;
   procedure set_business_ref
   ( pi_prcs_id in flow_processes.prcs_id%type
   , pi_vc2_value in flow_process_variables.prov_var_vc2%type
+  , pi_scope in flow_subflows.sbfl_scope%type default 0
   , pi_sbfl_id in flow_subflows.sbfl_id%type default null
   , pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
   , pi_expr_set in flow_object_expressions.expr_set%type default null
@@ -522,7 +523,7 @@ end delete_var;
   begin
     flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
-    , pi_scope        => 0  -- business_ref always set in top level scope
+    , pi_scope        => pi_scope 
     , pi_var_name     => flow_constants_pkg.gc_prov_builtin_business_ref
     , pi_vc2_value    => pi_vc2_value
     , pi_sbfl_id      => pi_sbfl_id
@@ -533,6 +534,7 @@ end delete_var;
 
   function get_business_ref
   ( pi_prcs_id in flow_processes.prcs_id%type
+  , pi_scope   in flow_subflows.sbfl_scope%type default 0
   )
   return flow_process_variables.prov_var_vc2%type
   is 
@@ -540,7 +542,7 @@ end delete_var;
     return get_var_vc2 
            ( pi_prcs_id => pi_prcs_id
            , pi_var_name => flow_constants_pkg.gc_prov_builtin_business_ref
-           , pi_scope => 0
+           , pi_scope => pi_scope
            );
   end get_business_ref;
 

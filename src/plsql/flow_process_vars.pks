@@ -202,17 +202,38 @@ procedure delete_var
 **
 ********************************************************************************/ 
 
-procedure set_business_ref
-( pi_prcs_id in flow_processes.prcs_id%type
-, pi_vc2_value in flow_process_variables.prov_var_vc2%type
-, pi_sbfl_id in flow_subflows.sbfl_id%type default null
-, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
-, pi_expr_set in flow_object_expressions.expr_set%type default null
-);
+-- set_business_ref - signature 1 - in scope 0 or in a known scope
 
-function get_business_ref
-( pi_prcs_id in flow_processes.prcs_id%type)
-return flow_process_variables.prov_var_vc2%type;
+  procedure set_business_ref
+  ( pi_prcs_id    in flow_processes.prcs_id%type
+  , pi_vc2_value  in flow_process_variables.prov_var_vc2%type
+  , pi_scope      in flow_subflows.sbfl_scope%type default 0
+  );
+
+-- set_business_ref - signature 2 - in scope determined by given subflow id
+
+  procedure set_business_ref
+  ( pi_prcs_id    in flow_processes.prcs_id%type
+  , pi_vc2_value  in flow_process_variables.prov_var_vc2%type
+  , pi_sbfl_id    in flow_subflows.sbfl_id%type
+  );
+
+-- get_business_ref - signature 1 - in scope 0 or in a known scope
+
+  function get_business_ref
+  ( pi_prcs_id in flow_processes.prcs_id%type
+  , pi_scope in flow_subflows.sbfl_scope%type default 0
+  )
+  return flow_process_variables.prov_var_vc2%type;
+
+-- get_business_ref - signature 2 - in scope determined by given subflow id
+
+  function get_business_ref
+  ( pi_prcs_id    in flow_processes.prcs_id%type
+  , pi_sbfl_id    in flow_subflows.sbfl_id%type
+  )
+  return flow_process_variables.prov_var_vc2%type;
+    
 
  /********************************************************************************
 **
