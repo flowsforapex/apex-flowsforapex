@@ -609,7 +609,7 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
 button.dialog {
   position: static;
   height: 30px;
-  width: 60px;
+  min-width: 60px;
   cursor: pointer;
   border: 1px solid #ccc;
   border-radius: 2px;
@@ -652,10 +652,17 @@ button.dialog.fa {
 .bpp-properties-entry[data-entry="quickpick-step-key"],
 .bpp-properties-entry[data-entry="quickpick-business-ref"],
 .bpp-properties-entry[data-entry="placeholderEditor"],
-.bpp-properties-entry[data-entry="quickpick-placeholder"] {
+.bpp-properties-entry[data-entry="quickpick-placeholder"],
+.bpp-properties-entry[data-entry="parametersEditor"],
+.bpp-properties-entry[data-entry="quickpick-parameters"] {
   display: inline-block;
   margin: 0 12px 0 0;
 }
 .bpp-properties-entry[data-entry="quickpick-business-ref"] {
   margin-bottom: 9px;
+}
+/* override label */
+.bpp-properties-panel label {
+  font-weight: normal !important;
+  font-size: 100% !important;
 }
