@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_20SecDelay" name="20SecDelay" isExecutable="false">
+    <bpmn:documentation>This Process just implements a 20 Second delay via an ICE with Timer Defined as PT20S then returns.</bpmn:documentation>
+    <bpmn:startEvent id="Event_1p87ip5" name="Start 20s Delay">
+      <bpmn:outgoing>Flow_0m5f8c0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0m5f8c0" sourceRef="Event_1p87ip5" targetRef="Event_DelayTimer20s" />
+    <bpmn:intermediateCatchEvent id="Event_DelayTimer20s" name="Event_DelayTimer20s">
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SetInCalled</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>SetInCalled</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m5f8c0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l4x6yf</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1l0hbhg">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="Event_1iyxzpq" name="End 20s Delay">
+      <bpmn:incoming>Flow_1l4x6yf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1l4x6yf" sourceRef="Event_DelayTimer20s" targetRef="Event_1iyxzpq" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_20SecDelay">
+      <bpmndi:BPMNEdge id="Flow_1l4x6yf_di" bpmnElement="Flow_1l4x6yf">
+        <di:waypoint x="468" y="460" />
+        <di:waypoint x="522" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m5f8c0_di" bpmnElement="Flow_0m5f8c0">
+        <di:waypoint x="378" y="460" />
+        <di:waypoint x="432" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1p87ip5_di" bpmnElement="Event_1p87ip5">
+        <dc:Bounds x="342" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="324" y="485" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vo9s18_di" bpmnElement="Event_DelayTimer20s">
+        <dc:Bounds x="432" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="408" y="485" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1iyxzpq_di" bpmnElement="Event_1iyxzpq">
+        <dc:Bounds x="522" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="506" y="485" width="69" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

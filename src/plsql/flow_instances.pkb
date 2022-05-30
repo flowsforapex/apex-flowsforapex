@@ -70,24 +70,33 @@ as
                               , pi_dgrm_version         => l_call_def.dgrm_version
                               , pi_prcs_id              => p_prcs_id
                               );
-
-      -- insert an instance_diagram record
-      insert into flow_instance_diagrams
-      ( prdg_prcs_id
-      , prdg_dgrm_id
-      , prdg_calling_dgrm
-      , prdg_calling_objt
-      )
-      values 
-      ( p_prcs_id
-      , l_call_def.dgrm_id
-      , p_dgrm_id
-      , call_activity.objt_bpmn_id
-      );
-      -- find any nested calls in child
-      find_nested_calls ( p_dgrm_id => l_call_def.dgrm_id
-                        , p_prcs_id => p_prcs_id
-                        );
+      -- check and error if there are any diagrams calling themselves                        
+      if l_call_def.dgrm_id <> p_dgrm_id then 
+        -- insert an instance_diagram record
+        insert into flow_instance_diagrams
+        ( prdg_prcs_id
+        , prdg_dgrm_id
+        , prdg_calling_dgrm
+        , prdg_calling_objt
+        )
+        values 
+        ( p_prcs_id
+        , l_call_def.dgrm_id
+        , p_dgrm_id
+        , call_activity.objt_bpmn_id
+        );
+        -- find any nested calls in child
+        find_nested_calls ( p_dgrm_id => l_call_def.dgrm_id
+                          , p_prcs_id => p_prcs_id
+                          );
+      else
+        -- diagram is calling itself -- call error to prevent infinite loop...
+        flow_errors.handle_general_error
+        ( pi_message_key => 'start-diagram-calls-itself'
+        , p0 => p_dgrm_id
+        );
+        -- $F4AMESSAGE 'start-diagram-calls-itself' || 'You tried to start a diagram %0 that contains a callActivity calling itself.' 
+      end if;
     end loop; 
   end find_nested_calls;
 
