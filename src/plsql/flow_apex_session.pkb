@@ -70,8 +70,7 @@ as
     l_current                flow_subflows.sbfl_current%type;
     l_sbfl_dgrm_id           flow_subflows.sbfl_dgrm_id%type;
     l_session_parameters     t_session_parameters;
-    l_timer_scope            flow_subflows.sbfl_scope%type;
-
+    l_timer_scope            flow_subflows.sbfl_scope%type;   
   begin
     -- get the current object (and scope) as timer object name
     select sbfl.sbfl_current
@@ -85,15 +84,15 @@ as
        and sbfl.sbfl_id      = p_subflow_id
     ;
     -- check if required process variables exist in current scope 
-    if flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
+    if flow_proc_vars_int.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_applicationId
                                      , pi_scope    => l_timer_scope
                                      ) is null  
-    or flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
+    or flow_proc_vars_int.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_pageId
                                      , pi_scope    => l_timer_scope
                                      ) is null
-    or flow_process_vars.get_var_vc2 ( pi_prcs_id  => p_process_id
+    or flow_proc_vars_int.get_var_vc2 ( pi_prcs_id  => p_process_id
                                      , pi_var_name => l_current || ':' || flow_constants_pkg.gc_async_parameter_username
                                      , pi_scope    => l_timer_scope
                                      ) is null
@@ -159,17 +158,17 @@ as
        and sbfl.sbfl_id      = p_subflow_id
     ;
     -- get async process variable details 
-    l_username  := flow_process_vars.get_var_vc2
+    l_username  := flow_proc_vars_int.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_username
                       , pi_scope     => l_timer_scope
                       );
-    l_app_id    := flow_process_vars.get_var_vc2
+    l_app_id    := flow_proc_vars_int.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_applicationId
                       , pi_scope     => l_timer_scope
                       );
-    l_page_id   := flow_process_vars.get_var_vc2
+    l_page_id   := flow_proc_vars_int.get_var_vc2
                       ( pi_prcs_id   => p_process_id
                       , pi_var_name  => l_timer_name || ':' || flow_constants_pkg.gc_async_parameter_pageId
                       , pi_scope     => l_timer_scope

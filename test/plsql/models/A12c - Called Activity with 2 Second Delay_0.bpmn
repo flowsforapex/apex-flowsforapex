@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_2sDelay" name="2sDelay" isExecutable="false">
+    <bpmn:documentation>This Process just implements a 2 Second delay via an ICE Timer  then returns.</bpmn:documentation>
+    <bpmn:startEvent id="Event_Start2sDelay" name="Start 2s Delay">
+      <bpmn:outgoing>Flow_0m5f8c0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0m5f8c0" sourceRef="Event_Start2sDelay" targetRef="Event_DelayTimer2s" />
+    <bpmn:endEvent id="Event_End2sDelay" name="End 2s Delay">
+      <bpmn:incoming>Flow_1l4x6yf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1l4x6yf" sourceRef="Event_DelayTimer2s" targetRef="Event_End2sDelay" />
+    <bpmn:intermediateCatchEvent id="Event_DelayTimer2s" name="Event_DelayTimer2s">
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SetInCalled</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>SetInCalled</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m5f8c0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l4x6yf</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0lbzuyh">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT2S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_2sDelay">
+      <bpmndi:BPMNEdge id="Flow_1l4x6yf_di" bpmnElement="Flow_1l4x6yf">
+        <di:waypoint x="468" y="460" />
+        <di:waypoint x="522" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m5f8c0_di" bpmnElement="Flow_0m5f8c0">
+        <di:waypoint x="378" y="460" />
+        <di:waypoint x="432" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1p87ip5_di" bpmnElement="Event_Start2sDelay">
+        <dc:Bounds x="342" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="327" y="485" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1iyxzpq_di" bpmnElement="Event_End2sDelay">
+        <dc:Bounds x="522" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="509" y="485" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1l4yrq1_di" bpmnElement="Event_DelayTimer2s">
+        <dc:Bounds x="432" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="408" y="485" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

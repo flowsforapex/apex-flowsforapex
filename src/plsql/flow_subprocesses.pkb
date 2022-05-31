@@ -31,6 +31,7 @@ as
     l_subproc_objt          flow_objects.objt_bpmn_id%type;
     l_remaining_subflows    number;
     l_parent_step_key       flow_subflows.sbfl_step_key%type;
+    l_end_is_interrupted    boolean;  
     l_par_objt_type         flow_objects.objt_tag_name%type;
     l_par_dgrm_id           flow_diagrams.dgrm_id%type;
     l_par_objt_id           flow_objects.objt_id%type;
@@ -53,10 +54,10 @@ as
              , l_parent_step_key
           from flow_objects boundary_objt
           join flow_objects subproc_objt
-            on subproc_objt.objt_bpmn_id = boundary_objt.objt_attached_to
+            on subproc_objt.objt_bpmn_id = boundary_objt.objt_attached_to 
+           and subproc_objt.objt_dgrm_id = boundary_objt.objt_dgrm_id
           join flow_subflows par_sbfl
             on par_sbfl.sbfl_current = subproc_objt.objt_bpmn_id
-           and par_sbfl.sbfl_dgrm_id = boundary_objt.objt_dgrm_id
            and par_sbfl.sbfl_dgrm_id = subproc_objt.objt_dgrm_id
          where par_sbfl.sbfl_id = p_sbfl_context_par.sbfl_id
            and par_sbfl.sbfl_prcs_id = p_process_id
@@ -77,14 +78,16 @@ as
         ( pi_objt_bpmn_id => l_boundary_event  
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
-        , pi_sbfl_id      => p_subflow_id
-        , pi_var_scope    => p_sbfl_info.sbfl_scope
-        , pi_expr_scope   => p_sbfl_info.sbfl_scope        
+        , pi_sbfl_id      => p_sbfl_context_par.sbfl_id
+        , pi_var_scope    => p_sbfl_context_par.scope
+        , pi_expr_scope   => p_sbfl_context_par.scope        
         );
+        l_end_is_interrupted := true;
+
       exception
         when no_data_found then
           -- error exit with no Boundary Event specified -- return to normal exit
-          l_boundary_event := null;
+          l_end_is_interrupted := true;
         when too_many_rows then
           flow_errors.handle_instance_error
           ( pi_prcs_id     => p_process_id
@@ -99,6 +102,13 @@ as
       ( p_process_id => p_process_id
       , p_process_level => p_sbfl_info.sbfl_process_level
       );
+      -- normal end processing will be ignored but we neeed to step forward on the parent
+      flow_engine.flow_complete_step 
+      ( p_process_id        => p_process_id
+      , p_subflow_id        => p_sbfl_context_par.sbfl_id
+      , p_step_key          => p_sbfl_context_par.step_key
+      , p_log_as_completed  => false
+      );
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
       -- sub process terminate end
       -- stop processing in sub process and all children
@@ -106,13 +116,24 @@ as
       ( p_process_id    => p_process_id
       , p_process_level => p_sbfl_info.sbfl_process_level
       ); 
+      l_end_is_interrupted := true;
+      -- normal end processing will be ignored but we neeed to step forward on the parent
+      flow_engine.flow_complete_step 
+      ( p_process_id  => p_process_id
+      , p_subflow_id  => p_sbfl_context_par.sbfl_id
+      , p_step_key  => p_sbfl_context_par.step_key
+      , p_log_as_completed  => false
+      );
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
       -- sub process escalation end
       -- this can be interrupting or non-interupting
-      flow_boundary_events.process_boundary_event
-      ( p_sbfl_info     => p_sbfl_info
-      , p_step_info     => p_step_info
-      , p_par_sbfl      => p_sbfl_context_par.sbfl_id
+      flow_boundary_events.process_escalation
+      ( pi_sbfl_info        => p_sbfl_info
+      , pi_step_info        => p_step_info
+      , pi_par_sbfl         => p_sbfl_context_par.sbfl_id
+      , pi_source_type      => flow_constants_pkg.gc_bpmn_end_event
+      , po_step_key         => l_parent_step_key
+      , po_is_interrupting  => l_end_is_interrupted
       );
     elsif p_step_info.target_objt_subtag is null then 
       -- sub process - normal end event
@@ -120,46 +141,53 @@ as
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
       );
+      l_end_is_interrupted := false;
     end if;
-    -- check if there are ANY remaining subflows in the process level.  If not, close process
-    select count(*)
-      into l_remaining_subflows
-      from flow_subflows sbfl
-     where sbfl.sbfl_prcs_id = p_process_id
-       and sbfl.sbfl_process_level = p_sbfl_info.sbfl_process_level;
-      
-    if l_remaining_subflows = 0 then 
-      -- No remaining subflows so process level has completed 
-      select objt.objt_tag_name
-           , par_sbfl.sbfl_dgrm_id
-           , objt.objt_id
-        into l_par_objt_type
-           , l_par_dgrm_id
-           , l_par_objt_id
-        from flow_objects objt
-        join flow_subflows par_sbfl
-          on par_sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
-         and par_sbfl.sbfl_current = objt.objt_bpmn_id
-       where par_sbfl.sbfl_id = p_sbfl_context_par.sbfl_id
-      ;
-      if l_par_objt_type = flow_constants_pkg.gc_bpmn_call_activity then
-        -- map outVariables expressions for call return (variables in calling scope, expressions in called scope)
-        flow_expressions.process_expressions
-        ( pi_objt_id      => l_par_objt_id
-        , pi_set          => flow_constants_pkg.gc_expr_set_out_variables
-        , pi_prcs_id      => p_process_id
-        , pi_sbfl_id      => p_sbfl_context_par.sbfl_id   --- should this be logged on calling or called subflows?  variables only in scope of calling...
-        , pi_var_scope    => p_sbfl_context_par.scope
-        , pi_expr_scope   => p_sbfl_info.sbfl_scope
-        );        
+
+    if not l_end_is_interrupted then
+      -- normal process level processing.  
+      -- check if there are ANY remaining subflows in the process level.  
+      -- If none, close process level
+      select count(*)
+        into l_remaining_subflows
+        from flow_subflows sbfl
+       where sbfl.sbfl_prcs_id = p_process_id
+         and sbfl.sbfl_process_level = p_sbfl_info.sbfl_process_level;
+
+      if l_remaining_subflows = 0 then 
+        -- No remaining subflows so process level has completed 
+        select objt.objt_tag_name
+             , par_sbfl.sbfl_dgrm_id
+             , objt.objt_id
+          into l_par_objt_type
+             , l_par_dgrm_id
+             , l_par_objt_id
+          from flow_objects objt
+          join flow_subflows par_sbfl
+            on par_sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+           and par_sbfl.sbfl_current = objt.objt_bpmn_id
+         where par_sbfl.sbfl_id = p_sbfl_context_par.sbfl_id
+        ;
+        if l_par_objt_type = flow_constants_pkg.gc_bpmn_call_activity then
+          -- map outVariables expressions for call return (variables in calling scope, expressions in called scope)
+          -- note: outVariable processing only occurs if the callActivit has a non-interrupted return
+          flow_expressions.process_expressions
+          ( pi_objt_id      => l_par_objt_id
+          , pi_set          => flow_constants_pkg.gc_expr_set_out_variables
+          , pi_prcs_id      => p_process_id
+          , pi_sbfl_id      => p_sbfl_context_par.sbfl_id   
+          , pi_var_scope    => p_sbfl_context_par.scope
+          , pi_expr_scope   => p_sbfl_info.sbfl_scope
+          );        
+        end if;
+        -- return to parent level and do next step
+        apex_debug.info ('Process Level Completed: Process level %0', p_sbfl_info.sbfl_process_level );
+        flow_engine.flow_complete_step 
+        ( p_process_id => p_process_id
+        , p_subflow_id => p_sbfl_context_par.sbfl_id
+        , p_step_key   => p_sbfl_context_par.step_key
+        );  
       end if;
-      -- return to parent level and do next step
-      apex_debug.info ('Process Level Completed: Process level %0', p_sbfl_info.sbfl_process_level );
-      flow_engine.flow_complete_step 
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_sbfl_context_par.sbfl_id
-      , p_step_key   => p_sbfl_context_par.step_key
-      );  
     end if;
   end process_process_level_endEvent;
 
