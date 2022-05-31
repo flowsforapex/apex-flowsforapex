@@ -891,23 +891,21 @@ as
             );
           -- if standard type just register value inside tag
           else
-            begin
-              select details.detail_type
-              , details.detail_id
-              , details.detail_value
-                  into l_detail_type
-                    , l_detail_id
-                    , l_detail_value
-                  from xmltable
-                      (
-                        xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                      , '*' passing rec.child_details
-                        columns
-                          detail_type        varchar2(50 char)    path 'name()'
-                        , detail_id          varchar2(50 char)    path '@id'
-                        , detail_value       varchar2(4000 char)  path 'text()'
-                      ) details;
-            end;
+            select details.detail_type
+            , details.detail_id
+            , details.detail_value
+                into l_detail_type
+                  , l_detail_id
+                  , l_detail_value
+                from xmltable
+                    (
+                      xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                    , '*' passing rec.child_details
+                      columns
+                        detail_type        varchar2(50 char)    path 'name()'
+                      , detail_id          varchar2(50 char)    path '@id'
+                      , detail_value       varchar2(4000 char)  path 'text()'
+                    ) details;
 
             -- register the timer type
             register_object_attribute

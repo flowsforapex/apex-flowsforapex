@@ -116,11 +116,17 @@ as
 
     if pi_property_name in ( flow_constants_pkg.gc_apex_task_plsql_code
                            , flow_constants_pkg.gc_bpmn_text
+                           , flow_constants_pkg.gc_apex_servicetask_body_text
+                           , flow_constants_pkg.gc_apex_servicetask_body_html
                            )
     then
       po_json_element := get_lines_array( pi_str => pi_value );
+    elsif pi_property_name = flow_constants_pkg.gc_apex_servicetask_placeholder
+    then
+      -- this is already JSON, better store differently
+      po_json_element := sys.json_object_t.parse( pi_value );
     else
-      null;
+      po_json_element := null;
     end if; 
   end property_to_json;
 

@@ -60,7 +60,7 @@ as
       l_attachments      t_attachments;
       l_workspace        varchar2(100);
       l_session          varchar2(20) := v('APP_SESSION');
-      l_json_object      json_object_t;
+      l_json_object      sys.json_object_t;
       l_scope            flow_subflows.sbfl_scope%type;
     begin
       apex_debug.enter 
