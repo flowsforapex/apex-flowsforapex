@@ -3,7 +3,8 @@
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2020,2022.
 --
--- Created 19-Feb-2022   Richard Allen - Oracle  
+-- Created  19-Feb-2022  Richard Allen - Oracle  
+-- Modified 22-May-2022  Moritz Klein (MT AG)
 --
 */
 
@@ -14,7 +15,7 @@ as
     ( dgrm_name              flow_diagrams.dgrm_name%type
     , dgrm_version           flow_diagrams.dgrm_version%type
     , dgrm_id                flow_diagrams.dgrm_id%type
-    , dgrm_version_selection flow_object_attributes.obat_vc_value%type
+    , dgrm_version_selection flow_types_pkg.t_bpmn_attribute_vc2
     );
 
   function is_called_activity
@@ -52,28 +53,14 @@ as
     , 'callActivity objt id' , pi_call_objt_id
     );
 
-    for rec in (
-                select obat.obat_key
-                     , obat.obat_vc_value
-                  from flow_object_attributes obat
-                 where obat.obat_objt_id = pi_call_objt_id
-                   and obat.obat_key in ( flow_constants_pkg.gc_apex_called_diagram 
-                                        , flow_constants_pkg.gc_apex_called_diagram_version_selection
-                                        , flow_constants_pkg.gc_apex_called_diagram_version
-                                        )
-               )
-    loop
-      case rec.obat_key
-        when flow_constants_pkg.gc_apex_called_diagram then
-          l_call_def.dgrm_name := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_called_diagram_version_selection then
-          l_call_def.dgrm_version_selection := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_called_diagram_version then
-          l_call_def.dgrm_version := rec.obat_vc_value;
-        else
-          null;
-      end case;
-    end loop;
+    select objt.objt_attributes."apex"."calledDiagram" as dgrm_name
+         , objt.objt_attributes."apex"."calledDiagramVersion" as dgrm_version
+         , cast( null as number ) as dgrm_id
+         , objt.objt_attributes."apex"."calledDiagramVersionSelection" as dgrm_version_selection
+      into l_call_def
+      from flow_objects objt
+     where objt.objt_dgrm_id = pi_call_objt_id
+    ;
 
     return l_call_def;
 

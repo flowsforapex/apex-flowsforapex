@@ -4,7 +4,8 @@
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
 --
--- Created 25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
+-- Created  25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
+-- Modified 30-May-2022  Moritz Klein (MT AG)
 --
 */
 create or replace package body flow_instances 
@@ -20,7 +21,7 @@ as
     ( dgrm_name              flow_diagrams.dgrm_name%type
     , dgrm_version           flow_diagrams.dgrm_version%type
     , dgrm_id                flow_diagrams.dgrm_id%type
-    , dgrm_version_selection flow_object_attributes.obat_vc_value%type
+    , dgrm_version_selection flow_types_pkg.t_bpmn_attribute_vc2
     );
 
   procedure find_nested_calls
@@ -32,44 +33,23 @@ as
     l_call_def                              t_call_def;
   begin
     for call_activity in (
-      select objt.objt_bpmn_id, objt.objt_id
+      select objt.objt_bpmn_id
+           , objt.objt_id
+           , objt.objt_attributes."apex"."calledDiagram" as dgrm_name
+           , objt.objt_attributes."apex"."calledDiagramVersion" as dgrm_version
+           , objt.objt_attributes."apex"."calledDiagramVersionSelection" as dgrm_version_selection
         from flow_objects objt
        where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_call_activity
          and objt.objt_dgrm_id = p_dgrm_id
       )
     loop
-      -- find object attributes defining called diagram
-        l_call_def := null;
-        for rec in (
-                    select obat.obat_key
-                         , obat.obat_vc_value
-                      from flow_object_attributes obat
-                     where obat.obat_objt_id = call_activity.objt_id
-                       and obat.obat_key in ( flow_constants_pkg.gc_apex_called_diagram
-                                            , flow_constants_pkg.gc_apex_called_diagram_version
-                                            , flow_constants_pkg.gc_apex_called_diagram_version_selection
-                                            )
-                   )
-        loop
-          case rec.obat_key
-            when flow_constants_pkg.gc_apex_called_diagram then
-              l_call_def.dgrm_name := rec.obat_vc_value;
-            when flow_constants_pkg.gc_apex_called_diagram_version_selection then
-              l_call_def.dgrm_version_selection := rec.obat_vc_value;
-            when flow_constants_pkg.gc_apex_called_diagram_version then
-              l_call_def.dgrm_version := rec.obat_vc_value;
-            else
-              null;
-          end case;
-        end loop;
-
-      -- get the diagram id
-      l_call_def.dgrm_id := flow_diagram.get_current_diagram
-                              ( pi_dgrm_name            => l_call_def.dgrm_name
-                              , pi_dgrm_calling_method  => l_call_def.dgrm_version_selection
-                              , pi_dgrm_version         => l_call_def.dgrm_version
-                              , pi_prcs_id              => p_prcs_id
-                              );
+      l_child_dgrm_id :=
+        flow_diagram.get_current_diagram
+        ( pi_dgrm_name            => call_activity.dgrm_name
+        , pi_dgrm_calling_method  => call_activity.dgrm_version_selection
+        , pi_dgrm_version         => call_activity.dgrm_version
+        , pi_prcs_id              => p_prcs_id
+        );
 
       -- insert an instance_diagram record
       insert into flow_instance_diagrams
@@ -80,14 +60,12 @@ as
       )
       values 
       ( p_prcs_id
-      , l_call_def.dgrm_id
+      , l_child_dgrm_id
       , p_dgrm_id
       , call_activity.objt_bpmn_id
       );
       -- find any nested calls in child
-      find_nested_calls ( p_dgrm_id => l_call_def.dgrm_id
-                        , p_prcs_id => p_prcs_id
-                        );
+      find_nested_calls( p_dgrm_id => l_child_dgrm_id, p_prcs_id => p_prcs_id );
     end loop; 
   end find_nested_calls;
 

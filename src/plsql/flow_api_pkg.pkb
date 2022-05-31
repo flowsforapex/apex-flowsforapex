@@ -38,7 +38,7 @@ as
   as
     l_dgrm_id         flow_diagrams.dgrm_id%type;
     l_dgrm_version    flow_diagrams.dgrm_version%type;
-    l_calling_method  flow_object_attributes.obat_vc_value%type;
+    l_calling_method  flow_types_pkg.t_bpmn_attribute_vc2;
   begin
   
     if pi_dgrm_version is null then
