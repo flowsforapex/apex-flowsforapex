@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_NoLanesCallsLanes" name="No Lanes Calls Lanes" isExecutable="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_07ridqj</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_X" name="X">
+      <bpmn:incoming>Flow_07ridqj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0sdat5i</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_07ridqj" sourceRef="Event_Start" targetRef="Activity_X" />
+    <bpmn:sequenceFlow id="Flow_0sdat5i" sourceRef="Activity_X" targetRef="Activity_YCall" />
+    <bpmn:task id="Activity_Z" name="Z">
+      <bpmn:incoming>Flow_0ddttlp</bpmn:incoming>
+      <bpmn:outgoing>Flow_19re1gj</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ddttlp" sourceRef="Activity_YCall" targetRef="Activity_Z" />
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_19re1gj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_19re1gj" sourceRef="Activity_Z" targetRef="Event_End" />
+    <bpmn:callActivity id="Activity_YCall" name="YCall" apex:calledDiagram="A15a - Single Diagram Lanes with SubProcs" apex:calledDiagramVersionSelection="latestVersion">
+      <bpmn:incoming>Flow_0sdat5i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ddttlp</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_NoLanesCallsLanes">
+      <bpmndi:BPMNEdge id="Flow_19re1gj_di" bpmnElement="Flow_19re1gj">
+        <di:waypoint x="710" y="350" />
+        <di:waypoint x="772" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ddttlp_di" bpmnElement="Flow_0ddttlp">
+        <di:waypoint x="550" y="350" />
+        <di:waypoint x="610" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sdat5i_di" bpmnElement="Flow_0sdat5i">
+        <di:waypoint x="390" y="350" />
+        <di:waypoint x="450" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07ridqj_di" bpmnElement="Flow_07ridqj">
+        <di:waypoint x="238" y="350" />
+        <di:waypoint x="290" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0kij9in_di" bpmnElement="Event_Start">
+        <dc:Bounds x="202" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="209" y="375" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cqr5bk_di" bpmnElement="Activity_X">
+        <dc:Bounds x="290" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qctrmu_di" bpmnElement="Activity_Z">
+        <dc:Bounds x="610" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fd3gql_di" bpmnElement="Event_End">
+        <dc:Bounds x="772" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="781" y="375" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04qxrwa_di" bpmnElement="Activity_YCall">
+        <dc:Bounds x="450" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -22,8 +22,8 @@ as
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_last_update
         , sbfl.sbfl_status
-        , lane.objt_bpmn_id as sbfl_current_lane
-        , coalesce( lane.objt_name, lane.objt_bpmn_id) as sbfl_current_lane_name
+        , sbfl.sbfl_lane as sbfl_current_lane
+        , sbfl.sbfl_lane_name as sbfl_current_lane_name
         , sbfl.sbfl_process_level
         , sbfl.sbfl_diagram_level
         , sbfl.sbfl_scope
@@ -49,8 +49,6 @@ left join flow_objects objt_last
 left join flow_connections conn
        on conn.conn_bpmn_id = sbfl.sbfl_route
       and conn.conn_dgrm_id = sbfl.sbfl_dgrm_id
-left join flow_objects lane
-       on objt_curr.objt_objt_lane_id = lane.objt_id
      join flow_diagrams dgrm 
        on dgrm.dgrm_id = prcs.prcs_dgrm_id
 left join flow_timers timr

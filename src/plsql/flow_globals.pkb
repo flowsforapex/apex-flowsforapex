@@ -71,10 +71,25 @@ as
   end get_is_recursive_step; 
 
   function business_ref
+  (pi_scope       flow_subflows.sbfl_scope%type default 0)
   return flow_process_variables.prov_var_vc2%type
   is
   begin
-    return flow_proc_vars_int.get_business_ref (pi_prcs_id => process_id);
+    return flow_proc_vars_int.get_business_ref 
+                              ( pi_prcs_id => process_id
+                              , pi_scope   => pi_scope
+                              );
+  end business_ref;
+
+  function business_ref
+  (pi_sbfl_id     flow_subflows.sbfl_id%type)
+  return flow_process_variables.prov_var_vc2%type
+  is
+    l_scope     flow_subflows.sbfl_scope%type;
+  begin
+    l_scope := flow_engine_util.get_scope ( p_process_id => process_id
+                                          , p_subflow_id => pi_sbfl_id);             
+    return business_ref ( pi_scope   => l_scope );
   end business_ref;
 
 end flow_globals;

@@ -320,7 +320,7 @@ as
       ;
 
       -- checks passed insert into table
-      if l_parent_check and l_lane_check then
+      if l_parent_check and l_lane_check  then
 
         insert_object
         (
@@ -1089,13 +1089,6 @@ as
         , pi_objt_interrupting   => rec.interrupting
         );
 
-        -- Register Object on Lane if parent belongs to a lane
-        -- Those connections are not directly visible in the XML
-        -- but BPMN defines inheritance for these.
-        if g_lane_refs.exists( pi_proc_bpmn_id ) and rec.steps_id is not null then
-          g_lane_refs( rec.steps_id ) := g_lane_refs( pi_proc_bpmn_id );
-        end if;
-
         if rec.steps_type = 'bpmn:laneSet' then
           parse_lanes
           (
@@ -1215,13 +1208,6 @@ as
         , pi_objt_name           => rec.proc_name
         , pi_objt_parent_bpmn_id => pi_parent_id
         );
-
-        -- Register Object on Lane if parent belongs to a lane
-        -- Those connections are not directly visible in the XML
-        -- but BPMN defines inheritance for these.
-        if g_lane_refs.exists( pi_parent_id ) and rec.proc_id is not null then
-          g_lane_refs( rec.proc_id ) := g_lane_refs( pi_parent_id );
-        end if;
 
         -- parse any immediate steps
         parse_steps

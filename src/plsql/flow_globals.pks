@@ -18,6 +18,11 @@ as
   scope      flow_subflows.sbfl_scope%type;
 
   function business_ref
+  (pi_scope       flow_subflows.sbfl_scope%type default 0)
+  return flow_process_variables.prov_var_vc2%type;
+
+  function business_ref
+  (pi_sbfl_id     flow_subflows.sbfl_id%type)
   return flow_process_variables.prov_var_vc2%type;
 
   procedure set_context
