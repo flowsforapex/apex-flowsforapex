@@ -19,6 +19,7 @@ with completed_objects as (
                                           select sbfl.sbfl_current
                                             from flow_subflows sbfl
                                            where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
+                                             and sbfl.sbfl_diagram_level = sflg.sflg_diagram_level
                                              and sbfl.sbfl_current is not null
                                         )
 ), all_completed as ( 
@@ -32,7 +33,7 @@ with completed_objects as (
        , sbfl_diagram_level as diagram_level 
        , listagg(sbfl_current, ':') within group ( order by sbfl_current ) as bpmn_ids
     from flow_subflows
-   where sbfl_current is not null  -- should this include  "and sbfl_status != 'error' "???
+   where sbfl_current is not null  
 group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
 ), all_errors as (
   select sbfl_prcs_id as prcs_id

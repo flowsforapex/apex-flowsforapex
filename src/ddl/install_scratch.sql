@@ -149,6 +149,8 @@ CREATE TABLE flow_subflows (
     sbfl_became_current   TIMESTAMP WITH TIME ZONE,
     sbfl_work_started     TIMESTAMP WITH TIME ZONE,
     sbfl_has_events       VARCHAR2(200 CHAR),
+    sbfl_lane             VARCHAR2(50 CHAR),
+    sbfl_lane_name        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
     sbfl_reservation      VARCHAR2(255 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL
 );

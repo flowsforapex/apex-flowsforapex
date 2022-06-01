@@ -20,6 +20,12 @@ create or replace package test_helper as
    , pi_sbfl_id in  flow_subflows.sbfl_id%type
    );
 
+  -- step the model forward from an object given the object ID
+   procedure step_forward 
+   ( pi_prcs_id       in  flow_processes.prcs_id%type
+   , pi_current  in  flow_subflows.sbfl_current%type
+   );
+
   -- get the subflow that has pi_current as the current object.
 
    function get_sbfl_id

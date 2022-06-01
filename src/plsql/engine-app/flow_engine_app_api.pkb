@@ -1340,7 +1340,8 @@ as
       flow_process_vars.set_var( 
         pi_prcs_id   => l_prcs_id,
         pi_var_name  => 'BUSINESS_REF',
-        pi_vc2_value => pi_business_ref);
+        pi_vc2_value => pi_business_ref,
+        pi_scope => 0);
     end if;
     return l_prcs_id; 
   end create_instance;

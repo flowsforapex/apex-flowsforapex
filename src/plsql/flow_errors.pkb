@@ -30,6 +30,11 @@ as
   )
   is 
   begin  
+      apex_debug.enter
+      ( 'set_error_status'
+      , 'pi_prcs_id', pi_prcs_id
+      , 'pi_sbfl_id', pi_sbfl_id
+      );
       -- set sbfl & prcs error status
       update flow_subflows sbfl
         set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error

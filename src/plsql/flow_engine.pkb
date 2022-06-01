@@ -859,6 +859,8 @@ begin
          , objt_target.objt_bpmn_id
          , objt_target.objt_tag_name    
          , objt_target.objt_sub_tag_name
+         , objt_lane.objt_bpmn_id
+         , objt_lane.objt_name
       into l_step_info
       from flow_connections conn
       join flow_objects objt_source
@@ -870,12 +872,14 @@ begin
       join flow_subflows sbfl
         on sbfl.sbfl_current = objt_source.objt_bpmn_id 
        and sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
+ left join flow_objects objt_lane
+        on objt_target.objt_objt_lane_id = objt_lane.objt_id
+       and objt_target.objt_dgrm_id = objt_lane.objt_dgrm_id
      where conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
        and conn.conn_bpmn_id like nvl2( p_forward_route, p_forward_route, '%' )
        and sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
     ;
-    return l_step_info;
   exception
     when no_data_found then
       flow_errors.handle_instance_error
@@ -906,6 +910,7 @@ begin
       );
       -- $F4AMESSAGE 'eng_handle_event_int' || 'Flow Engine Internal Error: Process %0 Subflow %1 Module %2 Current %4 Current Tag %3'
   end;
+  return l_step_info;
 end get_next_step_info;
 
 function get_restart_step_info
@@ -933,11 +938,16 @@ begin
          , objt_current.objt_bpmn_id
          , objt_current.objt_tag_name    
          , objt_current.objt_sub_tag_name
+         , objt_lane.objt_bpmn_id
+         , objt_lane.objt_name
       into l_step_info
       from flow_objects objt_current
       join flow_subflows sbfl
         on sbfl.sbfl_current = objt_current.objt_bpmn_id 
        and sbfl.sbfl_dgrm_id = objt_current.objt_dgrm_id
+ left join flow_objects objt_lane
+        on objt_current.objt_objt_lane_id = objt_lane.objt_id
+       and objt_current.objt_dgrm_id = objt_lane.objt_dgrm_id
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_current = p_current_bpmn_id
@@ -1271,20 +1281,37 @@ begin
     , p_subflow_id => p_subflow_id
     , p_forward_route => p_forward_route
     );
+ 
+    if not flow_globals.get_step_error then
+      -- complete the current step by doing the post-step operations
+      finish_current_step
+      ( p_sbfl_rec => l_sbfl_rec
+      , p_current_step_tag => l_step_info.source_objt_tag
+      , p_log_as_completed => p_log_as_completed
+      );
+    else
+      rollback;
+      if p_recursive_call then
+        -- set error status on instance and subflow
+        flow_errors.set_error_status
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        );
+      end if;
+      apex_debug.info
+      ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error on Step %1'
+      , p0        => p_subflow_id
+      , p1        => l_sbfl_rec.sbfl_current
+      );      
 
-    -- complete the current step by doing the post-step operations
-    finish_current_step
-    ( p_sbfl_rec => l_sbfl_rec
-    , p_current_step_tag => l_step_info.source_objt_tag
-    , p_log_as_completed => p_log_as_completed
-    );
+    end if;
   end if; -- step key valid
 
   -- end of post-step operations for previous step
   if flow_globals.get_step_error then
     rollback;
     if p_recursive_call then
-      -- set errort status on instance and subflow
+      -- set error status on instance and subflow
       flow_errors.set_error_status
       ( pi_prcs_id => p_process_id
       , pi_sbfl_id => p_subflow_id
@@ -1310,6 +1337,8 @@ begin
         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
         , sbfl.sbfl_work_started = null
         , sbfl.sbfl_last_update = l_timestamp
+        , sbfl.sbfl_lane      = coalesce( l_step_info.target_objt_lane     , sbfl.sbfl_lane     , null)
+        , sbfl.sbfl_lane_name = coalesce( l_step_info.target_objt_lane_name, sbfl.sbfl_lane_name, null)
     where sbfl.sbfl_prcs_id = p_process_id
       and sbfl.sbfl_id = p_subflow_id
     ;

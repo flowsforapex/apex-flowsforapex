@@ -44,6 +44,27 @@ create or replace package body test_helper as
     , p_step_key => l_step_key);
   end step_forward;
 
+    -- step the model forward from an object given the object ID
+   procedure step_forward 
+   ( pi_prcs_id  in  flow_processes.prcs_id%type
+   , pi_current  in  flow_subflows.sbfl_current%type
+   )
+   is
+     l_subflow     flow_subflows.sbfl_id%type;
+   begin
+     -- find the subflow having pi_sbfl_current as its current object
+       select sbfl.sbfl_id
+         into l_subflow
+         from flow_subflows sbfl
+        where sbfl.sbfl_prcs_id = pi_prcs_id
+          and sbfl.sbfl_current = pi_current;
+     -- step it forward
+      step_forward 
+      ( pi_prcs_id => pi_prcs_id
+      , pi_sbfl_id => l_subflow
+      );
+   end step_forward;
+
   -- get the subflow that has pi_current as the current object.
 
    function get_sbfl_id

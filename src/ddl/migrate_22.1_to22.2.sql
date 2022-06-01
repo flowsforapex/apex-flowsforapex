@@ -34,7 +34,9 @@ begin
     add (
       sbfl_calling_sbfl   number,
       sbfl_scope          number,
-      sbfl_diagram_level  number
+      sbfl_diagram_level  number,
+      sbfl_lane           varchar2(50 char)
+      sbfl_lane_name      varchar2(200 char)
     )' 
   ;
 
@@ -46,6 +48,24 @@ end;
  - we will need to step through existing prcesses where the process_level != 0, and set the sbfl_calling_sbfl to the calling sbfl
  -- its only for subproceses, as we won't have any call activities to migrate -- so we can get this with the right query on the objects / connections
  */
+
+ /* need to add content to sbfl_lane for all existing subflows at migration 
+ I’ve re-built the way that lanes work — which is required for call activities.
+The bpmn only puts top level objects into lanes — anything inside a subProcess is assumed to inherit the lane of its parent subProcess.  However, a callActivity, which is in a separate diagram, can have a lane system of its own.  And these can be mixed & matched so that the parent diagram has no lanes but the called diagram does have lanes.  etc.
+Before we put lanes on everything by resolving the inheritance from parents at parse time.  Now the parser only records those objects which have lanes in the bpmn, and we manage the inheritance at run-time.
+I have the parser and runtime working, and the view rebuilt so it now gets the lane from flow_subflows.sbfl_lane.
+BUT… there is a migration issue for running instances at migration.
+Is it possible to reliably run a script BEFORE we change the DML?  I’m thinking that we should:
+- Stop the engine for customer transactions & stop the scheduler.
+- Make a copy of Flow_objects, or create a table as select objt_bpmn_id, corresponding lane bpmn_id for all objects.
+- Do the upgrade, which will add flow_subflows.sbfl_lane 
+- Re-parse all diagrams (we were going to do that anyhow for AJAX.   We need to do that for lanes now as well!)
+- Populate sbfl_lanes for existing subflows using the copy of flow_objects from before the update.
+- Any other migration.
+- Restart the engine and scheduler
+- Carry on running…
+I haven’t written the migration script but wanted to record what is required somewhere while its fresh in my mind.
+*/
 
   begin
     execute immediate '
