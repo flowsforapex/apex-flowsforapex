@@ -118,6 +118,7 @@ as
                            , flow_constants_pkg.gc_bpmn_text
                            , flow_constants_pkg.gc_apex_servicetask_body_text
                            , flow_constants_pkg.gc_apex_servicetask_body_html
+                           , flow_constants_pkg.gc_apex_servicetask_attachment
                            )
     then
       po_json_element := get_lines_array( pi_str => pi_value );
