@@ -136,6 +136,7 @@ as
     l_scope := flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id );
     flow_globals.set_context( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope );
 
+    -- Pull all configuration from objt_attributes JSON structure
     get_config
     (
       pi_objt_id          => pi_objt_id
@@ -155,6 +156,7 @@ as
     , po_attachment_query => l_attachment_query
     );
 
+    -- Substitute process variables where needed
     flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_from );
     flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_to );
     flow_proc_vars_int.do_substitution( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope, pio_string => l_cc );
@@ -243,27 +245,27 @@ as
 
     end if;
 
-      if (l_attachment_query is not null ) then
+    if (l_attachment_query is not null ) then
 
-        execute immediate l_attachment_query 
-        bulk collect into  l_attachments;
+      execute immediate l_attachment_query 
+      bulk collect into  l_attachments;
 
-        for i in 1..l_attachments.count()
-        loop
-          apex_mail.add_attachment(
-            p_mail_id    => l_mail_id,
-            p_attachment => l_attachments(i).blob_content,
-            p_filename   => l_attachments(i).file_name,
-            p_mime_type  => l_attachments(i).mime_type
-          );
-        end loop;
-      end if;
+      for i in 1..l_attachments.count()
+      loop
+        apex_mail.add_attachment(
+          p_mail_id    => l_mail_id,
+          p_attachment => l_attachments(i).blob_content,
+          p_filename   => l_attachments(i).file_name,
+          p_mime_type  => l_attachments(i).mime_type
+        );
+      end loop;
+    end if;
 
-      if (l_immediate ) then
-        apex_mail.push_queue;
-      end if;
+    if (l_immediate ) then
+      apex_mail.push_queue;
+    end if;
     
-    exception
+  exception
     when e_wrong_default_workspace then
       apex_debug.error
       (
