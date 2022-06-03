@@ -6,7 +6,9 @@ as
   subtype t_bpmn_attributes_key is varchar2(50 char);
   subtype t_bpmn_attribute_vc2  is varchar2(4000 char);
 
+  subtype t_vc200              is varchar2(200 char);
   subtype t_single_vc2         is varchar2(1 char);
+  subtype t_boolean_num        is number(1);
 
   subtype t_expr_type          is varchar2(130 char);
   subtype t_expr_set           is varchar2(20 char);

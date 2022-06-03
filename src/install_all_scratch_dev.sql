@@ -1,6 +1,8 @@
 set define '^'
 set concat '.'
 
+spool install_all_scratch_dev.log
+
 PROMPT >> Flows4APEX Installation (Developer Edition)
 PROMPT >> ===========================================
 
@@ -44,3 +46,5 @@ end;
 
 PROMPT >> Finished Installation of Flows4APEX
 PROMPT >> ====================================
+
+spool off

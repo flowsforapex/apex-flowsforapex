@@ -5,38 +5,36 @@
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created 13-May-2021  Richard Allen (Flowquest Consuting, for MT AG) 
--- Edited  13-Apr-2022 - Richard Allen (Oracle)
+-- Edited  13-Apr-2022  Richard Allen (Oracle)
+-- Edited  23.May-2022  Moritz Klein (MT AG)
 --
 */
 create or replace package body flow_tasks
 as 
 
-  -- example to get taskType info from object_attributes
   function get_task_type
   (
     pi_objt_id in flow_objects.objt_id%type
   )
-    return flow_object_attributes.obat_vc_value%type
+    return flow_types_pkg.t_bpmn_attribute_vc2
   as
-    l_return flow_object_attributes.obat_vc_value%type;
+    l_return flow_types_pkg.t_bpmn_attribute_vc2;
   begin
 
-    select obat_vc_value
+    select objt.objt_attributes."timerType"
       into l_return
-      from flow_object_attributes
-     where obat_objt_id = pi_objt_id
-       and obat_key = flow_constants_pkg.gc_task_type_key
+      from flow_objects objt
+     where objt_id = pi_objt_id
     ;
-
-    return l_return;
-  exception
-    when no_data_found then
+    if l_return is null then
       apex_debug.warn
       (
         p_message => 'No task type found for object %s'
       , p0        =>  pi_objt_id
       );
-      return null;
+    end if;
+
+    return l_return;
   end get_task_type;
 
   procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error

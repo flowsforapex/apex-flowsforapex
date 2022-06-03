@@ -4,7 +4,8 @@
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
 --
--- Created 11-Sep-2020  Richard Allen (Flowquest) 
+-- Created  11-Sep-2020  Richard Allen (Flowquest)
+-- Modified 30-May-2022  Moritz Klein (MT AG)
 --
 */
 create or replace package body flow_engine
@@ -186,17 +187,11 @@ end flow_process_link_event;
       -- check for Terminate sub-Event
       if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
         -- get desired process status after termination from model
-        begin
-          select coalesce(obat.obat_vc_value, flow_constants_pkg.gc_prcs_status_completed)
-            into l_process_end_status
-            from flow_object_attributes obat
-          where obat.obat_objt_id = p_step_info.target_objt_id
-            and obat.obat_key = flow_constants_pkg.gc_terminate_result
-          ;
-        exception
-          when no_data_found then
-            l_process_end_status := flow_constants_pkg.gc_prcs_status_completed;
-        end;
+        select coalesce( objt.objt_attributes."processStatus", flow_constants_pkg.gc_prcs_status_completed )
+          into l_process_end_status
+          from flow_objects objt
+         where objt.objt_id = p_step_info.target_objt_id
+        ;
         -- terminate the main level
         flow_engine_util.terminate_level
         ( 

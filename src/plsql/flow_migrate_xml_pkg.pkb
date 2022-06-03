@@ -10,6 +10,7 @@ as
     l_domnodelist dbms_xmldom.DOMNodeList;
     l_domnode dbms_xmldom.DOMNode;
     l_domelement dbms_xmldom.DOMElement;
+    l_exporter_below_22 boolean;
   begin
     l_domnodelist := dbms_xmldom.getelementsbytagname(
       doc => p_domdoc
@@ -27,8 +28,9 @@ as
                               elem => l_domelement
                             , name => 'exporterVersion'
                             );
+        l_exporter_below_22 := ( to_number(substr(l_exporter_version, 1, instr(l_exporter_version, '.') - 1)) < 22 );
       end loop;    
-    return (l_exporter = 'Flows for APEX' and l_exporter_version = flow_constants_pkg.gc_version);
+    return (l_exporter = 'Flows for APEX' and ( not l_exporter_below_22 or l_exporter_version = flow_constants_pkg.gc_version ));
   end is_exporter_version_current;
   
   procedure set_exporter(

@@ -1,80 +1,14 @@
 create or replace package body flow_bpmn_parser_pkg
 as
 
-  -- Standard Data Types to use
-  subtype t_vc200 is varchar2(200 char);
-
-  -- Types for temporary storage of parsing result
-  type t_objt_rec is
-    record
-    (
-      objt_name           t_vc200
-    , objt_tag_name       flow_types_pkg.t_bpmn_id
-    , objt_parent_bpmn_id flow_types_pkg.t_bpmn_id
-    , objt_sub_tag_name   flow_types_pkg.t_bpmn_id
-    , objt_attached_to    flow_types_pkg.t_bpmn_id
-    , objt_interrupting   number
-    );
-  type t_objt_tab is table of t_objt_rec index by flow_types_pkg.t_bpmn_id;
-
-  type t_obat_rec is
-    record
-    (
-      obat_key            flow_object_attributes.obat_key%type
-    , obat_num_value      flow_object_attributes.obat_num_value%type
-    , obat_date_value     flow_object_attributes.obat_date_value%type
-    , obat_vc_value       flow_object_attributes.obat_vc_value%type
-    , obat_clob_value     flow_object_attributes.obat_clob_value%type
-    );
-  type t_obat_tab is table of t_obat_rec index by pls_integer;
-
-  type t_objt_obat_rec is
-    record
-    (
-      obat_sub_tag_name   flow_objects.objt_sub_tag_name%type
-    , obat_tab            t_obat_tab
-    );
-  type t_objt_obat_tab is table of t_objt_obat_rec index by flow_types_pkg.t_bpmn_id;
-
-  type t_expr_rec is
-    record
-    (
-      expr_set        flow_object_expressions.expr_set%type
-    , expr_order      flow_object_expressions.expr_order%type
-    , expr_var_name   flow_object_expressions.expr_var_name%type
-    , expr_var_type   flow_object_expressions.expr_var_type%type
-    , expr_type       flow_object_expressions.expr_type%type
-    , expr_expression flow_object_expressions.expr_expression%type
-    );
-  type t_expr_tab is table of t_expr_rec index by pls_integer;
-  type t_objt_expr_tab is table of t_expr_tab index by flow_types_pkg.t_bpmn_id;
-
-  type t_conn_rec is
-    record
-    (
-      conn_name        t_vc200
-    , conn_src_bpmn_id flow_types_pkg.t_bpmn_id
-    , conn_tgt_bpmn_id flow_types_pkg.t_bpmn_id
-    , conn_tag_name    flow_types_pkg.t_bpmn_id
-    , conn_origin      flow_types_pkg.t_bpmn_id
-    );
-  type t_conn_tab is table of t_conn_rec index by flow_types_pkg.t_bpmn_id;
-
-  type t_bpmn_ref_tab is table of flow_types_pkg.t_bpmn_id index by flow_types_pkg.t_bpmn_id;
-  type t_bpmn_id_tab is table of number index by flow_types_pkg.t_bpmn_id;
-
-  type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
-
   -- Variables to hold data during parse run
   g_dgrm_id        flow_diagrams.dgrm_id%type;
-  g_objects        t_objt_tab;
-  g_obj_attribs    t_objt_obat_tab;
-  g_objt_expr      t_objt_expr_tab;
-  g_connections    t_conn_tab;
-  g_lane_refs      t_bpmn_ref_tab;
-  g_default_cons   t_bpmn_id_tab;
-  g_objt_lookup    t_id_lookup_tab;
-
+  g_objects        flow_parser_util.t_objt_tab;
+  g_objt_expr      flow_parser_util.t_objt_expr_tab;
+  g_connections    flow_parser_util.t_conn_tab;
+  g_lane_refs      flow_parser_util.t_bpmn_ref_tab;
+  g_default_cons   flow_parser_util.t_bpmn_id_tab;
+  g_objt_lookup    flow_parser_util.t_id_lookup_tab;
 
   procedure register_object
   (
@@ -87,65 +21,68 @@ as
   , pi_objt_interrupting   in flow_objects.objt_interrupting%type default null
   )
   as
-    l_objt_rec t_objt_rec;
+    l_objt_rec flow_parser_util.t_objt_rec;
   begin
     if pi_objt_bpmn_id is not null then
-      l_objt_rec.objt_name           := pi_objt_name;
-      l_objt_rec.objt_tag_name       := pi_objt_tag_name;
-      l_objt_rec.objt_sub_tag_name   := pi_objt_sub_tag_name;
-      l_objt_rec.objt_parent_bpmn_id := pi_objt_parent_bpmn_id;
-      l_objt_rec.objt_attached_to    := pi_objt_attached_to;
-      l_objt_rec.objt_interrupting   := pi_objt_interrupting;
+      if g_objects.exists( pi_objt_bpmn_id ) then
+        l_objt_rec := g_objects( pi_objt_bpmn_id );
+      end if;
+      l_objt_rec.objt_name           := coalesce( pi_objt_name, l_objt_rec.objt_name );
+      l_objt_rec.objt_tag_name       := coalesce( pi_objt_tag_name, l_objt_rec.objt_tag_name );
+      l_objt_rec.objt_sub_tag_name   := coalesce( pi_objt_sub_tag_name, l_objt_rec.objt_sub_tag_name );
+      l_objt_rec.objt_parent_bpmn_id := coalesce( pi_objt_parent_bpmn_id, l_objt_rec.objt_parent_bpmn_id );
+      l_objt_rec.objt_attached_to    := coalesce( pi_objt_attached_to, l_objt_rec.objt_attached_to );
+      l_objt_rec.objt_interrupting   := coalesce( pi_objt_interrupting, l_objt_rec.objt_interrupting );
 
       g_objects( pi_objt_bpmn_id ) := l_objt_rec;
     end if;
   end register_object;
 
-  procedure register_object_attributes
+  procedure register_object_attribute
   (
-    pi_objt_bpmn_id       in flow_objects.objt_bpmn_id%type
-  , pi_objt_sub_tag_name  in flow_objects.objt_sub_tag_name%type default null
-  , pi_obat_key           in flow_object_attributes.obat_key%type
-  , pi_obat_num_value     in flow_object_attributes.obat_num_value%type default null
-  , pi_obat_date_value    in flow_object_attributes.obat_date_value%type default null
-  , pi_obat_vc_value      in flow_object_attributes.obat_vc_value%type default null
-  , pi_obat_clob_value    in flow_object_attributes.obat_clob_value%type default null
+    pi_objt_bpmn_id   in flow_types_pkg.t_bpmn_id
+  , pi_attribute_name in flow_types_pkg.t_bpmn_attributes_key
+  , pi_value          in flow_types_pkg.t_bpmn_attribute_vc2
   )
   as
-    l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
-
-    l_obat_rec              t_obat_rec;
-    l_obat_idx              pls_integer;
-	l_objt_obat_idx_exists  boolean := false;
+    l_namespace        flow_types_pkg.t_vc200;
+    l_attribute        flow_types_pkg.t_vc200;
+    l_namespace_object sys.json_object_t;
+    l_json_element     sys.json_element_t;
   begin
-    if pi_objt_bpmn_id is not null then
 
-	  -- check, if the index already exists
-	  begin
-	     l_objt_sub_tag_name := g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name;
-		 l_objt_obat_idx_exists := true;
-	  exception
-	    when no_data_found then
-		 l_objt_obat_idx_exists := false;
-	  end;
-
-	  -- fill attributes record
-	  l_obat_rec.obat_key        := pi_obat_key;
-	  l_obat_rec.obat_num_value  := pi_obat_num_value;
-	  l_obat_rec.obat_date_value := pi_obat_date_value;
-	  l_obat_rec.obat_vc_value   := pi_obat_vc_value;
-	  l_obat_rec.obat_clob_value := pi_obat_clob_value;
-   
-      if not l_objt_obat_idx_exists then
-        g_obj_attribs(pi_objt_bpmn_id).obat_sub_tag_name := pi_objt_sub_tag_name;
-		g_obj_attribs(pi_objt_bpmn_id).obat_tab(1) := l_obat_rec;
-	  else
-        l_obat_idx := coalesce(g_obj_attribs(pi_objt_bpmn_id).obat_tab.last,0);
-        g_obj_attribs(pi_objt_bpmn_id).obat_tab(l_obat_idx + 1) := l_obat_rec;
-	  end if;
-
+    if not g_objects.exists( pi_objt_bpmn_id ) then
+      register_object( pi_objt_bpmn_id => pi_objt_bpmn_id );
+      g_objects(pi_objt_bpmn_id).objt_attributes := sys.json_object_t();
     end if;
-  end register_object_attributes;
+
+    flow_parser_util.property_to_json
+    (
+      pi_property_name => pi_attribute_name
+    , pi_value         => pi_value
+    , po_namespace     => l_namespace
+    , po_key           => l_attribute
+    , po_json_element  => l_json_element
+    );
+
+    if l_namespace is not null then
+      flow_parser_util.guarantee_named_object
+      (
+        pio_objt_attributes => g_objects(pi_objt_bpmn_id).objt_attributes
+      , pi_key              => l_namespace
+      );
+      l_namespace_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( l_namespace );
+    else
+      l_namespace_object := g_objects(pi_objt_bpmn_id).objt_attributes;
+    end if;
+
+    if l_json_element is not null then
+      l_namespace_object.put( l_attribute, l_json_element );
+    else
+      l_namespace_object.put( l_attribute, pi_value );
+    end if;
+
+  end register_object_attribute;
 
   procedure register_object_expression
   (
@@ -158,7 +95,7 @@ as
   , pi_expr_expression in flow_object_expressions.expr_expression%type
   )
   as
-    l_object_expression t_expr_rec;
+    l_object_expression flow_parser_util.t_expr_rec;
     l_insert_index      pls_integer := 0;
   begin
     if pi_objt_bpmn_id is not null then
@@ -190,7 +127,7 @@ as
   , pi_conn_origin      in flow_connections.conn_origin%type
   )
   as
-    l_conn_rec t_conn_rec;
+    l_conn_rec flow_parser_util.t_conn_rec;
   begin
     if pi_conn_bpmn_id is not null then
       l_conn_rec.conn_name        := pi_conn_name;
@@ -213,6 +150,7 @@ as
   , pi_objt_objt_lane_id  in flow_objects.objt_objt_lane_id%type default null
   , pi_objt_attached_to   in flow_objects.objt_attached_to%type default null
   , pi_objt_interrupting  in flow_objects.objt_interrupting%type default null
+  , pi_objt_attributes    in flow_objects.objt_attributes%type default null
   , po_objt_id           out nocopy flow_objects.objt_id%type
   )
   as
@@ -229,6 +167,7 @@ as
            , objt_objt_lane_id
            , objt_attached_to
            , objt_interrupting
+           , objt_attributes
            )
     values (
              g_dgrm_id
@@ -240,42 +179,11 @@ as
            , pi_objt_objt_lane_id
            , pi_objt_attached_to
            , pi_objt_interrupting
+           , pi_objt_attributes
            )
       returning objt_id into po_objt_id
     ;
   end insert_object;
-
-  procedure insert_object_attributes
-  (
-    pi_objt_id          in flow_object_attributes.obat_objt_id%type
-  , pi_obat_key         in flow_object_attributes.obat_key%type
-  , pi_obat_num_value   in flow_object_attributes.obat_num_value%type default null
-  , pi_obat_date_value  in flow_object_attributes.obat_date_value%type default null
-  , pi_obat_vc_value    in flow_object_attributes.obat_vc_value%type default null
-  , pi_obat_clob_value  in flow_object_attributes.obat_clob_value%type default null
-  )
-  as
-  begin
-    insert
-      into flow_object_attributes
-           (
-             obat_objt_id
-           , obat_key
-           , obat_num_value
-           , obat_date_value
-           , obat_vc_value
-           , obat_clob_value
-           )
-    values (
-             pi_objt_id
-           , pi_obat_key
-           , pi_obat_num_value
-           , pi_obat_date_value
-           , pi_obat_vc_value
-           , pi_obat_clob_value
-           )
-    ;
-  end insert_object_attributes;
 
   procedure insert_object_expression
   (
@@ -352,58 +260,13 @@ as
     ;
   end insert_connection;
 
-  procedure process_object_attributes
-  (
-    pi_objt_id       in flow_object_attributes.obat_objt_id%type
-  , pi_objt_bpmn_id  in flow_types_pkg.t_bpmn_id
-  )
-  as
-    l_obat_tab      t_obat_tab;
-    l_obat_rec      t_obat_rec;
-    l_obat_exists   boolean;
-    l_cur_obat_idx  pls_integer;
-    l_next_obat_idx pls_integer;
-  begin
-
-    -- check, if there are attributes for the object
-    begin
-      l_obat_tab := g_obj_attribs(pi_objt_bpmn_id).obat_tab;
-      l_obat_exists := true;
-    exception
-      when no_data_found then
-        l_obat_exists := false;
-    end;
-
-    if l_obat_exists then
-      l_cur_obat_idx := l_obat_tab.first;
-      while l_cur_obat_idx is not null
-      loop
-        l_obat_rec := l_obat_tab( l_cur_obat_idx );
-
-        insert_object_attributes
-        (
-          pi_objt_id         => pi_objt_id
-        , pi_obat_key        => l_obat_rec.obat_key
-        , pi_obat_num_value  => l_obat_rec.obat_num_value
-        , pi_obat_date_value => l_obat_rec.obat_date_value
-        , pi_obat_vc_value   => l_obat_rec.obat_vc_value
-        , pi_obat_clob_value => l_obat_rec.obat_clob_value
-        );
-
-        l_next_obat_idx := l_obat_tab.next( l_cur_obat_idx );
-        l_cur_obat_idx := l_next_obat_idx;
-      end loop;
-    end if;
-
-  end process_object_attributes;
-
   procedure process_object_expressions
   (
     pi_objt_id       in flow_object_expressions.expr_objt_id%type
   , pi_objt_bpmn_id  in flow_types_pkg.t_bpmn_id    
   )
   as
-    l_cur_expressions t_expr_tab;
+    l_cur_expressions flow_parser_util.t_expr_tab;
     l_cur_index       pls_integer;
   begin
     if g_objt_expr.exists(pi_objt_bpmn_id) then
@@ -428,7 +291,7 @@ as
   as
     l_cur_objt_bpmn_id  flow_types_pkg.t_bpmn_id;
     l_next_objt_bpmn_id flow_types_pkg.t_bpmn_id;
-    l_cur_object        t_objt_rec;
+    l_cur_object        flow_parser_util.t_objt_rec;
     l_objt_id           flow_objects.objt_id%type;
     l_parent_check      boolean;
     l_lane_check        boolean;
@@ -469,13 +332,8 @@ as
         , pi_objt_sub_tag_name => l_cur_object.objt_sub_tag_name
         , pi_objt_attached_to  => l_cur_object.objt_attached_to
         , pi_objt_interrupting => l_cur_object.objt_interrupting
+        , pi_objt_attributes   => case when l_cur_object.objt_attributes is not null then l_cur_object.objt_attributes.to_clob() else null end
         , po_objt_id           => l_objt_id
-        );
-
-        process_object_attributes
-        (
-          pi_objt_id           => l_objt_id
-        , pi_objt_bpmn_id      => l_cur_objt_bpmn_id
         );
 
         process_object_expressions
@@ -511,7 +369,7 @@ as
   procedure process_connections
   as
     l_cur_conn_bpmn_id flow_types_pkg.t_bpmn_id;
-    l_cur_conn         t_conn_rec;
+    l_cur_conn         flow_parser_util.t_conn_rec;
     l_conn_id          flow_connections.conn_id%type;
   begin
 
@@ -690,7 +548,7 @@ as
   )
     return flow_types_pkg.t_bpmn_id
   as
-    c_nsmap        constant t_vc200 := flow_constants_pkg.gc_nsmap;
+    c_nsmap        constant flow_types_pkg.t_vc200 := flow_constants_pkg.gc_nsmap;
     l_return                flow_types_pkg.t_bpmn_id;
   begin
     l_return :=
@@ -756,44 +614,36 @@ as
   procedure parse_page_items
   (
     pi_bpmn_id         in flow_types_pkg.t_bpmn_id
-  , pi_page_items_xml   in xmltype
+  , pi_page_items_xml  in xmltype
   )
   as
-    l_itemNames  varchar2(4000);
-    l_itemValues varchar2(4000);
+    l_page_item   sys.json_object_t;
+    l_page_items  sys.json_array_t := sys.json_array_t();
+    l_apex_object sys.json_object_t;
   begin
     for rec in (
-                select items.itemName
-                     , items.itemValue
+                select items.item_name
+                     , items.item_value
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '*' passing pi_page_items_xml
                          columns
-                           itemName  varchar2(50 char) path 'apex:itemName'
-                         , itemValue varchar2(50 char) path 'apex:itemValue'
+                           item_name  varchar2(50 char) path 'apex:itemName'
+                         , item_value varchar2(50 char) path 'apex:itemValue'
                        ) items
                )
     loop
-      l_itemNames  := l_itemNames || rec.itemName || ',';
-      l_itemValues := l_itemValues || rec.itemValue || ',';
+      l_page_item := sys.json_object_t();
+      l_page_item.put( 'name', rec.item_name );
+      l_page_item.put( 'value', rec.item_value );
+      l_page_items.append( l_page_item );
     end loop;
-    if length(rtrim(l_itemNames, ',')) > 0 then
-        register_object_attributes
-        (
-        pi_objt_bpmn_id      => pi_bpmn_id
-        , pi_obat_key          => flow_constants_pkg.gc_apex_usertask_item
-        , pi_obat_vc_value     => rtrim(l_itemNames, ',')
-        );
-    end if;
-    if length(rtrim(l_itemValues, ',')) > 0 then
-        register_object_attributes
-        (
-        pi_objt_bpmn_id      => pi_bpmn_id
-        , pi_obat_key          =>flow_constants_pkg.gc_apex_usertask_value
-        , pi_obat_vc_value     => rtrim(l_itemValues, ',')
-        );
-    end if;
+    flow_parser_util.guarantee_apex_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes);
+
+    -- Complex JSON types are handled by reference
+    l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
+    l_apex_object.put( 'pageItems', l_page_items );
   end parse_page_items;
 
   procedure parse_task_subtypes
@@ -802,6 +652,10 @@ as
   , pi_subtype_xml in xmltype
   )
   as
+    l_namespace        flow_types_pkg.t_vc200;
+    l_attribute        flow_types_pkg.t_vc200;
+    l_json_element     sys.json_element_t;
+    l_namespace_object sys.json_object_t;
   begin
 
     for rec in (
@@ -814,44 +668,39 @@ as
                                       , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_subtype_xml
                          columns
-                           prop_name     varchar2(50 char)    path 'name()'
-                         , prop_value    varchar2(4000 char)  path 'text()'
-                         , prop_children xmltype              path '* except bpmn:incoming except bpmn:outgoing'
+                           prop_name     varchar2(50 char) path 'name()'
+                         , prop_value    clob              path 'text()'
+                         , prop_children xmltype           path '* except bpmn:incoming except bpmn:outgoing'
                        ) props
                )
     loop
-      -- User Task: nested page items
+      -- User Task: nested page items are handled separately
       if rec.prop_name = flow_constants_pkg.gc_apex_usertask_page_items then
         parse_page_items
         (
           pi_bpmn_id        => pi_bpmn_id
         , pi_page_items_xml => rec.prop_children
         );
-      -- long-value properties: store in clob column
-      elsif rec.prop_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
-                             , flow_constants_pkg.gc_apex_servicetask_body_text
-                             , flow_constants_pkg.gc_apex_servicetask_body_html
-                             , flow_constants_pkg.gc_apex_task_plsql_code
-                             )
-      then
-        if length(rec.prop_value) > 0 then
-          register_object_attributes
-          (
-            pi_objt_bpmn_id      => pi_bpmn_id
-          , pi_obat_key          => rec.prop_name
-          , pi_obat_clob_value   => rec.prop_value
-          );
+      elsif length(rec.prop_value) > 0 then
+        flow_parser_util.property_to_json
+        (
+          pi_property_name => rec.prop_name
+        , pi_value         => rec.prop_value
+        , po_namespace     => l_namespace
+        , po_key           => l_attribute
+        , po_json_element  => l_json_element
+        );
+
+        flow_parser_util.guarantee_named_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
+        l_namespace_object := g_objects(pi_bpmn_id).objt_attributes.get_object( l_namespace );
+        if l_json_element is not null then
+          l_namespace_object.put( l_attribute, l_json_element );
+        else
+          l_namespace_object.put( l_attribute, rec.prop_value );
         end if;
-      -- store varchar values   
+      --Empty properties will not be stored
       else
-        if length(rec.prop_value) > 0 then
-            register_object_attributes
-            (
-              pi_objt_bpmn_id      => pi_bpmn_id
-            , pi_obat_key          => rec.prop_name
-            , pi_obat_vc_value     => rec.prop_value
-            );
-        end if;
+        null;
       end if;
     end loop;
   end parse_task_subtypes;
@@ -862,6 +711,10 @@ as
   , pi_subtype_xml in xmltype
   )
   as
+    l_namespace        flow_types_pkg.t_vc200;
+    l_attribute        flow_types_pkg.t_vc200;
+    l_namespace_object sys.json_object_t;
+    l_json_element     sys.json_element_t;
   begin
 
     for rec in (
@@ -881,12 +734,22 @@ as
                )
     loop
       if length(rec.prop_value) > 0 then
-        register_object_attributes
+        flow_parser_util.property_to_json
         (
-          pi_objt_bpmn_id      => pi_bpmn_id
-        , pi_obat_key          => rec.prop_name
-        , pi_obat_vc_value     => rec.prop_value
+          pi_property_name => rec.prop_name
+        , pi_value         => rec.prop_value
+        , po_namespace     => l_namespace
+        , po_key           => l_attribute
+        , po_json_element  => l_json_element
         );
+
+        flow_parser_util.guarantee_named_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
+        l_namespace_object := g_objects(pi_bpmn_id).objt_attributes.get_object( l_namespace );
+        if l_json_element is not null then
+          l_namespace_object.put( l_attribute, l_json_element );
+        else
+          l_namespace_object.put( l_attribute, rec.prop_value );
+        end if;
       end if;
     end loop;
   end parse_custom_timers;
@@ -931,13 +794,13 @@ as
                                   , flow_constants_pkg.gc_apex_task_execute_plsql
                                   )
       then
-      -- register the task type
-        register_object_attributes
+        register_object_attribute
         (
-          pi_objt_bpmn_id      => pi_bpmn_id
-        , pi_obat_key          => flow_constants_pkg.gc_task_type_key
-        , pi_obat_vc_value     => rec.extension_type
+          pi_objt_bpmn_id   => pi_bpmn_id
+        , pi_attribute_name => flow_constants_pkg.gc_task_type_key
+        , pi_value          => rec.extension_type
         );
+  
         -- parse properties
         parse_task_subtypes
         (
@@ -950,14 +813,14 @@ as
                                   , flow_constants_pkg.gc_timer_type_oracle_cycle
                                   )
       then
-        -- register the timer type
-        register_object_attributes
+        register_object_attribute
         (
-          pi_objt_bpmn_id      => pi_bpmn_id
-        , pi_objt_sub_tag_name => flow_constants_pkg.gc_bpmn_timer_event_definition
-        , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
-        , pi_obat_vc_value     => rec.extension_type
+          pi_objt_bpmn_id   => pi_bpmn_id
+        , pi_attribute_name => flow_constants_pkg.gc_timer_type_key
+        , pi_value          => rec.extension_type
         );
+        g_objects(pi_bpmn_id).objt_sub_tag_name := flow_constants_pkg.gc_bpmn_timer_event_definition;
+
         -- parse properties
         parse_custom_timers
         (
@@ -976,11 +839,11 @@ as
   as
     l_child_type         flow_types_pkg.t_bpmn_id;
     l_child_id           flow_types_pkg.t_bpmn_id;
-    l_child_value        flow_object_attributes.obat_vc_value%type;
+    l_child_value        flow_types_pkg.t_bpmn_attribute_vc2;
     l_child_details      xmltype;
     l_detail_type        flow_types_pkg.t_bpmn_id;
     l_detail_id          flow_types_pkg.t_bpmn_id;
-    l_detail_value       flow_object_attributes.obat_vc_value%type;
+    l_detail_value       flow_types_pkg.t_bpmn_attribute_vc2;
   begin
 
     for rec in (
@@ -1008,12 +871,13 @@ as
         -- register the child which does not have details
         if rec.child_value is not null then
           -- if needed distinguish here between different attributes
-          register_object_attributes
+
+          register_object_attribute
           (
-            pi_objt_bpmn_id      => pi_objt_bpmn_id
-          , pi_obat_key          => rec.child_type
-          , pi_obat_vc_value     => rec.child_value
-        );
+            pi_objt_bpmn_id    => pi_objt_bpmn_id
+          , pi_attribute_name  => rec.child_type
+          , pi_value           => rec.child_value
+          );
         end if;
       else
         -- register the child which has details
@@ -1027,41 +891,35 @@ as
             );
           -- if standard type just register value inside tag
           else
-            begin
-              select details.detail_type
-              , details.detail_id
-              , details.detail_value
-                  into l_detail_type
-                    , l_detail_id
-                    , l_detail_value
-                  from xmltable
-                      (
-                        xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                      , '*' passing rec.child_details
-                        columns
-                          detail_type        varchar2(50 char)    path 'name()'
-                        , detail_id          varchar2(50 char)    path '@id'
-                        , detail_value       varchar2(4000 char)  path 'text()'
-                        --, extension_elements xmltype              path 'bpmn:extensionElements'
-                      ) details;
-            end;
+            select details.detail_type
+            , details.detail_id
+            , details.detail_value
+                into l_detail_type
+                  , l_detail_id
+                  , l_detail_value
+                from xmltable
+                    (
+                      xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                    , '*' passing rec.child_details
+                      columns
+                        detail_type        varchar2(50 char)    path 'name()'
+                      , detail_id          varchar2(50 char)    path '@id'
+                      , detail_value       varchar2(4000 char)  path 'text()'
+                    ) details;
 
             -- register the timer type
-            register_object_attributes
+            register_object_attribute
             (
-              pi_objt_bpmn_id      => pi_objt_bpmn_id
-            , pi_objt_sub_tag_name => rec.child_type
-            , pi_obat_key          => flow_constants_pkg.gc_timer_type_key
-            , pi_obat_vc_value     => l_detail_type
+              pi_objt_bpmn_id   => pi_objt_bpmn_id
+            , pi_attribute_name => flow_constants_pkg.gc_timer_type_key
+            , pi_value          => l_detail_type
             );
 
-            -- register the timer definition
-            register_object_attributes
+            register_object_attribute
             (
-              pi_objt_bpmn_id      => pi_objt_bpmn_id
-            , pi_objt_sub_tag_name => rec.child_type
-            , pi_obat_key          => flow_constants_pkg.gc_timer_def_key
-            , pi_obat_vc_value     => l_detail_value
+              pi_objt_bpmn_id   => pi_objt_bpmn_id
+            , pi_attribute_name => flow_constants_pkg.gc_timer_def_key
+            , pi_value          => l_detail_value
             );
           end if;
         -- custom processStatus attribute on terminateEndEvents
@@ -1080,12 +938,11 @@ as
                  ) details
           ;
           if l_detail_type = flow_constants_pkg.gc_apex_process_status then
-            register_object_attributes
+            register_object_attribute
             (
-              pi_objt_bpmn_id      => pi_objt_bpmn_id
-            , pi_objt_sub_tag_name => rec.child_type
-            , pi_obat_key          => flow_constants_pkg.gc_terminate_result
-            , pi_obat_vc_value     => l_detail_value
+              pi_objt_bpmn_id   => pi_objt_bpmn_id
+            , pi_attribute_name => flow_constants_pkg.gc_terminate_result
+            , pi_value          => l_detail_value
             );
           end if;
 	    end if;
@@ -1122,29 +979,29 @@ as
     loop
 
       if rec.activity_diagram is not null then
-        register_object_attributes
+        register_object_attribute
         (
-          pi_objt_bpmn_id      => pi_objt_bpmn_id
-        , pi_obat_key          => flow_constants_pkg.gc_apex_called_diagram
-        , pi_obat_vc_value     => rec.activity_diagram
+          pi_objt_bpmn_id   => pi_objt_bpmn_id
+        , pi_attribute_name => flow_constants_pkg.gc_apex_called_diagram
+        , pi_value          => rec.activity_diagram
         );
       end if;
 
       if rec.activity_versionSelection is not null then
-        register_object_attributes
+        register_object_attribute
         (
-          pi_objt_bpmn_id      => pi_objt_bpmn_id
-        , pi_obat_key          => flow_constants_pkg.gc_apex_called_diagram_version_selection
-        , pi_obat_vc_value     => rec.activity_versionSelection
+          pi_objt_bpmn_id   => pi_objt_bpmn_id
+        , pi_attribute_name => flow_constants_pkg.gc_apex_called_diagram_version_selection
+        , pi_value          => rec.activity_versionSelection
         );
       end if;
 
       if rec.activity_version is not null then
-        register_object_attributes
+        register_object_attribute
         (
-          pi_objt_bpmn_id      => pi_objt_bpmn_id
-        , pi_obat_key          => flow_constants_pkg.gc_apex_called_diagram_version
-        , pi_obat_vc_value     => rec.activity_version
+          pi_objt_bpmn_id   => pi_objt_bpmn_id
+        , pi_attribute_name => flow_constants_pkg.gc_apex_called_diagram_version
+        , pi_value          => rec.activity_version
         );
       end if;
 
@@ -1428,7 +1285,6 @@ as
   begin
     g_dgrm_id := null;
     g_objects.delete;
-    g_obj_attribs.delete;
     g_objt_expr.delete;
     g_connections.delete;
     g_objt_lookup.delete;

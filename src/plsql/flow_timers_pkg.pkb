@@ -6,15 +6,15 @@ as
   pragma exception_init (lock_timeout, -3006);  
 
   type t_timer_def is record
-  ( timer_type            flow_object_attributes.obat_vc_value%type
-  , timer_definition      flow_object_attributes.obat_vc_value%type
-  , oracle_date           flow_object_attributes.obat_vc_value%type
-  , oracle_format_mask    flow_object_attributes.obat_vc_value%type
-  , oracle_duration_ds    flow_object_attributes.obat_vc_value%type
-  , oracle_duration_ym    flow_object_attributes.obat_vc_value%type
-  , start_interval_ds     flow_object_attributes.obat_vc_value%type
-  , repeat_interval_ds    flow_object_attributes.obat_vc_value%type
-  , max_runs              flow_object_attributes.obat_vc_value%type
+  ( timer_type            flow_types_pkg.t_bpmn_attribute_vc2
+  , timer_definition      flow_types_pkg.t_bpmn_attribute_vc2
+  , oracle_date           flow_types_pkg.t_bpmn_attribute_vc2
+  , oracle_format_mask    flow_types_pkg.t_bpmn_attribute_vc2
+  , oracle_duration_ds    flow_types_pkg.t_bpmn_attribute_vc2
+  , oracle_duration_ym    flow_types_pkg.t_bpmn_attribute_vc2
+  , start_interval_ds     flow_types_pkg.t_bpmn_attribute_vc2
+  , repeat_interval_ds    flow_types_pkg.t_bpmn_attribute_vc2
+  , max_runs              flow_types_pkg.t_bpmn_attribute_vc2
   );
 
   function timer_exists
@@ -143,47 +143,32 @@ as
     , p0        => l_objt_with_timer_bpmn_id
     , p1        => pi_sbfl_id
     );
-
-    for rec in (
-                select obat.obat_key
-                     , obat.obat_vc_value
-                  from flow_object_attributes obat
-                 where obat.obat_objt_id = l_objt_with_timer
-                   and obat.obat_key in ( flow_constants_pkg.gc_timer_type_key
-                                        , flow_constants_pkg.gc_timer_def_key 
-                                        , flow_constants_pkg.gc_apex_timer_date
-                                        , flow_constants_pkg.gc_apex_timer_format_mask
-                                        , flow_constants_pkg.gc_apex_timer_interval_ym
-                                        , flow_constants_pkg.gc_apex_timer_interval_ds
-                                        , flow_constants_pkg.gc_apex_timer_start_interval_ds
-                                        , flow_constants_pkg.gc_apex_timer_repeat_interval_ds
-                                        , flow_constants_pkg.gc_apex_timer_max_runs
-                                        )
-               )
-    loop
-      case rec.obat_key
-        when flow_constants_pkg.gc_timer_type_key then
-          l_timer_def.timer_type := rec.obat_vc_value;
-        when flow_constants_pkg.gc_timer_def_key then
-          l_timer_def.timer_definition := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_date then
-          l_timer_def.oracle_date := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_format_mask then
-          l_timer_def.oracle_format_mask := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_interval_ym then
-          l_timer_def.oracle_duration_ym := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_interval_ds then
-          l_timer_def.oracle_duration_ds := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_start_interval_ds  then
-          l_timer_def.start_interval_ds := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_repeat_interval_ds then
-          l_timer_def.repeat_interval_ds  := rec.obat_vc_value;
-        when flow_constants_pkg.gc_apex_timer_max_runs then
-          l_timer_def.max_runs  := rec.obat_vc_value;
-        else
-          null;
-      end case;
-    end loop;
+    
+    select jt.timer_type
+         , jt.timer_definition
+         , jt.oracle_date
+         , jt.oracle_format_mask
+         , jt.oracle_duration_ds
+         , jt.oracle_duration_ym
+         , jt.start_interval_ds
+         , jt.repeat_interval_ds
+         , jt.max_runs
+      into l_timer_def
+      from flow_objects objt
+         , json_table( objt.objt_attributes, '$'
+             columns
+               timer_type         varchar2(4000) path '$.timerType'
+             , timer_definition   varchar2(4000) path '$.timerDefinition'
+             , oracle_date        varchar2(4000) path '$.apex.date'
+             , oracle_format_mask varchar2(4000) path '$.apex.formatMask'
+             , oracle_duration_ds varchar2(4000) path '$.apex.intervalDS'
+             , oracle_duration_ym varchar2(4000) path '$.apex.intervalYM'
+             , start_interval_ds  varchar2(4000) path '$.apex.startIntervalDS'
+             , repeat_interval_ds varchar2(4000) path '$.apex.repeatIntervalDS'
+             , max_runs           varchar2(4000) path '$.apex.maxRuns'
+           ) jt
+     where objt.objt_id = l_objt_with_timer
+    ;
 
     if l_timer_def.timer_type is null
        or
