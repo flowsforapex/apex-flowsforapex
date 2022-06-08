@@ -23,7 +23,10 @@ CREATE TABLE flow_connections (
     conn_tag_name     VARCHAR2(50 CHAR),
     conn_origin       VARCHAR2(50 CHAR),
     conn_is_default   NUMBER DEFAULT 0 NOT NULL
-);
+    conn_sequence     NUMBER,               -- test implementation of gateway expressions
+    conn_expression   VARCHAR2(4000),       -- test implementation of gateway expressions
+    conn_language     VARCHAR2(40)          -- test implementation of gateway expressions
+);  
 
 ALTER TABLE flow_connections ADD CONSTRAINT conn_pk PRIMARY KEY ( conn_id );
 

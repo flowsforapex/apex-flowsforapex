@@ -216,7 +216,7 @@ as
 
   gc_prov_builtin_business_ref        constant  varchar2(50 char) := 'BUSINESS_REF';
 
-  -- Process Variable Expression Types
+  -- Process Variable and Gateway Routing Variable Expression Types
   gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'static';
   gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'processVariable';
   gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'item';

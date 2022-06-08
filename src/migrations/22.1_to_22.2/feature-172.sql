@@ -126,8 +126,16 @@ PROMPT >> Prepare Process Variables for Scoping
 
   alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name);
 
+PROMPT >> Extend Connections for Gateway Routing expressions
+
+alter table flow_connections
+add
+(   conn_sequence     NUMBER,               -- test implementation of gateway expressions
+    conn_expression   VARCHAR2(4000),       -- test implementation of gateway expressions
+    conn_language     VARCHAR2(40)          -- test implementation of gateway expressions)
+);
+
 
 PROMPT >> Finished Upgrade from 22.1 to 22.2
-
 
 PROMPT >> Resume DBMS_SCHEDULER job 

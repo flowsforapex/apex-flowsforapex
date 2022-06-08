@@ -1,3 +1,5 @@
+create or replace package body flow_gateways
+as 
 /* 
 -- Flows for APEX - flow_gateways.pkb
 -- 
@@ -8,123 +10,205 @@
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
 --
 */
-
-create or replace package body flow_gateways
-as 
-
   type t_new_sbfls is table of flow_types_pkg.t_subflow_context;
 
-  lock_timeout exception;
+  e_no_route_found        exception;
+  lock_timeout            exception;
   pragma exception_init (lock_timeout, -3006);
 
-  function get_gateway_route
-    ( pi_process_id     in flow_processes.prcs_id%type
-    , pi_subflow_id     in flow_subflows.sbfl_id%type
-    , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
-    , pi_objt_tag       in flow_objects.objt_tag_name%type
-    ) return varchar2
-  is
-    l_forward_route         varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
-    l_bad_routes            apex_application_global.vc_arr2;
-    l_bad_route_string      varchar2(2000) := '';
-    l_num_bad_routes        number := 0;
-    l_num_routes            number := 0;
+  function get_valid_routing_variable_routes
+    ( pi_prcs_id            in flow_processes.prcs_id%type
+    , pi_sbfl_id            in flow_subflows.sbfl_id%type
+    , pi_objt_bpmn_id       in flow_objects.objt_bpmn_id%type
+    , pi_objt_tag           in flow_objects.objt_tag_name%type 
+    , pi_routing_variable   in flow_process_variables.prov_var_vc2%type  
+    ) return apex_t_varchar2
+  is 
+    l_forward_routes   apex_t_varchar2;  -- routes specified in the routing variable
+    l_possible_routes  apex_t_varchar2;  -- all possible forward routes from the splitting gateway
+    l_bad_routes       apex_t_varchar2;  -- specified routes which are not valid routes
+    l_bad_route_string varchar2 (2000);
   begin
-    -- check if route is in process variable
-    l_forward_route := flow_proc_vars_int.get_var_vc2 
-                          ( pi_prcs_id  => pi_process_id
-                          , pi_var_name => pi_objt_bpmn_id||':route'
-                          , pi_scope    => flow_engine_util.get_scope (p_process_id => pi_process_id, p_subflow_id => pi_subflow_id)
-                          );
-    if l_forward_route is not null
-    then
-      begin
-        -- test routes are all valid connections before returning
-        l_num_bad_routes := 0;
-        for bad_routes in (
-          select column_value as bad_route 
-            from table(apex_string.split(l_forward_route,':'))
-          minus 
-          select conn.conn_bpmn_id
-            from flow_connections conn
-            join flow_objects objt 
-              on objt.objt_id = conn.conn_src_objt_id
-             and conn.conn_dgrm_id = objt.objt_dgrm_id
-            join flow_subflows sbfl
-              on sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
-           where sbfl.sbfl_id = pi_subflow_id
-             and objt.objt_bpmn_id = pi_objt_bpmn_id
-            )
-        loop
-          l_num_bad_routes := l_num_bad_routes +1;
-          l_bad_route_string := l_bad_route_string||bad_routes.bad_route||', ';
-        end loop;
-
-        if pi_objt_tag = flow_constants_pkg.gc_bpmn_gateway_exclusive then
-          -- check only one route provided
-          select count(*) 
-            into l_num_routes  
-            from table(apex_string.split(l_forward_route,':')
-          );
-          if l_num_routes != 1 then
-            l_bad_route_string := l_forward_route;
-            raise flow_errors.e_gateway_invalid_route;
-          end if;
-        end if;
-
-        if l_num_bad_routes > 0 then
+    begin
+      l_forward_routes := apex_string.split ( p_str => pi_routing_variable
+                                            , p_sep => ':'
+                                            );
+      if pi_objt_tag = flow_constants_pkg.gc_bpmn_gateway_exclusive then
+        if (l_forward_routes.count > 1) then
+          l_bad_route_string := pi_routing_variable;
           raise flow_errors.e_gateway_invalid_route;
         end if;
-      exception
-        when flow_errors.e_gateway_invalid_route then
-          flow_errors.handle_instance_error
-          ( pi_prcs_id        => pi_process_id
-          , pi_sbfl_id        => pi_subflow_id
-          , pi_message_key    => 'gateway-invalid-route'
-          , p0 => pi_objt_bpmn_id 
-          , p1 => pi_objt_bpmn_id||':route'
-          , p2 => l_bad_route_string
-          );
-          -- $F4AMESSAGE 'gateway-invalid-route' || 'Error at gateway %0. Supplied variable %1 contains invalid route: %2'  
-        when no_data_found then -- all routes good
-          return l_forward_route
-          ;
-      end;
-    else -- forward route is null -- look for default routing
-      begin
-        -- check default route 
-        select conn_bpmn_id
-          into l_forward_route
-          from flow_connections conn
-          join flow_objects objt 
-            on objt.objt_id = conn.conn_src_objt_id
-           and conn.conn_dgrm_id = objt.objt_dgrm_id
-          join flow_subflows sbfl 
-            on sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
-         where conn.conn_is_default = 1
-           and objt.objt_bpmn_id = pi_objt_bpmn_id
-           and sbfl.sbfl_id = pi_subflow_id
-            ;
-      exception
-        when no_data_found then
-          flow_errors.handle_instance_error
-          ( pi_prcs_id        => pi_process_id
-          , pi_sbfl_id        => pi_subflow_id
-          , pi_message_key    => 'gateway-no-route'
-          , p0 => pi_objt_bpmn_id||':route'
-          );
-      -- $F4AMESSAGE 'gateway-no-route' || 'No gateway routing instruction provided in variable %0 and model contains no default route.'  
-        when too_many_rows then
-          flow_errors.handle_instance_error
-          ( pi_prcs_id        => pi_process_id
-          , pi_sbfl_id        => pi_subflow_id
-          , pi_message_key    => 'gateway-too-many-defaults'
-          , p0 => pi_objt_bpmn_id
-          );
-          -- $F4AMESSAGE 'gateway-too-many-defaults' || 'More than one default route specified in model for Gateway %0.' 
-      end;
-    end if; 
-    return l_forward_route;
+      end if;
+      -- get the possoble forward routes
+      select conn.conn_bpmn_id
+        bulk collect into l_possible_routes
+        from flow_connections conn
+        join flow_objects objt 
+          on objt.objt_id      = conn.conn_src_objt_id
+         and objt.objt_dgrm_id = conn.conn_dgrm_id 
+        join flow_subflows sbfl
+          on sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
+       where sbfl.sbfl_id      = pi_sbfl_id
+         and objt.objt_bpmn_id = pi_objt_bpmn_id
+      ;
+      -- check all specified routes are valid
+      l_bad_routes := l_forward_routes multiset except l_possible_routes;
+
+      if l_bad_routes.count > 0 then
+        -- we have some invalid routes in the routing variable
+        for l_row in 1 .. l_bad_routes.count
+        loop
+          l_bad_route_string := l_bad_route_string || l_bad_routes(l_row) ||',';
+        end loop;
+        l_bad_route_string := rtrim (l_bad_route_string, ',');
+        raise flow_errors.e_gateway_invalid_route;
+      end if;
+    exception
+      when flow_errors.e_gateway_invalid_route then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'gateway-invalid-route'
+        , p0 => pi_objt_bpmn_id 
+        , p1 => pi_objt_bpmn_id||':route'
+        , p2 => l_bad_route_string
+        );
+        -- $F4AMESSAGE 'gateway-invalid-route' || 'Error at gateway %0. Supplied variable %1 contains invalid route: %2'  
+    end;
+    return l_forward_routes;
+  end get_valid_routing_variable_routes;
+
+  function get_valid_routing_expression_routes
+    ( pi_prcs_id            in flow_processes.prcs_id%type
+    , pi_sbfl_id            in flow_subflows.sbfl_id%type
+    , pi_scope              in flow_subflows.sbfl_scope%type
+    , pi_objt_bpmn_id       in flow_objects.objt_bpmn_id%type
+    , pi_objt_tag           in flow_objects.objt_tag_name%type 
+    ) return apex_t_varchar2
+  is
+    type t_connections is table of flow_connections%rowtype;  
+
+    l_forward_routes    apex_t_varchar2 := apex_t_varchar2();
+    l_possible_route    flow_connections%rowtype;
+    l_possible_routes   t_connections;
+    l_take_route        boolean;
+    l_expr              varchar2(2000);
+  begin
+    -- get all valid forward routes, ordered by 
+    select conn.* 
+      bulk collect into l_possible_routes
+      from flow_connections conn
+      join flow_objects objt
+        on conn.conn_dgrm_id     = objt.objt_dgrm_id
+       and conn.conn_src_objt_id = objt.objt_id
+      join flow_subflows sbfl
+        on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+     where objt.objt_bpmn_id = pi_objt_bpmn_id
+       and sbfl.sbfl_id = pi_sbfl_id
+       and ( conn.conn_expression is not null 
+           or conn.conn_is_default = 1 )
+     order by conn.conn_is_default asc, conn.conn_sequence asc
+    ;
+    if l_possible_routes.count > 0 then
+      -- loop over routes
+      for route in 1 .. l_possible_routes.last
+      loop
+        l_take_route := false;
+        -- evaluate route expression
+        l_expr := l_possible_routes(route).conn_expression;
+        flow_proc_vars_int.do_substitution  ( pi_prcs_id   => pi_prcs_id 
+                                            , pi_sbfl_id   => pi_sbfl_id 
+                                            , pi_scope     => pi_scope 
+                                            , pio_string   => l_expr 
+                                            );      
+        case l_possible_routes(route).conn_language  
+        when flow_constants_pkg.gc_expr_type_plsql_expression then
+          l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr );
+        when flow_constants_pkg.gc_expr_type_plsql_function_body then
+          l_take_route := apex_plugin_util.get_plsql_func_result_boolean ( p_plsql_function => l_expr ); 
+        else       
+          l_take_route := false;
+        end case;
+        -- if valid, add to forward_routes
+        if l_take_route or l_possible_routes(route).conn_is_default = 1 then
+          l_forward_routes.extend;
+          l_forward_routes(l_forward_routes.last) := l_possible_routes(route).conn_bpmn_id;
+          -- if exclusive gateway, break out - we have our route
+          if pi_objt_tag = flow_constants_pkg.gc_bpmn_gateway_exclusive then
+            return l_forward_routes;
+          end if;
+        end if;
+      end loop;
+    else 
+      raise e_no_route_found;
+    end if;
+    -- check that some routes were found
+    if l_forward_routes.count = 0 then
+      raise e_no_route_found;
+    end if;
+    return l_forward_routes;
+  end get_valid_routing_expression_routes;
+
+  function get_gateway_route
+    ( pi_prcs_id        in flow_processes.prcs_id%type
+    , pi_sbfl_id        in flow_subflows.sbfl_id%type
+    , pi_objt_bpmn_id   in flow_objects.objt_bpmn_id%type
+    , pi_objt_tag       in flow_objects.objt_tag_name%type
+    , pi_scope          in flow_subflows.sbfl_scope%type
+    ) return apex_t_varchar2
+  is
+    l_routing_variable      varchar2(2000);  -- 1 route for exclusiveGateway, 1 or more for inclusive (:sep)
+    l_forward_routes        apex_t_varchar2 := apex_t_varchar2();
+    l_num_routes            number := 0;
+    l_default_route         flow_connections.conn_bpmn_id%type;
+
+  begin
+    begin
+      -- check if route is in process variable
+      l_routing_variable := flow_proc_vars_int.get_var_vc2 
+                            ( pi_prcs_id  => pi_prcs_id
+                            , pi_var_name => pi_objt_bpmn_id||':route'
+                            , pi_scope    => pi_scope
+                            );
+      if l_routing_variable is not null then
+        -- route from routing variable
+        l_forward_routes := get_valid_routing_variable_routes ( pi_prcs_id          => pi_prcs_id
+                                                              , pi_sbfl_id          => pi_sbfl_id
+                                                              , pi_objt_bpmn_id     => pi_objt_bpmn_id
+                                                              , pi_objt_tag         => pi_objt_tag
+                                                              , pi_routing_variable => l_routing_variable
+                                                              );            
+      else 
+        -- look for gateway routing expressions or default routing
+        l_forward_routes := get_valid_routing_expression_routes ( pi_prcs_id          => pi_prcs_id
+                                                                , pi_sbfl_id          => pi_sbfl_id
+                                                                , pi_objt_bpmn_id     => pi_objt_bpmn_id
+                                                                , pi_objt_tag         => pi_objt_tag
+                                                                , pi_scope            => pi_scope
+                                                                ); 
+      end if; 
+      if l_forward_routes.count = 0 then
+        raise e_no_route_found;
+      end if;
+    exception
+      when e_no_route_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'gateway-no-route'
+        , p0 => pi_objt_bpmn_id||':route'
+        );
+        -- $F4AMESSAGE 'gateway-no-route' || 'No gateway routing instruction provided in variable %0 and model contains no default route.'  
+      when too_many_rows then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'gateway-too-many-defaults'
+        , p0 => pi_objt_bpmn_id
+        );
+        -- $F4AMESSAGE 'gateway-too-many-defaults' || 'More than one default route specified in model for Gateway %0.' 
+    end;
+    return l_forward_routes;
   end get_gateway_route;
 
   function gateway_merge
@@ -266,7 +350,7 @@ as
     ( p_subflow_id     in flow_subflows.sbfl_id%type 
     , p_sbfl_info      in flow_subflows%rowtype
     , p_step_info      in flow_types_pkg.flow_step_info
-    , p_gateway_routes in varchar2
+    , p_gateway_routes in apex_t_varchar2
     )
   is 
     l_new_subflows      t_new_sbfls := t_new_sbfls();
@@ -309,7 +393,7 @@ as
                              OR 
                              ( objt.objt_tag_name = flow_constants_pkg.gc_bpmn_gateway_inclusive
                              and 
-                               conn.conn_bpmn_id member of apex_string.split( p_gateway_routes, ':' )
+                               conn.conn_bpmn_id member of p_gateway_routes
                              ))
                     )
     loop
@@ -391,7 +475,7 @@ as
     l_num_back_connections      number;   -- number of connections leading into object
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_unfinished_subflows   number;
-    l_forward_routes            varchar2(2000);
+    l_forward_routes            apex_t_varchar2 := apex_t_varchar2();
     l_step_key                  flow_subflows.sbfl_step_key%type;
 /*    l_new_subflows              t_new_sbfls := t_new_sbfls();
     l_new_subflow               flow_types_pkg.t_subflow_context; */ -- think these not used
@@ -453,18 +537,20 @@ as
           case p_step_info.target_objt_tag
           when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
             l_forward_routes := get_gateway_route
-            ( pi_process_id     => p_sbfl_info.sbfl_prcs_id
-            , pi_subflow_id     => p_sbfl_info.sbfl_id
+            ( pi_prcs_id       => p_sbfl_info.sbfl_prcs_id
+            , pi_sbfl_id       => p_sbfl_info.sbfl_id
             , pi_objt_bpmn_id   => p_step_info.target_objt_ref
             , pi_objt_tag       => p_step_info.target_objt_tag
+            , pi_scope          => p_sbfl_info.sbfl_scope
             );
             apex_debug.info
             ( p_message => 'Forward routes for inclusiveGateway %0 : %1'
             , p0 => p_step_info.target_objt_ref
-            , p1 => l_forward_routes
+            , p1 => 'string version of forward routes'
             );
           when flow_constants_pkg.gc_bpmn_gateway_parallel then 
-            l_forward_routes := 'parallel';  -- just needs to be some not null string
+            l_forward_routes.extend;
+            l_forward_routes(l_forward_routes.first) := 'parallel';  -- just needs to be some not null string
           end case;
           -- test for any errors again - if so, skip doing the split
           if not flow_globals.get_step_error then 
@@ -523,7 +609,7 @@ as
   is 
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_back_connections      number;   -- number of connections back from object
-    l_forward_route             varchar2(2000);
+    l_forward_route             apex_t_varchar2;
   begin
     -- handles opening and closing and closing and reopening
     apex_debug.enter 
@@ -553,10 +639,11 @@ as
       if not flow_globals.get_step_error then 
         -- get route choice
         l_forward_route := get_gateway_route
-        ( pi_process_id     => p_sbfl_info.sbfl_prcs_id
-        , pi_subflow_id     => p_sbfl_info.sbfl_id
+        ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+        , pi_sbfl_id        => p_sbfl_info.sbfl_id
         , pi_objt_bpmn_id   => p_step_info.target_objt_ref
         , pi_objt_tag       => p_step_info.target_objt_tag
+        , pi_scope          => p_sbfl_info.sbfl_scope
         );
       end if;
     else 
@@ -588,7 +675,10 @@ as
       ( p_process_id    => p_sbfl_info.sbfl_prcs_id
       , p_subflow_id    => p_sbfl_info.sbfl_id
       , p_step_key      => p_sbfl_info.sbfl_step_key
-      , p_forward_route => l_forward_route
+      , p_forward_route => case l_forward_route.count 
+                           when 0 then null 
+                           else l_forward_route(l_forward_route.first)
+                           end
       );
     else        
       -- has step errors from evaluating route
