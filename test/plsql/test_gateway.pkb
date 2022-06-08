@@ -70,13 +70,14 @@ create or replace package body test_gateway is
          select 
             'Exclusive' as lgpr_objt_id, 
             flow_constants_pkg.gc_prcs_event_error as lgpr_prcs_event, 
-            'No gateway routing instruction provided in variable Exclusive:route and model contains no default route.' as lgpr_comment, 
+            'No gateway routing instruction provided in variable Exclusive:route and model contains no default route.' as lgpr_comment
+           /* , 
             'ORA-01403: no data found
-' lgpr_error_info 
+' lgpr_error_info */
          from dual;
 
       open l_actual for
-         select lgpr_objt_id, lgpr_prcs_event, lgpr_comment, lgpr_error_info
+         select lgpr_objt_id, lgpr_prcs_event, lgpr_comment/*, lgpr_error_info*/
          from flow_instance_event_log 
          where lgpr_prcs_id = l_prcs_id
          order by lgpr_timestamp desc 
@@ -400,13 +401,13 @@ create or replace package body test_gateway is
          select 
             'Inclusive' as lgpr_objt_id, 
             flow_constants_pkg.gc_prcs_event_error as lgpr_prcs_event, 
-            'No gateway routing instruction provided in variable Inclusive:route and model contains no default route.' as lgpr_comment, 
+            'No gateway routing instruction provided in variable Inclusive:route and model contains no default route.' as lgpr_comment/*, 
             'ORA-01403: no data found
-' lgpr_error_info 
+' lgpr_error_info */
          from dual;
 
       open l_actual for
-         select lgpr_objt_id, lgpr_prcs_event, lgpr_comment, lgpr_error_info
+         select lgpr_objt_id, lgpr_prcs_event, lgpr_comment/*, lgpr_error_info */
          from flow_instance_event_log 
          where lgpr_prcs_id = l_prcs_id
          order by lgpr_timestamp desc 
