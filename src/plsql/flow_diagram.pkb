@@ -1,3 +1,5 @@
+create or replace package body flow_diagram
+as
 /* 
 -- Flows for APEX - flow_diagram.pkb
 -- 
@@ -8,8 +10,6 @@
 -- Modified 22-May-2022 Moritz Klein - MT AG
 --
 */
-create or replace package body flow_diagram
-as
 
   function create_diagram(
     pi_dgrm_name in flow_diagrams.dgrm_name%type,
