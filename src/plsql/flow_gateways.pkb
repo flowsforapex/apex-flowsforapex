@@ -86,16 +86,29 @@ as
     , pi_objt_tag           in flow_objects.objt_tag_name%type 
     ) return apex_t_varchar2
   is
-    type t_connections is table of flow_connections%rowtype;  
-
     l_forward_routes    apex_t_varchar2 := apex_t_varchar2();
-    l_possible_route    flow_connections%rowtype;
-    l_possible_routes   t_connections;
+    type t_possible_route  is record 
+      ( conn_id         flow_connections.conn_id%type
+      , conn_is_default flow_connections.conn_is_default%type
+      , conn_sequence   flow_connections.conn_sequence%type
+      , conn_bpmn_id    flow_connections.conn_bpmn_id%type
+      , conn_expression varchar2(2000)
+      , conn_language   flow_types_pkg.t_expr_type
+      );
+    type t_possible_routes is table of t_possible_route;
+    l_possible_routes   t_possible_routes;
     l_take_route        boolean;
     l_expr              varchar2(2000);
+    l_expr_type         flow_types_pkg.t_expr_type;
+
   begin
     -- get all valid forward routes, ordered by 
-    select conn.* 
+    select conn.conn_id
+         , conn.conn_is_default
+         , conn.conn_sequence
+         , conn.conn_bpmn_id
+         , conn.conn_attributes."apex"."expression" as conn_expression
+         , conn.conn_attributes."apex"."language"   as conn_language
       bulk collect into l_possible_routes
       from flow_connections conn
       join flow_objects objt
@@ -105,7 +118,7 @@ as
         on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
      where objt.objt_bpmn_id = pi_objt_bpmn_id
        and sbfl.sbfl_id = pi_sbfl_id
-       and ( conn.conn_expression is not null 
+       and ( conn.conn_attributes."apex"."expression" is not null 
            or conn.conn_is_default = 1 )
      order by conn.conn_is_default asc, conn.conn_sequence asc
     ;
@@ -115,13 +128,19 @@ as
       loop
         l_take_route := false;
         -- evaluate route expression
-        l_expr := l_possible_routes(route).conn_expression;
+        l_expr      := l_possible_routes(route).conn_expression;
+        l_expr_type := l_possible_routes(route).conn_language;
+
+        apex_debug.info (p_message => 'unpacked JSON - expression : %0 type : %1  '
+          , p0 => l_expr
+          , p1 => l_expr_type);
+
         flow_proc_vars_int.do_substitution  ( pi_prcs_id   => pi_prcs_id 
                                             , pi_sbfl_id   => pi_sbfl_id 
                                             , pi_scope     => pi_scope 
                                             , pio_string   => l_expr 
                                             );      
-        case l_possible_routes(route).conn_language  
+        case l_expr_type  
         when flow_constants_pkg.gc_expr_type_plsql_expression then
           l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr );
         when flow_constants_pkg.gc_expr_type_plsql_function_body then
