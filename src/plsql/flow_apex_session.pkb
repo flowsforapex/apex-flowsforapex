@@ -16,22 +16,26 @@ as
     l_var_value             flow_subflows.sbfl_current%type;
     l_session_parameters    t_session_parameters;
   begin
-  
-    select jt.app_id
-         , jt.page_id
-         , jt.username
-      into l_session_parameters
-      from flow_objects objt
-         , json_table( objt.objt_attributes, '$.apex'
-             columns
-               app_id   varchar2(4000) path '$.applicationId'
-             , page_id  varchar2(4000) path '$.pageId'
-             , username varchar2(4000) path '$.username'
-           ) jt
-     where objt.objt_dgrm_id = p_dgrm_id
-       and objt.objt_objt_id is null
-       and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-    ;
+    begin
+      select jt.app_id
+           , jt.page_id
+           , jt.username
+        into l_session_parameters
+        from flow_objects objt
+           , json_table( objt.objt_attributes, '$.apex'
+               columns
+                 app_id   varchar2(4000) path '$.applicationId'
+               , page_id  varchar2(4000) path '$.pageId'
+               , username varchar2(4000) path '$.username'
+             ) jt
+       where objt.objt_dgrm_id = p_dgrm_id
+         and objt.objt_objt_id is null
+         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+      ;
+    exception
+      when no_data_found then
+        apex_debug.info ( p_message => 'flow_apex_session - no session parameters found from diagram.');
+    end;
 
     if (  l_session_parameters.app_id is null
        or l_session_parameters.page_id is null 

@@ -59,7 +59,7 @@ as
          , objt.objt_attributes."apex"."calledDiagramVersionSelection" as dgrm_version_selection
       into l_call_def
       from flow_objects objt
-     where objt.objt_dgrm_id = pi_call_objt_id
+     where objt.objt_id = pi_call_objt_id
     ;
 
     return l_call_def;
