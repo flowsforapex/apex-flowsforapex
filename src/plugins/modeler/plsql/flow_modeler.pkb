@@ -351,10 +351,8 @@ as
             "varSequence": "",
             "varName": "",
             "varDataType": "",
-            "varExpression": "",
-            "varExpressionType": "",
-            "varDescription": "",
-          },
+            "varDescription": ""
+          }
           ...
          ],
          "OutVariables": [
@@ -362,10 +360,8 @@ as
             "varSequence": "",
             "varName": "",
             "varDataType": "",
-            "varExpression": "",
-            "varExpressionType": "",
-            "varDescription": "",
-          },
+            "varDescription": ""
+          }
           ...
          ]
        }
