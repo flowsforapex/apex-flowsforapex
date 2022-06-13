@@ -504,8 +504,14 @@ as
                when 'plsqlExpression' then
                   v_input := 'declare dummy varchar2(4000) :='
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
+               when 'plsqlExpressionBoolean' then
+                  v_input := 'declare dummy boolean :='
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
                when 'plsqlFunctionBody' then
                   v_input := 'declare function dummy return varchar2 is begin'
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+               when 'plsqlFunctionBodyBoolean' then
+                  v_input := 'declare function dummy return boolean is begin'
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
             end case;
             begin
