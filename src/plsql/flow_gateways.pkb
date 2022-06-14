@@ -100,6 +100,10 @@ as
     l_take_route        boolean;
     l_expr              varchar2(2000);
     l_expr_type         flow_types_pkg.t_expr_type;
+    l_bind              apex_plugin_util.t_bind;
+    l_bind_list         apex_plugin_util.t_bind_list;
+    l_var_list          apex_t_varchar2 := apex_t_varchar2();
+    l_indx              pls_integer;
 
   begin
     -- get all valid forward routes, ordered by 
@@ -131,7 +135,7 @@ as
         l_expr      := l_possible_routes(route).conn_expression;
         l_expr_type := l_possible_routes(route).conn_language;
 
-        apex_debug.info (p_message => 'unpacked JSON - expression : %0 type : %1  '
+        apex_debug.info (p_message => '--- unpacked gateway expression : %0 type : %1  '
           , p0 => l_expr
           , p1 => l_expr_type);
 
@@ -140,14 +144,62 @@ as
                                             , pi_scope     => pi_scope 
                                             , pio_string   => l_expr 
                                             );      
+            
+        apex_debug.info (p_message => '--- after substitution - expression : %0 type : %1  '
+          , p0 => l_expr
+          , p1 => l_expr_type);
+
+        l_var_list := apex_string.grep 
+                    ( p_str => l_expr
+                    , p_pattern =>  flow_constants_pkg.gc_bind_pattern
+                    , p_modifier => 'i'
+                    , p_subexpression => '1'
+                    );
+        if l_var_list is not null then
+          l_indx := l_var_list.first;
+          -- create bind list and get bind values
+          apex_debug.info('Expression : ' ||l_expr|| ' Contains Bind Tokens : '|| apex_string.join(l_var_list, ':'));
+          while l_indx is not null 
+          loop
+            l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
+            l_bind.value := flow_proc_vars_int.get_var_vc2
+                              ( pi_prcs_id            => pi_prcs_id
+                              , pi_var_name           => l_var_list(l_indx)
+                              , pi_scope              => pi_scope
+                              );
+            apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
+              , p0 => l_bind.name
+              , p1 => l_bind.value
+              );                              
+            l_bind_list(l_indx) := l_bind;
+            l_indx := l_var_list.next (l_indx);
+          end loop;
+        else
+          -- no bind variables
+          l_bind_list := apex_plugin_util.c_empty_bind_list;                      
+          apex_debug.info (p_message => 'Expression contains no bind variables.  Expression : %0 type : %1  '
+            , p0 => l_expr
+            , p1 => l_expr_type);
+        end if;
+
         case l_expr_type  
         when flow_constants_pkg.gc_expr_type_plsql_expression then
-          l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr );
+          l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr 
+                                                                         , p_auto_bind_items  => false
+                                                                         , p_bind_list        => l_bind_list
+                                                                         );
         when flow_constants_pkg.gc_expr_type_plsql_function_body then
-          l_take_route := apex_plugin_util.get_plsql_func_result_boolean ( p_plsql_function => l_expr ); 
+          l_take_route := apex_plugin_util.get_plsql_func_result_boolean ( p_plsql_function => l_expr 
+                                                                         , p_auto_bind_items  => false
+                                                                         , p_bind_list        => l_bind_list
+                                                                         );          
         else       
           l_take_route := false;
         end case;
+
+        apex_debug.info (p_message => 'Routing Expresion evaluation result : %0  '
+            , p0 => case l_take_route when true then 'true' else 'false' end );
+
         -- if valid, add to forward_routes
         if l_take_route or l_possible_routes(route).conn_is_default = 1 then
           l_forward_routes.extend;
@@ -158,7 +210,7 @@ as
           end if;
         end if;
       end loop;
-    else 
+    else
       raise e_no_route_found;
     end if;
     -- check that some routes were found
@@ -565,7 +617,7 @@ as
             apex_debug.info
             ( p_message => 'Forward routes for inclusiveGateway %0 : %1'
             , p0 => p_step_info.target_objt_ref
-            , p1 => 'string version of forward routes'
+            , p1 => apex_string.join(l_forward_routes,':')
             );
           when flow_constants_pkg.gc_bpmn_gateway_parallel then 
             l_forward_routes.extend;
