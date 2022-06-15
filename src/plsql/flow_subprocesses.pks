@@ -3,11 +3,13 @@
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2020,2022.
 --
--- Created 22-Feb-2022   Richard Allen - Refactor SubProcess code from flow_engine
+-- Created  22-Feb-2022   Richard Allen - Refactor SubProcess code from flow_engine
+-- Modified 15-Jun-2022   Moritz Klein (MT AG)
 --
 */
 create or replace package flow_subprocesses
-accessible by ( flow_engine )
+  authid definer
+  accessible by ( flow_engine )
 as
 
   procedure process_process_level_endEvent

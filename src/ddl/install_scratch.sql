@@ -22,7 +22,7 @@ CREATE TABLE flow_connections (
     conn_tgt_objt_id  NUMBER,
     conn_tag_name     VARCHAR2(50 CHAR),
     conn_origin       VARCHAR2(50 CHAR),
-    conn_is_default   NUMBER DEFAULT 0 NOT NULL
+    conn_is_default   NUMBER DEFAULT 0 NOT NULL,
     conn_sequence     NUMBER,               
     conn_attributes   CLOB      
 );  

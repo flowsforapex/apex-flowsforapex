@@ -1,5 +1,6 @@
 create or replace package flow_tasks
-accessible by (flow_engine)
+  authid definer
+  accessible by (flow_engine)
 as  
 
   procedure process_task

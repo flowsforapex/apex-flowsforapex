@@ -10,6 +10,7 @@
 */
 
 create or replace package flow_globals
+  authid definer
 as
 
   process_id flow_processes.prcs_id%type;

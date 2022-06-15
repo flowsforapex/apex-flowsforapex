@@ -1,5 +1,6 @@
 create or replace package flow_reservations
-accessible by (flow_api_pkg, flow_engine)
+  authid definer
+  accessible by (flow_api_pkg, flow_engine)
 as 
 
     procedure reserve_step

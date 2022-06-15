@@ -1,6 +1,6 @@
 create or replace package flow_apex_session 
+  authid current_user
 -- accessible by ( flow_timers_pkg, flow_engine )
-authid current_user
 as
 
   procedure set_async_proc_vars

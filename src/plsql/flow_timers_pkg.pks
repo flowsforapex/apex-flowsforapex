@@ -1,5 +1,5 @@
-
-create or replace package flow_timers_pkg 
+create or replace package flow_timers_pkg
+  authid definer
 -- accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg )
 as
 /******************************************************************************
@@ -13,19 +13,19 @@ as
 /******************************************************************************
   CONSTANTS
 ******************************************************************************/
-  c_created    varchar2(1) := 'C'; -- Created and waiting for the first action.
-  c_active     varchar2(1) := 'A'; -- The time has already completed 1 action
-                                   -- but will perform more actions.
-  c_ended      varchar2(1) := 'E'; -- The timer has naturally completed his
-                                   -- action/s with no external intervention.
-  c_expired    varchar2(1) := 'X'; -- The timers is stopped by call from the
-                                   -- flow when stepping forward, before his
-                                   -- natural end.
-  c_terminated varchar2(1) := 'T'; -- Abnormal termination by manual
-                                   -- intervention.
-  c_broken     varchar2(1) := 'B'; -- Error occured in timer flow.
-                                   -- Timer will be ignored until manually
-                                   -- reset to created or active.
+  c_created    constant varchar2(1) := 'C'; -- Created and waiting for the first action.
+  c_active     constant varchar2(1) := 'A'; -- The time has already completed 1 action
+                                            -- but will perform more actions.
+  c_ended      constant varchar2(1) := 'E'; -- The timer has naturally completed his
+                                            -- action/s with no external intervention.
+  c_expired    constant varchar2(1) := 'X'; -- The timers is stopped by call from the
+                                            -- flow when stepping forward, before his
+                                            -- natural end.
+  c_terminated constant varchar2(1) := 'T'; -- Abnormal termination by manual
+                                            -- intervention.
+  c_broken     constant varchar2(1) := 'B'; -- Error occured in timer flow.
+                                            -- Timer will be ignored until manually
+                                            -- reset to created or active.
 
 
 /******************************************************************************
