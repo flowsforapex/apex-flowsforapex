@@ -332,7 +332,144 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_diagrams;
+
+
+  procedure get_variable_mapping
+  as
+    l_result clob;
+    /* incoming parameters:
+       x02: bo.calledDiagram
+       x03: bo.calledDiagramVersionSelection
+       x04: bo.calledDiagramVersion
+    */
+  begin
+    l_result := '{"InVariables":"","OutVariables":""}';
+    /* TODO needed structure:
+       {
+         "InVariables": [ 
+          {
+            "varSequence": "",
+            "varName": "",
+            "varDataType": "",
+            "varDescription": ""
+          }
+          ...
+         ],
+         "OutVariables": [
+          {
+            "varSequence": "",
+            "varName": "",
+            "varDataType": "",
+            "varDescription": ""
+          }
+          ...
+         ]
+       }
+    */
+    htp.p(l_result);
+  end get_variable_mapping;
+
+
+  procedure get_usernames
+  as
+    l_result clob;
+    cursor c_users is select * from apex_workspace_apex_users order by user_name;
+    l_user apex_workspace_apex_users%rowtype;
+  begin
+    l_result := '[{"name":"","value":""},';
+    open c_users;
+    loop
+        fetch c_users into l_user;
+        exit when c_users%NOTFOUND;
+        l_result := l_result || '{"name":"' || l_user.user_name || '","value":"' || l_user.user_name || '"},';
+    end loop;
+    l_result := rtrim(l_result, ',') || ']';
+    htp.p(l_result);
+  end get_usernames;
+
+
+  procedure get_tasks
+  as
+    l_result clob;
+    l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
+    -- check that APEX is min v22.1
+    $IF flow_apex_env.ver_le_21_2
+    $THEN
+    $ELSE
+      cursor c_task_defs is select * from apex_appl_taskdefs where application_id = l_application_id order by static_id;
+      l_task_def apex_appl_taskdefs%rowtype;
+    $END
+  begin
+    l_result := '[{"name":"","value":""},';
+    $IF flow_apex_env.ver_le_21_2
+    $THEN
+    $ELSE
+      open c_task_defs;
+      loop
+          fetch c_task_defs into l_task_def;
+          exit when c_task_defs%NOTFOUND;
+          l_result := l_result || '{"name":"' || l_task_def.name || '","value":"' || l_task_def.static_id || '"},';
+    end loop;
+    $END
+    l_result := rtrim(l_result, ',') || ']';
+    htp.p(l_result);
+  end get_tasks;
   
+
+  procedure get_json_parameters
+  as
+    l_placeholders apex_t_varchar2;
+    l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
+    -- check that APEX is min v22.1
+    $IF flow_apex_env.ver_le_21_2
+    $THEN
+    $ELSE
+      cursor c_parameters
+      is 
+      select aatp.*
+        from apex_appl_taskdef_params aatp
+        join apex_appl_taskdefs aat
+          on aatp.task_def_id = aat.task_def_id
+      where aat.application_id = l_application_id
+        and aat.static_id = apex_application.g_x03;
+      l_parameter apex_appl_taskdef_params%rowtype;
+    $END
+  begin
+    apex_json.open_array;
+    $IF flow_apex_env.ver_le_21_2
+    $THEN
+    $ELSE
+      open c_parameters;
+      loop
+          fetch c_parameters into l_parameter;
+          exit when c_parameters%NOTFOUND;
+          apex_json.open_object;
+          apex_json.write(
+            p_name  => 'STATIC_ID'
+          , p_value => l_parameter.static_id
+          , p_write_null => true
+          );
+          apex_json.write(
+            p_name  => 'DATA_TYPE'
+          , p_value => l_parameter.data_type
+          , p_write_null => true
+          );
+          apex_json.write(
+            p_name  => 'VALUE'
+          , p_value => case l_parameter.static_id
+                      when 'PROCESS_ID' then '&F4A$PROCESS_ID.'
+                      when 'SUBFLOW_ID' then '&F4A$SUBFLOW_ID.'
+                      when 'STEP_KEY' then '&F4A$STEP_KEY.'
+                      else ''
+                      end
+          , p_write_null => true
+          );
+          apex_json.close_object;
+      end loop;
+    $END
+    apex_json.close_array;
+  end get_json_parameters;
+
   
   procedure parse_code
   as
@@ -367,8 +504,14 @@ as
                when 'plsqlExpression' then
                   v_input := 'declare dummy varchar2(4000) :='
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
+               when 'plsqlExpressionBoolean' then
+                  v_input := 'declare dummy boolean :='
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
                when 'plsqlFunctionBody' then
                   v_input := 'declare function dummy return varchar2 is begin'
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+               when 'plsqlFunctionBodyBoolean' then
+                  v_input := 'declare function dummy return boolean is begin'
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
             end case;
             begin
@@ -405,6 +548,10 @@ as
       when 'PARSE_CODE' then parse_code;
       when 'GET_JSON_PLACEHOLDERS' then get_json_placeholders;
       when 'GET_DIAGRAMS' then get_diagrams;
+      when 'GET_VARIABLE_MAPPING' then get_variable_mapping;
+      when 'GET_USERNAMES' then get_usernames;
+      when 'GET_TASKS' then get_tasks;
+      when 'GET_JSON_PARAMETERS' then get_json_parameters;
       else null;
     end case;
     return l_return;
