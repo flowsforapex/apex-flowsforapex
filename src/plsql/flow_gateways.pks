@@ -9,7 +9,8 @@
 */
 
 create or replace package flow_gateways
-accessible by (flow_engine)
+  authid definer
+  accessible by (flow_engine)
 as 
 
 procedure process_para_incl_Gateway

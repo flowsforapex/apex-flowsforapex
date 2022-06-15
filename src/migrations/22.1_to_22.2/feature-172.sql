@@ -1,5 +1,5 @@
 /*
-  Migration Script for Release 22.1 to 22.2
+  Migration Script for Feature CallActivities
 
   Created RAllen  25 Feb 2022
 
@@ -7,17 +7,7 @@
 
 */
 
-
-PROMPT >> Halt DBMS_SCHEDULER job 
-
-
-
-PROMPT >> Running Upgrade from 22.1 to 22.2
-PROMPT >> -------------------------------------------
-
-
 PROMPT >> Prepare Subflows for Call Activities
-
 -- change constraint on flow_object_expressions to add 'inVariables' and 'outVariables'
 
 ALTER TABLE flow_object_expressions
@@ -125,9 +115,3 @@ PROMPT >> Prepare Process Variables for Scoping
     modify ( prov_scope not null);
 
   alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name);
-
-
-PROMPT >> Finished Upgrade from 22.1 to 22.2
-
-
-PROMPT >> Resume DBMS_SCHEDULER job 

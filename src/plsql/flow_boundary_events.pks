@@ -1,6 +1,7 @@
 create or replace package flow_boundary_events
-accessible by (flow_engine, flow_tasks, flow_timers_pkg, flow_subprocesses 
-              , flow_call_activities)
+  authid definer
+  accessible by (flow_engine, flow_tasks, flow_timers_pkg, flow_subprocesses 
+                , flow_call_activities)
 is 
 
   procedure set_boundary_timers 

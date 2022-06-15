@@ -22,8 +22,10 @@ CREATE TABLE flow_connections (
     conn_tgt_objt_id  NUMBER,
     conn_tag_name     VARCHAR2(50 CHAR),
     conn_origin       VARCHAR2(50 CHAR),
-    conn_is_default   NUMBER DEFAULT 0 NOT NULL
-);
+    conn_is_default   NUMBER DEFAULT 0 NOT NULL,
+    conn_sequence     NUMBER,               
+    conn_attributes   CLOB      
+);  
 
 ALTER TABLE flow_connections ADD CONSTRAINT conn_pk PRIMARY KEY ( conn_id );
 
@@ -31,6 +33,8 @@ ALTER TABLE flow_connections ADD CONSTRAINT conn_uk UNIQUE ( conn_dgrm_id,
                                                              conn_bpmn_id );
 
 ALTER TABLE flow_connections ADD CONSTRAINT conn_default_ck CHECK ( conn_is_default IN ( 0, 1 ) );
+
+alter table flow_connections add constraint conn_attributes_ck check ( conn_attributes is json );
 
 CREATE TABLE flow_diagrams (
     dgrm_id       NUMBER

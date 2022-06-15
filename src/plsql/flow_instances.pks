@@ -7,8 +7,9 @@
 -- Created 25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
 --
 */
-create or replace package flow_instances 
-accessible by (flow_api_pkg, flow_engine)
+create or replace package flow_instances
+  authid definer
+  accessible by (flow_api_pkg, flow_engine)
 as
 
   function create_process

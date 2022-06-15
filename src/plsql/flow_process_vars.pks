@@ -15,7 +15,9 @@
 **
 */ 
  
-create or replace package flow_process_vars as 
+create or replace package flow_process_vars
+  authid definer
+as 
 /**
 PROCESS VARIABLE SYSTEM API
 ===========================

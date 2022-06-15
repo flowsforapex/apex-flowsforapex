@@ -8,6 +8,7 @@
 --
 */
 create or replace package flow_engine_util
+  authid definer
 -- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances)
 as 
 

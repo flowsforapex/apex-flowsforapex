@@ -1,4 +1,5 @@
 create or replace package flow_api_pkg
+  authid definer
 as
 
 /********************************************************************************

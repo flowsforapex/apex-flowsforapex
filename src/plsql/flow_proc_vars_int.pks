@@ -8,6 +8,7 @@
 */
 
 create or replace package flow_proc_vars_int
+  authid definer
 as 
  /********************************************************************************
 **
