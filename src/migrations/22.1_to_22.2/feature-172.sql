@@ -1,5 +1,5 @@
 /*
-  Migration Script for Fetaure CallActivities
+  Migration Script for Feature CallActivities
 
   Created RAllen  25 Feb 2022
 
