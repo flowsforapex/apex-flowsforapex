@@ -950,7 +950,7 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'if :P7_LOADED_DGRM_ID is not null',
 'then return flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_LOADED_DGRM_ID);',
-'else return flow_engine_app_api.get_objt_list(p_prcs_id => :P7_DGRM_ID);',
+'else return flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_DGRM_ID);',
 'end if;'))
 ,p_attribute_07=>'P7_LOADED_DGRM_ID,P7_DGRM_ID'
 ,p_attribute_08=>'Y'
@@ -1029,7 +1029,7 @@ wwv_flow_api.create_page_da_action(
 'else return',
 'flow_engine_app_api.get_objt_name(',
 '    p_objt_bpmn_id => :P7_OBJT_BPMN_ID',
-'  , p_prcs_id => :P7_DGRM_ID',
+'  , p_dgrm_id => :P7_DGRM_ID',
 ');',
 'end if;'))
 ,p_attribute_07=>'P7_OBJT_BPMN_ID,P7_LOADED_DGRM_ID,P7_DGRM_ID'
