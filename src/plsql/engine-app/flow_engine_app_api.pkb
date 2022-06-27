@@ -272,14 +272,21 @@ as
   as
     l_objt_list varchar2(32767);
   begin    
-    select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
+    select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
       into l_objt_list
-      from flow_objects
-     where objt_dgrm_id = (
-           select prcs_dgrm_id 
-             from flow_processes
-            where prcs_id = p_prcs_id)
-       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
+      from ( select objt_bpmn_id
+               from flow_objects
+              where objt_dgrm_id = ( select prcs_dgrm_id 
+                                       from flow_processes
+                                      where prcs_id = p_prcs_id)
+                and objt_tag_name not in ('bpmn:textAnnotation', 'bpmn:laneSet', 'bpmn:lane')
+              union
+             select conn_bpmn_id
+               from flow_connections
+              where conn_dgrm_id = ( select prcs_dgrm_id 
+                                       from flow_processes
+                                      where prcs_id = p_prcs_id)
+           );
     return l_objt_list;
   end get_objt_list;
 
@@ -290,11 +297,17 @@ as
   as
     l_objt_list varchar2(32767);
   begin    
-    select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
+    select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
       into l_objt_list
-      from flow_objects
-     where objt_dgrm_id = p_dgrm_id
-       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
+      from ( select objt_bpmn_id
+               from flow_objects
+              where objt_dgrm_id = p_dgrm_id
+                and objt_tag_name not in ('bpmn:textAnnotation', 'bpmn:laneSet', 'bpmn:lane')
+              union
+             select conn_bpmn_id
+               from flow_connections
+              where conn_dgrm_id = p_dgrm_id
+           );
     return l_objt_list;
   end get_objt_list;
   
@@ -306,11 +319,20 @@ as
   as
     l_objt_name flow_objects.objt_name%type;
   begin
-    select objt_name
+    select name
       into l_objt_name
-      from flow_objects
-     where objt_bpmn_id = p_objt_bpmn_id
-       and objt_dgrm_id = p_dgrm_id;
+      from ( select objt_bpmn_id as bpmn_id
+                  , objt_name as name
+                  , objt_dgrm_id as dgrm_id
+               from flow_objects
+              union
+             select conn_bpmn_id as bpmn_id
+                  , conn_name as name
+                  , conn_dgrm_id as dgrm_id
+               from flow_connections
+           )
+    where bpmn_id = p_objt_bpmn_id
+      and dgrm_id = p_dgrm_id;
     return l_objt_name;
   end get_objt_name;
 
@@ -322,13 +344,22 @@ as
   as
     l_objt_name flow_objects.objt_name%type;
   begin
-    select objt_name
+    select name
       into l_objt_name
-      from flow_objects
-     where objt_bpmn_id = p_objt_bpmn_id
-       and objt_dgrm_id = (select prcs_dgrm_id
-                             from flow_processes
-                            where prcs_id = p_prcs_id);
+      from ( select objt_bpmn_id as bpmn_id
+                  , objt_name as name
+                  , objt_dgrm_id as dgrm_id
+               from flow_objects
+              union
+             select conn_bpmn_id as bpmn_id
+                  , conn_name as name
+                  , conn_dgrm_id as dgrm_id
+               from flow_connections
+           )
+    where bpmn_id = p_objt_bpmn_id
+      and dgrm_id = (select prcs_dgrm_id
+                       from flow_processes
+                      where prcs_id = p_prcs_id);
     return l_objt_name;
   end get_objt_name;
 
