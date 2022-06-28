@@ -1,5 +1,6 @@
+create or replace package test_010_variable_expressions is
 /* 
--- Flows for APEX - test_variable_expressions.pks
+-- Flows for APEX - test_010_variable_expressions.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
@@ -7,14 +8,14 @@
 -- Edited  09-May-2022   Richard Allen - Oracle
 --
 */
-create or replace package test_variable_expressions is
-
     --%suite(test_variable_expressions)
     --%rollback(manual)
 
     --%beforeall
     procedure set_up_process;
 
+    --%test('check test can establish APEX session')
+    procedure test_apex_session_creation;
 
     --%test('Static Process Variable type expressions')
     procedure var_exp_static;
@@ -40,4 +41,4 @@ create or replace package test_variable_expressions is
     --%afterall
     procedure tear_down_process;
 
-end test_variable_expressions;
+end test_010_variable_expressions;

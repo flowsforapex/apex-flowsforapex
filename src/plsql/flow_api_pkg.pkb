@@ -246,6 +246,12 @@ as
     if l_session_id is not null then
       flow_apex_session.delete_session (p_session_id => l_session_id );
     end if;
+  exception
+    when others then
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id );
+      end if;
+      raise;
   end flow_complete_step;
 
   procedure flow_reschedule_timer

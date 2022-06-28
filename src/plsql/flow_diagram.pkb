@@ -35,7 +35,8 @@ as
           pi_dgrm_name     => pi_dgrm_name,
           pi_dgrm_version  => pi_dgrm_version,
           pi_dgrm_category => pi_dgrm_category,
-          pi_dgrm_content  => flow_constants_pkg.gc_default_xml,
+          pi_dgrm_content  => replace(flow_constants_pkg.gc_default_xml, '#RANDOM_PRCS_ID#',
+                                lower(sys.dbms_random.string('X',8))),
           pi_dgrm_status   => flow_constants_pkg.gc_dgrm_status_draft);
       flow_bpmn_parser_pkg.parse(
         pi_dgrm_id => l_dgrm_id);

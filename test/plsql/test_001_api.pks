@@ -1,4 +1,8 @@
-create or replace package test_api is
+create or replace package test_001_api is
+
+   -- uses model A01
+
+   -- tests  basic flows API
 
    --%suite(test_api)
    --%rollback(manual)
@@ -6,34 +10,37 @@ create or replace package test_api is
    -- Need to add tests for by name, by name and version, by id
    -- Maybe need to test the versionning logic as well here?
 
-   --%test
+   --%test(flow_create)
    procedure flow_create;
 
-   --%test
+   --%test(flow_start)
    procedure flow_start;
 
-   --%test
+   --%test(flow_reset)
    procedure flow_reset;
 
-   --%test
+   --%test(flow_terminate)
    procedure flow_terminate;
 
-   --%test
+   --%test(flow_delete)
    procedure flow_delete;
 
-   --%test
+   --%test(flow_complete_step)
    procedure flow_complete_step;
 
-   --%test
+   --%test(flow_reserve_step)
    procedure flow_reserve_step;
 
-   --%test
+   --%test(flow_release_step)
    procedure flow_release_step;
 
-   --%test
+   --%test(flow_start_step)
    procedure flow_start_step;
 
-   --%test
+   --%test(flow_variables)
    procedure flow_variables;
 
-end test_api;
+   --%afterall
+   procedure tear_down_tests;
+
+end test_001_api;

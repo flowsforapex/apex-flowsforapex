@@ -1,5 +1,6 @@
+create or replace package body test_014_call_Activity_error_BEs is
 /* 
--- Flows for APEX - test_call_Activity_escalation_BEs.pkb
+-- Flows for APEX - test_014_call_Activity_error_BEs.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
@@ -7,13 +8,12 @@
 -- 
 */
 
-create or replace package body test_call_Activity_escalation_BEs is
+  g_model_a14a constant varchar2(100) := 'A14a - Error BEs with Call Activities';
+  g_model_a14b constant varchar2(100) := 'A14b - Called Activity with Error End';
+  g_model_a14c constant varchar2(100) := 'A14c - Called Activity with Normal End';
+  g_model_a14d constant varchar2(100) := 'A14d - Called Activity with Terminate End';
 
-  g_model_a13a constant varchar2(100) := 'A13a - Escalation BEs with Call Activities';
-  g_model_a13b constant varchar2(100) := 'A13b - Called Activity with Escalation End';
-  g_model_a13c constant varchar2(100) := 'A13c - Called Activity with Escalation ITE';
-
-  g_test_prcs_name constant varchar2(100) := 'test - CallActivity Escalation BEs';
+  g_test_prcs_name constant varchar2(100) := 'test - CallActivity Error BEs';
 
   g_sbfl_path1_main             flow_subflows.sbfl_id%type;
   g_sbfl_path1_afterBE          flow_subflows.sbfl_id%type;
@@ -26,9 +26,10 @@ create or replace package body test_call_Activity_escalation_BEs is
 
   g_prcs_id       flow_processes.prcs_id%type;
   g_prcs_dgrm_id  flow_diagrams.dgrm_id%type; -- process level diagram id
-  g_dgrm_a13a_id  flow_diagrams.dgrm_id%type;
-  g_dgrm_a13b_id  flow_diagrams.dgrm_id%type;
-  g_dgrm_a13c_id  flow_diagrams.dgrm_id%type;
+  g_dgrm_a14a_id  flow_diagrams.dgrm_id%type;
+  g_dgrm_a14b_id  flow_diagrams.dgrm_id%type;
+  g_dgrm_a14c_id  flow_diagrams.dgrm_id%type;
+  g_dgrm_a14d_id  flow_diagrams.dgrm_id%type;
 
 
   procedure set_up_process
@@ -37,12 +38,13 @@ create or replace package body test_call_Activity_escalation_BEs is
     l_expected sys_refcursor;
   begin
 
-    -- get dgrm_ids to use for comparaison
-    g_dgrm_a13a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a13a );
-    g_dgrm_a13b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a13b );
-    g_dgrm_a13c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a13c );
+    -- get dgrm_ids to use for comparison
+    g_dgrm_a14a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a14a );
+    g_dgrm_a14b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a14b );
+    g_dgrm_a14c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a14c );
+    g_dgrm_a14d_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a14d );
 
-    g_prcs_dgrm_id := g_dgrm_a13a_id;
+    g_prcs_dgrm_id := g_dgrm_a14a_id;
 
     -- create a new instance
     g_prcs_id := flow_api_pkg.flow_create(
@@ -140,8 +142,8 @@ create or replace package body test_call_Activity_escalation_BEs is
   end set_up_process;
    
 
-  -- Lane 1: Non-Interrupting escalation boundary events on CallActivity - from endEvent
-  procedure test_callActivity_non_int_escalation_from_endEvent_BE_smoke
+  -- Lane 1: Error boundary events on CallActivity - error occurs
+  procedure test_callActivity_error_BE
   is
     l_actual   sys_refcursor;
     l_expected sys_refcursor;
@@ -152,36 +154,30 @@ create or replace package body test_call_Activity_escalation_BEs is
     test_helper.step_forward ( pi_prcs_id => g_prcs_id, pi_sbfl_id => g_sbfl_path1_main);
 
    -- test status of main and afterBE subflows step
-    open l_expected for
+    open l_expected for      
        select
           g_prcs_id as sbfl_prcs_id,
-          g_dgrm_a13a_id as sbfl_dgrm_id,
-          'Activity_After1' as sbfl_current,
-          flow_constants_pkg.gc_sbfl_status_running sbfl_status
-       from dual
-       union       
-       select
-          g_prcs_id as sbfl_prcs_id,
-          g_dgrm_a13a_id as sbfl_dgrm_id,
+          g_dgrm_a14a_id as sbfl_dgrm_id,
           'Activity_AfterBE1' as sbfl_current,
+          g_sbfl_path1_main as sbfl_id,
           flow_constants_pkg.gc_sbfl_status_running sbfl_status
        from dual;
     open l_actual for
-       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_id, sbfl_status 
        from flow_subflows 
        where sbfl_prcs_id = g_prcs_id
        and sbfl_status not like 'split'
        and sbfl_id not in (g_sbfl_path2_main, g_sbfl_path3_main, g_sbfl_path4_main);
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
-   -- check that Proc Var from Called Activity is returned to main
+   -- check that Proc Var from Called Activity is NOT returned to main
 
     l_actual_vc2 := flow_process_vars.get_var_vc2  
                    ( pi_prcs_id => g_prcs_id
                    , pi_var_name => 'ReturnedValue1'
                    , pi_scope => 0
                    );
-    ut.expect (l_actual_vc2).to_equal ('SetInCalled');
+    ut.expect (l_actual_vc2).to_be_null();
 
    -- check that End Event in Called Activity completed
 
@@ -193,14 +189,9 @@ create or replace package body test_call_Activity_escalation_BEs is
 
     ut.expect (l_actual_boolean).to_be_true();
 
-   -- step forward on Main 1 and After BE 1 to completion
-
-    g_sbfl_path1_afterBE := test_helper.get_sbfl_id 
-                            ( pi_prcs_id => g_prcs_id
-                            , pi_current => 'Activity_AfterBE1');
+   -- step forward on Main 1  to completion
 
     test_helper.step_forward ( pi_prcs_id => g_prcs_id, pi_sbfl_id => g_sbfl_path1_main);
-    test_helper.step_forward ( pi_prcs_id => g_prcs_id, pi_sbfl_id => g_sbfl_path1_afterBE);
 
     open l_actual for
        select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
@@ -210,11 +201,11 @@ create or replace package body test_call_Activity_escalation_BEs is
        and sbfl_id not in (g_sbfl_path2_main, g_sbfl_path3_main, g_sbfl_path4_main);
     ut.expect( l_actual ).to_be_empty;
    
-  end test_callActivity_non_int_escalation_from_endEvent_BE_smoke;
+  end test_callActivity_error_BE;
 
 
-  -- Lane 2 : Non-Interrupting escalation boundary events on CallActivity - from ITE
-  procedure test_callActivity_non_int_escalation_from_ITE_BE_smoke
+  -- Lane 2 : Error boundary events on CallActivity - no error occurs
+  procedure test_callActivity_error_BE_no_error
   is
     l_actual   sys_refcursor;
     l_expected sys_refcursor;
@@ -228,19 +219,13 @@ create or replace package body test_call_Activity_escalation_BEs is
     open l_expected for
        select
           g_prcs_id as sbfl_prcs_id,
-          g_dgrm_a13a_id as sbfl_dgrm_id,
+          g_dgrm_a14a_id as sbfl_dgrm_id,
           'Activity_After2' as sbfl_current,
-          flow_constants_pkg.gc_sbfl_status_running sbfl_status
-       from dual
-       union       
-       select
-          g_prcs_id as sbfl_prcs_id,
-          g_dgrm_a13a_id as sbfl_dgrm_id,
-          'Activity_AfterBE2' as sbfl_current,
+          g_sbfl_path2_main as sbfl_id,
           flow_constants_pkg.gc_sbfl_status_running sbfl_status
        from dual;
     open l_actual for
-       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_id, sbfl_status 
        from flow_subflows 
        where sbfl_prcs_id = g_prcs_id
        and sbfl_status not like 'split'
@@ -266,14 +251,9 @@ create or replace package body test_call_Activity_escalation_BEs is
 
     ut.expect (l_actual_boolean).to_be_true();
 
-   -- step forward on Main 2 and After BE 2 to completion
-
-    g_sbfl_path2_afterBE := test_helper.get_sbfl_id 
-                            ( pi_prcs_id => g_prcs_id
-                            , pi_current => 'Activity_AfterBE2');
+   -- step forward on Main 2 to completion
 
     test_helper.step_forward ( pi_prcs_id => g_prcs_id, pi_sbfl_id => g_sbfl_path2_main);
-    test_helper.step_forward ( pi_prcs_id => g_prcs_id, pi_sbfl_id => g_sbfl_path2_afterBE);
 
     open l_actual for
        select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
@@ -283,10 +263,10 @@ create or replace package body test_call_Activity_escalation_BEs is
        and sbfl_id not in (g_sbfl_path1_main, g_sbfl_path3_main, g_sbfl_path4_main);
     ut.expect( l_actual ).to_be_empty;
    
-  end test_callActivity_non_int_escalation_from_ITE_BE_smoke;
+  end test_callActivity_error_BE_no_error;
 
-  -- Lane 3 - Interrupting timer boundary events on CallActivity - from EndEvent - smoke
-  procedure test_callActivity_int_escalation_from_endEvent_BE_smoke
+  -- Lane 3 - Error boundary events on CallActivity - error occurs - no error BE
+  procedure test_callActivity_error_BE_no_BE
  is
     l_actual   sys_refcursor;
     l_expected sys_refcursor;
@@ -300,8 +280,8 @@ create or replace package body test_call_Activity_escalation_BEs is
     open l_expected for     
        select
           g_prcs_id as sbfl_prcs_id,
-          g_dgrm_a13a_id as sbfl_dgrm_id,
-          'Activity_AfterBE3' as sbfl_current,
+          g_dgrm_a14a_id as sbfl_dgrm_id,
+          'Activity_After3' as sbfl_current,
           g_sbfl_path3_main as sbfl_id, 
           flow_constants_pkg.gc_sbfl_status_running sbfl_status
        from dual;
@@ -353,10 +333,10 @@ create or replace package body test_call_Activity_escalation_BEs is
        and sbfl_id not in (g_sbfl_path1_main, g_sbfl_path2_main, g_sbfl_path4_main);
     ut.expect( l_actual ).to_be_empty;
    
-  end test_callActivity_int_escalation_from_endEvent_BE_smoke;
+  end test_callActivity_error_BE_no_BE;
 
-    -- Lane 4 - Interrupting timer boundary events on CallActivity - from ITE - smoke
-  procedure test_callActivity_int_escalation_from_ITE_BE_smoke
+    -- Lane 4 - Error boundary events on CallActivity - terminate end in Called
+  procedure test_callActivity_error_from_term_end
  is
     l_actual   sys_refcursor;
     l_expected sys_refcursor;
@@ -370,8 +350,8 @@ create or replace package body test_call_Activity_escalation_BEs is
     open l_expected for     
        select
           g_prcs_id as sbfl_prcs_id,
-          g_dgrm_a13a_id as sbfl_dgrm_id,
-          'Activity_AfterBE4' as sbfl_current,
+          g_dgrm_a14a_id as sbfl_dgrm_id,
+          'Activity_After4' as sbfl_current,
           g_sbfl_path4_main as sbfl_id,
           flow_constants_pkg.gc_sbfl_status_running sbfl_status
        from dual;
@@ -392,16 +372,6 @@ create or replace package body test_call_Activity_escalation_BEs is
                    );
     ut.expect (l_actual_vc2).to_be_null();
 
-   -- check that ITE Event in Called Activity completed
-
-    l_actual_boolean := test_helper.has_called_step_completed
-                 ( pi_prcs_id         => g_prcs_id
-                 , pi_calling_objt    => 'Activity_Call4'
-                 , pi_objt_bpmn_id    => 'Event_ITE'
-                 );
-
-    ut.expect (l_actual_boolean).to_be_true();  
-
    -- check that End Event in Called Activity completed
 
     l_actual_boolean := test_helper.has_called_step_completed
@@ -410,7 +380,7 @@ create or replace package body test_call_Activity_escalation_BEs is
                  , pi_objt_bpmn_id    => 'Event_End_Called'
                  );
 
-    ut.expect (l_actual_boolean).to_be_false();
+    ut.expect (l_actual_boolean).to_be_true();
   
    -- check that the Called Activity did not complete
 
@@ -433,7 +403,7 @@ create or replace package body test_call_Activity_escalation_BEs is
        and sbfl_id not in (g_sbfl_path1_main, g_sbfl_path2_main, g_sbfl_path3_main);
     ut.expect( l_actual ).to_be_empty;
    
-  end test_callActivity_int_escalation_from_ITE_BE_smoke;
+  end test_callActivity_error_from_term_end;
 
   procedure tear_down_process
   is
@@ -441,5 +411,5 @@ create or replace package body test_call_Activity_escalation_BEs is
     flow_api_pkg.flow_delete (p_process_id => g_prcs_id);
   end tear_down_process;
 
-end test_call_Activity_escalation_BEs;
+end test_014_call_Activity_error_BEs;
 /
