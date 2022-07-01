@@ -22,8 +22,20 @@ create or replace package test_helper as
 
   -- step the model forward from an object given the object ID
    procedure step_forward 
-   ( pi_prcs_id       in  flow_processes.prcs_id%type
-   , pi_current  in  flow_subflows.sbfl_current%type
+   ( pi_prcs_id   in  flow_processes.prcs_id%type
+   , pi_current   in  flow_subflows.sbfl_current%type
+   );
+
+  -- restart and step the model forward from an object given the object ID
+   procedure restart_forward 
+   ( pi_prcs_id   in  flow_processes.prcs_id%type
+   , pi_current   in  flow_subflows.sbfl_current%type
+   );
+
+  -- restart and step the model forward from an object given the subflow ID
+   procedure restart_forward 
+   ( pi_prcs_id      in  flow_processes.prcs_id%type
+   , pi_sbfl_id      in  flow_subflows.sbfl_id%type
    );
 
   -- get the subflow that has pi_current as the current object.

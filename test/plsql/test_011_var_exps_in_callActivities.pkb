@@ -1,13 +1,12 @@
+create or replace package body test_011_var_exps_in_callActivities is
 /* 
--- Flows for APEX - test_var_exps_in_callActivities.pkb
+-- Flows for APEX - test_011_var_exps_in_callActivities.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
 -- Created 2022   Richard Allen, Oracle   
 -- 
 */
-
-create or replace package body test_var_exps_in_callActivities is
 
    model_a11a constant varchar2(100) := 'A11a - Variable Exp Types with CallActivity';
    model_a11b constant varchar2(100) := 'A11b - Variable Exp Types with CallActivity';
@@ -17,6 +16,8 @@ create or replace package body test_var_exps_in_callActivities is
    l_step_key               flow_subflows.sbfl_step_key%type;
    l_dgrm_a_id              flow_diagrams.dgrm_id%type;
    l_dgrm_b_id              flow_diagrams.dgrm_id%type;
+
+   g_prcs_id_1 number;
 
    function get_dgrm_id( pi_dgrm_name in varchar2)
    return flow_diagrams.dgrm_id%type
@@ -47,6 +48,7 @@ create or replace package body test_var_exps_in_callActivities is
            pi_dgrm_id   => l_dgrm_a_id
          , pi_prcs_name => 'test - var_exp_in_callActivities'
       );
+      g_prcs_id_1 := l_prcs_id;
 
       open l_actual for
         select *
@@ -319,4 +321,12 @@ create or replace package body test_var_exps_in_callActivities is
    end var_exp_all_types;
 
 
-end test_var_exps_in_callActivities;
+   procedure tear_down_tests
+   is
+   begin
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_1);
+
+   end;
+
+
+end test_011_var_exps_in_callActivities;

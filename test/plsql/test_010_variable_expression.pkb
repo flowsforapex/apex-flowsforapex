@@ -1,5 +1,6 @@
+create or replace package body test_010_variable_expressions is
 /* 
--- Flows for APEX - test_variable_expressions.pkb
+-- Flows for APEX - test_010_variable_expressions.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
@@ -7,8 +8,6 @@
 -- Edited  09-May-2022   Richard Allen - Oracle
 --
 */
-
-create or replace package body test_variable_expressions is
 
     g_model_a10 constant varchar2(100) := 'A10 - Variable Expressions Types';
     g_sbfl_static           flow_subflows.sbfl_id%type;
@@ -170,6 +169,37 @@ create or replace package body test_variable_expressions is
      flow_api_pkg.flow_delete (p_process_id => g_prcs_id);
    end tear_down_process;
    
+   procedure test_apex_session_creation
+   is
+        l_app_id   flow_types_pkg.t_bpmn_attribute_vc2;
+        l_page_id  flow_types_pkg.t_bpmn_attribute_vc2;
+        l_username flow_types_pkg.t_bpmn_attribute_vc2;  
+   begin
+     -- check diagram apex session parameters are available
+
+
+     -- check system config parameters ar available
+      l_app_id   := flow_engine_util.get_config_value 
+                        ( p_config_key    => flow_constants_pkg.gc_config_default_application
+                        , p_default_value => null
+                        );
+
+    ut.expect(l_app_id).to_be_not_null();
+
+      l_page_id  := flow_engine_util.get_config_value 
+                        ( p_config_key    => flow_constants_pkg.gc_config_default_pageid 
+                        , p_default_value => null
+                        );
+
+    ut.expect(l_page_id).to_be_not_null();  
+
+      l_username := flow_engine_util.get_config_value 
+                        ( p_config_key    => flow_constants_pkg.gc_config_default_username
+                        , p_default_value => null
+                        );
+    ut.expect(l_username).to_be_not_null();
+
+   end test_apex_session_creation;
    
    procedure var_exp_static
    is
@@ -625,6 +655,10 @@ create or replace package body test_variable_expressions is
         into l_step_key
         from flow_subflows
         where sbfl_id = l_sbfl_id;
+
+        ut.expect( apex_error.have_errors_occurred(), 'apex thinks it has a problem!').to_be_false;
+        ut.expect( v('APP_SESSION')).to_be_null;
+
         --step forward on subflow
         flow_api_pkg.flow_complete_step
         ( p_process_id => g_prcs_id
@@ -862,4 +896,4 @@ create or replace package body test_variable_expressions is
       
     end var_exp_process_completed;
 
-end test_variable_expressions;
+end test_010_variable_expressions;

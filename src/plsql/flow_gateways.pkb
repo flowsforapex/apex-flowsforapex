@@ -211,11 +211,11 @@ as
         end if;
       end loop;
     else
-      raise e_no_route_found;
+      raise flow_gateways.e_no_route_found;
     end if;
     -- check that some routes were found
     if l_forward_routes.count = 0 then
-      raise e_no_route_found;
+      raise flow_gateways.e_no_route_found;
     end if;
     return l_forward_routes;
   end get_valid_routing_expression_routes;
@@ -262,7 +262,7 @@ as
         raise e_no_route_found;
       end if;
     exception
-      when e_no_route_found then
+      when flow_gateways.e_no_route_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id

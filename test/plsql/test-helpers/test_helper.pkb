@@ -65,6 +65,54 @@ create or replace package body test_helper as
       );
    end step_forward;
 
+  -- restart and step the model forward from a given subflow ID
+   procedure restart_forward 
+   ( pi_prcs_id       in  flow_processes.prcs_id%type
+   , pi_sbfl_id       in  flow_subflows.sbfl_id%type
+   )
+   is
+     l_step_key   flow_subflows.sbfl_step_key%type;
+   begin
+      -- get the step key
+       select sbfl.sbfl_step_key
+         into l_step_key
+         from flow_subflows sbfl
+        where sbfl.sbfl_prcs_id = pi_prcs_id
+          and sbfl.sbfl_id = pi_sbfl_id;
+
+      --step forward on subflow
+      flow_api_pkg.flow_restart_step
+      ( p_process_id => pi_prcs_id
+      , p_subflow_id => pi_sbfl_id
+      , p_step_key   => l_step_key);
+
+   end restart_forward;
+
+
+  -- restart and step the model forward from an object given the object ID
+   procedure restart_forward 
+   ( pi_prcs_id       in  flow_processes.prcs_id%type
+   , pi_current       in  flow_subflows.sbfl_current%type
+   )
+  is
+     l_subflow     flow_subflows.sbfl_id%type;
+     l_step_key   flow_subflows.sbfl_step_key%type;
+   begin
+      -- find the subflow having pi_sbfl_current as its current object & its step key
+       select sbfl.sbfl_id, sbfl.sbfl_step_key
+         into l_subflow,  l_step_key
+         from flow_subflows sbfl
+        where sbfl.sbfl_prcs_id = pi_prcs_id
+          and sbfl.sbfl_current = pi_current;
+
+      --step forward on subflow
+      flow_api_pkg.flow_restart_step
+      ( p_process_id => pi_prcs_id
+      , p_subflow_id => l_subflow
+      , p_step_key   => l_step_key);
+
+   end restart_forward;
+
   -- get the subflow that has pi_current as the current object.
 
    function get_sbfl_id

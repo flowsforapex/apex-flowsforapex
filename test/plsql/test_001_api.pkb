@@ -1,6 +1,18 @@
-create or replace package body test_api is
+create or replace package body test_001_api is
 
-   model_a1 constant varchar2(100) := 'A1 - Basic Model';
+   -- uses model A1
+
+   model_a1 constant varchar2(100) := 'A01 - Basic Model';
+   g_prcs_id_1    number;
+   g_prcs_id_2    number;
+   g_prcs_id_3    number;
+   g_prcs_id_4    number;
+   g_prcs_id_5    number;
+   g_prcs_id_6    number;
+   g_prcs_id_7    number;
+   g_prcs_id_8    number;
+   g_prcs_id_9    number;
+   g_prcs_id_10   number;
 
    function get_dgrm_id( pi_dgrm_name in varchar2)
    return flow_diagrams.dgrm_id%type
@@ -30,6 +42,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_create'
       );
+      g_prcs_id_1 := l_prcs_id;      
 
       open l_expected for
          select l_dgrm_id as prcs_dgrm_id, 'test - flow_create' as prcs_name, flow_constants_pkg.gc_prcs_status_created as prcs_status from dual;
@@ -57,6 +70,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_start'
       );
+      g_prcs_id_2 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
 
@@ -93,6 +107,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_reset'
       );
+      g_prcs_id_3 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
 
@@ -123,6 +138,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_terminate'
       );
+      g_prcs_id_4 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
 
@@ -152,6 +168,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_delete'
       );
+      g_prcs_id_5 := l_prcs_id;
 
       flow_api_pkg.flow_delete( p_process_id => l_prcs_id );
 
@@ -179,6 +196,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_complete_step'
       );
+      g_prcs_id_6 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
 
@@ -228,6 +246,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_reserve_step'
       );
+      g_prcs_id_7 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
 
@@ -284,6 +303,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_release_step'
       );
+      g_prcs_id_8 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
 
@@ -361,6 +381,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_start_step'
       );
+      g_prcs_id_9 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
 
@@ -423,6 +444,7 @@ create or replace package body test_api is
            pi_dgrm_name => model_a1
          , pi_prcs_name => 'test - flow_variables'
       );
+      g_prcs_id_10 := l_prcs_id;
 
       open l_expected for
          select l_dgrm_id as prcs_dgrm_id, 'test - flow_variables' as prcs_name, flow_constants_pkg.gc_prcs_status_created as prcs_status from dual;
@@ -593,5 +615,19 @@ create or replace package body test_api is
 
    end flow_variables;
 
+   procedure tear_down_tests
+   is
+   begin
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_1);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_2);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_3);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_4);
+      -- note: test 5 deletes itself
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_7);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_8);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_9);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_10);
+   end;
 
-end test_api;
+end test_001_api;

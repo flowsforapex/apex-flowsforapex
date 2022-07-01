@@ -1,13 +1,33 @@
-create or replace package body test_gateway is
+create or replace package body test_002_gateway is
+/* 
+-- Flows for APEX - test_002_gateway.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+--
+-- Created  08-Mar-2022   Louis Moreaux, Insum
+-- Modified 28-Jun-2022   Richard Allen, Oracle   
+-- 
+*/
 
-   model_a2 constant varchar2(100) := 'A2 - Exclusive Gateway No Route';
-   model_a3 constant varchar2(100) := 'A3 - Exclusive Gateway Default Route';
-   model_a4 constant varchar2(100) := 'A4 - Exclusive Gateway Routing';
-   model_a5 constant varchar2(100) := 'A5 - Inclusive Gateway No Route';
-   model_a6 constant varchar2(100) := 'A6 - Inclusive Gateway Default Route';
-   model_a7 constant varchar2(100) := 'A7 - Inclusive Gateway Routing';
-   model_a8 constant varchar2(100) := 'A8 - Parallel Gateway';
-   model_a9 constant varchar2(100) := 'A9 - Event Based Gateway';
+   model_a2 constant varchar2(100) := 'A02a - Exclusive Gateway No Route';
+   model_a3 constant varchar2(100) := 'A02b - Exclusive Gateway Default Route';
+   model_a4 constant varchar2(100) := 'A02c - Exclusive Gateway Routing';
+   model_a5 constant varchar2(100) := 'A02d - Inclusive Gateway No Route';
+   model_a6 constant varchar2(100) := 'A02e - Inclusive Gateway Default Route';
+   model_a7 constant varchar2(100) := 'A02f - Inclusive Gateway Routing';
+   model_a8 constant varchar2(100) := 'A02g - Parallel Gateway';
+   model_a9 constant varchar2(100) := 'A02h - Event Based Gateway';
+
+   g_prcs_id_1    number;
+   g_prcs_id_2    number;
+   g_prcs_id_3    number;
+   g_prcs_id_4    number;
+   g_prcs_id_5    number;
+   g_prcs_id_6    number;
+   g_prcs_id_7    number;
+   g_prcs_id_8    number;
+   g_prcs_id_9    number;
+   g_prcs_id_10   number;
 
    function get_dgrm_id( pi_dgrm_name in varchar2)
    return flow_diagrams.dgrm_id%type
@@ -38,6 +58,7 @@ create or replace package body test_gateway is
            pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - exclusive_no_route'
       );
+      g_prcs_id_1 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
       
@@ -105,6 +126,7 @@ create or replace package body test_gateway is
            pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - exclusive_default'
       );
+      g_prcs_id_2 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
       
@@ -175,6 +197,7 @@ create or replace package body test_gateway is
            pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - exclusive_route_provided'
       );
+      g_prcs_id_3 := l_prcs_id;
 
       --Set RouteA
       flow_process_vars.set_var(
@@ -369,6 +392,7 @@ create or replace package body test_gateway is
            pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - inclusive_no_route'
       );
+      g_prcs_id_4 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
       
@@ -433,6 +457,7 @@ create or replace package body test_gateway is
            pi_dgrm_id => l_dgrm_id
          , pi_prcs_name => 'test - inclusive_default'
       );
+      g_prcs_id_5 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
       
@@ -510,6 +535,7 @@ create or replace package body test_gateway is
            pi_dgrm_id => l_dgrm_id
          , pi_prcs_name => 'test - inclusive_route_provided'
       );
+      g_prcs_id_6 := l_prcs_id;
 
       --Set RouteA
       flow_process_vars.set_var(
@@ -1249,6 +1275,7 @@ create or replace package body test_gateway is
            pi_dgrm_id => l_dgrm_id
          , pi_prcs_name => 'test - parallel'
       );
+      g_prcs_id_7 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
       
@@ -1436,6 +1463,7 @@ create or replace package body test_gateway is
            pi_dgrm_id => l_dgrm_id
          , pi_prcs_name => 'test - event_based'
       );
+      g_prcs_id_8 := l_prcs_id;
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
       
@@ -1531,4 +1559,19 @@ create or replace package body test_gateway is
      
    end event_based;
 
-end test_gateway;
+
+   procedure tear_down_tests
+   is
+   begin
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_1);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_2);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_3);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_4);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_5);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_7);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_8);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_9);
+   end;
+
+end test_002_gateway;
