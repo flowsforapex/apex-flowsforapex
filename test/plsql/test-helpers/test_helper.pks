@@ -1,3 +1,4 @@
+create or replace package test_helper as
 /* 
 -- Flows for APEX - test_helper.pks
 -- 
@@ -6,7 +7,6 @@
 -- Created 18-May-2022   Richard Allen, Oracle
 --
 */
-create or replace package test_helper as
 
   -- basic model setup and movement
 

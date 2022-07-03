@@ -1,3 +1,4 @@
+create or replace package body flow_engine as 
 /* 
 -- Flows for APEX - flow_engine.pkb
 -- 
@@ -8,8 +9,6 @@
 -- Modified 30-May-2022  Moritz Klein (MT AG)
 --
 */
-create or replace package body flow_engine
-as 
 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
