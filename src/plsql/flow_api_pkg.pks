@@ -221,6 +221,7 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_step_key   in flow_subflows.sbfl_step_key%type default null
+  , p_scope      in flow_subflows.sbfl_scope%type default 0
   ) return varchar2;
 
   -- message

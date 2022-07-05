@@ -337,7 +337,8 @@ as
   (
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_step_key      in flow_subflows.sbfl_step_key%type default null
+  , p_step_key   in flow_subflows.sbfl_step_key%type default null
+  , p_scope      in flow_subflows.sbfl_scope%type default 0
   ) return varchar2
   as
     l_objt_id flow_objects.objt_id%type;
@@ -366,6 +367,7 @@ as
       , pi_sbfl_id  => p_subflow_id
       , pi_step_key => p_step_key
       , pi_objt_id  => l_objt_id
+      , pi_scope    => p_scope
       );
   end get_current_usertask_url;
 

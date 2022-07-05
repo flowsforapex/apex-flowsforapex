@@ -48,9 +48,11 @@ as
              , ut_page_id     varchar2(4000) path '$.pageId'
              , ut_request     varchar2(4000) path '$.request'
              , ut_clear_cache varchar2(4000) path '$.cache'
-             , order_key for ordinality
              , nested path '$.pageItems[*]'
-                 columns ( ut_item_name varchar2(4000) path '$.name', ut_item_value varchar2(4000) path '$.value' )
+                 columns ( order_key for ordinality
+                         , ut_item_name varchar2(4000) path '$.name'
+                         , ut_item_value varchar2(4000) path '$.value'
+                         )
            ) jt
         on objt.objt_id = pi_objt_id
     ;
