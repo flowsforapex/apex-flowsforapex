@@ -1,3 +1,5 @@
+create or replace package body flow_usertask_pkg
+as
 /* 
 -- Flows for APEX - flow_usertask_pkg.pkb
 -- 
@@ -9,9 +11,6 @@
 -- Edited  23-May-2022 Moritz Klein (MT AG)
 --
 */
-
-create or replace package body flow_usertask_pkg
-as
 
   function get_url
   (
@@ -33,8 +32,8 @@ as
          , max(ut_page_id)
          , max(ut_request)
          , max(ut_clear_cache)
-         , listagg( ut_item_name, ',' ) as item_names
-         , listagg( ut_item_value, ',' ) as item_values
+         , listagg( ut_item_name, ',' ) within group ( order by order_key ) as item_names
+         , listagg( ut_item_value, ',' ) within group ( order by order_key ) as item_values
       into l_application
          , l_page
          , l_request
@@ -49,6 +48,7 @@ as
              , ut_page_id     varchar2(4000) path '$.pageId'
              , ut_request     varchar2(4000) path '$.request'
              , ut_clear_cache varchar2(4000) path '$.cache'
+             , order_key for ordinality
              , nested path '$.pageItems[*]'
                  columns ( ut_item_name varchar2(4000) path '$.name', ut_item_value varchar2(4000) path '$.value' )
            ) jt
