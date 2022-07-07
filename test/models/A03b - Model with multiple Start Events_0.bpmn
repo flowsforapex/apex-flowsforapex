@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0" xmlns:apex="https://flowsforapex.org">
+  <bpmn:process id="Process_0rxermh" isExecutable="false">
+    <bpmn:task id="Activity_TaskA" name="A">
+      <bpmn:incoming>Flow_0sjgnml</bpmn:incoming>
+      <bpmn:incoming>Flow_0j4ch45</bpmn:incoming>
+      <bpmn:incoming>Flow_027wclx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pfvqri</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_EndA" name="EndA">
+      <bpmn:incoming>Flow_0pfvqri</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0pfvqri" sourceRef="Activity_TaskA" targetRef="Event_EndA"/>
+    <bpmn:startEvent id="Event_StartB" name="StartB">
+      <bpmn:outgoing>Flow_0sjgnml</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0sjgnml" sourceRef="Event_StartB" targetRef="Activity_TaskA"/>
+    <bpmn:startEvent id="Event_StartC" name="StartC">
+      <bpmn:outgoing>Flow_0j4ch45</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0j4ch45" sourceRef="Event_StartC" targetRef="Activity_TaskA"/>
+    <bpmn:startEvent id="Event_StartA" name="StartA">
+      <bpmn:outgoing>Flow_027wclx</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_027wclx" sourceRef="Event_StartA" targetRef="Activity_TaskA"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">
+      <bpmndi:BPMNEdge id="Flow_0pfvqri_di" bpmnElement="Flow_0pfvqri">
+        <di:waypoint x="430" y="440"/>
+        <di:waypoint x="482" y="440"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sjgnml_di" bpmnElement="Flow_0sjgnml">
+        <di:waypoint x="258" y="440"/>
+        <di:waypoint x="330" y="440"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j4ch45_di" bpmnElement="Flow_0j4ch45">
+        <di:waypoint x="258" y="600"/>
+        <di:waypoint x="294" y="600"/>
+        <di:waypoint x="294" y="470"/>
+        <di:waypoint x="330" y="470"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_027wclx_di" bpmnElement="Flow_027wclx">
+        <di:waypoint x="258" y="260"/>
+        <di:waypoint x="294" y="260"/>
+        <di:waypoint x="294" y="410"/>
+        <di:waypoint x="330" y="410"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0klbm0x_di" bpmnElement="Activity_TaskA">
+        <dc:Bounds x="330" y="400" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v82hni_di" bpmnElement="Event_EndA">
+        <dc:Bounds x="482" y="422" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="487" y="465" width="27" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kdlr9l_di" bpmnElement="Event_StartB">
+        <dc:Bounds x="222" y="422" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="225" y="465" width="31" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0to71og_di" bpmnElement="Event_StartC">
+        <dc:Bounds x="222" y="582" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="225" y="625" width="32" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xv09rn_di" bpmnElement="Event_StartA">
+        <dc:Bounds x="222" y="242" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="225" y="285" width="31" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -35,7 +35,7 @@ create or replace package body test_012_call_Activity_timer_BEs is
     l_expected sys_refcursor;
   begin
 
-    -- get dgrm_ids to use for comparaison
+    -- get dgrm_ids to use for comparison
     g_dgrm_a12a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a12a );
     g_dgrm_a12b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a12b );
     g_dgrm_a12c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a12c );
