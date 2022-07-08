@@ -865,7 +865,8 @@ as
         select n001
         from apex_collections
         where collection_name = 'C_SELECT'
-      );
+      )
+      order by dgrm_name, dgrm_version;
     else
       l_flow.dgrm_id := p_dgrm_id;
       l_flows(1)     := l_flow;

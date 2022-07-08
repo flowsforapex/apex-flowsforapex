@@ -1,0 +1,254 @@
+[
+    {
+        "dgrm_name": "A01 - Basic Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A01 - Basic Model_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02a - Exclusive Gateway No Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02a - Exclusive Gateway No Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02b - Exclusive Gateway Default Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02b - Exclusive Gateway Default Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02c - Exclusive Gateway Routing",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02c - Exclusive Gateway Routing_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02d - Inclusive Gateway No Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02d - Inclusive Gateway No Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02e - Inclusive Gateway Default Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02e - Inclusive Gateway Default Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02f - Inclusive Gateway Routing",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02f - Inclusive Gateway Routing_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02g - Parallel Gateway",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02g - Parallel Gateway_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02h - Event Based Gateway",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02h - Event Based Gateway_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03a - Model with No Start Event",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03a - Model with No Start Event_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03b - Model with multiple Start Events",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03b - Model with multiple Start Events_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03c - Model with one good Start Event",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03c - Model with one good Start Event_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03d - Model with one start event of bad type",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03d - Model with one start event of bad type_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03e - Model with one start event with good timer",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03e - Model with one start event with good timer_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03f - Model with one start event with bad timer definition",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03f - Model with one start event with bad timer definition_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03g - Model with one start event with bad on-event var exp",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03g - Model with one start event with bad on-event var exp_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03h - Model with one start event with bad before-event var exp",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03h - Model with one start event with bad before-event var exp_0.bpmn"
+    },
+    {
+        "dgrm_name": "A10 - Variable Expressions Types",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A10 - Variable Expressions Types_0.bpmn"
+    },
+    {
+        "dgrm_name": "A11a - Variable Exp Types with CallActivity",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A11a - Variable Exp Types with CallActivity_0.bpmn"
+    },
+    {
+        "dgrm_name": "A11b - Variable Exp Types with CallActivity",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A11b - Variable Exp Types with CallActivity_0.bpmn"
+    },
+    {
+        "dgrm_name": "A12a - Boundary Events with Call Activities",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A12a - Boundary Events with Call Activities_0.bpmn"
+    },
+    {
+        "dgrm_name": "A12b - Called Activity with 20 Second Delay",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A12b - Called Activity with 20 Second Delay_0.bpmn"
+    },
+    {
+        "dgrm_name": "A12c - Called Activity with 2 Second Delay",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A12c - Called Activity with 2 Second Delay_0.bpmn"
+    },
+    {
+        "dgrm_name": "A13a - Escalation BEs with Call Activities",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A13a - Escalation BEs with Call Activities_0.bpmn"
+    },
+    {
+        "dgrm_name": "A13b - Called Activity with Escalation End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A13b - Called Activity with Escalation End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A13c - Called Activity with Escalation ITE",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A13c - Called Activity with Escalation ITE_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14a - Error BEs with Call Activities",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14a - Error BEs with Call Activities_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14b - Called Activity with Error End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14b - Called Activity with Error End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14c - Called Activity with Normal End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14c - Called Activity with Normal End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14d - Called Activity with Terminate End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14d - Called Activity with Terminate End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15a - Single Diagram Lanes with SubProcs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15a - Single Diagram Lanes with SubProcs_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15b - Single Diagram with No Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15b - Single Diagram with No Lanes_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15c - Calling Diagram noLanes calls Diagram with Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15c - Calling Diagram noLanes calls Diagram with Lanes_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15d - Calling Diagram with Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15d - Calling Diagram with Lanes_0.bpmn"
+    },
+    {
+        "dgrm_name": "A16a - Inc Gateway Tx Boundaries",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A16a - Inc Gateway Tx Boundaries_0.bpmn"
+    },
+    {
+        "dgrm_name": "A17a - Exc GW Errors and Restarts",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A17a - Exc GW Errors and Restarts_0.bpmn"
+    }
+]
