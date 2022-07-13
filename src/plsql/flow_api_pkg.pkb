@@ -1,4 +1,4 @@
-
+create or replace package body flow_api_pkg as
 /* 
 -- Flows for APEX - flow_api_pkg.pkb
 -- 
@@ -7,8 +7,6 @@
 -- Created 2020   Moritz Klein - MT AG  
 -- 
 */
-create or replace package body flow_api_pkg
-as
 
   function get_dgrm_name
   (

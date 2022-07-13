@@ -36,10 +36,13 @@ as
       if pi_objt_tag = flow_constants_pkg.gc_bpmn_gateway_exclusive then
         if (l_forward_routes.count > 1) then
           l_bad_route_string := pi_routing_variable;
+          apex_debug.info ( p_message => '-- exclusive gateway - routing variable contains more than one forward route %0'
+                          , p0 => l_bad_route_string
+                          );
           raise flow_errors.e_gateway_invalid_route;
         end if;
       end if;
-      -- get the possoble forward routes
+      -- get the possible forward routes
       select conn.conn_bpmn_id
         bulk collect into l_possible_routes
         from flow_connections conn
@@ -179,7 +182,7 @@ as
           l_bind_list := apex_plugin_util.c_empty_bind_list;                      
           apex_debug.info (p_message => 'Expression contains no bind variables.  Expression : %0 type : %1  '
             , p0 => l_expr
-            , p1 => l_expr_type);
+            , p1 => l_expr_type); 
         end if;
 
         case l_expr_type  
@@ -204,6 +207,9 @@ as
         if l_take_route or l_possible_routes(route).conn_is_default = 1 then
           l_forward_routes.extend;
           l_forward_routes(l_forward_routes.last) := l_possible_routes(route).conn_bpmn_id;
+          if l_possible_routes(route).conn_is_default = 1 then
+            apex_debug.info ( p_message => '--- gateway routing using default routing'); 
+          end if;
           -- if exclusive gateway, break out - we have our route
           if pi_objt_tag = flow_constants_pkg.gc_bpmn_gateway_exclusive then
             return l_forward_routes;
@@ -211,11 +217,11 @@ as
         end if;
       end loop;
     else
-      raise flow_gateways.e_no_route_found;
+      raise e_no_route_found;
     end if;
     -- check that some routes were found
     if l_forward_routes.count = 0 then
-      raise flow_gateways.e_no_route_found;
+      raise e_no_route_found;
     end if;
     return l_forward_routes;
   end get_valid_routing_expression_routes;
@@ -248,7 +254,10 @@ as
                                                               , pi_objt_bpmn_id     => pi_objt_bpmn_id
                                                               , pi_objt_tag         => pi_objt_tag
                                                               , pi_routing_variable => l_routing_variable
-                                                              );            
+                                                              );   
+        apex_debug.info ( p_message => '-- gateway routing using gateway routing variable.  Forward path: %0'
+                        , p0 => l_routing_variable
+                        );                                                                
       else 
         -- look for gateway routing expressions or default routing
         l_forward_routes := get_valid_routing_expression_routes ( pi_prcs_id          => pi_prcs_id
@@ -257,12 +266,15 @@ as
                                                                 , pi_objt_tag         => pi_objt_tag
                                                                 , pi_scope            => pi_scope
                                                                 ); 
+        apex_debug.info ( p_message => '-- gateway routing using gateway routing expressions or default path. Forward path: %0'
+                        , p0 => apex_string.join (p_table => l_forward_routes, p_sep => ':')
+                        );   
       end if; 
       if l_forward_routes.count = 0 then
         raise e_no_route_found;
       end if;
     exception
-      when flow_gateways.e_no_route_found then
+      when e_no_route_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
@@ -680,7 +692,8 @@ as
   is 
     l_num_forward_connections   number;   -- number of connections forward from object
     l_num_back_connections      number;   -- number of connections back from object
-    l_forward_route             apex_t_varchar2;
+    l_forward_routes            apex_t_varchar2 := apex_t_varchar2();
+    l_forward_route             flow_connections.conn_bpmn_id%type;
   begin
     -- handles opening and closing and closing and reopening
     apex_debug.enter 
@@ -709,12 +722,21 @@ as
       -- test for any errors so far - if so, skip finding a route
       if not flow_globals.get_step_error then 
         -- get route choice
-        l_forward_route := get_gateway_route
+        l_forward_routes := get_gateway_route
         ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
         , pi_sbfl_id        => p_sbfl_info.sbfl_id
         , pi_objt_bpmn_id   => p_step_info.target_objt_ref
         , pi_objt_tag       => p_step_info.target_objt_tag
         , pi_scope          => p_sbfl_info.sbfl_scope
+        );
+        if l_forward_routes.count > 0 then
+          l_forward_route := l_forward_routes(l_forward_routes.first);
+        end if;
+      else
+        -- has step errors from expressions
+        flow_errors.set_error_status
+        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+        , pi_sbfl_id => p_sbfl_info.sbfl_id
         );
       end if;
     else 
@@ -746,10 +768,7 @@ as
       ( p_process_id    => p_sbfl_info.sbfl_prcs_id
       , p_subflow_id    => p_sbfl_info.sbfl_id
       , p_step_key      => p_sbfl_info.sbfl_step_key
-      , p_forward_route => case l_forward_route.count 
-                           when 0 then null 
-                           else l_forward_route(l_forward_route.first)
-                           end
+      , p_forward_route => l_forward_route
       );
     else        
       -- has step errors from evaluating route
