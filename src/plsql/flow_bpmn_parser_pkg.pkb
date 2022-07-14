@@ -7,6 +7,7 @@ as
   g_objt_expr      flow_parser_util.t_objt_expr_tab;
   g_connections    flow_parser_util.t_conn_tab;
   g_lane_refs      flow_parser_util.t_bpmn_ref_tab;
+  g_collab_refs    flow_parser_util.t_bpmn_ref_tab;
   g_default_cons   flow_parser_util.t_bpmn_id_tab;
   g_objt_lookup    flow_parser_util.t_id_lookup_tab;
 
@@ -495,7 +496,7 @@ as
 
   procedure parse_lanes
   (
-    pi_laneset_xml  in xmltype
+    pi_laneset_xml  in sys.xmltype
   , pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
   )
   as
@@ -510,10 +511,10 @@ as
                xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
              , '*' passing pi_laneset_xml
                columns
-                 lane_id   varchar2(50  char) path '@id'
-               , lane_name varchar2(200 char) path '@name'
-               , lane_type varchar2(50  char) path 'name()'
-               , child_elements xmltype path '*'
+                 lane_id        varchar2(50  char) path '@id'
+               , lane_name      varchar2(200 char) path '@name'
+               , lane_type      varchar2(50  char) path 'name()'
+               , child_elements sys.xmltype        path '*'
              ) lanes
     ) loop
 
@@ -544,7 +545,7 @@ as
 
   function find_subtag_name
   (
-    pi_xml in xmltype
+    pi_xml in sys.xmltype
   )
     return flow_types_pkg.t_bpmn_id
   as
@@ -575,7 +576,7 @@ as
   (
     pi_bpmn_id         in flow_types_pkg.t_bpmn_id
   , pi_execution_point in varchar2
-  , pi_proc_vars_xml   in xmltype
+  , pi_proc_vars_xml   in sys.xmltype
   )
   as
   begin
@@ -614,7 +615,7 @@ as
   procedure parse_page_items
   (
     pi_bpmn_id         in flow_types_pkg.t_bpmn_id
-  , pi_page_items_xml  in xmltype
+  , pi_page_items_xml  in sys.xmltype
   )
   as
     l_page_item   sys.json_object_t;
@@ -649,7 +650,7 @@ as
   procedure parse_task_subtypes
   (
     pi_bpmn_id     in flow_types_pkg.t_bpmn_id
-  , pi_subtype_xml in xmltype
+  , pi_subtype_xml in sys.xmltype
   )
   as
     l_namespace        flow_types_pkg.t_vc200;
@@ -670,7 +671,7 @@ as
                          columns
                            prop_name     varchar2(50 char) path 'name()'
                          , prop_value    clob              path 'text()'
-                         , prop_children xmltype           path '* except bpmn:incoming except bpmn:outgoing'
+                         , prop_children sys.xmltype       path '* except bpmn:incoming except bpmn:outgoing'
                        ) props
                )
     loop
@@ -708,7 +709,7 @@ as
   procedure parse_custom_timers
   (
     pi_bpmn_id     in flow_types_pkg.t_bpmn_id
-  , pi_subtype_xml in xmltype
+  , pi_subtype_xml in sys.xmltype
   )
   as
     l_namespace        flow_types_pkg.t_vc200;
@@ -729,7 +730,7 @@ as
                          columns
                            prop_name     varchar2(50 char)    path 'name()'
                          , prop_value    varchar2(4000 char)  path 'text()'
-                         , prop_children xmltype              path '* except bpmn:incoming except bpmn:outgoing'
+                         , prop_children sys.xmltype          path '* except bpmn:incoming except bpmn:outgoing'
                        ) props
                )
     loop
@@ -757,7 +758,7 @@ as
   procedure parse_extension_elements
   (
     pi_bpmn_id       in flow_types_pkg.t_bpmn_id
-  , pi_extension_xml in xmltype
+  , pi_extension_xml in sys.xmltype
   )
   as
   begin
@@ -770,7 +771,7 @@ as
                        , '/bpmn:extensionElements/*' passing pi_extension_xml
                          columns
                            extension_type varchar2(50 char) path 'name()'
-                         , extension_data xmltype           path '*'
+                         , extension_data sys.xmltype       path '*'
                        ) 
                )
     loop
@@ -831,16 +832,80 @@ as
     end loop;
   end parse_extension_elements;
 
+  procedure parse_callable_extensions
+  (
+    pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
+  , pi_xml          in sys.xmltype
+  )
+  as
+    l_apex_object sys.json_object_t;
+    l_var_array   flow_types_pkg.t_bpmn_attribute_vc2;
+  begin
+
+    -- Mark this process as callable
+    register_object_attribute
+    (
+      pi_objt_bpmn_id   => pi_objt_bpmn_id
+    , pi_attribute_name => flow_constants_pkg.gc_apex_process_callable
+    , pi_value          => flow_constants_pkg.gc_vcbool_true
+    );
+
+    -- previous call guarantees the "apex" object
+    -- so we can simply retrieve it here
+    l_apex_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( 'apex' );
+
+    -- Parse in vs. out variables separately
+    -- Makes it easier to understand in the code
+    -- while not hitting performance too much
+
+    select json_arrayagg( json_object(
+             key 'name'        is var_name
+           , key 'datatype'    is var_datatype
+           , key 'description' is var_description
+           ) ) in_var_array
+      into l_var_array
+      from xmltable(
+                   xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                 , 'https://flowsforapex.org' as "apex")
+                 , '/bpmn:extensionElements/apex:inVariables/apex:processVariable[*]' passing pi_xml
+                   columns
+                     var_name        varchar2(50 char) path 'apex:varName'
+                   , var_datatype    varchar2(50 char) path 'apex:varDataType'
+                   , var_description varchar2(50 char) path 'apex:varDescription'
+                 )
+    ;
+    l_apex_object.put( 'inVariables', sys.json_array_t.parse( l_var_array ) );
+
+    select json_arrayagg( json_object(
+             key 'name'        is var_name
+           , key 'datatype'    is var_datatype
+           , key 'description' is var_description
+           ) ) in_var_array
+      into l_var_array
+      from xmltable(
+                   xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                 , 'https://flowsforapex.org' as "apex")
+                 , '/bpmn:extensionElements/apex:outVariables/apex:processVariable[*]' passing pi_xml
+                   columns
+                     var_name        varchar2(50 char) path 'apex:varName'
+                   , var_datatype    varchar2(50 char) path 'apex:varDataType'
+                   , var_description varchar2(50 char) path 'apex:varDescription'
+                 )
+    ;
+    l_apex_object.put( 'outVariables', sys.json_array_t.parse( l_var_array ) );
+
+  end parse_callable_extensions;
+
   procedure parse_child_elements
   (
     pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
-  , pi_xml          in xmltype
+  , pi_xml          in sys.xmltype
   )
   as
     l_child_type         flow_types_pkg.t_bpmn_id;
     l_child_id           flow_types_pkg.t_bpmn_id;
     l_child_value        flow_types_pkg.t_bpmn_attribute_vc2;
-    l_child_details      xmltype;
+    l_child_details      sys.xmltype;
     l_detail_type        flow_types_pkg.t_bpmn_id;
     l_detail_id          flow_types_pkg.t_bpmn_id;
     l_detail_value       flow_types_pkg.t_bpmn_attribute_vc2;
@@ -861,8 +926,8 @@ as
                            child_type         varchar2(50 char)    path 'name()'
                          , child_id           varchar2(50 char)    path '@id'
                          , child_value        varchar2(4000 char)  path 'text()'
-                         , child_details      xmltype              path '* except bpmn:incoming except bpmn:outgoing'
-                         , extension_elements xmltype              path 'bpmn:extensionElements'
+                         , child_details      sys.xmltype          path '* except bpmn:incoming except bpmn:outgoing'
+                         , extension_elements sys.xmltype          path 'bpmn:extensionElements'
                        ) children
                )
     loop
@@ -892,20 +957,21 @@ as
           -- if standard type just register value inside tag
           else
             select details.detail_type
-            , details.detail_id
-            , details.detail_value
-                into l_detail_type
-                  , l_detail_id
-                  , l_detail_value
-                from xmltable
-                    (
-                      xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                    , '*' passing rec.child_details
-                      columns
-                        detail_type        varchar2(50 char)    path 'name()'
-                      , detail_id          varchar2(50 char)    path '@id'
-                      , detail_value       varchar2(4000 char)  path 'text()'
-                    ) details;
+                 , details.detail_id
+                 , details.detail_value
+              into l_detail_type
+                 , l_detail_id
+                 , l_detail_value
+              from xmltable
+                   (
+                     xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                   , '*' passing rec.child_details
+                     columns
+                       detail_type        varchar2(50 char)    path 'name()'
+                     , detail_id          varchar2(50 char)    path '@id'
+                     , detail_value       varchar2(4000 char)  path 'text()'
+                   ) details
+              ;
 
             -- register the timer type
             register_object_attribute
@@ -955,7 +1021,7 @@ as
 
   procedure parse_call_activity
   (
-    pi_xml          in xmltype
+    pi_xml          in sys.xmltype
   , pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
   )
   as
@@ -967,8 +1033,8 @@ as
                      , activity.activity_version
                   from xmltable
                        (
-                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                                      , 'https://flowsforapex.org' as "apex")
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                       , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_xml
                          columns
                            activity_diagram          varchar2(50 char) path '@apex:calledDiagram'
@@ -1011,7 +1077,7 @@ as
 
   procedure parse_steps
   (
-    pi_xml          in xmltype
+    pi_xml          in sys.xmltype
   , pi_proc_type    in flow_types_pkg.t_bpmn_id
   , pi_proc_bpmn_id in flow_types_pkg.t_bpmn_id
   )
@@ -1043,9 +1109,9 @@ as
                          , default_conn       varchar2(50  char) path '@default'
                          , attached_to        varchar2(50  char) path '@attachedToRef'
                          , interrupting       varchar2(50  char) path '@cancelActivity'
-                         , child_elements     xmltype            path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
-                         , extension_elements xmltype            path 'bpmn:extensionElements'
-                         , step               xmltype            path '.'
+                         , child_elements     sys.xmltype        path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
+                         , extension_elements sys.xmltype        path 'bpmn:extensionElements'
+                         , step               sys.xmltype        path '.'
                        ) steps
                )
     loop
@@ -1120,7 +1186,7 @@ as
 
   procedure parse_xml
   (
-    pi_xml       in xmltype
+    pi_xml       in sys.xmltype
   , pi_parent_id in flow_types_pkg.t_bpmn_id
   )
   as
@@ -1130,21 +1196,26 @@ as
                  select proc.proc_id
                       , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
                       , proc.proc_type
+                      , proc.proc_callable
                       , proc.proc_steps
                       , proc.proc_sub_procs
                       , proc.proc_name
                       , proc.proc_laneset
+                      , proc.proc_extensions
                    from xmltable
                       (
-                        xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                        xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                      , 'https://flowsforapex.org' as "apex")
                       , '/bpmn:definitions/bpmn:process' passing pi_xml
                         columns
-                          proc_id        varchar2(50  char) path '@id'
-                        , proc_type      varchar2(50  char) path 'name()'
-                        , proc_name      varchar2(200 char) path '@name'
-                        , proc_steps     xmltype            path '* except bpmn:subProcess'
-                        , proc_sub_procs xmltype            path 'bpmn:subProcess'
-                        , proc_laneset   xmltype            path 'bpmn:laneSet'
+                          proc_id         varchar2( 50 char) path '@id'
+                        , proc_type       varchar2( 50 char) path 'name()'
+                        , proc_name       varchar2(200 char) path '@name'
+                        , proc_callable   varchar2( 50 char) path '@apex:isCallable'
+                        , proc_steps      sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements'
+                        , proc_sub_procs  sys.xmltype        path 'bpmn:subProcess'
+                        , proc_laneset    sys.xmltype        path 'bpmn:laneSet'
+                        , proc_extensions sys.xmltype        path 'bpmn:extensionElements'
                       ) proc
                  )
       loop
@@ -1155,8 +1226,16 @@ as
           pi_objt_bpmn_id        => rec.proc_id
         , pi_objt_tag_name       => rec.proc_type
         , pi_objt_name           => rec.proc_name
-        , pi_objt_parent_bpmn_id => pi_parent_id
+        , pi_objt_parent_bpmn_id => case when g_collab_refs.exists( rec.proc_id ) then g_collab_refs( rec.proc_id ) else null end
         );
+
+        if rec.proc_callable = flow_constants_pkg.gc_vcbool_true then
+          parse_callable_extensions
+          (
+            pi_objt_bpmn_id => rec.proc_id
+          , pi_xml          => rec.proc_extensions
+          );
+        end if;
 
         -- parse immediate steps        
         parse_steps
@@ -1194,8 +1273,8 @@ as
                           proc_id        varchar2(50  char) path '@id'
                         , proc_name      varchar2(200 char) path '@name'
                         , proc_type      varchar2(50  char) path 'name()'
-                        , proc_steps     xmltype            path '* except bpmn:subProcess'
-                        , proc_sub_procs xmltype            path 'bpmn:subProcess'
+                        , proc_steps     sys.xmltype        path '* except bpmn:subProcess'
+                        , proc_sub_procs sys.xmltype        path 'bpmn:subProcess'
                       ) proc
                  )
       loop
@@ -1231,7 +1310,7 @@ as
 
   procedure parse_collaboration
   (
-    pi_xml in xmltype
+    pi_xml in sys.xmltype
   )
   as
 
@@ -1240,6 +1319,7 @@ as
                  select colab_id
                       , colab_name
                       , colab_type
+                      , colab_proc_ref
                       , colab_src_ref
                       , colab_tgt_ref
                    from xmltable
@@ -1247,14 +1327,14 @@ as
                           xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                         , '/bpmn:definitions/bpmn:collaboration/*' passing pi_xml
                           columns
-                            colab_id      varchar2(50  char)  path '@id'
-                          , colab_name    varchar2(200 char) path '@name'
-                          , colab_type    varchar2(50  char)  path 'name()'
-                          , colab_src_ref varchar2(50  char)  path '@sourceRef'
-                          , colab_tgt_ref varchar2(50  char)  path '@targetRef'
+                            colab_id       varchar2(50  char) path '@id'
+                          , colab_name     varchar2(200 char) path '@name'
+                          , colab_type     varchar2(50  char) path 'name()'
+                          , colab_proc_ref varchar2(50  char) path '@processRef'
+                          , colab_src_ref  varchar2(50  char) path '@sourceRef'
+                          , colab_tgt_ref  varchar2(50  char) path '@targetRef'
                         ) colab
     ) loop
-
       case
         when rec.colab_src_ref is null then
           register_object
@@ -1263,6 +1343,7 @@ as
           , pi_objt_tag_name       => rec.colab_type
           , pi_objt_name           => rec.colab_name
           );
+          g_collab_refs(rec.colab_proc_ref) := rec.colab_id;
         else
           register_connection
           (
@@ -1273,11 +1354,8 @@ as
           , pi_conn_tag_name    => rec.colab_type
           , pi_conn_origin      => null
           );
-
       end case;
-
     end loop;
-
   end parse_collaboration;
 
   procedure reset
@@ -1315,14 +1393,15 @@ as
     -- update diagram after change
     if l_has_changed then
       update flow_diagrams
-      set dgrm_content = l_dgrm_content
-      where dgrm_id = g_dgrm_id;
+         set dgrm_content = l_dgrm_content
+       where dgrm_id = g_dgrm_id
+      ;
     end if;
 
     -- parse out collaboration part first
-    parse_collaboration( pi_xml => xmltype(l_dgrm_content) );
+    parse_collaboration( pi_xml => sys.xmltype(l_dgrm_content) );
     -- start recursive processsing of xml
-    parse_xml( pi_xml => xmltype(l_dgrm_content), pi_parent_id => null );
+    parse_xml( pi_xml => sys.xmltype(l_dgrm_content), pi_parent_id => null );
 
     -- finally insert all parsed data
     finalize;
