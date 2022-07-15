@@ -126,6 +126,8 @@ as
   , pi_conn_tgt_bpmn_id in flow_objects.objt_bpmn_id%type
   , pi_conn_tag_name    in flow_connections.conn_tag_name%type
   , pi_conn_origin      in flow_connections.conn_origin%type
+  , pi_conn_sequence    in flow_connections.conn_sequence%type
+  , pi_conn_attributes  in flow_connections.conn_attributes%type
   )
   as
     l_conn_rec flow_parser_util.t_conn_rec;
@@ -136,6 +138,8 @@ as
       l_conn_rec.conn_tgt_bpmn_id := pi_conn_tgt_bpmn_id;
       l_conn_rec.conn_tag_name    := pi_conn_tag_name;
       l_conn_rec.conn_origin      := pi_conn_origin;
+      l_conn_rec.conn_sequence    := pi_conn_sequence;
+      l_conn_rec.conn_attributes  := pi_conn_attributes;
 
       g_connections( pi_conn_bpmn_id ) := l_conn_rec;
     end if;
@@ -228,7 +232,9 @@ as
   , pi_conn_src_objt_id  in flow_connections.conn_src_objt_id%type
   , pi_conn_tgt_objt_id  in flow_connections.conn_tgt_objt_id%type
   , pi_conn_tag_name     in flow_connections.conn_tag_name%type
-  , pi_conn_origin       in flow_connections.conn_origin%type -- ?? needed ??
+  , pi_conn_origin       in flow_connections.conn_origin%type
+  , pi_conn_sequence     in flow_connections.conn_sequence%type
+  , pi_conn_attributes   in flow_connections.conn_attributes%type
   , po_conn_id          out flow_connections.conn_id%type
   )
   as
@@ -246,6 +252,8 @@ as
             , conn_tag_name
             , conn_origin
             , conn_is_default
+            , conn_sequence
+            , conn_attributes
             )
     values (
               g_dgrm_id
@@ -255,7 +263,9 @@ as
             , pi_conn_tgt_objt_id
             , pi_conn_tag_name
             , pi_conn_origin
-            , l_conn_is_default 
+            , l_conn_is_default
+            , pi_conn_sequence
+            , pi_conn_attributes
             )
       returning conn_id into po_conn_id
     ;
@@ -396,6 +406,8 @@ as
         , pi_conn_tgt_objt_id  => case when l_cur_conn.conn_tgt_bpmn_id is not null then g_objt_lookup( l_cur_conn.conn_tgt_bpmn_id ) else null end
         , pi_conn_tag_name     => l_cur_conn.conn_tag_name
         , pi_conn_origin       => l_cur_conn.conn_origin
+        , pi_conn_sequence     => l_cur_conn.conn_sequence
+        , pi_conn_attributes   => l_cur_conn.conn_attributes
         , po_conn_id           => l_conn_id
         );
       end if;
@@ -1075,6 +1087,43 @@ as
 
   end parse_call_activity;
 
+  function get_connection_attributes
+  (
+    pi_conn_bpmn_id in flow_types_pkg.t_bpmn_id
+  , pi_xml          in sys.xmltype
+  ) return clob
+  as
+    l_condition_base       flow_types_pkg.t_bpmn_attribute_vc2;
+    l_condition_expression clob;
+    l_condition_object     sys.json_object_t;
+    l_expression_array     sys.json_array_t;
+    l_attributes_json      sys.json_object_t := sys.json_object_t();
+  begin
+    select json_object( key 'language' is condition_type )
+         , condition_value
+      into l_condition_base
+         , l_condition_expression
+      from xmltable
+           (
+             xmlnamespaces( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                          , 'https://flowsforapex.org' as "apex")
+           , '/bpmn:conditionExpression' passing pi_xml
+             columns
+               condition_type  varchar2(50 char) path '@conditionType'
+             , condition_value clob              path 'text()'
+           )
+    ;
+    l_condition_object := sys.json_object_t.parse( l_condition_base );
+    l_expression_array := flow_parser_util.get_lines_array( pi_str => l_condition_expression );
+    l_condition_object.put( 'expression', l_expression_array );
+
+    l_attributes_json.put( 'conditionExpression', l_condition_object );
+    return l_attributes_json.to_clob;
+  exception
+    when no_data_found then
+      return null;
+  end get_connection_attributes;
+
   procedure parse_steps
   (
     pi_xml          in sys.xmltype
@@ -1083,6 +1132,7 @@ as
   )
   as
     l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
+    l_conn_attributes   clob;
   begin
     for rec in (
                 select steps.steps_type
@@ -1093,12 +1143,14 @@ as
                      , steps.default_conn
                      , steps.attached_to
                      , case steps.interrupting when 'false' then 0 else 1 end as interrupting
+                     , steps.conn_sequence
                      , steps.child_elements
                      , steps.extension_elements
                      , steps.step
                   from xmltable
                        (
-                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                                       , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_xml
                          columns
                            steps_type         varchar2(50  char) path 'name()'
@@ -1109,6 +1161,7 @@ as
                          , default_conn       varchar2(50  char) path '@default'
                          , attached_to        varchar2(50  char) path '@attachedToRef'
                          , interrupting       varchar2(50  char) path '@cancelActivity'
+                         , conn_sequence      number             path '@apex:sequence'
                          , child_elements     sys.xmltype        path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
                          , extension_elements sys.xmltype        path 'bpmn:extensionElements'
                          , step               sys.xmltype        path '.'
@@ -1171,6 +1224,16 @@ as
           );
         end if;
       else
+        if rec.child_elements is not null then
+          l_conn_attributes := 
+            get_connection_attributes
+            (
+              pi_conn_bpmn_id   => rec.steps_id
+            , pi_xml            => rec.child_elements
+            );
+        else
+          l_conn_attributes := null;
+        end if;
         register_connection
         (
           pi_conn_bpmn_id     => rec.steps_id
@@ -1179,6 +1242,8 @@ as
         , pi_conn_tgt_bpmn_id => rec.target_ref
         , pi_conn_tag_name    => rec.steps_type
         , pi_conn_origin      => pi_proc_bpmn_id
+        , pi_conn_sequence    => rec.conn_sequence
+        , pi_conn_attributes  => l_conn_attributes
         );        
       end if;
     end loop;  
@@ -1353,6 +1418,8 @@ as
           , pi_conn_tgt_bpmn_id => rec.colab_tgt_ref
           , pi_conn_tag_name    => rec.colab_type
           , pi_conn_origin      => null
+          , pi_conn_sequence    => null
+          , pi_conn_attributes  => null
           );
       end case;
     end loop;
