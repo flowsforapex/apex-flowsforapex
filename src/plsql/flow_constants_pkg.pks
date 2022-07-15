@@ -140,6 +140,9 @@ as
   gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
   gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
+  -- Callable Process Tags
+  gc_apex_process_callable            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isCallable';
+
   -- callActivity tags
   gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
   gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
