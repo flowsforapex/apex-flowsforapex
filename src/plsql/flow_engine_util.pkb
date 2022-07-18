@@ -626,10 +626,25 @@ procedure get_number_of_connections
   as
     l_return clob;
   begin
+    apex_debug.info( p_message => '-- Joing JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
     for i in 0..p_json_array.get_size - 1 loop
       l_return := l_return || p_json_array.get_string( i ) || apex_application.lf;
     end loop;
+    return l_return;
   end json_array_join;
+
+  function json_array_join
+  (
+    p_json_array in clob
+  ) return clob
+  as
+    l_json sys.json_array_t;
+  begin
+    apex_debug.info( p_message => '-- Got CLOB parsing to JSON_ARRAY_T' );
+    l_json := sys.json_array_t.parse( p_json_array );
+    return json_array_join( p_json_array => l_json );
+  end json_array_join;
+
 
   -- initialise step key enforcement parameter
 

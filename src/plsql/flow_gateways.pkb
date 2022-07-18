@@ -130,16 +130,20 @@ as
            or conn.conn_is_default = 1 )
      order by conn.conn_is_default asc, conn.conn_sequence asc
     ;
+
+    apex_debug.info( p_message => '-- Found %0 possible routes.', p0 => l_possible_routes.count );
+
     if l_possible_routes.count > 0 then
       -- loop over routes
-      for route in 1 .. l_possible_routes.last
+      for route in 1 .. l_possible_routes.count
       loop
+        apex_debug.info( p_message => '-- Evaluating Route #%0, Language: %1, Expression: %2', p0 => route, p1 => l_possible_routes(route).conn_language, p2 => l_possible_routes(route).conn_expression );
         l_take_route := false;
         -- evaluate route expression
         l_expr      :=
           flow_engine_util.json_array_join
           ( 
-            p_json_array => sys.json_array_t.parse(l_possible_routes(route).conn_expression)
+            p_json_array => l_possible_routes(route).conn_expression
           );
         l_expr_type := l_possible_routes(route).conn_language;
 
@@ -253,6 +257,7 @@ as
                             , pi_scope    => pi_scope
                             );
       if l_routing_variable is not null then
+        apex_debug.info( p_message => '-- Using Routing Variable (Legacy Mode).' );
         -- route from routing variable
         l_forward_routes := get_valid_routing_variable_routes ( pi_prcs_id          => pi_prcs_id
                                                               , pi_sbfl_id          => pi_sbfl_id
@@ -264,6 +269,7 @@ as
                         , p0 => l_routing_variable
                         );                                                                
       else 
+        apex_debug.info( p_message => '-- Using Gateway Route Expressions.' );
         -- look for gateway routing expressions or default routing
         l_forward_routes := get_valid_routing_expression_routes ( pi_prcs_id          => pi_prcs_id
                                                                 , pi_sbfl_id          => pi_sbfl_id

@@ -118,5 +118,10 @@ as
     p_json_array in sys.json_array_t
   ) return clob;
 
+  function json_array_join
+  (
+    p_json_array in clob
+  ) return clob;
+
 end flow_engine_util;
 /
