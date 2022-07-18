@@ -8,6 +8,7 @@ as
 --
 -- Created    06-May-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
+-- Modified   2022-07-18   Moritz Klein (MT AG)
 --
 */
   type t_new_sbfls is table of flow_types_pkg.t_subflow_context;
@@ -95,13 +96,13 @@ as
       , conn_is_default flow_connections.conn_is_default%type
       , conn_sequence   flow_connections.conn_sequence%type
       , conn_bpmn_id    flow_connections.conn_bpmn_id%type
-      , conn_expression varchar2(2000)
+      , conn_expression clob
       , conn_language   flow_types_pkg.t_expr_type
       );
     type t_possible_routes is table of t_possible_route;
     l_possible_routes   t_possible_routes;
     l_take_route        boolean;
-    l_expr              varchar2(2000);
+    l_expr              clob;
     l_expr_type         flow_types_pkg.t_expr_type;
     l_bind              apex_plugin_util.t_bind;
     l_bind_list         apex_plugin_util.t_bind_list;
@@ -114,8 +115,8 @@ as
          , conn.conn_is_default
          , conn.conn_sequence
          , conn.conn_bpmn_id
-         , conn.conn_attributes."apex"."expression" as conn_expression
-         , conn.conn_attributes."apex"."language"   as conn_language
+         , conn.conn_attributes."conditionExpression"."expression" as conn_expression
+         , conn.conn_attributes."conditionExpression"."language"   as conn_language
       bulk collect into l_possible_routes
       from flow_connections conn
       join flow_objects objt
@@ -125,7 +126,7 @@ as
         on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
      where objt.objt_bpmn_id = pi_objt_bpmn_id
        and sbfl.sbfl_id = pi_sbfl_id
-       and ( conn.conn_attributes."apex"."expression" is not null 
+       and ( conn.conn_attributes."conditionExpression" is not null 
            or conn.conn_is_default = 1 )
      order by conn.conn_is_default asc, conn.conn_sequence asc
     ;
@@ -135,7 +136,11 @@ as
       loop
         l_take_route := false;
         -- evaluate route expression
-        l_expr      := l_possible_routes(route).conn_expression;
+        l_expr      :=
+          flow_engine_util.json_array_join
+          ( 
+            p_json_array => sys.json_array_t.parse(l_possible_routes(route).conn_expression)
+          );
         l_expr_type := l_possible_routes(route).conn_language;
 
         apex_debug.info (p_message => '--- unpacked gateway expression : %0 type : %1  '

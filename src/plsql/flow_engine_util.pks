@@ -1,16 +1,17 @@
+create or replace package flow_engine_util
+  authid definer
+-- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances, flow_plsql_runner_pkg)
+as 
 /* 
 -- Flows for APEX - flow_engine_util.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
 --
--- Created April-2021  Richard Allen (Flowquest) - for  MT AG  
+-- Created  April-2021  Richard Allen (Flowquest) - for  MT AG
+-- Modified 2022-07-18  Moritz Klein (MT AG)
 --
 */
-create or replace package flow_engine_util
-  authid definer
--- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances)
-as 
 
   function get_config_value
   ( 
@@ -111,6 +112,11 @@ as
   (  p_process_id  in flow_processes.prcs_id%type
   ,  p_subflow_id  in flow_subflows.sbfl_id%type
   ) return flow_subflows.sbfl_scope%type;
+
+  function json_array_join
+  (
+    p_json_array in sys.json_array_t
+  ) return clob;
 
 end flow_engine_util;
 /
