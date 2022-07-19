@@ -279,7 +279,7 @@ as
               where objt_dgrm_id = ( select prcs_dgrm_id 
                                        from flow_processes
                                       where prcs_id = p_prcs_id)
-                and objt_tag_name not in ('bpmn:textAnnotation', 'bpmn:laneSet', 'bpmn:lane')
+                and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
               union
              select conn_bpmn_id
                from flow_connections
@@ -302,7 +302,7 @@ as
       from ( select objt_bpmn_id
                from flow_objects
               where objt_dgrm_id = p_dgrm_id
-                and objt_tag_name not in ('bpmn:textAnnotation', 'bpmn:laneSet', 'bpmn:lane')
+                and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
               union
              select conn_bpmn_id
                from flow_connections
