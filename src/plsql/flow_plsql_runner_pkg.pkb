@@ -1,3 +1,5 @@
+create or replace package body flow_plsql_runner_pkg
+as
 /* 
 -- Flows for APEX - flow_plsql_runner_pkg.pkb
 -- 
@@ -7,10 +9,9 @@
 -- Created    15-Nov-2020  Moritz Klein (MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
 -- Modified   20-May-2022  Moritz Klein (MT AG)
+-- Modified   2022-07-18   Moritz Klein (MT AG)
 --
 */
-create or replace package body flow_plsql_runner_pkg
-as
 
   type t_runner_config is
     record
@@ -91,9 +92,7 @@ as
     po_use_apex_exec := coalesce( l_json_config.get_boolean( 'engine' ), false );
     po_do_autobinds  := coalesce( l_json_config.get_boolean( 'autoBinds' ), false );
     l_code_json      := l_json_config.get_array( 'plsqlCode' );
-    for i in 0..l_code_json.get_size - 1 loop
-      po_plsql_code := po_plsql_code || l_code_json.get_string( i ) || apex_application.lf;
-    end loop;
+    po_plsql_code    := flow_engine_util.json_array_join( p_json_array => l_code_json );
   end get_runner_config;
 
   procedure run_task_script

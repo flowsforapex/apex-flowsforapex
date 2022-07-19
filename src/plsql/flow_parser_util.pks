@@ -40,6 +40,8 @@ as
     , conn_tgt_bpmn_id flow_types_pkg.t_bpmn_id
     , conn_tag_name    flow_types_pkg.t_bpmn_id
     , conn_origin      flow_types_pkg.t_bpmn_id
+    , conn_sequence    number
+    , conn_attributes  clob
     );
   type t_conn_tab is table of t_conn_rec index by flow_types_pkg.t_bpmn_id;
 
@@ -65,6 +67,11 @@ as
     pio_objt_attributes in out nocopy sys.json_object_t
   , pi_key              in varchar2
   );
+
+  function get_lines_array
+  (
+    pi_str in clob
+  ) return sys.json_array_t;
 
   procedure property_to_json
   (

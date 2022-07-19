@@ -1,15 +1,15 @@
+create or replace package body flow_engine_util
+as 
 /* 
 -- Flows for APEX - flow_engine_util.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
 --
--- Created April-2021  Richard Allen (Flowquest) - from flow_engine.pkb
+-- Created  April-2021  Richard Allen (Flowquest) - from flow_engine.pkb
+-- Modified 2022-07-18  Moritz Klein (MT AG)
 --
 */
-create or replace package body flow_engine_util
-as 
-
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
@@ -617,7 +617,34 @@ procedure get_number_of_connections
       , p1 => p_process_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).' 
-  end;
+  end get_scope;
+
+  function json_array_join
+  (
+    p_json_array in sys.json_array_t
+  ) return clob
+  as
+    l_return clob;
+  begin
+    apex_debug.info( p_message => '-- Joing JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
+    for i in 0..p_json_array.get_size - 1 loop
+      l_return := l_return || p_json_array.get_string( i ) || apex_application.lf;
+    end loop;
+    return l_return;
+  end json_array_join;
+
+  function json_array_join
+  (
+    p_json_array in clob
+  ) return clob
+  as
+    l_json sys.json_array_t;
+  begin
+    apex_debug.info( p_message => '-- Got CLOB parsing to JSON_ARRAY_T' );
+    l_json := sys.json_array_t.parse( p_json_array );
+    return json_array_join( p_json_array => l_json );
+  end json_array_join;
+
 
   -- initialise step key enforcement parameter
 

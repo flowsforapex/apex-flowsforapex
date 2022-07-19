@@ -93,7 +93,6 @@ as
   gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'cache';
 
   gc_apex_usertask_page_items          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
-  --gc_apex_usertask_page_item          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItem';
   gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemName';
   gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemValue';
 
@@ -152,7 +151,7 @@ as
   gc_dgrm_version_named_version       constant flow_types_pkg.t_bpmn_attributes_key := 'namedVersion';
   gc_dgrm_version_latest_version      constant flow_types_pkg.t_bpmn_attributes_key := 'latestVersion';
 
-  -- Special Keys from FLOW_OBJECT_ATTRIBUTES
+  -- Special Keys from FLOW_OBJECTS.OBJT_ATTRIBUTES
   gc_timer_type_key                   constant flow_types_pkg.t_bpmn_id := 'timerType';
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
   
@@ -222,6 +221,8 @@ as
   gc_prov_builtin_business_ref        constant  varchar2(50 char) := 'BUSINESS_REF';
 
   -- Process Variable and Gateway Routing Variable Expression Types
+  gc_apex_expression constant flow_types_pkg.t_bpmn_attribute_vc2 := 'conditionExpression';
+
   gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'static';
   gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'processVariable';
   gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'item';
