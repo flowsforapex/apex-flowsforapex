@@ -291,10 +291,21 @@ function redirectToFlowDiagram( action, element ){
   sendToServer(data);
 }
 
-function redirectToMonitor( action, prcs_id ) {
+function initViewer( prcsId, prcsName, displaySetting ) {
+  if (prcsName !== "")
+      apex.jQuery( "#flow-monitor_heading" ).text( apex.lang.formatMessage("APP_VIEWER_TITLE_PROCESS_SELECTED", prcsName) );
+    else
+       apex.jQuery( "#flow-monitor_heading" ).text( apex.lang.getMessage("APP_VIEWER_TITLE_NO_PROCESS") );
+
+  if ( prcsId !== "" && displaySetting === "window") {
+    redirectToMonitor(prcsId);
+  }
+}
+
+function redirectToMonitor(prcsId) {
   var data = {};
-  data.x01 = action;
-  data.x02 = prcs_id;
+  data.x01 = "view-flow-instance";
+  data.x02 = prcsId;
   sendToServer(data);
 }
 
@@ -821,7 +832,7 @@ function markAsCurrent(prcsId){
 
 function refreshViewer(prcsId){
   if ( apex.item("P10_DISPLAY_SETTING").getValue() === "window" ) {
-    redirectToMonitor("view-flow-instance", prcsId);
+    redirectToMonitor(prcsId);
   } else {
     apex.region("flow-monitor").refresh();
   }
@@ -1071,7 +1082,7 @@ function initActions(){
                 apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );
 
                 if ( prcsId !== "" ) {
-                  redirectToMonitor( "view-flow-instance", prcsId );
+                  redirectToMonitor( prcsId );
                 }
                 break;
             }
@@ -1552,4 +1563,46 @@ function initPage10() {
     } );
 
   } );
+}
+
+/* Utility functions for viewer plugin dynamic (click) actions */
+
+function changeCursor(objectListItem) {
+  // get object ids from page item
+  var objects = objectListItem.split(':');
+  // change cursor to pointer
+  $.each(objects, function( index, value ) {
+    $( "[data-element-id='" + value + "']").css( "cursor", "pointer" );
+  });
+}
+
+function clickCondition(objectListItem, eventData) {
+  // if object exists in list
+  if (objectListItem.split(':').includes(eventData.element.id) &&
+      // filter out call activity drilldown
+      (eventData.element.type != 'bpmn:CallActivity' ||
+        (eventData.originalEvent.target.tagName != 'path' && !eventData.originalEvent.target.getAttribute('transform'))
+      )
+    ) return true;
+  return false;
+}
+
+function openObjectDialog(objectBpmnId, objectName) {
+  // set title
+  var title = objectBpmnId + (objectName.length > 0 ? ' - ' + objectName : '');
+  // open page
+  apex.server.process(
+      'GET_URL',                           
+      {
+          x01: objectBpmnId,
+          x02: title
+      }, 
+      {
+          success: function (pData)
+          {           
+              apex.navigation.redirect(pData);
+          },
+          dataType: "text"                     
+      }
+  );
 }

@@ -32,7 +32,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220407123354'
+,p_last_upd_yyyymmddhh24miss=>'20220720101855'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -1744,13 +1744,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>20
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var prcsId = apex.item("P8_PRCS_ID").getValue();',
-'var selectedView  = apex.item("P8_DISPLAY_SETTING").getValue();',
-'',
-'if ( prcsId !== "" && selectedView === "window") {',
-'    redirectToMonitor("view-flow-instance", prcsId);',
-'}'))
+,p_attribute_01=>'initViewer($v(''P8_PRCS_ID''), $v(''P8_PRCS_NAME''), $v(''P8_DISPLAY_SETTING''));'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(44803077743176612)
@@ -1776,11 +1770,7 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P8_OBJT_LIST'
 ,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'if :P8_LOADED_DGRM_ID is not null',
-'then return flow_engine_app_api.get_objt_list(p_dgrm_id => :P8_LOADED_DGRM_ID);',
-'else return flow_engine_app_api.get_objt_list(p_prcs_id => :P8_PRCS_ID);',
-'end if;'))
+,p_attribute_06=>'return flow_engine_app_api.get_objt_list(p_dgrm_id => nvl(:P8_LOADED_DGRM_ID, :P8_PRCS_ID));'
 ,p_attribute_07=>'P8_LOADED_DGRM_ID,P8_PRCS_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -1793,11 +1783,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var objects = $v(''P8_OBJT_LIST'').split('':'');',
-'$.each(objects, function( index, value ) {',
-'    $( "[data-element-id=''" + value + "'']").css( "cursor", "pointer" );',
-'})'))
+,p_attribute_01=>'changeCursor($v(''P8_OBJT_LIST''));'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6014453052464529)
@@ -1912,18 +1898,6 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'BUTTON'
 ,p_affected_button_id=>wwv_flow_api.id(5955186680464411)
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6002207343464522)
 ,p_name=>'Display Button Based on Gateway Type'
@@ -1935,6 +1909,18 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_expression=>'multi'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'change'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(6002775114464523)
@@ -1963,9 +1949,7 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(6133652177393567089)
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$v(''P8_OBJT_LIST'').split('':'').includes(this.data.element.id) &&',
-'(this.data.element.type != ''bpmn:CallActivity'' || (this.data.originalEvent.target.tagName != ''path'' && !this.data.originalEvent.target.getAttribute(''transform'')))'))
+,p_triggering_expression=>'clickCondition($v(''P8_OBJT_LIST''), this.data);'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
 );
@@ -1994,18 +1978,10 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements=>'P8_OBJT_NAME'
 ,p_attribute_01=>'FUNCTION_BODY'
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'if :P8_LOADED_DGRM_ID is not null',
-'then return',
-'flow_engine_app_api.get_objt_name(',
+'return flow_engine_app_api.get_objt_name(',
 '    p_objt_bpmn_id => :P8_OBJT_BPMN_ID',
-'  , p_dgrm_id => :P8_LOADED_DGRM_ID',
-');',
-'else return',
-'flow_engine_app_api.get_objt_name(',
-'    p_objt_bpmn_id => :P8_OBJT_BPMN_ID',
-'  , p_prcs_id => :P8_PRCS_ID',
-');',
-'end if;'))
+'  , p_dgrm_id => nvl(:P8_LOADED_DGRM_ID, :P8_PRCS_ID)',
+');'))
 ,p_attribute_07=>'P8_OBJT_BPMN_ID,P8_LOADED_DGRM_ID,P8_PRCS_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
@@ -2018,23 +1994,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var title = $v(''P8_OBJT_BPMN_ID'') + ($v(''P8_OBJT_NAME'').length > 0 ? '' - '' + $v(''P8_OBJT_NAME'') : '''');',
-'',
-'apex.server.process(',
-'    ''GET_URL'',                           ',
-'    {',
-'        x01: this.data.element.id,',
-'        x02: title',
-'    }, ',
-'    {',
-'        success: function (pData)',
-'        {           ',
-'            apex.navigation.redirect(pData);',
-'        },',
-'        dataType: "text"                     ',
-'    }',
-');'))
+,p_attribute_01=>'openObjectDialog($v(''P8_OBJT_BPMN_ID''), $v(''P8_OBJT_NAME''));'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6007809031464526)
