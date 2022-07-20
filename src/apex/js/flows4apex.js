@@ -266,7 +266,7 @@ function bulkDeleteFlowInstance( action, element ){
 
 function redirectToFlowInstanceAudit( action, element ){
   var data = getflowInstanceData(action, element);
-  data.x03 = apex.jQuery( el ).attr("data-name");
+  data.x03 = apex.jQuery( element ).attr("data-name");
   if ( apex.item("pFlowStepId").getValue() === "10" ) {
     apex.item("P10_PRCS_ID").setValue(data.x02);
     apex.item("P10_PRCS_NAME").setValue( data.x03 );
@@ -563,12 +563,14 @@ function updateProcessVariable(action, focusElement){
   } else {
     var varName = apex.jQuery(focusElement).attr("data-name");
     var varType = apex.jQuery(focusElement).attr("data-type");
+    var varScope = apex.jQuery(focusElement).attr("data-scope");
     apex.server.process( 
       "GET_VARIABLE", 
       {
         x01: apex.item("P8_PRCS_ID").getValue(),
         x02: varName,
-        x03: varType
+        x03: varType,
+        x04: varScope
       }, 
       {
         success: function( data )  {
