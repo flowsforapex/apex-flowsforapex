@@ -27,7 +27,7 @@
 
       this.exporter = {
         name: 'Flows for APEX',
-        version: '22.1.0',
+        version: '22.2.0',
       };
 
       this.moddleExtensions = {
@@ -99,7 +99,10 @@
       try {
         var result = await bpmnModeler$.importXML( this.diagramContent );
 
-        if (bpmnModeler$._definitions && (bpmnModeler$._definitions.exporter !== 'Flows for APEX' || (bpmnModeler$._definitions.exporter === 'Flows for APEX' && bpmnModeler$._definitions.exporterVersion != '22.1.0'))) {
+        var exporter = bpmnModeler$._definitions && bpmnModeler$._definitions.exporter;
+        var exporterVersion = bpmnModeler$._definitions && bpmnModeler$._definitions.exporterVersion;
+
+        if (exporter !== 'Flows for APEX' || !exporterVersion || exporterVersion.substr(0, exporterVersion.indexOf('.')) < 22) {
           const refactored = bpmnModeler$.get('xmlModule').refactorDiagram(this.diagramContent);
           result = await bpmnModeler$.importXML(refactored);
         }

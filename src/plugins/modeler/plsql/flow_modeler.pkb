@@ -39,8 +39,9 @@ as
         '})'
     );
     return l_return;
-    
   end render;
+
+
   procedure load
   (
     p_region in apex_plugin.t_region
@@ -140,8 +141,8 @@ as
       );
       apex_json.close_all;
   end load;
-  
-  
+
+
   procedure save
   (
     p_region in apex_plugin.t_region
@@ -190,8 +191,8 @@ as
       );
       apex_json.close_all;
   end save;
-  
-  
+
+
   procedure get_applications
   as
     l_result clob;
@@ -208,8 +209,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_applications;
-  
-  
+
+
   procedure get_pages
   as
     l_result clob;
@@ -227,8 +228,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_pages;
-  
-  
+
+
   procedure get_items
   as
     l_result clob;
@@ -247,8 +248,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_items;
-  
-  
+
+
   procedure get_applications_mail
   as
     l_result clob;
@@ -265,8 +266,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_applications_mail;
-  
-  
+
+
   procedure get_templates
   as
     l_result clob;
@@ -284,8 +285,8 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_templates;
-  
-  
+
+
   procedure get_json_placeholders
   as
     l_placeholders apex_t_varchar2;
@@ -314,8 +315,8 @@ as
    end loop;
    apex_json.close_object;
   end get_json_placeholders;
-  
-  
+
+
   procedure get_diagrams
   as
     l_result clob;
@@ -414,7 +415,7 @@ as
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_tasks;
-  
+
 
   procedure get_json_parameters
   as
@@ -470,7 +471,7 @@ as
     apex_json.close_array;
   end get_json_parameters;
 
-  
+
   procedure parse_code
   as
     v_cur int;
@@ -503,10 +504,10 @@ as
                   v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
                when 'plsqlExpression' then
                   v_input := 'declare dummy varchar2(4000) :='
-                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
+                              || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
                when 'plsqlExpressionBoolean' then
                   v_input := 'declare dummy boolean :='
-                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'begin null; end;';
+                              || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
                when 'plsqlFunctionBody' then
                   v_input := 'declare function dummy return varchar2 is begin'
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
@@ -527,7 +528,7 @@ as
     htp.p(l_result);
   end parse_code;
 
-  
+
   function ajax
   (
     p_region              in  apex_plugin.t_region

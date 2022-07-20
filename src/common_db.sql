@@ -6,6 +6,7 @@
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
 PROMPT >> Installing Package Specifications
+@plsql/flow_apex_env.pks
 @plsql/flow_types_pkg.pks
 @plsql/flow_constants_pkg.pks
 @plsql/flow_migrate_xml_pkg.pks

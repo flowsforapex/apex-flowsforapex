@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220429121156'
+,p_last_upd_yyyymmddhh24miss=>'20220720091055'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -947,11 +947,7 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P7_OBJT_LIST'
 ,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'if :P7_LOADED_DGRM_ID is not null',
-'then return flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_LOADED_DGRM_ID);',
-'else return flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_DGRM_ID);',
-'end if;'))
+,p_attribute_06=>'return flow_engine_app_api.get_objt_list(p_dgrm_id => nvl(:P7_LOADED_DGRM_ID, :P7_DGRM_ID));'
 ,p_attribute_07=>'P7_LOADED_DGRM_ID,P7_DGRM_ID'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -976,11 +972,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var objects = $v(''P7_OBJT_LIST'').split('':'');',
-'$.each(objects, function( index, value ) {',
-'    $( "[data-element-id=''" + value + "'']").css( "cursor", "pointer" );',
-'})'))
+,p_attribute_01=>'changeCursor($v(''P7_OBJT_LIST''));'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(16957375066050250)
@@ -989,9 +981,7 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_api.id(28425138174759832)
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$v(''P7_OBJT_LIST'').split('':'').includes(this.data.element.id) &&',
-'(this.data.element.type != ''bpmn:CallActivity'' || (this.data.originalEvent.target.tagName != ''path'' && !this.data.originalEvent.target.getAttribute(''transform'')))'))
+,p_triggering_expression=>'clickCondition($v(''P7_OBJT_LIST''), this.data);'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
 );
@@ -1020,18 +1010,10 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements=>'P7_OBJT_NAME'
 ,p_attribute_01=>'FUNCTION_BODY'
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'if :P7_LOADED_DGRM_ID is not null',
-'then return',
-'flow_engine_app_api.get_objt_name(',
+'return flow_engine_app_api.get_objt_name(',
 '    p_objt_bpmn_id => :P7_OBJT_BPMN_ID',
-'  , p_dgrm_id => :P7_LOADED_DGRM_ID',
-');',
-'else return',
-'flow_engine_app_api.get_objt_name(',
-'    p_objt_bpmn_id => :P7_OBJT_BPMN_ID',
-'  , p_dgrm_id => :P7_DGRM_ID',
-');',
-'end if;'))
+'  , p_dgrm_id => nvl(:P7_LOADED_DGRM_ID, :P7_DGRM_ID)',
+');'))
 ,p_attribute_07=>'P7_OBJT_BPMN_ID,P7_LOADED_DGRM_ID,P7_DGRM_ID'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
@@ -1044,23 +1026,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var title = $v(''P7_OBJT_BPMN_ID'') + ($v(''P7_OBJT_NAME'').length > 0 ? '' - '' + $v(''P7_OBJT_NAME'') : '''');',
-'',
-'apex.server.process(',
-'    ''GET_URL'',                           ',
-'    {',
-'        x01: this.data.element.id,',
-'        x02: title',
-'    }, ',
-'    {',
-'        success: function (pData)',
-'        {           ',
-'            apex.navigation.redirect(pData);',
-'        },',
-'        dataType: "text"                     ',
-'    }',
-');'))
+,p_attribute_01=>'openObjectDialog($v(''P7_OBJT_BPMN_ID''), $v(''P7_OBJT_NAME''));'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(22799930478488038)
