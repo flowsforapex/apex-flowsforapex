@@ -465,6 +465,31 @@
   "text_key" : "plugin-multiple-rows",
   "source" : "Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes.",
   "target" : "Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes."
+},
+  {
+  "text_key" : "apex-task-cancelation-error",
+  "source" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)",
+  "target" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)"
+},
+{
+  "text_key" : "apex-task-not-supported",
+  "source" : "APEX Workflow Feature use requires Oracle APEX v%0.",
+  "target" : "APEX Workflow Feature use requires Oracle APEX v%0."
+},
+{
+  "text_key" : "apex-task-not-found",
+  "source" : "APEX Workflow Task %0 not found in Flows for APEX Process",
+  "target" : "APEX Workflow Task %0 not found in Flows for APEX Process"
+},
+{
+  "text_key" : "apex-task-on-multiple-steps",
+  "source" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step.",
+  "target" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step."
+},
+{
+  "text_key" : "apex-task-not-current-step",
+  "source" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready.",
+  "target" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready."
 }
 ]
 }

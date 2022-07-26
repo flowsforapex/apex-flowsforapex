@@ -2,11 +2,16 @@ create or replace package body flow_api_pkg as
 /* 
 -- Flows for APEX - flow_api_pkg.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2020-2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG. 2020-22
 --
--- Created 2020   Moritz Klein - MT AG  
+-- Created    20-Jun-2020   Moritz Klein, MT AG 
+-- Modified   01-May-2022   Richard Allen, Oracle
 -- 
 */
+
+  e_lock_timeout exception;
+  pragma exception_init (e_lock_timeout, -3006);
 
   function get_dgrm_name
   (
@@ -401,6 +406,109 @@ create or replace package body flow_api_pkg as
            );
 
   end message;
+
+  procedure return_approval_result
+   ( p_process_id    in flow_processes.prcs_id%type
+   , p_apex_task_id  in number
+   , p_result        in flow_process_variables.prov_var_vc2%type default null
+   )
+   is
+     l_sbfl_id             flow_subflows.sbfl_id%type;
+     l_current_bpmn_id     flow_objects.objt_bpmn_id%type;
+     l_scope               flow_subflows.sbfl_scope%type;
+     l_step_key            flow_subflows.sbfl_step_key%type;
+     l_var_name            flow_process_variables.prov_var_name%type;
+     l_potential_current   flow_objects.objt_bpmn_id%type;
+
+     e_task_id_proc_var_not_found  exception;
+     e_task_id_duplicate_found     exception;
+     e_task_not_current_step       exception;
+   begin
+     apex_debug.enter
+     (p_routine_name => 'return_approval_result'
+     );
+     -- check task belongs to this process
+     begin
+       select prov.prov_var_name
+            , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current
+            , prov.prov_scope
+         into l_var_name
+            , l_potential_current
+            , l_scope
+         from flow_process_variables prov
+        where prov.prov_prcs_id = p_process_id
+          and prov.prov_var_num = p_apex_task_id
+          and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
+          and prov.prov_var_name like '%'||flow_constants_pkg.gc_prov_suffix_task_id
+       ;
+     exception
+       when no_data_found then
+         raise e_task_id_proc_var_not_found;
+       when too_many_rows then
+         raise e_task_id_duplicate_found;
+     end;
+     begin
+       -- find and lock the subflow
+       select sbfl.sbfl_id
+            , sbfl.sbfl_step_key
+         into l_sbfl_id
+            , l_step_key
+         from flow_subflows sbfl
+        where sbfl.sbfl_prcs_id = p_process_id
+          and sbfl.sbfl_scope = l_scope
+          and sbfl.sbfl_current = l_potential_current
+       for update of sbfl.sbfl_step_key wait 5;
+     exception
+       when no_data_found then
+         raise e_task_not_current_step;
+       when e_lock_timeout then
+         raise e_lock_timeout;
+     end;
+     -- create result variable
+     flow_proc_vars_int.set_var
+      ( pi_prcs_id       => p_process_id
+      , pi_var_name      => l_potential_current||flow_constants_pkg.gc_prov_suffix_result
+      , pi_scope         => l_scope
+      , pi_vc2_value     => p_result
+      , pi_sbfl_id       => l_sbfl_id
+      , pi_objt_bpmn_id  => l_potential_current
+      );
+     -- do next step
+     flow_api_pkg.flow_complete_step
+       ( p_process_id    => p_process_id
+       , p_subflow_id    => l_sbfl_id
+       , p_step_key      => l_step_key
+       );
+   exception
+     when e_lock_timeout then
+       flow_errors.handle_instance_error
+       ( pi_prcs_id     => p_process_id
+       , pi_sbfl_id     => l_sbfl_id
+       , pi_message_key => 'timeout_locking_subflow'
+       , p0 => l_sbfl_id
+       );
+     when e_task_id_proc_var_not_found then
+       flow_errors.handle_instance_error
+       ( pi_prcs_id     => p_process_id
+       , pi_sbfl_id     => l_sbfl_id
+       , pi_message_key => 'apex-task-not-found'
+       , p0 => p_apex_task_id 
+       );
+     when e_task_id_duplicate_found then
+       flow_errors.handle_instance_error
+       ( pi_prcs_id     => p_process_id
+       , pi_sbfl_id     => l_sbfl_id
+       , pi_message_key => 'apex-task-on-multiple-steps'
+       , p0 => p_apex_task_id
+       );
+     when e_task_not_current_step then
+       flow_errors.handle_instance_error
+       ( pi_prcs_id     => p_process_id
+       , pi_sbfl_id     => l_sbfl_id
+       , pi_message_key => 'apex-task-not-current-step'
+       , p0 => p_apex_task_id
+       );
+   end return_approval_result;
 
 end flow_api_pkg;
 /
