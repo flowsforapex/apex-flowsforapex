@@ -640,9 +640,13 @@ procedure get_number_of_connections
   as
     l_json sys.json_array_t;
   begin
-    apex_debug.info( p_message => '-- Got CLOB parsing to JSON_ARRAY_T' );
-    l_json := sys.json_array_t.parse( p_json_array );
-    return json_array_join( p_json_array => l_json );
+    if p_json_array is not null then
+      apex_debug.info( p_message => '-- Got CLOB parsing to JSON_ARRAY_T' );
+      l_json := sys.json_array_t.parse( p_json_array );
+      return json_array_join( p_json_array => l_json );
+    else
+      return null;
+    end if;
   end json_array_join;
 
 
