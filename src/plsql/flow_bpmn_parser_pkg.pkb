@@ -886,7 +886,11 @@ as
                    , var_description varchar2(50 char) path 'apex:varDescription'
                  )
     ;
-    l_apex_object.put( 'inVariables', sys.json_array_t.parse( l_var_array ) );
+
+    -- If no inVariables are found the variable is null
+    if l_var_array is not null then
+      l_apex_object.put( 'inVariables', sys.json_array_t.parse( l_var_array ) );
+    end if;
 
     select json_arrayagg( json_object(
              key 'name'        is var_name
@@ -904,7 +908,10 @@ as
                    , var_description varchar2(50 char) path 'apex:varDescription'
                  )
     ;
-    l_apex_object.put( 'outVariables', sys.json_array_t.parse( l_var_array ) );
+
+    if l_var_array is not null then
+      l_apex_object.put( 'outVariables', sys.json_array_t.parse( l_var_array ) );
+    end if;
 
   end parse_callable_extensions;
 
