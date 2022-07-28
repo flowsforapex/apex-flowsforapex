@@ -499,7 +499,7 @@ procedure get_number_of_connections
                               , pi_scope     => subflows_with_tasks.sbfl_scope
                               );
           -- cancel apex workflow task
-          flow_tasks.cancel_apex_task
+          flow_usertask_pkg.cancel_apex_task
           ( p_process_id    => p_process_id
           , p_objt_bpmn_id  => subflows_with_tasks.sbfl_current
           , p_apex_task_id  => l_apex_task_id
