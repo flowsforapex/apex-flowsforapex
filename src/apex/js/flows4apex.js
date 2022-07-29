@@ -639,6 +639,7 @@ function deleteProcessVariable(action, focusElement){
       data.x01 = action;
       data.x02 = apex.jQuery(focusElement).attr("data-prcs");
       data.x03 = apex.jQuery(focusElement).attr("data-name");
+      data.x04 = apex.jQuery(focusElement).attr("data-scope");
       
       options.messageKey = "APP_PROCESS_VARIABLE_DELETED";
       options.refreshRegion = ["process-variables"];
@@ -654,6 +655,7 @@ function bulkDeleteProcessVariable(action){
       data.x01 = action;
       data.f01 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "data-prcs");
       data.f02 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "value");
+      data.f03 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "data-scope");
       
       options.messageKey = "APP_PROCESS_VARIABLE_DELETED";
       options.refreshRegion = ["process-variables"];
@@ -1597,7 +1599,8 @@ function openObjectDialog(objectBpmnId, objectName) {
       'GET_URL',                           
       {
           x01: objectBpmnId,
-          x02: title
+          x02: title,
+          pageItems: ["P8_LOADED_DGRM_ID"]
       }, 
       {
           success: function (pData)

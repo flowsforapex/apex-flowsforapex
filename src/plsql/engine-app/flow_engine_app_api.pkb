@@ -63,8 +63,9 @@ as
             );
           when 'BULK-DELETE-PROCESS-VARIABLE' then 
             flow_process_vars.delete_var(
-              pi_prcs_id => apex_application.g_f01(i)
+              pi_prcs_id  => apex_application.g_f01(i)
             , pi_var_name => apex_application.g_f02(i)
+            , pi_scope    => apex_application.g_f03(i)
           );
           when 'BULK-RESCHEDULE-TIMER' then
           flow_api_pkg.flow_reschedule_timer(
@@ -214,8 +215,9 @@ as
           end case;
         when 'DELETE-PROCESS-VARIABLE' then
           flow_process_vars.delete_var(
-            pi_prcs_id => apex_application.g_x02
+              pi_prcs_id  => apex_application.g_x02
             , pi_var_name => apex_application.g_x03
+            , pi_scope    => apex_application.g_x04
           );
         when 'RESCHEDULE-TIMER' then
           flow_api_pkg.flow_reschedule_timer(
@@ -261,6 +263,8 @@ as
       when others then
         apex_json.open_object;
         apex_json.write( p_name => 'success', p_value => false );
+        apex_json.write( p_name => 'message', p_value => sqlerrm);
+        apex_json.write( p_name => 'fullstack', p_value => dbms_utility.format_error_stack);
         apex_json.close_all;
         l_error_occured := true;
   end handle_ajax;
@@ -438,17 +442,18 @@ as
 
   procedure get_url_p13(
     pi_prcs_id flow_processes.prcs_id%type
+  , pi_dgrm_id flow_processes.prcs_dgrm_id%type  
   , pi_objt_id varchar2
   , pi_title varchar2
   )
   as
     l_url varchar2(2000);
-    l_dgrm_id flow_processes.prcs_dgrm_id%type;
+    --l_dgrm_id flow_processes.prcs_dgrm_id%type;
   begin
-    select prcs_dgrm_id 
+    /*select prcs_dgrm_id 
       into l_dgrm_id 
       from flow_processes 
-    where prcs_id = pi_prcs_id;
+    where prcs_id = pi_prcs_id;*/
       
     l_url := apex_page.get_url(
       p_application => v('APP_ID'),
@@ -456,7 +461,7 @@ as
       p_session => v('APP_SESSION'),
       p_clear_cache => 'RP',
       p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
-      p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
+      p_values => pi_dgrm_id/*l_dgrm_id*/ || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
     );
     htp.p(l_url);
   end get_url_p13;
