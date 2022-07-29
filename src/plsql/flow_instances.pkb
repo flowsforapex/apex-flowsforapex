@@ -25,12 +25,14 @@ as
     );
 
   procedure find_nested_calls
-    ( p_dgrm_id  flow_diagrams.dgrm_id%type
-    , p_prcs_id  flow_processes.prcs_id%type
+    ( p_dgrm_id         flow_diagrams.dgrm_id%type
+    , p_prcs_id         flow_processes.prcs_id%type
+    , p_parent_prdg_id  flow_instance_diagrams.prdg_id%type
     )
   is 
     l_child_dgrm_id                         flow_diagrams.dgrm_id%type;
     l_call_def                              t_call_def;
+    l_current_prdg_id                       flow_instance_diagrams.prdg_id%type;
   begin
     for call_activity in (
       select objt.objt_bpmn_id
@@ -67,15 +69,22 @@ as
         , prdg_dgrm_id
         , prdg_calling_dgrm
         , prdg_calling_objt
+        , prdg_prdg_id
         )
         values 
         ( p_prcs_id
         , l_child_dgrm_id
         , p_dgrm_id
         , call_activity.objt_bpmn_id
-        );
+        , p_parent_prdg_id
+        )
+        returning prdg_id into l_current_prdg_id
+        ;
         -- find any nested calls in child
-        find_nested_calls( p_dgrm_id => l_child_dgrm_id, p_prcs_id => p_prcs_id );
+        find_nested_calls ( p_dgrm_id         => l_child_dgrm_id
+                          , p_prcs_id         => p_prcs_id 
+                          , p_parent_prdg_id  => l_current_prdg_id
+                          );
       end if;
     end loop; 
   end find_nested_calls;
@@ -85,6 +94,7 @@ as
     , p_dgrm_id  in flow_diagrams.dgrm_id%type
     )
   is 
+    l_parent_prdg_id  flow_instance_diagrams.prdg_id%type;
   begin
     -- put top level diagram into the call structure
     insert into flow_instance_diagrams
@@ -92,14 +102,16 @@ as
       , prdg_dgrm_id
       , prdg_diagram_level
       )
-      values 
+    values 
       ( p_prcs_id
       , p_dgrm_id
       , 0
-      );
+      )
+    returning prdg_id into l_parent_prdg_id;
     -- find any nested calls 
-    find_nested_calls ( p_dgrm_id => p_dgrm_id
-                      , p_prcs_id => p_prcs_id
+    find_nested_calls ( p_dgrm_id         => p_dgrm_id
+                      , p_prcs_id         => p_prcs_id
+                      , p_parent_prdg_id  => l_parent_prdg_id
                       );
   end create_call_structure;
 
