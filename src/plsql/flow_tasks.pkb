@@ -1,3 +1,4 @@
+create or replace package body flow_tasks as 
 /* 
 -- Flows for APEX - flow_tasks.pkb
 -- 
@@ -6,12 +7,9 @@
 --
 -- Created 13-May-2021  Richard Allen (Flowquest Consuting, for MT AG) 
 -- Edited  13-Apr-2022  Richard Allen (Oracle)
--- Edited  23.May-2022  Moritz Klein (MT AG)
+-- Edited  23-May-2022  Moritz Klein (MT AG)
 --
 */
-create or replace package body flow_tasks
-as 
-
   function get_task_type
   (
     pi_objt_id in flow_objects.objt_id%type
@@ -95,7 +93,6 @@ as
       );
   end handle_script_error;
 
-
   procedure process_task
     ( p_sbfl_info     in flow_subflows%rowtype
     , p_step_info     in flow_types_pkg.flow_step_info
@@ -118,19 +115,39 @@ as
     , p_step_info     in flow_types_pkg.flow_step_info
     )
   is 
+    l_usertask_type flow_types_pkg.t_bpmn_attribute_vc2;
   begin
-    -- current implementation is limited to one userTask type, which is to run a user defined APEX page
-    -- future userTask types could include parameterised, standarised template pages , e.g., for approvals??  template scripts ??
-    -- current implementation is implemented via the process inbox view.  
+  -- current implementation is limited to two userTask types, which are:
+  --   - to run a user defined APEX page via the Task Inbox View
+  --   - to call an APEX Approval Task (from APEX v22.1 onwards)
+  -- future userTask types could include parameterised, standarised template pages , template scripts ??
     apex_debug.enter 
     ( 'process_userTask'
-    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_tag'   , p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_subtag', p_step_info.target_objt_subtag 
     );
     -- set boundaryEvent Timers, if any
     flow_boundary_events.set_boundary_timers 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
     );  
+    -- get the userTask subtype  
+    select objt.objt_attributes."apex"."taskType"
+      into l_usertask_type
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_step_info.target_objt_ref
+       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+       ;
+       
+    case l_usertask_type
+    when flow_constants_pkg.gc_apex_usertask_apex_approval then
+       flow_usertask_pkg.process_apex_approval_task
+       ( p_sbfl_info => p_sbfl_info
+       , p_step_info => p_step_info
+       );
+    -- Note: no action required for apex_page type so no 'when...' required.
+    end case;
+
   end process_userTask;
 
   procedure process_scriptTask
@@ -138,6 +155,7 @@ as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
+    l_usertask_type    flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     apex_debug.enter 
     ( 'process_scriptTask'

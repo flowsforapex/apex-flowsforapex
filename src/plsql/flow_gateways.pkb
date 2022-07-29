@@ -74,7 +74,7 @@ as
         , pi_sbfl_id        => pi_sbfl_id
         , pi_message_key    => 'gateway-invalid-route'
         , p0 => pi_objt_bpmn_id 
-        , p1 => pi_objt_bpmn_id||':route'
+        , p1 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
         , p2 => l_bad_route_string
         );
         -- $F4AMESSAGE 'gateway-invalid-route' || 'Error at gateway %0. Supplied variable %1 contains invalid route: %2'  
@@ -253,7 +253,7 @@ as
       -- check if route is in process variable
       l_routing_variable := flow_proc_vars_int.get_var_vc2 
                             ( pi_prcs_id  => pi_prcs_id
-                            , pi_var_name => pi_objt_bpmn_id||':route'
+                            , pi_var_name => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
                             , pi_scope    => pi_scope
                             );
       if l_routing_variable is not null then
@@ -290,7 +290,7 @@ as
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
         , pi_message_key    => 'gateway-no-route'
-        , p0 => pi_objt_bpmn_id||':route'
+        , p0 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
         );
         -- $F4AMESSAGE 'gateway-no-route' || 'No gateway routing instruction provided in variable %0 and model contains no default route.'  
       when too_many_rows then
