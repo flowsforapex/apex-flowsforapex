@@ -642,8 +642,8 @@ as
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '*' passing pi_page_items_xml
                          columns
-                           item_name  varchar2(50 char) path 'apex:itemName'
-                         , item_value varchar2(50 char) path 'apex:itemValue'
+                           item_name  varchar2(  50 char) path 'apex:itemName'
+                         , item_value varchar2(4000 char) path 'apex:itemValue'
                        ) items
                )
     loop
@@ -658,6 +658,42 @@ as
     l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
     l_apex_object.put( 'pageItems', l_page_items );
   end parse_page_items;
+
+  procedure parse_parameters
+  (
+    pi_bpmn_id        in flow_types_pkg.t_bpmn_id
+  , pi_parameters_xml in sys.xmltype
+  )
+  as
+    l_param_array clob;
+    l_apex_object sys.json_object_t;
+  begin
+
+    select json_arrayagg( json_object
+                          (
+                            key 'parStaticId' is parameter_static_id
+                          , key 'parDataType' is parameter_data_type
+                          , key 'parValue'    is parameter_value
+                          )
+                        ) as par_obj
+      into l_param_array
+      from xmltable
+           (
+             xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
+           , '*' passing pi_parameters_xml
+             columns
+               parameter_static_id varchar2(  50 char) path 'apex:parStaticId'
+             , parameter_data_type varchar2(  50 char) path 'apex:parDataType'
+             , parameter_value     varchar2(4000 char) path 'apex:parValue'
+           )
+    ;
+
+    if l_param_array is not null then
+      flow_parser_util.guarantee_apex_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes );
+      l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
+      l_apex_object.put( 'parameters', sys.json_array_t.parse( l_param_array ) );
+    end if;
+  end parse_parameters;
 
   procedure parse_task_subtypes
   (
@@ -693,6 +729,13 @@ as
         (
           pi_bpmn_id        => pi_bpmn_id
         , pi_page_items_xml => rec.prop_children
+        );
+      -- Array of Parameter Bindings, used by Unified Tasklist Integration
+      elsif rec.prop_name = flow_constants_pkg.gc_apex_usertask_parameters then
+        parse_parameters
+        (
+          pi_bpmn_id        => pi_bpmn_id
+        , pi_parameters_xml => rec.prop_children
         );
       elsif length(rec.prop_value) > 0 then
         flow_parser_util.property_to_json
@@ -802,6 +845,7 @@ as
         );
       -- Task Subtypes
       elsif rec.extension_type in ( flow_constants_pkg.gc_apex_usertask_apex_page
+                                  , flow_constants_pkg.gc_apex_usertask_apex_approval
                                   , flow_constants_pkg.gc_apex_usertask_external_url
                                   , flow_constants_pkg.gc_apex_servicetask_send_mail
                                   , flow_constants_pkg.gc_apex_task_execute_plsql
@@ -886,7 +930,11 @@ as
                    , var_description varchar2(50 char) path 'apex:varDescription'
                  )
     ;
-    l_apex_object.put( 'inVariables', sys.json_array_t.parse( l_var_array ) );
+
+    -- If no inVariables are found the variable is null
+    if l_var_array is not null then
+      l_apex_object.put( 'inVariables', sys.json_array_t.parse( l_var_array ) );
+    end if;
 
     select json_arrayagg( json_object(
              key 'name'        is var_name
@@ -904,7 +952,10 @@ as
                    , var_description varchar2(50 char) path 'apex:varDescription'
                  )
     ;
-    l_apex_object.put( 'outVariables', sys.json_array_t.parse( l_var_array ) );
+
+    if l_var_array is not null then
+      l_apex_object.put( 'outVariables', sys.json_array_t.parse( l_var_array ) );
+    end if;
 
   end parse_callable_extensions;
 
