@@ -132,7 +132,7 @@ create or replace package body flow_tasks as
     , p_subflow_id => p_sbfl_info.sbfl_id
     );  
     -- get the userTask subtype  
-    select objt.objt_attributes."apex"."taskType"
+    select objt.objt_attributes."taskType"
       into l_usertask_type
       from flow_objects objt
      where objt.objt_bpmn_id = p_step_info.target_objt_ref

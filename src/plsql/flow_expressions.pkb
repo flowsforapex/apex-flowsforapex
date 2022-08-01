@@ -150,7 +150,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting %2 process variable %1 in process id %0.  See error in event log.'
+      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting process variable %1 in process id %0 (set %2).  See error in event log.'
 
   end set_static;
 
@@ -236,7 +236,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting %2 process variable %1 in process id %0.  See error in event log.'
+      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting process variable %1 in process id %0 (set %2).  See error in event log.'
         
   end set_proc_var;
 
@@ -284,7 +284,7 @@ as
             , p1 => pi_expression.expr_var_name
             , p2 => pi_expression.expr_set
             );
-            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'            
+            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'            
         when others then
             apex_debug.error
             ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
@@ -301,7 +301,7 @@ as
             , p1 => pi_expression.expr_var_name
             , p2 => pi_expression.expr_set
             );
-            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'               
+            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'               
         end;
         flow_proc_vars_int.set_var 
         ( pi_prcs_id        => pi_prcs_id
@@ -328,7 +328,7 @@ as
             , p1 => pi_expression.expr_var_name
             , p2 => pi_expression.expr_set
             );
-            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'            
+            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'            
         when others then
             apex_debug.error
             ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
@@ -345,7 +345,7 @@ as
             , p1 => pi_expression.expr_var_name
             , p2 => pi_expression.expr_set
             );
-            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'   
+            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'   
         end;
         flow_proc_vars_int.set_var 
         ( pi_prcs_id        => pi_prcs_id
@@ -372,7 +372,7 @@ as
             , p1 => pi_expression.expr_var_name
             , p2 => pi_expression.expr_set
             );
-            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'  
+            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'  
         when others then
             apex_debug.error
             ( p_message => 'Error setting process variable %0 for process id %1. SQLERRM: %2'
@@ -389,7 +389,7 @@ as
             , p1 => pi_expression.expr_var_name
             , p2 => pi_expression.expr_set
             );
-            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'   
+            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'   
         end;
         flow_proc_vars_int.set_var 
         ( pi_prcs_id        => pi_prcs_id
@@ -449,7 +449,7 @@ as
         , p1 => pi_expression.expr_var_name
         , p2 => pi_expression.expr_set
         );
-        -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'   
+        -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'   
     end;
     -- create delimited string output
     begin 
@@ -473,7 +473,7 @@ as
         , p1 => pi_expression.expr_var_name
         , p2 => pi_expression.expr_set
         );
-        -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'
+        -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'
     end;
     apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result, p_level => 3);
     -- set proc variable

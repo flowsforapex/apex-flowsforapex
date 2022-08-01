@@ -146,6 +146,11 @@ as
        where objt.objt_bpmn_id = p_step_info.target_objt_ref
          and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
          ;
+
+      apex_debug.info 
+        ( p_message => 'APEX Approval Task parameter  %0 '
+        , p0 => l_parameters
+        );
       -- do substitutions
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_app_id);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_static_id);
@@ -158,11 +163,11 @@ as
         select static_id
              , data_type
              , value
-        from json_table (l_parameters, '$.parameters[*]'
+        from json_table (l_parameters, '$[*]'
                          columns(
-                                  static_id path '$.static_id',
-                                  data_type path '$.data_type',
-                                  value path '$.value'
+                                  static_id path '$.parStaticId',
+                                  data_type path '$.parDataType',
+                                  value     path '$.parValue'
                                 )
                         )
       )
@@ -170,6 +175,11 @@ as
         l_task_parameter.static_id    := parameters.static_id;
         l_task_parameter.string_value := parameters.value;
         l_task_parameters(l_task_parameters.count+1) := l_task_parameter;
+        apex_debug.info 
+        ( p_message => 'APEX Approval Task parameter created - parameter %0 value %1'
+        , p0 => parameters.static_id
+        , p1 => parameters.value
+        );
       end loop;
 
       $IF flow_apex_env.ver_le_21_2 $THEN
@@ -184,6 +194,10 @@ as
                        , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref, null) 
                        , p_parameters         => l_task_parameters
                        );
+        apex_debug.info 
+        ( p_message => 'APEX Approval Task created - Approval Task Reference %0 created'
+        , p0 => l_apex_task_id
+        );
       $END
 
       flow_proc_vars_int.set_var 
@@ -195,6 +209,7 @@ as
       , pi_objt_bpmn_id => p_step_info.target_objt_ref
       );
       -- Add a comment to the task if included in the definition
+      -- set the status to 'waiting for approval'?
      -- exceptions
       -- APEX workflow Task not supported on this APEX release
       -- APEX Task with Static ID %0 not found in Application %1 in this APEX Workspace
