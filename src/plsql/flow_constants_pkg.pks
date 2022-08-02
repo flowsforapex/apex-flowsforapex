@@ -189,6 +189,7 @@ as
   gc_sbfl_status_waiting_timer        constant  varchar2(20 char) := 'waiting for timer';
   gc_sbfl_status_waiting_gateway      constant  varchar2(20 char) := 'waiting at gateway';
   gc_sbfl_status_waiting_event        constant  varchar2(20 char) := 'waiting for event';
+  gc_sbfl_status_waiting_approval     constant  varchar2(20 char) := 'waiting for approval';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';

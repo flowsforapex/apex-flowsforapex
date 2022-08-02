@@ -209,7 +209,15 @@ as
       , pi_objt_bpmn_id => p_step_info.target_objt_ref
       );
       -- Add a comment to the task if included in the definition
-      -- set the status to 'waiting for approval'?
+      -- set the status to 'waiting for approval'
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update = systimestamp
+           , sbfl.sbfl_status   = flow_constants_pkg.gc_sbfl_status_waiting_approval
+       where sbfl.sbfl_id       = l_sbfl_id
+         and sbfl.sbfl_prcs_id  = l_prcs_id
+      ;
+
+
      -- exceptions
       -- APEX workflow Task not supported on this APEX release
       -- APEX Task with Static ID %0 not found in Application %1 in this APEX Workspace
