@@ -87,6 +87,11 @@
   "target" : "No gateway routing instruction provided in variable %0 and model contains no default route."
 },
   {
+  "text_key" : "gateway-bad-expression",
+  "source" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).",
+  "target" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:)."
+},
+  {
   "text_key" : "gateway-too-many-defaults",
   "source" : "More than one default route specified in model for Gateway %0.",
   "target" : "More than one default route specified in model for Gateway %0."

@@ -65,6 +65,11 @@
       , "source" : "More than one default route specified in model for Gateway %0."
       , "target" : "Mais de uma rota padrão foi definida no modelo para o Gateway (Porta de Entrada) %0." 
     },
+    {
+    "text_key" : "gateway-bad-expression",
+    "source" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).",
+    "target" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:)."
+    },
     { 
       "text_key" : " link-no-catch" 
       , "source" : "Unable to find matching link catch event named %0."
