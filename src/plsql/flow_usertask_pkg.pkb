@@ -97,7 +97,9 @@ as
     l_subject          flow_types_pkg.t_bpmn_attribute_vc2;
     l_parameters       flow_types_pkg.t_bpmn_attribute_vc2;
     l_business_ref     flow_types_pkg.t_bpmn_attribute_vc2;
-    l_task_comment     flow_types_pkg.t_bpmn_attribute_vc2;
+    l_initiator        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_result_var       flow_types_pkg.t_bpmn_attribute_vc2;
     l_apex_task_id     number;
     $IF flow_apex_env.ver_le_21 $THEN
       -- only need this for testing as apex_approval should fail if attempt to run without apex 22.1+
@@ -120,6 +122,7 @@ as
     );
     -- check that APEX is >= v22.1 (required for APEX approval component)
     if flow_apex_env.ver_le_21_2 then 
+      apex_debug.info (p_message  => 'APEX Version v22.1 or higher required for APEX Approval tasks.');
       flow_errors.handle_instance_error
       ( pi_prcs_id        => l_prcs_id
       , pi_sbfl_id        => l_sbfl_id
@@ -135,18 +138,21 @@ as
            , objt.objt_attributes."apex"."subject"
            , objt.objt_attributes."apex"."parameters"
            , objt.objt_attributes."apex"."businessRef"
-           , objt.objt_attributes."apex"."taskComment"
+           , objt.objt_attributes."apex"."comment"  --- switch to resultVariable
+           , objt.objt_attributes."apex"."initiator"  
+           , objt.objt_attributes."apex"."priority"
         into l_app_id
            , l_static_id
            , l_subject
            , l_parameters
            , l_business_ref
-           , l_task_comment
+           , l_result_var
+           , l_initiator
+           , l_priority
         from flow_objects objt
        where objt.objt_bpmn_id = p_step_info.target_objt_ref
          and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
          ;
-
       apex_debug.info 
         ( p_message => 'APEX Approval Task parameter  %0 '
         , p0 => l_parameters
@@ -157,7 +163,9 @@ as
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_subject);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_parameters);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_ref);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_task_comment);
+      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
+      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
+      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_priority);
       -- create parameters table
       for parameters in (
         select static_id
@@ -182,46 +190,59 @@ as
         );
       end loop;
 
-      $IF flow_apex_env.ver_le_21_2 $THEN
-        -- dummy for testing before APEX v22.1...
-        l_apex_task_id := 99999999;
-      $ELSE
+      $IF not flow_apex_env.ver_le_21_2 $THEN     
         -- create the task in APEX Approvals if after APEX v22.1
-        l_apex_task_id := apex_approval.create_task
-                       ( p_application_id     => l_app_id
-                       , p_task_def_static_id => l_static_id
-                       , p_subject            => l_subject
-                       , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref, null) 
-                       , p_parameters         => l_task_parameters
-                       );
-        apex_debug.info 
-        ( p_message => 'APEX Approval Task created - Approval Task Reference %0 created'
-        , p0 => l_apex_task_id
-        );
+        begin
+          l_apex_task_id := apex_approval.create_task
+                         ( p_application_id     => l_app_id
+                         , p_task_def_static_id => l_static_id
+                         , p_subject            => l_subject
+                         , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref, null) 
+                         , p_parameters         => l_task_parameters
+                         , p_initiator          => l_initiator
+                         , p_priority           => l_priority
+                         );
+          apex_debug.info 
+          ( p_message => 'APEX Approval Task created - Approval Task Reference %0 created'
+          , p0 => l_apex_task_id
+          );  
+
+          flow_proc_vars_int.set_var 
+          ( pi_prcs_id      => l_prcs_id
+          , pi_scope        => l_scope
+          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
+          , pi_num_value    => l_apex_task_id
+          , pi_sbfl_id      => l_sbfl_id
+          , pi_objt_bpmn_id => p_step_info.target_objt_ref
+          );
+          -- set the status to 'waiting for approval'
+          update flow_subflows sbfl
+             set sbfl.sbfl_last_update = systimestamp
+               , sbfl.sbfl_status   = flow_constants_pkg.gc_sbfl_status_waiting_approval
+           where sbfl.sbfl_id       = l_sbfl_id
+             and sbfl.sbfl_prcs_id  = l_prcs_id
+          ;
+        exception
+          when others then
+            apex_debug.info 
+            ( p_message => ' --- Error creating APEX Approval Task.  AppID %0 TaskStaticID %1 Subject %2 DetailPK %3 Initiator %4 Priority %5.'
+            , p0 => l_app_id
+            , p1 => l_static_id
+            , p2 => l_subject
+            , p3 => coalesce(l_business_ref, flow_globals.business_ref, null) 
+            , p4 => l_initiator
+            , p5 => l_priority
+            );  
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => l_prcs_id
+            , pi_sbfl_id        => l_sbfl_id
+            , pi_message_key    => 'apex-task-creation-error'
+            , p0 => l_static_id
+            , p1 => l_app_id
+            );  
+            -- $F4AMESSAGE 'apex-task-creation-error' || 'Error creating APEX Workflow task %0 in application %1.  see debug for details.' 
+        end; 
       $END
-
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id      => l_prcs_id
-      , pi_scope        => l_scope
-      , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
-      , pi_num_value    => l_apex_task_id
-      , pi_sbfl_id      => l_sbfl_id
-      , pi_objt_bpmn_id => p_step_info.target_objt_ref
-      );
-      -- Add a comment to the task if included in the definition
-      -- set the status to 'waiting for approval'
-      update flow_subflows sbfl
-         set sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status   = flow_constants_pkg.gc_sbfl_status_waiting_approval
-       where sbfl.sbfl_id       = l_sbfl_id
-         and sbfl.sbfl_prcs_id  = l_prcs_id
-      ;
-
-
-     -- exceptions
-      -- APEX workflow Task not supported on this APEX release
-      -- APEX Task with Static ID %0 not found in Application %1 in this APEX Workspace
-      -- APEX Task cannot be started with these parameters
     end if;
   end process_apex_approval_task;
 
@@ -259,107 +280,147 @@ as
   end cancel_apex_task;
 
   procedure return_approval_result
-   ( p_process_id    in flow_processes.prcs_id%type
-   , p_apex_task_id  in number
-   , p_result        in flow_process_variables.prov_var_vc2%type default null
-   )
-   is
-     l_sbfl_id             flow_subflows.sbfl_id%type;
-     l_current_bpmn_id     flow_objects.objt_bpmn_id%type;
-     l_scope               flow_subflows.sbfl_scope%type;
-     l_step_key            flow_subflows.sbfl_step_key%type;
-     l_var_name            flow_process_variables.prov_var_name%type;
-     l_potential_current   flow_objects.objt_bpmn_id%type;
+    ( p_process_id    in flow_processes.prcs_id%type
+    , p_apex_task_id  in number
+    , p_result        in flow_process_variables.prov_var_vc2%type default null
+    )
+    is
+      l_sbfl_id             flow_subflows.sbfl_id%type;
+      l_dgrm_id             flow_subflows.sbfl_dgrm_id%type;
+      l_current_bpmn_id     flow_objects.objt_bpmn_id%type;
+      l_scope               flow_subflows.sbfl_scope%type;
+      l_step_key            flow_subflows.sbfl_step_key%type;
+      l_var_name            flow_process_variables.prov_var_name%type;
+      l_potential_current   flow_objects.objt_bpmn_id%type;
+      l_result_var          flow_process_variables.prov_var_name%type;
 
-     e_task_id_proc_var_not_found  exception;
-     e_task_id_duplicate_found     exception;
-     e_task_not_current_step       exception;
-   begin
-     apex_debug.enter
-     (p_routine_name => 'return_approval_result'
-     );
-     -- check task belongs to this process
-     begin
-       select prov.prov_var_name
-            , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current
-            , prov.prov_scope
-         into l_var_name
-            , l_potential_current
-            , l_scope
-         from flow_process_variables prov
-        where prov.prov_prcs_id = p_process_id
-          and prov.prov_var_num = p_apex_task_id
-          and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
-          and prov.prov_var_name like '%'||flow_constants_pkg.gc_prov_suffix_task_id
-       ;
-     exception
-       when no_data_found then
-         raise e_task_id_proc_var_not_found;
-       when too_many_rows then
-         raise e_task_id_duplicate_found;
-     end;
-     begin
-       -- find and lock the subflow
-       select sbfl.sbfl_id
-            , sbfl.sbfl_step_key
-         into l_sbfl_id
-            , l_step_key
-         from flow_subflows sbfl
-        where sbfl.sbfl_prcs_id = p_process_id
-          and sbfl.sbfl_scope = l_scope
-          and sbfl.sbfl_current = l_potential_current
-       for update of sbfl.sbfl_step_key wait 5;
-     exception
-       when no_data_found then
-         raise e_task_not_current_step;
-       when e_lock_timeout then
-         raise e_lock_timeout;
-     end;
-     -- create result variable
-     flow_proc_vars_int.set_var
-      ( pi_prcs_id       => p_process_id
-      , pi_var_name      => l_potential_current||flow_constants_pkg.gc_prov_suffix_result
-      , pi_scope         => l_scope
-      , pi_vc2_value     => p_result
-      , pi_sbfl_id       => l_sbfl_id
-      , pi_objt_bpmn_id  => l_potential_current
+      e_task_id_proc_var_not_found  exception;
+      e_task_id_duplicate_found     exception;
+      e_task_not_current_step       exception;
+      e_task_no_return_var          exception;
+    begin
+      apex_debug.enter
+      (p_routine_name => 'return_approval_result'
       );
-     -- do next step
-     flow_engine.flow_complete_step
-       ( p_process_id    => p_process_id
-       , p_subflow_id    => l_sbfl_id
-       , p_step_key      => l_step_key
+      -- check task belongs to this process
+      begin
+        select prov.prov_var_name
+             , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current
+             , prov.prov_scope
+          into l_var_name
+             , l_potential_current
+             , l_scope
+          from flow_process_variables prov
+         where prov.prov_prcs_id = p_process_id
+           and prov.prov_var_num = p_apex_task_id
+           and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
+           and prov.prov_var_name like '%'||flow_constants_pkg.gc_prov_suffix_task_id
+        ;
+        apex_debug.info 
+        ( p_message => '--- Returning Approval Result - Found current step %0 scope %1'
+        , p0 => l_potential_current
+        , p1 => l_scope
+        );
+      exception
+        when no_data_found then
+          raise e_task_id_proc_var_not_found;
+        when too_many_rows then
+          raise e_task_id_duplicate_found;
+      end;
+
+      begin
+        -- find and lock the subflow
+        select sbfl.sbfl_id
+             , sbfl.sbfl_step_key
+             , sbfl.sbfl_dgrm_id
+          into l_sbfl_id
+             , l_step_key
+             , l_dgrm_id
+          from flow_subflows sbfl
+         where sbfl.sbfl_prcs_id = p_process_id
+           and sbfl.sbfl_scope = l_scope
+           and sbfl.sbfl_current = l_potential_current
+        for update of sbfl.sbfl_step_key wait 5;
+      exception
+        when no_data_found then
+          raise e_task_not_current_step;
+        when e_lock_timeout then
+          raise e_lock_timeout;
+      end;
+      apex_debug.info 
+      ( p_message => '--- Returning Approval Result - Found Subflow %0 step Key %1 Diagram %2'
+      , p0 => l_sbfl_id
+      , p1 => l_step_key
+      , p2 => l_dgrm_id
+      );
+      -- get name of return variable
+      begin
+        select objt.objt_attributes."apex"."comment"   --- switch to resultVariable
+          into l_result_var
+          from flow_objects objt
+         where objt.objt_bpmn_id = l_potential_current
+           and objt.objt_dgrm_id = l_dgrm_id;
+        apex_debug.info 
+        ( p_message => '--- Returning Approval Result - Found result variable id %0'
+        , p0 => l_result_var
+        );
+      exception
+        when no_data_found then
+          raise e_task_no_return_var;
+      end;
+
+      -- create result variable
+      flow_proc_vars_int.set_var
+       ( pi_prcs_id       => p_process_id
+       , pi_var_name      => l_result_var
+       , pi_scope         => l_scope
+       , pi_vc2_value     => p_result
+       , pi_sbfl_id       => l_sbfl_id
+       , pi_objt_bpmn_id  => l_potential_current
        );
-   exception
-     when e_lock_timeout then
-       flow_errors.handle_instance_error
-       ( pi_prcs_id     => p_process_id
-       , pi_sbfl_id     => l_sbfl_id
-       , pi_message_key => 'timeout_locking_subflow'
-       , p0 => l_sbfl_id
-       );
-     when e_task_id_proc_var_not_found then
-       flow_errors.handle_instance_error
-       ( pi_prcs_id     => p_process_id
-       , pi_sbfl_id     => l_sbfl_id
-       , pi_message_key => 'apex-task-not-found'
-       , p0 => p_apex_task_id 
-       );
-     when e_task_id_duplicate_found then
-       flow_errors.handle_instance_error
-       ( pi_prcs_id     => p_process_id
-       , pi_sbfl_id     => l_sbfl_id
-       , pi_message_key => 'apex-task-on-multiple-steps'
-       , p0 => p_apex_task_id
-       );
-     when e_task_not_current_step then
-       flow_errors.handle_instance_error
-       ( pi_prcs_id     => p_process_id
-       , pi_sbfl_id     => l_sbfl_id
-       , pi_message_key => 'apex-task-not-current-step'
-       , p0 => p_apex_task_id
-       );
-   end return_approval_result;
+      -- do next step
+      flow_engine.flow_complete_step
+        ( p_process_id    => p_process_id
+        , p_subflow_id    => l_sbfl_id
+        , p_step_key      => l_step_key
+        );
+    exception
+      when e_lock_timeout then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => l_sbfl_id
+        , pi_message_key => 'timeout_locking_subflow'
+        , p0 => l_sbfl_id
+        );
+      when e_task_id_proc_var_not_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => l_sbfl_id
+        , pi_message_key => 'apex-task-not-found'
+        , p0 => p_apex_task_id 
+        );
+      when e_task_id_duplicate_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => l_sbfl_id
+        , pi_message_key => 'apex-task-on-multiple-steps'
+        , p0 => p_apex_task_id
+        );
+      when e_task_not_current_step then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => l_sbfl_id
+        , pi_message_key => 'apex-task-not-current-step'
+        , p0 => p_apex_task_id
+        );
+      when e_task_no_return_var then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => p_process_id
+        , pi_sbfl_id     => l_sbfl_id
+        , pi_message_key => 'apex-task-invalid-return-var'
+        , p0 => p_apex_task_id
+        );      
+    end return_approval_result;
 
 end flow_usertask_pkg;
 /

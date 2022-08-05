@@ -495,6 +495,16 @@
   "text_key" : "apex-task-not-current-step",
   "source" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready.",
   "target" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready."
+},
+{
+  "text_key" : "apex-task-invalid-result-var",
+  "source" : "APEX Workflow Task result process variable is not defined or invalid.",
+  "target" : "APEX Workflow Task result process variable is not defined or invalid."
+},
+{
+  "text_key" : "apex-task-creation-error",
+  "source" : "Error creating APEX Workflow task %0 in application %1.  see debug for details.",
+  "target" : "Error creating APEX Workflow task %0 in application %1.  see debug for details."
 }
 ]
 }
