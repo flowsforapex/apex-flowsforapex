@@ -22,5 +22,22 @@ as
   , pi_scope    in flow_subflows.sbfl_scope%type default 0
   ) return varchar2;
 
+  procedure process_apex_approval_task
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  );
+  
+  procedure cancel_apex_task
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_objt_bpmn_id  in flow_objects.objt_bpmn_id%type
+  , p_apex_task_id  in number    
+  );
+
+  procedure return_approval_result
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_apex_task_id  in number
+  , p_result        in flow_process_variables.prov_var_vc2%type default null
+  );
+
 end flow_usertask_pkg;
 /

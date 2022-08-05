@@ -13,8 +13,9 @@ as
 */
   type t_new_sbfls is table of flow_types_pkg.t_subflow_context;
 
-  e_no_route_found        exception;
-  lock_timeout            exception;
+  e_no_route_found          exception;
+  e_bad_routing_expression  exception;
+  lock_timeout              exception;
   pragma exception_init (lock_timeout, -3006);
 
   function get_valid_routing_variable_routes
@@ -74,7 +75,7 @@ as
         , pi_sbfl_id        => pi_sbfl_id
         , pi_message_key    => 'gateway-invalid-route'
         , p0 => pi_objt_bpmn_id 
-        , p1 => pi_objt_bpmn_id||':route'
+        , p1 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
         , p2 => l_bad_route_string
         );
         -- $F4AMESSAGE 'gateway-invalid-route' || 'Error at gateway %0. Supplied variable %1 contains invalid route: %2'  
@@ -194,20 +195,25 @@ as
             , p1 => l_expr_type); 
         end if;
 
-        case l_expr_type  
-        when flow_constants_pkg.gc_expr_type_plsql_expression then
-          l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr 
-                                                                         , p_auto_bind_items  => false
-                                                                         , p_bind_list        => l_bind_list
-                                                                         );
-        when flow_constants_pkg.gc_expr_type_plsql_function_body then
-          l_take_route := apex_plugin_util.get_plsql_func_result_boolean ( p_plsql_function => l_expr 
-                                                                         , p_auto_bind_items  => false
-                                                                         , p_bind_list        => l_bind_list
-                                                                         );          
-        else       
-          l_take_route := false;
-        end case;
+        begin
+          case l_expr_type  
+          when flow_constants_pkg.gc_expr_type_plsql_expression then
+            l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr 
+                                                                           , p_auto_bind_items  => false
+                                                                           , p_bind_list        => l_bind_list
+                                                                           );
+          when flow_constants_pkg.gc_expr_type_plsql_function_body then
+            l_take_route := apex_plugin_util.get_plsql_func_result_boolean ( p_plsql_function => l_expr 
+                                                                           , p_auto_bind_items  => false
+                                                                           , p_bind_list        => l_bind_list
+                                                                           );          
+          else       
+            l_take_route := false;
+          end case;
+        exception
+          when others then
+            raise e_bad_routing_expression;
+        end;
 
         apex_debug.info (p_message => 'Routing Expresion evaluation result : %0  '
             , p0 => case l_take_route when true then 'true' else 'false' end );
@@ -253,7 +259,7 @@ as
       -- check if route is in process variable
       l_routing_variable := flow_proc_vars_int.get_var_vc2 
                             ( pi_prcs_id  => pi_prcs_id
-                            , pi_var_name => pi_objt_bpmn_id||':route'
+                            , pi_var_name => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
                             , pi_scope    => pi_scope
                             );
       if l_routing_variable is not null then
@@ -290,9 +296,17 @@ as
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
         , pi_message_key    => 'gateway-no-route'
-        , p0 => pi_objt_bpmn_id||':route'
+        , p0 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
         );
         -- $F4AMESSAGE 'gateway-no-route' || 'No gateway routing instruction provided in variable %0 and model contains no default route.'  
+      when e_bad_routing_expression then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'gateway-bad-expression'
+        , p0 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
+        );
+        -- $F4AMESSAGE 'gateway-bad_expression' || 'Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).'  
       when too_many_rows then
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id

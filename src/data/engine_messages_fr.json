@@ -87,6 +87,11 @@
   "target" : "Plus d'une route par défaut spécifiée dans le modèle pour la passerelle %0."
 },
   {
+  "text_key" : "gateway-bad-expression",
+  "source" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).",
+  "target" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:)."
+},
+  {
   "text_key" : "link-no-catch",
   "source" : "Unable to find matching link catch event named %0.",
   "target" : "Impossible de trouver le lien correspondant à l'événement %0."
@@ -308,22 +313,22 @@
 },
   {
   "text_key" : "var_exp_sql_no_data",
-  "source" : "Error setting %2 process variable %1 in process id %0.  No data found in query.",
+  "source" : "Error setting process variable %1 in process id %0 (set %2).  No data found in query.",
   "target" : "Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0 - Aucune donnée trouvée dans la requête."
 },
   {
   "text_key" : "var_exp_sql_other",
-  "source" : "Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.",
+  "source" : "Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.",
   "target" : "Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0.  Erreur SQL indiquée dans le journal des événements."
 },
   {
   "text_key" : "var_exp_sql_too_many_rows",
-  "source" : "Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.",
+  "source" : "Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.",
   "target" : "Ereur lors de la mise à jour de la variable %1 avec la valeur %2 dans le processus %0.  La requête renvoie plusieurs lignes."
 },
   {
   "text_key" : "var_exp_static_general",
-  "source" : "Error setting %2 process variable %1 in process id %0.  See error in event log.",
+  "source" : "Error setting process variable %1 in process id %0 (set %2).  See error in event log.",
   "target" : "Erreur de définition de la variable de processus %2 %1 dans le processus id %0. Voir l'erreur dans le journal des événements."
 },
   {
@@ -353,7 +358,7 @@
 },
   {
   "text_key" : "plugin-route-not-define",
-  "source" : "Gateway is not define for routing.",
+  "source" : "Gateway is not defined for routing.",
   "target" : "La passerelle n'est pas définie pour le routage."
 },
   {
@@ -465,6 +470,41 @@
   "text_key" : "plugin-multiple-rows",
   "source" : "Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes.",
   "target" : "Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes."
+},
+{
+"text_key" : "apex-task-cancelation-error",
+"source" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)",
+"target" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)"
+},
+{
+"text_key" : "apex-task-not-supported",
+"source" : "APEX Workflow Feature use requires Oracle APEX v%0.",
+"target" : "APEX Workflow Feature use requires Oracle APEX v%0."
+},
+{
+"text_key" : "apex-task-not-found",
+"source" : "APEX Workflow Task %0 not found in Flows for APEX Process",
+"target" : "APEX Workflow Task %0 not found in Flows for APEX Process"
+},
+{
+"text_key" : "apex-task-on-multiple-steps",
+"source" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step.",
+"target" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step."
+},
+{
+"text_key" : "apex-task-not-current-step",
+"source" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready.",
+"target" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready."
+},
+{
+  "text_key" : "apex-task-invalid-result-var",
+  "source" : "APEX Workflow Task result process variable is not defined or invalid.",
+  "target" : "APEX Workflow Task result process variable is not defined or invalid."
+},
+{
+  "text_key" : "apex-task-creation-error",
+  "source" : "Error creating APEX Workflow task %0 in application %1.  see debug for details.",
+  "target" : "Error creating APEX Workflow task %0 in application %1.  see debug for details."
 }
 ]
 }

@@ -1,7 +1,12 @@
 create or replace package flow_api_pkg
   authid definer
 as
-
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG. 2020-22
+--
+-- Created    20-Jun-2020   Moritz Klein, MT AG 
+-- Modified   01-May-2022   Richard Allen, Oracle
+--
 /********************************************************************************
 **
 **        FLOW INSTANCE OPERATIONS (Create, Start, Reset, Terminate, Delete)
@@ -240,6 +245,18 @@ flow_delete ends all processing of a process instance.  It removes all subflows 
   , p8                in varchar2 default null
   , p9                in varchar2 default null
   ) return varchar2;
+
+  -- return_approval_result
+  -- convenience procedure for returning an APEX Approvals Component Approval task after completion
+  -- back into a Flows for APEX process.
+  -- Logicaly, this procedure checks the Task ID is valid, then stores p_result into a process variable
+  -- named <ApprovalTask UserTask bpmn_id>||':result'
+  -- then performs a flow_complete_step to step the process forward.
+   procedure return_approval_result
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_apex_task_id  in number
+  , p_result        in flow_process_variables.prov_var_vc2%type default null
+  );
 
 end flow_api_pkg;
 /
