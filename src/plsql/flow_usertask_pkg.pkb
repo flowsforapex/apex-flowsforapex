@@ -302,7 +302,7 @@ as
       apex_debug.enter
       (p_routine_name => 'return_approval_result'
       );
-      -- check task belongs to this process
+      -- check task belongs to this process by looking for a process variable with content = task id and name ending in task id suffix.
       begin
         select prov.prov_var_name
              , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current

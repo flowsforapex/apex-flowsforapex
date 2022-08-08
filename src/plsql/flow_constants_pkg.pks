@@ -231,7 +231,6 @@ as
   -- Standard Process Variable Suffixes
 
   gc_prov_suffix_task_id              constant  varchar2(50 char) := ':task_id';
-  gc_prov_suffix_result               constant  varchar2(50 char) := ':result';
   gc_prov_suffix_route                constant  varchar2(50 char) := ':route';  
 
   -- Process Variable and Gateway Routing Variable Expression Types

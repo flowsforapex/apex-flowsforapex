@@ -453,7 +453,7 @@ as
                 l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
                                                  ( pi_prcs_id  => pi_prcs_id
                                                  , pi_var_name => substr  ( l_timer_def.timer_definition,6
-                                                                          , length(l_timer_def.timer_definition)-6
+                                                                        , length(l_timer_def.timer_definition)-6
                                                                           )
                                                  , pi_scope    => l_scope
                                                  )
@@ -554,8 +554,8 @@ as
                 l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
                                                   ( pi_prcs_id  => pi_prcs_id
                                                   , pi_var_name => substr  ( l_timer_def.oracle_date,6
-                                                                           , length(l_timer_def.oracle_date)-6
-                                                                           )
+                                                                                    , length(l_timer_def.oracle_date)-6
+                                                                                    )
                                                   , pi_scope    => l_scope
                                                   )
                                                 , l_timer_def.oracle_format_mask
@@ -578,7 +578,7 @@ as
                                              , pi_scope   => l_scope
                                              );
           l_parsed_duration_ds := to_dsinterval ( nvl ( l_timer_def.oracle_duration_ds , '000 00:00:00') );
-          l_parsed_duration_ym := to_yminterval ( nvl( l_timer_def.oracle_duration_ym, '0-0') );
+          l_parsed_duration_ym := to_yminterval ( nvl ( l_timer_def.oracle_duration_ym, '0-0') );
           l_parsed_ts := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
 
         when flow_constants_pkg.gc_timer_type_oracle_cycle then
