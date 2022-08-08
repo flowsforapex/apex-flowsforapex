@@ -119,6 +119,13 @@
         "file": "A03h - Model with one start event with bad before-event var exp_0.bpmn"
     },
     {
+        "dgrm_name": "A04a - Basic Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A04a - Basic Model_0.bpmn"
+    },
+    {
         "dgrm_name": "A10 - Variable Expressions Types",
         "dgrm_version": "0",
         "dgrm_status": "draft",

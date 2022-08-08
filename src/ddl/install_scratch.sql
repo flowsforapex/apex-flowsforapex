@@ -332,7 +332,9 @@ create table flow_process_variables
 , prov_var_clob clob
 );
 
-alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, upper(prov_var_name));
+alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name);
+
+create index prov_uc_pk on flow_process_variables (prov_prcs_id, prov_scope, upper(prov_var_name));
 
 alter table flow_process_variables add constraint prov_prcs_fk foreign key (prov_prcs_id)
    references flow_processes (prcs_id)
