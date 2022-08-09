@@ -462,6 +462,11 @@
     "text_key" : "apex-task-creation-error",
     "source" : "Error creating APEX Workflow task %0 in application %1.  see debug for details.",
     "target" : "Error creating APEX Workflow task %0 in application %1.  see debug for details."
+  },
+  {
+    "text_key" : "apex-task-priority-error",
+    "source" : "Error creating APEX Workflow task - invalid priority %0.",
+    "target" : "Error creating APEX Workflow task - invalid priority %0."
   }
   ]
 }

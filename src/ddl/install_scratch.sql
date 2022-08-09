@@ -330,9 +330,10 @@ create table flow_process_variables
 , prov_var_num number
 , prov_var_date date
 , prov_var_clob clob
+, prov_var_name_uc varchar2(50 char) generated always as upper(prov_var_name)
 );
 
-alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name);
+alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name_uc);
 
 
 alter table flow_process_variables add constraint prov_prcs_fk foreign key (prov_prcs_id)

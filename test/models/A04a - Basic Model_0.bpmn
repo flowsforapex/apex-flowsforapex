@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_0rxermh" isExecutable="false">
+    <bpmn:startEvent id="Start" name="Start">
+      <bpmn:outgoing>Flow_0e7q139</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="A" name="A">
+      <bpmn:incoming>Flow_0e7q139</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i5wcjm</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0e7q139" sourceRef="Start" targetRef="A" />
+    <bpmn:task id="B" name="B">
+      <bpmn:incoming>Flow_0i5wcjm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e53n28</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0i5wcjm" sourceRef="A" targetRef="B" />
+    <bpmn:endEvent id="End" name="End">
+      <bpmn:incoming>Flow_0e53n28</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0e53n28" sourceRef="B" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">
+      <bpmndi:BPMNEdge id="Flow_0e7q139_di" bpmnElement="Flow_0e7q139">
+        <di:waypoint x="208" y="260" />
+        <di:waypoint x="310" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i5wcjm_di" bpmnElement="Flow_0i5wcjm">
+        <di:waypoint x="410" y="260" />
+        <di:waypoint x="490" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e53n28_di" bpmnElement="Flow_0e53n28">
+        <di:waypoint x="590" y="260" />
+        <di:waypoint x="682" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0fhqg78_di" bpmnElement="Start">
+        <dc:Bounds x="172" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="178" y="285" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ajtv1q_di" bpmnElement="A">
+        <dc:Bounds x="310" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ky6p0n_di" bpmnElement="B">
+        <dc:Bounds x="490" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wbyjbg_di" bpmnElement="End">
+        <dc:Bounds x="682" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="691" y="285" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

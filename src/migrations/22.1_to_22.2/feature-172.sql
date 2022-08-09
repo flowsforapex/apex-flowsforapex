@@ -119,4 +119,4 @@ PROMPT >> Prepare Process Variables for Scoping
   alter table flow_process_variables
     modify ( prov_scope not null);
 
-  alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name);
+ -- NOTE primary key on flow_process_variables is recreated as part of issue-77.sql migration script

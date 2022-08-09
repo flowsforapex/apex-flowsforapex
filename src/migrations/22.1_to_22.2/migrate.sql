@@ -19,6 +19,7 @@ PROMPT >> Halt DBMS_SCHEDULER job
 @@feature-172.sql
 @@issue-444.sql
 @@feature-468.sql
+@@issue-77.sql
 @@set_flows_version.sql
 
 

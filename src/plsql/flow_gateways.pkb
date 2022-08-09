@@ -275,7 +275,7 @@ as
                         , p0 => l_routing_variable
                         );                                                                
       else 
-        apex_debug.info( p_message => '-- Using Gateway Route Expressions.' );
+        apex_debug.info( p_message => '-- Using Gateway Route Expressions or Default Routing.' );
         -- look for gateway routing expressions or default routing
         l_forward_routes := get_valid_routing_expression_routes ( pi_prcs_id          => pi_prcs_id
                                                                 , pi_sbfl_id          => pi_sbfl_id
