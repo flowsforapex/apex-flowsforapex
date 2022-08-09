@@ -101,6 +101,7 @@ as
     l_priority         flow_types_pkg.t_bpmn_attribute_vc2;
     l_result_var       flow_types_pkg.t_bpmn_attribute_vc2;
     l_apex_task_id     number;
+    e_priority_invalid exception;
     $IF flow_apex_env.ver_le_21 $THEN
       -- only need this for testing as apex_approval should fail if attempt to run without apex 22.1+
       type t_task_parameter  is record
@@ -189,6 +190,16 @@ as
         , p1 => parameters.value
         );
       end loop;
+      -- check that priority is a valid priority 1-5 before passing
+      begin
+        if l_priority not between 1 and 5 then
+          raise e_priority_invalid;
+        end if;
+      exception
+        when value_error then
+          raise e_priority_invalid;
+      end;
+
 
       $IF not flow_apex_env.ver_le_21_2 $THEN     
         -- create the task in APEX Approvals if after APEX v22.1
@@ -223,6 +234,17 @@ as
              and sbfl.sbfl_prcs_id  = l_prcs_id
           ;
         exception
+          when e_priority_invalid then
+            apex_debug.info 
+            ( p_message => ' --- Error creating Approval Task.  Priority should evaluate to number between 1 and 5.  Priority: %0'
+            , p0 => l_priority
+            );  
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => l_priority
+            , pi_message_key    => 'apex-task-priority-error'
+            , p0 => l_priority
+            );  
+            -- $F4AMESSAGE 'apex-task-priority-error' || 'Error creating APEX Workflow task - invalid priority %0.'           
           when others then
             apex_debug.info 
             ( p_message => ' --- Error creating APEX Approval Task.  AppID %0 TaskStaticID %1 Subject %2 DetailPK %3 Initiator %4 Priority %5.'
