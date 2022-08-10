@@ -7,7 +7,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "doc_vars": "npx ploc --in src/plsql/flow_process_vars.pks --out doc/process_var_doc.md"
+    "doc_vars": "npx ploc --in src/plsql/flow_process_vars.pks --out doc/process_var_doc.md",
+    "doc_api": "npx ploc --in src/plsql/flow_api_pkg.pks --out doc/flow_api_doc.md"
   },
   "repository": {
     "type": "git",
