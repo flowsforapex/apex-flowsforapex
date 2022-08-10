@@ -38,7 +38,24 @@ The `flow_process_vars` package give you access to be able to set and get Proces
 SIGNATURE
 
 ```sql
-package flow_process_vars as
+package flow_process_vars
+  authid definer
+as /* 
+-- Flows for APEX - flow_process_vars.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2020-2022.
+--
+-- Created 22-SEP-2020  Richard Allen (Flowquest) 
+-- Edited  13-APR-2022 - Richard Allen (Oracle)
+--
+*/
+/*
+**
+**        PROCESS VARIABLE SYSTEM (get / set / etc)
+**        Process Variable System API for Application Developers
+**
+*/
 ```
 
 
