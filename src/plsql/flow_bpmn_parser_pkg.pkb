@@ -1160,7 +1160,7 @@ as
     l_expression_array     sys.json_array_t;
     l_attributes_json      sys.json_object_t := sys.json_object_t();
   begin
-    select json_object( key 'language' is condition_type )
+    select json_object( key 'language' is condition_language )
          , condition_value
       into l_condition_base
          , l_condition_expression
@@ -1170,8 +1170,8 @@ as
                           , 'https://flowsforapex.org' as "apex")
            , '/bpmn:conditionExpression' passing pi_xml
              columns
-               condition_type  varchar2(50 char) path '@conditionType'
-             , condition_value clob              path 'text()'
+               condition_language varchar2(50 char) path '@language'
+             , condition_value    clob              path 'text()'
            )
     ;
     l_condition_object := sys.json_object_t.parse( l_condition_base );
