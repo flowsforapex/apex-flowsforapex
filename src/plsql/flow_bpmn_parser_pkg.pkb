@@ -1,5 +1,15 @@
 create or replace package body flow_bpmn_parser_pkg
 as
+/* 
+-- Flows for APEX - flow_bpmn_parser_pkg.pkb
+-- 
+-- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+--
+-- Created    2020         Moritz Klein (MT AG)
+-- Modified   2022-08-10   Moritz Klein (MT AG)
+--
+*/
 
   -- Variables to hold data during parse run
   g_dgrm_id        flow_diagrams.dgrm_id%type;
@@ -915,9 +925,9 @@ as
     -- while not hitting performance too much
 
     select json_arrayagg( json_object(
-             key 'name'        is var_name
-           , key 'datatype'    is var_datatype
-           , key 'description' is var_description
+             key 'varName'        is var_name
+           , key 'varDataType'    is var_datatype
+           , key 'varDescription' is var_description
            ) ) in_var_array
       into l_var_array
       from xmltable(
@@ -937,9 +947,9 @@ as
     end if;
 
     select json_arrayagg( json_object(
-             key 'name'        is var_name
-           , key 'datatype'    is var_datatype
-           , key 'description' is var_description
+             key 'varName'        is var_name
+           , key 'varDataType'    is var_datatype
+           , key 'varDescription' is var_description
            ) ) in_var_array
       into l_var_array
       from xmltable(
