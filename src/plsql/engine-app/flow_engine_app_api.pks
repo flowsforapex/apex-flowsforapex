@@ -214,9 +214,5 @@ as
     pi_objt_id in flow_subflows.sbfl_current%type)
   return boolean;
 
-  function get_attributes(
-    pi_objt_id
-  )
-
 end flow_engine_app_api;
 /
