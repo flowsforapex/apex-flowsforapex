@@ -1,5 +1,15 @@
 create or replace package body flow_bpmn_parser_pkg
 as
+/* 
+-- Flows for APEX - flow_bpmn_parser_pkg.pkb
+-- 
+-- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+--
+-- Created    2020         Moritz Klein (MT AG)
+-- Modified   2022-08-10   Moritz Klein (MT AG)
+--
+*/
 
   -- Variables to hold data during parse run
   g_dgrm_id        flow_diagrams.dgrm_id%type;
@@ -915,9 +925,9 @@ as
     -- while not hitting performance too much
 
     select json_arrayagg( json_object(
-             key 'name'        is var_name
-           , key 'datatype'    is var_datatype
-           , key 'description' is var_description
+             key 'varName'        is var_name
+           , key 'varDataType'    is var_datatype
+           , key 'varDescription' is var_description
            ) ) in_var_array
       into l_var_array
       from xmltable(
@@ -937,9 +947,9 @@ as
     end if;
 
     select json_arrayagg( json_object(
-             key 'name'        is var_name
-           , key 'datatype'    is var_datatype
-           , key 'description' is var_description
+             key 'varName'        is var_name
+           , key 'varDataType'    is var_datatype
+           , key 'varDescription' is var_description
            ) ) in_var_array
       into l_var_array
       from xmltable(
@@ -1150,7 +1160,7 @@ as
     l_expression_array     sys.json_array_t;
     l_attributes_json      sys.json_object_t := sys.json_object_t();
   begin
-    select json_object( key 'language' is condition_type )
+    select json_object( key 'language' is condition_language )
          , condition_value
       into l_condition_base
          , l_condition_expression
@@ -1160,8 +1170,8 @@ as
                           , 'https://flowsforapex.org' as "apex")
            , '/bpmn:conditionExpression' passing pi_xml
              columns
-               condition_type  varchar2(50 char) path '@conditionType'
-             , condition_value clob              path 'text()'
+               condition_language varchar2(50 char) path '@language'
+             , condition_value    clob              path 'text()'
            )
     ;
     l_condition_object := sys.json_object_t.parse( l_condition_base );
