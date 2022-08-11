@@ -27,7 +27,7 @@ wwv_flow_api.create_static_lov_data(
  p_id=>wwv_flow_api.id(13103422381982643)
 ,p_lov_disp_sequence=>2
 ,p_lov_disp_value=>'<span><span aria-hidden="true" class="fa fa-files-o fa-lg"></span><span style="display: block;">Multiple Models</span></span>'
-,p_lov_return_value=>'multi'
+,p_lov_return_value=>'multiple'
 );
 wwv_flow_api.component_end;
 end;
