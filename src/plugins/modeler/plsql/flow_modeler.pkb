@@ -49,7 +49,7 @@ as
   )
   as
     type t_col_position_tab is table of pls_integer index by varchar2(128);
-    
+
     l_col_positions t_col_position_tab;
     l_context       apex_exec.t_context;
     l_id      number;
@@ -338,35 +338,27 @@ as
   procedure get_variable_mapping
   as
     l_result clob;
-    /* incoming parameters:
-       x02: bo.calledDiagram
-       x03: bo.calledDiagramVersionSelection
-       x04: bo.calledDiagramVersion
-    */
+
+    l_dgrm_id flow_diagrams.dgrm_id%type;
+    
+    l_in_variables  clob;
+    l_out_variables clob;
   begin
-    l_result := '{"InVariables":"","OutVariables":""}';
-    /* TODO needed structure:
-       {
-         "InVariables": [ 
-          {
-            "varSequence": "",
-            "varName": "",
-            "varDataType": "",
-            "varDescription": ""
-          }
-          ...
-         ],
-         "OutVariables": [
-          {
-            "varSequence": "",
-            "varName": "",
-            "varDataType": "",
-            "varDescription": ""
-          }
-          ...
-         ]
-       }
-    */
+    l_dgrm_id := flow_diagram.get_current_diagram
+        ( pi_dgrm_name            => apex_application.g_x02
+        , pi_dgrm_calling_method  => apex_application.g_x03
+        , pi_dgrm_version         => apex_application.g_x04
+        );
+
+    select coalesce(objt.objt_attributes."apex"."inVariables", '""')
+         , coalesce(objt.objt_attributes."apex"."outVariables", '""')
+      into l_in_variables
+         , l_out_variables
+      from flow_objects objt
+     where objt.objt_dgrm_id = l_dgrm_id
+       and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process;
+
+    l_result := '{"InVariables":' || l_in_variables ||',"OutVariables":' || l_out_variables || '}';
     htp.p(l_result);
   end get_variable_mapping;
 

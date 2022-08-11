@@ -146,7 +146,7 @@ as
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
-    
+
     l_dgrm_id_col_idx :=
       apex_exec.get_column_position
       (
@@ -193,24 +193,24 @@ as
     apex_json.open_object;
 
     if apex_exec.get_total_row_count( p_context => l_context ) > 0 then
-    
+
       -- multiple rows found but call activity option disabled
       if apex_exec.get_total_row_count( p_context => l_context ) > 1 and p_region.attribute_14 = 'N' then
-          
+
         apex_json.write
         (
           p_name  => 'found'
         , p_value => false
         );
-          
+
         apex_json.write
         (
           p_name  => 'message'
         , p_value => flow_api_pkg.message( p_message_key => 'plugin-multiple-rows', p_lang => apex_util.get_session_lang() )
         );
-          
+
       else
-      
+
         apex_json.write
         (
           p_name  => 'found'
@@ -334,8 +334,10 @@ as
           apex_json.close_object;
         end loop;
 
+        apex_exec.close( p_context => l_context );
+
         apex_json.close_array;
-      
+
       end if;
 
     else

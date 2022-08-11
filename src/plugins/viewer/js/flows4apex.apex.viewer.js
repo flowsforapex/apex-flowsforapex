@@ -123,12 +123,11 @@
         if ( pData.found ) {
           var diagram;
           var oldLoaded = true;
-
-          // set widget reference to viewer module
-          this.bpmnViewer$.get('subProcessModule').setWidget(this);
           
           // use call activities
           if ( this.options.enableCallActivities ) {
+            // set widget reference to viewer module
+            this.bpmnViewer$.get('subProcessModule').setWidget(this);
             // show/hide breadcrumb
             (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
             // load old diagram (if possible)

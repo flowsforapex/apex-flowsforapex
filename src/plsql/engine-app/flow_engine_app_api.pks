@@ -38,6 +38,7 @@ as
 
   procedure get_url_p13(
     pi_prcs_id flow_processes.prcs_id%type
+  , pi_dgrm_id flow_processes.prcs_dgrm_id%type    
   , pi_objt_id varchar2
   , pi_title varchar2
   );
@@ -212,6 +213,10 @@ as
     pi_prcs_id in flow_processes.prcs_id%type,
     pi_objt_id in flow_subflows.sbfl_current%type)
   return boolean;
+
+  function get_attributes(
+    pi_objt_id
+  )
 
 end flow_engine_app_api;
 /

@@ -173,16 +173,14 @@ function SubProcessModule(eventBus, canvas) {
       // get new diagram from hierarchy
       var newDiagram = data.find(
         d =>
-          d.diagramId.toString() === diagramId &&
-          (d.callingDiagramId === callingDiagramId ||
+          d.diagramId == diagramId &&
+          (d.callingDiagramId == callingDiagramId ||
             (callingDiagramId === 'undefined' &&
               typeof d.callingDiagramId === 'undefined')) &&
-          (d.callingObjectId === callingObjectId ||
+          (d.callingObjectId == callingObjectId ||
             (callingObjectId === 'undefined' &&
               typeof d.callingObjectId === 'undefined'))
       );
-
-      console.log('newDiagram', newDiagram);
 
       // trim breadcrumb to clicked entry
       trimBreadcrumbTo(index);

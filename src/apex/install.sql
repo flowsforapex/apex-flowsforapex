@@ -54,6 +54,8 @@ prompt --install
 @@application/shared_components/files/css_21_2_flows4apex_dark_css.sql
 @@application/shared_components/files/css_21_2_flows4apex_light_css.sql
 @@application/shared_components/files/flows_apex_svg.sql
+@@application/shared_components/files/lib_prismjs_js_prism_min_js.sql
+@@application/shared_components/files/lib_prismjs_js_prism_js_map.sql
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
