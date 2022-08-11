@@ -1,13 +1,15 @@
+create or replace package body flow_proc_vars_int
+as
+
 /* 
 -- Flows for APEX - flow_proc_vars_int.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
 -- Created    12-Apr-2022  Richard Allen (Oracle)
+-- Modified   11-Aug-2022  Moritz Klein (MT AG)
 --
 */
-create or replace package body flow_proc_vars_int
-as
 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
@@ -698,6 +700,64 @@ end delete_var;
       end loop;
     end if;
   end do_substitution;
+
+  procedure get_var_as_parameter
+  (
+    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
+  , pi_var_name   in flow_process_variables.prov_var_name%type
+  , pi_scope      in flow_process_variables.prov_scope%type
+  , po_data_type out apex_exec.t_data_type
+  , po_value     out apex_exec.t_value
+  )
+  as
+  begin
+    select case prov.prov_var_type
+             when flow_constants_pkg.gc_prov_var_type_varchar2 then 1
+             when flow_constants_pkg.gc_prov_var_type_number   then 2
+             when flow_constants_pkg.gc_prov_var_type_date     then 3
+             when flow_constants_pkg.gc_prov_var_type_clob     then 11
+             else 1
+           end as data_type
+         , prov.prov_var_vc2
+         , prov.prov_var_num
+         , prov.prov_var_date
+         , prov.prov_var_clob
+      into po_data_type
+         , po_value.varchar2_value
+         , po_value.number_value
+         , po_value.date_value
+         , po_value.clob_value
+      from flow_process_variables prov
+     where prov.prov_prcs_id    = pi_prcs_id
+       and prov.prov_scope      = pi_scope
+       and upper(prov_var_name) = upper(pi_var_name)
+    ;
+  end get_var_as_parameter;
+
+  function get_var_as_vc2
+  (
+    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
+  , pi_var_name   in flow_process_variables.prov_var_name%type
+  , pi_scope      in flow_process_variables.prov_scope%type
+  ) return varchar2
+  as
+    l_return flow_process_variables.prov_var_vc2%type;
+  begin
+    select case prov.prov_var_type
+             when flow_constants_pkg.gc_prov_var_type_varchar2 then prov.prov_var_vc2
+             when flow_constants_pkg.gc_prov_var_type_number   then to_char(prov.prov_var_num)
+             when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date)
+             else null
+           end as prov_var_value
+      into l_return
+      from flow_process_variables prov
+     where prov.prov_prcs_id    = pi_prcs_id
+       and prov.prov_scope      = pi_scope
+       and upper(prov_var_name) = upper(pi_var_name)
+    ;
+
+    return l_return;
+  end get_var_as_vc2;
 
 end flow_proc_vars_int;
 /
