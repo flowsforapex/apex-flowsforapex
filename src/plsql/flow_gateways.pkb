@@ -138,6 +138,7 @@ as
       -- loop over routes
       for route in 1 .. l_possible_routes.count
       loop
+        l_bind_list := apex_plugin_util.c_empty_bind_list;
         apex_debug.info( p_message => '-- Evaluating Route #%0, Language: %1, Expression: %2', p0 => route, p1 => l_possible_routes(route).conn_language, p2 => l_possible_routes(route).conn_expression );
         l_take_route := false;
         -- evaluate route expression
@@ -188,8 +189,7 @@ as
             l_indx := l_var_list.next (l_indx);
           end loop;
         else
-          -- no bind variables
-          l_bind_list := apex_plugin_util.c_empty_bind_list;                      
+          -- no bind variables, nothing to do as we reset bind-list for each loop
           apex_debug.info (p_message => 'Expression contains no bind variables.  Expression : %0 type : %1  '
             , p0 => l_expr
             , p1 => l_expr_type); 
