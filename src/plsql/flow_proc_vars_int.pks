@@ -1,15 +1,16 @@
+create or replace package flow_proc_vars_int
+  authid definer
+as 
 /* 
 -- Flows for APEX - flow_proc_vars_int.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
 -- Created    12-Apr-2022  Richard Allen (Oracle)
+-- Modified   11-Aug-2022  Moritz Klein (MT AG)
 --
 */
 
-create or replace package flow_proc_vars_int
-  authid definer
-as 
  /********************************************************************************
 **
 **        PROCESS VARIABLE SYSTEM (get / set / etc) 
@@ -155,6 +156,22 @@ function scope_is_valid
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_scope   in flow_subflows.sbfl_scope%type
 ) return boolean;
+
+  procedure get_var_as_parameter
+  (
+    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
+  , pi_var_name   in flow_process_variables.prov_var_name%type
+  , pi_scope      in flow_process_variables.prov_scope%type
+  , po_data_type out apex_exec.t_data_type
+  , po_value     out apex_exec.t_value
+  );
+
+  function get_var_as_vc2
+  (
+    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
+  , pi_var_name   in flow_process_variables.prov_var_name%type
+  , pi_scope      in flow_process_variables.prov_scope%type
+  ) return varchar2;
 
 end flow_proc_vars_int;
 /

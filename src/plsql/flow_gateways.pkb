@@ -175,7 +175,7 @@ as
           while l_indx is not null 
           loop
             l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
-            l_bind.value := flow_proc_vars_int.get_var_vc2
+            l_bind.value := flow_proc_vars_int.get_var_as_vc2
                               ( pi_prcs_id            => pi_prcs_id
                               , pi_var_name           => l_var_list(l_indx)
                               , pi_scope              => pi_scope
