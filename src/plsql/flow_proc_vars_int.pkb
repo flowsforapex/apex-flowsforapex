@@ -746,7 +746,7 @@ end delete_var;
     select case prov.prov_var_type
              when flow_constants_pkg.gc_prov_var_type_varchar2 then prov.prov_var_vc2
              when flow_constants_pkg.gc_prov_var_type_number   then to_char(prov.prov_var_num)
-             when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date)
+             when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date, flow_constants_pkg.gc_prov_default_date_format)
              else null
            end as prov_var_value
       into l_return
