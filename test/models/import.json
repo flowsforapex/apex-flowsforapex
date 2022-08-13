@@ -257,5 +257,19 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A17a - Exc GW Errors and Restarts_0.bpmn"
+    },
+    {
+        "dgrm_name": "A18a - GW Routing Exps - basic exprs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A18a - GW Routing Exps - basic exprs_0.bpmn"
+    },
+    {
+        "dgrm_name": "A18b - GW Routing Exps - basic func bodies",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A18b - GW Routing Exps - basic func bodies_0.bpmn"
     }
 ]

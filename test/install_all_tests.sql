@@ -12,6 +12,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_001_api.pks
 @plsql/test_002_gateway.pks
 @plsql/test_003_startEvents.pks
+@plsql/test_004_proc_vars.pks
 @plsql/test_010_variable_expression.pks
 @plsql/test_011_var_exps_in_callActivities.pks
 @plsql/test_012_call_activity_timer_BEs.pks
@@ -20,6 +21,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_015_lanes_parse_execute.pks
 @plsql/test_016_splitting_gw_errors.pks
 @plsql/test_017_exc_gw_errors_restarts.pks
+@plsql/test_018_gw_routing_exps.pks
 
 PROMPT >> Installing Package Bodies
 
@@ -27,6 +29,7 @@ PROMPT >> Installing Package Bodies
 @plsql/test_001_api.pkb
 @plsql/test_002_gateway.pkb
 @plsql/test_003_startEvents.pkb
+@plsql/test_004_proc_vars.pks
 @plsql/test_010_variable_expression.pkb
 @plsql/test_011_var_exps_in_callActivities.pkb
 @plsql/test_012_call_activity_timer_BEs.pkb
@@ -35,3 +38,8 @@ PROMPT >> Installing Package Bodies
 @plsql/test_015_lanes_parse_execute.pkb
 @plsql/test_016_splitting_gw_errors.pkb
 @plsql/test_017_exc_gw_errors_restarts.pkb
+@plsql/test_018_gw_routing_exps.pkb
+
+
+PROMPT >> Engine Test Scripts Installed
+

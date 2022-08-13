@@ -8,7 +8,7 @@
 - Adds support for Oracle APEX Approval Tasks when running with APEX v22.1 and above.  Approvals are called as a type of bpmn:userTask.
 - Adds a Approval Result Return process plug-in for declarative configuration of Approval Tasks.
 - Adds support for Gateway Routing Expressions, defined as part of each forward path from an Inclusive Gateway or Exclusive Gateway.
-- Adds process variable bind syntax (:F4A$myvar) support for Gateway Routing Expressions.
+- Adds process variable bind syntax (:F4A$myvar) to bind varchar2, number, and date variables into Gateway Routing Expressions.
 - Makes processVariable naming case-independant, so that myVar and MYVAR are the same variable.
 - Creates an APEX session for non-APEX originated end points, ensuring that variable expressions, debugging, etc. work correctly from non-APEX API calls, after timers, from test engines, etc.
 - Internally enhances storage of parsed BPMN object attributes using JSON structures in place of the flow_object_attributes table.
