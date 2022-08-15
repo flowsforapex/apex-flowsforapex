@@ -19,7 +19,7 @@ create or replace package body flow_tasks as
     l_return flow_types_pkg.t_bpmn_attribute_vc2;
   begin
 
-    select objt.objt_attributes."timerType"
+    select objt.objt_attributes."taskType"
       into l_return
       from flow_objects objt
      where objt_id = pi_objt_id

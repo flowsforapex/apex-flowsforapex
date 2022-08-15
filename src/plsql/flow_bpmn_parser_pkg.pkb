@@ -762,7 +762,12 @@ as
         if l_json_element is not null then
           l_namespace_object.put( l_attribute, l_json_element );
         else
-          l_namespace_object.put( l_attribute, rec.prop_value );
+          -- Need to create real booleans in JSON
+          if rec.prop_value in ( flow_constants_pkg.gc_vcbool_true, flow_constants_pkg.gc_vcbool_false ) then
+            l_namespace_object.put( l_attribute, ( rec.prop_value = flow_constants_pkg.gc_vcbool_true ) );
+          else
+            l_namespace_object.put( l_attribute, rec.prop_value );
+          end if;
         end if;
       --Empty properties will not be stored
       else
