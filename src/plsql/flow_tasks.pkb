@@ -140,12 +140,14 @@ create or replace package body flow_tasks as
        ;
        
     case l_usertask_type
-    when flow_constants_pkg.gc_apex_usertask_apex_approval then
+      when flow_constants_pkg.gc_apex_usertask_apex_approval then
        flow_usertask_pkg.process_apex_approval_task
        ( p_sbfl_info => p_sbfl_info
        , p_step_info => p_step_info
        );
-    -- Note: no action required for apex_page type so no 'when...' required.
+      -- No additional action required for other task types
+      else
+        null;
     end case;
 
   end process_userTask;
