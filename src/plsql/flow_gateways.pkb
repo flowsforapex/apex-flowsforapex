@@ -347,6 +347,7 @@ as
       into l_num_unfinished_subflows
       from flow_subflows sbfl
       where sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+        and sbfl.sbfl_diagram_level = p_sbfl_info.sbfl_diagram_level
         and sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
         and (  sbfl.sbfl_current != p_step_info.target_objt_ref
             or sbfl.sbfl_status != flow_constants_pkg.gc_sbfl_status_waiting_gateway
@@ -361,6 +362,7 @@ as
           for completed_subflows in ( select completed_sbfl.sbfl_id
                                         from flow_subflows completed_sbfl 
                                         where completed_sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+                                          and completed_sbfl.sbfl_diagram_level = p_sbfl_info.sbfl_diagram_level
                                           and completed_sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
                                           and completed_sbfl.sbfl_current = p_step_info.target_objt_ref 
                                           and completed_sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
