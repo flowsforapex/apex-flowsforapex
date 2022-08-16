@@ -46,6 +46,7 @@ PROMPT >> Installing Views
 @views/flow_instance_connections_lov.sql
 @views/flow_instance_gateways_lov.sql
 @views/flow_diagrams_vw.sql
+@views/flow_instance_diagrams_lov.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_proc_vars_int.pkb

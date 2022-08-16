@@ -177,9 +177,14 @@ as
   
   function get_connection_select_option(
     pi_gateway in flow_objects.objt_bpmn_id%type
-  , pi_prcs_id in flow_processes.prcs_id%type
+  , pi_prdg_id in flow_instance_diagrams.prdg_id%type
   )
   return varchar2;
+
+  function get_scope(
+      pi_gateway in flow_objects.objt_bpmn_id%type
+    , pi_prdg_id in flow_instance_diagrams.prdg_id%type
+  ) return number;
 
   /* page 9 */
 
@@ -213,10 +218,6 @@ as
     pi_prcs_id in flow_processes.prcs_id%type,
     pi_objt_id in flow_subflows.sbfl_current%type)
   return boolean;
-
-  function get_attributes(
-    pi_objt_id
-  )
 
 end flow_engine_app_api;
 /

@@ -36,7 +36,7 @@ wwv_flow_api.create_page(
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220727122903'
+,p_last_upd_yyyymmddhh24miss=>'20220816091405'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -990,17 +990,16 @@ wwv_flow_api.create_worksheet_rpt(
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(55105327231434717)
 ,p_plug_name=>'Attributes'
-,p_region_name=>'attibutes-ir'
+,p_region_name=>'attributes-ir'
 ,p_parent_plug_id=>wwv_flow_api.id(12635446510220640)
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(12495584334308880235)
 ,p_plug_display_sequence=>20
 ,p_plug_display_point=>'BODY'
-,p_query_type=>'SQL'
-,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select json_query(objt_attributes, ''$'' returning clob pretty) as json',
-'from flow_objects',
-'where objt_dgrm_id = :P13_DGRM_ID and objt_bpmn_id = :P13_OBJT_ID'))
+,p_query_type=>'TABLE'
+,p_query_table=>'FLOW_P0013_ATTRIBUTES_VW'
+,p_query_where=>'objt_dgrm_id = :P13_DGRM_ID and objt_bpmn_id = :P13_OBJT_ID'
+,p_include_rowid_column=>false
 ,p_plug_source_type=>'NATIVE_IR'
 ,p_ajax_items_to_submit=>'P13_OBJT_ID,P13_DGRM_ID'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
@@ -1050,18 +1049,20 @@ wwv_flow_api.component_begin (
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(55107181775434735)
 ,p_max_row_count=>'1000000'
+,p_no_data_found_message=>'No attributes found.'
 ,p_show_search_bar=>'N'
+,p_fixed_header=>'NONE'
 ,p_show_detail_link=>'N'
 ,p_owner=>'LMOREAUX'
 ,p_internal_uid=>55107181775434735
 );
 wwv_flow_api.create_worksheet_column(
- p_id=>wwv_flow_api.id(55107219570434736)
-,p_db_column_name=>'JSON'
+ p_id=>wwv_flow_api.id(55107985121434743)
+,p_db_column_name=>'JSON_ATTRIBUTES'
 ,p_display_order=>10
-,p_column_identifier=>'A'
-,p_column_label=>'Json'
-,p_column_html_expression=>'<pre><code class="language-json">#JSON#</code></pre>'
+,p_column_identifier=>'B'
+,p_column_label=>'Json Attributes'
+,p_column_html_expression=>'<pre><code class="language-json">#JSON_ATTRIBUTES#</code></pre>'
 ,p_allow_sorting=>'N'
 ,p_allow_filtering=>'N'
 ,p_allow_highlighting=>'N'
@@ -1073,7 +1074,26 @@ wwv_flow_api.create_worksheet_column(
 ,p_allow_pivot=>'N'
 ,p_allow_hide=>'N'
 ,p_column_type=>'CLOB'
+,p_static_id=>'JSON'
 ,p_rpt_show_filter_lov=>'N'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(55108094176434744)
+,p_db_column_name=>'OBJT_DGRM_ID'
+,p_display_order=>20
+,p_column_identifier=>'C'
+,p_column_label=>'Objt Dgrm Id'
+,p_column_type=>'NUMBER'
+,p_display_text_as=>'HIDDEN'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(55108153604434745)
+,p_db_column_name=>'OBJT_BPMN_ID'
+,p_display_order=>30
+,p_column_identifier=>'D'
+,p_column_label=>'Objt Bpmn Id'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
 );
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(57429429784782883)
@@ -1082,7 +1102,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'574295'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'JSON'
+,p_report_columns=>'JSON_ATTRIBUTES:OBJT_DGRM_ID:OBJT_BPMN_ID'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(12635705433220643)

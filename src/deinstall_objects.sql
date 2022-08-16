@@ -78,6 +78,7 @@ drop view flow_subflows_vw;
 drop view flow_diagram_categories_lov;
 drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
+drop view flow_instance_diagrams_lov;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;

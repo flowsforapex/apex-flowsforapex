@@ -184,6 +184,7 @@ as
                 pi_prcs_id   => apex_application.g_x02
               , pi_var_name  => apex_application.g_x03
               , pi_vc2_value => apex_application.g_x05
+              , pi_scope     => apex_application.g_x06
               );
             when 'NUMBER' then
               flow_process_vars.set_var
@@ -191,6 +192,7 @@ as
                 pi_prcs_id   => apex_application.g_x02
               , pi_var_name  => apex_application.g_x03
               , pi_num_value => to_number(apex_application.g_x05)
+              , pi_scope     => apex_application.g_x06
               );
             when 'DATE' then
               flow_process_vars.set_var
@@ -198,6 +200,7 @@ as
                 pi_prcs_id    => apex_application.g_x02
               , pi_var_name   => apex_application.g_x03
               , pi_date_value => to_date(apex_application.g_x05, v('APP_DATE_TIME_FORMAT'))
+              , pi_scope      => apex_application.g_x06
               );
             when 'CLOB' then
               for i in apex_application.g_f01.first..apex_application.g_f01.last
@@ -209,6 +212,7 @@ as
                 pi_prcs_id    => apex_application.g_x02
               , pi_var_name   => apex_application.g_x03
               , pi_clob_value => l_clob
+              , pi_scope      => apex_application.g_x06
               );
             else
               null;
@@ -1282,33 +1286,39 @@ as
     l_prov_prcs_id  flow_process_variables.prov_prcs_id%type;
     l_prov_var_name flow_process_variables.prov_var_name%type;
     l_prov_var_type flow_process_variables.prov_var_type%type;
+    l_prov_scope    flow_process_variables.prov_scope%type;
     l_prov_var_vc2  flow_process_variables.prov_var_vc2%type;
     l_prov_var_num  flow_process_variables.prov_var_num%type;
     l_prov_var_date flow_process_variables.prov_var_date%type;
     l_prov_var_clob flow_process_variables.prov_var_clob%type;
   begin
     -- Initialize
-    l_prov_prcs_id := apex_application.g_x01;
+    l_prov_prcs_id  := apex_application.g_x01;
     l_prov_var_name := apex_application.g_x02;
     l_prov_var_type := apex_application.g_x03;
+    l_prov_scope    := apex_application.g_x04;
     
     case l_prov_var_type
       when 'VARCHAR2' then
         l_prov_var_vc2 := flow_process_vars.get_var_vc2(
-                            pi_prcs_id => l_prov_prcs_id,
-                            pi_var_name =>l_prov_var_name);
+                            pi_prcs_id  => l_prov_prcs_id,
+                            pi_var_name => l_prov_var_name,
+                            pi_scope    => l_prov_scope);
       when 'NUMBER' then
         l_prov_var_num := flow_process_vars.get_var_num(
-                            pi_prcs_id => l_prov_prcs_id,
-                            pi_var_name =>l_prov_var_name);
+                            pi_prcs_id  => l_prov_prcs_id,
+                            pi_var_name => l_prov_var_name,
+                            pi_scope    => l_prov_scope);
       when 'DATE' then
         l_prov_var_date := flow_process_vars.get_var_date(
-                             pi_prcs_id => l_prov_prcs_id,
-                             pi_var_name =>l_prov_var_name);
+                             pi_prcs_id  => l_prov_prcs_id,
+                             pi_var_name => l_prov_var_name,
+                             pi_scope    => l_prov_scope);
       when 'CLOB' then
           l_prov_var_clob := flow_process_vars.get_var_clob(
-                               pi_prcs_id => l_prov_prcs_id,
-                               pi_var_name =>l_prov_var_name);
+                               pi_prcs_id  => l_prov_prcs_id,
+                               pi_var_name => l_prov_var_name,
+                               pi_scope    => l_prov_scope);
     end case;
     
     apex_json.open_object;
@@ -1324,7 +1334,7 @@ as
   
   function get_connection_select_option(
     pi_gateway in flow_objects.objt_bpmn_id%type
-  , pi_prcs_id in flow_processes.prcs_id%type
+  , pi_prdg_id in flow_instance_diagrams.prdg_id%type
   ) return varchar2
   as
     l_select_option flow_instance_gateways_lov.select_option%type;
@@ -1333,10 +1343,25 @@ as
       into l_select_option
       from flow_instance_gateways_lov
      where objt_bpmn_id = pi_gateway
-       and prcs_id = pi_prcs_id;
+       and prdg_id = pi_prdg_id;
     return l_select_option;
   end get_connection_select_option;
 
+   function get_scope(
+      pi_gateway in flow_objects.objt_bpmn_id%type
+    , pi_prdg_id in flow_instance_diagrams.prdg_id%type
+  ) return number
+  as 
+    l_prdg_diagram_level flow_instance_gateways_lov.prdg_diagram_level%type;
+  begin
+    select prdg_diagram_level
+      into l_prdg_diagram_level
+      from flow_instance_gateways_lov
+     where objt_bpmn_id = pi_gateway
+       and prdg_id = pi_prdg_id;
+    return l_prdg_diagram_level;
+    
+  end get_scope;
 
   /* page 9 */
   
