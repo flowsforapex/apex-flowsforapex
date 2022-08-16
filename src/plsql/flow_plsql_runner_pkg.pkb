@@ -129,6 +129,15 @@ as
     , po_plsql_code    => l_plsql_code
     );
 
+    flow_proc_vars_int.do_substitution
+    (
+      pi_prcs_id  => pi_prcs_id
+    , pi_sbfl_id  => pi_sbfl_id
+    , pi_scope    => flow_globals.scope
+    , pi_step_key => pi_step_key
+    , pio_string  => l_plsql_code
+    );
+
     if l_use_apex_exec then
       apex_exec.execute_plsql
       (
