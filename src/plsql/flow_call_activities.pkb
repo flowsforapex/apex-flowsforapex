@@ -90,15 +90,18 @@ as
 
     -- find called diagram and lock it in the flow_instance_diagrams
 
-    select prdg.prdg_dgrm_id
-         , prdg.prdg_id
+    select child_prdg.prdg_dgrm_id
+         , child_prdg.prdg_id
       into l_called_dgrm_id
          , l_prdg_id
-      from flow_instance_diagrams prdg
-     where prdg.prdg_prcs_id = p_process_id
-       and prdg.prdg_calling_dgrm = p_sbfl_info.sbfl_dgrm_id
-       and prdg.prdg_calling_objt = p_step_info.target_objt_ref
-       for update of prdg.prdg_diagram_level wait 2
+      from flow_instance_diagrams child_prdg
+      join flow_instance_diagrams parent_prdg
+        on parent_prdg.prdg_id = child_prdg.prdg_prdg_id
+     where child_prdg.prdg_prcs_id = p_process_id
+       and child_prdg.prdg_calling_dgrm = p_sbfl_info.sbfl_dgrm_id
+       and child_prdg.prdg_calling_objt = p_step_info.target_objt_ref
+       and parent_prdg.prdg_diagram_level = p_sbfl_info.sbfl_diagram_level
+       for update of child_prdg.prdg_diagram_level wait 2
     ;
 
     -- find start object
