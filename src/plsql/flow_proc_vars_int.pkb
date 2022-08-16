@@ -84,8 +84,7 @@ begin
   , p_var_vc2           => pi_vc2_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -134,8 +133,7 @@ begin
          and upper(prov.prov_var_name)  = upper(pi_var_name)
          and prov.prov_var_type         = flow_constants_pkg.gc_prov_var_type_number
            ;
-    when others
-    then
+    when others then
       l_action := 'var-set-error';
       raise;
   end;
@@ -150,8 +148,7 @@ begin
   , p_var_num           => pi_num_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -216,8 +213,7 @@ begin
   , p_var_date          => pi_date_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -265,8 +261,7 @@ begin
          and upper(prov.prov_var_name)   = upper(pi_var_name)
          and prov.prov_var_type          = flow_constants_pkg.gc_prov_var_type_clob
            ;
-    when others
-    then
+    when others then
       l_action := 'var-set-error';
       raise;
   end;
@@ -281,8 +276,7 @@ begin
   , p_var_clob           => pi_clob_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -309,8 +303,8 @@ begin
      into po_vc2_value
      from flow_process_variables prov
     where prov.prov_prcs_id         = pi_prcs_id
-      and upper(prov.prov_var_name) = upper(pi_var_name)
       and prov.prov_scope           = pi_scope
+      and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_vc2_value;
 exception
@@ -342,6 +336,7 @@ begin
      into po_num_value
      from flow_process_variables prov
     where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
       and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_num_value;
@@ -374,6 +369,7 @@ begin
      into po_date_value
      from flow_process_variables prov
     where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
       and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_date_value;
@@ -406,6 +402,7 @@ begin
      into po_clob_value
      from flow_process_variables prov
     where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
       and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_clob_value;
@@ -440,8 +437,8 @@ begin
      into l_var_type
      from flow_process_variables prov
     where prov.prov_prcs_id           = pi_prcs_id
-      and upper(prov.prov_var_name)   = upper(pi_var_name)
       and prov.prov_scope             = pi_scope
+      and upper(prov.prov_var_name)   = upper(pi_var_name)
         ;
    return l_var_type;
 exception
@@ -474,15 +471,15 @@ begin
     into l_var_type
     from flow_process_variables prov
    where prov.prov_prcs_id          = pi_prcs_id
-     and upper(prov.prov_var_name)  = upper(pi_var_name)
      and prov.prov_scope            = pi_scope
+     and upper(prov.prov_var_name)  = upper(pi_var_name)
      for update wait 2;
 
   delete 
     from flow_process_variables prov
    where prov.prov_prcs_id          = pi_prcs_id
-     and upper(prov.prov_var_name)  = upper(pi_var_name)
      and prov.prov_scope            = pi_scope
+     and upper(prov.prov_var_name)  = upper(pi_var_name)
   ;
   flow_logging.log_variable_event
   ( p_process_id        => pi_prcs_id
@@ -557,13 +554,16 @@ end delete_var;
   is
   begin
     if pi_retain_builtins then 
-      delete from flow_process_variables prov
-      where prov.prov_prcs_id = pi_prcs_id
-        and prov.prov_var_name not in ( flow_constants_pkg.gc_prov_builtin_business_ref )
+      delete
+        from flow_process_variables prov
+       where prov.prov_prcs_id = pi_prcs_id
+         and prov.prov_var_name not in ( flow_constants_pkg.gc_prov_builtin_business_ref )
       ;
     else
-      delete from flow_process_variables prov
-      where prov.prov_prcs_id = pi_prcs_id;
+      delete
+        from flow_process_variables prov
+       where prov.prov_prcs_id = pi_prcs_id
+      ;
     end if;
   end delete_all_for_process;
 
