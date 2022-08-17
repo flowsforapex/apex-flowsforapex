@@ -89,6 +89,8 @@ as
 
     if l_json_element is not null then
       l_namespace_object.put( l_attribute, l_json_element );
+    elsif pi_value in ( flow_constants_pkg.gc_vcbool_true, flow_constants_pkg.gc_vcbool_false ) then
+      l_namespace_object.put( l_attribute, (pi_value = flow_constants_pkg.gc_vcbool_true) );
     else
       l_namespace_object.put( l_attribute, pi_value );
     end if;
@@ -1328,6 +1330,9 @@ as
                       , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
                       , proc.proc_type
                       , proc.proc_callable
+                      , proc.proc_application_id
+                      , proc.proc_page_id
+                      , proc.proc_username
                       , proc.proc_steps
                       , proc.proc_sub_procs
                       , proc.proc_name
@@ -1339,14 +1344,17 @@ as
                                       , 'https://flowsforapex.org' as "apex")
                       , '/bpmn:definitions/bpmn:process' passing pi_xml
                         columns
-                          proc_id         varchar2( 50 char) path '@id'
-                        , proc_type       varchar2( 50 char) path 'name()'
-                        , proc_name       varchar2(200 char) path '@name'
-                        , proc_callable   varchar2( 50 char) path '@apex:isCallable'
-                        , proc_steps      sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements'
-                        , proc_sub_procs  sys.xmltype        path 'bpmn:subProcess'
-                        , proc_laneset    sys.xmltype        path 'bpmn:laneSet'
-                        , proc_extensions sys.xmltype        path 'bpmn:extensionElements'
+                          proc_id             varchar2( 50 char) path '@id'
+                        , proc_type           varchar2( 50 char) path 'name()'
+                        , proc_name           varchar2(200 char) path '@name'
+                        , proc_callable       varchar2( 50 char) path '@apex:isCallable'
+                        , proc_application_id varchar2( 50 char) path '@apex:applicationId'
+                        , proc_page_id        varchar2( 50 char) path '@apex:pageId'
+                        , proc_username       varchar2( 50 char) path '@apex:username'
+                        , proc_steps          sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements'
+                        , proc_sub_procs      sys.xmltype        path 'bpmn:subProcess'
+                        , proc_laneset        sys.xmltype        path 'bpmn:laneSet'
+                        , proc_extensions     sys.xmltype        path 'bpmn:extensionElements'
                       ) proc
                  )
       loop
@@ -1359,6 +1367,33 @@ as
         , pi_objt_name           => rec.proc_name
         , pi_objt_parent_bpmn_id => case when g_collab_refs.exists( rec.proc_id ) then g_collab_refs( rec.proc_id ) else null end
         );
+
+        if rec.proc_application_id is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_application_id
+          , pi_value          => rec.proc_application_id
+          );
+        end if;
+
+        if rec.proc_page_id is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_page_id
+          , pi_value          => rec.proc_page_id
+          );
+        end if;
+
+        if rec.proc_username is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_username
+          , pi_value          => rec.proc_username
+          );
+        end if;
 
         if rec.proc_callable = flow_constants_pkg.gc_vcbool_true then
           parse_callable_extensions
