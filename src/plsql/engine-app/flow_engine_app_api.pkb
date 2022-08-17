@@ -318,6 +318,31 @@ as
            );
     return l_objt_list;
   end get_objt_list;
+
+
+  function get_objt_list(
+    p_prdg_id in flow_instance_diagrams.prdg_id%type
+  ) return varchar2
+  as
+    l_objt_list varchar2(32767);
+  begin    
+    select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
+      into l_objt_list
+      from ( select objt_bpmn_id
+               from flow_objects
+              where objt_dgrm_id = ( select prdg_dgrm_id 
+                                       from flow_instance_diagrams
+                                      where prdg_id = p_prdg_id)
+                and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
+              union
+             select conn_bpmn_id
+               from flow_connections
+              where conn_dgrm_id = ( select prdg_dgrm_id 
+                                       from flow_instance_diagrams
+                                      where prdg_id = p_prdg_id)
+           );
+    return l_objt_list;
+  end get_objt_list;
   
   
   function get_objt_name(
@@ -368,6 +393,33 @@ as
       and dgrm_id = (select prcs_dgrm_id
                        from flow_processes
                       where prcs_id = p_prcs_id);
+    return l_objt_name;
+  end get_objt_name;
+
+
+  function get_objt_name(
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_prdg_id      in flow_instance_diagrams.prdg_id%type
+  ) return flow_objects.objt_name%type
+  as
+    l_objt_name flow_objects.objt_name%type;
+  begin
+    select name
+      into l_objt_name
+      from ( select objt_bpmn_id as bpmn_id
+                  , objt_name as name
+                  , objt_dgrm_id as dgrm_id
+               from flow_objects
+              union
+             select conn_bpmn_id as bpmn_id
+                  , conn_name as name
+                  , conn_dgrm_id as dgrm_id
+               from flow_connections
+           )
+    where bpmn_id = p_objt_bpmn_id
+      and dgrm_id = (select prdg_dgrm_id
+                       from flow_instance_diagrams
+                      where prdg_id = p_prdg_id);
     return l_objt_name;
   end get_objt_name;
 
@@ -446,18 +498,18 @@ as
 
   procedure get_url_p13(
     pi_prcs_id flow_processes.prcs_id%type
-  , pi_dgrm_id flow_processes.prcs_dgrm_id%type  
+  , pi_prdg_id flow_instance_diagrams.prdg_id%type
   , pi_objt_id varchar2
   , pi_title varchar2
   )
   as
     l_url varchar2(2000);
-    --l_dgrm_id flow_processes.prcs_dgrm_id%type;
+    l_dgrm_id flow_processes.prcs_dgrm_id%type;
   begin
-    /*select prcs_dgrm_id 
+    select prdg_dgrm_id 
       into l_dgrm_id 
-      from flow_processes 
-    where prcs_id = pi_prcs_id;*/
+      from flow_instance_diagrams
+     where prdg_id = pi_prdg_id;
       
     l_url := apex_page.get_url(
       p_application => v('APP_ID'),
@@ -465,7 +517,7 @@ as
       p_session => v('APP_SESSION'),
       p_clear_cache => 'RP',
       p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
-      p_values => pi_dgrm_id/*l_dgrm_id*/ || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
+      p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
     );
     htp.p(l_url);
   end get_url_p13;

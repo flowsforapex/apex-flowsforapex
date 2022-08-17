@@ -90,7 +90,13 @@
           bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
         }
         // trigger load event
-        event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", { diagramId: this.diagramId } );
+        event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", 
+          { 
+            diagramIdentifier: this.diagramIdentifier, 
+            callingDiagramIdentifier: this.callingDiagramIdentifier, 
+            callingObjectId: this.callingObjectId
+          } 
+        );
       } catch (err) {
         apex.debug.error( "Loading Diagram failed.", err, this.diagram );
       }
@@ -131,16 +137,16 @@
             // show/hide breadcrumb
             (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
             // load old diagram (if possible)
-            diagram = pData.data.find(d => d.diagramId === this.diagramId && d.callingDiagramId === this.callingDiagramId && d.callingObjectId === this.callingObjectId);
+            diagram = pData.data.find(d => d.diagramIdentifier === this.diagramIdentifier);
             // otherwise: get root entry
             if (!diagram) {
               oldLoaded = false;
-              diagram = pData.data.find(d => typeof(d.callingDiagramId) === 'undefined');
+              diagram = pData.data.find(d => typeof(d.callingDiagramIdentifier) === 'undefined');
             } 
             // set references to hierarchy + current diagram
             this.data = pData.data;
-            this.diagramId = diagram.diagramId;
-            this.callingDiagramId = diagram.callingDiagramId;
+            this.diagramIdentifier = diagram.diagramIdentifier;
+            this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
             // reset breadcrumb
             if (!oldLoaded) this.bpmnViewer$.get('subProcessModule').resetBreadcrumb();

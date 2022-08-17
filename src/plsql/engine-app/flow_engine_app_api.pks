@@ -12,6 +12,10 @@ as
   function get_objt_list(
     p_dgrm_id in flow_diagrams.dgrm_id%type
   ) return varchar2;
+
+    function get_objt_list(
+    p_prdg_id in flow_instance_diagrams.prdg_id%type
+  ) return varchar2;
   
   function get_objt_name(
     p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
@@ -21,6 +25,11 @@ as
   function get_objt_name(
     p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
   , p_prcs_id      in flow_processes.prcs_id%type
+  ) return flow_objects.objt_name%type;
+
+  function get_objt_name(
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_prdg_id      in flow_instance_diagrams.prdg_id%type
   ) return flow_objects.objt_name%type;
 
   procedure set_viewport(
@@ -38,7 +47,7 @@ as
 
   procedure get_url_p13(
     pi_prcs_id flow_processes.prcs_id%type
-  , pi_dgrm_id flow_processes.prcs_dgrm_id%type    
+  , pi_prdg_id flow_instance_diagrams.prdg_id%type
   , pi_objt_id varchar2
   , pi_title varchar2
   );

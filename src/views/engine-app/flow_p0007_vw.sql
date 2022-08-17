@@ -6,7 +6,7 @@ as
          , dgrm.dgrm_id
          , null as calling_dgrm
          , null as calling_objt
-         , dgrm.dgrm_name || ' (' || dgrm.dgrm_version || ')' as breadcrumb
+         , dgrm.dgrm_name || ' ( Version: ' || dgrm.dgrm_version || ' )' as breadcrumb
          , 1 as sub_prcs_insight
       from flow_diagrams dgrm
      union all
@@ -14,7 +14,7 @@ as
          , dgrm.dgrm_id
          , objt.objt_dgrm_id as calling_dgrm
          , objt.objt_bpmn_id as calling_objt
-         , dgrm.dgrm_name || ' (' || dgrm.dgrm_version || ')' as breadcrumb
+         , dgrm.dgrm_name || ' ( Version: ' || dgrm.dgrm_version || ' )' as breadcrumb
          , 1 as sub_prcs_insight
       from flow_objects objt
       join flow_diagrams dgrm

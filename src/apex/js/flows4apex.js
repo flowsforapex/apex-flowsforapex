@@ -1606,7 +1606,7 @@ function openObjectDialog(objectBpmnId, objectName) {
       {
           x01: objectBpmnId,
           x02: title,
-          pageItems: ["P8_LOADED_DGRM_ID"]
+          pageItems: ["P8_LOADED_DIAGRAM"]
       }, 
       {
           success: function (pData)
