@@ -1597,7 +1597,7 @@ function clickCondition(objectListItem, eventData) {
   return false;
 }
 
-function openObjectDialog(objectBpmnId, objectName) {
+function openObjectDialog(objectBpmnId, objectName, currentPage) {
   // set title
   var title = objectBpmnId + (objectName.length > 0 ? ' - ' + objectName : '');
   // open page
@@ -1606,7 +1606,7 @@ function openObjectDialog(objectBpmnId, objectName) {
       {
           x01: objectBpmnId,
           x02: title,
-          pageItems: ["P8_LOADED_DIAGRAM"]
+          pageItems: [`P${currentPage}_LOADED_DIAGRAM`]
       }, 
       {
           success: function (pData)

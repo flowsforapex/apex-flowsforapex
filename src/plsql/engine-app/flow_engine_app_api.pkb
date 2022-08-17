@@ -516,8 +516,8 @@ as
       p_page => '13',
       p_session => v('APP_SESSION'),
       p_clear_cache => 'RP',
-      p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
-      p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
+      p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE,P13_PRDG_ID',
+      p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title || ',' || pi_prdg_id
     );
     htp.p(l_url);
   end get_url_p13;
