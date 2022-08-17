@@ -27,6 +27,7 @@ as
              when 'waiting at gateway' then 'fa fa-hand-stop-o'
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
+             when 'waiting for approval' then 'fa fa-hand-stop-o'
          end as sbfl_status_icon
        , sbfl.timr_start_on at time zone sessiontimezone as sbfl_timr_start_on
        , sbfl.sbfl_current_lane_name as sbfl_current_lane
