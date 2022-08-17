@@ -17,7 +17,7 @@ wwv_flow_api.create_list_of_values(
 ,p_source_type=>'TABLE'
 ,p_location=>'LOCAL'
 ,p_query_table=>'FLOW_INSTANCE_GATEWAYS_LOV'
-,p_query_where=>'prcs_id = :p8_prcs_id'
+,p_query_where=>'prdg_id = :P8_PRDG_ID'
 ,p_return_column_name=>'OBJT_BPMN_ID'
 ,p_display_column_name=>'OBJT_NAME'
 ,p_group_sort_direction=>'ASC'

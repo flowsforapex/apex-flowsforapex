@@ -22,7 +22,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220720091055'
+,p_last_upd_yyyymmddhh24miss=>'20220817084002'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -669,7 +669,7 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(44803477939176616)
-,p_name=>'P7_LOADED_DGRM_ID'
+,p_name=>'P7_LOADED_DIAGRAM'
 ,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_api.id(28425138174759832)
 ,p_display_as=>'NATIVE_HIDDEN'
@@ -931,9 +931,9 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P7_LOADED_DGRM_ID'
+,p_affected_elements=>'P7_LOADED_DIAGRAM'
 ,p_attribute_01=>'JAVASCRIPT_EXPRESSION'
-,p_attribute_05=>'this.data.diagramId'
+,p_attribute_05=>'this.data.diagramIdentifier'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
@@ -947,8 +947,11 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P7_OBJT_LIST'
 ,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>'return flow_engine_app_api.get_objt_list(p_dgrm_id => nvl(:P7_LOADED_DGRM_ID, :P7_DGRM_ID));'
-,p_attribute_07=>'P7_LOADED_DGRM_ID,P7_DGRM_ID'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P7_LOADED_DIAGRAM is not null then',
+'return flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_LOADED_DIAGRAM);',
+'end if;'))
+,p_attribute_07=>'P7_LOADED_DIAGRAM'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
@@ -1010,11 +1013,13 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements=>'P7_OBJT_NAME'
 ,p_attribute_01=>'FUNCTION_BODY'
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P7_LOADED_DIAGRAM is not null then',
 'return flow_engine_app_api.get_objt_name(',
 '    p_objt_bpmn_id => :P7_OBJT_BPMN_ID',
-'  , p_dgrm_id => nvl(:P7_LOADED_DGRM_ID, :P7_DGRM_ID)',
-');'))
-,p_attribute_07=>'P7_OBJT_BPMN_ID,P7_LOADED_DGRM_ID,P7_DGRM_ID'
+'  , p_dgrm_id => :P7_LOADED_DIAGRAM',
+');',
+'end if;'))
+,p_attribute_07=>'P7_OBJT_BPMN_ID,P7_LOADED_DIAGRAM'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
@@ -1026,7 +1031,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'openObjectDialog($v(''P7_OBJT_BPMN_ID''), $v(''P7_OBJT_NAME''));'
+,p_attribute_01=>'openObjectDialog($v(''P7_OBJT_BPMN_ID''), $v(''P7_OBJT_NAME''), 7);'
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(22799930478488038)
