@@ -1148,11 +1148,11 @@ as
     exception
       when flow_diagram.diagram_exists then
         apex_error.add_error(
-            p_message => 'Model already exists.'
+            p_message => apex_lang.message('APP_ERR_MODEL_EXIST', pi_dgrm_name, pi_dgrm_version)
             , p_display_location => apex_error.c_on_error_page);
       when flow_diagram.diagram_not_draft then
         apex_error.add_error(
-            p_message => 'Overwrite only possible for draft models.'
+            p_message => apex_lang.message('APP_ERR_ONLY_DRAFT')
             , p_display_location => apex_error.c_on_error_page);
     end upload_and_parse;
     
@@ -1274,6 +1274,11 @@ as
       else
         raise_application_error(-20002, 'Unknown operation requested.');
     end case;
+    exception
+      when flow_diagram.diagram_exists then
+        apex_error.add_error(
+            p_message => apex_lang.message('APP_ERR_MODEL_EXIST', pi_dgrm_name, pi_dgrm_version)
+            , p_display_location => apex_error.c_on_error_page);
   end process_page_p7;
   
   
