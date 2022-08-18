@@ -139,7 +139,7 @@ as
            , objt.objt_attributes."apex"."subject"
            , objt.objt_attributes."apex"."parameters"
            , objt.objt_attributes."apex"."businessRef"
-           , objt.objt_attributes."apex"."comment"  --- switch to resultVariable
+           , objt.objt_attributes."apex"."resultVariable"
            , objt.objt_attributes."apex"."initiator"  
            , objt.objt_attributes."apex"."priority"
         into l_app_id
@@ -377,7 +377,7 @@ as
       );
       -- get name of return variable
       begin
-        select objt.objt_attributes."apex"."comment"   --- switch to resultVariable
+        select objt.objt_attributes."apex"."resultVariable"
           into l_result_var
           from flow_objects objt
          where objt.objt_bpmn_id = l_potential_current
