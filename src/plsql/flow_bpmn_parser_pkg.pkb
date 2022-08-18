@@ -1491,7 +1491,7 @@ as
                    from xmltable
                         (
                           xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                        , '/bpmn:definitions/bpmn:collaboration/*' passing pi_xml
+                        , '/bpmn:definitions/bpmn:collaboration/bpmn:participant' passing pi_xml
                           columns
                             colab_id       varchar2(50  char) path '@id'
                           , colab_name     varchar2(200 char) path '@name'
@@ -1533,8 +1533,10 @@ as
     g_objects.delete;
     g_objt_expr.delete;
     g_connections.delete;
-    g_objt_lookup.delete;
+    g_lane_refs.delete;
+    g_collab_refs.delete;
     g_default_cons.delete;
+    g_objt_lookup.delete;
   end reset;
 
   procedure parse
