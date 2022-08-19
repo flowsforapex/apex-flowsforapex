@@ -64,6 +64,7 @@ drop view flow_p0013_instance_log_vw;
 drop view flow_p0013_step_log_vw;
 drop view flow_p0013_subflows_vw;
 drop view flow_p0013_variable_log_vw;
+drop view flow_p0013_called_diagrams_vw;
 drop view flow_p0014_instance_log_vw;
 drop view flow_p0014_step_log_vw;
 drop view flow_p0014_subflows_vw;

@@ -31,8 +31,8 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220817082815'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20220819075750'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5681179787037011)
@@ -634,7 +634,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'59765'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CHECKBOX:ACTION:PROV_VAR_NAME:PROV_VAR_TYPE:PROV_VAR_VALUE::IS_GATEWAY_ROUTE:CURRENT_CLASS'
+,p_report_columns=>'CHECKBOX:ACTION:PROV_VAR_NAME:PROV_VAR_TYPE:PROV_VAR_VALUE:PROV_SCOPE:'
 ,p_sort_column_1=>'CURRENT_SCOPE'
 ,p_sort_direction_1=>'DESC'
 ,p_sort_column_2=>'0'
@@ -975,7 +975,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'SBFL_DIAGRAM_LEVEL'
 ,p_display_order=>210
 ,p_column_identifier=>'V'
-,p_column_label=>'Diagram Level'
+,p_column_label=>'Level'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'RIGHT'
 );
@@ -1024,7 +1024,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'59631'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION:CURRENT_CLASS'
+,p_report_columns=>'CHECKBOX:ACTIONS:QUICK_ACTION:SBFL_CURRENT:SBFL_LAST_UPDATE:SBFL_STATUS:SBFL_CURRENT_LANE:SBFL_RESERVATION:SBFL_DIAGRAM_LEVEL:'
 ,p_sort_column_1=>'CURRENT_LEVEL'
 ,p_sort_direction_1=>'DESC'
 ,p_sort_column_2=>'0'
@@ -1039,7 +1039,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_sort_direction_6=>'ASC'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(60757298702595828)
+ p_id=>wwv_flow_api.id(60914663811851899)
 ,p_report_id=>wwv_flow_api.id(8498061205860315)
 ,p_condition_type=>'FILTER'
 ,p_allow_delete=>'Y'
@@ -1400,7 +1400,7 @@ wwv_flow_api.create_page_button(
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#'
 ,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
-,p_button_image_alt=>'Add Gateway Route'
+,p_button_image_alt=>'Set Gateway Route'
 ,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>'P8_PRCS_STATUS'
@@ -1418,7 +1418,7 @@ wwv_flow_api.create_page_button(
 ,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
 ,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
 ,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Add Process Variable'
+,p_button_image_alt=>'Set Process Variable'
 ,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>'P8_PRCS_STATUS'
@@ -2279,7 +2279,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>40
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'openObjectDialog($v(''P8_OBJT_BPMN_ID''), $v(''P8_OBJT_NAME''));'
+,p_attribute_01=>'openObjectDialog($v(''P8_OBJT_BPMN_ID''), $v(''P8_OBJT_NAME''),8);'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6007809031464526)
