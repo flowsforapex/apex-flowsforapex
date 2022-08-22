@@ -484,8 +484,12 @@ create or replace package body flow_plugin_manage_instance_variables as
                                 when 'set' 
                                    then 
                                       $if wwv_flow_api.c_current >= 20210415 $then 
-                                         to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )  
-                                      $else                                          
+                                         case when l_items ( l_item_name ).format_mask is not null then
+                                            to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )
+                                         else
+                                            to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                                         end
+                                      $else
                                          to_number( apex_util.get_session_state( p_item => l_item_name ) )
                                       $end
                                  when 'get' 
@@ -501,7 +505,11 @@ create or replace package body flow_plugin_manage_instance_variables as
                            pi_prcs_id    => l_prcs_id
                            , pi_var_name   => l_prcs_var_name
                            , pi_num_value  => $if wwv_flow_api.c_current >= 20210415 $then 
-                                                 to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )  
+                                                 case when l_items ( l_item_name ).format_mask is not null then
+                                                    to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )
+                                                 else
+                                                    to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                                                 end
                                               $else
                                                  to_number( apex_util.get_session_state( p_item => l_item_name ) )
                                               $end
