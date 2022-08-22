@@ -6,7 +6,8 @@ as
   , page_id  flow_types_pkg.t_bpmn_attribute_vc2
   , username flow_types_pkg.t_bpmn_attribute_vc2
   );
-  e_apex_session_missing_param exception;
+  e_apex_session_missing_param        exception;
+  e_apex_session_multiple_processes   exception;
 
   function get_session_parameters 
   ( p_dgrm_id         flow_diagrams.dgrm_id%type
@@ -28,11 +29,17 @@ as
                , page_id  varchar2(4000) path '$.pageId'
                , username varchar2(4000) path '$.username'
              ) jt
-       where objt.objt_dgrm_id = p_dgrm_id
-         and objt.objt_objt_id is null
+       where objt.objt_dgrm_id  = p_dgrm_id
          and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
       ;
     exception
+      when too_many_rows then
+        apex_debug.info ( p_message => 'flow_apex_session - multiple bpmn:process events found in model.  Multiple not yet supported.  raising Error');
+        raise e_apex_session_multiple_processes;
+        /* Note for future:  Session information is available from bpmn:process in diagram.  We currently support bpmn:process or bpmn:collaboration as the top 
+        level in the XML but dont create a flow_object for the collaboration object.   So top level is the bpmn:participation.
+        when we support collaboration properly (i.e., support message flow between participations), this code will need to be revisited.
+        */
       when no_data_found then
         apex_debug.info ( p_message => 'flow_apex_session - no session parameters found from diagram.');
     end;
@@ -129,6 +136,13 @@ as
           );
     end if;
   exception
+      when e_apex_session_multiple_processes then
+          flow_errors.handle_instance_error
+          ( pi_prcs_id      => p_process_id
+          , pi_sbfl_id      => p_subflow_id
+          , pi_message_key  => 'apex-task-multiple-process'
+          );
+          -- F4A$MESSAGE 'apex-session-multiple-process' || 'Error creating APEX session.  BPMN diagram contains multiple Process objects.'
       when e_apex_session_missing_param then
           flow_errors.handle_instance_error
           ( pi_prcs_id      => p_process_id

@@ -467,6 +467,11 @@
     "text_key" : "apex-task-priority-error",
     "source" : "Error creating APEX Workflow task - invalid priority %0.",
     "target" : "Error creating APEX Workflow task - invalid priority %0."
+  },
+  {
+    "text_key" : "apex-task-multiple-processes",
+    "source" : "Error creating APEX session.  BPMN diagram contains multiple Process objects.",
+    "target" : "Error creating APEX session.  BPMN diagram contains multiple Process objects."
   }
   ]
 }
