@@ -23,8 +23,8 @@ wwv_flow_api.create_page(
 '    font-size: 1.1rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220107130905'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20220824004123'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(8027146440825640)
@@ -167,6 +167,85 @@ wwv_flow_api.create_page_item(
 ,p_attribute_02=>'NONE'
 );
 wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(60865099550537248)
+,p_name=>'P9_DEFAULT_WORKSPACE'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
+,p_prompt=>'Default Workspace'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_colspan=>3
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'Default workspace, application and page id are used to create an APEX session if they are not defined at the activity or diagram level.'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(60865167757537249)
+,p_name=>'P9_DEFAULT_APPLICATION'
+,p_item_sequence=>30
+,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
+,p_prompt=>'Default Application Id'
+,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_cSize=>30
+,p_begin_on_new_line=>'N'
+,p_colspan=>2
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_03=>'right'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(60865213001537250)
+,p_name=>'P9_DEFAULT_PAGEID'
+,p_item_sequence=>40
+,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
+,p_prompt=>'Default Page Id'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_begin_on_new_line=>'N'
+,p_colspan=>2
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(62611455436485301)
+,p_name=>'P9_DEFAULT_EMAIL_SENDER'
+,p_item_sequence=>50
+,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
+,p_prompt=>'Default Email Sender'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_colspan=>3
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'Use as a sender for emails if it is not defined on the service task.'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'EMAIL'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(62611542240485302)
+,p_name=>'P9_TIMER_MAX_CYCLES'
+,p_item_sequence=>60
+,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
+,p_prompt=>'Timer Max Cycles'
+,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_cSize=>30
+,p_colspan=>2
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'For cycle timers, this will defined a maximum number of execution.'
+,p_attribute_03=>'right'
+);
+wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(62704280409232512)
 ,p_name=>'P9_DUPLICATE_STEP_PREVENTION'
 ,p_item_sequence=>10
@@ -194,7 +273,7 @@ wwv_flow_api.create_page_computation(
 ,p_computation_type=>'FUNCTION_BODY'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'return flow_engine_util.get_config_value(',
-'           p_config_key => ''logging_language''',
+'           p_config_key => flow_constants_pkg.gc_config_logging_language',
 '         , p_default_value => flow_constants_pkg.gc_config_default_logging_language',
 '       );'))
 );
@@ -206,7 +285,7 @@ wwv_flow_api.create_page_computation(
 ,p_computation_type=>'FUNCTION_BODY'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'return flow_engine_util.get_config_value(',
-'           p_config_key => ''logging_level''',
+'           p_config_key =>  flow_constants_pkg.gc_config_logging_level',
 '         , p_default_value => flow_constants_pkg.gc_config_default_logging_level',
 '       );'))
 );
@@ -218,7 +297,7 @@ wwv_flow_api.create_page_computation(
 ,p_computation_type=>'FUNCTION_BODY'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'return flow_engine_util.get_config_value(',
-'           p_config_key => ''logging_hide_userid''',
+'           p_config_key => flow_constants_pkg.gc_config_logging_level',
 '         , p_default_value => flow_constants_pkg.gc_config_default_logging_level',
 '       );'))
 );
@@ -230,7 +309,7 @@ wwv_flow_api.create_page_computation(
 ,p_computation_type=>'FUNCTION_BODY'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'return flow_engine_util.get_config_value(',
-'           p_config_key => ''engine_app_mode''',
+'           p_config_key =>  flow_constants_pkg.gc_config_engine_app_mode',
 '         , p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode',
 '       );'))
 );
@@ -242,8 +321,56 @@ wwv_flow_api.create_page_computation(
 ,p_computation_type=>'FUNCTION_BODY'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'return flow_engine_util.get_config_value(',
-'           p_config_key => ''duplicate_step_prevention''',
+'           p_config_key => flow_constants_pkg.gc_config_dup_step_prevention',
 '         , p_default_value => flow_constants_pkg.gc_config_default_dup_step_prevention',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(62611635971485303)
+,p_computation_sequence=>60
+,p_computation_item=>'P9_DEFAULT_WORKSPACE'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key => flow_constants_pkg.gc_config_default_workspace',
+'         , p_default_value => flow_constants_pkg.gc_config_default_default_workspace',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(62611793257485304)
+,p_computation_sequence=>70
+,p_computation_item=>'P9_DEFAULT_APPLICATION'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>  flow_constants_pkg.gc_config_default_application',
+'         , p_default_value => flow_constants_pkg.gc_config_default_default_application',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(62611879621485305)
+,p_computation_sequence=>80
+,p_computation_item=>'P9_DEFAULT_PAGEID'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>flow_constants_pkg.gc_config_default_pageid',
+'         , p_default_value => flow_constants_pkg.gc_config_default_default_pageid',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(62611912263485306)
+,p_computation_sequence=>90
+,p_computation_item=>'P9_DEFAULT_EMAIL_SENDER'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key => flow_constants_pkg.gc_config_default_email_sender',
+'         , p_default_value => null ',
 '       );'))
 );
 wwv_flow_api.create_page_process(
@@ -259,6 +386,11 @@ wwv_flow_api.create_page_process(
 ', pi_logging_hide_userid => :P9_LOGGING_HIDE_USERID',
 ', pi_engine_app_mode => :P9_ENGINE_APP_MODE',
 ', pi_duplicate_step_prevention => :P9_DUPLICATE_STEP_PREVENTION',
+', pi_default_workspace    => :P9_DEFAULT_WORKSPACE',
+', pi_default_application  => :P9_DEFAULT_APPLICATION ',
+', pi_default_pageid       => :P9_DEFAULT_PAGEID   ',
+', pi_default_email_sender => :P9_DEFAULT_EMAIL_SENDER ',
+', pi_timer_max_cycles     => :P9_TIMER_MAX_CYCLES',
 ');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when_button_id=>wwv_flow_api.id(8026761271825636)

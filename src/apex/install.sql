@@ -85,7 +85,6 @@ prompt --install
 @@application/shared_components/user_interface/lovs/p8_instance_connections_lov.sql
 @@application/shared_components/user_interface/lovs/p8_instance_gateways_lov.sql
 @@application/pages/page_groups.sql
-@@application/comments.sql
 @@application/shared_components/navigation/breadcrumbs/breadcrumb.sql
 @@application/shared_components/user_interface/templates/page/minimal_no_navigation.sql
 @@application/shared_components/user_interface/templates/page/standard.sql

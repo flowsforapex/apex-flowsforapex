@@ -102,13 +102,13 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
 ,p_sql_min_column_count=>1
-,p_sql_max_column_count=>1
+,p_sql_max_column_count=>2
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_api.id(84720010618460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
-,p_help_text=>'<p>SQL Query which returns one row with one column containing the flow process instance id.</p>'
+,p_help_text=>'<p>SQL Query which returns one row with one or two columns containing the flow process instance id and, optionally the subflow id.</p>'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(84820717881541566)
@@ -251,7 +251,8 @@ wwv_flow_api.create_plugin_attribute(
 '	{',
 '		"name": "Example_num_var",',
 '		"type": "number",',
-'		"value": 200',
+'		"value": 200,',
+'                "scope": 100',
 '	},',
 '	{',
 '		"name": "Example_date_var",',
@@ -282,7 +283,8 @@ wwv_flow_api.create_plugin_attribute(
 '	{',
 '		"name": "Example_date_var",',
 '		"type": "date",',
-'		"item": "ITEM_NAME"',
+'		"item": "ITEM_NAME",',
+'                 "scope": 200',
 '	},',
 '	{',
 '		"name": "Example_clob_var",',
@@ -291,7 +293,9 @@ wwv_flow_api.create_plugin_attribute(
 '	}',
 ']',
 '</pre>'))
-,p_help_text=>'Enter a JSON array that contains one or more process variables, their types, and values (when action is set) or item (when action is get).'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'Enter a JSON array that contains one or more process variables, their types, and values (when action is set) or item (when action is get).</br>',
+'You can optionnaly defined a scope attribute that will overwrite the subflow or the default value.'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(84725241650460993)
@@ -318,6 +322,7 @@ wwv_flow_api.create_plugin_attribute(
 '          key ''name'' value ''example_vc2_var''',
 '        , key ''type'' value ''varchar2''',
 '        , key ''value'' value ''test_vc2''',
+'        , key ''scope'' value 100',
 '        ),',
 '    json_object(',
 '          key ''name'' value ''example_num_var''',
@@ -344,6 +349,7 @@ wwv_flow_api.create_plugin_attribute(
 '          key ''name'' value ''example_vc2_var''',
 '        , key ''type'' value ''varchar2''',
 '        , key ''item'' value ''ITEM_NAME''',
+'        , key ''scope'' value 100',
 '        ),',
 '    json_object(',
 '          key ''name'' value ''example_num_var''',
@@ -375,6 +381,30 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>false
 ,p_is_translatable=>false
+);
+wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(62243875274673859)
+,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>11
+,p_display_sequence=>25
+,p_prompt=>'Subflow ID Item'
+,p_attribute_type=>'PAGE ITEM'
+,p_is_required=>false
+,p_is_translatable=>false
+,p_depending_on_attribute_id=>wwv_flow_api.id(84720010618460990)
+,p_depending_on_has_to_exist=>true
+,p_depending_on_condition_type=>'EQUALS'
+,p_depending_on_expression=>'item'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>APEX Item that contains the Flow Instance subflow_id.</p>',
+'',
+'<p>This could typically be: </p>',
+'<ul>',
+'<li>An Application Item, often named SUBFLOW_ID.</li>',
+'<li>A Global Page Item, for example P0_SUBFLOW_ID.</li>',
+'<li>A Page Item on your page.</li>',
+'</ul>'))
 );
 wwv_flow_api.component_end;
 end;

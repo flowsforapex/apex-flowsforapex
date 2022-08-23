@@ -1429,14 +1429,24 @@ as
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_engine_app_mode           in flow_configuration.cfig_value%type
   , pi_duplicate_step_prevention in flow_configuration.cfig_value%type
+  , pi_default_workspace         in flow_configuration.cfig_value%type
+  , pi_default_application       in flow_configuration.cfig_value%type
+  , pi_default_pageid            in flow_configuration.cfig_value%type
+  , pi_default_email_sender      in flow_configuration.cfig_value%type
+  , pi_timer_max_cycles          in flow_configuration.cfig_value%type
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => 'logging_language', p_value => pi_logging_language);
-      flow_engine_util.set_config_value( p_config_key => 'logging_level', p_value => pi_logging_level);
-      flow_engine_util.set_config_value( p_config_key => 'logging_hide_userid', p_value => pi_logging_hide_userid);
-      flow_engine_util.set_config_value( p_config_key => 'engine_app_mode', p_value => pi_engine_app_mode);
-      flow_engine_util.set_config_value( p_config_key => 'duplicate_step_prevention', p_value => pi_duplicate_step_prevention);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language    , p_value => pi_logging_language);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level       , p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid , p_value => pi_logging_hide_userid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode     , p_value => pi_engine_app_mode);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_dup_step_prevention , p_value => pi_duplicate_step_prevention);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_workspace   , p_value => pi_default_workspace);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application , p_value => pi_default_application);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid      , p_value => pi_default_pageid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_email_sender, p_value => pi_default_email_sender);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_timer_max_cycles    , p_value => pi_timer_max_cycles);
   end set_settings;
 
 
