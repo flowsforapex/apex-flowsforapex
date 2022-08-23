@@ -351,5 +351,19 @@ as
      where dgrm_id = pi_dgrm_id;
   end archive_diagram;   
 
+  function get_diagram_name
+    ( pi_dgrm_id       in flow_diagrams.dgrm_id%type)
+  return flow_diagrams.dgrm_name%type
+  is
+    l_dgrm_name   flow_diagrams.dgrm_name%type;
+  begin
+    select dgrm_name
+      into l_dgrm_name
+      from flow_diagrams
+     where dgrm_id = pi_dgrm_id
+    ;
+     return l_dgrm_name;
+  end get_diagram_name;
+
 end flow_diagram;
 /

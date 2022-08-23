@@ -214,6 +214,8 @@ as
   gc_prcs_event_restart_step         constant  varchar2(20 char) := 'restart step';
   gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
   gc_prcs_event_rescheduled          constant  varchar2(20 char) := 'rescheduled';
+  gc_prcs_event_enter_call           constant  varchar2(20 char) := 'start called model';
+  gc_prcs_event_leave_call           constant  varchar2(20 char) := 'finish called model';
 
   -- Process Variable Datatypes
 

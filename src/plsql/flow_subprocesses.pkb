@@ -178,7 +178,15 @@ as
           , pi_sbfl_id      => p_sbfl_context_par.sbfl_id   
           , pi_var_scope    => p_sbfl_context_par.scope
           , pi_expr_scope   => p_sbfl_info.sbfl_scope
-          );        
+          );      
+          -- log the diagram as being completed
+          flow_logging.log_instance_event
+          ( p_process_id    => p_process_id
+          , p_objt_bpmn_id  => p_step_info.target_objt_ref
+          , p_event         => flow_constants_pkg.gc_prcs_event_leave_call
+          , p_comment       => 'Leaving called diagram '||
+                               flow_diagram.get_diagram_name (pi_dgrm_id => p_sbfl_info.sbfl_dgrm_id) ||'.'
+          );  
         end if;
         -- return to parent level and do next step
         apex_debug.info ('Process Level Completed: Process level %0', p_sbfl_info.sbfl_process_level );
