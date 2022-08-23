@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch:t-Dialog--noPadding'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220817083211'
+,p_last_upd_yyyymmddhh24miss=>'20220823114450'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6161598858353963900)

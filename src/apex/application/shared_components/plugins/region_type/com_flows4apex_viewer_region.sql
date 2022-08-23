@@ -84,7 +84,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
-,p_help_text=>'Choose the column containing the diagram identifier of the current displayed diagram (normally the prdg_id for running instances).'
+,p_help_text=>'Choose the column containing the diagram identifier of the currently displayed diagram (normally the prdg_id for running instances and the dgrm_id for displaying plain models).'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(49047760679593436066)
@@ -125,7 +125,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_expression=>'Y'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'Choose the column containing the diagram identifier of the parent diagram.<br/>',
-'In the context of call activities this is the diagram that contains the activity which called the current displayed diagram (normally the prdg_prdg_id for running instances).'))
+'In the context of call activities this is the diagram that contains the activity which called the currently displayed diagram (normally the prdg_prdg_id for running instances and the calling_dgrm for displaying plain models).'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(49047759420063427098)
@@ -244,7 +244,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>13
 ,p_display_sequence=>110
-,p_prompt=>'Allow Call Activity Drilldown'
+,p_prompt=>'Allow Drilldown On Diagram Level'
 ,p_attribute_type=>'REGION SOURCE COLUMN'
 ,p_is_required=>false
 ,p_default_value=>'DRILLDOWN_ALLOWED'
@@ -255,8 +255,9 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'Choose if you want to allow users to drill down into the underlying diagram on a call activity.<br/>',
-'This option can be used to fulfill security requirements when you want to hide implementation details of single sub processes.<br/>',
+'Choose if you want to allow users to drill down into the underlying diagram on a specific call activity.<br/>',
+'The value can be set separately for each diagram level and thus each call activity.<br/>',
+'This option can be used to fulfill security requirements when you want to hide implementation details of single subprocesses.<br/>',
 'Allowed column values:<br/>',
 '<ul>',
 '<li><b>0</b> - Drilldown is prohibited. The call activity will work as a normal task and users can not display the called diagram.</li>',
@@ -276,7 +277,8 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_translatable=>false
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'Choose if you want the plugin to support call activities.<br/>',
-'This option has to be enabled, if you use call cativities in any of your models to ensure displaying the correct diagram.'))
+'This option has to be enabled, if you use call cativities in any of your models to ensure displaying the correct diagram.',
+'Be sure to setup the other attributes for building up the correct diagram call structure.'))
 );
 wwv_flow_api.create_plugin_std_attribute(
  p_id=>wwv_flow_api.id(48859105243699546287)

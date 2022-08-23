@@ -22,8 +22,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage7();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220822233312'
+,p_last_updated_by=>'DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20220823114450'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
