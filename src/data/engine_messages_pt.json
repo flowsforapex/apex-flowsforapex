@@ -472,6 +472,11 @@
     "text_key" : "apex-task-multiple-processes",
     "source" : "Error creating APEX session.  BPMN diagram contains multiple Process objects.",
     "target" : "Error creating APEX session.  BPMN diagram contains multiple Process objects."
+  },
+  {
+    "text_key" : "call-diagram-not-callable",
+    "source" : "You tried to call a diagram %0 that is marked as being not callable.",
+    "target" : "You tried to call a diagram %0 that is marked as being not callable."
   }
   ]
 }

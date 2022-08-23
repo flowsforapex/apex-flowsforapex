@@ -24,6 +24,42 @@ as
     , dgrm_version_selection flow_types_pkg.t_bpmn_attribute_vc2
     );
 
+  function call_is_recursive
+    ( p_prcs_id   flow_processes.prcs_id%type
+    , p_prdg_id   flow_instance_diagrams.prdg_id%type
+    , p_dgrm_id   flow_diagrams.dgrm_id%type  
+    ) return boolean
+  is
+    l_num_recursive_nodes number;
+  begin
+    -- tests id p_dgrm_id exists in the instance diagram tree above p_prdg_id
+    select  count(1)
+    into    l_num_recursive_nodes
+    from    flow_instance_diagrams
+    where   prdg_prcs_id = p_prcs_id
+    and     prdg_dgrm_id = p_dgrm_id
+    and     level        > 1
+    start with prdg_id   = p_prdg_id
+    connect by prior prdg_prdg_id = prdg_id
+    ;
+    return l_num_recursive_nodes > 0;
+  end call_is_recursive;
+
+  function diagram_is_callable
+    ( p_dgrm_id   flow_diagrams.dgrm_id%type
+    ) return boolean
+  is
+    l_is_callable   flow_types_pkg.t_bpmn_attribute_vc2;
+  begin
+      select nvl( objt.objt_attributes."apex"."isCallable" ,'false')
+        into l_is_callable
+        from flow_objects objt
+       where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         and objt.objt_dgrm_id = p_dgrm_id
+      ;
+      return l_is_callable = 'true';
+  end diagram_is_callable;
+
   procedure find_nested_calls
     ( p_dgrm_id         flow_diagrams.dgrm_id%type
     , p_prcs_id         flow_processes.prcs_id%type
@@ -52,39 +88,64 @@ as
         , pi_dgrm_version         => call_activity.dgrm_version
         , pi_prcs_id              => p_prcs_id
         );
-
-      -- Check for self-reference
-      -- If Diagram is calling itself stop processing and error out.
-      -- This is to guard against infinite loops.
-      if l_child_dgrm_id = p_dgrm_id then
-        flow_errors.handle_general_error
-        ( pi_message_key => 'start-diagram-calls-itself'
-        , p0 => p_dgrm_id
-        );
-        -- $F4AMESSAGE 'start-diagram-calls-itself' || 'You tried to start a diagram %0 that contains a callActivity calling itself.' 
+      -- check diagram is callable
+      if  diagram_is_callable (p_dgrm_id => l_child_dgrm_id) then
+        -- diagram is callable 
+        -- Check for self-reference
+        -- If Diagram is calling itself stop processing and error out.
+        if l_child_dgrm_id = p_dgrm_id then
+          flow_errors.handle_general_error
+          ( pi_message_key => 'start-diagram-calls-itself'
+          , p0 => p_dgrm_id
+          );
+          -- $F4AMESSAGE 'start-diagram-calls-itself' || 'You tried to start a diagram %0 that contains a callActivity calling itself.' 
+        else
+          -- insert an instance_diagram record
+          insert into flow_instance_diagrams
+          ( prdg_prcs_id
+          , prdg_dgrm_id
+          , prdg_calling_dgrm
+          , prdg_calling_objt
+          , prdg_prdg_id
+          )
+          values 
+          ( p_prcs_id
+          , l_child_dgrm_id
+          , p_dgrm_id
+          , call_activity.objt_bpmn_id
+          , p_parent_prdg_id
+          )
+          returning prdg_id into l_current_prdg_id
+          ;
+          -- check for indirect recursion
+          if call_is_recursive  ( p_prcs_id => p_prcs_id
+                                , p_dgrm_id => l_child_dgrm_id
+                                , p_prdg_id => l_current_prdg_id) 
+          then
+            flow_errors.handle_general_error
+            ( pi_message_key => 'start-diagram-calls-itself'
+            , p0 => p_dgrm_id
+            );
+            -- $F4AMESSAGE 'start-diagram-calls-itself' || 'You tried to start a diagram %0 that contains a callActivity calling itself.'           
+          -- find any nested calls in child
+          end if;
+          find_nested_calls ( p_dgrm_id         => l_child_dgrm_id
+                            , p_prcs_id         => p_prcs_id 
+                            , p_parent_prdg_id  => l_current_prdg_id
+                            );
+        end if;
       else
-        -- insert an instance_diagram record
-        insert into flow_instance_diagrams
-        ( prdg_prcs_id
-        , prdg_dgrm_id
-        , prdg_calling_dgrm
-        , prdg_calling_objt
-        , prdg_prdg_id
-        )
-        values 
-        ( p_prcs_id
-        , l_child_dgrm_id
-        , p_dgrm_id
-        , call_activity.objt_bpmn_id
-        , p_parent_prdg_id
-        )
-        returning prdg_id into l_current_prdg_id
-        ;
-        -- find any nested calls in child
-        find_nested_calls ( p_dgrm_id         => l_child_dgrm_id
-                          , p_prcs_id         => p_prcs_id 
-                          , p_parent_prdg_id  => l_current_prdg_id
-                          );
+        -- diagram is not callable - raise error
+        apex_debug.info
+        ( p_message  => 'Building Diagram Call Tree - Diagram %0 (called by diagram %1 is set as not-callable'
+        , p0  => l_child_dgrm_id
+        , p1  => p_dgrm_id
+        );
+        flow_errors.handle_general_error
+        ( pi_message_key => 'call-diagram-not-callable'
+        , p0 => l_child_dgrm_id
+        );
+        -- $F4AMESSAGE 'call-diagram-not-callable' || 'You tried to call a diagram %0 that is marked as being not callable.'        
       end if;
     end loop; 
   end find_nested_calls;
