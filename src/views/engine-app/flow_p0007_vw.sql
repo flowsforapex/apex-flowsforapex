@@ -18,15 +18,11 @@ as
          , 1 as sub_prcs_insight
       from flow_objects objt
       join flow_diagrams dgrm
-        on objt.objt_attributes."apex"."calledDiagram" = dgrm.dgrm_name
-       and (  (   objt.objt_attributes."apex"."calledDiagramVersionSelection" = 'latestVersion'
-              and ( dgrm.dgrm_status = 'released'
-                  or ( dgrm.dgrm_status = 'draft' and dgrm.dgrm_version = '0' )
-                  )
-              )
-           or ( objt.objt_attributes."apex"."calledDiagramVersionSelection" = 'namedVersion'
-              and dgrm.dgrm_version = objt.objt_attributes."apex"."calledDiagramVersion"
-              )
+        on objt.objt_tag_name = 'bpmn:callActivity'
+       and dgrm_id = flow_diagram.get_current_diagram(
+             pi_dgrm_name           => objt.objt_attributes."apex"."calledDiagram"
+           , pi_dgrm_calling_method => objt.objt_attributes."apex"."calledDiagramVersionSelection"
+           , pi_dgrm_version        => objt.objt_attributes."apex"."calledDiagramVersion"
            )
   )
   select dgrm.dgrm_content
