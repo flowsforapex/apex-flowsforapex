@@ -381,6 +381,10 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
 
+      -- tear down test
+      flow_api_pkg.flow_delete ( p_process_id => l_prcs_id);
+
+
    end exclusive_route_provided_runner;
 
 
@@ -1322,6 +1326,10 @@ create or replace package body test_002_gateway is
          select prcs_dgrm_id, prcs_name, prcs_status from flow_processes where prcs_id = l_prcs_id;
 
       ut.expect( l_actual ).to_equal( l_expected );
+
+      -- tear down test
+      flow_api_pkg.flow_delete ( p_process_id => l_prcs_id);
+
    end inclusive_route_provided_runner;
 
    procedure inclusive_route_provided_correct_case
@@ -1719,7 +1727,7 @@ create or replace package body test_002_gateway is
    begin
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_1);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_2);
-      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_3);
+      -- test 3 is torn down in the test runner
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_4);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_5);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);

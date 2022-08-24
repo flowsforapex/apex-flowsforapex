@@ -82,5 +82,10 @@ as
     )
   return flow_diagrams.dgrm_id%type;
 
+  function get_diagram_name
+    ( pi_dgrm_id            in flow_diagrams.dgrm_id%type
+    )
+  return flow_diagramS.dgrm_name%type;
+
 end flow_diagram;
 /

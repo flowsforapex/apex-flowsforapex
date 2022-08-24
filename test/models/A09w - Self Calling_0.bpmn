@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:process id="Process_myh583ps" isExecutable="false" apex:isCallable="true" apex:manualInput="false">
+    <bpmn:startEvent id="Event_StartW" name="StartW">
+      <bpmn:outgoing>Flow_1kzrr9h</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_TaskA" name="TaskA">
+      <bpmn:incoming>Flow_1kzrr9h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wum42u</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1kzrr9h" sourceRef="Event_StartW" targetRef="Activity_TaskA" />
+    <bpmn:sequenceFlow id="Flow_0wum42u" sourceRef="Activity_TaskA" targetRef="Activity_CallW" />
+    <bpmn:task id="Activity_TaskC" name="TaskC">
+      <bpmn:incoming>Flow_0wbx4gu</bpmn:incoming>
+      <bpmn:outgoing>Flow_11t1d4c</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0wbx4gu" sourceRef="Activity_CallW" targetRef="Activity_TaskC" />
+    <bpmn:endEvent id="Event_EndW" name="EndW">
+      <bpmn:incoming>Flow_11t1d4c</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_11t1d4c" sourceRef="Activity_TaskC" targetRef="Event_EndW" />
+    <bpmn:callActivity id="Activity_CallW" name="CallW" apex:manualInput="false" apex:calledDiagram="A09w - Self Calling" apex:calledDiagramVersionSelection="latestVersion">
+      <bpmn:incoming>Flow_0wum42u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wbx4gu</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_myh583ps">
+      <bpmndi:BPMNEdge id="Flow_11t1d4c_di" bpmnElement="Flow_11t1d4c">
+        <di:waypoint x="900" y="460" />
+        <di:waypoint x="962" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wbx4gu_di" bpmnElement="Flow_0wbx4gu">
+        <di:waypoint x="740" y="460" />
+        <di:waypoint x="800" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wum42u_di" bpmnElement="Flow_0wum42u">
+        <di:waypoint x="580" y="460" />
+        <di:waypoint x="640" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kzrr9h_di" bpmnElement="Flow_1kzrr9h">
+        <di:waypoint x="428" y="460" />
+        <di:waypoint x="480" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_03upfyt_di" bpmnElement="Event_StartW">
+        <dc:Bounds x="392" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="394" y="485" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03ippgs_di" bpmnElement="Activity_TaskA">
+        <dc:Bounds x="480" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ak4vaz_di" bpmnElement="Activity_TaskC">
+        <dc:Bounds x="800" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0c6ihpc_di" bpmnElement="Event_EndW">
+        <dc:Bounds x="962" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="966" y="485" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0krhc7q_di" bpmnElement="Activity_CallW">
+        <dc:Bounds x="640" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

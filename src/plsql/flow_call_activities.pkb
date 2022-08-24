@@ -165,6 +165,14 @@ as
         , pi_expr_scope   => l_calling_sbfl_scope
         );
 
+        -- add diagram start to the instance log
+        flow_logging.log_instance_event
+        ( p_process_id    => p_process_id
+        , p_objt_bpmn_id  => p_step_info.target_objt_ref
+        , p_event         => flow_constants_pkg.gc_prcs_event_enter_call
+        , p_comment       => 'Starting called diagram '||l_call_definition.dgrm_name||
+                             ' version '||l_call_definition.dgrm_version||'.'
+        );
 
         -- run on-event expressions for child startEvent (inside called diagram scope)
         flow_expressions.process_expressions
