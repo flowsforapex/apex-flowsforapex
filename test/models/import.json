@@ -126,6 +126,62 @@
         "file": "A04a - Basic Model_0.bpmn"
     },
     {
+        "dgrm_name": "A09p - Recursive Chain PQP Top",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09p - Recursive Chain PQP Top_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09q - Recursive Chain PQP Bottom",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09q - Recursive Chain PQP Bottom_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09r - Recursive Chain RSTR Top",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09r - Recursive Chain RSTR Top_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09s - Recursive Chain RSTR Middle",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09s - Recursive Chain RSTR Middle_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09t - Recursive Chain RSTR Bottom",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09t - Recursive Chain RSTR Bottom_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09u - Calling non-callable diagram",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09u - Calling non-callable diagram_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09v - Called Non-Callable Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09v - Called Non-Callable Model_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09w - Self Calling",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09w - Self Calling_0.bpmn"
+    },
+    {
         "dgrm_name": "A10 - Variable Expressions Types",
         "dgrm_version": "0",
         "dgrm_status": "draft",
