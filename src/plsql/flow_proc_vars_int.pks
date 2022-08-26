@@ -159,18 +159,20 @@ function scope_is_valid
 
   procedure get_var_as_parameter
   (
-    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
-  , pi_var_name   in flow_process_variables.prov_var_name%type
-  , pi_scope      in flow_process_variables.prov_scope%type
-  , po_data_type out apex_exec.t_data_type
-  , po_value     out apex_exec.t_value
+    pi_prcs_id            in flow_process_variables.prov_prcs_id%type
+  , pi_var_name           in flow_process_variables.prov_var_name%type
+  , pi_scope              in flow_process_variables.prov_scope%type
+  , pi_exception_on_null  in boolean default true
+  , po_data_type         out apex_exec.t_data_type
+  , po_value             out apex_exec.t_value
   );
 
   function get_var_as_vc2
   (
-    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
-  , pi_var_name   in flow_process_variables.prov_var_name%type
-  , pi_scope      in flow_process_variables.prov_scope%type
+    pi_prcs_id           in flow_process_variables.prov_prcs_id%type
+  , pi_var_name          in flow_process_variables.prov_var_name%type
+  , pi_scope             in flow_process_variables.prov_scope%type
+  , pi_exception_on_null in boolean default true
   ) return varchar2;
 
 end flow_proc_vars_int;
