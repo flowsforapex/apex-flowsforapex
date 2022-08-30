@@ -20,11 +20,18 @@ create or replace package body flow_plugin_manage_instance_variables as
             , p0        => p_process.attribute_02
             , p1        => apex_util.get_session_state(p_item => p_process.attribute_02)
          );
-         apex_debug.info(
-            p_message => '......Flow Subflow Item used: %s - Session state value: %s'
-            , p0        => p_process.attribute_11
-            , p1        => apex_util.get_session_state(p_item => p_process.attribute_11)
-         );
+		 
+         if p_process.attribute_11 is not null then 
+            apex_debug.info(
+               p_message => '......Flow Subflow Item used: %s - Session state value: %s'
+               , p0        => p_process.attribute_11
+               , p1        => apex_util.get_session_state(p_item => p_process.attribute_11)
+            );
+         else
+            apex_debug.info(
+               p_message => '......No Subflow Item provided'
+            );
+         end if;
       elsif p_process.attribute_01 = 'sql'  then
          apex_debug.info(
             p_message => '......Query'
@@ -72,13 +79,6 @@ create or replace package body flow_plugin_manage_instance_variables as
          );
       end if;
 
-      if p_process.attribute_10 is not null then
-         apex_debug.info(
-            p_message => '...Return Instance ID into: %s'
-            , p0        => p_process.attribute_10
-         );
-      end if;
-
       apex_debug.info(
            p_message => ' < Process plug-in attributes'
       );
@@ -102,8 +102,8 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_attribute7  p_process.attribute_07%type := p_process.attribute_07; -- APEX item(s)
       l_attribute8  p_process.attribute_08%type := p_process.attribute_08; -- JSON
       l_attribute9  p_process.attribute_09%type := p_process.attribute_09; -- SQL query (1 column JSON array)
-      l_attribute10 p_process.attribute_10%type := p_process.attribute_10; -- Return instance Id into
-      l_attribute11 p_process.attribute_11%type := p_process.attribute_11; -- Subflow ID (APEX item)
+      
+	   l_attribute11 p_process.attribute_11%type := p_process.attribute_11; -- Subflow ID (APEX item)																								
 
       --exceptions
       e_var_config              exception;
@@ -136,7 +136,7 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_prov_var_name   flow_process_variables.prov_var_name%type;
       l_prov_scope      flow_process_variables.prov_scope%type;
       l_prov_var_vc2    flow_process_variables.prov_var_vc2%type;
-      l_prov_var_num    flow_process_variables.prov_var_num2%type;
+      l_prov_var_num    flow_process_variables.prov_var_num%type;
       l_prov_var_date   flow_process_variables.prov_var_date%type;
       l_prov_var_clob    flow_process_variables.prov_var_clob%type;
       l_split_prcs_var  apex_t_varchar2;
@@ -146,7 +146,6 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_types_different number;
       l_ts              timestamp;
       l_col_count       pls_integer;
-      
    begin
 
       --debug
@@ -162,20 +161,21 @@ create or replace package body flow_plugin_manage_instance_variables as
       -- Get process Id and subflow Id
       if ( l_attribute1 = 'item' ) then
          l_prcs_id  := apex_util.get_session_state(p_item => l_attribute2);
-         if l_attribute11 is not null then
+		 
+		   if l_attribute11 is not null then
             l_sbfl_id  := apex_util.get_session_state(p_item => l_attribute11);
-         end if;
+         end if;								  
       elsif ( l_attribute1 = 'sql' ) then
          l_context         := apex_exec.open_query_context(
             p_location   => apex_exec.c_location_local_db
           , p_sql_query  => l_attribute3
          );
 
-         l_col_count := apex_exec.get_col_count( p_context => l_context );
+		   l_col_count := apex_exec.get_column_count( p_context => l_context );
 
          while apex_exec.next_row(l_context) loop
             l_prcs_id  := apex_exec.get_number(l_context, 1);
-            if l_col_count = 2 then
+			   if l_col_count = 2 then
                l_sbfl_id := apex_exec.get_number(l_context, 2);
             end if;
          end loop;
@@ -187,13 +187,27 @@ create or replace package body flow_plugin_manage_instance_variables as
          , p0        => l_prcs_id
       );
 
-      if l_col_count = 2 then
+	  if l_sbfl_id is not null then
          apex_debug.info(
             p_message => '...Flow Subflow Id is %s'
             , p0        => l_sbfl_id
          );
-      end if;
 
+         -- get the scope and current object for the supplied subflow
+         select sbfl.sbfl_scope
+         into l_prov_scope
+         from flow_subflows sbfl
+         where sbfl.sbfl_id = l_sbfl_id
+         and sbfl.sbfl_prcs_id = l_prcs_id;
+
+      else
+         l_prov_scope := 0;
+      end if;
+      
+      apex_debug.info(
+         p_message => '...Scope is %s'
+         , p0        => l_prov_scope
+      );
       apex_debug.info(
            p_message => '...Start %s Flow Instance Variable(s)'
          , p0        => case l_attribute4
@@ -242,7 +256,8 @@ create or replace package body flow_plugin_manage_instance_variables as
                join flow_process_variables prcs_var 
                on prcs_var.prov_var_name = set_var.name 
                and prcs_var.prov_prcs_id = l_prcs_id
-               where prcs_var.prov_var_type != upper( set_var.type );
+               where prcs_var.prov_var_type != upper( set_var.type )
+			   and prcs_var.prov_scope = l_prov_scope;
             
             -- Raise exception if incoherent value found
             if ( l_types_different > 0 ) then
@@ -255,250 +270,155 @@ create or replace package body flow_plugin_manage_instance_variables as
             l_prov_var_name    := l_process_variable.get_string('name');
             l_prov_var_type    := l_process_variable.get_string('type');
             l_item_name        := l_process_variable.get_string('item');
-            l_prov_scope       := null;
-            if l_process_variable.has('scope') then
-               l_prov_scope := l_process_variable.get_number('scope');
-            elsif l_sbfl_id is null then
-              l_prov_scope := 0;
-            end if;
             case l_prov_var_type
                when 'varchar2' then
-                  case l_attribute4
-                     when 'set' then 
-                        l_prov_var_vc2 := l_process_variable.get_string('value');
-                     when 'get' then 
-                        if l_prov_scope is null then
-                           l_prov_var_vc2 := 
-                              flow_process_vars.get_var_vc2(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_sbfl_id  => l_sbfl_id
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        else
-                           l_prov_var_vc2 := 
-                              flow_process_vars.get_var_vc2(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_scope    => l_prov_scope
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        end if;
-                  end;
-                  
                   apex_debug.info(
                      p_message => '......Name: %s - Type: %s - Value %s'
                      , p0 => l_prov_var_name
                      , p1 => l_prov_var_type
-                     , p2 => l_prov_var_vc2
-                  );
-                  case l_attribute4
-                     when 'set' then
-                        if l_prov_scope is null then
-                           flow_process_vars.set_var(
-                                pi_prcs_id   => l_prcs_id
-                              , pi_sbfl_id    => l_sbfl_id
-                              , pi_var_name   => l_prov_var_name
-                              , pi_vc2_value  => l_prov_var_vc2
-                           );
-                        else
-                           flow_process_vars.set_var(
-                                pi_prcs_id   => l_prcs_id
-                              , pi_var_name   => l_prov_var_name
-                              , pi_vc2_value  => l_prov_var_vc2
-                              , pi_scope      => l_prov_scope
-                           );
-                        end if;
-                     when 'get' then
-                        apex_util.set_session_state( 
-                           p_name  => l_item_name
-                           , p_value => l_prov_var_vc2
-                        );
-                  end case;
-               when 'number' then
-                  case l_attribute4
-                     when 'set' then 
-                        l_json_element := l_process_variable.get('value');
-                        if ( l_json_element.is_Number() = false ) then
-                           raise e_invalid_number;
-                        end if;
-                        l_prov_var_num := l_process_variable.get_number('value');
-                     when 'get' then 
-                        if l_prov_scope is null then
-                           l_prov_var_num := 
-                              flow_process_vars.get_var_num(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_sbfl_id  => l_sbfl_id
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        else
-                           l_prov_var_num := 
-                              flow_process_vars.get_var_num(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_scope    => l_prov_scope
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        end if;
-                  end;
-                  apex_debug.info(
-                     p_message => '......Name: %s - Type: %s - Value %s'
-                     , p0 => l_prov_var_name
-                     , p1 => l_prov_var_type
-                     , p2 => l_prov_var_num
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_string('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_vc2(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
                   );
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
-                             pi_prcs_id   => l_prcs_id
-                           , pi_var_name  => l_prov_var_name
-                           , pi_num_value => l_prov_var_num
+                           pi_prcs_id   => l_prcs_id
+						      , pi_scope      => l_prov_scope   
+                        , pi_var_name   => l_prov_var_name
+                        , pi_vc2_value  => l_process_variable.get_string('value')
                         );
                      when 'get' then
                         apex_util.set_session_state( 
                              p_name  => l_item_name
-                           , p_value => l_prov_var_num
+                           , p_value => flow_process_vars.get_var_vc2(
+                                             pi_prcs_id  => l_prcs_id
+										             , pi_scope    => l_prov_scope	 
+                                           , pi_var_name => l_prov_var_name
+                                        ) 
+                        );
+                  end case;
+               when 'number' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prov_var_name
+                     , p1 => l_prov_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_number('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_num(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
+                  );
+                  case l_attribute4
+                     when 'set' then
+                        l_json_element := l_process_variable.get('value');
+                        if ( l_json_element.is_Number() = false ) then
+                           raise e_invalid_number;
+                        end if;
+                        flow_process_vars.set_var(
+                             pi_prcs_id   => l_prcs_id
+						         , pi_scope     => l_prov_scope	 
+                           , pi_var_name  => l_prov_var_name
+                           , pi_num_value => l_process_variable.get_number('value')
+                        );
+                     when 'get' then
+                        apex_util.set_session_state( 
+                             p_name  => l_item_name
+                           , p_value => flow_process_vars.get_var_num(
+                                             pi_prcs_id  => l_prcs_id
+										             , pi_scope    => l_prov_scope	 
+                                           , pi_var_name => l_prov_var_name
+                                        ) 
                         );
                   end case;
                when 'date' then
-                  case l_attribute4 
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prov_var_name
+                     , p1 => l_prov_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_date('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_date(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
+                  );
+                  case l_attribute4
                      when 'set' then
                         l_json_element := l_process_variable.get('value');
                         begin
-                           l_ts := l_process_variable.get_timestamp('value');
                            if instr( l_process_variable.get_String('value'), 'T' ) > 0 then
                               l_ts := to_timestamp_tz( replace ( l_process_variable.get_String('value'), 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' ); 
                            else
                               l_ts := to_timestamp_tz( l_process_variable.get_String('value'), 'YYYY-MM-DD TZR' ); 
                            end if;
-                           l_ts := l_process_variable.get_timestamp('value')
                         exception when others then
                            raise e_invalid_date;
                         end;
+                        flow_process_vars.set_var(
+                          pi_prcs_id    => l_prcs_id
+						      , pi_scope      => l_prov_scope									
+                        , pi_var_name   => l_prov_var_name
+                        , pi_date_value => l_process_variable.get_timestamp('value')
+                        );
                      when 'get' then
-                        if l_prov_scope is null then
-                           l_prov_var_date := 
-                              flow_process_vars.get_var_date(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_sbfl_id  => l_sbfl_id  
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        else
-                           l_prov_var_date := 
-                              flow_process_vars.get_var_date(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_scope    => l_prov_scope  
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        end if;
-                  end case;
-                              
-                  apex_debug.info(
-                     p_message => '......Name: %s - Type: %s - Value %s'
-                     , p0 => l_prov_var_name
-                     , p1 => l_prov_var_type
-                     , p2 => l_prov_var_date
-                  );
-
-                  case l_attribute4
-                     when 'set' then
-                        if l_prov_scope is null then
-                           flow_process_vars.set_var(
-                                pi_prcs_id    => l_prcs_id
-                              , pi_sbfl_id    => l_sbfl_id  
-                              , pi_var_name   => l_prov_var_name
-                              , pi_date_value => l_ts
-                           );
-                        else
-                           flow_process_vars.set_var(
-                                pi_prcs_id    => l_prcs_id
-                              , pi_scope      => l_prov_scope  
-                              , pi_var_name   => l_prov_var_name
-                              , pi_date_value => l_ts
-                           );
-                        end if;
-                     when 'get' then
-                        if l_prov_scope is null then
-                           apex_exec.execute_plsql(   'begin
-                              :' || l_item_name || ' :=  flow_process_vars.get_var_date(
-                                                   pi_prcs_id  => '||l_prcs_id||'
-                                                , pi_sbfl     => '||l_sbfl_id||'
-                                                , pi_var_name => '''||l_prov_var_name||'''
-                                             ); 
-                              end;');
-                        else
-                           apex_exec.execute_plsql(   'begin
-                              :' || l_item_name || ' :=  flow_process_vars.get_var_date(
-                                                   pi_prcs_id  => '||l_prcs_id||'
-                                                , pi_scope    =>  '||l_prov_scope||'
-                                                , pi_var_name => '''||l_prov_var_name||'''
-                                             ); 
-                              end;');
-                        end if;
+                        apex_exec.execute_plsql(   'begin
+                           :' || l_item_name || ' :=  flow_process_vars.get_var_date(
+                                                pi_prcs_id  => '||l_prcs_id||'
+											            , pi_scope     => '||l_prov_scope||'										
+                                             , pi_var_name => '''||l_prov_var_name||'''
+                                          ); 
+                           end;');
                   end case;
                when 'clob' then
-                  case l_attribute4
-                     when 'set' then 
-                        l_prov_var_clob := l_process_variable.get_clob('value');
-                     when 'get' then 
-                        if l_prov_scope is null then
-                           l_prov_var_clob := 
-                              flow_process_vars.get_var_clob(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_sbfl_id   => l_sbfl_id
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        else
-                           l_prov_var_clob := 
-                              flow_process_vars.get_var_clob(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_scope   => l_prov_scope
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        end if;
-                  end case;
-
                   apex_debug.info(
                      p_message => '......Name: %s - Type: %s - Value %s'
                      , p0 => l_prov_var_name
                      , p1 => l_prov_var_type
-                     , p2 => 
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_clob('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_clob(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
                   );
-
                   case l_attribute4
                      when 'set' then
-                        if l_prov_scope is null then
-                           flow_process_vars.set_var(
-                                pi_prcs_id    => l_prcs_id
-                              , pi_sbfl_id    => l_sbfl_id  
-                              , pi_var_name   => l_prov_var_name
-                              , pi_clob_value => l_prov_var_clob
-                           );
-                        else
-                           flow_process_vars.set_var(
-                                pi_prcs_id    => l_prcs_id
-                              , pi_scope      => l_prov_scope  
-                              , pi_var_name   => l_prov_var_name
-                              , pi_clob_value => l_prov_var_clob
-                           );
-                        end if;
+                        flow_process_vars.set_var(
+                          pi_prcs_id    => l_prcs_id
+						      , pi_scope      => l_prov_scope									
+                        , pi_var_name   => l_prov_var_name
+                        , pi_clob_value => l_process_variable.get_clob('value')
+                        );
                      when 'get' then
-                        if prov_scope is null then
-                           apex_exec.execute_plsql('begin
-                              :' || l_item_name || ' := flow_process_vars.get_var_clob(
-                                                   pi_prcs_id  => '|| l_prcs_id ||'
-                                                , pi_sbfl_id   => '|| l_sbfl_id ||'
-                                                , pi_var_name => '''|| l_prov_var_name ||'''
-                                             );
-                              end;'
-                           );
-                        else
-                           apex_exec.execute_plsql('begin
-                              :' || l_item_name || ' := flow_process_vars.get_var_clob(
-                                                   pi_prcs_id  => '|| l_prcs_id ||'
-                                                , pi_scope    =>  '|| l_prov_scope ||'
-                                                , pi_var_name => '''|| l_prov_var_name ||'''
-                                             );
-                              end;'
-                           );
-                        end if;
+                        apex_exec.execute_plsql('begin
+                           :' || l_item_name || ' := flow_process_vars.get_var_clob(
+                                               pi_prcs_id  => '|| l_prcs_id ||'
+											            , pi_scope    => '|| l_prov_scope ||'									   
+                                             , pi_var_name => '''|| l_prov_var_name ||'''
+                                          );
+                           end;'
+                        );
                   end case;                   
                else
                   raise e_incorrect_variable_type;
@@ -516,23 +436,12 @@ create or replace package body flow_plugin_manage_instance_variables as
             raise e_var_config;
          end if;
 
-         -- get the scope and current object for the supplied subflow
-         if l_sbfl_id is not null then
-            select sbfl.sbfl_scope
-            into l_prov_scope
-            from flow_subflows sbfl
-            where sbfl.sbfl_id = l_sbfl_id
-            and sbfl.sbfl_prcs_id = l_prcs_id;
-         else
-            l_prov_scope := 0;
-         end if;
-
          -- Get process variables types
          for rec in (
             select prov_var_name, prov_var_type
             from flow_process_variables prov
          where prov.prov_prcs_id = l_prcs_id
-           and prov.prov_scope = l_prov_scope
+			and prov.prov_scope = l_prov_scope								 
             and prov.prov_var_name in (
                select trim(column_value)
                from table(l_split_prcs_var)
@@ -592,87 +501,66 @@ create or replace package body flow_plugin_manage_instance_variables as
             
             case l_prov_var_type 
                when 'VARCHAR2' then
-                  case l_attribute4
-                     when 'set' then 
-                        l_prov_var_vc2 := apex_util.get_session_state( p_item => l_item_name );
-                      when 'get' then
-                        if l_sbfl_id is not null then
-                           l_prov_var_vc2 := 
-                              flow_process_vars.get_var_vc2(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_sbfl_id  => l_sbfl_id
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        else
-                           l_prov_var_vc2 :=
-                              flow_process_vars.get_var_vc2(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_scope    => l_prov_scope
-                                 , pi_var_name => l_prov_var_name
-                              );
-                        end if;
-                  end case
-
                   apex_debug.info(
                      p_message => '......Name: %s - Type: %s - Value %s'
                      , p0 => l_prov_var_name
                      , p1 => l_prov_var_type
-                     , p2 => l_prov_var_vc2
-                  );
-
-                  case l_attribute4
-                     when 'set' then
-                        if l_sbfl_id is not null then
-                           flow_process_vars.set_var(
-                                pi_prcs_id    => l_prcs_id
-                              , pi_sbfl_id    => l_sbfl_id
-                              , pi_var_name   => l_prov_var_name
-                              , pi_vc2_value  => l_prov_var_vc2
-                           );
-                        else
-                            flow_process_vars.set_var(
-                                pi_prcs_id    => l_prcs_id
-                              , pi_scope      => l_prov_scope
-                              , pi_var_name   => l_prov_var_name
-                              , pi_vc2_value  => l_prov_var_vc2
-                           );
-                        end if;
-                     when 'get' then
-                        apex_util.set_session_state( 
-                             p_name  => l_item_name
-                           , p_value => l_prov_var_vc2
-                        );
-                  end case;
-
-               when 'NUMBER' then
-                  case l_attribute4
-                     when 'set' 
-                        then 
-                           $if wwv_flow_api.c_current >= 20210415 $then 
-                              case when l_items ( l_item_name ).format_mask is not null then
-                                 to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )
-                              else
-                                 to_number( apex_util.get_session_state( p_item => l_item_name ) )
-                              end
-                           $else
-                              to_number( apex_util.get_session_state( p_item => l_item_name ) )
-                           $end
-                     when 'get' 
-                        then flow_process_vars.get_var_num(
-                                   pi_prcs_id  => l_prcs_id
-                                 , pi_var_name => l_prov_var_name
-                              )
-                  end case;
-                  apex_debug.info(
-                     p_message => '......Name: %s - Type: %s - Value %s'
-                     , p0 => l_prov_var_name
-                     , p1 => l_prov_var_type
-                     , p2 => 
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then apex_util.get_session_state( p_item => l_item_name )
+                                 when 'get' 
+                                    then flow_process_vars.get_var_vc2(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
                   );
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
-                           pi_prcs_id    => l_prcs_id
+                             pi_prcs_id    => l_prcs_id
+						         , pi_scope      => l_prov_scope								  
+                           , pi_var_name   => l_prov_var_name
+                           , pi_vc2_value  => apex_util.get_session_state( p_item => l_item_name )
+                        );
+                     when 'get' then
+                        apex_util.set_session_state( 
+                             p_name  => l_item_name
+                           , p_value => flow_process_vars.get_var_vc2(
+                                             pi_prcs_id  => l_prcs_id
+										             , pi_scope    => l_prov_scope	 
+                                           , pi_var_name => l_prov_var_name
+                                        ) 
+                        );
+                  end case;
+
+               when 'NUMBER' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prov_var_name
+                     , p1 => l_prov_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then 
+                                      $if wwv_flow_api.c_current >= 20210415 $then 
+                                         to_number( apex_util.get_session_state( p_item => l_item_name ), l_items ( l_item_name ).format_mask )  
+                                      $else                                          
+                                         to_number( apex_util.get_session_state( p_item => l_item_name ) )
+                                      $end
+                                 when 'get' 
+                                    then flow_process_vars.get_var_num(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
+                  );
+                  case l_attribute4
+                     when 'set' then
+                        flow_process_vars.set_var(
+                             pi_prcs_id    => l_prcs_id
+						         , pi_scope      => l_prov_scope	 
                            , pi_var_name   => l_prov_var_name
                            , pi_num_value  => $if wwv_flow_api.c_current >= 20210415 $then 
                                                  case when l_items ( l_item_name ).format_mask is not null then
@@ -689,6 +577,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                              p_name  => l_item_name
                            , p_value => flow_process_vars.get_var_num(
                                              pi_prcs_id  => l_prcs_id
+										             , pi_scope    => l_prov_scope	 
                                            , pi_var_name => l_prov_var_name
                                         ) 
                         );
@@ -705,6 +594,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                                     then to_char(
                                             flow_process_vars.get_var_date(
                                                pi_prcs_id  => l_prcs_id
+											            , pi_scope    => l_prov_scope   
                                              , pi_var_name => l_prov_var_name
                                             ), l_items(l_item_name).format_mask 
                                           )
@@ -713,9 +603,10 @@ create or replace package body flow_plugin_manage_instance_variables as
                   case l_attribute4
                      when 'set' then
                         flow_process_vars.set_var(
-                           pi_prcs_id     => l_prcs_id
-                           , pi_var_name    => l_prov_var_name
-                           , pi_date_value  => to_date( apex_util.get_session_state( p_item => l_item_name ) , l_items(l_item_name).format_mask )
+                             pi_prcs_id    => l_prcs_id
+						         , pi_scope      => l_prov_scope
+                           , pi_var_name   => l_prov_var_name
+                           , pi_date_value => to_date( apex_util.get_session_state( p_item => l_item_name ) , l_items(l_item_name).format_mask )
                         );
                      when 'get' then
                         apex_util.set_session_state( 
@@ -723,6 +614,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                            , p_value => to_char(
                                           flow_process_vars.get_var_date(
                                              pi_prcs_id  => l_prcs_id
+										             , pi_scope    => l_prov_scope	 
                                            , pi_var_name => l_prov_var_name
                                         ), l_items(l_item_name).format_mask )
                         );
@@ -738,6 +630,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                               when 'get' 
                                  then flow_process_vars.get_var_clob(
                                            pi_prcs_id  => l_prcs_id
+										           , pi_scope    => l_prov_scope  
                                          , pi_var_name => l_prov_var_name
                                       )
                           end 
@@ -745,14 +638,16 @@ create or replace package body flow_plugin_manage_instance_variables as
                case l_attribute4
                   when 'set' then
                      flow_process_vars.set_var(
-                        pi_prcs_id     => l_prcs_id
+                          pi_prcs_id     => l_prcs_id
+						      , pi_scope       => l_prov_scope
                         , pi_var_name    => l_prov_var_name
                         , pi_clob_value  => apex_util.get_session_state( p_item => l_item_name )
                      );
                   when 'get' then
                      apex_exec.execute_plsql('begin
                         :' || l_item_name || q'[ := ']' || flow_process_vars.get_var_clob(
-                                             pi_prcs_id  => l_prcs_id
+                                            pi_prcs_id  => l_prcs_id
+										            , pi_scope    => l_prov_scope	 
                                           , pi_var_name => l_prov_var_name
                                        ) || q'[';
                         end;]'
@@ -768,15 +663,6 @@ create or replace package body flow_plugin_manage_instance_variables as
                            when 'get' then 'getting'
                         end 
       );
-
-      -- Return instance id in the APEX item provided
-      if ( l_attribute10 is not null ) then
-         apex_debug.info(
-            p_message => '...Return Flow Instance Id into item "%s"'
-         , p0        => l_attribute10
-         );
-         apex_util.set_session_state( l_attribute10, l_prcs_id );
-      end if;
 
       return l_result;
    exception 
