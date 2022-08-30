@@ -108,7 +108,12 @@ wwv_flow_api.create_plugin_attribute(
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
-,p_help_text=>'<p>SQL Query which returns one row with one or two columns containing the flow process instance id and, optionally the subflow id.</p>'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>SQL Query which returns one row with one or or two columns:</p>',
+'<ul>',
+'<li>First column needs to contain the Instance Id (prcs_id)</li>',
+'<li>Second column may contain the Subflow Id (sbfl_id)</li>',
+'</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(84820717881541566)
@@ -251,8 +256,7 @@ wwv_flow_api.create_plugin_attribute(
 '	{',
 '		"name": "Example_num_var",',
 '		"type": "number",',
-'		"value": 200,',
-'                "scope": 100',
+'		"value": 200',
 '	},',
 '	{',
 '		"name": "Example_date_var",',
@@ -283,8 +287,7 @@ wwv_flow_api.create_plugin_attribute(
 '	{',
 '		"name": "Example_date_var",',
 '		"type": "date",',
-'		"item": "ITEM_NAME",',
-'                 "scope": 200',
+'		"item": "ITEM_NAME"',
 '	},',
 '	{',
 '		"name": "Example_clob_var",',
@@ -293,9 +296,7 @@ wwv_flow_api.create_plugin_attribute(
 '	}',
 ']',
 '</pre>'))
-,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'Enter a JSON array that contains one or more process variables, their types, and values (when action is set) or item (when action is get).</br>',
-'You can optionnaly defined a scope attribute that will overwrite the subflow or the default value.'))
+,p_help_text=>'Enter a JSON array that contains one or more process variables, their types, and values (when action is set) or item (when action is get).'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(84725241650460993)
@@ -322,7 +323,6 @@ wwv_flow_api.create_plugin_attribute(
 '          key ''name'' value ''example_vc2_var''',
 '        , key ''type'' value ''varchar2''',
 '        , key ''value'' value ''test_vc2''',
-'        , key ''scope'' value 100',
 '        ),',
 '    json_object(',
 '          key ''name'' value ''example_num_var''',
@@ -349,7 +349,6 @@ wwv_flow_api.create_plugin_attribute(
 '          key ''name'' value ''example_vc2_var''',
 '        , key ''type'' value ''varchar2''',
 '        , key ''item'' value ''ITEM_NAME''',
-'        , key ''scope'' value 100',
 '        ),',
 '    json_object(',
 '          key ''name'' value ''example_num_var''',
@@ -377,10 +376,11 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>10
 ,p_display_sequence=>100
-,p_prompt=>'Return Flow Instance ID into'
+,p_prompt=>'Return Flow Instance ID into [deprecated]'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>false
 ,p_is_translatable=>false
+,p_help_text=>'This attribute is deprecated starting from Flows for APEX 22.2 and will probably be removed in a future release.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(62243875274673859)

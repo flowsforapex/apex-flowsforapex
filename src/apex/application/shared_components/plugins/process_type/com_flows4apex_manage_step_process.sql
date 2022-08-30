@@ -309,11 +309,11 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>11
 ,p_display_sequence=>110
-,p_prompt=>'Return  Flow Instance and Subflow ID'
+,p_prompt=>'Return  Flow Instance and Subflow ID [deprecated]'
 ,p_attribute_type=>'PAGE ITEMS'
 ,p_is_required=>false
 ,p_is_translatable=>false
-,p_help_text=>'Provide APEX items to return Flow Instance and Subflow ID.'
+,p_help_text=>'This attribute is deprecated starting from Flows for APEX 22.2 and will probably be removed in a future release.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(133131748772449152)

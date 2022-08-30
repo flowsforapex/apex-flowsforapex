@@ -24,7 +24,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220824004123'
+,p_last_upd_yyyymmddhh24miss=>'20220830170953'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(8027146440825640)
@@ -177,7 +177,7 @@ wwv_flow_api.create_page_item(
 ,p_colspan=>3
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
-,p_inline_help_text=>'Default workspace, application and page id are used to create an APEX session if they are not defined at the activity or diagram level.'
+,p_inline_help_text=>'Should be set to your default APEX workspace used for Flows for APEX. This is used as a last-resort for scriptTasks and serviceTasks when creating an APEX session or looking for mail templates'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -186,29 +186,30 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(60865167757537249)
 ,p_name=>'P9_DEFAULT_APPLICATION'
-,p_item_sequence=>30
+,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
 ,p_prompt=>'Default Application Id'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
 ,p_cSize=>30
-,p_begin_on_new_line=>'N'
-,p_colspan=>2
+,p_colspan=>3
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'the application ID of one of your APEX apps that will be provided to create a session'
 ,p_attribute_03=>'right'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(60865213001537250)
 ,p_name=>'P9_DEFAULT_PAGEID'
-,p_item_sequence=>40
+,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
 ,p_prompt=>'Default Page Id'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_begin_on_new_line=>'N'
-,p_colspan=>2
+,p_colspan=>3
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'the page ID of one of your apps that will be provided to create a session'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -217,15 +218,16 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(62611455436485301)
 ,p_name=>'P9_DEFAULT_EMAIL_SENDER'
-,p_item_sequence=>50
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
 ,p_prompt=>'Default Email Sender'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
+,p_begin_on_new_line=>'N'
 ,p_colspan=>3
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
-,p_inline_help_text=>'Use as a sender for emails if it is not defined on the service task.'
+,p_inline_help_text=>'Should be set to your default email sender, in case outbound mail serviceTasks do not have a sender defined.'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'EMAIL'
@@ -234,15 +236,15 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(62611542240485302)
 ,p_name=>'P9_TIMER_MAX_CYCLES'
-,p_item_sequence=>60
+,p_item_sequence=>70
 ,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
 ,p_prompt=>'Timer Max Cycles'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
 ,p_cSize=>30
-,p_colspan=>2
+,p_colspan=>3
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
-,p_inline_help_text=>'For cycle timers, this will defined a maximum number of execution.'
+,p_inline_help_text=>'For cycle timers, this will defined the maximum number of execution.'
 ,p_attribute_03=>'right'
 );
 wwv_flow_api.create_page_item(
@@ -264,6 +266,24 @@ wwv_flow_api.create_page_item(
 '</ul>'))
 ,p_attribute_01=>'2'
 ,p_attribute_02=>'NONE'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(63513608436355401)
+,p_name=>'P9_DEFAULT_USERNAME'
+,p_item_sequence=>60
+,p_item_plug_id=>wwv_flow_api.id(62704132398232511)
+,p_prompt=>'Default Username'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_begin_on_new_line=>'N'
+,p_colspan=>3
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'the username to be user on the APEX session to create a session if no other username is provided	'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_api.create_page_computation(
  p_id=>wwv_flow_api.id(8026380531825632)
@@ -338,8 +358,20 @@ wwv_flow_api.create_page_computation(
 '       );'))
 );
 wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(62611793257485304)
+ p_id=>wwv_flow_api.id(62611912263485306)
 ,p_computation_sequence=>70
+,p_computation_item=>'P9_DEFAULT_EMAIL_SENDER'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key => flow_constants_pkg.gc_config_default_email_sender',
+'         , p_default_value => null ',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(62611793257485304)
+,p_computation_sequence=>80
 ,p_computation_item=>'P9_DEFAULT_APPLICATION'
 ,p_computation_point=>'BEFORE_BOX_BODY'
 ,p_computation_type=>'FUNCTION_BODY'
@@ -351,7 +383,7 @@ wwv_flow_api.create_page_computation(
 );
 wwv_flow_api.create_page_computation(
  p_id=>wwv_flow_api.id(62611879621485305)
-,p_computation_sequence=>80
+,p_computation_sequence=>90
 ,p_computation_item=>'P9_DEFAULT_PAGEID'
 ,p_computation_point=>'BEFORE_BOX_BODY'
 ,p_computation_type=>'FUNCTION_BODY'
@@ -362,15 +394,27 @@ wwv_flow_api.create_page_computation(
 '       );'))
 );
 wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(62611912263485306)
-,p_computation_sequence=>90
-,p_computation_item=>'P9_DEFAULT_EMAIL_SENDER'
+ p_id=>wwv_flow_api.id(63513782968355402)
+,p_computation_sequence=>100
+,p_computation_item=>'P9_DEFAULT_USERNAME'
 ,p_computation_point=>'BEFORE_BOX_BODY'
 ,p_computation_type=>'FUNCTION_BODY'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'return flow_engine_util.get_config_value(',
-'           p_config_key => flow_constants_pkg.gc_config_default_email_sender',
-'         , p_default_value => null ',
+'           p_config_key =>flow_constants_pkg.gc_config_default_username',
+'         , p_default_value => flow_constants_pkg.gc_config_default_default_username',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(63513811062355403)
+,p_computation_sequence=>110
+,p_computation_item=>'P9_TIMER_MAX_CYCLES'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>flow_constants_pkg.gc_config_timer_max_cycles',
+'         , p_default_value => flow_constants_pkg.gc_config_default_timer_max_cycles',
 '       );'))
 );
 wwv_flow_api.create_page_process(
@@ -387,9 +431,10 @@ wwv_flow_api.create_page_process(
 ', pi_engine_app_mode => :P9_ENGINE_APP_MODE',
 ', pi_duplicate_step_prevention => :P9_DUPLICATE_STEP_PREVENTION',
 ', pi_default_workspace    => :P9_DEFAULT_WORKSPACE',
+', pi_default_email_sender => :P9_DEFAULT_EMAIL_SENDER ',
 ', pi_default_application  => :P9_DEFAULT_APPLICATION ',
 ', pi_default_pageid       => :P9_DEFAULT_PAGEID   ',
-', pi_default_email_sender => :P9_DEFAULT_EMAIL_SENDER ',
+', pi_default_username     => :P9_DEFAULT_USERNAME',
 ', pi_timer_max_cycles     => :P9_TIMER_MAX_CYCLES',
 ');'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'

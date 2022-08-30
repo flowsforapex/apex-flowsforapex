@@ -204,9 +204,10 @@ as
   , pi_engine_app_mode           in flow_configuration.cfig_value%type
   , pi_duplicate_step_prevention in flow_configuration.cfig_value%type
   , pi_default_workspace         in flow_configuration.cfig_value%type
+  , pi_default_email_sender      in flow_configuration.cfig_value%type
   , pi_default_application       in flow_configuration.cfig_value%type
   , pi_default_pageid            in flow_configuration.cfig_value%type
-  , pi_default_email_sender      in flow_configuration.cfig_value%type
+  , pi_default_username          in flow_configuration.cfig_value%type
   , pi_timer_max_cycles          in flow_configuration.cfig_value%type
   );
 
