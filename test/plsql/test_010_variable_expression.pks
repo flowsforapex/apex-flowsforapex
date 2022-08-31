@@ -8,7 +8,7 @@ create or replace package test_010_variable_expressions is
 -- Edited  09-May-2022   Richard Allen - Oracle
 --
 */
-    --%suite(test_variable_expressions)
+    --%suite(10 Variable Expressions)
     --%rollback(manual)
 
     --%beforeall

@@ -10,7 +10,7 @@ create or replace package test_009_call_Activity_nesting as
 
   -- uses models 09a-w (eventually)
 
-  --%suite(Call Activity Nesting)
+  --%suite(09 Call Activity Nesting)
   --%rollback(manual)
 
   --%beforeall

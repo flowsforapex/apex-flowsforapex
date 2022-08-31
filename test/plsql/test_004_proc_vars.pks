@@ -4,7 +4,7 @@ create or replace package test_004_proc_vars is
 
    -- tests  process variable functions
 
-   --%suite(Process Variable operations)
+   --%suite(04 Process Variable operations)
    --%rollback(manual)
 
    -- Need to add tests for by name, by name and version, by id

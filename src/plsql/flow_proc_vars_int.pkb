@@ -488,7 +488,7 @@ begin
   , p_var_type          => l_var_type
   );
 exception
-  when  no_data_found then
+  when no_data_found then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'var-delete-error'        
@@ -703,11 +703,12 @@ end delete_var;
 
   procedure get_var_as_parameter
   (
-    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
-  , pi_var_name   in flow_process_variables.prov_var_name%type
-  , pi_scope      in flow_process_variables.prov_scope%type
-  , po_data_type out apex_exec.t_data_type
-  , po_value     out apex_exec.t_value
+    pi_prcs_id            in flow_process_variables.prov_prcs_id%type
+  , pi_var_name           in flow_process_variables.prov_var_name%type
+  , pi_scope              in flow_process_variables.prov_scope%type
+  , pi_exception_on_null  in boolean default true
+  , po_data_type         out apex_exec.t_data_type
+  , po_value             out apex_exec.t_value
   )
   as
   begin
@@ -732,13 +733,26 @@ end delete_var;
        and prov.prov_scope      = pi_scope
        and upper(prov_var_name) = upper(pi_var_name)
     ;
+  exception
+    when no_data_found then
+      if pi_exception_on_null then
+        flow_errors.handle_instance_error
+        ( 
+          pi_prcs_id     => pi_prcs_id
+        , pi_message_key => 'var-get-error'      
+        , p0             => pi_var_name
+        , p1             => pi_prcs_id
+        , p2             => pi_scope
+        );
+      end if;
   end get_var_as_parameter;
 
   function get_var_as_vc2
   (
-    pi_prcs_id    in flow_process_variables.prov_prcs_id%type
-  , pi_var_name   in flow_process_variables.prov_var_name%type
-  , pi_scope      in flow_process_variables.prov_scope%type
+    pi_prcs_id           in flow_process_variables.prov_prcs_id%type
+  , pi_var_name          in flow_process_variables.prov_var_name%type
+  , pi_scope             in flow_process_variables.prov_scope%type
+  , pi_exception_on_null in boolean default true
   ) return varchar2
   as
     l_return flow_process_variables.prov_var_vc2%type;
@@ -757,6 +771,20 @@ end delete_var;
     ;
 
     return l_return;
+  exception
+    when no_data_found then
+      if pi_exception_on_null then
+        flow_errors.handle_instance_error
+        ( 
+          pi_prcs_id     => pi_prcs_id
+        , pi_message_key => 'var-get-error'      
+        , p0             => pi_var_name
+        , p1             => pi_prcs_id
+        , p2             => pi_scope
+        );
+      else
+        return null;
+      end if;
   end get_var_as_vc2;
 
 end flow_proc_vars_int;

@@ -10,7 +10,7 @@ create or replace package test_015_lanes_parse_execute as
 
   -- uses models 15a, 15b, 15c, 15d
 
-  --%suite(Lane parsing and execution)
+  --%suite(15 Lane parsing and execution)
   --%rollback(manual)
 
   --%beforeall

@@ -327,5 +327,75 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A18b - GW Routing Exps - basic func bodies_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18c - Inclusive GW AB C is Def no Condition",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18c - Inclusive GW AB C is Def no Condition_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18d - Inclusive GW AB C is Def has Condition",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18d - Inclusive GW AB C is Def has Condition_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18e - Inclusive GW AB C no Condition no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18e - Inclusive GW AB C no Condition no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18f - Inclusive GW ABC Condition no Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18f - Inclusive GW ABC Condition no Def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18g - Inclusive GW ABC No Conds No Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18g - Inclusive GW ABC No Conds No Def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18h - Exclusive GW AB Cond C no Cond no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18h - Exclusive GW AB Cond C no Cond no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18i - Exclusive GW AB C def has cond",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18i - Exclusive GW AB C def has cond_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18j - Exclusive GW AB C no cond no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18j - Exclusive GW AB C no cond no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18k - Exclusive GW ABC Conds No def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18k - Exclusive GW ABC Conds No def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18l - Exclusive GW ABC No Conds No Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18l - Exclusive GW ABC No Conds No Def_0.bpmn"
     }
 ]

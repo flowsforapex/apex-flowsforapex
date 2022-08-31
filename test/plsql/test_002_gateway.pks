@@ -8,7 +8,7 @@ create or replace package test_002_gateway is
 -- Modified 28-Jun-2022   Richard Allen, Oracle   
 -- 
 */
-   --%suite(test_gateway)
+   --%suite(02 Basic Gateway Operation)
    --%rollback(manual)
 
    -- Need to add tests for completing order

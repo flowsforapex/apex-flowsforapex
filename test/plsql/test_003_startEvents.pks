@@ -11,7 +11,7 @@ create or replace package test_003_startEvents is
 
    -- tests  good and bad startEvent definitions
 
-   --%suite(test_startEvents)
+   --%suite(03 Start Events)
    --%rollback(manual)
 
    --%beforeall
