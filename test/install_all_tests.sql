@@ -13,6 +13,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_002_gateway.pks
 @plsql/test_003_startEvents.pks
 @plsql/test_004_proc_vars.pks
+@plsql/test_009_call_activity_nesting.pks
 @plsql/test_010_variable_expression.pks
 @plsql/test_011_var_exps_in_callActivities.pks
 @plsql/test_012_call_activity_timer_BEs.pks
@@ -30,6 +31,7 @@ PROMPT >> Installing Package Bodies
 @plsql/test_002_gateway.pkb
 @plsql/test_003_startEvents.pkb
 @plsql/test_004_proc_vars.pks
+@plsql/test_009_call_activity_nesting.pks
 @plsql/test_010_variable_expression.pkb
 @plsql/test_011_var_exps_in_callActivities.pkb
 @plsql/test_012_call_activity_timer_BEs.pkb

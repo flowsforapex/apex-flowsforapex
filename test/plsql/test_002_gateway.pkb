@@ -42,6 +42,8 @@ create or replace package body test_002_gateway is
       return l_dgrm_id;
    end get_dgrm_id;
 
+   --test(a. exclusive gateway - no route provided)
+
    procedure exclusive_no_route
    is
       l_prcs_id  flow_processes.prcs_id%type;
@@ -109,6 +111,8 @@ create or replace package body test_002_gateway is
       flow_api_pkg.flow_delete(p_process_id => l_prcs_id);
    end exclusive_no_route;
 
+   --test(b. exclusive gateway - default routing)
+
    procedure exclusive_default
    is
       l_prcs_id  flow_processes.prcs_id%type;
@@ -118,7 +122,7 @@ create or replace package body test_002_gateway is
       l_actual   sys_refcursor;
       l_expected sys_refcursor;
    begin
-      -- get dgrm_id to use for comparaison
+      -- get dgrm_id to use for comparison
       l_dgrm_id := get_dgrm_id( model_a3 );
 
       -- create a new instance
@@ -178,6 +182,8 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
    end;
+
+   -- tests C1-3
 
    procedure exclusive_route_provided_runner
    ( pi_prcs_name    in flow_processes.prcs_name%type
@@ -387,7 +393,7 @@ create or replace package body test_002_gateway is
 
    end exclusive_route_provided_runner;
 
-
+   -- test c1 - exclusive gateway - GR var provided - matching case)
    procedure exclusive_route_provided_correct_case
    is
    begin
@@ -401,6 +407,8 @@ create or replace package body test_002_gateway is
       , pi_routing_value_C       => 'RouteC'
       );
    end exclusive_route_provided_correct_case;
+
+   -- test(c2. exclusive gateway - GR var provided - UPPER CASE)
 
    procedure exclusive_route_provided_upper_case
    is
@@ -416,6 +424,8 @@ create or replace package body test_002_gateway is
       );
    end exclusive_route_provided_upper_case;
 
+   -- test(c3. exclusive gateway - GR var provided - lower CASE)
+
    procedure exclusive_route_provided_lower_case
    is
    begin
@@ -429,6 +439,8 @@ create or replace package body test_002_gateway is
       , pi_routing_value_C       => 'RouteC'
       );
    end exclusive_route_provided_lower_case;
+
+   -- test(d. inclusive gateway - no routing)
 
    procedure inclusive_no_route
    is
@@ -493,6 +505,8 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
    end;
+
+   -- test(e. inclusive gateway - default routing)
 
    procedure inclusive_default
    is
@@ -571,6 +585,8 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
    end;
+
+   -- runner for tests f1-4
 
    procedure inclusive_route_provided_runner
    ( pi_prcs_name            in flow_processes.prcs_name%type
@@ -1332,6 +1348,8 @@ create or replace package body test_002_gateway is
 
    end inclusive_route_provided_runner;
 
+   -- test f1 - inclusive gateway - GR provided - matching case)
+
    procedure inclusive_route_provided_correct_case
    is
    begin
@@ -1354,6 +1372,8 @@ create or replace package body test_002_gateway is
       );
    end inclusive_route_provided_correct_case;
 
+   -- test f2 - inclusive gateway - GR provided - UPPER CASE)
+   
    procedure inclusive_route_provided_upper_case
    is
    begin
@@ -1376,6 +1396,8 @@ create or replace package body test_002_gateway is
       );
    end inclusive_route_provided_upper_case;
 
+   -- test f3 - inclusive gateway - GR provided - lower case)
+   
    procedure inclusive_route_provided_lower_case
    is
    begin
@@ -1398,6 +1420,8 @@ create or replace package body test_002_gateway is
       );
    end inclusive_route_provided_lower_case;
 
+   -- test f4 - inclusive gateway - GR provided - JuMbLeD case)
+   
    procedure inclusive_route_provided_jumbled_case
    is
    begin
@@ -1419,6 +1443,8 @@ create or replace package body test_002_gateway is
       , pi_routing_value_ABC     => 'RouteA:RouteB:RouteC'
       );
    end inclusive_route_provided_jumbled_case;
+
+   -- test(g. parallel gateway)
 
    procedure parallel
    is
@@ -1605,6 +1631,8 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
    end;
+
+   -- test h. event based gateway - uses timer)
 
    procedure event_based 
    is

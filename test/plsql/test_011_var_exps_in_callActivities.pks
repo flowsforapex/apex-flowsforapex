@@ -8,7 +8,7 @@ create or replace package test_011_var_exps_in_callActivities is
 -- 
 */
 
-   --%suite(test_variable_exps_in_callactivities)
+   --%suite(11 Variable Expressions in Call Activities)
    --%rollback(manual)
 
    --%test
