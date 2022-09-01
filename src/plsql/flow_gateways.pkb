@@ -121,14 +121,15 @@ as
       bulk collect into l_possible_routes
       from flow_connections conn
       join flow_objects objt
-        on conn.conn_dgrm_id     = objt.objt_dgrm_id
-       and conn.conn_src_objt_id = objt.objt_id
+        on conn.conn_dgrm_id      = objt.objt_dgrm_id
+       and conn.conn_src_objt_id  = objt.objt_id
       join flow_subflows sbfl
-        on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
-     where objt.objt_bpmn_id = pi_objt_bpmn_id
-       and sbfl.sbfl_id = pi_sbfl_id
+        on sbfl.sbfl_dgrm_id      = objt.objt_dgrm_id
+     where objt.objt_bpmn_id      = pi_objt_bpmn_id
+       and sbfl.sbfl_id           = pi_sbfl_id
        and ( conn.conn_attributes."conditionExpression" is not null 
            or conn.conn_is_default = 1 )
+       and conn.conn_tag_name     = flow_constants_pkg.gc_bpmn_sequence_flow
      order by conn.conn_is_default asc, conn.conn_sequence asc
     ;
 
