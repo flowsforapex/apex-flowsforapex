@@ -46,6 +46,7 @@ PROMPT >> Installing Views
 @views/flow_instance_connections_lov.sql
 @views/flow_instance_gateways_lov.sql
 @views/flow_diagrams_vw.sql
+@views/flow_instance_diagrams_lov.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_proc_vars_int.pkb
@@ -87,6 +88,8 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0002_diagrams_vw.sql
 @views/engine-app/flow_p0007_vw.sql
 @views/engine-app/flow_p0007_instances_counter_vw.sql
+@views/engine-app/flow_p0007_diagrams_var_vw.sql
+@views/engine-app/flow_p0007_diagrams_attributes_vw.sql
 @views/engine-app/flow_p0008_instance_details_vw.sql
 @views/engine-app/flow_p0008_instance_log_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
@@ -94,12 +97,13 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
 @views/engine-app/flow_p0010_vw.sql
--- @views/engine-app/flow_p0013_attributes_vw.sql
+@views/engine-app/flow_p0013_attributes_vw.sql
 @views/engine-app/flow_p0013_expressions_vw.sql
 @views/engine-app/flow_p0013_instance_log_vw.sql
 @views/engine-app/flow_p0013_step_log_vw.sql
 @views/engine-app/flow_p0013_subflows_vw.sql
 @views/engine-app/flow_p0013_variable_log_vw.sql
+@views/engine-app/flow_p0013_called_diagrams_vw.sql
 @views/engine-app/flow_p0014_instance_log_vw.sql
 @views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql

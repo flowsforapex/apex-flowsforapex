@@ -234,7 +234,7 @@ as
           if l_dgrm_id_col_idx is not null then
               apex_json.write
               (
-                p_name  => 'diagramId'
+                p_name  => 'diagramIdentifier'
               , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_dgrm_id_col_idx )
               );
           end if;
@@ -242,7 +242,7 @@ as
           if l_calling_dgrm_col_idx is not null then
               apex_json.write
               (
-                p_name  => 'callingDiagramId'
+                p_name  => 'callingDiagramIdentifier'
               , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_calling_dgrm_col_idx )
               );
           end if;

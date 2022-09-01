@@ -17,12 +17,41 @@ wwv_flow_api.create_list_of_values(
 ,p_source_type=>'TABLE'
 ,p_location=>'LOCAL'
 ,p_query_table=>'FLOW_INSTANCE_GATEWAYS_LOV'
-,p_query_where=>'prcs_id = :p8_prcs_id'
+,p_query_where=>'prdg_id = :P8_PRDG_ID'
 ,p_return_column_name=>'OBJT_BPMN_ID'
 ,p_display_column_name=>'OBJT_NAME'
 ,p_group_sort_direction=>'ASC'
 ,p_default_sort_column_name=>'OBJT_NAME'
 ,p_default_sort_direction=>'ASC'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(60613290222026477)
+,p_query_column_name=>'OBJT_BPMN_ID'
+,p_display_sequence=>10
+,p_data_type=>'VARCHAR2'
+,p_is_visible=>'N'
+,p_is_searchable=>'N'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(60613680131026481)
+,p_query_column_name=>'OBJT_NAME'
+,p_heading=>'Objt Name'
+,p_display_sequence=>20
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(60614013397026484)
+,p_query_column_name=>'CALLING_OBJECT'
+,p_heading=>'Calling Object'
+,p_display_sequence=>30
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_api.create_list_of_values_cols(
+ p_id=>wwv_flow_api.id(60614493307026485)
+,p_query_column_name=>'PRDG_DIAGRAM_LEVEL'
+,p_heading=>'Prdg Diagram Level'
+,p_display_sequence=>40
+,p_data_type=>'NUMBER'
 );
 wwv_flow_api.component_end;
 end;

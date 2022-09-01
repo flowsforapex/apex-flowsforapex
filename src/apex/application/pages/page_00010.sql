@@ -27,7 +27,7 @@ wwv_flow_api.create_page(
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220720102011'
+,p_last_upd_yyyymmddhh24miss=>'20220823114450'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -92,9 +92,9 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_no_data_found=>'No process selected'
 ,p_attribute_01=>'DGRM_CONTENT'
 ,p_attribute_02=>'ALL_CURRENT'
-,p_attribute_03=>'DGRM_ID'
+,p_attribute_03=>'PRDG_ID'
 ,p_attribute_04=>'ALL_COMPLETED'
-,p_attribute_05=>'CALLING_DGRM'
+,p_attribute_05=>'PRDG_PRDG_ID'
 ,p_attribute_06=>'ALL_ERRORS'
 ,p_attribute_07=>'CALLING_OBJT'
 ,p_attribute_08=>'Y'
@@ -571,7 +571,7 @@ wwv_flow_api.create_page_item(
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(42701880150211103)
-,p_name=>'P10_LOADED_DGRM_ID'
+,p_name=>'P10_LOADED_DIAGRAM'
 ,p_item_sequence=>60
 ,p_item_plug_id=>wwv_flow_api.id(6127698437330102702)
 ,p_use_cache_before_default=>'NO'
@@ -765,9 +765,9 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P10_LOADED_DGRM_ID'
+,p_affected_elements=>'P10_LOADED_DIAGRAM'
 ,p_attribute_01=>'JAVASCRIPT_EXPRESSION'
-,p_attribute_05=>'this.data.diagramId'
+,p_attribute_05=>'this.data.diagramIdentifier'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
@@ -781,8 +781,11 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P10_OBJT_LIST'
 ,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>'return flow_engine_app_api.get_objt_list(p_dgrm_id => nvl(:P10_LOADED_DGRM_ID, :P10_PRCS_ID));'
-,p_attribute_07=>'P10_LOADED_DGRM_ID,P10_PRCS_ID'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P10_LOADED_DIAGRAM is not null then',
+'return flow_engine_app_api.get_objt_list(p_prdg_id => :P10_LOADED_DIAGRAM);',
+'end if;'))
+,p_attribute_07=>'P10_LOADED_DIAGRAM'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
@@ -832,11 +835,13 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements=>'P10_OBJT_NAME'
 ,p_attribute_01=>'FUNCTION_BODY'
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if :P10_LOADED_DIAGRAM is not null then',
 'return flow_engine_app_api.get_objt_name(',
 '    p_objt_bpmn_id => :P10_OBJT_BPMN_ID',
-'  , p_dgrm_id => nvl(:P10_LOADED_DGRM_ID, :P10_PRCS_ID)',
-');'))
-,p_attribute_07=>'P10_OBJT_BPMN_ID,P10_LOADED_DGRM_ID,P10_PRCS_ID'
+'  , p_prdg_id => :P10_LOADED_DIAGRAM',
+');',
+'end if;'))
+,p_attribute_07=>'P10_OBJT_BPMN_ID,P10_LOADED_DIAGRAM'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
@@ -848,7 +853,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action_sequence=>40
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'openObjectDialog($v(''P10_OBJT_BPMN_ID''), $v(''P10_OBJT_NAME''));'
+,p_attribute_01=>'openObjectDialog($v(''P10_OBJT_BPMN_ID''), $v(''P10_OBJT_NAME''), 10);'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34634407162575846)
@@ -961,6 +966,7 @@ wwv_flow_api.create_page_process(
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flow_engine_app_api.get_url_p13(',
 '  pi_prcs_id => :P10_PRCS_ID',
+', pi_prdg_id => :P10_LOADED_DIAGRAM',
 ', pi_objt_id => apex_application.g_x01',
 ', pi_title => apex_application.g_x02',
 ');'))
