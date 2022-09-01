@@ -51,6 +51,8 @@ PROMPT >> Views
 drop view flow_p0002_diagrams_vw;
 drop view flow_p0007_vw;
 drop view flow_p0007_instances_counter_vw;
+drop view flow_p0007_diagrams_var_vw;
+drop view flow_p0007_diagrams_attributes_vw;
 drop view flow_p0008_instance_details_vw;
 drop view flow_p0008_instance_log_vw;
 drop view flow_p0008_subflows_vw;
@@ -64,6 +66,7 @@ drop view flow_p0013_instance_log_vw;
 drop view flow_p0013_step_log_vw;
 drop view flow_p0013_subflows_vw;
 drop view flow_p0013_variable_log_vw;
+drop view flow_p0013_called_diagrams_vw;
 drop view flow_p0014_instance_log_vw;
 drop view flow_p0014_step_log_vw;
 drop view flow_p0014_subflows_vw;
@@ -78,6 +81,7 @@ drop view flow_subflows_vw;
 drop view flow_diagram_categories_lov;
 drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
+drop view flow_instance_diagrams_lov;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;

@@ -53,6 +53,18 @@ wwv_flow_api.create_static_lov_data(
 ,p_lov_disp_value=>'After Merge'
 ,p_lov_return_value=>'afterMerge'
 );
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(62212194512228414)
+,p_lov_disp_sequence=>7
+,p_lov_disp_value=>'In Variables'
+,p_lov_return_value=>'inVariables'
+);
+wwv_flow_api.create_static_lov_data(
+ p_id=>wwv_flow_api.id(62212467011228444)
+,p_lov_disp_sequence=>8
+,p_lov_disp_value=>'Out Variables'
+,p_lov_return_value=>'outVariables'
+);
 wwv_flow_api.component_end;
 end;
 /

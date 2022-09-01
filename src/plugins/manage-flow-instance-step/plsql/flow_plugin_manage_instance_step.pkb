@@ -79,13 +79,6 @@ create or replace package body flow_plugin_manage_instance_step as
             );
       end if;
 
-      if p_process.attribute_11 is not null then
-         apex_debug.info(
-            p_message => '...Return Flow Instance ID and Subflow ID into: %s'
-            , p0        => p_process.attribute_11
-         );
-      end if;
-
       apex_debug.info(
            p_message => ' < Process plug-in attributes'
       );
@@ -114,7 +107,7 @@ create or replace package body flow_plugin_manage_instance_step as
       l_attribute8      p_process.attribute_08%type := p_process.attribute_08; -- Route ID
       l_attribute9      p_process.attribute_09%type := p_process.attribute_09; -- Auto branching (Y/N)
       l_attribute10     p_process.attribute_10%type := p_process.attribute_10; -- Reservation 
-      l_attribute11     p_process.attribute_11%type := p_process.attribute_11; -- Return Flow Instance and Subflow ID
+      
       l_attribute12     p_process.attribute_12%type := p_process.attribute_12; -- Step Key  
 
       l_process_id      flow_processes.prcs_id%type;
@@ -334,24 +327,6 @@ create or replace package body flow_plugin_manage_instance_step as
             , p_subflow_id => l_subflow_id
             , p_step_key   => l_step_key
          );
-      end if;
-
-      -- Return Flow Instance Id and Subflow Id in the APEX items provided
-      if ( l_attribute11 is not null ) then
-         l_split_items := apex_string.split( l_attribute11, ',' );
-         apex_debug.info(
-            p_message => '...Return Flow Instance Id into item "%s"'
-         , p0        => l_split_items(1)
-         );
-         apex_util.set_session_state( l_split_items(1), l_process_id );
-
-         if l_split_items.count() = 2 then
-            apex_debug.info(
-               p_message => '...Return Subflow Id into item "%s"'
-            , p0        => l_split_items(2)
-            );
-            apex_util.set_session_state( l_split_items(2), l_subflow_id );
-         end if;
       end if;
 
       return l_result;

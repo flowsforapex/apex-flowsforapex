@@ -455,6 +455,7 @@ function addProcessVariable(action, focusElement){
       var data = {}, options = {};
       data.x01 = action;
       data.x02 = apex.item("P8_PRCS_ID").getValue();
+      data.x06 = apex.item("P8_PROV_SCOPE").getValue();
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
@@ -497,14 +498,16 @@ function addProcessVariable(action, focusElement){
       apex.jQuery( "#add-prov-var-route-btn" ).show();
       apex.jQuery( "#save-prov-var-route-btn" ).hide();
     } else {
-      apex.item( "P8_PROV_VAR_VC2" ).setValue();
-      apex.item( "P8_PROV_VAR_NUM" ).setValue();
+      apex.item( "P8_PROV_VAR_VC2"  ).setValue();
+      apex.item( "P8_PROV_VAR_NUM"  ).setValue();
       apex.item( "P8_PROV_VAR_DATE" ).setValue();
       apex.item( "P8_PROV_VAR_CLOB" ).setValue();
       apex.item( "P8_PROV_VAR_NAME" ).setValue();
-      apex.item("P8_PROV_VAR_NAME").enable();
+      apex.item( "P8_PROV_VAR_NAME" ).enable();
       apex.item( "P8_PROV_VAR_TYPE" ).setValue("VARCHAR2");
       apex.item( "P8_PROV_VAR_TYPE" ).enable();
+      apex.item( "P8_PROV_SCOPE"    ).setValue("0");
+      apex.item( "P8_PROV_SCOPE"    ).enable();
       apex.jQuery( "#add-prov-var-btn" ).show();
       apex.jQuery( "#save-prov-var-btn" ).hide();
     }
@@ -529,6 +532,7 @@ function updateProcessVariable(action, focusElement){
       var data = {}, options = {};
       data.x01 = action;
       data.x02 = apex.item("P8_PRCS_ID").getValue();
+      data.x06 = apex.item("P8_PROV_SCOPE").getValue();
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
@@ -592,6 +596,8 @@ function updateProcessVariable(action, focusElement){
               apex.item("P8_PROV_VAR_NAME").disable();
               apex.item("P8_PROV_VAR_TYPE").setValue(varType);
               apex.item("P8_PROV_VAR_TYPE").disable();
+              apex.item("P8_PROV_SCOPE").setValue(varScope);
+              apex.item("P8_PROV_SCOPE").disable();
               apex.theme.openRegion("variable_dialog");
               if ( varType === "VARCHAR2") {
                 apex.item("P8_PROV_VAR_VC2").setValue(data.vc2_value);
@@ -1591,7 +1597,7 @@ function clickCondition(objectListItem, eventData) {
   return false;
 }
 
-function openObjectDialog(objectBpmnId, objectName) {
+function openObjectDialog(objectBpmnId, objectName, currentPage) {
   // set title
   var title = objectBpmnId + (objectName.length > 0 ? ' - ' + objectName : '');
   // open page
@@ -1600,7 +1606,7 @@ function openObjectDialog(objectBpmnId, objectName) {
       {
           x01: objectBpmnId,
           x02: title,
-          pageItems: ["P8_LOADED_DGRM_ID"]
+          pageItems: [`P${currentPage}_LOADED_DIAGRAM`]
       }, 
       {
           success: function (pData)

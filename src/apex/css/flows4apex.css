@@ -98,6 +98,10 @@ th#view-process, td[headers*="view-process"]{
 	padding-top: 30px;
 }
 
+div#attributes-ir th#JSON {
+	display: none;
+}
+
 /* badges */
 
 .prcs_status_badge, .prcs_event_badge, .sbfl_status_badge {

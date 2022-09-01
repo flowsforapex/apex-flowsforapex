@@ -28,8 +28,8 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   12:32 Wednesday August 10, 2022
---   Exported By:     DAMTHOR
+--   Date and Time:   16:45 Tuesday August 30, 2022
+--   Exported By:     LMOREAUX
 --   Flashback:       0
 --   Export Type:     Component Export
 --   Manifest
@@ -376,9 +376,11 @@ wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(92426687525670726)
 ,p_plugin_attribute_id=>wwv_flow_api.id(92425252700670724)
 ,p_display_sequence=>30
-,p_display_value=>'ID'
+,p_display_value=>'ID [deprecated]'
 ,p_return_value=>'id'
-,p_help_text=>'Use this to specify the Flow (Diagram) to be used by giving a Flow (diagram) ID.'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'This option is deprecated starting from Flows for APEX 22.2 and will probably be removed in a future release.',
+'Use this to specify the Flow (Diagram) to be used by giving a Flow (diagram) ID.'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(92428044285670726)

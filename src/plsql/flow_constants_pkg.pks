@@ -274,7 +274,7 @@ as
   gc_config_default_application       constant varchar2(50 char) := 'default_application';
   gc_config_default_pageid            constant varchar2(50 char) := 'default_pageid';
   gc_config_default_username          constant varchar2(50 char) := 'default_username';
-
+  gc_config_default_email_sender      constant varchar2(50 char) := 'default_email_sender';
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 

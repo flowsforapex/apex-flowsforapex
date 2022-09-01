@@ -74,6 +74,7 @@ prompt --install
 @@application/shared_components/navigation/tabs/parent.sql
 @@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
+@@application/shared_components/user_interface/lovs/flow_instance_diagrams_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p13_object_attributes.sql
 @@application/shared_components/user_interface/lovs/p13_var_exp_set_on.sql

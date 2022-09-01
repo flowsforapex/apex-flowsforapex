@@ -19,7 +19,7 @@ wwv_flow_api.create_list_of_values(
 ,p_query_table=>'FLOW_INSTANCE_CONNECTIONS_LOV'
 ,p_query_where=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'src_objt_bpmn_id = :p8_gateway',
-'and prcs_id = :p8_prcs_id'))
+'and prdg_id = :p8_prdg_id'))
 ,p_return_column_name=>'CONN_BPMN_ID'
 ,p_display_column_name=>'CONN_NAME'
 ,p_group_sort_direction=>'ASC'

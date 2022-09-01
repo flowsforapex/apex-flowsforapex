@@ -4,7 +4,7 @@ create or replace package test_001_api is
 
    -- tests  basic flows API
 
-   --%suite(test_api)
+   --%suite(01 Basic API Functionality)
    --%rollback(manual)
 
    -- Need to add tests for by name, by name and version, by id

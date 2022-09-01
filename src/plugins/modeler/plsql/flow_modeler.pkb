@@ -320,7 +320,16 @@ as
   procedure get_diagrams
   as
     l_result clob;
-    cursor c_diagrams is select distinct dgrm_name from flow_diagrams;
+    
+    cursor c_diagrams
+        is
+    select distinct dgrm_name
+      from flow_diagrams dgrm
+      join flow_objects objt
+        on dgrm.dgrm_id = objt.objt_dgrm_id
+       and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+     where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true;
+    
     l_diagram flow_diagrams.dgrm_name%type;
   begin
     l_result := '[{"name":"","value":""},';

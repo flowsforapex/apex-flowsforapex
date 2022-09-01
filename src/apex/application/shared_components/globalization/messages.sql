@@ -328,6 +328,12 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(61364531151233202)
+,p_name=>'APP_ERR_ONLY_DRAFT'
+,p_message_text=>'Overwrite only possible for draft models.'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7385297806875971)
 ,p_name=>'APP_ERR_PROV_VAR_DATE_NOT_DATE'
 ,p_message_text=>'Value must be a date'
@@ -597,6 +603,16 @@ wwv_flow_api.create_message(
 ,p_message_language=>'fr'
 ,p_message_text=>unistr('Sous-flux red\00E9marr\00E9.')
 ,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(61820488838157963)
+,p_name=>'APP_TAB_IN_OUT_MAPPING'
+,p_message_text=>'In/Out Mapping'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(61820286299155230)
+,p_name=>'APP_TAB_VAR_EXP'
+,p_message_text=>'Variable Expressions'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(34715995579436957)

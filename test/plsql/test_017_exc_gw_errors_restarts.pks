@@ -10,7 +10,7 @@ create or replace package test_017_exc_gw_errors_restarts as
 
   -- uses models 17a
 
-  --%suite(Exclusive Gateway Errors and Restarts)
+  --%suite(17 Exclusive Gateway Errors and Restarts)
   --%rollback(manual)
 
   --%beforeall
