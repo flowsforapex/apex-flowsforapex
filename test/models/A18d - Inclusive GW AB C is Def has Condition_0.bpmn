@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:process id="Process_Test18d" name="Test Model 18d" isExecutable="false" apex:isCallable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start 18">
+      <bpmn:outgoing>Flow_0697l0g</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_Pre" name="Set MyVar">
+      <bpmn:incoming>Flow_0697l0g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0peoo8k</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0697l0g" sourceRef="Event_Start" targetRef="Activity_Pre" />
+    <bpmn:sequenceFlow id="Flow_0peoo8k" sourceRef="Activity_Pre" targetRef="Gateway_Split" />
+    <bpmn:inclusiveGateway id="Gateway_Split" name="Split" default="Flow_C">
+      <bpmn:incoming>Flow_0peoo8k</bpmn:incoming>
+      <bpmn:outgoing>Flow_A</bpmn:outgoing>
+      <bpmn:outgoing>Flow_B</bpmn:outgoing>
+      <bpmn:outgoing>Flow_C</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:incoming>Flow_A</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kwfzlg</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_A" name=":F4A$MyVar like &#39;%A%&#39;" sourceRef="Gateway_Split" targetRef="Activity_A" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$MyVar like '%A%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_B" name="B">
+      <bpmn:incoming>Flow_B</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m4hx9d</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_B" name=":F4A$MyVar like &#39;%B%&#39;" sourceRef="Gateway_Split" targetRef="Activity_B" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$MyVar like '%B%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_C" name="C">
+      <bpmn:incoming>Flow_C</bpmn:incoming>
+      <bpmn:outgoing>Flow_01uwhaj</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_C" name=":F4A$MyVar like &#39;%C%&#39;" sourceRef="Gateway_Split" targetRef="Activity_C" apex:sequence="30">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$MyVar like '%C%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_EndA" name="EndA">
+      <bpmn:incoming>Flow_1kwfzlg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1kwfzlg" sourceRef="Activity_A" targetRef="Event_EndA" />
+    <bpmn:endEvent id="Event_EndB" name="EndB">
+      <bpmn:incoming>Flow_0m4hx9d</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0m4hx9d" sourceRef="Activity_B" targetRef="Event_EndB" />
+    <bpmn:endEvent id="Event_EndC" name="EndC">
+      <bpmn:incoming>Flow_01uwhaj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_01uwhaj" sourceRef="Activity_C" targetRef="Event_EndC" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Test18d">
+      <bpmndi:BPMNEdge id="Flow_01uwhaj_di" bpmnElement="Flow_01uwhaj">
+        <di:waypoint x="1010" y="620" />
+        <di:waypoint x="1182" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m4hx9d_di" bpmnElement="Flow_0m4hx9d">
+        <di:waypoint x="1010" y="510" />
+        <di:waypoint x="1182" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kwfzlg_di" bpmnElement="Flow_1kwfzlg">
+        <di:waypoint x="1010" y="380" />
+        <di:waypoint x="1182" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hp5vp1_di" bpmnElement="Flow_C">
+        <di:waypoint x="720" y="535" />
+        <di:waypoint x="720" y="620" />
+        <di:waypoint x="910" y="620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="781" y="593" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12w9kbp_di" bpmnElement="Flow_B">
+        <di:waypoint x="745" y="510" />
+        <di:waypoint x="910" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="789" y="466" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a4ks49_di" bpmnElement="Flow_A">
+        <di:waypoint x="720" y="485" />
+        <di:waypoint x="720" y="380" />
+        <di:waypoint x="910" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="771" y="336" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0peoo8k_di" bpmnElement="Flow_0peoo8k">
+        <di:waypoint x="640" y="510" />
+        <di:waypoint x="695" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0697l0g_di" bpmnElement="Flow_0697l0g">
+        <di:waypoint x="488" y="510" />
+        <di:waypoint x="540" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0qtnmec_di" bpmnElement="Event_Start">
+        <dc:Bounds x="452" y="492" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="452" y="535" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17hl1hi_di" bpmnElement="Activity_Pre">
+        <dc:Bounds x="540" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wiwp7p_di" bpmnElement="Gateway_Split">
+        <dc:Bounds x="695" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="679" y="473" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i1jfgp_di" bpmnElement="Activity_A">
+        <dc:Bounds x="910" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1difm7b_di" bpmnElement="Activity_B">
+        <dc:Bounds x="910" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q163mm_di" bpmnElement="Activity_C">
+        <dc:Bounds x="910" y="580" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00ef91t_di" bpmnElement="Event_EndA">
+        <dc:Bounds x="1182" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1187" y="405" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0so9410_di" bpmnElement="Event_EndB">
+        <dc:Bounds x="1182" y="492" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1187" y="535" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cfogf3_di" bpmnElement="Event_EndC">
+        <dc:Bounds x="1182" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1187" y="645" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

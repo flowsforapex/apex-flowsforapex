@@ -13,8 +13,9 @@ as
 */
   type t_new_sbfls is table of flow_types_pkg.t_subflow_context;
 
-  e_no_route_found        exception;
-  lock_timeout            exception;
+  e_no_route_found          exception;
+  e_bad_routing_expression  exception;
+  lock_timeout              exception;
   pragma exception_init (lock_timeout, -3006);
 
   function get_valid_routing_variable_routes
@@ -74,7 +75,7 @@ as
         , pi_sbfl_id        => pi_sbfl_id
         , pi_message_key    => 'gateway-invalid-route'
         , p0 => pi_objt_bpmn_id 
-        , p1 => pi_objt_bpmn_id||':route'
+        , p1 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
         , p2 => l_bad_route_string
         );
         -- $F4AMESSAGE 'gateway-invalid-route' || 'Error at gateway %0. Supplied variable %1 contains invalid route: %2'  
@@ -100,15 +101,18 @@ as
       , conn_language   flow_types_pkg.t_expr_type
       );
     type t_possible_routes is table of t_possible_route;
-    l_possible_routes   t_possible_routes;
-    l_take_route        boolean;
-    l_expr              clob;
-    l_expr_type         flow_types_pkg.t_expr_type;
-    l_bind              apex_plugin_util.t_bind;
-    l_bind_list         apex_plugin_util.t_bind_list;
-    l_var_list          apex_t_varchar2 := apex_t_varchar2();
-    l_indx              pls_integer;
-
+    l_possible_routes       t_possible_routes;
+    l_take_route            boolean;
+    l_expr                  clob;
+    l_expr_type             flow_types_pkg.t_expr_type;
+    l_bind                  apex_plugin_util.t_bind;
+    l_bind_list             apex_plugin_util.t_bind_list;
+    l_var_list              apex_t_varchar2 := apex_t_varchar2();
+    l_indx                  pls_integer;
+    l_expressions           number;
+    l_has_default           boolean;
+    l_default_has_condition boolean;
+    l_num_expected_exprs    number;
   begin
     -- get all valid forward routes, ordered by 
     select conn.conn_id
@@ -126,17 +130,51 @@ as
         on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
      where objt.objt_bpmn_id = pi_objt_bpmn_id
        and sbfl.sbfl_id = pi_sbfl_id
-       and ( conn.conn_attributes."conditionExpression" is not null 
-           or conn.conn_is_default = 1 )
+--       and ( conn.conn_attributes."conditionExpression" is not null 
+--           or conn.conn_is_default = 1 )
      order by conn.conn_is_default asc, conn.conn_sequence asc
     ;
 
     apex_debug.info( p_message => '-- Found %0 possible routes.', p0 => l_possible_routes.count );
 
+    -- check whether expressions are being used
+    -- if so, raise exception if any non default path is missing an expression - assume a missing gw routing var)
+
+    l_expressions           := 0;
+    l_has_default           := false;
+    l_default_has_condition  := false;
+
+    for route in 1 ..l_possible_routes.count
+    loop
+      if l_possible_routes(route).conn_expression is not null then
+        l_expressions := l_expressions +1;
+      end if;
+      if l_possible_routes(route).conn_is_default = 1 then
+        l_has_default           := true;
+        if l_possible_routes(route).conn_expression is not null then
+          l_default_has_condition  := true;
+        end if;
+      end if;
+    end loop;
+
+    l_num_expected_exprs := l_possible_routes.count;
+    if l_has_default and not l_default_has_condition then
+      l_num_expected_exprs := l_num_expected_exprs - 1;
+    end if;
+
+    if l_expressions > 0  then
+      if l_num_expected_exprs > l_expressions then
+        raise e_no_route_found;
+      end if;
+    end if;
+
+    -- evaluate each routing condition in sequence.  Treat no expression as unconditional
+
     if l_possible_routes.count > 0 then
       -- loop over routes
       for route in 1 .. l_possible_routes.count
       loop
+        l_bind_list := apex_plugin_util.c_empty_bind_list;
         apex_debug.info( p_message => '-- Evaluating Route #%0, Language: %1, Expression: %2', p0 => route, p1 => l_possible_routes(route).conn_language, p2 => l_possible_routes(route).conn_expression );
         l_take_route := false;
         -- evaluate route expression
@@ -151,69 +189,85 @@ as
           , p0 => l_expr
           , p1 => l_expr_type);
 
-        flow_proc_vars_int.do_substitution  ( pi_prcs_id   => pi_prcs_id 
-                                            , pi_sbfl_id   => pi_sbfl_id 
-                                            , pi_scope     => pi_scope 
-                                            , pio_string   => l_expr 
-                                            );      
-            
-        apex_debug.info (p_message => '--- after substitution - expression : %0 type : %1  '
-          , p0 => l_expr
-          , p1 => l_expr_type);
-
-        l_var_list := apex_string.grep 
-                    ( p_str => l_expr
-                    , p_pattern =>  flow_constants_pkg.gc_bind_pattern
-                    , p_modifier => 'i'
-                    , p_subexpression => '1'
-                    );
-        if l_var_list is not null then
-          l_indx := l_var_list.first;
-          -- create bind list and get bind values
-          apex_debug.info('Expression : ' ||l_expr|| ' Contains Bind Tokens : '|| apex_string.join(l_var_list, ':'));
-          while l_indx is not null 
-          loop
-            l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
-            l_bind.value := flow_proc_vars_int.get_var_vc2
-                              ( pi_prcs_id            => pi_prcs_id
-                              , pi_var_name           => l_var_list(l_indx)
-                              , pi_scope              => pi_scope
-                              );
-            apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
-              , p0 => l_bind.name
-              , p1 => l_bind.value
-              );                              
-            l_bind_list(l_indx) := l_bind;
-            l_indx := l_var_list.next (l_indx);
-          end loop;
-        else
-          -- no bind variables
-          l_bind_list := apex_plugin_util.c_empty_bind_list;                      
-          apex_debug.info (p_message => 'Expression contains no bind variables.  Expression : %0 type : %1  '
-            , p0 => l_expr
-            , p1 => l_expr_type); 
-        end if;
-
-        case l_expr_type  
-        when flow_constants_pkg.gc_expr_type_plsql_expression then
-          l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr 
-                                                                         , p_auto_bind_items  => false
-                                                                         , p_bind_list        => l_bind_list
-                                                                         );
-        when flow_constants_pkg.gc_expr_type_plsql_function_body then
-          l_take_route := apex_plugin_util.get_plsql_func_result_boolean ( p_plsql_function => l_expr 
-                                                                         , p_auto_bind_items  => false
-                                                                         , p_bind_list        => l_bind_list
-                                                                         );          
-        else       
+        if l_expr is null and l_possible_routes(route).conn_is_default = 0 then
+          -- treat forward path as being false
           l_take_route := false;
-        end case;
+
+          apex_debug.info (p_message => 'Expression contains no condition and will not be taken.'); 
+        else 
+          -- evaluate condition
+
+          flow_proc_vars_int.do_substitution  ( pi_prcs_id   => pi_prcs_id 
+                                              , pi_sbfl_id   => pi_sbfl_id 
+                                              , pi_scope     => pi_scope 
+                                              , pio_string   => l_expr 
+                                              );      
+
+          apex_debug.info (p_message => '--- after substitution - expression : %0 type : %1  '
+            , p0 => l_expr
+            , p1 => l_expr_type);
+
+          l_var_list := apex_string.grep 
+                      ( p_str => l_expr
+                      , p_pattern =>  flow_constants_pkg.gc_bind_pattern
+                      , p_modifier => 'i'
+                      , p_subexpression => '1'
+                      );
+          if l_var_list is not null then
+            l_indx := l_var_list.first;
+            -- create bind list and get bind values
+            apex_debug.info('Expression : ' ||l_expr|| ' Contains Bind Tokens : '|| apex_string.join(l_var_list, ':'));
+            while l_indx is not null 
+            loop
+              l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
+              l_bind.value := flow_proc_vars_int.get_var_as_vc2
+                                ( pi_prcs_id            => pi_prcs_id
+                                , pi_var_name           => l_var_list(l_indx)
+                                , pi_scope              => pi_scope
+                                , pi_exception_on_null  => false
+                                );
+              apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
+                , p0 => l_bind.name
+                , p1 => l_bind.value
+                );                              
+              l_bind_list(l_indx) := l_bind;
+              l_indx := l_var_list.next (l_indx);
+            end loop;
+          else
+            -- no bind variables, nothing to do as we reset bind-list for each loop
+            apex_debug.info (p_message => 'Expression contains no bind variables.  Expression : %0 type : %1  '
+              , p0 => l_expr
+              , p1 => l_expr_type); 
+          end if;
+
+          begin
+            case l_expr_type  
+            when flow_constants_pkg.gc_expr_type_plsql_expression then
+              l_take_route := apex_plugin_util.get_plsql_expr_result_boolean ( p_plsql_expression => l_expr 
+                                                                             , p_auto_bind_items  => false
+                                                                             , p_bind_list        => l_bind_list
+                                                                             );
+            when flow_constants_pkg.gc_expr_type_plsql_function_body then
+              l_take_route := apex_plugin_util.get_plsql_func_result_boolean ( p_plsql_function => l_expr 
+                                                                             , p_auto_bind_items  => false
+                                                                             , p_bind_list        => l_bind_list
+                                                                             );          
+            else       
+              l_take_route := false;
+            end case;
+          exception
+            when others then
+              raise e_bad_routing_expression;
+          end;
+        end if;
 
         apex_debug.info (p_message => 'Routing Expresion evaluation result : %0  '
             , p0 => case l_take_route when true then 'true' else 'false' end );
 
         -- if valid, add to forward_routes
-        if l_take_route or l_possible_routes(route).conn_is_default = 1 then
+        if l_take_route or ( l_possible_routes(route).conn_is_default = 1 
+                             and l_forward_routes.count = 0 )
+        then
           l_forward_routes.extend;
           l_forward_routes(l_forward_routes.last) := l_possible_routes(route).conn_bpmn_id;
           if l_possible_routes(route).conn_is_default = 1 then
@@ -253,7 +307,7 @@ as
       -- check if route is in process variable
       l_routing_variable := flow_proc_vars_int.get_var_vc2 
                             ( pi_prcs_id  => pi_prcs_id
-                            , pi_var_name => pi_objt_bpmn_id||':route'
+                            , pi_var_name => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
                             , pi_scope    => pi_scope
                             );
       if l_routing_variable is not null then
@@ -269,7 +323,7 @@ as
                         , p0 => l_routing_variable
                         );                                                                
       else 
-        apex_debug.info( p_message => '-- Using Gateway Route Expressions.' );
+        apex_debug.info( p_message => '-- Using Gateway Route Expressions or Default Routing.' );
         -- look for gateway routing expressions or default routing
         l_forward_routes := get_valid_routing_expression_routes ( pi_prcs_id          => pi_prcs_id
                                                                 , pi_sbfl_id          => pi_sbfl_id
@@ -290,9 +344,17 @@ as
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
         , pi_message_key    => 'gateway-no-route'
-        , p0 => pi_objt_bpmn_id||':route'
+        , p0 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
         );
         -- $F4AMESSAGE 'gateway-no-route' || 'No gateway routing instruction provided in variable %0 and model contains no default route.'  
+      when e_bad_routing_expression then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_message_key    => 'gateway-bad-expression'
+        , p0 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
+        );
+        -- $F4AMESSAGE 'gateway-bad_expression' || 'Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).'  
       when too_many_rows then
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
@@ -333,6 +395,7 @@ as
       into l_num_unfinished_subflows
       from flow_subflows sbfl
       where sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+        and sbfl.sbfl_diagram_level = p_sbfl_info.sbfl_diagram_level
         and sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
         and (  sbfl.sbfl_current != p_step_info.target_objt_ref
             or sbfl.sbfl_status != flow_constants_pkg.gc_sbfl_status_waiting_gateway
@@ -347,6 +410,7 @@ as
           for completed_subflows in ( select completed_sbfl.sbfl_id
                                         from flow_subflows completed_sbfl 
                                         where completed_sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+                                          and completed_sbfl.sbfl_diagram_level = p_sbfl_info.sbfl_diagram_level
                                           and completed_sbfl.sbfl_starting_object = p_sbfl_info.sbfl_starting_object
                                           and completed_sbfl.sbfl_current = p_step_info.target_objt_ref 
                                           and completed_sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
@@ -641,6 +705,12 @@ as
             ( p_message => 'Forward routes for inclusiveGateway %0 : %1'
             , p0 => p_step_info.target_objt_ref
             , p1 => apex_string.join(l_forward_routes,':')
+            );
+            flow_logging.log_instance_event
+            ( p_process_id  => p_sbfl_info.sbfl_prcs_id
+            , p_objt_bpmn_id  => p_step_info.target_objt_ref
+            , p_event  => 'Gateway Processed'
+            , p_comment  => 'Chosen Paths : '||apex_string.join(l_forward_routes,':')
             );
           when flow_constants_pkg.gc_bpmn_gateway_parallel then 
             l_forward_routes.extend;

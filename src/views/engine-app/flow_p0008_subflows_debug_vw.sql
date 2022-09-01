@@ -37,6 +37,7 @@ as
              when 'waiting at gateway' then 'fa fa-hand-stop-o'
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
+             when 'waiting for approval' then 'fa fa-question-square-o'
          end as sbfl_status_icon
        , sbfl.sbfl_reservation
        , null as actions   

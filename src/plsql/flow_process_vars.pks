@@ -1,4 +1,6 @@
-/* 
+create or replace package flow_process_vars
+  authid definer
+as /* 
 -- Flows for APEX - flow_process_vars.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
@@ -15,9 +17,6 @@
 **
 */ 
  
-create or replace package flow_process_vars
-  authid definer
-as 
 /**
 PROCESS VARIABLE SYSTEM API
 ===========================

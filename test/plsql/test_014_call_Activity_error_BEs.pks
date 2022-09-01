@@ -8,7 +8,7 @@ create or replace package test_014_call_Activity_error_BEs is
 -- 
 */
 
-  --%suite(test_callActivity_error_boundary_Events)
+  --%suite(14 Call Activity Error Boundary Events)
   --%rollback(manual)
 
   --%beforeall

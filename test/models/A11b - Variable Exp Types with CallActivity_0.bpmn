@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
-  <bpmn:process id="Process_0rxermh" isExecutable="false">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:process id="Process_0rxermh" isExecutable="false" apex:isCallable="true" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:inVariables>
+        <apex:processVariable>
+          <apex:varName>Called_Invar_StaticVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Invar Static Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Invar_CopyStaticVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Invar CopyStatic Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Invar_SQLSingleVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Invar SingleSQL Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Invar_SQLMultiVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Invar MultiSQL Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Invar_ExpressionVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Invar Expression Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Invar_FuncBodyVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Invar FuncBody Description</apex:varDescription>
+        </apex:processVariable>
+      </apex:inVariables>
+      <apex:outVariables>
+        <apex:processVariable>
+          <apex:varName>Called_Outvar_StaticVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Outvar Static Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Outvar_CopyStaticVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Outvar CopyStatic Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Outvar_SQLSingleVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Outvar SingleSQL Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Outvar_SQLMultiVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Outvar MultiSQL Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Outvar_ExpressionVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Outvar Expression Description</apex:varDescription>
+        </apex:processVariable>
+        <apex:processVariable>
+          <apex:varName>Called_Outvar_FuncBodyVC2</apex:varName>
+          <apex:varDataType>VARCHAR2</apex:varDataType>
+          <apex:varDescription>Outvar FuncBody Description</apex:varDescription>
+        </apex:processVariable>
+      </apex:outVariables>
+    </bpmn:extensionElements>
     <bpmn:startEvent id="Event_0j4rspz" name="start (Called)">
       <bpmn:outgoing>Flow_07uc0ef</bpmn:outgoing>
     </bpmn:startEvent>

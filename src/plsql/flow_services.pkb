@@ -68,9 +68,11 @@ as
     )
     as
     begin
-      for i in 0..pi_array.get_size - 1 loop
-        po_clob := po_clob || pi_array.get_string(i) || apex_application.lf;
-      end loop;
+      if pi_array is not null then
+        for i in 0..pi_array.get_size - 1 loop
+          po_clob := po_clob || pi_array.get_string(i) || apex_application.lf;
+        end loop;
+      end if;
     end json_array_to_clob;
   begin
     select json_query( objt.objt_attributes format json, '$.apex' returning clob ) as json_data

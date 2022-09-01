@@ -119,6 +119,69 @@
         "file": "A03h - Model with one start event with bad before-event var exp_0.bpmn"
     },
     {
+        "dgrm_name": "A04a - Basic Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A04a - Basic Model_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09p - Recursive Chain PQP Top",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09p - Recursive Chain PQP Top_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09q - Recursive Chain PQP Bottom",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09q - Recursive Chain PQP Bottom_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09r - Recursive Chain RSTR Top",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09r - Recursive Chain RSTR Top_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09s - Recursive Chain RSTR Middle",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09s - Recursive Chain RSTR Middle_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09t - Recursive Chain RSTR Bottom",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09t - Recursive Chain RSTR Bottom_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09u - Calling non-callable diagram",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09u - Calling non-callable diagram_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09v - Called Non-Callable Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09v - Called Non-Callable Model_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09w - Self Calling",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09w - Self Calling_0.bpmn"
+    },
+    {
         "dgrm_name": "A10 - Variable Expressions Types",
         "dgrm_version": "0",
         "dgrm_status": "draft",
@@ -250,5 +313,89 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A17a - Exc GW Errors and Restarts_0.bpmn"
+    },
+    {
+        "dgrm_name": "A18a - GW Routing Exps - basic exprs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A18a - GW Routing Exps - basic exprs_0.bpmn"
+    },
+    {
+        "dgrm_name": "A18b - GW Routing Exps - basic func bodies",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A18b - GW Routing Exps - basic func bodies_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18c - Inclusive GW AB C is Def no Condition",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18c - Inclusive GW AB C is Def no Condition_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18d - Inclusive GW AB C is Def has Condition",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18d - Inclusive GW AB C is Def has Condition_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18e - Inclusive GW AB C no Condition no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18e - Inclusive GW AB C no Condition no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18f - Inclusive GW ABC Condition no Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18f - Inclusive GW ABC Condition no Def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18g - Inclusive GW ABC No Conds No Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18g - Inclusive GW ABC No Conds No Def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18h - Exclusive GW AB Cond C no Cond no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18h - Exclusive GW AB Cond C no Cond no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18i - Exclusive GW AB C def has cond",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18i - Exclusive GW AB C def has cond_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18j - Exclusive GW AB C no cond no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18j - Exclusive GW AB C no cond no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18k - Exclusive GW ABC Conds No def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18k - Exclusive GW ABC Conds No def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18l - Exclusive GW ABC No Conds No Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18l - Exclusive GW ABC No Conds No Def_0.bpmn"
     }
 ]

@@ -65,6 +65,11 @@
       , "source" : "More than one default route specified in model for Gateway %0."
       , "target" : "Mais de uma rota padrão foi definida no modelo para o Gateway (Porta de Entrada) %0." 
     },
+    {
+    "text_key" : "gateway-bad-expression",
+    "source" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).",
+    "target" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:)."
+    },
     { 
       "text_key" : " link-no-catch" 
       , "source" : "Unable to find matching link catch event named %0."
@@ -279,22 +284,22 @@
     },
     { 
       "text_key" : " var_exp_sql_no_data" 
-      , "source" : "Error setting %2 process variable %1 in process id %0.  No data found in query."
+      , "source" : " Error setting process variable %1 in process id %0 (set %2).  No data found in query."
       , "target" : "Erro ao atualizar a variável %1 com valor %2 no processo %0 - Nenhum dado encontrado na consulta."
      },
     { 
       "text_key" : " var_exp_sql_other" 
-      , "source" : "Error setting %2 process variable %1 in process id %0.  SQL error shown in event log."
+      , "source" : "Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log."
       , "target" : "Erro ao atualizar a variável %1 com valor %2 no processo %0. Erro de SQL exibido no log de eventos." 
     },
     { 
       "text_key" : " var_exp_sql_too_many_rows" 
-      , "source" : "Error setting %2 process variable %1 in process id %0.  Query returns multiple rows."
+      , "source" : "Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows."
       , "target" : "Erro ao atualizar a variável %1 com valor %2 no processo %0. A consulta retorna várias linhas." 
     },
     { 
       "text_key" : " var_exp_static_general" 
-      , "source" : "Error setting %2 process variable %1 in process id %0.  See error in event log."
+      , "source" : "Error setting process variable %1 in process id %0 (set %2).  See error in event log."
       , "target" : "Erro ao atualizar a variável %1 com valor %2 no processo %0. Veja o no log de eventos." 
     },
     { 
@@ -320,7 +325,7 @@
     },
     { 
       "text_key" : " plugin-route-not-define" 
-      , "source" : "Gateway is not define for routing."
+      , "source" : "Gateway is not defined for routing."
       , "target" : "O Gateway (Porta de Entrada) não está definido para roteamento." 
     },
     { 
@@ -422,6 +427,56 @@
       "text_key" : " email-placeholder-json-invalid" 
       , "source" : "Process %0: ServiceTask %1 placeholder JSON is invalid.Please check the model."
       , "target" : "Processo %0: Falha na Tarefa do Tipo Serviço %1: objeto JSON de espaço reservado inválido. Por favor, verifique o modelo." 
-    }
+    },
+    {
+    "text_key" : "apex-task-cancelation-error",
+    "source" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)",
+    "target" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)"
+  },
+  {
+    "text_key" : "apex-task-not-supported",
+    "source" : "APEX Workflow Feature use requires Oracle APEX v%0.",
+    "target" : "APEX Workflow Feature use requires Oracle APEX v%0."
+  },
+  {
+    "text_key" : "apex-task-not-found",
+    "source" : "APEX Workflow Task %0 not found in Flows for APEX Process",
+    "target" : "APEX Workflow Task %0 not found in Flows for APEX Process"
+  },
+  {
+    "text_key" : "apex-task-on-multiple-steps",
+    "source" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step.",
+    "target" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step."
+  },
+  {
+    "text_key" : "apex-task-not-current-step",
+    "source" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready.",
+    "target" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready."
+  },
+  {
+    "text_key" : "apex-task-invalid-result-var",
+    "source" : "APEX Workflow Task result process variable is not defined or invalid.",
+    "target" : "APEX Workflow Task result process variable is not defined or invalid."
+  },
+  {
+    "text_key" : "apex-task-creation-error",
+    "source" : "Error creating APEX Workflow task %0 in application %1.  see debug for details.",
+    "target" : "Error creating APEX Workflow task %0 in application %1.  see debug for details."
+  },
+  {
+    "text_key" : "apex-task-priority-error",
+    "source" : "Error creating APEX Workflow task - invalid priority %0.",
+    "target" : "Error creating APEX Workflow task - invalid priority %0."
+  },
+  {
+    "text_key" : "apex-task-multiple-processes",
+    "source" : "Error creating APEX session.  BPMN diagram contains multiple Process objects.",
+    "target" : "Error creating APEX session.  BPMN diagram contains multiple Process objects."
+  },
+  {
+    "text_key" : "call-diagram-not-callable",
+    "source" : "You tried to call a diagram %0 that is marked as being not callable.",
+    "target" : "You tried to call a diagram %0 that is marked as being not callable."
+  }
   ]
 }

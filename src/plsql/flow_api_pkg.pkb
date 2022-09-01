@@ -2,11 +2,16 @@ create or replace package body flow_api_pkg as
 /* 
 -- Flows for APEX - flow_api_pkg.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2020-2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG. 2020-22
 --
--- Created 2020   Moritz Klein - MT AG  
+-- Created    20-Jun-2020   Moritz Klein, MT AG 
+-- Modified   01-May-2022   Richard Allen, Oracle
 -- 
 */
+
+  e_lock_timeout exception;
+  pragma exception_init (e_lock_timeout, -3006);
 
   function get_dgrm_name
   (
@@ -401,6 +406,19 @@ create or replace package body flow_api_pkg as
            );
 
   end message;
+
+  procedure return_approval_result
+    ( p_process_id    in flow_processes.prcs_id%type
+    , p_apex_task_id  in number
+    , p_result        in flow_process_variables.prov_var_vc2%type default null
+    )
+  is
+  begin
+    flow_usertask_pkg.return_approval_result  ( p_process_id    => p_process_id
+                                              , p_apex_task_id  => p_apex_task_id
+                                              , p_result        => p_result
+                                              );
+  end return_approval_result;
 
 end flow_api_pkg;
 /

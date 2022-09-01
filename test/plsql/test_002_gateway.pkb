@@ -42,6 +42,8 @@ create or replace package body test_002_gateway is
       return l_dgrm_id;
    end get_dgrm_id;
 
+   --test(a. exclusive gateway - no route provided)
+
    procedure exclusive_no_route
    is
       l_prcs_id  flow_processes.prcs_id%type;
@@ -109,6 +111,8 @@ create or replace package body test_002_gateway is
       flow_api_pkg.flow_delete(p_process_id => l_prcs_id);
    end exclusive_no_route;
 
+   --test(b. exclusive gateway - default routing)
+
    procedure exclusive_default
    is
       l_prcs_id  flow_processes.prcs_id%type;
@@ -118,7 +122,7 @@ create or replace package body test_002_gateway is
       l_actual   sys_refcursor;
       l_expected sys_refcursor;
    begin
-      -- get dgrm_id to use for comparaison
+      -- get dgrm_id to use for comparison
       l_dgrm_id := get_dgrm_id( model_a3 );
 
       -- create a new instance
@@ -179,8 +183,17 @@ create or replace package body test_002_gateway is
       ut.expect( l_actual ).to_equal( l_expected );
    end;
 
+   -- tests C1-3
 
-   procedure exclusive_route_provided
+   procedure exclusive_route_provided_runner
+   ( pi_prcs_name    in flow_processes.prcs_name%type
+   , pi_routing_var_name_A   in varchar2
+   , pi_routing_value_A      in varchar2
+   , pi_routing_var_name_B   in varchar2
+   , pi_routing_value_B      in varchar2
+   , pi_routing_var_name_C   in varchar2
+   , pi_routing_value_C      in varchar2
+   )
    is
       l_prcs_id  flow_processes.prcs_id%type;
       l_dgrm_id  flow_diagrams.dgrm_id%type;
@@ -195,15 +208,15 @@ create or replace package body test_002_gateway is
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
            pi_dgrm_id   => l_dgrm_id
-         , pi_prcs_name => 'test - exclusive_route_provided'
+         , pi_prcs_name => pi_prcs_name 
       );
       g_prcs_id_3 := l_prcs_id;
 
       --Set RouteA
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Exclusive:route'
-         , pi_vc2_value => 'RouteA'
+         , pi_var_name  =>  pi_routing_var_name_A
+         , pi_vc2_value =>  pi_routing_value_A
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -211,7 +224,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - exclusive_route_provided' as prcs_name, 
+            pi_prcs_name  as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -247,7 +260,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - exclusive_route_provided' as prcs_name, 
+            pi_prcs_name  as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -261,8 +274,8 @@ create or replace package body test_002_gateway is
       --Set RouteB
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Exclusive:route'
-         , pi_vc2_value => 'RouteB'
+         , pi_var_name  => pi_routing_var_name_B
+         , pi_vc2_value => pi_routing_value_B
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -270,7 +283,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - exclusive_route_provided' as prcs_name, 
+            pi_prcs_name  as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -306,7 +319,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - exclusive_route_provided' as prcs_name, 
+            pi_prcs_name  as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -320,8 +333,8 @@ create or replace package body test_002_gateway is
       --Set RouteC
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Exclusive:route'
-         , pi_vc2_value => 'RouteC'
+         , pi_var_name  => pi_routing_var_name_C
+         , pi_vc2_value =>  pi_routing_value_C
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -329,7 +342,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - exclusive_route_provided' as prcs_name, 
+            pi_prcs_name  as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -365,7 +378,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - exclusive_route_provided' as prcs_name, 
+            pi_prcs_name  as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -374,7 +387,60 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
 
-   end;
+      -- tear down test
+      flow_api_pkg.flow_delete ( p_process_id => l_prcs_id);
+
+
+   end exclusive_route_provided_runner;
+
+   -- test c1 - exclusive gateway - GR var provided - matching case)
+   procedure exclusive_route_provided_correct_case
+   is
+   begin
+      exclusive_route_provided_runner 
+      ( pi_prcs_name             => 'test - exclusive_route_provided - matching case'
+      , pi_routing_var_name_A    => 'Exclusive:route'
+      , pi_routing_value_A       => 'RouteA'
+      , pi_routing_var_name_B    => 'Exclusive:route'
+      , pi_routing_value_B       => 'RouteB'
+      , pi_routing_var_name_C    => 'Exclusive:route'
+      , pi_routing_value_C       => 'RouteC'
+      );
+   end exclusive_route_provided_correct_case;
+
+   -- test(c2. exclusive gateway - GR var provided - UPPER CASE)
+
+   procedure exclusive_route_provided_upper_case
+   is
+   begin
+      exclusive_route_provided_runner 
+      ( pi_prcs_name             => 'test - exclusive_route_provided - upper case'
+      , pi_routing_var_name_A    => 'EXCLUSIVE:ROUTE'
+      , pi_routing_value_A       => 'RouteA'
+      , pi_routing_var_name_B    => 'EXCLUSIVE:ROUTE'
+      , pi_routing_value_B       => 'RouteB'
+      , pi_routing_var_name_C    => 'EXCLUSIVE:ROUTE'
+      , pi_routing_value_C       => 'RouteC'
+      );
+   end exclusive_route_provided_upper_case;
+
+   -- test(c3. exclusive gateway - GR var provided - lower CASE)
+
+   procedure exclusive_route_provided_lower_case
+   is
+   begin
+      exclusive_route_provided_runner 
+      ( pi_prcs_name             => 'test - exclusive_route_provided - lower case'
+      , pi_routing_var_name_A    => 'exclusive:route'
+      , pi_routing_value_A       => 'RouteA'
+      , pi_routing_var_name_B    => 'exclusive:route'
+      , pi_routing_value_B       => 'RouteB'
+      , pi_routing_var_name_C    => 'exclusive:route'
+      , pi_routing_value_C       => 'RouteC'
+      );
+   end exclusive_route_provided_lower_case;
+
+   -- test(d. inclusive gateway - no routing)
 
    procedure inclusive_no_route
    is
@@ -439,6 +505,8 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
    end;
+
+   -- test(e. inclusive gateway - default routing)
 
    procedure inclusive_default
    is
@@ -518,7 +586,25 @@ create or replace package body test_002_gateway is
       ut.expect( l_actual ).to_equal( l_expected );
    end;
 
-   procedure inclusive_route_provided
+   -- runner for tests f1-4
+
+   procedure inclusive_route_provided_runner
+   ( pi_prcs_name            in flow_processes.prcs_name%type
+   , pi_routing_var_name_A   in varchar2
+   , pi_routing_value_A      in varchar2
+   , pi_routing_var_name_B   in varchar2
+   , pi_routing_value_B      in varchar2
+   , pi_routing_var_name_C   in varchar2
+   , pi_routing_value_C      in varchar2
+   , pi_routing_var_name_AB  in varchar2
+   , pi_routing_value_AB     in varchar2
+   , pi_routing_var_name_BC  in varchar2
+   , pi_routing_value_BC     in varchar2
+   , pi_routing_var_name_AC  in varchar2
+   , pi_routing_value_AC     in varchar2
+   , pi_routing_var_name_ABC in varchar2
+   , pi_routing_value_ABC    in varchar2   
+   )  
    is
       l_prcs_id  flow_processes.prcs_id%type;
       l_dgrm_id  flow_diagrams.dgrm_id%type;
@@ -533,15 +619,15 @@ create or replace package body test_002_gateway is
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
            pi_dgrm_id => l_dgrm_id
-         , pi_prcs_name => 'test - inclusive_route_provided'
+         , pi_prcs_name => pi_prcs_name
       );
       g_prcs_id_6 := l_prcs_id;
 
       --Set RouteA
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Inclusive:route'
-         , pi_vc2_value => 'RouteA'
+         , pi_var_name  => pi_routing_var_name_A
+         , pi_vc2_value => pi_routing_value_A
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -549,7 +635,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -593,7 +679,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -607,8 +693,8 @@ create or replace package body test_002_gateway is
       --Set RouteB
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Inclusive:route'
-         , pi_vc2_value => 'RouteB'
+         , pi_var_name  => pi_routing_var_name_B
+         , pi_vc2_value => pi_routing_value_B 
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -616,7 +702,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -660,7 +746,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -674,8 +760,8 @@ create or replace package body test_002_gateway is
       --Set RouteC
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Inclusive:route'
-         , pi_vc2_value => 'RouteC'
+         , pi_var_name  => pi_routing_var_name_C
+         , pi_vc2_value => pi_routing_value_C
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -683,7 +769,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -727,7 +813,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -741,8 +827,8 @@ create or replace package body test_002_gateway is
       --Set RouteA:RouteB
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Inclusive:route'
-         , pi_vc2_value => 'RouteA:RouteB'
+         , pi_var_name  => pi_routing_var_name_AB
+         , pi_vc2_value => pi_routing_value_AB
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -750,7 +836,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -842,7 +928,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -856,8 +942,8 @@ create or replace package body test_002_gateway is
       --Set RouteA:RouteC
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Inclusive:route'
-         , pi_vc2_value => 'RouteA:RouteC'
+         , pi_var_name  => pi_routing_var_name_AC
+         , pi_vc2_value => pi_routing_value_AC 
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -865,7 +951,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -957,7 +1043,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -971,8 +1057,8 @@ create or replace package body test_002_gateway is
       --Set RouteB:RouteC
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Inclusive:route'
-         , pi_vc2_value => 'RouteB:RouteC'
+         , pi_var_name  => pi_routing_var_name_BC
+         , pi_vc2_value => pi_routing_value_BC
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -980,7 +1066,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -1072,7 +1158,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -1086,8 +1172,8 @@ create or replace package body test_002_gateway is
       --Set RouteA:RouteB:RouteC
       flow_process_vars.set_var(
            pi_prcs_id   => l_prcs_id
-         , pi_var_name  => 'Inclusive:route'
-         , pi_vc2_value => 'RouteA:RouteB:RouteC'
+         , pi_var_name  => pi_routing_var_name_ABC
+         , pi_vc2_value => pi_routing_value_ABC
       );
 
       flow_api_pkg.flow_start( p_process_id => l_prcs_id );
@@ -1095,7 +1181,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_running as prcs_status 
          from dual;
 
@@ -1248,7 +1334,7 @@ create or replace package body test_002_gateway is
       open l_expected for
          select 
             l_dgrm_id as prcs_dgrm_id, 
-            'test - inclusive_route_provided' as prcs_name, 
+            pi_prcs_name as prcs_name, 
             flow_constants_pkg.gc_prcs_status_completed as prcs_status 
          from dual;
 
@@ -1256,7 +1342,109 @@ create or replace package body test_002_gateway is
          select prcs_dgrm_id, prcs_name, prcs_status from flow_processes where prcs_id = l_prcs_id;
 
       ut.expect( l_actual ).to_equal( l_expected );
-   end;
+
+      -- tear down test
+      flow_api_pkg.flow_delete ( p_process_id => l_prcs_id);
+
+   end inclusive_route_provided_runner;
+
+   -- test f1 - inclusive gateway - GR provided - matching case)
+
+   procedure inclusive_route_provided_correct_case
+   is
+   begin
+      inclusive_route_provided_runner 
+      ( pi_prcs_name             => 'test - inclusive_route_provided - matching case'
+      , pi_routing_var_name_A    => 'Inclusive:route'
+      , pi_routing_value_A       => 'RouteA'
+      , pi_routing_var_name_B    => 'Inclusive:route'
+      , pi_routing_value_B       => 'RouteB'
+      , pi_routing_var_name_C    => 'Inclusive:route'
+      , pi_routing_value_C       => 'RouteC'
+      , pi_routing_var_name_AB   => 'Inclusive:route'
+      , pi_routing_value_AB      => 'RouteA:RouteB'
+      , pi_routing_var_name_BC   => 'Inclusive:route'
+      , pi_routing_value_BC      => 'RouteB:RouteC'
+      , pi_routing_var_name_AC   => 'Inclusive:route'
+      , pi_routing_value_AC      => 'RouteA:RouteC'
+      , pi_routing_var_name_ABC  => 'Inclusive:route'
+      , pi_routing_value_ABC     => 'RouteA:RouteB:RouteC'
+      );
+   end inclusive_route_provided_correct_case;
+
+   -- test f2 - inclusive gateway - GR provided - UPPER CASE)
+   
+   procedure inclusive_route_provided_upper_case
+   is
+   begin
+      inclusive_route_provided_runner 
+      ( pi_prcs_name             => 'test - inclusive_route_provided - upper case'
+      , pi_routing_var_name_A    => 'INCLUSIVE:ROUTE'
+      , pi_routing_value_A       => 'RouteA'
+      , pi_routing_var_name_B    => 'INCLUSIVE:ROUTE'
+      , pi_routing_value_B       => 'RouteB'
+      , pi_routing_var_name_C    => 'INCLUSIVE:ROUTE'
+      , pi_routing_value_C       => 'RouteC'
+      , pi_routing_var_name_AB   => 'INCLUSIVE:ROUTE'
+      , pi_routing_value_AB      => 'RouteA:RouteB'
+      , pi_routing_var_name_BC   => 'INCLUSIVE:ROUTE'
+      , pi_routing_value_BC      => 'RouteB:RouteC'
+      , pi_routing_var_name_AC   => 'INCLUSIVE:ROUTE'
+      , pi_routing_value_AC      => 'RouteA:RouteC'
+      , pi_routing_var_name_ABC  => 'INCLUSIVE:ROUTE'
+      , pi_routing_value_ABC     => 'RouteA:RouteB:RouteC'
+      );
+   end inclusive_route_provided_upper_case;
+
+   -- test f3 - inclusive gateway - GR provided - lower case)
+   
+   procedure inclusive_route_provided_lower_case
+   is
+   begin
+      inclusive_route_provided_runner 
+      ( pi_prcs_name             => 'test - inclusive_route_provided - lower case'
+      , pi_routing_var_name_A    => 'inclusive:route'
+      , pi_routing_value_A       => 'RouteA'
+      , pi_routing_var_name_B    => 'inclusive:route'
+      , pi_routing_value_B       => 'RouteB'
+      , pi_routing_var_name_C    => 'inclusive:route'
+      , pi_routing_value_C       => 'RouteC'
+      , pi_routing_var_name_AB   => 'inclusive:route'
+      , pi_routing_value_AB      => 'RouteA:RouteB'
+      , pi_routing_var_name_BC   => 'inclusive:route'
+      , pi_routing_value_BC      => 'RouteB:RouteC'
+      , pi_routing_var_name_AC   => 'inclusive:route'
+      , pi_routing_value_AC      => 'RouteA:RouteC'
+      , pi_routing_var_name_ABC  => 'inclusive:route'
+      , pi_routing_value_ABC     => 'RouteA:RouteB:RouteC'
+      );
+   end inclusive_route_provided_lower_case;
+
+   -- test f4 - inclusive gateway - GR provided - JuMbLeD case)
+   
+   procedure inclusive_route_provided_jumbled_case
+   is
+   begin
+      inclusive_route_provided_runner 
+      ( pi_prcs_name             => 'test - inclusive_route_provided - jumbled case'
+      , pi_routing_var_name_A    => 'iNcLuSive:RouTe'
+      , pi_routing_value_A       => 'RouteA'
+      , pi_routing_var_name_B    => 'iNcLuSive:RouTe'
+      , pi_routing_value_B       => 'RouteB'
+      , pi_routing_var_name_C    => 'iNcLuSive:RouTe'
+      , pi_routing_value_C       => 'RouteC'
+      , pi_routing_var_name_AB   => 'iNcLuSive:RouTe'
+      , pi_routing_value_AB      => 'RouteA:RouteB'
+      , pi_routing_var_name_BC   => 'iNcLuSive:RouTe'
+      , pi_routing_value_BC      => 'RouteB:RouteC'
+      , pi_routing_var_name_AC   => 'iNcLuSive:RouTe'
+      , pi_routing_value_AC      => 'RouteA:RouteC'
+      , pi_routing_var_name_ABC  => 'iNcLuSive:RouTe'
+      , pi_routing_value_ABC     => 'RouteA:RouteB:RouteC'
+      );
+   end inclusive_route_provided_jumbled_case;
+
+   -- test(g. parallel gateway)
 
    procedure parallel
    is
@@ -1444,6 +1632,8 @@ create or replace package body test_002_gateway is
       ut.expect( l_actual ).to_equal( l_expected );
    end;
 
+   -- test h. event based gateway - uses timer)
+
    procedure event_based 
    is
       l_prcs_id  flow_processes.prcs_id%type;
@@ -1565,7 +1755,7 @@ create or replace package body test_002_gateway is
    begin
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_1);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_2);
-      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_3);
+      -- test 3 is torn down in the test runner
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_4);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_5);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);

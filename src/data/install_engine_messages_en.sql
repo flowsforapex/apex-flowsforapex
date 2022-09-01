@@ -447,28 +447,28 @@ begin
   values (
   'var_exp_sql_no_data',
   'en',
-  'Error setting %2 process variable %1 in process id %0.  No data found in query.'
+  'Error setting process variable %1 in process id %0 (set %2).  No data found in query.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var_exp_sql_other',
   'en',
-  'Error setting %2 process variable %1 in process id %0.  SQL error shown in event log.'
+  'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var_exp_sql_too_many_rows',
   'en',
-  'Error setting %2 process variable %1 in process id %0.  Query returns multiple rows.'
+  'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
   values (
   'var_exp_static_general',
   'en',
-  'Error setting %2 process variable %1 in process id %0.  See error in event log.'
+  'Error setting process variable %1 in process id %0 (set %2).  See error in event log.'
   );
   
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -511,7 +511,7 @@ begin
   values (
   'plugin-route-not-define',
   'en',
-  'Gateway is not define for routing.'
+  'Gateway is not defined for routing.'
   );
 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

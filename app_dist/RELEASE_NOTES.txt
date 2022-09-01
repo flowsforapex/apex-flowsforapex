@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v22.1                 *
+*            Flows for APEX v22.2                 *
 *          Installation instructions              *
 *                                                 *
 ***************************************************
@@ -9,7 +9,7 @@ DOCUMENTATION / SOURCE CODE / FURTHER INFORMATION
 - Have a look here: https://github.com/flowsforapex/apex-flowsforapex
 
 PREREQUISITES
-- Oracle Database 12.2 or higher (all editions supported)
+- Oracle Database 19c or higher (all editions supported)
 - Oracle Application Express 20.1 or higher
 - APEX workspace with at least 50 MB space
 - Google Chrome 85+ / Firefox 77+ / Edge 85+ / Safari 13.1 - if possible, use the latest version

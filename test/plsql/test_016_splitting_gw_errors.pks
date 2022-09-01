@@ -10,7 +10,7 @@ create or replace package test_016_splitting_gw_errors as
 
   -- uses models 16a
 
-  --%suite(Splitting Gateway Errors and Restarts)
+  --%suite(16 Splitting Gateway Errors and Restarts)
   --%rollback(manual)
 
   --%beforeall

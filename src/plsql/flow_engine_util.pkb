@@ -447,6 +447,7 @@ procedure get_number_of_connections
     , p_process_level in flow_subflows.sbfl_process_level%type
     )
   is
+    l_apex_task_id  number;
   begin
     apex_debug.enter
     ( 'terminate_level'
@@ -470,7 +471,43 @@ procedure get_number_of_connections
         , p_process_level  => child_proc_levels.sbfl_process_level);
       end loop;
     end;
-    -- end all subflows in the level
+    -- end all subflows in this level
+    $IF NOT FLOW_APEX_ENV.VER_LE_21_2  
+    $THEN
+      -- running on APEX 22.1 or above
+      -- first check if any subflows have current tasks that running external tasks, e,g., APEX approvals
+      begin
+        for subflows_with_tasks in (
+          select sbfl.sbfl_id
+               , sbfl.sbfl_current
+               , sbfl.sbfl_scope
+               , objt.objt_tag_name
+               , objt.objt_sub_tag_name
+            from flow_subflows sbfl
+            join flow_objects objt
+              on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+           where sbfl.sbfl_prcs_id = p_process_id
+             and sbfl.sbfl_process_level = p_process_level
+             and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_usertask
+             and objt.objt_sub_tag_name = flow_constants_pkg.gc_apex_usertask_apex_approval
+        )
+        loop
+          -- get apex taskID
+          l_apex_task_id := flow_proc_vars_int.get_var_num
+                              ( pi_prcs_id   => p_process_id
+                              , pi_var_name  => subflows_with_tasks.sbfl_current||flow_constants_pkg.gc_prov_suffix_task_id
+                              , pi_scope     => subflows_with_tasks.sbfl_scope
+                              );
+          -- cancel apex workflow task
+          flow_usertask_pkg.cancel_apex_task
+          ( p_process_id    => p_process_id
+          , p_objt_bpmn_id  => subflows_with_tasks.sbfl_current
+          , p_apex_task_id  => l_apex_task_id
+          );
+        end loop;
+      end;
+    $END 
+     -- then delete the subflows
     delete from flow_subflows
     where sbfl_process_level = p_process_level 
       and sbfl_prcs_id = p_process_id
@@ -640,9 +677,13 @@ procedure get_number_of_connections
   as
     l_json sys.json_array_t;
   begin
-    apex_debug.info( p_message => '-- Got CLOB parsing to JSON_ARRAY_T' );
-    l_json := sys.json_array_t.parse( p_json_array );
-    return json_array_join( p_json_array => l_json );
+    if p_json_array is not null then
+      apex_debug.info( p_message => '-- Got CLOB parsing to JSON_ARRAY_T' );
+      l_json := sys.json_array_t.parse( p_json_array );
+      return json_array_join( p_json_array => l_json );
+    else
+      return null;
+    end if;
   end json_array_join;
 
 

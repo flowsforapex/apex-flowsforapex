@@ -1,13 +1,15 @@
+create or replace package body flow_proc_vars_int
+as
+
 /* 
 -- Flows for APEX - flow_proc_vars_int.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
 -- Created    12-Apr-2022  Richard Allen (Oracle)
+-- Modified   11-Aug-2022  Moritz Klein (MT AG)
 --
 */
-create or replace package body flow_proc_vars_int
-as
 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
@@ -60,11 +62,11 @@ begin
     when dup_val_on_index then
       l_action := 'var-update-error';
       update flow_process_variables prov 
-         set prov.prov_var_vc2  = pi_vc2_value
-       where prov.prov_prcs_id  = pi_prcs_id
-         and prov.prov_scope    = pi_scope
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_varchar2 
+         set prov.prov_var_vc2          = pi_vc2_value
+       where prov.prov_prcs_id          = pi_prcs_id
+         and prov.prov_scope            = pi_scope
+         and upper(prov.prov_var_name)  = upper(pi_var_name)
+         and prov.prov_var_type         = flow_constants_pkg.gc_prov_var_type_varchar2 
            ;
     when others
     then
@@ -82,8 +84,7 @@ begin
   , p_var_vc2           => pi_vc2_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -126,14 +127,13 @@ begin
     when dup_val_on_index then
       l_action := 'var-update-error';
       update flow_process_variables prov 
-         set prov.prov_var_num  = pi_num_value
-       where prov.prov_prcs_id  = pi_prcs_id
-         and prov.prov_scope    = pi_scope
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
+         set prov.prov_var_num          = pi_num_value
+       where prov.prov_prcs_id          = pi_prcs_id
+         and prov.prov_scope            = pi_scope
+         and upper(prov.prov_var_name)  = upper(pi_var_name)
+         and prov.prov_var_type         = flow_constants_pkg.gc_prov_var_type_number
            ;
-    when others
-    then
+    when others then
       l_action := 'var-set-error';
       raise;
   end;
@@ -148,8 +148,7 @@ begin
   , p_var_num           => pi_num_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -192,11 +191,11 @@ begin
     when dup_val_on_index then
       l_action := 'var-update-error';
       update flow_process_variables prov 
-         set prov.prov_var_date = pi_date_value
-       where prov.prov_prcs_id  = pi_prcs_id
-         and prov.prov_scope    = pi_scope
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_date
+         set prov.prov_var_date         = pi_date_value
+       where prov.prov_prcs_id          = pi_prcs_id
+         and prov.prov_scope            = pi_scope
+         and upper(prov.prov_var_name)  = upper(pi_var_name)
+         and prov.prov_var_type         = flow_constants_pkg.gc_prov_var_type_date
            ;
     when others
     then
@@ -214,8 +213,7 @@ begin
   , p_var_date          => pi_date_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -257,14 +255,13 @@ begin
   exception
     when dup_val_on_index then
       update flow_process_variables prov 
-         set prov.prov_var_clob = pi_clob_value
-       where prov.prov_prcs_id  = pi_prcs_id
-         and prov.prov_scope    = pi_scope
-         and prov.prov_var_name = pi_var_name
-         and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_clob
+         set prov.prov_var_clob          = pi_clob_value
+       where prov.prov_prcs_id           = pi_prcs_id
+         and prov.prov_scope             = pi_scope
+         and upper(prov.prov_var_name)   = upper(pi_var_name)
+         and prov.prov_var_type          = flow_constants_pkg.gc_prov_var_type_clob
            ;
-    when others
-    then
+    when others then
       l_action := 'var-set-error';
       raise;
   end;
@@ -279,8 +276,7 @@ begin
   , p_var_clob           => pi_clob_value
   );
 exception
-  when others
-  then
+  when others then
     flow_errors.handle_instance_error
     ( pi_prcs_id        => pi_prcs_id
     , pi_sbfl_id        => pi_sbfl_id
@@ -306,9 +302,9 @@ begin
    select prov.prov_var_vc2
      into po_vc2_value
      from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
-      and prov.prov_scope = pi_scope
+    where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
+      and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_vc2_value;
 exception
@@ -339,8 +335,9 @@ begin
    select prov.prov_var_num
      into po_num_value
      from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
+    where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
+      and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_num_value;
 exception
@@ -371,8 +368,9 @@ begin
    select prov.prov_var_date
      into po_date_value
      from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
+    where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
+      and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_date_value;
 exception
@@ -403,8 +401,9 @@ begin
    select prov.prov_var_clob
      into po_clob_value
      from flow_process_variables prov
-    where prov.prov_prcs_id = pi_prcs_id
-      and prov.prov_var_name = pi_var_name
+    where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
+      and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
    return po_clob_value;
 exception
@@ -437,9 +436,9 @@ begin
    select prov.prov_var_type
      into l_var_type
      from flow_process_variables prov
-    where prov.prov_prcs_id   = pi_prcs_id
-      and prov.prov_var_name  = pi_var_name
-      and prov.prov_scope     = pi_scope
+    where prov.prov_prcs_id           = pi_prcs_id
+      and prov.prov_scope             = pi_scope
+      and upper(prov.prov_var_name)   = upper(pi_var_name)
         ;
    return l_var_type;
 exception
@@ -471,16 +470,16 @@ begin
   select prov_var_type
     into l_var_type
     from flow_process_variables prov
-   where prov.prov_prcs_id = pi_prcs_id
-     and prov.prov_var_name = pi_var_name
-     and prov.prov_scope = pi_scope
+   where prov.prov_prcs_id          = pi_prcs_id
+     and prov.prov_scope            = pi_scope
+     and upper(prov.prov_var_name)  = upper(pi_var_name)
      for update wait 2;
 
   delete 
     from flow_process_variables prov
-   where prov.prov_prcs_id  = pi_prcs_id
-     and prov.prov_var_name = pi_var_name
-     and prov.prov_scope    = pi_scope
+   where prov.prov_prcs_id          = pi_prcs_id
+     and prov.prov_scope            = pi_scope
+     and upper(prov.prov_var_name)  = upper(pi_var_name)
   ;
   flow_logging.log_variable_event
   ( p_process_id        => pi_prcs_id
@@ -489,7 +488,7 @@ begin
   , p_var_type          => l_var_type
   );
 exception
-  when  no_data_found then
+  when no_data_found then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'var-delete-error'        
@@ -540,9 +539,9 @@ end delete_var;
   is 
   begin
     return get_var_vc2 
-           ( pi_prcs_id => pi_prcs_id
+           ( pi_prcs_id  => pi_prcs_id
            , pi_var_name => flow_constants_pkg.gc_prov_builtin_business_ref
-           , pi_scope => pi_scope
+           , pi_scope    => pi_scope
            );
   end get_business_ref;
 
@@ -555,13 +554,16 @@ end delete_var;
   is
   begin
     if pi_retain_builtins then 
-      delete from flow_process_variables prov
-      where prov.prov_prcs_id = pi_prcs_id
-        and prov.prov_var_name not in ( flow_constants_pkg.gc_prov_builtin_business_ref )
+      delete
+        from flow_process_variables prov
+       where prov.prov_prcs_id = pi_prcs_id
+         and prov.prov_var_name not in ( flow_constants_pkg.gc_prov_builtin_business_ref )
       ;
     else
-      delete from flow_process_variables prov
-      where prov.prov_prcs_id = pi_prcs_id;
+      delete
+        from flow_process_variables prov
+       where prov.prov_prcs_id = pi_prcs_id
+      ;
     end if;
   end delete_all_for_process;
 
@@ -616,9 +618,9 @@ end delete_var;
               select prov.prov_var_vc2
                 into l_replacement_value
                 from flow_process_variables prov
-               where prov.prov_prcs_id  = pi_prcs_id
-                 and prov.prov_scope    = pi_scope
-                 and upper(prov.prov_var_name) = upper(l_f4a_substitutions(i))
+               where prov.prov_prcs_id          = pi_prcs_id
+                 and prov.prov_scope            = pi_scope
+                 and upper(prov.prov_var_name)  = upper(l_f4a_substitutions(i))
               ;
               pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), l_replacement_value );
             exception
@@ -683,9 +685,9 @@ end delete_var;
               select prov.prov_var_vc2
                 into l_replacement_value
                 from flow_process_variables prov
-               where prov.prov_prcs_id  = pi_prcs_id
-                 and prov.prov_scope    = pi_scope
-                 and upper(prov.prov_var_name) = upper(l_f4a_substitutions(i))
+               where prov.prov_prcs_id          = pi_prcs_id
+                 and prov.prov_scope            = pi_scope
+                 and upper(prov.prov_var_name)  = upper(l_f4a_substitutions(i))
               ;
               pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), l_replacement_value );
             exception
@@ -698,6 +700,92 @@ end delete_var;
       end loop;
     end if;
   end do_substitution;
+
+  procedure get_var_as_parameter
+  (
+    pi_prcs_id            in flow_process_variables.prov_prcs_id%type
+  , pi_var_name           in flow_process_variables.prov_var_name%type
+  , pi_scope              in flow_process_variables.prov_scope%type
+  , pi_exception_on_null  in boolean default true
+  , po_data_type         out apex_exec.t_data_type
+  , po_value             out apex_exec.t_value
+  )
+  as
+  begin
+    select case prov.prov_var_type
+             when flow_constants_pkg.gc_prov_var_type_varchar2 then 1
+             when flow_constants_pkg.gc_prov_var_type_number   then 2
+             when flow_constants_pkg.gc_prov_var_type_date     then 3
+             when flow_constants_pkg.gc_prov_var_type_clob     then 11
+             else 1
+           end as data_type
+         , prov.prov_var_vc2
+         , prov.prov_var_num
+         , prov.prov_var_date
+         , prov.prov_var_clob
+      into po_data_type
+         , po_value.varchar2_value
+         , po_value.number_value
+         , po_value.date_value
+         , po_value.clob_value
+      from flow_process_variables prov
+     where prov.prov_prcs_id    = pi_prcs_id
+       and prov.prov_scope      = pi_scope
+       and upper(prov_var_name) = upper(pi_var_name)
+    ;
+  exception
+    when no_data_found then
+      if pi_exception_on_null then
+        flow_errors.handle_instance_error
+        ( 
+          pi_prcs_id     => pi_prcs_id
+        , pi_message_key => 'var-get-error'      
+        , p0             => pi_var_name
+        , p1             => pi_prcs_id
+        , p2             => pi_scope
+        );
+      end if;
+  end get_var_as_parameter;
+
+  function get_var_as_vc2
+  (
+    pi_prcs_id           in flow_process_variables.prov_prcs_id%type
+  , pi_var_name          in flow_process_variables.prov_var_name%type
+  , pi_scope             in flow_process_variables.prov_scope%type
+  , pi_exception_on_null in boolean default true
+  ) return varchar2
+  as
+    l_return flow_process_variables.prov_var_vc2%type;
+  begin
+    select case prov.prov_var_type
+             when flow_constants_pkg.gc_prov_var_type_varchar2 then prov.prov_var_vc2
+             when flow_constants_pkg.gc_prov_var_type_number   then to_char(prov.prov_var_num)
+             when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date, flow_constants_pkg.gc_prov_default_date_format)
+             else null
+           end as prov_var_value
+      into l_return
+      from flow_process_variables prov
+     where prov.prov_prcs_id    = pi_prcs_id
+       and prov.prov_scope      = pi_scope
+       and upper(prov_var_name) = upper(pi_var_name)
+    ;
+
+    return l_return;
+  exception
+    when no_data_found then
+      if pi_exception_on_null then
+        flow_errors.handle_instance_error
+        ( 
+          pi_prcs_id     => pi_prcs_id
+        , pi_message_key => 'var-get-error'      
+        , p0             => pi_var_name
+        , p1             => pi_prcs_id
+        , p2             => pi_scope
+        );
+      else
+        return null;
+      end if;
+  end get_var_as_vc2;
 
 end flow_proc_vars_int;
 /

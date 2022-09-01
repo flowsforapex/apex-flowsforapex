@@ -8,7 +8,7 @@ create or replace package test_013_call_Activity_escalation_BEs is
 -- 
 */
 
-  --%suite(test_callActivity_escalation_boundary_Events)
+  --%suite(13 Call Activity Ecalation Boundary Events)
   --%rollback(manual)
 
   --%beforeall

@@ -4,7 +4,8 @@
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
 --
--- Created Nov-2020 Moritz Klein  MT AG  
+-- Created    Nov-2020 Moritz Klein,  MT AG
+-- Edited  16-Mar-2022 Richard Allen, Oracle Corporation  
 --
 */
 create or replace view flow_instance_details_vw
@@ -47,6 +48,8 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
 )
   select prcs.prcs_id
        , prcs.prcs_name
+       , prdg.prdg_id
+       , prdg.prdg_prdg_id
        , prdg.prdg_diagram_level as diagram_level
        , prdg.prdg_calling_dgrm as calling_dgrm
        , prdg.prdg_calling_objt as calling_objt
@@ -86,7 +89,8 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
     join flow_diagrams dgrm
       on prdg.prdg_dgrm_id = dgrm.dgrm_id
     left join flow_process_variables prov
-      on prov.prov_prcs_id = prcs.prcs_id
+      on prov.prov_prcs_id  = prcs.prcs_id
      and prov.prov_var_name = 'BUSINESS_REF'
      and prov.prov_var_type = 'VARCHAR2'
+     and prov.prov_scope    = 0
 with read only;
