@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:process id="Process_Tutorial5f" name="Tutorial 5F - Making a Diagram Callable" isExecutable="false" apex:isCallable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_13pm9fl">
+      <bpmn:outgoing>Flow_0nyyjkj</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_1w86o6c" name="Step A">
+      <bpmn:incoming>Flow_0nyyjkj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0u3mznx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0nyyjkj" sourceRef="Event_13pm9fl" targetRef="Activity_1w86o6c" />
+    <bpmn:task id="Activity_0irzelz" name="Step B">
+      <bpmn:incoming>Flow_175gkh6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jlmtjb</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0u3mznx" sourceRef="Activity_1w86o6c" targetRef="Activity_1kv9zax" />
+    <bpmn:endEvent id="Event_18an09f">
+      <bpmn:incoming>Flow_11ko7k8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0jlmtjb" sourceRef="Activity_0irzelz" targetRef="Activity_0vygmu9" />
+    <bpmn:task id="Activity_1kv9zax" name="Set is Callable = Yes">
+      <bpmn:incoming>Flow_0u3mznx</bpmn:incoming>
+      <bpmn:outgoing>Flow_175gkh6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_175gkh6" sourceRef="Activity_1kv9zax" targetRef="Activity_0irzelz" />
+    <bpmn:task id="Activity_0vygmu9" name="Set In/Out Variable Specs">
+      <bpmn:incoming>Flow_0jlmtjb</bpmn:incoming>
+      <bpmn:outgoing>Flow_11ko7k8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_11ko7k8" sourceRef="Activity_0vygmu9" targetRef="Event_18an09f" />
+    <bpmn:textAnnotation id="TextAnnotation_006k1ua">
+      <bpmn:text>1. Click on the modeler background to select the Process object.
+2.In the Properties Panel &gt; General -  set Execution - Is Callable to 'yes'</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1bpdyqv" sourceRef="Activity_1kv9zax" targetRef="TextAnnotation_006k1ua" />
+    <bpmn:textAnnotation id="TextAnnotation_1smzwql">
+      <bpmn:text>In the Properties Panel &gt; In/Out Mapping,
+define the required Input &amp; Output variables to be passed in and returned after completion.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1o407ht" sourceRef="Activity_0vygmu9" targetRef="TextAnnotation_1smzwql" />
+    <bpmn:textAnnotation id="TextAnnotation_0prrv7o">
+      <bpmn:text>Tutorial 5f: Setting a Diagram to be Callable
+
+It's very easy to make a diagram callable by other diagrams.....</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_18c814z" sourceRef="Event_13pm9fl" targetRef="TextAnnotation_0prrv7o" />
+    <bpmn:textAnnotation id="TextAnnotation_16jzotv">
+      <bpmn:text>experiment by making this diagram callable....</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1wsaj6b" sourceRef="Event_18an09f" targetRef="TextAnnotation_16jzotv" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Tutorial5f">
+      <bpmndi:BPMNShape id="TextAnnotation_006k1ua_di" bpmnElement="TextAnnotation_006k1ua">
+        <dc:Bounds x="710" y="220" width="309.9815979003906" height="67.99632263183594" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1smzwql_di" bpmnElement="TextAnnotation_1smzwql">
+        <dc:Bounds x="1080" y="220" width="249.99998474121094" height="67.99632263183594" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0prrv7o_di" bpmnElement="TextAnnotation_0prrv7o">
+        <dc:Bounds x="550" y="70" width="589.9999389648438" height="53.98896789550781" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_16jzotv_di" bpmnElement="TextAnnotation_16jzotv">
+        <dc:Bounds x="1240" y="340" width="99.99999237060547" height="67.99632263183594" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0nyyjkj_di" bpmnElement="Flow_0nyyjkj">
+        <di:waypoint x="408" y="440" />
+        <di:waypoint x="460" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u3mznx_di" bpmnElement="Flow_0u3mznx">
+        <di:waypoint x="560" y="440" />
+        <di:waypoint x="600" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jlmtjb_di" bpmnElement="Flow_0jlmtjb">
+        <di:waypoint x="915" y="440" />
+        <di:waypoint x="960" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_175gkh6_di" bpmnElement="Flow_175gkh6">
+        <di:waypoint x="700" y="440" />
+        <di:waypoint x="815" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11ko7k8_di" bpmnElement="Flow_11ko7k8">
+        <di:waypoint x="1060" y="440" />
+        <di:waypoint x="1202" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_13pm9fl_di" bpmnElement="Event_13pm9fl">
+        <dc:Bounds x="372" y="422" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w86o6c_di" bpmnElement="Activity_1w86o6c">
+        <dc:Bounds x="460" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18an09f_di" bpmnElement="Event_18an09f">
+        <dc:Bounds x="1202" y="422" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kv9zax_di" bpmnElement="Activity_1kv9zax">
+        <dc:Bounds x="600" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0irzelz_di" bpmnElement="Activity_0irzelz">
+        <dc:Bounds x="815" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vygmu9_di" bpmnElement="Activity_0vygmu9">
+        <dc:Bounds x="960" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1bpdyqv_di" bpmnElement="Association_1bpdyqv">
+        <di:waypoint x="671" y="400" />
+        <di:waypoint x="732" y="288" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1o407ht_di" bpmnElement="Association_1o407ht">
+        <di:waypoint x="1010" y="400" />
+        <di:waypoint x="1091" y="288" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_18c814z_di" bpmnElement="Association_18c814z">
+        <di:waypoint x="399" y="425" />
+        <di:waypoint x="577" y="124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wsaj6b_di" bpmnElement="Association_1wsaj6b">
+        <di:waypoint x="1231" y="426" />
+        <di:waypoint x="1246" y="408" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

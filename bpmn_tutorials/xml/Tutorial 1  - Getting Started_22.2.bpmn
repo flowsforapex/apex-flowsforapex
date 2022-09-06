@@ -49,32 +49,32 @@ twitter: @FlowquestR</bpmn:documentation>
 
 We've left a few tutorial and demo models here for you to get started!
 
-To create a new model, use the Flow Management page then the +Create Flow button to create or edit a model. If you edit the tutorials, please save them into your own model so that others can start from a clean model!
+To create a new model, use the Flow Management page then the +Create Flow button to create or edit a model.  If you edit the tutorials, please save them into your own model so that others can start from a clean model!
 - select or create a new category - e.g., 'my tests'
-- give your model a name 'my first model'  - version 0 is fine.
+- give your model a name 'my first model'    - version 0 is fine.
 
 To execute a model, go to Flow Monitor.
-Using + Create New Instance button, select the Process Diagram that you want to execute an Instance of. Give the instance a Name.
+Using + Create New Instance button, select the Process Diagram that you want to execute an Instance of.  Give the instance a Name.
 
-In Flow Monitor, the Process Instances tab shows you all of the current process instances. Find your process instance and then using the row menu, select Start to begin executing your process.
+In Flow Monitor, the Process Instances tab shows you all of the current process instances.  Find your process instance and then using the row menu, select Start to begin executing your process.
 
-Select Details. Then move to the Subflows tab to see the individual routes (subflows) through your process. Use the Complete option to move the subflow forwards.
+Select Details.  Then move to the Subflows tab to see the individual routes (subflows) through your process.  Use the Complete option to move the subflow forwards.
 
 The other tab is Variables - we'll explore that in the Gateway Tutorial model...
 
-This model has a parallel section, but is otherwise very simple. Step through the model using the Complete icon to show progress.
+This model has a parallel section, but is otherwise very simple.  Step through the model using the Complete icon to show progress.
 
 When the process has completed, you can go back to Process Instances and either reset it, to execute it again, or delete it.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1qmz32s" sourceRef="Event_1h6hi8k" targetRef="TextAnnotation_0s1apks" />
     <bpmn:textAnnotation id="TextAnnotation_1ooxxc0">
-      <bpmn:text>When you're happy with this, move on to Tutorial 1, about Gateways....
+      <bpmn:text>When you're happy with this, move on to  Tutorial 1,  about Gateways....
 
 You can also look at our sample applications - access them from http://flowsforapex.org/</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1tltpuk" sourceRef="Event_0aiip5h" targetRef="TextAnnotation_1ooxxc0" />
     <bpmn:textAnnotation id="TextAnnotation_1w4dn1z">
-      <bpmn:text>These are Tasks that have to be performed in your process.  Each Task is a Process Step.</bpmn:text>
+      <bpmn:text>These are Tasks that have to be performed in your process.   Each Task is a Process Step.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1gei2vd" sourceRef="Activity_0i4a27g" targetRef="TextAnnotation_1w4dn1z" />
   </bpmn:process>

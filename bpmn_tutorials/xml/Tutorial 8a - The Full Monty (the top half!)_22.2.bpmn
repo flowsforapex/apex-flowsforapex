@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:apex="https://flowsforapex.org" id="Definitions_0wpri2w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="22.1.0">
-  <bpmn:collaboration id="Collaboration_0iz09gx">
-    <bpmn:participant id="Participant_1eelczk" name="My Flows For APEX Pool" processRef="Process_1f6tnxw" />
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:apex="https://flowsforapex.org" id="Definitions_0wpri2w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:collaboration id="Collaboration_Tutorial_8a">
+    <bpmn:participant id="Participant_1eelczk" name="My Flows For APEX Pool" processRef="Process_Tutorial8a" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_1f6tnxw" isExecutable="true">
+  <bpmn:process id="Process_Tutorial8a" name="Tutorial8a - The Full Monty" isExecutable="true" apex:isCallable="false" apex:manualInput="false">
     <bpmn:laneSet id="LaneSet_1kndmqr">
       <bpmn:lane id="Lane_B" name="Department B Lane">
         <bpmn:flowNodeRef>Activity_userTask</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_uT_remind_end</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Reminder</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_ReminderBE</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Excl_Choose1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_OptionB</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_CTermEnd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_ABMerge</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_CDE_Inc_Split</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_D</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_CDEClose</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_C</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_E</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_OptionA</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_scriptTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_S</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_RSTClose</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_R</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_T</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_ManualTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_scriptTask</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1i0012l</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_19316nz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_OptionA</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_RST_Inc_Split</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_ABMerge</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_ReminderBE</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_A" name="Department A Lane">
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
@@ -39,12 +40,12 @@
         <bpmn:flowNodeRef>Event_TheEnd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_MainSync</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_SubProcF</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_FTimeoutBE</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_FNI_Timer_BE</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_FEscBE</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_FRemind</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_Notify</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_FTermEnd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_FEscBE</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_FNI_Timer_BE</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_FTimeoutBE</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="StartEvent_1" name="Start">
@@ -115,21 +116,11 @@
       <bpmn:incoming>Flow_0bevchi</bpmn:incoming>
       <bpmn:outgoing>Flow_0mw3yoc</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:endEvent id="Event_TheEnd" name="Process End">
-      <bpmn:incoming>Flow_05y14rb</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:parallelGateway id="Gateway_MainSync" name="Merging Parallel Gateway&#10;- Merges and&#10;Syncronises paths">
-      <bpmn:incoming>Flow_0g7i78z</bpmn:incoming>
-      <bpmn:incoming>Flow_1ml8gyp</bpmn:incoming>
-      <bpmn:incoming>Flow_1lkzgyz</bpmn:incoming>
-      <bpmn:incoming>Flow_1320p09</bpmn:incoming>
-      <bpmn:outgoing>Flow_05y14rb</bpmn:outgoing>
-    </bpmn:parallelGateway>
     <bpmn:serviceTask id="Activity_Reminder" name="Send&#10;reminder&#10;Email" apex:type="sendMail">
       <bpmn:incoming>Flow_1bssnss</bpmn:incoming>
       <bpmn:outgoing>Flow_139aflr</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_ReminderBE" name="Reminder Timer" cancelActivity="false" attachedToRef="Activity_userTask">
+    <bpmn:boundaryEvent id="Event_ReminderBE" name="Reminder Timer (Repeats every 2min)" cancelActivity="false" attachedToRef="Activity_userTask">
       <bpmn:documentation>Sends a reminder email every 2 minutes.   Stops after 5 cycles.</bpmn:documentation>
       <bpmn:outgoing>Flow_1bssnss</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_12bhsbj">
@@ -139,21 +130,19 @@
     <bpmn:sequenceFlow id="Flow_1u5kfn1" sourceRef="StartEvent_1" targetRef="Activity_stdTask" />
     <bpmn:sequenceFlow id="Flow_0k089wp" sourceRef="Activity_stdTask" targetRef="Gateway_MainSplit" />
     <bpmn:sequenceFlow id="Flow_1q7lyne" sourceRef="Gateway_MainSplit" targetRef="Activity_userTask" />
-    <bpmn:sequenceFlow id="Flow_0av2w95" sourceRef="Activity_userTask" targetRef="Activity_scriptTask" />
+    <bpmn:sequenceFlow id="Flow_0av2w95" sourceRef="Activity_userTask" targetRef="Activity_19316nz" />
     <bpmn:sequenceFlow id="Flow_15m8qw2" sourceRef="Gateway_MainSplit" targetRef="Activity_SubProcF" />
-    <bpmn:sequenceFlow id="Flow_0395vvt" sourceRef="Activity_scriptTask" targetRef="Activity_1i0012l" />
     <bpmn:sequenceFlow id="Flow_12bf5hj" sourceRef="Activity_ManualTask" targetRef="Gateway_Excl_Choose1" />
-    <bpmn:sequenceFlow id="Flow_A" name="route A" sourceRef="Gateway_Excl_Choose1" targetRef="Activity_OptionA" />
+    <bpmn:sequenceFlow id="Flow_A" name="route A" sourceRef="Gateway_Excl_Choose1" targetRef="Activity_OptionA" apex:sequence="30" />
     <bpmn:sequenceFlow id="Flow_03kgsyn" sourceRef="Activity_OptionA" targetRef="Gateway_ABMerge" />
     <bpmn:sequenceFlow id="Flow_1bssnss" sourceRef="Event_ReminderBE" targetRef="Activity_Reminder" />
     <bpmn:sequenceFlow id="Flow_139aflr" sourceRef="Activity_Reminder" targetRef="Event_uT_remind_end" />
     <bpmn:sequenceFlow id="Flow_0g7i78z" sourceRef="Activity_SubProcF" targetRef="Gateway_MainSync" />
-    <bpmn:sequenceFlow id="Flow_1ml8gyp" sourceRef="Gateway_CDEClose" targetRef="Gateway_MainSync" />
+    <bpmn:sequenceFlow id="Flow_1ml8gyp" sourceRef="Gateway_RSTClose" targetRef="Gateway_MainSync" apex:sequence="10" />
     <bpmn:sequenceFlow id="Flow_0f14hah" sourceRef="Event_FEscBE" targetRef="Activity_Notify" />
     <bpmn:sequenceFlow id="Flow_1qh3zb4" sourceRef="Event_FTimeoutBE" targetRef="Activity_CloseInput" />
     <bpmn:sequenceFlow id="Flow_10ebnqk" sourceRef="Event_FNI_Timer_BE" targetRef="Activity_FRemind" />
     <bpmn:sequenceFlow id="Flow_1hkw8tj" sourceRef="Activity_FRemind" targetRef="Event_FRemindEnd" />
-    <bpmn:sequenceFlow id="Flow_05y14rb" sourceRef="Gateway_MainSync" targetRef="Event_TheEnd" />
     <bpmn:sequenceFlow id="Flow_1sl1mr5" sourceRef="Gateway_MainSplit" targetRef="Gateway_EBG" />
     <bpmn:sequenceFlow id="Flow_1hbzc2c" sourceRef="Gateway_EBG" targetRef="Event_TimerG" />
     <bpmn:sequenceFlow id="Flow_0ab2ygs" sourceRef="Gateway_EBG" targetRef="Event_TimerH" />
@@ -161,7 +150,7 @@
     <bpmn:sequenceFlow id="Flow_0e3ltbj" sourceRef="Activity_G" targetRef="Gateway_GHMerge" />
     <bpmn:sequenceFlow id="Flow_0bevchi" sourceRef="Event_TimerH" targetRef="Activity_H" />
     <bpmn:sequenceFlow id="Flow_0mw3yoc" sourceRef="Activity_H" targetRef="Gateway_GHMerge" />
-    <bpmn:sequenceFlow id="Flow_1lkzgyz" sourceRef="Gateway_GHMerge" targetRef="Gateway_MainSync" />
+    <bpmn:sequenceFlow id="Flow_1lkzgyz" sourceRef="Gateway_GHMerge" targetRef="Gateway_MainSync" apex:sequence="10" />
     <bpmn:sequenceFlow id="Flow_1d0hvhw" sourceRef="Activity_Notify" targetRef="Event_FTermEnd" />
     <bpmn:subProcess id="Activity_SubProcF" name="Sub Process F">
       <bpmn:incoming>Flow_15m8qw2</bpmn:incoming>
@@ -174,6 +163,7 @@
         <bpmn:incoming>Flow_06l5x9i</bpmn:incoming>
         <bpmn:outgoing>Flow_toF2</bpmn:outgoing>
         <bpmn:outgoing>Flow_toF1</bpmn:outgoing>
+        <bpmn:outgoing>Flow_F3</bpmn:outgoing>
       </bpmn:parallelGateway>
       <bpmn:subProcess id="Activity_subProcF1" name="Sub Process F1">
         <bpmn:incoming>Flow_toF1</bpmn:incoming>
@@ -196,7 +186,7 @@
           <bpmn:incoming>Flow_1qccguc</bpmn:incoming>
           <bpmn:outgoing>Flow_13gdlkj</bpmn:outgoing>
         </bpmn:task>
-        <bpmn:sequenceFlow id="Flow_1qccguc" name="Yes" sourceRef="Gateway_AllOK" targetRef="Activity_F1B" />
+        <bpmn:sequenceFlow id="Flow_1qccguc" name="Yes" sourceRef="Gateway_AllOK" targetRef="Activity_F1B" apex:sequence="20" />
         <bpmn:endEvent id="Event_F1HappyEnd" name="F1 Happy End">
           <bpmn:incoming>Flow_13gdlkj</bpmn:incoming>
         </bpmn:endEvent>
@@ -205,7 +195,7 @@
           <bpmn:incoming>Flow_1f2lsls</bpmn:incoming>
           <bpmn:outgoing>Flow_13w3z3z</bpmn:outgoing>
         </bpmn:task>
-        <bpmn:sequenceFlow id="Flow_1f2lsls" name="No - Process Error" sourceRef="Gateway_AllOK" targetRef="Activity_F1_Proc_error" />
+        <bpmn:sequenceFlow id="Flow_1f2lsls" name="No - Process Error" sourceRef="Gateway_AllOK" targetRef="Activity_F1_Proc_error" apex:sequence="30" />
         <bpmn:sequenceFlow id="Flow_13w3z3z" sourceRef="Activity_F1_Proc_error" targetRef="Event_F1ErrorEnd" />
         <bpmn:endEvent id="Event_F1ErrorEnd" name="F1 Error End">
           <bpmn:incoming>Flow_13w3z3z</bpmn:incoming>
@@ -246,15 +236,15 @@
           <bpmn:incoming>Flow_0hra594</bpmn:incoming>
           <bpmn:outgoing>Flow_1t5akvc</bpmn:outgoing>
         </bpmn:exclusiveGateway>
-        <bpmn:sequenceFlow id="Flow_0hzmts8" name="Y" sourceRef="Gateway_F2Open" targetRef="Gateway_F2Close" />
-        <bpmn:sequenceFlow id="Flow_1dar5q9" name="N" sourceRef="Gateway_F2Open" targetRef="Event_F2EscITE" />
+        <bpmn:sequenceFlow id="Flow_0hzmts8" name="Y" sourceRef="Gateway_F2Open" targetRef="Gateway_F2Close" apex:sequence="20" />
+        <bpmn:sequenceFlow id="Flow_1dar5q9" name="N" sourceRef="Gateway_F2Open" targetRef="Event_F2EscITE" apex:sequence="30" />
         <bpmn:sequenceFlow id="Flow_0hra594" sourceRef="Event_F2EscITE" targetRef="Gateway_F2Close" />
         <bpmn:intermediateThrowEvent id="Event_F2EscITE" name="Escalation Intermediate Throw Event">
           <bpmn:incoming>Flow_1dar5q9</bpmn:incoming>
           <bpmn:outgoing>Flow_0hra594</bpmn:outgoing>
           <bpmn:escalationEventDefinition id="EscalationEventDefinition_0ue9ndq" />
         </bpmn:intermediateThrowEvent>
-        <bpmn:sequenceFlow id="Flow_1t5akvc" sourceRef="Gateway_F2Close" targetRef="Event_F2End" />
+        <bpmn:sequenceFlow id="Flow_1t5akvc" sourceRef="Gateway_F2Close" targetRef="Event_F2End" apex:sequence="10" />
         <bpmn:endEvent id="Event_F2End" name="F2 End">
           <bpmn:incoming>Flow_1t5akvc</bpmn:incoming>
         </bpmn:endEvent>
@@ -313,12 +303,12 @@
       <bpmn:endEvent id="Event_FEndC" name="F End C">
         <bpmn:incoming>Flow_1jynl0c</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_1jynl0c" name="Y" sourceRef="Gateway_AllOKNow" targetRef="Event_FEndC" />
+      <bpmn:sequenceFlow id="Flow_1jynl0c" name="Y" sourceRef="Gateway_AllOKNow" targetRef="Event_FEndC" apex:sequence="20" />
       <bpmn:intermediateThrowEvent id="Event_F1_LinkA" name="LinkA">
         <bpmn:incoming>Flow_05k289e</bpmn:incoming>
         <bpmn:linkEventDefinition id="LinkEventDefinition_098srpp" name="" />
       </bpmn:intermediateThrowEvent>
-      <bpmn:sequenceFlow id="Flow_0zm2lio" name="N" sourceRef="Gateway_AllOKNow" targetRef="Activity_PrepForTerm" />
+      <bpmn:sequenceFlow id="Flow_0zm2lio" name="N" sourceRef="Gateway_AllOKNow" targetRef="Activity_PrepForTerm" apex:sequence="30" />
       <bpmn:sequenceFlow id="Flow_0203h3w" sourceRef="Activity_PrepForTerm" targetRef="Event_FEscEnd" />
       <bpmn:endEvent id="Event_FEscEnd" name="Escalating End">
         <bpmn:incoming>Flow_0203h3w</bpmn:incoming>
@@ -345,27 +335,77 @@
         <bpmn:incoming>Flow_0zm2lio</bpmn:incoming>
         <bpmn:outgoing>Flow_0203h3w</bpmn:outgoing>
       </bpmn:task>
+      <bpmn:sequenceFlow id="Flow_F3" name="To F3" sourceRef="Gateway_FSplit" targetRef="Activity_F3" />
+      <bpmn:callActivity id="Activity_F3" name="F3 Call Another Diagram" apex:manualInput="false" apex:calledDiagram="Tutorial 5e - ship Goods (Called by Tutorial 5d)" apex:calledDiagramVersionSelection="namedVersion" apex:calledDiagramVersion="22.2">
+        <bpmn:extensionElements>
+          <apex:inVariables>
+            <apex:processVariable>
+              <apex:varSequence>0</apex:varSequence>
+              <apex:varName>OrderRef</apex:varName>
+              <apex:varDataType>VARCHAR2</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression>1234</apex:varExpression>
+              <apex:varDescription>Order requiring Shipping</apex:varDescription>
+            </apex:processVariable>
+            <apex:processVariable>
+              <apex:varSequence>1</apex:varSequence>
+              <apex:varName>ShippingPriority</apex:varName>
+              <apex:varDataType>VARCHAR2</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression>URGENT</apex:varExpression>
+              <apex:varDescription>URGENT or ROUTINE</apex:varDescription>
+            </apex:processVariable>
+          </apex:inVariables>
+          <apex:outVariables>
+            <apex:processVariable>
+              <apex:varSequence>0</apex:varSequence>
+              <apex:varName>ShipperName</apex:varName>
+              <apex:varDataType>VARCHAR2</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression></apex:varExpression>
+              <apex:varDescription>Shipper Used</apex:varDescription>
+            </apex:processVariable>
+            <apex:processVariable>
+              <apex:varSequence>1</apex:varSequence>
+              <apex:varName>ShippedDate</apex:varName>
+              <apex:varDataType>DATE</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression></apex:varExpression>
+              <apex:varDescription>Date Order Shipped</apex:varDescription>
+            </apex:processVariable>
+            <apex:processVariable>
+              <apex:varSequence>2</apex:varSequence>
+              <apex:varName>TrackingID:</apex:varName>
+              <apex:varDataType>VARCHAR2</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression></apex:varExpression>
+              <apex:varDescription>Tracking Reference for Shipment</apex:varDescription>
+            </apex:processVariable>
+          </apex:outVariables>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_F3</bpmn:incoming>
+        <bpmn:outgoing>Flow_0qcvrkv</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:sequenceFlow id="Flow_0qcvrkv" sourceRef="Activity_F3" targetRef="Event_0wf0v6l" />
+      <bpmn:intermediateThrowEvent id="Event_0wf0v6l" name="LinkB">
+        <bpmn:incoming>Flow_0qcvrkv</bpmn:incoming>
+        <bpmn:linkEventDefinition id="LinkEventDefinition_11dqyd7" name="LinkB" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:intermediateCatchEvent id="Event_11kl7us" name="LinkB">
+        <bpmn:outgoing>Flow_1f1h0pi</bpmn:outgoing>
+        <bpmn:linkEventDefinition id="LinkEventDefinition_10krl16" name="LinkB" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:endEvent id="Event_1u4qtdo" name="F End D">
+        <bpmn:incoming>Flow_1f1h0pi</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1f1h0pi" sourceRef="Event_11kl7us" targetRef="Event_1u4qtdo" />
       <bpmn:textAnnotation id="TextAnnotation_1nzqkt7">
         <bpmn:text>All running paths must end before the sub process completes and moves on to the next task</bpmn:text>
       </bpmn:textAnnotation>
       <bpmn:association id="Association_1x9wuxi" sourceRef="Event_FEndA" targetRef="TextAnnotation_1nzqkt7" />
+      <bpmn:textAnnotation id="TextAnnotation_03t7ss3" />
+      <bpmn:association id="Association_1rvraln" sourceRef="Activity_F3" targetRef="TextAnnotation_03t7ss3" />
     </bpmn:subProcess>
-    <bpmn:boundaryEvent id="Event_FTimeoutBE" name="Interrupting Timer on F" attachedToRef="Activity_SubProcF">
-      <bpmn:outgoing>Flow_1qh3zb4</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0b8p9qg">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT130M</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="Event_FNI_Timer_BE" name="Non Interrupting Timer on F" cancelActivity="false" attachedToRef="Activity_SubProcF">
-      <bpmn:outgoing>Flow_10ebnqk</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_17ny1xz">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT120M</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="Event_FEscBE" name="Interrupting Escalation Handler&#10;(Terminates F)" attachedToRef="Activity_SubProcF">
-      <bpmn:outgoing>Flow_0f14hah</bpmn:outgoing>
-      <bpmn:escalationEventDefinition id="EscalationEventDefinition_1i2ea4w" />
-    </bpmn:boundaryEvent>
     <bpmn:scriptTask id="Activity_FRemind" name="Post Reminders (PL/SQL Script)" apex:type="executePlsql">
       <bpmn:extensionElements>
         <apex:executePlsql>
@@ -384,6 +424,17 @@
       <bpmn:incoming>Flow_1d0hvhw</bpmn:incoming>
       <bpmn:terminateEventDefinition id="TerminateEventDefinition_1hfrp0v" />
     </bpmn:endEvent>
+    <bpmn:endEvent id="Event_TheEnd" name="Process End">
+      <bpmn:incoming>Flow_05y14rb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:parallelGateway id="Gateway_MainSync" name="Merging Parallel Gateway&#10;- Merges and&#10;Syncronises paths">
+      <bpmn:incoming>Flow_0g7i78z</bpmn:incoming>
+      <bpmn:incoming>Flow_1ml8gyp</bpmn:incoming>
+      <bpmn:incoming>Flow_1lkzgyz</bpmn:incoming>
+      <bpmn:incoming>Flow_1320p09</bpmn:incoming>
+      <bpmn:outgoing>Flow_05y14rb</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_05y14rb" sourceRef="Gateway_MainSync" targetRef="Event_TheEnd" />
     <bpmn:exclusiveGateway id="Gateway_Excl_Choose1" name="Exclusive Gateway - Choose 1 Path" default="Flow_B">
       <bpmn:incoming>Flow_12bf5hj</bpmn:incoming>
       <bpmn:outgoing>Flow_B</bpmn:outgoing>
@@ -398,63 +449,56 @@
       <bpmn:incoming>Flow_C</bpmn:incoming>
       <bpmn:terminateEventDefinition id="TerminateEventDefinition_1ixj664" />
     </bpmn:endEvent>
-    <bpmn:exclusiveGateway id="Gateway_ABMerge" name="Merge">
-      <bpmn:incoming>Flow_1dyxw9o</bpmn:incoming>
-      <bpmn:incoming>Flow_03kgsyn</bpmn:incoming>
-      <bpmn:outgoing>Flow_0f0z11o</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:inclusiveGateway id="Gateway_CDE_Inc_Split" name="Inclusive Gateway&#10;- Pick 1 or more Options" default="Flow_E">
-      <bpmn:incoming>Flow_0f0z11o</bpmn:incoming>
-      <bpmn:outgoing>Flow_D</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0miynpd</bpmn:outgoing>
-      <bpmn:outgoing>Flow_E</bpmn:outgoing>
-    </bpmn:inclusiveGateway>
-    <bpmn:task id="Activity_D" name="D">
-      <bpmn:incoming>Flow_D</bpmn:incoming>
+    <bpmn:task id="Activity_S" name="S">
+      <bpmn:incoming>Flow_S</bpmn:incoming>
       <bpmn:outgoing>Flow_02uxial</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:inclusiveGateway id="Gateway_CDEClose" name="Closing Inclusive Gateway&#10;- Merges and&#10;Synchronises paths">
+    <bpmn:inclusiveGateway id="Gateway_RSTClose" name="Closing Inclusive Gateway&#10;- Merges and&#10;Synchronises paths">
       <bpmn:incoming>Flow_02uxial</bpmn:incoming>
       <bpmn:incoming>Flow_135n6n7</bpmn:incoming>
       <bpmn:incoming>Flow_1mpw2yu</bpmn:incoming>
       <bpmn:outgoing>Flow_1ml8gyp</bpmn:outgoing>
     </bpmn:inclusiveGateway>
-    <bpmn:task id="Activity_C" name="C">
-      <bpmn:incoming>Flow_0miynpd</bpmn:incoming>
+    <bpmn:task id="Activity_R" name="R">
+      <bpmn:incoming>Flow_R</bpmn:incoming>
       <bpmn:outgoing>Flow_135n6n7</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_E" name="E">
-      <bpmn:incoming>Flow_E</bpmn:incoming>
+    <bpmn:task id="Activity_T" name="T">
+      <bpmn:incoming>Flow_T</bpmn:incoming>
       <bpmn:outgoing>Flow_1mpw2yu</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_B" name="route B&#10;(default path)" sourceRef="Gateway_Excl_Choose1" targetRef="Activity_OptionB" />
-    <bpmn:sequenceFlow id="Flow_C" name="route C&#10;(bad path)" sourceRef="Gateway_Excl_Choose1" targetRef="Event_CTermEnd" />
+    <bpmn:sequenceFlow id="Flow_B" name="route B&#10;(default path)" sourceRef="Gateway_Excl_Choose1" targetRef="Activity_OptionB" apex:sequence="40" />
+    <bpmn:sequenceFlow id="Flow_C" name="route C&#10;(bad path)" sourceRef="Gateway_Excl_Choose1" targetRef="Event_CTermEnd" apex:sequence="50" />
     <bpmn:sequenceFlow id="Flow_1dyxw9o" sourceRef="Activity_OptionB" targetRef="Gateway_ABMerge" />
-    <bpmn:sequenceFlow id="Flow_0f0z11o" sourceRef="Gateway_ABMerge" targetRef="Gateway_CDE_Inc_Split" />
-    <bpmn:sequenceFlow id="Flow_D" name="path D" sourceRef="Gateway_CDE_Inc_Split" targetRef="Activity_D" />
-    <bpmn:sequenceFlow id="Flow_0miynpd" name="path C" sourceRef="Gateway_CDE_Inc_Split" targetRef="Activity_C" />
-    <bpmn:sequenceFlow id="Flow_E" name="path E&#10;(default path)" sourceRef="Gateway_CDE_Inc_Split" targetRef="Activity_E" />
-    <bpmn:sequenceFlow id="Flow_02uxial" sourceRef="Activity_D" targetRef="Gateway_CDEClose" />
-    <bpmn:sequenceFlow id="Flow_135n6n7" sourceRef="Activity_C" targetRef="Gateway_CDEClose" />
-    <bpmn:sequenceFlow id="Flow_1mpw2yu" sourceRef="Activity_E" targetRef="Gateway_CDEClose" />
-    <bpmn:task id="Activity_OptionA" name="Option A">
-      <bpmn:incoming>Flow_A</bpmn:incoming>
-      <bpmn:outgoing>Flow_03kgsyn</bpmn:outgoing>
-    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0f0z11o" sourceRef="Gateway_ABMerge" targetRef="Gateway_RST_Inc_Split" apex:sequence="10" />
+    <bpmn:sequenceFlow id="Flow_S" name=":F4A$RST_Path like &#39;%S%&#39;" sourceRef="Gateway_RST_Inc_Split" targetRef="Activity_S" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$RST_Path like '%S%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_R" name=":F4A$RST_Path like &#39;%R%&#39;" sourceRef="Gateway_RST_Inc_Split" targetRef="Activity_R" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression" sequence="1">:F4A$RST_Path like '%R%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_T" name=":F4A$RST_Path like &#39;%T%&#39;" sourceRef="Gateway_RST_Inc_Split" targetRef="Activity_T" apex:sequence="30">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$RST_Path like '%T%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_02uxial" sourceRef="Activity_S" targetRef="Gateway_RSTClose" />
+    <bpmn:sequenceFlow id="Flow_135n6n7" sourceRef="Activity_R" targetRef="Gateway_RSTClose" />
+    <bpmn:sequenceFlow id="Flow_1mpw2yu" sourceRef="Activity_T" targetRef="Gateway_RSTClose" />
+    <bpmn:manualTask id="Activity_ManualTask" name="Manual Task&#10;(placeholder for non computer task)">
+      <bpmn:incoming>Flow_1a3mwvi</bpmn:incoming>
+      <bpmn:outgoing>Flow_12bf5hj</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_0395vvt" sourceRef="Activity_scriptTask" targetRef="Activity_1i0012l" />
+    <bpmn:sequenceFlow id="Flow_1a3mwvi" sourceRef="Activity_1i0012l" targetRef="Activity_ManualTask" />
+    <bpmn:sequenceFlow id="Flow_0m74axl" sourceRef="Activity_19316nz" targetRef="Activity_scriptTask" />
     <bpmn:scriptTask id="Activity_scriptTask" name="scriptTask&#10;(run a PL/SQL script)" apex:type="executePlsql">
       <bpmn:extensionElements>
         <apex:executePlsql>
           <apex:plsqlCode>null;</apex:plsqlCode>
         </apex:executePlsql>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0av2w95</bpmn:incoming>
+      <bpmn:incoming>Flow_0m74axl</bpmn:incoming>
       <bpmn:outgoing>Flow_0395vvt</bpmn:outgoing>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_1a3mwvi" sourceRef="Activity_1i0012l" targetRef="Activity_ManualTask" />
-    <bpmn:manualTask id="Activity_ManualTask" name="Manual Task&#10;(placeholder for non computer task)">
-      <bpmn:incoming>Flow_1a3mwvi</bpmn:incoming>
-      <bpmn:outgoing>Flow_12bf5hj</bpmn:outgoing>
-    </bpmn:manualTask>
     <bpmn:businessRuleTask id="Activity_1i0012l" name="businessRules&#10;Task&#10;(run scoring model)" apex:type="executePlsql">
       <bpmn:documentation>This can be used to run a credit scoring routine or a ML model -- anything accessible via PL/SQL).
 
@@ -462,6 +506,52 @@
       <bpmn:incoming>Flow_0395vvt</bpmn:incoming>
       <bpmn:outgoing>Flow_1a3mwvi</bpmn:outgoing>
     </bpmn:businessRuleTask>
+    <bpmn:userTask id="Activity_19316nz" name="userTask&#10;(call APEX Approval Task)" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:incoming>Flow_0av2w95</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m74axl</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_FEscBE" name="Interrupting Escalation Handler&#10;(Terminates F)" attachedToRef="Activity_SubProcF">
+      <bpmn:outgoing>Flow_0f14hah</bpmn:outgoing>
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_1i2ea4w" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_FNI_Timer_BE" name="Non Interrupting Timer on F" cancelActivity="false" attachedToRef="Activity_SubProcF">
+      <bpmn:outgoing>Flow_10ebnqk</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_17ny1xz">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT120M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_FTimeoutBE" name="Interrupting Timer on F" attachedToRef="Activity_SubProcF">
+      <bpmn:outgoing>Flow_1qh3zb4</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0b8p9qg">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT130M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Activity_OptionA" name="Option A">
+      <bpmn:incoming>Flow_A</bpmn:incoming>
+      <bpmn:outgoing>Flow_03kgsyn</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:inclusiveGateway id="Gateway_RST_Inc_Split" name="Inclusive Gateway&#10;- Pick 1 or more Options" default="Flow_T">
+      <bpmn:extensionElements>
+        <apex:beforeSplit>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>RST_Path</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>RT</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeSplit>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0f0z11o</bpmn:incoming>
+      <bpmn:outgoing>Flow_S</bpmn:outgoing>
+      <bpmn:outgoing>Flow_R</bpmn:outgoing>
+      <bpmn:outgoing>Flow_T</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_ABMerge" name="Merge">
+      <bpmn:incoming>Flow_1dyxw9o</bpmn:incoming>
+      <bpmn:incoming>Flow_03kgsyn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f0z11o</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:textAnnotation id="TextAnnotation_0ig39o8">
       <bpmn:text>Annotations help explain the model to readers</bpmn:text>
     </bpmn:textAnnotation>
@@ -469,29 +559,113 @@
     <bpmn:textAnnotation id="TextAnnotation_0xch24e">
       <bpmn:text>This model does nearly
 everything that we can process
-in v22.1.
+in v22.2.
 
 Work your way through this.
 
 Try changing the way the gateways direct the process to cover all of the ways through the model, until you understand how this model gets processed!</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0tjhct6" sourceRef="StartEvent_1" targetRef="TextAnnotation_0xch24e" />
+    <bpmn:textAnnotation id="TextAnnotation_1n3sri5">
+      <bpmn:text>Routing using Gateway Routing Variable</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_095hgt1" sourceRef="Gateway_Excl_Choose1" targetRef="TextAnnotation_1n3sri5" />
+    <bpmn:textAnnotation id="TextAnnotation_1az2cby">
+      <bpmn:text>Routing Using Gateway Routing Expressions</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_09n6lvz" sourceRef="Gateway_RST_Inc_Split" targetRef="TextAnnotation_1az2cby" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0iz09gx">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_Tutorial_8a">
       <bpmndi:BPMNShape id="Participant_1eelczk_di" bpmnElement="Participant_1eelczk" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="1850" height="1240" />
+        <dc:Bounds x="160" y="80" width="2030" height="1240" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1malyps_di" bpmnElement="Lane_A" isHorizontal="true">
-        <dc:Bounds x="190" y="420" width="1820" height="900" />
+        <dc:Bounds x="190" y="420" width="2000" height="900" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_09houmv_di" bpmnElement="Lane_B" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="1820" height="340" />
+        <dc:Bounds x="190" y="80" width="2000" height="340" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0m74axl_di" bpmnElement="Flow_0m74axl">
+        <di:waypoint x="770" y="250" />
+        <di:waypoint x="810" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a3mwvi_di" bpmnElement="Flow_1a3mwvi">
+        <di:waypoint x="1050" y="250" />
+        <di:waypoint x="1090" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0395vvt_di" bpmnElement="Flow_0395vvt">
+        <di:waypoint x="910" y="250" />
+        <di:waypoint x="950" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mpw2yu_di" bpmnElement="Flow_1mpw2yu">
+        <di:waypoint x="1880" y="360" />
+        <di:waypoint x="1980" y="360" />
+        <di:waypoint x="1980" y="275" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_135n6n7_di" bpmnElement="Flow_135n6n7">
+        <di:waypoint x="1880" y="150" />
+        <di:waypoint x="1980" y="150" />
+        <di:waypoint x="1980" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02uxial_di" bpmnElement="Flow_02uxial">
+        <di:waypoint x="1880" y="250" />
+        <di:waypoint x="1955" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wt3yjm_di" bpmnElement="Flow_T">
+        <di:waypoint x="1660" y="275" />
+        <di:waypoint x="1660" y="360" />
+        <di:waypoint x="1780" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1671" y="326" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0miynpd_di" bpmnElement="Flow_R">
+        <di:waypoint x="1660" y="225" />
+        <di:waypoint x="1660" y="150" />
+        <di:waypoint x="1780" y="150" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1680" y="116" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03skdre_di" bpmnElement="Flow_S">
+        <di:waypoint x="1685" y="250" />
+        <di:waypoint x="1780" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1680" y="216" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f0z11o_di" bpmnElement="Flow_0f0z11o">
+        <di:waypoint x="1565" y="250" />
+        <di:waypoint x="1635" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dyxw9o_di" bpmnElement="Flow_1dyxw9o">
+        <di:waypoint x="1470" y="250" />
+        <di:waypoint x="1515" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xjsivb_di" bpmnElement="Flow_C">
+        <di:waypoint x="1280" y="275" />
+        <di:waypoint x="1280" y="360" />
+        <di:waypoint x="1372" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1295" y="326" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ir2osx_di" bpmnElement="Flow_B">
+        <di:waypoint x="1305" y="250" />
+        <di:waypoint x="1370" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1298" y="216" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05y14rb_di" bpmnElement="Flow_05y14rb">
+        <di:waypoint x="2055" y="765" />
+        <di:waypoint x="2092" y="765" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1320p09_di" bpmnElement="Flow_1320p09">
         <di:waypoint x="1720" y="1180" />
-        <di:waypoint x="1890" y="1180" />
-        <di:waypoint x="1890" y="790" />
+        <di:waypoint x="2030" y="1180" />
+        <di:waypoint x="2030" y="790" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1d0hvhw_di" bpmnElement="Flow_1d0hvhw">
         <di:waypoint x="1140" y="1180" />
@@ -499,8 +673,8 @@ Try changing the way the gateways direct the process to cover all of the ways th
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1lkzgyz_di" bpmnElement="Flow_1lkzgyz">
         <di:waypoint x="915" y="1260" />
-        <di:waypoint x="1890" y="1260" />
-        <di:waypoint x="1890" y="790" />
+        <di:waypoint x="2030" y="1260" />
+        <di:waypoint x="2030" y="790" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mw3yoc_di" bpmnElement="Flow_0mw3yoc">
         <di:waypoint x="810" y="1260" />
@@ -533,10 +707,6 @@ Try changing the way the gateways direct the process to cover all of the ways th
         <di:waypoint x="480" y="1160" />
         <di:waypoint x="525" y="1160" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_05y14rb_di" bpmnElement="Flow_05y14rb">
-        <di:waypoint x="1915" y="765" />
-        <di:waypoint x="1952" y="765" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1hkw8tj_di" bpmnElement="Flow_1hkw8tj">
         <di:waypoint x="1420" y="1180" />
         <di:waypoint x="1452" y="1180" />
@@ -557,13 +727,13 @@ Try changing the way the gateways direct the process to cover all of the ways th
         <di:waypoint x="1040" y="1180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ml8gyp_di" bpmnElement="Flow_1ml8gyp">
-        <di:waypoint x="1831" y="250" />
-        <di:waypoint x="1890" y="250" />
-        <di:waypoint x="1890" y="740" />
+        <di:waypoint x="2005" y="250" />
+        <di:waypoint x="2030" y="250" />
+        <di:waypoint x="2030" y="740" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g7i78z_di" bpmnElement="Flow_0g7i78z">
-        <di:waypoint x="1680" y="765" />
-        <di:waypoint x="1865" y="765" />
+        <di:waypoint x="1880" y="765" />
+        <di:waypoint x="2005" y="765" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_139aflr_di" bpmnElement="Flow_139aflr">
         <di:waypoint x="750" y="370" />
@@ -575,25 +745,21 @@ Try changing the way the gateways direct the process to cover all of the ways th
         <di:waypoint x="650" y="370" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_03kgsyn_di" bpmnElement="Flow_03kgsyn">
-        <di:waypoint x="1296" y="140" />
-        <di:waypoint x="1386" y="140" />
-        <di:waypoint x="1386" y="225" />
+        <di:waypoint x="1470" y="140" />
+        <di:waypoint x="1540" y="140" />
+        <di:waypoint x="1540" y="225" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0iu6gi4_di" bpmnElement="Flow_A">
-        <di:waypoint x="1106" y="225" />
-        <di:waypoint x="1106" y="140" />
-        <di:waypoint x="1196" y="140" />
+        <di:waypoint x="1280" y="225" />
+        <di:waypoint x="1280" y="140" />
+        <di:waypoint x="1370" y="140" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1128.0000000000002" y="123" width="35" height="14" />
+          <dc:Bounds x="1302" y="123" width="35" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12bf5hj_di" bpmnElement="Flow_12bf5hj">
-        <di:waypoint x="1030" y="250" />
-        <di:waypoint x="1081" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0395vvt_di" bpmnElement="Flow_0395vvt">
-        <di:waypoint x="760" y="250" />
-        <di:waypoint x="800" y="250" />
+        <di:waypoint x="1190" y="250" />
+        <di:waypoint x="1255" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15m8qw2_di" bpmnElement="Flow_15m8qw2">
         <di:waypoint x="505" y="600" />
@@ -601,7 +767,7 @@ Try changing the way the gateways direct the process to cover all of the ways th
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0av2w95_di" bpmnElement="Flow_0av2w95">
         <di:waypoint x="630" y="250" />
-        <di:waypoint x="660" y="250" />
+        <di:waypoint x="670" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1q7lyne_di" bpmnElement="Flow_1q7lyne">
         <di:waypoint x="480" y="575" />
@@ -615,70 +781,6 @@ Try changing the way the gateways direct the process to cover all of the ways th
       <bpmndi:BPMNEdge id="Flow_1u5kfn1_di" bpmnElement="Flow_1u5kfn1">
         <di:waypoint x="248" y="600" />
         <di:waypoint x="300" y="600" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ir2osx_di" bpmnElement="Flow_B">
-        <di:waypoint x="1131" y="250" />
-        <di:waypoint x="1196" y="250" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1123" y="216" width="65" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0xjsivb_di" bpmnElement="Flow_C">
-        <di:waypoint x="1106" y="275" />
-        <di:waypoint x="1106" y="360" />
-        <di:waypoint x="1198" y="360" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1120" y="326" width="51" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1dyxw9o_di" bpmnElement="Flow_1dyxw9o">
-        <di:waypoint x="1296" y="250" />
-        <di:waypoint x="1361" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0f0z11o_di" bpmnElement="Flow_0f0z11o">
-        <di:waypoint x="1411" y="250" />
-        <di:waypoint x="1481" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03skdre_di" bpmnElement="Flow_D">
-        <di:waypoint x="1531" y="250" />
-        <di:waypoint x="1606" y="250" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1539" y="232" width="33" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0miynpd_di" bpmnElement="Flow_0miynpd">
-        <di:waypoint x="1506" y="225" />
-        <di:waypoint x="1506" y="150" />
-        <di:waypoint x="1606" y="150" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1529" y="133" width="33" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wt3yjm_di" bpmnElement="Flow_E">
-        <di:waypoint x="1506" y="275" />
-        <di:waypoint x="1506" y="360" />
-        <di:waypoint x="1606" y="360" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1513" y="326" width="65" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_02uxial_di" bpmnElement="Flow_02uxial">
-        <di:waypoint x="1706" y="250" />
-        <di:waypoint x="1781" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_135n6n7_di" bpmnElement="Flow_135n6n7">
-        <di:waypoint x="1706" y="150" />
-        <di:waypoint x="1806" y="150" />
-        <di:waypoint x="1806" y="225" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1mpw2yu_di" bpmnElement="Flow_1mpw2yu">
-        <di:waypoint x="1706" y="360" />
-        <di:waypoint x="1806" y="360" />
-        <di:waypoint x="1806" y="275" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1a3mwvi_di" bpmnElement="Flow_1a3mwvi">
-        <di:waypoint x="900" y="250" />
-        <di:waypoint x="930" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="212" y="582" width="36" height="36" />
@@ -743,92 +845,42 @@ Try changing the way the gateways direct the process to cover all of the ways th
       <bpmndi:BPMNShape id="Activity_00w4hzt_di" bpmnElement="Activity_H">
         <dc:Bounds x="710" y="1220" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1tokmzs_di" bpmnElement="Event_TheEnd">
-        <dc:Bounds x="1952" y="747" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1939" y="790" width="63" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0mce1tt_di" bpmnElement="Gateway_MainSync">
-        <dc:Bounds x="1865" y="740" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1785" y="797" width="90" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_149vhoy_di" bpmnElement="Activity_Reminder">
         <dc:Bounds x="650" y="330" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1a5in2d_di" bpmnElement="Gateway_Excl_Choose1" isMarkerVisible="true">
-        <dc:Bounds x="1081" y="225" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1016" y="160" width="80" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ev2yqx_di" bpmnElement="Activity_OptionB">
-        <dc:Bounds x="1196" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1citjar_di" bpmnElement="Event_CTermEnd">
-        <dc:Bounds x="1198" y="342" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1239" y="360" width="73" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0elt40y_di" bpmnElement="Gateway_ABMerge" isMarkerVisible="true">
-        <dc:Bounds x="1361" y="225" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1370" y="282" width="32" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0pqx7yh_di" bpmnElement="Gateway_CDE_Inc_Split">
-        <dc:Bounds x="1481" y="225" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1411" y="190" width="90" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_05958zc_di" bpmnElement="Activity_D">
-        <dc:Bounds x="1606" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0bkzha0_di" bpmnElement="Gateway_CDEClose">
-        <dc:Bounds x="1781" y="225" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1824" y="167" width="83" height="66" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1n9ks7b_di" bpmnElement="Activity_C">
-        <dc:Bounds x="1606" y="110" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1o9oe05_di" bpmnElement="Activity_E">
-        <dc:Bounds x="1606" y="320" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0owgu48_di" bpmnElement="Activity_OptionA">
-        <dc:Bounds x="1196" y="100" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1d8dhsd_di" bpmnElement="Activity_scriptTask">
-        <dc:Bounds x="660" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_03tagro_di" bpmnElement="Activity_ManualTask">
-        <dc:Bounds x="930" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0cax07n_di" bpmnElement="Activity_1i0012l">
-        <dc:Bounds x="800" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1g13boe_di" bpmnElement="Activity_SubProcF" isExpanded="true">
-        <dc:Bounds x="600" y="435" width="1080" height="675" />
+        <dc:Bounds x="600" y="435" width="1280" height="675" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1f1h0pi_di" bpmnElement="Flow_1f1h0pi">
+        <di:waypoint x="1458" y="854" />
+        <di:waypoint x="1622" y="854" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qcvrkv_di" bpmnElement="Flow_0qcvrkv">
+        <di:waypoint x="860" y="1035" />
+        <di:waypoint x="892" y="1035" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gkk731_di" bpmnElement="Flow_F3">
+        <di:waypoint x="710" y="760" />
+        <di:waypoint x="710" y="1035" />
+        <di:waypoint x="760" y="1035" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="726" y="1003" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0uoidfy_di" bpmnElement="Flow_0uoidfy">
         <di:waypoint x="1358" y="1035" />
         <di:waypoint x="1395" y="1035" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0203h3w_di" bpmnElement="Flow_0203h3w">
-        <di:waypoint x="1560" y="935" />
-        <di:waypoint x="1622" y="935" />
+        <di:waypoint x="1560" y="955" />
+        <di:waypoint x="1622" y="955" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0zm2lio_di" bpmnElement="Flow_0zm2lio">
         <di:waypoint x="1420" y="1010" />
-        <di:waypoint x="1420" y="935" />
-        <di:waypoint x="1460" y="935" />
+        <di:waypoint x="1420" y="955" />
+        <di:waypoint x="1460" y="955" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1431" y="970" width="8" height="14" />
+          <dc:Bounds x="1431" y="979" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jynl0c_di" bpmnElement="Flow_1jynl0c">
@@ -843,17 +895,17 @@ Try changing the way the gateways direct the process to cover all of the ways th
         <di:waypoint x="1322" y="1035" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wjommq_di" bpmnElement="Flow_0wjommq">
-        <di:waypoint x="1090" y="1035" />
+        <di:waypoint x="1120" y="1035" />
         <di:waypoint x="1142" y="1035" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_031cc6f_di" bpmnElement="Flow_031cc6f">
-        <di:waypoint x="930" y="973" />
-        <di:waypoint x="930" y="1035" />
-        <di:waypoint x="990" y="1035" />
+        <di:waypoint x="980" y="973" />
+        <di:waypoint x="980" y="1035" />
+        <di:waypoint x="1020" y="1035" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kgfn9a_di" bpmnElement="Flow_1kgfn9a">
-        <di:waypoint x="1350" y="805" />
-        <di:waypoint x="1622" y="805" />
+        <di:waypoint x="1350" y="771" />
+        <di:waypoint x="1622" y="771" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1eyfbtd_di" bpmnElement="Flow_1eyfbtd">
         <di:waypoint x="1420" y="555" />
@@ -868,7 +920,7 @@ Try changing the way the gateways direct the process to cover all of the ways th
         <di:waypoint x="710" y="595" />
         <di:waypoint x="750" y="595" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="716" y="650" width="22" height="14" />
+          <dc:Bounds x="709" y="573" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1c3cdi9_di" bpmnElement="Flow_toF2">
@@ -876,7 +928,7 @@ Try changing the way the gateways direct the process to cover all of the ways th
         <di:waypoint x="710" y="854" />
         <di:waypoint x="760" y="854" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="681" y="651" width="26" height="14" />
+          <dc:Bounds x="727" y="823" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06l5x9i_di" bpmnElement="Flow_06l5x9i">
@@ -1081,9 +1133,9 @@ Try changing the way the gateways direct the process to cover all of the ways th
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1wkp2r5_di" bpmnElement="Event_F_End_B">
-        <dc:Bounds x="1622" y="787" width="36" height="36" />
+        <dc:Bounds x="1622" y="753" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1620" y="830" width="40" height="14" />
+          <dc:Bounds x="1621" y="796" width="39" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_04jlqb2_di" bpmnElement="Event_F2EscLinkA">
@@ -1117,9 +1169,9 @@ Try changing the way the gateways direct the process to cover all of the ways th
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0220gli_di" bpmnElement="Event_FEscEnd">
-        <dc:Bounds x="1622" y="917" width="36" height="36" />
+        <dc:Bounds x="1622" y="937" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1603" y="960" width="74" height="14" />
+          <dc:Bounds x="1605" y="980" width="71" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0c9r2uu_di" bpmnElement="Event_TimerAfterLink">
@@ -1129,13 +1181,37 @@ Try changing the way the gateways direct the process to cover all of the ways th
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0fjkffv_di" bpmnElement="Activity_EmailManagerHelp">
-        <dc:Bounds x="990" y="995" width="100" height="80" />
+        <dc:Bounds x="1020" y="995" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0xyp3mc_di" bpmnElement="Activity_PrepForTerm">
-        <dc:Bounds x="1460" y="895" width="100" height="80" />
+        <dc:Bounds x="1460" y="915" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oum5jo_di" bpmnElement="Activity_F3">
+        <dc:Bounds x="760" y="995" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1q9eutv_di" bpmnElement="Event_0wf0v6l">
+        <dc:Bounds x="892" y="1017" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="897" y="1060" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1eiscel_di" bpmnElement="Event_11kl7us">
+        <dc:Bounds x="1422" y="836" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1427" y="879" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1u4qtdo_di" bpmnElement="Event_1u4qtdo">
+        <dc:Bounds x="1622" y="836" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1621" y="879" width="39" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1nzqkt7_di" bpmnElement="TextAnnotation_1nzqkt7">
         <dc:Bounds x="1460" y="455" width="132" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_03t7ss3_di" bpmnElement="TextAnnotation_03t7ss3">
+        <dc:Bounds x="860" y="910" width="99.99999237060547" height="29.999998092651367" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0s9z99m_di" bpmnElement="Event_F1ErrorBoundary">
         <dc:Bounds x="1402" y="637" width="36" height="36" />
@@ -1144,14 +1220,18 @@ Try changing the way the gateways direct the process to cover all of the ways th
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1026xtr_di" bpmnElement="Event_F2Esc">
-        <dc:Bounds x="912" y="937" width="36" height="36" />
+        <dc:Bounds x="962" y="937" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="838" y="975" width="83" height="40" />
+          <dc:Bounds x="890" y="967" width="80" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1x9wuxi_di" bpmnElement="Association_1x9wuxi">
         <di:waypoint x="1625" y="545" />
         <di:waypoint x="1592" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1rvraln_di" bpmnElement="Association_1rvraln">
+        <di:waypoint x="846" y="995" />
+        <di:waypoint x="896" y="940" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_1dg82fs_di" bpmnElement="Activity_FRemind">
         <dc:Bounds x="1320" y="1140" width="100" height="80" />
@@ -1165,34 +1245,109 @@ Try changing the way the gateways direct the process to cover all of the ways th
           <dc:Bounds x="1152" y="1205" width="57" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tokmzs_di" bpmnElement="Event_TheEnd">
+        <dc:Bounds x="2092" y="747" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2080" y="790" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0mce1tt_di" bpmnElement="Gateway_MainSync">
+        <dc:Bounds x="2005" y="740" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1927" y="797" width="87" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1a5in2d_di" bpmnElement="Gateway_Excl_Choose1" isMarkerVisible="true">
+        <dc:Bounds x="1255" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1185" y="196" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ev2yqx_di" bpmnElement="Activity_OptionB">
+        <dc:Bounds x="1370" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1citjar_di" bpmnElement="Event_CTermEnd">
+        <dc:Bounds x="1372" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1414" y="360" width="71" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05958zc_di" bpmnElement="Activity_S">
+        <dc:Bounds x="1780" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0bkzha0_di" bpmnElement="Gateway_RSTClose">
+        <dc:Bounds x="1955" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2000" y="167" width="80" height="66" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1n9ks7b_di" bpmnElement="Activity_R">
+        <dc:Bounds x="1780" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o9oe05_di" bpmnElement="Activity_T">
+        <dc:Bounds x="1780" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03tagro_di" bpmnElement="Activity_ManualTask">
+        <dc:Bounds x="1090" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1d8dhsd_di" bpmnElement="Activity_scriptTask">
+        <dc:Bounds x="810" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cax07n_di" bpmnElement="Activity_1i0012l">
+        <dc:Bounds x="950" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s7k7au_di" bpmnElement="Activity_19316nz">
+        <dc:Bounds x="670" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0owgu48_di" bpmnElement="Activity_OptionA">
+        <dc:Bounds x="1370" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pqx7yh_di" bpmnElement="Gateway_RST_Inc_Split">
+        <dc:Bounds x="1635" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1567" y="190" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0elt40y_di" bpmnElement="Gateway_ABMerge" isMarkerVisible="true">
+        <dc:Bounds x="1515" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1525" y="282" width="31" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0ig39o8_di" bpmnElement="TextAnnotation_0ig39o8">
         <dc:Bounds x="650" y="116" width="140" height="54" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0xch24e_di" bpmnElement="TextAnnotation_0xch24e">
-        <dc:Bounds x="240" y="200" width="189.99731669415664" height="169.54269573961426" />
+        <dc:Bounds x="240" y="200" width="189.99998474121094" height="169.99998474121094" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_11dxhil_di" bpmnElement="Event_FEscBE">
-        <dc:Bounds x="972" y="1092" width="36" height="36" />
+      <bpmndi:BPMNShape id="TextAnnotation_1n3sri5_di" bpmnElement="TextAnnotation_1n3sri5">
+        <dc:Bounds x="1090" y="330" width="99.98161315917969" height="67.99632263183594" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1az2cby_di" bpmnElement="TextAnnotation_1az2cby">
+        <dc:Bounds x="1540" y="320" width="99.98161315917969" height="67.99632263183594" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1rvlutc_di" bpmnElement="Event_FTimeoutBE">
+        <dc:Bounds x="1542" y="1092" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="914" y="1123" width="71" height="53" />
+          <dc:Bounds x="1458" y="1126" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1xu4vjx_di" bpmnElement="Event_FNI_Timer_BE">
         <dc:Bounds x="1202" y="1092" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1230" y="1126" width="79" height="27" />
+          <dc:Bounds x="1232" y="1126" width="76" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1rvlutc_di" bpmnElement="Event_FTimeoutBE">
-        <dc:Bounds x="1542" y="1092" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_11dxhil_di" bpmnElement="Event_FEscBE">
+        <dc:Bounds x="972" y="1092" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1456" y="1126" width="87" height="27" />
+          <dc:Bounds x="905" y="1123" width="89" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14ldymq_di" bpmnElement="Event_ReminderBE">
         <dc:Bounds x="562" y="272" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="500" y="315" width="79" height="14" />
+          <dc:Bounds x="492" y="315" width="76" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_14q8sx5_di" bpmnElement="Association_14q8sx5">
@@ -1202,6 +1357,14 @@ Try changing the way the gateways direct the process to cover all of the ways th
       <bpmndi:BPMNEdge id="Association_0tjhct6_di" bpmnElement="Association_0tjhct6">
         <di:waypoint x="234" y="583" />
         <di:waypoint x="279" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_095hgt1_di" bpmnElement="Association_095hgt1">
+        <di:waypoint x="1265" y="260" />
+        <di:waypoint x="1162" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_09n6lvz_di" bpmnElement="Association_09n6lvz">
+        <di:waypoint x="1649" y="264" />
+        <di:waypoint x="1602" y="320" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

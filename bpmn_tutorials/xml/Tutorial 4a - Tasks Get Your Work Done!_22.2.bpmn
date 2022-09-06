@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="22.1.0">
-  <bpmn:process id="Tutorial4" name="Task Types Tutorial" isExecutable="false">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:process id="Tutorial4" name="Task Types Tutorial" isExecutable="false" apex:isCallable="false" apex:manualInput="false">
     <bpmn:documentation>Tutorials by Richard Allen.
 Flowquest Consulting.
 twitter: @FlowquestR</bpmn:documentation>
@@ -13,7 +13,7 @@ twitter: @FlowquestR</bpmn:documentation>
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_1nctu2s" sourceRef="Event_0etkrt2" targetRef="Activity_0byebb7" />
     <bpmn:sequenceFlow id="Flow_0pijurl" sourceRef="Activity_0byebb7" targetRef="Activity_0srf4in" />
-    <bpmn:userTask id="Activity_0srf4in" name="This is a UserTask - I can call an APEX Page" apex:type="apexPage">
+    <bpmn:userTask id="Activity_0srf4in" name="UserTask - I can call an APEX Page or APEX Approval" apex:type="apexPage" apex:manualInput="false">
       <bpmn:extensionElements>
         <apex:apexPage />
       </bpmn:extensionElements>
@@ -21,7 +21,7 @@ twitter: @FlowquestR</bpmn:documentation>
       <bpmn:outgoing>Flow_199lc3i</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_199lc3i" sourceRef="Activity_0srf4in" targetRef="Activity_0w0fi2i" />
-    <bpmn:scriptTask id="Activity_0w0fi2i" name="This is a scriptTask&#10;- I can run a&#10;PL/SQL script" apex:type="executePlsql">
+    <bpmn:scriptTask id="Activity_0w0fi2i" name="scriptTask&#10;- I can run a&#10;PL/SQL script&#10;" apex:type="executePlsql">
       <bpmn:extensionElements>
         <apex:executePlsql>
           <apex:plsqlCode>null;</apex:plsqlCode>
@@ -31,7 +31,7 @@ twitter: @FlowquestR</bpmn:documentation>
       <bpmn:outgoing>Flow_05hp9u3</bpmn:outgoing>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_05hp9u3" sourceRef="Activity_0w0fi2i" targetRef="Activity_1sk9zqj" />
-    <bpmn:serviceTask id="Activity_1sk9zqj" name="This is a&#10;Service Task&#10;- Use me to&#10;send an email" apex:type="executePlsql">
+    <bpmn:serviceTask id="Activity_1sk9zqj" name="serviceTask&#10;- Use me to&#10;send an email" apex:type="executePlsql">
       <bpmn:extensionElements>
         <apex:executePlsql>
           <apex:plsqlCode>null;</apex:plsqlCode>
@@ -50,7 +50,7 @@ twitter: @FlowquestR</bpmn:documentation>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_07uwsw9" sourceRef="Activity_0t8licd" targetRef="Activity_1ysn2gx" />
     <bpmn:sequenceFlow id="Flow_0mxa79i" sourceRef="Activity_1ysn2gx" targetRef="Event_1da6vg3" />
-    <bpmn:businessRuleTask id="Activity_1ysn2gx" name="This is a BusinessRule Task - use me to run a ML model" apex:type="executePlsql">
+    <bpmn:businessRuleTask id="Activity_1ysn2gx" name="&#10;BusinessRule Task - use me to run a ML model" apex:type="executePlsql">
       <bpmn:incoming>Flow_07uwsw9</bpmn:incoming>
       <bpmn:outgoing>Flow_0mxa79i</bpmn:outgoing>
     </bpmn:businessRuleTask>
@@ -67,7 +67,9 @@ This tutorial is one to look at in Flow Management / Flow Modeler, but not run i
     <bpmn:textAnnotation id="TextAnnotation_1vygfet">
       <bpmn:text>A User Task can call an APEX page, pass variables into the page, etc -- just like an APEX menu does.
 
-Open the APEX tab in the Properties Panel (on the right) and you can see how you specify the application and page to call, provide instructions on what action to perform, what to do with the cache, and list items to set and values to use.</bpmn:text>
+Open the APEX tab in the Properties Panel (on the right) and you can see how you specify the application and page to call, provide instructions on what action to perform, what to do with the cache, and list items to set and values to use.
+
+A UserTask can also call an APEX Approval Task in APEX v22.1+.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1r0p5lj" sourceRef="Activity_0srf4in" targetRef="TextAnnotation_1vygfet" />
     <bpmn:textAnnotation id="TextAnnotation_1egb903">
@@ -104,15 +106,14 @@ Optionally you can bind your APEX page items into your scripts. Just be careful 
 These could be models stored in the database using the SQL Models feature or something else you can call via PL/SQL script.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_01wl35g" sourceRef="Activity_1ysn2gx" targetRef="TextAnnotation_1ipwm4g" />
+    <bpmn:association id="Association_1ity14p" sourceRef="TextAnnotation_02mhmae" targetRef="Activity_0w0fi2i" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Tutorial4">
-      <bpmndi:BPMNShape id="TextAnnotation_1rkmr7t_di" bpmnElement="TextAnnotation_1rkmr7t">
-        <dc:Bounds x="1020" y="190" width="200" height="95" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1ipwm4g_di" bpmnElement="TextAnnotation_1ipwm4g">
-        <dc:Bounds x="1270" y="172" width="220" height="127" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0mxa79i_di" bpmnElement="Flow_0mxa79i">
+        <di:waypoint x="1270" y="380" />
+        <di:waypoint x="1382" y="380" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07uwsw9_di" bpmnElement="Flow_07uwsw9">
         <di:waypoint x="1090" y="380" />
         <di:waypoint x="1170" y="380" />
@@ -137,10 +138,6 @@ These could be models stored in the database using the SQL Models feature or som
         <di:waypoint x="298" y="380" />
         <di:waypoint x="350" y="380" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mxa79i_di" bpmnElement="Flow_0mxa79i">
-        <di:waypoint x="1270" y="380" />
-        <di:waypoint x="1382" y="380" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0etkrt2_di" bpmnElement="Event_0etkrt2">
         <dc:Bounds x="262" y="362" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -159,23 +156,29 @@ These could be models stored in the database using the SQL Models feature or som
       <bpmndi:BPMNShape id="Activity_1apqobn_di" bpmnElement="Activity_0t8licd">
         <dc:Bounds x="990" y="340" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0xw8y26_di" bpmnElement="TextAnnotation_0xw8y26">
-        <dc:Bounds x="410" y="40" width="620" height="123.9930648803711" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1vygfet_di" bpmnElement="TextAnnotation_1vygfet">
-        <dc:Bounds x="560" y="178" width="370" height="120" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1egb903_di" bpmnElement="TextAnnotation_1egb903">
-        <dc:Bounds x="950" y="490" width="390" height="113" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_02mhmae_di" bpmnElement="TextAnnotation_02mhmae">
-        <dc:Bounds x="450" y="490" width="430.0000305175781" height="251.9965362548828" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1da6vg3_di" bpmnElement="Event_1da6vg3">
         <dc:Bounds x="1382" y="362" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0lrcet4_di" bpmnElement="Activity_1ysn2gx">
         <dc:Bounds x="1170" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0xw8y26_di" bpmnElement="TextAnnotation_0xw8y26">
+        <dc:Bounds x="410" y="40" width="620" height="123.9930648803711" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1vygfet_di" bpmnElement="TextAnnotation_1vygfet">
+        <dc:Bounds x="560" y="178" width="429.9999694824219" height="123.98896026611328" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1egb903_di" bpmnElement="TextAnnotation_1egb903">
+        <dc:Bounds x="950" y="490" width="390" height="113" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1rkmr7t_di" bpmnElement="TextAnnotation_1rkmr7t">
+        <dc:Bounds x="1020" y="190" width="200" height="95" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_02mhmae_di" bpmnElement="TextAnnotation_02mhmae">
+        <dc:Bounds x="450" y="490" width="430.0000305175781" height="251.9965362548828" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1ipwm4g_di" bpmnElement="TextAnnotation_1ipwm4g">
+        <dc:Bounds x="1270" y="172" width="220" height="127" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_00jab7b_di" bpmnElement="Association_00jab7b">
         <di:waypoint x="287" y="364" />
@@ -183,23 +186,27 @@ These could be models stored in the database using the SQL Models feature or som
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1r0p5lj_di" bpmnElement="Association_1r0p5lj">
         <di:waypoint x="573" y="340" />
-        <di:waypoint x="585" y="298" />
+        <di:waypoint x="584" y="302" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_061ntp9_di" bpmnElement="Association_061ntp9">
         <di:waypoint x="918" y="420" />
         <di:waypoint x="986" y="490" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1w56n8r_di" bpmnElement="Association_1w56n8r">
-        <di:waypoint x="670" y="405" />
-        <di:waypoint x="665" y="407" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1crb5iq_di" bpmnElement="Association_1crb5iq">
         <di:waypoint x="1044" y="340" />
         <di:waypoint x="1049" y="285" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1w56n8r_di" bpmnElement="Association_1w56n8r">
+        <di:waypoint x="670" y="405" />
+        <di:waypoint x="665" y="407" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_01wl35g_di" bpmnElement="Association_01wl35g">
         <di:waypoint x="1241" y="340" />
         <di:waypoint x="1270" y="284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ity14p_di" bpmnElement="Association_1ity14p">
+        <di:waypoint x="699" y="490" />
+        <di:waypoint x="717" y="420" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
