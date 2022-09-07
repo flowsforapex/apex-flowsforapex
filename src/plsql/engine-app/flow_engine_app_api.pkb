@@ -1305,6 +1305,63 @@ as
     return l_page_title;
   end get_page_title;
 
+  function get_current_diagram
+    ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
+    , pi_dgrm_calling_method    in flow_types_pkg.t_bpmn_attribute_vc2
+    , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+    )
+  return flow_diagrams.dgrm_id%type
+    -- gets the current dgrm_id to be used for a diagram name.
+    -- returns the current 'released' diagram or a 'draft' of version '0' 
+  is
+    l_dgrm_id     flow_diagrams.dgrm_id%type;
+  begin
+    case pi_dgrm_calling_method 
+    when flow_constants_pkg.gc_dgrm_version_latest_version then
+      begin 
+        -- look for the 'released' version of the diagram
+        select dgrm_id 
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
+        ;
+        return l_dgrm_id;
+      exception
+        when no_data_found then
+          -- look for the version 0 (default) of 'draft' of the diagram
+          begin
+            select dgrm_id
+              into l_dgrm_id
+              from flow_diagrams
+             where dgrm_name = pi_dgrm_name
+               and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
+               and dgrm_version = '0'
+            ;
+            return l_dgrm_id;
+          exception
+            when no_data_found then
+              null;
+          end;  
+      end;
+
+    when flow_constants_pkg.gc_dgrm_version_named_version then
+      -- dgrm_version was specified
+      begin
+        select dgrm_id
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_version = pi_dgrm_version
+        ;
+      exception
+        when no_data_found then
+          null;
+      end;
+    end case;
+    return l_dgrm_id;
+  end get_current_diagram;
+
 
   /* page 8 */
 

@@ -90,6 +90,8 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0007_instances_counter_vw.sql
 @views/engine-app/flow_p0007_diagrams_var_vw.sql
 @views/engine-app/flow_p0007_diagrams_attributes_vw.sql
+@views/engine-app/flow_p0007_called_diagrams_vw.sql
+@views/engine-app/flow_p0007_calling_diagrams_vw.sql
 @views/engine-app/flow_p0008_instance_details_vw.sql
 @views/engine-app/flow_p0008_instance_log_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql

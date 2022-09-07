@@ -171,6 +171,13 @@ as
   )
   return varchar2;
 
+  function get_current_diagram
+    ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
+    , pi_dgrm_calling_method    in flow_types_pkg.t_bpmn_attribute_vc2
+    , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+    )
+  return flow_diagrams.dgrm_id%type;
+
   /* page 8 */
 
   function check_is_date(
