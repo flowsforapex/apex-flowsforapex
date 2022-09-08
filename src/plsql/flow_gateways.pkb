@@ -684,7 +684,7 @@ as
         ( pi_objt_id     => p_step_info.target_objt_id
         , pi_set         => flow_constants_pkg.gc_expr_set_before_split
         , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id     => p_sbfl_info.sbfl_id
+        , pi_sbfl_id     => l_sbfl_id
         , pi_var_scope   => p_sbfl_info.sbfl_scope
         , pi_expr_scope  => p_sbfl_info.sbfl_scope
         );        
@@ -696,7 +696,7 @@ as
           when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
             l_forward_routes := get_gateway_route
             ( pi_prcs_id       => p_sbfl_info.sbfl_prcs_id
-            , pi_sbfl_id       => p_sbfl_info.sbfl_id --l_sbfl_id?
+            , pi_sbfl_id       => l_sbfl_id --l_sbfl_id?
             , pi_objt_bpmn_id   => p_step_info.target_objt_ref
             , pi_objt_tag       => p_step_info.target_objt_tag
             , pi_scope          => p_sbfl_info.sbfl_scope
@@ -729,14 +729,14 @@ as
             -- has step errors from evaluating route
             flow_errors.set_error_status
             ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-            , pi_sbfl_id => p_sbfl_info.sbfl_id
+            , pi_sbfl_id => l_sbfl_id
             );
           end if;
         else
           -- has step errors from expressions
           flow_errors.set_error_status
           ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-          , pi_sbfl_id => p_sbfl_info.sbfl_id
+          , pi_sbfl_id => l_sbfl_id
           );
         end if;
       elsif l_num_forward_connections = 1 then

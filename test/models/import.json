@@ -61,7 +61,27 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A02h - Event Based Gateway_0.bpmn"
-    },
+    },  {
+        "dgrm_name": "A02i - Inc GW Merge and Resplit",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02i - Inc GW Merge and Resplit_0.bpmn"
+      },
+      {
+        "dgrm_name": "A02j - Par GW Merge and Resplit",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02j - Par GW Merge and Resplit_0.bpmn"
+      },
+      {
+        "dgrm_name": "A02k - Inc GW Merge and Resplit - GRExps",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02k - Inc GW Merge and Resplit - GRExps_0.bpmn"
+      }
     {
         "dgrm_name": "A03a - Model with No Start Event",
         "dgrm_version": "0",
