@@ -61,11 +61,12 @@ as
 
       if l_bad_routes.count > 0 then
         -- we have some invalid routes in the routing variable
-        for l_row in 1 .. l_bad_routes.count
-        loop
-          l_bad_route_string := l_bad_route_string || l_bad_routes(l_row) ||',';
-        end loop;
-        l_bad_route_string := rtrim (l_bad_route_string, ',');
+        l_bad_route_string := apex_string.join(l_bad_routes,',');
+        apex_debug.message ( 
+          p_message => 'Invalid routes found - count %0, bad routes: %1)'
+        , p0 => l_bad_routes.count
+        , p1 => l_bad_route_string 
+        );
         raise flow_errors.e_gateway_invalid_route;
       end if;
     exception
@@ -695,7 +696,7 @@ as
           when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
             l_forward_routes := get_gateway_route
             ( pi_prcs_id       => p_sbfl_info.sbfl_prcs_id
-            , pi_sbfl_id       => p_sbfl_info.sbfl_id
+            , pi_sbfl_id       => p_sbfl_info.sbfl_id --l_sbfl_id?
             , pi_objt_bpmn_id   => p_step_info.target_objt_ref
             , pi_objt_tag       => p_step_info.target_objt_tag
             , pi_scope          => p_sbfl_info.sbfl_scope
