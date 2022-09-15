@@ -260,10 +260,18 @@ ALTER TABLE flow_subflows
         REFERENCES flow_processes ( prcs_id )
             ON DELETE CASCADE;
 
--- instance_diagrams - to add??
--- fk to flow_processes delete cascade
--- fk to diagram delete restrict
--- fk to calling dgrm delete restrict
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_prcs_fk FOREIGN KEY ( prdg_prcs_id )
+        REFERENCES flow_processes ( prcs_id )
+            ON DELETE CASCADE;
+
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_dgrm_fk FOREIGN KEY ( prdg_dgrm_id )
+        REFERENCES flow_diagrams ( dgrm_id );
+
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_calling_dgrm_fk FOREIGN KEY ( prdg_calling_dgrm )
+        REFERENCES flow_diagrams ( dgrm_id );
 
 ALTER TABLE flow_timers
     ADD CONSTRAINT timr_prcs_fk FOREIGN KEY ( timr_prcs_id )
