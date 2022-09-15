@@ -84,6 +84,18 @@ I haven’t written the migration script but wanted to record what is required s
 COMMENT ON COLUMN flow_instance_diagrams.prdg_prdg_id is
     'Parent prdg_id (prdg_id of Calling Diagram)';
 
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_prcs_fk FOREIGN KEY ( prdg_prcs_id )
+        REFERENCES flow_processes ( prcs_id )
+            ON DELETE CASCADE;
+
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_dgrm_fk FOREIGN KEY ( prdg_dgrm_id )
+        REFERENCES flow_diagrams ( dgrm_id );
+
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_calling_dgrm_fk FOREIGN KEY ( prdg_calling_dgrm )
+        REFERENCES flow_diagrams ( dgrm_id );
 
 -- add a row into here for each existing instance (all of which don't have callactivities)
 
