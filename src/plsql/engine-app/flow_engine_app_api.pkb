@@ -278,24 +278,24 @@ as
     p_prcs_id in flow_processes.prcs_id%type
   ) return varchar2
   as
-    l_objt_list varchar2(32767);
+    l_objt_list apex_t_varchar2;
   begin    
-    select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
-      into l_objt_list
-      from ( select objt_bpmn_id
+    select bpmn_id
+      bulk collect into l_objt_list
+      from ( select objt_bpmn_id as bpmn_id
                from flow_objects
               where objt_dgrm_id = ( select prcs_dgrm_id 
                                        from flow_processes
                                       where prcs_id = p_prcs_id)
                 and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
-              union
-             select conn_bpmn_id
+              union all
+             select conn_bpmn_id as bpmn_id
                from flow_connections
               where conn_dgrm_id = ( select prcs_dgrm_id 
                                        from flow_processes
                                       where prcs_id = p_prcs_id)
            );
-    return l_objt_list;
+    return apex_string.join( p_table => l_objt_list, p_sep => ':' );
   end get_objt_list;
 
 
@@ -303,20 +303,20 @@ as
     p_dgrm_id in flow_diagrams.dgrm_id%type
   ) return varchar2
   as
-    l_objt_list varchar2(32767);
+    l_objt_list apex_t_varchar2;
   begin    
-    select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
-      into l_objt_list
-      from ( select objt_bpmn_id
+    select bpmn_id
+      bulk collect into l_objt_list
+      from ( select objt_bpmn_id as bpmn_id
                from flow_objects
               where objt_dgrm_id = p_dgrm_id
                 and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
-              union
-             select conn_bpmn_id
+              union all
+             select conn_bpmn_id as bpmn_id
                from flow_connections
               where conn_dgrm_id = p_dgrm_id
            );
-    return l_objt_list;
+    return apex_string.join( p_table => l_objt_list, p_sep => ':' );
   end get_objt_list;
 
 
@@ -324,24 +324,24 @@ as
     p_prdg_id in flow_instance_diagrams.prdg_id%type
   ) return varchar2
   as
-    l_objt_list varchar2(32767);
+    l_objt_list apex_t_varchar2;
   begin    
-    select distinct listagg(objt_bpmn_id, ':') within group (order by objt_bpmn_id)
-      into l_objt_list
-      from ( select objt_bpmn_id
+    select bpmn_id
+      bulk collect into l_objt_list
+      from ( select objt_bpmn_id as bpmn_id
                from flow_objects
               where objt_dgrm_id = ( select prdg_dgrm_id 
                                        from flow_instance_diagrams
                                       where prdg_id = p_prdg_id)
                 and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
-              union
-             select conn_bpmn_id
+              union all
+             select conn_bpmn_id as bpmn_id
                from flow_connections
               where conn_dgrm_id = ( select prdg_dgrm_id 
                                        from flow_instance_diagrams
                                       where prdg_id = p_prdg_id)
            );
-    return l_objt_list;
+    return apex_string.join( p_table => l_objt_list, p_sep => ':' );
   end get_objt_list;
   
   
