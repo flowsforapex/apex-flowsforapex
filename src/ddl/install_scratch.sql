@@ -401,6 +401,7 @@ create table flow_instance_event_log
 , lgpr_error_info           VARCHAR2(2000 CHAR)
 );
 
+create index flow_lgpr_ix on flow_instance_event_log (lgpr_prcs_id, lgpr_objt_id );
 
 create table flow_step_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL
@@ -418,6 +419,8 @@ create table flow_step_event_log
 , lgsf_comment         	    VARCHAR2(2000 CHAR)
 );
 
+create index flow_lgsf_ix on flow_step_event_log (lgsf_prcs_id, lgsf_objt_id );
+
 create table flow_variable_event_log
 ( lgvr_prcs_id			    number not null
 , lgvr_scope                number not null
@@ -432,6 +435,8 @@ create table flow_variable_event_log
 , lgvr_var_date 			date
 , lgvr_var_clob 			clob
 );
+
+create index flow_lgvr_ix on flow_variable_event_log (lgvr_prcs_id, lgvr_scope, lgvr_var_name);
 
 create table flow_configuration
 ( cfig_key                  varchar2(50 char) NOT NULL
