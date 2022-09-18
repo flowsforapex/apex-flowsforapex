@@ -1,0 +1,1 @@
+drop view flow_p0007_instances_counter_vw;

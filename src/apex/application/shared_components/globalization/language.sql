@@ -35,6 +35,12 @@ wwv_flow_api.create_language_map(
 ,p_translation_flow_language_cd=>'de'
 ,p_direction_right_to_left=>'N'
 );
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(65314222214861109)
+,p_translation_flow_id=>100005
+,p_translation_flow_language_cd=>'es'
+,p_direction_right_to_left=>'N'
+);
 wwv_flow_api.component_end;
 end;
 /

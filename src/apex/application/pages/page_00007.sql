@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220907233600'
+,p_last_upd_yyyymmddhh24miss=>'20220918215150'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -134,6 +134,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(63514135027355406)
 ,p_max_row_count=>'1000000'
+,p_no_data_found_message=>'No Called Diagrams found.'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
 ,p_report_list_mode=>'TABS'
@@ -263,6 +264,7 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(63514930517355414)
 ,p_max_row_count=>'1000000'
+,p_no_data_found_message=>'No Calling Diagrams found.'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
 ,p_report_list_mode=>'TABS'
@@ -367,6 +369,7 @@ wwv_flow_api.create_report_region(
 ,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
 ,p_query_num_rows=>15
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_query_no_data_found=>'No In/Out variables found.'
 ,p_query_num_rows_type=>'NEXT_PREVIOUS_LINKS'
 ,p_pagination_display_position=>'BOTTOM_RIGHT'
 ,p_csv_output=>'N'
@@ -447,6 +450,7 @@ wwv_flow_api.create_report_region(
 ,p_query_row_template=>wwv_flow_api.id(12495548550946880181)
 ,p_query_num_rows=>15
 ,p_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_query_no_data_found=>'No attributes found.'
 ,p_csv_output=>'N'
 ,p_prn_output=>'N'
 ,p_sort_null=>'L'
@@ -552,10 +556,23 @@ wwv_flow_api.create_report_region(
 ,p_new_grid_row=>false
 ,p_display_point=>'BODY'
 ,p_source_type=>'NATIVE_SQL_REPORT'
-,p_query_type=>'TABLE'
-,p_query_table=>'FLOW_P0007_INSTANCES_COUNTER_VW'
-,p_query_where=>'dgrm_id = :P7_DGRM_ID'
-,p_include_rowid_column=>false
+,p_query_type=>'SQL'
+,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+' select distinct ',
+'    sum(case when i.prcs_status = ''created'' then 1 else 0 end)  as created_instances,',
+'    sum(case when i.prcs_status = ''running'' then 1 else 0 end)  as running_instances,',
+'    sum(case when i.prcs_status = ''completed'' then 1 else 0 end)  as completed_instances,',
+'    sum(case when i.prcs_status = ''terminated'' then 1 else 0 end)  as terminated_instances,',
+'    sum(case when i.prcs_status = ''error'' then 1 else 0 end)  as error_instances',
+'from flow_instances_vw i',
+'where i.prcs_id in (',
+'   select prdg.prdg_prcs_id',
+'   from flow_diagrams_vw d',
+'   left join flow_instance_diagrams prdg ',
+'   on (prdg.prdg_dgrm_id = d.dgrm_id or prdg.prdg_calling_dgrm = d.dgrm_id)',
+'   where d.dgrm_id = :P7_DGRM_ID',
+');',
+''))
 ,p_display_when_condition=>'P7_DGRM_ID'
 ,p_display_condition_type=>'ITEM_IS_NOT_NULL'
 ,p_ajax_enabled=>'Y'
@@ -569,16 +586,8 @@ wwv_flow_api.create_report_region(
 ,p_plug_query_strip_html=>'N'
 );
 wwv_flow_api.create_report_columns(
- p_id=>wwv_flow_api.id(26021369466277917)
-,p_query_column_id=>1
-,p_column_alias=>'DGRM_ID'
-,p_column_display_sequence=>4
-,p_hidden_column=>'Y'
-,p_derived_column=>'N'
-);
-wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(26021760516277918)
-,p_query_column_id=>2
+,p_query_column_id=>1
 ,p_column_alias=>'CREATED_INSTANCES'
 ,p_column_display_sequence=>1
 ,p_column_heading=>'Created'
@@ -592,7 +601,7 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(26022166035277918)
-,p_query_column_id=>3
+,p_query_column_id=>2
 ,p_column_alias=>'RUNNING_INSTANCES'
 ,p_column_display_sequence=>2
 ,p_column_heading=>'Running'
@@ -604,7 +613,7 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(26022532889277920)
-,p_query_column_id=>4
+,p_query_column_id=>3
 ,p_column_alias=>'COMPLETED_INSTANCES'
 ,p_column_display_sequence=>3
 ,p_column_heading=>'Completed'
@@ -616,9 +625,9 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(34402829743171414)
-,p_query_column_id=>5
+,p_query_column_id=>4
 ,p_column_alias=>'TERMINATED_INSTANCES'
-,p_column_display_sequence=>5
+,p_column_display_sequence=>4
 ,p_column_heading=>'Terminated'
 ,p_use_as_row_header=>'N'
 ,p_column_html_expression=>'<span data-status="terminated">#TERMINATED_INSTANCES#</a>'
@@ -628,9 +637,9 @@ wwv_flow_api.create_report_columns(
 );
 wwv_flow_api.create_report_columns(
  p_id=>wwv_flow_api.id(34402963356171415)
-,p_query_column_id=>6
+,p_query_column_id=>5
 ,p_column_alias=>'ERROR_INSTANCES'
-,p_column_display_sequence=>6
+,p_column_display_sequence=>5
 ,p_column_heading=>'Error'
 ,p_use_as_row_header=>'N'
 ,p_column_html_expression=>'<span data-status="error">#ERROR_INSTANCES#</a>'
@@ -679,9 +688,13 @@ wwv_flow_api.create_report_region(
 'select apex_lang.message(p_name => ''APP_DIAGRAM_INSTANCES_NB'', p0 => nb_instances) as nb_instances',
 'from (',
 '    select count(*) as nb_instances',
-'    from flow_instance_diagrams prdg',
-'    where prdg.prdg_dgrm_id = :P7_DGRM_ID',
-')'))
+'    from flow_instances_vw ins',
+'    where ins.prcs_id in (',
+'        select prdg.prdg_prcs_id',
+'        from flow_instance_diagrams prdg',
+'        where prdg.prdg_dgrm_id = :P7_DGRM_ID',
+'    )',
+')   '))
 ,p_ajax_enabled=>'Y'
 ,p_ajax_items_to_submit=>'P7_DGRM_ID'
 ,p_query_row_template=>wwv_flow_api.id(12495559701953880190)
@@ -927,6 +940,18 @@ wwv_flow_api.create_page_item(
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(7336335344307045)
 ,p_name=>'P7_OBJT_BPMN_ID'
@@ -954,18 +979,6 @@ wwv_flow_api.create_page_item(
 ,p_item_plug_id=>wwv_flow_api.id(7937843762499701)
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(24212748636956111)
@@ -1171,6 +1184,25 @@ wwv_flow_api.create_page_validation(
 ,p_associated_item=>wwv_flow_api.id(26068279548227242)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
+wwv_flow_api.create_page_validation(
+ p_id=>wwv_flow_api.id(63516446869355429)
+,p_validation_name=>'Archive Model Validation'
+,p_validation_sequence=>40
+,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select 1 ',
+'from flow_instances_vw ins',
+'where ins.prcs_id in (',
+'    select prdg.prdg_prcs_id',
+'    from flow_instance_diagrams prdg',
+'    where prdg.prdg_dgrm_id = :P7_DGRM_ID',
+')',
+'and ins.prcs_status not in (''completed'', ''terminated'')'))
+,p_validation_type=>'NOT_EXISTS'
+,p_error_message=>'You cannot archived a model which is associated with running instances.'
+,p_validation_condition=>'ARCHIVE'
+,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(24216185870956145)
 ,p_name=>'Open new version'
@@ -1217,13 +1249,10 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var myElement = $( this.triggeringElement ).children().first();',
-'var prcsStatus  = myElement.data( "status" );',
-'var dgrmName = apex.item("P7_DGRM_NAME").getValue();',
-'var dgrmVersion = apex.item("P7_DGRM_VERSION").getValue();',
-'',
-'apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + "::" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:IR_PRCS_DGRM_NAME,IR_PRCS_DGRM_VERSION,IR_PRCS_STATUS:" + dgrmName + "," + dgrmVer'
-||'sion + "," + prcsStatus);'))
+'let myElement = $( this.triggeringElement ).children().first();',
+'let prcsStatus  = myElement.data( "status" );',
+'let dgrmId = apex.item("P7_DGRM_ID").getValue();',
+'apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + "::" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:P10_FILTER_DGRM_ID,IR_PRCS_STATUS:" + dgrmId + "," + prcsStatus);'))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(34402165369171407)

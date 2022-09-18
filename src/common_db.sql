@@ -87,7 +87,6 @@ PROMPT >> Global Error Function
 PROMPT >> Page Views
 @views/engine-app/flow_p0002_diagrams_vw.sql
 @views/engine-app/flow_p0007_vw.sql
-@views/engine-app/flow_p0007_instances_counter_vw.sql
 @views/engine-app/flow_p0007_diagrams_var_vw.sql
 @views/engine-app/flow_p0007_diagrams_attributes_vw.sql
 @views/engine-app/flow_p0007_called_diagrams_vw.sql
