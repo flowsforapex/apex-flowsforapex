@@ -156,6 +156,7 @@
             $('#breadcrumb').hide();
             // get first (only) entry
             diagram = pData.data[0];
+            this.diagramIdentifier = diagram.diagramIdentifier;
           }
 
           // add highlighting
