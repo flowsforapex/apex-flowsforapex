@@ -46,8 +46,30 @@ create or replace package test_002_gateway is
    --%test(f4. inclusive gateway - GR var provided - jumbled CASE)
    procedure inclusive_route_provided_jumbled_case;
 
-   --%test(g. parallel gateway)
+   --%test(f5. inclusive gateway - merge and resplit - all paths)
+   procedure inclusive_merge_resplit_f5;
+
+   --%test(f6. inclusive gateway - merge and resplit - some paths a)
+   procedure inclusive_merge_resplit_f6;
+
+   --%test(f7. inclusive gateway - merge and resplit - some paths b)
+   procedure inclusive_merge_resplit_f7;
+
+   --%test(f8. inclusive gateway - merge and resplit - exprs - all paths)
+   procedure inclusive_merge_resplit_f8;
+
+   --%test(f9. inclusive gateway - merge and resplit - exprs - some paths a)
+   procedure inclusive_merge_resplit_f9;
+
+   --%test(f10. inclusive gateway - merge and resplit - exprs - some paths b)
+   procedure inclusive_merge_resplit_f10;
+
+
+   --%test(g1. parallel gateway)
    procedure parallel;
+
+  --%test(g2. parallel gateway - merge and resplit)
+   procedure parallel_merge_resplit;
 
    --%test (h. event based gateway - uses timer)
    procedure event_based;

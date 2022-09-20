@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:process id="Process_Tutorial5d" name="Tutorial5d" isExecutable="false" apex:isCallable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_09z8ee7" name="Customer on promotion target list">
+      <bpmn:outgoing>Flow_0c50l8q</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_0fpcard" name="make customer call for sales promotion">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Action</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>ORDER:FOLLOWUP</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0c50l8q</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dvvgox</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0c50l8q" sourceRef="Event_09z8ee7" targetRef="Activity_0fpcard" />
+    <bpmn:sequenceFlow id="Flow_0dvvgox" sourceRef="Activity_0fpcard" targetRef="Gateway_0t8ybcj" />
+    <bpmn:sequenceFlow id="Flow_Info" name=":F4A$Action like &#39;%INFO%&#39;" sourceRef="Gateway_0t8ybcj" targetRef="Activity_1wezuvx" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$Action like '%INFO%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:inclusiveGateway id="Gateway_0t8ybcj" name="customer needs follow up" default="Flow_Followup">
+      <bpmn:incoming>Flow_0dvvgox</bpmn:incoming>
+      <bpmn:outgoing>Flow_Info</bpmn:outgoing>
+      <bpmn:outgoing>Flow_15a033v</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Followup</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0jgqhp9</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_15a033v" name=":F4A$Action like &#39;%ORDER%&#39;" sourceRef="Gateway_0t8ybcj" targetRef="Activity_0gyfptj" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$Action like '%ORDER%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Followup" name=":F4A$Action like &#39;%FOLLOWUP%&#39;" sourceRef="Gateway_0t8ybcj" targetRef="Activity_1h6w1sp" apex:sequence="40">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression" sequence="">:F4A$Action like '%FOLLOWUP%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0jgqhp9" name=":F4A$Action like &#39;%REMOVE%&#39;" sourceRef="Gateway_0t8ybcj" targetRef="Activity_021su62" apex:sequence="30">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression" sequence="">:F4A$Action like '%REMOVE%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0or0rxi" sourceRef="Activity_0gyfptj" targetRef="Activity_0jcpdul" />
+    <bpmn:callActivity id="Activity_0jcpdul" name="Process order" apex:manualInput="false" apex:calledDiagram="Tutorial 5e - ship Goods (Called by Tutorial 5d)" apex:calledDiagramVersionSelection="namedVersion" apex:calledDiagramVersion="22.2">
+      <bpmn:extensionElements>
+        <apex:inVariables>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>OrderRef</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>OrderRef</apex:varExpression>
+            <apex:varDescription>Order requiring Shipping</apex:varDescription>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>ShippingPriority</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>URGENT</apex:varExpression>
+            <apex:varDescription>URGENT or ROUTINE</apex:varDescription>
+          </apex:processVariable>
+        </apex:inVariables>
+        <apex:outVariables>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>ShipperName</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>ShipperName</apex:varExpression>
+            <apex:varDescription>Shipper Used</apex:varDescription>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>ShippedDate</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>ShippedDate</apex:varExpression>
+            <apex:varDescription>Date Order Shipped</apex:varDescription>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>TrackingID:</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>TrackingID</apex:varExpression>
+            <apex:varDescription>Tracking Reference for Shipment</apex:varDescription>
+          </apex:processVariable>
+        </apex:outVariables>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0or0rxi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fl4rrv</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:userTask id="Activity_1wezuvx" name="select info to send customer" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:incoming>Flow_Info</bpmn:incoming>
+      <bpmn:outgoing>Flow_0491f8g</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0gyfptj" name="take order" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>OrderRef</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>dbms_random.string ('A',8);</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15a033v</bpmn:incoming>
+      <bpmn:outgoing>Flow_0or0rxi</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1484c4f" name="followup scheduled">
+      <bpmn:incoming>Flow_0ihtyj4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ihtyj4" sourceRef="Activity_1h6w1sp" targetRef="Event_1484c4f" />
+    <bpmn:endEvent id="Event_0x68t1e" name="removed from promotion">
+      <bpmn:incoming>Flow_09tth3s</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_09tth3s" sourceRef="Activity_021su62" targetRef="Event_0x68t1e" />
+    <bpmn:sequenceFlow id="Flow_0491f8g" sourceRef="Activity_1wezuvx" targetRef="Activity_1ejij76" />
+    <bpmn:serviceTask id="Activity_1ejij76" name="send info to customer" apex:type="executePlsql">
+      <bpmn:incoming>Flow_0491f8g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1t15ahv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1t15ahv" sourceRef="Activity_1ejij76" targetRef="Event_0vziymp" />
+    <bpmn:intermediateCatchEvent id="Event_0vziymp" name="7 days (demo 20 sec)">
+      <bpmn:incoming>Flow_1t15ahv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fy1x5x</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1mat8jk">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0fy1x5x" sourceRef="Event_0vziymp" targetRef="Activity_1kwqlbl" />
+    <bpmn:serviceTask id="Activity_1kwqlbl" name="send tickler email" apex:type="executePlsql">
+      <bpmn:incoming>Flow_0fy1x5x</bpmn:incoming>
+      <bpmn:outgoing>Flow_12r2bp8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0fl4rrv" sourceRef="Activity_0jcpdul" targetRef="Event_0trjr0k" />
+    <bpmn:sequenceFlow id="Flow_1hwxs6h" sourceRef="Event_0trjr0k" targetRef="Activity_00iss9v" />
+    <bpmn:endEvent id="Event_0sqk7g5" name="info sent">
+      <bpmn:incoming>Flow_12r2bp8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_12r2bp8" sourceRef="Activity_1kwqlbl" targetRef="Event_0sqk7g5" />
+    <bpmn:scriptTask id="Activity_1h6w1sp" name="mark for follow up call" apex:type="executePlsql" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>null;</apex:plsqlCode>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Followup</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ihtyj4</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_021su62" name="remove from promotion" apex:type="executePlsql" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>null;</apex:plsqlCode>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0jgqhp9</bpmn:incoming>
+      <bpmn:outgoing>Flow_09tth3s</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_00iss9v" name="send welcome email" apex:type="executePlsql">
+      <bpmn:incoming>Flow_1hwxs6h</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qrm13o</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1cfcjsk" name="item sold and delivered">
+      <bpmn:incoming>Flow_1qrm13o</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1qrm13o" sourceRef="Activity_00iss9v" targetRef="Event_1cfcjsk" />
+    <bpmn:intermediateCatchEvent id="Event_0trjr0k" name="2 Days after Delivery&#10;(demo 20 sec)">
+      <bpmn:incoming>Flow_0fl4rrv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hwxs6h</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0z1rkyf">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:textAnnotation id="TextAnnotation_0h4j8v0">
+      <bpmn:text>Tutorial 5d: Using Call Activities to 'Reuse Processes'
+
+In this diagram, the Sales &amp; Marketing Group have just created a sales promotion process to call targeted customers, and try to sell them a product.
+If the sales call is successful, they will take an order - and ship the product to the customer.
+
+The Sales and Marketing Group don't want to define all of the order processing process steps in their promotion.   But the Supply Chain IT developers have already created a process for booking an order, picking, packing, and shipping it.  This Shipping process is contained in the model 'Tutorial 5e'.   So our Sales and Marketing process developer can just 'call' this model using a Call Activity (Task 'Process Order')</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0wo3s14" sourceRef="Event_09z8ee7" targetRef="TextAnnotation_0h4j8v0" />
+    <bpmn:textAnnotation id="TextAnnotation_1aazt0j">
+      <bpmn:text>The Call Activity calls another diagram. (Tutorial 5e).  Look at theProperties Panel to see how this is configured.
+
+When configuring a Call Activity call, first find the model you want to call.  Select a specific version, or the latest version.
+
+Use the In/Out Variables tab to configure how process variables in the Calling diagram get copied into the Called Diagram.  Click on the green 'Load Defined Variables' button to get all of the required Input and Output Variables loaded into the properties panel....
+
+Process Variables are scoped to a single diagram -- so any variables in the calling diagram only exist in the called diagram if you copy them into the called diagram when the diagram starts running.
+
+Similarly, any variables or results that you create in the called diagram need be explicitly returned to the calling diagram when election of the called diagram completes.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_13ugv4j" sourceRef="Activity_0jcpdul" targetRef="TextAnnotation_1aazt0j" />
+    <bpmn:textAnnotation id="TextAnnotation_0p6eegv">
+      <bpmn:text>Tutorial Tasks:
+
+1.  Look at the Definition of the two models Tutorial 5d (this one) and Tutorial 5e (the called diagram).  
+- in this diagram, see how the Call Activity is configured to select the diagram, and then look at the In/Out tab to see how process variables can be passed into and returned from the Called Diagram.
+- in Tutorial 5e diagram, see how the parameters were defined in the Process-level In/Out Parameters tab.  Also note that the Process object has an attribute Is Callable, which must be set for a diagram to be called.
+
+2.  Run Model 5d.   By default, 'ACTIONS' is set to 'ORDER:FOLLOWUP' so those paths are taken.
+- step the 'Take Order' path forward into the 'Process Order' Call Activity task.  On the Flow Diagram, click the '+' box to show progress inside the Called Diagram.
+- use the breadcrumb at the top of the diagram to move between models.
+- Look at the process variables as you step through the model - notice the original diagram variables (shown in scope 0) and then new variables in the scope of the called diagram once you step into the called diagram.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0re9avf" sourceRef="Event_1cfcjsk" targetRef="TextAnnotation_0p6eegv" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Tutorial5d">
+      <bpmndi:BPMNShape id="TextAnnotation_0h4j8v0_di" bpmnElement="TextAnnotation_0h4j8v0">
+        <dc:Bounds x="330" y="-100" width="429.9999694824219" height="194.99998474121094" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1aazt0j_di" bpmnElement="TextAnnotation_1aazt0j">
+        <dc:Bounds x="1050" y="440" width="489.9999694824219" height="236.9852752685547" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0p6eegv_di" bpmnElement="TextAnnotation_0p6eegv">
+        <dc:Bounds x="1420" y="110" width="540" height="280" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1qrm13o_di" bpmnElement="Flow_1qrm13o">
+        <di:waypoint x="1160" y="310" />
+        <di:waypoint x="1222" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12r2bp8_di" bpmnElement="Flow_12r2bp8">
+        <di:waypoint x="1160" y="180" />
+        <di:waypoint x="1222" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hwxs6h_di" bpmnElement="Flow_1hwxs6h">
+        <di:waypoint x="998" y="310" />
+        <di:waypoint x="1060" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fl4rrv_di" bpmnElement="Flow_0fl4rrv">
+        <di:waypoint x="900" y="310" />
+        <di:waypoint x="962" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fy1x5x_di" bpmnElement="Flow_0fy1x5x">
+        <di:waypoint x="998" y="180" />
+        <di:waypoint x="1060" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1t15ahv_di" bpmnElement="Flow_1t15ahv">
+        <di:waypoint x="900" y="180" />
+        <di:waypoint x="962" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0491f8g_di" bpmnElement="Flow_0491f8g">
+        <di:waypoint x="740" y="180" />
+        <di:waypoint x="800" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09tth3s_di" bpmnElement="Flow_09tth3s">
+        <di:waypoint x="740" y="440" />
+        <di:waypoint x="802" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ihtyj4_di" bpmnElement="Flow_0ihtyj4">
+        <di:waypoint x="740" y="570" />
+        <di:waypoint x="802" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0or0rxi_di" bpmnElement="Flow_0or0rxi">
+        <di:waypoint x="740" y="310" />
+        <di:waypoint x="800" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jgqhp9_di" bpmnElement="Flow_0jgqhp9">
+        <di:waypoint x="535" y="440" />
+        <di:waypoint x="640" y="440" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="541" y="406" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bf6itn_di" bpmnElement="Flow_Followup">
+        <di:waypoint x="510" y="465" />
+        <di:waypoint x="510" y="570" />
+        <di:waypoint x="640" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="538" y="526" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15a033v_di" bpmnElement="Flow_15a033v">
+        <di:waypoint x="510" y="415" />
+        <di:waypoint x="510" y="310" />
+        <di:waypoint x="640" y="310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="541" y="276" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u4qa74_di" bpmnElement="Flow_Info">
+        <di:waypoint x="510" y="415" />
+        <di:waypoint x="510" y="180" />
+        <di:waypoint x="640" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="531" y="146" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dvvgox_di" bpmnElement="Flow_0dvvgox">
+        <di:waypoint x="430" y="440" />
+        <di:waypoint x="485" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c50l8q_di" bpmnElement="Flow_0c50l8q">
+        <di:waypoint x="278" y="440" />
+        <di:waypoint x="330" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_09z8ee7_di" bpmnElement="Event_09z8ee7">
+        <dc:Bounds x="242" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="221" y="465" width="78" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fpcard_di" bpmnElement="Activity_0fpcard">
+        <dc:Bounds x="330" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_09inf4z_di" bpmnElement="Gateway_0t8ybcj">
+        <dc:Bounds x="485" y="415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="432" y="356" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0glnydz_di" bpmnElement="Activity_0jcpdul">
+        <dc:Bounds x="800" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s3xnap_di" bpmnElement="Activity_1wezuvx">
+        <dc:Bounds x="640" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kivh8b_di" bpmnElement="Activity_0gyfptj">
+        <dc:Bounds x="640" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1484c4f_di" bpmnElement="Event_1484c4f">
+        <dc:Bounds x="802" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="796" y="595" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0x68t1e_di" bpmnElement="Event_0x68t1e">
+        <dc:Bounds x="802" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="787" y="465" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1b5gwt7_di" bpmnElement="Activity_1ejij76">
+        <dc:Bounds x="800" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0svbp8u_di" bpmnElement="Event_0vziymp">
+        <dc:Bounds x="962" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="941" y="205" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jtbimi_di" bpmnElement="Activity_1kwqlbl">
+        <dc:Bounds x="1060" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0sqk7g5_di" bpmnElement="Event_0sqk7g5">
+        <dc:Bounds x="1222" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1220" y="205" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m7jjp4_di" bpmnElement="Activity_1h6w1sp">
+        <dc:Bounds x="640" y="530" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0iiov2q_di" bpmnElement="Activity_021su62">
+        <dc:Bounds x="640" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yp9y86_di" bpmnElement="Activity_00iss9v">
+        <dc:Bounds x="1060" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cfcjsk_di" bpmnElement="Event_1cfcjsk">
+        <dc:Bounds x="1222" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1209" y="335" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0huehfr_di" bpmnElement="Event_0trjr0k">
+        <dc:Bounds x="962" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="946" y="335" width="68" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0wo3s14_di" bpmnElement="Association_0wo3s14">
+        <di:waypoint x="264" y="423" />
+        <di:waypoint x="339" y="95" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_13ugv4j_di" bpmnElement="Association_13ugv4j">
+        <di:waypoint x="900" y="339" />
+        <di:waypoint x="1074" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0re9avf_di" bpmnElement="Association_0re9avf">
+        <di:waypoint x="1254" y="299" />
+        <di:waypoint x="1420" y="165" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

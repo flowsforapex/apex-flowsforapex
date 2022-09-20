@@ -9,14 +9,18 @@ create or replace package body test_002_gateway is
 -- 
 */
 
-   model_a2 constant varchar2(100) := 'A02a - Exclusive Gateway No Route';
-   model_a3 constant varchar2(100) := 'A02b - Exclusive Gateway Default Route';
-   model_a4 constant varchar2(100) := 'A02c - Exclusive Gateway Routing';
-   model_a5 constant varchar2(100) := 'A02d - Inclusive Gateway No Route';
-   model_a6 constant varchar2(100) := 'A02e - Inclusive Gateway Default Route';
-   model_a7 constant varchar2(100) := 'A02f - Inclusive Gateway Routing';
-   model_a8 constant varchar2(100) := 'A02g - Parallel Gateway';
-   model_a9 constant varchar2(100) := 'A02h - Event Based Gateway';
+   model_a2  constant varchar2(100) := 'A02a - Exclusive Gateway No Route';
+   model_a3  constant varchar2(100) := 'A02b - Exclusive Gateway Default Route';
+   model_a4  constant varchar2(100) := 'A02c - Exclusive Gateway Routing';
+   model_a5  constant varchar2(100) := 'A02d - Inclusive Gateway No Route';
+   model_a6  constant varchar2(100) := 'A02e - Inclusive Gateway Default Route';
+   model_a7  constant varchar2(100) := 'A02f - Inclusive Gateway Routing';
+   model_a8  constant varchar2(100) := 'A02g - Parallel Gateway';
+   model_a9  constant varchar2(100) := 'A02h - Event Based Gateway';
+   model_a10 constant varchar2(100) := 'A02i - Inc GW Merge and Resplit';
+   model_a11 constant varchar2(100) := 'A02j - Par GW Merge and Resplit';
+   model_a12 constant varchar2(100) := 'A02k - Inc GW Merge and Resplit - GRExps';
+
 
    g_prcs_id_1    number;
    g_prcs_id_2    number;
@@ -1444,6 +1448,263 @@ create or replace package body test_002_gateway is
       );
    end inclusive_route_provided_jumbled_case;
 
+   -- test f5 - inclusve gateway - merge and resplit
+
+
+
+   procedure IncGWResplitTestRunner
+   ( p_prcs_name           in flow_processes.prcs_name%type
+   , p_dgrm_name           in flow_diagrams.dgrm_name%type
+   , p_gw_split_GRV        in varchar2 default null
+   , p_gw_mergeSplit_GRV   in varchar2 default null
+   , p_gw_split_GRE        in varchar2 default null
+   , p_gw_mergeSplit_GRE   in varchar2 default null
+   , p_expected_paths_XY   in varchar2
+   , p_expected_paths_ABC  in varchar2
+   )
+   is
+      l_actual            sys_refcursor;
+      l_expected          sys_refcursor;
+      l_actual_vc2        varchar2(200);
+      l_actual_number     number;
+      l_result_set_xy    apex_t_varchar2;
+      l_result_set_abc   apex_t_varchar2;
+      l_result            flow_process_variables.prov_var_vc2%type;
+      test_dgrm_id        flow_diagrams.dgrm_id%type;
+      test_prcs_id        flow_processes.prcs_id%type;
+      test_sbfl_id_main   flow_subflows.sbfl_id%type;
+      test_prcs_name      flow_processes.prcs_name%type := p_prcs_name;  
+   begin
+      test_dgrm_id := test_helper.set_dgrm_id( pi_dgrm_name => p_dgrm_name);
+      -- create new process
+      test_prcs_id := flow_api_pkg.flow_create 
+                       ( pi_dgrm_id   => test_dgrm_id
+                       , pi_prcs_name => test_prcs_name
+                       );
+
+      -- set gatewy variables
+      if p_gw_split_GRV is not null then
+         flow_process_vars.set_var
+         ( pi_prcs_id => test_prcs_id
+         , pi_var_name => 'Gateway_Split:route'
+         , pi_scope => 0
+         , pi_vc2_value => p_gw_split_GRV
+         );
+      end if;
+
+      if p_gw_mergeSplit_GRV is not null then
+         flow_process_vars.set_var
+         ( pi_prcs_id => test_prcs_id
+         , pi_var_name => 'Gateway_MergeSplit:route'
+         , pi_scope => 0
+         , pi_vc2_value => p_gw_mergeSplit_GRV
+         );
+      end if;
+
+      if p_gw_split_GRE is not null then
+         flow_process_vars.set_var
+         ( pi_prcs_id => test_prcs_id
+         , pi_var_name => 'GW_Split_Var'
+         , pi_scope => 0
+         , pi_vc2_value => p_gw_split_GRE
+         );
+      end if;
+
+      if p_gw_mergeSplit_GRE is not null then
+         flow_process_vars.set_var
+         ( pi_prcs_id => test_prcs_id
+         , pi_var_name => 'GW_ReSplit_Var'
+         , pi_scope => 0
+         , pi_vc2_value => p_gw_mergeSplit_GRE
+         );
+      end if;
+
+      -- start process
+
+      flow_api_pkg.flow_start( p_process_id => test_prcs_id );
+
+      -- check process and subflow are running
+      open l_expected for
+          select
+          test_dgrm_id                               as prcs_dgrm_id,
+          test_prcs_name                             as prcs_name,
+          flow_constants_pkg.gc_prcs_status_running   as prcs_status
+          from dual;
+      open l_actual for
+          select prcs_dgrm_id, prcs_name, prcs_status 
+            from flow_processes p
+           where p.prcs_id = test_prcs_id;
+      ut.expect( l_actual ).to_equal( l_expected );  
+
+      -- check 1st subflow running
+
+      open l_expected for
+         select
+            test_prcs_id           as sbfl_prcs_id,
+            test_dgrm_id           as sbfl_dgrm_id,
+            'Activity_Pre'        as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running as sbfl_status
+         from dual    
+         ; 
+      open l_actual for
+         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+         from flow_subflows 
+         where sbfl_prcs_id = test_prcs_id
+         and sbfl_status not like 'split'; 
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+      -- step forward into Inc GW Split
+
+      test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_Pre');    
+
+
+      -- check which paths were chosen
+      select sbfl_current
+      bulk collect into  l_result_set_xy
+        from flow_subflows
+       where sbfl_prcs_id = test_prcs_id
+         and sbfl_status  = flow_constants_pkg.gc_sbfl_status_running
+       order by sbfl_current
+      ;   
+      -- create delimited string output
+      l_result := apex_string.join
+        ( p_table => l_result_set_xy
+        , p_sep => ':'
+        );
+      ut.expect (l_result).to_equal(p_expected_paths_xy);
+
+      -- step forward on X and/or Y
+
+      for path in 1..l_result_set_xy.count
+      loop
+         test_helper.step_forward ( pi_prcs_id => test_prcs_id, pi_current => l_result_set_xy(path) );   
+      end loop;
+
+    -- this sould step us into gateway_mergeResplit
+
+     -- check which paths were chosen
+
+      select sbfl_current
+      bulk collect into  l_result_set_abc
+        from flow_subflows
+       where sbfl_prcs_id = test_prcs_id
+         and sbfl_status  = flow_constants_pkg.gc_sbfl_status_running
+       order by sbfl_current
+      ;   
+      -- create delimited string output
+      l_result := apex_string.join
+        ( p_table => l_result_set_abc
+        , p_sep => ':'
+        );
+      ut.expect (l_result).to_equal(p_expected_paths_abc);
+
+      -- step forward on X and/or Y
+
+      for path in 1..l_result_set_abc.count
+      loop
+         test_helper.step_forward ( pi_prcs_id => test_prcs_id, pi_current => l_result_set_abc(path) );   
+      end loop;
+
+
+      -- delete process
+
+      flow_api_pkg.flow_delete ( p_process_id => test_prcs_id);
+
+      ut.expect (v('APP_SESSION')).to_be_null;
+
+   end IncGWResplitTestRunner; 
+
+   -- test f5 - inc gateway merge resplit - all paths taken
+
+   procedure inclusive_merge_resplit_f5
+   is
+   begin
+      IncGWResplitTestRunner 
+      ( p_prcs_name           => 'Suite 02 Test f7 Inc Resplits'
+      , p_dgrm_name           => model_a10
+      , p_gw_split_GRV        => 'Flow_X:Flow_Y'
+      , p_gw_mergeSplit_GRV   => 'Flow_A:Flow_B:Flow_C'
+      , p_expected_paths_XY   => 'Activity_X:Activity_Y'
+      , p_expected_paths_ABC  => 'Activity_A:Activity_B:Activity_C'
+      );
+   end inclusive_merge_resplit_f5;
+
+   -- test f6 - inc gateway merge resplit - all paths taken
+
+   procedure inclusive_merge_resplit_f6
+   is
+   begin
+      IncGWResplitTestRunner 
+      ( p_prcs_name           => 'Suite 02 Test f6 Inc Resplits'
+      , p_dgrm_name           => model_a10
+      , p_gw_split_GRV        => 'Flow_X:Flow_Y'
+      , p_gw_mergeSplit_GRV   => 'Flow_A:Flow_C'
+      , p_expected_paths_XY   => 'Activity_X:Activity_Y'
+      , p_expected_paths_ABC  => 'Activity_A:Activity_C'
+      );
+   end inclusive_merge_resplit_f6;
+
+      -- test f7 - inc gateway merge resplit - all paths taken
+
+   procedure inclusive_merge_resplit_f7
+   is
+   begin
+      IncGWResplitTestRunner 
+      ( p_prcs_name           => 'Suite 02 Test f7 Inc Resplits'
+      , p_dgrm_name           => model_a10
+      , p_gw_split_GRV        => 'Flow_Y'
+      , p_gw_mergeSplit_GRV   => 'Flow_A:Flow_B'
+      , p_expected_paths_XY   => 'Activity_Y'
+      , p_expected_paths_ABC  => 'Activity_A:Activity_B'
+      );
+   end inclusive_merge_resplit_f7;
+
+   -- test f8 - inc gateway merge resplit - all paths taken
+
+   procedure inclusive_merge_resplit_f8
+   is
+   begin
+      IncGWResplitTestRunner 
+      ( p_prcs_name           => 'Suite 02 Test f8 Inc Resplits Exprs'
+      , p_dgrm_name           => model_a12
+      , p_gw_split_GRE        => 'X:Y'
+      , p_gw_mergeSplit_GRE   => 'A:B:C'
+      , p_expected_paths_XY   => 'Activity_X:Activity_Y'
+      , p_expected_paths_ABC  => 'Activity_A:Activity_B:Activity_C'
+      );
+   end inclusive_merge_resplit_f8;
+
+   -- test f9 - inc gateway merge resplit - all paths taken
+
+   procedure inclusive_merge_resplit_f9
+   is
+   begin
+      IncGWResplitTestRunner 
+      ( p_prcs_name           => 'Suite 02 Test f9 Inc Resplits Exprs'
+      , p_dgrm_name           => model_a12
+      , p_gw_split_GRE        => 'X:Y'
+      , p_gw_mergeSplit_GRE   => 'A:C'
+      , p_expected_paths_XY   => 'Activity_X:Activity_Y'
+      , p_expected_paths_ABC  => 'Activity_A:Activity_C'
+      );
+   end inclusive_merge_resplit_f9;
+
+      -- test f10 - inc gateway merge resplit - all paths taken
+
+   procedure inclusive_merge_resplit_f10
+   is
+   begin
+      IncGWResplitTestRunner 
+      ( p_prcs_name           => 'Suite 02 Test f10 Inc Resplits Exprs'
+      , p_dgrm_name           => model_a12
+      , p_gw_split_GRE        => 'Y'
+      , p_gw_mergeSplit_GRE   => 'A:B'
+      , p_expected_paths_XY   => 'Activity_Y'
+      , p_expected_paths_ABC  => 'Activity_A:Activity_B'
+      );
+   end inclusive_merge_resplit_f10;
+
+
    -- test(g. parallel gateway)
 
    procedure parallel
@@ -1631,6 +1892,21 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
    end;
+
+   -- test g2 : parallel merge- resplit gateway
+
+   procedure parallel_merge_resplit
+   is
+   begin
+      IncGWResplitTestRunner 
+      ( p_prcs_name           => 'Suite 02 Test g2 Par Resplits'
+      , p_dgrm_name           => model_a11
+      , p_gw_split_GRV        => null
+      , p_gw_mergeSplit_GRV   => null
+      , p_expected_paths_XY   => 'Activity_X:Activity_Y'
+      , p_expected_paths_ABC  => 'Activity_A:Activity_B:Activity_C'
+      );
+   end parallel_merge_resplit;
 
    -- test h. event based gateway - uses timer)
 

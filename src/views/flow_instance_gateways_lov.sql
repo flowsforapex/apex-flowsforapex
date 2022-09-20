@@ -24,5 +24,8 @@ as
       on callobj.objt_dgrm_id = prdg.prdg_calling_dgrm
       and callobj.objt_bpmn_id = prdg.prdg_calling_objt
    where obj.objt_tag_name in ('bpmn:exclusiveGateway', 'bpmn:inclusiveGateway')
-     and ( select count(*) from flow_connections conn where conn.conn_src_objt_id = obj.objt_id ) > 1
+     and ( select count(*) 
+           from flow_connections conn 
+           where conn.conn_src_objt_id = obj.objt_id 
+           and conn.conn_tag_name = 'bpmn:sequenceFlow') > 1
 with read only;

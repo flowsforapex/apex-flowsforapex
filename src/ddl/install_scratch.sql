@@ -260,10 +260,18 @@ ALTER TABLE flow_subflows
         REFERENCES flow_processes ( prcs_id )
             ON DELETE CASCADE;
 
--- instance_diagrams - to add??
--- fk to flow_processes delete cascade
--- fk to diagram delete restrict
--- fk to calling dgrm delete restrict
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_prcs_fk FOREIGN KEY ( prdg_prcs_id )
+        REFERENCES flow_processes ( prcs_id )
+            ON DELETE CASCADE;
+
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_dgrm_fk FOREIGN KEY ( prdg_dgrm_id )
+        REFERENCES flow_diagrams ( dgrm_id );
+
+ALTER TABLE flow_instance_diagrams
+    ADD CONSTRAINT prdg_calling_dgrm_fk FOREIGN KEY ( prdg_calling_dgrm )
+        REFERENCES flow_diagrams ( dgrm_id );
 
 ALTER TABLE flow_timers
     ADD CONSTRAINT timr_prcs_fk FOREIGN KEY ( timr_prcs_id )
@@ -393,6 +401,7 @@ create table flow_instance_event_log
 , lgpr_error_info           VARCHAR2(2000 CHAR)
 );
 
+create index flow_lgpr_ix on flow_instance_event_log (lgpr_prcs_id, lgpr_objt_id );
 
 create table flow_step_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL
@@ -410,6 +419,8 @@ create table flow_step_event_log
 , lgsf_comment         	    VARCHAR2(2000 CHAR)
 );
 
+create index flow_lgsf_ix on flow_step_event_log (lgsf_prcs_id, lgsf_objt_id );
+
 create table flow_variable_event_log
 ( lgvr_prcs_id			    number not null
 , lgvr_scope                number not null
@@ -424,6 +435,8 @@ create table flow_variable_event_log
 , lgvr_var_date 			date
 , lgvr_var_clob 			clob
 );
+
+create index flow_lgvr_ix on flow_variable_event_log (lgvr_prcs_id, lgvr_scope, lgvr_var_name);
 
 create table flow_configuration
 ( cfig_key                  varchar2(50 char) NOT NULL

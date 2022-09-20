@@ -55,8 +55,6 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
        , prdg.prdg_calling_objt as calling_objt
        , dgrm.dgrm_name || case when prdg.prdg_diagram_level is not null then ' ( Level: ' || prdg.prdg_diagram_level || ' )' else '' end as breadcrumb
        , 1 as drilldown_allowed
-       , prdg.prdg_id
-       , prdg.prdg_prdg_id
        , dgrm.dgrm_id
        , dgrm.dgrm_name
        , dgrm.dgrm_version
