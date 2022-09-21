@@ -5,7 +5,9 @@
 --
 -- Created Sep-2021   Richard Allen - Flowquest 
 --
-*/PROMPT >> Resetting Engine Messages to initial state (English)
+*/
+
+PROMPT >> Resetting Engine Messages to initial state (English)
 begin
   delete from flow_messages where fmsg_lang = 'en';
 
