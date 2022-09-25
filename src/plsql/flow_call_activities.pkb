@@ -1,3 +1,5 @@
+create or replace package body flow_call_activities 
+as
 /* 
 -- Flows for APEX - flow_call_activities.pkb
 -- 
@@ -7,9 +9,6 @@
 -- Modified 22-May-2022  Moritz Klein (MT AG)
 --
 */
-
-create or replace package body flow_call_activities 
-as
 
   type t_call_def is record
     ( dgrm_name              flow_diagrams.dgrm_name%type

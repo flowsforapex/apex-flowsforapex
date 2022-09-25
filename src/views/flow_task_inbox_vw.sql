@@ -33,6 +33,7 @@ as
             else null
           end link_text
         , sbfl_current_tag_name
+        , sbfl_became_current
         , sbfl_last_update
         , sbfl_status
         , sbfl_current_lane
