@@ -1,0 +1,115 @@
+create or replace view flow_apex_task_inbox_my_tasks_vw 
+     ( app_id
+     , task_id
+     , task_def_id
+     , task_def_name
+     , task_def_static_id
+     , subject
+     , details_app_id
+     , details_app_name
+     , details_link_target
+     , due_on
+     , due_in_hours
+     , due_in 
+     , due_code
+     , priority
+     , priority_level
+     , initiator
+     , initiator_lower
+     , actual_owner
+     , actual_owner_lower
+     , state_code
+     , state
+     , is_completed
+     , outcome_code
+     , outcome
+     , badge_css_classes
+     , badge_text
+     , created_ago_hours
+     , created_ago
+     , created_by
+     , created_on
+     , last_updated_by
+     , last_updated_on
+     , process_id
+     , subflow_id
+     , step_key
+     )
+as select  
+       app_id
+     , task_id
+     , task_def_id
+     , task_def_name
+     , task_def_static_id
+     , subject
+     , details_app_id
+     , details_app_name
+     , details_link_target
+     , due_on
+     , due_in_hours
+     , due_in 
+     , due_code
+     , priority
+     , priority_level
+     , initiator
+     , initiator_lower
+     , actual_owner
+     , actual_owner_lower
+     , state_code
+     , state
+     , is_completed
+     , outcome_code
+     , outcome
+     , badge_css_classes
+     , badge_text
+     , created_ago_hours
+     , created_ago
+     , created_by
+     , created_on
+     , last_updated_by
+     , last_updated_on
+     , null
+     , null
+     , null
+    from table ( apex_approval.get_tasks ( p_context => 'MY_TASKS' ) )
+    UNION 
+    select  
+       app_id
+     , task_id
+     , task_def_id
+     , task_def_name
+     , task_def_static_id
+     , subject
+     , details_app_id
+     , details_app_name
+     , details_link_target
+     , due_on
+     , due_in_hours
+     , due_in 
+     , due_code
+     , priority
+     , priority_level
+     , initiator
+     , initiator_lower
+     , actual_owner
+     , actual_owner_lower
+     , state_code
+     , state
+     , is_completed
+     , outcome_code
+     , outcome
+     , badge_css_classes
+     , badge_text
+     , created_ago_hours
+     , created_ago
+     , created_by
+     , created_on
+     , last_updated_by
+     , last_updated_on
+     , process_id
+     , subflow_id
+     , step_key
+     from flow_apex_task_inbox_vw
+     --where user = ... 
+     ;
+     
