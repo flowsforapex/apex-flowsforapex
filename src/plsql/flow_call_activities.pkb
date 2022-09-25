@@ -140,10 +140,14 @@ as
       if not flow_globals.get_step_error then 
         -- Check again, then Update parent subflow to 'in callActivity'
         update flow_subflows sbfl
-        set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent call Activity
-            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-            , sbfl.sbfl_last_update = systimestamp
-            , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_callactivity
+        set   sbfl.sbfl_current         = p_step_info.target_objt_ref -- parent call Activity
+            , sbfl.sbfl_last_completed  = p_sbfl_info.sbfl_last_completed
+            , sbfl.sbfl_status          = flow_constants_pkg.gc_sbfl_status_in_callactivity
+            , sbfl.sbfl_last_update     = systimestamp
+            , sbfl.sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
+                                                   , sys_context('userenv','os_user')
+                                                   , sys_context('userenv','session_user')
+                                                   )  
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
         returning sbfl.sbfl_scope into l_calling_sbfl_scope

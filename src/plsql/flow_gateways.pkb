@@ -384,9 +384,13 @@ as
     );
     -- set current subflow to status waiting,       
     update flow_subflows sbfl
-        set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_gateway
-          , sbfl.sbfl_last_update = systimestamp 
-          , sbfl.sbfl_current = p_step_info.target_objt_ref
+        set sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_gateway
+          , sbfl.sbfl_current        = p_step_info.target_objt_ref
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )            
       where sbfl.sbfl_id = p_sbfl_info.sbfl_id
         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
     ;
@@ -427,13 +431,17 @@ as
           --mark parent split subflow ready to restart
           l_subflow := p_sbfl_info.sbfl_sbfl_id;
           update flow_subflows parent_sbfl
-              set parent_sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_proceed_gateway
-                , parent_sbfl.sbfl_current = p_step_info.target_objt_ref
-                , parent_sbfl.sbfl_last_update = systimestamp
+              set parent_sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_proceed_gateway
+                , parent_sbfl.sbfl_current        = p_step_info.target_objt_ref
                 , parent_sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current  -- last step of final child sbfl pre-merge
+                , parent_sbfl.sbfl_last_update    = systimestamp
+                , parent_sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                             , sys_context('userenv','os_user')
+                                                             , sys_context('userenv','session_user')
+                                                             )  
             where parent_sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
-              and parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-              and parent_sbfl.sbfl_id = p_sbfl_info.sbfl_sbfl_id
+              and parent_sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_split  
+              and parent_sbfl.sbfl_id             = p_sbfl_info.sbfl_sbfl_id
           ;
         exception
           when lock_timeout then
@@ -524,9 +532,13 @@ as
     -- Current Subflow into status split 
     update flow_subflows sbfl
         set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-          , sbfl.sbfl_current = p_step_info.target_objt_ref
-          , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-          , sbfl.sbfl_last_update = systimestamp 
+          , sbfl.sbfl_current        = p_step_info.target_objt_ref
+          , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_split  
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
     ;
@@ -587,9 +599,13 @@ as
     );
     -- update parent status now split and no current object
      update flow_subflows sbfl
-        set sbfl.sbfl_current = null
+        set sbfl.sbfl_current        = null
           , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
-          , sbfl.sbfl_last_update = systimestamp 
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id;
 
@@ -838,10 +854,14 @@ as
     if not flow_globals.get_step_error then 
       -- all good so step forward
       update flow_subflows sbfl
-         set sbfl.sbfl_current = p_step_info.target_objt_ref
+         set sbfl.sbfl_current        = p_step_info.target_objt_ref
            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-           , sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+           , sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
        where sbfl.sbfl_id = p_sbfl_info.sbfl_id
          and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;  
@@ -935,9 +955,13 @@ as
     -- mark parent flow as split
     update flow_subflows sbfl
        set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-         , sbfl.sbfl_current = p_step_info.target_objt_ref
-         , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
-         , sbfl.sbfl_last_update = systimestamp 
+         , sbfl.sbfl_current        = p_step_info.target_objt_ref
+         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_split  
+         , sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                               , sys_context('userenv','os_user')
+                                               , sys_context('userenv','session_user')
+                                               )  
      where sbfl.sbfl_id = p_sbfl_info.sbfl_id
        and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
     ;

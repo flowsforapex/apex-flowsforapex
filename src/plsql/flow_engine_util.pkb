@@ -378,6 +378,7 @@ procedure get_number_of_connections
          , sbfl_current
          , sbfl_status
          , sbfl_last_update
+         , sbfl_last_update_by
          , sbfl_dgrm_id
          , sbfl_diagram_level
          , sbfl_step_key
@@ -397,6 +398,10 @@ procedure get_number_of_connections
          , p_current_object
          , p_status
          , systimestamp
+         , coalesce ( sys_context('apex$session','app_user') 
+                    , sys_context('userenv','os_user')
+                    , sys_context('userenv','session_user')
+                    )  
          , p_dgrm_id
          , l_diagram_level
          , flow_engine_util.step_key
