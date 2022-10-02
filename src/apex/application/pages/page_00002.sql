@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220106161757'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20220919110329'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -190,7 +190,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" ',
 '        data-menu="row_actions_menu"',
-'        data-dgrm=#DGRM_ID#>',
+'        data-dgrm="#DGRM_ID#">',
 '    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
 '</button>'))
 ,p_allow_sorting=>'N'
