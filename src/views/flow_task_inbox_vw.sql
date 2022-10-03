@@ -35,6 +35,7 @@ as
         , sbfl_current_tag_name
         , sbfl_became_current
         , sbfl_last_update
+        , sbfl_last_update_by
         , sbfl_status
         , sbfl_current_lane
         , sbfl_current_lane_name
