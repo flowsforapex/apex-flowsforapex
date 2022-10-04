@@ -84,14 +84,16 @@ ALTER TABLE flow_objects ADD CONSTRAINT objt_uk UNIQUE ( objt_dgrm_id,
 alter table flow_objects add constraint objt_attributes_ck check ( objt_attributes is json );
 
 CREATE TABLE flow_processes (
-    prcs_id           NUMBER
+    prcs_id             NUMBER
         GENERATED ALWAYS AS IDENTITY ( START WITH 1 NOCACHE )
     NOT NULL,
-    prcs_dgrm_id      NUMBER NOT NULL,
-    prcs_name         VARCHAR2(150 CHAR) NOT NULL,
-    prcs_status       VARCHAR2(20 CHAR) NOT NULL,
-    prcs_init_ts      TIMESTAMP WITH TIME ZONE NOT NULL,
-    prcs_last_update  TIMESTAMP WITH TIME ZONE
+    prcs_dgrm_id        NUMBER NOT NULL,
+    prcs_name           VARCHAR2(150 CHAR) NOT NULL,
+    prcs_status         VARCHAR2(20 CHAR) NOT NULL,
+    prcs_init_ts        TIMESTAMP WITH TIME ZONE NOT NULL,
+    prcs_init_by        VARCHAR2(255 CHAR),
+    prcs_last_update    TIMESTAMP WITH TIME ZONE,
+    prcs_last_update_by VARCHAR2(255 CHAR)
 );
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
@@ -129,7 +131,8 @@ CREATE TABLE flow_subflows (
     sbfl_lane             VARCHAR2(50 CHAR),
     sbfl_lane_name        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
     sbfl_reservation      VARCHAR2(255 CHAR),
-    sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL
+    sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL,
+    sbfl_last_update_by   VARCHAR2(255 CHAR)
 );
 
 COMMENT ON COLUMN flow_subflows.sbfl_dgrm_id is

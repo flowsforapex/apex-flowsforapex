@@ -22,6 +22,7 @@ PROMPT >> Halt DBMS_SCHEDULER job
 @@issue-77.sql
 @@issue-516.sql
 @@issue-511.sql
+@@issue-523.sql
 @@set_flows_version.sql
 
 

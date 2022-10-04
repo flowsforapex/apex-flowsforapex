@@ -91,7 +91,12 @@ is
             if not flow_globals.get_step_error then 
               -- set timer flag on child (Self, Noninterrupting, Timer)
               update flow_subflows sbfl
-                  set sbfl.sbfl_has_events = sbfl.sbfl_has_events||':SNT'
+                  set sbfl.sbfl_has_events      = sbfl.sbfl_has_events||':SNT'
+                    , sbfl.sbfl_last_update     = systimestamp
+                    , sbfl.sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
+                                                           , sys_context('userenv','os_user')
+                                                           , sys_context('userenv','session_user')
+                                                           )  
                 where sbfl.sbfl_id = l_new_non_int_timer_sbfl.sbfl_id
                   and sbfl.sbfl_prcs_id = p_process_id
               ;
@@ -101,8 +106,13 @@ is
         end case;
         --- set timer flag on parent (it can get more than 1)
         update flow_subflows sbfl
-          set sbfl.sbfl_has_events = sbfl.sbfl_has_events||l_parent_tag
-        where sbfl.sbfl_id = p_subflow_id
+          set sbfl.sbfl_has_events      = sbfl.sbfl_has_events||l_parent_tag
+            , sbfl.sbfl_last_update     = systimestamp
+            , sbfl.sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
+                                                   , sys_context('userenv','os_user')
+                                                   , sys_context('userenv','session_user')
+                                                   )  
+        where sbfl.sbfl_id      = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
         ;
       end loop;
@@ -160,7 +170,12 @@ is
       end loop;
       -- remove the event flags from the subflow
       update flow_subflows sbfl
-         set sbfl_has_events = ''
+         set sbfl_has_events      = ''
+           , sbfl_last_update     = systimestamp
+           , sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
+                                             , sys_context('userenv','os_user')
+                                             , sys_context('userenv','session_user')
+                                             )  
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
       ;
@@ -271,12 +286,16 @@ is
                                             );
     -- switch processing onto boundaryEvent path and do next step
     update flow_subflows sbfl
-       set sbfl.sbfl_current = l_boundary_objt_bpmn_id
-         , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+       set sbfl.sbfl_current        = l_boundary_objt_bpmn_id
+         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
          , sbfl.sbfl_last_completed = l_parent_objt_bpmn_id
          , sbfl.sbfl_became_current = l_timestamp
-         , sbfl.sbfl_step_key = l_step_key
-         , sbfl.sbfl_last_update = l_timestamp 
+         , sbfl.sbfl_step_key       = l_step_key
+         , sbfl.sbfl_last_update    = l_timestamp 
+         , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                               , sys_context('userenv','os_user')
+                                               , sys_context('userenv','session_user')
+                                               )  
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
     ;
@@ -436,12 +455,16 @@ is
                                               );                       
       -- set parent subflow to boundary event and do flow_complete_step
       update flow_subflows sbfl
-          set sbfl.sbfl_current = l_boundary_event
-            , sbfl.sbfl_last_completed = pi_step_info.target_objt_ref 
-            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-            , sbfl.sbfl_became_current = l_timestamp
-            , sbfl.sbfl_step_key = l_step_key
-            , sbfl_last_update = l_timestamp
+          set sbfl.sbfl_current         = l_boundary_event
+            , sbfl.sbfl_last_completed  = pi_step_info.target_objt_ref 
+            , sbfl.sbfl_status          = flow_constants_pkg.gc_sbfl_status_running
+            , sbfl.sbfl_became_current  = l_timestamp
+            , sbfl.sbfl_step_key        = l_step_key
+            , sbfl.sbfl_last_update     = l_timestamp
+            , sbfl.sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
+                                                   , sys_context('userenv','os_user')
+                                                   , sys_context('userenv','session_user')
+                                                   )  
         where sbfl.sbfl_id = pi_par_sbfl
           and sbfl.sbfl_prcs_id = pi_sbfl_info.sbfl_prcs_id
       ;

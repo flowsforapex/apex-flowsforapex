@@ -67,9 +67,14 @@ as
         flow_boundary_events.unset_boundary_timers (p_process_id, p_sbfl_context_par.sbfl_id);
         -- set current event on parent process to the error Boundary Event
         update flow_subflows sbfl
-        set sbfl.sbfl_current = l_boundary_event
-          , sbfl.sbfl_last_completed = l_subproc_objt  -- is this done in next_step?
-          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+        set sbfl.sbfl_current         = l_boundary_event
+          , sbfl.sbfl_last_completed  = l_subproc_objt  -- is this done in next_step?
+          , sbfl.sbfl_status          = flow_constants_pkg.gc_sbfl_status_running
+          , sbfl.sbfl_last_update     = systimestamp
+          , sbfl.sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
         where sbfl.sbfl_id = p_sbfl_context_par.sbfl_id
           and sbfl.sbfl_prcs_id = p_process_id
           ;
@@ -263,10 +268,14 @@ as
       if not flow_globals.get_step_error then 
         -- Check again, then Update parent subflow
         update flow_subflows sbfl
-        set   sbfl.sbfl_current = p_step_info.target_objt_ref -- parent subProc Activity
-            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-            , sbfl.sbfl_last_update = systimestamp
-            , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
+        set   sbfl.sbfl_current         = p_step_info.target_objt_ref -- parent subProc Activity
+            , sbfl.sbfl_last_completed  = p_sbfl_info.sbfl_last_completed
+            , sbfl.sbfl_status          = flow_constants_pkg.gc_sbfl_status_in_subprocess
+            , sbfl.sbfl_last_update     = systimestamp
+            , sbfl.sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
+                                                   , sys_context('userenv','os_user')
+                                                   , sys_context('userenv','session_user')
+                                                   )  
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
         ;  

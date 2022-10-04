@@ -62,16 +62,24 @@ create or replace package body flow_tasks as
       for update wait 2;
       -- set subflow to error status
       update flow_subflows sbfl
-         set sbfl.sbfl_current = p_script_object
-           , sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
+         set sbfl.sbfl_current        = p_script_object
+           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_error
+           , sbfl.sbfl_last_update    = systimestamp 
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )         
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
       ;
       -- set instance to error status
       update flow_processes prcs
-         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
-           , prcs.prcs_last_update = systimestamp
+         set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_error
+           , prcs.prcs_last_update    = systimestamp
+           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
        where prcs.prcs_id = p_process_id
       ;
       -- log error as instance event
