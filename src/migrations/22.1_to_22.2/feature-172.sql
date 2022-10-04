@@ -32,7 +32,8 @@ begin
 
   update flow_subflows   --- needs more work - see below
   set sbfl_calling_sbfl = 0 
-    , sbfl_scope = 0;
+    , sbfl_scope = 0
+    , sbfl_diagram_level = 0;
 end;
 /* Migrating existing instances with subProcess calls is a problem now sbfl_calling_sbfl is set for subProcesses and callActivities.  
  - we will need to step through existing prcesses where the process_level != 0, and set the sbfl_calling_sbfl to the calling sbfl
