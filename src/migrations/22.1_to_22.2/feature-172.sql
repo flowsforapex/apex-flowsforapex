@@ -7,7 +7,10 @@
 
 */
 
-PROMPT >> Prepare Subflows for Call Activities
+PROMPT >> Prepare for Call Activities
+
+PROMPT >> Prepare Expressions for Call Activity In-Out Parameters
+
 -- change constraint on flow_object_expressions to add 'inVariables' and 'outVariables'
 
 ALTER TABLE flow_object_expressions
@@ -17,6 +20,7 @@ ALTER TABLE flow_object_expressions
     ADD CONSTRAINT expr_set_ck
       CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge', 'inVariables', 'outVariables') );
 
+PROMPT >> Prepare Subflow table for Call Activities
 
 begin
   execute immediate '
@@ -28,24 +32,65 @@ begin
       sbfl_lane           varchar2(50 char)
       sbfl_lane_name      varchar2(200 char)
     )' 
-  ;
-
-  update flow_subflows   --- needs more work - see below
-  set sbfl_calling_sbfl = 0 
-    , sbfl_scope = 0
-    , sbfl_diagram_level = 0;
+    ;
 end;
-/* Migrating existing instances with subProcess calls is a problem now sbfl_calling_sbfl is set for subProcesses and callActivities.  
- - we will need to step through existing prcesses where the process_level != 0, and set the sbfl_calling_sbfl to the calling sbfl
+
+-- migration
+
+  update flow_subflows   
+  set sbfl_scope = 0
+    , sbfl_diagram_level = 0;
+
+ /* Migrating existing instances with subProcess calls is required now sbfl_calling_sbfl is set for subProcesses and callActivities.  
+ -  existing subflows where the process_level != 0, need to set the sbfl_calling_sbfl to the calling sbfl
  -- its only for subproceses, as we won't have any call activities to migrate -- so we can get this with the right query on the objects / connections
  */
 
- /* need to add content to sbfl_lane for all existing subflows at migration 
- I’ve re-built the way that lanes work — which is required for call activities.
-The bpmn only puts top level objects into lanes — anything inside a subProcess is assumed to inherit the lane of its parent subProcess.  However, a callActivity, which is in a separate diagram, can have a lane system of its own.  And these can be mixed & matched so that the parent diagram has no lanes but the called diagram does have lanes.  etc.
-Before we put lanes on everything by resolving the inheritance from parents at parse time.  Now the parser only records those objects which have lanes in the bpmn, and we manage the inheritance at run-time.
-I have the parser and runtime working, and the view rebuilt so it now gets the lane from flow_subflows.sbfl_lane.
-BUT… there is a migration issue for running instances at migration.
+  -- set sbfl_calling_sbfl
+  -- first for subflows in top level - so not in a subprocess...
+  update flow_subflows
+  set sbfl_calling_sbfl = 0
+  where sbfl_process_level = 0;
+  -- now for subflows inside a subprocess...
+  update flow_subflows s
+  set s.sbfl_calling_sbfl = 
+     ( select par_sbfl.sbfl_id 
+        from flow_objects cur_objt
+        join flow_objects par_objt
+          on par_objt.objt_id      = cur_objt.objt_objt_id
+         and par_objt.objt_dgrm_id = cur_objt.objt_dgrm_id
+        join flow_processes prcs
+          on prcs.prcs_dgrm_id = cur_objt.objt_dgrm_id
+        join flow_subflows cur_sbfl
+          on nvl(cur_sbfl.sbfl_current, cur_sbfl.sbfl_last_completed) = cur_objt.objt_bpmn_id
+         and cur_sbfl.sbfl_prcs_id = prcs.prcs_id
+        join flow_subflows par_sbfl
+          on par_sbfl.sbfl_prcs_id = prcs.prcs_id
+         and par_sbfl.sbfl_current = par_objt.objt_bpmn_id
+       where par_sbfl.sbfl_status   = 'in subprocess'
+         and par_objt.objt_tag_name = 'bpmn:subProcess'
+         and cur_sbfl.sbfl_process_level != 0
+         and cur_sbfl.sbfl_id = s.sbfl_id)
+  where s.sbfl_process_level != 0;
+
+  -- now set lane and lane name using flow_objects BEFORE it is reparsed
+  -- in 22.1 this was all just taken from flow_objects as a join with flow_subflows in flow_task_inbox_vw
+  -- but with callActivities, the engine needs to keep track of lanes and lane names on each process step
+  -- we need to get the object lane names FROM THE 22.1 CATALOG BEFORE WE REPARSE the diagrams.
+  update flow_subflows s
+   set (s.sbfl_lane, s.sbfl_lane_name) = (
+        select lane.objt_bpmn_id , lane.objt_name 
+          from flow_subflows sbfl
+          join flow_processes prcs
+            on prcs.prcs_id = sbfl.sbfl_prcs_id
+          join flow_objects objt
+            on objt.objt_dgrm_id = prcs.prcs_dgrm_id
+           and objt.objt_bpmn_id = nvl(sbfl.sbfl_current, sbfl.sbfl_last_completed)
+     left join flow_objects lane
+            on objt.objt_objt_lane_id = lane.objt_id
+         where sbfl.sbfl_id = s.sbfl_id);
+
+ /* 
 Is it possible to reliably run a script BEFORE we change the DML?  I’m thinking that we should:
 - Stop the engine for customer transactions & stop the scheduler.
 - Make a copy of Flow_objects, or create a table as select objt_bpmn_id, corresponding lane bpmn_id for all objects.
@@ -55,8 +100,8 @@ Is it possible to reliably run a script BEFORE we change the DML?  I’m thinkin
 - Any other migration.
 - Restart the engine and scheduler
 - Carry on running…
-I haven’t written the migration script but wanted to record what is required somewhere while its fresh in my mind.
 */
+PROMPT >> Prepare Subflow Log for Call Activities
 
   begin
     execute immediate '
@@ -64,12 +109,16 @@ I haven’t written the migration script but wanted to record what is required s
       add (
         sflg_dgrm_id       NUMBER,
         sflg_diagram_level NUMBER,
-        sflg_calling_objt  VARCHAR2(50) -- only used on Start Events to record Parent
       )';
   end;
 
--- need to add migration
--- need to set not nulls as appropriate once migrated
+  update flow_subflog_log
+  set diagram_level = 0
+      l.sflg_dgrm_id = ( select prcs.prcs_dgrm_id
+                         from   flow_processes prcs
+                         where  prcs.prcs_id = l.sflg_prcs_id );
+
+PROMPT >> Prepare Instance Diagrams table (PRDG)
 
   CREATE TABLE flow_instance_diagrams (
     prdg_id             NUMBER GENERATED BY DEFAULT AS IDENTITY ( START WITH 1 NOCACHE ORDER )

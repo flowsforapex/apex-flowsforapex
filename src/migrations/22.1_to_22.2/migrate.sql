@@ -8,6 +8,11 @@
 
 */
 
+PROMPT >> Checking that Schema can be Upgraded from 22.1 to 22.2
+PROMPT >> ------------------------------------------------------
+
+
+
 
 PROMPT >> Running Schema Upgrade from 22.1 to 22.2
 PROMPT >> -------------------------------------------
