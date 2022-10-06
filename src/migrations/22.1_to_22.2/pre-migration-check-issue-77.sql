@@ -33,7 +33,7 @@ begin
   select prov.prov_prcs_id Process_ID,  upper (prov.prov_var_name) Proc_Var_Name, count(*) "Variants"
   from flow_process_variables prov
   group by prov.prov_prcs_id,  upper (prov.prov_var_name)
-  having count(*) > 0
+  having count(*) > 1
   )
   select count(proc_var_name) 
   into   l_duplicate_count
