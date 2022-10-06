@@ -22,18 +22,15 @@ ALTER TABLE flow_object_expressions
 
 PROMPT >> Prepare Subflow table for Call Activities
 
-begin
-  execute immediate '
-    alter table flow_subflows
-    add (
-      sbfl_calling_sbfl   number,
-      sbfl_scope          number,
-      sbfl_diagram_level  number,
-      sbfl_lane           varchar2(50 char)
-      sbfl_lane_name      varchar2(200 char)
-    )' 
-    ;
-end;
+
+  alter table flow_subflows
+  add (
+    sbfl_calling_sbfl   number,
+    sbfl_scope          number,
+    sbfl_diagram_level  number,
+    sbfl_lane           varchar2(50 char)
+    sbfl_lane_name      varchar2(200 char)
+  );
 
 -- migration
 
@@ -112,8 +109,8 @@ PROMPT >> Prepare Subflow Log for Call Activities
       )';
   end;
 
-  update flow_subflog_log
-  set diagram_level = 0
+  update flow_subflog_log l
+  set l.sflg_diagram_level = 0,
       l.sflg_dgrm_id = ( select prcs.prcs_dgrm_id
                          from   flow_processes prcs
                          where  prcs.prcs_id = l.sflg_prcs_id );
@@ -176,9 +173,9 @@ PROMPT >> Prepare Process Variables for Scoping
      set lgvr.lgvr_scope = 0;
 
   alter table flow_process_variables
-    drop constraint prov_pk;
-
-  alter table flow_process_variables
     modify ( prov_scope not null);
+
+  alter table flow_variable_event_log
+    modify ( lgvr_scope not null);
 
  -- NOTE primary key on flow_process_variables is recreated as part of issue-77.sql migration script

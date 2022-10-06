@@ -8,4 +8,3 @@ PROMPT >> Add new attributes column to objects table
 alter table flow_objects add ( objt_attributes clob );
 alter table flow_objects add constraint objt_attributes_ck check ( objt_attributes is json );
 
-/
