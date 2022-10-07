@@ -10,11 +10,13 @@
 - Adds support for Gateway Routing Expressions, defined as part of each forward path from an Inclusive Gateway or Exclusive Gateway.
 - Adds process variable bind syntax (:F4A$myvar) to bind varchar2, number, and date variables into Gateway Routing Expressions.
 - Adds error detection to Inclusive and Exclusive Gateways when no Routing Variable is detected and Gateway Routing Expressions are present.
+- Adds support for integration of Flows for APEX userTasks into the APEX v22.1+ Unified Task Inbox through custom Task Inbox views.   (Note that this functionality may change in upcoming APEX and Flows for APEX releases).
 - Makes processVariable naming case-independant, so that myVar and MYVAR are the same variable.
 - Creates an APEX session for non-APEX originated end points, ensuring that variable expressions, debugging, etc. work correctly from non-APEX API calls, after timers, from test engines, etc.
+- Changes Lane processing from parse-time to step-run-time to facilitate call activities with or without lanes in any involved diagram.
 - Internally enhances storage of parsed BPMN object attributes using JSON structures in place of the flow_object_attributes table.
 - Simplifies translation framework, allowing contributors to more easily supply translations to be incorporated into the product.
-- Adds new translations to support Brazilian Portuguese (pt-BR), German (de), and Japanese (ja).
+- Adds new translations to support Brazilian Portuguese (pt-BR), German (de), Spanish (es), and Japanese (ja).
 - Enhanced engine testing regime now introduced through utPLSQL regression test suites.
 - Enhanced sample app "Expense Claims" to reflect features added to Flows for APEX v22.2. 
 

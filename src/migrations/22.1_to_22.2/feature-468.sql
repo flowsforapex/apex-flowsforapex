@@ -1,4 +1,4 @@
-PROMPT >> Extend Connections for Gateway Routing expressions
+PROMPT >> Prepare Connections table for Gateway Routing Expressions
 
 alter table flow_connections
 add

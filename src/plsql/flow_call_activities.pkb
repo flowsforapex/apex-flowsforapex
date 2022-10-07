@@ -115,9 +115,9 @@ as
     l_called_subflow_context := flow_engine_util.subflow_start 
       ( p_process_id              => p_process_id
       , p_parent_subflow          => p_subflow_id
-      , p_starting_object         => l_called_start_objt_bpmn_id
-      , p_current_object          => l_called_start_objt_bpmn_id
-      , p_route                   => 'main'
+      , p_starting_object         => p_step_info.target_objt_ref -- parent callActivity activity
+      , p_current_object          => l_called_start_objt_bpmn_id -- callActivity Start event
+      , p_route                   => 'call main'
       , p_last_completed          => p_sbfl_info.sbfl_current
       , p_status                  => flow_constants_pkg.gc_sbfl_status_running 
       , p_parent_sbfl_proc_level  => p_sbfl_info.sbfl_process_level
