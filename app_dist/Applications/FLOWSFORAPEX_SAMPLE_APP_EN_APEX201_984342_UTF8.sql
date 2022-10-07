@@ -28,7 +28,7 @@ prompt APPLICATION 984342 - Sample Process Flow Application
 -- Application Export:
 --   Application:     984342
 --   Name:            Sample Process Flow Application
---   Date and Time:   10:57 Friday October 7, 2022
+--   Date and Time:   17:24 Friday October 7, 2022
 --   Exported By:     NDBRUIJN
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -132,7 +132,7 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Sample Process Flows Application'
 ,p_last_updated_by=>'NDBRUIJN'
-,p_last_upd_yyyymmddhh24miss=>'20221007105647'
+,p_last_upd_yyyymmddhh24miss=>'20221007172146'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>5
 ,p_ui_type_name => null
@@ -15956,7 +15956,7 @@ wwv_flow_api.create_page(
 ,p_dialog_chained=>'N'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'NDBRUIJN'
-,p_last_upd_yyyymmddhh24miss=>'20221007105636'
+,p_last_upd_yyyymmddhh24miss=>'20221007172146'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(4316497941625607915)
@@ -16302,10 +16302,11 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'PLUGIN_COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'
 ,p_process_name=>'Delete flow instance'
 ,p_attribute_01=>'delete'
-,p_attribute_03=>'item'
-,p_attribute_04=>'PROCESS_ID'
-,p_attribute_07=>'name'
-,p_attribute_10=>'no'
+,p_attribute_03=>'sql'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select prcs_id',
+'from flow_instances_vw',
+'where prcs_business_ref = :P2_EXPE_ID'))
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when_button_id=>wwv_flow_api.id(4303797563645881020)
 );
@@ -16345,7 +16346,7 @@ wwv_flow_api.create_page(
 ,p_dialog_height=>'550'
 ,p_dialog_width=>'900'
 ,p_last_updated_by=>'NDBRUIJN'
-,p_last_upd_yyyymmddhh24miss=>'20221007105647'
+,p_last_upd_yyyymmddhh24miss=>'20221007105904'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(4316901026522749441)
