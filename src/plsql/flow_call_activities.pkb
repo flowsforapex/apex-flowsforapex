@@ -117,7 +117,7 @@ as
       , p_parent_subflow          => p_subflow_id
       , p_starting_object         => l_called_start_objt_bpmn_id
       , p_current_object          => l_called_start_objt_bpmn_id
-      , p_route                   => 'main'
+      , p_route                   => 'call-main'
       , p_last_completed          => p_sbfl_info.sbfl_current
       , p_status                  => flow_constants_pkg.gc_sbfl_status_running 
       , p_parent_sbfl_proc_level  => p_sbfl_info.sbfl_process_level
@@ -158,6 +158,9 @@ as
            set prdg.prdg_diagram_level = l_called_subflow_context.sbfl_id
          where prdg.prdg_id = l_prdg_id;
 
+
+
+
         -- map inVariables expressions for call (variables in called scope, expressions in calling scope)
         flow_expressions.process_expressions
         ( pi_objt_id => p_step_info.target_objt_id 
@@ -177,22 +180,40 @@ as
                              ' version '||l_call_definition.dgrm_version||'.'
         );
 
-        -- run on-event expressions for child startEvent (inside called diagram scope)
-        flow_expressions.process_expressions
-        ( pi_objt_bpmn_id => l_called_start_objt_bpmn_id 
-        , pi_set          => flow_constants_pkg.gc_expr_set_on_event
-        , pi_prcs_id      => p_process_id
-        , pi_sbfl_id      => l_called_subflow_context.sbfl_id
-        , pi_var_scope    => l_called_subflow_context.scope
-        , pi_expr_scope   => l_called_subflow_context.scope
-        );
         if not flow_globals.get_step_error then 
-          -- check again for any errors from expressions before stepping forward in the called activity
-          flow_engine.flow_complete_step   
-          ( p_process_id    => p_process_id
-          , p_subflow_id    => l_called_subflow_context.sbfl_id
-          , p_step_key      => l_called_subflow_context.step_key
-          );
+          -- commit the transaction in the parent process level / diagram plsql_optimize_level
+          commit;
+
+          apex_debug.info ( p_message => 'New Call Activity Parent Commited');
+
+          -- reset step_had_error flag
+          flow_globals.set_step_error ( p_has_error => false);
+
+          -- relock child subflow in new process level
+          if flow_engine_util.lock_subflow
+              ( p_subflow_id => l_called_subflow_context.sbfl_id
+              )
+          then
+            -- run on-event expressions for child startEvent (inside called diagram scope)
+            flow_expressions.process_expressions
+            ( pi_objt_bpmn_id => l_called_start_objt_bpmn_id 
+            , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+            , pi_prcs_id      => p_process_id
+            , pi_sbfl_id      => l_called_subflow_context.sbfl_id
+            , pi_var_scope    => l_called_subflow_context.scope
+            , pi_expr_scope   => l_called_subflow_context.scope
+            );
+            if not flow_globals.get_step_error then 
+              -- check again for any errors from expressions before stepping forward in the called activity
+              flow_engine.flow_complete_step   
+              ( p_process_id    => p_process_id
+              , p_subflow_id    => l_called_subflow_context.sbfl_id
+              , p_step_key      => l_called_subflow_context.step_key
+              );
+            end if;
+          end if;
+          -- reset step_had_error flag
+          flow_globals.set_step_error ( p_has_error => false);
         end if;
       end if;
     end if;
