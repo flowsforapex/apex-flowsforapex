@@ -28,8 +28,9 @@ as
           dgrm.calling_objt,
           dgrm.dgrm_name,
           dgrm_version,
-          connect_by_root(dgrm.dgrm_id) as root_dgrm
+          connect_by_root(dgrm.dgrm_id) as root_dgrm,
+          connect_by_iscycle as has_recursion
      from diagrams dgrm
     start with dgrm.calling_dgrm is null
-  connect by dgrm.calling_dgrm = prior dgrm.dgrm_id
+  connect by nocycle dgrm.calling_dgrm = prior dgrm.dgrm_id
 with read only;
