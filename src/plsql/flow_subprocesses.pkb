@@ -279,27 +279,43 @@ as
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
         ;  
-      
-        -- run on-event expressions for child startEvent
-        flow_expressions.process_expressions
-        ( pi_objt_bpmn_id => l_target_objt_sub  
-        , pi_set          => flow_constants_pkg.gc_expr_set_on_event
-        , pi_prcs_id      => p_process_id
-        , pi_sbfl_id      => l_sbfl_context_sub.sbfl_id
-        , pi_var_scope    => l_sbfl_context_sub.scope
-        , pi_expr_scope   => l_sbfl_context_sub.scope
-        );
 
-        if not flow_globals.get_step_error then 
+        --  commit parent here
+        commit;
 
-          -- check again for any errors from expressions before stepping into sub_process
-          flow_engine.flow_complete_step   
-          ( p_process_id    => p_process_id
-          , p_subflow_id    => l_sbfl_context_sub.sbfl_id
-          , p_step_key      => l_sbfl_context_sub.step_key
-          , p_forward_route => null
+        apex_debug.info (p_message => 'SubProcess Parent Transaction commited');
+
+        -- reset step_had_error flag
+        flow_globals.set_step_error ( p_has_error => false);
+
+        -- relock child subflow(in case earlier loop terminated everything in level)
+        if flow_engine_util.lock_subflow
+          ( p_subflow_id => l_sbfl_context_sub.sbfl_id
+          )
+        then
+          -- run on-event expressions for child startEvent
+          flow_expressions.process_expressions
+          ( pi_objt_bpmn_id => l_target_objt_sub  
+          , pi_set          => flow_constants_pkg.gc_expr_set_on_event
+          , pi_prcs_id      => p_process_id
+          , pi_sbfl_id      => l_sbfl_context_sub.sbfl_id
+          , pi_var_scope    => l_sbfl_context_sub.scope
+          , pi_expr_scope   => l_sbfl_context_sub.scope
           );
+
+          if not flow_globals.get_step_error then 
+
+            -- check again for any errors from expressions before stepping forward in the sub_process
+            flow_engine.flow_complete_step   
+            ( p_process_id    => p_process_id
+            , p_subflow_id    => l_sbfl_context_sub.sbfl_id
+            , p_step_key      => l_sbfl_context_sub.step_key
+            , p_forward_route => null
+            );
+          end if;
         end if;
+        -- reset step_had_error flag
+        flow_globals.set_step_error ( p_has_error => false);
       end if;
     end if;
   end process_subProcess; 
