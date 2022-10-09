@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220918215150'
+,p_last_upd_yyyymmddhh24miss=>'20221009154518'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -200,6 +200,25 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(63516512604355430)
+,p_db_column_name=>'HAS_RECURSION'
+,p_display_order=>90
+,p_column_identifier=>'I'
+,p_column_label=>'Has Recursion'
+,p_column_html_expression=>'<span class="#HAS_RECURSION_ICON#" aria-label="Has recursion" title="Has recursion"></span>'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'CENTER'
+);
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(63516662153355431)
+,p_db_column_name=>'HAS_RECURSION_ICON'
+,p_display_order=>100
+,p_column_identifier=>'J'
+,p_column_label=>'Has Recursion Icon'
+,p_column_type=>'STRING'
+,p_display_text_as=>'HIDDEN'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(64613740907593919)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -207,7 +226,7 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'646138'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'DGRM_NAME:DGRM_VERSION:CALLING_OBJT:'
+,p_report_columns=>'DGRM_NAME:DGRM_VERSION:CALLING_OBJT::HAS_RECURSION:HAS_RECURSION_ICON'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(63514877350355413)
@@ -920,6 +939,18 @@ wwv_flow_api.create_page_branch(
 ,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
 ,p_branch_condition=>'DELETE'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_branch(
  p_id=>wwv_flow_api.id(34402504419171411)
 ,p_branch_name=>'Go To Page 4'
@@ -939,18 +970,6 @@ wwv_flow_api.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(7336335344307045)

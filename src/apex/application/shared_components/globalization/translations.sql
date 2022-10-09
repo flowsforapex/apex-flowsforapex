@@ -22684,7 +22684,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'ja'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\4F5C\6210\65E5')
+,p_translate_to_text=>'Created'
 ,p_translate_from_text=>'Created'
 );
 wwv_flow_api.create_translation(
@@ -22744,7 +22744,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'ja'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\5B8C\4E86')
+,p_translate_to_text=>'Completed'
 ,p_translate_from_text=>'Completed'
 );
 wwv_flow_api.create_translation(
@@ -22768,7 +22768,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'ja'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\4F5C\6210\65E5')
+,p_translate_to_text=>'Created'
 ,p_translate_from_text=>'Created'
 );
 wwv_flow_api.create_translation(
@@ -22792,7 +22792,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'ja'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\5B8C\4E86')
+,p_translate_to_text=>'Completed'
 ,p_translate_from_text=>'Completed'
 );
 wwv_flow_api.create_translation(
@@ -36008,7 +36008,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'ja'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\5B8C\4E86')
+,p_translate_to_text=>'Completed'
 ,p_translate_from_text=>'Completed'
 );
 wwv_flow_api.create_translation(
@@ -36046,7 +36046,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'ja'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>unistr('\4F5C\6210\65E5')
+,p_translate_to_text=>'Created'
 ,p_translate_from_text=>'Created'
 );
 wwv_flow_api.create_translation(
@@ -86561,7 +86561,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'es'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Completado'
+,p_translate_to_text=>'Completed'
 ,p_translate_from_text=>'Completed'
 );
 wwv_flow_api.create_translation(
@@ -101600,7 +101600,7 @@ wwv_flow_api.create_translation(
 ,p_translate_to_lang_code=>'es'
 ,p_translation_specific_to_item=>'NO'
 ,p_template_translatable=>'N'
-,p_translate_to_text=>'Completado'
+,p_translate_to_text=>'Completed'
 ,p_translate_from_text=>'Completed'
 );
 wwv_flow_api.create_translation(
@@ -103205,6 +103205,343 @@ unistr('    <li><strong>strict</strong> (recommended) - Utilisez cette option po
 '</ul>'))
 );
 wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69413923458521093)
+,p_page_id=>7
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100001)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69414029659521127)
+,p_page_id=>7
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100001)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Comporte une r\00E9cursivit\00E9')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.03.31'
+,p_release=>'20.1.0.00.13'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69414208917521153)
+,p_page_id=>7
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100001)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69414489838521154)
+,p_page_id=>7
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100001)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Comporte une r\00E9cursivit\00E9')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69414614944521175)
+,p_page_id=>7
+,p_translated_flow_id=>100001
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100001)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>150
+,p_translate_to_lang_code=>'fr'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('<span class="#HAS_RECURSION_ICON#" aria-label="Comporte une r\00E9cursivit\00E9" title="Comporte une r\00E9cursivit\00E9"></span>')
+,p_translate_from_text=>'<span class="#HAS_RECURSION_ICON#" aria-label="Has recursion" title="Has recursion"></span>'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69511213793577959)
+,p_page_id=>7
+,p_translated_flow_id=>100004
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100004)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'de'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69511330899578005)
+,p_page_id=>7
+,p_translated_flow_id=>100004
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100004)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'de'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Hat Rekursion'
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69511545975578029)
+,p_page_id=>7
+,p_translated_flow_id=>100004
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100004)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'de'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69511761800578029)
+,p_page_id=>7
+,p_translated_flow_id=>100004
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100004)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'de'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Hat Rekursion'
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69511973309578063)
+,p_page_id=>7
+,p_translated_flow_id=>100004
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100004)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>150
+,p_translate_to_lang_code=>'de'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'<span class="#HAS_RECURSION_ICON#" aria-label="Hat Rekursion" title="Hat Rekursion"></span>'
+,p_translate_from_text=>'<span class="#HAS_RECURSION_ICON#" aria-label="Has recursion" title="Has recursion"></span>'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69512057488580128)
+,p_page_id=>7
+,p_translated_flow_id=>100003
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100003)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'ja'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69512130568580205)
+,p_page_id=>7
+,p_translated_flow_id=>100003
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100003)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'ja'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('\518D\5E30\3042\308A')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69512326282580242)
+,p_page_id=>7
+,p_translated_flow_id=>100003
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100003)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'ja'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69512575391580242)
+,p_page_id=>7
+,p_translated_flow_id=>100003
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100003)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'ja'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('\518D\5E30\3042\308A')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69512731696580274)
+,p_page_id=>7
+,p_translated_flow_id=>100003
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100003)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>150
+,p_translate_to_lang_code=>'ja'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('<span class="#HAS_RECURSION_ICON#" aria-label="\518D\5E30\3042\308A" title="\518D\5E30\3042\308A"></span>')
+,p_translate_from_text=>'<span class="#HAS_RECURSION_ICON#" aria-label="Has recursion" title="Has recursion"></span>'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69512860715582455)
+,p_page_id=>7
+,p_translated_flow_id=>100002
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100002)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'pt-br'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69512948544582489)
+,p_page_id=>7
+,p_translated_flow_id=>100002
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100002)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'pt-br'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Tem recurs\00E3o')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69513104983582529)
+,p_page_id=>7
+,p_translated_flow_id=>100002
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100002)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'pt-br'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69513375483582530)
+,p_page_id=>7
+,p_translated_flow_id=>100002
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100002)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'pt-br'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Tem recurs\00E3o')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69513508508582571)
+,p_page_id=>7
+,p_translated_flow_id=>100002
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100002)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>150
+,p_translate_to_lang_code=>'pt-br'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('<span class="#HAS_RECURSION_ICON#" aria-label="Tem recurs\00E3o" title="Tem recurs\00E3o"></span>')
+,p_translate_from_text=>'<span class="#HAS_RECURSION_ICON#" aria-label="Has recursion" title="Has recursion"></span>'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69513645436584564)
+,p_page_id=>7
+,p_translated_flow_id=>100005
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100005)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'es'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69513789037584594)
+,p_page_id=>7
+,p_translated_flow_id=>100005
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100005)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>148
+,p_translate_to_lang_code=>'es'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Tiene recursi\00F3n')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69513917476584622)
+,p_page_id=>7
+,p_translated_flow_id=>100005
+,p_translate_to_id=>wwv_flow_api.id(63516662153355431.100005)
+,p_translate_from_id=>wwv_flow_api.id(63516662153355431)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'es'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>'Has Recursion Icon'
+,p_translate_from_text=>'Has Recursion Icon'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69514106960584622)
+,p_page_id=>7
+,p_translated_flow_id=>100005
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100005)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>149
+,p_translate_to_lang_code=>'es'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('Tiene recursi\00F3n')
+,p_translate_from_text=>'Has Recursion'
+);
+wwv_flow_api.create_translation(
+ p_id=>wwv_flow_api.id(69514393884584655)
+,p_page_id=>7
+,p_translated_flow_id=>100005
+,p_translate_to_id=>wwv_flow_api.id(63516512604355430.100005)
+,p_translate_from_id=>wwv_flow_api.id(63516512604355430)
+,p_translate_column_id=>150
+,p_translate_to_lang_code=>'es'
+,p_translation_specific_to_item=>'NO'
+,p_template_translatable=>'N'
+,p_translate_to_text=>unistr('<span class="#HAS_RECURSION_ICON#" aria-label="Tiene recursi\00F3n" title="Tiene recursi\00F3n"></span>')
+,p_translate_from_text=>'<span class="#HAS_RECURSION_ICON#" aria-label="Has recursion" title="Has recursion"></span>'
+);
+wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(73515508910251639)
 ,p_page_id=>8
 ,p_translated_flow_id=>100001
@@ -103229,18 +103566,6 @@ wwv_flow_api.create_translation(
 ,p_template_translatable=>'N'
 ,p_translate_to_text=>'Commentaire'
 ,p_translate_from_text=>'Comment'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_translation(
  p_id=>wwv_flow_api.id(73515892329251645)

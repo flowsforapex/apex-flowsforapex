@@ -29,7 +29,10 @@ as
           dgrm.dgrm_name,
           dgrm_version,
           connect_by_root(dgrm.dgrm_id) as root_dgrm,
-          connect_by_iscycle as has_recursion
+          connect_by_iscycle as has_recursion,
+          case when connect_by_iscycle = 1 then
+            'fa fa-exclamation-triangle-o fa-lg u-warning-text'
+          end has_recursion_icon
      from diagrams dgrm
     start with dgrm.calling_dgrm is null
   connect by nocycle dgrm.calling_dgrm = prior dgrm.dgrm_id
