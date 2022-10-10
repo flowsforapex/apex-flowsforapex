@@ -1,6 +1,6 @@
 create or replace view flow_instance_diagrams_lov
 as
-  select 
+  select distinct
     case when callobj.objt_id is null then 'Main Diagram' else callobj.objt_name end as calling_diagram,
     prdg.prdg_id,
     prdg.prdg_prcs_id

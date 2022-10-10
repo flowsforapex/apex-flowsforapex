@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20221009154518'
+,p_last_upd_yyyymmddhh24miss=>'20221010213745'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -577,12 +577,12 @@ wwv_flow_api.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-' select distinct ',
-'    sum(case when i.prcs_status = ''created'' then 1 else 0 end)  as created_instances,',
-'    sum(case when i.prcs_status = ''running'' then 1 else 0 end)  as running_instances,',
-'    sum(case when i.prcs_status = ''completed'' then 1 else 0 end)  as completed_instances,',
-'    sum(case when i.prcs_status = ''terminated'' then 1 else 0 end)  as terminated_instances,',
-'    sum(case when i.prcs_status = ''error'' then 1 else 0 end)  as error_instances',
+'select distinct',
+'    nvl(sum(case when i.prcs_status = ''created'' then 1 else 0 end), 0)  as created_instances,',
+'    nvl(sum(case when i.prcs_status = ''running'' then 1 else 0 end), 0)  as running_instances,',
+'    nvl(sum(case when i.prcs_status = ''completed'' then 1 else 0 end), 0)  as completed_instances,',
+'    nvl(sum(case when i.prcs_status = ''terminated'' then 1 else 0 end), 0)  as terminated_instances,',
+'    nvl(sum(case when i.prcs_status = ''error'' then 1 else 0 end), 0)  as error_instances',
 'from flow_instances_vw i',
 'where i.prcs_id in (',
 '   select prdg.prdg_prcs_id',
@@ -590,8 +590,7 @@ wwv_flow_api.create_report_region(
 '   left join flow_instance_diagrams prdg ',
 '   on (prdg.prdg_dgrm_id = d.dgrm_id or prdg.prdg_calling_dgrm = d.dgrm_id)',
 '   where d.dgrm_id = :P7_DGRM_ID',
-');',
-''))
+')'))
 ,p_display_when_condition=>'P7_DGRM_ID'
 ,p_display_condition_type=>'ITEM_IS_NOT_NULL'
 ,p_ajax_enabled=>'Y'
