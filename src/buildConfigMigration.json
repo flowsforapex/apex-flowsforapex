@@ -9,7 +9,7 @@
     , "build_type": "concat"
     , "build_path": "/"
     , "script_path": "/"
-    , "script_name": "migrate_engine_22.1_to_22.2"
+    , "script_name": "premigrate_engine_22.1_to_22.2"
     , "script_extension": "sql"
     , "log_extension": "log"
     , "add_newline": true
@@ -19,7 +19,24 @@
     , "content":
       [
         { "content_type": "plaintext", "path": "migrations/22.1_to_22.2/", "name": "pre-migration-check-issue-77.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "migrations/22.1_to_22.2/", "name": "feature-447.sql", "add_show_errors": false }
+      ]
+    },
+    {
+      "base_path": "/"
+    , "search_path": "/"
+    , "build_type": "concat"
+    , "build_path": "/"
+    , "script_path": "/"
+    , "script_name": "migrate_engine_22.1_to_22.2"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "migrations/22.1_to_22.2/", "name": "feature-447.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/22.1_to_22.2/", "name": "feature-172.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/22.1_to_22.2/", "name": "issue-444.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/22.1_to_22.2/", "name": "feature-468.sql", "add_show_errors": false }
