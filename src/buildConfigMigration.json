@@ -154,7 +154,7 @@
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_es.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_fr.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_ja.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_pt.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_pt-br.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "", "name": "parse_all_diagrams.sql", "add_show_errors": false }
       ]
     }
