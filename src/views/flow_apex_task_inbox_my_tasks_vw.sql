@@ -113,11 +113,13 @@ as select
      , fati.subflow_id
      , fati.step_key
      from flow_apex_task_inbox_vw fati
-     join apex_appl_acl_user_roles roles
-       on fati.lane_name = roles.role_static_id
     where fati.state = 'running'
-      and roles.user_name = SYS_CONTEXT('APEX$SESSION','APP_USER')
-      and roles.workspace_id = SYS_CONTEXT('APEX$SESSION','WORKSPACE_ID')
       and ( fati.actual_owner = SYS_CONTEXT('APEX$SESSION','APP_USER') 
           OR fati.actual_owner is null )
+      and fati.lane_name in ( select roles.role_static_id
+                              from   apex_appl_acl_user_roles roles
+                              where  roles.user_name = SYS_CONTEXT('APEX$SESSION','APP_USER')
+                              and    roles.workspace_id = SYS_CONTEXT('APEX$SESSION','WORKSPACE_ID')
+                              )
+          --- if lanes not always being used, change this to your situation
      ;
