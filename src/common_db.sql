@@ -137,4 +137,4 @@ PROMPT >> Engine Messages
 @data/install_engine_messages_es.sql
 @data/install_engine_messages_fr.sql
 @data/install_engine_messages_ja.sql
-@data/install_engine_messages_pt.sql
+@data/install_engine_messages_pt-br.sql
