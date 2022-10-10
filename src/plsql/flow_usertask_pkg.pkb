@@ -228,8 +228,12 @@ as
           );
           -- set the status to 'waiting for approval'
           update flow_subflows sbfl
-             set sbfl.sbfl_last_update = systimestamp
-               , sbfl.sbfl_status   = flow_constants_pkg.gc_sbfl_status_waiting_approval
+             set sbfl.sbfl_last_update    = systimestamp
+               , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_approval
+               , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                      , sys_context('userenv','os_user')
+                                                      , sys_context('userenv','session_user')
+                                                      )  
            where sbfl.sbfl_id       = l_sbfl_id
              and sbfl.sbfl_prcs_id  = l_prcs_id
           ;

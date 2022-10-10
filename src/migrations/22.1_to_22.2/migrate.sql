@@ -8,12 +8,15 @@
 
 */
 
+PROMPT >> Checking that Schema can be Upgraded from 22.1 to 22.2
+PROMPT >> ------------------------------------------------------
+
+-- wrap test query in pl/sql that raises exception if any rows returned
+
 
 PROMPT >> Running Schema Upgrade from 22.1 to 22.2
 PROMPT >> -------------------------------------------
 
-PROMPT >> Halt DBMS_SCHEDULER job 
-/* TODO Implement Job disabling */
 
 @@feature-447.sql
 @@feature-172.sql
@@ -22,10 +25,8 @@ PROMPT >> Halt DBMS_SCHEDULER job
 @@issue-77.sql
 @@issue-516.sql
 @@issue-511.sql
+@@issue-523.sql
 @@set_flows_version.sql
 
-
-PROMPT >> Resume DBMS_SCHEDULER job
-/* TODO Implement Job enabling */
 
 PROMPT >> Finished Schema Upgrade from 22.1 to 22.2

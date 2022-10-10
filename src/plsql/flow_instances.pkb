@@ -194,6 +194,7 @@ as
           , prcs.prcs_status
           , prcs.prcs_init_ts
           , prcs.prcs_last_update
+          , prcs.prcs_init_by
           )
     values
           ( p_prcs_name
@@ -201,6 +202,10 @@ as
           , flow_constants_pkg.gc_prcs_status_created
           , systimestamp
           , systimestamp
+          , coalesce  ( sys_context('apex$session','app_user') 
+                      , sys_context('userenv','os_user')
+                      , sys_context('userenv','session_user')
+                      )  
           )
       returning prcs.prcs_id into l_ret
     ;
@@ -310,8 +315,12 @@ as
     );
     -- mark process as running
     update flow_processes prcs
-       set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
-         , prcs.prcs_last_update = systimestamp
+       set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_running
+         , prcs.prcs_last_update    = systimestamp
+         , prcs.prcs_last_update_by =  coalesce  ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;    
@@ -474,8 +483,12 @@ as
     ;
     -- reset the process status to 'created'
     update flow_processes prcs
-       set prcs.prcs_last_update = systimestamp
-         , prcs.prcs_status = flow_constants_pkg.gc_prcs_status_created
+       set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_created
+         , prcs.prcs_last_update    = systimestamp
+         , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
      where prcs.prcs_id = p_process_id
     ;
     -- log the reset
@@ -546,6 +559,10 @@ as
     update flow_processes prcs
        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_terminated
          , prcs.prcs_last_update = systimestamp
+         , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
      where prcs.prcs_id = p_process_id
     ; 
     -- log termination

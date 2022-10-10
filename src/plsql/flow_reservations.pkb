@@ -52,7 +52,12 @@ as
       end if;
       -- place the reservation
       update flow_subflows sbfl
-         set sbfl_reservation = p_reservation
+         set sbfl_reservation         = p_reservation
+           , sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
        where sbfl_prcs_id = p_process_id
          and sbfl_id = p_subflow_id
       ;
@@ -132,7 +137,12 @@ as
     end if;
     -- release the reservation
     update flow_subflows sbfl
-      set sbfl_reservation = null
+       set sbfl_reservation         = null
+         , sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                               , sys_context('userenv','os_user')
+                                               , sys_context('userenv','session_user')
+                                               )  
     where sbfl_prcs_id = p_process_id
       and sbfl_id = p_subflow_id
     ;

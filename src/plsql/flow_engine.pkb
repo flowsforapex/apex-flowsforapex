@@ -85,8 +85,12 @@ begin
       -- update current step info before logging
       update flow_subflows sbfl
           set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-            , sbfl.sbfl_last_update = systimestamp
-            , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+            , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+            , sbfl.sbfl_last_update    = systimestamp
+            , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
         where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
       ;
@@ -98,11 +102,15 @@ begin
       );
       -- jump into matching catch event
       update flow_subflows sbfl
-      set   sbfl.sbfl_current = l_next_objt
+      set   sbfl.sbfl_current        = l_next_objt
           , sbfl.sbfl_last_completed = p_step_info.target_objt_ref
+          , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
           , sbfl.sbfl_became_current = systimestamp 
-          , sbfl.sbfl_last_update = systimestamp
-          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
       where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
       ;
@@ -155,9 +163,13 @@ end flow_process_link_event;
     -- update the subflow before logging
      update flow_subflows sbfl
         set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-          , sbfl.sbfl_current = p_step_info.target_objt_ref
-          , sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_completed  
-          , sbfl.sbfl_last_update = systimestamp 
+          , sbfl.sbfl_current        = p_step_info.target_objt_ref
+          , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_completed  
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
       where sbfl.sbfl_id = p_subflow_id
         and sbfl.sbfl_prcs_id = p_process_id
     ;
@@ -215,8 +227,12 @@ end flow_process_link_event;
       if l_remaining_subflows = 0 then 
 
         update flow_processes prcs 
-           set prcs.prcs_status = l_process_end_status
-             , prcs.prcs_last_update = systimestamp
+           set prcs.prcs_status         = l_process_end_status
+             , prcs.prcs_last_update    = systimestamp
+             , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                    , sys_context('userenv','os_user')
+                                                    , sys_context('userenv','session_user')
+                                                    )  
          where prcs.prcs_id = p_process_id
         ;
         -- log the completion
@@ -261,10 +277,14 @@ end flow_process_link_event;
     if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
       -- we have a timer.  Set status to waiting and schedule the timer.
       update flow_subflows sbfl
-         set sbfl.sbfl_current = p_step_info.target_objt_ref
+         set sbfl.sbfl_current        = p_step_info.target_objt_ref
            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-           , sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_timer
+           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_timer
+           , sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
        where sbfl.sbfl_id = p_sbfl_info.sbfl_id
          and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
@@ -278,10 +298,14 @@ end flow_process_link_event;
       -- not a timer.  Just set it to running for now.  (other types to be implemented later)
       -- this includes bpmn:linkEventDefinition which should come here
       update flow_subflows sbfl
-         set sbfl.sbfl_current = p_step_info.target_objt_ref
+         set sbfl.sbfl_current        = p_step_info.target_objt_ref
            , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-           , sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
+           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+           , sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
        where sbfl.sbfl_id = p_sbfl_info.sbfl_id
          and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
@@ -316,12 +340,16 @@ end flow_process_link_event;
     if p_step_info.target_objt_subtag is null then
       -- a none event.  Make the ITE the current event then just call flow_complete_step.  
       update flow_subflows sbfl
-      set   sbfl.sbfl_current = p_step_info.target_objt_ref
+      set   sbfl.sbfl_current        = p_step_info.target_objt_ref
           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-          , sbfl.sbfl_last_update = systimestamp
-          , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-      where sbfl.sbfl_id = p_sbfl_info.sbfl_id
-          and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+          , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
+      where sbfl.sbfl_id      = p_sbfl_info.sbfl_id
+        and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
       ;
       flow_complete_step
       ( p_process_id => p_sbfl_info.sbfl_prcs_id
@@ -448,12 +476,16 @@ begin
                                                     );
 
      update flow_subflows sbfl
-        set sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-          , sbfl_current = l_current_object
+        set sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+          , sbfl_current        = l_current_object
           , sbfl_last_completed = l_child_starting_object
-          , sbfl_last_update = l_timestamp
           , sbfl_became_current = l_timestamp
-          , sbfl_step_key = l_forward_step_key
+          , sbfl_step_key       = l_forward_step_key
+          , sbfl_last_update    = l_timestamp 
+          , sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                           , sys_context('userenv','os_user')
+                                           , sys_context('userenv','session_user')
+                                           )  
       where sbfl.sbfl_prcs_id = p_process_id
         and sbfl.sbfl_id = p_parent_subflow_id
         and sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_split  
@@ -515,8 +547,12 @@ begin
   , 'Step Key', p_step_key
   );
   update flow_subflows sbfl 
-     set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-       , sbfl.sbfl_last_update = systimestamp
+     set sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+       , sbfl.sbfl_last_update    = systimestamp
+       , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                             , sys_context('userenv','os_user')
+                                             , sys_context('userenv','session_user')
+                                             )  
    where sbfl.sbfl_prcs_id = p_process_id
      and sbfl.sbfl_id = p_subflow_id
   returning sbfl_scope into l_sbfl_scope
@@ -589,7 +625,12 @@ begin
   if not flow_globals.get_step_error then 
       -- set timer flag on child (Self, Noninterrupting, Timer)
       update flow_subflows sbfl
-          set sbfl.sbfl_has_events = sbfl.sbfl_has_events||':SNT'
+          set sbfl.sbfl_has_events     = sbfl.sbfl_has_events||':SNT'
+            , sbfl.sbfl_last_update    = systimestamp
+            , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
         where sbfl.sbfl_id = l_new_subflow_context.sbfl_id
           and sbfl.sbfl_prcs_id = p_process_id
       ;
@@ -999,8 +1040,12 @@ begin
   );   
   --  Set status to waiting and reschedule the timer with current time.
       update flow_subflows sbfl
-         set sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_timer
+         set sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_timer
+           , sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
        where sbfl.sbfl_id = p_sbfl_rec.sbfl_id
          and sbfl.sbfl_prcs_id = p_sbfl_rec.sbfl_prcs_id
       ;
@@ -1324,15 +1369,19 @@ begin
                                              );
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
-      set sbfl.sbfl_current = l_step_info.target_objt_ref
+      set sbfl.sbfl_current        = l_step_info.target_objt_ref
         , sbfl.sbfl_last_completed = l_sbfl_rec.sbfl_current
         , sbfl.sbfl_became_current = l_timestamp
-        , sbfl.sbfl_step_key = l_step_key
-        , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-        , sbfl.sbfl_work_started = null
-        , sbfl.sbfl_last_update = l_timestamp
-        , sbfl.sbfl_lane      = coalesce( l_step_info.target_objt_lane     , sbfl.sbfl_lane     , null)
-        , sbfl.sbfl_lane_name = coalesce( l_step_info.target_objt_lane_name, sbfl.sbfl_lane_name, null)
+        , sbfl.sbfl_step_key       = l_step_key
+        , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+        , sbfl.sbfl_work_started   = null
+        , sbfl.sbfl_lane           = coalesce( l_step_info.target_objt_lane     , sbfl.sbfl_lane     , null)
+        , sbfl.sbfl_lane_name      = coalesce( l_step_info.target_objt_lane_name, sbfl.sbfl_lane_name, null)
+        , sbfl.sbfl_last_update    = l_timestamp
+        , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                              , sys_context('userenv','os_user')
+                                              , sys_context('userenv','session_user')
+                                              )  
     where sbfl.sbfl_prcs_id = p_process_id
       and sbfl.sbfl_id = p_subflow_id
     ;
@@ -1424,7 +1473,12 @@ begin
       -- set the start time if null
       if l_existing_start is null then
         update flow_subflows sbfl
-          set sbfl_work_started = systimestamp
+           set sbfl_work_started        = systimestamp
+             , sbfl.sbfl_last_update    = systimestamp
+             , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                   , sys_context('userenv','os_user')
+                                                   , sys_context('userenv','session_user')
+                                                   )  
         where sbfl_prcs_id = p_process_id
           and sbfl_id = p_subflow_id
         ;
@@ -1499,8 +1553,12 @@ begin
                     );
     -- set subflow status to running
     update flow_subflows sbfl
-       set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_running
-         , sbfl_last_update = systimestamp
+       set sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+         , sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                               , sys_context('userenv','os_user')
+                                               , sys_context('userenv','session_user')
+                                               )  
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
     ;
@@ -1521,6 +1579,11 @@ begin
     if l_num_error_subflows = 0 then
       update flow_processes prcs
          set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
+           , prcs.prcs_last_update = systimestamp
+           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
        where prcs.prcs_id = p_process_id
       ;
       flow_logging.log_instance_event

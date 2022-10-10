@@ -20,7 +20,9 @@ as
         , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as sbfl_current_name
         , sbfl.sbfl_step_key
         , objt_curr.objt_tag_name as sbfl_current_tag_name
+        , sbfl.sbfl_became_current
         , sbfl.sbfl_last_update
+        , sbfl.sbfl_last_update_by
         , sbfl.sbfl_status
         , sbfl.sbfl_lane as sbfl_current_lane
         , sbfl.sbfl_lane_name as sbfl_current_lane_name
