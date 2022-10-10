@@ -56,10 +56,25 @@ PROMPT >> Publish Translated Applications
 begin
   -- Next call might fail if we do not set NUMERIC_CHARACTERS
   execute immediate q'[alter session set NLS_NUMERIC_CHARACTERS='.,']';
-  apex_lang.publish_application
-  (
-    p_application_id => apex_application_install.get_application_id
-  , p_language => 'fr'
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'fr' 
+  );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'ja' 
+  );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'de' 
+  );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'pt-br' 
+  );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'es' 
   );
   commit;
 end;
