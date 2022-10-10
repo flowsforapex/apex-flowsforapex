@@ -39,6 +39,22 @@ begin
     p_application_id => apex_application_install.get_application_id,
     p_language => 'fr' 
   );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'ja' 
+  );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'de' 
+  );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'pt-br' 
+  );
+  apex_lang.publish_application(
+    p_application_id => apex_application_install.get_application_id,
+    p_language => 'es' 
+  );
   commit;
 end;
 /

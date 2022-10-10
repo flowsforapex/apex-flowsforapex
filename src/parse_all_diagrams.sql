@@ -6,6 +6,6 @@ begin
   end loop;
   commit;
 end;
+/
 PROMPT >> Finished Reparsing all Diagrams
 PROMPT >> ===============================================
-/
