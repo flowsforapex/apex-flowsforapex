@@ -28,7 +28,7 @@ PROMPT >> Prepare Subflow table for Call Activities
     sbfl_calling_sbfl   number,
     sbfl_scope          number,
     sbfl_diagram_level  number,
-    sbfl_lane           varchar2(50 char)
+    sbfl_lane           varchar2(50 char),
     sbfl_lane_name      varchar2(200 char)
   );
 
@@ -105,11 +105,12 @@ PROMPT >> Prepare Subflow Log for Call Activities
       alter table flow_subflow_log
       add (
         sflg_dgrm_id       NUMBER,
-        sflg_diagram_level NUMBER,
+        sflg_diagram_level NUMBER
       )';
   end;
+  /
 
-  update flow_subflog_log l
+  update flow_subflow_log l
   set l.sflg_diagram_level = 0,
       l.sflg_dgrm_id = ( select prcs.prcs_dgrm_id
                          from   flow_processes prcs
