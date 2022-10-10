@@ -1,525 +1,525 @@
 {
-  "lang" : "es",
-  "messages" : [
-  {
-  "text_key" : "ITE-unsupported-type",
-  "source" : "Currently unsupported type of Intermediate Throw Event encountered at %0 .",
-  "target" : "Currently unsupported type of Intermediate Throw Event encountered at %0 ."
-},
-  {
-  "text_key" : "apex-session-params-not-set",
-  "source" : "Asynchronous connection details for object %0 need to be set in process variables, diagram async connection details, or system config details.",
-  "target" : "Asynchronous connection details for object %0 need to be set in process variables, diagram async connection details, or system config details."
-},
-  {
-  "text_key" : "async-invalid_params",
-  "source" : "Unable to create asyncronous connection for object %0.  Username not valid in specified Application",
-  "target" : "Unable to create asyncronous connection for object %0.  Username not valid in specified Application"
-},
-  {
-  "text_key" : "async-no-username",
-  "source" : "Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.",
-  "target" : "Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration."
-},
-  {
-  "text_key" : "async-no-appid",
-  "source" : "Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.",
-  "target" : "Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration."
-},
-  {
-  "text_key" : "async-no-pageid",
-  "source" : "Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.",
-  "target" : "Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration."
-},
-  {
-  "text_key" : "boundary-event-child-lock-to",
-  "source" : "Child Boundary Subflows or Timers of %0 currently locked by another user.  Retry your transaction later.",
-  "target" : "Child Boundary Subflows or Timers of %0 currently locked by another user.  Retry your transaction later."
-},
-  {
-  "text_key" : "boundary-event-no-catch-found",
-  "source" : "No boundaryEvent of type %0 found to catch event.",
-  "target" : "No boundaryEvent of type %0 found to catch event."
-},
-  {
-  "text_key" : "boundary-event-too-many",
-  "source" : "More than one %0 boundaryEvent found on sub process.",
-  "target" : "More than one %0 boundaryEvent found on sub process."
-},
-  {
-  "text_key" : "eng_handle_event_int",
-  "source" : "Flow Engine Internal Error: Process %0 Subflow %1 Module %2 Current %4 Current Tag %3",
-  "target" : "Flow Engine Internal Error: Process %0 Subflow %1 Module %2 Current %4 Current Tag %3"
-},
-  {
-  "text_key" : "engine-unsupported-object",
-  "source" : "Model Error: Process BPMN model next step uses unsupported object %0",
-  "target" : "Model Error: Process BPMN model next step uses unsupported object %0"
-},
-  {
-  "text_key" : "engine-util-prcs-not-found",
-  "source" : "Application Error: Process ID %0 not found.",
-  "target" : "Application Error: Process ID %0 not found."
-},
-  {
-  "text_key" : "engine-util-sbfl-not-in-prcs",
-  "source" : "Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 ).",
-  "target" : "Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 )."
-},
-  {
-  "text_key" : "engine-util-sbfl-not-found",
-  "source" : "Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).",
-  "target" : "Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations)."
-},
-  {
-  "text_key" : "gateway-invalid-route",
-  "source" : "Error at gateway %0. Supplied variable %1 contains invalid route: %2",
-  "target" : "Error at gateway %0. Supplied variable %1 contains invalid route: %2"
-},
-  {
-  "text_key" : "gateway-merge-error",
-  "source" : "Internal error processing merging gateway on subflow %0",
-  "target" : "Internal error processing merging gateway on subflow %0"
-},
-  {
-  "text_key" : "gateway-no-route",
-  "source" : "No gateway routing instruction provided in variable %0 and model contains no default route.",
-  "target" : "No gateway routing instruction provided in variable %0 and model contains no default route."
-},
-  {
-  "text_key" : "gateway-bad-expression",
-  "source" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).",
-  "target" : "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:)."
-},
-  {
-  "text_key" : "gateway-too-many-defaults",
-  "source" : "More than one default route specified in model for Gateway %0.",
-  "target" : "More than one default route specified in model for Gateway %0."
-},
-  {
-  "text_key" : "link-no-catch",
-  "source" : "Unable to find matching link catch event named %0.",
-  "target" : "Unable to find matching link catch event named %0."
-},
-  {
-  "text_key" : "link-too-many-catches",
-  "source" : "More than one matching link catch event named %0.",
-  "target" : "More than one matching link catch event named %0."
-},
-  {
-  "text_key" : "logging-instance-event",
-  "source" : "Flows - Internal error while logging an Instance Event",
-  "target" : "Flows - Internal error while logging an Instance Event"
-},
-  {
-  "text_key" : "logging-step-event",
-  "source" : "Flows - Internal error while logging a Step Event",
-  "target" : "Flows - Internal error while logging a Step Event"
-},
-  {
-  "text_key" : "logging-variable-event",
-  "source" : "Flows - Internal error while logging a Variable Event",
-  "target" : "Flows - Internal error while logging a Variable Event"
-},
-  {
-  "text_key" : "process-lock-timeout",
-  "source" : "Process objects for %0 currently locked by another user.  Try again later.",
-  "target" : "Process objects for %0 currently locked by another user.  Try again later."
-},
-  {
-  "text_key" : "more_than_1_forward_path",
-  "source" : "More than 1 forward path found when only 1 allowed.",
-  "target" : "More than 1 forward path found when only 1 allowed."
-},
-  {
-  "text_key" : "no_next_step_found",
-  "source" : "No Next Step Found on subflow %0.  Check your process diagram.",
-  "target" : "No Next Step Found on subflow %0.  Check your process diagram."
-},
-  {
-  "text_key" : "plsql_script_failed",
-  "source" : "Process %0: Task %1 failed due to PL/SQL error - see event log.",
-  "target" : "Process %0: Task %1 failed due to PL/SQL error - see event log."
-},
-  {
-  "text_key" : "plsql_script_requested_stop",
-  "source" : "Process %0: Task %1 requested processing stop - see event log.",
-  "target" : "Process %0: Task %1 requested processing stop - see event log."
-},
-  {
-  "text_key" : "timeout_locking_subflow",
-  "source" : "Unable to lock subflow %0 as currently locked by another user.  Try again later.",
-  "target" : "Unable to lock subflow %0 as currently locked by another user.  Try again later."
-},
-  {
-  "text_key" : "reservation-already-placed",
-  "source" : "Reservation already placed on next task for you.",
-  "target" : "Reservation already placed on next task for you."
-},
-  {
-  "text_key" : "reservation-by-other_user",
-  "source" : "Reservation for %0 unsuccessful.  Step already reserved by another user (%1).",
-  "target" : "Reservation for %0 unsuccessful.  Step already reserved by another user (%1)."
-},
-  {
-  "text_key" : "reservation-failed-not-found",
-  "source" : "Reservation for %2 unsuccessful.  Subflow %0 in Process %1 not found.",
-  "target" : "Reservation for %2 unsuccessful.  Subflow %0 in Process %1 not found."
-},
-  {
-  "text_key" : "reservation-incorrect-step-key",
-  "source" : "Task is no longer current, probably already completed.  Please refresh your Inbox.",
-  "target" : "Task is no longer current, probably already completed.  Please refresh your Inbox."
-},
-  {
-  "text_key" : "reservation-lock-timeout",
-  "source" : "Subflow currently locked (not reserved) by another user.  Try your reservation again later.",
-  "target" : "Subflow currently locked (not reserved) by another user.  Try your reservation again later."
-},
-  {
-  "text_key" : "reservation-release-not-found",
-  "source" : "Reservation release unsuccessful.  Subflow %0 in Process %1 not found.",
-  "target" : "Reservation release unsuccessful.  Subflow %0 in Process %1 not found."
-},
-  {
-  "text_key" : "restart-no-error",
-  "source" : "No Current Error Found.  Check your process diagram.",
-  "target" : "No Current Error Found.  Check your process diagram."
-},
-  {
-  "text_key" : "start-already-running",
-  "source" : "You tried to start a process (id %0)that is already running.",
-  "target" : "You tried to start a process (id %0)that is already running."
-},
-  {
-  "text_key" : "start-diagram-calls-itself",
-  "source" : "You tried to start a process with a diagram %0 that includes a callActivity calling itself.",
-  "target" : "You tried to start a process with a diagram %0 that includes a callActivity calling itself."
-},
-  {
-  "text_key" : "start-multiple-already-running",
-  "source" : "You tried to start a process (id %0) with multiple copies already running.",
-  "target" : "You tried to start a process (id %0) with multiple copies already running."
-},
-  {
-  "text_key" : "start-multiple-start-events",
-  "source" : "You have multiple starting events defined. Make sure your diagram has only one start event.",
-  "target" : "You have multiple starting events defined. Make sure your diagram has only one start event."
-},
-  {
-  "text_key" : "start-no-start-event",
-  "source" : "No starting event is defined in the Flow diagram.",
-  "target" : "No starting event is defined in the Flow diagram."
-},
-  {
-  "text_key" : "start-not-created",
-  "source" : "You tried to start a process (id %0) that does not exist.",
-  "target" : "You tried to start a process (id %0) that does not exist."
-},
-  {
-  "text_key" : "start-type-unsupported",
-  "source" : "Unsupported start event type (%0). Only None (standard) Start Event and Timer Start Event are currently supported.",
-  "target" : "Unsupported start event type (%0). Only None (standard) Start Event and Timer Start Event are currently supported."
-},
-  {
-  "text_key" : "startwork-sbfl-not-found",
-  "source" : "Start Work time recording unsuccessful.  Subflow %0 in Process %1 not found.",
-  "target" : "Start Work time recording unsuccessful.  Subflow %0 in Process %1 not found."
-},
-  {
-  "text_key" : "step-key-incorrect",
-  "source" : "This Process Step has already occurred.  (Incorrect step key %0 supplied while expecting step key %1).",
-  "target" : "This Process Step has already occurred.  (Incorrect step key %0 supplied while expecting step key %1)."
-},
-  {
-  "text_key" : "subProcess-no-start",
-  "source" : "Unable to find Sub-Process Start Event.",
-  "target" : "Unable to find Sub-Process Start Event."
-},
-  {
-  "text_key" : "subProcess-too-many-starts",
-  "source" : "More than one Sub-Process Start found.",
-  "target" : "More than one Sub-Process Start found."
-},
-  {
-  "text_key" : "timer-broken",
-  "source" : "Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.",
-  "target" : "Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info."
-},
-  {
-  "text_key" : "timer-cycle-unsupported",
-  "source" : "Cycle Timer defined for object %0 not currently supported.",
-  "target" : "Cycle Timer defined for object %0 not currently supported."
-},
-  {
-  "text_key" : "timer-incomplete-definition",
-  "source" : "Incomplete timer definitions for object %0. Type: %1; Value1: %2 Value2: %3  Value3: %4",
-  "target" : "Incomplete timer definitions for object %0. Type: %1; Value1: %2 Value2: %3  Value3: %4"
-},
-  {
-  "text_key" : "timer-lock-timeout",
-  "source" : "Timer for subflow %0 currently locked by another user.  Try again later.",
-  "target" : "Timer for subflow %0 currently locked by another user.  Try again later."
-},
-  {
-  "text_key" : "timer-object-not-found",
-  "source" : "Object with timer not found in get_timer_definition. Subflow %0.",
-  "target" : "Object with timer not found in get_timer_definition. Subflow %0."
-},
-  {
-  "text_key" : "timers-lock-timeout",
-  "source" : "Timers for process %0 currently locked by another user.  Try again later.",
-  "target" : "Timers for process %0 currently locked by another user.  Try again later."
-},
-  {
-  "text_key" : "var-set-error",
-  "source" : "Error creating process variable %0 for process id %1 in scope %2.",
-  "target" : "Error creating process variable %0 for process id %1 in scope %2."
-},
-  {
-  "text_key" : "var-get-error",
-  "source" : "Error getting process variable %0 for process id %1 in scope %2.",
-  "target" : "Error getting process variable %0 for process id %1 in scope %2."
-},
-  {
-  "text_key" : "var-update-error",
-  "source" : "Error updating process variable %0 for process id %1 in scope %2.",
-  "target" : "Error updating process variable %0 for process id %1 in scope %2."
-},
-  {
-  "text_key" : "var-delete-error",
-  "source" : "Error deleting process variable %0 for process id %1 in scope %2.",
-  "target" : "Error deleting process variable %0 for process id %1 in scope %2."
-},
-  {
-  "text_key" : "var-lock-error",
-  "source" : "Error locking process variable %0 for process id %1 in scope %2.",
-  "target" : "Error locking process variable %0 for process id %1 in scope %2."
-},
-  {
-  "text_key" : "var_exp_datatype",
-  "source" : "Error setting process variable.  Incorrect datatype for variable %0.  SQL error shown in debug output.",
-  "target" : "Error setting process variable.  Incorrect datatype for variable %0.  SQL error shown in debug output."
-},
-  {
-  "text_key" : "var_exp_date_format",
-  "source" : "Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)",
-  "target" : "Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)"
-},
-  {
-  "text_key" : "var_exp_object_not_found",
-  "source" : "Internal error looking up object %0 in process_expressions.  SQL error shown in debug output.",
-  "target" : "Internal error looking up object %0 in process_expressions.  SQL error shown in debug output."
-},
-  {
-  "text_key" : "var_exp_plsql_error",
-  "source" : "Subflow : %0 Error in %2 expression for Variable : %1",
-  "target" : "Subflow : %0 Error in %2 expression for Variable : %1"
-},
-  {
-  "text_key" : "var_exp_sql_no_data",
-  "source" : "Error setting process variable %1 in process id %0 (set %2).  No data found in query.",
-  "target" : "Error setting process variable %1 in process id %0 (set %2).  No data found in query."
-},
-  {
-  "text_key" : "var_exp_sql_other",
-  "source" : "Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.",
-  "target" : "Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log."
-},
-  {
-  "text_key" : "var_exp_sql_too_many_rows",
-  "source" : "Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.",
-  "target" : "Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows."
-},
-  {
-  "text_key" : "var_exp_static_general",
-  "source" : "Error setting process variable %1 in process id %0 (set %2).  See error in event log.",
-  "target" : "Error setting process variable %1 in process id %0 (set %2).  See error in event log."
-},
-  {
-  "text_key" : "version-no-rel-or-draft-v0",
-  "source" : "Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id",
-  "target" : "Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id"
-},
-  {
-  "text_key" : "version-not-found",
-  "source" : "Cannot find specified diagram version.  Please check version specification.",
-  "target" : "Cannot find specified diagram version.  Please check version specification."
-},
-  {
-  "text_key" : "timer_definition_error",
-  "source" : "Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3",
-  "target" : "Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3"
-},
-  {
-  "text_key" : "plugin-model-no-version",
-  "source" : "Version not defined.",
-  "target" : "Version not defined."
-},
-  {
-  "text_key" : "plugin-parsing-json-variables",
-  "source" : "Error during parsing process variables.",
-  "target" : "Error during parsing process variables."
-},
-  {
-  "text_key" : "plugin-route-not-define",
-  "source" : "Gateway is not defined for routing.",
-  "target" : "Gateway is not defined for routing."
-},
-  {
-  "text_key" : "plugin-gateway-not-exist",
-  "source" : "Gateway define does not exists for this flow.",
-  "target" : "Gateway define does not exists for this flow."
-},
-  {
-  "text_key" : "plugin-no-instance-subflow-id",
-  "source" : "Unable to get Flow Instance Id and or subflow Id to manage the step.",
-  "target" : "Unable to get Flow Instance Id and or subflow Id to manage the step."
-},
-  {
-  "text_key" : "plugin-wrong-variable-number",
-  "source" : "Wrong number of APEX item(s) or process variable(s).",
-  "target" : "Wrong number of APEX item(s) or process variable(s)."
-},
-  {
-  "text_key" : "plugin-wrong-variable-type",
-  "source" : "One or more process variable(s) are a different type than the one defined in the JSON.",
-  "target" : "One or more process variable(s) are a different type than the one defined in the JSON."
-},
-  {
-  "text_key" : "plugin-variable-not-a-number",
-  "source" : "%0 is not a valid number.",
-  "target" : "%0 is not a valid number."
-},
-  {
-  "text_key" : "plugin-variable-not-a-date",
-  "source" : "%0 is not a valid date.",
-  "target" : "%0 is not a valid date."
-},
-  {
-  "text_key" : "plugin-invalid-json",
-  "source" : "JSON provided is invalid.",
-  "target" : "JSON provided is invalid."
-},
-  {
-  "text_key" : "plugin-modeler-id-not-found",
-  "source" : "No data found. Check if Diagram with given ID exists.",
-  "target" : "No data found. Check if Diagram with given ID exists."
-},
-  {
-  "text_key" : "plugin-unexpected-error",
-  "source" : "Unexpected error, please contact your administrator.",
-  "target" : "Unexpected error, please contact your administrator."
-},
-  {
-  "text_key" : "plugin-diagram-not-parsable",
-  "source" : "Diagram could not be parsed.<br />Please review your diagram to ensure that it is supported.",
-  "target" : "Diagram could not be parsed.<br />Please review your diagram to ensure that it is supported."
-},
-  {
-  "text_key" : "plugin-diagram-saved",
-  "source" : "Changes saved!",
-  "target" : "Changes saved!"
-},
-  {
-  "text_key" : "plugin-diagram-has-changed",
-  "source" : "Model has changed. Discard changes?",
-  "target" : "Model has changed. Discard changes?"
-},
-  {
-  "text_key" : "wrong-default-workspace",
-  "source" : "Process %0: ServiceTask %1 failed: the default workspace defined in the configuration parameter is not valid.",
-  "target" : "Process %0: ServiceTask %1 failed: the default workspace defined in the configuration parameter is not valid."
-},
-  {
-  "text_key" : "workspace-not-found",
-  "source" : "Process %0: ServiceTask %1 failed: unable to find the workspace associated with the application id defined in the diagram. Please check the model.",
-  "target" : "Process %0: ServiceTask %1 failed: unable to find the workspace associated with the application id defined in the diagram. Please check the model."
-},
-  {
-  "text_key" : "email-no-from",
-  "source" : "Process %0: ServiceTask %1 failed: attribute \"From\" and default email sender are not defined. Please check the model and or the configuration parameter.",
-  "target" : "Process %0: ServiceTask %1 failed: attribute \"From\" and default email sender are not defined. Please check the model and or the configuration parameter."
-},
-  {
-  "text_key" : "email-no-to",
-  "source" : "Process %0: ServiceTask %1 failed: attribute \"To\" not defined. Please check the model.",
-  "target" : "Process %0: ServiceTask %1 failed: attribute \"To\" not defined. Please check the model."
-},
-  {
-  "text_key" : "email-no-template",
-  "source" : "Process %0: ServiceTask %1 failed: attribute \"Template\" not defined. Please check the model.",
-  "target" : "Process %0: ServiceTask %1 failed: attribute \"Template\" not defined. Please check the model."
-},
-  {
-  "text_key" : "email-no-body",
-  "source" : "Process %0: ServiceTask %1 failed: attribute \"Body\" not defined. Please check the model.",
-  "target" : "Process %0: ServiceTask %1 failed: attribute \"Body\" not defined. Please check the model."
-},
-  {
-  "text_key" : "email-failed",
-  "source" : "Process %0: ServiceTask %1 failed see error log and check the model.",
-  "target" : "Process %0: ServiceTask %1 failed see error log and check the model."
-},
-  {
-  "text_key" : "email-placeholder-json-invalid",
-  "source" : "Process %0: ServiceTask %1 placeholder JSON is invalid.Please check the model.",
-  "target" : "Process %0: ServiceTask %1 placeholder JSON is invalid.Please check the model."
-},
-  {
-  "text_key" : "plugin-multiple-rows",
-  "source" : "Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes.",
-  "target" : "Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes."
-},
-  {
-  "text_key" : "apex-task-cancelation-error",
-  "source" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)",
-  "target" : "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)"
-},
-{
-  "text_key" : "apex-task-not-supported",
-  "source" : "APEX Workflow Feature use requires Oracle APEX v%0.",
-  "target" : "APEX Workflow Feature use requires Oracle APEX v%0."
-},
-{
-  "text_key" : "apex-task-not-found",
-  "source" : "APEX Workflow Task %0 not found in Flows for APEX Process",
-  "target" : "APEX Workflow Task %0 not found in Flows for APEX Process"
-},
-{
-  "text_key" : "apex-task-on-multiple-steps",
-  "source" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step.",
-  "target" : "APEX Workflow Task %0 found associated with more than one Flows for APEX process step."
-},
-{
-  "text_key" : "apex-task-not-current-step",
-  "source" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready.",
-  "target" : "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready."
-},
-{
-  "text_key" : "apex-task-invalid-result-var",
-  "source" : "APEX Workflow Task result process variable is not defined or invalid.",
-  "target" : "APEX Workflow Task result process variable is not defined or invalid."
-},
-{
-  "text_key" : "apex-task-creation-error",
-  "source" : "Error creating APEX Workflow task %0 in application %1.  see debug for details.",
-  "target" : "Error creating APEX Workflow task %0 in application %1.  see debug for details."
-},
-{
-  "text_key" : "apex-task-priority-error",
-  "source" : "Error creating APEX Workflow task - invalid priority %0.",
-  "target" : "Error creating APEX Workflow task - invalid priority %0."
-},
-{
-  "text_key" : "apex-task-multiple-processes",
-  "source" : "Error creating APEX session.  BPMN diagram contains multiple Process objects.",
-  "target" : "Error creating APEX session.  BPMN diagram contains multiple Process objects."
-},
-{
-  "text_key" : "call-diagram-not-callable",
-  "source" : "You tried to call a diagram %0 that is marked as being not callable.",
-  "target" : "You tried to call a diagram %0 that is marked as being not callable."
-}
-]
+  "lang": "es",
+  "messages": [
+    {
+      "text_key": "ITE-unsupported-type",
+      "source": "Currently unsupported type of Intermediate Throw Event encountered at %0 .",
+      "target": "Se ha encontrado un tipo de evento de devolución intermedio no soportado actualmente en %0."
+    },
+    {
+      "text_key": "apex-session-params-not-set",
+      "source": "Asynchronous connection details for object %0 need to be set in process variables, diagram async connection details, or system config details.",
+      "target": "Los detalles de conexión asíncrona para el objeto %0 se deben definir en variables de proceso, detalles de conexión asíncrona de diagrama o detalles de configuración del sistema."
+    },
+    {
+      "text_key": "async-invalid_params",
+      "source": "Unable to create asyncronous connection for object %0.  Username not valid in specified Application",
+      "target": "No se puede crear una conexión asíncrona para el objeto %0. Nombre de usuario no válido en la aplicación especificada"
+    },
+    {
+      "text_key": "async-no-username",
+      "source": "Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.",
+      "target": "No se puede crear una conexión asíncrona para el objeto %0. Se debe especificar el nombre de usuario en la variable de proceso, el diagrama de proceso o la configuración del sistema."
+    },
+    {
+      "text_key": "async-no-appid",
+      "source": "Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.",
+      "target": "No se puede crear una conexión asíncrona para el objeto %0. El ID de aplicación se debe especificar en la variable de proceso, el diagrama de proceso o la configuración del sistema."
+    },
+    {
+      "text_key": "async-no-pageid",
+      "source": "Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.",
+      "target": "No se puede crear una conexión asíncrona para el objeto %0. El ID de página se debe especificar en la variable de proceso, el diagrama de proceso o la configuración del sistema."
+    },
+    {
+      "text_key": "boundary-event-child-lock-to",
+      "source": "Child Boundary Subflows or Timers of %0 currently locked by another user.  Retry your transaction later.",
+      "target": "Subflujos o temporizadores de límite secundario de %0 bloqueados actualmente por otro usuario. Vuelva a intentar la transacción más tarde."
+    },
+    {
+      "text_key": "boundary-event-no-catch-found",
+      "source": "No boundaryEvent of type %0 found to catch event.",
+      "target": "No se ha encontrado ningún boundaryEvent de tipo %0 para capturar el evento."
+    },
+    {
+      "text_key": "boundary-event-too-many",
+      "source": "More than one %0 boundaryEvent found on sub process.",
+      "target": "Se ha encontrado más de un %0 boundaryEvent en el subproceso."
+    },
+    {
+      "text_key": "eng_handle_event_int",
+      "source": "Flow Engine Internal Error: Process %0 Subflow %1 Module %2 Current %4 Current Tag %3",
+      "target": "Error interno del motor de flujo: Proceso %0 Subflujo %1 Módulo %2 Actual %4 Etiqueta actual %3"
+    },
+    {
+      "text_key": "engine-unsupported-object",
+      "source": "Model Error: Process BPMN model next step uses unsupported object %0",
+      "target": "Error de modelo: el siguiente paso del modelo BPMN del proceso utiliza un objeto %0 no soportado"
+    },
+    {
+      "text_key": "engine-util-prcs-not-found",
+      "source": "Application Error: Process ID %0 not found.",
+      "target": "Error de aplicación: No se ha encontrado el ID de proceso %0."
+    },
+    {
+      "text_key": "engine-util-sbfl-not-in-prcs",
+      "source": "Application Error: Subflow ID supplied ( %0 ) exists but is not child of Process ID Supplied ( %1 ).",
+      "target": "Error de aplicación: el ID de subflujo proporcionado ( %0 ) existe pero no es secundario del ID de proceso proporcionado ( %1 )."
+    },
+    {
+      "text_key": "engine-util-sbfl-not-found",
+      "source": "Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).",
+      "target": "No se ha encontrado el ID de subflujo proporcionado (%0). Compruebe los eventos de proceso que han cambiado el flujo de proceso (tiempos de espera, errores, escaladas)."
+    },
+    {
+      "text_key": "gateway-invalid-route",
+      "source": "Error at gateway %0. Supplied variable %1 contains invalid route: %2",
+      "target": "Error en gateway %0. La variable proporcionada %1 contiene una ruta no válida: %2"
+    },
+    {
+      "text_key": "gateway-merge-error",
+      "source": "Internal error processing merging gateway on subflow %0",
+      "target": "Error interno al procesar el gateway de fusión en el subflujo %0"
+    },
+    {
+      "text_key": "gateway-no-route",
+      "source": "No gateway routing instruction provided in variable %0 and model contains no default route.",
+      "target": "No se ha proporcionado ninguna instrucción de direccionamiento de gateway en la variable %0 y el modelo no contiene ninguna ruta por defecto."
+    },
+    {
+      "text_key": "gateway-bad-expression",
+      "source": "Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).",
+      "target": "Expresión de enrutamiento de gateway incorrecta. Esto puede ocurrir si intenta enlazar una variable con dos puntos incrustados (:)."
+    },
+    {
+      "text_key": "gateway-too-many-defaults",
+      "source": "More than one default route specified in model for Gateway %0.",
+      "target": "Se ha especificado más de una ruta por defecto en el modelo para el gateway %0."
+    },
+    {
+      "text_key": "link-no-catch",
+      "source": "Unable to find matching link catch event named %0.",
+      "target": "No se ha encontrado el evento de captura de enlace coincidente denominado %0."
+    },
+    {
+      "text_key": "link-too-many-catches",
+      "source": "More than one matching link catch event named %0.",
+      "target": "Hay más de un evento de captura de enlace coincidente denominado %0."
+    },
+    {
+      "text_key": "logging-instance-event",
+      "source": "Flows - Internal error while logging an Instance Event",
+      "target": "Flujos: error interno al registrar un evento de instancia"
+    },
+    {
+      "text_key": "logging-step-event",
+      "source": "Flows - Internal error while logging a Step Event",
+      "target": "Flujos - Error interno al registrar un evento de paso"
+    },
+    {
+      "text_key": "logging-variable-event",
+      "source": "Flows - Internal error while logging a Variable Event",
+      "target": "Flujos: error interno al registrar un evento variable"
+    },
+    {
+      "text_key": "process-lock-timeout",
+      "source": "Process objects for %0 currently locked by another user.  Try again later.",
+      "target": "Objetos de proceso para %0 bloqueados actualmente por otro usuario. Vuelva a intentarlo más tarde."
+    },
+    {
+      "text_key": "more_than_1_forward_path",
+      "source": "More than 1 forward path found when only 1 allowed.",
+      "target": "Se encontraron más de 1 ruta hacia adelante cuando solo se permiten 1."
+    },
+    {
+      "text_key": "no_next_step_found",
+      "source": "No Next Step Found on subflow %0.  Check your process diagram.",
+      "target": "No se ha encontrado ningún paso siguiente en el subflujo %0. Compruebe el diagrama de proceso."
+    },
+    {
+      "text_key": "plsql_script_failed",
+      "source": "Process %0: Task %1 failed due to PL/SQL error - see event log.",
+      "target": "Proceso %0: la tarea %1 ha fallado debido a un error de PL/SQL. Consulte el log de eventos."
+    },
+    {
+      "text_key": "plsql_script_requested_stop",
+      "source": "Process %0: Task %1 requested processing stop - see event log.",
+      "target": "Proceso %0: la tarea %1 ha solicitado la detención del procesamiento. Consulte el log de eventos."
+    },
+    {
+      "text_key": "timeout_locking_subflow",
+      "source": "Unable to lock subflow %0 as currently locked by another user.  Try again later.",
+      "target": "No se puede bloquear el subflujo %0 porque está bloqueado actualmente por otro usuario. Vuelva a intentarlo más tarde."
+    },
+    {
+      "text_key": "reservation-already-placed",
+      "source": "Reservation already placed on next task for you.",
+      "target": "Ya ha realizado la reserva en la siguiente tarea."
+    },
+    {
+      "text_key": "reservation-by-other_user",
+      "source": "Reservation for %0 unsuccessful.  Step already reserved by another user (%1).",
+      "target": "Reserva incorrecta para %0. El paso ya está reservado por otro usuario (%1)."
+    },
+    {
+      "text_key": "reservation-failed-not-found",
+      "source": "Reservation for %2 unsuccessful.  Subflow %0 in Process %1 not found.",
+      "target": "Reserva para %2 incorrecta. No se ha encontrado el subflujo %0 en el proceso %1."
+    },
+    {
+      "text_key": "reservation-incorrect-step-key",
+      "source": "Task is no longer current, probably already completed.  Please refresh your Inbox.",
+      "target": "La tarea ya no está actualizada, probablemente ya se haya completado. Refresque la bandeja de entrada."
+    },
+    {
+      "text_key": "reservation-lock-timeout",
+      "source": "Subflow currently locked (not reserved) by another user.  Try your reservation again later.",
+      "target": "Subflujo bloqueado actualmente (no reservado) por otro usuario. Intente realizar su reserva de nuevo más tarde."
+    },
+    {
+      "text_key": "reservation-release-not-found",
+      "source": "Reservation release unsuccessful.  Subflow %0 in Process %1 not found.",
+      "target": "Liberación de reserva incorrecta. No se ha encontrado el subflujo %0 en el proceso %1."
+    },
+    {
+      "text_key": "restart-no-error",
+      "source": "No Current Error Found.  Check your process diagram.",
+      "target": "No se ha encontrado ningún error actual. Compruebe el diagrama de proceso."
+    },
+    {
+      "text_key": "start-already-running",
+      "source": "You tried to start a process (id %0)that is already running.",
+      "target": "Ha intentado iniciar un proceso (ID %0) que ya se está ejecutando."
+    },
+    {
+      "text_key": "start-diagram-calls-itself",
+      "source": "You tried to start a process with a diagram %0 that includes a callActivity calling itself.",
+      "target": "Ha intentado iniciar un proceso con un diagrama %0 que incluye una llamada callActivity."
+    },
+    {
+      "text_key": "start-multiple-already-running",
+      "source": "You tried to start a process (id %0) with multiple copies already running.",
+      "target": "Intentó iniciar un proceso (ID %0) con varias copias ya en ejecución."
+    },
+    {
+      "text_key": "start-multiple-start-events",
+      "source": "You have multiple starting events defined. Make sure your diagram has only one start event.",
+      "target": "Tiene varios eventos iniciales definidos. Asegúrese de que el diagrama solo tiene un evento de inicio."
+    },
+    {
+      "text_key": "start-no-start-event",
+      "source": "No starting event is defined in the Flow diagram.",
+      "target": "No se ha definido ningún evento inicial en el diagrama de flujo."
+    },
+    {
+      "text_key": "start-not-created",
+      "source": "You tried to start a process (id %0) that does not exist.",
+      "target": "Ha intentado iniciar un proceso (ID %0) que no existe."
+    },
+    {
+      "text_key": "start-type-unsupported",
+      "source": "Unsupported start event type (%0). Only None (standard) Start Event and Timer Start Event are currently supported.",
+      "target": "Tipo de evento de inicio no soportado (%0). Actualmente solo están soportados el evento de inicio Ninguno (estándar) y el evento de inicio de temporizador."
+    },
+    {
+      "text_key": "startwork-sbfl-not-found",
+      "source": "Start Work time recording unsuccessful.  Subflow %0 in Process %1 not found.",
+      "target": "Registro de hora de inicio de trabajo incorrecto. No se ha encontrado el subflujo %0 en el proceso %1."
+    },
+    {
+      "text_key": "step-key-incorrect",
+      "source": "This Process Step has already occurred.  (Incorrect step key %0 supplied while expecting step key %1).",
+      "target": "Ya se ha producido este paso de proceso. (Se ha proporcionado una clave de paso incorrecta %0 mientras se esperaba la clave de paso %1)."
+    },
+    {
+      "text_key": "subProcess-no-start",
+      "source": "Unable to find Sub-Process Start Event.",
+      "target": "No se ha encontrado el evento de inicio de subproceso."
+    },
+    {
+      "text_key": "subProcess-too-many-starts",
+      "source": "More than one Sub-Process Start found.",
+      "target": "Se ha encontrado más de un inicio de subproceso."
+    },
+    {
+      "text_key": "timer-broken",
+      "source": "Timer %0 Run %4 broken in process %1 , subflow : %2.  See error_info.",
+      "target": "Temporizador %0 Ejecución %4 interrumpido en proceso %1 , subflujo : %2. Consulte error_info."
+    },
+    {
+      "text_key": "timer-cycle-unsupported",
+      "source": "Cycle Timer defined for object %0 not currently supported.",
+      "target": "El temporizador de ciclo definido para el objeto %0 no está soportado actualmente."
+    },
+    {
+      "text_key": "timer-incomplete-definition",
+      "source": "Incomplete timer definitions for object %0. Type: %1; Value1: %2 Value2: %3  Value3: %4",
+      "target": "Definiciones de temporizador incompletas para el objeto %0. Tipo: %1; Value1: %2 Value2: %3  Value3: %4"
+    },
+    {
+      "text_key": "timer-lock-timeout",
+      "source": "Timer for subflow %0 currently locked by another user.  Try again later.",
+      "target": "El temporizador para el subflujo %0 está bloqueado actualmente por otro usuario. Vuelva a intentarlo más tarde."
+    },
+    {
+      "text_key": "timer-object-not-found",
+      "source": "Object with timer not found in get_timer_definition. Subflow %0.",
+      "target": "No se ha encontrado el objeto con temporizador en get_timer_definition. Subflujo %0."
+    },
+    {
+      "text_key": "timers-lock-timeout",
+      "source": "Timers for process %0 currently locked by another user.  Try again later.",
+      "target": "Los temporizadores del proceso %0 están bloqueados actualmente por otro usuario. Vuelva a intentarlo más tarde."
+    },
+    {
+      "text_key": "var-set-error",
+      "source": "Error creating process variable %0 for process id %1 in scope %2.",
+      "target": "Error al crear la variable de proceso %0 para el ID de proceso %1 en el ámbito %2."
+    },
+    {
+      "text_key": "var-get-error",
+      "source": "Error getting process variable %0 for process id %1 in scope %2.",
+      "target": "Error al obtener la variable de proceso %0 para el ID de proceso %1 en el ámbito %2."
+    },
+    {
+      "text_key": "var-update-error",
+      "source": "Error updating process variable %0 for process id %1 in scope %2.",
+      "target": "Error al actualizar la variable de proceso %0 para el ID de proceso %1 en el ámbito %2."
+    },
+    {
+      "text_key": "var-delete-error",
+      "source": "Error deleting process variable %0 for process id %1 in scope %2.",
+      "target": "Error al suprimir la variable de proceso %0 para el ID de proceso %1 en el ámbito %2."
+    },
+    {
+      "text_key": "var-lock-error",
+      "source": "Error locking process variable %0 for process id %1 in scope %2.",
+      "target": "Error al bloquear la variable de proceso %0 para el ID de proceso %1 en el ámbito %2."
+    },
+    {
+      "text_key": "var_exp_datatype",
+      "source": "Error setting process variable.  Incorrect datatype for variable %0.  SQL error shown in debug output.",
+      "target": "Error al definir la variable de proceso. Tipo de dato incorrecto para la variable %0. Error SQL mostrado en la salida de depuración."
+    },
+    {
+      "text_key": "var_exp_date_format",
+      "source": "Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)",
+      "target": "Error al definir la variable de proceso %1: Formato de fecha incorrecto (subflujo: %0, juego: %3)."
+    },
+    {
+      "text_key": "var_exp_object_not_found",
+      "source": "Internal error looking up object %0 in process_expressions.  SQL error shown in debug output.",
+      "target": "Error interno al buscar el objeto %0 en process_expressions. Error SQL mostrado en la salida de depuración."
+    },
+    {
+      "text_key": "var_exp_plsql_error",
+      "source": "Subflow : %0 Error in %2 expression for Variable : %1",
+      "target": "Subflujo: %0 Error en expresión %2 para variable: %1"
+    },
+    {
+      "text_key": "var_exp_sql_no_data",
+      "source": "Error setting process variable %1 in process id %0 (set %2).  No data found in query.",
+      "target": "Error al establecer la variable de proceso %1 en el ID de proceso %0 (juego %2). No se han encontrado datos en la consulta."
+    },
+    {
+      "text_key": "var_exp_sql_other",
+      "source": "Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.",
+      "target": "Error al establecer la variable de proceso %1 en el ID de proceso %0 (juego %2). Error SQL mostrado en el log de eventos."
+    },
+    {
+      "text_key": "var_exp_sql_too_many_rows",
+      "source": "Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.",
+      "target": "Error al establecer la variable de proceso %1 en el ID de proceso %0 (juego %2). La consulta devuelve varias filas."
+    },
+    {
+      "text_key": "var_exp_static_general",
+      "source": "Error setting process variable %1 in process id %0 (set %2).  See error in event log.",
+      "target": "Error al establecer la variable de proceso %1 en el ID de proceso %0 (juego %2). Consulte el error en el log de eventos."
+    },
+    {
+      "text_key": "version-no-rel-or-draft-v0",
+      "source": "Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id",
+      "target": "No se ha encontrado el diagrama publicado o la versión de borrador 0 del diagrama; especifique una versión o diagram_id"
+    },
+    {
+      "text_key": "version-not-found",
+      "source": "Cannot find specified diagram version.  Please check version specification.",
+      "target": "No se ha encontrado la versión de diagrama especificada. Compruebe la especificación de versión."
+    },
+    {
+      "text_key": "timer_definition_error",
+      "source": "Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3",
+      "target": "Error al analizar la definición de temporizador en el proceso %0, subflujo %1. Tipo de temporizador: %2, Definición: %3"
+    },
+    {
+      "text_key": "plugin-model-no-version",
+      "source": "Version not defined.",
+      "target": "Versión no definida."
+    },
+    {
+      "text_key": "plugin-parsing-json-variables",
+      "source": "Error during parsing process variables.",
+      "target": "Error durante el análisis de variables de proceso."
+    },
+    {
+      "text_key": "plugin-route-not-define",
+      "source": "Gateway is not defined for routing.",
+      "target": "Gateway no está definido para direccionamiento."
+    },
+    {
+      "text_key": "plugin-gateway-not-exist",
+      "source": "Gateway define does not exists for this flow.",
+      "target": "La definición de gateway no existe para este flujo."
+    },
+    {
+      "text_key": "plugin-no-instance-subflow-id",
+      "source": "Unable to get Flow Instance Id and or subflow Id to manage the step.",
+      "target": "No se ha podido obtener el ID de instancia de flujo ni el ID de subflujo para gestionar el paso."
+    },
+    {
+      "text_key": "plugin-wrong-variable-number",
+      "source": "Wrong number of APEX item(s) or process variable(s).",
+      "target": "Número incorrecto de elementos APEX o variables de proceso."
+    },
+    {
+      "text_key": "plugin-wrong-variable-type",
+      "source": "One or more process variable(s) are a different type than the one defined in the JSON.",
+      "target": "Una o más variables de proceso son de un tipo diferente al definido en JSON."
+    },
+    {
+      "text_key": "plugin-variable-not-a-number",
+      "source": "%0 is not a valid number.",
+      "target": "%0 no es un número válido."
+    },
+    {
+      "text_key": "plugin-variable-not-a-date",
+      "source": "%0 is not a valid date.",
+      "target": "%0 no es una fecha válida."
+    },
+    {
+      "text_key": "plugin-invalid-json",
+      "source": "JSON provided is invalid.",
+      "target": "El JSON proporcionado no es válido."
+    },
+    {
+      "text_key": "plugin-modeler-id-not-found",
+      "source": "No data found. Check if Diagram with given ID exists.",
+      "target": "No se encontraron datos. Compruebe si existe un diagrama con el ID proporcionado."
+    },
+    {
+      "text_key": "plugin-unexpected-error",
+      "source": "Unexpected error, please contact your administrator.",
+      "target": "Error inesperado. Póngase en contacto con el administrador."
+    },
+    {
+      "text_key": "plugin-diagram-not-parsable",
+      "source": "Diagram could not be parsed.<br />Please review your diagram to ensure that it is supported.",
+      "target": "No se ha podido analizar el diagrama.<br />Revise el diagrama para asegurarse de que está soportado."
+    },
+    {
+      "text_key": "plugin-diagram-saved",
+      "source": "Changes saved!",
+      "target": "¡Cambios guardados!"
+    },
+    {
+      "text_key": "plugin-diagram-has-changed",
+      "source": "Model has changed. Discard changes?",
+      "target": "El modelo ha cambiado. ¿Descartar los cambios?"
+    },
+    {
+      "text_key": "wrong-default-workspace",
+      "source": "Process %0: ServiceTask %1 failed: the default workspace defined in the configuration parameter is not valid.",
+      "target": "Proceso %0: fallo de ServiceTask %1: el espacio de trabajo por defecto definido en el parámetro de configuración no es válido."
+    },
+    {
+      "text_key": "workspace-not-found",
+      "source": "Process %0: ServiceTask %1 failed: unable to find the workspace associated with the application id defined in the diagram. Please check the model.",
+      "target": "Proceso %0: ServiceTask %1 ha fallado: no se ha encontrado el espacio de trabajo asociado al ID de aplicación definido en el diagrama. Compruebe el modelo."
+    },
+    {
+      "text_key": "email-no-from",
+      "source": "Process %0: ServiceTask %1 failed: attribute \"From\" and default email sender are not defined. Please check the model and or the configuration parameter.",
+      "target": "Proceso %0: ServiceTask %1 ha fallado: el atributo \"De\" y el remitente de correo electrónico por defecto no están definidos. Compruebe el modelo o el parámetro de configuración."
+    },
+    {
+      "text_key": "email-no-to",
+      "source": "Process %0: ServiceTask %1 failed: attribute \"To\" not defined. Please check the model.",
+      "target": "Proceso %0: fallo de ServiceTask %1: atributo \"A\" no definido. Compruebe el modelo."
+    },
+    {
+      "text_key": "email-no-template",
+      "source": "Process %0: ServiceTask %1 failed: attribute \"Template\" not defined. Please check the model.",
+      "target": "Proceso %0: fallo de ServiceTask %1: atributo \"Plantilla\" no definido. Compruebe el modelo."
+    },
+    {
+      "text_key": "email-no-body",
+      "source": "Process %0: ServiceTask %1 failed: attribute \"Body\" not defined. Please check the model.",
+      "target": "Proceso %0: fallo de ServiceTask %1: atributo \"Cuerpo\" no definido. Compruebe el modelo."
+    },
+    {
+      "text_key": "email-failed",
+      "source": "Process %0: ServiceTask %1 failed see error log and check the model.",
+      "target": "Proceso %0: ServiceTask %1 no ha podido ver el log de errores y comprobar el modelo."
+    },
+    {
+      "text_key": "email-placeholder-json-invalid",
+      "source": "Process %0: ServiceTask %1 placeholder JSON is invalid.Please check the model.",
+      "target": "Proceso %0: ServiceTask %1 marcador de posición JSON es invalid.Please comprobar el modelo."
+    },
+    {
+      "text_key": "plugin-multiple-rows",
+      "source": "Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes.",
+      "target": "Se han encontrado varias filas. Active el valor 'Activar actividades de llamada' en los atributos del plugin del visor."
+    },
+    {
+      "text_key": "apex-task-cancelation-error",
+      "source": "Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)",
+      "target": "Error al intentar cancelar la tarea de flujo de trabajo de APEX (task_id: %1 ) para el paso de proceso: %0.)"
+    },
+    {
+      "text_key": "apex-task-not-supported",
+      "source": "APEX Workflow Feature use requires Oracle APEX v%0.",
+      "target": "El uso de la función Flujo de trabajo de APEX necesita Oracle APEX v%0."
+    },
+    {
+      "text_key": "apex-task-not-found",
+      "source": "APEX Workflow Task %0 not found in Flows for APEX Process",
+      "target": "No se ha encontrado la tarea de flujo de trabajo de APEX %0 en flujos para el proceso APEX"
+    },
+    {
+      "text_key": "apex-task-on-multiple-steps",
+      "source": "APEX Workflow Task %0 found associated with more than one Flows for APEX process step.",
+      "target": "La tarea de flujo de trabajo de APEX %0 se ha encontrado asociada a más de un flujo para el paso de proceso de APEX."
+    },
+    {
+      "text_key": "apex-task-not-current-step",
+      "source": "APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready.",
+      "target": "La tarea de flujo de trabajo de APEX %0 no es el paso actual del proceso. El paso puede haber finalizado todo listo."
+    },
+    {
+      "text_key": "apex-task-invalid-result-var",
+      "source": "APEX Workflow Task result process variable is not defined or invalid.",
+      "target": "La variable de proceso de resultado de tarea de flujo de trabajo de APEX no está definida o no es válida."
+    },
+    {
+      "text_key": "apex-task-creation-error",
+      "source": "Error creating APEX Workflow task %0 in application %1.  see debug for details.",
+      "target": "Error al crear la tarea de flujo de trabajo de APEX %0 en la aplicación %1. Consulte la depuración para obtener más información."
+    },
+    {
+      "text_key": "apex-task-priority-error",
+      "source": "Error creating APEX Workflow task - invalid priority %0.",
+      "target": "Error al crear la tarea de flujo de trabajo de APEX: prioridad no válida %0."
+    },
+    {
+      "text_key": "apex-task-multiple-processes",
+      "source": "Error creating APEX session.  BPMN diagram contains multiple Process objects.",
+      "target": "Error al crear la sesión de APEX. El diagrama BPMN contiene varios objetos de proceso."
+    },
+    {
+      "text_key": "call-diagram-not-callable",
+      "source": "You tried to call a diagram %0 that is marked as being not callable.",
+      "target": "Ha intentado llamar a un diagrama %0 marcado como no llamable."
+    }
+  ]
 }
