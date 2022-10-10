@@ -132,5 +132,9 @@ PROMPT >> Viewer Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pkb
 
 PROMPT >> Engine Messages
+@data/install_engine_messages_de.sql
 @data/install_engine_messages_en.sql
+@data/install_engine_messages_es.sql
 @data/install_engine_messages_fr.sql
+@data/install_engine_messages_ja.sql
+@data/install_engine_messages_pt-br.sql
