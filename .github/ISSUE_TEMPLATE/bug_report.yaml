@@ -26,11 +26,9 @@ body:
       label: Oracle Database version
       description: We only support Oracle Database 19 and higher
       options:
-        - 12.1 and lower (unsupported)
-        - 12.2 (unsupported)
-        - 18 (unsupported)
-        - 19
-        - 21
+        - 18c or lower (unsupported)
+        - 19c
+        - 21c
     validations:
       required: true
   - type: dropdown
@@ -45,6 +43,7 @@ body:
         - 21.1
         - 21.2
         - 22.1
+        - 22.2
     validations:
       required: true
   - type: dropdown
