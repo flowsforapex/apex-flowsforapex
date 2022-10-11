@@ -92,8 +92,6 @@ wwv_flow_api.create_flow(
 ,p_owner=>nvl(wwv_flow_application_install.get_schema,'FLOWS222')
 ,p_name=>nvl(wwv_flow_application_install.get_application_name,'Sample Process Flow Application')
 ,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'EXPENSE-CLAIMS')
-,p_application_group=>501900269538020670
-,p_application_group_name=>'20.1 Sample Apps'
 ,p_page_view_logging=>'YES'
 ,p_page_protection_enabled_y_n=>'Y'
 ,p_checksum_salt=>'95CA423F6A63C011928A687030AD1C7F675B456A5E9E78265C28EED427058481'
@@ -118,7 +116,7 @@ wwv_flow_api.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Release 22.1'
+,p_flow_version=>'Release 22.2'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -25648,7 +25646,7 @@ wwv_flow_api.create_install_check(
 '  then',
 '    return l_check_success;',
 'end;'))
-,p_failure_message=>'Please install the extension "Flows for APEX 22.1.x" first.'
+,p_failure_message=>'Please install the extension "Flows for APEX 22.2.x" first.'
 );
 end;
 /
