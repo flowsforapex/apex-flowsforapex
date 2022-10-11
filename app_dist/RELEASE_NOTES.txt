@@ -17,12 +17,12 @@ PREREQUISITES
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "FLOWSFORAPEX_APEX201_984339_UTF8_V22.1.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "flowsforapex_apex201.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
 - Refresh the theme when installing the app in APEX versions 20.2 or higher
   Note: switching the theme style is not supported.
-- Optionally, you can now import the demo app in the same way by using file "FLOWSFORAPEX221_SAMPLE_APP_EXPENSE_CLAIMS_EN_APEX201_984341_UTF8_V1.0.sql"
+- Optionally, you can now import the demo app in the same way by using file "flowsforapex_sample_app_apex201.sql"
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
 
 MIGRATING EXISTING INSTALLATIONS
@@ -32,8 +32,7 @@ MIGRATING EXISTING INSTALLATIONS
 - Run migrate_all.sql
 
 Migration notes:
-- Please be aware that you can only migrate to the subsequent release (ie. 21.1 to 22.1 or 5.1.2 to 21.1, but not 5.1.2 to 21.1.1)
-- For application upgrade/migration issues with step keys for existing applications read docs/addingStepKeysToV21app.md on Github
+- Please be aware that you can only migrate to the subsequent release (ie. 22.1 to 22.2 , but not 21.2 to 22.2)
 
 
 HISTORY
