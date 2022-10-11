@@ -1,32 +1,38 @@
-create or replace package body flow_tasks
-as 
-
-  -- example to get taskType info from object_attributes
+create or replace package body flow_tasks as 
+/* 
+-- Flows for APEX - flow_tasks.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created 13-May-2021  Richard Allen (Flowquest Consuting, for MT AG) 
+-- Edited  13-Apr-2022  Richard Allen (Oracle)
+-- Edited  23-May-2022  Moritz Klein (MT AG)
+--
+*/
   function get_task_type
   (
     pi_objt_id in flow_objects.objt_id%type
   )
-    return flow_object_attributes.obat_vc_value%type
+    return flow_types_pkg.t_bpmn_attribute_vc2
   as
-    l_return flow_object_attributes.obat_vc_value%type;
+    l_return flow_types_pkg.t_bpmn_attribute_vc2;
   begin
 
-    select obat_vc_value
+    select objt.objt_attributes."taskType"
       into l_return
-      from flow_object_attributes
-     where obat_objt_id = pi_objt_id
-       and obat_key = flow_constants_pkg.gc_task_type_key
+      from flow_objects objt
+     where objt_id = pi_objt_id
     ;
-
-    return l_return;
-  exception
-    when no_data_found then
+    if l_return is null then
       apex_debug.warn
       (
         p_message => 'No task type found for object %s'
       , p0        =>  pi_objt_id
       );
-      return null;
+    end if;
+
+    return l_return;
   end get_task_type;
 
   procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error
@@ -56,16 +62,24 @@ as
       for update wait 2;
       -- set subflow to error status
       update flow_subflows sbfl
-         set sbfl.sbfl_current = p_script_object
-           , sbfl.sbfl_last_update = systimestamp
-           , sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
+         set sbfl.sbfl_current        = p_script_object
+           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_error
+           , sbfl.sbfl_last_update    = systimestamp 
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )         
        where sbfl.sbfl_id = p_subflow_id
          and sbfl.sbfl_prcs_id = p_process_id
       ;
       -- set instance to error status
       update flow_processes prcs
-         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
-           , prcs.prcs_last_update = systimestamp
+         set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_error
+           , prcs.prcs_last_update    = systimestamp
+           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
        where prcs.prcs_id = p_process_id
       ;
       -- log error as instance event
@@ -86,7 +100,6 @@ as
       , p_level   => 2
       );
   end handle_script_error;
-
 
   procedure process_task
     ( p_sbfl_info     in flow_subflows%rowtype
@@ -110,19 +123,41 @@ as
     , p_step_info     in flow_types_pkg.flow_step_info
     )
   is 
+    l_usertask_type flow_types_pkg.t_bpmn_attribute_vc2;
   begin
-    -- current implementation is limited to one userTask type, which is to run a user defined APEX page
-    -- future userTask types could include parameterised, standarised template pages , e.g., for approvals??  template scripts ??
-    -- current implementation is implemented via the process inbox view.  
+  -- current implementation is limited to two userTask types, which are:
+  --   - to run a user defined APEX page via the Task Inbox View
+  --   - to call an APEX Approval Task (from APEX v22.1 onwards)
+  -- future userTask types could include parameterised, standarised template pages , template scripts ??
     apex_debug.enter 
     ( 'process_userTask'
-    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_tag'   , p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_subtag', p_step_info.target_objt_subtag 
     );
     -- set boundaryEvent Timers, if any
     flow_boundary_events.set_boundary_timers 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
     );  
+    -- get the userTask subtype  
+    select objt.objt_attributes."taskType"
+      into l_usertask_type
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_step_info.target_objt_ref
+       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+       ;
+       
+    case l_usertask_type
+      when flow_constants_pkg.gc_apex_usertask_apex_approval then
+       flow_usertask_pkg.process_apex_approval_task
+       ( p_sbfl_info => p_sbfl_info
+       , p_step_info => p_step_info
+       );
+      -- No additional action required for other task types
+      else
+        null;
+    end case;
+
   end process_userTask;
 
   procedure process_scriptTask
@@ -130,6 +165,7 @@ as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
+    l_usertask_type    flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     apex_debug.enter 
     ( 'process_scriptTask'

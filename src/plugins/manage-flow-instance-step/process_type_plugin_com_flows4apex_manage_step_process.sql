@@ -28,8 +28,8 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   16:03 Friday January 21, 2022
---   Exported By:     DAMTHOR
+--   Date and Time:   16:45 Tuesday August 30, 2022
+--   Exported By:     LMOREAUX
 --   Flashback:       0
 --   Export Type:     Component Export
 --   Manifest
@@ -57,7 +57,7 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
-,p_version_identifier=>'22.1'
+,p_version_identifier=>'22.2'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -343,11 +343,11 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>11
 ,p_display_sequence=>110
-,p_prompt=>'Return  Flow Instance and Subflow ID'
+,p_prompt=>'Return  Flow Instance and Subflow ID [deprecated]'
 ,p_attribute_type=>'PAGE ITEMS'
 ,p_is_required=>false
 ,p_is_translatable=>false
-,p_help_text=>'Provide APEX items to return Flow Instance and Subflow ID.'
+,p_help_text=>'This attribute is deprecated starting from Flows for APEX 22.2 and will probably be removed in a future release.'
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(133131748772449152)

@@ -10,7 +10,7 @@ create or replace package body flow_plugin_manage_instance_step as
            p_message => ' > Process plug-in attributes'
       );
       apex_debug.info(
-           p_message => '...Flow Instance, Subflow & Step Key define by: %s'
+           p_message => '...Flow Instance, Subflow and Step Key define by: %s'
          , p0        => p_process.attribute_01
       );
 
@@ -79,13 +79,6 @@ create or replace package body flow_plugin_manage_instance_step as
             );
       end if;
 
-      if p_process.attribute_11 is not null then
-         apex_debug.info(
-            p_message => '...Return Flow Instance ID and Subflow ID into: %s'
-            , p0        => p_process.attribute_11
-         );
-      end if;
-
       apex_debug.info(
            p_message => ' < Process plug-in attributes'
       );
@@ -114,7 +107,7 @@ create or replace package body flow_plugin_manage_instance_step as
       l_attribute8      p_process.attribute_08%type := p_process.attribute_08; -- Route ID
       l_attribute9      p_process.attribute_09%type := p_process.attribute_09; -- Auto branching (Y/N)
       l_attribute10     p_process.attribute_10%type := p_process.attribute_10; -- Reservation 
-      l_attribute11     p_process.attribute_11%type := p_process.attribute_11; -- Return Flow Instance and Subflow ID
+      
       l_attribute12     p_process.attribute_12%type := p_process.attribute_12; -- Step Key  
 
       l_process_id      flow_processes.prcs_id%type;
@@ -183,7 +176,7 @@ create or replace package body flow_plugin_manage_instance_step as
 
       if ( l_attribute5 = 'complete' ) then
          -- Get step informations
-         select prcs.prcs_dgrm_id
+         select sbfl.sbfl_dgrm_id
             , objt_source.objt_tag_name
             , objt_source.objt_objt_lane_id
             , conn.conn_tgt_objt_id
@@ -199,13 +192,11 @@ create or replace package body flow_plugin_manage_instance_step as
          join flow_objects objt_target
             on conn.conn_tgt_objt_id = objt_target.objt_id
             and conn.conn_dgrm_id = objt_target.objt_dgrm_id
-         join flow_processes prcs
-            on prcs.prcs_dgrm_id = conn.conn_dgrm_id
          join flow_subflows sbfl
             on sbfl.sbfl_current = objt_source.objt_bpmn_id
-            and sbfl.sbfl_prcs_id = prcs.prcs_id
+            and sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
          where conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
-            and prcs.prcs_id = l_process_id
+            and sbfl.sbfl_prcs_id = l_process_id
             and sbfl.sbfl_id = l_subflow_id;
 
          --Set the gateway route
@@ -217,9 +208,9 @@ create or replace package body flow_plugin_manage_instance_step as
 
                select count(*)
                into l_gateway_exists
-               from flow_processes prcs
-               join flow_objects obj on obj.objt_dgrm_id = prcs.prcs_dgrm_id
-               where prcs.prcs_id = l_process_id
+               from flow_instance_diagrams prdg
+               join flow_objects obj on obj.objt_dgrm_id = prdg.prdg_dgrm_id
+               where prdg.prdg_prcs_id = l_process_id
                and obj.objt_tag_name in (flow_constants_pkg.gc_bpmn_gateway_exclusive, flow_constants_pkg.gc_bpmn_gateway_inclusive)
                and obj.objt_bpmn_id = l_gateway_name;
 
@@ -246,7 +237,8 @@ create or replace package body flow_plugin_manage_instance_step as
                );
 
                flow_process_vars.set_var(
-                  pi_prcs_id    => l_process_id
+                 pi_prcs_id    => l_process_id
+               , pi_sbfl_id    => l_subflow_id
                , pi_var_name   => l_gateway_name || ':route'
                , pi_vc2_value  => l_attribute8
                );
@@ -334,24 +326,6 @@ create or replace package body flow_plugin_manage_instance_step as
             , p_subflow_id => l_subflow_id
             , p_step_key   => l_step_key
          );
-      end if;
-
-      -- Return Flow Instance Id and Subflow Id in the APEX items provided
-      if ( l_attribute11 is not null ) then
-         l_split_items := apex_string.split( l_attribute11, ',' );
-         apex_debug.info(
-            p_message => '...Return Flow Instance Id into item "%s"'
-         , p0        => l_split_items(1)
-         );
-         apex_util.set_session_state( l_split_items(1), l_process_id );
-
-         if l_split_items.count() = 2 then
-            apex_debug.info(
-               p_message => '...Return Subflow Id into item "%s"'
-            , p0        => l_split_items(2)
-            );
-            apex_util.set_session_state( l_split_items(2), l_subflow_id );
-         end if;
       end if;
 
       return l_result;

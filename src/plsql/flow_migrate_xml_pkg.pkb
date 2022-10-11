@@ -10,6 +10,7 @@ as
     l_domnodelist dbms_xmldom.DOMNodeList;
     l_domnode dbms_xmldom.DOMNode;
     l_domelement dbms_xmldom.DOMElement;
+    l_exporter_below_22 boolean;
   begin
     l_domnodelist := dbms_xmldom.getelementsbytagname(
       doc => p_domdoc
@@ -27,8 +28,9 @@ as
                               elem => l_domelement
                             , name => 'exporterVersion'
                             );
+        l_exporter_below_22 := ( to_number(substr(l_exporter_version, 1, instr(l_exporter_version, '.') - 1)) < 22 );
       end loop;    
-    return (l_exporter = 'Flows for APEX' and l_exporter_version = flow_constants_pkg.gc_version);
+    return (l_exporter = 'Flows for APEX' and ( not l_exporter_below_22 or l_exporter_version = flow_constants_pkg.gc_version ));
   end is_exporter_version_current;
   
   procedure set_exporter(
@@ -196,6 +198,49 @@ as
     l_valid_items number;
 
     l_return clob;
+
+    function get_or_create_ext_elements
+    (
+      p_domdoc  dbms_xmldom.DOMDocument
+    , p_domnode dbms_xmldom.DOMNode
+    , p_elem    dbms_xmldom.DOMElement
+    )
+      return dbms_xmldom.DOMNode
+    as
+      l_new_ext_node     dbms_xmldom.DOMNode;
+      l_cur_ext_elements dbms_xmldom.DOMNodeList;
+    begin
+        
+      l_cur_ext_elements :=
+        dbms_xmldom.getchildrenbytagname
+        (
+          elem => p_elem
+        , name => 'extensionElements'
+        );
+
+      if dbms_xmldom.getlength(l_cur_ext_elements) > 0 then
+        l_new_ext_node := dbms_xmldom.item(l_cur_ext_elements, 0);
+      else
+        -- create extension element node 
+        l_new_ext_node :=
+          dbms_xmldom.makenode( elem => 
+            dbms_xmldom.createelement
+            ( 
+              doc     => p_domdoc
+            , tagName => 'extensionElements'
+            )
+          );
+        -- append
+        l_new_ext_node :=
+          dbms_xmldom.appendchild
+          (
+            n        => p_domnode
+          , newchild => l_new_ext_node
+          );
+      end if;
+      return l_new_ext_node;
+    end get_or_create_ext_elements
+    ;
   begin
     -- get xml document
     l_data := XMLTYPE(p_dgrm_content);
@@ -225,19 +270,15 @@ as
             , newValue => 'apexPage'
             , ns => flow_constants_pkg.gc_nsapex
             );
-            -- create extension element node 
-            l_extension_node := dbms_xmldom.makenode( 
-              elem => dbms_xmldom.createelement( 
-                  doc => l_domdoc
-                , tagName => 'bpmn:extensionElements'
-                , ns => flow_constants_pkg.gc_nsbpmn
-                )
-            );
-            -- append
-            l_extension_node := dbms_xmldom.appendchild(
-              n => l_domnode
-            , newchild => l_extension_node
-            );
+
+            l_extension_node :=
+              get_or_create_ext_elements
+              ( 
+                p_domdoc  => l_domdoc
+              , p_domnode => l_domnode
+              , p_elem    => l_domelement
+              );
+
             -- create apex page node 
             l_task_type_node := dbms_xmldom.makenode( 
               elem => dbms_xmldom.createelement( 
@@ -383,19 +424,15 @@ as
               , newValue => 'executePlsql'
               , ns => flow_constants_pkg.gc_nsapex
               );
-              -- create extension element node 
-              l_extension_node := dbms_xmldom.makenode( 
-                elem => dbms_xmldom.createelement( 
-                          doc => l_domdoc
-                        , tagName => 'bpmn:extensionElements'
-                        , ns => flow_constants_pkg.gc_nsbpmn
-                        )
+
+            l_extension_node :=
+              get_or_create_ext_elements
+              ( 
+                p_domdoc  => l_domdoc
+              , p_domnode => l_domnode
+              , p_elem    => l_domelement
               );
-              -- append
-              l_extension_node := dbms_xmldom.appendchild(
-                n => l_domnode
-              , newchild => l_extension_node
-              );
+
               -- create execute Plsql node 
               l_task_type_node := dbms_xmldom.makenode( 
                 elem => dbms_xmldom.createelement( 

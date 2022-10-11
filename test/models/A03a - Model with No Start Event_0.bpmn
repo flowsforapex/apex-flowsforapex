@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_Test_03a" name="Test Start with no Start Event" isExecutable="false" apex:isCallable="false" apex:manualInput="false">
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:outgoing>Flow_0pfvqri</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_EndA" name="End A">
+      <bpmn:incoming>Flow_0pfvqri</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0pfvqri" sourceRef="Activity_A" targetRef="Event_EndA" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Test_03a">
+      <bpmndi:BPMNEdge id="Flow_0pfvqri_di" bpmnElement="Flow_0pfvqri">
+        <di:waypoint x="430" y="440" />
+        <di:waypoint x="482" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0klbm0x_di" bpmnElement="Activity_A">
+        <dc:Bounds x="330" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v82hni_di" bpmnElement="Event_EndA">
+        <dc:Bounds x="482" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="486" y="465" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

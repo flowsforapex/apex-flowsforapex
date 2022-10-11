@@ -1,4 +1,5 @@
 create or replace package flow_errors
+  authid definer
 as
 
   procedure handle_instance_error

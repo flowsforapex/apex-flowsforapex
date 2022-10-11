@@ -23,7 +23,7 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage <i>Flows for APEX</i> Flow Instance Variable(s). The plug-in allows you to get or set variable(s).'
-,p_version_identifier=>'22.1'
+,p_version_identifier=>'22.2'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -102,13 +102,18 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'SQL'
 ,p_is_required=>true
 ,p_sql_min_column_count=>1
-,p_sql_max_column_count=>1
+,p_sql_max_column_count=>2
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_api.id(84720010618460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
-,p_help_text=>'<p>SQL Query which returns one row with one column containing the flow process instance id.</p>'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>SQL Query which returns one row with one or or two columns:</p>',
+'<ul>',
+'<li>First column needs to contain the Instance Id (prcs_id)</li>',
+'<li>Second column may contain the Subflow Id (sbfl_id)</li>',
+'</ul>'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(84820717881541566)
@@ -371,10 +376,35 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>10
 ,p_display_sequence=>100
-,p_prompt=>'Return Flow Instance ID into'
+,p_prompt=>'Return Flow Instance ID into [deprecated]'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>false
 ,p_is_translatable=>false
+,p_help_text=>'This attribute is deprecated starting from Flows for APEX 22.2 and will probably be removed in a future release.'
+);
+wwv_flow_api.create_plugin_attribute(
+ p_id=>wwv_flow_api.id(62243875274673859)
+,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+,p_attribute_scope=>'COMPONENT'
+,p_attribute_sequence=>11
+,p_display_sequence=>25
+,p_prompt=>'Subflow ID Item'
+,p_attribute_type=>'PAGE ITEM'
+,p_is_required=>false
+,p_is_translatable=>false
+,p_depending_on_attribute_id=>wwv_flow_api.id(84720010618460990)
+,p_depending_on_has_to_exist=>true
+,p_depending_on_condition_type=>'EQUALS'
+,p_depending_on_expression=>'item'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>APEX Item that contains the Flow Instance subflow_id.</p>',
+'',
+'<p>This could typically be: </p>',
+'<ul>',
+'<li>An Application Item, often named SUBFLOW_ID.</li>',
+'<li>A Global Page Item, for example P0_SUBFLOW_ID.</li>',
+'<li>A Page Item on your page.</li>',
+'</ul>'))
 );
 wwv_flow_api.component_end;
 end;

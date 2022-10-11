@@ -23,7 +23,7 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
-,p_version_identifier=>'22.1'
+,p_version_identifier=>'22.2'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -342,9 +342,11 @@ wwv_flow_api.create_plugin_attr_value(
  p_id=>wwv_flow_api.id(92426687525670726)
 ,p_plugin_attribute_id=>wwv_flow_api.id(92425252700670724)
 ,p_display_sequence=>30
-,p_display_value=>'ID'
+,p_display_value=>'ID [deprecated]'
 ,p_return_value=>'id'
-,p_help_text=>'Use this to specify the Flow (Diagram) to be used by giving a Flow (diagram) ID.'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'This option is deprecated starting from Flows for APEX 22.2 and will probably be removed in a future release.',
+'Use this to specify the Flow (Diagram) to be used by giving a Flow (diagram) ID.'))
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(92428044285670726)

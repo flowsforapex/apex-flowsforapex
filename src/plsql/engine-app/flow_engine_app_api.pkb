@@ -63,8 +63,9 @@ as
             );
           when 'BULK-DELETE-PROCESS-VARIABLE' then 
             flow_process_vars.delete_var(
-              pi_prcs_id => apex_application.g_f01(i)
+              pi_prcs_id  => apex_application.g_f01(i)
             , pi_var_name => apex_application.g_f02(i)
+            , pi_scope    => apex_application.g_f03(i)
           );
           when 'BULK-RESCHEDULE-TIMER' then
           flow_api_pkg.flow_reschedule_timer(
@@ -183,6 +184,7 @@ as
                 pi_prcs_id   => apex_application.g_x02
               , pi_var_name  => apex_application.g_x03
               , pi_vc2_value => apex_application.g_x05
+              , pi_scope     => apex_application.g_x06
               );
             when 'NUMBER' then
               flow_process_vars.set_var
@@ -190,6 +192,7 @@ as
                 pi_prcs_id   => apex_application.g_x02
               , pi_var_name  => apex_application.g_x03
               , pi_num_value => to_number(apex_application.g_x05)
+              , pi_scope     => apex_application.g_x06
               );
             when 'DATE' then
               flow_process_vars.set_var
@@ -197,6 +200,7 @@ as
                 pi_prcs_id    => apex_application.g_x02
               , pi_var_name   => apex_application.g_x03
               , pi_date_value => to_date(apex_application.g_x05, v('APP_DATE_TIME_FORMAT'))
+              , pi_scope      => apex_application.g_x06
               );
             when 'CLOB' then
               for i in apex_application.g_f01.first..apex_application.g_f01.last
@@ -208,14 +212,16 @@ as
                 pi_prcs_id    => apex_application.g_x02
               , pi_var_name   => apex_application.g_x03
               , pi_clob_value => l_clob
+              , pi_scope      => apex_application.g_x06
               );
             else
               null;
           end case;
         when 'DELETE-PROCESS-VARIABLE' then
           flow_process_vars.delete_var(
-            pi_prcs_id => apex_application.g_x02
+              pi_prcs_id  => apex_application.g_x02
             , pi_var_name => apex_application.g_x03
+            , pi_scope    => apex_application.g_x04
           );
         when 'RESCHEDULE-TIMER' then
           flow_api_pkg.flow_reschedule_timer(
@@ -261,6 +267,8 @@ as
       when others then
         apex_json.open_object;
         apex_json.write( p_name => 'success', p_value => false );
+        apex_json.write( p_name => 'message', p_value => sqlerrm);
+        apex_json.write( p_name => 'fullstack', p_value => dbms_utility.format_error_stack);
         apex_json.close_all;
         l_error_occured := true;
   end handle_ajax;
@@ -270,17 +278,24 @@ as
     p_prcs_id in flow_processes.prcs_id%type
   ) return varchar2
   as
-    l_objt_list varchar2(32767);
+    l_objt_list apex_t_varchar2;
   begin    
-    select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
-      into l_objt_list
-      from flow_objects
-     where objt_dgrm_id = (
-           select prcs_dgrm_id 
-             from flow_processes
-            where prcs_id = p_prcs_id)
-       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
-    return l_objt_list;
+    select bpmn_id
+      bulk collect into l_objt_list
+      from ( select objt_bpmn_id as bpmn_id
+               from flow_objects
+              where objt_dgrm_id = ( select prcs_dgrm_id 
+                                       from flow_processes
+                                      where prcs_id = p_prcs_id)
+                and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
+              union all
+             select conn_bpmn_id as bpmn_id
+               from flow_connections
+              where conn_dgrm_id = ( select prcs_dgrm_id 
+                                       from flow_processes
+                                      where prcs_id = p_prcs_id)
+           );
+    return apex_string.join( p_table => l_objt_list, p_sep => ':' );
   end get_objt_list;
 
 
@@ -288,27 +303,123 @@ as
     p_dgrm_id in flow_diagrams.dgrm_id%type
   ) return varchar2
   as
-    l_objt_list varchar2(32767);
+    l_objt_list apex_t_varchar2;
   begin    
-    select distinct listagg(OBJT_BPMN_ID, ':') within group (order by OBJT_BPMN_ID)
-      into l_objt_list
-      from flow_objects
-     where objt_dgrm_id = p_dgrm_id
-       and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane');
-    return l_objt_list;
+    select bpmn_id
+      bulk collect into l_objt_list
+      from ( select objt_bpmn_id as bpmn_id
+               from flow_objects
+              where objt_dgrm_id = p_dgrm_id
+                and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
+              union all
+             select conn_bpmn_id as bpmn_id
+               from flow_connections
+              where conn_dgrm_id = p_dgrm_id
+           );
+    return apex_string.join( p_table => l_objt_list, p_sep => ':' );
+  end get_objt_list;
+
+
+  function get_objt_list(
+    p_prdg_id in flow_instance_diagrams.prdg_id%type
+  ) return varchar2
+  as
+    l_objt_list apex_t_varchar2;
+  begin    
+    select bpmn_id
+      bulk collect into l_objt_list
+      from ( select objt_bpmn_id as bpmn_id
+               from flow_objects
+              where objt_dgrm_id = ( select prdg_dgrm_id 
+                                       from flow_instance_diagrams
+                                      where prdg_id = p_prdg_id)
+                and objt_tag_name not in ('bpmn:process', 'bpmn:textAnnotation', 'bpmn:participant', 'bpmn:laneSet', 'bpmn:lane')
+              union all
+             select conn_bpmn_id as bpmn_id
+               from flow_connections
+              where conn_dgrm_id = ( select prdg_dgrm_id 
+                                       from flow_instance_diagrams
+                                      where prdg_id = p_prdg_id)
+           );
+    return apex_string.join( p_table => l_objt_list, p_sep => ':' );
   end get_objt_list;
   
   
   function get_objt_name(
     p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_dgrm_id      in flow_diagrams.dgrm_id%type
   ) return flow_objects.objt_name%type
   as
     l_objt_name flow_objects.objt_name%type;
   begin
-    select distinct objt_name
+    select name
       into l_objt_name
-      from flow_objects
-     where objt_bpmn_id = p_objt_bpmn_id;
+      from ( select objt_bpmn_id as bpmn_id
+                  , objt_name as name
+                  , objt_dgrm_id as dgrm_id
+               from flow_objects
+              union
+             select conn_bpmn_id as bpmn_id
+                  , conn_name as name
+                  , conn_dgrm_id as dgrm_id
+               from flow_connections
+           )
+    where bpmn_id = p_objt_bpmn_id
+      and dgrm_id = p_dgrm_id;
+    return l_objt_name;
+  end get_objt_name;
+
+
+  function get_objt_name(
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_prcs_id      in flow_processes.prcs_id%type
+  ) return flow_objects.objt_name%type
+  as
+    l_objt_name flow_objects.objt_name%type;
+  begin
+    select name
+      into l_objt_name
+      from ( select objt_bpmn_id as bpmn_id
+                  , objt_name as name
+                  , objt_dgrm_id as dgrm_id
+               from flow_objects
+              union
+             select conn_bpmn_id as bpmn_id
+                  , conn_name as name
+                  , conn_dgrm_id as dgrm_id
+               from flow_connections
+           )
+    where bpmn_id = p_objt_bpmn_id
+      and dgrm_id = (select prcs_dgrm_id
+                       from flow_processes
+                      where prcs_id = p_prcs_id);
+    return l_objt_name;
+  end get_objt_name;
+
+
+  function get_objt_name(
+    p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
+  , p_prdg_id      in flow_instance_diagrams.prdg_id%type
+  ) return flow_objects.objt_name%type
+  as
+    l_objt_name flow_objects.objt_name%type;
+  begin
+    select name
+      into l_objt_name
+      from ( select objt_bpmn_id as bpmn_id
+                  , objt_name as name
+                  , objt_dgrm_id as dgrm_id
+               from flow_objects
+              union
+             select conn_bpmn_id as bpmn_id
+                  , conn_name as name
+                  , conn_dgrm_id as dgrm_id
+               from flow_connections
+           )
+    where bpmn_id = p_objt_bpmn_id
+      and dgrm_id = (select prdg_dgrm_id
+                       from flow_instance_diagrams
+                      where prdg_id = p_prdg_id);
     return l_objt_name;
   end get_objt_name;
 
@@ -387,6 +498,7 @@ as
 
   procedure get_url_p13(
     pi_prcs_id flow_processes.prcs_id%type
+  , pi_prdg_id flow_instance_diagrams.prdg_id%type
   , pi_objt_id varchar2
   , pi_title varchar2
   )
@@ -394,18 +506,18 @@ as
     l_url varchar2(2000);
     l_dgrm_id flow_processes.prcs_dgrm_id%type;
   begin
-    select prcs_dgrm_id 
+    select prdg_dgrm_id 
       into l_dgrm_id 
-      from flow_processes 
-    where prcs_id = pi_prcs_id;
+      from flow_instance_diagrams
+     where prdg_id = pi_prdg_id;
       
     l_url := apex_page.get_url(
       p_application => v('APP_ID'),
       p_page => '13',
       p_session => v('APP_SESSION'),
       p_clear_cache => 'RP',
-      p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE',
-      p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title
+      p_items => 'P13_DGRM_ID,P13_PRCS_ID,P13_OBJT_ID,P13_TITLE,P13_PRDG_ID',
+      p_values => l_dgrm_id || ',' || pi_prcs_id || ',' || pi_objt_id || ',' || pi_title || ',' || pi_prdg_id
     );
     htp.p(l_url);
   end get_url_p13;
@@ -845,7 +957,8 @@ as
         select n001
         from apex_collections
         where collection_name = 'C_SELECT'
-      );
+      )
+      order by dgrm_name, dgrm_version;
     else
       l_flow.dgrm_id := p_dgrm_id;
       l_flows(1)     := l_flow;
@@ -1035,11 +1148,11 @@ as
     exception
       when flow_diagram.diagram_exists then
         apex_error.add_error(
-            p_message => 'Model already exists.'
+            p_message => apex_lang.message('APP_ERR_MODEL_EXIST', pi_dgrm_name, pi_dgrm_version)
             , p_display_location => apex_error.c_on_error_page);
       when flow_diagram.diagram_not_draft then
         apex_error.add_error(
-            p_message => 'Overwrite only possible for draft models.'
+            p_message => apex_lang.message('APP_ERR_ONLY_DRAFT')
             , p_display_location => apex_error.c_on_error_page);
     end upload_and_parse;
     
@@ -1161,6 +1274,11 @@ as
       else
         raise_application_error(-20002, 'Unknown operation requested.');
     end case;
+    exception
+      when flow_diagram.diagram_exists then
+        apex_error.add_error(
+            p_message => apex_lang.message('APP_ERR_MODEL_EXIST', pi_dgrm_name, pi_dgrm_version)
+            , p_display_location => apex_error.c_on_error_page);
   end process_page_p7;
   
   
@@ -1186,6 +1304,63 @@ as
     end case;
     return l_page_title;
   end get_page_title;
+
+  function get_current_diagram
+    ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
+    , pi_dgrm_calling_method    in flow_types_pkg.t_bpmn_attribute_vc2
+    , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+    )
+  return flow_diagrams.dgrm_id%type
+    -- gets the current dgrm_id to be used for a diagram name.
+    -- returns the current 'released' diagram or a 'draft' of version '0' 
+  is
+    l_dgrm_id     flow_diagrams.dgrm_id%type;
+  begin
+    case pi_dgrm_calling_method 
+    when flow_constants_pkg.gc_dgrm_version_latest_version then
+      begin 
+        -- look for the 'released' version of the diagram
+        select dgrm_id 
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
+        ;
+        return l_dgrm_id;
+      exception
+        when no_data_found then
+          -- look for the version 0 (default) of 'draft' of the diagram
+          begin
+            select dgrm_id
+              into l_dgrm_id
+              from flow_diagrams
+             where dgrm_name = pi_dgrm_name
+               and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
+               and dgrm_version = '0'
+            ;
+            return l_dgrm_id;
+          exception
+            when no_data_found then
+              null;
+          end;  
+      end;
+
+    when flow_constants_pkg.gc_dgrm_version_named_version then
+      -- dgrm_version was specified
+      begin
+        select dgrm_id
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_version = pi_dgrm_version
+        ;
+      exception
+        when no_data_found then
+          null;
+      end;
+    end case;
+    return l_dgrm_id;
+  end get_current_diagram;
 
 
   /* page 8 */
@@ -1225,33 +1400,39 @@ as
     l_prov_prcs_id  flow_process_variables.prov_prcs_id%type;
     l_prov_var_name flow_process_variables.prov_var_name%type;
     l_prov_var_type flow_process_variables.prov_var_type%type;
+    l_prov_scope    flow_process_variables.prov_scope%type;
     l_prov_var_vc2  flow_process_variables.prov_var_vc2%type;
     l_prov_var_num  flow_process_variables.prov_var_num%type;
     l_prov_var_date flow_process_variables.prov_var_date%type;
     l_prov_var_clob flow_process_variables.prov_var_clob%type;
   begin
     -- Initialize
-    l_prov_prcs_id := apex_application.g_x01;
+    l_prov_prcs_id  := apex_application.g_x01;
     l_prov_var_name := apex_application.g_x02;
     l_prov_var_type := apex_application.g_x03;
+    l_prov_scope    := apex_application.g_x04;
     
     case l_prov_var_type
       when 'VARCHAR2' then
         l_prov_var_vc2 := flow_process_vars.get_var_vc2(
-                            pi_prcs_id => l_prov_prcs_id,
-                            pi_var_name =>l_prov_var_name);
+                            pi_prcs_id  => l_prov_prcs_id,
+                            pi_var_name => l_prov_var_name,
+                            pi_scope    => l_prov_scope);
       when 'NUMBER' then
         l_prov_var_num := flow_process_vars.get_var_num(
-                            pi_prcs_id => l_prov_prcs_id,
-                            pi_var_name =>l_prov_var_name);
+                            pi_prcs_id  => l_prov_prcs_id,
+                            pi_var_name => l_prov_var_name,
+                            pi_scope    => l_prov_scope);
       when 'DATE' then
         l_prov_var_date := flow_process_vars.get_var_date(
-                             pi_prcs_id => l_prov_prcs_id,
-                             pi_var_name =>l_prov_var_name);
+                             pi_prcs_id  => l_prov_prcs_id,
+                             pi_var_name => l_prov_var_name,
+                             pi_scope    => l_prov_scope);
       when 'CLOB' then
           l_prov_var_clob := flow_process_vars.get_var_clob(
-                               pi_prcs_id => l_prov_prcs_id,
-                               pi_var_name =>l_prov_var_name);
+                               pi_prcs_id  => l_prov_prcs_id,
+                               pi_var_name => l_prov_var_name,
+                               pi_scope    => l_prov_scope);
     end case;
     
     apex_json.open_object;
@@ -1267,7 +1448,7 @@ as
   
   function get_connection_select_option(
     pi_gateway in flow_objects.objt_bpmn_id%type
-  , pi_prcs_id in flow_processes.prcs_id%type
+  , pi_prdg_id in flow_instance_diagrams.prdg_id%type
   ) return varchar2
   as
     l_select_option flow_instance_gateways_lov.select_option%type;
@@ -1276,10 +1457,25 @@ as
       into l_select_option
       from flow_instance_gateways_lov
      where objt_bpmn_id = pi_gateway
-       and prcs_id = pi_prcs_id;
+       and prdg_id = pi_prdg_id;
     return l_select_option;
   end get_connection_select_option;
 
+   function get_scope(
+      pi_gateway in flow_objects.objt_bpmn_id%type
+    , pi_prdg_id in flow_instance_diagrams.prdg_id%type
+  ) return number
+  as 
+    l_prdg_diagram_level flow_instance_gateways_lov.prdg_diagram_level%type;
+  begin
+    select prdg_diagram_level
+      into l_prdg_diagram_level
+      from flow_instance_gateways_lov
+     where objt_bpmn_id = pi_gateway
+       and prdg_id = pi_prdg_id;
+    return l_prdg_diagram_level;
+    
+  end get_scope;
 
   /* page 9 */
   
@@ -1290,14 +1486,26 @@ as
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_engine_app_mode           in flow_configuration.cfig_value%type
   , pi_duplicate_step_prevention in flow_configuration.cfig_value%type
+  , pi_default_workspace         in flow_configuration.cfig_value%type
+  , pi_default_email_sender      in flow_configuration.cfig_value%type
+  , pi_default_application       in flow_configuration.cfig_value%type
+  , pi_default_pageid            in flow_configuration.cfig_value%type
+  , pi_default_username          in flow_configuration.cfig_value%type
+  , pi_timer_max_cycles          in flow_configuration.cfig_value%type
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => 'logging_language', p_value => pi_logging_language);
-      flow_engine_util.set_config_value( p_config_key => 'logging_level', p_value => pi_logging_level);
-      flow_engine_util.set_config_value( p_config_key => 'logging_hide_userid', p_value => pi_logging_hide_userid);
-      flow_engine_util.set_config_value( p_config_key => 'engine_app_mode', p_value => pi_engine_app_mode);
-      flow_engine_util.set_config_value( p_config_key => 'duplicate_step_prevention', p_value => pi_duplicate_step_prevention);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language    , p_value => pi_logging_language);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level       , p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid , p_value => pi_logging_hide_userid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode     , p_value => pi_engine_app_mode);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_dup_step_prevention , p_value => pi_duplicate_step_prevention);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_workspace   , p_value => pi_default_workspace);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_email_sender, p_value => pi_default_email_sender);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application , p_value => pi_default_application);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid      , p_value => pi_default_pageid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username    , p_value => pi_default_username);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_timer_max_cycles    , p_value => pi_timer_max_cycles);
   end set_settings;
 
 
@@ -1320,7 +1528,8 @@ as
       flow_process_vars.set_var( 
         pi_prcs_id   => l_prcs_id,
         pi_var_name  => 'BUSINESS_REF',
-        pi_vc2_value => pi_business_ref);
+        pi_vc2_value => pi_business_ref,
+        pi_scope => 0);
     end if;
     return l_prcs_id; 
   end create_instance;

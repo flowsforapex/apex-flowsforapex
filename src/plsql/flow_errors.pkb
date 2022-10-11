@@ -30,15 +30,28 @@ as
   )
   is 
   begin  
+      apex_debug.enter
+      ( 'set_error_status'
+      , 'pi_prcs_id', pi_prcs_id
+      , 'pi_sbfl_id', pi_sbfl_id
+      );
       -- set sbfl & prcs error status
       update flow_subflows sbfl
-        set sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error
-          , sbfl.sbfl_last_update = systimestamp
+        set sbfl_status              = flow_constants_pkg.gc_sbfl_status_error
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
       where sbfl.sbfl_id = pi_sbfl_id
       ;
       update flow_processes prcs
-        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_error
-          , prcs.prcs_last_update = systimestamp
+        set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_error
+          , prcs.prcs_last_update    = systimestamp
+          , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
       where prcs.prcs_id = pi_prcs_id
       ;   
   end set_error_status;

@@ -22,8 +22,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20220107153141'
+,p_last_updated_by=>'LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20220913095650'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -437,7 +437,7 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_element=>'P6_MODE'
 ,p_condition_element=>'P6_MODE'
 ,p_triggering_condition_type=>'EQUALS'
-,p_triggering_expression=>'multi'
+,p_triggering_expression=>'multiple'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'change'
 );
@@ -516,7 +516,7 @@ wwv_flow_api.create_page_process(
 '                 );',
 '    :P6_DGRM_ID := l_dgrm_id;',
 'end;'))
-,p_process_error_message=>'Flow already exists. Use force orverwrite.'
+,p_process_error_message=>'Model already exists. Use force overwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MODE'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
@@ -535,7 +535,7 @@ wwv_flow_api.create_page_process(
 '    pi_force_overwrite => :P6_FORCE_OVERWRITE',
 ');',
 ''))
-,p_process_error_message=>'Model already exists. Use force orverwrite.'
+,p_process_error_message=>'Model already exists. Use force overwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MODE'
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'

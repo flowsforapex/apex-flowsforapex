@@ -15,19 +15,20 @@ body:
         - 5.1.1
         - 5.1.2
         - 21.1 
-        - 22.1 (latest)
-        - 22.2 (development)
+        - 22.1
+        - 22.2 (latest)
+        - Current Development
     validations:
       required: true
   - type: dropdown
     id: oracle_db_version
     attributes:
       label: Oracle Database version
-      description: We only support Oracle Database 12.2 and higher
+      description: We only support Oracle Database 19 and higher
       options:
         - 12.1 and lower (unsupported)
-        - 12.2
-        - 18
+        - 12.2 (unsupported)
+        - 18 (unsupported)
         - 19
         - 21
     validations:

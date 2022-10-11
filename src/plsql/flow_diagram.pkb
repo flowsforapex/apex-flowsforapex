@@ -1,5 +1,15 @@
 create or replace package body flow_diagram
 as
+/* 
+-- Flows for APEX - flow_diagram.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright MT AG, 2021-2022.
+--
+-- Created  10-Dec-2021 Dennis Amthor - MT AG  
+-- Modified 22-May-2022 Moritz Klein - MT AG
+--
+*/
 
   function create_diagram(
     pi_dgrm_name in flow_diagrams.dgrm_name%type,
@@ -25,7 +35,8 @@ as
           pi_dgrm_name     => pi_dgrm_name,
           pi_dgrm_version  => pi_dgrm_version,
           pi_dgrm_category => pi_dgrm_category,
-          pi_dgrm_content  => flow_constants_pkg.gc_default_xml,
+          pi_dgrm_content  => replace(flow_constants_pkg.gc_default_xml, '#RANDOM_PRCS_ID#',
+                                lower(sys.dbms_random.string('X',8))),
           pi_dgrm_status   => flow_constants_pkg.gc_dgrm_status_draft);
       flow_bpmn_parser_pkg.parse(
         pi_dgrm_id => l_dgrm_id);
@@ -143,6 +154,119 @@ as
     end if;
   end diagram_is_modifiable;
 
+  function get_start_event(
+    pi_dgrm_id    in flow_diagrams.dgrm_id%type,
+    pi_prcs_id    in flow_processes.prcs_id%type)
+  return flow_objects.objt_bpmn_id%type
+  is
+    e_unsupported_start_type exception;
+    l_objt_bpmn_id           flow_subflows.sbfl_current%type;
+  begin
+      -- get the starting object 
+      select objt.objt_bpmn_id
+        into l_objt_bpmn_id
+        from flow_objects objt
+        join flow_objects parent
+          on objt.objt_objt_id = parent.objt_id
+       where objt.objt_dgrm_id = pi_dgrm_id
+         and parent.objt_dgrm_id = pi_dgrm_id
+         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_start_event  
+         and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         ;
+    apex_debug.info
+    ( p_message => 'Found starting object %0 in diagram %1'
+    , p0 => l_objt_bpmn_id
+    , p1 => pi_dgrm_id
+    );
+    return l_objt_bpmn_id;
+  exception
+    when too_many_rows then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'start-multiple-start-events'
+      );
+      -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
+    when no_data_found then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'start-no-start-event'
+      );
+      -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
+  end get_start_event;
+
+  function get_current_diagram
+    ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
+    , pi_dgrm_calling_method    in flow_types_pkg.t_bpmn_attribute_vc2
+    , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+    , pi_prcs_id                in flow_processes.prcs_id%type default null
+    )
+  return flow_diagrams.dgrm_id%type
+    -- gets the current dgrm_id to be used for a diagram name.
+    -- returns the current 'released' diagram or a 'draft' of version '0' 
+  is
+    l_dgrm_id     flow_diagrams.dgrm_id%type;
+  begin
+    case pi_dgrm_calling_method 
+    when flow_constants_pkg.gc_dgrm_version_latest_version then
+      begin 
+        -- look for the 'released' version of the diagram
+        select dgrm_id 
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
+        ;
+        return l_dgrm_id;
+      exception
+        when no_data_found then
+          -- look for the version 0 (default) of 'draft' of the diagram
+          begin
+            select dgrm_id
+              into l_dgrm_id
+              from flow_diagrams
+             where dgrm_name = pi_dgrm_name
+               and dgrm_status = flow_constants_pkg.gc_dgrm_status_draft
+               and dgrm_version = '0'
+            ;
+            return l_dgrm_id;
+          exception
+            when no_data_found then
+              if pi_prcs_id is null then 
+                -- initial process start so call general error (instance not yet running)
+                flow_errors.handle_general_error
+                ( pi_message_key => 'version-no-rel-or-draft-v0'
+                );
+                -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
+              else 
+                -- callActivity so log an instance error
+                flow_errors.handle_instance_error
+                ( pi_prcs_id     => pi_prcs_id
+                , pi_message_key => 'version-no-rel-or-draft-v0'
+                );
+                -- $F4AMESSAGE 'version-no-rel-or-draft-v0' || 'Cannot find released diagram or draft version 0 of diagram - please specify a version or diagram_id'
+              end if; 
+          end;  
+      end;
+
+    when flow_constants_pkg.gc_dgrm_version_named_version then
+      -- dgrm_version was specified
+      begin
+        select dgrm_id
+          into l_dgrm_id
+          from flow_diagrams
+         where dgrm_name = pi_dgrm_name
+           and dgrm_version = pi_dgrm_version
+        ;
+      exception
+        when no_data_found then
+          -- initial process start so call general error (instance not yet running)
+          flow_errors.handle_general_error ( pi_message_key => 'version-not-found');
+          -- $F4AMESSAGE 'version-not-found' || 'Cannot find specified diagram version.  Please check version specification.'
+      end;
+    end case;
+    return l_dgrm_id;
+  end get_current_diagram;
+
 
   procedure delete_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type,
@@ -226,6 +350,20 @@ as
        set dgrm_status = flow_constants_pkg.gc_dgrm_status_archived
      where dgrm_id = pi_dgrm_id;
   end archive_diagram;   
+
+  function get_diagram_name
+    ( pi_dgrm_id       in flow_diagrams.dgrm_id%type)
+  return flow_diagrams.dgrm_name%type
+  is
+    l_dgrm_name   flow_diagrams.dgrm_name%type;
+  begin
+    select dgrm_name
+      into l_dgrm_name
+      from flow_diagrams
+     where dgrm_id = pi_dgrm_id
+    ;
+     return l_dgrm_name;
+  end get_diagram_name;
 
 end flow_diagram;
 /

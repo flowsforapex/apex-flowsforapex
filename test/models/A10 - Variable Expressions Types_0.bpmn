@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_0rxermh" name="Test expression Evaluation" isExecutable="false">
+    <bpmn:documentation>This test model tests the variable expression evaluations by expression type and process variable datatype.</bpmn:documentation>
+    <bpmn:startEvent id="Event_0b152er" name="Start">
+      <bpmn:extensionElements>
+        <apex:onEvent />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0uuu5a1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0uuu5a1" sourceRef="Event_0b152er" targetRef="Gateway_0y8dosg" />
+    <bpmn:task id="Activity_StaticVC2" name="StaticVC2">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>StaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>StaticVC2</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ptb98e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1muvhms</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0a9684t" sourceRef="Gateway_0y8dosg" targetRef="Static" />
+    <bpmn:task id="Activity_StaticNumber" name="StaticNumber">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>StaticNumber2</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>StaticNumber2dec1</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2.1</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1muvhms</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ghbc0z</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1muvhms" sourceRef="Activity_StaticVC2" targetRef="Activity_StaticNumber" />
+    <bpmn:task id="Activity_1kox4ml" name="StaticDate">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>StaticDate</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2021-08-15 15:16:17</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ghbc0z</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fa3j1m</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1ghbc0z" sourceRef="Activity_StaticNumber" targetRef="Activity_1kox4ml" />
+    <bpmn:sequenceFlow id="Flow_1fa3j1m" sourceRef="Activity_1kox4ml" targetRef="Event_1w1qylz" />
+    <bpmn:task id="Activity_ProcVarVC2" name="ProcVarVC2">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>CopyStaticVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>StaticVC2</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00ci7cg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xg3was</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0m0671p" sourceRef="Gateway_0y8dosg" targetRef="ProcVar" />
+    <bpmn:task id="Activity_ProcVarNumber" name="ProcVarNumber">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>CopyStaticNumber2</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>StaticNumber2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>CopyStaticNumber2dec1</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>StaticNumber2dec1</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0xg3was</bpmn:incoming>
+      <bpmn:outgoing>Flow_06ltsr4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0xg3was" sourceRef="Activity_ProcVarVC2" targetRef="Activity_ProcVarNumber" />
+    <bpmn:task id="Activity_ProcVarDate" name="ProcVarDate">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>CopyStaticDate</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>StaticDate</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06ltsr4</bpmn:incoming>
+      <bpmn:outgoing>Flow_11rvp9o</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_06ltsr4" sourceRef="Activity_ProcVarNumber" targetRef="Activity_ProcVarDate" />
+    <bpmn:task id="Activity_1fvk99g" name="ProcVarCLOB">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>CopyStaticCLOB</apex:varName>
+            <apex:varDataType>CLOB</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>StaticCLOB</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11rvp9o</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yvykwh</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_11rvp9o" sourceRef="Activity_ProcVarDate" targetRef="Activity_1fvk99g" />
+    <bpmn:task id="Activity_SQLSingleVC2" name="SQLSingleVC2">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SQLSingleVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select 'SingleVC2' as value
+from dual
+</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1y5qrk4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jexpd5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0h79q5q" sourceRef="Gateway_0y8dosg" targetRef="SQLSingle" />
+    <bpmn:task id="Activity_SQLSingleNumber" name="SQLSingleNumber">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SQLSingleNumber</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select 1000 as value
+from dual</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jexpd5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qpkp1m</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1jexpd5" sourceRef="Activity_SQLSingleVC2" targetRef="Activity_SQLSingleNumber" />
+    <bpmn:task id="Activity_SQLSingleDate" name="SQLSingleDate">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SQLSingleDate</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select to_date('01/01/2022', 'DD/MM/YYYY') as value
+from dual</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1qpkp1m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mregfd</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1qpkp1m" sourceRef="Activity_SQLSingleNumber" targetRef="Activity_SQLSingleDate" />
+    <bpmn:sequenceFlow id="Flow_0mregfd" sourceRef="Activity_SQLSingleDate" targetRef="Event_0g0s8cb" />
+    <bpmn:task id="Activity_SQLMultiVC2" name="SQLMultiVC2">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>SQLMultiVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQueryList</apex:varExpressionType>
+            <apex:varExpression>select 'value1' as value
+
+from dual
+union
+select 'value2' as value 
+from dual
+union
+select 'value3' as value 
+from dual</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1aztrma</bpmn:incoming>
+      <bpmn:outgoing>Flow_0sknu0j</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0y3xm42" sourceRef="Gateway_0y8dosg" targetRef="SQLMulti" />
+    <bpmn:endEvent id="Event_1w1qylz">
+      <bpmn:incoming>Flow_1fa3j1m</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_1sfukfx">
+      <bpmn:incoming>Flow_1yvykwh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1yvykwh" sourceRef="Activity_1fvk99g" targetRef="Event_1sfukfx" />
+    <bpmn:endEvent id="Event_0g0s8cb">
+      <bpmn:incoming>Flow_0mregfd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0gv01yv">
+      <bpmn:incoming>Flow_0sknu0j</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0sknu0j" sourceRef="Activity_SQLMultiVC2" targetRef="Event_0gv01yv" />
+    <bpmn:task id="Activity_ExpressionVC2" name="ExpressionVC2">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>ExpressionVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>upper('king')||' is UPPERCASE'</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mkutb6</bpmn:incoming>
+      <bpmn:outgoing>Flow_10kh2sv</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1ry5pfg" sourceRef="Gateway_0y8dosg" targetRef="Expression" />
+    <bpmn:task id="Activity_ExpressionNumber" name="ExpressionNumber">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>ExpressionNumber</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>10.5 * 4.0</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10kh2sv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fb4kzg</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_10kh2sv" sourceRef="Activity_ExpressionVC2" targetRef="Activity_ExpressionNumber" />
+    <bpmn:task id="Activity_ExpressionDate" name="ExpressionDate">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>ExpressionDate</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>to_char
+( add_months ( to_date ('01-01-2022 14:00:00', 'DD-MM-YYYY HH24:MI:SS'),3)
+, 'YYYY-MM-DD HH24:MI:SS' )</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1fb4kzg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wx824p</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1fb4kzg" sourceRef="Activity_ExpressionNumber" targetRef="Activity_ExpressionDate" />
+    <bpmn:sequenceFlow id="Flow_1wx824p" sourceRef="Activity_ExpressionDate" targetRef="Event_135ptih" />
+    <bpmn:endEvent id="Event_135ptih">
+      <bpmn:incoming>Flow_1wx824p</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_FuncBodyVC2" name="FuncBodyVC2">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>FuncBodyVC2</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlFunctionBody</apex:varExpressionType>
+            <apex:varExpression>declare
+  l_month varchar2(4000);
+begin
+  l_month := to_char( to_date('01-09-2022','DD-MM-YYYY') , 'Month');
+ return l_month;
+end;</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01xchzo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hm8n3b</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1qcji3g" sourceRef="Gateway_0y8dosg" targetRef="FuncBody" />
+    <bpmn:task id="Activity_FuncBodyNumber" name="FuncBodyNumber">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>FuncBodyNumber</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>plsqlFunctionBody</apex:varExpressionType>
+            <apex:varExpression>declare
+  l_value number;
+begin
+  l_value := 42 * 5.4;
+ return l_value;
+end;</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hm8n3b</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ghryux</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1hm8n3b" sourceRef="Activity_FuncBodyVC2" targetRef="Activity_FuncBodyNumber" />
+    <bpmn:task id="Activity_FuncBodyDate" name="FuncBodyDate">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>FuncBodyDate</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>plsqlFunctionBody</apex:varExpressionType>
+            <apex:varExpression>declare
+  l_date varchar2(4000);
+begin
+  l_date := to_char( add_months(to_date('01-01-2022 14:00:00','DD-MM-YYYY HH24:MI:SS'),3) , 'YYYY-MM-DD HH24:MI:SS');
+ return l_date;
+end;</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ghryux</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ctsfkx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ghryux" sourceRef="Activity_FuncBodyNumber" targetRef="Activity_FuncBodyDate" />
+    <bpmn:endEvent id="Event_1azwq91">
+      <bpmn:incoming>Flow_1ctsfkx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ctsfkx" sourceRef="Activity_FuncBodyDate" targetRef="Event_1azwq91" />
+    <bpmn:parallelGateway id="Gateway_0y8dosg">
+      <bpmn:incoming>Flow_0uuu5a1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a9684t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0m0671p</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0h79q5q</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0y3xm42</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ry5pfg</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1qcji3g</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="Static" name="Static">
+      <bpmn:incoming>Flow_0a9684t</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ptb98e</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1ptb98e" sourceRef="Static" targetRef="Activity_StaticVC2" />
+    <bpmn:task id="ProcVar" name="ProcVar">
+      <bpmn:incoming>Flow_0m0671p</bpmn:incoming>
+      <bpmn:outgoing>Flow_00ci7cg</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_00ci7cg" sourceRef="ProcVar" targetRef="Activity_ProcVarVC2" />
+    <bpmn:task id="SQLSingle" name="SQLSingle">
+      <bpmn:incoming>Flow_0h79q5q</bpmn:incoming>
+      <bpmn:outgoing>Flow_1y5qrk4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1y5qrk4" sourceRef="SQLSingle" targetRef="Activity_SQLSingleVC2" />
+    <bpmn:task id="SQLMulti" name="SQLMulti">
+      <bpmn:incoming>Flow_0y3xm42</bpmn:incoming>
+      <bpmn:outgoing>Flow_1aztrma</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1aztrma" sourceRef="SQLMulti" targetRef="Activity_SQLMultiVC2" />
+    <bpmn:task id="Expression" name="Expression">
+      <bpmn:incoming>Flow_1ry5pfg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mkutb6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0mkutb6" sourceRef="Expression" targetRef="Activity_ExpressionVC2" />
+    <bpmn:task id="FuncBody" name="FuncBody">
+      <bpmn:incoming>Flow_1qcji3g</bpmn:incoming>
+      <bpmn:outgoing>Flow_01xchzo</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_01xchzo" sourceRef="FuncBody" targetRef="Activity_FuncBodyVC2" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">
+      <bpmndi:BPMNEdge id="Flow_01xchzo_di" bpmnElement="Flow_01xchzo">
+        <di:waypoint x="260" y="860" />
+        <di:waypoint x="300" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mkutb6_di" bpmnElement="Flow_0mkutb6">
+        <di:waypoint x="260" y="750" />
+        <di:waypoint x="300" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aztrma_di" bpmnElement="Flow_1aztrma">
+        <di:waypoint x="260" y="640" />
+        <di:waypoint x="300" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1y5qrk4_di" bpmnElement="Flow_1y5qrk4">
+        <di:waypoint x="260" y="530" />
+        <di:waypoint x="300" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00ci7cg_di" bpmnElement="Flow_00ci7cg">
+        <di:waypoint x="260" y="340" />
+        <di:waypoint x="300" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ptb98e_di" bpmnElement="Flow_1ptb98e">
+        <di:waypoint x="260" y="170" />
+        <di:waypoint x="300" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ctsfkx_di" bpmnElement="Flow_1ctsfkx">
+        <di:waypoint x="680" y="860" />
+        <di:waypoint x="862" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ghryux_di" bpmnElement="Flow_0ghryux">
+        <di:waypoint x="540" y="860" />
+        <di:waypoint x="580" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hm8n3b_di" bpmnElement="Flow_1hm8n3b">
+        <di:waypoint x="400" y="860" />
+        <di:waypoint x="440" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qcji3g_di" bpmnElement="Flow_1qcji3g">
+        <di:waypoint x="100" y="555" />
+        <di:waypoint x="100" y="860" />
+        <di:waypoint x="160" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wx824p_di" bpmnElement="Flow_1wx824p">
+        <di:waypoint x="680" y="750" />
+        <di:waypoint x="862" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fb4kzg_di" bpmnElement="Flow_1fb4kzg">
+        <di:waypoint x="540" y="750" />
+        <di:waypoint x="580" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10kh2sv_di" bpmnElement="Flow_10kh2sv">
+        <di:waypoint x="400" y="750" />
+        <di:waypoint x="440" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ry5pfg_di" bpmnElement="Flow_1ry5pfg">
+        <di:waypoint x="100" y="555" />
+        <di:waypoint x="100" y="750" />
+        <di:waypoint x="160" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sknu0j_di" bpmnElement="Flow_0sknu0j">
+        <di:waypoint x="400" y="640" />
+        <di:waypoint x="862" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yvykwh_di" bpmnElement="Flow_1yvykwh">
+        <di:waypoint x="820" y="340" />
+        <di:waypoint x="862" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y3xm42_di" bpmnElement="Flow_0y3xm42">
+        <di:waypoint x="100" y="555" />
+        <di:waypoint x="100" y="640" />
+        <di:waypoint x="160" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mregfd_di" bpmnElement="Flow_0mregfd">
+        <di:waypoint x="680" y="530" />
+        <di:waypoint x="862" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qpkp1m_di" bpmnElement="Flow_1qpkp1m">
+        <di:waypoint x="540" y="530" />
+        <di:waypoint x="580" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jexpd5_di" bpmnElement="Flow_1jexpd5">
+        <di:waypoint x="400" y="530" />
+        <di:waypoint x="440" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h79q5q_di" bpmnElement="Flow_0h79q5q">
+        <di:waypoint x="125" y="530" />
+        <di:waypoint x="160" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11rvp9o_di" bpmnElement="Flow_11rvp9o">
+        <di:waypoint x="680" y="340" />
+        <di:waypoint x="720" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06ltsr4_di" bpmnElement="Flow_06ltsr4">
+        <di:waypoint x="540" y="340" />
+        <di:waypoint x="580" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xg3was_di" bpmnElement="Flow_0xg3was">
+        <di:waypoint x="400" y="340" />
+        <di:waypoint x="440" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m0671p_di" bpmnElement="Flow_0m0671p">
+        <di:waypoint x="100" y="505" />
+        <di:waypoint x="100" y="340" />
+        <di:waypoint x="160" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fa3j1m_di" bpmnElement="Flow_1fa3j1m">
+        <di:waypoint x="680" y="170" />
+        <di:waypoint x="862" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ghbc0z_di" bpmnElement="Flow_1ghbc0z">
+        <di:waypoint x="540" y="170" />
+        <di:waypoint x="580" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1muvhms_di" bpmnElement="Flow_1muvhms">
+        <di:waypoint x="400" y="170" />
+        <di:waypoint x="440" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a9684t_di" bpmnElement="Flow_0a9684t">
+        <di:waypoint x="100" y="505" />
+        <di:waypoint x="100" y="170" />
+        <di:waypoint x="160" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uuu5a1_di" bpmnElement="Flow_0uuu5a1">
+        <di:waypoint x="48" y="530" />
+        <di:waypoint x="75" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0b152er_di" bpmnElement="Event_0b152er">
+        <dc:Bounds x="12" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="18" y="555" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u1qdwm_di" bpmnElement="Activity_StaticVC2">
+        <dc:Bounds x="300" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1b7iwii_di" bpmnElement="Activity_StaticNumber">
+        <dc:Bounds x="440" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kox4ml_di" bpmnElement="Activity_1kox4ml">
+        <dc:Bounds x="580" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dyj2ha_di" bpmnElement="Activity_ProcVarVC2">
+        <dc:Bounds x="300" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x0p908_di" bpmnElement="Activity_ProcVarNumber">
+        <dc:Bounds x="440" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ymyhyu_di" bpmnElement="Activity_ProcVarDate">
+        <dc:Bounds x="580" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fvk99g_di" bpmnElement="Activity_1fvk99g">
+        <dc:Bounds x="720" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1236qly_di" bpmnElement="Activity_SQLSingleVC2">
+        <dc:Bounds x="300" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w05v0x_di" bpmnElement="Activity_SQLSingleNumber">
+        <dc:Bounds x="440" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eg3cwi_di" bpmnElement="Activity_SQLSingleDate">
+        <dc:Bounds x="580" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14dswe4_di" bpmnElement="Activity_SQLMultiVC2">
+        <dc:Bounds x="300" y="600" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1w1qylz_di" bpmnElement="Event_1w1qylz">
+        <dc:Bounds x="862" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1sfukfx_di" bpmnElement="Event_1sfukfx">
+        <dc:Bounds x="862" y="322" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0g0s8cb_di" bpmnElement="Event_0g0s8cb">
+        <dc:Bounds x="862" y="512" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gv01yv_di" bpmnElement="Event_0gv01yv">
+        <dc:Bounds x="862" y="622" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0khxn3o_di" bpmnElement="Activity_ExpressionVC2">
+        <dc:Bounds x="300" y="710" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hvxxyo_di" bpmnElement="Activity_ExpressionNumber">
+        <dc:Bounds x="440" y="710" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07cetbl_di" bpmnElement="Activity_ExpressionDate">
+        <dc:Bounds x="580" y="710" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_135ptih_di" bpmnElement="Event_135ptih">
+        <dc:Bounds x="862" y="732" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s4taqv_di" bpmnElement="Activity_FuncBodyVC2">
+        <dc:Bounds x="300" y="820" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c22z4b_di" bpmnElement="Activity_FuncBodyNumber">
+        <dc:Bounds x="440" y="820" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09fci1q_di" bpmnElement="Activity_FuncBodyDate">
+        <dc:Bounds x="580" y="820" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1azwq91_di" bpmnElement="Event_1azwq91">
+        <dc:Bounds x="862" y="842" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0zg859z_di" bpmnElement="Gateway_0y8dosg">
+        <dc:Bounds x="75" y="505" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g9ntfg_di" bpmnElement="Static">
+        <dc:Bounds x="160" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c1437q_di" bpmnElement="ProcVar">
+        <dc:Bounds x="160" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wlw33z_di" bpmnElement="SQLSingle">
+        <dc:Bounds x="160" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cp76lz_di" bpmnElement="SQLMulti">
+        <dc:Bounds x="160" y="600" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jajukz_di" bpmnElement="Expression">
+        <dc:Bounds x="160" y="710" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02v3my3_di" bpmnElement="FuncBody">
+        <dc:Bounds x="160" y="820" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

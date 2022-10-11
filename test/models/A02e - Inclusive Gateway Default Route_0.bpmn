@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_0rxermh" isExecutable="false">
+    <bpmn:startEvent id="Start" name="Start">
+      <bpmn:outgoing>Flow_0k5azlb</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0k5azlb" sourceRef="Start" targetRef="Inclusive" />
+    <bpmn:task id="A" name="A">
+      <bpmn:incoming>RouteA</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b9sacz</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="RouteA" name="RouteA" sourceRef="Inclusive" targetRef="A" />
+    <bpmn:task id="B" name="B">
+      <bpmn:incoming>RouteB</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gi2wi1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="RouteB" name="RouteB" sourceRef="Inclusive" targetRef="B" />
+    <bpmn:inclusiveGateway id="Inclusive" name="Inclusive" default="RouteA">
+      <bpmn:incoming>Flow_0k5azlb</bpmn:incoming>
+      <bpmn:outgoing>RouteA</bpmn:outgoing>
+      <bpmn:outgoing>RouteB</bpmn:outgoing>
+      <bpmn:outgoing>RouteC</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0b9sacz" sourceRef="A" targetRef="Gateway_1gbrbic" />
+    <bpmn:inclusiveGateway id="Gateway_1gbrbic">
+      <bpmn:incoming>Flow_0b9sacz</bpmn:incoming>
+      <bpmn:incoming>Flow_0gi2wi1</bpmn:incoming>
+      <bpmn:incoming>Flow_043vfgk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0abb1vr</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0gi2wi1" sourceRef="B" targetRef="Gateway_1gbrbic" />
+    <bpmn:endEvent id="End" name="End&#10;">
+      <bpmn:incoming>Flow_0abb1vr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0abb1vr" sourceRef="Gateway_1gbrbic" targetRef="End" />
+    <bpmn:task id="C" name="C">
+      <bpmn:incoming>RouteC</bpmn:incoming>
+      <bpmn:outgoing>Flow_043vfgk</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="RouteC" name="RouteC" sourceRef="Inclusive" targetRef="C" />
+    <bpmn:sequenceFlow id="Flow_043vfgk" sourceRef="C" targetRef="Gateway_1gbrbic" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">
+      <bpmndi:BPMNEdge id="Flow_0yvrnp4_di" bpmnElement="RouteB">
+        <di:waypoint x="295" y="360" />
+        <di:waypoint x="370" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="302" y="343" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0294h9i_di" bpmnElement="RouteA">
+        <di:waypoint x="270" y="335" />
+        <di:waypoint x="270" y="240" />
+        <di:waypoint x="370" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="301" y="223" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k5azlb_di" bpmnElement="Flow_0k5azlb">
+        <di:waypoint x="178" y="360" />
+        <di:waypoint x="245" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b9sacz_di" bpmnElement="Flow_0b9sacz">
+        <di:waypoint x="470" y="240" />
+        <di:waypoint x="560" y="240" />
+        <di:waypoint x="560" y="335" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gi2wi1_di" bpmnElement="Flow_0gi2wi1">
+        <di:waypoint x="470" y="360" />
+        <di:waypoint x="535" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0abb1vr_di" bpmnElement="Flow_0abb1vr">
+        <di:waypoint x="585" y="360" />
+        <di:waypoint x="652" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08jcn93_di" bpmnElement="RouteC">
+        <di:waypoint x="270" y="385" />
+        <di:waypoint x="270" y="480" />
+        <di:waypoint x="370" y="480" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="302" y="453" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_043vfgk_di" bpmnElement="Flow_043vfgk">
+        <di:waypoint x="470" y="480" />
+        <di:waypoint x="560" y="480" />
+        <di:waypoint x="560" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0xjo3mr_di" bpmnElement="A">
+        <dc:Bounds x="370" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1so7xgq_di" bpmnElement="B">
+        <dc:Bounds x="370" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0xe40fr_di" bpmnElement="Inclusive">
+        <dc:Bounds x="245" y="335" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="208" y="333" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0tz1js9_di" bpmnElement="Gateway_1gbrbic">
+        <dc:Bounds x="535" y="335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c1bsse_di" bpmnElement="C">
+        <dc:Bounds x="370" y="440" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fc4avf_di" bpmnElement="End">
+        <dc:Bounds x="652" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="661" y="385" width="19" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yu3z7x_di" bpmnElement="Start">
+        <dc:Bounds x="142" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="148" y="385" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

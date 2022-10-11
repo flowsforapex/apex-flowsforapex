@@ -1,0 +1,20 @@
+set define off;
+@"Tutorial 1  - Getting Started_22.2.sql";
+@"Tutorial 2a - Basic Navigation with Gateways_22.2.sql";
+@"Tutorial 2b - Parallel Gateways_22.2.sql";
+@"Tutorial 2c - Inclusive Gateways_22.2.sql";
+@"Tutorial 2d - Making your process pause_22.2.sql";
+@"Tutorial 3a - Setting Process Variables from your Model_22.2.sql";
+@"Tutorial 3b - Substitution and Bind Syntax_22.2.sql";
+@"Tutorial 4a - Tasks Get Your Work Done!_22.2.sql";
+@"Tutorial 4b - Reminders and Timeouts_22.2.sql";
+@"Tutorial 5a - Structure your Process with Sub Processes and Calls_22.2.sql";
+@"Tutorial 5b - Introducing Sub Processes_22.2.sql";
+@"Tutorial 5c - Handling Sub Process Error and Escalation Events_22.2.sql";
+@"Tutorial 5d - Using CallActivities to call another diagram_22.2.sql";
+@"Tutorial 5e - ship Goods (Called by Tutorial 5d)_22.2.sql";
+@"Tutorial 5f - Making a Diagram Callable_22.2.sql";
+@"Tutorial 6a - Collaborations, Lanes and Reservations_22.2.sql";
+@"Tutorial 8a - The Full Monty (the top half!)_22.2.sql";
+@"Tutorial 8c - Background Session Configuration_22.2.sql";
+

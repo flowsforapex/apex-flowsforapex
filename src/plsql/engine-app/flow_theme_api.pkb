@@ -45,7 +45,6 @@ as
         on s.application_id = t.application_id
        and s.theme_number = t.theme_number
      where s.application_id = apex_application.g_flow_id
-       and t.ui_type_name = 'DESKTOP'
        and s.theme_style_id = l_theme_style_id;
     return l_theme_name;
   exception
@@ -87,7 +86,6 @@ as
         on s.application_id = t.application_id
        and s.theme_number = t.theme_number
      where s.application_id = apex_application.g_flow_id
-       and t.ui_type_name = 'DESKTOP'
        and s.name = l_theme_name;
 
     apex_theme.set_user_style (
@@ -139,7 +137,6 @@ as
      where s.application_id = t.application_id
        and s.theme_number = t.theme_number
        and s.application_id = apex_application.g_flow_id
-       and t.ui_type_name = 'DESKTOP'
        and s.name = l_theme_name;
 
      apex_theme.set_user_style (
@@ -186,7 +183,6 @@ as
              where s.application_id = t.application_id
                and s.theme_number = t.theme_number
                and s.application_id = apex_application.g_flow_id
-               and t.ui_type_name = 'DESKTOP'
                and s.theme_style_id = apex_theme.get_user_style(
                                         apex_application.g_flow_id
                                       , apex_application.g_user
@@ -204,7 +200,6 @@ as
      where s.application_id = t.application_id
        and s.theme_number = t.theme_number
        and s.application_id = apex_application.g_flow_id
-       and t.ui_type_name = 'DESKTOP'
        and s.name = l_theme_name;
 
     apex_theme.set_user_style (

@@ -9,7 +9,9 @@ as
        , dgrm.dgrm_category
        , prcs.prcs_status
        , prcs.prcs_init_ts
+       , prcs.prcs_init_by
        , prcs.prcs_last_update
+       , prcs.prcs_last_update_by
        , prov.prov_var_vc2 as prcs_business_ref
     from flow_processes prcs
     join flow_diagrams dgrm
@@ -18,4 +20,5 @@ as
       on prov.prov_prcs_id = prcs.prcs_id
      and prov.prov_var_name = 'BUSINESS_REF'
      and prov.prov_var_type = 'VARCHAR2' 
+     and prov.prov_scope = 0
 with read only;

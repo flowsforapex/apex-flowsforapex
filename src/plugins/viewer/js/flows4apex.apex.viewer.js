@@ -1,6 +1,6 @@
 /* global apex, BpmnJS */
 
-(function( $, region, event ){
+(function( $, region, event, message ){
 
   $.widget( "flows4apex.viewer", {
     options: {
@@ -9,7 +9,8 @@
       noDataFoundMessage: "Could not load Diagram",
       refreshOnLoad: false,
       useNavigatedViewer: false,
-      enableExpandModule: true,
+      addHighlighting: false,
+      enableCallActivities: false,
       config: {
         currentStyle: {
           "fill": "#6aad42",
@@ -40,9 +41,11 @@
       this.regionId    = this.element[0].id;
       this.canvasId    = this.regionId + "_canvas";
       this.enabledModules = [];
-      this.enabledModules.push(bpmnViewer.customModules.styleModule);
-      if ( this.options.enableExpandModule ) {
-        this.enabledModules.push( bpmnViewer.customModules.spViewModule );
+      if ( this.options.addHighlighting ) {
+        this.enabledModules.push(bpmnViewer.customModules.styleModule);
+      }
+      if ( this.options.enableCallActivities ) {
+        this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
       }
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
@@ -81,9 +84,19 @@
           apex.debug.warn( "Warnings during XML Import", warnings );
         }
         this.zoom( "fit-viewport" );
-        bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
-        bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
-        bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+        if ( this.options.addHighlighting ) {
+          bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
+          bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
+          bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+        }
+        // trigger load event
+        event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", 
+          { 
+            diagramIdentifier: this.diagramIdentifier, 
+            callingDiagramIdentifier: this.callingDiagramIdentifier, 
+            callingObjectId: this.callingObjectId
+          } 
+        );
       } catch (err) {
         apex.debug.error( "Loading Diagram failed.", err, this.diagram );
       }
@@ -96,8 +109,10 @@
       try {
         const result = await bpmnViewer$.saveSVG({ format: true });
         const { svg } = result;
-        const styledSVG = bpmnViewer$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
-        return styledSVG;
+        if ( this.options.addHighlighting ) {
+          return bpmnViewer$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+        }
+        return svg;
       } catch (err) {
         apex.debug.error( "Get SVG failed.", err );
         throw err;
@@ -112,14 +127,66 @@
         loadingIndicator: "#" + this.canvasId
       }).then( pData => {
         if ( pData.found ) {
-          this.diagram   = pData.data.diagram;
-          this.current   = pData.data.current;
-          this.completed = pData.data.completed;
-          this.error     = pData.data.error;
+          var diagram;
+          var oldLoaded = true;
+          
+          // use call activities
+          if ( this.options.enableCallActivities ) {
+            // set widget reference to viewer module
+            this.bpmnViewer$.get('subProcessModule').setWidget(this);
+            // show/hide breadcrumb
+            (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
+            // load old diagram (if possible)
+            diagram = pData.data.find(d => d.diagramIdentifier === this.diagramIdentifier);
+            // otherwise: get root entry
+            if (!diagram) {
+              oldLoaded = false;
+              diagram = pData.data.find(d => typeof(d.callingDiagramIdentifier) === 'undefined');
+            } 
+            // set references to hierarchy + current diagram
+            this.data = pData.data;
+            this.diagramIdentifier = diagram.diagramIdentifier;
+            this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
+            this.callingObjectId = diagram.callingObjectId;
+            // reset breadcrumb
+            if (!oldLoaded) this.bpmnViewer$.get('subProcessModule').resetBreadcrumb();
+          }
+          else {
+            // hide breadcrumb
+            $('#breadcrumb').hide();
+            // get first (only) entry
+            diagram = pData.data[0];
+            this.diagramIdentifier = diagram.diagramIdentifier;
+          }
+
+          // add highlighting
+          if ( this.options.addHighlighting ) {
+            this.current   = diagram.current;
+            this.completed = diagram.completed;
+            this.error     = diagram.error;
+          }
+
+          // set diagram content
+          this.diagram = diagram.diagram;
+
+          // load diagram
           this.loadDiagram();
         } else {
           $( "#" + this.canvasId ).hide();
-          $( "#" + this.regionId + " span.nodatafound" ).show();
+          if (pData.message) {
+            apex.message.clearErrors();
+            message.showErrors( [
+              {
+                type: "error",
+                location: ["page"],
+                message: pData.message,
+                unsafe: false,
+              },
+            ] );
+          }
+          else {
+            $( "#" + this.regionId + " span.nodatafound" ).show();
+          }
         }
       });
     },
@@ -142,4 +209,4 @@
     }
   })
 
-})( apex.jQuery, apex.region, apex.event );
+})( apex.jQuery, apex.region, apex.event, apex.message );

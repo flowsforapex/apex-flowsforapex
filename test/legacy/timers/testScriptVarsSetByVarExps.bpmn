@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.1.0">
+  <bpmn:process id="Process_0rxermh" isExecutable="false">
+    <bpmn:documentation>add attributes here once UI completed</bpmn:documentation>
+    <bpmn:startEvent id="Event_0uqf6fn" name="Start">
+      <bpmn:outgoing>Flow_161uk3a</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_161uk3a" sourceRef="Event_0uqf6fn" targetRef="Gateway_split" />
+    <bpmn:parallelGateway id="Gateway_split" name="split">
+      <bpmn:incoming>Flow_161uk3a</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ybbt4b</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ogkq3i</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1o7pfav</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kzpr4w</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="Activity_Before_A" name="Before A (set all async parameters by ProcVars)">
+      <bpmn:documentation>A - tests that the process variables get set from var exps and then work for PLSQL expressions after the timer</bpmn:documentation>
+      <bpmn:incoming>Flow_1ybbt4b</bpmn:incoming>
+      <bpmn:outgoing>Flow_19b6qr5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1ybbt4b" sourceRef="Gateway_split" targetRef="Activity_Before_A" />
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Event_A_NITE:username</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>flowsdev</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>Event_A_NITE:applicationId</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>101</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>Event_A_NITE:pageId</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>1</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19b6qr5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mieqd3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_19b6qr5" sourceRef="Activity_Before_A" targetRef="Activity_A" />
+    <bpmn:endEvent id="Event_A_End" name="A_End">
+      <bpmn:incoming>Flow_0mieqd3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0mieqd3" sourceRef="Activity_A" targetRef="Event_A_End" />
+    <bpmn:sequenceFlow id="Flow_0ipxjp7" sourceRef="Event_A_NITE" targetRef="Activity_After_A_NITE" />
+    <bpmn:endEvent id="Event_A_NITE_End" name="A_NITE_End">
+      <bpmn:incoming>Flow_1ot2q31</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_After_A_NITE" name="After_A_NITE">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>A_plsql_exp</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>to_char(to_date('13-06-1970','DD-MM-YYYY'), 'DDth Month YYYY A.D.');</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ipxjp7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ot2q31</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1ot2q31" sourceRef="Activity_After_A_NITE" targetRef="Event_A_NITE_End" />
+    <bpmn:boundaryEvent id="Event_A_NITE" name="A_NITE" cancelActivity="false" attachedToRef="Activity_A">
+      <bpmn:outgoing>Flow_0ipxjp7</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_02z9i2j" apex:timerType="oracleDuration">
+        <bpmn:extensionElements>
+          <apex:oracleDuration>
+            <apex:intervalDS>000 00:00:10</apex:intervalDS>
+          </apex:oracleDuration>
+        </bpmn:extensionElements>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Activity_Before_B" name="Before B (set all async parameters from Process Diagram)">
+      <bpmn:documentation>A - tests that the process variables get set from process diagram attributes and then work for PLSQL expressions after the timer</bpmn:documentation>
+      <bpmn:incoming>Flow_1ogkq3i</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ptp01k</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_B" name="B">
+      <bpmn:extensionElements>
+        <apex:beforeTask />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ptp01k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ncy9r8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_B_End" name="B_End">
+      <bpmn:incoming>Flow_0ncy9r8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_B_NITE_End" name="B_NITE_End">
+      <bpmn:incoming>Flow_13mm5eo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_After_B_NITE" name="After_B_NITE">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>B_plsql_exp</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>to_char(to_date('13-06-1970','DD-MM-YYYY'), 'DDth Month YYYY A.D.');</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0pqgjww</bpmn:incoming>
+      <bpmn:outgoing>Flow_13mm5eo</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:boundaryEvent id="Event_B_NITE" name="B_NITE" cancelActivity="false" attachedToRef="Activity_B">
+      <bpmn:outgoing>Flow_0pqgjww</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1aosh0s" apex:timerType="oracleDuration">
+        <bpmn:extensionElements>
+          <apex:oracleDuration>
+            <apex:intervalDS>000 00:00:10</apex:intervalDS>
+          </apex:oracleDuration>
+        </bpmn:extensionElements>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1ptp01k" sourceRef="Activity_Before_B" targetRef="Activity_B" />
+    <bpmn:sequenceFlow id="Flow_0ncy9r8" sourceRef="Activity_B" targetRef="Event_B_End" />
+    <bpmn:sequenceFlow id="Flow_0pqgjww" sourceRef="Event_B_NITE" targetRef="Activity_After_B_NITE" />
+    <bpmn:sequenceFlow id="Flow_13mm5eo" sourceRef="Activity_After_B_NITE" targetRef="Event_B_NITE_End" />
+    <bpmn:task id="Activity_Before_C" name="Before C (username only from  ProcVars, others from diagram)">
+      <bpmn:documentation>C - tests that the process variables get set from mixed sources with username from var exps and others from diagram then work for PLSQL expressions after the timer</bpmn:documentation>
+      <bpmn:incoming>Flow_1o7pfav</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hgwx6k</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_C" name="C">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Event_C_NITE:username</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>flowsdev</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hgwx6k</bpmn:incoming>
+      <bpmn:outgoing>Flow_02e89wf</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_C_End" name="C_End">
+      <bpmn:incoming>Flow_02e89wf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="C_NITE_End" name="C_NITE_End">
+      <bpmn:incoming>Flow_0l6v0dd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_After_C_NITE" name="After_C_NITE">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>C_plsql_exp</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>to_char(to_date('13-06-1970','DD-MM-YYYY'), 'DDth Month YYYY A.D.');</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17zy7b9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l6v0dd</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:boundaryEvent id="Event_C_NITE" name="C_NITE" cancelActivity="false" attachedToRef="Activity_C">
+      <bpmn:outgoing>Flow_17zy7b9</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_03eiq05" apex:timerType="oracleDuration">
+        <bpmn:extensionElements>
+          <apex:oracleDuration>
+            <apex:intervalDS>000 00:00:10</apex:intervalDS>
+          </apex:oracleDuration>
+        </bpmn:extensionElements>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1hgwx6k" sourceRef="Activity_Before_C" targetRef="Activity_C" />
+    <bpmn:sequenceFlow id="Flow_02e89wf" sourceRef="Activity_C" targetRef="Event_C_End" />
+    <bpmn:sequenceFlow id="Flow_17zy7b9" sourceRef="Event_C_NITE" targetRef="Activity_After_C_NITE" />
+    <bpmn:sequenceFlow id="Flow_0l6v0dd" sourceRef="Activity_After_C_NITE" targetRef="C_NITE_End" />
+    <bpmn:task id="Activity_Before_D" name="Before D (set 2  async parameters by ProcVars)">
+      <bpmn:documentation>D - tests that 2 process variables get set from var exps and the final from diagram attribute then work for PLSQL expressions after the timer</bpmn:documentation>
+      <bpmn:incoming>Flow_1kzpr4w</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ubrfc7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_D" name="D">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>Event_D_NITE:applicationId</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>102</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>Event_D_NITE:pageId</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ubrfc7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dmq2oh</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_D_End" name="D_End">
+      <bpmn:incoming>Flow_1dmq2oh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_D_NITE_End" name="D_NITE_End">
+      <bpmn:incoming>Flow_04vlcjo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_After_D_NITE" name="After_D_NITE">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>D_plsql_exp</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>to_char(to_date('13-06-1970','DD-MM-YYYY'), 'DDth Month YYYY A.D.');</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0j3g93x</bpmn:incoming>
+      <bpmn:outgoing>Flow_04vlcjo</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:boundaryEvent id="Event_0d2mmh6" name="A_NITE" cancelActivity="false" attachedToRef="Activity_D">
+      <bpmn:outgoing>Flow_0j3g93x</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0wfeexr" apex:timerType="oracleDuration">
+        <bpmn:extensionElements>
+          <apex:oracleDuration>
+            <apex:intervalDS>000 00:00:10</apex:intervalDS>
+          </apex:oracleDuration>
+        </bpmn:extensionElements>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0ubrfc7" sourceRef="Activity_Before_D" targetRef="Activity_D" />
+    <bpmn:sequenceFlow id="Flow_1dmq2oh" sourceRef="Activity_D" targetRef="Event_D_End" />
+    <bpmn:sequenceFlow id="Flow_0j3g93x" sourceRef="Event_0d2mmh6" targetRef="Activity_After_D_NITE" />
+    <bpmn:sequenceFlow id="Flow_04vlcjo" sourceRef="Activity_After_D_NITE" targetRef="Event_D_NITE_End" />
+    <bpmn:sequenceFlow id="Flow_1ogkq3i" sourceRef="Gateway_split" targetRef="Activity_Before_B" />
+    <bpmn:sequenceFlow id="Flow_1o7pfav" sourceRef="Gateway_split" targetRef="Activity_Before_C" />
+    <bpmn:sequenceFlow id="Flow_1kzpr4w" sourceRef="Gateway_split" targetRef="Activity_Before_D" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">
+      <bpmndi:BPMNEdge id="Flow_161uk3a_di" bpmnElement="Flow_161uk3a">
+        <di:waypoint x="288" y="510" />
+        <di:waypoint x="345" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ybbt4b_di" bpmnElement="Flow_1ybbt4b">
+        <di:waypoint x="370" y="485" />
+        <di:waypoint x="370" y="40" />
+        <di:waypoint x="460" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19b6qr5_di" bpmnElement="Flow_19b6qr5">
+        <di:waypoint x="560" y="40" />
+        <di:waypoint x="630" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mieqd3_di" bpmnElement="Flow_0mieqd3">
+        <di:waypoint x="730" y="40" />
+        <di:waypoint x="982" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ipxjp7_di" bpmnElement="Flow_0ipxjp7">
+        <di:waypoint x="680" y="98" />
+        <di:waypoint x="680" y="160" />
+        <di:waypoint x="750" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ot2q31_di" bpmnElement="Flow_1ot2q31">
+        <di:waypoint x="850" y="160" />
+        <di:waypoint x="982" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ptp01k_di" bpmnElement="Flow_1ptp01k">
+        <di:waypoint x="560" y="320" />
+        <di:waypoint x="630" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ncy9r8_di" bpmnElement="Flow_0ncy9r8">
+        <di:waypoint x="730" y="320" />
+        <di:waypoint x="982" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pqgjww_di" bpmnElement="Flow_0pqgjww">
+        <di:waypoint x="680" y="378" />
+        <di:waypoint x="680" y="440" />
+        <di:waypoint x="750" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13mm5eo_di" bpmnElement="Flow_13mm5eo">
+        <di:waypoint x="850" y="440" />
+        <di:waypoint x="982" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hgwx6k_di" bpmnElement="Flow_1hgwx6k">
+        <di:waypoint x="560" y="560" />
+        <di:waypoint x="630" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02e89wf_di" bpmnElement="Flow_02e89wf">
+        <di:waypoint x="730" y="560" />
+        <di:waypoint x="982" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17zy7b9_di" bpmnElement="Flow_17zy7b9">
+        <di:waypoint x="680" y="618" />
+        <di:waypoint x="680" y="680" />
+        <di:waypoint x="750" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l6v0dd_di" bpmnElement="Flow_0l6v0dd">
+        <di:waypoint x="850" y="680" />
+        <di:waypoint x="982" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ubrfc7_di" bpmnElement="Flow_0ubrfc7">
+        <di:waypoint x="560" y="800" />
+        <di:waypoint x="630" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dmq2oh_di" bpmnElement="Flow_1dmq2oh">
+        <di:waypoint x="730" y="800" />
+        <di:waypoint x="982" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j3g93x_di" bpmnElement="Flow_0j3g93x">
+        <di:waypoint x="680" y="858" />
+        <di:waypoint x="680" y="920" />
+        <di:waypoint x="750" y="920" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04vlcjo_di" bpmnElement="Flow_04vlcjo">
+        <di:waypoint x="850" y="920" />
+        <di:waypoint x="982" y="920" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ogkq3i_di" bpmnElement="Flow_1ogkq3i">
+        <di:waypoint x="370" y="485" />
+        <di:waypoint x="370" y="320" />
+        <di:waypoint x="460" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o7pfav_di" bpmnElement="Flow_1o7pfav">
+        <di:waypoint x="370" y="535" />
+        <di:waypoint x="370" y="560" />
+        <di:waypoint x="460" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kzpr4w_di" bpmnElement="Flow_1kzpr4w">
+        <di:waypoint x="370" y="535" />
+        <di:waypoint x="370" y="800" />
+        <di:waypoint x="460" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0uqf6fn_di" bpmnElement="Event_0uqf6fn">
+        <dc:Bounds x="252" y="492" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="258" y="535" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_13l5kpc_di" bpmnElement="Gateway_split">
+        <dc:Bounds x="345" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="500" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1g09x11_di" bpmnElement="Activity_Before_A">
+        <dc:Bounds x="460" y="0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0j5k4rb_di" bpmnElement="Activity_A">
+        <dc:Bounds x="630" y="0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f1skmh_di" bpmnElement="Activity_After_A_NITE">
+        <dc:Bounds x="750" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ensjhq_di" bpmnElement="Event_A_End">
+        <dc:Bounds x="982" y="22" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="983" y="65" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fno1c0_di" bpmnElement="Event_A_NITE_End">
+        <dc:Bounds x="982" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="185" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1iqq5ph_di" bpmnElement="Activity_Before_B">
+        <dc:Bounds x="460" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11doba3_di" bpmnElement="Activity_B">
+        <dc:Bounds x="630" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0w96vv3_di" bpmnElement="Event_B_End">
+        <dc:Bounds x="982" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="984" y="345" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0h7yb1i_di" bpmnElement="Event_B_NITE_End">
+        <dc:Bounds x="982" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="465" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0x0eets_di" bpmnElement="Activity_After_B_NITE">
+        <dc:Bounds x="750" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0roumlo_di" bpmnElement="Activity_Before_C">
+        <dc:Bounds x="460" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04eka93_di" bpmnElement="Activity_C">
+        <dc:Bounds x="630" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0zkccch_di" bpmnElement="Event_C_End">
+        <dc:Bounds x="982" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="983" y="585" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03jwbtc_di" bpmnElement="C_NITE_End">
+        <dc:Bounds x="982" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="705" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0y61und_di" bpmnElement="Activity_After_C_NITE">
+        <dc:Bounds x="750" y="640" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g5zg0r_di" bpmnElement="Activity_Before_D">
+        <dc:Bounds x="460" y="760" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0btr4dz_di" bpmnElement="Activity_D">
+        <dc:Bounds x="630" y="760" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1po5317_di" bpmnElement="Event_D_End">
+        <dc:Bounds x="982" y="782" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="983" y="825" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1w1qish_di" bpmnElement="Event_D_NITE_End">
+        <dc:Bounds x="982" y="902" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="945" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vjxaep_di" bpmnElement="Activity_After_D_NITE">
+        <dc:Bounds x="750" y="880" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wnzwqh_di" bpmnElement="Event_A_NITE">
+        <dc:Bounds x="662" y="62" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="601" y="105" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wdgjgy_di" bpmnElement="Event_B_NITE">
+        <dc:Bounds x="662" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="601" y="385" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ddgmbw_di" bpmnElement="Event_C_NITE">
+        <dc:Bounds x="662" y="582" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="601" y="625" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0d2mmh6_di" bpmnElement="Event_0d2mmh6">
+        <dc:Bounds x="662" y="822" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="601" y="865" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -25,9 +25,13 @@ function childrenAttributeToArray(container, children, attribute){
 }
 
 function getflowInstanceData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
   return {
     "x01": action,
-    "x02": apex.jQuery( element ).attr("data-prcs")
+    "x02": apex.jQuery( el ).attr("data-prcs")
   };
 }
 
@@ -39,11 +43,15 @@ function getBulkFlowInstanceData(action){
 }
 
 function getSubflowData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
   return {
     "x01": action,
-    "x02": apex.jQuery( element ).attr("data-prcs"),
-    "x03": apex.jQuery( element ).attr("data-sbfl"),
-    "x04": apex.jQuery( element ).attr("data-key")
+    "x02": apex.jQuery( el ).attr("data-prcs"),
+    "x03": apex.jQuery( el ).attr("data-sbfl"),
+    "x04": apex.jQuery( el ).attr("data-key")
   };
 }
 
@@ -57,22 +65,26 @@ function getBulkSubflowData(action){
 }
 
 function openModalConfirmWithComment( action, element, confirmMessageKey, titleKey ){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
   var pageId = apex.item("pFlowStepId").getValue();
   apex.item( "P" + pageId + "_COMMENT" ).setValue( "" );
   apex.item( "P" + pageId + "_CONFIRM_TEXT" ).setValue( apex.lang.getMessage( confirmMessageKey ) );
   apex.jQuery( "#confirm-btn" ).attr( "data-action", action );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-prcs", apex.jQuery( element ).attr( "data-prcs" ) );
+    .attr( "data-prcs", apex.jQuery( el ).attr( "data-prcs" ) );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-sbfl", apex.jQuery( element ).attr( "data-sbfl" ) );
+    .attr( "data-sbfl", apex.jQuery( el ).attr( "data-sbfl" ) );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+    .attr( "data-key", apex.jQuery( el ).attr( "data-key" ) );
   apex
     .jQuery( "#confirm-btn" )
-    .attr( "data-name", apex.jQuery( element ).attr( "data-name" ) );
+    .attr( "data-name", apex.jQuery( el ).attr( "data-name" ) );
   apex.theme.openRegion( "instance_action_dialog" );
   apex.util.getTopApex().jQuery(".f4a-dynamic-title").closest(".ui-dialog-content").dialog('option', 'title', apex.lang.getMessage( titleKey ));
 }
@@ -159,11 +171,7 @@ function bulkStartFlowInstance( action ) {
 function resetFlowInstance(action, element){
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var el = element;
-    if ( el.type === undefined || el.type !== "button") {
-      el = apex.jQuery(element).closest("button");
-    }
-    var data = getflowInstanceData(action, el);
+    var data = getflowInstanceData(action, element);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -195,11 +203,7 @@ function bulkResetFlowInstance(action, element){
 function terminateFlowInstance(action, element) {
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var el = element;
-    if ( el.type === undefined || el.type !== "button") {
-      el = apex.jQuery(element).closest("button");
-    }
-    var data = getflowInstanceData(action, el);
+    var data = getflowInstanceData(action, element);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -231,11 +235,7 @@ function bulkTerminateFlowInstance(action, element) {
 function deleteFlowInstance( action, element ){ 
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
-    var el = element;
-    if ( el.type === undefined || el.type !== "button") {
-      el = apex.jQuery(element).closest("button");
-    }
-    var data = getflowInstanceData(action, el);
+    var data = getflowInstanceData(action, element);
     data.x03 = getConfirmComment();
 
     var options = {};
@@ -265,12 +265,8 @@ function bulkDeleteFlowInstance( action, element ){
 }
 
 function redirectToFlowInstanceAudit( action, element ){
-  var el = element;
-  if ( el.type === undefined || el.type !== "button") {
-    el = apex.jQuery(element).closest("button");
-  }
-  var data = getflowInstanceData(action, el);
-  data.x03 = apex.jQuery( el ).attr("data-name");
+  var data = getflowInstanceData(action, element);
+  data.x03 = apex.jQuery( element ).attr("data-name");
   if ( apex.item("pFlowStepId").getValue() === "10" ) {
     apex.item("P10_PRCS_ID").setValue(data.x02);
     apex.item("P10_PRCS_NAME").setValue( data.x03 );
@@ -295,10 +291,21 @@ function redirectToFlowDiagram( action, element ){
   sendToServer(data);
 }
 
-function redirectToMonitor( action, prcs_id ) {
+function initViewer( prcsId, prcsName, displaySetting ) {
+  if (prcsName !== "")
+      apex.jQuery( "#flow-monitor_heading" ).text( apex.lang.formatMessage("APP_VIEWER_TITLE_PROCESS_SELECTED", prcsName) );
+    else
+       apex.jQuery( "#flow-monitor_heading" ).text( apex.lang.getMessage("APP_VIEWER_TITLE_NO_PROCESS") );
+
+  if ( prcsId !== "" && displaySetting === "window") {
+    redirectToMonitor(prcsId);
+  }
+}
+
+function redirectToMonitor(prcsId) {
   var data = {};
-  data.x01 = action;
-  data.x02 = prcs_id;
+  data.x01 = "view-flow-instance";
+  data.x02 = prcsId;
   sendToServer(data);
 }
 
@@ -448,6 +455,7 @@ function addProcessVariable(action, focusElement){
       var data = {}, options = {};
       data.x01 = action;
       data.x02 = apex.item("P8_PRCS_ID").getValue();
+      data.x06 = apex.item("P8_PROV_SCOPE").getValue();
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
@@ -490,14 +498,16 @@ function addProcessVariable(action, focusElement){
       apex.jQuery( "#add-prov-var-route-btn" ).show();
       apex.jQuery( "#save-prov-var-route-btn" ).hide();
     } else {
-      apex.item( "P8_PROV_VAR_VC2" ).setValue();
-      apex.item( "P8_PROV_VAR_NUM" ).setValue();
+      apex.item( "P8_PROV_VAR_VC2"  ).setValue();
+      apex.item( "P8_PROV_VAR_NUM"  ).setValue();
       apex.item( "P8_PROV_VAR_DATE" ).setValue();
       apex.item( "P8_PROV_VAR_CLOB" ).setValue();
       apex.item( "P8_PROV_VAR_NAME" ).setValue();
-      apex.item("P8_PROV_VAR_NAME").enable();
+      apex.item( "P8_PROV_VAR_NAME" ).enable();
       apex.item( "P8_PROV_VAR_TYPE" ).setValue("VARCHAR2");
       apex.item( "P8_PROV_VAR_TYPE" ).enable();
+      apex.item( "P8_PROV_SCOPE"    ).setValue("0");
+      apex.item( "P8_PROV_SCOPE"    ).enable();
       apex.jQuery( "#add-prov-var-btn" ).show();
       apex.jQuery( "#save-prov-var-btn" ).hide();
     }
@@ -522,6 +532,7 @@ function updateProcessVariable(action, focusElement){
       var data = {}, options = {};
       data.x01 = action;
       data.x02 = apex.item("P8_PRCS_ID").getValue();
+      data.x06 = apex.item("P8_PROV_SCOPE").getValue();
       if ( gatewayRoute ) {
         data.x03 = apex.item("P8_GATEWAY").getValue() + ":route";
         data.x04 = 'VARCHAR2';
@@ -556,12 +567,14 @@ function updateProcessVariable(action, focusElement){
   } else {
     var varName = apex.jQuery(focusElement).attr("data-name");
     var varType = apex.jQuery(focusElement).attr("data-type");
+    var varScope = apex.jQuery(focusElement).attr("data-scope");
     apex.server.process( 
       "GET_VARIABLE", 
       {
         x01: apex.item("P8_PRCS_ID").getValue(),
         x02: varName,
-        x03: varType
+        x03: varType,
+        x04: varScope
       }, 
       {
         success: function( data )  {
@@ -583,6 +596,8 @@ function updateProcessVariable(action, focusElement){
               apex.item("P8_PROV_VAR_NAME").disable();
               apex.item("P8_PROV_VAR_TYPE").setValue(varType);
               apex.item("P8_PROV_VAR_TYPE").disable();
+              apex.item("P8_PROV_SCOPE").setValue(varScope);
+              apex.item("P8_PROV_SCOPE").disable();
               apex.theme.openRegion("variable_dialog");
               if ( varType === "VARCHAR2") {
                 apex.item("P8_PROV_VAR_VC2").setValue(data.vc2_value);
@@ -630,6 +645,7 @@ function deleteProcessVariable(action, focusElement){
       data.x01 = action;
       data.x02 = apex.jQuery(focusElement).attr("data-prcs");
       data.x03 = apex.jQuery(focusElement).attr("data-name");
+      data.x04 = apex.jQuery(focusElement).attr("data-scope");
       
       options.messageKey = "APP_PROCESS_VARIABLE_DELETED";
       options.refreshRegion = ["process-variables"];
@@ -645,6 +661,7 @@ function bulkDeleteProcessVariable(action){
       data.x01 = action;
       data.f01 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "data-prcs");
       data.f02 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "value");
+      data.f03 = childrenAttributeToArray("#process-variables .a-IRR-tableContainer", 'input[name="f03"]:checked', "data-scope");
       
       options.messageKey = "APP_PROCESS_VARIABLE_DELETED";
       options.refreshRegion = ["process-variables"];
@@ -825,7 +842,7 @@ function markAsCurrent(prcsId){
 
 function refreshViewer(prcsId){
   if ( apex.item("P10_DISPLAY_SETTING").getValue() === "window" ) {
-    redirectToMonitor("view-flow-instance", prcsId);
+    redirectToMonitor(prcsId);
   } else {
     apex.region("flow-monitor").refresh();
   }
@@ -1075,7 +1092,7 @@ function initActions(){
                 apex.jQuery( "#col2" ).addClass( [ "col-12", "col-start", "col-end" ] ).removeClass( "col-6" );
 
                 if ( prcsId !== "" ) {
-                  redirectToMonitor( "view-flow-instance", prcsId );
+                  redirectToMonitor( prcsId );
                 }
                 break;
             }
@@ -1431,7 +1448,7 @@ function initPage8() {
                 ? false
                 : true;
           }
-          if ( item.action === "change-timer" ) {
+          if ( item.action === "reschedule-timer" ) {
             item.disabled = sbflStatus === "waiting for timer" ? false : true;
           }
           return item;
@@ -1556,4 +1573,47 @@ function initPage10() {
     } );
 
   } );
+}
+
+/* Utility functions for viewer plugin dynamic (click) actions */
+
+function changeCursor(objectListItem) {
+  // get object ids from page item
+  var objects = objectListItem.split(':');
+  // change cursor to pointer
+  $.each(objects, function( index, value ) {
+    $( "[data-element-id='" + value + "']").css( "cursor", "pointer" );
+  });
+}
+
+function clickCondition(objectListItem, eventData) {
+  // if object exists in list
+  if (objectListItem.split(':').includes(eventData.element.id) &&
+      // filter out call activity drilldown
+      (eventData.element.type != 'bpmn:CallActivity' ||
+        (eventData.originalEvent.target.tagName != 'path' && !eventData.originalEvent.target.getAttribute('transform'))
+      )
+    ) return true;
+  return false;
+}
+
+function openObjectDialog(objectBpmnId, objectName, currentPage) {
+  // set title
+  var title = objectBpmnId + (objectName.length > 0 ? ' - ' + objectName : '');
+  // open page
+  apex.server.process(
+      'GET_URL',                           
+      {
+          x01: objectBpmnId,
+          x02: title,
+          pageItems: [`P${currentPage}_LOADED_DIAGRAM`]
+      }, 
+      {
+          success: function (pData)
+          {           
+              apex.navigation.redirect(pData);
+          },
+          dataType: "text"                     
+      }
+  );
 }

@@ -54,6 +54,8 @@ prompt --install
 @@application/shared_components/files/css_21_2_flows4apex_dark_css.sql
 @@application/shared_components/files/css_21_2_flows4apex_light_css.sql
 @@application/shared_components/files/flows_apex_svg.sql
+@@application/shared_components/files/lib_prismjs_js_prism_min_js.sql
+@@application/shared_components/files/lib_prismjs_js_prism_js_map.sql
 @@application/plugin_settings.sql
 @@application/shared_components/security/authorizations/administration_rights.sql
 @@application/shared_components/navigation/navigation_bar.sql
@@ -70,8 +72,10 @@ prompt --install
 @@application/shared_components/logic/application_settings.sql
 @@application/shared_components/navigation/tabs/standard.sql
 @@application/shared_components/navigation/tabs/parent.sql
+@@application/shared_components/user_interface/lovs/diagrams_instanciated_lov.sql
 @@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
+@@application/shared_components/user_interface/lovs/flow_instance_diagrams_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p13_object_attributes.sql
 @@application/shared_components/user_interface/lovs/p13_var_exp_set_on.sql

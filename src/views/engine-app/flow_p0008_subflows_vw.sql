@@ -4,6 +4,14 @@ as
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_current_name as sbfl_current
        , sbfl.sbfl_step_key
+       , sbfl.sbfl_sbfl_dgrm_id
+       , sbfl.sbfl_diagram_level
+       , ( select nvl(objt.objt_name ,'Main Diagram')
+             from flow_objects objt
+             join flow_instance_diagrams prdg 
+               on prdg.prdg_calling_objt = objt.objt_bpmn_id
+              and prdg.prdg_calling_dgrm = objt.objt_dgrm_id
+            where prdg.prdg_diagram_level = sbfl.sbfl_diagram_level ) as Calling_object
        , sbfl.sbfl_starting_object_name as sbfl_starting_object
        , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update
        , sbfl.sbfl_status
@@ -15,9 +23,11 @@ as
              when 'error' then 'fa-exclamation-circle-o'
              when 'split' then 'fa fa-share-alt'
              when 'in subprocess' then 'fa fa-share-alt'
+             when 'in call activity' then 'fa fa-share-alt'
              when 'waiting at gateway' then 'fa fa-hand-stop-o'
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
+             when 'waiting for approval' then 'fa fa-question-square-o'
          end as sbfl_status_icon
        , sbfl.timr_start_on at time zone sessiontimezone as sbfl_timr_start_on
        , sbfl.sbfl_current_lane_name as sbfl_current_lane

@@ -1,7 +1,8 @@
 create or replace package flow_engine
-accessible by (flow_api_pkg, flow_instances, flow_gateways, flow_tasks, 
-               flow_boundary_events, flow_timers_pkg)
-
+  authid definer
+  accessible by ( flow_api_pkg, flow_instances, flow_gateways, flow_tasks
+                , flow_boundary_events, flow_timers_pkg, flow_subprocesses
+                , flow_call_activities, flow_usertask_pkg)
 as 
   procedure flow_handle_event
   ( p_process_id    in flow_processes.prcs_id%type

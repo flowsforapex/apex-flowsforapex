@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0">
+  <bpmn:process id="Process_T" name="Process T" isExecutable="false" apex:isCallable="true" apex:manualInput="false">
+    <bpmn:startEvent id="Event_StartT" name="StartT">
+      <bpmn:outgoing>Flow_0vyk8y4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0vyk8y4" sourceRef="Event_StartT" targetRef="Activity_CallR" />
+    <bpmn:endEvent id="Event_EndT" name="EndT">
+      <bpmn:incoming>Flow_15v9ikf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_15v9ikf" sourceRef="Activity_CallR" targetRef="Event_EndT" />
+    <bpmn:callActivity id="Activity_CallR" name="CallR" apex:manualInput="false" apex:calledDiagram="A09r - Recursive Chain RSTR Top" apex:calledDiagramVersionSelection="latestVersion">
+      <bpmn:incoming>Flow_0vyk8y4</bpmn:incoming>
+      <bpmn:outgoing>Flow_15v9ikf</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_T">
+      <bpmndi:BPMNEdge id="Flow_15v9ikf_di" bpmnElement="Flow_15v9ikf">
+        <di:waypoint x="570" y="530" />
+        <di:waypoint x="622" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vyk8y4_di" bpmnElement="Flow_0vyk8y4">
+        <di:waypoint x="418" y="530" />
+        <di:waypoint x="470" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_17aiqrl_di" bpmnElement="Event_StartT">
+        <dc:Bounds x="382" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="387" y="555" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tv3n6x_di" bpmnElement="Event_EndT">
+        <dc:Bounds x="622" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="630" y="555" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09is0yx_di" bpmnElement="Activity_CallR">
+        <dc:Bounds x="470" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
