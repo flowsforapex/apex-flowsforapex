@@ -8,8 +8,10 @@ PROMPT >> Pre Migration Checks
 @migrations/^from_version._to_^to_version./premigrate.sql
 
 PROMPT >> Halt DBMS_SCHEDULER job 
-/* TODO Implement Job disabling */
-
+begin
+  flow_timers_pkg.disable_scheduled_job;
+end;
+/
 
 PROMPT >> Database Objects Installation
 PROMPT >> =============================
@@ -32,7 +34,10 @@ order by object_type
 ;
 
 PROMPT >> Resume DBMS_SCHEDULER job
-/* TODO Implement Job enabling AFTER RE-PARSE*/
+begin
+  flow_timers_pkg.enable_scheduled_job;
+end;
+/
 
 PROMPT >> =====================
 PROMPT >> Upgrade Finished
