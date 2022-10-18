@@ -226,7 +226,9 @@ begin
     values ( 'apex-task-multiple-processes', c_load_lang, q'[Error creating APEX session.  BPMN diagram contains multiple Process objects.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'call-diagram-not-callable', c_load_lang, q'[You tried to call a diagram %0 that is marked as being not callable.]' );
-  
+  -- below here manually added for 23.1 dev
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'diagram-archive-has-instances', c_load_lang, q'[You tried to archive a diagram that has running instances.]' );  
   commit;
 end;
 /
