@@ -520,6 +520,11 @@
       "text_key": "workspace-not-found",
       "source": "Process %0: ServiceTask %1 failed: unable to find the workspace associated with the application id defined in the diagram. Please check the model.",
       "target": "Prozess %0: Aufgabe %1 fehlgeschlagen: Der, zu der Applikations-ID, zugewiesene Workspace konnte nicht gefunden werden. Bitte überprüfen sie das Modell"
+    },
+    {
+      "text_key" : "diagram-archive-has-instances",
+      "source" : "You tried to archive a diagram that has running instances.",
+      "target" : "You tried to archive a diagram that has running instances."
     }
   ]
 }

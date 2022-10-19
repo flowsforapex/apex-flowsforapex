@@ -520,6 +520,12 @@
   "text_key" : "call-diagram-not-callable",
   "source" : "You tried to call a diagram %0 that is marked as being not callable.",
   "target" : "You tried to call a diagram %0 that is marked as being not callable."
+},
+{
+  "text_key" : "diagram-archive-has-instances",
+  "source" : "You tried to archive a diagram that has running instances.",
+  "target" : "You tried to archive a diagram that has running instances."
 }
+
 ]
 }

@@ -520,6 +520,11 @@
       "text_key": "subProcess-no-start",
       "source": "Unable to find Sub-Process Start Event.",
       "target": "サブプロセス開始イベントが見つかりません。"
+    },
+    {
+      "text_key" : "diagram-archive-has-instances",
+      "source" : "You tried to archive a diagram that has running instances.",
+      "target" : "You tried to archive a diagram that has running instances."
     }
   ]
 }

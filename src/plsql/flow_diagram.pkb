@@ -345,10 +345,33 @@ as
   procedure archive_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type)
   as
+    l_running_instances       number ;
+    e_has_running_instances   exception;
   begin
-    update flow_diagrams
-       set dgrm_status = flow_constants_pkg.gc_dgrm_status_archived
-     where dgrm_id = pi_dgrm_id;
+    -- check that diagram has no current running process instances
+    select count(prcs_id)
+      into l_running_instances
+      from flow_processes prcs
+     where prcs.prcs_id in (
+            select prdg.prdg_prcs_id
+              from flow_instance_diagrams prdg
+             where prdg.prdg_dgrm_id = pi_dgrm_id
+            )
+       and prcs.prcs_status not in  ( flow_constants_pkg.gc_prcs_status_completed
+                                    , flow_constants_pkg.gc_prcs_status_terminated
+                                    );
+    if l_running_instances = 0 then
+      update flow_diagrams
+         set dgrm_status = flow_constants_pkg.gc_dgrm_status_archived
+       where dgrm_id = pi_dgrm_id;
+    else                     
+      raise e_has_running_instances;
+    end if;
+  exception
+    when e_has_running_instances then
+          -- initial process start so call general error (instance not yet running)
+          flow_errors.handle_general_error ( pi_message_key => 'diagram-archive-has-instances');
+          -- $F4AMESSAGE 'version-not-found' || 'Cannot find specified diagram version.  Please check version specification.'
   end archive_diagram;   
 
   function get_diagram_name
