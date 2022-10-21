@@ -814,12 +814,22 @@ end delete_var;
       while l_indx is not null 
       loop
         l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
-        l_bind.value := get_var_as_vc2
+        case upper(l_var_list(l_indx))
+          when flow_constants_pkg.gc_substitution_process_id then
+            l_bind.value := pi_prcs_id;
+          when flow_constants_pkg.gc_substitution_subflow_id then
+            l_bind.value := pi_sbfl_id;
+          when flow_constants_pkg.gc_substitution_scope then
+            l_bind.value := pi_scope;        
+          else  
+            l_bind.value := get_var_as_vc2
                           ( pi_prcs_id            => pi_prcs_id
                           , pi_var_name           => l_var_list(l_indx)
                           , pi_scope              => pi_scope
                           , pi_exception_on_null  => false
                           );
+          end case;
+
         apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
           , p0 => l_bind.name
           , p1 => l_bind.value
