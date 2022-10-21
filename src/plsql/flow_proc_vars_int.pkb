@@ -787,5 +787,49 @@ end delete_var;
       end if;
   end get_var_as_vc2;
 
+  function get_bind_list
+  (
+    pi_expr in clob
+  , pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  , pi_scope    in  flow_subflows.sbfl_scope%type
+  ) return apex_plugin_util.t_bind_list
+  is
+    l_bind                  apex_plugin_util.t_bind;
+    l_bind_list             apex_plugin_util.t_bind_list;
+    l_var_list              apex_t_varchar2 := apex_t_varchar2();
+    l_indx                  pls_integer;
+  begin
+    l_bind_list := apex_plugin_util.c_empty_bind_list;
+    l_var_list  := apex_string.grep 
+                ( p_str => pi_expr
+                , p_pattern =>  flow_constants_pkg.gc_bind_pattern
+                , p_modifier => 'i'
+                , p_subexpression => '1'
+                );
+    if l_var_list is not null then
+      l_indx := l_var_list.first;
+      -- create bind list and get bind values
+      apex_debug.info('Expression : ' ||pi_expr|| ' Contains Bind Tokens : '|| apex_string.join(l_var_list, ':'));
+      while l_indx is not null 
+      loop
+        l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
+        l_bind.value := get_var_as_vc2
+                          ( pi_prcs_id            => pi_prcs_id
+                          , pi_var_name           => l_var_list(l_indx)
+                          , pi_scope              => pi_scope
+                          , pi_exception_on_null  => false
+                          );
+        apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
+          , p0 => l_bind.name
+          , p1 => l_bind.value
+          );                              
+        l_bind_list(l_indx) := l_bind;
+        l_indx := l_var_list.next (l_indx);
+      end loop; 
+    end if;
+    return l_bind_list;
+  end get_bind_list; 
+
 end flow_proc_vars_int;
 /

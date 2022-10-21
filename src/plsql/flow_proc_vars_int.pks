@@ -175,5 +175,14 @@ function scope_is_valid
   , pi_exception_on_null in boolean default true
   ) return varchar2;
 
+  function get_bind_list
+  (
+    pi_expr in clob
+  , pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  , pi_scope    in  flow_subflows.sbfl_scope%type
+  ) return apex_plugin_util.t_bind_list;
+
+
 end flow_proc_vars_int;
 /
