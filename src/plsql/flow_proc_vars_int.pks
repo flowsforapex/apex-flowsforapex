@@ -17,8 +17,15 @@ as
 **        FOR USE ONLY BY THE FLOW ENGINE (PRIVATE TO ENGINE)
 **
 ********************************************************************************/ 
+ type t_proc_var_value is record
+ ( var_name     flow_process_variables.prov_var_name%type
+ , var_type     flow_process_variables.prov_var_type%type
+ , var_vc2      flow_process_variables.prov_var_vc2%type
+ , var_num      flow_process_variables.prov_var_num%type
+ , var_date     flow_process_variables.prov_var_date%type
+ , var_clob     flow_process_variables.prov_var_clob%type
+ ); 
  
-
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_scope in flow_process_variables.prov_scope%type default 0
@@ -59,6 +66,14 @@ procedure set_var
 , pi_scope in flow_process_variables.prov_scope%type default 0
 );
 
+procedure set_var
+( pi_prcs_id      in flow_processes.prcs_id%type
+, pi_var_value    in t_proc_var_value
+, pi_sbfl_id      in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set     in flow_object_expressions.expr_set%type default null
+, pi_scope        in flow_process_variables.prov_scope%type default 0
+);
 -- getters return
 
 function get_var_vc2
@@ -88,6 +103,13 @@ function get_var_clob
 , pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_clob%type;
+
+function get_var_value
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null in boolean default false
+) return t_proc_var_value;
   
 function get_var_type
 ( pi_prcs_id in flow_processes.prcs_id%type
@@ -157,7 +179,7 @@ function scope_is_valid
 , pi_scope   in flow_subflows.sbfl_scope%type
 ) return boolean;
 
-  procedure get_var_as_parameter
+  /*procedure get_var_as_parameter
   (
     pi_prcs_id            in flow_process_variables.prov_prcs_id%type
   , pi_var_name           in flow_process_variables.prov_var_name%type
@@ -165,7 +187,22 @@ function scope_is_valid
   , pi_exception_on_null  in boolean default true
   , po_data_type         out apex_exec.t_data_type
   , po_value             out apex_exec.t_value
-  );
+  );*/
+  function get_var_as_parameter
+  (
+    pi_prcs_id            in flow_process_variables.prov_prcs_id%type
+  , pi_var_name           in flow_process_variables.prov_var_name%type
+  , pi_scope              in flow_process_variables.prov_scope%type
+  , pi_exception_on_null  in boolean default true
+  ) return apex_exec.t_parameter;
+
+  function get_parameter_list
+  (
+    pi_expr     in  varchar2
+  , pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  , pi_scope    in  flow_subflows.sbfl_scope%type
+  ) return apex_exec.t_parameters;
 
   function get_var_as_vc2
   (

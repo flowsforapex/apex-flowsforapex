@@ -241,23 +241,32 @@ as
   end set_proc_var;
 
   procedure set_sql
-  ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   t_expr_rec
-  , pi_sbfl_id      flow_subflows.sbfl_id%type
-  , pi_var_scope    flow_subflows.sbfl_scope%type
-  , pi_expr_scope   flow_subflows.sbfl_scope%type
-  )
-  as 
-    l_sql_text      flow_object_expressions.expr_expression%type;
-    l_result_vc2    flow_process_variables.prov_var_vc2%type;
-    l_result_date   flow_process_variables.prov_var_date%type;
-    l_result_num    flow_process_variables.prov_var_num%type;
+  ( pi_prcs_id        flow_processes.prcs_id%type
+  , pi_expression     t_expr_rec
+  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  , pi_var_scope      flow_subflows.sbfl_scope%type
+  , pi_expr_scope     flow_subflows.sbfl_scope%type
+  ) 
+  as  
+    l_sql_text        flow_object_expressions.expr_expression%type;
+    l_result_vc2      flow_process_variables.prov_var_vc2%type;
+    l_result_date     flow_process_variables.prov_var_date%type;
+    l_result_num      flow_process_variables.prov_var_num%type;
+    l_bind_parameters apex_exec.t_parameters;
+    l_context         apex_exec.t_context;
+    l_result_column   apex_exec.t_column;
+    l_result_rec      flow_proc_vars_int.t_proc_var_value;
+
+    e_var_exp_must_return_one_column exception;
+    e_var_exp_sql_too_many_rows      exception;
   begin
       apex_debug.enter
     ( 'flow_expressions.set_sql'
     , 'expr_var_name', pi_expression.expr_var_name
     , 'sql text' , pi_expression.expr_expression
     );
+    l_result_rec.var_name   := pi_expression.expr_var_name;
+    l_result_rec.var_type   := pi_expression.expr_var_type;
 
     l_sql_text := rtrim ( pi_expression.expr_expression, ';');
     -- substitute any F4A Process Variables
@@ -267,140 +276,106 @@ as
     , pi_scope   => pi_expr_scope
     , pio_string => l_sql_text
     );
-    case pi_expression.expr_var_type 
-    when flow_constants_pkg.gc_prov_var_type_varchar2 then
-        begin
-        execute immediate l_sql_text 
-                    into l_result_vc2;
-        exception
-        when no_data_found then
-          l_result_vc2 := null;
-        when too_many_rows then
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_too_many_rows'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'            
-        when others then
-            apex_debug.error
-            ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
-            , p0        => pi_expression.expr_var_name
-            , p1        => pi_prcs_id
-            , p2        => sqlerrm
-            );
+    -- get bind parameters
+    l_bind_parameters := flow_proc_vars_int.get_parameter_list
+                            ( pi_expr               => l_sql_text
+                            , pi_prcs_id            => pi_prcs_id
+                            , pi_sbfl_id            => pi_sbfl_id
+                            , pi_scope              => pi_expr_scope
+                            );
+    l_context := apex_exec.open_query_context
+                      ( p_location          => apex_exec.c_location_local_db
+                      , p_sql_query         => l_sql_text
+                      , p_sql_parameters    => l_bind_parameters
+                      , p_total_row_count   => true
+                      );
 
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_other'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'               
-        end;
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_vc2_value      => l_result_vc2
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );
-    when flow_constants_pkg.gc_prov_var_type_date then
-        begin
-        execute immediate l_sql_text 
-                     into l_result_date;
-        exception
-        when no_data_found then
-            l_result_date := null;
-        when too_many_rows then
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_too_many_rows'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'            
-        when others then
-            apex_debug.error
-            ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
-            , p0        => pi_expression.expr_var_name
-            , p1        => pi_prcs_id
-            , p2        => sqlerrm
-            );
+    -- check only 1 row and 1 column returned
+    if apex_exec.get_column_count (p_context => l_context) <> 1 then
+      raise e_var_exp_must_return_one_column;
+    end if;
+    if apex_exec.get_total_row_count (p_context => l_context) > 1 then
+      raise e_var_exp_sql_too_many_rows;
+    end if;
+    -- result must be in only row/column returned
+    if apex_exec.next_row (p_context => l_context) then
+      -- if query returns values, set them.  If not, all values will be null (correctly)
+      l_result_column := apex_exec.get_column ( p_context => l_context
+                                              , p_column_idx => 1
+                                              );
+      case pi_expression.expr_var_type 
+      when flow_constants_pkg.gc_prov_var_type_varchar2 then
+        if l_result_column.data_type = apex_exec.c_data_type_varchar2 then
+          l_result_rec.var_vc2 := apex_exec.get_varchar2  ( p_context => l_context
+                                                          , p_column_idx => 1
+                                                          );
+        elsif l_result_column.data_type = apex_exec.c_data_type_date then
+          l_result_rec.var_vc2 := to_char ( apex_exec.get_date ( p_context => l_context
+                                                               , p_column_idx => 1 )
+                                          , flow_constants_pkg.gc_prov_default_date_format
+                                          );
+        elsif l_result_column.data_type = apex_exec.c_data_type_number then
+          l_result_rec.var_vc2 := to_char ( apex_exec.get_number ( p_context => l_context
+                                                                 , p_column_idx => 1 )
+                                          );
+        -- add conversion CLOB to varchar2 if length OK?
+        end if;
 
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_other'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'   
-        end;
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_date_value     => l_result_date
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );
-    when flow_constants_pkg.gc_prov_var_type_number then
-        begin
-        execute immediate l_sql_text 
-                     into l_result_num;
-        exception
-        when no_data_found then
-            l_result_num := null;
-        when too_many_rows then
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_too_many_rows'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'  
-        when others then
-            apex_debug.error
-            ( p_message => 'Error setting process variable %0 for process id %1. SQLERRM: %2'
-            , p0        => pi_expression.expr_var_name
-            , p1        => pi_prcs_id
-            , p2        => sqlerrm
-            );
+      when flow_constants_pkg.gc_prov_var_type_date then
+        if l_result_column.data_type = apex_exec.c_data_type_date then
+          l_result_rec.var_date := apex_exec.get_date ( p_context => l_context
+                                                      , p_column_idx => 1 );
+        -- add attempt to conversion varchar2 to date using F4A default date format                                              
+        end if;
 
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => pi_prcs_id
-            , pi_sbfl_id        => pi_sbfl_id
-            , pi_message_key    => 'var_exp_sql_other'
-            , p0 => pi_prcs_id
-            , p1 => pi_expression.expr_var_name
-            , p2 => pi_expression.expr_set
-            );
-            -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'   
-        end;
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_num_value      => l_result_num
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );
-    end case;
+      when flow_constants_pkg.gc_prov_var_type_number then
+        if l_result_column.data_type = apex_exec.c_data_type_number then
+          l_result_rec.var_num := apex_exec.get_number ( p_context => l_context
+                                                       , p_column_idx => 1 );
+        -- add attempt to convert varchar2 to number using default number format
+        end if;
+
+      end case;
+    end if;
+    flow_proc_vars_int.set_var 
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_var_value      => l_result_rec
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+    , pi_expr_set       => pi_expression.expr_set
+    , pi_scope          => pi_var_scope
+    );
+    -- close the cursor
+    apex_exec.close (l_context);
+  exception
+    when e_var_exp_sql_too_many_rows then
+      apex_exec.close (l_context);
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_sql_too_many_rows'
+      , p0 => pi_prcs_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'  
+    when others then
+      apex_debug.error
+      ( p_message => 'Error setting process variable %0 for process id %1. SQLERRM: %2'
+      , p0        => pi_expression.expr_var_name
+      , p1        => pi_prcs_id
+      , p2        => sqlerrm
+      );
+      apex_exec.close (l_context);
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_sql_other'
+      , p0 => pi_prcs_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'    
   end set_sql;
 
   procedure set_sql_delimited
@@ -499,15 +474,23 @@ as
     l_result_vc2    flow_process_variables.prov_var_vc2%type;
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
+    l_bind_list     apex_plugin_util.t_bind_list;
   begin
     apex_debug.enter
     ( 'flow_expressions.set_plsql_expression'
     , 'expr_var_name', pi_expression.expr_var_name
     , 'plsql expression' , pi_expression.expr_expression
     );
+    l_bind_list := flow_proc_vars_int.get_bind_list ( pi_expr    => pi_expression.expr_expression
+                                                    , pi_prcs_id => pi_prcs_id
+                                                    , pi_sbfl_id => pi_sbfl_id
+                                                    , pi_scope   => pi_expr_scope
+                                                    );
     -- evaluate the expression
     l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
                     ( p_plsql_expression => pi_expression.expr_expression
+                    , p_auto_bind_items  => false
+                    , p_bind_list        => l_bind_list
                     );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
@@ -590,16 +573,23 @@ as
     l_result_vc2    flow_process_variables.prov_var_vc2%type;
     l_result_date   flow_process_variables.prov_var_date%type;
     l_result_num    flow_process_variables.prov_var_num%type;
+    l_bind_list     apex_plugin_util.t_bind_list;
   begin
     apex_debug.enter
     ( 'flow_expressions.set_plsql_function'
     , 'expr_var_name', pi_expression.expr_var_name
     , 'plsql function body' , pi_expression.expr_expression
     );
-
+    l_bind_list := flow_proc_vars_int.get_bind_list ( pi_expr    => pi_expression.expr_expression
+                                                    , pi_prcs_id => pi_prcs_id
+                                                    , pi_sbfl_id => pi_sbfl_id
+                                                    , pi_scope   => pi_expr_scope
+                                                    );
     -- evaluate the function
     l_result_vc2 := apex_plugin_util.get_plsql_function_result 
                       ( p_plsql_function => pi_expression.expr_expression
+                      , p_auto_bind_items  => false
+                      , p_bind_list        => l_bind_list
                       );
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
@@ -801,7 +791,7 @@ as
       from flow_objects objt
       join flow_subflows sbfl 
         on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
-     where sbfl.sbfl_id = pi_sbfl_id
+     where sbfl.sbfl_id = pi_sbfl_id 
        and objt.objt_bpmn_id = pi_objt_bpmn_id
     ;
     process_expressions
