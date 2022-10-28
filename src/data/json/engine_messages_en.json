@@ -525,6 +525,11 @@
   "text_key" : "diagram-archive-has-instances",
   "source" : "You tried to archive a diagram that has running instances.",
   "target" : "You tried to archive a diagram that has running instances."
+},
+{
+"text_key" : "var_exp_sql_too_many_values",
+"source" : "Error setting process variable %1 in process id %0 (set %2).  Query returns more than one value.",
+"target" : "Error setting process variable %1 in process id %0 (set %2).  Query returns more than one value."
 }
 
 ]

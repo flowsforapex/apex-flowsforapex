@@ -249,9 +249,6 @@ as
   ) 
   as  
     l_sql_text        flow_object_expressions.expr_expression%type;
-    l_result_vc2      flow_process_variables.prov_var_vc2%type;
-    l_result_date     flow_process_variables.prov_var_date%type;
-    l_result_num      flow_process_variables.prov_var_num%type;
     l_bind_parameters apex_exec.t_parameters;
     l_context         apex_exec.t_context;
     l_result_column   apex_exec.t_column;
@@ -325,14 +322,31 @@ as
         if l_result_column.data_type = apex_exec.c_data_type_date then
           l_result_rec.var_date := apex_exec.get_date ( p_context => l_context
                                                       , p_column_idx => 1 );
-        -- add attempt to conversion varchar2 to date using F4A default date format                                              
+        elsif l_result_column.data_type = apex_exec.c_data_type_varchar2 then
+          begin
+            l_result_rec.var_date := to_date ( apex_exec.get_varchar2 ( p_context => l_context
+                                                                      , p_column_idx => 1 )
+                                             , flow_constants_pkg.gc_prov_default_date_format
+                                             );  
+          exception
+            when others then
+              l_result_rec.var_date := null;
+          end;
         end if;
 
       when flow_constants_pkg.gc_prov_var_type_number then
         if l_result_column.data_type = apex_exec.c_data_type_number then
           l_result_rec.var_num := apex_exec.get_number ( p_context => l_context
                                                        , p_column_idx => 1 );
-        -- add attempt to convert varchar2 to number using default number format
+        elsif l_result_column.data_type = apex_exec.c_data_type_varchar2 then
+          begin
+            l_result_rec.var_num := to_number ( apex_exec.get_varchar2 ( p_context => l_context
+                                                                       , p_column_idx => 1 )
+                                              );  
+          exception
+            when others then
+              l_result_rec.var_num := null;
+          end;
         end if;
 
       end case;
@@ -359,6 +373,17 @@ as
       , p2 => pi_expression.expr_set
       );
       -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.'  
+    when e_var_exp_must_return_one_column then
+      apex_exec.close (l_context);
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_sql_too_many_values'
+      , p0 => pi_prcs_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_sql_too_many_cols' || 'Error setting process variable %1 in process id %0 (set %2).  Query returns more than one value.'  
     when others then
       apex_debug.error
       ( p_message => 'Error setting process variable %0 for process id %1. SQLERRM: %2'
@@ -387,59 +412,80 @@ as
   )
   as 
     l_sql_text        flow_object_expressions.expr_expression%type;
+    l_bind_parameters apex_exec.t_parameters;
+    l_context         apex_exec.t_context;
+    l_result_column   apex_exec.t_column;
+    l_result_rec      flow_proc_vars_int.t_proc_var_value;
     l_result_set_vc2  apex_t_varchar2;
     l_result          flow_process_variables.prov_var_vc2%type;
+    l_indx            pls_integer;
+
+    e_var_exp_must_return_one_column exception;
   begin
       apex_debug.enter
     ( 'flow_expressions.set_sql_delimited'
     , 'expr_var_name', pi_expression.expr_var_name
     , 'sql text' , pi_expression.expr_expression
     );
+    l_result_rec.var_name   := pi_expression.expr_var_name;
+    l_result_rec.var_type   := pi_expression.expr_var_type;
+
     l_sql_text := rtrim ( pi_expression.expr_expression, ';');
-    -- substitute any F4A Process Variables
-    flow_proc_vars_int.do_substitution
-    ( pi_prcs_id => pi_prcs_id
-    , pi_sbfl_id => pi_sbfl_id
-    , pi_scope   => pi_expr_scope
-    , pio_string => l_sql_text
-    );
     begin
-        execute immediate l_sql_text 
-        bulk collect into  l_result_set_vc2;
+      -- substitute any F4A Process Variables
+      flow_proc_vars_int.do_substitution
+      ( pi_prcs_id => pi_prcs_id
+      , pi_sbfl_id => pi_sbfl_id
+      , pi_scope   => pi_expr_scope
+      , pio_string => l_sql_text
+      );
+      -- get bind parameters
+      l_bind_parameters := flow_proc_vars_int.get_parameter_list
+                              ( pi_expr               => l_sql_text
+                              , pi_prcs_id            => pi_prcs_id
+                              , pi_sbfl_id            => pi_sbfl_id
+                              , pi_scope              => pi_expr_scope
+                              );
+      l_context := apex_exec.open_query_context
+                        ( p_location          => apex_exec.c_location_local_db
+                        , p_sql_query         => l_sql_text
+                        , p_sql_parameters    => l_bind_parameters
+                        , p_total_row_count   => true
+                        );
+
+      -- check only 1 column returned
+      if apex_exec.get_column_count (p_context => l_context) <> 1 then
+        raise e_var_exp_must_return_one_column;
+      end if;
+      -- get the returned column info...
+      l_result_column := apex_exec.get_column ( p_context => l_context
+                                              , p_column_idx => 1
+                                              );
+      l_result_set_vc2 := apex_t_varchar2();
+      loop 
+        -- result must be in only row/column returned
+        exit when not apex_exec.next_row (p_context => l_context); 
+        l_result_set_vc2.extend;
+        l_indx := l_result_set_vc2.last;
+        if l_result_column.data_type = apex_exec.c_data_type_varchar2 then
+          l_result_set_vc2(l_indx)  := apex_exec.get_varchar2  ( p_context => l_context
+                                                               , p_column_idx => 1
+                                                               );
+        elsif l_result_column.data_type = apex_exec.c_data_type_number then
+          l_result_set_vc2(l_indx)  := to_char ( apex_exec.get_number ( p_context => l_context
+                                                                      , p_column_idx => 1 )
+                                               );
+        end if;
+      end loop;
     exception
-    when no_data_found then
-          l_result_set_vc2 := null;
-    when others then
+      when others then
         apex_debug.error
         ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
         , p0        => pi_expression.expr_var_name
         , p1        => pi_prcs_id
         , p2        => sqlerrm
         );
-        flow_errors.handle_instance_error
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_message_key    => 'var_exp_sql_other'
-        , p0 => pi_prcs_id
-        , p1 => pi_expression.expr_var_name
-        , p2 => pi_expression.expr_set
-        );
-        -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'   
-    end;
-    -- create delimited string output
-    begin 
-        l_result := apex_string.join
-        ( p_table => l_result_set_vc2
-        , p_sep => ':'
-        );
-    exception
-    when others then
-        apex_debug.error
-        ( p_message => 'Error setting process variable %s for process id %s. SQLERRM: %s'
-        , p0        => pi_expression.expr_var_name
-        , p1        => pi_prcs_id
-        , p2        => sqlerrm
-        );
+        apex_exec.close (l_context);
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
@@ -450,17 +496,22 @@ as
         );
         -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'
     end;
+    -- create delimited string output
+    l_result_rec.var_vc2 := apex_string.join
+                          ( p_table => l_result_set_vc2
+                          , p_sep => ':'
+                          );
     apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result, p_level => 3);
     -- set proc variable
     flow_proc_vars_int.set_var 
     ( pi_prcs_id        => pi_prcs_id
-    , pi_var_name       => pi_expression.expr_var_name
-    , pi_vc2_value      => l_result
+    , pi_var_value      => l_result_rec
     , pi_sbfl_id        => pi_sbfl_id
     , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
     , pi_expr_set       => pi_expression.expr_set    
     , pi_scope          => pi_var_scope
     );
+    apex_exec.close (l_context);
   end set_sql_delimited;
 
   procedure set_plsql_expression         
