@@ -28,6 +28,7 @@ begin
       into l_app_id
       from apex_applications
      where alias = upper('^app_alias.')
+     and workspace = upper('^ws_name')
     ;
   exception
     when no_data_found then
