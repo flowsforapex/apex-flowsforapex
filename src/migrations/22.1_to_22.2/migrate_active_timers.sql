@@ -23,13 +23,14 @@ begin
   for timer in 
     (
     select timr.timr_id, timr.timr_prcs_id, timr.timr_sbfl_id
-    from   flow_timers timr;
+    from   flow_timers timr
     )
     loop
       flow_apex_session.set_async_proc_vars
         ( p_process_id => timer.timr_prcs_id
         , p_subflow_id => timer.timr_sbfl_id);
     end loop;
-end;
+
 commit;
+end;
 
