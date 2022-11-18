@@ -166,6 +166,7 @@ as
   , p_var_num           in flow_process_variables.prov_var_num%type default null
   , p_var_date          in flow_process_variables.prov_var_date%type default null
   , p_var_clob          in flow_process_variables.prov_var_clob%type default null
+  , p_var_ts            in flow_process_variables.prov_var_ts%type default null
   )
   as 
   begin 
@@ -183,6 +184,7 @@ as
       , lgvr_var_num  
       , lgvr_var_date   
       , lgvr_var_clob   
+      , lgvr_var_ts   
       )
       values
       ( p_process_id
@@ -197,6 +199,7 @@ as
       , p_var_num  
       , p_var_date 
       , p_var_clob  
+      , p_var_ts 
       );
     end if;
   exception

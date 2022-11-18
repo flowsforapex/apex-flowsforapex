@@ -24,6 +24,7 @@ as
  , var_num      flow_process_variables.prov_var_num%type
  , var_date     flow_process_variables.prov_var_date%type
  , var_clob     flow_process_variables.prov_var_clob%type
+ , var_ts       flow_process_variables.prov_var_ts%type
  ); 
  
 procedure set_var
@@ -67,6 +68,16 @@ procedure set_var
 );
 
 procedure set_var
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_ts_value in flow_process_variables.prov_var_ts%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
+, pi_scope in flow_process_variables.prov_scope%type default 0
+);
+
+procedure set_var
 ( pi_prcs_id      in flow_processes.prcs_id%type
 , pi_var_value    in t_proc_var_value
 , pi_sbfl_id      in flow_subflows.sbfl_id%type default null
@@ -103,6 +114,13 @@ function get_var_clob
 , pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null in boolean default false
 ) return flow_process_variables.prov_var_clob%type;
+
+function get_var_ts
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_ts%type;
 
 function get_var_value
 ( pi_prcs_id in flow_processes.prcs_id%type

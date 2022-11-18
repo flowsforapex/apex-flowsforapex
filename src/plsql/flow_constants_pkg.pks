@@ -224,8 +224,10 @@ as
   gc_prov_var_type_date               constant  varchar2(50 char) := 'DATE';
   gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
   gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
+  gc_prov_var_type_ts                 constant  varchar2(50 char) := 'TIMESTAMP WITH TIME ZONE';
 
   gc_prov_default_date_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS';
+  gc_prov_default_ts_format           constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS TZR';
 
   -- Standard Process Variables
 
