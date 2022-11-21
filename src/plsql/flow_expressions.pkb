@@ -129,6 +129,28 @@ as
         , pi_expr_set       => pi_expression.expr_set
         , pi_scope          => pi_var_scope
         ); 
+    when flow_constants_pkg.gc_prov_var_type_ts then
+        -- test timestamp is in our required format
+        begin
+          if l_expression_text != to_char ( to_timestamp_tz ( l_expression_text
+                                          , flow_constants_pkg.gc_prov_default_ts_format )
+                                          , flow_constants_pkg.gc_prov_default_ts_format ) then 
+          raise e_var_exp_date_format_error;
+          end if;
+        exception
+          when others then
+            raise e_var_exp_date_format_error;
+        end;
+
+        flow_proc_vars_int.set_var 
+        ( pi_prcs_id        => pi_prcs_id
+        , pi_var_name       => pi_expression.expr_var_name
+        , pi_ts  _value     => to_timestamp_tz(l_expression_text, flow_constants_pkg.gc_prov_default_ts_format)
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
+        , pi_scope          => pi_var_scope
+        ); 
     end case;
   exception
     when e_var_exp_date_format_error then
@@ -224,7 +246,21 @@ as
         , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
         , pi_expr_set       => pi_expression.expr_set
         , pi_scope          => pi_var_scope
-        );    
+        );  
+    when flow_constants_pkg.gc_prov_var_type_ts then
+        flow_proc_vars_int.set_var 
+        ( pi_prcs_id    => pi_prcs_id
+        , pi_var_name   => pi_expression.expr_var_name
+        , pi_ts_value   => flow_proc_vars_int.get_var_ts 
+                           ( pi_prcs_id  => pi_prcs_id
+                           , pi_var_name => pi_expression.expr_expression
+                           , pi_scope    => pi_expr_scope
+                           )
+        , pi_sbfl_id        => pi_sbfl_id
+        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+        , pi_expr_set       => pi_expression.expr_set
+        , pi_scope          => pi_var_scope
+        );   
     end case; 
   exception
     when others then
@@ -315,6 +351,11 @@ as
           l_result_rec.var_vc2 := to_char ( apex_exec.get_number ( p_context => l_context
                                                                  , p_column_idx => 1 )
                                           );
+        elsif l_result_column.data_type = apex_exec.c_data_type_timestamp_tz then
+          l_result_rec.var_vc2 := to_char ( apex_exec.get_number ( p_context => l_context
+                                                                 , p_column_idx => 1 )
+                                          , flow_constants_pkg.gc_prov_default_ts_format
+                                          );
         -- add conversion CLOB to varchar2 if length OK?
         end if;
 
@@ -332,6 +373,10 @@ as
             when others then
               l_result_rec.var_date := null;
           end;
+        elsif l_result_column.data_type = apex_exec.c_data_type_ts then
+          l_result_rec.var_date := cast (apex_exec.get_timestamp_tz ( p_context => l_context
+                                                      , p_column_idx => 1 )
+                                        as date );
         end if;
 
       when flow_constants_pkg.gc_prov_var_type_number then
@@ -349,6 +394,27 @@ as
           end;
         end if;
 
+
+      when flow_constants_pkg.gc_prov_var_type_ts then
+        if l_result_column.data_type = apex_exec.c_data_type_timestamp_tz then
+          l_result_rec.var_ts := apex_exec.get_timestamp_tz ( p_context => l_context
+                                                            , p_column_idx => 1 );
+        elsif l_result_column.data_type = apex_exec.c_data_type_varchar2 then
+          begin
+            l_result_rec.var_ts := to_timestamp_tz ( apex_exec.get_varchar2 ( p_context => l_context
+                                                                            , p_column_idx => 1 )
+                                                   , flow_constants_pkg.gc_prov_default_ts_format
+                                                   );  
+          exception
+            when others then
+              l_result_rec.var_ts := null;
+          end;
+        elsif l_result_column.data_type = apex_exec.c_data_type_date then
+          -- convert date to timestamp_tz using current session timezone
+           l_result_rec.var_ts := cast (apex_exec.get_date ( p_context => l_context
+                                                            , p_column_idx => 1 )
+                                        as timestamp with time zone);         
+        end if;
       end case;
     end if;
     flow_proc_vars_int.set_var 
@@ -571,6 +637,22 @@ as
       , pi_expr_set       => pi_expression.expr_set
       , pi_scope          => pi_var_scope
       );
+    when flow_constants_pkg.gc_prov_var_type_tz then
+      -- test date value returned using our specified format
+      if l_result_vc2 != to_char  ( to_timestamp_tz ( l_result_vc2 
+                                                    , flow_constants_pkg.gc_prov_default_ts_format )
+                                  , flow_constants_pkg.gc_prov_default_ts_format ) then 
+         raise e_var_exp_date_format_error;
+      end if;
+      flow_proc_vars_int.set_var 
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_ts_value       => to_timestamp_tz(l_result_vc2,flow_constants_pkg.gc_prov_default_ts_format)
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set
+      , pi_scope          => pi_var_scope
+      );
     when flow_constants_pkg.gc_prov_var_type_number then
       flow_proc_vars_int.set_var 
       ( pi_prcs_id        => pi_prcs_id
@@ -671,6 +753,29 @@ as
       ( pi_prcs_id        => pi_prcs_id
       , pi_var_name       => pi_expression.expr_var_name
       , pi_date_value     => to_date(l_result_vc2, flow_constants_pkg.gc_prov_default_date_format)
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+      , pi_expr_set       => pi_expression.expr_set
+      , pi_scope          => pi_var_scope
+      );
+    when flow_constants_pkg.gc_prov_var_type_ts then
+      -- a timestamp value must be returned using our specified format
+      -- add a test that format is good?
+      begin
+        if l_result_vc2 != to_char  ( to_timestamp_tz ( l_result_vc2 
+                                              , flow_constants_pkg.gc_prov_default_ts_format )
+                                    , flow_constants_pkg.gc_prov_default_ts_format ) then 
+        raise e_var_exp_date_format_error;
+        end if;
+      exception
+        when others then
+          raise e_var_exp_date_format_error;
+      end;
+
+      flow_proc_vars_int.set_var 
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_var_name       => pi_expression.expr_var_name
+      , pi_ts_value       => to_timestamp_tz(l_result_vc2, flow_constants_pkg.gc_prov_default_ts_format)
       , pi_sbfl_id        => pi_sbfl_id
       , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
       , pi_expr_set       => pi_expression.expr_set

@@ -51,7 +51,7 @@ create or replace package body test_004_proc_vars is
       l_expected_vc2  varchar2(4000) := 'TEST';
       l_expected_num  number := 1000;
       l_expected_date date := to_date('01/01/2022', 'DD/MM/YYYY');
-      l_expected_ts   timestamp with time zone := to_timestamp_tz('01/01/2022 13:10:10 Pacific/Sydney',
+      l_expected_ts   timestamp with time zone := to_timestamp_tz('01/01/2022 13:10:10 US/Pacific',
                          'DD/MM/YYYY HH24:MI:SS TZR');
       l_expected_clob clob := to_clob('TEST');
       l_actual_vc2 varchar2(4000);
@@ -287,7 +287,7 @@ create or replace package body test_004_proc_vars is
          select *
          from flow_process_variables
          where prov_prcs_id = l_prcs_id
-         and prov_var_name = l_date_var_name;
+         and prov_var_name = l_ts_var_name;
       fetch l_actual into l_rec;
 
       ut.expect( l_rec.prov_var_vc2 ).to_be_null();
