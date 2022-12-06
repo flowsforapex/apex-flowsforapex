@@ -93,7 +93,7 @@ as
   gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'request';
   gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'cache';
 
-  gc_apex_usertask_page_items          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
+  gc_apex_usertask_page_items         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
   gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemName';
   gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemValue';
 
@@ -248,6 +248,11 @@ as
   gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'sqlQueryList';
   gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
   gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
+
+  gc_date_value_type_date             constant flow_types_pkg.t_expr_type := 'date';
+  gc_date_value_type_time_of_day      constant flow_types_pkg.t_expr_type := 'timeOfDay';
+  gc_date_value_type_duration         constant flow_types_pkg.t_expr_type := 'duration';
+  gc_date_value_type_oracle_scheduler constant flow_types_pkg.t_expr_type := 'oracleScheduler';
 
 -- Process Variable Expression sets and CallActivity in-Out sets
   gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';

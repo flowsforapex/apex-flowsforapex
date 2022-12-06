@@ -238,6 +238,10 @@ as
     l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
     l_main_subflow          flow_types_pkg.t_subflow_context;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
+    l_priority_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority              flow_processes.prcs_priority%type;
+    l_due_date_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_date              flow_processes.prcs_due_on%type;
   begin
     apex_debug.enter
     ('start_process'
@@ -278,6 +282,23 @@ as
         , p0 => p_process_id
         );
         -- $F4AMESSAGE 'start-multiple-already-running' || 'You tried to start a process (id %0) with multiple copies already running.' 
+    end;
+    begin
+      -- get instance scheduling information
+      select objt.objt_attributes."apex"."priority"
+           , objt.objt_attributes."apex"."dueDate"
+        into l_priority_json
+           , l_due_date_json
+        from flow_objects objt
+       where objt.objt_dgrm_id = l_dgrm_id
+         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+      ;
+      if l_priority is not null then
+        l_priority := flow_settings.get_priority (pi_prcs_id => p_process_id, pi_expr => l_priority_json);
+      end if;
+      if l_due_date is not null then 
+        l_due_date := flow_settings.get_due_date (pi_prcs_id => p_process_id, pi_expr => l_due_date_json);
+      end if;
     end;
     begin
       -- get the starting object 
@@ -321,6 +342,8 @@ as
                                                  , sys_context('userenv','os_user')
                                                  , sys_context('userenv','session_user')
                                                  )  
+         , prcs.prcs_priority       = l_priority
+         , prcs.prcs_due_on         = l_due_date
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;    

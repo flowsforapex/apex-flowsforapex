@@ -83,6 +83,60 @@ as
     ;
   end get_url;
 
+  procedure process_apex_page_task
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  )
+  is 
+    l_priority_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority              flow_processes.prcs_priority%type;
+    l_due_date_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_date              flow_processes.prcs_due_on%type;
+  begin
+    apex_debug.enter 
+    ( 'process_APEX_page_task'
+    , 'p_step_info.target_objt_tag'   , p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_subtag', p_step_info.target_objt_subtag 
+    );
+      -- get the userTask subtype  
+    select objt.objt_attributes."apex"."priority"
+         , objt.objt_attributes."apex"."dueDate"
+      into l_priority_json
+         , l_due_date_json
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_step_info.target_objt_ref
+       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+       ;
+
+
+      if l_priority_json is not null then
+        l_priority := flow_settings.get_priority 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_expr    => l_priority_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      if l_due_date_json is not null then 
+        l_due_date := flow_settings.get_due_date 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_expr    => l_due_date_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_priority       = l_priority
+           , sbfl.sbfl_due_on         = l_due_date
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
+         and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
+      ;
+  end process_apex_page_task;
+      
+
   procedure process_apex_approval_task
   ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info

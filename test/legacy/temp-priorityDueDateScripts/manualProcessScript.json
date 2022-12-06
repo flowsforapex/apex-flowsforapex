@@ -1,0 +1,58 @@
+
+
+FOR PROCESS
+
+
+{
+  "apex": {
+    "applicationId": "100",
+    "pageId": "3",
+    "username": "FLOWSDEV2",
+    "priority": {
+      "expressionType": "static",
+      "expressionValue": "3"
+    },
+    "isStartable": "true",
+    "potentialStartingUsers": {
+      "expressionType": "static",
+      "expressionValue": "FLOWSDEV2:RICALLEN"
+    },
+    "potentialStartingGroups": {
+      "expressionType": "static",
+      "expressionValue": "SALES:MARKETING"
+    },
+    "dueDate": {
+      "expressionType": "static",
+      "valueType": "date",
+      "value": "13-04-2017 19:45:30",
+      "formatMask": "DD-MM-YYYY HH24:MI:SS",
+      "timeZone": "US/Pacific"
+    }          
+  }
+}
+
+FOR USERTASK
+
+{
+  "apex": {
+    "priority": {
+      "expressionType": "static",
+      "expressionValue": "3"
+    },
+    "potentialUsers": {
+      "expressionType": "static",
+      "expressionValue": "FLOWSDEV2:RICALLEN"
+    },
+    "potentialGroups": {
+      "expressionType": "static",
+      "expressionValue": "SALES:MARKETING"
+    },
+    "dueDate": {
+      "expressionType": "static",
+      "valueType": "date",
+      "value": "17-12-2017 19:45:30",
+      "formatMask": "DD-MM-YYYY HH24:MI:SS",
+      "timeZone": "US/Pacific"
+    }            
+  }
+}

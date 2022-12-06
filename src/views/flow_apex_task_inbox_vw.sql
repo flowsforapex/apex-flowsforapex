@@ -57,9 +57,9 @@ select null as app_id
               )
             else null 
             end as details_link_target
-     , sbfl.sbfl_became_current + interval '1' day as due_on    --- F4A v22.2 All Tasks due in 24 Hours!
+     , sbfl.sbfl_due_on   
      , floor((cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24) as due_in_hours
-     , apex_util.get_since (p_value => sbfl.sbfl_became_current + interval '1' day) as due_in
+     , apex_util.get_since (p_value => sbfl.sbfl_due_on ) as due_in
      , case 
             when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 0 then 
               'OVERDUE'
@@ -71,7 +71,7 @@ select null as app_id
               'NEXT_WEEK'
             else null
             end as due_code  
-     , 3 as priority
+     , sbfl.sbfl_priority as priority
      , 'medium' as priority_level
      , prcs.prcs_init_by as initiator
      , lower(prcs.prcs_init_by) as initiator_lower
@@ -83,7 +83,7 @@ select null as app_id
      , null as outcome_code
      , null as outcome
      , null as badge_css_classes
-     , 'Ready for Action' as badge_text
+     , nvl2 (sbfl.sbfl_reservation, null, 'unassigned') as badge_text
      , floor((sysdate - cast(sbfl_became_current as date) )*24) as created_ago_hours
      , apex_util.get_since(p_value => sbfl_became_current)  as created_ago
      , prcs.prcs_init_by as created_by     

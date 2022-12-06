@@ -92,6 +92,8 @@ CREATE TABLE flow_processes (
     prcs_status         VARCHAR2(20 CHAR) NOT NULL,
     prcs_init_ts        TIMESTAMP WITH TIME ZONE NOT NULL,
     prcs_init_by        VARCHAR2(255 CHAR),
+    prcs_due_on         TIMESTAMP WITH TIME ZONE,
+    prcs_priority       NUMBER,
     prcs_last_update    TIMESTAMP WITH TIME ZONE,
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
@@ -124,6 +126,8 @@ CREATE TABLE flow_subflows (
     sbfl_last_completed   VARCHAR2(50 CHAR),
     sbfl_current          VARCHAR2(50 CHAR),
     sbfl_step_key         VARCHAR2(20 CHAR), /*make not null before shipping*/
+    sbfl_due_on           TIMESTAMP WITH TIME ZONE,
+    sbfl_priority         NUMBER,
     sbfl_status           VARCHAR2(20 CHAR),
     sbfl_became_current   TIMESTAMP WITH TIME ZONE,
     sbfl_work_started     TIMESTAMP WITH TIME ZONE,
@@ -131,6 +135,9 @@ CREATE TABLE flow_subflows (
     sbfl_lane             VARCHAR2(50 CHAR),
     sbfl_lane_name        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
     sbfl_reservation      VARCHAR2(255 CHAR),
+    sbfl_potential_users  VARCHAR2(4000 CHAR),
+    sbfl_potential_groups VARCHAR2(4000 CHAR),
+    sbfl_excluded_users   VARCHAR2(4000 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL,
     sbfl_last_update_by   VARCHAR2(255 CHAR)
 );
@@ -419,6 +426,8 @@ create table flow_step_event_log
 , lgsf_started 			    TIMESTAMP WITH TIME ZONE
 , lgsf_completed 			TIMESTAMP WITH TIME ZONE 
 , lgsf_reservation		    VARCHAR2(255 char)
+, lgsf_due_on               TIMESTAMP WITH TIME ZONE 
+, lgsf_priority             NUMBER
 , lgsf_user				    VARCHAR2(255 char)	
 , lgsf_comment         	    VARCHAR2(2000 CHAR)
 );
