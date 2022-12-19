@@ -7,7 +7,7 @@ as
        , prov.prov_var_vc2
        , prov.prov_var_num
        , prov.prov_var_date
-       , prov.prov_var_ts
+       , prov.prov_var_tstz
        , prov.prov_var_clob
        , prcs.prcs_name
        , prcs.prcs_status

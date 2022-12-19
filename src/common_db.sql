@@ -22,6 +22,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_instances.pks
 @plsql/flow_engine.pks
 @plsql/flow_settings.pks
+@plsql/flow_util.pks
 @plsql/flow_reservations.pks
 @plsql/flow_proc_vars_int.pks
 @plsql/flow_process_vars.pks
@@ -56,6 +57,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_process_vars.pkb
 @plsql/flow_expressions.pkb
 @plsql/flow_settings.pkb
+@plsql/flow_util.pkb
 @plsql/flow_reservations.pkb
 @plsql/flow_engine_util.pkb
 @plsql/flow_gateways.pkb

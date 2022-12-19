@@ -41,7 +41,7 @@ as
     l_expression        flow_types_pkg.t_bpmn_attribute_vc2;
     l_function_body     flow_types_pkg.t_bpmn_attribute_vc2;
     l_content           flow_types_pkg.t_bpmn_attribute_vc2;
-    l_return_ts         timestamp with time zone;
+    l_return_tstz       timestamp with time zone;
   begin
     -- split based on expression type
     apex_json.parse( p_source => pi_expr );
@@ -80,14 +80,14 @@ as
                                                       );
           return to_timestamp_tz ( l_content, l_format_mask );  
         elsif l_data_type = flow_constants_pkg.gc_prov_var_type_date then
-          l_return_ts := cast ( flow_proc_vars_int.get_var_date ( pi_prcs_id    => pi_prcs_id
-                                                                , pi_var_name   => l_value
-                                                                , pi_scope      => pi_scope
-                                                                )
+          l_return_tstz := cast ( flow_proc_vars_int.get_var_date ( pi_prcs_id    => pi_prcs_id
+                                                                  , pi_var_name   => l_value
+                                                                  , pi_scope      => pi_scope
+                                                                  )
                                 as timestamp with time zone); 
-          return l_return_ts;                           
-        elsif l_data_type = flow_constants_pkg.gc_prov_var_type_ts then
-          return flow_proc_vars_int.get_var_date  ( pi_prcs_id    => pi_prcs_id
+          return l_return_tstz;                           
+        elsif l_data_type = flow_constants_pkg.gc_prov_var_type_tstz then
+          return flow_proc_vars_int.get_var_tstz  ( pi_prcs_id    => pi_prcs_id
                                                   , pi_var_name   => l_value
                                                   , pi_scope      => pi_scope
                                                   );       
@@ -170,7 +170,6 @@ as
   , pi_sbfl_id       flow_subflows.sbfl_id%type
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
   , pi_scope         flow_subflows.sbfl_scope%type default 0
-  , pi_is_multi      boolean default false
   ) return flow_types_pkg.t_bpmn_attribute_vc2
   is
     l_values                          apex_json.t_values;
@@ -184,17 +183,16 @@ as
     apex_debug.enter 
     ( 'get_vc2_expression'
     , 'pi_expr'   , pi_expr
-    , 'pi_is_multi', case pi_is_multi when true then 'true' else 'false' end 
     );
     apex_json.parse ( p_source => pi_expr);
 
     l_expression_type  := apex_json.get_varchar2 ( p_path => 'expressionType');
     l_expression       := apex_json.get_varchar2 ( p_path => 'expressionValue');
 
-   case l_expression_type 
-    when flow_constants_pkg.gc_expr_type_static then
+   case 
+    when l_expression_type = flow_constants_pkg.gc_expr_type_static then
       l_return_value := l_expression;
-    when flow_constants_pkg.gc_expr_type_proc_var then
+    when l_expression_type = flow_constants_pkg.gc_expr_type_proc_var then
       case flow_proc_vars_int.get_var_type ( pi_prcs_id   => pi_prcs_id
                                            , pi_var_name  => l_expression
                                            , pi_scope     => pi_scope
@@ -207,30 +205,25 @@ as
       else
         raise e_param_proc_var_invalid_type;
       end case;
-    when flow_constants_pkg.gc_expr_type_sql then
+    when l_expression_type = flow_constants_pkg.gc_expr_type_sql 
+      or l_expression_type = flow_constants_pkg.gc_expr_type_sql_delimited_list 
+    then
       l_result_rec := flow_util.exec_flows_sql
                       ( pi_prcs_id      => pi_prcs_id
                       , pi_sbfl_id      => pi_sbfl_id
                       , pi_sql_text     => l_expression
                       , pi_result_type  => flow_constants_pkg.gc_prov_var_type_varchar2
                       , pi_scope        => pi_scope
-                      , pi_is_multi     => false
+                      , pi_expr_type    => l_expression_type
                       );
       l_return_value := l_result_rec.var_vc2;
-    when flow_constants_pkg.gc_expr_type_sql_delimited_list then
-      l_result_rec := flow_util.exec_flows_sql
-                      ( pi_prcs_id      => pi_prcs_id
-                      , pi_sbfl_id      => pi_sbfl_id
-                      , pi_sql_text     => l_expression
-                      , pi_result_type  => flow_constants_pkg.gc_prov_var_type_varchar2
-                      , pi_scope        => pi_scope
-                      , pi_is_multi     => true
-                      );
-      l_return_value := l_result_rec.var_vc2;
-    when flow_constants_pkg.gc_expr_type_plsql_expression then
+    when l_expression_type = flow_constants_pkg.gc_expr_type_plsql_expression 
+      or l_expression_type = flow_constants_pkg.gc_expr_type_plsql_raw_expression 
+      or l_expression_type = flow_constants_pkg.gc_expr_type_plsql_function_body
+      or l_expression_type = flow_constants_pkg.gc_expr_type_plsql_raw_function_body
+    then
       return null; -- tbi
-    when flow_constants_pkg.gc_expr_type_plsql_expression then
-      return null; -- tbi
+
     else
       raise e_param_expr_invalid_type;
     end case;
@@ -254,7 +247,6 @@ as
                               , pi_sbfl_id     => pi_sbfl_id
                               , pi_expr        => pi_expr
                               , pi_scope       => pi_scope
-                              , pi_is_multi    => true
                               );
   end get_potential_users;
 
@@ -270,7 +262,6 @@ as
                               , pi_sbfl_id     => pi_sbfl_id
                               , pi_expr        => pi_expr
                               , pi_scope       => pi_scope
-                              , pi_is_multi    => true
                               );
   end get_potential_groups;
 
@@ -286,7 +277,6 @@ as
                               , pi_sbfl_id     => pi_sbfl_id
                               , pi_expr        => pi_expr
                               , pi_scope       => pi_scope
-                              , pi_is_multi    => false
                               );
   end get_excluded_users;
 

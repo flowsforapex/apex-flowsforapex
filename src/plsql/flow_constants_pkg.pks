@@ -224,10 +224,10 @@ as
   gc_prov_var_type_date               constant  varchar2(50 char) := 'DATE';
   gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
   gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
-  gc_prov_var_type_ts                 constant  varchar2(50 char) := 'TIMESTAMP WITH TIME ZONE';
+  gc_prov_var_type_tstz               constant  varchar2(50 char) := 'TIMESTAMP WITH TIME ZONE';
 
   gc_prov_default_date_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS';
-  gc_prov_default_ts_format           constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS TZR';
+  gc_prov_default_tstz_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS TZR';
 
   -- Standard Process Variables
 
@@ -241,13 +241,16 @@ as
   -- Process Variable and Gateway Routing Variable Expression Types
   gc_apex_expression constant flow_types_pkg.t_bpmn_attribute_vc2 := 'conditionExpression';
 
-  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'static';
-  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'processVariable';
-  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'item';
-  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
-  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'sqlQueryList';
-  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
-  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
+  gc_expr_type_static                   constant flow_types_pkg.t_expr_type := 'static';
+  gc_expr_type_proc_var                 constant flow_types_pkg.t_expr_type := 'processVariable';
+  gc_expr_type_item                     constant flow_types_pkg.t_expr_type := 'item';
+  gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
+  gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
+  gc_expr_type_plsql_function_body      constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';  -- vc2 typed functionbody (e.g., date returns vc2)
+  gc_expr_type_plsql_expression         constant flow_types_pkg.t_expr_type := 'plsqlExpression';    -- vc2 typed expression  (e.g., date returns vc2)
+  gc_expr_type_plsql_raw_function_body  constant flow_types_pkg.t_expr_type := 'plsqlRawFunctionBody';  -- raw functionbody  (e.g., date returns date)
+  gc_expr_type_plsql_raw_expression     constant flow_types_pkg.t_expr_type := 'plsqlRawExpression';    -- raw expression  (e.g., date returns date)
+
 
   gc_date_value_type_date             constant flow_types_pkg.t_expr_type := 'date';
   gc_date_value_type_time_of_day      constant flow_types_pkg.t_expr_type := 'timeOfDay';

@@ -96,8 +96,8 @@ FOR USERTASK2
       "expressionValue": "select ename from emp where job = 'PRESIDENT'"
     },
     "dueDate": {
-      "expressionType": "static",
-      "valueType": "date",
+      "expressionType": "plsqlExpression",
+      "expression": "timestamp",
       "value": "17-12-2017 19:45:30",
       "formatMask": "DD-MM-YYYY HH24:MI:SS",
       "timeZone": "US/Pacific"

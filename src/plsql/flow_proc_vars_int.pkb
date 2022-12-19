@@ -291,7 +291,7 @@ end set_var;
 procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
-, pi_ts_value in flow_process_variables.prov_var_ts%type
+, pi_tstz_value in flow_process_variables.prov_var_tstz%type
 , pi_sbfl_id in flow_subflows.sbfl_id%type default null
 , pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
 , pi_expr_set in flow_object_expressions.expr_set%type default null
@@ -306,19 +306,19 @@ begin
       , prov_scope
       , prov_var_name
       , prov_var_type
-      , prov_var_ts
+      , prov_var_tstz
       ) values
       ( pi_prcs_id
       , pi_scope
       , pi_var_name
-      , flow_constants_pkg.gc_prov_var_type_ts
-      , pi_ts_value
+      , flow_constants_pkg.gc_prov_var_type_tstz
+      , pi_tstz_value
       );
   exception
     when dup_val_on_index then
       l_action := 'var-update-error';
       update flow_process_variables prov 
-         set prov.prov_var_ts           = pi_ts_value
+         set prov.prov_var_tstz         = pi_tstz_value
        where prov.prov_prcs_id          = pi_prcs_id
          and prov.prov_scope            = pi_scope
          and upper(prov.prov_var_name)  = upper(pi_var_name)
@@ -336,8 +336,8 @@ begin
   , p_objt_bpmn_id      => pi_objt_bpmn_id
   , p_subflow_id        => pi_sbfl_id
   , p_expr_set          => pi_expr_set
-  , p_var_type          => flow_constants_pkg.gc_prov_var_type_ts 
-  , p_var_ts            => pi_ts_value
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_tstz 
+  , p_var_tstz          => pi_tstz_value
   );
 exception
   when others then
@@ -373,7 +373,7 @@ begin
       , prov_var_vc2
       , prov_var_num
       , prov_var_date
-      , prov_var_ts
+      , prov_var_tstz
       , prov_var_clob
       ) values
       ( pi_prcs_id
@@ -383,7 +383,7 @@ begin
       , pi_var_value.var_vc2
       , pi_var_value.var_num
       , pi_var_value.var_date
-      , pi_var_value.var_ts
+      , pi_var_value.var_tstz
       , pi_var_value.var_clob
       );
   exception
@@ -394,7 +394,7 @@ begin
            , prov.prov_var_num           = pi_var_value.var_num
            , prov.prov_var_date          = pi_var_value.var_date
            , prov.prov_var_clob          = pi_var_value.var_clob
-           , prov.prov_var_ts            = pi_var_value.var_ts
+           , prov.prov_var_tstz          = pi_var_value.var_tstz
        where prov.prov_prcs_id           = pi_prcs_id
          and prov.prov_scope             = pi_scope
          and upper(prov.prov_var_name)   = upper(pi_var_value.var_name)
@@ -416,7 +416,7 @@ begin
   , p_var_num           => pi_var_value.var_num
   , p_var_date          => pi_var_value.var_date
   , p_var_clob          => pi_var_value.var_clob
-  , p_var_ts            => pi_var_value.var_ts
+  , p_var_tstz            => pi_var_value.var_tstz
   );
 exception
   when others then
@@ -565,23 +565,23 @@ exception
     end if;
 end get_var_clob;
 
-function get_var_ts
+function get_var_tstz
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
 , pi_scope in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null in boolean default false
-) return flow_process_variables.prov_var_ts%type
+) return flow_process_variables.prov_var_tstz%type
 is 
-   po_ts_value  flow_process_variables.prov_var_ts%type;
+   po_tstz_value  flow_process_variables.prov_var_tstz%type;
 begin 
-   select prov.prov_var_ts
-     into po_ts_value
+   select prov.prov_var_tstz
+     into po_tstz_value
      from flow_process_variables prov
     where prov.prov_prcs_id         = pi_prcs_id
       and prov.prov_scope           = pi_scope
       and upper(prov.prov_var_name) = upper(pi_var_name)
         ;
-   return po_ts_value;
+   return po_tstz_value;
 exception
   when no_data_found then
     if pi_exception_on_null then
@@ -596,7 +596,7 @@ exception
     else
       return null;
     end if;
-end get_var_ts;
+end get_var_tstz;
 
 
 function get_var_value
@@ -614,7 +614,7 @@ begin
         , prov.prov_var_num
         , prov.prov_var_date
         , prov.prov_var_clob
-        , prov.prov_var_ts
+        , prov.prov_var_tstz
      into l_value_rec
      from flow_process_variables prov
     where prov.prov_prcs_id         = pi_prcs_id
@@ -877,7 +877,7 @@ end delete_var;
     l_f4a_substitutions :=
       apex_string.grep
       (
-        p_str            => pio_string
+        p_str           => pio_string
       , p_pattern       => flow_constants_pkg.gc_substitution_pattern
       , p_modifier      => 'i'
       , p_subexpression => '1'
@@ -933,8 +933,8 @@ end delete_var;
              when flow_constants_pkg.gc_prov_var_type_varchar2 then 1
              when flow_constants_pkg.gc_prov_var_type_number   then 2
              when flow_constants_pkg.gc_prov_var_type_date     then 3
-             when flow_constants_pkg.gc_prov_var_type_clob     then 5
-             when flow_constants_pkg.gc_prov_var_type_ts       then 11
+             when flow_constants_pkg.gc_prov_var_type_clob     then 11
+             when flow_constants_pkg.gc_prov_var_type_tstz     then 5
              else 1
            end as data_type
          , prov.prov_var_vc2
@@ -981,19 +981,21 @@ end delete_var;
                when flow_constants_pkg.gc_prov_var_type_varchar2 then 1
                when flow_constants_pkg.gc_prov_var_type_number   then 2
                when flow_constants_pkg.gc_prov_var_type_date     then 3
-               when flow_constants_pkg.gc_prov_var_type_ts       then 5
+               when flow_constants_pkg.gc_prov_var_type_tstz     then 5
                when flow_constants_pkg.gc_prov_var_type_clob     then 11
                else 1
              end as data_type
            , prov.prov_var_vc2
            , prov.prov_var_num
            , prov.prov_var_date
+           , prov.prov_var_tstz
            , prov.prov_var_clob
            , upper(prov.prov_var_name)
         into l_parameter.data_type
            , l_parameter.value.varchar2_value
            , l_parameter.value.number_value
            , l_parameter.value.date_value
+           , l_parameter.value.timestamp_tz_value
            , l_parameter.value.clob_value
            , l_parameter.name
         from flow_process_variables prov
@@ -1031,7 +1033,7 @@ end delete_var;
              when flow_constants_pkg.gc_prov_var_type_varchar2 then prov.prov_var_vc2
              when flow_constants_pkg.gc_prov_var_type_number   then to_char(prov.prov_var_num)
              when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date, flow_constants_pkg.gc_prov_default_date_format)
-             when flow_constants_pkg.gc_prov_var_type_ts       then to_char(prov.prov_var_ts, flow_constants_pkg.gc_prov_default_ts_format)
+             when flow_constants_pkg.gc_prov_var_type_tstz     then to_char(prov.prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format)
              else null
            end as prov_var_value
       into l_return
@@ -1160,10 +1162,12 @@ end delete_var;
             l_parameter.name := flow_constants_pkg.gc_substitution_flow_identifier||l_parameter.name;
           end case;
 
-        apex_debug.info (p_message => 'bind variables found : %0 value : 1  data type: %2 '
+        apex_debug.info (p_message => 'bind variables found : %0 data type: %2 numvalue : %1  dateval : %3 vc2val : %4'
           , p0 => l_parameter.name
- --         , p1 => to_char(l_parameter.value)
+          , p1 => to_char(l_parameter.value.number_value)
           , p2 => l_parameter.data_type
+          , p3 => to_char(l_parameter.value.date_value)
+          , p4 => l_parameter.value.varchar2_value
           );                              
         l_parameters(l_indx) := l_parameter;
         l_indx := l_var_list.next (l_indx);

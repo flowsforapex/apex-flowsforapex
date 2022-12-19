@@ -47,17 +47,17 @@ create or replace package body test_004_proc_vars is
       l_num_var_name varchar2(10) := 'num_var';
       l_date_var_name varchar2(10) := 'date_var';
       l_clob_var_name varchar2(10) := 'clob_var';
-      l_ts_var_name   varchar2(10)   := 'ts_var';
+      l_tstz_var_name   varchar2(10)   := 'tstz_var';
       l_expected_vc2  varchar2(4000) := 'TEST';
       l_expected_num  number := 1000;
       l_expected_date date := to_date('01/01/2022', 'DD/MM/YYYY');
-      l_expected_ts   timestamp with time zone := to_timestamp_tz('01/01/2022 13:10:10 US/Pacific',
+      l_expected_tstz   timestamp with time zone := to_timestamp_tz('01/01/2022 13:10:10 US/Pacific',
                          'DD/MM/YYYY HH24:MI:SS TZR');
       l_expected_clob clob := to_clob('TEST');
       l_actual_vc2 varchar2(4000);
       l_actual_num number;
       l_actual_date date;
-      l_actual_ts   timestamp with time zone;  
+      l_actual_tstz   timestamp with time zone;  
       l_actual_clob clob;
    
       l_rec flow_process_variables%rowtype;
@@ -157,7 +157,7 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_num ).to_be_null();
       ut.expect( l_rec.prov_var_date ).to_be_null();
       ut.expect( l_rec.prov_var_clob ).to_be_null(); 
-      ut.expect( l_rec.prov_var_ts ).to_be_null(); 
+      ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
 
 
       flow_process_vars.set_var(
@@ -191,7 +191,7 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_vc2 ).to_be_null();
       ut.expect( l_rec.prov_var_date ).to_be_null();
       ut.expect( l_rec.prov_var_clob ).to_be_null();
-      ut.expect( l_rec.prov_var_ts ).to_be_null(); 
+      ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
  
 
       flow_process_vars.set_var(
@@ -225,7 +225,7 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_vc2 ).to_be_null();
       ut.expect( l_rec.prov_var_num ).to_be_null();
       ut.expect( l_rec.prov_var_clob ).to_be_null(); 
-      ut.expect( l_rec.prov_var_ts ).to_be_null(); 
+      ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
 
 
       flow_process_vars.set_var(
@@ -259,27 +259,27 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_vc2 ).to_be_null();
       ut.expect( l_rec.prov_var_num ).to_be_null();
       ut.expect( l_rec.prov_var_date ).to_be_null(); 
-      ut.expect( l_rec.prov_var_ts ).to_be_null(); 
+      ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
 
 
       flow_process_vars.set_var(
            pi_prcs_id => l_prcs_id
-         , pi_var_name => l_ts_var_name
-         , pi_ts_value => l_expected_ts
+         , pi_var_name => l_tstz_var_name
+         , pi_tstz_value => l_expected_tstz
       );
 
       open l_expected for
          select 
-            l_ts_var_name              as prov_var_name, 
+            l_tstz_var_name            as prov_var_name, 
             'TIMESTAMP WITH TIME ZONE' as prov_var_type, 
-            l_expected_ts              as prov_var_ts
+            l_expected_tstz            as prov_var_tstz
          from dual;
 
       open l_actual for 
-         select prov_var_name, prov_var_type, prov_var_ts 
+         select prov_var_name, prov_var_type, prov_var_tstz 
          from flow_process_variables
          where prov_prcs_id = l_prcs_id
-         and prov_var_name = l_ts_var_name;
+         and prov_var_name = l_tstz_var_name;
    
       ut.expect( l_actual ).to_equal( l_expected ); 
 
@@ -287,7 +287,7 @@ create or replace package body test_004_proc_vars is
          select *
          from flow_process_variables
          where prov_prcs_id = l_prcs_id
-         and prov_var_name = l_ts_var_name;
+         and prov_var_name = l_tstz_var_name;
       fetch l_actual into l_rec;
 
       ut.expect( l_rec.prov_var_vc2 ).to_be_null();
@@ -327,15 +327,15 @@ create or replace package body test_004_proc_vars is
            flow_process_vars.set_var(
            pi_prcs_id => l_prcs_id
          , pi_var_name => l_date_var_name
-         , pi_ts_value => l_expected_ts 
+         , pi_tstz_value => l_expected_tstz 
       );
 
-      l_actual_ts := flow_process_vars.get_var_ts(
+      l_actual_tstz := flow_process_vars.get_var_tstz(
            pi_prcs_id  => l_prcs_id
-         , pi_var_name => l_ts_var_name
+         , pi_var_name => l_tstz_var_name
       );
 
-      ut.expect( l_actual_ts ).to_equal( l_expected_ts );
+      ut.expect( l_actual_tstz ).to_equal( l_expected_tstz );
 
 
    end basic_flow_variables;

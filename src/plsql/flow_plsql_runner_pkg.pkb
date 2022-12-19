@@ -140,9 +140,9 @@ as
 
     if not l_do_autobind then
       -- bind in process variables rather than APEX session state
-      l_sql_parameters := flow_proc_var_int.get_parameter_list
+      l_sql_parameters := flow_proc_vars_int.get_parameter_list
                           ( pi_expr       => l_plsql_code
-                          , pi_prs_id     => pi_prcs_id
+                          , pi_prcs_id     => pi_prcs_id
                           , pi_sbfl_id    => pi_sbfl_id
                           , pi_scope      => flow_globals.scope
                           );

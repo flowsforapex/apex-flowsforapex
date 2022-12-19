@@ -243,7 +243,7 @@ end;
 procedure set_var
 ( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
 , pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
-, pi_ts_value   in flow_process_variables.prov_var_ts%type          -- Value of the variable (TIMESTAMP WITH TIME ZONE)
+, pi_tstz_value in flow_process_variables.prov_var_tstz%type        -- Value of the variable (TIMESTAMP WITH TIME ZONE)
 , pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0
 );
 /**
@@ -253,13 +253,13 @@ This procedure is used to set a TIMESTAMP WITH TIME ZONE value of a process vari
 
 EXAMPLE
 
-This example will set the value of the process variable "MY_TS" to the current date, systimestamp, in the process instance ID 1 in scope 0.
+This example will set the value of the process variable "MY_TSTZ" to the current date, systimestamp, in the process instance ID 1 in scope 0.
 
 ```sql
 begin
    flow_process_vars.set_var(
         pi_prcs_id    => 1
-      , pi_var_name   => 'MY_TS'
+      , pi_var_name   => 'MY_TSTZ'
       , pi_scope      => 0
       , pi_date_value => systimestamp
    );
@@ -271,22 +271,22 @@ end;
 procedure set_var
 ( pi_prcs_id    in flow_processes.prcs_id%type                -- Process ID
 , pi_var_name   in flow_process_variables.prov_var_name%type  -- Name of the process variable
-, pi_ts_value   in flow_process_variables.prov_var_ts%type    -- Value of the variable (TIMESTAMP WITH TIME ZONE)
+, pi_tstz_value in flow_process_variables.prov_var_tstz%type  -- Value of the variable (TIMESTAMP WITH TIME ZONE)
 , pi_sbfl_id    in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
 );
 /**
 SIGNATURE 5b - TIMESTAMP WITH TIMEZONE - Using Subflow_id.
 
-This procedure is used to set a TIMESTAMP WITH TIME ZONE value of a process variable usingthe current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
+This procedure is used to set a TIMESTAMP WITH TIME ZONE value of a process variable using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
 EXAMPLE
 
-This example will set the value of the process variable "MY_TS" to the current date, systimestamp, in the process instance ID 1, with a scope used in subflow 12.
+This example will set the value of the process variable "MY_TSTZ" to the current date, systimestamp, in the process instance ID 1, with a scope used in subflow 12.
 ```sql
 begin
    flow_process_vars.set_var(
         pi_prcs_id    => 1
-      , pi_var_name   => 'MY_TS'
+      , pi_var_name   => 'MY_TSTZ'
       , pi_sbfl_id    => 1
       , pi_date_value => systimestamp
    );
@@ -528,12 +528,12 @@ end;
 **/
 
 
-function get_var_ts
+function get_var_tstz
 ( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
 , pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
 , pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
 , pi_exception_on_null in boolean default false                             -- If true, return an exception if null
-) return flow_process_variables.prov_var_ts%type;
+) return flow_process_variables.prov_var_tstz%type;
 /**
 SIGNATURE 1 - Using Scope.
 
@@ -541,27 +541,27 @@ This function is used to get the value of a TIMESTAMP process variable.
 
 EXAMPLE
 
-This example will get the value of the process variable "MY_TS" in the main diagram scope.
+This example will get the value of the process variable "MY_TSTZ" in the main diagram scope.
 
 ```sql
 declare
-   l_value flow_process_variables.prov_var_ts%type;
+   l_value flow_process_variables.prov_var_tstz%type;
 begin
    l_value := flow_process_vars.get_var_date(
                    pi_prcs_id   => 1
                  , pi_scope     => 0
-                 , pi_var_name  => 'MY_TS'
+                 , pi_var_name  => 'MY_TSTZ'
               );
 end;
 ```
 **/
 
-function get_var_ts
+function get_var_tstz
 ( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
 , pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
 , pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
 , pi_exception_on_null in boolean default false                       -- If true, return an exception if null
-) return flow_process_variables.prov_var_ts%type;
+) return flow_process_variables.prov_var_tstz%type;
 /**
 SIGNATURE 2 - Using Subflow_id.
 
@@ -569,17 +569,17 @@ This function is used to get the value of a TIMESTAMP process variable.
 
 EXAMPLE
 
-This example will get the value of the process variable "MY_TS", in the scope used in subflow 12.
+This example will get the value of the process variable "MY_TSTZ", in the scope used in subflow 12.
 
 
 ```sql
 declare
-   l_value flow_process_variables.prov_var_ts%type;
+   l_value flow_process_variables.prov_var_tstz%type;
 begin
    l_value := flow_process_vars.get_var_date(
                    pi_prcs_id   => 1
                  , pi_sbfl_id   => 12
-                 , pi_var_name  => 'MY_TS'
+                 , pi_var_name  => 'MY_TSTZ'
               );
 end;
 ```

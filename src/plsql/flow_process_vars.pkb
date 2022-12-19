@@ -281,7 +281,7 @@ end set_var;
 procedure set_var
 ( pi_prcs_id    in flow_processes.prcs_id%type
 , pi_var_name   in flow_process_variables.prov_var_name%type
-, pi_ts_value   in flow_process_variables.prov_var_ts%type
+, pi_tstz_value   in flow_process_variables.prov_var_tstz%type
 , pi_scope      in flow_process_variables.prov_scope%type default 0
 )
 is 
@@ -293,7 +293,7 @@ begin
     flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
       , pi_var_name     => pi_var_name
-      , pi_ts_value     => pi_ts_value
+      , pi_tstz_value   => pi_tstz_value
       , pi_scope        => pi_scope
       );
   end if;
@@ -304,7 +304,7 @@ end set_var;
 procedure set_var
 ( pi_prcs_id    in flow_processes.prcs_id%type
 , pi_var_name   in flow_process_variables.prov_var_name%type
-, pi_ts_value   in flow_process_variables.prov_var_ts%type
+, pi_tstz_value in flow_process_variables.prov_var_tstz%type
 , pi_sbfl_id    in flow_subflows.sbfl_id%type 
 )
 is 
@@ -324,7 +324,7 @@ begin
   flow_proc_vars_int.set_var
     ( pi_prcs_id      => pi_prcs_id
     , pi_var_name     => pi_var_name
-    , pi_ts_value     => pi_ts_value
+    , pi_tstz_value   => pi_tstz_value
     , pi_scope        => l_scope
     , pi_sbfl_id      => pi_sbfl_id
     , pi_objt_bpmn_id => l_current
@@ -561,30 +561,30 @@ end get_var_clob;
 
 -- get_var_date: timestamp type - signature 1 - scope (or no scope) supplied
 
-function get_var_ts
+function get_var_tstz
 ( pi_prcs_id            in flow_processes.prcs_id%type
 , pi_var_name           in flow_process_variables.prov_var_name%type
 , pi_scope              in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null  in boolean default false
-) return flow_process_variables.prov_var_ts%type
+) return flow_process_variables.prov_var_tstz%type
 is 
 begin
-  return flow_proc_vars_int.get_var_ts
+  return flow_proc_vars_int.get_var_tstz
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => pi_scope
               , pi_exception_on_null  => pi_exception_on_null
               );
-end get_var_ts;
+end get_var_tstz;
 
 -- get_var_date: timestamp type - signature 2 - subflow_id supplied
 
-function get_var_ts
+function get_var_tstz
 ( pi_prcs_id            in flow_processes.prcs_id%type
 , pi_var_name           in flow_process_variables.prov_var_name%type
 , pi_sbfl_id            in flow_subflows.sbfl_id%type
 , pi_exception_on_null  in boolean default false
-) return flow_process_variables.prov_var_ts%type
+) return flow_process_variables.prov_var_tstz%type
 is 
   l_scope       flow_process_variables.prov_scope%type;
 begin 
@@ -595,7 +595,7 @@ begin
    where sbfl.sbfl_id = pi_sbfl_id
      and sbfl.sbfl_prcs_id = pi_prcs_id
   ;
-  return flow_proc_vars_int.get_var_ts
+  return flow_proc_vars_int.get_var_tstz
               ( pi_prcs_id            => pi_prcs_id
               , pi_var_name           => pi_var_name
               , pi_scope              => l_scope
@@ -611,7 +611,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
-end get_var_ts;
+end get_var_tstz;
 
 -- get type of a variable - signature 1 - with scope including default scope
 

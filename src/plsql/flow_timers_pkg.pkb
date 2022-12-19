@@ -322,11 +322,11 @@ as
 
   procedure get_iso_duration
   (
-    in_string     in     varchar2
-  , in_start_ts   in     timestamp with time zone default null
-  , out_start_ts     out timestamp with time zone
-  , out_interv_ym in out interval year to month
-  , out_interv_ds in out interval day to second
+    in_string       in     varchar2
+  , in_start_tstz   in     timestamp with time zone default null
+  , out_start_tstz  out    timestamp with time zone
+  , out_interv_ym   in out interval year to month
+  , out_interv_ds   in out interval day to second
   )
   as
     type t_duration_components is table of number index by varchar2(1 char);
@@ -372,7 +372,7 @@ as
       out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
       out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
 
-      out_start_ts  := coalesce( in_start_ts, systimestamp ) + out_interv_ym + out_interv_ds;
+      out_start_tstz  := coalesce( in_start_tstz, systimestamp ) + out_interv_ym + out_interv_ds;
     else
       raise e_invalid_duration;
     end if;
@@ -390,7 +390,7 @@ as
   , pi_step_key   in flow_subflows.sbfl_step_key%type default null
   )
   as
-    l_parsed_ts           flow_timers.timr_start_on%type;
+    l_parsed_tstz         flow_timers.timr_start_on%type;
     l_parsed_duration_ym  flow_timers.timr_interval_ym%type;
     l_parsed_duration_ds  flow_timers.timr_interval_ds%type;
     l_repeat_times        flow_timers.timr_repeat_times%type;
@@ -441,7 +441,7 @@ as
                                                 )
             when flow_constants_pkg.gc_prov_var_type_date then
                 -- substitution parameter is a date process var = already an Oracle date
-                l_parsed_ts :=
+                l_parsed_tstz :=
                   flow_proc_vars_int.get_var_date
                   ( 
                     pi_prcs_id  => pi_prcs_id
@@ -450,15 +450,15 @@ as
                   )
                 ;
             when flow_constants_pkg.gc_prov_var_type_varchar2 then
-                l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
-                                                 ( pi_prcs_id  => pi_prcs_id
-                                                 , pi_var_name => substr  ( l_timer_def.timer_definition,6
-                                                                        , length(l_timer_def.timer_definition)-6
-                                                                          )
-                                                 , pi_scope    => l_scope
-                                                 )
-                                                , flow_constants_pkg.gc_prov_default_date_format
-                                                );
+                l_parsed_tstz := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
+                                                  ( pi_prcs_id  => pi_prcs_id
+                                                  , pi_var_name => substr  ( l_timer_def.timer_definition,6
+                                                                           , length(l_timer_def.timer_definition)-6
+                                                                           )
+                                                  , pi_scope    => l_scope
+                                                  ),
+                                                   flow_constants_pkg.gc_prov_default_date_format
+                                                 );
             end case;
           elsif substr(l_timer_def.timer_definition,1,1) = 'T' then
             -- check for just an ISO Time, and then get next time that time of day occurs (today/tomorrow)
@@ -466,15 +466,15 @@ as
             case 
               when  (sysdate - to_date(to_char(sysdate,'YYYY-MM-DD ')||l_time_string,'YYYY-MM-DD HH24:MI:SS')) < 0 then
                 -- today
-                l_parsed_ts := to_timestamp_tz( to_char (sysdate,'YYYY-MM-DD ')||l_time_string, 'YYYY-MM-DD HH24:MI:SS');
+                l_parsed_tstz := to_timestamp_tz( to_char (sysdate,'YYYY-MM-DD ')||l_time_string, 'YYYY-MM-DD HH24:MI:SS');
               else
                 -- tomorrow
-                l_parsed_ts := to_timestamp_tz(to_char ( sysdate+1,'YYYY-MM-DD ')||l_time_string,'YYYY-MM-DD HH24:MI:SS');
+                l_parsed_tstz := to_timestamp_tz(to_char ( sysdate+1,'YYYY-MM-DD ')||l_time_string,'YYYY-MM-DD HH24:MI:SS');
             end case;
 
           else
             -- assume we have an ISO date-time
-            l_parsed_ts := to_timestamp_tz( replace ( l_timer_def.timer_definition, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
+            l_parsed_tstz := to_timestamp_tz( replace ( l_timer_def.timer_definition, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
           end if;
         when flow_constants_pkg.gc_timer_type_duration then
           -- ISO 8601 Duration - check for substitution of process variable
@@ -490,11 +490,11 @@ as
           end if;     
           get_iso_duration
           (
-            in_string     => l_timer_def.timer_definition
-          , in_start_ts   => systimestamp
-          , out_start_ts  => l_parsed_ts
-          , out_interv_ym => l_parsed_duration_ym
-          , out_interv_ds => l_parsed_duration_ds
+            in_string       => l_timer_def.timer_definition
+          , in_start_tstz   => systimestamp
+          , out_start_tstz  => l_parsed_tstz
+          , out_interv_ym   => l_parsed_duration_ym
+          , out_interv_ds   => l_parsed_duration_ds
           );
         when flow_constants_pkg.gc_timer_type_cycle then
           -- ISO 8601 Cycle - check for substitution of process variable
@@ -526,11 +526,11 @@ as
                                                   );
           get_iso_duration
           (
-            in_string     => l_timer_def.timer_definition
-          , in_start_ts   => systimestamp
-          , out_start_ts  => l_parsed_ts
-          , out_interv_ym => l_parsed_duration_ym
-          , out_interv_ds => l_parsed_duration_ds
+            in_string       => l_timer_def.timer_definition
+          , in_start_tstz   => systimestamp
+          , out_start_tstz  => l_parsed_tstz
+          , out_interv_ym   => l_parsed_duration_ym
+          , out_interv_ds   => l_parsed_duration_ds
           );
         when flow_constants_pkg.gc_timer_type_oracle_date then
 
@@ -541,7 +541,7 @@ as
                                                  )
             when flow_constants_pkg.gc_prov_var_type_date then
                 -- substitution parameter is a date process var = already an Oracle date
-                l_parsed_ts :=
+                l_parsed_tstz :=
                   flow_proc_vars_int.get_var_date
                   ( 
                     pi_prcs_id  => pi_prcs_id
@@ -551,7 +551,7 @@ as
                 ;
             when flow_constants_pkg.gc_prov_var_type_varchar2 then
                 -- substitution parameter is a vc2 - use the specified format mask
-                l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
+                l_parsed_tstz := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
                                                   ( pi_prcs_id  => pi_prcs_id
                                                   , pi_var_name => substr  ( l_timer_def.oracle_date,6
                                                                                     , length(l_timer_def.oracle_date)-6
@@ -563,7 +563,7 @@ as
             end case;
           else
             -- just use the specified date and format mask
-            l_parsed_ts := to_timestamp ( l_timer_def.oracle_date, l_timer_def.oracle_format_mask);
+            l_parsed_tstz := to_timestamp ( l_timer_def.oracle_date, l_timer_def.oracle_format_mask);
           end if;
         when flow_constants_pkg.gc_timer_type_oracle_duration then 
           -- handle possible vc2-typed subsitutions for both parameters
@@ -579,7 +579,7 @@ as
                                              );
           l_parsed_duration_ds := to_dsinterval ( nvl ( l_timer_def.oracle_duration_ds , '000 00:00:00') );
           l_parsed_duration_ym := to_yminterval ( nvl ( l_timer_def.oracle_duration_ym, '0-0') );
-          l_parsed_ts := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
+          l_parsed_tstz := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
 
         when flow_constants_pkg.gc_timer_type_oracle_cycle then
           -- oracle cycle timer - all 3 parameters can be substituted with vc2-type proc var
@@ -606,7 +606,7 @@ as
                               , p_default_value => flow_constants_pkg.gc_config_default_timer_max_cycles
                               );
           end if;
-          l_parsed_ts           := systimestamp + to_dsinterval ( l_timer_def.start_interval_ds );
+          l_parsed_tstz         := systimestamp + to_dsinterval ( l_timer_def.start_interval_ds );
           l_parsed_duration_ym  := to_yminterval ('0-0');  -- UI currently does not allow YM input so set to 0
           l_parsed_duration_ds  := to_dsinterval ( l_timer_def.repeat_interval_ds );
         else
@@ -668,7 +668,7 @@ as
       , l_timer_def.timer_type
       , systimestamp
       , c_created
-      , l_parsed_ts
+      , l_parsed_tstz
       , l_parsed_duration_ym
       , l_parsed_duration_ds
       , l_repeat_times
@@ -686,7 +686,7 @@ as
   , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
-    l_parsed_ts           flow_timers.timr_start_on%type;
+    l_parsed_tstz         flow_timers.timr_start_on%type;
     l_parsed_duration_ym  flow_timers.timr_interval_ym%type;
     l_parsed_duration_ds  flow_timers.timr_interval_ds%type;
     l_repeat_times        flow_timers.timr_repeat_times%type;
@@ -745,7 +745,7 @@ as
   , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
-    l_parsed_ts           flow_timers.timr_start_on%type;
+    l_parsed_tstz         flow_timers.timr_start_on%type;
     l_parsed_duration_ym  flow_timers.timr_interval_ym%type;
     l_parsed_duration_ds  flow_timers.timr_interval_ds%type;
     l_repeat_times        flow_timers.timr_repeat_times%type;

@@ -1,17 +1,15 @@
-
-/* 
--- Flows for APEX - flow_expressions.pkb
--- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
--- (c) Copyright MT AG, 2021-2022.
---
--- Created    22-Mar-2021  Richard Allen (Flowquest, for MT AG)
--- Modified   12-Apr-2022  Richard Allen (Oracle)
---
-*/
 create or replace package body flow_expressions
 as 
-  
+  /* 
+  -- Flows for APEX - flow_expressions.pkb
+  -- 
+  -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+  -- (c) Copyright MT AG, 2021-2022.
+  --
+  -- Created    22-Mar-2021  Richard Allen (Flowquest, for MT AG)
+  -- Modified   12-Apr-2022  Richard Allen (Oracle)
+  --
+  */  
   type t_expr_rec is record
   ( expr_id             flow_object_expressions.expr_id%type
   , expr_objt_id        flow_object_expressions.expr_objt_id%type
@@ -25,7 +23,6 @@ as
   );
 
   type t_expr_set is table of t_expr_rec;
-
 
   function get_expression_set
   ( pi_objt_id      flow_objects.objt_id%type
@@ -70,6 +67,7 @@ as
   )
   as 
     l_expression_text   flow_object_expressions.expr_expression%type;
+    l_result_rec        flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter
     ( 'flow_expressions.set_static'
@@ -86,27 +84,15 @@ as
     , pi_scope   => pi_expr_scope
     , pio_string => l_expression_text
     );
+
+    l_result_rec.var_name := pi_expression.expr_var_name;
+    l_result_rec.var_type := pi_expression.expr_var_type;
+    
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_vc2_value      => l_expression_text
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );
+        l_result_rec.var_vc2   := l_expression_text;
     when flow_constants_pkg.gc_prov_var_type_number then
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_num_value      => l_expression_text
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );
+        l_result_rec.var_num   := l_expression_text;
     when flow_constants_pkg.gc_prov_var_type_date then
         -- test date is in our required format
         begin
@@ -119,39 +105,30 @@ as
           when others then
             raise e_var_exp_date_format_error;
         end;
-
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_date_value     => to_date(l_expression_text, flow_constants_pkg.gc_prov_default_date_format)
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        ); 
-    when flow_constants_pkg.gc_prov_var_type_ts then
+        l_result_rec.var_date   := to_date(l_expression_text, flow_constants_pkg.gc_prov_default_date_format);
+    when flow_constants_pkg.gc_prov_var_type_tstz then
         -- test timestamp is in our required format
         begin
           if l_expression_text != to_char ( to_timestamp_tz ( l_expression_text
-                                          , flow_constants_pkg.gc_prov_default_ts_format )
-                                          , flow_constants_pkg.gc_prov_default_ts_format ) then 
+                                          , flow_constants_pkg.gc_prov_default_tstz_format )
+                                          , flow_constants_pkg.gc_prov_default_tstz_format ) then 
           raise e_var_exp_date_format_error;
           end if;
         exception
           when others then
             raise e_var_exp_date_format_error;
         end;
-
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id        => pi_prcs_id
-        , pi_var_name       => pi_expression.expr_var_name
-        , pi_ts_value     => to_timestamp_tz(l_expression_text, flow_constants_pkg.gc_prov_default_ts_format)
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        ); 
+        l_result_rec.var_tstz := to_timestamp_tz(l_expression_text, flow_constants_pkg.gc_prov_default_tstz_format);
     end case;
+    -- set proc variable
+    flow_proc_vars_int.set_var 
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_var_value      => l_result_rec
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+    , pi_expr_set       => pi_expression.expr_set    
+    , pi_scope          => pi_var_scope
+    );
   exception
     when e_var_exp_date_format_error then
       flow_errors.handle_instance_error
@@ -173,7 +150,6 @@ as
       , p2 => pi_expression.expr_set
       );
       -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting process variable %1 in process id %0 (set %2).  See error in event log.'
-
   end set_static;
 
   procedure set_proc_var
@@ -184,84 +160,58 @@ as
   , pi_expr_scope   flow_subflows.sbfl_scope%type
   )
   as 
+    l_result_rec        flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter
     ( 'flow_expressions.set_proc_var'
     , 'expr_var_name', pi_expression.expr_var_name
     , 'proc var' , pi_expression.expr_expression
     );
+
+    l_result_rec.var_name := pi_expression.expr_var_name;
+    l_result_rec.var_type := pi_expression.expr_var_type;
+
     case pi_expression.expr_var_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id   => pi_prcs_id
-        , pi_var_name  => pi_expression.expr_var_name
-        , pi_vc2_value => flow_proc_vars_int.get_var_vc2 
-                          ( pi_prcs_id  => pi_prcs_id
-                          , pi_var_name => pi_expression.expr_expression
-                          , pi_scope    => pi_expr_scope
-                          )
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );      
+        l_result_rec.var_vc2 :=   flow_proc_vars_int.get_var_vc2 
+                                    ( pi_prcs_id  => pi_prcs_id
+                                    , pi_var_name => pi_expression.expr_expression
+                                    , pi_scope    => pi_expr_scope
+                                    );    
     when flow_constants_pkg.gc_prov_var_type_date then
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id    => pi_prcs_id
-        , pi_var_name   => pi_expression.expr_var_name
-        , pi_date_value => flow_proc_vars_int.get_var_date 
-                           ( pi_prcs_id  => pi_prcs_id
-                           , pi_var_name => pi_expression.expr_expression
-                           , pi_scope    => pi_expr_scope
-                           )
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );     
+        l_result_rec.var_date  := flow_proc_vars_int.get_var_date 
+                                    ( pi_prcs_id  => pi_prcs_id
+                                    , pi_var_name => pi_expression.expr_expression
+                                    , pi_scope    => pi_expr_scope
+                                    );  
     when flow_constants_pkg.gc_prov_var_type_number then
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id      => pi_prcs_id
-        , pi_var_name     => pi_expression.expr_var_name
-        , pi_num_value    => flow_proc_vars_int.get_var_num
-                             ( pi_prcs_id  => pi_prcs_id
-                             , pi_var_name => pi_expression.expr_expression
-                             , pi_scope    => pi_expr_scope                             
-                             )
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );    
+        l_result_rec.var_num   := flow_proc_vars_int.get_var_num
+                                    ( pi_prcs_id  => pi_prcs_id
+                                    , pi_var_name => pi_expression.expr_expression
+                                    , pi_scope    => pi_expr_scope                             
+                                    );   
     when flow_constants_pkg.gc_prov_var_type_clob then
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id    => pi_prcs_id
-        , pi_var_name   => pi_expression.expr_var_name
-        , pi_clob_value => flow_proc_vars_int.get_var_clob 
-                          ( pi_prcs_id  => pi_prcs_id
-                          , pi_var_name => pi_expression.expr_expression
-                          , pi_scope    => pi_expr_scope
-                          )
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );  
-    when flow_constants_pkg.gc_prov_var_type_ts then
-        flow_proc_vars_int.set_var 
-        ( pi_prcs_id    => pi_prcs_id
-        , pi_var_name   => pi_expression.expr_var_name
-        , pi_ts_value   => flow_proc_vars_int.get_var_ts 
-                           ( pi_prcs_id  => pi_prcs_id
-                           , pi_var_name => pi_expression.expr_expression
-                           , pi_scope    => pi_expr_scope
-                           )
-        , pi_sbfl_id        => pi_sbfl_id
-        , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-        , pi_expr_set       => pi_expression.expr_set
-        , pi_scope          => pi_var_scope
-        );   
+        l_result_rec.var_clob  := flow_proc_vars_int.get_var_clob 
+                                    ( pi_prcs_id  => pi_prcs_id
+                                    , pi_var_name => pi_expression.expr_expression
+                                    , pi_scope    => pi_expr_scope
+                                    );
+    when flow_constants_pkg.gc_prov_var_type_tstz then
+        l_result_rec.var_tstz :=  flow_proc_vars_int.get_var_tstz
+                                    ( pi_prcs_id  => pi_prcs_id
+                                    , pi_var_name => pi_expression.expr_expression
+                                    , pi_scope    => pi_expr_scope
+                                    );  
     end case; 
+    -- set proc variable
+    flow_proc_vars_int.set_var 
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_var_value      => l_result_rec
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+    , pi_expr_set       => pi_expression.expr_set    
+    , pi_scope          => pi_var_scope
+    );
   exception
     when others then
       flow_errors.handle_instance_error
@@ -272,8 +222,7 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting process variable %1 in process id %0 (set %2).  See error in event log.'
-        
+      -- $F4AMESSAGE 'var_exp_static_general' || 'Error setting process variable %1 in process id %0 (set %2).  See error in event log.'      
   end set_proc_var;
 
   procedure set_sql
@@ -298,9 +247,9 @@ as
                     , pi_sql_text     => pi_expression.expr_expression
                     , pi_result_type  => pi_expression.expr_var_type
                     , pi_scope        => pi_expr_scope
-                    , pi_is_multi     => false
+                    , pi_expr_type    => pi_expression.expr_type
                     );
-                    
+
     l_result_rec.var_name   := pi_expression.expr_var_name;
 
     flow_proc_vars_int.set_var 
@@ -331,7 +280,7 @@ as
       -- $F4AMESSAGE 'var_exp_sql_other' || 'Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.'    
   end set_sql;
 
-  procedure set_sql_delimited
+  procedure set_plsql         
   ( pi_prcs_id      flow_processes.prcs_id%type
   , pi_expression   t_expr_rec
   , pi_sbfl_id      flow_subflows.sbfl_id%type
@@ -339,21 +288,21 @@ as
   , pi_expr_scope   flow_subflows.sbfl_scope%type
   )
   as 
-    l_result_rec      flow_proc_vars_int.t_proc_var_value;
+    l_result_rec                flow_proc_vars_int.t_proc_var_value;
   begin
-      apex_debug.enter
-    ( 'flow_expressions.set_sql_delimited'
+    apex_debug.enter
+    ( 'flow_expressions.set_plsql'
     , 'expr_var_name', pi_expression.expr_var_name
-    , 'sql text' , pi_expression.expr_expression
+    , 'plsql text' , pi_expression.expr_expression
     );
 
-    l_result_rec := flow_util.exec_flows_sql
+    l_result_rec := flow_util.exec_flows_plsql
                     ( pi_prcs_id      => pi_prcs_id
                     , pi_sbfl_id      => pi_sbfl_id
-                    , pi_sql_text     => pi_expression.expr_expression
+                    , pi_plsql_text   => pi_expression.expr_expression
                     , pi_result_type  => pi_expression.expr_var_type
                     , pi_scope        => pi_expr_scope
-                    , pi_is_multi     => true
+                    , pi_expr_type   => pi_expression.expr_type
                     );
     l_result_rec.var_name   := pi_expression.expr_var_name;
 
@@ -366,111 +315,8 @@ as
     , pi_expr_set       => pi_expression.expr_set    
     , pi_scope          => pi_var_scope
     );
-  end set_sql_delimited;
 
-  procedure set_plsql_expression         
-  ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   t_expr_rec
-  , pi_sbfl_id      flow_subflows.sbfl_id%type
-  , pi_var_scope    flow_subflows.sbfl_scope%type
-  , pi_expr_scope   flow_subflows.sbfl_scope%type
-  )
-  as 
-    l_result_vc2    flow_process_variables.prov_var_vc2%type;
-    l_result_date   flow_process_variables.prov_var_date%type;
-    l_result_num    flow_process_variables.prov_var_num%type;
-    l_bind_list     apex_plugin_util.t_bind_list;
-  begin
-    apex_debug.enter
-    ( 'flow_expressions.set_plsql_expression'
-    , 'expr_var_name', pi_expression.expr_var_name
-    , 'plsql expression' , pi_expression.expr_expression
-    );
-    l_bind_list := flow_proc_vars_int.get_bind_list ( pi_expr    => pi_expression.expr_expression
-                                                    , pi_prcs_id => pi_prcs_id
-                                                    , pi_sbfl_id => pi_sbfl_id
-                                                    , pi_scope   => pi_expr_scope
-                                                    );
-    -- evaluate the expression
-    l_result_vc2 := apex_plugin_util.get_plsql_expression_result 
-                    ( p_plsql_expression => pi_expression.expr_expression
-                    , p_auto_bind_items  => false
-                    , p_bind_list        => l_bind_list
-                    );
-    case pi_expression.expr_var_type 
-    when flow_constants_pkg.gc_prov_var_type_varchar2 then
-
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_vc2_value      => l_result_vc2
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set
-      , pi_scope          => pi_var_scope
-      );
-    when flow_constants_pkg.gc_prov_var_type_date then
-      -- test date value returned using our specified format
-      if l_result_vc2 != to_char  ( to_date ( l_result_vc2 
-                                            , flow_constants_pkg.gc_prov_default_date_format )
-                                  , flow_constants_pkg.gc_prov_default_date_format ) then 
-         raise e_var_exp_date_format_error;
-      end if;
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_date_value     => to_date(l_result_vc2,flow_constants_pkg.gc_prov_default_date_format)
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set
-      , pi_scope          => pi_var_scope
-      );
-    when flow_constants_pkg.gc_prov_var_type_ts then
-      -- test date value returned using our specified format
-      if l_result_vc2 != to_char  ( to_timestamp_tz ( l_result_vc2 
-                                                    , flow_constants_pkg.gc_prov_default_ts_format )
-                                  , flow_constants_pkg.gc_prov_default_ts_format ) then 
-         raise e_var_exp_date_format_error;
-      end if;
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_ts_value       => to_timestamp_tz(l_result_vc2,flow_constants_pkg.gc_prov_default_ts_format)
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set
-      , pi_scope          => pi_var_scope
-      );
-    when flow_constants_pkg.gc_prov_var_type_number then
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_num_value      => to_number(l_result_vc2)
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set
-      , pi_scope          => pi_var_scope
-      ); 
-    else
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_message_key    => 'var_exp_datatype'
-      , p0 => pi_expression.expr_var_name
-      );
-      -- $F4AMESSAGE 'var_exp_datatype' || 'Error setting process variable.  Incorrect datatype for variable %0.  SQL error shown in debug output.'  
-    end case;
   exception
-    when e_var_exp_date_format_error then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_message_key    => 'var_exp_date_format'
-      , p0 => pi_sbfl_id
-      , p1 => pi_expression.expr_var_name
-      , p2 => pi_expression.expr_set
-      );
-      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'      
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
@@ -481,135 +327,7 @@ as
       , p2 => pi_expression.expr_set
       );
       -- $F4AMESSAGE 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
-  end set_plsql_expression;  
-
-  procedure set_plsql_function        
-  ( pi_prcs_id      flow_processes.prcs_id%type
-  , pi_expression   t_expr_rec
-  , pi_sbfl_id      flow_subflows.sbfl_id%type
-  , pi_var_scope    flow_subflows.sbfl_scope%type
-  , pi_expr_scope   flow_subflows.sbfl_scope%type
-  )
-  as 
-    l_result_vc2    flow_process_variables.prov_var_vc2%type;
-    l_result_date   flow_process_variables.prov_var_date%type;
-    l_result_num    flow_process_variables.prov_var_num%type;
-    l_bind_list     apex_plugin_util.t_bind_list;
-  begin
-    apex_debug.enter
-    ( 'flow_expressions.set_plsql_function'
-    , 'expr_var_name', pi_expression.expr_var_name
-    , 'plsql function body' , pi_expression.expr_expression
-    );
-    l_bind_list := flow_proc_vars_int.get_bind_list ( pi_expr    => pi_expression.expr_expression
-                                                    , pi_prcs_id => pi_prcs_id
-                                                    , pi_sbfl_id => pi_sbfl_id
-                                                    , pi_scope   => pi_expr_scope
-                                                    );
-    -- evaluate the function
-    l_result_vc2 := apex_plugin_util.get_plsql_function_result 
-                      ( p_plsql_function => pi_expression.expr_expression
-                      , p_auto_bind_items  => false
-                      , p_bind_list        => l_bind_list
-                      );
-    case pi_expression.expr_var_type 
-    when flow_constants_pkg.gc_prov_var_type_varchar2 then
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_vc2_value      => l_result_vc2
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set
-      , pi_scope          => pi_var_scope
-      );
-    when flow_constants_pkg.gc_prov_var_type_date then
-      -- a date value must be returned using our specified format
-      -- add a test that format is good?
-      begin
-        if l_result_vc2 != to_char  ( to_date ( l_result_vc2 
-                                              , flow_constants_pkg.gc_prov_default_date_format )
-                                    , flow_constants_pkg.gc_prov_default_date_format ) then 
-        raise e_var_exp_date_format_error;
-        end if;
-      exception
-        when others then
-          raise e_var_exp_date_format_error;
-      end;
-
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_date_value     => to_date(l_result_vc2, flow_constants_pkg.gc_prov_default_date_format)
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set
-      , pi_scope          => pi_var_scope
-      );
-    when flow_constants_pkg.gc_prov_var_type_ts then
-      -- a timestamp value must be returned using our specified format
-      -- add a test that format is good?
-      begin
-        if l_result_vc2 != to_char  ( to_timestamp_tz ( l_result_vc2 
-                                              , flow_constants_pkg.gc_prov_default_ts_format )
-                                    , flow_constants_pkg.gc_prov_default_ts_format ) then 
-        raise e_var_exp_date_format_error;
-        end if;
-      exception
-        when others then
-          raise e_var_exp_date_format_error;
-      end;
-
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_ts_value       => to_timestamp_tz(l_result_vc2, flow_constants_pkg.gc_prov_default_ts_format)
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set
-      , pi_scope          => pi_var_scope
-      );
-    when flow_constants_pkg.gc_prov_var_type_number then
-      flow_proc_vars_int.set_var 
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_var_name       => pi_expression.expr_var_name
-      , pi_num_value      => to_number(l_result_vc2)
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
-      , pi_expr_set       => pi_expression.expr_set 
-      , pi_scope          => pi_var_scope
-      ); 
-    else
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_message_key    => 'var_exp_datatype'
-      , p0 => pi_expression.expr_var_name
-      );
-      -- $F4AMESSAGE 'var_exp_datatype' || 'Error setting process variable.  Incorrect datatype for variable %0.  SQL error shown in debug output.'  
-    end case;
-  exception
-    when e_var_exp_date_format_error then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_message_key    => 'var_exp_date_format'
-      , p0 => pi_sbfl_id
-      , p1 => pi_expression.expr_var_name
-      , p2 => pi_expression.expr_set
-      );
-      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'    
-    when others then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_sbfl_id        => pi_sbfl_id
-      , pi_message_key    => 'var_exp_plsql_error'
-      , p0 => pi_sbfl_id
-      , p1 => pi_expression.expr_var_name
-      , p2 => pi_expression.expr_set
-      );
-      -- $F4AMESSAGE 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
-  end set_plsql_function;
+  end set_plsql;  
 
   /**********************************************************************
   **
@@ -655,8 +373,8 @@ as
       -- step through expressions
       for i in 1..l_expressions.count loop
         -- process expression
-        case l_expressions(i).expr_type
-          when flow_constants_pkg.gc_expr_type_static then
+        case 
+          when l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_static then
             set_static 
             ( pi_prcs_id      => pi_prcs_id
             , pi_sbfl_id      => pi_sbfl_id
@@ -664,44 +382,35 @@ as
             , pi_var_scope    => pi_var_scope
             , pi_expr_scope   => pi_expr_scope 
             );
-          when flow_constants_pkg.gc_expr_type_proc_var then
+          when l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_proc_var then
             set_proc_var
             ( pi_prcs_id      => pi_prcs_id
             , pi_sbfl_id      => pi_sbfl_id
             , pi_expression   => l_expressions(i)
             , pi_var_scope    => pi_var_scope
-            , pi_expr_scope   => pi_expr_scope );
-          when flow_constants_pkg.gc_expr_type_sql  then
+            , pi_expr_scope   => pi_expr_scope 
+            );
+          when l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql  
+            or l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql_delimited_list
+          then
             set_sql
             ( pi_prcs_id      => pi_prcs_id
             , pi_expression   => l_expressions(i)
             , pi_sbfl_id      => pi_sbfl_id
             , pi_var_scope    => pi_var_scope
             , pi_expr_scope   => pi_expr_scope             
-            );
-          when flow_constants_pkg.gc_expr_type_sql_delimited_list  then
-            set_sql_delimited
+            );  
+          when l_expressions(i).expr_type in ( flow_constants_pkg.gc_expr_type_plsql_expression
+                                             , flow_constants_pkg.gc_expr_type_plsql_raw_expression
+                                             , flow_constants_pkg.gc_expr_type_plsql_function_body
+                                             , flow_constants_pkg.gc_expr_type_plsql_raw_function_body )
+          then
+            set_plsql
             ( pi_prcs_id      => pi_prcs_id
             , pi_expression   => l_expressions(i)
             , pi_sbfl_id      => pi_sbfl_id
             , pi_var_scope    => pi_var_scope
             , pi_expr_scope   => pi_expr_scope             
-            );     
-          when flow_constants_pkg.gc_expr_type_plsql_expression then
-            set_plsql_expression
-            ( pi_prcs_id      => pi_prcs_id
-            , pi_expression   => l_expressions(i)
-            , pi_sbfl_id      => pi_sbfl_id
-            , pi_var_scope    => pi_var_scope
-            , pi_expr_scope   => pi_expr_scope             
-            ); 
-          when flow_constants_pkg.gc_expr_type_plsql_function_body then
-            set_plsql_function
-            ( pi_prcs_id      => pi_prcs_id
-            , pi_expression   => l_expressions(i)
-            , pi_sbfl_id      => pi_sbfl_id
-            , pi_var_scope    => pi_var_scope
-            , pi_expr_scope   => pi_expr_scope 
             );  
           else
               null;

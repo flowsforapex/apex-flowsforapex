@@ -347,7 +347,7 @@ create table flow_process_variables
 , prov_var_vc2      varchar2(4000 char)
 , prov_var_num      number
 , prov_var_date     date
-, prov_var_ts       timestamp with time zone
+, prov_var_tstz     timestamp with time zone
 , prov_var_clob     clob
 , prov_var_name_uc  varchar2(50 char) generated always as ( upper(prov_var_name) )
 );
@@ -446,7 +446,7 @@ create table flow_variable_event_log
 , lgvr_var_vc2 			    varchar2(4000 char)
 , lgvr_var_num 			    number
 , lgvr_var_date 			date
-, lgvr_var_ts 			    timestamp with time zone
+, lgvr_var_tstz 			timestamp with time zone
 , lgvr_var_clob 			clob
 );
 
