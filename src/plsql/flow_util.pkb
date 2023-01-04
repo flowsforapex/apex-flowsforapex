@@ -96,8 +96,8 @@ as
                                                                    , p_column_idx => 1 )
                                             );
           elsif l_result_column.data_type = apex_exec.c_data_type_timestamp_tz then
-            l_result_rec.var_vc2 := to_char ( apex_exec.get_number ( p_context => l_context
-                                                                   , p_column_idx => 1 )
+            l_result_rec.var_vc2 := to_char ( apex_exec.get_timestamp_tz ( p_context => l_context
+                                                                         , p_column_idx => 1 )
                                             , flow_constants_pkg.gc_prov_default_tstz_format
                                             );
           -- add conversion CLOB to varchar2 if length OK?
@@ -322,6 +322,8 @@ as
 
     l_result_rec.var_name   := 'result';
     l_result_rec.var_type   := flow_constants_pkg.gc_prov_var_type_number;
+
+    apex_debug.message(p_message => 'Number result %0', p0 => l_result_rec.var_num, p_level => 3);
 
     return l_result_rec;   
   end exec_flows_plsql_num;

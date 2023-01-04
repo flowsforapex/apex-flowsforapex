@@ -177,7 +177,7 @@ procedure delete_all_for_process
 procedure do_substitution
 (
   pi_prcs_id  in flow_processes.prcs_id%type
-, pi_sbfl_id  in flow_subflows.sbfl_id%type
+, pi_sbfl_id  in flow_subflows.sbfl_id%type default null
 , pi_scope    in flow_subflows.sbfl_scope%type
 , pi_step_key in flow_subflows.sbfl_step_key%type default null
 , pio_string  in out nocopy varchar2
@@ -186,7 +186,7 @@ procedure do_substitution
 procedure do_substitution
 (
   pi_prcs_id  in flow_processes.prcs_id%type
-, pi_sbfl_id  in flow_subflows.sbfl_id%type
+, pi_sbfl_id  in flow_subflows.sbfl_id%type default null
 , pi_scope    in flow_subflows.sbfl_scope%type
 , pi_step_key in flow_subflows.sbfl_step_key%type default null
 , pio_string  in out nocopy clob

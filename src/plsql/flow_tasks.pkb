@@ -126,8 +126,8 @@ create or replace package body flow_tasks as
     l_usertask_type         flow_types_pkg.t_bpmn_attribute_vc2;
     l_priority_json         flow_types_pkg.t_bpmn_attribute_vc2;
     l_priority              flow_subflows.sbfl_priority%type;
-    l_due_date_json         flow_types_pkg.t_bpmn_attribute_vc2;
-    l_due_date              flow_subflows.sbfl_due_on%type;
+    l_due_on_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_on              flow_subflows.sbfl_due_on%type;
   begin
   -- current implementation is limited to two userTask types, which are:
   --   - to run a user defined APEX page via the Task Inbox View
@@ -145,30 +145,11 @@ create or replace package body flow_tasks as
     );  
     -- get the userTask subtype  
     select objt.objt_attributes."taskType"
-         , objt.objt_attributes."apex"."priority"
-         , objt.objt_attributes."apex"."dueDate"
       into l_usertask_type
-         , l_priority_json
-         , l_due_date_json
       from flow_objects objt
      where objt.objt_bpmn_id = p_step_info.target_objt_ref
        and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
        ;
-       
-      if l_priority is not null then
-        l_priority := flow_settings.get_priority 
-                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                      , pi_expr    => l_priority_json
-                      , pi_scope   => p_sbfl_info.sbfl_scope
-                      );
-      end if;
-      if l_due_date is not null then 
-        l_due_date := flow_settings.get_due_date 
-                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                      , pi_expr    => l_due_date_json
-                      , pi_scope   => p_sbfl_info.sbfl_scope
-                      );
-      end if;
 
     case l_usertask_type
       when flow_constants_pkg.gc_apex_usertask_apex_approval then

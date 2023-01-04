@@ -10,23 +10,20 @@ FOR PROCESS
     "username": "FLOWSDEV2",
     "priority": {
       "expressionType": "static",
-      "expressionValue": "3"
+      "expression": "2"
     },
     "isStartable": "true",
     "potentialStartingUsers": {
       "expressionType": "static",
-      "expressionValue": "FLOWSDEV2:RICALLEN"
+      "expression": "FLOWSDEV2:RICALLEN"
     },
     "potentialStartingGroups": {
       "expressionType": "static",
-      "expressionValue": "SALES:MARKETING"
+      "expression": "SALES:MARKETING"
     },
-    "dueDate": {
-      "expressionType": "static",
-      "valueType": "date",
-      "value": "13-04-2017 19:45:30",
-      "formatMask": "DD-MM-YYYY HH24:MI:SS",
-      "timeZone": "US/Pacific"
+    "dueOn": {
+      "expressionType": "duration",
+      "expression": "P45DT6H15M"
     }          
   }
 }
@@ -34,7 +31,9 @@ FOR PROCESS
 FOR USERTASK1
 
 {"taskType":"apex:apexPage",
-  "apex":{"applicationId":"100",
+  "apex":
+  {
+  "applicationId":"100",
   "pageId":"9",
   "pageItems":[
     {"name":"PROCESS_ID",
@@ -46,22 +45,20 @@ FOR USERTASK1
     ],
   "priority": {
     "expressionType": "static",
-    "expressionValue": "3"
+    "expression": "3"
   },
   "potentialUsers": {
     "expressionType": "static",
-    "expressionValue": "FLOWSDEV2:RICALLEN"
+    "expression": "FLOWSDEV2:RICALLEN"
   },
   "potentialGroups": {
     "expressionType": "static",
-    "expressionValue": "SALES:MARKETING"
+    "expression": "SALES:MARKETING"
   },
-  "dueDate": {
+  "dueOn": {
     "expressionType": "static",
-    "valueType": "date",
-    "value": "17-12-2017 19:45:30",
-    "formatMask": "DD-MM-YYYY HH24:MI:SS",
-    "timeZone": "US/Pacific"
+    "expression": "17-12-2017 19:45:30 US/Pacific",
+    "formatMask": "DD-MM-YYYY HH24:MI:SS TZR"
   }    
   }}
 
@@ -80,27 +77,24 @@ FOR USERTASK2
       "value":"&F4A$STEP_KEY."}
       ],
     "priority": {
-      "expressionType": "static",
-      "expressionValue": "3"
+      "expressionType": "plsqlRawExpression",
+      "expression": ":F4A$process_priority + 2"
     },
     "potentialUsers": {
       "expressionType": "static",
-      "expressionValue": "FLOWSDEV2:RICALLEN"
+      "expression": "FLOWSDEV2:RICALLEN"
     },
     "potentialGroups": {
       "expressionType": "sqlQueryList",
-      "expressionValue": "select dname from dept where deptno in (20,30)"
+      "expression": "select dname from dept where deptno in (20,30)"
     },
     "excludedUsers": {
       "expressionType": "sqlQuerySingle",
-      "expressionValue": "select ename from emp where job = 'PRESIDENT'"
+      "expression": "select ename from emp where job = 'PRESIDENT'"
     },
-    "dueDate": {
-      "expressionType": "plsqlExpression",
-      "expression": "timestamp",
-      "value": "17-12-2017 19:45:30",
-      "formatMask": "DD-MM-YYYY HH24:MI:SS",
-      "timeZone": "US/Pacific"
+    "dueOn": {
+      "expressionType": "duration",
+      "expression": "010 12:30:15"
     }            
   }
 }
@@ -122,26 +116,23 @@ FOR USERTASK3
       ],
     "priority": {
       "expressionType": "static",
-      "expressionValue": "4"
+      "expression": "4"
     },
     "potentialUsers": {
       "expressionType": "static",
-      "expressionValue": "RICALLEN"
+      "expression": "RICALLEN"
     },
     "potentialGroups": {
       "expressionType": "sqlQueryList",
-      "expressionValue": "select dname from dept where deptno =60"
+      "expression": "select dname from dept where deptno =60"
     },
     "excludedUsers": {
       "expressionType": "sqlQuerySingle",
-      "expressionValue": "select ename from emp where job = 'PRESIDENT'"
+      "expression": "select ename from emp where job = 'PRESIDENT'"
     },
-    "dueDate": {
-      "expressionType": "static",
-      "valueType": "date",
-      "value": "17-12-2017 19:45:30",
-      "formatMask": "DD-MM-YYYY HH24:MI:SS",
-      "timeZone": "US/Pacific"
+    "dueOn": {
+      "expressionType": "plsqlRawExpression",
+      "expression": "to_timestamp_tz ( '17-12-2023 19:45:30 CET','DD-MM-YYYY HH24:MI:SS TZR')"
     }            
   }
 }

@@ -508,8 +508,8 @@
 },
 {
   "text_key" : "apex-task-priority-error",
-  "source" : "Error creating APEX Workflow task - invalid priority %0.",
-  "target" : "Error creating APEX Workflow task - invalid priority %0."
+  "source" : "Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.",
+  "target" : "Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0."
 },
 {
   "text_key" : "apex-task-multiple-processes",

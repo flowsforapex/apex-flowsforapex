@@ -174,6 +174,9 @@ as
   gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
   gc_substitution_step_key            constant flow_types_pkg.t_bpmn_attributes_key := 'STEP_KEY';
   gc_substitution_scope               constant flow_types_pkg.t_bpmn_attributes_key := 'SCOPE';
+  gc_substitution_process_priority    constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_PRIORITY';
+  
+
   gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$([a-zA-Z0-9:\_\-]*)' || gc_substitution_postfix;
   gc_bind_prefix                      constant flow_types_pkg.t_single_vc2          := ':';
   gc_bind_pattern                     constant flow_types_pkg.t_bpmn_attributes_key := gc_bind_prefix || 'F4A\$([a-zA-Z0-9:\_\-]*)';
@@ -206,17 +209,19 @@ as
   gc_prcs_status_error                constant  varchar2(20 char) := 'error';
 
   -- Process Instance Events
-  gc_prcs_event_created              constant  varchar2(20 char) := gc_prcs_status_created;
-  gc_prcs_event_started              constant  varchar2(20 char) := 'started';
-  gc_prcs_event_completed            constant  varchar2(20 char) := gc_prcs_status_completed;
-  gc_prcs_event_terminated           constant  varchar2(20 char) := gc_prcs_status_terminated;
-  gc_prcs_event_reset                constant  varchar2(20 char) := 'reset';
-  gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
-  gc_prcs_event_restart_step         constant  varchar2(20 char) := 'restart step';
-  gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
-  gc_prcs_event_rescheduled          constant  varchar2(20 char) := 'rescheduled';
-  gc_prcs_event_enter_call           constant  varchar2(20 char) := 'start called model';
-  gc_prcs_event_leave_call           constant  varchar2(20 char) := 'finish called model';
+  gc_prcs_event_created               constant  varchar2(20 char) := gc_prcs_status_created;
+  gc_prcs_event_started               constant  varchar2(20 char) := 'started';
+  gc_prcs_event_completed             constant  varchar2(20 char) := gc_prcs_status_completed;
+  gc_prcs_event_terminated            constant  varchar2(20 char) := gc_prcs_status_terminated;
+  gc_prcs_event_reset                 constant  varchar2(20 char) := 'reset';
+  gc_prcs_event_error                 constant  varchar2(20 char) := gc_prcs_status_error;
+  gc_prcs_event_restart_step          constant  varchar2(20 char) := 'restart step';
+  gc_prcs_event_deleted               constant  varchar2(20 char) := 'deleted';
+  gc_prcs_event_rescheduled           constant  varchar2(20 char) := 'rescheduled';
+  gc_prcs_event_enter_call            constant  varchar2(20 char) := 'start called model';
+  gc_prcs_event_leave_call            constant  varchar2(20 char) := 'finish called model';
+  gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
+  gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
 
   -- Process Variable Datatypes
 

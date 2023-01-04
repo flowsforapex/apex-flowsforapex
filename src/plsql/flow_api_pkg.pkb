@@ -145,6 +145,28 @@ create or replace package body flow_api_pkg as
         raise;
   end flow_start;
 
+  procedure flow_set_priority 
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_priority   in flow_processes.prcs_priority%type 
+  )
+  is
+  begin
+    flow_instances.set_priority ( p_process_id  => p_process_id
+                                , p_priority    => p_priority
+                                );
+  end flow_set_priority;
+
+  procedure flow_set_due_on
+  ( p_process_id in flow_processes.prcs_id%type
+  , p_due_on     in flow_processes.prcs_due_on%type 
+  )
+  is
+  begin
+    flow_instances.set_due_on ( p_process_id  => p_process_id
+                              , p_due_on      => p_due_on
+                                );
+  end flow_set_due_on;
+
   procedure flow_reserve_step
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type

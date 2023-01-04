@@ -826,6 +826,11 @@ end delete_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_process_priority then
+            pio_string := replace ( pio_string
+                                  , get_replacement_pattern( l_f4a_substitutions(i) )
+                                  , flow_instances.priority (p_process_id => pi_prcs_id)
+                                  );
           else
             -- own implementation of get_vc_var
             -- Reason:
@@ -853,7 +858,7 @@ end delete_var;
   procedure do_substitution
   (
     pi_prcs_id  in flow_processes.prcs_id%type
-  , pi_sbfl_id  in flow_subflows.sbfl_id%type
+  , pi_sbfl_id  in flow_subflows.sbfl_id%type default null
   , pi_scope    in flow_subflows.sbfl_scope%type
   , pi_step_key in flow_subflows.sbfl_step_key%type default null
   , pio_string  in out nocopy clob
@@ -893,6 +898,11 @@ end delete_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_process_priority then
+            pio_string := replace ( pio_string
+                                  , get_replacement_pattern( l_f4a_substitutions(i) )
+                                  , flow_instances.priority (p_process_id => pi_prcs_id)
+                                  );
           else
             -- own implementation of get_vc_var
             -- Reason:
@@ -1093,7 +1103,9 @@ end delete_var;
           when flow_constants_pkg.gc_substitution_subflow_id then
             l_bind.value := pi_sbfl_id;
           when flow_constants_pkg.gc_substitution_scope then
-            l_bind.value := pi_scope;        
+            l_bind.value := pi_scope;   
+          when flow_constants_pkg.gc_substitution_process_priority then
+            l_bind.value := flow_instances.priority (p_process_id => pi_prcs_id);   
           else  
             l_bind.value := get_var_as_vc2
                           ( pi_prcs_id            => pi_prcs_id
@@ -1151,7 +1163,10 @@ end delete_var;
             l_parameter.data_type           := apex_exec.c_data_type_number;
           when flow_constants_pkg.gc_substitution_scope then
             l_parameter.value.number_value  := pi_scope;
-            l_parameter.data_type           := apex_exec.c_data_type_number;        
+            l_parameter.data_type           := apex_exec.c_data_type_number;      
+          when flow_constants_pkg.gc_substitution_process_priority then
+            l_parameter.value.number_value  := flow_instances.priority (p_process_id => pi_prcs_id);
+            l_parameter.data_type           := apex_exec.c_data_type_number;     
           else  
             l_parameter := get_var_as_parameter
                           ( pi_prcs_id            => pi_prcs_id

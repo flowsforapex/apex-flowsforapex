@@ -9,30 +9,16 @@ as
 --
 */
 
- /*       <apex:expressionType>processVariable</apex:type>       
-        <apex:valueType>date</apex:valuetype>   
-        <apex:value>F4A$MyVC2Var</apex:variable>
-        <apex:dataType>varchar2</apex:dataType>
-        <apex:formatMask>DD-MON-YYYY"T"HH24:MI:SS</apex:formatMask>
-        <apex:timeZone>+8.00</apex:formatMask>
-        */
 
-  function get_next_time_of_day
-  ( pi_time_of_day    flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_time_zone     flow_types_pkg.t_bpmn_attribute_vc2
-  )return timestamp with time zone
-  is
-  begin
-    return systimestamp;   -- tbi
-  end get_next_time_of_day;
-
-  function get_due_date
+  function get_due_on
   ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type default null
   , pi_expr          flow_objects.objt_attributes%type
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return timestamp with time zone
   is
     l_json_def          sys.json_object_t;
+    l_result_rec        flow_proc_vars_int.t_proc_var_value;
     l_expression_type   flow_types_pkg.t_bpmn_attribute_vc2;
     l_value_type        flow_types_pkg.t_bpmn_attribute_vc2;
     l_value             flow_types_pkg.t_bpmn_attribute_vc2;
@@ -42,125 +28,198 @@ as
     l_function_body     flow_types_pkg.t_bpmn_attribute_vc2;
     l_content           flow_types_pkg.t_bpmn_attribute_vc2;
     l_return_tstz       timestamp with time zone;
+
+    e_invalid_interval_spec    exception;
+    pragma exception_init (e_invalid_interval_spec , -1867);  
+
   begin
     -- split based on expression type
     apex_json.parse( p_source => pi_expr );
 
     l_expression_type    := apex_json.get_varchar2( p_path => 'expressionType' );
-    l_value_type         := apex_json.get_varchar2( p_path => 'valueType' );
-    l_value              := apex_json.get_varchar2( p_path => 'value' );
-    l_data_type          := apex_json.get_varchar2( p_path => 'dataType' );
-    l_format_mask        := apex_json.get_varchar2( p_path => 'formatMask' );
     l_expression         := apex_json.get_varchar2( p_path => 'expression' );
-    l_function_body      := apex_json.get_varchar2( p_path => 'functionBody' );
+    l_format_mask        := apex_json.get_varchar2( p_path => 'formatMask' );
 
 
-    case l_expression_type 
-    when flow_constants_pkg.gc_expr_type_static then
-      case l_value_type
-      when flow_constants_pkg.gc_date_value_type_date then
-        return to_timestamp_tz ( l_value, l_format_mask);
-      when flow_constants_pkg.gc_date_value_type_duration then
-        return systimestamp + to_dsinterval( l_value );
-      when flow_constants_pkg.gc_date_value_type_time_of_day then
-        return systimestamp; -- tbi
-      when flow_constants_pkg.gc_date_value_type_oracle_scheduler then
-        return systimestamp; -- tbi
-      else
-        return systimestamp; -- tbi
-      end case;
+    if l_expression_type in ( flow_constants_pkg.gc_expr_type_static 
+                            , flow_constants_pkg.gc_date_value_type_duration
+                            , flow_constants_pkg.gc_date_value_type_oracle_scheduler
+                            ) then
+      -- static types - timestamp, duration & scheduler statics - start by doing substitutions
+      flow_proc_vars_int.do_substitution
+        ( pi_prcs_id => pi_prcs_id
+        , pi_sbfl_id => pi_sbfl_id
+        , pi_scope   => pi_scope
+        , pio_string => l_expression 
+        );
+    end if;
 
-    when flow_constants_pkg.gc_expr_type_proc_var then
-      case l_value_type
-      when flow_constants_pkg.gc_date_value_type_date then 
-        if l_data_type = flow_constants_pkg.gc_prov_var_type_varchar2 then
-          l_content := flow_proc_vars_int.get_var_vc2 ( pi_prcs_id    => pi_prcs_id
-                                                      , pi_var_name   => l_value
-                                                      , pi_scope      => pi_scope
-                                                      );
-          return to_timestamp_tz ( l_content, l_format_mask );  
-        elsif l_data_type = flow_constants_pkg.gc_prov_var_type_date then
-          l_return_tstz := cast ( flow_proc_vars_int.get_var_date ( pi_prcs_id    => pi_prcs_id
-                                                                  , pi_var_name   => l_value
-                                                                  , pi_scope      => pi_scope
-                                                                  )
-                                as timestamp with time zone); 
-          return l_return_tstz;                           
-        elsif l_data_type = flow_constants_pkg.gc_prov_var_type_tstz then
-          return flow_proc_vars_int.get_var_tstz  ( pi_prcs_id    => pi_prcs_id
-                                                  , pi_var_name   => l_value
-                                                  , pi_scope      => pi_scope
-                                                  );       
-        end if;
+    case 
+    when l_expression_type = flow_constants_pkg.gc_expr_type_static then    
+      l_return_tstz := to_timestamp_tz ( l_expression, l_format_mask);
+    when l_expression_type = flow_constants_pkg.gc_date_value_type_duration then
+      l_return_tstz := systimestamp + to_dsinterval( l_expression );
+    when l_expression_type = flow_constants_pkg.gc_date_value_type_oracle_scheduler then
+      sys.dbms_scheduler.evaluate_calendar_string ( calendar_string   => l_expression
+                                                  , start_date        => systimestamp -- to get correct TZ, should this be localtimestamp?
+                                                  , return_date_after => systimestamp
+                                                  , next_run_date     => l_return_tstz
+                                                  );
+      l_return_tstz := l_return_tstz;
 
-
-      when flow_constants_pkg.gc_date_value_type_duration then 
-        return systimestamp + to_dsinterval( l_value );
-      when flow_constants_pkg.gc_date_value_type_oracle_scheduler then
-        return systimestamp; -- tbi
-      else
-        return systimestamp; -- tbi
-      end case;
-
-    when flow_constants_pkg.gc_expr_type_sql then
-      null;
-    when flow_constants_pkg.gc_expr_type_plsql_function_body then
-      null;
-    when flow_constants_pkg.gc_expr_type_plsql_expression then
-      null;
+    when l_expression_type = flow_constants_pkg.gc_expr_type_proc_var then
+      l_return_tstz := flow_proc_vars_int.get_var_tstz  ( pi_prcs_id    => pi_prcs_id
+                                                        , pi_var_name   => l_expression
+                                                        , pi_scope      => pi_scope
+                                                        );       
+  
+    when l_expression_type = flow_constants_pkg.gc_expr_type_sql then
+      l_result_rec := flow_util.exec_flows_sql 
+                      ( pi_prcs_id      => pi_prcs_id
+                      , pi_sbfl_id      => pi_sbfl_id
+                      , pi_sql_text     => l_expression
+                      , pi_result_type  => flow_constants_pkg.gc_prov_var_type_tstz
+                      , pi_scope        => pi_scope
+                      , pi_expr_type    => flow_constants_pkg.gc_expr_type_sql 
+                      );
+      l_return_tstz := l_result_rec.var_tstz;
+    when l_expression_type in ( flow_constants_pkg.gc_expr_type_plsql_function_body 
+                              , flow_constants_pkg.gc_expr_type_plsql_raw_function_body 
+                              , flow_constants_pkg.gc_expr_type_plsql_expression
+                              , flow_constants_pkg.gc_expr_type_plsql_raw_expression )   
+    then
+      l_result_rec := flow_util.exec_flows_plsql 
+                      ( pi_prcs_id      => pi_prcs_id
+                      , pi_sbfl_id      => pi_sbfl_id
+                      , pi_plsql_text   => l_expression
+                      , pi_result_type  => flow_constants_pkg.gc_prov_var_type_tstz
+                      , pi_scope        => pi_scope
+                      , pi_expr_type    => l_expression_type 
+                      );
+      l_return_tstz := l_result_rec.var_tstz;
     end case;
-
-    return systimestamp;
-  end get_due_date;
+    return l_return_tstz;
+  exception
+    when e_invalid_interval_spec then
+      apex_debug.info 
+      ( p_message => ' --- Error evaluating Due On.  Interval expression is invalid.  Interval: %0.'
+      , p0 => l_expression
+      );  
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'due-on-interval-error'
+      , p0 => l_expression
+      );  
+      -- $F4AMESSAGE 'due-on-interval-error' || 'Error evaluating Due On.  Interval expression is invalid.  Interval: %0.'  
+      return systimestamp;  
+    when others then
+      apex_debug.info 
+      ( p_message => ' --- Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp returned.'
+      , p0 => l_expression
+      );  
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'due-on-error'
+      , p0 => l_expression
+      );  
+      -- $F4AMESSAGE 'due-on-error' || 'Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp returned.'  
+      return systimestamp;  
+  end get_due_on;
 
   function get_priority
   ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type default null
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return flow_processes.prcs_priority%type
   is
     l_values                          apex_json.t_values;
+    l_result_rec                      flow_proc_vars_int.t_proc_var_value;
     l_expression_type                 flow_types_pkg.t_bpmn_attribute_vc2;
     l_expression                      flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority                        flow_processes.prcs_priority%type;
     e_param_proc_var_invalid_type     exception;
     e_param_expr_invalid_type         exception;
+    e_priority_invalid                exception;
+
   begin
     apex_json.parse ( p_source => pi_expr);
 
     l_expression_type  := apex_json.get_varchar2 ( p_path => 'expressionType');
-    l_expression       := apex_json.get_varchar2 ( p_path => 'expressionValue');
+    l_expression       := apex_json.get_varchar2 ( p_path => 'expression');
 
-    case l_expression_type 
-    when flow_constants_pkg.gc_expr_type_static then
-      return to_number (l_expression);
-    when flow_constants_pkg.gc_expr_type_proc_var then
+    case 
+    when l_expression_type = flow_constants_pkg.gc_expr_type_static then
+      flow_proc_vars_int.do_substitution 
+      ( pi_prcs_id   => pi_prcs_id
+      , pi_sbfl_id   => pi_sbfl_id
+      , pi_scope     => pi_scope
+      , pio_string   => l_expression
+      );
+      apex_debug.info (P_message => 'Process Priority Evaluation : %0 ', p0 => to_number (l_expression));
+      l_priority := to_number (l_expression);
+    when l_expression_type = flow_constants_pkg.gc_expr_type_proc_var then
       case flow_proc_vars_int.get_var_type ( pi_prcs_id   => pi_prcs_id
                                            , pi_var_name  => l_expression
                                            , pi_scope     => pi_scope
                                            )
       when flow_constants_pkg.gc_prov_var_type_varchar2 then
-        return to_number ( flow_proc_vars_int.get_var_vc2 ( pi_prcs_id   => pi_prcs_id
-                                                          , pi_scope     => pi_scope
-                                                          , pi_var_name  => l_expression
-                                                          ) );
+        l_priority :=  to_number ( flow_proc_vars_int.get_var_vc2 ( pi_prcs_id   => pi_prcs_id
+                                                                  , pi_scope     => pi_scope
+                                                                  , pi_var_name  => l_expression
+                                                                  ) );
       when flow_constants_pkg.gc_prov_var_type_number then
-        return flow_proc_vars_int.get_var_num ( pi_prcs_id   => pi_prcs_id
-                                              , pi_scope     => pi_scope
-                                              , pi_var_name  => l_expression
-                                              );
+        l_priority :=  flow_proc_vars_int.get_var_num ( pi_prcs_id   => pi_prcs_id
+                                                      , pi_scope     => pi_scope
+                                                      , pi_var_name  => l_expression
+                                                      );
       else
         raise e_param_proc_var_invalid_type;
       end case;
-    when flow_constants_pkg.gc_expr_type_sql then
-      return null; -- tbi
-    when flow_constants_pkg.gc_expr_type_plsql_expression then
-      return null; -- tbi
-    when flow_constants_pkg.gc_expr_type_plsql_expression then
-      return null; -- tbi
+    when l_expression_type = flow_constants_pkg.gc_expr_type_sql then
+      l_result_rec := flow_util.exec_flows_sql 
+                      ( pi_prcs_id      => pi_prcs_id
+                      , pi_sbfl_id      => pi_sbfl_id
+                      , pi_sql_text     => l_expression
+                      , pi_result_type  => flow_constants_pkg.gc_prov_var_type_number
+                      , pi_scope        => pi_scope
+                      , pi_expr_type    => flow_constants_pkg.gc_expr_type_sql 
+                      );
+      l_priority := l_result_rec.var_num;
+    when l_expression_type in ( flow_constants_pkg.gc_expr_type_plsql_expression 
+                              , flow_constants_pkg.gc_expr_type_plsql_raw_expression
+                              , flow_constants_pkg.gc_expr_type_plsql_function_body
+                              , flow_constants_pkg.gc_expr_type_plsql_raw_function_body) 
+    then
+      l_result_rec := flow_util.exec_flows_plsql 
+                      ( pi_prcs_id      => pi_prcs_id
+                      , pi_sbfl_id      => pi_sbfl_id
+                      , pi_plsql_text   => l_expression
+                      , pi_result_type  => flow_constants_pkg.gc_prov_var_type_number
+                      , pi_scope        => pi_scope
+                      , pi_expr_type    => l_expression_type 
+                      );
+      l_priority := l_result_rec.var_num;
     else
       raise e_param_expr_invalid_type;
     end case;
+    -- test priority is valid (1-5)
+    if l_priority not between 1 and 5 then
+      raise e_priority_invalid;
+    end if;
+    return l_priority;
   exception
+    when e_priority_invalid then
+      apex_debug.info 
+      ( p_message => ' --- Error evaluating Priority.  Priority be between 1 and 5.  Priority: %0'
+      , p0 => l_priority
+      );  
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'apex-task-priority-error'
+      , p0 => l_priority
+      );  
+      -- $F4AMESSAGE 'apex-task-priority-error' || 'Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.'    
     when others then -- tbi
       return null;
   end get_priority;
@@ -187,7 +246,7 @@ as
     apex_json.parse ( p_source => pi_expr);
 
     l_expression_type  := apex_json.get_varchar2 ( p_path => 'expressionType');
-    l_expression       := apex_json.get_varchar2 ( p_path => 'expressionValue');
+    l_expression       := apex_json.get_varchar2 ( p_path => 'expression');
 
    case 
     when l_expression_type = flow_constants_pkg.gc_expr_type_static then
@@ -222,13 +281,18 @@ as
       or l_expression_type = flow_constants_pkg.gc_expr_type_plsql_function_body
       or l_expression_type = flow_constants_pkg.gc_expr_type_plsql_raw_function_body
     then
-      return null; -- tbi
-
+      l_result_rec := flow_util.exec_flows_plsql 
+                      ( pi_prcs_id      => pi_prcs_id
+                      , pi_sbfl_id      => pi_sbfl_id
+                      , pi_plsql_text   => l_expression
+                      , pi_result_type  => flow_constants_pkg.gc_prov_var_type_varchar2
+                      , pi_scope        => pi_scope
+                      , pi_expr_type    => l_expression_type 
+                      );
+      l_return_value := l_result_rec.var_vc2;
     else
       raise e_param_expr_invalid_type;
     end case;
-
-    apex_debug.info (p_message => '  - SQL query result %0', p0 => l_return_value);
     return l_return_value;
   exception
     when others then -- tbi

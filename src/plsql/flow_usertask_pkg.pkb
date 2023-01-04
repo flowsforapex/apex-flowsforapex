@@ -90,8 +90,8 @@ as
   is 
     l_priority_json           flow_types_pkg.t_bpmn_attribute_vc2;
     l_priority                flow_subflows.sbfl_priority%type;
-    l_due_date_json           flow_types_pkg.t_bpmn_attribute_vc2;
-    l_due_date                flow_subflows.sbfl_due_on%type;
+    l_due_on_json             flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_on                  flow_subflows.sbfl_due_on%type;
     l_potential_users_json    flow_types_pkg.t_bpmn_attribute_vc2;
     l_potential_users         flow_subflows.sbfl_potential_users%type;
     l_potential_users_t       apex_t_varchar2;
@@ -108,12 +108,12 @@ as
     );
       -- get the userTask subtype  
     select objt.objt_attributes."apex"."priority"
-         , objt.objt_attributes."apex"."dueDate"
+         , objt.objt_attributes."apex"."dueOn"
          , objt.objt_attributes."apex"."potentialUsers"
          , objt.objt_attributes."apex"."potentialGroups"
          , objt.objt_attributes."apex"."excludedUsers"
       into l_priority_json
-         , l_due_date_json
+         , l_due_on_json
          , l_potential_users_json
          , l_potential_groups_json 
          , l_excluded_users_json
@@ -125,14 +125,16 @@ as
       if l_priority_json is not null then
         l_priority := flow_settings.get_priority 
                       ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
                       , pi_expr    => l_priority_json
                       , pi_scope   => p_sbfl_info.sbfl_scope
                       );
       end if;
-      if l_due_date_json is not null then 
-        l_due_date := flow_settings.get_due_date 
+      if l_due_on_json is not null then 
+        l_due_on   := flow_settings.get_due_on 
                       ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                      , pi_expr    => l_due_date_json
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_due_on_json
                       , pi_scope   => p_sbfl_info.sbfl_scope
                       );
       end if;
@@ -175,7 +177,7 @@ as
       update flow_subflows sbfl
          set sbfl.sbfl_last_update        = systimestamp
            , sbfl.sbfl_priority           = l_priority
-           , sbfl.sbfl_due_on             = l_due_date
+           , sbfl.sbfl_due_on             = l_due_on
            , sbfl.sbfl_reservation        = l_reservation
            , sbfl.sbfl_potential_users    = l_potential_users
            , sbfl.sbfl_potential_groups   = l_potential_groups
@@ -351,7 +353,7 @@ as
             , p0 => l_priority
             );  
             flow_errors.handle_instance_error
-            ( pi_prcs_id        => l_priority
+            ( pi_prcs_id        => l_prcs_id
             , pi_message_key    => 'apex-task-priority-error'
             , p0 => l_priority
             );  

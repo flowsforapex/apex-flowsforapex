@@ -10,7 +10,7 @@ as
 */
   function exec_flows_sql
   ( pi_prcs_id        flow_processes.prcs_id%type
-  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_sql_text       varchar2
   , pi_result_type    varchar2  
   , pi_scope          flow_subflows.sbfl_scope%type
@@ -19,7 +19,7 @@ as
 
   function exec_flows_plsql
   ( pi_prcs_id        flow_processes.prcs_id%type
-  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_plsql_text     varchar2
   , pi_result_type    varchar2  
   , pi_scope          flow_subflows.sbfl_scope%type
