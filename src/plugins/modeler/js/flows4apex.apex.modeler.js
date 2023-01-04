@@ -15,7 +15,9 @@
       this.propertiesPanelParent = this.regionId + "_properties";
 
       this.enabledModules = [
-        bpmnModeler.customModules.propertiesPanelModule,
+        bpmnModeler.customModules.BpmnPropertiesPanelModule,
+        bpmnModeler.customModules.BpmnPropertiesProviderModule,  
+        // bpmnModeler.customModules.propertiesPanelModule,
         bpmnModeler.customModules.propertiesProviderModule,
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
@@ -38,11 +40,11 @@
         bpmnlint: bpmnModeler.linting.apexLinting,
       };
 
-      this.bpmnRenderer = {
-        defaultFillColor: "var(--default-fill-color)",
-        defaultStrokeColor: "var(--default-stroke-color)",
-        defaultLabelColor: "var(--default-stroke-color)",
-      };
+    //   this.bpmnRenderer = {
+    //     defaultFillColor: "var(--default-fill-color)",
+    //     defaultStrokeColor: "var(--default-stroke-color)",
+    //     defaultLabelColor: "var(--default-stroke-color)",
+    //   };
 
       this.bpmnModeler$ = new bpmnModeler.Modeler( {
         container: "#" + this.canvasId,
@@ -57,8 +59,29 @@
 
       // prevent click events from bubbling up the dom
       $( "#" + this.modelerWrap ).on( "click", ( event ) => {
-        event.stopPropagation();
-        return false;
+          const input = event.target.tagName == 'INPUT' ? event.target :
+                        event.target.tagName == 'LABEL' ? document.getElementById(event.target.getAttribute('for')) :
+                        event.target.tagName == 'SPAN' ? event.target : 
+                        null;
+
+          if (input && input.type == 'checkbox') {
+            // allow checkbox
+          }
+          else if (input && input.classList.contains('bio-properties-panel-toggle-switch__slider')) {
+            // allow toggle switch
+          }
+          else {
+            event.stopPropagation();
+            return false;
+          }
+      } );
+
+      // prevent page submit + reload after button click
+      $( document ).on( "apexbeforepagesubmit", ( event ) => {
+        const blocking = ['bio-properties-panel-add-entry', 'bio-properties-panel-remove-entry'];
+        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
+          apex.event.gCancelFlag = true;
+        }
       } );
 
       // register custom changed handler with APEX
