@@ -22,6 +22,11 @@ as
   , pi_scope    in flow_subflows.sbfl_scope%type default 0
   ) return varchar2;
 
+  procedure process_apex_page_task
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  );
+  
   procedure process_apex_approval_task
   ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info

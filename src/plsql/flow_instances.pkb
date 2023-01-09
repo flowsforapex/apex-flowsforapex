@@ -238,6 +238,10 @@ as
     l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
     l_main_subflow          flow_types_pkg.t_subflow_context;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
+    l_priority_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority              flow_processes.prcs_priority%type;
+    l_due_on_json           flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_on                flow_processes.prcs_due_on%type;
   begin
     apex_debug.enter
     ('start_process'
@@ -278,6 +282,24 @@ as
         , p0 => p_process_id
         );
         -- $F4AMESSAGE 'start-multiple-already-running' || 'You tried to start a process (id %0) with multiple copies already running.' 
+    end;
+    begin
+      -- get instance scheduling information
+      select objt.objt_attributes."apex"."priority"
+           , objt.objt_attributes."apex"."dueOn"
+        into l_priority_json
+           , l_due_on_json
+        from flow_objects objt
+       where objt.objt_dgrm_id = l_dgrm_id
+         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+      ;
+      if l_priority_json is not null then
+        l_priority := flow_settings.get_priority ( pi_prcs_id => p_process_id, pi_expr => l_priority_json);
+      end if;
+      if l_due_on_json is not null then 
+        l_due_on   := flow_settings.get_due_on (pi_prcs_id => p_process_id, pi_expr => l_due_on_json);
+      end if;
+      apex_debug.info (p_message => 'Process Priority : %0  Due On : %1', p0 => l_priority, p1 => l_due_on );
     end;
     begin
       -- get the starting object 
@@ -321,6 +343,8 @@ as
                                                  , sys_context('userenv','os_user')
                                                  , sys_context('userenv','session_user')
                                                  )  
+         , prcs.prcs_priority       = l_priority
+         , prcs.prcs_due_on         = l_due_on
      where prcs.prcs_dgrm_id = l_dgrm_id
        and prcs.prcs_id = p_process_id
          ;    
@@ -652,6 +676,78 @@ as
 
     commit;
   end delete_process;
+
+  procedure set_priority
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_priority    in flow_processes.prcs_priority%type
+    )
+    is
+    begin
+      update flow_processes prcs
+      set prcs.prcs_priority = prcs_priority
+        , prcs.prcs_last_update = systimestamp
+        , prcs.prcs_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                              , sys_context('userenv','os_user')
+                                              , sys_context('userenv','session_user')
+                                              )  
+      where prcs.prcs_id = p_process_id;
+      -- log the priority change
+      flow_logging.log_instance_event
+      ( p_process_id => p_process_id
+      , p_event      => flow_constants_pkg.gc_prcs_event_priority_set
+      , p_comment    => 'Priority set to '||p_priority
+      );      
+    end set_priority;
+
+  function priority
+    ( p_process_id  in flow_processes.prcs_id%type
+    ) return flow_processes.prcs_priority%type
+    is
+      l_priority    flow_processes.prcs_priority%type;
+    begin
+      select prcs_priority
+        into l_priority
+        from flow_processes
+       where prcs_id = p_process_id;
+      return l_priority;
+    end priority;
+
+  procedure set_due_on
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_due_on      in flow_processes.prcs_due_on%type
+    )
+    is
+    begin
+      update flow_processes prcs
+      set prcs.prcs_due_on = prcs_due_on
+        , prcs.prcs_last_update = systimestamp
+        , prcs.prcs_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                              , sys_context('userenv','os_user')
+                                              , sys_context('userenv','session_user')
+                                              )  
+      where prcs.prcs_id = p_process_id;
+      -- log the priority change
+      flow_logging.log_instance_event
+      ( p_process_id => p_process_id
+      , p_event      => flow_constants_pkg.gc_prcs_event_due_on_set
+      , p_comment    => 'Instance Due On set to '||to_char(p_due_on, flow_constants_pkg.gc_prov_default_tstz_format)
+      );  
+  end set_due_on;
+
+  function due_on
+    ( p_process_id  in flow_processes.prcs_id%type
+    ) return flow_processes.prcs_due_on%type
+    is
+      l_due_on    flow_processes.prcs_due_on%type;
+    begin
+      select prcs_due_on
+        into l_due_on
+        from flow_processes
+       where prcs_id = p_process_id;
+      return l_due_on;
+    end due_on;
 
 end flow_instances;
 /

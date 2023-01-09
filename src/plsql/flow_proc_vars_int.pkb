@@ -288,6 +288,149 @@ exception
     -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1 in scope %2.'
 end set_var;
 
+procedure set_var
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_tstz_value in flow_process_variables.prov_var_tstz%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
+, pi_scope in flow_process_variables.prov_scope%type default 0
+)
+is 
+  l_action  varchar2(20);
+begin 
+  begin
+      insert into flow_process_variables 
+      ( prov_prcs_id
+      , prov_scope
+      , prov_var_name
+      , prov_var_type
+      , prov_var_tstz
+      ) values
+      ( pi_prcs_id
+      , pi_scope
+      , pi_var_name
+      , flow_constants_pkg.gc_prov_var_type_tstz
+      , pi_tstz_value
+      );
+  exception
+    when dup_val_on_index then
+      l_action := 'var-update-error';
+      update flow_process_variables prov 
+         set prov.prov_var_tstz         = pi_tstz_value
+       where prov.prov_prcs_id          = pi_prcs_id
+         and prov.prov_scope            = pi_scope
+         and upper(prov.prov_var_name)  = upper(pi_var_name)
+         and prov.prov_var_type         = flow_constants_pkg.gc_prov_var_type_date
+           ;
+    when others
+    then
+      l_action := 'var-set-error';
+      raise;
+  end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_scope             => pi_scope
+  , p_var_name          => pi_var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => flow_constants_pkg.gc_prov_var_type_tstz 
+  , p_var_tstz          => pi_tstz_value
+  );
+exception
+  when others then
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => l_action         
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
+    , p2 => pi_scope
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1 in scope %2.'
+    -- $F4AMESSAGE 'var-update-error' || 'Error updating process variable %0 for process id %1 in scope %2.'   
+end set_var;
+
+procedure set_var
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_value in t_proc_var_value
+, pi_sbfl_id in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set in flow_object_expressions.expr_set%type default null
+, pi_scope in flow_process_variables.prov_scope%type default 0
+)
+is 
+  l_action  varchar2(20);
+begin 
+  begin
+      insert into flow_process_variables 
+      ( prov_prcs_id
+      , prov_scope
+      , prov_var_name
+      , prov_var_type
+      , prov_var_vc2
+      , prov_var_num
+      , prov_var_date
+      , prov_var_tstz
+      , prov_var_clob
+      ) values
+      ( pi_prcs_id
+      , pi_scope
+      , pi_var_value.var_name
+      , pi_var_value.var_type
+      , pi_var_value.var_vc2
+      , pi_var_value.var_num
+      , pi_var_value.var_date
+      , pi_var_value.var_tstz
+      , pi_var_value.var_clob
+      );
+  exception
+    when dup_val_on_index then
+      update flow_process_variables prov 
+         set prov.prov_var_type          = pi_var_value.var_type
+           , prov.prov_var_vc2           = pi_var_value.var_vc2
+           , prov.prov_var_num           = pi_var_value.var_num
+           , prov.prov_var_date          = pi_var_value.var_date
+           , prov.prov_var_clob          = pi_var_value.var_clob
+           , prov.prov_var_tstz          = pi_var_value.var_tstz
+       where prov.prov_prcs_id           = pi_prcs_id
+         and prov.prov_scope             = pi_scope
+         and upper(prov.prov_var_name)   = upper(pi_var_value.var_name)
+         and prov.prov_var_type          = flow_constants_pkg.gc_prov_var_type_clob
+           ;
+    when others then
+      l_action := 'var-set-error';
+      raise;
+  end;
+  flow_logging.log_variable_event
+  ( p_process_id        => pi_prcs_id
+  , p_scope             => pi_scope
+  , p_var_name          => pi_var_value.var_name
+  , p_objt_bpmn_id      => pi_objt_bpmn_id
+  , p_subflow_id        => pi_sbfl_id
+  , p_expr_set          => pi_expr_set
+  , p_var_type          => pi_var_value.var_type 
+  , p_var_vc2           => pi_var_value.var_vc2
+  , p_var_num           => pi_var_value.var_num
+  , p_var_date          => pi_var_value.var_date
+  , p_var_clob          => pi_var_value.var_clob
+  , p_var_tstz            => pi_var_value.var_tstz
+  );
+exception
+  when others then
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => l_action         
+    , p0 => pi_var_value.var_name
+    , p1 => pi_prcs_id
+    , p2 => pi_scope
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1 in scope %2.'
+end set_var;
+
 -- getters return
 
 function get_var_vc2
@@ -421,6 +564,79 @@ exception
       return null;
     end if;
 end get_var_clob;
+
+function get_var_tstz
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_tstz%type
+is 
+   po_tstz_value  flow_process_variables.prov_var_tstz%type;
+begin 
+   select prov.prov_var_tstz
+     into po_tstz_value
+     from flow_process_variables prov
+    where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
+      and upper(prov.prov_var_name) = upper(pi_var_name)
+        ;
+   return po_tstz_value;
+exception
+  when no_data_found then
+    if pi_exception_on_null then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-get-error'      
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
+      , p2 => pi_scope
+      );
+      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+    else
+      return null;
+    end if;
+end get_var_tstz;
+
+
+function get_var_value
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null in boolean default false
+) return t_proc_var_value
+is 
+   l_value_rec  t_proc_var_value;
+begin 
+   select prov.prov_var_name
+        , prov.prov_var_type
+        , prov.prov_var_vc2
+        , prov.prov_var_num
+        , prov.prov_var_date
+        , prov.prov_var_clob
+        , prov.prov_var_tstz
+     into l_value_rec
+     from flow_process_variables prov
+    where prov.prov_prcs_id         = pi_prcs_id
+      and prov.prov_scope           = pi_scope
+      and upper(prov.prov_var_name) = upper(pi_var_name)
+        ;
+   return l_value_rec;
+exception
+  when no_data_found then
+    if pi_exception_on_null then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'var-get-error'      
+      , p0 => pi_var_name
+      , p1 => pi_prcs_id
+      , p2 => pi_scope
+      );
+      -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+    else
+      return null;
+    end if;
+end get_var_value;
 
 -- get type of a variable
 
@@ -610,6 +826,11 @@ end delete_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_process_priority then
+            pio_string := replace ( pio_string
+                                  , get_replacement_pattern( l_f4a_substitutions(i) )
+                                  , flow_instances.priority (p_process_id => pi_prcs_id)
+                                  );
           else
             -- own implementation of get_vc_var
             -- Reason:
@@ -637,7 +858,7 @@ end delete_var;
   procedure do_substitution
   (
     pi_prcs_id  in flow_processes.prcs_id%type
-  , pi_sbfl_id  in flow_subflows.sbfl_id%type
+  , pi_sbfl_id  in flow_subflows.sbfl_id%type default null
   , pi_scope    in flow_subflows.sbfl_scope%type
   , pi_step_key in flow_subflows.sbfl_step_key%type default null
   , pio_string  in out nocopy clob
@@ -661,7 +882,7 @@ end delete_var;
     l_f4a_substitutions :=
       apex_string.grep
       (
-        p_str            => pio_string
+        p_str           => pio_string
       , p_pattern       => flow_constants_pkg.gc_substitution_pattern
       , p_modifier      => 'i'
       , p_subexpression => '1'
@@ -677,6 +898,11 @@ end delete_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_process_priority then
+            pio_string := replace ( pio_string
+                                  , get_replacement_pattern( l_f4a_substitutions(i) )
+                                  , flow_instances.priority (p_process_id => pi_prcs_id)
+                                  );
           else
             -- own implementation of get_vc_var
             -- Reason:
@@ -701,6 +927,7 @@ end delete_var;
     end if;
   end do_substitution;
 
+/*
   procedure get_var_as_parameter
   (
     pi_prcs_id            in flow_process_variables.prov_prcs_id%type
@@ -717,6 +944,7 @@ end delete_var;
              when flow_constants_pkg.gc_prov_var_type_number   then 2
              when flow_constants_pkg.gc_prov_var_type_date     then 3
              when flow_constants_pkg.gc_prov_var_type_clob     then 11
+             when flow_constants_pkg.gc_prov_var_type_tstz     then 5
              else 1
            end as data_type
          , prov.prov_var_vc2
@@ -746,6 +974,60 @@ end delete_var;
         );
       end if;
   end get_var_as_parameter;
+  */
+
+  function get_var_as_parameter
+  (
+    pi_prcs_id            in flow_process_variables.prov_prcs_id%type
+  , pi_var_name           in flow_process_variables.prov_var_name%type
+  , pi_scope              in flow_process_variables.prov_scope%type
+  , pi_exception_on_null  in boolean default true
+  ) return apex_exec.t_parameter 
+  is 
+    l_parameter          apex_exec.t_parameter := apex_exec.t_parameter();
+  begin
+    begin
+      select case prov.prov_var_type
+               when flow_constants_pkg.gc_prov_var_type_varchar2 then 1
+               when flow_constants_pkg.gc_prov_var_type_number   then 2
+               when flow_constants_pkg.gc_prov_var_type_date     then 3
+               when flow_constants_pkg.gc_prov_var_type_tstz     then 5
+               when flow_constants_pkg.gc_prov_var_type_clob     then 11
+               else 1
+             end as data_type
+           , prov.prov_var_vc2
+           , prov.prov_var_num
+           , prov.prov_var_date
+           , prov.prov_var_tstz
+           , prov.prov_var_clob
+           , upper(prov.prov_var_name)
+        into l_parameter.data_type
+           , l_parameter.value.varchar2_value
+           , l_parameter.value.number_value
+           , l_parameter.value.date_value
+           , l_parameter.value.timestamp_tz_value
+           , l_parameter.value.clob_value
+           , l_parameter.name
+        from flow_process_variables prov
+       where prov.prov_prcs_id    = pi_prcs_id
+         and prov.prov_scope      = pi_scope
+         and upper(prov_var_name) = upper(pi_var_name)
+      ;
+    exception
+      when no_data_found then
+        if pi_exception_on_null then
+          flow_errors.handle_instance_error
+          ( 
+            pi_prcs_id     => pi_prcs_id
+          , pi_message_key => 'var-get-error'      
+          , p0             => pi_var_name
+          , p1             => pi_prcs_id
+          , p2             => pi_scope
+          );
+        end if;
+    end;
+    return l_parameter;
+  end get_var_as_parameter;
 
   function get_var_as_vc2
   (
@@ -761,6 +1043,7 @@ end delete_var;
              when flow_constants_pkg.gc_prov_var_type_varchar2 then prov.prov_var_vc2
              when flow_constants_pkg.gc_prov_var_type_number   then to_char(prov.prov_var_num)
              when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date, flow_constants_pkg.gc_prov_default_date_format)
+             when flow_constants_pkg.gc_prov_var_type_tstz     then to_char(prov.prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format)
              else null
            end as prov_var_value
       into l_return
@@ -786,6 +1069,129 @@ end delete_var;
         return null;
       end if;
   end get_var_as_vc2;
+
+  function get_bind_list
+  (
+    pi_expr in clob
+  , pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  , pi_scope    in  flow_subflows.sbfl_scope%type
+  ) return apex_plugin_util.t_bind_list
+  is
+    l_bind                  apex_plugin_util.t_bind;
+    l_bind_list             apex_plugin_util.t_bind_list;
+    l_var_list              apex_t_varchar2 := apex_t_varchar2();
+    l_indx                  pls_integer;
+  begin
+    l_bind_list := apex_plugin_util.c_empty_bind_list;
+    l_var_list  := apex_string.grep 
+                ( p_str => pi_expr
+                , p_pattern =>  flow_constants_pkg.gc_bind_pattern
+                , p_modifier => 'i'
+                , p_subexpression => '1'
+                );
+    if l_var_list is not null then
+      l_indx := l_var_list.first;
+      -- create bind list and get bind values
+      apex_debug.info('Expression : ' ||pi_expr|| ' Contains Bind Tokens : '|| apex_string.join(l_var_list, ':'));
+      while l_indx is not null 
+      loop
+        l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
+        case upper(l_var_list(l_indx))
+          when flow_constants_pkg.gc_substitution_process_id then
+            l_bind.value := pi_prcs_id;
+          when flow_constants_pkg.gc_substitution_subflow_id then
+            l_bind.value := pi_sbfl_id;
+          when flow_constants_pkg.gc_substitution_scope then
+            l_bind.value := pi_scope;   
+          when flow_constants_pkg.gc_substitution_process_priority then
+            l_bind.value := flow_instances.priority (p_process_id => pi_prcs_id);   
+          else  
+            l_bind.value := get_var_as_vc2
+                          ( pi_prcs_id            => pi_prcs_id
+                          , pi_var_name           => l_var_list(l_indx)
+                          , pi_scope              => pi_scope
+                          , pi_exception_on_null  => false
+                          );
+          end case;
+
+        apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
+          , p0 => l_bind.name
+          , p1 => l_bind.value
+          );                              
+        l_bind_list(l_indx) := l_bind;
+        l_indx := l_var_list.next (l_indx);
+      end loop; 
+    end if;
+    return l_bind_list;
+  end get_bind_list; 
+
+  function get_parameter_list
+  (
+    pi_expr     in  varchar2
+  , pi_prcs_id  in  flow_processes.prcs_id%type
+  , pi_sbfl_id  in  flow_subflows.sbfl_id%type
+  , pi_scope    in  flow_subflows.sbfl_scope%type
+  ) return apex_exec.t_parameters
+  is
+    l_parameter             apex_exec.t_parameter;
+    l_parameters            apex_exec.t_parameters;
+    l_var_list              apex_t_varchar2 := apex_t_varchar2();
+    l_indx                  pls_integer;
+  begin
+    l_parameters := apex_exec.t_parameters();
+    apex_debug.info('t_parameters initialised');
+    l_var_list  := apex_string.grep 
+                ( p_str => pi_expr
+                , p_pattern =>  flow_constants_pkg.gc_bind_pattern
+                , p_modifier => 'i'
+                , p_subexpression => '1'
+                );
+    if l_var_list is not null then
+      l_indx := l_var_list.first;
+      -- create bind list and get bind values
+      apex_debug.info('Expression : ' ||pi_expr|| ' Contains Bind Tokens : '|| apex_string.join(l_var_list, ':'));
+      while l_indx is not null 
+      loop
+        l_parameter.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
+        case upper(l_var_list(l_indx))
+          when flow_constants_pkg.gc_substitution_process_id then
+            l_parameter.value.number_value  := pi_prcs_id;
+            l_parameter.data_type           := apex_exec.c_data_type_number;
+          when flow_constants_pkg.gc_substitution_subflow_id then
+            l_parameter.value.number_value  := pi_sbfl_id;
+            l_parameter.data_type           := apex_exec.c_data_type_number;
+          when flow_constants_pkg.gc_substitution_scope then
+            l_parameter.value.number_value  := pi_scope;
+            l_parameter.data_type           := apex_exec.c_data_type_number;      
+          when flow_constants_pkg.gc_substitution_process_priority then
+            l_parameter.value.number_value  := flow_instances.priority (p_process_id => pi_prcs_id);
+            l_parameter.data_type           := apex_exec.c_data_type_number;     
+          else  
+            l_parameter := get_var_as_parameter
+                          ( pi_prcs_id            => pi_prcs_id
+                          , pi_var_name           => l_var_list(l_indx)
+                          , pi_scope              => pi_scope
+                          , pi_exception_on_null  => false
+                          );
+            l_parameter.name := flow_constants_pkg.gc_substitution_flow_identifier||l_parameter.name;
+          end case;
+
+        apex_debug.info (p_message => 'bind variables found : %0 data type: %2 numvalue : %1  dateval : %3 vc2val : %4'
+          , p0 => l_parameter.name
+          , p1 => to_char(l_parameter.value.number_value)
+          , p2 => l_parameter.data_type
+          , p3 => to_char(l_parameter.value.date_value)
+          , p4 => l_parameter.value.varchar2_value
+          );                              
+        l_parameters(l_indx) := l_parameter;
+        l_indx := l_var_list.next (l_indx);
+      end loop; 
+    else
+      apex_debug.info('Parameter list is empty');
+    end if;
+    return l_parameters;
+  end get_parameter_list; 
 
 end flow_proc_vars_int;
 /

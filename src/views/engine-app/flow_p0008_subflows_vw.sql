@@ -29,9 +29,14 @@ as
              when 'waiting for event' then 'fa fa-hand-stop-o'
              when 'waiting for approval' then 'fa fa-question-square-o'
          end as sbfl_status_icon
+       , sbfl.sbfl_priority
+       , sbfl.sbfl_due_on
        , sbfl.timr_start_on at time zone sessiontimezone as sbfl_timr_start_on
        , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
+       , sbfl.sbfl_potential_users
+       , sbfl.sbfl_potential_groups
+       , sbfl.sbfl_excluded_users
        , null as actions   
        , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-key="'|| sbfl.sbfl_step_key ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
         , case 

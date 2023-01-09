@@ -41,6 +41,7 @@ as
   , p_var_num           in flow_process_variables.prov_var_num%type default null
   , p_var_date          in flow_process_variables.prov_var_date%type default null
   , p_var_clob          in flow_process_variables.prov_var_clob%type default null
+  , p_var_tstz          in flow_process_variables.prov_var_tstz%type default null
   );
 
 end flow_logging;
