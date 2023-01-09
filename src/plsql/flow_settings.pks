@@ -45,3 +45,4 @@ as
   ) return   flow_types_pkg.t_bpmn_attribute_vc2;
 
 end flow_settings;
+/
