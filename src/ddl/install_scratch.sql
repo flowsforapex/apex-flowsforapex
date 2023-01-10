@@ -92,9 +92,13 @@ CREATE TABLE flow_processes (
     prcs_status         VARCHAR2(20 CHAR) NOT NULL,
     prcs_init_ts        TIMESTAMP WITH TIME ZONE NOT NULL,
     prcs_init_by        VARCHAR2(255 CHAR),
+    prcs_complete_ts    TIMESTAMP WITH TIME ZONE,  
     prcs_last_update    TIMESTAMP WITH TIME ZONE,
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
+
+comment on column flow_processes.prcs_complete_ts is 
+ 'Timestamp for process end when instance is in states "completed" or "terminated".';
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
 
