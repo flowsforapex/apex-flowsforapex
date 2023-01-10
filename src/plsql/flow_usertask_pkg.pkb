@@ -83,6 +83,115 @@ as
     ;
   end get_url;
 
+  procedure process_apex_page_task
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  )
+  is 
+    l_priority_json           flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority                flow_subflows.sbfl_priority%type;
+    l_due_on_json             flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_on                  flow_subflows.sbfl_due_on%type;
+    l_potential_users_json    flow_types_pkg.t_bpmn_attribute_vc2;
+    l_potential_users         flow_subflows.sbfl_potential_users%type;
+    l_potential_users_t       apex_t_varchar2;
+    l_potential_groups_json   flow_types_pkg.t_bpmn_attribute_vc2;
+    l_potential_groups        flow_subflows.sbfl_potential_groups%type;
+    l_excluded_users_json     flow_types_pkg.t_bpmn_attribute_vc2;
+    l_excluded_users          flow_subflows.sbfl_excluded_users%type;
+    l_reservation             flow_subflows.sbfl_reservation%type;
+  begin
+    apex_debug.enter 
+    ( 'process_APEX_page_task'
+    , 'p_step_info.target_objt_tag'   , p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_subtag', p_step_info.target_objt_subtag 
+    );
+      -- get the userTask subtype  
+    select objt.objt_attributes."apex"."priority"
+         , objt.objt_attributes."apex"."dueOn"
+         , objt.objt_attributes."apex"."potentialUsers"
+         , objt.objt_attributes."apex"."potentialGroups"
+         , objt.objt_attributes."apex"."excludedUsers"
+      into l_priority_json
+         , l_due_on_json
+         , l_potential_users_json
+         , l_potential_groups_json 
+         , l_excluded_users_json
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_step_info.target_objt_ref
+       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+       ;
+
+      if l_priority_json is not null then
+        l_priority := flow_settings.get_priority 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_priority_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      if l_due_on_json is not null then 
+        l_due_on   := flow_settings.get_due_on 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_due_on_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+
+      if l_potential_groups_json is not null then 
+        l_potential_groups := flow_settings.get_potential_groups 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_potential_groups_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      if l_excluded_users_json is not null then 
+        l_excluded_users := flow_settings.get_excluded_users 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_excluded_users_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      if l_potential_users_json is not null then 
+        l_potential_users := flow_settings.get_potential_users 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_potential_users_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+        -- check if only 1 potential user & if so, auto-reserve
+        if l_potential_groups is null and l_potential_users <> l_excluded_users then
+          l_potential_users_t := apex_string.split ( p_str => l_potential_users, p_sep => ':');
+          if l_potential_users_t is not null then
+            if l_potential_users_t.count = 1 then
+              -- only 1 potential user so auto-reserve
+              l_reservation := l_potential_users_t(1);
+            end if;
+          end if;
+        end if;       
+      end if;
+
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update        = systimestamp
+           , sbfl.sbfl_priority           = l_priority
+           , sbfl.sbfl_due_on             = l_due_on
+           , sbfl.sbfl_reservation        = l_reservation
+           , sbfl.sbfl_potential_users    = l_potential_users
+           , sbfl.sbfl_potential_groups   = l_potential_groups
+           , sbfl.sbfl_excluded_users     = l_excluded_users
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
+         and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
+      ;
+  end process_apex_page_task;
+      
+
   procedure process_apex_approval_task
   ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
@@ -244,7 +353,7 @@ as
             , p0 => l_priority
             );  
             flow_errors.handle_instance_error
-            ( pi_prcs_id        => l_priority
+            ( pi_prcs_id        => l_prcs_id
             , pi_message_key    => 'apex-task-priority-error'
             , p0 => l_priority
             );  

@@ -9,7 +9,7 @@
 */
 create or replace package flow_instances
   authid definer
-  accessible by (flow_api_pkg, flow_engine)
+  accessible by (flow_api_pkg, flow_engine, flow_proc_vars_int)
 as
 
   function create_process
@@ -37,6 +37,28 @@ as
       p_process_id  in flow_processes.prcs_id%type
     , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     );
+
+  procedure set_priority
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_priority    in flow_processes.prcs_priority%type
+    );
+
+  function priority
+    ( p_process_id  in flow_processes.prcs_id%type
+    ) return flow_processes.prcs_priority%type
+    ;
+
+  procedure set_due_on
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_due_on      in flow_processes.prcs_due_on%type
+    );
+
+  function due_on
+    ( p_process_id  in flow_processes.prcs_id%type
+    ) return flow_processes.prcs_due_on%type
+    ;
 
 end flow_instances;
 /

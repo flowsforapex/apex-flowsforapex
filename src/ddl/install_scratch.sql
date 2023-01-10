@@ -93,6 +93,8 @@ CREATE TABLE flow_processes (
     prcs_init_ts        TIMESTAMP WITH TIME ZONE NOT NULL,
     prcs_init_by        VARCHAR2(255 CHAR),
     prcs_complete_ts    TIMESTAMP WITH TIME ZONE,  
+    prcs_due_on         TIMESTAMP WITH TIME ZONE,
+    prcs_priority       NUMBER,
     prcs_last_update    TIMESTAMP WITH TIME ZONE,
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
@@ -128,6 +130,8 @@ CREATE TABLE flow_subflows (
     sbfl_last_completed   VARCHAR2(50 CHAR),
     sbfl_current          VARCHAR2(50 CHAR),
     sbfl_step_key         VARCHAR2(20 CHAR), /*make not null before shipping*/
+    sbfl_due_on           TIMESTAMP WITH TIME ZONE,
+    sbfl_priority         NUMBER,
     sbfl_status           VARCHAR2(20 CHAR),
     sbfl_became_current   TIMESTAMP WITH TIME ZONE,
     sbfl_work_started     TIMESTAMP WITH TIME ZONE,
@@ -135,6 +139,9 @@ CREATE TABLE flow_subflows (
     sbfl_lane             VARCHAR2(50 CHAR),
     sbfl_lane_name        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
     sbfl_reservation      VARCHAR2(255 CHAR),
+    sbfl_potential_users  VARCHAR2(4000 CHAR),
+    sbfl_potential_groups VARCHAR2(4000 CHAR),
+    sbfl_excluded_users   VARCHAR2(4000 CHAR),
     sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL,
     sbfl_last_update_by   VARCHAR2(255 CHAR)
 );
@@ -337,15 +344,16 @@ ALTER TABLE flow_timers
 -- Additional Objects not yet engineered in data modeler
 
 create table flow_process_variables
-( prov_prcs_id number not null
-, prov_scope number not null
-, prov_var_name varchar2(50 char) not null
-, prov_var_type varchar2(50 char) not null 
-, prov_var_vc2 varchar2(4000 char)
-, prov_var_num number
-, prov_var_date date
-, prov_var_clob clob
-, prov_var_name_uc varchar2(50 char) generated always as ( upper(prov_var_name) )
+( prov_prcs_id      number not null
+, prov_scope        number not null
+, prov_var_name     varchar2(50 char) not null
+, prov_var_type     varchar2(50 char) not null 
+, prov_var_vc2      varchar2(4000 char)
+, prov_var_num      number
+, prov_var_date     date
+, prov_var_tstz     timestamp with time zone
+, prov_var_clob     clob
+, prov_var_name_uc  varchar2(50 char) generated always as ( upper(prov_var_name) )
 );
 
 alter table flow_process_variables add constraint prov_pk primary key (prov_prcs_id, prov_scope, prov_var_name_uc);
@@ -422,6 +430,8 @@ create table flow_step_event_log
 , lgsf_started 			    TIMESTAMP WITH TIME ZONE
 , lgsf_completed 			TIMESTAMP WITH TIME ZONE 
 , lgsf_reservation		    VARCHAR2(255 char)
+, lgsf_due_on               TIMESTAMP WITH TIME ZONE 
+, lgsf_priority             NUMBER
 , lgsf_user				    VARCHAR2(255 char)	
 , lgsf_comment         	    VARCHAR2(2000 CHAR)
 );
@@ -440,6 +450,7 @@ create table flow_variable_event_log
 , lgvr_var_vc2 			    varchar2(4000 char)
 , lgvr_var_num 			    number
 , lgvr_var_date 			date
+, lgvr_var_tstz 			timestamp with time zone
 , lgvr_var_clob 			clob
 );
 

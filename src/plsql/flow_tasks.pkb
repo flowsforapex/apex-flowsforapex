@@ -123,7 +123,11 @@ create or replace package body flow_tasks as
     , p_step_info     in flow_types_pkg.flow_step_info
     )
   is 
-    l_usertask_type flow_types_pkg.t_bpmn_attribute_vc2;
+    l_usertask_type         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority              flow_subflows.sbfl_priority%type;
+    l_due_on_json         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_on              flow_subflows.sbfl_due_on%type;
   begin
   -- current implementation is limited to two userTask types, which are:
   --   - to run a user defined APEX page via the Task Inbox View
@@ -146,14 +150,18 @@ create or replace package body flow_tasks as
      where objt.objt_bpmn_id = p_step_info.target_objt_ref
        and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
        ;
-       
+
     case l_usertask_type
       when flow_constants_pkg.gc_apex_usertask_apex_approval then
        flow_usertask_pkg.process_apex_approval_task
        ( p_sbfl_info => p_sbfl_info
        , p_step_info => p_step_info
        );
-      -- No additional action required for other task types
+      when flow_constants_pkg.gc_apex_usertask_apex_page then
+       flow_usertask_pkg.process_apex_page_task
+       ( p_sbfl_info => p_sbfl_info
+       , p_step_info => p_step_info
+       );
       else
         null;
     end case;

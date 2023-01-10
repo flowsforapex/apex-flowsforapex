@@ -9,7 +9,9 @@ as
         , prcs_dgrm_category
         , prcs_status
         , prcs_dgrm_status_icon
+        , prcs_priority
         , prcs_status_icon
+        , prcs_due_on
         , prcs_init_date
         , prcs_last_update
         , prcs_business_ref
@@ -28,8 +30,10 @@ as
                   when 'deprecated' then 'fa fa-ban'
                   when 'archived' then 'fa fa-archive'
                 end as prcs_dgrm_status_icon
+                 , prcs_priority
                  , dgrm_category as prcs_dgrm_category
                  , prcs_status
+                 , prcs_due_on at time zone sessiontimezone as prcs_due_on
                  , prcs_init_ts at time zone sessiontimezone as prcs_init_date
                  , prcs_last_update at time zone sessiontimezone as prcs_last_update
                  , prcs_business_ref

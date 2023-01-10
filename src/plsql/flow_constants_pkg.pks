@@ -93,7 +93,7 @@ as
   gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'request';
   gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'cache';
 
-  gc_apex_usertask_page_items          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
+  gc_apex_usertask_page_items         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
   gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemName';
   gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemValue';
 
@@ -173,6 +173,10 @@ as
   gc_substitution_process_id          constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_ID';
   gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
   gc_substitution_step_key            constant flow_types_pkg.t_bpmn_attributes_key := 'STEP_KEY';
+  gc_substitution_scope               constant flow_types_pkg.t_bpmn_attributes_key := 'SCOPE';
+  gc_substitution_process_priority    constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_PRIORITY';
+  
+
   gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$([a-zA-Z0-9:\_\-]*)' || gc_substitution_postfix;
   gc_bind_prefix                      constant flow_types_pkg.t_single_vc2          := ':';
   gc_bind_pattern                     constant flow_types_pkg.t_bpmn_attributes_key := gc_bind_prefix || 'F4A\$([a-zA-Z0-9:\_\-]*)';
@@ -205,17 +209,19 @@ as
   gc_prcs_status_error                constant  varchar2(20 char) := 'error';
 
   -- Process Instance Events
-  gc_prcs_event_created              constant  varchar2(20 char) := gc_prcs_status_created;
-  gc_prcs_event_started              constant  varchar2(20 char) := 'started';
-  gc_prcs_event_completed            constant  varchar2(20 char) := gc_prcs_status_completed;
-  gc_prcs_event_terminated           constant  varchar2(20 char) := gc_prcs_status_terminated;
-  gc_prcs_event_reset                constant  varchar2(20 char) := 'reset';
-  gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
-  gc_prcs_event_restart_step         constant  varchar2(20 char) := 'restart step';
-  gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
-  gc_prcs_event_rescheduled          constant  varchar2(20 char) := 'rescheduled';
-  gc_prcs_event_enter_call           constant  varchar2(20 char) := 'start called model';
-  gc_prcs_event_leave_call           constant  varchar2(20 char) := 'finish called model';
+  gc_prcs_event_created               constant  varchar2(20 char) := gc_prcs_status_created;
+  gc_prcs_event_started               constant  varchar2(20 char) := 'started';
+  gc_prcs_event_completed             constant  varchar2(20 char) := gc_prcs_status_completed;
+  gc_prcs_event_terminated            constant  varchar2(20 char) := gc_prcs_status_terminated;
+  gc_prcs_event_reset                 constant  varchar2(20 char) := 'reset';
+  gc_prcs_event_error                 constant  varchar2(20 char) := gc_prcs_status_error;
+  gc_prcs_event_restart_step          constant  varchar2(20 char) := 'restart step';
+  gc_prcs_event_deleted               constant  varchar2(20 char) := 'deleted';
+  gc_prcs_event_rescheduled           constant  varchar2(20 char) := 'rescheduled';
+  gc_prcs_event_enter_call            constant  varchar2(20 char) := 'start called model';
+  gc_prcs_event_leave_call            constant  varchar2(20 char) := 'finish called model';
+  gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
+  gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
 
   -- Process Variable Datatypes
 
@@ -223,8 +229,10 @@ as
   gc_prov_var_type_date               constant  varchar2(50 char) := 'DATE';
   gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
   gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
+  gc_prov_var_type_tstz               constant  varchar2(50 char) := 'TIMESTAMP WITH TIME ZONE';
 
   gc_prov_default_date_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS';
+  gc_prov_default_tstz_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS TZR';
 
   -- Standard Process Variables
 
@@ -238,13 +246,21 @@ as
   -- Process Variable and Gateway Routing Variable Expression Types
   gc_apex_expression constant flow_types_pkg.t_bpmn_attribute_vc2 := 'conditionExpression';
 
-  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'static';
-  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'processVariable';
-  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'item';
-  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
-  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'sqlQueryList';
-  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
-  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
+  gc_expr_type_static                   constant flow_types_pkg.t_expr_type := 'static';
+  gc_expr_type_proc_var                 constant flow_types_pkg.t_expr_type := 'processVariable';
+  gc_expr_type_item                     constant flow_types_pkg.t_expr_type := 'item';
+  gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
+  gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
+  gc_expr_type_plsql_function_body      constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';  -- vc2 typed functionbody (e.g., date returns vc2)
+  gc_expr_type_plsql_expression         constant flow_types_pkg.t_expr_type := 'plsqlExpression';    -- vc2 typed expression  (e.g., date returns vc2)
+  gc_expr_type_plsql_raw_function_body  constant flow_types_pkg.t_expr_type := 'plsqlRawFunctionBody';  -- raw functionbody  (e.g., date returns date)
+  gc_expr_type_plsql_raw_expression     constant flow_types_pkg.t_expr_type := 'plsqlRawExpression';    -- raw expression  (e.g., date returns date)
+
+
+  gc_date_value_type_date             constant flow_types_pkg.t_expr_type := 'date';
+  gc_date_value_type_time_of_day      constant flow_types_pkg.t_expr_type := 'timeOfDay';
+  gc_date_value_type_duration         constant flow_types_pkg.t_expr_type := 'duration';
+  gc_date_value_type_oracle_scheduler constant flow_types_pkg.t_expr_type := 'oracleScheduler';
 
 -- Process Variable Expression sets and CallActivity in-Out sets
   gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';

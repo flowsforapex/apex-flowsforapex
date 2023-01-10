@@ -1,8 +1,6 @@
 create or replace package flow_api_pkg
-  authid definer
-as
-
-/* Flows for APEX - flow_api_pkg.pks
+   authid definer as
+ /* Flows for APEX - flow_api_pkg.pks
 --
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG. 2020-22
@@ -10,8 +8,7 @@ as
 -- Created    20-Jun-2020   Moritz Klein, MT AG 
 -- Modified   01-May-2022   Richard Allen, Oracle
 */
-
-/**
+ /**
 FLOWS FOR APEX ENGINE API
 =========================
 
@@ -28,6 +25,8 @@ These API functions allow you to control a process instance, i.e., one operation
 - Terminate an instance (stop all processing of an instance)
 - Reset an instance back to its newly created state
 - Delete an instance
+- Set the Instance priority
+- Set the Instance Due On timestamp.
 
 Flow Step Operations:
 ---------------------
@@ -48,13 +47,14 @@ These API functions are provided as Application Helper functions from the Flows 
 - return the result of an APEX Approval task to its Flows for APEX process instance upon completion
 
 **/
-
-function flow_create
-( pi_dgrm_name    in flow_diagrams.dgrm_name%type                 -- Name of the model to instanciate
-, pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
-, pi_prcs_name    in flow_processes.prcs_name%type                -- Name of the process instance to create
-) return flow_processes.prcs_id%type;
-/**
+   function flow_create (
+      pi_dgrm_name in flow_diagrams.dgrm_name%type -- Name of the model to instanciate
+,
+      pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
+,
+      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+   ) return flow_processes.prcs_id%type;
+ /**
 Function flow_create - Signature 1
 This function creates a new process instance based on a diagram name and version (process specification)
 If the version is not specified,
@@ -80,12 +80,12 @@ begin
 end;
 ```
 **/
-
-function flow_create
-( pi_dgrm_id   in flow_diagrams.dgrm_id%type      -- ID of the model to instanciate
-, pi_prcs_name in flow_processes.prcs_name%type   -- Name of the process instance to create
-) return flow_processes.prcs_id%type;
-/**
+   function flow_create (
+      pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
+,
+      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+   ) return flow_processes.prcs_id%type;
+ /**
 Function flow_create - Signature 2
 This function creates a new process instance based on a diagram id (process specification) and returns the Process ID of the newly created process
 
@@ -104,14 +104,14 @@ begin
 end;
 ```
 **/
-
-
-procedure flow_create
-( pi_dgrm_name    in flow_diagrams.dgrm_name%type                 -- Name of the model to instanciate
-, pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
-, pi_prcs_name    in flow_processes.prcs_name%type                -- Name of the process instance to create
-);
-/**
+   procedure flow_create (
+      pi_dgrm_name in flow_diagrams.dgrm_name%type -- Name of the model to instanciate
+,
+      pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
+,
+      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+   );
+ /**
 Procedure flow_create - Signature 1
 Creates a new process instance based on a diagram name and version (process specification).
 
@@ -136,13 +136,12 @@ begin
 end;
 ```
 **/
-
-
-procedure flow_create
-( pi_dgrm_id   in flow_diagrams.dgrm_id%type      -- ID of the model to instanciate
-, pi_prcs_name in flow_processes.prcs_name%type   -- Name of the process instance to create
-);
-/**
+   procedure flow_create (
+      pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
+,
+      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+   );
+ /**
 Procedure flow_create - Signature 2
 
 This procedure creates a new process instance based on a diagram id and version (process specification)
@@ -161,11 +160,10 @@ begin
 end;
 ```
 **/
-
-procedure flow_start
-( p_process_id in flow_processes.prcs_id%type -- Process ID to start
-);
-/**
+   procedure flow_start (
+      p_process_id in flow_processes.prcs_id%type -- Process ID to start
+   );
+ /**
 Procedure flow_start
 
 This procedure is use to start a process that was previously created by flow_create. It will will find the none Start event in the Flow diagram, and step the instance forward from the Start event.
@@ -191,13 +189,12 @@ begin
 end;
 ```
 **/
-
-
-procedure flow_reset
-( p_process_id  in flow_processes.prcs_id%type                            -- Process ID to reset
-, p_comment     in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs
-);
-/**
+   procedure flow_reset (
+      p_process_id in flow_processes.prcs_id%type -- Process ID to reset
+,
+      p_comment in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs
+   );
+ /**
 Procedure flow_reset
 This procedure is used, typically during model development and testing only, to reset an existing Instance to the state it would be at after it was created, but not yet started. 
 All Process Variables, except built-ins, are deleted. **This is not meant for use in Production Systems.**
@@ -215,12 +212,12 @@ begin
 end;
 ```
 **/
-
-procedure flow_terminate
-( p_process_id  in flow_processes.prcs_id%type                            -- Process ID to terminate
-, p_comment     in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs
-);
-/**
+   procedure flow_terminate (
+      p_process_id in flow_processes.prcs_id%type -- Process ID to terminate
+,
+      p_comment in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs
+   );
+ /**
 Procedure flow_terminate
 This procedure is used, typically by an administrator, to permanently stop processing of the Instance (which will be lefty in a status of terminated).
 
@@ -237,12 +234,13 @@ begin
 end;
 ```
 **/
-
-procedure flow_delete
-( p_process_id  in flow_processes.prcs_id%type                            -- Process ID to delete
-, p_comment     in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs   
-);
-/**
+   procedure flow_delete (
+      p_process_id in flow_processes.prcs_id%type -- Process ID to delete
+,
+      p_comment in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs
+   );
+ /**
+Procedure flow_delete
 This procedure is used to remove an Instance from the system. All instances, subflows, and variables are deleted from the operational system. 
 If event logging was enabled while the process was running, records in the event logs are maintained for auditting purposes.
 
@@ -259,14 +257,60 @@ begin
 end;
 ```
 **/
+   procedure flow_set_priority (
+      p_process_id in flow_processes.prcs_id%type       -- Process ID to update,
+,
+      p_priority   in flow_processes.prcs_priority%type -- New Instance Priority ( values 1 (highest) to 5 (lowest).)
+   );
+ /**
+Procedure flow_set_priority.
+This procedure is used to update the priority of a process instance.  The initial process priority will be set from the process diagram definition, 
+but this procedure can be used to reset the priority while the instance is running.  Values from 1 (highest priority) to 5 (lowest priority)
 
+EXAMPLE
 
-procedure flow_start_step
-( p_process_id    in flow_processes.prcs_id%type                    -- Process ID
-, p_subflow_id    in flow_subflows.sbfl_id%type                     -- Subflow ID
-, p_step_key      in flow_subflows.sbfl_step_key%type default null  -- Step Key
-);
-/**
+This example will update the process instance priority to 1 (most urgent) for process instance 345.
+
+```sql
+begin
+   flow_api_pkg.flow_reset(
+        p_process_id => 345
+      , p_priority   => 1
+   );
+end;
+```
+**/
+   procedure flow_set_due_on (
+      p_process_id in flow_processes.prcs_id%type     -- Process ID to update
+,
+      p_due_on     in flow_processes.prcs_due_on%type -- New Instance Due On timestamp
+   );
+ /**
+Procedure flow_set_due_on
+This procedure is used to update the Due On timestamp of a process instance.  The initial process Due On date (actually a timestamp with time zone) will be set from the process diagram definition, 
+but this procedure can be used to reset the Due On while the instance is running. Due On date values should be a Timestamp with Time Zone.
+
+EXAMPLE
+
+This example will update the process instance due_on timestamp to 31 Dec 2027 at 14:30 GMT for process instance 345.
+
+```sql
+begin
+   flow_api_pkg.flow_reset(
+        p_process_id => 345
+      , p_due_on     => to_timestamp_tz ( '31-DEC-2027 14:30:00 GMT', 'DD-MON-YYYY HH24:MI:SS TZR')
+   );
+end;
+```
+**/
+   procedure flow_start_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+   );
+ /**
 Procedure flow_start_step
 This procedure is an optional command that can be used in applications to signal that a user is about to start working on a task. 
 This is only used to differentiate ‘waiting’ time from ‘processing’ time in system logs to aid process management and statistics. 
@@ -286,14 +330,16 @@ begin
 end;
 ```
 **/
-
-procedure flow_reserve_step
-( p_process_id    in flow_processes.prcs_id%type                    -- Process ID
-, p_subflow_id    in flow_subflows.sbfl_id%type                     -- Subflow ID
-, p_step_key      in flow_subflows.sbfl_step_key%type default null  -- Step Key
-, p_reservation   in flow_subflows.sbfl_reservation%type            -- Value of the reservation, typically the username
-);  
-/**
+   procedure flow_reserve_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+,
+      p_reservation in flow_subflows.sbfl_reservation%type -- Value of the reservation, typically the username
+   );
+ /**
 Procedure flow_reserve_step
 This procedure is used to signal to other users that a user is going to handle this task (see the documentation on reservations).
 
@@ -312,14 +358,14 @@ begin
 end;
 ```
 **/
-
-
-procedure flow_release_step
-( p_process_id    in flow_processes.prcs_id%type                    -- Process ID
-, p_subflow_id    in flow_subflows.sbfl_id%type                     -- Subflow ID
-, p_step_key      in flow_subflows.sbfl_step_key%type default null  -- Step Key
-); 
-/**
+   procedure flow_release_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+   );
+ /**
 Procedure flow_release_step
 This procedure is used to remove a reservation (see the documentation on reservations).
 
@@ -337,14 +383,14 @@ begin
 end;
 ```
 **/
-
-
-procedure flow_complete_step
-( p_process_id    in flow_processes.prcs_id%type                    -- Process ID
-, p_subflow_id    in flow_subflows.sbfl_id%type                     -- Subflow ID
-, p_step_key      in flow_subflows.sbfl_step_key%type default null  -- Step Key
-); 
-/**
+   procedure flow_complete_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+   );
+ /**
 Procedure flow_complete_step
 This procedure is used to tell the flow engine that the current step is complete, and to move the instance forward to the next step.
 
@@ -362,14 +408,16 @@ begin
 end;
 ```
 **/
-
-procedure flow_restart_step
-( p_process_id    in flow_processes.prcs_id%type                            -- Process ID
-, p_subflow_id    in flow_subflows.sbfl_id%type                             -- Subflow ID
-, p_step_key      in flow_subflows.sbfl_step_key%type default null          -- Step Key
-, p_comment       in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs
-);
-/** Procedure flow_restart_step
+   procedure flow_restart_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+,
+      p_comment in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the instance event logs
+   );
+ /** Procedure flow_restart_step
 This procedure is designed to be called by an administrator to restart, for example, a scriptTask or serviceTask that has failed due to an error. 
 The intended usage is that the adminstrator can fix the script or edit the process data that caused the task to fail, and then restart the task using this call.
 A comment can optionally be provided, which will be added to the task event log entry. It should only be used on a subflow having a status of ‘error’
@@ -388,18 +436,20 @@ begin
 end;
 ```
 **/
-
-
-
-procedure flow_reschedule_timer
-( p_process_id    in flow_processes.prcs_id%type                            -- Process ID
-, p_subflow_id    in flow_subflows.sbfl_id%type                             -- Subflow ID
-, p_step_key      in flow_subflows.sbfl_step_key%type default null          -- Step Key
-, p_is_immediate  in boolean default false                                  -- Causes the step to occur immediately
-, p_new_timestamp in flow_timers.timr_start_on%type default null            -- Causes the step to be rescheduled at the supplied timestamp
-, p_comment       in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the event logs
-);
-/**
+   procedure flow_reschedule_timer (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+,
+      p_is_immediate in boolean default false -- Causes the step to occur immediately
+,
+      p_new_timestamp in flow_timers.timr_start_on%type default null -- Causes the step to be rescheduled at the supplied timestamp
+,
+      p_comment in flow_instance_event_log.lgpr_comment%type default null -- Optional comment to be added to the event logs
+   );
+ /**
 Procedure flow_reschedulule_timer
 flow_reschedule_timer can be called to change the next scheduled time of a timer on a running timer. 
 It can change the currently scheduled time to a future time, or can instruct the timer to fire immediately. 
@@ -437,14 +487,16 @@ begin
 end;
 ```
 **/
-
-function get_current_usertask_url
-( p_process_id in flow_processes.prcs_id%type                   -- Process ID
-, p_subflow_id in flow_subflows.sbfl_id%type                    -- Subflow ID
-, p_step_key   in flow_subflows.sbfl_step_key%type default null -- Step Key
-, p_scope      in flow_subflows.sbfl_scope%type default 0       -- Scope
-) return varchar2;
-/** get_current_usertask_url
+   function get_current_usertask_url (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+,
+      p_scope in flow_subflows.sbfl_scope%type default 0 -- Scope
+   ) return varchar2;
+ /** get_current_usertask_url
 This function returns the URL for the current task on the specified subflow.
 
 EXAMPLE
@@ -463,22 +515,24 @@ begin
 end;
 ```
 **/
-
-function message
-( p_message_key     in varchar2               -- Key of the message that shoud exists in the flow_messages table
-, p_lang            in varchar2 default 'en'  -- Lang code to retrieve the message, default is “en”
-, p0                in varchar2 default null  -- Value for substitution: %0 in the message will be replaced by p0, %1 by p1, etc
-, p1                in varchar2 default null
-, p2                in varchar2 default null
-, p3                in varchar2 default null
-, p4                in varchar2 default null
-, p5                in varchar2 default null
-, p6                in varchar2 default null
-, p7                in varchar2 default null
-, p8                in varchar2 default null
-, p9                in varchar2 default null
-) return varchar2;
-/** message function
+   function message (
+      p_message_key in varchar2 -- Key of the message that shoud exists in the flow_messages table
+,
+      p_lang in varchar2 default 'en' -- Lang code to retrieve the message, default is “en”
+,
+      p0 in varchar2 default null -- Value for substitution: %0 in the message will be replaced by p0, %1 by p1, etc
+,
+      p1 in varchar2 default null,
+      p2 in varchar2 default null,
+      p3 in varchar2 default null,
+      p4 in varchar2 default null,
+      p5 in varchar2 default null,
+      p6 in varchar2 default null,
+      p7 in varchar2 default null,
+      p8 in varchar2 default null,
+      p9 in varchar2 default null
+   ) return varchar2;
+ /** message function
 This function returns a Flows for APEX error message with p0…p9 substitutions in p_lang.
 
 EXAMPLE
@@ -497,13 +551,14 @@ begin
 end;
 ```
 **/
-
-procedure return_approval_result
-( p_process_id    in flow_processes.prcs_id%type                            -- Process ID
-, p_apex_task_id  in number                                                 -- APEX Task ID
-, p_result        in flow_process_variables.prov_var_vc2%type default null  -- Approval Result
-);
-/**
+   procedure return_approval_result (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_apex_task_id in number -- APEX Task ID
+,
+      p_result in flow_process_variables.prov_var_vc2%type default null -- Approval Result
+   );
+ /**
 return_approval_result Procedure
 A convenience procedure for returning an APEX Approval result into a Flows for APEX process when the task has ben completed.
 This procedure checks the Task ID is valid, stores p_result into the return variable (as defined in the process diagram),
@@ -522,6 +577,5 @@ flow_api_pkg.return_approval_result ( p_process_id      => :PROCESS_ID,
                                       p_result          => :APEX$TASK_OUTCOME);
 ```
 **/
-
 end flow_api_pkg;
 /
