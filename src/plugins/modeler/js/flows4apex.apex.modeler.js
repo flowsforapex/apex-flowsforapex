@@ -40,11 +40,11 @@
         bpmnlint: bpmnModeler.linting.apexLinting,
       };
 
-    //   this.bpmnRenderer = {
-    //     defaultFillColor: "var(--default-fill-color)",
-    //     defaultStrokeColor: "var(--default-stroke-color)",
-    //     defaultLabelColor: "var(--default-stroke-color)",
-    //   };
+      this.bpmnRenderer = {
+        defaultFillColor: "var(--default-fill-color)",
+        defaultStrokeColor: "var(--default-stroke-color)",
+        defaultLabelColor: "var(--default-stroke-color)",
+      };
 
       this.bpmnModeler$ = new bpmnModeler.Modeler( {
         container: "#" + this.canvasId,
