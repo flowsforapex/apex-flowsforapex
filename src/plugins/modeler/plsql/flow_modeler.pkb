@@ -204,7 +204,10 @@ as
     loop
         fetch c_applications into l_application;
         exit when c_applications%NOTFOUND;
-        l_result := l_result || '{"label":"' || l_application.application_name || '","value":"' || l_application.application_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_application.application_id || ' - ' || l_application.application_name ||
+          '","value":"' || l_application.application_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -215,7 +218,7 @@ as
   as
     l_result clob;
     l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
-    cursor c_pages is select * from apex_application_pages where application_id = l_application_id order by page_name;
+    cursor c_pages is select * from apex_application_pages where application_id = l_application_id order by page_id;
     l_page apex_application_pages%rowtype;
   begin
     l_result := '[{"label":"","value":""},';
@@ -223,7 +226,10 @@ as
     loop
         fetch c_pages into l_page;
         exit when c_pages%NOTFOUND;
-        l_result := l_result || '{"label":"' || l_page.page_name || '","value":"' || l_page.page_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_page.page_id || ' - ' || l_page.page_name ||
+          '","value":"' || l_page.page_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -261,7 +267,10 @@ as
     loop
         fetch c_applications into l_application;
         exit when c_applications%NOTFOUND;
-        l_result := l_result || '{"label":"' || l_application.application_name || '","value":"' || l_application.application_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_application.application_id || ' - ' || l_application.application_name ||
+          '","value":"' || l_application.application_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
