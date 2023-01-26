@@ -39,24 +39,39 @@
         "</bpmndi:BPMNDiagram>" +
         "</bpmn:definitions>";
       this.regionId    = this.element[0].id;
+      this.viewerWrap  = this.regionId + "_viewer";
       this.canvasId    = this.regionId + "_canvas";
       this.enabledModules = [];
-      if ( this.options.addHighlighting ) {
-        this.enabledModules.push(bpmnViewer.customModules.styleModule);
-      }
-      if ( this.options.enableCallActivities ) {
-        this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
-      }
+    //   if ( this.options.addHighlighting ) {
+    //     this.enabledModules.push(bpmnViewer.customModules.styleModule);
+    //   }
+    //   if ( this.options.enableCallActivities ) {
+    //     this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
+    //   }
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
         defaultLabelColor: "var(--default-stroke-color)",
       }
-      if ( this.options.useNavigatedViewer ) {
-        this.bpmnViewer$ = new bpmnViewer.NavigatedViewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
-      } else {
-        this.bpmnViewer$ = new bpmnViewer.Viewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
-      }
+    //   if ( this.options.useNavigatedViewer ) {
+    //     this.bpmnViewer$ = new bpmnViewer.NavigatedViewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
+    //   } else {
+    //     this.bpmnViewer$ = new bpmnViewer.Viewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
+    //   }
+        this.bpmnViewer$ = new bpmnViewer.Viewer({
+            container: "#" + this.canvasId,
+            // additionalModules: this.enabledModules,
+            bpmnRenderer: this.bpmnRenderer
+        });
+
+      // prevent page submit + reload after button click
+      $( document ).on( "apexbeforepagesubmit", ( event ) => {
+        const blocking = ['bjs-drilldown'];
+        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
+          apex.event.gCancelFlag = true;
+        }
+      } );  
+
       if ( this.options.refreshOnLoad ) {
         this.refresh();
       }
@@ -84,11 +99,11 @@
           apex.debug.warn( "Warnings during XML Import", warnings );
         }
         this.zoom( "fit-viewport" );
-        if ( this.options.addHighlighting ) {
-          bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
-          bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
-          bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
-        }
+        // if ( this.options.addHighlighting ) {
+        //   bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
+        //   bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
+        //   bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+        // }
         // trigger load event
         event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", 
           { 
@@ -102,7 +117,7 @@
       }
     },
     zoom: function( zoomOption ) {
-      this.bpmnViewer$.get( "canvas" ).zoom( zoomOption );
+      this.bpmnViewer$.get( "canvas" ).zoom( zoomOption, 'auto' );
     },
     getSVG: async function() {
       const bpmnViewer$ = this.bpmnViewer$;
@@ -133,9 +148,7 @@
           // use call activities
           if ( this.options.enableCallActivities ) {
             // set widget reference to viewer module
-            this.bpmnViewer$.get('subProcessModule').setWidget(this);
-            // show/hide breadcrumb
-            (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
+            this.bpmnViewer$.get('customDrilldown').setWidget(this);
             // load old diagram (if possible)
             diagram = pData.data.find(d => d.diagramIdentifier === this.diagramIdentifier);
             // otherwise: get root entry
@@ -149,11 +162,9 @@
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
             // reset breadcrumb
-            if (!oldLoaded) this.bpmnViewer$.get('subProcessModule').resetBreadcrumb();
+            if (!oldLoaded) this.bpmnViewer$.get('customDrilldown').updateBreadcrumb();
           }
           else {
-            // hide breadcrumb
-            $('#breadcrumb').hide();
             // get first (only) entry
             diagram = pData.data[0];
             this.diagramIdentifier = diagram.diagramIdentifier;

@@ -1,5 +1,5 @@
-.flows4apex-viewer {
-  height: 80vh;
+.canvas {
+  height: 70vh;
   background-color: #f0f0f0;
 }
 
@@ -21,7 +21,7 @@
 /**
  * custom dark mode colors
  */
-.flows4apex-viewer.FLOWS-DARK {
+.FLOWS-DARK .canvas {
   background-color: #2b3035;
 }
 
