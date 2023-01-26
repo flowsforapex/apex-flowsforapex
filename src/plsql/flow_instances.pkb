@@ -1,7 +1,7 @@
 /* 
 -- Flows for APEX - flow_instances.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created  25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
@@ -338,6 +338,7 @@ as
     -- mark process as running
     update flow_processes prcs
        set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_running
+         , prcs.prcs_start_ts       = systimestamp
          , prcs.prcs_last_update    = systimestamp
          , prcs.prcs_last_update_by =  coalesce  ( sys_context('apex$session','app_user') 
                                                  , sys_context('userenv','os_user')
@@ -508,6 +509,8 @@ as
     -- reset the process status to 'created'
     update flow_processes prcs
        set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_created
+         , prcs_start_ts            = null
+         , prcs_complete_ts         = null
          , prcs.prcs_last_update    = systimestamp
          , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
                                                 , sys_context('userenv','os_user')

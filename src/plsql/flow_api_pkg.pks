@@ -250,7 +250,7 @@ This example will delete the process instance that have the ID 1.
 
 ```sql
 begin
-   flow_api_pkg.flow_reset(
+   flow_api_pkg.flow_delete(
         p_process_id => 1
       , p_comment    => 'Delete Process Instance using the PL/SQL API'
    );
@@ -577,5 +577,9 @@ flow_api_pkg.return_approval_result ( p_process_id      => :PROCESS_ID,
                                       p_result          => :APEX$TASK_OUTCOME);
 ```
 **/
+  function intervalDStoSec (
+    p_intervalDS  interval day to second
+  ) return number;
+
 end flow_api_pkg;
 /
