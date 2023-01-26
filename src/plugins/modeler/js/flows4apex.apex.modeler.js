@@ -5,6 +5,7 @@
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null,
+      pluginMode: null,
     },
 
     _create: function () {
@@ -17,19 +18,17 @@
       this.enabledModules = [
         bpmnModeler.customModules.BpmnPropertiesPanelModule,
         bpmnModeler.customModules.BpmnPropertiesProviderModule,  
-        // bpmnModeler.customModules.propertiesPanelModule,
         bpmnModeler.customModules.propertiesProviderModule,
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
-        bpmnModeler.customModules.styleModule,
         bpmnModeler.customModules.xmlModule,
         bpmnModeler.customModules.AddExporter
       ];
 
       this.exporter = {
         name: 'Flows for APEX',
-        version: '22.2.0',
+        version: '23.1.0',
       };
 
       this.moddleExtensions = {
@@ -55,6 +54,7 @@
         linting: this.linting,
         bpmnRenderer: this.bpmnRenderer,
         exporter: this.exporter,
+        pluginMode: this.options.pluginMode
       } );
 
       // prevent click events from bubbling up the dom
@@ -122,11 +122,9 @@
       try {
         var result = await bpmnModeler$.importXML( this.diagramContent );
 
-        var exporter = bpmnModeler$._definitions && bpmnModeler$._definitions.exporter;
-        var exporterVersion = bpmnModeler$._definitions && bpmnModeler$._definitions.exporterVersion;
-
-        if (exporter !== 'Flows for APEX' || !exporterVersion || exporterVersion.substr(0, exporterVersion.indexOf('.')) < 22) {
-          const refactored = bpmnModeler$.get('xmlModule').refactorDiagram(this.diagramContent);
+        if (!bpmnModeler$._definitions.get('xmlns:apex')) {
+          // custom namespace must be added manually for working default values 
+          const refactored = bpmnModeler$.get('xmlModule').addCustomNamespace(this.diagramContent);
           result = await bpmnModeler$.importXML(refactored);
         }
 
@@ -181,7 +179,7 @@
       try {
         const result = await bpmnModeler$.saveSVG( { format: true } );
         const { svg } = result;
-        const styledSVG = bpmnModeler$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+        const styledSVG = bpmnModeler$.get('xmlModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
         return styledSVG;
       } catch ( err ) {
         debug.error( "Get SVG failed.", err );

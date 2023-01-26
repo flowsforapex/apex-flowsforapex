@@ -9,7 +9,15 @@ as
     return apex_plugin.t_region_render_result
   as
     l_return apex_plugin.t_region_render_result;
+
+    l_plugin_mode flow_configuration.cfig_value%type;
   begin
+    -- get config value for plugin mode
+    select cfig_value
+      into l_plugin_mode
+      from flow_configuration
+     where cfig_key = 'modeler_plugin_mode';
+
     apex_plugin_util.debug_region
     (
       p_plugin => p_plugin
@@ -34,6 +42,12 @@ as
         (
           p_name      => 'itemsToSubmit'
         , p_value     => apex_plugin_util.page_item_names_to_jquery( p_page_item_names => p_region.ajax_items_to_submit )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'pluginMode'
+        , p_value     => l_plugin_mode
         , p_add_comma => true
         ) ||
         '})'
