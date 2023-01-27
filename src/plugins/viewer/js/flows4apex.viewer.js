@@ -2,46 +2,6 @@ var bpmnViewer;
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./CustomViewer.js":
-/*!*************************!*\
-  !*** ./CustomViewer.js ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ CustomViewer)
-/* harmony export */ });
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
-/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
-/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
-/* harmony import */ var _lib_customDrilldown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/customDrilldown */ "./lib/customDrilldown/index.js");
-/* harmony import */ var _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lib/styleModule */ "./lib/styleModule/index.js");
-
-
-
-
-
-
-class CustomViewer extends bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__["default"] {
-}
-
-CustomViewer.prototype._customModules = [
-  diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_3__["default"],
-  diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_4__["default"],
-  _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__["default"],
-  _lib_customDrilldown__WEBPACK_IMPORTED_MODULE_0__["default"]
-];
-
-CustomViewer.prototype._modules = [].concat(
-  bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__["default"].prototype._modules.filter(f => !f.drilldownBreadcrumbs),
-  CustomViewer.prototype._customModules
-);
-
-
-/***/ }),
-
 /***/ "./lib/customDrilldown/CustomDrilldown.js":
 /*!************************************************!*\
   !*** ./lib/customDrilldown/CustomDrilldown.js ***!
@@ -26707,17 +26667,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _CustomViewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CustomViewer */ "./CustomViewer.js");
-// import Viewer from 'bpmn-js/lib/Viewer';
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+/* harmony import */ var _lib_customDrilldown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/customDrilldown */ "./lib/customDrilldown/index.js");
+/* harmony import */ var _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lib/styleModule */ "./lib/styleModule/index.js");
+
+
+
+
+
 
 
 var bpmnViewer = {
-  Viewer: _CustomViewer__WEBPACK_IMPORTED_MODULE_0__["default"],
-  // NavigatedViewer: BpmnJSNavigated,
-  // customModules: {
-  //   styleModule,
-  //   subProcessModule,
-  // },
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__["default"],
+  customModules: {
+    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_3__["default"],
+    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_4__["default"],
+    customDrilldownModule: _lib_customDrilldown__WEBPACK_IMPORTED_MODULE_0__["default"],
+    styleModule: _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (bpmnViewer);

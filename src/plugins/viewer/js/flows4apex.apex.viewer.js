@@ -42,27 +42,27 @@
       this.viewerWrap  = this.regionId + "_viewer";
       this.canvasId    = this.regionId + "_canvas";
       this.enabledModules = [];
-    //   if ( this.options.addHighlighting ) {
-    //     this.enabledModules.push(bpmnViewer.customModules.styleModule);
-    //   }
-    //   if ( this.options.enableCallActivities ) {
-    //     this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
-    //   }
+      if ( this.options.addHighlighting ) {
+        this.enabledModules.push(bpmnViewer.customModules.styleModule);
+      }
+      if ( this.options.enableCallActivities ) {
+        this.enabledModules.push(bpmnViewer.customModules.customDrilldownModule);
+      }
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
         defaultLabelColor: "var(--default-stroke-color)",
       }
-    //   if ( this.options.useNavigatedViewer ) {
-    //     this.bpmnViewer$ = new bpmnViewer.NavigatedViewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
-    //   } else {
-    //     this.bpmnViewer$ = new bpmnViewer.Viewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
-    //   }
-        this.bpmnViewer$ = new bpmnViewer.Viewer({
-            container: "#" + this.canvasId,
-            // additionalModules: this.enabledModules,
-            bpmnRenderer: this.bpmnRenderer
-        });
+      if ( this.options.useNavigatedViewer ) {
+        this.enabledModules.push(bpmnViewer.customModules.MoveCanvasModule);
+        this.enabledModules.push(bpmnViewer.customModules.ZoomScrollModule);
+      }
+
+      this.bpmnViewer$ = new bpmnViewer.Viewer({
+          container: "#" + this.canvasId,
+          additionalModules: this.enabledModules,
+          bpmnRenderer: this.bpmnRenderer
+      });
 
       // prevent page submit + reload after button click
       $( document ).on( "apexbeforepagesubmit", ( event ) => {
@@ -99,11 +99,11 @@
           apex.debug.warn( "Warnings during XML Import", warnings );
         }
         this.zoom( "fit-viewport" );
-        // if ( this.options.addHighlighting ) {
-        //   bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
-        //   bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
-        //   bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
-        // }
+        if ( this.options.addHighlighting ) {
+          bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
+          bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
+          bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+        }
         // trigger load event
         event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", 
           { 

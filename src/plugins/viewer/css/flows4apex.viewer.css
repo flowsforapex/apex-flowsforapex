@@ -1,35 +1,24 @@
-.canvas {
-  height: 70vh;
+/**
+ * general
+ */
+ .canvas {
+  height: 80vh;
   background-color: #f0f0f0;
 }
-
 .bjs-container {
   --default-fill-color: white;
   --default-stroke-color: black;
 }
-
-#breadcrumb {
-  min-height: 48px;
-  padding: 12px;
-}
-
-#breadcrumb .diagram-link:hover {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
 /**
  * custom dark mode colors
  */
 .FLOWS-DARK .canvas {
   background-color: #2b3035;
 }
-
 .FLOWS-DARK .bjs-container {
   --default-fill-color: #2b3035;
   --default-stroke-color: white;
 }
-
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
 }
