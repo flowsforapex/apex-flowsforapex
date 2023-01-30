@@ -19,11 +19,12 @@
         bpmnModeler.customModules.BpmnPropertiesPanelModule,
         bpmnModeler.customModules.BpmnPropertiesProviderModule,  
         bpmnModeler.customModules.propertiesProviderModule,
+        bpmnModeler.customModules.AddExporter,
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
         bpmnModeler.customModules.xmlModule,
-        bpmnModeler.customModules.AddExporter
+        bpmnModeler.customModules.drilldownCentering
       ];
 
       this.exporter = {

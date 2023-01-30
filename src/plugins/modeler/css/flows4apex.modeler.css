@@ -1,3 +1,6 @@
+.FLOWS {
+  --color-flows-button-green: #52B415;
+}
 /**
  * general
  */
@@ -21,14 +24,9 @@
   overflow: auto;
   display: block;
   height: 90%;
-  background-color: #f0f0f0;
 }
 .properties-panel-parent:empty {
   display: none;
-}
-.properties-panel-parent > .djs-properties-panel {
-  padding-bottom: 70px;
-  min-height:100%;
 }
 /** 
  * custom colors
@@ -61,16 +59,6 @@
 /**
  * open dialog button
  */
-.bio-properties-panel-group-header-button {
-  height: 30px;
-  min-width: 60px;
-  margin: 2px 32px 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  background-color: #52B415;
-  color: white;
-  cursor: pointer;
-}
 .open-dialog-label {
   display: flex;
   justify-content: space-between;
@@ -83,10 +71,8 @@
  */
 .bio-properties-panel-description .bio-properties-panel-quickpick-link {
   cursor: pointer;
-  /* color: #52B415; */
   margin-inline-end: 12px;
   font-size: var(--text-size-base);
-  /* text-decoration: none; */
 }
 /**
  * button-like quickpicks
@@ -96,7 +82,7 @@
 }
 .bio-properties-panel-group-entries > .bio-properties-panel-quickpick > .bio-properties-panel-quickpick-link {
   cursor: pointer;
-  color: #52B415;
+  color: var(--color-flows-button-green);
   margin-inline-end: 12px;
 }
 /**
@@ -137,7 +123,6 @@
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgb(0,0,0);
   background-color: rgba(0,0,0,0.4);
 }
 .modal-content {
@@ -174,13 +159,13 @@ button.dialog {
   background-color: #f8f8f8;
 }
 button.dialog:hover {
-  color: #52B415;
+  color: var(--color-flows-button-green);
 }
 button.dialog.fa {
   width: 40px;
 }
 #save-btn {
-  background-color: #52B415;
+  background-color: var(--color-flows-button-green);
   color: white;
 }
 #error-text {
@@ -196,43 +181,56 @@ button.dialog.fa {
 /**
  * dark mode 
  */
+.FLOWS-DARK {
+  --color-flows-dark-background: #2b3035;
+
+  --color-flows-dark-properties-panel-background: #32383d;
+  --color-flows-dark-properties-panel-input: #282c30;
+  
+  --color-flows-dark-hover: #1e2328;
+  --color-flows-dark-drop-not-allowed: #3f3035;
+  --color-flows-dark-lint: #4c4e50;
+}
 /**
  * custom colors
  */
-.FLOWS-DARK .canvas, .FLOWS-DARK .properties-panel-parent {
-  background-color: #2b3035;
+.FLOWS-DARK .canvas {
+  background-color: var(--color-flows-dark-background);
 }
 .FLOWS-DARK .bjs-container {
-  --default-fill-color: #2b3035;
+  --default-fill-color: var(--color-flows-dark-background);
   --default-stroke-color: white;
 }
 .FLOWS-DARK .djs-popup {
-  --popup-body-background-color:  #2b3035;
-  --popup-background-color: #2b3035;
+  --popup-body-background-color:  var(--color-flows-dark-background);
+  --popup-background-color: var(--color-flows-dark-background);
   color: white;
 }
 .FLOWS-DARK .djs-context-pad .entry {
-  --context-pad-entry-background-color: #2b3035;
-  --context-pad-entry-hover-background-color: #1e2328;
+  --context-pad-entry-background-color: var(--color-flows-dark-background);
+  --context-pad-entry-hover-background-color: var(--color-flows-dark-hover);
   color: white;
 }
 .FLOWS-DARK .djs-palette {
-  --palette-background-color: #2b3035;
+  --palette-background-color: var(--color-flows-dark-background);
   --palette-entry-color: white;
 }
 .FLOWS-DARK .djs-direct-editing-parent {
-  background-color: #2b3035 !important;
+  background-color: var(--color-flows-dark-background) !important;
   color: white !important;
 }
 .FLOWS-DARK .djs-container {
-  --shape-drop-not-allowed-fill-color: #3f3035;
-  --shape-drop-allowed-fill-color: #2b3035;
+  --shape-drop-not-allowed-fill-color: var(--color-flows-dark-drop-not-allowed);
+  --shape-drop-allowed-fill-color: var(--color-flows-dark-background);
 }
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
 }
 .FLOWS-DARK .bjsl-button-inactive {
-  background-color: #4c4e50 !important;
+  background-color: var(--color-flows-dark-lint) !important;
+}
+.FLOWS-DARK svg.new-parent {
+  background-color: var(--color-flows-dark-background) !important;
 }
 /**
  * custom properties panel colors
@@ -242,32 +240,33 @@ button.dialog.fa {
  .FLOWS-DARK .bio-properties-panel-group,
  .FLOWS-DARK .bio-properties-panel-group-header.sticky
  {
-   background-color: #32383d;
+   background-color: var(--color-flows-dark-properties-panel-background);
    color: white;
  }
 .FLOWS-DARK .bio-properties-panel {
-  --input-background-color: #282c30;
-  --input-focus-background-color: #282c30;
-  --input-error-background-color: #282c30;
-  --placeholder-background-color: #282c30;
+  --input-background-color: var(--color-flows-dark-properties-panel-input);
+  --input-focus-background-color: var(--color-flows-dark-properties-panel-input);
+  --input-error-background-color: var(--color-flows-dark-properties-panel-input);
+  --placeholder-background-color: var(--color-flows-dark-properties-panel-input);
+  --add-entry-fill-color: white;
+  --arrow-fill-color: white;
+  --dot-color: white;
+  --arrow-hover-background-color: var(--color-flows-dark-properties-panel-input);
 }
 .FLOWS-DARK .bio-properties-panel-input,
 .FLOWS-DARK .bio-properties-panel-description {
   color: white;
 }
-.FLOWS-DARK svg.new-parent {
-  background-color: #2b3035 !important;
-}
 /**
  * custom monaco editor colors
  */
 .FLOWS-DARK .modal-content {
-  background-color: #32383d;
+  background-color: var(--color-flows-dark-properties-panel-background);
 }
 .FLOWS-DARK button.dialog {
   color: white;
-  background-color: #282c30;
+  background-color: var(--color-flows-dark-properties-panel-input);
 }
 .FLOWS-DARK button.dialog:hover {
-  color: #52B415;
+  color: var(--color-flows-button-green);
 }
