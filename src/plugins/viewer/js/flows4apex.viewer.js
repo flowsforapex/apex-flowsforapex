@@ -2,10 +2,10 @@ var bpmnViewer;
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./lib/customDrilldown/CustomDrilldown.js":
-/*!************************************************!*\
-  !*** ./lib/customDrilldown/CustomDrilldown.js ***!
-  \************************************************/
+/***/ "./modules/callActivityModule/CallActivityModule.js":
+/*!**********************************************************!*\
+  !*** ./modules/callActivityModule/CallActivityModule.js ***!
+  \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -231,144 +231,10 @@ CustomDrilldown.$inject = [
 
 /***/ }),
 
-/***/ "./lib/customDrilldown/DrilldownCentering.js":
-/*!***************************************************!*\
-  !*** ./lib/customDrilldown/DrilldownCentering.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ DrilldownCentering)
-/* harmony export */ });
-
-/**
- * Move collapsed subprocesses into view when drilling down.
- *
- * Zoom and scroll are saved in a session.
- *
- * @param {eventBus} eventBus
- * @param {canvas} canvas
- */
-function DrilldownCentering(eventBus, canvas) {
-
-  var currentRoot = null;
-  var positionMap = new Map();
-
-  eventBus.on('root.set', function (event) {
-
-    canvas.zoom('fit-viewport', 'auto');
-
-    // var newRoot = event.element;
-    // var currentViewbox = canvas.viewbox();
-    // var storedViewbox = positionMap.get(newRoot);
-
-    // positionMap.set(currentRoot, {
-    //   x: currentViewbox.x,
-    //   y: currentViewbox.y,
-    //   zoom: currentViewbox.scale
-    // });
-
-    // currentRoot = newRoot;
-
-    // // current root was replaced with a collaboration, we don't update the viewbox
-    // if (is(newRoot, 'bpmn:Collaboration') && !storedViewbox) {
-    //   return;
-    // }
-
-    // storedViewbox = storedViewbox || { x: 0, y: 0, zoom: 1 };
-
-    // var dx = (currentViewbox.x - storedViewbox.x) * currentViewbox.scale,
-    //     dy = (currentViewbox.y - storedViewbox.y) * currentViewbox.scale;
-
-    // if (dx !== 0 || dy !== 0) {
-    //   canvas.scroll({
-    //     dx: dx,
-    //     dy: dy
-    //   });
-    // }
-
-    // if (storedViewbox.zoom !== currentViewbox.scale) {
-    //   canvas.zoom(storedViewbox.zoom, { x: 0, y: 0 });
-    // }
-  });
-
-  // eventBus.on('diagram.clear', function() {
-  //   positionMap.clear();
-  //   currentRoot = null;
-  // });
-
-}
-
-DrilldownCentering.$inject = ['eventBus', 'canvas'];
-
-
-/**
- * ES5 Map implementation. Works.
- */
-function Map() {
-
-  this._entries = [];
-
-  this.set = function (key, value) {
-
-    var found = false;
-
-    for (var k in this._entries) {
-      if (this._entries[k][0] === key) {
-        this._entries[k][1] = value;
-
-        found = true;
-
-        break;
-      }
-    }
-
-    if (!found) {
-      this._entries.push([key, value]);
-    }
-  };
-
-  this.get = function (key) {
-
-    for (var k in this._entries) {
-      if (this._entries[k][0] === key) {
-        return this._entries[k][1];
-      }
-    }
-
-    return null;
-  };
-
-  this.clear = function () {
-    this._entries.length = 0;
-  };
-
-  this.remove = function (key) {
-
-    var idx = -1;
-
-    for (var k in this._entries) {
-      if (this._entries[k][0] === key) {
-        idx = k;
-
-        break;
-      }
-    }
-
-    if (idx !== -1) {
-      this._entries.splice(idx, 1);
-    }
-  };
-}
-
-/***/ }),
-
-/***/ "./lib/customDrilldown/index.js":
-/*!**************************************!*\
-  !*** ./lib/customDrilldown/index.js ***!
-  \**************************************/
+/***/ "./modules/callActivityModule/index.js":
+/*!*********************************************!*\
+  !*** ./modules/callActivityModule/index.js ***!
+  \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -376,41 +242,74 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var diagram_js_lib_features_change_support__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/features/change-support */ "./node_modules/diagram-js/lib/features/change-support/index.js");
-/* harmony import */ var diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/features/overlays */ "./node_modules/diagram-js/lib/features/overlays/index.js");
-/* harmony import */ var diagram_js_lib_features_root_elements__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/features/root-elements */ "./node_modules/diagram-js/lib/features/root-elements/index.js");
-/* harmony import */ var bpmn_js_lib_features_drilldown_DrilldownBreadcrumbs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! bpmn-js/lib/features/drilldown/DrilldownBreadcrumbs */ "./node_modules/bpmn-js/lib/features/drilldown/DrilldownBreadcrumbs.js");
-/* harmony import */ var bpmn_js_lib_features_drilldown_DrilldownOverlayBehavior__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-js/lib/features/drilldown/DrilldownOverlayBehavior */ "./node_modules/bpmn-js/lib/features/drilldown/DrilldownOverlayBehavior.js");
-/* harmony import */ var bpmn_js_lib_features_drilldown_SubprocessCompatibility__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! bpmn-js/lib/features/drilldown/SubprocessCompatibility */ "./node_modules/bpmn-js/lib/features/drilldown/SubprocessCompatibility.js");
-/* harmony import */ var _DrilldownCentering__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DrilldownCentering */ "./lib/customDrilldown/DrilldownCentering.js");
-/* harmony import */ var _CustomDrilldown__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CustomDrilldown */ "./lib/customDrilldown/CustomDrilldown.js");
-
-
-
-
-
-
-
-
-
+/* harmony import */ var _CallActivityModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CallActivityModule */ "./modules/callActivityModule/CallActivityModule.js");
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __depends__: [diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_2__["default"], diagram_js_lib_features_change_support__WEBPACK_IMPORTED_MODULE_3__["default"], diagram_js_lib_features_root_elements__WEBPACK_IMPORTED_MODULE_4__["default"]],
-  __init__: ['drilldownBreadcrumbs', 'drilldownOverlayBehavior', 'drilldownCentering', 'subprocessCompatibility', 'customDrilldown'],
-  drilldownBreadcrumbs: ['type', bpmn_js_lib_features_drilldown_DrilldownBreadcrumbs__WEBPACK_IMPORTED_MODULE_5__["default"]],
-  drilldownCentering: ['type', _DrilldownCentering__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  drilldownOverlayBehavior: ['type', bpmn_js_lib_features_drilldown_DrilldownOverlayBehavior__WEBPACK_IMPORTED_MODULE_6__["default"]],
-  subprocessCompatibility: ['type', bpmn_js_lib_features_drilldown_SubprocessCompatibility__WEBPACK_IMPORTED_MODULE_7__["default"]],
-  customDrilldown: ['type', _CustomDrilldown__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  __init__: ['callActivityModule'],
+  callActivityModule: ['type', _CallActivityModule__WEBPACK_IMPORTED_MODULE_0__["default"]],
 });
 
 /***/ }),
 
-/***/ "./lib/styleModule/StyleModule.js":
-/*!****************************************!*\
-  !*** ./lib/styleModule/StyleModule.js ***!
-  \****************************************/
+/***/ "./modules/drilldownCentering/DrilldownCentering.js":
+/*!**********************************************************!*\
+  !*** ./modules/drilldownCentering/DrilldownCentering.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ DrilldownCentering)
+/* harmony export */ });
+/**
+ * Move collapsed subprocesses into view when drilling down.
+ *
+ * Overwrite default behaviour where zoom and scroll are saved in a session.
+ * Zoom always reset to fit-viewport & centered when drilling down / moving up
+ *
+ * @param {eventBus} eventBus
+ * @param {canvas} canvas
+ */
+function DrilldownCentering(eventBus, canvas) {
+
+  eventBus.on('root.set', function () {
+
+    canvas.zoom('fit-viewport', 'auto');
+
+  });
+}
+
+DrilldownCentering.$inject = ['eventBus', 'canvas'];
+
+/***/ }),
+
+/***/ "./modules/drilldownCentering/index.js":
+/*!*********************************************!*\
+  !*** ./modules/drilldownCentering/index.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _DrilldownCentering__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DrilldownCentering */ "./modules/drilldownCentering/DrilldownCentering.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['drilldownCentering'],
+  drilldownCentering: ['type', _DrilldownCentering__WEBPACK_IMPORTED_MODULE_0__["default"]],
+});
+
+/***/ }),
+
+/***/ "./modules/styleModule/StyleModule.js":
+/*!********************************************!*\
+  !*** ./modules/styleModule/StyleModule.js ***!
+  \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -479,10 +378,10 @@ StyleModule.prototype.addToSVGStyle = function (svg, style) {
 
 /***/ }),
 
-/***/ "./lib/styleModule/index.js":
-/*!**********************************!*\
-  !*** ./lib/styleModule/index.js ***!
-  \**********************************/
+/***/ "./modules/styleModule/index.js":
+/*!**************************************!*\
+  !*** ./modules/styleModule/index.js ***!
+  \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -490,7 +389,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _StyleModule_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StyleModule.js */ "./lib/styleModule/StyleModule.js");
+/* harmony import */ var _StyleModule_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StyleModule.js */ "./modules/styleModule/StyleModule.js");
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -26667,11 +26566,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
-/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
-/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
-/* harmony import */ var _lib_customDrilldown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/customDrilldown */ "./lib/customDrilldown/index.js");
-/* harmony import */ var _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lib/styleModule */ "./lib/styleModule/index.js");
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+/* harmony import */ var _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/callActivityModule */ "./modules/callActivityModule/index.js");
+/* harmony import */ var _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/drilldownCentering */ "./modules/drilldownCentering/index.js");
+/* harmony import */ var _modules_styleModule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/styleModule */ "./modules/styleModule/index.js");
+
 
 
 
@@ -26680,12 +26581,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var bpmnViewer = {
-  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_2__["default"],
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_3__["default"],
   customModules: {
-    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_3__["default"],
-    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_4__["default"],
-    customDrilldownModule: _lib_customDrilldown__WEBPACK_IMPORTED_MODULE_0__["default"],
-    styleModule: _lib_styleModule__WEBPACK_IMPORTED_MODULE_1__["default"]
+    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_4__["default"],
+    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_5__["default"],
+    drilldownCentering: _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_1__["default"],
+    callActivityModule: _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_0__["default"],
+    styleModule: _modules_styleModule__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
 };
 

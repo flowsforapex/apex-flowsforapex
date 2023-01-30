@@ -41,12 +41,14 @@
       this.regionId    = this.element[0].id;
       this.viewerWrap  = this.regionId + "_viewer";
       this.canvasId    = this.regionId + "_canvas";
-      this.enabledModules = [];
+      this.enabledModules = [
+        bpmnViewer.customModules.drilldownCentering
+      ];
       if ( this.options.addHighlighting ) {
         this.enabledModules.push(bpmnViewer.customModules.styleModule);
       }
       if ( this.options.enableCallActivities ) {
-        this.enabledModules.push(bpmnViewer.customModules.customDrilldownModule);
+        this.enabledModules.push(bpmnViewer.customModules.callActivityModule);
       }
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
@@ -148,7 +150,7 @@
           // use call activities
           if ( this.options.enableCallActivities ) {
             // set widget reference to viewer module
-            this.bpmnViewer$.get('customDrilldown').setWidget(this);
+            this.bpmnViewer$.get('callActivityModule').setWidget(this);
             // load old diagram (if possible)
             diagram = pData.data.find(d => d.diagramIdentifier === this.diagramIdentifier);
             // otherwise: get root entry
@@ -162,7 +164,7 @@
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
             // reset breadcrumb
-            if (!oldLoaded) this.bpmnViewer$.get('customDrilldown').updateBreadcrumb();
+            if (!oldLoaded) this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
           }
           else {
             // get first (only) entry

@@ -1,7 +1,7 @@
 /**
  * general
  */
- .canvas {
+.canvas {
   height: 80vh;
   background-color: #f0f0f0;
 }
@@ -10,13 +10,19 @@
   --default-stroke-color: black;
 }
 /**
- * custom dark mode colors
+ * dark mode
  */
+.FLOWS-DARK {
+  --color-flows-dark-background: #2b3035;
+}
+/**
+ * custom colors
+ */  
 .FLOWS-DARK .canvas {
-  background-color: #2b3035;
+  background-color: var(--color-flows-dark-background);
 }
 .FLOWS-DARK .bjs-container {
-  --default-fill-color: #2b3035;
+  --default-fill-color: var(--color-flows-dark-background);
   --default-stroke-color: white;
 }
 .FLOWS-DARK .bjs-powered-by {
