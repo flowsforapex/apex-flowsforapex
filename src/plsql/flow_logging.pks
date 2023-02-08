@@ -44,5 +44,7 @@ as
   , p_var_tstz          in flow_process_variables.prov_var_tstz%type default null
   );
 
+  procedure purge_logs;
+
 end flow_logging;
 /

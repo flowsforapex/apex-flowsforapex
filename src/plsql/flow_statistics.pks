@@ -9,10 +9,10 @@ as
 --
 */
 
-procedure collect_step_statistics
+  procedure run_daily_stats;
 
-
-
+  procedure purge_statistics;
 
 
 end flow_statistics;
+/

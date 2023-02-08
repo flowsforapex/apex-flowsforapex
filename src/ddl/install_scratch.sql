@@ -517,7 +517,7 @@ create unique index flow_stsf_ix on flow_daily_stats (stsf_dgrm_id, stsf_objt_bp
 
 alter table flow_step_stats
     add constraint check_stsf_period_type
-      check ( stsf_period in ('DAY' ,'MONTH', 'QUARTER','YEAR') );
+      check ( stsf_period in ('DAY' , 'MTD', 'MONTH', 'QUARTER','YEAR') );
 
 /* Configurations & Error Messages Tables */
 
@@ -535,3 +535,26 @@ create table flow_messages
 );
 
 alter table flow_messages ADD CONSTRAINT fmsg_pk PRIMARY KEY ( fmsg_message_key, fmsg_lang );
+
+create table flow_stats_history
+( sths_id       number  GENERATED always AS IDENTITY ( START WITH 1 NOCACHE ORDER ) not null
+, sths_date     date
+, sths_status   varchar2(50 char)
+, sths_type     varchar2(20 char)
+, sths_errors   varchar2(4000 char)
+, sths_comments varchar2(4000 char)
+, sths_created_on systimestamp with time zone
+, sths_updated_on systimestamp with time zone
+, sths_updated_by varchar2(50 char)
+);
+
+create index flow_sths_ix on flow_stats_history (sths_date);
+
+alter table flow_stats_history
+  add constraint check_sths_status
+    check (sths_status in ('SUCCESS', 'ERROR') );
+
+alter table flow_stats_type
+  add constraint check_sths_type
+    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER') );
+

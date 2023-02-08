@@ -291,6 +291,11 @@ as
   gc_config_default_pageid            constant varchar2(50 char) := 'default_pageid';
   gc_config_default_username          constant varchar2(50 char) := 'default_username';
   gc_config_default_email_sender      constant varchar2(50 char) := 'default_email_sender';
+  gc_config_log_retain_logs           constant varchar2(50 char) := 'logging_retain_logs_after_prcs_completion_days';
+  gc_config_log_retain_summary_daily  constant varchar2(50 char) := 'logging_retain_daily_summaries_days';
+  gc_config_log_retain_summary_month  constant varchar2(50 char) := 'logging_retain_monthly_summaries_months';
+  gc_config_log_retain_summary_qtr    constant varchar2(50 char) := 'logging_retain_quarterly_summaries_months';
+
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
@@ -316,6 +321,18 @@ as
   gc_config_default_default_pageID            constant varchar2(2000 char) := '1';
   gc_config_default_default_username          constant varchar2(2000 char) := 'FLOWS4APEX';
   gc_config_default_timer_max_cycles          constant varchar2(2000 char) := '1000';
+  gc_config_default_log_retain_logs           constant varchar2(2000 char) := '60';
+  gc_config_default_log_retain_summary_daily  constant varchar2(2000 char) := '180';
+  gc_config_default_log_retain_summary_month  constant varchar2(2000 char) := '9';
+  gc_config_default_log_retain_summary_qtr    constant varchar2(2000 char) := '36';
+
+-- Staistics Period
+  gc_stats_period_day                   constant varchar2(20 char) := 'DAY';
+  gc_stats_period_month                 constant varchar2(20 char) := 'MONTH';
+  gc_stats_period_quarter               constant varchar2(20 char) := 'QUARTER';
+
+  gc_stats_outcome_success              constant varchar2(50 char) := 'SUCCESS';
+  gc_stats_outcome_error                constant varchar2(50 char) := 'ERROR';
 
 
 

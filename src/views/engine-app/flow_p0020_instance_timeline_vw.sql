@@ -42,7 +42,8 @@ select prcs_id
         else 'Object '||objt||'  subflow ' ||subflow||' • variable '||proc_var||' • value '||value        
        end as event_desc
      , 'u-color-'||( ora_hash(objt,44) + 1 )||' '||
-      case operation
+        'fa fa-clock-o'
+/*      case operation
         when 'step current' then 'fa fa-circle-o'
         when 'step started' then 'fa fa-play-circle'
         when 'step completed' then 'fa fa-check-circle'
@@ -55,7 +56,7 @@ select prcs_id
         when 'Gateway Processed' then 'fa fa-index'
         when 'start called model' then 'fa fa-box-arrow-in-south'
         when 'finish called model' then 'fa fa-box-arrow-out-north'
-       end as USER_COLOR
+       end */ as USER_COLOR
      , case operation
         when 'step current' then 'fa fa-circle-o'
         when 'step started' then 'fa fa-play-circle-o'
