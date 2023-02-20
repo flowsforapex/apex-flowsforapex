@@ -1,13 +1,14 @@
+create or replace package flow_logging
 /* 
 -- Flows for APEX - flow_logging.pks
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
+-- Updated 10-Feb-2023  Richard Allen, Oracle
 --
 */
-create or replace package flow_logging
   authid definer
   accessible by ( flow_engine, flow_instances, flow_proc_vars_int, flow_expressions 
                 , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
@@ -43,8 +44,6 @@ as
   , p_var_clob          in flow_process_variables.prov_var_clob%type default null
   , p_var_tstz          in flow_process_variables.prov_var_tstz%type default null
   );
-
-  procedure purge_logs;
 
 end flow_logging;
 /

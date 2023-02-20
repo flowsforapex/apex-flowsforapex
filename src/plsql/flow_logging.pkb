@@ -1,15 +1,14 @@
+create or replace package body flow_logging as
 /* 
 -- Flows for APEX - flow_logging.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
 --
--- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
+-- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG
+-- updated 10-Feb-2023  Richard Allen (Oracle)  
 --
 */
-create or replace package body flow_logging
-as
-
   g_logging_level           flow_configuration.cfig_value%type; 
   g_logging_hide_userid     flow_configuration.cfig_value%type;
 

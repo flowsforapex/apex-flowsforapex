@@ -770,17 +770,17 @@ union all
     apex_debug.enter(p_routine_name  => 'purge_statistics');
 
     l_daily_summary_purge_date      := sysdate - flow_engine_util.get_config_value
-                                      ( p_config_key => flow_constants_pkg.gc_config_log_retain_summary_daily 
-                                      , p_default_value => flow_constants_pkg.gc_config_default_log_retain_summary_daily   
+                                      ( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily 
+                                      , p_default_value => flow_constants_pkg.gc_config_default_stats_retain_summary_daily   
                                       );
     l_monthly_summary_purge_date    := add_months ( sysdate, -1 * flow_engine_util.get_config_value
-                                                      ( p_config_key => flow_constants_pkg.gc_config_log_retain_summary_month 
-                                                      , p_default_value => flow_constants_pkg.gc_config_default_log_retain_summary_month  
+                                                      ( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month 
+                                                      , p_default_value => flow_constants_pkg.gc_config_default_stats_retain_summary_month  
                                                       )
                                                   );                                      
     l_quarterly_summary_purge_date  := add_months ( sysdate, -1 * flow_engine_util.get_config_value
-                                                      ( p_config_key => flow_constants_pkg.gc_config_log_retain_summary_qtr 
-                                                      , p_default_value => flow_constants_pkg.gc_config_default_log_retain_summary_qtr  
+                                                      ( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr 
+                                                      , p_default_value => flow_constants_pkg.gc_config_default_stats_retain_summary_qtr  
                                                       )
                                                   );
 

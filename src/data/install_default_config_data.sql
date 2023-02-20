@@ -4,9 +4,10 @@ begin
   insert into flow_configuration (cfig_key, cfig_value) values ('logging_hide_userid', 'false');
   insert into flow_configuration (cfig_key, cfig_value) values ('logging_language','en');
   insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_logs_after_prcs_completion_days','60');
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_daily_summaries_days','185');
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_monthly_summaries_months','9');
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_quarterly_summaries_months','60');
+  insert into flow_configuration (cfig_key, cfig_value) values ('logging_archive_instance_summaries','false');
+  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_daily_summaries_days','185');
+  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_monthly_summaries_months','9');
+  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_quarterly_summaries_months','60');
   insert into flow_configuration (cfig_key, cfig_value) values ('engine_app_mode','production');
   -- put new systems into strict mode for step keys (migrated systems are in legacy mode)
   insert into flow_configuration (cfig_key, cfig_value) values ('duplicate_step_prevention','strict');

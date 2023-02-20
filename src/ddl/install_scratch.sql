@@ -95,13 +95,20 @@ CREATE TABLE flow_processes (
     prcs_start_ts       TIMESTAMP WITH TIME ZONE,
     prcs_complete_ts    TIMESTAMP WITH TIME ZONE,  
     prcs_due_on         TIMESTAMP WITH TIME ZONE,
+    prcs_archived_ts    TIMESTAMP WITH TIME ZONE,
     prcs_priority       NUMBER,
     prcs_last_update    TIMESTAMP WITH TIME ZONE,
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
 
+comment on column flow_processes.prcs_start_ts is 
+ 'Timestamp for process start.  Resets if process instance is reset.';
+
 comment on column flow_processes.prcs_complete_ts is 
  'Timestamp for process end when instance is in states "completed" or "terminated".';
+
+  comment on column flow_processes.prcs_archived_ts is 
+ 'Timestamp for process archive.  Resets if process instance is reset. ';
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
 

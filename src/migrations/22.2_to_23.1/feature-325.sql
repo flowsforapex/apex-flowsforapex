@@ -5,7 +5,8 @@
  alter table flow_processes
  add (
   prcs_start_ts      timestamp with time zone,
-  prcs_complete_ts   timestamp with time zone
+  prcs_complete_ts   timestamp with time zone,
+  prcs_archived_ts   timestamp with time zone
  );
 
  comment on column flow_processes.prcs_complete_ts is 
@@ -13,6 +14,9 @@
 
   comment on column flow_processes.prcs_start_ts is 
  'Timestamp for process start.  Resets if process instance is reset.';
+
+  comment on column flow_processes.prcs_archived_ts is 
+ 'Timestamp for process archive.  Resets if process instance is reset. ';
 
  alter table flow_instance_event_log 
  add ( lgpr_duration interval day(3) to second (3));
@@ -56,6 +60,7 @@ alter table flow_stats_type
 -- add retention config
 
   insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_logs_after_prcs_completion_days','60');
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_daily_summaries_days','185');
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_monthly_summaries_months','9');
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_quarterly_summaries_months','60');
+  insert into flow_configuration (cfig_key, cfig_value) values ('logging_archive_instance_summaries','false');
+  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_daily_summaries_days','185');
+  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_monthly_summaries_months','9');
+  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_quarterly_summaries_months','60');

@@ -1,4 +1,5 @@
 create or replace package flow_statistics
+accessible by ( flow_admin_api)
 as
 /* 
 -- Flows for APEX - flow_statistics.pks
