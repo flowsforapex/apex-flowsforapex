@@ -280,42 +280,65 @@ as
 
 -- Config Parameter Keys
 
-  gc_config_logging_level             constant varchar2(50 char) := 'logging_level';
-  gc_config_logging_hide_userid       constant varchar2(50 char) := 'logging_hide_userid';
-  gc_config_logging_language          constant varchar2(50 char) := 'logging_language';
-  gc_config_engine_app_mode           constant varchar2(50 char) := 'engine_app_mode';
-  gc_config_dup_step_prevention       constant varchar2(50 char) := 'duplicate_step_prevention';
-  gc_config_timer_max_cycles          constant varchar2(50 char) := 'timer_max_cycles';
-  gc_config_default_workspace         constant varchar2(50 char) := 'default_workspace';
-  gc_config_default_application       constant varchar2(50 char) := 'default_application';
-  gc_config_default_pageid            constant varchar2(50 char) := 'default_pageid';
-  gc_config_default_username          constant varchar2(50 char) := 'default_username';
-  gc_config_default_email_sender      constant varchar2(50 char) := 'default_email_sender';
+  gc_config_logging_level               constant varchar2(50 char) := 'logging_level';
+  gc_config_logging_hide_userid         constant varchar2(50 char) := 'logging_hide_userid';
+  gc_config_logging_language            constant varchar2(50 char) := 'logging_language';
+  gc_config_logging_retain_logs         constant varchar2(50 char) := 'logging_retain_logs_after_prcs_completion_days';
+  gc_config_logging_archive_location    constant varchar2(50 char) := 'logging_archive_location';
+  gc_config_logging_archive_enabled     constant varchar2(50 char) := 'logging_archive_instance_summaries';
+  gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
+  gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
+  gc_config_timer_max_cycles            constant varchar2(50 char) := 'timer_max_cycles';
+  gc_config_default_workspace           constant varchar2(50 char) := 'default_workspace';
+  gc_config_default_application         constant varchar2(50 char) := 'default_application';
+  gc_config_default_pageid              constant varchar2(50 char) := 'default_pageid';
+  gc_config_default_username            constant varchar2(50 char) := 'default_username';
+  gc_config_default_email_sender        constant varchar2(50 char) := 'default_email_sender';
+  gc_config_stats_retain_summary_daily  constant varchar2(50 char) := 'stats_retain_daily_summaries_days';
+  gc_config_stats_retain_summary_month  constant varchar2(50 char) := 'stats_retain_monthly_summaries_months';
+  gc_config_stats_retain_summary_qtr    constant varchar2(50 char) := 'stats_retain_quarterly_summaries_months';
+
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
-  gc_config_logging_level_none         constant varchar2(2000 char) := 'none';      -- none
-  gc_config_logging_level_standard     constant varchar2(2000 char) := 'standard';  -- instances and tasks
-  gc_config_logging_level_secure       constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
-  gc_config_logging_level_full         constant varchar2(2000 char) := 'full';      -- secure + variable changes
-  gc_config_engine_app_mode_dev        constant varchar2(2000 char) := 'development';
-  gc_config_engine_app_mode_prod       constant varchar2(2000 char) := 'production';
-  gc_config_dup_step_prevention_legacy constant varchar2(2000 char) := 'legacy';   -- null step key allowed
-  gc_config_dup_step_prevention_strict constant varchar2(2000 char) := 'strict';   -- step key enforced
+  gc_config_logging_level_none               constant varchar2(2000 char) := 'none';        -- none
+  gc_config_logging_level_standard           constant varchar2(2000 char) := 'standard';    -- instances and tasks
+  gc_config_logging_level_secure             constant varchar2(2000 char) := 'secure';      -- standard + diagram changes
+  gc_config_logging_level_full               constant varchar2(2000 char) := 'full';        -- secure + variable changes
+  gc_config_engine_app_mode_dev              constant varchar2(2000 char) := 'development';
+  gc_config_engine_app_mode_prod             constant varchar2(2000 char) := 'production';
+  gc_config_dup_step_prevention_legacy       constant varchar2(2000 char) := 'legacy';      -- null step key allowed
+  gc_config_dup_step_prevention_strict       constant varchar2(2000 char) := 'strict';      -- step key enforced
+  gc_config_archive_destination_table        constant varchar2(2000 char) := 'TABLE';       -- To Database Table
+  gc_config_archive_destination_oci_api      constant varchar2(2000 char) := 'OCI-API';     -- OCI using API Key
+  gc_config_archive_destination_oci_preauth  constant varchar2(2000 char) := 'OCI-PREAUTH'; -- OCI using PreAuth
 
 
 -- Config Parameter Default Values
 
-  gc_config_default_logging_level             constant varchar2(2000 char) := gc_config_logging_level_standard;
-  gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
-  gc_config_default_logging_language          constant varchar2(2000 char) := 'en';
-  gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
-  gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
-  gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
-  gc_config_default_default_application       constant varchar2(2000 char) := '100';
-  gc_config_default_default_pageID            constant varchar2(2000 char) := '1';
-  gc_config_default_default_username          constant varchar2(2000 char) := 'FLOWS4APEX';
-  gc_config_default_timer_max_cycles          constant varchar2(2000 char) := '1000';
+  gc_config_default_logging_level               constant varchar2(2000 char) := gc_config_logging_level_standard;
+  gc_config_default_logging_hide_userid         constant varchar2(2000 char) := 'false';
+  gc_config_default_logging_language            constant varchar2(2000 char) := 'en';
+  gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := 'false';
+  gc_config_default_engine_app_mode             constant varchar2(2000 char) := 'production';
+  gc_config_default_dup_step_prevention         constant varchar2(2000 char) := 'legacy';
+  gc_config_default_default_workspace           constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_default_application         constant varchar2(2000 char) := '100';
+  gc_config_default_default_pageID              constant varchar2(2000 char) := '1';
+  gc_config_default_default_username            constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_timer_max_cycles            constant varchar2(2000 char) := '1000';
+  gc_config_default_log_retain_logs             constant varchar2(2000 char) := '60';
+  gc_config_default_stats_retain_summary_daily  constant varchar2(2000 char) := '180';
+  gc_config_default_stats_retain_summary_month  constant varchar2(2000 char) := '9';
+  gc_config_default_stats_retain_summary_qtr    constant varchar2(2000 char) := '36';
+
+-- Staistics Period
+  gc_stats_period_day                   constant varchar2(20 char) := 'DAY';
+  gc_stats_period_month                 constant varchar2(20 char) := 'MONTH';
+  gc_stats_period_quarter               constant varchar2(20 char) := 'QUARTER';
+
+  gc_stats_outcome_success              constant varchar2(50 char) := 'SUCCESS';
+  gc_stats_outcome_error                constant varchar2(50 char) := 'ERROR';
 
 
 

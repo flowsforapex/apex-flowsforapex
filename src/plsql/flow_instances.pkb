@@ -1,7 +1,7 @@
 /* 
 -- Flows for APEX - flow_instances.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created  25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
@@ -338,6 +338,7 @@ as
     -- mark process as running
     update flow_processes prcs
        set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_running
+         , prcs.prcs_start_ts       = systimestamp
          , prcs.prcs_last_update    = systimestamp
          , prcs.prcs_last_update_by =  coalesce  ( sys_context('apex$session','app_user') 
                                                  , sys_context('userenv','os_user')
@@ -508,6 +509,9 @@ as
     -- reset the process status to 'created'
     update flow_processes prcs
        set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_created
+         , prcs_start_ts            = null
+         , prcs_complete_ts         = null
+         , prcs_archived_ts         = null
          , prcs.prcs_last_update    = systimestamp
          , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
                                                 , sys_context('userenv','os_user')
@@ -583,6 +587,7 @@ as
     update flow_processes prcs
        set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_terminated
          , prcs.prcs_last_update = systimestamp
+         , prcs.prcs_complete_ts = systimestamp
          , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
                                                 , sys_context('userenv','os_user')
                                                 , sys_context('userenv','session_user')
@@ -605,9 +610,15 @@ as
     , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     )
   is
-    l_return_code   number;
+    l_return_code             number;
+    l_is_not_archived         boolean := false;
+    l_cur_prcs_id             flow_processes.prcs_id%type;
+    l_cur_sbfl_id             flow_subflows.sbfl_id%type;
+    l_cur_sflg_updated        flow_subflow_log.sflg_last_updated%type;
+    l_cur_prdg_id             flow_instance_diagrams.prdg_id%type;
+    l_cur_prcs_archived_ts    flow_processes.prcs_archived_ts%type;
     cursor c_lock_all is 
-      select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id
+      select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id, prcs.prcs_archived_ts
         from flow_subflows sbfl
         join flow_processes prcs
           on prcs.prcs_id = sbfl.sbfl_prcs_id 
@@ -626,9 +637,17 @@ as
     begin 
       -- lock all timers, logs, subflows, instance diagrams and the process
       open c_lock_all;
+      fetch c_lock_all into l_cur_prcs_id
+                          , l_cur_sbfl_id
+                          , l_cur_sflg_updated
+                          , l_cur_prdg_id
+                          , l_cur_prcs_archived_ts;
       flow_timers_pkg.lock_process_timers
       ( pi_prcs_id => p_process_id
       ); 
+      if l_cur_prcs_archived_ts is null then
+        l_is_not_archived := true;
+      end if;
       close c_lock_all; 
 
     exception 
@@ -651,8 +670,17 @@ as
         pi_prcs_id => p_process_id
       , po_return_code => l_return_code
     );  
+    -- if instance archiving is enabled and instance is not yet archived, run instance archive now before
+    -- process data is deleted from run time tables to ensure arcchive is full audit trail
+    if l_is_not_archived then
+      if flow_engine_util.get_config_value ( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled 
+                                           , p_default_value => flow_constants_pkg.gc_config_default_logging_archive_enabled
+                                           ) = 'true' 
+      then
+        flow_log_admin.archive_completed_instances (p_process_id => p_process_id);
+      end if;
+    end if;
     -- clear out run-time object_log
-
     delete
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id

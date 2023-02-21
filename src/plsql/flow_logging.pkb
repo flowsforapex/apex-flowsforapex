@@ -1,15 +1,14 @@
+create or replace package body flow_logging as
 /* 
 -- Flows for APEX - flow_logging.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
 --
--- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
+-- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG
+-- updated 10-Feb-2023  Richard Allen (Oracle)  
 --
 */
-create or replace package body flow_logging
-as
-
   g_logging_level           flow_configuration.cfig_value%type; 
   g_logging_hide_userid     flow_configuration.cfig_value%type;
 
@@ -34,7 +33,8 @@ as
       , lgpr_prcs_name 
       , lgpr_business_id
       , lgpr_prcs_event
-      , lgpr_timestamp 
+      , lgpr_timestamp
+      , lgpr_duration 
       , lgpr_user 
       , lgpr_comment
       , lgpr_error_info
@@ -46,6 +46,14 @@ as
           , flow_proc_vars_int.get_business_ref (p_process_id)  --- 
           , p_event
           , systimestamp 
+          , case p_event
+            when flow_constants_pkg.gc_prcs_event_completed then
+              prcs.prcs_complete_ts - prcs.prcs_start_ts
+            when flow_constants_pkg.gc_prcs_event_terminated then
+              prcs.prcs_complete_ts - prcs.prcs_start_ts
+            else
+              null
+            end
           , case g_logging_hide_userid 
             when 'true' then 
               null

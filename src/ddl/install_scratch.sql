@@ -4,7 +4,7 @@
 --   type:      Oracle Database 12cR2
 
 -- edited by Richard Allen Feb 2022
--- (c) Copyright, Oracle Corporation and/or its associates.  2020-2022.
+-- (c) Copyright, Oracle Corporation and/or its associates.  2020-2023.
 
 
 -- predefined type, no DDL - SDO_GEOMETRY
@@ -92,11 +92,23 @@ CREATE TABLE flow_processes (
     prcs_status         VARCHAR2(20 CHAR) NOT NULL,
     prcs_init_ts        TIMESTAMP WITH TIME ZONE NOT NULL,
     prcs_init_by        VARCHAR2(255 CHAR),
+    prcs_start_ts       TIMESTAMP WITH TIME ZONE,
+    prcs_complete_ts    TIMESTAMP WITH TIME ZONE,  
     prcs_due_on         TIMESTAMP WITH TIME ZONE,
+    prcs_archived_ts    TIMESTAMP WITH TIME ZONE,
     prcs_priority       NUMBER,
     prcs_last_update    TIMESTAMP WITH TIME ZONE,
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
+
+comment on column flow_processes.prcs_start_ts is 
+ 'Timestamp for process start.  Resets if process instance is reset.';
+
+comment on column flow_processes.prcs_complete_ts is 
+ 'Timestamp for process end when instance is in states "completed" or "terminated".';
+
+  comment on column flow_processes.prcs_archived_ts is 
+ 'Timestamp for process archive.  Resets if process instance is reset. ';
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
 
@@ -387,6 +399,8 @@ ALTER TABLE flow_object_expressions
     ADD CONSTRAINT expr_set_ck
       CHECK ( expr_set in ('beforeEvent', 'onEvent', 'beforeTask', 'afterTask', 'beforeSplit', 'afterMerge', 'inVariables', 'outVariables') );
 
+/* Event logging Tables */
+
 create table flow_flow_event_log
 ( lgfl_dgrm_id       		NUMBER NOT NULL
 , lgfl_dgrm_name     		VARCHAR2(150 CHAR) NOT NULL
@@ -407,6 +421,7 @@ create table flow_instance_event_log
 , lgpr_business_id			VARCHAR2(4000 char)
 , lgpr_prcs_event       	VARCHAR2(20 CHAR) NOT NULL
 , lgpr_timestamp     		TIMESTAMP WITH TIME ZONE NOT NULL
+, lgpr_duration             interval day(3) to second (3)
 , lgpr_user 				VARCHAR2(255 char)
 , lgpr_comment				VARCHAR2(2000 CHAR)
 , lgpr_error_info           VARCHAR2(2000 CHAR)
@@ -452,6 +467,67 @@ create table flow_variable_event_log
 
 create index flow_lgvr_ix on flow_variable_event_log (lgvr_prcs_id, lgvr_scope, lgvr_var_name);
 
+/* Statistics Tables */
+
+create table flow_instance_stats
+( stpr_dgrm_id              number
+, stpr_period_start         date
+, stpr_period               varchar2(10 char)
+, stpr_created              number
+, stpr_started              number
+, stpr_error                number
+, stpr_completed            number
+, stpr_terminated           number
+, stpr_reset                number
+, stpr_duration_10pc_ivl    interval day(3) to second(0)
+, stpr_duration_50pc_ivl    interval day(3) to second(0)
+, stpr_duration_90pc_ivl    interval day(3) to second(0)
+, stpr_duration_max_ivl     interval day(3) to second(0)
+, stpr_duration_10pc_sec    number
+, stpr_duration_50pc_sec    number
+, stpr_duration_90pc_sec    number
+, stpr_duration_max_sec     number
+);
+
+create unique index flow_stpr_ix on flow_instance_stats (stpr_dgrm_id, stpr_period, stpr_period_start);
+
+alter table flow_instance_stats
+    add constraint check_stpr_period_type
+      check ( stpr_period in ('DAY' ,'MONTH', 'QUARTER','YEAR') );
+
+create table flow_step_stats
+( stsf_dgrm_id             number
+, stsf_objt_bpmn_id        varchar2(50 char)
+, stsf_tag_name            varchar2(50 char)
+, stsf_period_start        date
+, stsf_period              varchar2(10 char)
+, stsf_completed           number
+, stsf_duration_10pc_ivl   interval day(3) to second(3)
+, stsf_duration_50pc_ivl   interval day(3) to second(3)
+, stsf_duration_90pc_ivl   interval day(3) to second(3)
+, stsf_duration_max_ivl    interval day(3) to second(3)
+, stsf_duration_10pc_sec   number
+, stsf_duration_50pc_sec   number
+, stsf_duration_90pc_sec   number
+, stsf_duration_max_sec    number
+, stsf_waiting_10pc_ivl    interval day(3) to second(3)
+, stsf_waiting_50pc_ivl    interval day(3) to second(3)
+, stsf_waiting_90pc_ivl    interval day(3) to second(3)
+, stsf_waiting_max_ivl     interval day(3) to second(3)
+, stsf_waiting_10pc_sec    number
+, stsf_waiting_50pc_sec    number
+, stsf_waiting_90pc_sec    number
+, stsf_waiting_max_sec     number
+);
+
+create unique index flow_stsf_ix on flow_daily_stats (stsf_dgrm_id, stsf_objt_bpmn_id, stsf_period, stsf_period_start);
+
+alter table flow_step_stats
+    add constraint check_stsf_period_type
+      check ( stsf_period in ('DAY' , 'MTD', 'MONTH', 'QUARTER','YEAR') );
+
+/* Configurations & Error Messages Tables */
+
 create table flow_configuration
 ( cfig_key                  varchar2(50 char) NOT NULL
 , cfig_value                varchar2(2000 char)
@@ -466,3 +542,26 @@ create table flow_messages
 );
 
 alter table flow_messages ADD CONSTRAINT fmsg_pk PRIMARY KEY ( fmsg_message_key, fmsg_lang );
+
+create table flow_stats_history
+( sths_id       number  GENERATED always AS IDENTITY ( START WITH 1 NOCACHE ORDER ) not null
+, sths_date     date
+, sths_status   varchar2(50 char)
+, sths_type     varchar2(20 char)
+, sths_errors   varchar2(4000 char)
+, sths_comments varchar2(4000 char)
+, sths_created_on systimestamp with time zone
+, sths_updated_on systimestamp with time zone
+, sths_updated_by varchar2(50 char)
+);
+
+create index flow_sths_ix on flow_stats_history (sths_date);
+
+alter table flow_stats_history
+  add constraint check_sths_status
+    check (sths_status in ('SUCCESS', 'ERROR') );
+
+alter table flow_stats_type
+  add constraint check_sths_type
+    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER') );
+

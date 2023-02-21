@@ -442,5 +442,18 @@ create or replace package body flow_api_pkg as
                                               );
   end return_approval_result;
 
+  function intervalDStoSec (
+    p_intervalDS  interval day to second
+  ) return number
+  is
+    l_sec number;
+  begin
+    return ( extract( day   from p_intervalDS) * 86400
+           + extract( hour  from p_intervalDS) *  3600
+           + extract(minute from p_intervalDS) *    60
+           + extract(second from p_intervalDS)        
+           );
+  end intervalDStoSec;
+
 end flow_api_pkg;
 /

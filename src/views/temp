@@ -1,0 +1,689 @@
+{
+    "processID": 7164,
+    "mainDiagram": 146,
+    "processName": "Export Parts Order - BA A320 Seating Refurb G994K ",
+    "businessID": "1006",
+    "priority": null,
+    "prcs_status": "running",
+    "json_created": "2023-02-01T10:53:41.681732Z",
+    "prcs_init_ts": "2022-12-02T06:40:12.064057Z",
+    "prcs_init_by": "SCOTT",
+    "prcs_due_on": null,
+    "diagramsUsed": [
+        {
+            "diagramLevel": 0,
+            "diagramId": 146,
+            "diagramName": "Process Large Export Order",
+            "diagramVersion": "1",
+            "diagramStatus": "draft",
+            "callingDiagram": null,
+            "callingObject": null
+        },
+        {
+            "diagramLevel": 28602,
+            "diagramId": 147,
+            "diagramName": "Generate Export Paperwork",
+            "diagramVersion": "0",
+            "diagramStatus": "draft",
+            "callingDiagram": 146,
+            "callingObject": "Activity_1c61tqz"
+        }
+    ],
+    "events": [
+        {
+            "event": "created",
+            "diagram": 146,
+            "timestamp": "2022-12-02T06:40:12.077756Z",
+            "user": "SCOTT"
+        },
+        {
+            "event": "started",
+            "diagram": 146,
+            "timestamp": "2022-12-02T06:40:12.081617Z",
+            "user": "SCOTT"
+        },
+        {
+            "event": "start called model",
+            "object": "Activity_1c61tqz",
+            "diagram": 146,
+            "timestamp": "2022-12-02T06:46:48.849763Z",
+            "user": "FLOWSDEV2",
+            "comment": "Starting called diagram Generate Export Paperwork version ."
+        },
+        {
+            "event": "Gateway Processed",
+            "object": "Gateway_Inc_ShipModes",
+            "diagram": 146,
+            "timestamp": "2022-12-02T06:46:48.884936Z",
+            "user": "FLOWSDEV2",
+            "comment": "Chosen Paths : Flow_0rpxblp:Flow_1klmqrg"
+        },
+        {
+            "event": "finish called model",
+            "object": "Event_1b31018",
+            "diagram": 146,
+            "timestamp": "2022-12-02T06:50:56.915332Z",
+            "user": "ED",
+            "comment": "Leaving called diagram Generate Export Paperwork."
+        }
+    ],
+    "steps": [
+        {
+            "object": "Event_Start_Exco",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "wasCurrent": "2022-12-02T06:40:12.109283Z",
+            "wasCompleted": "2022-12-02T06:40:12.134109Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "SCOTT"
+        },
+        {
+            "object": "Activity_Enter_Order",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Event_Start_Exco",
+            "wasCurrent": "2022-12-02T06:40:12.134384Z",
+            "wasCompleted": "2022-12-02T06:41:58.917589Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "reservation": "SCOTT",
+            "user": "SCOTT"
+        },
+        {
+            "object": "Activity_0o48cf3",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Activity_Enter_Order",
+            "wasCurrent": "2022-12-02T06:41:58.920577Z",
+            "wasCompleted": "2022-12-02T06:46:48.629197Z",
+            "statusWhenComplete": "waiting for approval",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Gateway_0iirqxr",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_0iirqxr",
+            "wasCurrent": "2022-12-02T06:46:48.629356Z",
+            "wasCompleted": "2022-12-02T06:46:48.691172Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Gateway_0kh5iel",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_0kh5iel",
+            "wasCurrent": "2022-12-02T06:46:48.691271Z",
+            "wasCompleted": "2022-12-02T06:52:15.460988Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "OSCAR"
+        },
+        {
+            "object": "Gateway_1vn4tgg",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_1vn4tgg",
+            "wasCurrent": "2022-12-02T06:46:48.691271Z",
+            "wasCompleted": "2022-12-02T06:46:48.710226Z",
+            "statusWhenComplete": "split",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "exportOrLocalDocGateway",
+            "subflowID": 28595,
+            "processLevel": 0,
+            "lastCompleted": "exportOrLocalDocGateway",
+            "wasCurrent": "2022-12-02T06:46:48.715093Z",
+            "wasCompleted": "2022-12-02T06:46:48.755546Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Activity_1ow2uze",
+            "subflowID": 28595,
+            "processLevel": 0,
+            "lastCompleted": "exportOrLocalDocGateway",
+            "wasCurrent": "2022-12-02T06:46:48.755617Z",
+            "wasCompleted": "2022-12-02T06:51:04.823364Z",
+            "statusWhenComplete": "in subprocess",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Event_0n2zeza",
+            "subflowID": 28598,
+            "processLevel": 28598,
+            "lastCompleted": "exportOrLocalDocGateway",
+            "wasCurrent": "2022-12-02T06:46:48.781017Z",
+            "wasCompleted": "2022-12-02T06:46:48.817686Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Gateway_0r2ju5v",
+            "subflowID": 28598,
+            "processLevel": 28598,
+            "lastCompleted": "Gateway_0r2ju5v",
+            "wasCurrent": "2022-12-02T06:46:48.817763Z",
+            "wasCompleted": "2022-12-02T06:46:48.821453Z",
+            "statusWhenComplete": "split",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Activity_1c61tqz",
+            "subflowID": 28600,
+            "processLevel": 28598,
+            "lastCompleted": "Gateway_0r2ju5v",
+            "wasCurrent": "2022-12-02T06:46:48.822358Z",
+            "wasCompleted": "2022-12-02T06:50:56.916712Z",
+            "statusWhenComplete": "in call activity",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Event_0g5ea9q",
+            "subflowID": 28602,
+            "processLevel": 28602,
+            "lastCompleted": "Activity_1c61tqz",
+            "wasCurrent": "2022-12-02T06:46:48.837998Z",
+            "wasCompleted": "2022-12-02T06:46:48.851562Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 147,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Activity_17zccdb",
+            "subflowID": 28602,
+            "processLevel": 28602,
+            "lastCompleted": "Event_0g5ea9q",
+            "wasCurrent": "2022-12-02T06:46:48.851654Z",
+            "wasCompleted": "2022-12-02T06:47:45.913923Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 147,
+            "user": "ED"
+        },
+        {
+            "object": "Activity_1w0hgj6",
+            "subflowID": 28601,
+            "processLevel": 28598,
+            "lastCompleted": "Gateway_0r2ju5v",
+            "wasCurrent": "2022-12-02T06:46:48.853372Z",
+            "wasCompleted": "2022-12-02T06:51:04.732512Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "reservation": "ED",
+            "user": "ED"
+        },
+        {
+            "object": "Activity_1bum658",
+            "subflowID": 28596,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_1vn4tgg",
+            "wasCurrent": "2022-12-02T06:46:48.854688Z",
+            "wasStarted": "2022-12-02T06:46:48.859446Z",
+            "wasCompleted": "2022-12-02T06:46:48.869485Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Gateway_0vab9yd",
+            "subflowID": 28596,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_0vab9yd",
+            "wasCurrent": "2022-12-02T06:46:48.869599Z",
+            "wasCompleted": "2022-12-02T06:52:15.453755Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "OSCAR"
+        },
+        {
+            "object": "Gateway_Inc_ShipModes",
+            "subflowID": 28596,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_Inc_ShipModes",
+            "wasCurrent": "2022-12-02T06:46:48.869599Z",
+            "wasCompleted": "2022-12-02T06:46:48.888668Z",
+            "statusWhenComplete": "split",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Activity_1cozv1y",
+            "subflowID": 28603,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_Inc_ShipModes",
+            "wasCurrent": "2022-12-02T06:46:48.889639Z",
+            "wasCompleted": "2022-12-02T06:52:11.614937Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "reservation": "OSCAR",
+            "user": "OSCAR"
+        },
+        {
+            "object": "Activity_1dewv3m",
+            "subflowID": 28604,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_Inc_ShipModes",
+            "wasCurrent": "2022-12-02T06:46:48.890973Z",
+            "wasCompleted": "2022-12-02T06:52:15.391963Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "reservation": "OSCAR",
+            "user": "OSCAR"
+        },
+        {
+            "object": "Activity_1fh9sk7",
+            "subflowID": 28597,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_1vn4tgg",
+            "wasCurrent": "2022-12-02T06:46:48.892273Z",
+            "wasStarted": "2022-12-02T06:46:48.892680Z",
+            "wasCompleted": "2022-12-02T06:46:48.897479Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Activity_148qqch",
+            "subflowID": 28602,
+            "processLevel": 28602,
+            "lastCompleted": "Activity_17zccdb",
+            "wasCurrent": "2022-12-02T06:47:45.914129Z",
+            "wasCompleted": "2022-12-02T06:50:56.889983Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 147,
+            "user": "ED"
+        },
+        {
+            "object": "Event_1b31018",
+            "subflowID": 28602,
+            "processLevel": 28602,
+            "lastCompleted": "Event_1b31018",
+            "wasCurrent": "2022-12-02T06:50:56.890183Z",
+            "wasCompleted": "2022-12-02T06:50:56.896863Z",
+            "statusWhenComplete": "completed",
+            "subflowDiagram": 147,
+            "user": "ED"
+        },
+        {
+            "object": "Event_0ctcxyt",
+            "subflowID": 28600,
+            "processLevel": 28598,
+            "lastCompleted": "Event_0ctcxyt",
+            "wasCurrent": "2022-12-02T06:50:56.916807Z",
+            "wasCompleted": "2022-12-02T06:50:56.917424Z",
+            "statusWhenComplete": "completed",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Event_1q5elwj",
+            "subflowID": 28601,
+            "processLevel": 28598,
+            "lastCompleted": "Event_1q5elwj",
+            "wasCurrent": "2022-12-02T06:51:04.733043Z",
+            "wasCompleted": "2022-12-02T06:51:04.734648Z",
+            "statusWhenComplete": "completed",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Gateway_1qon03h",
+            "subflowID": 28595,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_1qon03h",
+            "wasCurrent": "2022-12-02T06:51:04.823475Z",
+            "wasCompleted": "2022-12-02T06:51:04.825890Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Activity_13ozi9d",
+            "subflowID": 28596,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_0vab9yd",
+            "wasCurrent": "2022-12-02T06:52:15.453892Z",
+            "wasStarted": "2022-12-02T06:52:15.454674Z",
+            "wasCompleted": "2022-12-02T06:52:15.457631Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "OSCAR"
+        },
+        {
+            "object": "Activity_0pozgkx",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_0kh5iel",
+            "wasCurrent": "2022-12-02T06:52:15.461057Z",
+            "wasCompleted": "2022-12-02T06:52:53.002704Z",
+            "statusWhenComplete": "waiting for approval",
+            "subflowDiagram": 146,
+            "user": "SCOTT"
+        },
+        {
+            "object": "Activity_1voltm6",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Activity_0pozgkx",
+            "wasCurrent": "2022-12-02T06:52:53.002961Z",
+            "wasCompleted": "2022-12-02T07:04:21.418268Z",
+            "statusWhenComplete": "waiting for approval",
+            "subflowDiagram": 146,
+            "user": "GEORGIA"
+        },
+        {
+            "object": "Activity_1oqds9y",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Activity_1voltm6",
+            "wasCurrent": "2022-12-02T07:04:21.418468Z",
+            "wasCompleted": "2022-12-02T07:04:44.757669Z",
+            "statusWhenComplete": "waiting for approval",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Gateway_13czvao",
+            "subflowID": 28594,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_13czvao",
+            "wasCurrent": "2022-12-02T07:04:44.757856Z",
+            "wasCompleted": "2022-12-02T07:04:44.763307Z",
+            "statusWhenComplete": "split",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Activity_18ugqjq",
+            "subflowID": 28605,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_13czvao",
+            "wasCurrent": "2022-12-02T07:04:44.764387Z",
+            "wasStarted": "2022-12-02T07:04:44.765036Z",
+            "wasCompleted": "2022-12-02T07:04:44.767660Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Event_1t06ziv",
+            "subflowID": 28605,
+            "processLevel": 0,
+            "lastCompleted": "Event_1t06ziv",
+            "wasCurrent": "2022-12-02T07:04:44.767726Z",
+            "wasCompleted": "2022-12-02T07:04:44.768416Z",
+            "statusWhenComplete": "completed",
+            "subflowDiagram": 146,
+            "user": "ED"
+        },
+        {
+            "object": "Activity_0etzv1y",
+            "subflowID": 28606,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_13czvao",
+            "wasCurrent": "2022-12-02T07:04:44.773611Z",
+            "wasCompleted": "2022-12-02T07:05:14.799920Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "reservation": "OSCAR",
+            "user": "OSCAR"
+        },
+        {
+            "object": "exportOrLocalPackingGateway",
+            "subflowID": 28606,
+            "processLevel": 0,
+            "lastCompleted": "exportOrLocalPackingGateway",
+            "wasCurrent": "2022-12-02T07:05:14.800399Z",
+            "wasCompleted": "2022-12-02T07:05:14.865181Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "OSCAR"
+        },
+        {
+            "object": "Activity_1ll5xmd",
+            "subflowID": 28606,
+            "processLevel": 0,
+            "lastCompleted": "exportOrLocalPackingGateway",
+            "wasCurrent": "2022-12-02T07:05:14.865275Z",
+            "wasCompleted": "2022-12-02T07:05:28.186753Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "reservation": "OSCAR",
+            "user": "OSCAR"
+        },
+        {
+            "object": "Event_1nncfer",
+            "subflowID": 28606,
+            "processLevel": 0,
+            "lastCompleted": "Activity_1ll5xmd",
+            "wasCurrent": "2022-12-02T07:05:28.187215Z",
+            "wasCompleted": "2022-12-02T07:05:57.305622Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        },
+        {
+            "object": "Gateway_1gk5qxz",
+            "subflowID": 28606,
+            "processLevel": 0,
+            "lastCompleted": "Gateway_1gk5qxz",
+            "wasCurrent": "2022-12-02T07:05:57.305845Z",
+            "wasCompleted": "2022-12-02T07:05:57.339609Z",
+            "statusWhenComplete": "running",
+            "subflowDiagram": 146,
+            "user": "FLOWSDEV2"
+        }
+    ],
+    "processVariablesSet": [
+        {
+            "scope": 0,
+            "variables": [
+                {
+                    "var_name": "PROCESS_NAME",
+                    "subflowID": null,
+                    "objectId": null,
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:40:12.316907Z",
+                    "newValue": "Export Parts Order - BA A320 Seating Refurb G994K"
+                },
+                {
+                    "var_name": "BUSINESS_REF",
+                    "subflowID": null,
+                    "objectId": null,
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:40:15.389242Z",
+                    "newValue": "1006"
+                },
+                {
+                    "var_name": "Activity_0o48cf3:task_id",
+                    "subflowID": 28594,
+                    "objectId": "Activity_0o48cf3",
+                    "expr_set": null,
+                    "type": "NUMBER",
+                    "timestamp": "2022-12-02T06:41:58.938163Z",
+                    "newValue": "8280764444326998"
+                },
+                {
+                    "var_name": "OrderAccepted",
+                    "subflowID": 28594,
+                    "objectId": "Activity_0o48cf3",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.627159Z",
+                    "newValue": "APPROVED"
+                },
+                {
+                    "var_name": "export_doc_reqd",
+                    "subflowID": 28595,
+                    "objectId": "exportOrLocalDocGateway",
+                    "expr_set": "beforeSplit",
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.751462Z",
+                    "newValue": "GLOBAL"
+                },
+                {
+                    "var_name": "Event_Export_Rem:applicationId",
+                    "subflowID": 28599,
+                    "objectId": "Event_Export_Rem",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.799546Z",
+                    "newValue": "105"
+                },
+                {
+                    "var_name": "Event_Export_Rem:pageId",
+                    "subflowID": 28599,
+                    "objectId": "Event_Export_Rem",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.799678Z",
+                    "newValue": "1"
+                },
+                {
+                    "var_name": "Event_Export_Rem:username",
+                    "subflowID": 28599,
+                    "objectId": "Event_Export_Rem",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.799765Z",
+                    "newValue": "FLOWSDEV2"
+                },
+                {
+                    "var_name": "Ship_Modes",
+                    "subflowID": 28596,
+                    "objectId": "Gateway_Inc_ShipModes",
+                    "expr_set": "beforeSplit",
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.877980Z",
+                    "newValue": "courier:ocean"
+                },
+                {
+                    "var_name": "Activity_0pozgkx:task_id",
+                    "subflowID": 28594,
+                    "objectId": "Activity_0pozgkx",
+                    "expr_set": null,
+                    "type": "NUMBER",
+                    "timestamp": "2022-12-02T06:52:15.469908Z",
+                    "newValue": "8281813846388651"
+                },
+                {
+                    "var_name": "SHIP_APPROVAL_SALES",
+                    "subflowID": 28594,
+                    "objectId": "Activity_0pozgkx",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:52:53.001015Z",
+                    "newValue": "APPROVED"
+                },
+                {
+                    "var_name": "Activity_1voltm6:task_id",
+                    "subflowID": 28594,
+                    "objectId": "Activity_1voltm6",
+                    "expr_set": null,
+                    "type": "NUMBER",
+                    "timestamp": "2022-12-02T06:52:53.009415Z",
+                    "newValue": "8281932362392405"
+                },
+                {
+                    "var_name": "SHIP_APPROVAL_GM",
+                    "subflowID": 28594,
+                    "objectId": "Activity_1voltm6",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T07:04:21.416260Z",
+                    "newValue": "APPROVED"
+                },
+                {
+                    "var_name": "Activity_1oqds9y:task_id",
+                    "subflowID": 28594,
+                    "objectId": "Activity_1oqds9y",
+                    "expr_set": null,
+                    "type": "NUMBER",
+                    "timestamp": "2022-12-02T07:04:21.425889Z",
+                    "newValue": "8282061756461247"
+                },
+                {
+                    "var_name": "SHIP_APPROVAL_EXPORT",
+                    "subflowID": 28594,
+                    "objectId": "Activity_1oqds9y",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T07:04:44.713193Z",
+                    "newValue": "APPROVED"
+                },
+                {
+                    "var_name": "PackagingType",
+                    "subflowID": 28606,
+                    "objectId": "exportOrLocalPackingGateway",
+                    "expr_set": "beforeSplit",
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T07:05:14.814047Z",
+                    "newValue": "export"
+                },
+                {
+                    "var_name": "Event_1nncfer:applicationId",
+                    "subflowID": 28606,
+                    "objectId": "Event_1nncfer",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T07:05:28.190011Z",
+                    "newValue": "105"
+                },
+                {
+                    "var_name": "Event_1nncfer:pageId",
+                    "subflowID": 28606,
+                    "objectId": "Event_1nncfer",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T07:05:28.190247Z",
+                    "newValue": "1"
+                },
+                {
+                    "var_name": "Event_1nncfer:username",
+                    "subflowID": 28606,
+                    "objectId": "Event_1nncfer",
+                    "expr_set": null,
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T07:05:28.190338Z",
+                    "newValue": "FLOWSDEV2"
+                }
+            ]
+        },
+        {
+            "scope": 28602,
+            "variables": [
+                {
+                    "var_name": "BUSINESS_REF",
+                    "subflowID": 28602,
+                    "objectId": "Activity_1c61tqz",
+                    "expr_set": "inVariables",
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.844361Z",
+                    "newValue": "1006"
+                },
+                {
+                    "var_name": "PROCESS_NAME",
+                    "subflowID": 28602,
+                    "objectId": "Activity_1c61tqz",
+                    "expr_set": "inVariables",
+                    "type": "VARCHAR2",
+                    "timestamp": "2022-12-02T06:46:48.844623Z",
+                    "newValue": "Export Doc Generator"
+                }
+            ]
+        }
+    ]
+}

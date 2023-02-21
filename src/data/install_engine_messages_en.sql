@@ -229,6 +229,14 @@ begin
   -- below here manually added for 23.1 dev
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'diagram-archive-has-instances', c_load_lang, q'[You tried to archive a diagram that has running instances.]' );  
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'apex-task-business-ref-null', c_load_lang, q'[Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'archive-destination-bad-json', c_load_lang, q'[Error in archive destination configuration parameter.  Parameter: %0]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'log-archive-error', c_load_lang, q'[Error archiving instance summary for Process Instance %0]' ); 
+
+
   commit;
 end;
 /
