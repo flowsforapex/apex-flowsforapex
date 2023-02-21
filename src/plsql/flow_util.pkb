@@ -6,6 +6,7 @@ as
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
 -- Created  08-Dec-2022  Richard Allen (Oracle Corporation)
+-- Changed  21-FEB-2023  Moritz Klein (MT GmbH)
 --
 */
 
@@ -526,6 +527,45 @@ as
       -- $F4AMESSAGE 'exec_plsql_other' || 'Error executing PL/SQL.  PL/SQL error shown in event log.'    
 
   end exec_flows_plsql;
+
+  function clob_to_blob
+  ( 
+    pi_clob in clob
+  ) return blob
+  as
+  $if flow_apex_env.ver_le_22_1 $then
+    l_blob   blob;
+    l_dstoff pls_integer := 1;
+    l_srcoff pls_integer := 1;
+    l_lngctx pls_integer := 0;
+    l_warn   pls_integer;
+  $end
+  begin
+
+  $if flow_apex_env.ver_le_22_1 $then
+    sys.dbms_lob.createtemporary
+    ( lob_loc => l_blob
+    , cache   => true
+    , dur     => sys.dbms_lob.call
+    );    
+
+    sys.dbms_lob.converttoblob
+    ( dest_lob     => l_blob
+    , src_clob     => pi_clob
+    , amount       => sys.dbms_lob.lobmaxsize
+    , dest_offset  => l_dstoff
+    , src_offset   => l_srcoff
+    , blob_csid    => nls_charset_id( 'AL32UTF8' )
+    , lang_context => l_lngctx
+    , warning      => l_warn
+    );
+
+    return l_blob;
+  $else
+    return apex_util.clob_to_blob( p_clob => pi_clob );
+  $end
+
+  end clob_to_blob;
 
 end flow_util;
 /

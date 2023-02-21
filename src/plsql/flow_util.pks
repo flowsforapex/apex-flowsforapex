@@ -6,6 +6,7 @@ as
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 --
 -- Created  08-Dec-2022  Richard Allen (Oracle Corporation)
+-- Changed  21-FEB-2023  Moritz Klein (MT GmbH)
 --
 */
   function exec_flows_sql
@@ -30,6 +31,11 @@ as
   --                 = flow_constants_pkg.gc_expr_type_plsql_raw_function_body
   --                 = flow_constants_pkg.gc_expr_type_plsql_expression
   --                 = flow_constants_pkg.gc_expr_type_plsql_raw_expression
+
+  function clob_to_blob
+  ( 
+    pi_clob in clob
+  ) return blob;
 
 end flow_util;
 /
