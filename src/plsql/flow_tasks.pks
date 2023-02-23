@@ -33,5 +33,15 @@ as
   , p_step_info     in flow_types_pkg.flow_step_info
   );
 
+  procedure process_sendTask
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  );
+  
+  procedure process_receiveTask
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  );
+
 end flow_tasks;
 /

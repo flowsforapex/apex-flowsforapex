@@ -815,7 +815,8 @@ begin
   -- evaluate and set any post-step variable expressions on the last object
   if p_current_step_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask )
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask 
+  , flow_constants_pkg.gc_bpmn_sendtask , flow_constants_pkg.gc_bpmn_receivetask )
   then 
     flow_expressions.process_expressions
       ( pi_objt_bpmn_id   => p_sbfl_rec.sbfl_current
@@ -832,6 +833,7 @@ begin
                             , flow_constants_pkg.gc_bpmn_task
                             , flow_constants_pkg.gc_bpmn_usertask
                             , flow_constants_pkg.gc_bpmn_manualtask
+                            , flow_constants_pkg.gc_bpmn_receivetask
                             ) -- boundary event attachable types
       and p_sbfl_rec.sbfl_has_events is not null )            -- subflow has events attached
   then
@@ -1127,7 +1129,8 @@ begin
   -- evaluate and set any pre-step variable expressions on the next object
   if p_step_info.target_objt_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask )
+  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask 
+  , flow_constants_pkg.gc_bpmn_sendtask , flow_constants_pkg.gc_bpmn_receivetask )
   then 
     flow_expressions.process_expressions
       ( pi_objt_id     => p_step_info.target_objt_id
@@ -1231,6 +1234,16 @@ begin
       );
     when  flow_constants_pkg.gc_bpmn_businessruletask then 
       flow_tasks.process_businessRuleTask
+         ( p_sbfl_info => p_sbfl_rec
+         , p_step_info => p_step_info
+         );
+    when  flow_constants_pkg.gc_bpmn_sendtask then 
+      flow_tasks.process_sendTask
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      );
+    when  flow_constants_pkg.gc_bpmn_receivetask then 
+      flow_tasks.process_receiveTask
          ( p_sbfl_info => p_sbfl_rec
          , p_step_info => p_step_info
          );

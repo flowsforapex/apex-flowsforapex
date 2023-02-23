@@ -73,6 +73,8 @@ as
   gc_bpmn_manualtask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'manualTask';
   gc_bpmn_scripttask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
   gc_bpmn_businessruletask             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'businessRuleTask';
+  gc_bpmn_sendtask                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sendTask';
+  gc_bpmn_receivetask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'receiveTask';
   
   gc_bpmn_text                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'text';
 
@@ -132,6 +134,10 @@ as
 
   --terminateEndEvent
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
+
+  -- Custom extensions
+  gc_apex_custom_extension            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'customExtension';
+
 
   -- Oracle format timer definitions
   gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
