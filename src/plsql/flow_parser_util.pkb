@@ -123,7 +123,8 @@ as
                            )
     then
       po_json_element := get_lines_array( pi_str => pi_value );
-    elsif pi_property_name = flow_constants_pkg.gc_apex_servicetask_placeholder
+    elsif pi_property_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
+                              , flow_constants_pkg.gc_apex_custom_extension)
     then
       -- this is already JSON, better store differently
       po_json_element := sys.json_object_t.parse( pi_value );
