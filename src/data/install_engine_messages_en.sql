@@ -235,6 +235,8 @@ begin
     values ( 'archive-destination-bad-json', c_load_lang, q'[Error in archive destination configuration parameter.  Parameter: %0]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'log-archive-error', c_load_lang, q'[Error archiving instance summary for Process Instance %0]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'scheduler-repeat-shared-env', c_load_lang, q'[Timer repeat interval too frequent for host (%0) Requested Interval %1.  Must be greater than 1 Minute.]' ); 
 
 
   commit;
