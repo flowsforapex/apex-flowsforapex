@@ -1,6 +1,14 @@
-create or replace package body flow_timers_pkg
-as
-
+create or replace package body flow_timers_pkg as
+/* 
+-- Flows for APEX - flow_timers_pkg.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+--
+-- Created 2020        Franco Soldaro
+-- Edited  2020        Moritz Klein - MT AG  
+-- Edited  24-Feb-2023 Richard Allen, Oracle
+--
+*/
   lock_timeout             exception;
   e_invalid_duration       exception;
   pragma exception_init (lock_timeout, -3006);  
@@ -980,6 +988,87 @@ end reschedule_timer;
     ;
   end delete_process_timers;
 
+  function get_timer_repeat_interval
+  return sys.all_scheduler_jobs.repeat_interval%type
+  as
+    l_repeat_interval  sys.all_scheduler_jobs.repeat_interval%type;
+  begin
+    select repeat_interval
+      into l_repeat_interval
+      from sys.all_scheduler_jobs
+     where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    return l_repeat_interval;
+  end get_timer_repeat_interval;
+
+  procedure set_timer_repeat_interval 
+  ( p_repeat_interval  in  varchar2
+  )
+  is
+    l_existing_value                sys.all_scheduler_jobs.repeat_interval%type;
+    l_host_url                      varchar2(4000);
+    e_scheduler_repeat_too_small  exception;
+  begin
+    apex_debug.enter
+    ( 'set_timer_repeat_interval'
+    , 'p_repeat_interval', p_repeat_interval 
+    );
+    -- check if this is actually an update, if not, ignore it.
+    l_existing_value := get_timer_repeat_interval;
+
+    if l_existing_value = p_repeat_interval then
+      -- no chages required
+      null;
+    else
+      -- changes required
+      l_host_url := apex_util.host_url;
+      
+      if ( l_host_url like '%apex.oracle.com%'
+         or l_host_url like '%apex.oraclecorp.com%' 
+         )
+      then 
+        if p_repeat_interval like '%SECONDLY%' then
+          raise e_scheduler_repeat_too_small;
+        end if;
+      end if;      
+      -- go ahead with the update
+      sys.dbms_scheduler.set_attribute
+      ( name => 'APEX_FLOW_STEP_TIMERS_J'
+      , attribute => 'repeat_interval'
+      , value => p_repeat_interval
+      );
+      apex_debug.message
+      ( p_message => '--- Timer scheduler repeat interval set.  Host: %0 Requested Interval %1'
+      , p0 => l_host_url
+      , p1 => p_repeat_interval
+      );
+    end if;
+  exception
+    when e_scheduler_repeat_too_small then
+      apex_debug.message
+      ( p_message => 'Attempt to set timer repeat interval too frequent.  Host: %0 Requested Interval %1'
+      , p0 => l_host_url
+      , p1 => p_repeat_interval
+      );
+      flow_errors.handle_general_error
+      (pi_message_key  => 'scheduler-repeat-shared-env'
+      , p0  => l_host_url
+      , p1  => p_repeat_interval
+      );
+      -- $F4AMESSAGE 'scheduler-repeat-shared-env' || 'Timer repeat interval too frequent for host (%0) Requested Interval %1.  Must be greater than 1 Minute.'
+  end set_timer_repeat_interval;
+
+  function get_timer_status
+  return varchar2
+  as
+    l_status  sys.all_scheduler_jobs.enabled%type;
+  begin
+    select enabled
+      into l_status
+      from sys.all_scheduler_jobs
+     where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    return l_status;
+  end get_timer_status;
+    
   procedure disable_scheduled_job
   as
   begin
@@ -987,7 +1076,7 @@ end reschedule_timer;
     q'[begin
     sys.dbms_scheduler.disable( name => 'apex_flow_step_timers_j' );
     end;]';
-  end;
+  end disable_scheduled_job;
 
   procedure enable_scheduled_job
   as
@@ -996,7 +1085,7 @@ end reschedule_timer;
     q'[begin
     sys.dbms_scheduler.enable( name => 'apex_flow_step_timers_j' );
     end;]';
-  end;
+  end enable_scheduled_job;
 
 end flow_timers_pkg;
 /

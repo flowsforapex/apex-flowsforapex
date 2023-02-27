@@ -109,6 +109,8 @@ as
       case upper(apex_application.g_x01)
         when 'RESET-FLOW-INSTANCE' then
           flow_api_pkg.flow_reset( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
+        when 'STEP-TIMERS' then
+          flow_api_pkg.step_timers;
         when 'START-FLOW-INSTANCE' then
           flow_api_pkg.flow_start( p_process_id => apex_application.g_x02 );
         when 'DELETE-FLOW-INSTANCE' then
@@ -1492,6 +1494,8 @@ as
   , pi_default_pageid            in flow_configuration.cfig_value%type
   , pi_default_username          in flow_configuration.cfig_value%type
   , pi_timer_max_cycles          in flow_configuration.cfig_value%type
+  , pi_timer_status              in sys.all_scheduler_jobs.enabled%type
+  , pi_timer_repeat_interval     in sys.all_scheduler_jobs.repeat_interval%type
   )
   as
   begin
@@ -1506,6 +1510,14 @@ as
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid      , p_value => pi_default_pageid);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username    , p_value => pi_default_username);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_timer_max_cycles    , p_value => pi_timer_max_cycles);
+
+      case pi_timer_status
+      when 'TRUE'  then flow_timers_pkg.enable_scheduled_job;
+      when 'FALSE' then flow_timers_pkg.disable_scheduled_job;
+      end case;
+
+      flow_timers_pkg.set_timer_repeat_interval( p_repeat_interval => pi_timer_repeat_interval);
+
   end set_settings;
 
 

@@ -455,5 +455,13 @@ create or replace package body flow_api_pkg as
            );
   end intervalDStoSec;
 
+-- Manually Step Forward Timers
+
+  procedure step_timers
+  is
+  begin
+    flow_timers_pkg.step_timers;
+  end;
+
 end flow_api_pkg;
 /
