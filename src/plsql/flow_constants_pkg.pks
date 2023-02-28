@@ -1,13 +1,13 @@
+create or replace package flow_constants_pkg
 /* 
 -- Flows for APEX - flow_constants_pkg.pks
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
 --
 -- Created 2020   Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
 --
 */
-create or replace package flow_constants_pkg
   authid definer
 as
 

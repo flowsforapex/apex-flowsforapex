@@ -216,6 +216,8 @@ as
   , pi_default_pageid            in flow_configuration.cfig_value%type
   , pi_default_username          in flow_configuration.cfig_value%type
   , pi_timer_max_cycles          in flow_configuration.cfig_value%type
+  , pi_timer_status              in sys.all_scheduler_jobs.enabled%type
+  , pi_timer_repeat_interval     in sys.all_scheduler_jobs.repeat_interval%type
   );
 
   /* page 11 */
