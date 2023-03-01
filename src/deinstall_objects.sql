@@ -90,6 +90,7 @@ drop view flow_diagrams_instanciated_lov;
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
 drop table flow_objects cascade constraints;
+drop table flow_message_subscriptions cascade constraints;
 drop table flow_processes cascade constraints;
 drop table flow_subflows cascade constraints;
 drop table flow_subflow_log cascade constraints;
