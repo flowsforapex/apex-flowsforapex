@@ -1,14 +1,26 @@
 create or replace package flow_timers_pkg
-  authid definer
--- accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg )
-as
-/******************************************************************************
- Purpose:
+/* 
+-- Flows for APEX - flow_timers_pkg.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
+--
+-- Created 2020        Franco Soldaro
+-- Edited  2020        Moritz Klein - MT AG  
+-- Edited  24-Feb-2023 Richard Allen, Oracle
+--
+Purpose:
    Provides support to timers in Flows for APEX.
 
  Grants required:
    CREATE JOB
+
+
 ******************************************************************************/
+  authid definer
+-- accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg
+--               , flow_admin_api )
+as
+
 
 /******************************************************************************
   CONSTANTS
@@ -141,6 +153,31 @@ procedure reschedule_timer
     po_return_code  out  number
   );
 
+
+/******************************************************************************
+  get_timer_repeat_interval
+    get the repeat interval of the timer scheduler job.
+******************************************************************************/
+  function get_timer_repeat_interval
+  return sys.all_scheduler_jobs.repeat_interval%type
+  ;
+
+/******************************************************************************
+  set_timer_repeat_interval
+    set the repeat interval of the timer scheduler job (uses dbms_scheduler syntax)
+******************************************************************************/
+
+  procedure set_timer_repeat_interval 
+  ( p_repeat_interval  in  varchar2
+  );
+
+/******************************************************************************
+  get_timer_status
+    disable the scheduled job processing of timers.
+******************************************************************************/
+
+  function get_timer_status
+  return varchar2;
 
 /******************************************************************************
   disable_scheduled_job
