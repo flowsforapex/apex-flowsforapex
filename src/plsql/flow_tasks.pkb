@@ -579,13 +579,6 @@ create or replace package body flow_tasks as
     -- future scriptTask types could include pre-built REST calls
     -- current implementation is limited to synchronous script execution (i.e., script is run as part of Flows for APEX process)
   
-    -- set work started time
-    flow_engine.start_step 
-    ( p_process_id => p_sbfl_info.sbfl_prcs_id
-    , p_subflow_id => p_sbfl_info.sbfl_id
-    , p_step_key   => p_sbfl_info.sbfl_step_key
-    , p_called_internally => true
-    );
     
     case get_task_type( p_step_info.target_objt_id )
       when flow_constants_pkg.gc_apex_task_execute_plsql then
