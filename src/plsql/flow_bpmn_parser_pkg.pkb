@@ -1479,45 +1479,85 @@ as
     pi_xml in sys.xmltype
   )
   as
-
+    l_collab_id    flow_types_pkg.t_bpmn_id;
+    l_collab_name  flow_types_pkg.t_vc200;
+    l_collab_type  flow_types_pkg.t_bpmn_id;
+    l_collab_nodes sys.xmltype;
   begin
+
+    select collab_id
+         , collab_name
+         , collab_type
+         , collab_nodes
+      into l_collab_id
+         , l_collab_name
+         , l_collab_type
+         , l_collab_nodes
+      from xmltable
+           (
+             xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+           , '/bpmn:definitions/bpmn:collaboration' passing pi_xml
+             columns
+               collab_id    varchar2(50  char) path '@id'
+             , collab_name  varchar2(200 char) path '@name'
+             , collab_type  varchar2(50  char) path 'name()'
+             , collab_nodes sys.xmltype        path '*'
+           ) collab
+    ;
+
+    register_object
+    (
+      pi_objt_bpmn_id        => l_collab_id
+    , pi_objt_tag_name       => l_collab_type
+    , pi_objt_name           => l_collab_name
+    );
+
     for rec in (
-                 select colab_id
-                      , colab_name
-                      , colab_type
-                      , colab_proc_ref
-                      , colab_src_ref
-                      , colab_tgt_ref
+                 select node_id
+                      , node_name
+                      , node_type
+                      , node_proc_ref
+                      , node_src_ref
+                      , node_tgt_ref
+                      , node_cat_ref
                    from xmltable
                         (
                           xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                        , '/bpmn:definitions/bpmn:collaboration/bpmn:participant' passing pi_xml
+                        , '*' passing l_collab_nodes
                           columns
-                            colab_id       varchar2(50  char) path '@id'
-                          , colab_name     varchar2(200 char) path '@name'
-                          , colab_type     varchar2(50  char) path 'name()'
-                          , colab_proc_ref varchar2(50  char) path '@processRef'
-                          , colab_src_ref  varchar2(50  char) path '@sourceRef'
-                          , colab_tgt_ref  varchar2(50  char) path '@targetRef'
-                        ) colab
+                            node_id       varchar2(50  char) path '@id'
+                          , node_name     varchar2(200 char) path '@name'
+                          , node_type     varchar2(50  char) path 'name()'
+                          , node_proc_ref varchar2(50  char) path '@processRef'
+                          , node_src_ref  varchar2(50  char) path '@sourceRef'
+                          , node_tgt_ref  varchar2(50  char) path '@targetRef'
+                          , node_cat_ref  varchar2(50  char) path '@categoryValueRef'
+                        ) collab_nodes
     ) loop
       case
-        when rec.colab_src_ref is null then
+        when rec.node_src_ref is null then
           register_object
           (
-            pi_objt_bpmn_id        => rec.colab_id
-          , pi_objt_tag_name       => rec.colab_type
-          , pi_objt_name           => rec.colab_name
+            pi_objt_bpmn_id        => rec.node_id
+          , pi_objt_tag_name       => rec.node_type
+          , pi_objt_name           => rec.node_name
+          , pi_objt_parent_bpmn_id => l_collab_id
           );
-          g_collab_refs(rec.colab_proc_ref) := rec.colab_id;
+          case rec.node_type
+            when flow_constants_pkg.gc_bpmn_participant then
+              -- add check for not null
+              g_collab_refs(rec.node_proc_ref) := rec.node_id;
+            else
+              null;
+          end case;
         else
           register_connection
           (
-            pi_conn_bpmn_id     => rec.colab_id
-          , pi_conn_name        => rec.colab_name
-          , pi_conn_src_bpmn_id => rec.colab_src_ref
-          , pi_conn_tgt_bpmn_id => rec.colab_tgt_ref
-          , pi_conn_tag_name    => rec.colab_type
+            pi_conn_bpmn_id     => rec.node_id
+          , pi_conn_name        => rec.node_name
+          , pi_conn_src_bpmn_id => rec.node_src_ref
+          , pi_conn_tgt_bpmn_id => rec.node_tgt_ref
+          , pi_conn_tag_name    => rec.node_type
           , pi_conn_origin      => null
           , pi_conn_sequence    => null
           , pi_conn_attributes  => null
