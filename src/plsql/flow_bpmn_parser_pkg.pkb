@@ -518,28 +518,80 @@ as
     ;
   end cleanup_parsing_tables;
 
-  procedure parse_lanes
+  procedure parse_flow_node_refs
   (
-    pi_laneset_xml  in sys.xmltype
-  , pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
+    pi_lane_refs_xml  in sys.xmltype
+  , pi_parent_bpmn_id in flow_types_pkg.t_bpmn_id
   )
   as
   begin
+    for node_rec in (
+        select nodes.node_ref
+          from xmltable
+             (
+               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+             , '*' passing pi_lane_refs_xml
+               columns
+                 node_ref   varchar2(50 char) path 'text()'
+             ) nodes
+    ) loop
+      g_lane_refs( node_rec.node_ref ) := pi_parent_bpmn_id;
+    end loop;
+  end parse_flow_node_refs;
+
+  procedure parse_laneset
+  (
+    pi_laneset_xml    in sys.xmltype
+  , pi_parent_bpmn_id in flow_types_pkg.t_bpmn_id
+  )
+  as
+    l_laneset_id  flow_types_pkg.t_bpmn_id;
+    l_laneset_tag flow_types_pkg.t_bpmn_id;
+    l_lanes_xml   sys.xmltype;
+  begin
+
+    select laneset_id
+         , laneset_tag
+         , lanes_xml
+      into l_laneset_id
+         , l_laneset_tag
+         , l_lanes_xml
+      from xmltable
+           (
+             xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                           , 'https://flowsforapex.org' as "apex")
+           , '*' passing pi_laneset_xml
+             columns
+               laneset_id    varchar2(50 char) path '@id'
+             , laneset_tag   varchar2(50 char) path 'name()'
+             , lanes_xml     sys.xmltype       path '*'
+           )
+    ;
+
+    register_object
+    (
+      pi_objt_bpmn_id        => l_laneset_id
+    , pi_objt_tag_name       => l_laneset_tag
+    , pi_objt_parent_bpmn_id => pi_parent_bpmn_id
+    );
+
     for lane_rec in (
-      select lanes.lane_id
-           , lanes.lane_name
-           , lanes.lane_type
-           , lanes.child_elements
+      select lane_id
+           , lane_name
+           , lane_type
+           , node_refs
+           , child_laneset
         from xmltable
              (
                xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-             , '*' passing pi_laneset_xml
+             , '*' passing l_lanes_xml
                columns
-                 lane_id        varchar2(50  char) path '@id'
-               , lane_name      varchar2(200 char) path '@name'
-               , lane_type      varchar2(50  char) path 'name()'
-               , child_elements sys.xmltype        path '*'
-             ) lanes
+                 lane_id       varchar2(50  char) path '@id'
+               , lane_name     varchar2(200 char) path '@name'
+               , lane_type     varchar2(50  char) path 'name()'
+               , node_refs     sys.xmltype        path '* except bpmn:childLaneSet'
+               , child_laneset sys.xmltype        path 'bpmn:childLaneSet'
+             )
     ) loop
 
       register_object
@@ -547,25 +599,28 @@ as
         pi_objt_bpmn_id        => lane_rec.lane_id
       , pi_objt_name           => lane_rec.lane_name
       , pi_objt_tag_name       => lane_rec.lane_type
-      , pi_objt_parent_bpmn_id => pi_objt_bpmn_id
+      , pi_objt_parent_bpmn_id => l_laneset_id
       );
 
-      for node_rec in (
-        select nodes.node_ref
-          from xmltable
-             (
-               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-             , '*' passing lane_rec.child_elements
-               columns
-                 node_ref   varchar2(50 char) path 'text()'
-             ) nodes
-      ) loop
-        g_lane_refs( node_rec.node_ref ) := lane_rec.lane_id;
-      end loop;
+      if lane_rec.child_laneset is not null then
+        -- ignore flowNodeRefs on this level as they duplicate lower levels
+        -- jump into childLaneSet parsing (recursion)
+        parse_laneset
+        (
+          pi_laneset_xml    => lane_rec.child_laneset
+        , pi_parent_bpmn_id => lane_rec.lane_id
+        );
+      else
+        parse_flow_node_refs
+        (
+          pi_lane_refs_xml  => lane_rec.node_refs
+        , pi_parent_bpmn_id => lane_rec.lane_id
+        );
+      end if;
 
     end loop;
 
-  end parse_lanes;
+  end parse_laneset;
 
   function find_subtag_name
   (
@@ -1276,14 +1331,6 @@ as
         , pi_objt_interrupting   => rec.interrupting
         );
 
-        if rec.steps_type = 'bpmn:laneSet' then
-          parse_lanes
-          (
-            pi_laneset_xml  => rec.child_elements
-          , pi_objt_bpmn_id => rec.steps_id
-          );
-        end if;
-
         if rec.steps_type = 'bpmn:callActivity' then
           parse_call_activity
           (
@@ -1351,7 +1398,7 @@ as
                         , proc_application_id varchar2( 50 char) path '@apex:applicationId'
                         , proc_page_id        varchar2( 50 char) path '@apex:pageId'
                         , proc_username       varchar2( 50 char) path '@apex:username'
-                        , proc_steps          sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements'
+                        , proc_steps          sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:laneSet'
                         , proc_sub_procs      sys.xmltype        path 'bpmn:subProcess'
                         , proc_laneset        sys.xmltype        path 'bpmn:laneSet'
                         , proc_extensions     sys.xmltype        path 'bpmn:extensionElements'
@@ -1400,6 +1447,15 @@ as
           (
             pi_objt_bpmn_id => rec.proc_id
           , pi_xml          => rec.proc_extensions
+          );
+        end if;
+
+        -- parse LaneSet if existing
+        if rec.proc_laneset is not null then
+          parse_laneset
+          (  
+            pi_laneset_xml    => rec.proc_laneset
+          , pi_parent_bpmn_id => rec.proc_id
           );
         end if;
 
@@ -1564,6 +1620,10 @@ as
           );
       end case;
     end loop;
+  exception
+    when no_data_found then
+      -- if no collaboration present we can skip
+      null;
   end parse_collaboration;
 
   procedure reset

@@ -33,6 +33,7 @@ as
   gc_bpmn_participant                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'participant';
   gc_bpmn_collaboration                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'collaboration';
   gc_bpmn_lane_set                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'laneSet';
+  gc_bpmn_child_lane_set               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'childLaneSet';
   gc_bpmn_lane                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'lane';
 
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
