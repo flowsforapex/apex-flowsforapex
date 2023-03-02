@@ -1620,6 +1620,10 @@ as
           );
       end case;
     end loop;
+  exception
+    when no_data_found then
+      -- if no collaboration present we can skip
+      null;
   end parse_collaboration;
 
   procedure reset
