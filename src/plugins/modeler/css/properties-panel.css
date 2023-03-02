@@ -455,6 +455,10 @@ textarea.bio-properties-panel-input,
   width: 100%;
 }
 
+textarea.bio-properties-panel-input.auto-resize {
+  min-height: 28px;
+}
+
 .bio-properties-panel-input:focus,
 .bio-properties-panel-input:focus-within {
   outline: none;

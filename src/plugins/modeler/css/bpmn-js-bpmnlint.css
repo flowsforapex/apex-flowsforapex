@@ -28,11 +28,11 @@
 .bjsl-icon {
   background: white;
   border-radius: 100%;
-  display: inline-block;
   height: 20px;
-  line-height: 23px;
-  text-align: center;
   width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bjsl-icon-error {
@@ -99,8 +99,12 @@
   white-space: nowrap;
 }
 
-.bjsl-issues li:not(:first-child) {
-  margin-top: 7px;
+.bjsl-issues .icon {
+  display: flex;
+}
+
+.bjsl-issues li + li {
+  margin-top: .5rem;
 }
 
 .bjsl-issues .error svg {
