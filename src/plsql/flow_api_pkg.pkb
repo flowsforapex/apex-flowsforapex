@@ -451,11 +451,11 @@ create or replace package body flow_api_pkg as
   )
   is
   begin
-    flow_tasks.receive_message ( p_message_name  =>p_message_name
-                               , p_key_name  =>  p_key_name
-                               , p_key_value  => p_key_value
-                               , p_payload  => p_payload 
-                               );
+    flow_msg_subscription.receive_message ( p_message_name  =>p_message_name
+                                          , p_key_name  =>  p_key_name
+                                          , p_key_value  => p_key_value
+                                          , p_payload  => p_payload 
+                                          );
   end receive_message;
 
 

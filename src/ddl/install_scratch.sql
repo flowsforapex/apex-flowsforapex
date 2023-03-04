@@ -242,6 +242,7 @@ create table flow_message_subscriptions (
     msub_prcs_id	        number,	
     msub_sbfl_id	        number,	
     msub_step_key	        varchar2(20),	
+    msub_callback           varchar2(200),
     msub_created	        timestamp with time zone	
 );
   

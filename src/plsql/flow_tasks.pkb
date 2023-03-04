@@ -577,6 +577,7 @@ create or replace package body flow_tasks as
     l_value             flow_message_subscriptions.msub_key_value%type;
     l_payload_variable  flow_process_variables.prov_var_name%type;
     l_msub_id           flow_message_subscriptions.msub_id%type;
+    l_msg_sub           flow_msg_subscription.t_subscription_details;
   begin
     apex_debug.enter 
     ( 'process_receiveTask'
@@ -598,6 +599,7 @@ create or replace package body flow_tasks as
       else
         null;
     end case;*/
+    l_msg_sub   := flow_msg_subscription.t_subscription_details();
 
     -- get message and correlation settings and evaluate them
       -- get the userTask subtype  
@@ -623,56 +625,45 @@ create or replace package body flow_tasks as
     );
 
       if l_message_name_json is not null then
-        l_message_name := flow_settings.get_message_name 
-                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                      , pi_sbfl_id => p_sbfl_info.sbfl_id
-                      , pi_expr    => l_message_name_json
-                      , pi_scope   => p_sbfl_info.sbfl_scope
-                      );
+        l_msg_sub.message_name := flow_settings.get_message_name 
+                                ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                                , pi_sbfl_id => p_sbfl_info.sbfl_id
+                                , pi_expr    => l_message_name_json
+                                , pi_scope   => p_sbfl_info.sbfl_scope
+                                );
       end if;
       if l_key_json is not null then 
-        l_key      := flow_settings.get_correlation_key 
-                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                      , pi_sbfl_id => p_sbfl_info.sbfl_id
-                      , pi_expr    => l_key_json
-                      , pi_scope   => p_sbfl_info.sbfl_scope
-                      );
+        l_msg_sub.key_name     := flow_settings.get_correlation_key 
+                                ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                                , pi_sbfl_id => p_sbfl_info.sbfl_id
+                                , pi_expr    => l_key_json
+                                , pi_scope   => p_sbfl_info.sbfl_scope
+                                );
       end if;
       if l_value_json is not null then 
-        l_value    := flow_settings.get_correlation_value
-                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                      , pi_sbfl_id => p_sbfl_info.sbfl_id
-                      , pi_expr    => l_value_json
-                      , pi_scope   => p_sbfl_info.sbfl_scope
-                      );
+        l_msg_sub.key_value    := flow_settings.get_correlation_value
+                                ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                                , pi_sbfl_id => p_sbfl_info.sbfl_id
+                                , pi_expr    => l_value_json
+                                , pi_scope   => p_sbfl_info.sbfl_scope
+                                );
       end if;
 
     apex_debug.message 
     ( p_message => '-- ReceiveTask settings: messageName "%0", key "%1", value "%2".'
-    , p0 => l_message_name
-    , p1 => l_key
-    , p2 => l_value
+    , p0 => l_msg_sub.message_name
+    , p1 => l_msg_sub.key_name
+    , p2 => l_msg_sub.key_value
     , p3 => l_payload_variable
     );
-    -- subscribe the message to correlator
-    insert into flow_message_subscriptions
-    ( msub_message_name
-    , msub_key_name
-    , msub_key_value
-    , msub_prcs_id
-    , msub_sbfl_id
-    , msub_step_key
-    , msub_created
-    )
-    values 
-    ( l_message_name
-    , l_key
-    , l_value
-    , p_sbfl_info.sbfl_prcs_id
-    , p_sbfl_info.sbfl_id
-    , p_sbfl_info.sbfl_step_key
-    , systimestamp
-    ) returning msub_id into l_msub_id;
+
+    l_msg_sub.prcs_id        := p_sbfl_info.sbfl_prcs_id;
+    l_msg_sub.sbfl_id        := p_sbfl_info.sbfl_id;
+    l_msg_sub.step_key       := p_sbfl_info.sbfl_step_key;
+    l_msg_sub.callback       := flow_constants_pkg.gc_bpmn_receivetask;
+
+    -- create subscription for the awaited message 
+    l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
 
     -- update subflow into 'waiting for message' status
     update flow_subflows sbfl
@@ -802,56 +793,6 @@ create or replace package body flow_tasks as
     );
 
   end receiveTask_callback;
-
-  procedure receive_message
-  ( p_message_name  flow_message_subscriptions.msub_message_name%type
-  , p_key_name      flow_message_subscriptions.msub_key_name%type
-  , p_key_value     flow_message_subscriptions.msub_key_value%type
-  , p_payload       clob default null
-  )
-  is
-    l_process_id  flow_processes.prcs_id%type;
-    l_subflow_id  flow_subflows.sbfl_id%type;
-    l_step_key    flow_subflows.sbfl_step_key%type;
-    l_msub_id     flow_message_subscriptions.msub_id%type;
-  begin
-    begin
-      select msub.msub_prcs_id
-           , msub.msub_sbfl_id
-           , msub.msub_step_key
-           , msub.msub_id
-        into l_process_id
-           , l_subflow_id
-           , l_step_key
-           , l_msub_id
-        from flow_message_subscriptions msub
-       where msub.msub_message_name    = p_message_name
-         and msub.msub_key_name        = p_key_name
-         and msub.msub_key_value       = p_key_value
-         for update of msub_id wait 2
-      ;
-    exception
-        when no_data_found then
-          -- sdd some message-specific logging capability into here.
-          flow_errors.handle_general_error
-          ( pi_message_key => 'msg-not-correlated');
-          raise no_data_found;
-        -- add exceptions for lock time outs
-    end;
-
-    -- do the delete before the callback because the callback will do a next-step, which commits at step end
-    delete from flow_message_subscriptions
-     where msub_id = l_msub_id;
-
-    receiveTask_callback 
-    ( p_process_id    => l_process_id
-    , p_subflow_id    => l_subflow_id
-    , p_step_key      => l_step_key
-    , p_msub_id       => l_msub_id
-    , p_payload       => p_payload
-    );
-
-  end receive_message;
   
 
 end flow_tasks;

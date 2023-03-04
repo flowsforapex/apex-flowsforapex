@@ -50,13 +50,6 @@ as
   , p_msub_id       flow_message_subscriptions.msub_id%type
   , p_payload       clob default null
   );
-
-  procedure receive_message
-  ( p_message_name  flow_message_subscriptions.msub_message_name%type
-  , p_key_name      flow_message_subscriptions.msub_key_name%type
-  , p_key_value     flow_message_subscriptions.msub_key_value%type
-  , p_payload       clob default null
-  );
   
 end flow_tasks;
 /
