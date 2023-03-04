@@ -344,5 +344,50 @@ as
                               );
   end get_excluded_users;
 
+  function get_message_name
+  ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_scope         flow_subflows.sbfl_scope%type default 0
+  ) return   flow_types_pkg.t_bpmn_attribute_vc2
+  is
+  begin
+    return get_vc2_expression ( pi_prcs_id     => pi_prcs_id
+                              , pi_sbfl_id     => pi_sbfl_id
+                              , pi_expr        => pi_expr
+                              , pi_scope       => pi_scope
+                              );
+  end get_message_name;
+
+  function get_correlation_key
+  ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_scope         flow_subflows.sbfl_scope%type default 0
+  ) return   flow_types_pkg.t_bpmn_attribute_vc2
+  is
+  begin
+    return get_vc2_expression ( pi_prcs_id     => pi_prcs_id
+                              , pi_sbfl_id     => pi_sbfl_id
+                              , pi_expr        => pi_expr
+                              , pi_scope       => pi_scope
+                              );
+  end get_correlation_key;
+
+  function get_correlation_value
+  ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_scope         flow_subflows.sbfl_scope%type default 0
+  ) return   flow_types_pkg.t_bpmn_attribute_vc2
+  is
+  begin
+    return get_vc2_expression ( pi_prcs_id     => pi_prcs_id
+                              , pi_sbfl_id     => pi_sbfl_id
+                              , pi_expr        => pi_expr
+                              , pi_scope       => pi_scope
+                              );
+  end get_correlation_value;
+
 end flow_settings;
 /

@@ -1,6 +1,6 @@
 create or replace package flow_tasks
   authid definer
-  accessible by (flow_engine, flow_engine_util)
+--  accessible by (flow_engine, flow_engine_util, flow_api_pkg)
 as  
 
   procedure process_task
@@ -43,5 +43,20 @@ as
   , p_step_info     in flow_types_pkg.flow_step_info
   );
 
+  procedure receiveTask_callback
+  ( p_process_id    flow_processes.prcs_id%type
+  , p_subflow_id    flow_subflows.sbfl_id%type
+  , p_step_key      flow_subflows.sbfl_step_key%type
+  , p_msub_id       flow_message_subscriptions.msub_id%type
+  , p_payload       clob default null
+  );
+
+  procedure receive_message
+  ( p_message_name  flow_message_subscriptions.msub_message_name%type
+  , p_key_name      flow_message_subscriptions.msub_key_name%type
+  , p_key_value     flow_message_subscriptions.msub_key_value%type
+  , p_payload       clob default null
+  );
+  
 end flow_tasks;
 /

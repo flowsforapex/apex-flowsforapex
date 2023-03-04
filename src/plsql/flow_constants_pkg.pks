@@ -125,6 +125,9 @@ as
   gc_apex_servicetask_body_html       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyHTML';
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
+
+  --receiveTask
+  gc_apex_receivetask_subtype_basic   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'basicApexMessage';
    
   -- execute PL/SQL tasks
   gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
@@ -201,6 +204,7 @@ as
   gc_sbfl_status_waiting_gateway      constant  varchar2(20 char) := 'waiting at gateway';
   gc_sbfl_status_waiting_event        constant  varchar2(20 char) := 'waiting for event';
   gc_sbfl_status_waiting_approval     constant  varchar2(20 char) := 'waiting for approval';
+  gc_sbfl_status_waiting_message      constant  varchar2(20 char) := 'waiting for message';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';

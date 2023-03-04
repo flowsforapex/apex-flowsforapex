@@ -442,6 +442,25 @@ create or replace package body flow_api_pkg as
                                               );
   end return_approval_result;
 
+
+  procedure receive_message
+  ( p_message_name  flow_message_subscriptions.msub_message_name%type
+  , p_key_name      flow_message_subscriptions.msub_key_name%type
+  , p_key_value     flow_message_subscriptions.msub_key_value%type
+  , p_payload       clob default null
+  )
+  is
+  begin
+    flow_tasks.receive_message ( p_message_name  =>p_message_name
+                               , p_key_name  =>  p_key_name
+                               , p_key_value  => p_key_value
+                               , p_payload  => p_payload 
+                               );
+  end receive_message;
+
+
+
+
   function intervalDStoSec (
     p_intervalDS  interval day to second
   ) return number

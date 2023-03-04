@@ -569,6 +569,14 @@ create or replace package body flow_tasks as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
+    l_message_name_json flow_types_pkg.t_bpmn_attribute_vc2;
+    l_message_name      flow_message_subscriptions.msub_message_name%type;
+    l_key_json          flow_types_pkg.t_bpmn_attribute_vc2;
+    l_key               flow_message_subscriptions.msub_key_name%type;
+    l_value_json        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_value             flow_message_subscriptions.msub_key_value%type;
+    l_payload_variable  flow_process_variables.prov_var_name%type;
+    l_msub_id           flow_message_subscriptions.msub_id%type;
   begin
     apex_debug.enter 
     ( 'process_receiveTask'
@@ -580,8 +588,8 @@ create or replace package body flow_tasks as
     -- current implementation is limited to synchronous script execution (i.e., script is run as part of Flows for APEX process)
   
     
-    case get_task_type( p_step_info.target_objt_id )
-      when flow_constants_pkg.gc_apex_task_execute_plsql then
+/*    case get_task_type( p_step_info.target_objt_id )
+      when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
         flow_plsql_runner_pkg.run_task_script
         ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
         , pi_sbfl_id => p_sbfl_info.sbfl_id
@@ -589,42 +597,262 @@ create or replace package body flow_tasks as
         );
       else
         null;
-    end case;
-    
-    flow_engine.flow_complete_step 
-    ( p_process_id => p_sbfl_info.sbfl_prcs_id
-    , p_subflow_id => p_sbfl_info.sbfl_id
-    , p_step_key   => p_sbfl_info.sbfl_step_key
+    end case;*/
+
+    -- get message and correlation settings and evaluate them
+      -- get the userTask subtype  
+    select objt.objt_attributes."apex"."messageName"
+         , objt.objt_attributes."apex"."correlationKey"
+         , objt.objt_attributes."apex"."correlationValue"
+         , objt.objt_attributes."apex"."payloadVariable"
+      into l_message_name_json
+         , l_key_json
+         , l_value_json
+         , l_payload_variable
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_step_info.target_objt_ref
+       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+       ;
+
+    apex_debug.message 
+    ( p_message => '-- ReceiveTask settings: messageName %0, key %1, value%2, returnVar %3'
+    , p0 => l_message_name_json
+    , p1 => l_key_json
+    , p2 => l_value_json
+    , p3 => l_payload_variable
     );
 
-  exception
-    when flow_plsql_runner_pkg.e_plsql_script_failed then
-      rollback;
-      apex_debug.info 
-      ( p_message => 'Rollback initiated after script failed in plsql script runner'
-      );
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
-      , pi_sbfl_id        => p_sbfl_info.sbfl_id
-      , pi_message_key    => 'plsql_script_failed'
-      , p0 => p_sbfl_info.sbfl_prcs_id
-      , p1 => p_step_info.target_objt_ref
-      );
-      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
-      rollback;
-      apex_debug.info 
-      ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
-      ); 
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
-      , pi_sbfl_id        => p_sbfl_info.sbfl_id
-      , pi_message_key    => 'plsql_script_requested_stop'
-      , p0 => p_sbfl_info.sbfl_prcs_id
-      , p1 => p_step_info.target_objt_ref
-      );  
-      -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+      if l_message_name_json is not null then
+        l_message_name := flow_settings.get_message_name 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_message_name_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      if l_key_json is not null then 
+        l_key      := flow_settings.get_correlation_key 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_key_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      if l_value_json is not null then 
+        l_value    := flow_settings.get_correlation_value
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_value_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+
+    apex_debug.message 
+    ( p_message => '-- ReceiveTask settings: messageName "%0", key "%1", value "%2".'
+    , p0 => l_message_name
+    , p1 => l_key
+    , p2 => l_value
+    , p3 => l_payload_variable
+    );
+    -- subscribe the message to correlator
+    insert into flow_message_subscriptions
+    ( msub_message_name
+    , msub_key_name
+    , msub_key_value
+    , msub_prcs_id
+    , msub_sbfl_id
+    , msub_step_key
+    , msub_created
+    )
+    values 
+    ( l_message_name
+    , l_key
+    , l_value
+    , p_sbfl_info.sbfl_prcs_id
+    , p_sbfl_info.sbfl_id
+    , p_sbfl_info.sbfl_step_key
+    , systimestamp
+    ) returning msub_id into l_msub_id;
+
+    -- update subflow into 'waiting for message' status
+    update flow_subflows sbfl
+       set sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_message
+         , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
+     where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
+       and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
+      ;
+    -- log subscription event
+    apex_debug.message 
+    ( p_message => '-- ReceiveTask subscription created - message subscription id: %0'
+    , p0 => l_msub_id
+    );
+    -- 
   end process_receiveTask;  
+
+  procedure receiveTask_callback
+  ( p_process_id    flow_processes.prcs_id%type
+  , p_subflow_id    flow_subflows.sbfl_id%type
+  , p_step_key      flow_subflows.sbfl_step_key%type
+  , p_msub_id       flow_message_subscriptions.msub_id%type
+  , p_payload       clob default null
+  )
+  is
+    l_payload_variable    flow_process_variables.prov_var_name%type;
+    l_msub_id             flow_message_subscriptions.msub_id%type;
+    l_required_step_key   flow_subflows.sbfl_step_key%type;
+    l_current             flow_objects.objt_bpmn_id%type;
+    l_scope               flow_process_variables.prov_scope%type;
+    l_dgrm_id             flow_diagrams.dgrm_id%type;
+    e_incorrect_step_key  exception;
+  begin
+    apex_debug.enter 
+    ( 'receiveTask_callback'
+    , 'p_process_id', p_process_id
+    , 'p_subflow_id', p_subflow_id
+    , 'p_step_key', p_step_key
+    , 'p_payload', p_payload
+    );
+
+    -- get subflow info, step info, validate step key
+    flow_engine.start_step 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
+    , p_called_internally => true
+    );
+
+    begin
+      select objt.objt_attributes."apex"."payloadVariable"
+           , sbfl.sbfl_step_key
+           , sbfl.sbfl_current
+           , sbfl.sbfl_scope
+           , sbfl.sbfl_dgrm_id
+        into l_payload_variable
+           , l_required_step_key
+           , l_current
+           , l_scope
+           , l_dgrm_id
+        from flow_objects objt
+        join flow_subflows sbfl
+          on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+         and sbfl.sbfl_current = objt.objt_bpmn_id
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl_prcs_id = p_process_id
+         ;
+      if l_required_step_key != p_step_key then
+        raise e_incorrect_step_key;
+      end if;
+    exception
+      when no_data_found then
+        null; -- tbi
+      when e_incorrect_step_key then
+        null; -- tbi
+      when others then
+        null; -- tbi
+    end; 
+
+    -- put payload into return variable 
+    if p_payload is not null then 
+      select objt.objt_attributes."apex"."payloadVariable"
+        into l_payload_variable
+        from flow_objects objt
+       where objt.objt_bpmn_id = l_current
+         and objt.objt_dgrm_id = l_dgrm_id
+         ;
+
+      apex_debug.message 
+      ( p_message => '-- ReceiveTask Callback settings:  returnVar %0'
+      , p0 => l_payload_variable
+      );
+
+      flow_proc_vars_int.set_var
+      ( pi_prcs_id      => p_process_id
+      , pi_sbfl_id      => p_subflow_id
+      , pi_var_name     => l_payload_variable
+      , pi_clob_value   => p_payload
+      , pi_objt_bpmn_id => l_current
+      , pi_scope        => l_scope
+      );
+
+    end if;
+    -- set subflow to running
+    update flow_subflows sbfl
+       set sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_work_started   = systimestamp
+         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+         , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
+     where sbfl.sbfl_id       = p_subflow_id
+       and sbfl.sbfl_prcs_id  = p_process_id
+      ;
+    -- log message receipt event
+
+
+    -- step subflow forward
+    flow_engine.flow_complete_step 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
+    );
+
+  end receiveTask_callback;
+
+  procedure receive_message
+  ( p_message_name  flow_message_subscriptions.msub_message_name%type
+  , p_key_name      flow_message_subscriptions.msub_key_name%type
+  , p_key_value     flow_message_subscriptions.msub_key_value%type
+  , p_payload       clob default null
+  )
+  is
+    l_process_id  flow_processes.prcs_id%type;
+    l_subflow_id  flow_subflows.sbfl_id%type;
+    l_step_key    flow_subflows.sbfl_step_key%type;
+    l_msub_id     flow_message_subscriptions.msub_id%type;
+  begin
+    begin
+      select msub.msub_prcs_id
+           , msub.msub_sbfl_id
+           , msub.msub_step_key
+           , msub.msub_id
+        into l_process_id
+           , l_subflow_id
+           , l_step_key
+           , l_msub_id
+        from flow_message_subscriptions msub
+       where msub.msub_message_name    = p_message_name
+         and msub.msub_key_name        = p_key_name
+         and msub.msub_key_value       = p_key_value
+         for update of msub_id wait 2
+      ;
+    exception
+        when no_data_found then
+          -- sdd some message-specific logging capability into here.
+          flow_errors.handle_general_error
+          ( pi_message_key => 'msg-not-correlated');
+          raise no_data_found;
+        -- add exceptions for lock time outs
+    end;
+
+    -- do the delete before the callback because the callback will do a next-step, which commits at step end
+    delete from flow_message_subscriptions
+     where msub_id = l_msub_id;
+
+    receiveTask_callback 
+    ( p_process_id    => l_process_id
+    , p_subflow_id    => l_subflow_id
+    , p_step_key      => l_step_key
+    , p_msub_id       => l_msub_id
+    , p_payload       => p_payload
+    );
+
+  end receive_message;
+  
 
 end flow_tasks;
 /
