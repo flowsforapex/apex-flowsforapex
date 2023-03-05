@@ -28,5 +28,6 @@ create or replace package flow_msg_subscription as
   , p_key_value     flow_message_subscriptions.msub_key_value%type
   , p_payload       clob default null
   );
-  
+
 end flow_msg_subscription;
+/

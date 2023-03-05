@@ -583,11 +583,7 @@ create or replace package body flow_tasks as
     ( 'process_receiveTask'
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
-    -- current implementation is limited to one receiveTask type, 
-    -- which is to run a user defined PL/SQL script
-    -- future scriptTask types could include pre-built REST calls
-    -- current implementation is limited to synchronous script execution (i.e., script is run as part of Flows for APEX process)
-  
+
     
 /*    case get_task_type( p_step_info.target_objt_id )
       when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
@@ -599,11 +595,10 @@ create or replace package body flow_tasks as
       else
         null;
     end case;*/
-    l_msg_sub   := flow_msg_subscription.t_subscription_details();
 
     -- get message and correlation settings and evaluate them
       -- get the userTask subtype  
-    select objt.objt_attributes."apex"."messageName"
+/*    select objt.objt_attributes."apex"."messageName"
          , objt.objt_attributes."apex"."correlationKey"
          , objt.objt_attributes."apex"."correlationValue"
          , objt.objt_attributes."apex"."payloadVariable"
@@ -660,7 +655,13 @@ create or replace package body flow_tasks as
     l_msg_sub.prcs_id        := p_sbfl_info.sbfl_prcs_id;
     l_msg_sub.sbfl_id        := p_sbfl_info.sbfl_id;
     l_msg_sub.step_key       := p_sbfl_info.sbfl_step_key;
-    l_msg_sub.callback       := flow_constants_pkg.gc_bpmn_receivetask;
+*/
+    l_msg_sub            := flow_msg_util.get_msg_subscription_details
+                            ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
+                            , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
+                            , p_sbfl_info               => p_sbfl_info
+                            );
+    l_msg_sub.callback  := flow_constants_pkg.gc_bpmn_receivetask;
 
     -- create subscription for the awaited message 
     l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
@@ -682,6 +683,7 @@ create or replace package body flow_tasks as
     , p0 => l_msub_id
     );
     -- 
+    
   end process_receiveTask;  
 
   procedure receiveTask_callback

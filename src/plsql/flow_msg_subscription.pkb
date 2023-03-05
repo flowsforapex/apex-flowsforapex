@@ -90,8 +90,22 @@ create or replace package body flow_msg_subscription as
       , p_msub_id       => l_msub_id
       , p_payload       => p_payload
       );
+    when 'MessageICE' then
+      -- Call Back is for a bpmn:intermediateCatchEvent - message subtype (Message Catch Event)
+      -- do the delete before the callback because the callback will do a next-step, which commits at step end
+      delete from flow_message_subscriptions
+       where msub_id = l_msub_id;
+
+      flow_engine.message_ICE_callback 
+      ( p_process_id    => l_process_id
+      , p_subflow_id    => l_subflow_id
+      , p_step_key      => l_step_key
+      , p_msub_id       => l_msub_id
+      , p_payload       => p_payload
+      );
     end case;
 
   end receive_message;
 
 end flow_msg_subscription;
+/

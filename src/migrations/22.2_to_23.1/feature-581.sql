@@ -32,3 +32,39 @@ alter table flow_message_subscriptions
 
 alter table flow_message_subscriptions
     add constraint msub_uk UNIQUE (msub_message_name, msub_key_name, msub_key_value);
+
+--- experimental code for timer callbacks
+--- migration would require every open timer to be given a callback routine,
+--- therefore differentiate between
+--  -- start timer
+--  -- boundary event timer
+--  -- ICE timer
+
+update_flow_timers
+set timr_callback = 
+select cur_objt.objt_tag_name
+  from flow_subflows sbfl
+  join flow_objects cur_objt
+    on sbfl.sbfl_current = cur_objt.objt_bpmn_id
+   and sbfl.sbfl_dgrm_id = cur_objt.objt_dgrm_id
+  where sbfl.sbfl_id = timr.timr_sbfl_id
+
+
+
+-- in addition, know in flow_subflows if the current event follows on from a Event Based Gateway
+ 
+update flow_subflows sbfl
+set sbfl.is_following_ebg = 'Y'
+where sbfl.sbfl_current in (
+             select cur_objt.objt_bpmn_id
+               from flow_objects cur_objt
+               join flow_diagrams dgrm
+                 on dgrm.dgrm_id = cur_objt.objt_dgrm_id
+               join flow_objects prev_objt 
+                 on cur_objt.objt_dgrm_id = prev_objt.objt_dgrm_id
+               join flow_connections conn
+                 on conn.conn_dgrm_id = cur_objt.objt_dgrm_id
+                and conn.conn_tgt_objt_id = cur_objt.objt_id
+                and conn.conn_src_objt_id = prev_objt.objt_id
+              where cur_objt.objt_tag_name = 'bpmn:intermediateCatchEvent'
+                and prev_objt.objt_tag_name = 'bpmn:eventBasedGateway');

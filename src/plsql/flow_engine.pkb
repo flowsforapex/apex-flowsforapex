@@ -265,6 +265,9 @@ end flow_process_link_event;
   , p_step_info  in flow_types_pkg.flow_step_info
   )
   is 
+    l_new_status        flow_subflows.sbfl_status%type;
+    l_msg_sub           flow_msg_subscription.t_subscription_details;
+    l_msub_id           flow_message_subscriptions.msub_id%type;
   begin
     -- then we make everything behave like a simple activity unless specifically supported
     -- currently only supports timer and without checking its type is timer
@@ -275,42 +278,48 @@ end flow_process_link_event;
     , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
     );
 
-    if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
+    case p_step_info.target_objt_subtag 
+    when flow_constants_pkg.gc_bpmn_timer_event_definition then
       -- we have a timer.  Set status to waiting and schedule the timer.
-      update flow_subflows sbfl
-         set sbfl.sbfl_current        = p_step_info.target_objt_ref
-           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_last_completed
-           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_timer
-           , sbfl.sbfl_last_update    = systimestamp
-           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
-                                                 , sys_context('userenv','os_user')
-                                                 , sys_context('userenv','session_user')
-                                                 )  
-       where sbfl.sbfl_id = p_sbfl_info.sbfl_id
-         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
-      ;
+      l_new_status  := flow_constants_pkg.gc_sbfl_status_waiting_timer;
+
       flow_timers_pkg.start_timer
       ( 
         pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id  => p_sbfl_info.sbfl_id
       , pi_step_key => p_sbfl_info.sbfl_step_key
       );
+    when flow_constants_pkg.gc_bpmn_message_event_definition then    
+      -- message catch event
+      l_new_status  := flow_constants_pkg.gc_sbfl_status_waiting_message;
+
+      l_msg_sub            := flow_msg_util.get_msg_subscription_details
+                              ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
+                              , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
+                              , p_sbfl_info               => p_sbfl_info
+                              );
+      l_msg_sub.callback  := 'MessageICE';
+
+      -- create subscription for the awaited message 
+      l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
     else
       -- not a timer.  Just set it to running for now.  (other types to be implemented later)
       -- this includes bpmn:linkEventDefinition which should come here
-      update flow_subflows sbfl
-         set sbfl.sbfl_current        = p_step_info.target_objt_ref
-           , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
-           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
-           , sbfl.sbfl_last_update    = systimestamp
-           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
-                                                 , sys_context('userenv','os_user')
-                                                 , sys_context('userenv','session_user')
-                                                 )  
-       where sbfl.sbfl_id = p_sbfl_info.sbfl_id
-         and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
-      ;
-    end if;
+      l_new_status  := flow_constants_pkg.gc_sbfl_status_running;
+    end case;
+
+    update flow_subflows sbfl
+       set sbfl.sbfl_current        = p_step_info.target_objt_ref
+         , sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+         , sbfl.sbfl_status         = l_new_status
+         , sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                               , sys_context('userenv','os_user')
+                                               , sys_context('userenv','session_user')
+                                               )  
+     where sbfl.sbfl_id = p_sbfl_info.sbfl_id
+       and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+    ;
   end process_intermediateCatchEvent;
 
   procedure process_intermediateThrowEvent
@@ -702,7 +711,7 @@ begin
       , p_step_key     => p_step_key
       , p_current_objt => l_sbfl_current
       );
-     elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event then
+    elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event then
       -- if a repeating cycle timer, start next cycle before handling
       if p_timr_id is not null and p_run is not null then
         create_repeat_subflow 
