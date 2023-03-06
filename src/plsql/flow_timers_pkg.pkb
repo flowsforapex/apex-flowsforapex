@@ -279,7 +279,7 @@ create or replace package body flow_timers_pkg as
           l_timr_id   := null;      
           l_timr_run  := null;
         end if;
-        flow_engine.flow_handle_event
+        flow_engine.timer_callback
         (
           p_process_id => l_timers.timr_prcs_id
         , p_subflow_id => l_timers.timr_sbfl_id
@@ -396,6 +396,8 @@ create or replace package body flow_timers_pkg as
     pi_prcs_id    in flow_processes.prcs_id%type
   , pi_sbfl_id    in flow_subflows.sbfl_id%type 
   , pi_step_key   in flow_subflows.sbfl_step_key%type default null
+  , pi_callback     in flow_timers.timr_callback%type
+  , pi_callback_par in flow_timers.timr_callback_par%type  
   )
   as
     l_parsed_tstz         flow_timers.timr_start_on%type;
@@ -666,6 +668,8 @@ create or replace package body flow_timers_pkg as
       , timr_interval_ym
       , timr_interval_ds
       , timr_repeat_times
+      , timr_callback
+      , timr_callback_par
       )
       values
       (
@@ -680,6 +684,8 @@ create or replace package body flow_timers_pkg as
       , l_parsed_duration_ym
       , l_parsed_duration_ds
       , l_repeat_times
+      , pi_callback 
+      , pi_callback_par 
       )
     ;
 
@@ -687,11 +693,13 @@ create or replace package body flow_timers_pkg as
 
   procedure start_repeat_timer
   (
-    pi_prcs_id    in flow_processes.prcs_id%type
-  , pi_sbfl_id    in flow_subflows.sbfl_id%type 
-  , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
-  , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type 
+  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
+  , pi_callback     in flow_timers.timr_callback%type
+  , pi_callback_par in flow_timers.timr_callback_par%type  
+  , pi_run          in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
+  , pi_timr_id      in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
     l_parsed_tstz         flow_timers.timr_start_on%type;
@@ -722,6 +730,8 @@ create or replace package body flow_timers_pkg as
     , timr_interval_ym
     , timr_interval_ds
     , timr_repeat_times
+    , timr_callback
+    , timr_callback_par
     ) 
     select
       pi_timr_id
@@ -736,6 +746,8 @@ create or replace package body flow_timers_pkg as
     , old_timr.timr_interval_ym
     , old_timr.timr_interval_ds
     , old_timr.timr_repeat_times
+    , pi_callback 
+    , pi_callback_par 
     from flow_timers old_timr
     where old_timr.timr_id = pi_timr_id
       and old_timr.timr_run = pi_run - 1
@@ -746,11 +758,13 @@ create or replace package body flow_timers_pkg as
 
   procedure start_timer
   (
-    pi_prcs_id    in flow_processes.prcs_id%type
-  , pi_sbfl_id    in flow_subflows.sbfl_id%type 
-  , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
-  , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type 
+  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
+  , pi_callback     in flow_timers.timr_callback%type
+  , pi_callback_par in flow_timers.timr_callback_par%type default null
+  , pi_run          in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
+  , pi_timr_id      in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
     l_parsed_tstz         flow_timers.timr_start_on%type;
@@ -764,24 +778,29 @@ create or replace package body flow_timers_pkg as
     , 'prcs_id', pi_prcs_id
     , 'sbfl_id', pi_sbfl_id
     , 'step_key', pi_step_key
+    , 'callback', pi_callback
     , 'timr_id (repeats)', pi_timr_id
     , 'timer run', pi_run
     );
     if pi_run = 1 and pi_timr_id is null then
       -- starting the first run of a new timer
       start_new_timer
-      ( pi_prcs_id   => pi_prcs_id   
-      , pi_sbfl_id   => pi_sbfl_id  
-      , pi_step_key  => pi_step_key 
+      ( pi_prcs_id      => pi_prcs_id   
+      , pi_sbfl_id      => pi_sbfl_id  
+      , pi_step_key     => pi_step_key 
+      , pi_callback     => pi_callback
+      , pi_callback_par => pi_callback_par
       );
     elsif pi_run > 1 and pi_timr_id is not null then
         -- starting a repeat cycle of a existing timer (on a new sbfl)
       start_repeat_timer
-      ( pi_prcs_id   => pi_prcs_id   
-      , pi_sbfl_id   => pi_sbfl_id  
-      , pi_step_key  => pi_step_key 
-      , pi_run       => pi_run
-      , pi_timr_id   => pi_timr_id
+      ( pi_prcs_id      => pi_prcs_id   
+      , pi_sbfl_id      => pi_sbfl_id  
+      , pi_step_key     => pi_step_key 
+      , pi_callback     => pi_callback
+      , pi_callback_par => pi_callback_par
+      , pi_run          => pi_run
+      , pi_timr_id      => pi_timr_id
       );  
     else
         flow_errors.handle_instance_error

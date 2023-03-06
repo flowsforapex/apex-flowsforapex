@@ -249,6 +249,7 @@ create table flow_message_subscriptions (
     msub_step_key	        varchar2( 20 char),	
     msub_callback           varchar2(200 char),
     msub_callback_par       varchar2(200 char),
+    msub_payload_var        varchar2(50 char),
     msub_created	        timestamp with time zone	
 );
   

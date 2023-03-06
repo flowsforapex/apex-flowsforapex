@@ -17,7 +17,7 @@ drop package flow_migrate_xml_pkg;
 drop package flow_expressions;
 drop package flow_settings;
 drop package flow_util;
-drop package flow_msg_subscriptions;
+drop package flow_msg_subscription;
 drop package flow_msg_util;
 drop package flow_process_vars;
 drop package flow_proc_vars_int;

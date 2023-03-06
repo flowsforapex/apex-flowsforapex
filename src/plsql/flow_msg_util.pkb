@@ -25,7 +25,7 @@ create or replace package body flow_msg_util as
     l_value             flow_message_subscriptions.msub_key_value%type;
     l_msub_id           flow_message_subscriptions.msub_id%type;
     l_msg_sub           flow_msg_subscription.t_subscription_details;
-
+    l_payload_variable  flow_process_variables.prov_var_name%type;
 
   begin
     apex_debug.enter 
@@ -40,19 +40,22 @@ create or replace package body flow_msg_util as
     select objt.objt_attributes."apex"."messageName"
          , objt.objt_attributes."apex"."correlationKey"
          , objt.objt_attributes."apex"."correlationValue"
+         , objt.objt_attributes."apex"."payloadVariable"
       into l_message_name_json
          , l_key_json
          , l_value_json
+         , l_payload_variable
       from flow_objects objt
      where objt.objt_bpmn_id = p_msg_object_bpmn_id
        and objt.objt_dgrm_id = p_dgrm_id 
        ;
 
     apex_debug.message 
-    ( p_message => '-- message settings: messageName %0, key %1, value%2'
+    ( p_message => '-- message settings: messageName %0, key %1, value %2, payload var %3'
     , p0 => l_message_name_json
     , p1 => l_key_json
     , p2 => l_value_json
+    , p3 => l_payload_variable
     );
 
       if l_message_name_json is not null then
@@ -81,15 +84,17 @@ create or replace package body flow_msg_util as
       end if;
 
     apex_debug.message 
-    ( p_message => '-- ReceiveTask settings: messageName "%0", key "%1", value "%2".'
+    ( p_message => '-- ReceiveTask settings: messageName "%0", key "%1", value "%2", payload var "%3".'
     , p0 => l_msg_sub.message_name
     , p1 => l_msg_sub.key_name
     , p2 => l_msg_sub.key_value
+    , p3 => l_payload_variable
     );
 
     l_msg_sub.prcs_id        := p_sbfl_info.sbfl_prcs_id;
     l_msg_sub.sbfl_id        := p_sbfl_info.sbfl_id;
     l_msg_sub.step_key       := p_sbfl_info.sbfl_step_key;
+    l_msg_sub.payload_var    := l_payload_variable;
   
     return l_msg_sub;
   end get_msg_subscription_details;

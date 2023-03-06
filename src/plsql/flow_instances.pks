@@ -1,13 +1,13 @@
+create or replace package flow_instances
 /* 
 -- Flows for APEX - flow_instances.pks
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created 25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
 --
 */
-create or replace package flow_instances
   authid definer
   accessible by (flow_api_pkg, flow_engine, flow_proc_vars_int)
 as

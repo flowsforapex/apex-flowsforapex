@@ -285,9 +285,10 @@ end flow_process_link_event;
 
       flow_timers_pkg.start_timer
       ( 
-        pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
-      , pi_sbfl_id  => p_sbfl_info.sbfl_id
-      , pi_step_key => p_sbfl_info.sbfl_step_key
+        pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id      => p_sbfl_info.sbfl_id
+      , pi_step_key     => p_sbfl_info.sbfl_step_key
+      , pi_callback     => flow_constants_pkg.gc_bpmn_intermediate_catch_event
       );
     when flow_constants_pkg.gc_bpmn_message_event_definition then    
       -- message catch event
@@ -298,7 +299,7 @@ end flow_process_link_event;
                               , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
                               , p_sbfl_info               => p_sbfl_info
                               );
-      l_msg_sub.callback  := 'MessageICE';
+      l_msg_sub.callback  := flow_constants_pkg.gc_bpmn_intermediate_catch_event;
 
       -- create subscription for the awaited message 
       l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
@@ -439,7 +440,6 @@ begin
     -- - stop / terminate all of the child subflows that were created to wait for other events
     -- - including making sure any timers, message receivers, etc., are cleared up.
 
-    -- note that if this is called from a timer, you might not be in an APEX session so might not get debug
     apex_debug.enter
     ( 'handle_event_gateway_event' 
     , 'p_process_id', p_process_id
@@ -625,11 +625,13 @@ begin
           );
 
   flow_timers_pkg.start_timer
-  ( pi_prcs_id  => p_process_id
-  , pi_sbfl_id  => l_new_subflow_context.sbfl_id
-  , pi_step_key => l_new_subflow_context.step_key
-  , pi_timr_id  => p_timr_id
-  , pi_run      => p_next_run
+  ( pi_prcs_id      => p_process_id
+  , pi_sbfl_id      => l_new_subflow_context.sbfl_id
+  , pi_step_key     => l_new_subflow_context.step_key
+  , pi_callback     => flow_constants_pkg.gc_bpmn_intermediate_catch_event
+  , pi_callback_par => 'non-interrupting' 
+  , pi_timr_id      => p_timr_id
+  , pi_run          => p_next_run
   );
 
   if not flow_globals.get_step_error then 
@@ -648,7 +650,7 @@ begin
     
 end create_repeat_subflow;
 
-procedure flow_handle_event
+procedure timer_callback
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_step_key   in flow_subflows.sbfl_step_key%type
@@ -660,6 +662,7 @@ is
   l_prev_objt_tag_name    flow_objects.objt_tag_name%type;
   l_curr_objt_tag_name    flow_objects.objt_tag_name%type;
   l_sbfl_current          flow_subflows.sbfl_current%type;
+  l_follows_ebg           flow_subflows.sbfl_is_following_ebg%type;
 begin
   -- currently handles callbacks from flow_timers when a timer fires
   apex_debug.enter 
@@ -691,9 +694,11 @@ begin
     select curr_objt.objt_tag_name
          , sbfl.sbfl_sbfl_id
          , sbfl.sbfl_current
+         , sbfl.sbfl_is_following_ebg
       into l_curr_objt_tag_name
          , l_parent_subflow
          , l_sbfl_current
+         , l_follows_ebg
       from flow_objects curr_objt 
       join flow_subflows sbfl 
         on sbfl.sbfl_current = curr_objt.objt_bpmn_id
@@ -729,43 +734,25 @@ begin
       , p_step_key     => p_step_key
       , p_current_objt => l_sbfl_current
       );
-    elsif l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_subprocess
+    elsif l_curr_objt_tag_name in ( flow_constants_pkg.gc_bpmn_subProcess
                                   , flow_constants_pkg.gc_bpmn_task 
-                                  , flow_constants_pkg.gc_bpmn_usertask
-                                  , flow_constants_pkg.gc_bpmn_manualtask
+                                  , flow_constants_pkg.gc_bpmn_userTask
+                                  , flow_constants_pkg.gc_bpmn_manualTask
                                   , flow_constants_pkg.gc_bpmn_call_activity
+                                  , flow_constants_pkg.gc_bpmn_receiveTask
                                   )   -- add any objects that can support timer boundary events here
           -- if any of these events have a timer on them, it must be an interrupting timer.
           -- because non-interupting timers are set on the boundary event itself
-    then
+      then
       -- we have an interrupting timer boundary event
       flow_boundary_events.handle_interrupting_timer 
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
       );
-    else
+    elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event  then 
       -- we need to look at previous step to see if this follows an eventBasedGateway...
-      begin
-        select prev_objt.objt_tag_name
-          into l_prev_objt_tag_name
-          from flow_connections conn 
-          join flow_objects curr_objt 
-            on conn.conn_tgt_objt_id = curr_objt.objt_id 
-           and conn.conn_dgrm_id = curr_objt.objt_dgrm_id
-          join flow_objects prev_objt 
-            on conn.conn_src_objt_id = prev_objt.objt_id
-           and conn.conn_dgrm_id = prev_objt.objt_dgrm_id
-          join flow_subflows sbfl
-            on sbfl.sbfl_dgrm_id = conn.conn_dgrm_id 
-         where sbfl.sbfl_id = p_subflow_id
-           and curr_objt.objt_bpmn_id = l_sbfl_current
-            ;
-      exception
-        when too_many_rows then
-            l_prev_objt_tag_name := 'other';
-      end;
-      if  l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event   
-          and l_prev_objt_tag_name = flow_constants_pkg.gc_bpmn_gateway_event_based then
+      case l_follows_ebg 
+      when 'Y' then
         -- we have an eventBasedGateway
         handle_event_gateway_event 
         (
@@ -773,7 +760,7 @@ begin
         , p_parent_subflow_id => l_parent_subflow
         , p_cleared_subflow_id => p_subflow_id
         );
-      elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event then
+      else 
         -- independant iCE not following an eBG
         -- set subflow status to running and call flow_complete_step
         handle_intermediate_catch_event 
@@ -783,7 +770,7 @@ begin
         , p_step_key   => p_step_key
         , p_current_objt => l_sbfl_current
         );
-      end if;
+      end case;
     end if;
   end if; -- sbfl locked
 exception
@@ -800,7 +787,7 @@ exception
     );
       -- $F4AMESSAGE 'eng_handle_event_int' || 'Flow Engine Internal Error: Process %0 Subflow %1 Module %2 Current %4 Current Tag %3'
 
-end flow_handle_event;
+end timer_callback;
 
 /************************************************************************************************************
 ****

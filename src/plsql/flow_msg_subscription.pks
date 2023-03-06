@@ -16,6 +16,7 @@ create or replace package flow_msg_subscription as
   , sbfl_id       flow_message_subscriptions.msub_sbfl_id%type
   , step_key      flow_message_subscriptions.msub_step_key%type
   , callback      flow_message_subscriptions.msub_callback%type
+  , payload_var   flow_message_subscriptions.msub_payload_var%type
   );   
 
   function subscribe

@@ -1,3 +1,4 @@
+create or replace package body flow_instances as
 /* 
 -- Flows for APEX - flow_instances.pkb
 -- 
@@ -8,9 +9,6 @@
 -- Modified 30-May-2022  Moritz Klein (MT AG)
 --
 */
-create or replace package body flow_instances 
-as
-
 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
@@ -399,6 +397,7 @@ as
           pi_prcs_id    => p_process_id
         , pi_sbfl_id    => l_main_subflow.sbfl_id
         , pi_step_key   => l_main_subflow.step_key
+        , pi_callback     => flow_constants_pkg.gc_bpmn_start_event
         ); 
       end if;       
 

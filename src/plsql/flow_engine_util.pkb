@@ -304,6 +304,7 @@ procedure get_number_of_connections
     , p_new_scope                 in boolean default false
     , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
+    , p_follows_ebg               in boolean default false
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
@@ -316,6 +317,7 @@ procedure get_number_of_connections
     l_level_parent        flow_subflows.sbfl_id%type := 0;
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_is_new_scope        varchar2(1 byte) := flow_constants_pkg.gc_false;
+    l_follows_ebg         flow_subflows.sbfl_is_following_ebg%type;
   begin
     apex_debug.enter 
     ( 'subflow_start'
@@ -325,7 +327,10 @@ procedure get_number_of_connections
     
     -- convert boolean in parameters to varchar2 for use in SQL
     if p_new_proc_level then 
-      l_is_new_level := 'Y';
+      l_is_new_level := flow_constants_pkg.gc_true;
+    end if;
+    if p_follows_ebg then
+      l_follows_ebg := flow_constants_pkg.gc_true;
     end if;
 
     if p_parent_subflow is  null then
@@ -386,6 +391,7 @@ procedure get_number_of_connections
          , sbfl_scope
          , sbfl_lane
          , sbfl_lane_name
+         , sbfl_is_following_ebg
          )
     values
          ( p_process_id
@@ -409,6 +415,7 @@ procedure get_number_of_connections
          , l_scope
          , l_lane
          , l_lane_name
+         , l_follows_ebg
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 

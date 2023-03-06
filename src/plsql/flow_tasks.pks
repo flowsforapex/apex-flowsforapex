@@ -48,7 +48,6 @@ as
   , p_subflow_id    flow_subflows.sbfl_id%type
   , p_step_key      flow_subflows.sbfl_step_key%type
   , p_msub_id       flow_message_subscriptions.msub_id%type
-  , p_payload       clob default null
   );
   
 end flow_tasks;

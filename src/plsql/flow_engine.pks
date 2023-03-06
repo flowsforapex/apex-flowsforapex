@@ -2,9 +2,9 @@ create or replace package flow_engine
   authid definer
   accessible by ( flow_api_pkg, flow_instances, flow_gateways, flow_tasks
                 , flow_boundary_events, flow_timers_pkg, flow_subprocesses
-                , flow_call_activities, flow_usertask_pkg)
+                , flow_call_activities, flow_usertask_pkg, flow_msg_subscription)
 as 
-  procedure flow_handle_event
+  procedure timer_callback
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_step_key      in flow_subflows.sbfl_step_key%type

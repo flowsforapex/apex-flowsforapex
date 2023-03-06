@@ -101,6 +101,7 @@ as
     , p_new_scope                 in boolean default false
     , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
+    , p_follows_ebg               in boolean default false
     ) return flow_types_pkg.t_subflow_context
     ;
 

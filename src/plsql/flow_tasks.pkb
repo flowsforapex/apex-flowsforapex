@@ -596,66 +596,7 @@ create or replace package body flow_tasks as
         null;
     end case;*/
 
-    -- get message and correlation settings and evaluate them
-      -- get the userTask subtype  
-/*    select objt.objt_attributes."apex"."messageName"
-         , objt.objt_attributes."apex"."correlationKey"
-         , objt.objt_attributes."apex"."correlationValue"
-         , objt.objt_attributes."apex"."payloadVariable"
-      into l_message_name_json
-         , l_key_json
-         , l_value_json
-         , l_payload_variable
-      from flow_objects objt
-     where objt.objt_bpmn_id = p_step_info.target_objt_ref
-       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
-       ;
 
-    apex_debug.message 
-    ( p_message => '-- ReceiveTask settings: messageName %0, key %1, value%2, returnVar %3'
-    , p0 => l_message_name_json
-    , p1 => l_key_json
-    , p2 => l_value_json
-    , p3 => l_payload_variable
-    );
-
-      if l_message_name_json is not null then
-        l_msg_sub.message_name := flow_settings.get_message_name 
-                                ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                                , pi_sbfl_id => p_sbfl_info.sbfl_id
-                                , pi_expr    => l_message_name_json
-                                , pi_scope   => p_sbfl_info.sbfl_scope
-                                );
-      end if;
-      if l_key_json is not null then 
-        l_msg_sub.key_name     := flow_settings.get_correlation_key 
-                                ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                                , pi_sbfl_id => p_sbfl_info.sbfl_id
-                                , pi_expr    => l_key_json
-                                , pi_scope   => p_sbfl_info.sbfl_scope
-                                );
-      end if;
-      if l_value_json is not null then 
-        l_msg_sub.key_value    := flow_settings.get_correlation_value
-                                ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-                                , pi_sbfl_id => p_sbfl_info.sbfl_id
-                                , pi_expr    => l_value_json
-                                , pi_scope   => p_sbfl_info.sbfl_scope
-                                );
-      end if;
-
-    apex_debug.message 
-    ( p_message => '-- ReceiveTask settings: messageName "%0", key "%1", value "%2".'
-    , p0 => l_msg_sub.message_name
-    , p1 => l_msg_sub.key_name
-    , p2 => l_msg_sub.key_value
-    , p3 => l_payload_variable
-    );
-
-    l_msg_sub.prcs_id        := p_sbfl_info.sbfl_prcs_id;
-    l_msg_sub.sbfl_id        := p_sbfl_info.sbfl_id;
-    l_msg_sub.step_key       := p_sbfl_info.sbfl_step_key;
-*/
     l_msg_sub            := flow_msg_util.get_msg_subscription_details
                             ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
                             , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
@@ -683,7 +624,7 @@ create or replace package body flow_tasks as
     , p0 => l_msub_id
     );
     -- 
-    
+
   end process_receiveTask;  
 
   procedure receiveTask_callback
@@ -691,10 +632,8 @@ create or replace package body flow_tasks as
   , p_subflow_id    flow_subflows.sbfl_id%type
   , p_step_key      flow_subflows.sbfl_step_key%type
   , p_msub_id       flow_message_subscriptions.msub_id%type
-  , p_payload       clob default null
   )
   is
-    l_payload_variable    flow_process_variables.prov_var_name%type;
     l_msub_id             flow_message_subscriptions.msub_id%type;
     l_required_step_key   flow_subflows.sbfl_step_key%type;
     l_current             flow_objects.objt_bpmn_id%type;
@@ -707,7 +646,6 @@ create or replace package body flow_tasks as
     , 'p_process_id', p_process_id
     , 'p_subflow_id', p_subflow_id
     , 'p_step_key', p_step_key
-    , 'p_payload', p_payload
     );
 
     -- get subflow info, step info, validate step key
@@ -719,15 +657,11 @@ create or replace package body flow_tasks as
     );
 
     begin
-      select objt.objt_attributes."apex"."payloadVariable"
-           , sbfl.sbfl_step_key
+      select sbfl.sbfl_step_key
            , sbfl.sbfl_current
-           , sbfl.sbfl_scope
            , sbfl.sbfl_dgrm_id
-        into l_payload_variable
-           , l_required_step_key
+        into l_required_step_key
            , l_current
-           , l_scope
            , l_dgrm_id
         from flow_objects objt
         join flow_subflows sbfl
@@ -748,30 +682,6 @@ create or replace package body flow_tasks as
         null; -- tbi
     end; 
 
-    -- put payload into return variable 
-    if p_payload is not null then 
-      select objt.objt_attributes."apex"."payloadVariable"
-        into l_payload_variable
-        from flow_objects objt
-       where objt.objt_bpmn_id = l_current
-         and objt.objt_dgrm_id = l_dgrm_id
-         ;
-
-      apex_debug.message 
-      ( p_message => '-- ReceiveTask Callback settings:  returnVar %0'
-      , p0 => l_payload_variable
-      );
-
-      flow_proc_vars_int.set_var
-      ( pi_prcs_id      => p_process_id
-      , pi_sbfl_id      => p_subflow_id
-      , pi_var_name     => l_payload_variable
-      , pi_clob_value   => p_payload
-      , pi_objt_bpmn_id => l_current
-      , pi_scope        => l_scope
-      );
-
-    end if;
     -- set subflow to running
     update flow_subflows sbfl
        set sbfl.sbfl_last_update    = systimestamp
