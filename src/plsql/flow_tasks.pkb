@@ -256,7 +256,7 @@ create or replace package body flow_tasks as
     , p_called_internally => true
     );
 
-    case get_task_type( p_step_info.target_objt_id )
+    case get_task_type( pi_objt_id => p_step_info.target_objt_id )
       when flow_constants_pkg.gc_apex_task_execute_plsql then
         flow_plsql_runner_pkg.run_task_script
         ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
@@ -503,7 +503,9 @@ create or replace package body flow_tasks as
   begin
     apex_debug.enter 
     ( 'process_sendTask'
-    , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
+    , 'p_step_info.target_objt_id', p_step_info.target_objt_id
+    , 'taret object task type', get_task_type( pi_objt_id => p_step_info.target_objt_id )
     );
     -- current implementation is limited to one sendTask type, 
     -- which is to run a user defined PL/SQL script
@@ -518,15 +520,19 @@ create or replace package body flow_tasks as
     , p_called_internally => true
     );
     
-    case get_task_type( p_step_info.target_objt_id )
-      when flow_constants_pkg.gc_apex_task_execute_plsql then
+    case get_task_type( pi_objt_id => p_step_info.target_objt_id )
+    when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+        -- Flows for APEX Basic MessageFlow
+        flow_msg_subscription.send_message
+        ( p_sbfl_info => p_sbfl_info
+        , p_step_info => p_step_info
+        );
+    when flow_constants_pkg.gc_apex_task_execute_plsql then
         flow_plsql_runner_pkg.run_task_script
         ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
         , pi_sbfl_id => p_sbfl_info.sbfl_id
         , pi_objt_id => p_step_info.target_objt_id
         );
-      else
-        null;
     end case;
     
     flow_engine.flow_complete_step 
@@ -585,45 +591,57 @@ create or replace package body flow_tasks as
     );
 
     
-/*    case get_task_type( p_step_info.target_objt_id )
-      when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+    case get_task_type( p_step_info.target_objt_id )
+    when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+ 
+        l_msg_sub            := flow_msg_util.get_msg_subscription_details
+                                ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
+                                , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
+                                , p_sbfl_info               => p_sbfl_info
+                                );
+        l_msg_sub.callback  := flow_constants_pkg.gc_bpmn_receivetask;
+  
+        -- create subscription for the awaited message 
+        l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
+  
+        -- update subflow into 'waiting for message' status
+        update flow_subflows sbfl
+           set sbfl.sbfl_last_update    = systimestamp
+             , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_message
+             , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                    , sys_context('userenv','os_user')
+                                                    , sys_context('userenv','session_user')
+                                                    )  
+         where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
+           and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
+          ;
+        -- log subscription event
+        apex_debug.message 
+        ( p_message => '-- ReceiveTask subscription created - message subscription id: %0'
+        , p0 => l_msub_id
+        );
+    when flow_constants_pkg.gc_apex_task_execute_plsql then
+        -- set work started time
+        flow_engine.start_step 
+        ( p_process_id => p_sbfl_info.sbfl_prcs_id
+        , p_subflow_id => p_sbfl_info.sbfl_id
+        , p_step_key   => p_sbfl_info.sbfl_step_key
+        , p_called_internally => true
+        );
+
         flow_plsql_runner_pkg.run_task_script
         ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
         , pi_sbfl_id => p_sbfl_info.sbfl_id
         , pi_objt_id => p_step_info.target_objt_id
         );
-      else
-        null;
-    end case;*/
 
+        flow_engine.flow_complete_step   --- remove the complete step?
+        ( p_process_id => p_sbfl_info.sbfl_prcs_id
+        , p_subflow_id => p_sbfl_info.sbfl_id
+        , p_step_key   => p_sbfl_info.sbfl_step_key
+        );
 
-    l_msg_sub            := flow_msg_util.get_msg_subscription_details
-                            ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
-                            , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
-                            , p_sbfl_info               => p_sbfl_info
-                            );
-    l_msg_sub.callback  := flow_constants_pkg.gc_bpmn_receivetask;
-
-    -- create subscription for the awaited message 
-    l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
-
-    -- update subflow into 'waiting for message' status
-    update flow_subflows sbfl
-       set sbfl.sbfl_last_update    = systimestamp
-         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_message
-         , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                , sys_context('userenv','os_user')
-                                                , sys_context('userenv','session_user')
-                                                )  
-     where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
-       and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
-      ;
-    -- log subscription event
-    apex_debug.message 
-    ( p_message => '-- ReceiveTask subscription created - message subscription id: %0'
-    , p0 => l_msub_id
-    );
-    -- 
+    end case;
 
   end process_receiveTask;  
 

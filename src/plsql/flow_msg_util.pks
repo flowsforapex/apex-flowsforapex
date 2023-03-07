@@ -16,6 +16,12 @@ create or replace package flow_msg_util as
   , p_dgrm_id                   flow_diagrams.dgrm_id%type
   , p_sbfl_info                 flow_subflows%rowtype
   ) return flow_msg_subscription.t_subscription_details;
+
+  function prepare_message
+  ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
+  , p_dgrm_id                   flow_diagrams.dgrm_id%type
+  , p_sbfl_info                 flow_subflows%rowtype
+  ) return flow_msg_subscription.t_flow_basic_message;
   
 end flow_msg_util;
 /

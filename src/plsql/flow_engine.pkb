@@ -374,6 +374,16 @@ end flow_process_link_event;
       , p_sbfl_info  => p_sbfl_info
       , p_step_info  => p_step_info
       );   
+    elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_message_event_definition then
+      flow_msg_subscription.send_message
+      ( p_sbfl_info  => p_sbfl_info
+      , p_step_info  => p_step_info
+      );
+      flow_complete_step
+      ( p_process_id => p_sbfl_info.sbfl_prcs_id
+      , p_subflow_id => p_sbfl_info.sbfl_id
+      , p_step_key   => p_sbfl_info.sbfl_step_key
+      );
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_escalation_event_definition then
       -- make the ITE the current step
       update  flow_subflows sbfl

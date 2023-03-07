@@ -51,14 +51,28 @@ as
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return   flow_types_pkg.t_bpmn_attribute_vc2;
 
-    function get_correlation_key
+  function get_correlation_key
   ( pi_prcs_id       flow_processes.prcs_id%type
   , pi_sbfl_id       flow_subflows.sbfl_id%type
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return   flow_types_pkg.t_bpmn_attribute_vc2;
 
-    function get_correlation_value
+  function get_correlation_value
+  ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_scope         flow_subflows.sbfl_scope%type default 0
+  ) return   flow_types_pkg.t_bpmn_attribute_vc2;  
+
+  function get_payload
+  ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_scope         flow_subflows.sbfl_scope%type default 0
+  ) return   clob;  
+
+  function get_endpoint
   ( pi_prcs_id       flow_processes.prcs_id%type
   , pi_sbfl_id       flow_subflows.sbfl_id%type
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2

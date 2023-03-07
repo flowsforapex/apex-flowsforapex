@@ -19,6 +19,14 @@ create or replace package flow_msg_subscription as
   , payload_var   flow_message_subscriptions.msub_payload_var%type
   );   
 
+  type t_flow_basic_message is record
+  ( endpoint      flow_types_pkg.t_vc200
+  , message_name  flow_message_subscriptions.msub_message_name%type
+  , key_name      flow_message_subscriptions.msub_key_name%type
+  , key_value     flow_message_subscriptions.msub_key_value%type
+  , payload       clob 
+  );  
+
   function subscribe
   ( p_subscription_details     in t_subscription_details
   ) return flow_message_subscriptions.msub_id%type;
@@ -28,6 +36,11 @@ create or replace package flow_msg_subscription as
   , p_key_name      flow_message_subscriptions.msub_key_name%type
   , p_key_value     flow_message_subscriptions.msub_key_value%type
   , p_payload       clob default null
+  );
+
+  procedure send_message
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
   );
 
 end flow_msg_subscription;

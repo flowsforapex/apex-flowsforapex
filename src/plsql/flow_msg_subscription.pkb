@@ -132,5 +132,37 @@ create or replace package body flow_msg_subscription as
 
   end receive_message;
 
+  procedure send_message
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  )
+  is
+    l_message       flow_msg_subscription.t_flow_basic_message;
+  begin
+      apex_debug.enter 
+    ( 'send_message'
+    , 'p_msg_object_bpmn_id', p_step_info.target_objt_ref
+    );
+    l_message := flow_msg_util.prepare_message( p_msg_object_bpmn_id  => p_step_info.target_objt_ref
+                                              , p_dgrm_id             => p_sbfl_info.sbfl_dgrm_id
+                                              , p_sbfl_info           => p_sbfl_info 
+                                              );
+
+    case l_message.endpoint 
+    when 'local' then
+      begin
+        flow_msg_subscription.receive_message
+        ( p_message_name    => l_message.message_name
+        , p_key_name        => l_message.key_name
+        , p_key_value       => l_message.key_value
+        , p_payload         => l_message.payload
+        );
+      end;
+    end case;
+
+  end;
+
+
+
 end flow_msg_subscription;
 /
