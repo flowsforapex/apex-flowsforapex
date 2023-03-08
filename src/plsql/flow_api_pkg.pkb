@@ -451,7 +451,7 @@ create or replace package body flow_api_pkg as
   )
   is
   begin
-    flow_msg_subscription.receive_message ( p_message_name  =>p_message_name
+    flow_message_flow.receive_message ( p_message_name  =>p_message_name
                                           , p_key_name  =>  p_key_name
                                           , p_key_value  => p_key_value
                                           , p_payload  => p_payload 

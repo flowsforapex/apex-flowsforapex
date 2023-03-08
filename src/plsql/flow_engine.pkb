@@ -266,7 +266,7 @@ end flow_process_link_event;
   )
   is 
     l_new_status        flow_subflows.sbfl_status%type;
-    l_msg_sub           flow_msg_subscription.t_subscription_details;
+    l_msg_sub           flow_message_flow.t_subscription_details;
     l_msub_id           flow_message_subscriptions.msub_id%type;
   begin
     -- then we make everything behave like a simple activity unless specifically supported
@@ -294,7 +294,7 @@ end flow_process_link_event;
       -- message catch event
       l_new_status  := flow_constants_pkg.gc_sbfl_status_waiting_message;
 
-      l_msg_sub            := flow_msg_util.get_msg_subscription_details
+      l_msg_sub            := flow_message_util.get_msg_subscription_details
                               ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
                               , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
                               , p_sbfl_info               => p_sbfl_info
@@ -302,7 +302,7 @@ end flow_process_link_event;
       l_msg_sub.callback  := flow_constants_pkg.gc_bpmn_intermediate_catch_event;
 
       -- create subscription for the awaited message 
-      l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
+      l_msub_id := flow_message_flow.subscribe ( p_subscription_details => l_msg_sub);
     else
       -- not a timer.  Just set it to running for now.  (other types to be implemented later)
       -- this includes bpmn:linkEventDefinition which should come here
@@ -375,7 +375,7 @@ end flow_process_link_event;
       , p_step_info  => p_step_info
       );   
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_message_event_definition then
-      flow_msg_subscription.send_message
+      flow_message_flow.send_message
       ( p_sbfl_info  => p_sbfl_info
       , p_step_info  => p_step_info
       );

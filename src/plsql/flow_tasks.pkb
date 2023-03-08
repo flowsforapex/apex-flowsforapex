@@ -523,7 +523,7 @@ create or replace package body flow_tasks as
     case get_task_type( pi_objt_id => p_step_info.target_objt_id )
     when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
         -- Flows for APEX Basic MessageFlow
-        flow_msg_subscription.send_message
+        flow_message_flow.send_message
         ( p_sbfl_info => p_sbfl_info
         , p_step_info => p_step_info
         );
@@ -583,7 +583,7 @@ create or replace package body flow_tasks as
     l_value             flow_message_subscriptions.msub_key_value%type;
     l_payload_variable  flow_process_variables.prov_var_name%type;
     l_msub_id           flow_message_subscriptions.msub_id%type;
-    l_msg_sub           flow_msg_subscription.t_subscription_details;
+    l_msg_sub           flow_message_flow.t_subscription_details;
   begin
     apex_debug.enter 
     ( 'process_receiveTask'
@@ -594,7 +594,7 @@ create or replace package body flow_tasks as
     case get_task_type( p_step_info.target_objt_id )
     when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
  
-        l_msg_sub            := flow_msg_util.get_msg_subscription_details
+        l_msg_sub            := flow_message_util.get_msg_subscription_details
                                 ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
                                 , p_dgrm_id                 => p_sbfl_info.sbfl_dgrm_id
                                 , p_sbfl_info               => p_sbfl_info
@@ -602,7 +602,7 @@ create or replace package body flow_tasks as
         l_msg_sub.callback  := flow_constants_pkg.gc_bpmn_receivetask;
   
         -- create subscription for the awaited message 
-        l_msub_id := flow_msg_subscription.subscribe ( p_subscription_details => l_msg_sub);
+        l_msub_id := flow_message_flow.subscribe ( p_subscription_details => l_msg_sub);
   
         -- update subflow into 'waiting for message' status
         update flow_subflows sbfl

@@ -1,6 +1,6 @@
-create or replace package body flow_msg_subscription as
+create or replace package body flow_message_flow as
 /* 
--- Flows for APEX - flow_msg_subscription.pkb
+-- Flows for APEX - flow_message_flow.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
 --
@@ -137,13 +137,13 @@ create or replace package body flow_msg_subscription as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is
-    l_message       flow_msg_subscription.t_flow_basic_message;
+    l_message       flow_message_flow.t_flow_basic_message;
   begin
       apex_debug.enter 
     ( 'send_message'
     , 'p_msg_object_bpmn_id', p_step_info.target_objt_ref
     );
-    l_message := flow_msg_util.prepare_message( p_msg_object_bpmn_id  => p_step_info.target_objt_ref
+    l_message := flow_message_util.prepare_message( p_msg_object_bpmn_id  => p_step_info.target_objt_ref
                                               , p_dgrm_id             => p_sbfl_info.sbfl_dgrm_id
                                               , p_sbfl_info           => p_sbfl_info 
                                               );
@@ -151,7 +151,7 @@ create or replace package body flow_msg_subscription as
     case l_message.endpoint 
     when 'local' then
       begin
-        flow_msg_subscription.receive_message
+        flow_message_flow.receive_message
         ( p_message_name    => l_message.message_name
         , p_key_name        => l_message.key_name
         , p_key_value       => l_message.key_value
@@ -164,5 +164,5 @@ create or replace package body flow_msg_subscription as
 
 
 
-end flow_msg_subscription;
+end flow_message_flow;
 /

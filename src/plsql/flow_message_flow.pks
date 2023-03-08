@@ -1,6 +1,6 @@
-create or replace package flow_msg_subscription as
+create or replace package flow_message_flow as
 /* 
--- Flows for APEX - flow_msg_subscription.pks
+-- Flows for APEX - flow_message_flow.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
 --
@@ -43,5 +43,5 @@ create or replace package flow_msg_subscription as
   , p_step_info     in flow_types_pkg.flow_step_info
   );
 
-end flow_msg_subscription;
+end flow_message_flow;
 /

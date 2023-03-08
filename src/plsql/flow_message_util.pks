@@ -1,6 +1,6 @@
-create or replace package flow_msg_util as
+create or replace package flow_message_util as
 /* 
--- Flows for APEX - flow_msg_util
+-- Flows for APEX - flow_message_util
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
 --
@@ -15,13 +15,13 @@ create or replace package flow_msg_util as
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
   , p_dgrm_id                   flow_diagrams.dgrm_id%type
   , p_sbfl_info                 flow_subflows%rowtype
-  ) return flow_msg_subscription.t_subscription_details;
+  ) return flow_message_flow.t_subscription_details;
 
   function prepare_message
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
   , p_dgrm_id                   flow_diagrams.dgrm_id%type
   , p_sbfl_info                 flow_subflows%rowtype
-  ) return flow_msg_subscription.t_flow_basic_message;
+  ) return flow_message_flow.t_flow_basic_message;
   
-end flow_msg_util;
+end flow_message_util;
 /
