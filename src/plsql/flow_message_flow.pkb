@@ -45,9 +45,11 @@ create or replace package body flow_message_flow as
     , p_payload       clob default null
     )
   is
-    l_scope       flow_subflows.sbfl_scope%type;
-    l_current     flow_subflows.sbfl_current%type;
-    l_msub        flow_message_subscriptions%rowtype;
+    l_scope             flow_subflows.sbfl_scope%type;
+    l_current           flow_subflows.sbfl_current%type;
+    l_msub              flow_message_subscriptions%rowtype;
+    l_log_msg           flow_configuration.cfig_value%type;
+    l_was_correlated    flow_types_pkg.t_single_vc2 := flow_constants_pkg.gc_false;
   begin
     begin
       select msub.*
@@ -78,6 +80,7 @@ create or replace package body flow_message_flow as
          and sbfl_prcs_id   = l_msub.msub_prcs_id
          and sbfl_step_key  = l_msub.msub_step_key
       ;
+      l_was_correlated  := flow_constants_pkg.gc_true;
     exception
       when no_data_found then
           -- sdd some message-specific logging capability into here.
@@ -101,6 +104,34 @@ create or replace package body flow_message_flow as
       apex_debug.message 
       ( p_message => '-- incoming mesage payload stored in proc var %0'
       , p0 => l_msub.msub_payload_var
+      );
+    end if;
+
+    l_log_msg := flow_engine_util.get_config_value ( p_config_key     => flow_constants_pkg.gc_config_logging_message_flow_recd
+                                                   , p_default_value  => flow_constants_pkg.gc_config_default_logging_recd_msg 
+                                                   );
+
+    if l_log_msg = flow_constants_pkg.gc_vcbool_true then
+
+      insert into flow_message_received_log
+      ( lgrx_message_name
+      , lgrx_key_name
+      , lgrx_key_value
+      , lgrx_payload
+      , lgrx_was_correlated
+      , lgrx_prcs_id
+      , lgrx_sbfl_id
+      , lgrx_received_on
+      )
+      values
+      ( p_message_name
+      , p_key_name
+      , p_key_value
+      , p_payload
+      , l_was_correlated
+      , l_msub.msub_prcs_id
+      , l_msub.msub_sbfl_id
+      , systimestamp
       );
     end if;
 

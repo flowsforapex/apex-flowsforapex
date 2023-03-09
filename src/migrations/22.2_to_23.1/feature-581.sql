@@ -35,6 +35,19 @@ alter table flow_message_subscriptions
 alter table flow_message_subscriptions
     add constraint msub_uk UNIQUE (msub_message_name, msub_key_name, msub_key_value);
 
+create table flow_message_received_log
+( lgrx_id                   number generated always as identity (start with 1) not null
+, lgrx_message_name	        varchar2(200 char)
+, lgrx_key_name	            varchar2(200 char)
+, lgrx_key_value	        varchar2(200 char)
+, lgrx_payload              clob
+, lgrx_prcs_id	            number
+, lgrx_sbfl_id	            number
+, lgrx_received_on          timestamp with time zone
+, lgrx_was_correlated       varchar2(1 char)
+, lgrx_comment              varchar2(200 char)
+);
+
 --- experimental code for timer callbacks
 --- migration would require every open timer to be given a callback routine,
 --- therefore differentiate between

@@ -501,6 +501,20 @@ create table flow_variable_event_log
 
 create index flow_lgvr_ix on flow_variable_event_log (lgvr_prcs_id, lgvr_scope, lgvr_var_name);
 
+create table flow_message_received_log
+( lgrx_id                   number generated always as identity (start with 1) not null
+, lgrx_message_name	        varchar2(200 char)
+, lgrx_key_name	            varchar2(200 char)
+, lgrx_key_value	        varchar2(200 char)
+, lgrx_payload              clob
+, lgrx_prcs_id	            number
+, lgrx_sbfl_id	            number
+, lgrx_received_on          timestamp with time zone
+, lgrx_was_correlated       varchar2(1 char)
+, lgrx_comment              varchar2(200 char)
+);
+
+
 /* Statistics Tables */
 
 create table flow_instance_stats

@@ -202,6 +202,31 @@ create or replace package body flow_log_admin as
 
   end purge_instance_logs;
 
+  procedure purge_message_logs
+  ( p_retention_period_days    in number default null
+  )
+  is
+    l_log_retain_days    flow_configuration.cfig_value%type;
+    l_purge_interval     interval day(4) to second(0);
+  begin
+    apex_debug.enter ('purge_message_logs'
+    , 'p_retention_period_days', p_retention_period_days);
+
+    -- if retention period not specified, get configuration parameter or default
+    if p_retention_period_days is null then
+      l_log_retain_days     := flow_engine_util.get_config_value 
+                               ( p_config_key  => flow_constants_pkg.gc_config_logging_retain_msg_flow 
+                               , p_default_value  => flow_constants_pkg.gc_config_default_log_retain_msg_flow_logs
+                               );   
+      l_purge_interval   := to_dsinterval ('P'||trim( both from l_log_retain_days)||'D');
+    else
+      l_purge_interval   := to_dsinterval ('P'||trim( both from p_retention_period_days)||'D');   
+    end if;
+
+    delete from flow_message_received_log
+    where lgrx_received_on < systimestamp - l_purge_interval;
+
+  end purge_message_logs;
 
   /*function validate_db_archive_location
   ( p_table       flow_types_pkg.t_vc200

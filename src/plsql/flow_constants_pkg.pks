@@ -11,7 +11,7 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '22.2.0';
+  gc_version constant varchar2(10 char) := '23.1.0 dev';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';
@@ -297,6 +297,8 @@ as
   gc_config_logging_retain_logs         constant varchar2(50 char) := 'logging_retain_logs_after_prcs_completion_days';
   gc_config_logging_archive_location    constant varchar2(50 char) := 'logging_archive_location';
   gc_config_logging_archive_enabled     constant varchar2(50 char) := 'logging_archive_instance_summaries';
+  gc_config_logging_message_flow_recd   constant varchar2(50 char) := 'logging_received_message_flow';
+  gc_config_logging_retain_msg_flow     constant varchar2(50 char) := 'logging_retain_message_flow_days';
   gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
   gc_config_timer_max_cycles            constant varchar2(50 char) := 'timer_max_cycles';
@@ -328,9 +330,10 @@ as
 -- Config Parameter Default Values
 
   gc_config_default_logging_level               constant varchar2(2000 char) := gc_config_logging_level_standard;
-  gc_config_default_logging_hide_userid         constant varchar2(2000 char) := 'false';
+  gc_config_default_logging_hide_userid         constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_logging_language            constant varchar2(2000 char) := 'en';
-  gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := 'false';
+  gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := gc_vcbool_false;
+  gc_config_default_logging_recd_msg            constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_engine_app_mode             constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention         constant varchar2(2000 char) := 'legacy';
   gc_config_default_default_workspace           constant varchar2(2000 char) := 'FLOWS4APEX';
@@ -339,6 +342,7 @@ as
   gc_config_default_default_username            constant varchar2(2000 char) := 'FLOWS4APEX';
   gc_config_default_timer_max_cycles            constant varchar2(2000 char) := '1000';
   gc_config_default_log_retain_logs             constant varchar2(2000 char) := '60';
+  gc_config_default_log_retain_msg_flow_logs    constant varchar2(2000 char) := '7';
   gc_config_default_stats_retain_summary_daily  constant varchar2(2000 char) := '180';
   gc_config_default_stats_retain_summary_month  constant varchar2(2000 char) := '9';
   gc_config_default_stats_retain_summary_qtr    constant varchar2(2000 char) := '36';
