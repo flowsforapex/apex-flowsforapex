@@ -465,9 +465,8 @@ create or replace package body flow_instances as
     -- lock all objects
     begin
       open c_lock_all;
-      flow_timers_pkg.lock_process_timers
-      ( pi_prcs_id => p_process_id
-      );  
+      flow_timers_pkg.lock_process_timers ( pi_prcs_id => p_process_id );  
+      flow_message_util.lock_instance_subscriptions ( p_process_id => p_process_id );
       close c_lock_all;
     exception 
       when lock_timeout then
@@ -484,6 +483,10 @@ create or replace package body flow_instances as
     ( pi_prcs_id => p_process_id
     , po_return_code => l_return_code
     );  
+    -- cancel any message subscriptions
+    flow_message_util.cancel_instance_subscriptions
+    ( p_process_id => p_process_id
+    );
     -- clear out run-time object_log
     delete
       from flow_subflow_log sflg 
@@ -552,11 +555,9 @@ create or replace package body flow_instances as
     begin 
       -- lock all timers, logs, subflows and the process.  
       open c_lock_all;
-      flow_timers_pkg.lock_process_timers
-      ( pi_prcs_id => p_process_id
-      ); 
+      flow_message_util.lock_instance_subscriptions ( p_process_id => p_process_id );
+      flow_timers_pkg.lock_process_timers ( pi_prcs_id => p_process_id ); 
       close c_lock_all; 
-
     exception 
       when lock_timeout then
         flow_errors.handle_instance_error
@@ -567,7 +568,8 @@ create or replace package body flow_instances as
         -- $F4AMESSAGE 'process-lock-timeout' || 'Process objects for %0 currently locked by another user.  Try again later.'
     end;
 
-    -- kill any timers sill running in the process
+    -- kill any message subscriptions or timers sill running in the process
+    flow_message_util.cancel_instance_subscriptions ( p_process_id => p_process_id );
     flow_timers_pkg.delete_process_timers
     (
         pi_prcs_id => p_process_id
@@ -641,6 +643,7 @@ create or replace package body flow_instances as
                           , l_cur_sflg_updated
                           , l_cur_prdg_id
                           , l_cur_prcs_archived_ts;
+      flow_message_util.lock_instance_subscriptions (p_process_id => p_process_id);
       flow_timers_pkg.lock_process_timers
       ( pi_prcs_id => p_process_id
       ); 
@@ -664,7 +667,8 @@ create or replace package body flow_instances as
     , p_event      => flow_constants_pkg.gc_prcs_event_deleted
     , p_comment    => p_comment
     );
-    -- kill any timers sill running in the process
+    -- kill any message subscriptions or  timers still running in the instance
+    flow_message_util.cancel_instance_subscriptions (p_process_id => p_process_id);
     flow_timers_pkg.delete_process_timers(
         pi_prcs_id => p_process_id
       , po_return_code => l_return_code
@@ -709,8 +713,8 @@ create or replace package body flow_instances as
       p_process_id  in flow_processes.prcs_id%type
     , p_priority    in flow_processes.prcs_priority%type
     )
-    is
-    begin
+  is
+  begin
       update flow_processes prcs
       set prcs.prcs_priority = prcs_priority
         , prcs.prcs_last_update = systimestamp
@@ -725,28 +729,28 @@ create or replace package body flow_instances as
       , p_event      => flow_constants_pkg.gc_prcs_event_priority_set
       , p_comment    => 'Priority set to '||p_priority
       );      
-    end set_priority;
+  end set_priority;
 
   function priority
     ( p_process_id  in flow_processes.prcs_id%type
     ) return flow_processes.prcs_priority%type
-    is
+  is
       l_priority    flow_processes.prcs_priority%type;
-    begin
+  begin
       select prcs_priority
         into l_priority
         from flow_processes
        where prcs_id = p_process_id;
       return l_priority;
-    end priority;
+  end priority;
 
   procedure set_due_on
     (
       p_process_id  in flow_processes.prcs_id%type
     , p_due_on      in flow_processes.prcs_due_on%type
     )
-    is
-    begin
+  is
+  begin
       update flow_processes prcs
       set prcs.prcs_due_on = prcs_due_on
         , prcs.prcs_last_update = systimestamp
@@ -766,15 +770,15 @@ create or replace package body flow_instances as
   function due_on
     ( p_process_id  in flow_processes.prcs_id%type
     ) return flow_processes.prcs_due_on%type
-    is
+  is
       l_due_on    flow_processes.prcs_due_on%type;
-    begin
+  begin
       select prcs_due_on
         into l_due_on
         from flow_processes
        where prcs_id = p_process_id;
       return l_due_on;
-    end due_on;
+  end due_on;
 
 end flow_instances;
 /

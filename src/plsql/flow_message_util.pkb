@@ -10,6 +10,8 @@ create or replace package body flow_message_util as
 -- bpmn:sendTask, bpmn:receiveTask, message catch and throw events, message start events, etc.
 --
 */
+  lock_timeout exception;
+  pragma exception_init (lock_timeout, -3006);
 
   function get_msg_subscription_details
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
@@ -203,6 +205,68 @@ create or replace package body flow_message_util as
   
     return l_message;
   end prepare_message;
+
+  procedure lock_subscription
+  ( p_process_id                    flow_processes.prcs_id%type
+  , p_subflow_id                    flow_subflows.sbfl_id%type
+  )
+  is
+    cursor c_lock_sub is
+      select msub_id
+        from flow_message_subscriptions
+       where msub_prcs_id = p_process_id
+         and msub_sbfl_id = p_subflow_id
+         for update of msub_id;
+  begin
+    apex_debug.enter
+    ( 'lock_subscription'
+    , 'process_id', p_process_id
+    , 'subflow_id', p_subflow_id
+    );
+    open c_lock_sub;
+    close c_lock_sub;
+  end lock_subscription;
+  
+  procedure cancel_subscription
+  ( p_process_id                    flow_processes.prcs_id%type
+  , p_subflow_id                    flow_subflows.sbfl_id%type
+  )
+  is
+  begin
+    delete from flow_message_subscriptions
+          where msub_prcs_id = p_process_id
+            and msub_sbfl_id = p_subflow_id;
+  end cancel_subscription;
+  
+
+  procedure lock_instance_subscriptions
+  ( p_process_id                    flow_processes.prcs_id%type
+  )
+  is
+    cursor c_lock_subs is
+      select msub_id
+        from flow_message_subscriptions
+       where msub_prcs_id = p_process_id
+         for update of msub_id;
+  begin
+    apex_debug.enter
+    ( 'lock_subscription'
+    , 'process_id', p_process_id
+    );
+    open c_lock_subs;
+    close c_lock_subs;
+
+  end lock_instance_subscriptions;
+
+
+  procedure cancel_instance_subscriptions
+  ( p_process_id                    flow_processes.prcs_id%type
+  )
+  is
+  begin
+    delete from flow_message_subscriptions
+          where msub_prcs_id = p_process_id;
+  end cancel_instance_subscriptions;
 
 end flow_message_util;
 /

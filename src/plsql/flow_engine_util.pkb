@@ -484,9 +484,7 @@ procedure get_number_of_connections
       end loop;
     end;
     -- end all subflows in this level
-    $IF NOT FLOW_APEX_ENV.VER_LE_21_2  
-    $THEN
-      -- running on APEX 22.1 or above
+
       -- first check if any subflows have current tasks that running external tasks, e,g., APEX approvals
       begin
         for subflows_with_tasks in (
@@ -495,30 +493,45 @@ procedure get_number_of_connections
                , sbfl.sbfl_scope
                , objt.objt_tag_name
                , objt.objt_sub_tag_name
+               , objt.objt_attributes."subType" subtype
             from flow_subflows sbfl
             join flow_objects objt
               on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
            where sbfl.sbfl_prcs_id = p_process_id
              and sbfl.sbfl_process_level = p_process_level
-             and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_usertask
-             and objt.objt_sub_tag_name = flow_constants_pkg.gc_apex_usertask_apex_approval
+             and objt.objt_tag_name in ( flow_constants_pkg.gc_bpmn_usertask
+                                       , flow_constants_pkg.gc_bpmn_receiveTask
+                                       , flow_constants_pkg.gc_bpmn_intermediate_catch_event )
+--             and objt.objt_sub_tag_name = flow_constants_pkg.gc_apex_usertask_apex_approval
         )
         loop
-          -- get apex taskID
-          l_apex_task_id := flow_proc_vars_int.get_var_num
-                              ( pi_prcs_id   => p_process_id
-                              , pi_var_name  => subflows_with_tasks.sbfl_current||flow_constants_pkg.gc_prov_suffix_task_id
-                              , pi_scope     => subflows_with_tasks.sbfl_scope
-                              );
-          -- cancel apex workflow task
-          flow_usertask_pkg.cancel_apex_task
-          ( p_process_id    => p_process_id
-          , p_objt_bpmn_id  => subflows_with_tasks.sbfl_current
-          , p_apex_task_id  => l_apex_task_id
-          );
+          -- clear any approval tasks (only runs on APEX 22.1 upwards)
+          $IF NOT FLOW_APEX_ENV.VER_LE_21_2  
+          $THEN
+            if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_usertask_apex_approval then
+              -- get apex taskID
+              l_apex_task_id := flow_proc_vars_int.get_var_num
+                                  ( pi_prcs_id   => p_process_id
+                                  , pi_var_name  => subflows_with_tasks.sbfl_current||flow_constants_pkg.gc_prov_suffix_task_id
+                                  , pi_scope     => subflows_with_tasks.sbfl_scope
+                                  );
+              -- cancel apex workflow task
+              flow_usertask_pkg.cancel_apex_task
+              ( p_process_id    => p_process_id
+              , p_objt_bpmn_id  => subflows_with_tasks.sbfl_current
+              , p_apex_task_id  => l_apex_task_id
+              );
+            end if;
+          $END 
+          -- cancel any message subscriptions
+          if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+            flow_message_util.cancel_subscription ( p_process_id  => p_process_id 
+                                                  , p_subflow_id  => subflows_with_tasks.sbfl_id
+                                                  );
+          end if;
         end loop;
       end;
-    $END 
+
      -- then delete the subflows
     delete from flow_subflows
     where sbfl_process_level = p_process_level 
