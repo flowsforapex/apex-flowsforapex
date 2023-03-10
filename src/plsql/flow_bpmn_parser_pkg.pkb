@@ -663,7 +663,10 @@ as
     for rec in (
                 select variable_sequence
                      , variable_name
-                     , variable_type
+                     , case variable_type
+                         when 'TIMESTAMP_WITH_TIME_ZONE' then 'TIMESTAMP WITH TIME ZONE'
+                         else variable_type
+                       end as variable_type
                      , expression_type
                      , expression_value
                   from xmltable
