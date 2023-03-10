@@ -883,6 +883,34 @@ as
     end loop;
   end parse_custom_timers;
 
+  procedure parse_simple_expression
+  (
+    pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
+  , pi_ext_type     in varchar2
+  , pi_exp_type     in varchar2
+  , pi_exp_val      in clob
+  )
+  as
+    l_apex_object sys.json_object_t;
+    l_ext_object  sys.json_object_t := sys.json_object_t();
+  begin
+    flow_parser_util.guarantee_apex_object( pio_objt_attributes => g_objects(pi_objt_bpmn_id).objt_attributes );
+    l_apex_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( 'apex' );
+
+    l_ext_object.put( 'expressionType', pi_exp_type );
+    if pi_exp_type in ( flow_constants_pkg.gc_expr_type_sql, flow_constants_pkg.gc_expr_type_sql_delimited_list
+                      , flow_constants_pkg.gc_expr_type_plsql_expression, flow_constants_pkg.gc_expr_type_plsql_function_body
+                      , flow_constants_pkg.gc_expr_type_plsql_raw_expression, flow_constants_pkg.gc_expr_type_plsql_raw_function_body
+                      )
+    then
+      l_ext_object.put( 'expression', flow_parser_util.get_lines_array( pi_str => pi_exp_val ) );
+    else
+      l_ext_object.put( 'expression', pi_exp_val );
+    end if;
+
+    l_apex_object.put( replace(pi_ext_type, 'apex:'), l_ext_object );
+  end parse_simple_expression;
+
   procedure parse_extension_elements
   (
     pi_bpmn_id       in flow_types_pkg.t_bpmn_id
@@ -893,13 +921,17 @@ as
     for rec in (
                 select extension_type
                      , extension_data
+                     , extension_exp_type
+                     , extension_exp_val
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '/bpmn:extensionElements/*' passing pi_extension_xml
                          columns
-                           extension_type varchar2(50 char) path 'name()'
-                         , extension_data sys.xmltype       path '*'
+                           extension_type     varchar2(50 char) path 'name()'
+                         , extension_data     sys.xmltype       path '*'
+                         , extension_exp_type varchar2(50 char) path 'apex:expressionType'
+                         , extension_exp_val  clob              path 'apex:expression'
                        ) 
                )
     loop
@@ -957,6 +989,15 @@ as
           pi_bpmn_id     => pi_bpmn_id
         , pi_subtype_xml => rec.extension_data
         );
+      -- Stanard Expressions with expressionType and expression nested
+      elsif rec.extension_exp_type is not null then
+        parse_simple_expression
+        (
+          pi_objt_bpmn_id => pi_bpmn_id
+        , pi_ext_type     => rec.extension_type
+        , pi_exp_type     => rec.extension_exp_type
+        , pi_exp_val      => rec.extension_exp_val
+        );
       end if;
     end loop;
   end parse_extension_elements;
@@ -969,10 +1010,6 @@ as
   as
     l_apex_object  sys.json_object_t;
     l_var_array    flow_types_pkg.t_bpmn_attribute_vc2;
-    l_ext_object   sys.json_object_t;
-    l_namespace    varchar2(32767);
-    l_key          varchar2(32767);
-    l_json_element sys.json_element_t;
   begin
 
     l_apex_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( 'apex' );
@@ -994,24 +1031,13 @@ as
              ) ext
        where ext_type not in ( 'apex:inVariables', 'apex:outVariables' )
     ) loop
-      l_ext_object := sys.json_object_t();
-      l_ext_object.put( 'expressionType', rec.exp_type );
-      if rec.exp_type in ( flow_constants_pkg.gc_expr_type_sql, flow_constants_pkg.gc_expr_type_sql_delimited_list
-                         , flow_constants_pkg.gc_expr_type_plsql_expression, flow_constants_pkg.gc_expr_type_plsql_function_body
-                         , flow_constants_pkg.gc_expr_type_plsql_raw_expression, flow_constants_pkg.gc_expr_type_plsql_raw_function_body
-                         )
-      then
-        l_ext_object.put( 'expression', flow_parser_util.get_lines_array( pi_str => rec.exp_value ) );
-      else
-        l_ext_object.put( 'expression', rec.exp_value );
-      end if;
-
-      flow_parser_util.split_property_name(
-        pi_property_name => rec.ext_type
-      , po_namespace     => l_namespace
-      , po_key           => l_key
+      parse_simple_expression
+      (
+        pi_objt_bpmn_id => pi_objt_bpmn_id
+      , pi_ext_type     => rec.ext_type
+      , pi_exp_type     => rec.exp_type
+      , pi_exp_val      => rec.exp_value
       );
-      l_apex_object.put( l_key, l_ext_object );
     end loop;
 
     -- Parse in vs. out variables separately
