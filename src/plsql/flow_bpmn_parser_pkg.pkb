@@ -1345,6 +1345,9 @@ as
   )
   as
     l_apex_object sys.json_object_t;
+    l_namespace    flow_types_pkg.t_bpmn_id;
+    l_key          flow_types_pkg.t_bpmn_attributes_key;
+    l_json_element sys.json_element_t;
   begin
     flow_parser_util.guarantee_apex_object( pio_attributes => pio_conn_attributes );
     l_apex_object := pio_conn_attributes.get_object( 'apex' );
@@ -1363,7 +1366,17 @@ as
              ) ext
        where ext_type = flow_constants_pkg.gc_apex_custom_extension
     ) loop
-      l_apex_object.put( 'customExtension', sys.json_element_t.parse( rec.ext_text ) );
+      flow_parser_util.property_to_json
+      (
+        pi_property_name => rec.ext_type
+      , pi_value         => rec.ext_text
+      , po_namespace     => l_namespace
+      , po_key           => l_key
+      , po_json_element  => l_json_element
+      );
+      if l_json_element is not null then
+        l_apex_object.put( l_key, l_json_element );
+      end if;
     end loop;
   end parse_connection_extensions;
 
