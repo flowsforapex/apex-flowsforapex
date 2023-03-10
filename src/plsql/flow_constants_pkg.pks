@@ -157,6 +157,9 @@ as
   gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
   gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
 
+  -- Custom Extension Tag
+  gc_apex_custom_extension            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'customExtension';
+
   -- Diagram calling methods
   gc_dgrm_version_named_version       constant flow_types_pkg.t_bpmn_attributes_key := 'namedVersion';
   gc_dgrm_version_latest_version      constant flow_types_pkg.t_bpmn_attributes_key := 'latestVersion';

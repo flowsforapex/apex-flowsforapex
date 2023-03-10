@@ -38,46 +38,46 @@ as
 
   procedure guarantee_apex_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   )
   as
     c_key constant varchar2(20) := 'apex';
   begin
     -- Initialize the main object if not done already
-    pio_objt_attributes := coalesce( pio_objt_attributes, sys.json_object_t() );
+    pio_attributes := coalesce( pio_attributes, sys.json_object_t() );
     -- Create empty "apex" object if not existing
-    if not pio_objt_attributes.has( c_key ) then
-      pio_objt_attributes.put( c_key, sys.json_object_t() );
+    if not pio_attributes.has( c_key ) then
+      pio_attributes.put( c_key, sys.json_object_t() );
     end if;
   end guarantee_apex_object;
 
   procedure guarantee_bpmn_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   )
   as
     c_key constant varchar2(20) := 'bpmn';
   begin
     -- Initialize the main object if not done already
-    pio_objt_attributes := coalesce( pio_objt_attributes, sys.json_object_t() );
+    pio_attributes := coalesce( pio_attributes, sys.json_object_t() );
     -- Create empty "bpmn" object if not existing
-    if not pio_objt_attributes.has( c_key ) then
-      pio_objt_attributes.put( c_key, sys.json_object_t() );
+    if not pio_attributes.has( c_key ) then
+      pio_attributes.put( c_key, sys.json_object_t() );
     end if;
   end guarantee_bpmn_object;
 
   procedure guarantee_named_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
-  , pi_key              in varchar2
+    pio_attributes in out nocopy sys.json_object_t
+  , pi_key         in varchar2
   )
   as
   begin
     -- Initialize the main object if not done already
-    pio_objt_attributes := coalesce( pio_objt_attributes, sys.json_object_t() );
+    pio_attributes := coalesce( pio_attributes, sys.json_object_t() );
     -- Create empty "pi_key" object if not existing
-    if not pio_objt_attributes.has( pi_key ) then
-      pio_objt_attributes.put( pi_key, sys.json_object_t() );
+    if not pio_attributes.has( pi_key ) then
+      pio_attributes.put( pi_key, sys.json_object_t() );
     end if;
   end guarantee_named_object;
 
@@ -136,10 +136,12 @@ as
                            )
     then
       po_json_element := get_lines_array( pi_str => pi_value );
-    elsif pi_property_name = flow_constants_pkg.gc_apex_servicetask_placeholder
+    elsif pi_property_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
+                              , flow_constants_pkg.gc_apex_custom_extension
+                              )
     then
       -- this is already JSON, better store differently
-      po_json_element := sys.json_object_t.parse( pi_value );
+      po_json_element := sys.json_object_t.parse( replace( replace( pi_value, '&amp;', '&' ), chr(10) ) );
     else
       po_json_element := null;
     end if; 
