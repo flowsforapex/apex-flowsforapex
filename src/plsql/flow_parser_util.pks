@@ -51,6 +51,15 @@ as
   type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   -- Methods
+  procedure split_property_name
+  (
+    pi_property_name  in        varchar2
+  , po_namespace     out nocopy varchar2
+  , po_key           out nocopy varchar2
+  );
+
+  function get_property_key( pi_property_name in varchar2 )
+    return varchar2;
 
   procedure guarantee_apex_object
   (

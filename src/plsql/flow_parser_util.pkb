@@ -1,7 +1,6 @@
 create or replace package body flow_parser_util
 as
 
-  -- Private Methods
   procedure split_property_name
   (
     pi_property_name  in        varchar2
@@ -22,7 +21,21 @@ as
 
   end split_property_name;
 
-  -- Public Methods
+  function get_property_key( pi_property_name in varchar2 )
+    return varchar2
+  as
+    l_namespace varchar2(32767);
+    l_key       varchar2(32767);
+  begin
+    split_property_name
+    (
+      pi_property_name => pi_property_name
+    , po_namespace     => l_namespace
+    , po_key           => l_key
+    );
+    return l_key;
+  end get_property_key;
+
   procedure guarantee_apex_object
   (
     pio_objt_attributes in out nocopy sys.json_object_t

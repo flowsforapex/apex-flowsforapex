@@ -4,8 +4,9 @@ create or replace package flow_constants_pkg
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
 --
--- Created 2020   Moritz Klein - MT AG  
+-- Created 2020        Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
+-- Edited  10-Mar-2023 Moritz Klein, MT GmbH
 --
 */
   authid definer
@@ -147,8 +148,9 @@ as
   gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
   gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
-  -- Callable Process Tags
+  -- Process Tags
   gc_apex_process_callable            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isCallable';
+  gc_apex_process_startable           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isStartable';
 
   -- callActivity tags
   gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
