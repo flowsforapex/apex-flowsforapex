@@ -38,7 +38,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_diagram.pks
 @plsql/flow_log_admin.pks
 @plsql/flow_admin_api.pks
-
+@plsql/flow_statistics.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -84,6 +84,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_diagram.pkb
 @plsql/flow_log_admin.pkb
 @plsql/flow_admin_api.pkb
+@plsql/flow_statistics.pkb
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================

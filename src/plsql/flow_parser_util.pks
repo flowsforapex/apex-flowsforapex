@@ -41,7 +41,7 @@ as
     , conn_tag_name    flow_types_pkg.t_bpmn_id
     , conn_origin      flow_types_pkg.t_bpmn_id
     , conn_sequence    number
-    , conn_attributes  clob
+    , conn_attributes  sys.json_object_t
     );
   type t_conn_tab is table of t_conn_rec index by flow_types_pkg.t_bpmn_id;
 
@@ -51,21 +51,30 @@ as
   type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   -- Methods
+  procedure split_property_name
+  (
+    pi_property_name  in        varchar2
+  , po_namespace     out nocopy varchar2
+  , po_key           out nocopy varchar2
+  );
+
+  function get_property_key( pi_property_name in varchar2 )
+    return varchar2;
 
   procedure guarantee_apex_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   );
 
   procedure guarantee_bpmn_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   );
 
   procedure guarantee_named_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
-  , pi_key              in varchar2
+    pio_attributes in out nocopy sys.json_object_t
+  , pi_key         in varchar2
   );
 
   function get_lines_array

@@ -8,6 +8,7 @@ as
 --
 -- Created    2020         Moritz Klein (MT AG)
 -- Modified   2022-08-10   Moritz Klein (MT AG)
+-- Modified   2023-03-10   Moritz Klein (MT GmbH)
 --
 */
 
@@ -53,7 +54,7 @@ as
   (
     pi_objt_bpmn_id   in flow_types_pkg.t_bpmn_id
   , pi_attribute_name in flow_types_pkg.t_bpmn_attributes_key
-  , pi_value          in flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_value          in clob
   )
   as
     l_namespace        flow_types_pkg.t_vc200;
@@ -79,8 +80,8 @@ as
     if l_namespace is not null then
       flow_parser_util.guarantee_named_object
       (
-        pio_objt_attributes => g_objects(pi_objt_bpmn_id).objt_attributes
-      , pi_key              => l_namespace
+        pio_attributes => g_objects(pi_objt_bpmn_id).objt_attributes
+      , pi_key         => l_namespace
       );
       l_namespace_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( l_namespace );
     else
@@ -139,7 +140,7 @@ as
   , pi_conn_tag_name    in flow_connections.conn_tag_name%type
   , pi_conn_origin      in flow_connections.conn_origin%type
   , pi_conn_sequence    in flow_connections.conn_sequence%type
-  , pi_conn_attributes  in flow_connections.conn_attributes%type
+  , pi_conn_attributes  in sys.json_object_t
   )
   as
     l_conn_rec flow_parser_util.t_conn_rec;
@@ -355,7 +356,7 @@ as
         , pi_objt_sub_tag_name => l_cur_object.objt_sub_tag_name
         , pi_objt_attached_to  => l_cur_object.objt_attached_to
         , pi_objt_interrupting => l_cur_object.objt_interrupting
-        , pi_objt_attributes   => case when l_cur_object.objt_attributes is not null then l_cur_object.objt_attributes.to_clob() else null end
+        , pi_objt_attributes   => case when l_cur_object.objt_attributes is not null then l_cur_object.objt_attributes.to_clob else null end
         , po_objt_id           => l_objt_id
         );
 
@@ -419,7 +420,7 @@ as
         , pi_conn_tag_name     => l_cur_conn.conn_tag_name
         , pi_conn_origin       => l_cur_conn.conn_origin
         , pi_conn_sequence     => l_cur_conn.conn_sequence
-        , pi_conn_attributes   => l_cur_conn.conn_attributes
+        , pi_conn_attributes   => case when l_cur_conn.conn_attributes is not null then l_cur_conn.conn_attributes.to_clob else null end
         , po_conn_id           => l_conn_id
         );
       end if;
@@ -662,7 +663,10 @@ as
     for rec in (
                 select variable_sequence
                      , variable_name
-                     , variable_type
+                     , case variable_type
+                         when 'TIMESTAMP_WITH_TIME_ZONE' then 'TIMESTAMP WITH TIME ZONE'
+                         else variable_type
+                       end as variable_type
                      , expression_type
                      , expression_value
                   from xmltable
@@ -719,7 +723,7 @@ as
       l_page_item.put( 'value', rec.item_value );
       l_page_items.append( l_page_item );
     end loop;
-    flow_parser_util.guarantee_apex_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes);
+    flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_bpmn_id).objt_attributes);
 
     -- Complex JSON types are handled by reference
     l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
@@ -756,7 +760,7 @@ as
     ;
 
     if l_param_array is not null then
-      flow_parser_util.guarantee_apex_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes );
+      flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_bpmn_id).objt_attributes );
       l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
       l_apex_object.put( 'parameters', sys.json_array_t.parse( l_param_array ) );
     end if;
@@ -814,7 +818,7 @@ as
         , po_json_element  => l_json_element
         );
 
-        flow_parser_util.guarantee_named_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
+        flow_parser_util.guarantee_named_object( pio_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
         l_namespace_object := g_objects(pi_bpmn_id).objt_attributes.get_object( l_namespace );
         if l_json_element is not null then
           l_namespace_object.put( l_attribute, l_json_element );
@@ -871,7 +875,7 @@ as
         , po_json_element  => l_json_element
         );
 
-        flow_parser_util.guarantee_named_object( pio_objt_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
+        flow_parser_util.guarantee_named_object( pio_attributes => g_objects(pi_bpmn_id).objt_attributes, pi_key => l_namespace );
         l_namespace_object := g_objects(pi_bpmn_id).objt_attributes.get_object( l_namespace );
         if l_json_element is not null then
           l_namespace_object.put( l_attribute, l_json_element );
@@ -881,6 +885,34 @@ as
       end if;
     end loop;
   end parse_custom_timers;
+
+  procedure parse_simple_expression
+  (
+    pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
+  , pi_ext_type     in varchar2
+  , pi_exp_type     in varchar2
+  , pi_exp_val      in clob
+  )
+  as
+    l_apex_object sys.json_object_t;
+    l_ext_object  sys.json_object_t := sys.json_object_t();
+  begin
+    flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_objt_bpmn_id).objt_attributes );
+    l_apex_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( 'apex' );
+
+    l_ext_object.put( 'expressionType', pi_exp_type );
+    if pi_exp_type in ( flow_constants_pkg.gc_expr_type_sql, flow_constants_pkg.gc_expr_type_sql_delimited_list
+                      , flow_constants_pkg.gc_expr_type_plsql_expression, flow_constants_pkg.gc_expr_type_plsql_function_body
+                      , flow_constants_pkg.gc_expr_type_plsql_raw_expression, flow_constants_pkg.gc_expr_type_plsql_raw_function_body
+                      )
+    then
+      l_ext_object.put( 'expression', flow_parser_util.get_lines_array( pi_str => pi_exp_val ) );
+    else
+      l_ext_object.put( 'expression', pi_exp_val );
+    end if;
+
+    l_apex_object.put( replace(pi_ext_type, 'apex:'), l_ext_object );
+  end parse_simple_expression;
 
   procedure parse_extension_elements
   (
@@ -892,13 +924,19 @@ as
     for rec in (
                 select extension_type
                      , extension_data
+                     , extension_exp_type
+                     , extension_exp_val
+                     , extension_text
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '/bpmn:extensionElements/*' passing pi_extension_xml
                          columns
-                           extension_type varchar2(50 char) path 'name()'
-                         , extension_data sys.xmltype       path '*'
+                           extension_type     varchar2(50 char) path 'name()'
+                         , extension_data     sys.xmltype       path '*'
+                         , extension_exp_type varchar2(50 char) path 'apex:expressionType'
+                         , extension_exp_val  clob              path 'apex:expression'
+                         , extension_text     clob              path 'text()'
                        ) 
                )
     loop
@@ -956,51 +994,98 @@ as
           pi_bpmn_id     => pi_bpmn_id
         , pi_subtype_xml => rec.extension_data
         );
+      -- Standard Expressions with expressionType and expression nested
+      elsif rec.extension_exp_type is not null then
+        parse_simple_expression
+        (
+          pi_objt_bpmn_id => pi_bpmn_id
+        , pi_ext_type     => rec.extension_type
+        , pi_exp_type     => rec.extension_exp_type
+        , pi_exp_val      => rec.extension_exp_val
+        );
+      elsif rec.extension_type = flow_constants_pkg.gc_apex_custom_extension then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => pi_bpmn_id
+        , pi_attribute_name => rec.extension_type
+        , pi_value          => rec.extension_text
+        );
       end if;
     end loop;
   end parse_extension_elements;
 
-  procedure parse_callable_extensions
+  procedure parse_process_extensions
   (
     pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
   , pi_xml          in sys.xmltype
   )
   as
-    l_apex_object sys.json_object_t;
-    l_var_array   flow_types_pkg.t_bpmn_attribute_vc2;
+    l_apex_object  sys.json_object_t;
+    l_var_array    flow_types_pkg.t_bpmn_attribute_vc2;
   begin
-
-    -- Mark this process as callable
-    register_object_attribute
-    (
-      pi_objt_bpmn_id   => pi_objt_bpmn_id
-    , pi_attribute_name => flow_constants_pkg.gc_apex_process_callable
-    , pi_value          => flow_constants_pkg.gc_vcbool_true
-    );
-
-    -- previous call guarantees the "apex" object
-    -- so we can simply retrieve it here
+    flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_objt_bpmn_id).objt_attributes );
     l_apex_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( 'apex' );
+
+    -- Extensions which use expressionType + expression structure
+    for rec in (
+      select ext_type
+           , exp_type
+           , exp_value
+           , ext_text
+        from xmltable
+             (
+               xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                             , 'https://flowsforapex.org' as "apex")
+             , '/bpmn:extensionElements/*' passing pi_xml
+               columns
+                 ext_type  varchar2( 50 char) path 'name()'
+               , exp_type  varchar2( 50 char) path 'apex:expressionType'
+               , exp_value clob               path 'apex:expression'
+               , ext_text  clob               path 'text()'
+             ) ext
+    ) loop
+      if rec.exp_type is not null then
+        parse_simple_expression
+        (
+          pi_objt_bpmn_id => pi_objt_bpmn_id
+        , pi_ext_type     => rec.ext_type
+        , pi_exp_type     => rec.exp_type
+        , pi_exp_val      => rec.exp_value
+        );
+      elsif rec.ext_type = flow_constants_pkg.gc_apex_custom_extension then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => pi_objt_bpmn_id
+        , pi_attribute_name => rec.ext_type
+        , pi_value          => rec.ext_text
+        );
+      end if;
+    end loop;
 
     -- Parse in vs. out variables separately
     -- Makes it easier to understand in the code
     -- while not hitting performance too much
 
-    select json_arrayagg( json_object(
-             key 'varName'        is var_name
-           , key 'varDataType'    is var_datatype
-           , key 'varDescription' is var_description
-           ) ) in_var_array
+    select json_arrayagg
+           (
+             json_object
+             (
+               key 'varName'        is var_name
+             , key 'varDataType'    is var_datatype
+             , key 'varDescription' is var_description
+             )
+           ) in_var_array
       into l_var_array
-      from xmltable(
-                   xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                                 , 'https://flowsforapex.org' as "apex")
-                 , '/bpmn:extensionElements/apex:inVariables/apex:processVariable[*]' passing pi_xml
-                   columns
-                     var_name        varchar2(50 char) path 'apex:varName'
-                   , var_datatype    varchar2(50 char) path 'apex:varDataType'
-                   , var_description varchar2(50 char) path 'apex:varDescription'
-                 )
+      from xmltable
+           (
+             xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                           , 'https://flowsforapex.org' as "apex")
+           , '/bpmn:extensionElements/apex:inVariables/apex:processVariable[*]' passing pi_xml
+             columns
+               var_name        varchar2(50 char) path 'apex:varName'
+             , var_datatype    varchar2(50 char) path 'apex:varDataType'
+             , var_description varchar2(50 char) path 'apex:varDescription'
+           )
     ;
 
     -- If no inVariables are found the variable is null
@@ -1008,28 +1093,33 @@ as
       l_apex_object.put( 'inVariables', sys.json_array_t.parse( l_var_array ) );
     end if;
 
-    select json_arrayagg( json_object(
-             key 'varName'        is var_name
-           , key 'varDataType'    is var_datatype
-           , key 'varDescription' is var_description
-           ) ) in_var_array
+    select json_arrayagg
+           (
+             json_object
+             (
+               key 'varName'        is var_name
+             , key 'varDataType'    is var_datatype
+             , key 'varDescription' is var_description
+             )
+           ) in_var_array
       into l_var_array
-      from xmltable(
-                   xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                                 , 'https://flowsforapex.org' as "apex")
-                 , '/bpmn:extensionElements/apex:outVariables/apex:processVariable[*]' passing pi_xml
-                   columns
-                     var_name        varchar2(50 char) path 'apex:varName'
-                   , var_datatype    varchar2(50 char) path 'apex:varDataType'
-                   , var_description varchar2(50 char) path 'apex:varDescription'
-                 )
+      from xmltable
+           (
+             xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                           , 'https://flowsforapex.org' as "apex")
+           , '/bpmn:extensionElements/apex:outVariables/apex:processVariable[*]' passing pi_xml
+             columns
+               var_name        varchar2(50 char) path 'apex:varName'
+             , var_datatype    varchar2(50 char) path 'apex:varDataType'
+             , var_description varchar2(50 char) path 'apex:varDescription'
+           )
     ;
 
     if l_var_array is not null then
       l_apex_object.put( 'outVariables', sys.json_array_t.parse( l_var_array ) );
     end if;
 
-  end parse_callable_extensions;
+  end parse_process_extensions;
 
   procedure parse_child_elements
   (
@@ -1214,7 +1304,7 @@ as
   (
     pi_conn_bpmn_id in flow_types_pkg.t_bpmn_id
   , pi_xml          in sys.xmltype
-  ) return clob
+  ) return sys.json_object_t
   as
     l_condition_base       flow_types_pkg.t_bpmn_attribute_vc2;
     l_condition_expression clob;
@@ -1241,11 +1331,54 @@ as
     l_condition_object.put( 'expression', l_expression_array );
 
     l_attributes_json.put( 'conditionExpression', l_condition_object );
-    return l_attributes_json.to_clob;
+    return l_attributes_json;
   exception
     when no_data_found then
       return null;
   end get_connection_attributes;
+
+  procedure parse_connection_extensions
+  (
+    pi_conn_bpmn_id     in     flow_types_pkg.t_bpmn_id
+  , pi_xml              in     sys.xmltype
+  , pio_conn_attributes in out sys.json_object_t
+  )
+  as
+    l_apex_object sys.json_object_t;
+    l_namespace    flow_types_pkg.t_bpmn_id;
+    l_key          flow_types_pkg.t_bpmn_attributes_key;
+    l_json_element sys.json_element_t;
+  begin
+    flow_parser_util.guarantee_apex_object( pio_attributes => pio_conn_attributes );
+    l_apex_object := pio_conn_attributes.get_object( 'apex' );
+
+    for rec in (
+      select ext_type
+           , ext_text
+        from xmltable
+             (
+               xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                             , 'https://flowsforapex.org' as "apex")
+             , '/bpmn:extensionElements/*' passing pi_xml
+               columns
+                 ext_type  varchar2( 50 char) path 'name()'
+               , ext_text  clob               path 'text()'
+             ) ext
+       where ext_type = flow_constants_pkg.gc_apex_custom_extension
+    ) loop
+      flow_parser_util.property_to_json
+      (
+        pi_property_name => rec.ext_type
+      , pi_value         => rec.ext_text
+      , po_namespace     => l_namespace
+      , po_key           => l_key
+      , po_json_element  => l_json_element
+      );
+      if l_json_element is not null then
+        l_apex_object.put( l_key, l_json_element );
+      end if;
+    end loop;
+  end parse_connection_extensions;
 
   procedure parse_steps
   (
@@ -1255,7 +1388,7 @@ as
   )
   as
     l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
-    l_conn_attributes   clob;
+    l_conn_attributes   sys.json_object_t;
   begin
     for rec in (
                 select steps.steps_type
@@ -1339,6 +1472,7 @@ as
           );
         end if;
       else
+        l_conn_attributes := null;
         if rec.child_elements is not null then
           l_conn_attributes := 
             get_connection_attributes
@@ -1346,8 +1480,14 @@ as
               pi_conn_bpmn_id   => rec.steps_id
             , pi_xml            => rec.child_elements
             );
-        else
-          l_conn_attributes := null;
+        end if;
+        if rec.extension_elements is not null then
+          parse_connection_extensions
+          (
+            pi_conn_bpmn_id     => rec.steps_id
+          , pi_xml              => rec.extension_elements
+          , pio_conn_attributes => l_conn_attributes
+          );
         end if;
         register_connection
         (
@@ -1377,6 +1517,7 @@ as
                       , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
                       , proc.proc_type
                       , proc.proc_callable
+                      , proc.proc_startable
                       , proc.proc_application_id
                       , proc.proc_page_id
                       , proc.proc_username
@@ -1395,6 +1536,7 @@ as
                         , proc_type           varchar2( 50 char) path 'name()'
                         , proc_name           varchar2(200 char) path '@name'
                         , proc_callable       varchar2( 50 char) path '@apex:isCallable'
+                        , proc_startable      varchar2( 50 char) path '@apex:isStartable'
                         , proc_application_id varchar2( 50 char) path '@apex:applicationId'
                         , proc_page_id        varchar2( 50 char) path '@apex:pageId'
                         , proc_username       varchar2( 50 char) path '@apex:username'
@@ -1442,8 +1584,26 @@ as
           );
         end if;
 
-        if rec.proc_callable = flow_constants_pkg.gc_vcbool_true then
-          parse_callable_extensions
+        if rec.proc_callable is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_callable
+          , pi_value          => rec.proc_callable
+          );
+        end if;
+
+        if rec.proc_startable is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_startable
+          , pi_value          => rec.proc_startable
+          );
+        end if;
+
+        if rec.proc_extensions is not null then
+          parse_process_extensions
           (
             pi_objt_bpmn_id => rec.proc_id
           , pi_xml          => rec.proc_extensions
