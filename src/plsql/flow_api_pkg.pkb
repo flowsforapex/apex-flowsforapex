@@ -451,15 +451,15 @@ create or replace package body flow_api_pkg as
   )
   is
   begin
+    -- Note:  Unlike other API calls, we cannot create an  APEX session here if this has come in from outside APEX
+    -- as we do not yet have Flows information.  Wait until correlation completed to 
+    -- create a session (inside flow_message_flow.receive_message)
     flow_message_flow.receive_message ( p_message_name  =>p_message_name
                                           , p_key_name  =>  p_key_name
                                           , p_key_value  => p_key_value
                                           , p_payload  => p_payload 
                                           );
   end receive_message;
-
-
-
 
   function intervalDStoSec (
     p_intervalDS  interval day to second

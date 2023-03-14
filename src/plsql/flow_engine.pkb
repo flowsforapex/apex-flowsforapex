@@ -674,7 +674,7 @@ is
   l_sbfl_current          flow_subflows.sbfl_current%type;
   l_follows_ebg           flow_subflows.sbfl_is_following_ebg%type;
 begin
-  -- currently handles callbacks from flow_timers when a timer fires
+  -- currently handles callbacks from flow_timers and flow_message_flow when a timer fires / message is received
   apex_debug.enter 
   ( 'flow_handle_event'
   , 'subflow_id', p_subflow_id

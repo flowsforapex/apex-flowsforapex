@@ -7,6 +7,9 @@ create or replace package body flow_message_flow as
 -- Created  04-Mar-2034  Richard Allen (Oracle Corporation)
 --
 */
+  e_lock_timeout exception;
+  pragma exception_init (e_lock_timeout, -3006);
+
   function subscribe
   ( p_subscription_details     in t_subscription_details
   ) return flow_message_subscriptions.msub_id%type
@@ -50,8 +53,10 @@ create or replace package body flow_message_flow as
     l_msub              flow_message_subscriptions%rowtype;
     l_log_msg           flow_configuration.cfig_value%type;
     l_was_correlated    flow_types_pkg.t_single_vc2 := flow_constants_pkg.gc_false;
+    l_session_id        number;
   begin
     begin
+      -- attempt the correlation based on 1))% match of message name, key and value
       select msub.*
         into l_msub
         from flow_message_subscriptions msub
@@ -62,14 +67,22 @@ create or replace package body flow_message_flow as
       ;
     exception
         when no_data_found then
-          -- sdd some message-specific logging capability into here.
           flow_errors.handle_general_error
-          ( pi_message_key => 'msg-not-correlated');
+          ( pi_message_key => 'msgflow-not-correlated');
           raise no_data_found;
-        -- add exceptions for lock time outs
+          -- logging of incorrect message handled in procedure exceptions below...
+        when e_lock_timeout then
+          flow_errors.handle_general_error
+          ( pi_message_key => 'msgflow-lock-timeout-subscription');
+          raise no_data_found;          
+          
     end;
-
-    -- validate step key and get scope and current object
+    -- message is correlated.  create an APEX session if coming from outside
+    -- and then validate the step key to make sure the receive / catch is still current
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
+    end if; 
+    -- validate step key, get scope and current object, and lock subflow
     begin
       select sbfl_scope
            , sbfl_current
@@ -79,14 +92,17 @@ create or replace package body flow_message_flow as
        where sbfl_id        = l_msub.msub_sbfl_id
          and sbfl_prcs_id   = l_msub.msub_prcs_id
          and sbfl_step_key  = l_msub.msub_step_key
+         for update of sbfl_current
       ;
       l_was_correlated  := flow_constants_pkg.gc_true;
     exception
       when no_data_found then
-          -- sdd some message-specific logging capability into here.
+          -- add some message-specific logging capability into here.
           flow_errors.handle_general_error
-          ( pi_message_key => 'msg-no-longer-current-step');
+          ( pi_message_key => 'msgflow-no-longer-current-step');
           raise no_data_found;
+      when e_lock_timeout then
+          
     end;
 
     -- store payload, if present
@@ -161,6 +177,16 @@ create or replace package body flow_message_flow as
       );
     end case;
 
+    -- tear down APEX Session if this was an external call.
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;
+  exception
+    when others then
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id );
+      end if;
+      raise;
   end receive_message;
 
   procedure send_message

@@ -205,19 +205,27 @@ as
   /* page 9 */
 
   procedure set_settings(
-    pi_logging_language          in flow_configuration.cfig_value%type
-  , pi_logging_level             in flow_configuration.cfig_value%type
-  , pi_logging_hide_userid       in flow_configuration.cfig_value%type
-  , pi_engine_app_mode           in flow_configuration.cfig_value%type
-  , pi_duplicate_step_prevention in flow_configuration.cfig_value%type
-  , pi_default_workspace         in flow_configuration.cfig_value%type
-  , pi_default_email_sender      in flow_configuration.cfig_value%type
-  , pi_default_application       in flow_configuration.cfig_value%type
-  , pi_default_pageid            in flow_configuration.cfig_value%type
-  , pi_default_username          in flow_configuration.cfig_value%type
-  , pi_timer_max_cycles          in flow_configuration.cfig_value%type
-  , pi_timer_status              in sys.all_scheduler_jobs.enabled%type
-  , pi_timer_repeat_interval     in sys.all_scheduler_jobs.repeat_interval%type
+    pi_logging_language             in flow_configuration.cfig_value%type
+  , pi_logging_level                in flow_configuration.cfig_value%type
+  , pi_logging_hide_userid          in flow_configuration.cfig_value%type
+  , pi_logging_retain_logs          in flow_configuration.cfig_value%type
+  , pi_logging_archive_location     in flow_configuration.cfig_value%type
+  , pi_logging_archive_enabled      in flow_configuration.cfig_value%type
+  , pi_logging_msg_flow_recd        in flow_configuration.cfig_value%type
+  , pi_logging_msg_flow_retention   in flow_configuration.cfig_value%type
+  , pi_engine_app_mode              in flow_configuration.cfig_value%type
+  , pi_duplicate_step_prevention    in flow_configuration.cfig_value%type
+  , pi_default_workspace            in flow_configuration.cfig_value%type
+  , pi_default_email_sender         in flow_configuration.cfig_value%type
+  , pi_default_application          in flow_configuration.cfig_value%type
+  , pi_default_pageid               in flow_configuration.cfig_value%type
+  , pi_default_username             in flow_configuration.cfig_value%type
+  , pi_timer_max_cycles             in flow_configuration.cfig_value%type
+  , pi_timer_status                 in sys.all_scheduler_jobs.enabled%type
+  , pi_timer_repeat_interval        in sys.all_scheduler_jobs.repeat_interval%type
+  , pi_stats_retain_daily           in flow_configuration.cfig_value%type
+  , pi_stats_retain_month           in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr             in flow_configuration.cfig_value%type
   );
 
   /* page 11 */
