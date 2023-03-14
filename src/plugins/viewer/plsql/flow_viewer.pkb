@@ -17,11 +17,11 @@ as
       p_plugin => p_plugin
     , p_region => p_region
     );
-
-    sys.htp.p( '<div id="breadcrumb"></div>' );
-    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="flows4apex-viewer ' || v('THEME_PLUGIN_CLASS') || '" style="display: none;"></div>' );
+    --sys.htp.p( '<div id="breadcrumb"></div>' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_viewer" class="flows4apex-viewer ' || v('THEME_PLUGIN_CLASS') || '">' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="canvas" style="display: none;"></div>' );
     sys.htp.p( '<span id="' || p_region.static_id || '_ndf" class="nodatafound" style="display: none;">' || coalesce(p_region.no_data_found_message, 'No data found.') || '</span>' );
-
+    sys.htp.p( '</div>' );
     apex_javascript.add_onload_code
     (
       p_code => 'apex.jQuery("#' || p_region.static_id || '").viewer({' ||
