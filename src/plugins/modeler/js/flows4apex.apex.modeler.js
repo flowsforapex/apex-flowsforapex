@@ -5,6 +5,7 @@
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null,
+      pluginMode: null,
     },
 
     _create: function () {
@@ -15,19 +16,20 @@
       this.propertiesPanelParent = this.regionId + "_properties";
 
       this.enabledModules = [
-        bpmnModeler.customModules.propertiesPanelModule,
+        bpmnModeler.customModules.BpmnPropertiesPanelModule,
+        bpmnModeler.customModules.BpmnPropertiesProviderModule,  
         bpmnModeler.customModules.propertiesProviderModule,
+        bpmnModeler.customModules.AddExporter,
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
-        bpmnModeler.customModules.styleModule,
         bpmnModeler.customModules.xmlModule,
-        bpmnModeler.customModules.AddExporter
+        bpmnModeler.customModules.drilldownCentering
       ];
 
       this.exporter = {
         name: 'Flows for APEX',
-        version: '22.2.0',
+        version: '23.1.0',
       };
 
       this.moddleExtensions = {
@@ -53,12 +55,34 @@
         linting: this.linting,
         bpmnRenderer: this.bpmnRenderer,
         exporter: this.exporter,
+        pluginMode: this.options.pluginMode
       } );
 
       // prevent click events from bubbling up the dom
       $( "#" + this.modelerWrap ).on( "click", ( event ) => {
-        event.stopPropagation();
-        return false;
+          const input = event.target.tagName == 'INPUT' ? event.target :
+                        event.target.tagName == 'LABEL' ? document.getElementById(event.target.getAttribute('for')) :
+                        event.target.tagName == 'SPAN' ? event.target : 
+                        null;
+
+          if (input && input.type == 'checkbox') {
+            // allow checkbox
+          }
+          else if (input && input.classList.contains('bio-properties-panel-toggle-switch__slider')) {
+            // allow toggle switch
+          }
+          else {
+            event.stopPropagation();
+            return false;
+          }
+      } );
+
+      // prevent page submit + reload after button click
+      $( document ).on( "apexbeforepagesubmit", ( event ) => {
+        const blocking = ['bio-properties-panel-add-entry', 'bio-properties-panel-remove-entry'];
+        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
+          apex.event.gCancelFlag = true;
+        }
       } );
 
       // register custom changed handler with APEX
@@ -99,11 +123,9 @@
       try {
         var result = await bpmnModeler$.importXML( this.diagramContent );
 
-        var exporter = bpmnModeler$._definitions && bpmnModeler$._definitions.exporter;
-        var exporterVersion = bpmnModeler$._definitions && bpmnModeler$._definitions.exporterVersion;
-
-        if (exporter !== 'Flows for APEX' || !exporterVersion || exporterVersion.substr(0, exporterVersion.indexOf('.')) < 22) {
-          const refactored = bpmnModeler$.get('xmlModule').refactorDiagram(this.diagramContent);
+        if (!bpmnModeler$._definitions.get('xmlns:apex')) {
+          // custom namespace must be added manually for working default values 
+          const refactored = bpmnModeler$.get('xmlModule').addCustomNamespace(this.diagramContent);
           result = await bpmnModeler$.importXML(refactored);
         }
 
@@ -158,7 +180,7 @@
       try {
         const result = await bpmnModeler$.saveSVG( { format: true } );
         const { svg } = result;
-        const styledSVG = bpmnModeler$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+        const styledSVG = bpmnModeler$.get('xmlModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
         return styledSVG;
       } catch ( err ) {
         debug.error( "Get SVG failed.", err );

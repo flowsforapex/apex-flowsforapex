@@ -42,7 +42,6 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_admin_api.pks
 @plsql/flow_statistics.pks
 
-
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
 @views/flow_subflows_vw.sql
