@@ -9,7 +9,15 @@ as
     return apex_plugin.t_region_render_result
   as
     l_return apex_plugin.t_region_render_result;
+
+    l_plugin_mode flow_configuration.cfig_value%type;
   begin
+    -- get config value for plugin mode
+    select cfig_value
+      into l_plugin_mode
+      from flow_configuration
+     where cfig_key = 'modeler_plugin_mode';
+
     apex_plugin_util.debug_region
     (
       p_plugin => p_plugin
@@ -34,6 +42,12 @@ as
         (
           p_name      => 'itemsToSubmit'
         , p_value     => apex_plugin_util.page_item_names_to_jquery( p_page_item_names => p_region.ajax_items_to_submit )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'pluginMode'
+        , p_value     => l_plugin_mode
         , p_add_comma => true
         ) ||
         '})'
@@ -199,12 +213,15 @@ as
     cursor c_applications is select * from apex_applications order by application_name;
     l_application apex_applications%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_applications;
     loop
         fetch c_applications into l_application;
         exit when c_applications%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_application.application_name || '","value":"' || l_application.application_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_application.application_id || ' - ' || l_application.application_name ||
+          '","value":"' || l_application.application_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -215,15 +232,18 @@ as
   as
     l_result clob;
     l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
-    cursor c_pages is select * from apex_application_pages where application_id = l_application_id order by page_name;
+    cursor c_pages is select * from apex_application_pages where application_id = l_application_id order by page_id;
     l_page apex_application_pages%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_pages;
     loop
         fetch c_pages into l_page;
         exit when c_pages%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_page.page_name || '","value":"' || l_page.page_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_page.page_id || ' - ' || l_page.page_name ||
+          '","value":"' || l_page.page_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -238,12 +258,12 @@ as
     cursor c_items is select * from apex_application_page_items where application_id = l_application_id and page_id = l_page_id order by item_name;
     l_item apex_application_page_items%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_items;
     loop
         fetch c_items into l_item;
         exit when c_items%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_item.item_name || '","value":"' || l_item.item_name || '"},';
+        l_result := l_result || '{"label":"' || l_item.item_name || '","value":"' || l_item.item_name || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -256,12 +276,15 @@ as
     cursor c_applications is select * from apex_applications where application_id in (select application_id from apex_appl_email_templates) order by application_name;
     l_application apex_applications%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_applications;
     loop
         fetch c_applications into l_application;
         exit when c_applications%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_application.application_name || '","value":"' || l_application.application_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_application.application_id || ' - ' || l_application.application_name ||
+          '","value":"' || l_application.application_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -275,12 +298,12 @@ as
     cursor c_templates is select * from apex_appl_email_templates where application_id = l_application_id order by name;
     l_template apex_appl_email_templates%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_templates;
     loop
         fetch c_templates into l_template;
         exit when c_templates%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_template.name || '","value":"' || l_template.static_id || '"},';
+        l_result := l_result || '{"label":"' || l_template.name || '","value":"' || l_template.static_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -320,7 +343,6 @@ as
   procedure get_diagrams
   as
     l_result clob;
-    
     cursor c_diagrams
         is
     select distinct dgrm_name
@@ -329,15 +351,14 @@ as
         on dgrm.dgrm_id = objt.objt_dgrm_id
        and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
      where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true;
-    
     l_diagram flow_diagrams.dgrm_name%type;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_diagrams;
     loop
         fetch c_diagrams into l_diagram;
         exit when c_diagrams%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_diagram || '","value":"' || l_diagram || '"},';
+        l_result := l_result || '{"label":"' || l_diagram || '","value":"' || l_diagram || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -378,12 +399,12 @@ as
     cursor c_users is select * from apex_workspace_apex_users order by user_name;
     l_user apex_workspace_apex_users%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_users;
     loop
         fetch c_users into l_user;
         exit when c_users%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_user.user_name || '","value":"' || l_user.user_name || '"},';
+        l_result := l_result || '{"label":"' || l_user.user_name || '","value":"' || l_user.user_name || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -402,7 +423,7 @@ as
       l_task_def apex_appl_taskdefs%rowtype;
     $END
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     $IF flow_apex_env.ver_le_21_2
     $THEN
     $ELSE
@@ -410,7 +431,7 @@ as
       loop
           fetch c_task_defs into l_task_def;
           exit when c_task_defs%NOTFOUND;
-          l_result := l_result || '{"name":"' || l_task_def.name || '","value":"' || l_task_def.static_id || '"},';
+          l_result := l_result || '{"label":"' || l_task_def.name || '","value":"' || l_task_def.static_id || '"},';
     end loop;
     $END
     l_result := rtrim(l_result, ',') || ']';

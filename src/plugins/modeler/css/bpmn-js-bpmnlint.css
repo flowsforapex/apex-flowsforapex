@@ -28,11 +28,11 @@
 .bjsl-icon {
   background: white;
   border-radius: 100%;
-  display: inline-block;
   height: 20px;
-  line-height: 23px;
-  text-align: center;
   width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bjsl-icon-error {
@@ -76,7 +76,6 @@
 .bjsl-dropdown-content {
   min-width: 260px;
   position:  absolute;
-  height: fit-content;
 }
 
 .bjsl-dropdown {
@@ -97,10 +96,15 @@
 .bjsl-issues li {
   display: flex;
   flex-direction: row;
+  white-space: nowrap;
 }
 
-.bjsl-issues li:not(:first-child) {
-  margin-top: 7px;
+.bjsl-issues .icon {
+  display: flex;
+}
+
+.bjsl-issues li + li {
+  margin-top: .5rem;
 }
 
 .bjsl-issues .error svg {
@@ -117,8 +121,34 @@
   text-decoration: none;
 }
 
+.bjsl-issues .bjsl-issue-heading {
+  margin-left: 0px;
+  font-weight: bold;
+  margin-bottom: 100px;
+}
+
+.bjsl-child-issues hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+.bjsl-child-issues ul {
+  margin-top: 7px;
+}
+
 .bjsl-issues a:hover {
   text-decoration: none;
+}
+
+.bjsl-id-hint {
+  background-color: #bdbdbd;
+  padding: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-weight: bold;
+  border-radius: 20px;
 }
 
 
