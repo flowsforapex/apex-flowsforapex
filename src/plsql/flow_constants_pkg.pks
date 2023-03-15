@@ -140,10 +140,6 @@ as
   --terminateEndEvent
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
 
-  -- Custom extensions
-  gc_apex_custom_extension            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'customExtension';
-
-
   -- Oracle format timer definitions
   gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
   gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';

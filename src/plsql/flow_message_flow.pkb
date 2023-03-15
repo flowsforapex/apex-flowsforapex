@@ -73,7 +73,7 @@ create or replace package body flow_message_flow as
           -- logging of incorrect message handled in procedure exceptions below...
         when e_lock_timeout then
           flow_errors.handle_general_error
-          ( pi_message_key => 'msgflow-lock-timeout-subscription');
+          ( pi_message_key => 'msgflow-lock-timeout-msub');
           raise no_data_found;          
           
     end;
@@ -102,7 +102,10 @@ create or replace package body flow_message_flow as
           ( pi_message_key => 'msgflow-no-longer-current-step');
           raise no_data_found;
       when e_lock_timeout then
-          
+          -- add some message-specific logging capability into here.
+          flow_errors.handle_general_error
+          ( pi_message_key => 'msgflow-lock-timeout-subflow');
+          raise no_data_found;          
     end;
 
     -- store payload, if present

@@ -242,7 +242,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'msgflow-no-longer-current-step', c_load_lang, q'[Process step receiving message has already occured (incorrect step key provided).]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'msgflow-lock-timeout-subscription', c_load_lang, q'[Message Subscription locked by another user.   Try again.]' ); 
+    values ( 'msgflow-lock-timeout-msub', c_load_lang, q'[Message Subscription locked by another user.   Try again.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'msgflow-lock-timeout-subflow', c_load_lang, q'[Message receiver unable to lock subflow.  Try again.]' ); 
 
