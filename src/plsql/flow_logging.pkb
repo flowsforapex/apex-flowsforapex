@@ -6,11 +6,31 @@ create or replace package body flow_logging as
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG
--- updated 10-Feb-2023  Richard Allen (Oracle)  
+-- Updated 10-Feb-2023  Richard Allen (Oracle)  
 --
 */
   g_logging_level           flow_configuration.cfig_value%type; 
   g_logging_hide_userid     flow_configuration.cfig_value%type;
+
+  procedure log_diagram_event
+  ( p_dgrm_id           in flow_diagrams.dgrm_id%type
+  , p_dgrm_name         in flow_diagrams.dgrm_name%type default null
+  , p_dgrm_version      in flow_diagrams.dgrm_version%type default null
+  , p_dgrm_status       in flow_diagrams.dgrm_status%type default null
+  , p_dgrm_category     in flow_diagrams.dgrm_category%type default null
+  , p_dgrm_content      in flow_diagrams.dgrm_content%type default null
+  , p_comment           in flow_flow_event_log.lgfl_comment%type default null
+  )
+  is
+  begin
+    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_secure
+                          , flow_constants_pkg.gc_config_logging_level_full
+                          ) 
+    then
+      null; -- not yet implemented
+    end if;
+
+  end log_diagram_event;
 
   procedure log_instance_event
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type

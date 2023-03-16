@@ -38,6 +38,10 @@ as
           pi_dgrm_content  => replace(flow_constants_pkg.gc_default_xml, '#RANDOM_PRCS_ID#',
                                 lower(sys.dbms_random.string('X',8))),
           pi_dgrm_status   => flow_constants_pkg.gc_dgrm_status_draft);
+
+          --RA move upload into flow_diagrams? 
+          --RA  add logging 
+
       flow_bpmn_parser_pkg.parse(
         pi_dgrm_id => l_dgrm_id);
     else
@@ -47,6 +51,114 @@ as
   end create_diagram;
 
 
+  function upload_diagram
+  (
+    pi_dgrm_name       in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version    in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category   in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content    in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status     in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
+  ) return flow_diagrams.dgrm_id%type
+  as
+    l_cnt     number;
+    l_dgrm_id flow_diagrams.dgrm_id%type;
+  begin
+
+    begin
+      select dgrm_id
+        into l_dgrm_id
+        from flow_diagrams
+       where dgrm_name = pi_dgrm_name
+         and dgrm_version = pi_dgrm_version
+      ;
+    exception
+      when no_data_found then
+        l_dgrm_id := null;
+    end;
+
+    if l_dgrm_id is null then
+      insert
+        into flow_diagrams ( dgrm_name, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
+        values ( pi_dgrm_name, pi_dgrm_version, pi_dgrm_category, 
+                 pi_dgrm_status,  systimestamp, pi_dgrm_content )
+      returning dgrm_id into l_dgrm_id
+      ;
+              --RA if logging enabled, add logging
+    else
+      if (pi_force_overwrite) then
+        update flow_diagrams
+          set dgrm_content = pi_dgrm_content
+            , dgrm_last_update = systimestamp
+            , dgrm_status  = pi_dgrm_status
+        where dgrm_id = l_dgrm_id
+        ;
+        --RA if logging enabled, add logging
+      end if;
+    end if;
+
+    return l_dgrm_id;
+
+  end upload_diagram;
+
+  procedure upload_diagram
+  (
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
+  )
+  as
+    l_dgrm_id       flow_diagrams.dgrm_id%type;
+  begin
+    l_dgrm_id := upload_diagram ( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                                  pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
+                                  pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
+                                );
+  end upload_diagram;
+
+  procedure upload_and_parse
+  (
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
+  )
+  as
+    l_dgrm_id  flow_diagrams.dgrm_id%type;
+  begin
+
+    l_dgrm_id := upload_diagram ( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                                  pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
+                                  pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite
+                                );
+    flow_bpmn_parser_pkg.parse ( pi_dgrm_id => l_dgrm_id);
+
+  end upload_and_parse;
+
+  procedure update_diagram
+  (
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type
+  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+  )
+  as
+  begin
+
+    update flow_diagrams
+       set dgrm_content = pi_dgrm_content
+         , dgrm_last_update = systimestamp
+     where dgrm_id = pi_dgrm_id
+    ;
+            --RA if logging enabled, add logging
+
+    flow_bpmn_parser_pkg.parse ( pi_dgrm_id => pi_dgrm_id);
+  end update_diagram;
+
+  
   function add_diagram_version(
     pi_dgrm_id in flow_diagrams.dgrm_id%type,
     pi_dgrm_version in flow_diagrams.dgrm_version%type)
@@ -276,9 +388,11 @@ as
     if pi_cascade = flow_constants_pkg.gc_true then
       delete from flow_processes
        where prcs_dgrm_id = pi_dgrm_id;
+    --RA - should this flow_instances.delete_process for all processes (loop) (contains a commit for each delete- add p_commit default true parameter)
     end if;
     delete from flow_diagrams 
      where dgrm_id = pi_dgrm_id;
+    --RA call logging
   end delete_diagram;
 
 
@@ -304,6 +418,8 @@ as
              select dgrm_name 
                from flow_diagrams
               where dgrm_id = pi_dgrm_id);
+
+      -- RA then call logging - cat change
     end if;
 
     update flow_diagrams
@@ -311,6 +427,8 @@ as
            dgrm_version = pi_dgrm_version,
            dgrm_category = pi_dgrm_category
      where dgrm_id = pi_dgrm_id;
+
+      -- RA then call logging - name / version / cat change
   end edit_diagram;
 
 
@@ -325,10 +443,13 @@ as
              from flow_diagrams
             where dgrm_id = pi_dgrm_id)
        and dgrm_status = flow_constants_pkg.gc_dgrm_status_released;
+--RA returning old dgrm_id - then call logging on old dgrm       
 
     update flow_diagrams
        set dgrm_status = flow_constants_pkg.gc_dgrm_status_released
      where dgrm_id = pi_dgrm_id;
+
+--RA then call logging on new dgrm_id
   end release_diagram;
 
 
@@ -339,6 +460,8 @@ as
     update flow_diagrams
        set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated
      where dgrm_id = pi_dgrm_id;
+
+ --RA then call logging on old dgrm     
   end deprecate_diagram;
 
 
@@ -364,6 +487,7 @@ as
       update flow_diagrams
          set dgrm_status = flow_constants_pkg.gc_dgrm_status_archived
        where dgrm_id = pi_dgrm_id;
+  --RA - then call logging
     else                     
       raise e_has_running_instances;
     end if;

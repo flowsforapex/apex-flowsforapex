@@ -1,11 +1,12 @@
 /* 
 -- Flows for APEX - flow_diagram.pks
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-23.
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created  10-Dec-2021  Dennis Amthor - MT AG
 -- Modified 22-May-2022  Moritz Klein - MT AG
+-- Modified 16-Mar-2023  Richard Allen - Oracle 
 --
 */
 create or replace package flow_diagram
@@ -23,7 +24,42 @@ as
     pi_dgrm_version in flow_diagrams.dgrm_version%type)
   return flow_diagrams.dgrm_id%type;
 
+  function upload_diagram
+  (
+    pi_dgrm_name       in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version    in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category   in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content    in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status     in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
+  ) return flow_diagrams.dgrm_id%type;
 
+  procedure upload_diagram
+  (
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
+  );
+
+  procedure upload_and_parse
+  (
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_force_overwrite in boolean default false
+  );
+
+  procedure update_diagram
+  (
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type
+  , pi_dgrm_content in flow_diagrams.dgrm_content%type
+  );
+  
   function add_diagram_version(
     pi_dgrm_id in flow_diagrams.dgrm_id%type,
     pi_dgrm_version in flow_diagrams.dgrm_version%type)
