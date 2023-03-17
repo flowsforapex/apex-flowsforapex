@@ -141,7 +141,7 @@ as
                               )
     then
       -- this is already JSON, better store differently
-      po_json_element := sys.json_object_t.parse( replace( replace( pi_value, '&amp;', '&' ), chr(10) ) );
+      po_json_element := sys.json_object_t.parse( replace( replace( pi_value, chr(38)||'amp;', chr(38) ), chr(10) ) );
     else
       po_json_element := null;
     end if; 

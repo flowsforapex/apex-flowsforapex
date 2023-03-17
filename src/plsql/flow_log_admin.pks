@@ -37,5 +37,9 @@ create or replace package flow_log_admin
   ( p_retention_period_days  in number default null
   );
 
+  procedure purge_message_logs
+  ( p_retention_period_days    in number default null
+  );
+  
 end flow_log_admin;
 /

@@ -916,6 +916,7 @@ as
         , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
         , p_new_proc_level         => false    
         , p_dgrm_id                => p_sbfl_info.sbfl_dgrm_id
+        , p_follows_ebg            => true
         )
       ;
       l_new_subflow.route   := new_path.route;
