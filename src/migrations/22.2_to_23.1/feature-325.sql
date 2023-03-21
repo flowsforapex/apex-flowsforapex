@@ -64,3 +64,19 @@ alter table flow_stats_type
   insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_daily_summaries_days','185');
   insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_monthly_summaries_months','9');
   insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_quarterly_summaries_months','60');
+
+-- modify flow_flow_event_log
+
+  alter table flow_flow_event_log 
+    drop column lgfl_dgrm_content;
+
+  alter table flow_flow_event_log
+    add ( lgfl_dgrm_archive_location  varchar2(2000));
+
+  alter table flow_flow_event_log
+    modify 
+    ( lgfl_dgrm_name null
+    , lgfl_dgrm_status null
+    , lgfl_dgrm_version null
+    );
+    

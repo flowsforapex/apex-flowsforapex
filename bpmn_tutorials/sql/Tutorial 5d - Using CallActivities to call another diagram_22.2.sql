@@ -397,7 +397,7 @@ begin
       ,q'[</bpmn:definitions>]'
       ,q'[]'
   ));
-  flow_bpmn_parser_pkg.upload_and_parse(
+  flow_diagram.upload_and_parse(
     pi_dgrm_name => 'Tutorial 5d - Using CallActivities to call another diagram',
     pi_dgrm_version => '22.2',
     pi_dgrm_category => 'Tutorials',

@@ -10,7 +10,7 @@ create or replace package flow_logging
 --
 */
   authid definer
-  accessible by ( flow_diagrams, flow_engine, flow_instances, flow_proc_vars_int, flow_expressions 
+  accessible by ( flow_diagram, flow_engine, flow_instances, flow_proc_vars_int, flow_expressions 
                 , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
                 , flow_call_activities, flow_subprocesses , flow_usertask_pkg)
 as

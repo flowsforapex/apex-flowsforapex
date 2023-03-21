@@ -9,7 +9,7 @@ create or replace package flow_instances
 --
 */
   authid definer
-  accessible by (flow_api_pkg, flow_engine, flow_proc_vars_int)
+  accessible by (flow_api_pkg, flow_engine, flow_proc_vars_int, flow_diagram)
 as
 
   function create_process

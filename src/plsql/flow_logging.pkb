@@ -22,14 +22,54 @@ create or replace package body flow_logging as
   , p_comment           in flow_flow_event_log.lgfl_comment%type default null
   )
   is
+    l_log_dgrm_content  boolean;
+    l_diagram_location  flow_flow_event_log.lgfl_dgrm_archive_location%type;
   begin
     if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_secure
                           , flow_constants_pkg.gc_config_logging_level_full
                           ) 
     then
-      null; -- not yet implemented
-    end if;
+      if p_dgrm_content is not null and p_dgrm_status != flow_constants_pkg.gc_dgrm_status_draft then
+        l_log_dgrm_content := true;
+        -- copy the new bpmn content to the bpmn archive (table or OCI object storage)
+        l_diagram_location := flow_log_admin.archive_bpmn_diagram ( p_dgrm_id       => p_dgrm_id
+                                                                  , p_dgrm_content  => p_dgrm_content
+                                                                  );
+      end if;
 
+      insert into flow_flow_event_log
+      ( lgfl_dgrm_id
+      , lgfl_dgrm_name
+      , lgfl_dgrm_version
+      , lgfl_dgrm_status
+      , lgfl_dgrm_category
+      , lgfl_dgrm_archive_location
+      , lgfl_user
+      , lgfl_comment
+      , lgfl_timestamp
+      )
+      values
+      ( p_dgrm_id
+      , p_dgrm_name
+      , p_dgrm_version
+      , p_dgrm_status
+      , p_dgrm_category
+      , l_diagram_location
+      , coalesce  ( sys_context('apex$session','app_user') 
+                  , sys_context('userenv','os_user')
+                  , sys_context('userenv','session_user')
+                  ) 
+      , p_comment
+      , systimestamp at time zone 'UTC'
+      );
+    end if;
+  exception
+    when others then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'logging-diagram-event'
+      );
+      -- $F4AMESSAGE 'logging-diagram-event' || 'Flows - Internal error while logging a Diagram Event'
+      raise;
   end log_diagram_event;
 
   procedure log_instance_event
