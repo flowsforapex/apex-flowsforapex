@@ -692,6 +692,46 @@ procedure get_number_of_connections
   end json_array_join;
 
 
+  function clob_to_blob
+  ( 
+    pi_clob in clob
+  ) return blob
+  as
+  $if flow_apex_env.ver_le_22_1 $then
+    l_blob   blob;
+    l_dstoff pls_integer := 1;
+    l_srcoff pls_integer := 1;
+    l_lngctx pls_integer := 0;
+    l_warn   pls_integer;
+  $end
+  begin
+
+  $if flow_apex_env.ver_le_22_1 $then
+    sys.dbms_lob.createtemporary
+    ( lob_loc => l_blob
+    , cache   => true
+    , dur     => sys.dbms_lob.call
+    );    
+
+    sys.dbms_lob.converttoblob
+    ( dest_lob     => l_blob
+    , src_clob     => pi_clob
+    , amount       => sys.dbms_lob.lobmaxsize
+    , dest_offset  => l_dstoff
+    , src_offset   => l_srcoff
+    , blob_csid    => nls_charset_id( 'AL32UTF8' )
+    , lang_context => l_lngctx
+    , warning      => l_warn
+    );
+
+    return l_blob;
+  $else
+    return apex_util.clob_to_blob( p_clob => pi_clob );
+  $end
+
+  end clob_to_blob;
+
+
   -- initialise step key enforcement parameter
 
   begin

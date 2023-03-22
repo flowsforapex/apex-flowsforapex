@@ -123,5 +123,10 @@ as
     p_json_array in clob
   ) return clob;
 
+  function clob_to_blob
+  ( 
+    pi_clob in clob
+  ) return blob;
+
 end flow_engine_util;
 /

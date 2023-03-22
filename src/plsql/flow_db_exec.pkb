@@ -1,9 +1,9 @@
-create or replace package body flow_util
+create or replace package body flow_db_exec
 as 
 /* 
--- Flows for APEX - flow_util.pkb
+-- Flows for APEX - flow_db_exec.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 --
 -- Created  08-Dec-2022  Richard Allen (Oracle Corporation)
 -- Changed  21-FEB-2023  Moritz Klein (MT GmbH)
@@ -242,20 +242,20 @@ as
     l_result_rec        flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter
-    ( 'flow_util.exec_flows_plsql_vc2'
+    ( 'flow_db_exec.exec_flows_plsql_vc2'
     , 'plsql text', pi_plsql_text
     );
     case 
     when pi_expr_type = flow_constants_pkg.gc_expr_type_plsql_expression 
       or pi_expr_type = flow_constants_pkg.gc_expr_type_plsql_raw_expression 
     then
-      l_wrap_begin  := q'#begin :BIND_OUT_VAR := #';
-      l_wrap_end    := q'# ; end;#';
+      l_wrap_begin  := c_wrap_vc2_expr_pre;
+      l_wrap_end    := c_wrap_vc2_expr_post;
     when pi_expr_type = flow_constants_pkg.gc_expr_type_plsql_function_body 
       or pi_expr_type = flow_constants_pkg.gc_expr_type_plsql_raw_function_body 
     then
-      l_wrap_begin  := q'#declare function x return varchar2 is begin #';
-      l_wrap_end    := q'#return null; end; begin :BIND_OUT_VAR := x; end;#';
+      l_wrap_begin  := c_wrap_vc2_func_pre;
+      l_wrap_end    := c_wrap_vc2_func_post;
     end case;
 
     apex_exec.add_parameter ( l_bind_parameters, 'BIND_OUT_VAR','');
@@ -291,22 +291,22 @@ as
     l_result_rec      flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter
-    ( 'flow_util.exec_flows_plsql_num'
+    ( 'flow_db_exec.exec_flows_plsql_num'
     , 'plsql text', pi_plsql_text
     );
     case 
     when pi_expr_type  = flow_constants_pkg.gc_expr_type_plsql_expression then
-      l_wrap_begin  := q'#begin :BIND_OUT_VAR := #';
-      l_wrap_end    := q'# ; end;#';
+      l_wrap_begin  := c_wrap_num_expr_pre;
+      l_wrap_end    := c_wrap_num_expr_post;
     when pi_expr_type = flow_constants_pkg.gc_expr_type_plsql_raw_expression then
-      l_wrap_begin  := q'#begin :BIND_OUT_VAR := to_char( #';
-      l_wrap_end    := q'# ) ; end;#';
+      l_wrap_begin  := c_wrap_num_raw_expr_pre;
+      l_wrap_end    := c_wrap_num_raw_expr_post;
     when pi_expr_type  = flow_constants_pkg.gc_expr_type_plsql_function_body then
-      l_wrap_begin  := q'#declare function x return varchar2 is begin #';
-      l_wrap_end    := q'#return null; end; begin :BIND_OUT_VAR := x; end;#';
+      l_wrap_begin  := c_wrap_num_func_pre;
+      l_wrap_end    := c_wrap_num_func_post;
     when pi_expr_type  = flow_constants_pkg.gc_expr_type_plsql_raw_function_body then
-      l_wrap_begin  := q'#declare function x return number is begin #';
-      l_wrap_end    := q'#return null; end; begin :BIND_OUT_VAR := cast (x as varchar2); end;#';
+      l_wrap_begin  := c_wrap_num_raw_func_pre;
+      l_wrap_end    := c_wrap_num_raw_func_post;
     end case;
 
     apex_exec.add_parameter ( l_bind_parameters, 'BIND_OUT_VAR','');
@@ -345,26 +345,26 @@ as
     l_result_rec      flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter
-    ( 'flow_util.exec_flows_plsql_date'
+    ( 'flow_db_exec.exec_flows_plsql_date'
     , 'plsql text', pi_plsql_text
     );
     case pi_expr_type 
     when flow_constants_pkg.gc_expr_type_plsql_expression then
       -- legacy mode - expression will return a vc2 in our format
-      l_wrap_begin  := q'#begin :BIND_OUT_VAR := #';
-      l_wrap_end    := q'#; end;#';
+      l_wrap_begin  := c_wrap_date_expr_pre;
+      l_wrap_end    := c_wrap_date_expr_post;
     when flow_constants_pkg.gc_expr_type_plsql_raw_expression then
       -- new 'raw' mode - expression will return a date
-      l_wrap_begin  := q'#begin :BIND_OUT_VAR := to_char( #';
-      l_wrap_end    := q'# ,'#'||flow_constants_pkg.gc_prov_default_date_format||q'#'); end;#';
+      l_wrap_begin  := c_wrap_date_raw_expr_pre;
+      l_wrap_end    := c_wrap_date_raw_expr_post;
     when flow_constants_pkg.gc_expr_type_plsql_function_body then
       -- legacy mode - function will return a vc2 in our format
-      l_wrap_begin  := q'#declare function x return varchar2 is begin #';
-      l_wrap_end    := q'#return null; end; begin :BIND_OUT_VAR := x; end;#';
+      l_wrap_begin  := c_wrap_date_func_pre;
+      l_wrap_end    := c_wrap_date_func_post;
     when flow_constants_pkg.gc_expr_type_plsql_raw_function_body then
       -- new 'raw' mode - function will return a date
-      l_wrap_begin  := q'#declare function x return date is begin #';
-      l_wrap_end    := q'#return null; end; begin :BIND_OUT_VAR := to_char(x, '#'||flow_constants_pkg.gc_prov_default_date_format||q'#'); end;#';
+      l_wrap_begin  := c_wrap_date_raw_func_pre;
+      l_wrap_end    := c_wrap_date_raw_func_post;
     end case;
 
     apex_exec.add_parameter ( l_bind_parameters, 'BIND_OUT_VAR','');
@@ -401,26 +401,26 @@ as
     l_result_rec      flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter
-    ( 'flow_util.exec_flows_plsql_tstz'
+    ( 'flow_db_exec.exec_flows_plsql_tstz'
     , 'plsql text', pi_plsql_text
     );
     case pi_expr_type 
     when flow_constants_pkg.gc_expr_type_plsql_expression then
       -- legacy mode - expression will return a vc2 in our format     
-      l_wrap_begin  := q'#begin :BIND_OUT_VAR := #';
-      l_wrap_end    := q'# ; end;#';
+      l_wrap_begin  := c_wrap_tstz_expr_pre;
+      l_wrap_end    := c_wrap_tstz_expr_post;
     when flow_constants_pkg.gc_expr_type_plsql_raw_expression then
       -- new 'raw' mode - expression will return a tstz      
-      l_wrap_begin  := q'#begin :BIND_OUT_VAR := to_char( #';
-      l_wrap_end    := q'# ,'#'||flow_constants_pkg.gc_prov_default_tstz_format||q'#'); end;#';
+      l_wrap_begin  := c_wrap_tstz_raw_expr_pre;
+      l_wrap_end    := c_wrap_tstz_raw_expr_post;
     when flow_constants_pkg.gc_expr_type_plsql_function_body then
       -- legacy mode - function will return a vc2 in our format   
-      l_wrap_begin  := q'#declare function x return varchar2 is begin #';
-      l_wrap_end    := q'#return null; end; begin :BIND_OUT_VAR := x; end;#';
+      l_wrap_begin  := c_wrap_tstz_func_pre;
+      l_wrap_end    := c_wrap_tstz_func_post;
     when flow_constants_pkg.gc_expr_type_plsql_raw_function_body then
       -- new 'raw' mode - function will return a tstz
-      l_wrap_begin  := q'#declare function x return timestamp with time zone is begin #';
-      l_wrap_end    := q'#return null; end; begin :BIND_OUT_VAR := to_char(x, '#'||flow_constants_pkg.gc_prov_default_tstz_format||q'#'); end;#';
+      l_wrap_begin  := c_wrap_tstz_raw_func_pre;
+      l_wrap_end    := c_wrap_tstz_raw_func_post;
     end case;
 
     apex_exec.add_parameter ( l_bind_parameters, 'BIND_OUT_VAR','');
@@ -457,7 +457,7 @@ as
     l_result_rec      flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter
-    ( 'flow_util.exec_flows_plsql'
+    ( 'flow_db_exec.exec_flows_plsql'
     , 'plsql text', pi_plsql_text
     , 'plsql type' , pi_expr_type 
     );
@@ -528,44 +528,5 @@ as
 
   end exec_flows_plsql;
 
-  function clob_to_blob
-  ( 
-    pi_clob in clob
-  ) return blob
-  as
-  $if flow_apex_env.ver_le_22_1 $then
-    l_blob   blob;
-    l_dstoff pls_integer := 1;
-    l_srcoff pls_integer := 1;
-    l_lngctx pls_integer := 0;
-    l_warn   pls_integer;
-  $end
-  begin
-
-  $if flow_apex_env.ver_le_22_1 $then
-    sys.dbms_lob.createtemporary
-    ( lob_loc => l_blob
-    , cache   => true
-    , dur     => sys.dbms_lob.call
-    );    
-
-    sys.dbms_lob.converttoblob
-    ( dest_lob     => l_blob
-    , src_clob     => pi_clob
-    , amount       => sys.dbms_lob.lobmaxsize
-    , dest_offset  => l_dstoff
-    , src_offset   => l_srcoff
-    , blob_csid    => nls_charset_id( 'AL32UTF8' )
-    , lang_context => l_lngctx
-    , warning      => l_warn
-    );
-
-    return l_blob;
-  $else
-    return apex_util.clob_to_blob( p_clob => pi_clob );
-  $end
-
-  end clob_to_blob;
-
-end flow_util;
+end flow_db_exec;
 /

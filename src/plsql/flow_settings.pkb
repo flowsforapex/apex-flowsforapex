@@ -74,7 +74,7 @@ as
                                                         );       
   
     when l_expression_type = flow_constants_pkg.gc_expr_type_sql then
-      l_result_rec := flow_util.exec_flows_sql 
+      l_result_rec := flow_db_exec.exec_flows_sql 
                       ( pi_prcs_id      => pi_prcs_id
                       , pi_sbfl_id      => pi_sbfl_id
                       , pi_sql_text     => l_expression
@@ -88,7 +88,7 @@ as
                               , flow_constants_pkg.gc_expr_type_plsql_expression
                               , flow_constants_pkg.gc_expr_type_plsql_raw_expression )   
     then
-      l_result_rec := flow_util.exec_flows_plsql 
+      l_result_rec := flow_db_exec.exec_flows_plsql 
                       ( pi_prcs_id      => pi_prcs_id
                       , pi_sbfl_id      => pi_sbfl_id
                       , pi_plsql_text   => l_expression
@@ -177,7 +177,7 @@ as
         raise e_param_proc_var_invalid_type;
       end case;
     when l_expression_type = flow_constants_pkg.gc_expr_type_sql then
-      l_result_rec := flow_util.exec_flows_sql 
+      l_result_rec := flow_db_exec.exec_flows_sql 
                       ( pi_prcs_id      => pi_prcs_id
                       , pi_sbfl_id      => pi_sbfl_id
                       , pi_sql_text     => l_expression
@@ -191,7 +191,7 @@ as
                               , flow_constants_pkg.gc_expr_type_plsql_function_body
                               , flow_constants_pkg.gc_expr_type_plsql_raw_function_body) 
     then
-      l_result_rec := flow_util.exec_flows_plsql 
+      l_result_rec := flow_db_exec.exec_flows_plsql 
                       ( pi_prcs_id      => pi_prcs_id
                       , pi_sbfl_id      => pi_sbfl_id
                       , pi_plsql_text   => l_expression
@@ -267,7 +267,7 @@ as
     when l_expression_type = flow_constants_pkg.gc_expr_type_sql 
       or l_expression_type = flow_constants_pkg.gc_expr_type_sql_delimited_list 
     then
-      l_result_rec := flow_util.exec_flows_sql
+      l_result_rec := flow_db_exec.exec_flows_sql
                       ( pi_prcs_id      => pi_prcs_id
                       , pi_sbfl_id      => pi_sbfl_id
                       , pi_sql_text     => l_expression
@@ -281,7 +281,7 @@ as
       or l_expression_type = flow_constants_pkg.gc_expr_type_plsql_function_body
       or l_expression_type = flow_constants_pkg.gc_expr_type_plsql_raw_function_body
     then
-      l_result_rec := flow_util.exec_flows_plsql 
+      l_result_rec := flow_db_exec.exec_flows_plsql 
                       ( pi_prcs_id      => pi_prcs_id
                       , pi_sbfl_id      => pi_sbfl_id
                       , pi_plsql_text   => l_expression
