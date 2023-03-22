@@ -10,10 +10,21 @@ create or replace package flow_logging
 --
 */
   authid definer
-  accessible by ( flow_engine, flow_instances, flow_proc_vars_int, flow_expressions 
+  accessible by ( flow_diagram, flow_engine, flow_instances, flow_proc_vars_int, flow_expressions 
                 , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
                 , flow_call_activities, flow_subprocesses , flow_usertask_pkg)
 as
+
+  procedure log_diagram_event
+  ( p_dgrm_id           in flow_diagrams.dgrm_id%type
+  , p_dgrm_name         in flow_diagrams.dgrm_name%type default null
+  , p_dgrm_version      in flow_diagrams.dgrm_version%type default null
+  , p_dgrm_status       in flow_diagrams.dgrm_status%type default null
+  , p_dgrm_category     in flow_diagrams.dgrm_category%type default null
+  , p_dgrm_content      in flow_diagrams.dgrm_content%type default null
+  , p_comment           in flow_flow_event_log.lgfl_comment%type default null
+  );
+
 
   procedure log_instance_event
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type

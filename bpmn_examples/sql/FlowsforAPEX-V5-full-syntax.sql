@@ -1159,7 +1159,7 @@ begin
       ,q'[</bpmn:definitions>]'
       ,q'[]'
   ));
-  flow_bpmn_parser_pkg.upload_and_parse(
+  flow_diagram.upload_and_parse(
     pi_dgrm_name => 'V5FullSyntax',
     pi_dgrm_version => '0',
     pi_dgrm_category => 'My demos',

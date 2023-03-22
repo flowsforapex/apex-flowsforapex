@@ -831,7 +831,7 @@ as
     end loop;
     l_buffer := '  ));';
     l_buffer := l_buffer||utl_tcp.crlf;
-    l_buffer := l_buffer||'  flow_bpmn_parser_pkg.upload_and_parse('||utl_tcp.crlf;
+    l_buffer := l_buffer||'  flow_diagram.upload_and_parse('||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;

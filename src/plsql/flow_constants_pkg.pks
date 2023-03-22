@@ -300,6 +300,7 @@ as
   gc_config_logging_archive_enabled     constant varchar2(50 char) := 'logging_archive_instance_summaries';
   gc_config_logging_message_flow_recd   constant varchar2(50 char) := 'logging_received_message_flow';
   gc_config_logging_retain_msg_flow     constant varchar2(50 char) := 'logging_retain_message_flow_days';
+  gc_config_logging_bpmn_location       constant varchar2(50 char) := 'logging_bpmn_location';
   gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
   gc_config_timer_max_cycles            constant varchar2(50 char) := 'timer_max_cycles';
@@ -356,7 +357,10 @@ as
   gc_stats_outcome_success              constant varchar2(50 char) := 'SUCCESS';
   gc_stats_outcome_error                constant varchar2(50 char) := 'ERROR';
 
+-- MIME types
 
+  gc_mime_type_bpmn                     constant varchar2(50 char) := 'application/bpmn-xml';
+  gc_mime_type_json                     constant varchar2(50 char) := 'application/json';
 
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>

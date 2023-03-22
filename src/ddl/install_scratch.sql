@@ -436,15 +436,15 @@ ALTER TABLE flow_object_expressions
 /* Event logging Tables */
 
 create table flow_flow_event_log
-( lgfl_dgrm_id       		NUMBER NOT NULL
-, lgfl_dgrm_name     		VARCHAR2(150 CHAR) NOT NULL
-, lgfl_dgrm_version  		VARCHAR2(10 CHAR) NOT NULL
-, lgfl_dgrm_status   		VARCHAR2(10 CHAR) NOT NULL
-, lgfl_dgrm_category 		VARCHAR2(30 CHAR)
-, lgfl_timestamp 			TIMESTAMP WITH TIME ZONE NOT NULL
-, lgfl_user				    VARCHAR2(255 char)
-, lgfl_comment              VARCHAR2(2000 CHAR)
-, lgfl_dgrm_content  		CLOB
+( lgfl_dgrm_id       		    NUMBER NOT NULL
+, lgfl_dgrm_name     		    VARCHAR2(150 CHAR)
+, lgfl_dgrm_version  		    VARCHAR2(10 CHAR) 
+, lgfl_dgrm_status   		    VARCHAR2(10 CHAR) 
+, lgfl_dgrm_category 		    VARCHAR2(30 CHAR)
+, lgfl_timestamp 			    TIMESTAMP WITH TIME ZONE NOT NULL
+, lgfl_user				        VARCHAR2(255 char)
+, lgfl_comment                  VARCHAR2(2000 CHAR)
+, lgfl_dgrm_archive_location    VARCHAR2(2000 CHAR)
 );
 
 create table flow_instance_event_log

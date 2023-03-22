@@ -245,6 +245,8 @@ begin
     values ( 'msgflow-lock-timeout-msub', c_load_lang, q'[Message Subscription locked by another user.   Try again.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'msgflow-lock-timeout-subflow', c_load_lang, q'[Message receiver unable to lock subflow.  Try again.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'logging-diagram-event', c_load_lang, q'[Flows - Internal error while logging a Diagram Event.]' ); 
 
 
   commit;
