@@ -12,7 +12,7 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '22.2.0';
+  gc_version constant varchar2(10 char) := '23.1.0 dev';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';
@@ -75,6 +75,8 @@ as
   gc_bpmn_manualtask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'manualTask';
   gc_bpmn_scripttask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
   gc_bpmn_businessruletask             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'businessRuleTask';
+  gc_bpmn_sendtask                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sendTask';
+  gc_bpmn_receivetask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'receiveTask';
   
   gc_bpmn_text                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'text';
 
@@ -124,6 +126,9 @@ as
   gc_apex_servicetask_body_html       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyHTML';
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
+
+  --receiveTask
+  gc_apex_receivetask_subtype_basic   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'basicApexMessage';
    
   -- execute PL/SQL tasks
   gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
@@ -200,6 +205,7 @@ as
   gc_sbfl_status_waiting_gateway      constant  varchar2(20 char) := 'waiting at gateway';
   gc_sbfl_status_waiting_event        constant  varchar2(20 char) := 'waiting for event';
   gc_sbfl_status_waiting_approval     constant  varchar2(20 char) := 'waiting for approval';
+  gc_sbfl_status_waiting_message      constant  varchar2(20 char) := 'waiting for message';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
@@ -292,6 +298,9 @@ as
   gc_config_logging_retain_logs         constant varchar2(50 char) := 'logging_retain_logs_after_prcs_completion_days';
   gc_config_logging_archive_location    constant varchar2(50 char) := 'logging_archive_location';
   gc_config_logging_archive_enabled     constant varchar2(50 char) := 'logging_archive_instance_summaries';
+  gc_config_logging_message_flow_recd   constant varchar2(50 char) := 'logging_received_message_flow';
+  gc_config_logging_retain_msg_flow     constant varchar2(50 char) := 'logging_retain_message_flow_days';
+  gc_config_logging_bpmn_location       constant varchar2(50 char) := 'logging_bpmn_location';
   gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
   gc_config_timer_max_cycles            constant varchar2(50 char) := 'timer_max_cycles';
@@ -323,9 +332,10 @@ as
 -- Config Parameter Default Values
 
   gc_config_default_logging_level               constant varchar2(2000 char) := gc_config_logging_level_standard;
-  gc_config_default_logging_hide_userid         constant varchar2(2000 char) := 'false';
+  gc_config_default_logging_hide_userid         constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_logging_language            constant varchar2(2000 char) := 'en';
-  gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := 'false';
+  gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := gc_vcbool_false;
+  gc_config_default_logging_recd_msg            constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_engine_app_mode             constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention         constant varchar2(2000 char) := 'legacy';
   gc_config_default_default_workspace           constant varchar2(2000 char) := 'FLOWS4APEX';
@@ -334,6 +344,7 @@ as
   gc_config_default_default_username            constant varchar2(2000 char) := 'FLOWS4APEX';
   gc_config_default_timer_max_cycles            constant varchar2(2000 char) := '1000';
   gc_config_default_log_retain_logs             constant varchar2(2000 char) := '60';
+  gc_config_default_log_retain_msg_flow_logs    constant varchar2(2000 char) := '7';
   gc_config_default_stats_retain_summary_daily  constant varchar2(2000 char) := '180';
   gc_config_default_stats_retain_summary_month  constant varchar2(2000 char) := '9';
   gc_config_default_stats_retain_summary_qtr    constant varchar2(2000 char) := '36';
@@ -346,7 +357,10 @@ as
   gc_stats_outcome_success              constant varchar2(50 char) := 'SUCCESS';
   gc_stats_outcome_error                constant varchar2(50 char) := 'ERROR';
 
+-- MIME types
 
+  gc_mime_type_bpmn                     constant varchar2(50 char) := 'application/bpmn-xml';
+  gc_mime_type_json                     constant varchar2(50 char) := 'application/json';
 
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>

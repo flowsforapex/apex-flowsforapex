@@ -237,6 +237,16 @@ begin
     values ( 'log-archive-error', c_load_lang, q'[Error archiving instance summary for Process Instance %0]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'scheduler-repeat-shared-env', c_load_lang, q'[Timer repeat interval too frequent for host (%0) Requested Interval %1.  Must be greater than 1 Minute.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'msgflow-not-correlated', c_load_lang, q'[Received message does not match an expected message.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'msgflow-no-longer-current-step', c_load_lang, q'[Process step receiving message has already occured (incorrect step key provided).]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'msgflow-lock-timeout-msub', c_load_lang, q'[Message Subscription locked by another user.   Try again.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'msgflow-lock-timeout-subflow', c_load_lang, q'[Message receiver unable to lock subflow.  Try again.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'logging-diagram-event', c_load_lang, q'[Flows - Internal error while logging a Diagram Event.]' ); 
 
 
   commit;

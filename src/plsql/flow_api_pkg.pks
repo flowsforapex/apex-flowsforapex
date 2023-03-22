@@ -577,6 +577,17 @@ flow_api_pkg.return_approval_result ( p_process_id      => :PROCESS_ID,
                                       p_result          => :APEX$TASK_OUTCOME);
 ```
 **/
+
+  procedure receive_message
+  ( p_message_name  flow_message_subscriptions.msub_message_name%type
+  , p_key_name      flow_message_subscriptions.msub_key_name%type
+  , p_key_value     flow_message_subscriptions.msub_key_value%type
+  , p_payload       clob default null
+  );
+
+
+
+
   function intervalDStoSec (
     p_intervalDS  interval day to second
   ) return number;

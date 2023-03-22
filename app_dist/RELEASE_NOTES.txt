@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v22.2                 *
+*            Flows for APEX v23.1                 *
 *          Installation instructions              *
 *                                                 *
 ***************************************************
@@ -10,7 +10,7 @@ DOCUMENTATION / SOURCE CODE / FURTHER INFORMATION
 
 PREREQUISITES
 - Oracle Database 19c or higher (all editions supported)
-- Oracle Application Express 20.1 or higher
+- Oracle Application Express 20.2 or higher
 - APEX workspace with at least 50 MB space
 - Google Chrome 85+ / Firefox 77+ / Edge 85+ / Safari 13.1 - if possible, use the latest version
 
@@ -36,6 +36,30 @@ Migration notes:
 
 
 HISTORY
+
+* v23.1
+  - Adds Due Dates and Priorities to bpmn:processes and to bpmn:userTasks, allowing declarative tracking of scheduling, priority and due dates.
+  - Adds Task Assignment to bpmn:userTasks, allowing easier declarative assignment of tasks to potential users and groups.
+  - Adds MessageFlow between sendTasks, receiveTasks, Intermediate Message Catch and Throw events.
+  - Adds REST-enabling of the Flows for APEX API and MessageFlow
+  - Major upgrade to the BPMN Modeler, with new, modern-looking properties panel.
+  - Enhanced support for modeling and viewing of collapsed subProcesses that can be easily expanded / collapsed.
+  - Adds support for BPMN Child Lane sets, allowing nesting of lane sets inside parent lanes.
+  - Adds explicit definition of relationship (or not) between Lanes and APEX roles/groups.
+  - Adds Timestamp with Time Zone datatype option for Process Variables.
+  - Adds binding of Process Variables into PL/SQL scripts, variable expressions, and element settings.
+  - Adds support for binding non-varchar2 typed (i.e., number, date, timestamp with time zone) process variabless. 
+  - Adds 'is Startable' information to Processes, along with users and groups that can start a process.
+  - Allows BPMN diagrams to contain Groups and attached Annotations.
+  - Adds Automation to create daily, month-to-date, monthly, and quarterly statistics on process and step performance.
+  - Enhances Flows for APEX Application dashboard to display process and step performance, errors, and waiting time statistics.
+  - Adds auditing / logging of changes made to process diagrams, to complete the existing logging capabilities
+  - Adds the ability to create a summary document, as a JSON document, describing all actions taken to run a process instance.
+  - Adds an Automation creating archive summaries for all recently completed process instances into an archive table or OCI Object Storage.
+  - Adds an automation for automated purging of old logging data and statistics summaries.
+  - Allows an administrator to easily change the timer polling frequency, or temporarily enable / disable timers on non-production systems.
+  - Adds support for additional languages Italian, Simplified Chinese, Traditional Chinese, Korean.
+  - Required APEX version increased to APEX v20.2
 
 * v22.2
   - Adds BPMN Call Activities, allowing a process diagram to call another process diagram, passing and returning in/out variables.

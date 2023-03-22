@@ -12,6 +12,8 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_migrate_xml_pkg.pks
 @plsql/flow_parser_util.pks
 @plsql/flow_bpmn_parser_pkg.pks
+@plsql/flow_message_flow.pks
+@plsql/flow_message_util.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_engine_util.pks
 @plsql/flow_gateways.pks
@@ -53,6 +55,7 @@ PROMPT >> Installing Views
 @views/flow_diagrams_vw.sql
 @views/flow_instance_diagrams_lov.sql
 @views/flow_diagrams_instanciated_lov.sql
+@views/flow_instance_timeline_vw.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_proc_vars_int.pkb
@@ -60,6 +63,8 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_expressions.pkb
 @plsql/flow_settings.pkb
 @plsql/flow_db_exec.pkb
+@plsql/flow_message_flow.pkb
+@plsql/flow_message_util.pkb
 @plsql/flow_reservations.pkb
 @plsql/flow_engine_util.pkb
 @plsql/flow_gateways.pkb
@@ -120,6 +125,8 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
+@views/engine-app/flow_p0020_instance_timeline_vw.sql
+
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb

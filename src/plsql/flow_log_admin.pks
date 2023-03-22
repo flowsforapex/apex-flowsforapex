@@ -13,7 +13,7 @@ create or replace package flow_log_admin
   --    - purging of instance log tables 
   */  
   authid definer
-  accessible by ( flow_admin_api, flow_instances )
+  accessible by ( flow_admin_api, flow_instances , flow_diagram, flow_logging)
   as
 
   function get_instance_json_summary
@@ -36,6 +36,15 @@ create or replace package flow_log_admin
   procedure purge_instance_logs
   ( p_retention_period_days  in number default null
   );
+
+  procedure purge_message_logs
+  ( p_retention_period_days    in number default null
+  );
+
+  function archive_bpmn_diagram
+  ( p_dgrm_id            flow_diagrams.dgrm_id%type
+  , p_dgrm_content       flow_diagrams.dgrm_content%type
+  ) return flow_flow_event_log.lgfl_dgrm_archive_location%type;
 
 end flow_log_admin;
 /
