@@ -897,6 +897,10 @@ as
     l_apex_object sys.json_object_t;
     l_ext_object  sys.json_object_t := sys.json_object_t();
   begin
+    if not g_objects.exists( pi_objt_bpmn_id ) then
+      register_object( pi_objt_bpmn_id => pi_objt_bpmn_id );
+      g_objects(pi_objt_bpmn_id).objt_attributes := sys.json_object_t();
+    end if;
     flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_objt_bpmn_id).objt_attributes );
     l_apex_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( 'apex' );
 
