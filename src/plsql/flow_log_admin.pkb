@@ -414,7 +414,7 @@ create or replace package body flow_log_admin as
     -- fix timestamp
     l_timestamp := systimestamp at time zone 'UTC';
     -- create bpmn blob
-    l_archive_blob := flow_util.clob_to_blob( pi_clob  => p_dgrm_content );
+    l_archive_blob := flow_engine_util.clob_to_blob( pi_clob  => p_dgrm_content );
     -- get archive location
     l_archive_location := get_archive_location (p_archive_type => flow_constants_pkg.gc_config_logging_bpmn_location);
     -- store in preferred location
@@ -452,7 +452,7 @@ create or replace package body flow_log_admin as
     l_archive_blob   blob;
   begin
     -- create instance summary json
-    l_archive_blob := flow_db_exec.clob_to_blob( pi_clob  => get_instance_json_summary (p_process_id => p_process_id) );
+    l_archive_blob := flow_engine_util.clob_to_blob( pi_clob  => get_instance_json_summary (p_process_id => p_process_id) );
     -- store in preferred location
     case p_archive_location.destination_type
     when flow_constants_pkg.gc_config_archive_destination_table then
