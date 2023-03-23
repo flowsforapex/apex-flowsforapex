@@ -221,7 +221,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'apex-task-creation-error', c_load_lang, q'[Error creating APEX Workflow task %0 in application %1.  see debug for details.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-priority-error', c_load_lang, q'[Error creating APEX Workflow task - invalid priority %0.]' );
+    values ( 'apex-task-priority-error', c_load_lang, q'[Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'apex-task-multiple-processes', c_load_lang, q'[Error creating APEX session.  BPMN diagram contains multiple Process objects.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -247,7 +247,10 @@ begin
     values ( 'msgflow-lock-timeout-subflow', c_load_lang, q'[Message receiver unable to lock subflow.  Try again.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'logging-diagram-event', c_load_lang, q'[Flows - Internal error while logging a Diagram Event.]' ); 
-
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'due-on-interval-error', c_load_lang, q'[Error evaluating Due On.  Interval expression is invalid.  Interval: %0.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'due-on-error', c_load_lang, q'[Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp used instead.]' ); 
 
   commit;
 end;

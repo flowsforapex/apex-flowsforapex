@@ -688,7 +688,7 @@ procedure get_number_of_connections
   as
     l_return clob;
   begin
-    apex_debug.info( p_message => '-- Joing JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
+    apex_debug.info( p_message => '-- Joining JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
     for i in 0..p_json_array.get_size - 1 loop
       l_return := l_return || p_json_array.get_string( i ) || apex_application.lf;
     end loop;
@@ -711,6 +711,21 @@ procedure get_number_of_connections
     end if;
   end json_array_join;
 
+  function apex_json_array_join
+  ( p_json_array in apex_t_varchar2
+  )
+  return flow_types_pkg.t_bpmn_attribute_vc2
+  is 
+    l_return flow_types_pkg.t_bpmn_attribute_vc2;
+  begin
+    apex_debug.info( p_message => '-- Joining APEX JSON Array to vc2, size %0', p0 => p_json_array.count );
+    for i in 1..p_json_array.count  loop
+      l_return := l_return || p_json_array( i ) || apex_application.lf;
+    end loop;
+
+    apex_debug.info( p_message => '-- returned string', p0 => l_return);
+    return l_return;
+  end apex_json_array_join;
 
   function clob_to_blob
   ( 

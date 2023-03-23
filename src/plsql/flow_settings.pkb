@@ -25,6 +25,7 @@ as
     l_data_type         flow_types_pkg.t_bpmn_attribute_vc2;
     l_format_mask       flow_types_pkg.t_bpmn_attribute_vc2;
     l_expression        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_expression_kind   apex_json.t_kind;
     l_function_body     flow_types_pkg.t_bpmn_attribute_vc2;
     l_content           flow_types_pkg.t_bpmn_attribute_vc2;
     l_return_tstz       timestamp with time zone;
@@ -33,16 +34,27 @@ as
     pragma exception_init (e_invalid_interval_spec , -1867);  
 
   begin
+    apex_debug.enter ( 'flow_settings.get_due_on'
+    , 'scope' , pi_scope
+    , 'expr' , pi_expr
+    );
     -- split based on expression type
     apex_json.parse( p_source => pi_expr );
 
     l_expression_type    := apex_json.get_varchar2( p_path => 'expressionType' );
-    l_expression         := apex_json.get_varchar2( p_path => 'expression' );
+    l_expression_kind    := apex_json.get_value_kind ( p_path => 'expression');
+    case l_expression_kind
+    when apex_json.c_varchar2 then
+      l_expression  := apex_json.get_varchar2( p_path => 'expression' );
+    when apex_json.c_array then
+      l_expression  := flow_engine_util.apex_json_array_join (apex_json.get_t_varchar2( p_path => 'expression' ));
+    end case;
     l_format_mask        := apex_json.get_varchar2( p_path => 'formatMask' );
 
+    apex_debug.message (p_message => 'expression type: %1, expression :%0', p0 => l_expression, p1=> l_expression_type);
 
     if l_expression_type in ( flow_constants_pkg.gc_expr_type_static 
-                            , flow_constants_pkg.gc_date_value_type_duration
+                            , flow_constants_pkg.gc_date_value_type_interval
                             , flow_constants_pkg.gc_date_value_type_oracle_scheduler
                             ) then
       -- static types - timestamp, duration & scheduler statics - start by doing substitutions
@@ -57,7 +69,7 @@ as
     case 
     when l_expression_type = flow_constants_pkg.gc_expr_type_static then    
       l_return_tstz := to_timestamp_tz ( l_expression, l_format_mask);
-    when l_expression_type = flow_constants_pkg.gc_date_value_type_duration then
+    when l_expression_type = flow_constants_pkg.gc_date_value_type_interval then
       l_return_tstz := systimestamp + to_dsinterval( l_expression );
     when l_expression_type = flow_constants_pkg.gc_date_value_type_oracle_scheduler then
       sys.dbms_scheduler.evaluate_calendar_string ( calendar_string   => l_expression
@@ -122,7 +134,7 @@ as
       , pi_message_key    => 'due-on-error'
       , p0 => l_expression
       );  
-      -- $F4AMESSAGE 'due-on-error' || 'Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp returned.'  
+      -- $F4AMESSAGE 'due-on-error' || 'Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp used instead.'  
       return systimestamp;  
   end get_due_on;
 
@@ -137,6 +149,7 @@ as
     l_result_rec                      flow_proc_vars_int.t_proc_var_value;
     l_expression_type                 flow_types_pkg.t_bpmn_attribute_vc2;
     l_expression                      flow_types_pkg.t_bpmn_attribute_vc2;
+    l_expression_kind                 apex_json.t_kind;
     l_priority                        flow_processes.prcs_priority%type;
     e_param_proc_var_invalid_type     exception;
     e_param_expr_invalid_type         exception;
@@ -146,7 +159,13 @@ as
     apex_json.parse ( p_source => pi_expr);
 
     l_expression_type  := apex_json.get_varchar2 ( p_path => 'expressionType');
-    l_expression       := apex_json.get_varchar2 ( p_path => 'expression');
+    l_expression_kind    := apex_json.get_value_kind ( p_path => 'expression');
+    case l_expression_kind
+    when apex_json.c_varchar2 then
+      l_expression  := apex_json.get_varchar2( p_path => 'expression' );
+    when apex_json.c_array then
+      l_expression  := flow_engine_util.apex_json_array_join (apex_json.get_t_varchar2( p_path => 'expression' ));
+    end case;
 
     case 
     when l_expression_type = flow_constants_pkg.gc_expr_type_static then
@@ -156,26 +175,33 @@ as
       , pi_scope     => pi_scope
       , pio_string   => l_expression
       );
-      apex_debug.info (P_message => 'Process Priority Evaluation : %0 ', p0 => to_number (l_expression));
+      apex_debug.info (P_message => 'Set Priority Evaluation : %0 ', p0 => to_number (l_expression));
       l_priority := to_number (l_expression);
     when l_expression_type = flow_constants_pkg.gc_expr_type_proc_var then
-      case flow_proc_vars_int.get_var_type ( pi_prcs_id   => pi_prcs_id
-                                           , pi_var_name  => l_expression
-                                           , pi_scope     => pi_scope
-                                           )
-      when flow_constants_pkg.gc_prov_var_type_varchar2 then
-        l_priority :=  to_number ( flow_proc_vars_int.get_var_vc2 ( pi_prcs_id   => pi_prcs_id
-                                                                  , pi_scope     => pi_scope
-                                                                  , pi_var_name  => l_expression
-                                                                  ) );
-      when flow_constants_pkg.gc_prov_var_type_number then
-        l_priority :=  flow_proc_vars_int.get_var_num ( pi_prcs_id   => pi_prcs_id
-                                                      , pi_scope     => pi_scope
-                                                      , pi_var_name  => l_expression
-                                                      );
+      if l_expression = flow_constants_pkg.gc_substitution_process_priority then
+        select prcs_priority
+          into l_priority
+          from flow_processes
+         where prcs_id = pi_prcs_id; 
       else
-        raise e_param_proc_var_invalid_type;
-      end case;
+        case flow_proc_vars_int.get_var_type ( pi_prcs_id   => pi_prcs_id
+                                             , pi_var_name  => l_expression
+                                             , pi_scope     => pi_scope
+                                             )
+        when flow_constants_pkg.gc_prov_var_type_varchar2 then
+          l_priority :=  to_number ( flow_proc_vars_int.get_var_vc2 ( pi_prcs_id   => pi_prcs_id
+                                                                    , pi_scope     => pi_scope
+                                                                    , pi_var_name  => l_expression
+                                                                    ) );
+        when flow_constants_pkg.gc_prov_var_type_number then
+          l_priority :=  flow_proc_vars_int.get_var_num ( pi_prcs_id   => pi_prcs_id
+                                                        , pi_scope     => pi_scope
+                                                        , pi_var_name  => l_expression
+                                                        );
+        else
+          raise e_param_proc_var_invalid_type;
+        end case;
+      end if;
     when l_expression_type = flow_constants_pkg.gc_expr_type_sql then
       l_result_rec := flow_db_exec.exec_flows_sql 
                       ( pi_prcs_id      => pi_prcs_id
@@ -234,6 +260,7 @@ as
     l_values                          apex_json.t_values;
     l_expression_type                 flow_types_pkg.t_bpmn_attribute_vc2;
     l_expression                      flow_types_pkg.t_bpmn_attribute_vc2;
+    l_expression_kind                 apex_json.t_kind;
     e_param_proc_var_invalid_type     exception;
     e_param_expr_invalid_type         exception;
     l_return_value                    flow_types_pkg.t_bpmn_attribute_vc2;
@@ -246,7 +273,13 @@ as
     apex_json.parse ( p_source => pi_expr);
 
     l_expression_type  := apex_json.get_varchar2 ( p_path => 'expressionType');
-    l_expression       := apex_json.get_varchar2 ( p_path => 'expression');
+    l_expression_kind    := apex_json.get_value_kind ( p_path => 'expression');
+    case l_expression_kind
+    when apex_json.c_varchar2 then
+      l_expression  := apex_json.get_varchar2( p_path => 'expression' );
+    when apex_json.c_array then
+      l_expression  := flow_engine_util.apex_json_array_join (apex_json.get_t_varchar2( p_path => 'expression' ));
+    end case;
 
    case 
     when l_expression_type = flow_constants_pkg.gc_expr_type_static then
@@ -309,6 +342,7 @@ as
     l_values                          apex_json.t_values;
     l_expression_type                 flow_types_pkg.t_bpmn_attribute_vc2;
     l_expression                      flow_types_pkg.t_bpmn_attribute_vc2;
+    l_expression_kind                 apex_json.t_kind;
     e_param_proc_var_invalid_type     exception;
     e_param_expr_invalid_type         exception;
     l_return_value                    clob;
@@ -321,7 +355,13 @@ as
     apex_json.parse ( p_source => pi_expr);
 
     l_expression_type  := apex_json.get_varchar2 ( p_path => 'expressionType');
-    l_expression       := apex_json.get_varchar2 ( p_path => 'expression');
+    l_expression_kind    := apex_json.get_value_kind ( p_path => 'expression');
+    case l_expression_kind
+    when apex_json.c_varchar2 then
+      l_expression  := apex_json.get_varchar2( p_path => 'expression' );
+    when apex_json.c_array then
+      l_expression  := flow_engine_util.apex_json_array_join (apex_json.get_t_varchar2( p_path => 'expression' ));
+    end case;
 
    case 
     when l_expression_type = flow_constants_pkg.gc_expr_type_static then
