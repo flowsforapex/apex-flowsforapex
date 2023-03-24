@@ -124,5 +124,15 @@ as
     p_json_array in clob
   ) return clob;
 
+  function apex_json_array_join
+  ( p_json_array in apex_t_varchar2
+  )
+  return flow_types_pkg.t_bpmn_attribute_vc2;
+
+  function clob_to_blob
+  ( 
+    pi_clob in clob
+  ) return blob;
+
 end flow_engine_util;
 /

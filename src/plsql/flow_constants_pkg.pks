@@ -271,7 +271,7 @@ as
 
   gc_date_value_type_date             constant flow_types_pkg.t_expr_type := 'date';
   gc_date_value_type_time_of_day      constant flow_types_pkg.t_expr_type := 'timeOfDay';
-  gc_date_value_type_duration         constant flow_types_pkg.t_expr_type := 'duration';
+  gc_date_value_type_interval         constant flow_types_pkg.t_expr_type := 'interval';
   gc_date_value_type_oracle_scheduler constant flow_types_pkg.t_expr_type := 'oracleScheduler';
 
 -- Process Variable Expression sets and CallActivity in-Out sets

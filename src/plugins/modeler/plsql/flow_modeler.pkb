@@ -181,7 +181,7 @@ as
     );
     l_id      := apex_json.get_number( p_values => l_values, p_path => 'regions[1].data.id' );
     l_content := apex_json.get_clob( p_values => l_values, p_path => 'regions[1].data.content');
-    flow_bpmn_parser_pkg.update_diagram
+    flow_diagram.update_diagram
     (
       pi_dgrm_id      => l_id
     , pi_dgrm_content => l_content
