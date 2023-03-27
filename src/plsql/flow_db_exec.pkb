@@ -399,6 +399,7 @@ as
     l_expr            varchar2(4000) := pi_plsql_text;
     l_bind_parameters apex_exec.t_parameters := pi_bind_parameters;
     l_result_rec      flow_proc_vars_int.t_proc_var_value;
+    l_statement       varchar2(4000);
   begin
     apex_debug.enter
     ( 'flow_db_exec.exec_flows_plsql_tstz'
@@ -425,8 +426,10 @@ as
 
     apex_exec.add_parameter ( l_bind_parameters, 'BIND_OUT_VAR','');
 
+    l_statement := l_wrap_begin||pi_plsql_text||l_wrap_end;
+   
     apex_exec.execute_plsql(
-        p_plsql_code      => l_wrap_begin||pi_plsql_text||l_wrap_end,
+        p_plsql_code      => l_statement,
         p_auto_bind_items => false,
         p_sql_parameters  => l_bind_parameters );
 

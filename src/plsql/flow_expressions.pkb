@@ -413,6 +413,7 @@ as
             , pi_expr_scope   => pi_expr_scope             
             );  
           else
+              pragma coverage ('not_feasible');
               null;
         end case;
       end loop;
@@ -457,6 +458,7 @@ as
     );
   exception
     when no_data_found then
+      pragma coverage ('not_feasible');
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id
