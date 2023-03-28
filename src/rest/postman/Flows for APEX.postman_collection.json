@@ -1,0 +1,1814 @@
+{
+	"info": {
+		"_postman_id": "6905b75d-98ec-461d-8dcc-b77713749d91",
+		"name": "Flows for APEX",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"access_token\", jsonData.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{client_pw}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{client_id}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "grant_type",
+								"value": "client_credentials",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}oauth/token",
+							"host": [
+								"{{host}}oauth"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "diagrams",
+			"item": [
+				{
+					"name": "diagrams",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}diagrams?status=all",
+							"host": [
+								"{{host}}{{module}}diagrams"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "all"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "diagrams/:dgrm_id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"dgrm_id\", pm.request.url.variables.get('dgrm_id'));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}diagrams/:dgrm_id",
+							"host": [
+								"{{host}}{{module}}diagrams"
+							],
+							"path": [
+								":dgrm_id"
+							],
+							"variable": [
+								{
+									"key": "dgrm_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Processes",
+			"item": [
+				{
+					"name": "diagrams/:dgrm_id/processes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{host}}{{module}}diagrams/:dgrm_id/processes?status=created",
+							"host": [
+								"{{host}}{{module}}diagrams"
+							],
+							"path": [
+								":dgrm_id",
+								"processes"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "created"
+								}
+							],
+							"variable": [
+								{
+									"key": "dgrm_id",
+									"value": "{{dgrm_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "diagrams/:dgrm_id/processes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.environment.set(\"prcs_id\", jsonData.items[0].prcs_id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"name\": \"test create via rest api\", \"business_ref\": \"test-ref\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}diagrams/:dgrm_id/processes",
+							"host": [
+								"{{host}}{{module}}diagrams"
+							],
+							"path": [
+								":dgrm_id",
+								"processes"
+							],
+							"variable": [
+								{
+									"key": "dgrm_id",
+									"value": "{{dgrm_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id [start]",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"start\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id [reset]",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"reset\", \"comment\": \"test reset\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id [terminate]",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"terminate\", \"prcs_comment\": \"test comment\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"prcs_comment\": \"test comment\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id/start",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id/start",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id",
+								"start"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id/reset",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id/reset",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id",
+								"reset"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id/terminate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"prcs_comment\": \"test comment\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id/terminate",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id",
+								"terminate"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Process Variables",
+			"item": [
+				{
+					"name": "processes/:prcs_id/process_vars",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"sbfl_id\", jsonData.items[0].sbfl_id);\r",
+									"pm.environment.set(\"step_key\", jsonData.items[0].sbfl_step_key);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id/process_vars",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id",
+								"process_vars"
+							],
+							"query": [
+								{
+									"key": "scope",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "var_b",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "processes/:prcs_id/process_vars",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"sbfl_id\", jsonData.items[0].sbfl_id);\r",
+									"pm.environment.set(\"step_key\", jsonData.items[0].sbfl_step_key);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\"name\":\"VAR_A\",\r\n \"type\":\"varchar\",\r\n \"value\":\"set\"},\r\n {\"name\":\"VAR_B\",\r\n \"type\":\"varchar\",\r\n \"value\":\"set\"},\r\n {\"name\":\"VAR_C\",\r\n \"type\":\"varchar\",\r\n \"value\":\"set\"}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id/process_vars",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id",
+								"process_vars"
+							],
+							"query": [
+								{
+									"key": "scope",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "var_b",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Steps",
+			"item": [
+				{
+					"name": "processes/:prcs_id/steps",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"sbfl_id\", jsonData.items[0].sbfl_id);\r",
+									"pm.environment.set(\"step_key\", jsonData.items[0].step_key);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id/steps",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id",
+								"steps"
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": "{{prcs_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"sbfl_id\", jsonData.items[0].sbfl_id);\r",
+									"pm.environment.set(\"step_key\", jsonData.items[0].step_key);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id [start]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"start\", \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id [reserve]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"reserve\", \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id [release]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"release\", \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id [complete]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"complete\", \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id  [restart]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"restart\", \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id [reschedule_timer]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"status\": \"reschedule_timer\", \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id/start",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id/start",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id",
+								"start"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id/reserve",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id/reserve",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id",
+								"reserve"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id/release",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id/release",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id",
+								"release"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id/complete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id/complete",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id",
+								"complete"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id/restart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id/restart",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id",
+								"restart"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "steps/:sbfl_id/reschedule_timer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"step_key\": \"{{step_key}}\" }"
+						},
+						"url": {
+							"raw": "{{host}}{{module}}steps/:sbfl_id/reschedule_timer",
+							"host": [
+								"{{host}}{{module}}steps"
+							],
+							"path": [
+								":sbfl_id",
+								"reschedule_timer"
+							],
+							"variable": [
+								{
+									"key": "sbfl_id",
+									"value": "{{sbfl_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Message Subscriptions",
+			"item": [
+				{
+					"name": "processes/:prcs_id/message_subscriptions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{host}}{{module}}processes/:prcs_id/message_subscriptions",
+							"host": [
+								"{{host}}{{module}}processes"
+							],
+							"path": [
+								":prcs_id",
+								"message_subscriptions"
+							],
+							"query": [
+								{
+									"key": "scope",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "var_b",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "prcs_id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "messages/:message_name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"sbfl_id\", jsonData.items[0].sbfl_id);\r",
+									"pm.environment.set(\"step_key\", jsonData.items[0].sbfl_step_key);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "status",
+								"value": "all",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\":\"VAR_A\",\r\n \"type\":\"varchar\",\r\n \"value\":\"set\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{module}}messages/:message_name",
+							"host": [
+								"{{host}}{{module}}messages"
+							],
+							"path": [
+								":message_name"
+							],
+							"query": [
+								{
+									"key": "scope",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "var_b",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "message_name",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Utils",
+			"item": [
+				{
+					"name": "utils/roles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}utils/roles",
+							"host": [
+								"{{host}}{{module}}utils"
+							],
+							"path": [
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "utils/ping",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}utils/ping",
+							"host": [
+								"{{host}}{{module}}utils"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,703 @@
+DECLARE
+  l_roles     OWA.VC_ARR;
+  l_modules   OWA.VC_ARR;
+  l_patterns  OWA.VC_ARR;
+BEGIN
+ 
+
+  ORDS.DEFINE_MODULE(
+      p_module_name    => 'v1',
+      p_base_path      => '/v1/',
+      p_items_per_page =>  25,
+      p_status         => 'PUBLISHED',
+      p_comments       => NULL);      
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'SELECT  dgrm_id,
+        name,
+        version,
+        status,
+        category,
+        links "{}links"
+  from flow_rest_diagrams_vw 
+  where lower(status) = decode( lower(nvl(:dgrm_status, ''released'')), ''all'', status, lower(nvl(:dgrm_status, ''released'')))
+  order by dgrm_id'
+      );
+  ORDS.DEFINE_PARAMETER(
+      p_module_name        => 'v1',
+      p_pattern            => 'diagrams',
+      p_method             => 'GET',
+      p_name               => 'status',
+      p_bind_variable_name => 'dgrm_status',
+      p_source_type        => 'URI',
+      p_param_type         => 'STRING',
+      p_access_method      => 'IN',
+      p_comments           => NULL);      
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams/:dgrm_id',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams/:dgrm_id',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'SELECT  dgrm_id,
+        name,
+        version,
+        status,
+        category,
+        links "{}links"
+  from flow_rest_diagrams_vw 
+  where dgrm_id = :dgrm_id'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams/:dgrm_id/processes',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams/:dgrm_id/processes',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => 'Create a process instance based on a specific diagram',
+      p_source         => 
+'begin
+ flow_rest_api_v1.processes_post( pi_dgrm_id  => :dgrm_id
+                                , pi_payload  => json_element_t.parse(:body)
+                                , pi_current_user     => :current_user
+                                , po_status_code      => :status_code 
+                                , po_forward_location => :forward_location );
+end;
+'
+      );
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams/:dgrm_id/processes',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'SELECT  dgrm_id
+      , prcs_id
+      , name
+      , status
+      , init_ts
+      , init_by
+      , process_vars "{}process_vars"
+      , links "{}links"
+  from flow_rest_processes_vw
+  where dgrm_id = :dgrm_id
+    and lower(status) = lower( decode(nvl(:prcs_status,''running''), ''all'', status, nvl(:prcs_status,''running'')))
+  order by prcs_id'
+      );
+  ORDS.DEFINE_PARAMETER(
+      p_module_name        => 'v1',
+      p_pattern            => 'diagrams/:dgrm_id/processes',
+      p_method             => 'GET',
+      p_name               => 'status',
+      p_bind_variable_name => 'prcs_status',
+      p_source_type        => 'URI',
+      p_param_type         => 'STRING',
+      p_access_method      => 'IN',
+      p_comments           => 'Available process status:
+- all
+- created
+- running (default value)
+- completed
+- terminated
+- error');      
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'messages/:message_name',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'messages/:message_name',
+      p_method         => 'PUT',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+ flow_rest_api_v1.messages_put( pi_message_name      => :message_name
+                              , pi_payload           => json_element_t.parse(:body)
+                              , pi_current_user      => :current_user
+                              , po_status_code       => :status_code
+                              , po_forward_location  => :forward_location);
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id',
+      p_method         => 'DELETE',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  flow_rest_api_v1.processes_delete( pi_prcs_id  => :prcs_id
+                                   , pi_payload  => json_element_t.parse(:body)
+                                   , pi_current_user => :current_user
+                                   , po_status_code  => :status_code);
+end;'
+      );
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'SELECT  dgrm_id
+      , prcs_id
+      , name
+      , status
+      , init_ts
+      , init_by
+      , process_vars "{}process_vars"
+      , links "{}links"
+  from flow_rest_processes_vw
+  where prcs_id = :prcs_id'
+      );
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id',
+      p_method         => 'PUT',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => 'application/json',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+ flow_rest_api_v1.processes_put( pi_prcs_id  => :prcs_id
+                               , pi_payload  => json_element_t.parse(:body)
+                               , pi_current_user      => :current_user
+                               , po_status_code       => :status_code
+                               , po_forward_location  => :forward_location);
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_Id/message_subscriptions',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_Id/message_subscriptions',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'select  msub_id
+      , name
+      , key
+      , value
+      , prcs_id
+      , sbfl_id
+      , step_key      
+  from flow_rest_message_subscriptions_vw
+  where prcs_id = :prcs_id'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/process_vars',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/process_vars',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'SELECT  scope
+      , name
+      , type
+      , value
+  from flow_rest_process_vars_vw 
+  where prcs_id = :prcs_id
+    and scope = nvl(:prov_scope, 0)
+    and lower(name) = lower(nvl(:prov_var_name, name))'
+      );
+  ORDS.DEFINE_PARAMETER(
+      p_module_name        => 'v1',
+      p_pattern            => 'processes/:prcs_id/process_vars',
+      p_method             => 'GET',
+      p_name               => 'name',
+      p_bind_variable_name => 'prov_var_name',
+      p_source_type        => 'URI',
+      p_param_type         => 'STRING',
+      p_access_method      => 'IN',
+      p_comments           => NULL);      
+  ORDS.DEFINE_PARAMETER(
+      p_module_name        => 'v1',
+      p_pattern            => 'processes/:prcs_id/process_vars',
+      p_method             => 'GET',
+      p_name               => 'scope',
+      p_bind_variable_name => 'prov_scope',
+      p_source_type        => 'URI',
+      p_param_type         => 'STRING',
+      p_access_method      => 'IN',
+      p_comments           => NULL);      
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/process_vars',
+      p_method         => 'PUT',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+ flow_rest_api_v1.process_vars_put( pi_prcs_id  => :prcs_id
+                                  , pi_payload  => json_element_t.parse(:body)
+                                  , pi_current_user      => :current_user
+                                  , po_status_code       => :status_code
+                                  , po_forward_location  => :forward_location);
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/reset',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/reset',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'declare 
+  l_body_element  json_element_t;
+begin
+  
+  begin
+    l_body_element := json_element_t.parse(:body); 
+    exception
+      when others then -- Todo: handle ORA-40834
+        null;
+  end; 
+
+    flow_rest_api_v1.processes_reset_post( pi_prcs_id  => :prcs_id
+                                         , pi_payload  => l_body_element
+                                         , pi_current_user     => :current_user
+                                         , po_status_code      => :status_code 
+                                         , po_forward_location => :forward_location );                                                                  
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/start',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/start',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+ flow_rest_api_v1.processes_start_post( pi_prcs_id  => :prcs_id
+                                      , pi_current_user     => :current_user
+                                      , po_status_code      => :status_code 
+                                      , po_forward_location => :forward_location );
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/steps',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/steps',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'select  prcs_id
+      , sbfl_id
+      , sbfl_sbfl_id
+      , process_level
+      , diagram_level
+      , calling_sbfl
+      , scope
+      , "current"
+      , step_key
+      , status
+      , became_current
+      , reservation
+      , links as "{}links"
+  from flow_rest_subflows_vw
+  where prcs_id = :prcs_id'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/terminate',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/terminate',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'declare 
+  l_body_element  json_element_t;
+begin
+  
+  begin
+    l_body_element := json_element_t.parse(:body); 
+    exception
+      when others then -- Todo: handle ORA-40834
+        null;
+  end; 
+  flow_rest_api_v1.processes_terminate_post( pi_prcs_id  => :prcs_id
+                                           , pi_payload  => l_body_element
+                                           , pi_current_user     => :current_user
+                                           , po_status_code      => :status_code 
+                                           , po_forward_location => :forward_location );                                                                   
+end;'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'select  prcs_id
+      , sbfl_id
+      , sbfl_sbfl_id
+      , process_level
+      , diagram_level
+      , calling_sbfl
+      , scope
+      , "current"
+      , step_key
+      , status
+      , became_current
+      , reservation
+      , links as "{}links"
+  from flow_rest_subflows_vw
+  where sbfl_id = :sbfl_id'
+      );
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id',
+      p_method         => 'PUT',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+
+ flow_rest_api_v1.steps_put( pi_sbfl_id  => :sbfl_id
+                           , pi_payload  => json_element_t.parse(:body)
+                           , pi_current_user     => :current_user
+                           , po_status_code      => :status_code
+                           , po_forward_location => :forward_location);
+                           
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/complete',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/complete',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  flow_rest_api_v1.steps_complete_post( pi_sbfl_id  => :sbfl_id
+                                      , pi_payload  => json_element_t.parse(:body)
+                                      , pi_current_user     => :current_user
+                                      , po_status_code      => :status_code
+                                      , po_forward_location => :forward_location);                        
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/release',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/release',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  flow_rest_api_v1.steps_release_post( pi_sbfl_id  => :sbfl_id
+                                     , pi_payload  => json_element_t.parse(:body)
+                                     , pi_current_user     => :current_user
+                                     , po_status_code      => :status_code
+                                     , po_forward_location => :forward_location);                        
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/reschedule_timer',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/reschedule_timer',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  flow_rest_api_v1.steps_reschedule_timer_post( pi_sbfl_id  => :sbfl_id
+                                              , pi_payload  => json_element_t.parse(:body)
+                                              , pi_current_user     => :current_user
+                                              , po_status_code      => :status_code
+                                              , po_forward_location => :forward_location);                        
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/reserve',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/reserve',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  flow_rest_api_v1.steps_reserve_post( pi_sbfl_id  => :sbfl_id
+                                     , pi_payload  => json_element_t.parse(:body)
+                                     , pi_current_user     => :current_user
+                                     , po_status_code      => :status_code
+                                     , po_forward_location => :forward_location);                        
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/restart',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/restart',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  flow_rest_api_v1.steps_restart_post( pi_sbfl_id  => :sbfl_id
+                                     , pi_payload  => json_element_t.parse(:body)
+                                     , pi_current_user     => :current_user
+                                     , po_status_code      => :status_code
+                                     , po_forward_location => :forward_location);                        
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/start',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'steps/:sbfl_id/start',
+      p_method         => 'POST',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  flow_rest_api_v1.steps_start_post( pi_sbfl_id  => :sbfl_id
+                                   , pi_payload  => json_element_t.parse(:body)
+                                   , pi_current_user     => :current_user
+                                   , po_status_code      => :status_code
+                                   , po_forward_location => :forward_location);                        
+end;
+'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'utils/ping',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'utils/ping',
+      p_method         => 'GET',
+      p_source_type    => 'plsql/block',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'begin
+  sys.htp.p( json_object_t.parse(''{"status": "ok"}'').stringify );
+end;'
+      );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'utils/roles',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'utils/roles',
+      p_method         => 'GET',
+      p_source_type    => 'json/collection',
+      p_items_per_page =>  0,
+      p_mimes_allowed  => '',
+      p_comments       => NULL,
+      p_source         => 
+'select oucr.role_name
+  from user_ords_clients ouc
+  join user_ords_client_roles oucr on ouc.id = oucr.client_id
+  where ouc.client_id = :current_user'
+      );
+
+  ORDS.CREATE_ROLE(p_role_name  => 'Flows for Apex - Admin');
+  ORDS.CREATE_ROLE(p_role_name  => 'Flows for Apex - Read');
+  ORDS.CREATE_ROLE(p_role_name  => 'Flows for Apex - Write');
+
+  l_roles(1)   := 'Flows for Apex - Admin';
+  l_roles(2)   := 'Flows for Apex - Read';
+  l_roles(3)   := 'Flows for Apex - Write';
+  l_modules(1) := 'v1';
+  l_patterns(1):= '/rest/*';
+
+  ORDS.DEFINE_PRIVILEGE(
+      p_privilege_name => 'flowsforapex.read',
+      p_roles          => l_roles,
+      p_patterns       => l_patterns,
+      p_modules        => l_modules,
+      p_label          => 'flowsforapex.read',
+      p_description    => '',
+      p_comments       => NULL);      
+
+
+  COMMIT; 
+
+END;
