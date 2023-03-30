@@ -251,6 +251,10 @@ begin
     values ( 'due-on-interval-error', c_load_lang, q'[Error evaluating Due On.  Interval expression is invalid.  Interval: %0.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'due-on-error', c_load_lang, q'[Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp used instead.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'settings-priority-error', c_load_lang, q'[Error evaluating Priority. Priority expression is invalid.  Expression: %0.  Priority 3 used instead.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'settings-error', c_load_lang, q'[Error evaluating Setting. Expression is invalid.  Expression: %0.]' );
 
   commit;
 end;

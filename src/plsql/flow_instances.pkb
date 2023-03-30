@@ -716,7 +716,7 @@ create or replace package body flow_instances as
   is
   begin
       update flow_processes prcs
-      set prcs.prcs_priority = prcs_priority
+      set prcs.prcs_priority = p_priority
         , prcs.prcs_last_update = systimestamp
         , prcs.prcs_last_update_by = coalesce ( sys_context('apex$session','app_user') 
                                               , sys_context('userenv','os_user')
@@ -752,7 +752,7 @@ create or replace package body flow_instances as
   is
   begin
       update flow_processes prcs
-      set prcs.prcs_due_on = prcs_due_on
+      set prcs.prcs_due_on = p_due_on
         , prcs.prcs_last_update = systimestamp
         , prcs.prcs_last_update_by = coalesce ( sys_context('apex$session','app_user') 
                                               , sys_context('userenv','os_user')

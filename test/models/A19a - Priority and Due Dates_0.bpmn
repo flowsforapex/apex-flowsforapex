@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_19a_priorities" name="Test 19a Priorities" isExecutable="false" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:priority>
+        <apex:expressionType>static</apex:expressionType>
+        <apex:expression>5</apex:expression>
+      </apex:priority>
+      <apex:dueOn>
+        <apex:expressionType>static</apex:expressionType>
+        <apex:formatMask>YYYY-MM-DD HH24:MI:SS TZR</apex:formatMask>
+        <apex:expression>2023-05-23 14:00:23 EUROPE/PARIS</apex:expression>
+      </apex:dueOn>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_1rslafo">
+      <bpmn:outgoing>Flow_0j88db6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0j88db6" sourceRef="Event_1rslafo" targetRef="Gateway_0vylp2b" />
+    <bpmn:parallelGateway id="Gateway_0vylp2b">
+      <bpmn:incoming>Flow_0j88db6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l8tn6c</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0lf6kf4</bpmn:outgoing>
+      <bpmn:outgoing>Flow_09uie8b</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="Activity_Proc" name="Process Priority">
+      <bpmn:incoming>Flow_0l8tn6c</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bhyls4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0l8tn6c" sourceRef="Gateway_0vylp2b" targetRef="Activity_Proc" />
+    <bpmn:task id="Activity_Task" name="Task Priority">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>MY_priority_var</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>my_deadline_var</apex:varName>
+            <apex:varDataType>TIMESTAMP_WITH_TIME_ZONE</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2032-06-21 23:59:59 GMT</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lf6kf4</bpmn:incoming>
+      <bpmn:outgoing>Flow_14w0zj7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0lf6kf4" sourceRef="Gateway_0vylp2b" targetRef="Activity_Task" />
+    <bpmn:task id="Activity_API" name="API">
+      <bpmn:incoming>Flow_09uie8b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1758jqw</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_09uie8b" sourceRef="Gateway_0vylp2b" targetRef="Activity_API" />
+    <bpmn:endEvent id="Event_0op6n0a">
+      <bpmn:incoming>Flow_07m1me8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_14w0zj7" sourceRef="Activity_Task" targetRef="Activity_Static" apex:sequence="10" />
+    <bpmn:endEvent id="Event_0yt1cbf">
+      <bpmn:incoming>Flow_15b3axr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0bhyls4" sourceRef="Activity_Proc" targetRef="Activity_Static3" />
+    <bpmn:sequenceFlow id="Flow_07m1me8" sourceRef="Activity_FuncBody" targetRef="Event_0op6n0a" />
+    <bpmn:sequenceFlow id="Flow_08yzwje" sourceRef="Activity_Expr" targetRef="Activity_FuncBody" />
+    <bpmn:sequenceFlow id="Flow_0syketw" sourceRef="Activity_SQL" targetRef="Activity_Expr" />
+    <bpmn:sequenceFlow id="Flow_1fk0oue" sourceRef="Activity_ProcVar" targetRef="Activity_SQL" />
+    <bpmn:sequenceFlow id="Flow_0kcay5a" sourceRef="Activity_Static" targetRef="Activity_Interval" />
+    <bpmn:sequenceFlow id="Flow_1dlu7y9" sourceRef="Activity_Static3" targetRef="Activity_SQL6" />
+    <bpmn:sequenceFlow id="Flow_15b3axr" sourceRef="Activity_SQL6" targetRef="Event_0yt1cbf" />
+    <bpmn:userTask id="Activity_Static3" name="Static3" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>3</apex:expression>
+        </apex:priority>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>1</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bhyls4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dlu7y9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_SQL6" name="SQL6" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>sqlQuerySingle</apex:expressionType>
+          <apex:expression>select 6 from dual</apex:expression>
+        </apex:priority>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1dlu7y9</bpmn:incoming>
+      <bpmn:outgoing>Flow_15b3axr</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_Static" name="Set Static" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>4</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:formatMask>YYYY-MM-DD HH24:MI:SS TZR</apex:formatMask>
+          <apex:expression>2024-06-21 09:15:05 GMT</apex:expression>
+        </apex:dueOn>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14w0zj7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kcay5a</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_ProcVar" name="Set Proc Var" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>MY_PRIORITY_VAR</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>MY_DEADLINE_VAR</apex:expression>
+        </apex:dueOn>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wfosco</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fk0oue</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0pclqub" sourceRef="Activity_Interval" targetRef="Activity_Scheduler" />
+    <bpmn:sequenceFlow id="Flow_1wfosco" sourceRef="Activity_Scheduler" targetRef="Activity_ProcVar" />
+    <bpmn:userTask id="Activity_Interval" name="Set Interval" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>1</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>interval</apex:expressionType>
+          <apex:expression>000 12:00:00</apex:expression>
+        </apex:dueOn>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kcay5a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pclqub</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_Scheduler" name="Set Scheduler" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>5</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>oracleScheduler</apex:expressionType>
+          <apex:expression>FREQ=HOURLY;INTERVAL=1</apex:expression>
+        </apex:dueOn>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0pclqub</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wfosco</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_SQL" name="Set SQL" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>sqlQuerySingle</apex:expressionType>
+          <apex:expression>select 4 from dual</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>sqlQuerySingle</apex:expressionType>
+          <apex:expression>select systimestamp + to_dsinterval('PT6H') from dual</apex:expression>
+        </apex:dueOn>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1fk0oue</bpmn:incoming>
+      <bpmn:outgoing>Flow_0syketw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_Expr" name="Set Expr" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeTask_0</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:priority>
+          <apex:expressionType>plsqlRawExpression</apex:expressionType>
+          <apex:expression>6-3</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>plsqlRawExpression</apex:expressionType>
+          <apex:expression>systimestamp + to_dsinterval('001 12:00:00')</apex:expression>
+        </apex:dueOn>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0syketw</bpmn:incoming>
+      <bpmn:outgoing>Flow_08yzwje</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_FuncBody" name="Set FuncBody" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:priority>
+          <apex:expressionType>plsqlRawFunctionBody</apex:expressionType>
+          <apex:expression>return 4;</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>plsqlRawFunctionBody</apex:expressionType>
+          <apex:expression>declare
+  l_interval interval day to second(0);
+  l_return timestamp with time zone;
+begin
+  l_interval := to_dsinterval('PT6H');
+  l_return := systimestamp + l_interval;
+  return l_return;
+end;</apex:expression>
+        </apex:dueOn>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08yzwje</bpmn:incoming>
+      <bpmn:outgoing>Flow_07m1me8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="Activity_priority_sub" name="process_priority substitution">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Process_priority_copy</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>&amp;F4A$PROCESS_PRIORITY.</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1758jqw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1riymfx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1758jqw" sourceRef="Activity_API" targetRef="Activity_priority_sub" />
+    <bpmn:endEvent id="Event_0retrdo">
+      <bpmn:incoming>Flow_1e71822</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1riymfx" sourceRef="Activity_priority_sub" targetRef="Activity_Proc_priority" />
+    <bpmn:sequenceFlow id="Flow_1e71822" sourceRef="Activity_Proc_priority" targetRef="Event_0retrdo" />
+    <bpmn:userTask id="Activity_Proc_priority" name="task priority is process priority" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+        </apex:apexPage>
+        <apex:priority>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>PROCESS_PRIORITY</apex:expression>
+        </apex:priority>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1riymfx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e71822</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_19a_priorities">
+      <bpmndi:BPMNShape id="Event_1rslafo_di" bpmnElement="Event_1rslafo">
+        <dc:Bounds x="342" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_109tnvm_di" bpmnElement="Gateway_0vylp2b">
+        <dc:Bounds x="435" y="405" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1r2dlyx_di" bpmnElement="Activity_Proc">
+        <dc:Bounds x="560" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xrrd9x_di" bpmnElement="Activity_Task">
+        <dc:Bounds x="560" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pkmbov_di" bpmnElement="Activity_API">
+        <dc:Bounds x="560" y="580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0op6n0a_di" bpmnElement="Event_0op6n0a">
+        <dc:Bounds x="1802" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yt1cbf_di" bpmnElement="Event_0yt1cbf">
+        <dc:Bounds x="1642" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18q4efk_di" bpmnElement="Activity_Static3">
+        <dc:Bounds x="740" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00kf3sr_di" bpmnElement="Activity_SQL6">
+        <dc:Bounds x="920" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gvw77b_di" bpmnElement="Activity_Static">
+        <dc:Bounds x="710" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_108g5mz_di" bpmnElement="Activity_ProcVar">
+        <dc:Bounds x="1150" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q2ijbu_di" bpmnElement="Activity_Interval">
+        <dc:Bounds x="850" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_169ubfd_di" bpmnElement="Activity_Scheduler">
+        <dc:Bounds x="1000" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lyu42x_di" bpmnElement="Activity_SQL">
+        <dc:Bounds x="1300" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_092zifv_di" bpmnElement="Activity_Expr">
+        <dc:Bounds x="1480" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_140jwcu_di" bpmnElement="Activity_FuncBody">
+        <dc:Bounds x="1660" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0j58ipi_di" bpmnElement="Activity_priority_sub">
+        <dc:Bounds x="740" y="580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0retrdo_di" bpmnElement="Event_0retrdo">
+        <dc:Bounds x="1072" y="602" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s7uht8_di" bpmnElement="Activity_Proc_priority">
+        <dc:Bounds x="900" y="580" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0j88db6_di" bpmnElement="Flow_0j88db6">
+        <di:waypoint x="378" y="430" />
+        <di:waypoint x="435" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l8tn6c_di" bpmnElement="Flow_0l8tn6c">
+        <di:waypoint x="460" y="405" />
+        <di:waypoint x="460" y="230" />
+        <di:waypoint x="560" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lf6kf4_di" bpmnElement="Flow_0lf6kf4">
+        <di:waypoint x="485" y="430" />
+        <di:waypoint x="560" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09uie8b_di" bpmnElement="Flow_09uie8b">
+        <di:waypoint x="460" y="455" />
+        <di:waypoint x="460" y="620" />
+        <di:waypoint x="560" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14w0zj7_di" bpmnElement="Flow_14w0zj7">
+        <di:waypoint x="660" y="430" />
+        <di:waypoint x="710" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bhyls4_di" bpmnElement="Flow_0bhyls4">
+        <di:waypoint x="660" y="230" />
+        <di:waypoint x="740" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07m1me8_di" bpmnElement="Flow_07m1me8">
+        <di:waypoint x="1760" y="430" />
+        <di:waypoint x="1802" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_12w4oqc" bpmnElement="Flow_08yzwje">
+        <di:waypoint x="1580" y="430" />
+        <di:waypoint x="1660" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1v3823l" bpmnElement="Flow_0syketw">
+        <di:waypoint x="1400" y="430" />
+        <di:waypoint x="1480" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1bwcqav" bpmnElement="Flow_1fk0oue">
+        <di:waypoint x="1250" y="430" />
+        <di:waypoint x="1300" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1msohgw" bpmnElement="Flow_0kcay5a">
+        <di:waypoint x="810" y="430" />
+        <di:waypoint x="850" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dlu7y9_di" bpmnElement="Flow_1dlu7y9">
+        <di:waypoint x="840" y="230" />
+        <di:waypoint x="920" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15b3axr_di" bpmnElement="Flow_15b3axr">
+        <di:waypoint x="1020" y="230" />
+        <di:waypoint x="1642" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pclqub_di" bpmnElement="Flow_0pclqub">
+        <di:waypoint x="950" y="430" />
+        <di:waypoint x="1000" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wfosco_di" bpmnElement="Flow_1wfosco">
+        <di:waypoint x="1100" y="430" />
+        <di:waypoint x="1150" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1758jqw_di" bpmnElement="Flow_1758jqw">
+        <di:waypoint x="660" y="620" />
+        <di:waypoint x="740" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1riymfx_di" bpmnElement="Flow_1riymfx">
+        <di:waypoint x="840" y="620" />
+        <di:waypoint x="900" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e71822_di" bpmnElement="Flow_1e71822">
+        <di:waypoint x="1000" y="620" />
+        <di:waypoint x="1072" y="620" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

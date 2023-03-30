@@ -234,6 +234,7 @@ as
   gc_prcs_event_leave_call            constant  varchar2(20 char) := 'finish called model';
   gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
   gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
+  gc_prcs_event_warning               constant  varchar2(20 char) := 'warning';
 
   -- Process Variable Datatypes
 

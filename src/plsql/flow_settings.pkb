@@ -51,7 +51,10 @@ as
     end case;
     l_format_mask        := apex_json.get_varchar2( p_path => 'formatMask' );
 
-    apex_debug.message (p_message => 'expression type: %1, expression :%0', p0 => l_expression, p1=> l_expression_type);
+    apex_debug.message (p_message => ' --- JSON Content - expression type: %1, expression :%0, formatMask :%2'
+    , p0 => l_expression
+    , p1 => l_expression_type
+    , p2 => l_format_mask);
 
     if l_expression_type in ( flow_constants_pkg.gc_expr_type_static 
                             , flow_constants_pkg.gc_date_value_type_interval
@@ -68,6 +71,14 @@ as
 
     case 
     when l_expression_type = flow_constants_pkg.gc_expr_type_static then    
+      if l_format_mask is null then
+        -- log warning then try to use the F4A default mask
+        flow_logging.log_instance_event ( p_process_id      => pi_prcs_id
+                                        , p_event           => flow_constants_pkg.gc_prcs_event_warning
+                                        , p_comment         => 'Timestamp formatMask not present.   Attempting to convert using default Flows for APEX format'
+                                        );
+        l_format_mask := flow_constants_pkg.gc_prov_default_tstz_format;
+      end if;
       l_return_tstz := to_timestamp_tz ( l_expression, l_format_mask);
     when l_expression_type = flow_constants_pkg.gc_date_value_type_interval then
       l_return_tstz := systimestamp + to_dsinterval( l_expression );
@@ -227,6 +238,7 @@ as
                       );
       l_priority := l_result_rec.var_num;
     else
+      pragma coverage ('not_feasible');
       raise e_param_expr_invalid_type;
     end case;
     -- test priority is valid (1-5)
@@ -246,8 +258,18 @@ as
       , p0 => l_priority
       );  
       -- $F4AMESSAGE 'apex-task-priority-error' || 'Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.'    
-    when others then -- tbi
-      return null;
+    when others then 
+      apex_debug.info 
+      ( p_message => ' --- Error evaluating Priority.  Priority expression is invalid.  Expression: %0.  priority 3 returned.'
+      , p0 => l_expression
+      );  
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'settings-priority-error'
+      , p0 => l_expression
+      );  
+      -- $F4AMESSAGE 'settings-priority-error' || 'Error evaluating Priority. Priority expression is invalid.  Expression: %0.  Priority 3 used instead.'  
+      return 3;
   end get_priority;
 
   function get_vc2_expression
@@ -328,8 +350,17 @@ as
     end case;
     return l_return_value;
   exception
-    when others then -- tbi
-      return null;
+    when others then 
+      apex_debug.info 
+      ( p_message => ' --- Error evaluating Setting.  Expression is invalid.  Expression: %0. '
+      , p0 => l_expression
+      );  
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'settings-error'
+      , p0 => l_expression
+      );  
+      -- $F4AMESSAGE 'settings-error' || 'Error evaluating Setting. Expression is invalid.  Expression: %0.' 
   end get_vc2_expression;
 
   function get_clob_expression
@@ -415,7 +446,17 @@ as
     end case;
     return l_return_value;
   exception
-    when others then -- tbi
+    when others then
+      apex_debug.info 
+      ( p_message => ' --- Error evaluating Setting.  Expression is invalid.  Expression: %0. '
+      , p0 => l_expression
+      );  
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_message_key    => 'settings-error'
+      , p0 => l_expression
+      );  
+      -- $F4AMESSAGE 'settings-error' || 'Error evaluating Setting. Expression is invalid.  Expression: %0.' 
       return null;
   end get_clob_expression;
 
