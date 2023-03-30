@@ -35,6 +35,9 @@ create or replace package body test_004_proc_vars is
     g_dgrm_a04a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a04a );
     g_prcs_dgrm_id := g_dgrm_a04a_id;
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_prcs_dgrm_id);
+
     -- all running and ready for tests 
 
   end set_up_tests;

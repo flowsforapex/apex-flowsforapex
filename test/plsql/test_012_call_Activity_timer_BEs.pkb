@@ -42,6 +42,11 @@ create or replace package body test_012_call_Activity_timer_BEs is
     g_dgrm_a12b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a12b );
     g_dgrm_a12c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a12c );
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a12a_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a12b_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a12c_id);
+
     g_prcs_dgrm_id := g_dgrm_a12a_id;
 
     -- get existing scheduler frequency.  use to reset later...

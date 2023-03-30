@@ -38,6 +38,10 @@ create or replace package body test_010_variable_expressions is
         -- get dgrm_id to use for comparaison
         set_dgrm_id( g_model_a10 );
 
+        -- parse the diagrams
+        flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_id);
+
+
         -- create a new instance
         g_prcs_id := flow_api_pkg.flow_create(
            pi_dgrm_id   => g_dgrm_id

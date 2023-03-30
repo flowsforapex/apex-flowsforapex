@@ -46,6 +46,28 @@ create or replace package body test_002_gateway is
       return l_dgrm_id;
    end get_dgrm_id;
 
+   -- beforeall
+   procedure set_up_tests
+   is
+   begin
+     -- parse the diagrams
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a2));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a3));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a4));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a5));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a6));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a7));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a8));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a9));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a10));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a11));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a12));
+
+
+   end set_up_tests;
+
+
+
    --test(a. exclusive gateway - no route provided)
 
    procedure exclusive_no_route

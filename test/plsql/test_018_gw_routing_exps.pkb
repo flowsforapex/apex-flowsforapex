@@ -69,6 +69,20 @@ create or replace package body test_018_gw_routing_exps as
     g_dgrm_a18l_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a18l );
     test_dgrm_id := g_dgrm_a18a_id;
 
+    -- parse all diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18a_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18b_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18c_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18d_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18e_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18f_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18g_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18h_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18i_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18j_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18k_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a18l_id);
+
     -- create a new instance
     g_prcs_id_a := flow_api_pkg.flow_create(
        pi_dgrm_id   => test_dgrm_id
