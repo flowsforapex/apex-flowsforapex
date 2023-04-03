@@ -112,6 +112,8 @@ comment on column flow_processes.prcs_complete_ts is
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
 
+create index flow_prcs_dgrm_status_ix on flow_processes (prcs_dgrm_id, prcs_status);
+
 CREATE TABLE flow_subflow_log (
     sflg_prcs_id       NUMBER NOT NULL,
     sflg_objt_id       VARCHAR2(50) NOT NULL,
@@ -193,6 +195,13 @@ CREATE TABLE flow_instance_diagrams (
 
 COMMENT ON COLUMN flow_instance_diagrams.prdg_prdg_id is
     'Parent prdg_id (prdg_id of Calling Diagram)';
+
+alter table flow_instance_diagrams
+  add constraint flow_prdg_pk primary key ( prdg_id )
+;
+
+create index flow_prdg_dgrm_id_ix
+  on flow_instance_diagrams (prdg_dgrm_id);
 
 CREATE TABLE flow_timers (
     timr_id            NUMBER

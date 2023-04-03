@@ -21,6 +21,7 @@ PROMPT >> -------------------------------------------
 @@feature-565.sql
 @@feature-325.sql
 @@feature-581.sql
+@@feature-603.sql
 
 @@set_flows_version.sql
 
