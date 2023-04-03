@@ -146,6 +146,33 @@
         "file": "A04a - Basic Model_0.bpmn"
     },
     {
+        "dgrm_name":"A05a - Engine - Terminations",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05a - Engine - Terminations_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05b - Engine - Bad Links",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05b - Engine - Bad Links_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05c - Engine - ICE Types",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05c - Engine - ICE Types_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05d - Engine - Repeating Timer BE",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05d - Engine - Repeating Timer BE_0.bpmn"
+    },
+    {
         "dgrm_name": "A09p - Recursive Chain PQP Top",
         "dgrm_version": "0",
         "dgrm_status": "draft",
@@ -230,11 +257,11 @@
         "file": "A12a - Boundary Events with Call Activities_0.bpmn"
     },
     {
-        "dgrm_name": "A12b - Called Activity with 20 Second Delay",
+        "dgrm_name": "A12b - Called Activity with 10 Second Delay",
         "dgrm_version": "0",
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
-        "file": "A12b - Called Activity with 20 Second Delay_0.bpmn"
+        "file": "A12b - Called Activity with 10 Second Delay_0.bpmn"
     },
     {
         "dgrm_name": "A12c - Called Activity with 2 Second Delay",

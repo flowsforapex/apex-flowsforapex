@@ -53,7 +53,7 @@ create or replace package body test_012_call_Activity_timer_BEs is
 
    g_starting_scheduler_frequency := flow_timers_pkg.get_timer_repeat_interval;
 
-   flow_timers_pkg.set_timer_repeat_interval (p_repeat_interval => 'FREQ=SECONDLY;INTERVAL=2');
+--   flow_timers_pkg.set_timer_repeat_interval (p_repeat_interval => 'FREQ=SECONDLY;INTERVAL=2');
 
     -- create a new instance
     g_prcs_id := flow_api_pkg.flow_create(
@@ -201,7 +201,14 @@ create or replace package body test_012_call_Activity_timer_BEs is
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
    -- wait 25sec (20 sec + 2 sec timer cycle time)
-   dbms_session.sleep(12);
+/*   dbms_session.sleep(6);
+   flow_api_pkg.step_timers;
+
+   dbms_session.sleep(6);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(2);*/
+
+   dbms_session.sleep(20);
 
    -- test status of main and afterBE subflows after becoming current
     open l_expected for
@@ -299,7 +306,13 @@ create or replace package body test_012_call_Activity_timer_BEs is
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
    -- wait 8 sec (2 sec + 2 sec timer cycle time)
-   dbms_session.sleep(8);
+/*   dbms_session.sleep(5);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(12);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(2); */
+
+   dbms_session.sleep(20);
 
    -- test status of main  subflows after becoming current
     open l_expected for
@@ -377,7 +390,11 @@ create or replace package body test_012_call_Activity_timer_BEs is
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
    -- wait 5 sec - interruption should have occured
-   dbms_session.sleep(7);
+/*   dbms_session.sleep(7);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(2); */
+
+   dbms_session.sleep(12);
 
    -- test status of main and afterBE subflows after becoming current
     open l_expected for     
@@ -461,8 +478,14 @@ create or replace package body test_012_call_Activity_timer_BEs is
        and sbfl_id not in (g_sbfl_path1_main, g_sbfl_path2_main, g_sbfl_path3_main);
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
-   -- wait 10sec ( 10 sec timer cycle time)
-   dbms_session.sleep(7);
+/*   -- wait 10sec ( 10 sec timer cycle time)
+   dbms_session.sleep(3);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(13);
+   flow_api_pkg.step_timers; 
+   dbms_session.sleep(2);  */
+
+   dbms_session.sleep(15);
 
    -- test status of main and afterBE subflows after becoming current
     open l_expected for     
@@ -510,7 +533,7 @@ create or replace package body test_012_call_Activity_timer_BEs is
 
     -- reset existing scheduler frequency.  
 
-   flow_timers_pkg.set_timer_repeat_interval (p_repeat_interval => g_starting_scheduler_frequency );
+--   flow_timers_pkg.set_timer_repeat_interval (p_repeat_interval => g_starting_scheduler_frequency );
 
   end tear_down_process;
 
