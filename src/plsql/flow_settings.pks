@@ -9,6 +9,22 @@ as
 --
 */
 
+  --- Datatype Specific Settings Getters - Use if setting has no special options
+  function get_vc2_expression
+  ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_scope         flow_subflows.sbfl_scope%type default 0
+  ) return   flow_types_pkg.t_bpmn_attribute_vc2;
+
+  function get_clob_expression
+  ( pi_prcs_id       flow_processes.prcs_id%type
+  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_scope         flow_subflows.sbfl_scope%type default 0
+  ) return   clob;
+
+  -- setting-specific getters - use if the setting is not standard...
   function get_due_on
   ( pi_prcs_id       flow_processes.prcs_id%type
   , pi_sbfl_id       flow_subflows.sbfl_id%type default null
@@ -22,55 +38,6 @@ as
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return flow_processes.prcs_priority%type;
-
-  function get_potential_users
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_scope         flow_subflows.sbfl_scope%type default 0
-  ) return   flow_types_pkg.t_bpmn_attribute_vc2;
-
-  function get_potential_groups
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_scope         flow_subflows.sbfl_scope%type default 0
-  ) return   flow_types_pkg.t_bpmn_attribute_vc2;
-
-  function get_excluded_users
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_scope         flow_subflows.sbfl_scope%type default 0
-  ) return   flow_types_pkg.t_bpmn_attribute_vc2;
-
-  function get_message_name
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_scope         flow_subflows.sbfl_scope%type default 0
-  ) return   flow_types_pkg.t_bpmn_attribute_vc2;
-
-  function get_correlation_key
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_scope         flow_subflows.sbfl_scope%type default 0
-  ) return   flow_types_pkg.t_bpmn_attribute_vc2;
-
-  function get_correlation_value
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_scope         flow_subflows.sbfl_scope%type default 0
-  ) return   flow_types_pkg.t_bpmn_attribute_vc2;  
-
-  function get_payload
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
-  , pi_scope         flow_subflows.sbfl_scope%type default 0
-  ) return   clob;  
 
   function get_endpoint
   ( pi_prcs_id       flow_processes.prcs_id%type
