@@ -6,7 +6,7 @@ create index flow_prcs_dgrm_status_ix
 alter table flow_instance_diagrams
   add constraint flow_prdg_pk primary key ( prdg_id );
 
-create index flow_prdg_dgrm_id_ix
-  on flow_instance_diagrams (prdg_dgrm_id);
+create index flow_prdg_dgrm_prcs_ix
+  on flow_instance_diagrams (prdg_prcs_id, prdg_dgrm_id);
 
 PROMPT >> Updated View flow_p0002_diagrams_vw will get installed via common_db_objects.sql

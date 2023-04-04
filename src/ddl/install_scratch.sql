@@ -200,8 +200,8 @@ alter table flow_instance_diagrams
   add constraint flow_prdg_pk primary key ( prdg_id )
 ;
 
-create index flow_prdg_dgrm_id_ix
-  on flow_instance_diagrams (prdg_dgrm_id);
+create index flow_prdg_dgrm_prcs_ix
+  on flow_instance_diagrams (prdg_prcs_id, prdg_dgrm_id);
 
 CREATE TABLE flow_timers (
     timr_id            NUMBER

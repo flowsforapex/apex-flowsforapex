@@ -3,7 +3,7 @@ create or replace view flow_p0002_diagrams_vw
 as
   with instance_numbers as
   (
-    select prcs_dgrm_id as dgrm_id
+    select prdg_dgrm_id as dgrm_id
          , created_cnt
          , running_cnt
          , completed_cnt
@@ -11,13 +11,12 @@ as
          , error_cnt
          , created_cnt + running_cnt + completed_cnt + terminated_cnt + error_cnt as total_cnt 
       from (
-             select prcs.prcs_dgrm_id
+             select prdg.prdg_dgrm_id
                   , prcs.prcs_status
                from flow_processes prcs
-              where exists ( select null
-                               from flow_instance_diagrams prdg
-                              where prdg.prdg_dgrm_id = prcs.prcs_dgrm_id
-                           )
+               join flow_instance_diagrams prdg
+                 on prdg.prdg_prcs_id = prcs.prcs_id
+           group by prcs.prcs_id, prdg.prdg_dgrm_id, prcs.prcs_status
            )
      pivot (
              count(*) for
@@ -36,8 +35,8 @@ as
          , apex_page.get_url(p_page => 7, p_items => 'P7_DGRM_ID', p_values => d.dgrm_id) as edit_link
          , apex_page.get_url(p_page => 11, p_items => 'P11_DGRM_ID', p_values => d.dgrm_id) as create_instance_link
          , decode(inst_nums.total_cnt, 0, null, inst_nums.total_cnt) as instances 
-         , case when exists( select null from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id ) then 'No' else 'Yes' end as diagram_parsed
-         , case when exists( select null from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id ) then 'fa-times-circle-o fa-lg u-danger-text' else 'fa-check-circle-o fa-lg u-success-text' end as diagram_parsed_icon
+         , case when not exists( select null from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id ) then 'No' else 'Yes' end as diagram_parsed
+         , case when not exists( select null from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id ) then 'fa-times-circle-o fa-lg u-danger-text' else 'fa-check-circle-o fa-lg u-success-text' end as diagram_parsed_icon
          , case dgrm_status
              when 'draft'      then 'fa fa-wrench'
              when 'released'   then 'fa fa-check'
