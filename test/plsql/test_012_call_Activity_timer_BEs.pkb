@@ -9,7 +9,7 @@ create or replace package body test_012_call_Activity_timer_BEs is
 */
 
   g_model_a12a constant varchar2(100) := 'A12a - Boundary Events with Call Activities';
-  g_model_a12b constant varchar2(100) := 'A12b - Called Activity with 20 Second Delay';
+  g_model_a12b constant varchar2(100) := 'A12b - Called Activity with 10 Second Delay';
   g_model_a12c constant varchar2(100) := 'A12c - Called Activity with 2 Second Delay';
 
   g_test_prcs_name constant varchar2(100) := 'test - CallActivity Timer BEs';
@@ -29,6 +29,8 @@ create or replace package body test_012_call_Activity_timer_BEs is
   g_dgrm_a12b_id  flow_diagrams.dgrm_id%type;
   g_dgrm_a12c_id  flow_diagrams.dgrm_id%type;
 
+  g_starting_scheduler_frequency   sys.all_scheduler_jobs.repeat_interval%type;
+
   procedure set_up_process
   is
     l_actual   sys_refcursor;
@@ -40,7 +42,18 @@ create or replace package body test_012_call_Activity_timer_BEs is
     g_dgrm_a12b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a12b );
     g_dgrm_a12c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a12c );
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a12a_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a12b_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a12c_id);
+
     g_prcs_dgrm_id := g_dgrm_a12a_id;
+
+    -- get existing scheduler frequency.  use to reset later...
+
+   g_starting_scheduler_frequency := flow_timers_pkg.get_timer_repeat_interval;
+
+--   flow_timers_pkg.set_timer_repeat_interval (p_repeat_interval => 'FREQ=SECONDLY;INTERVAL=2');
 
     -- create a new instance
     g_prcs_id := flow_api_pkg.flow_create(
@@ -135,6 +148,8 @@ create or replace package body test_012_call_Activity_timer_BEs is
       and sbfl_current = 'Activity_Pre4';         
       
       -- all running and ready for tests
+
+
   end set_up_process;
    
 
@@ -174,7 +189,7 @@ create or replace package body test_012_call_Activity_timer_BEs is
        select
           g_prcs_id as sbfl_prcs_id,
           g_dgrm_a12b_id as sbfl_dgrm_id,
-          'Event_DelayTimer20s' as sbfl_current,
+          'Event_DelayTimer10s' as sbfl_current,
           flow_constants_pkg.gc_sbfl_status_waiting_timer sbfl_status
        from dual;
     open l_actual for
@@ -185,8 +200,15 @@ create or replace package body test_012_call_Activity_timer_BEs is
        and sbfl_id not in (g_sbfl_path2_main, g_sbfl_path3_main, g_sbfl_path4_main);
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
-   -- wait 30sec (20 sec + 10 sec timer cycle time)
-   dbms_session.sleep(35);
+   -- wait 25sec (20 sec + 2 sec timer cycle time)
+/*   dbms_session.sleep(6);
+   flow_api_pkg.step_timers;
+
+   dbms_session.sleep(6);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(2);*/
+
+   dbms_session.sleep(20);
 
    -- test status of main and afterBE subflows after becoming current
     open l_expected for
@@ -283,7 +305,13 @@ create or replace package body test_012_call_Activity_timer_BEs is
        and sbfl_id not in (g_sbfl_path1_main, g_sbfl_path3_main, g_sbfl_path4_main);
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
-   -- wait 30sec (20 sec + 10 sec timer cycle time)
+   -- wait 8 sec (2 sec + 2 sec timer cycle time)
+/*   dbms_session.sleep(5);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(12);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(2); */
+
    dbms_session.sleep(20);
 
    -- test status of main  subflows after becoming current
@@ -350,7 +378,7 @@ create or replace package body test_012_call_Activity_timer_BEs is
        select
           g_prcs_id as sbfl_prcs_id,
           g_dgrm_a12b_id as sbfl_dgrm_id,
-          'Event_DelayTimer20s' as sbfl_current,
+          'Event_DelayTimer10s' as sbfl_current,
           flow_constants_pkg.gc_sbfl_status_waiting_timer sbfl_status
        from dual;
     open l_actual for
@@ -361,8 +389,12 @@ create or replace package body test_012_call_Activity_timer_BEs is
        and sbfl_id not in (g_sbfl_path1_main, g_sbfl_path2_main, g_sbfl_path4_main);
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
-   -- wait 30sec (10 sec + 10 sec timer cycle time)
-   dbms_session.sleep(21);
+   -- wait 5 sec - interruption should have occured
+/*   dbms_session.sleep(7);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(2); */
+
+   dbms_session.sleep(12);
 
    -- test status of main and afterBE subflows after becoming current
     open l_expected for     
@@ -446,7 +478,13 @@ create or replace package body test_012_call_Activity_timer_BEs is
        and sbfl_id not in (g_sbfl_path1_main, g_sbfl_path2_main, g_sbfl_path3_main);
     ut.expect( l_actual ).to_equal( l_expected ).unordered;
 
-   -- wait 30sec (2 sec + 10 sec timer cycle time)
+/*   -- wait 10sec ( 10 sec timer cycle time)
+   dbms_session.sleep(3);
+   flow_api_pkg.step_timers;
+   dbms_session.sleep(13);
+   flow_api_pkg.step_timers; 
+   dbms_session.sleep(2);  */
+
    dbms_session.sleep(15);
 
    -- test status of main and afterBE subflows after becoming current
@@ -492,6 +530,11 @@ create or replace package body test_012_call_Activity_timer_BEs is
   is
   begin
     flow_api_pkg.flow_delete (p_process_id => g_prcs_id);
+
+    -- reset existing scheduler frequency.  
+
+--   flow_timers_pkg.set_timer_repeat_interval (p_repeat_interval => g_starting_scheduler_frequency );
+
   end tear_down_process;
 
 end test_012_call_Activity_timer_BEs;

@@ -322,7 +322,7 @@ begin
        where prov.prov_prcs_id          = pi_prcs_id
          and prov.prov_scope            = pi_scope
          and upper(prov.prov_var_name)  = upper(pi_var_name)
-         and prov.prov_var_type         = flow_constants_pkg.gc_prov_var_type_date
+         and prov.prov_var_type         = flow_constants_pkg.gc_prov_var_type_tstz
            ;
     when others
     then

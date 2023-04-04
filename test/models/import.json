@@ -81,7 +81,7 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A02k - Inc GW Merge and Resplit - GRExps_0.bpmn"
-      }
+      },
     {
         "dgrm_name": "A03a - Model with No Start Event",
         "dgrm_version": "0",
@@ -144,6 +144,33 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A04a - Basic Model_0.bpmn"
+    },
+    {
+        "dgrm_name":"A05a - Engine - Terminations",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05a - Engine - Terminations_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05b - Engine - Bad Links",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05b - Engine - Bad Links_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05c - Engine - ICE Types",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05c - Engine - ICE Types_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05d - Engine - Repeating Timer BE",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05d - Engine - Repeating Timer BE_0.bpmn"
     },
     {
         "dgrm_name": "A09p - Recursive Chain PQP Top",
@@ -230,11 +257,11 @@
         "file": "A12a - Boundary Events with Call Activities_0.bpmn"
     },
     {
-        "dgrm_name": "A12b - Called Activity with 20 Second Delay",
+        "dgrm_name": "A12b - Called Activity with 10 Second Delay",
         "dgrm_version": "0",
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
-        "file": "A12b - Called Activity with 20 Second Delay_0.bpmn"
+        "file": "A12b - Called Activity with 10 Second Delay_0.bpmn"
     },
     {
         "dgrm_name": "A12c - Called Activity with 2 Second Delay",
@@ -417,5 +444,50 @@
       "dgrm_status": "draft",
       "dgrm_category": "Testing",
       "file": "A18l - Exclusive GW ABC No Conds No Def_0.bpmn"
-    }
+    },
+    {"dgrm_name":"A19a - Priority and Due Dates",
+    "dgrm_version":"0",
+    "dgrm_status":"draft",
+    "dgrm_category":"Testing",
+    "file":"A19a - Priority and Due Dates_0.bpmn"
+    },
+    {
+      "dgrm_name":"A19b - Priority and Due Dates - Scheduler",
+      "dgrm_version":"0","dgrm_status":"draft",
+      "dgrm_category":"Testing",
+      "file":"A19b - Priority and Due Dates - Scheduler_0.bpmn"
+    },
+    {
+      "dgrm_name":"A19c - Priority and Due Dates - Interval",
+      "dgrm_version":"0",
+      "dgrm_status":"draft",
+      "dgrm_category":"Testing",
+      "file":"A19c - Priority and Due Dates - Interval_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19d - Priority and Due Dates - Proc Var",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19d - Priority and Due Dates - Proc Var_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19e - Priority and Due Dates - SQL",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19e - Priority and Due Dates - SQL_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19f - Priority and Due Dates - Expressions",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19f - Priority and Due Dates - Expressions_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19g - Priority and Due Dates - Func Bodies",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19g - Priority and Due Dates - Func Bodies_0.bpmn"
+    }   
 ]

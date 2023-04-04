@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_rawgoamu" isExecutable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_07ryazt</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_BeforeA" name="BeforeA">
+      <bpmn:incoming>Flow_07ryazt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1igelz7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_07ryazt" sourceRef="Event_Start" targetRef="Activity_BeforeA" />
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:incoming>Flow_1igelz7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nhydje</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1igelz7" sourceRef="Activity_BeforeA" targetRef="Activity_A" />
+    <bpmn:endEvent id="Event_0q5kav1" name="EndA">
+      <bpmn:incoming>Flow_0nhydje</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0nhydje" sourceRef="Activity_A" targetRef="Event_0q5kav1" />
+    <bpmn:boundaryEvent id="Event_NITimerBE" name="NITimerBE (8s)" cancelActivity="false" attachedToRef="Activity_A">
+      <bpmn:outgoing>Flow_0ptczxu</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_04fbl4b">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R4/PT8S</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Activity_AReminder" name="AReminder">
+      <bpmn:incoming>Flow_0ptczxu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jhzn0i</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ptczxu" sourceRef="Event_NITimerBE" targetRef="Activity_AReminder" />
+    <bpmn:endEvent id="Event_AReminderEnd" name="AReminderEnd">
+      <bpmn:incoming>Flow_0jhzn0i</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0jhzn0i" sourceRef="Activity_AReminder" targetRef="Event_AReminderEnd" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_rawgoamu">
+      <bpmndi:BPMNShape id="Event_0mre253_di" bpmnElement="Event_Start">
+        <dc:Bounds x="302" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="308" y="305" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00171rj_di" bpmnElement="Activity_BeforeA">
+        <dc:Bounds x="390" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ceckk8_di" bpmnElement="Activity_A">
+        <dc:Bounds x="550" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0q5kav1_di" bpmnElement="Event_0q5kav1">
+        <dc:Bounds x="712" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="717" y="305" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yr6ljw_di" bpmnElement="Activity_AReminder">
+        <dc:Bounds x="670" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1nwdi2o_di" bpmnElement="Event_AReminderEnd">
+        <dc:Bounds x="822" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="803" y="425" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1j092ij_di" bpmnElement="Event_NITimerBE">
+        <dc:Bounds x="582" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="524" y="345" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_07ryazt_di" bpmnElement="Flow_07ryazt">
+        <di:waypoint x="338" y="280" />
+        <di:waypoint x="390" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1igelz7_di" bpmnElement="Flow_1igelz7">
+        <di:waypoint x="490" y="280" />
+        <di:waypoint x="550" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nhydje_di" bpmnElement="Flow_0nhydje">
+        <di:waypoint x="650" y="280" />
+        <di:waypoint x="712" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ptczxu_di" bpmnElement="Flow_0ptczxu">
+        <di:waypoint x="600" y="338" />
+        <di:waypoint x="600" y="400" />
+        <di:waypoint x="670" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jhzn0i_di" bpmnElement="Flow_0jhzn0i">
+        <di:waypoint x="770" y="400" />
+        <di:waypoint x="822" y="400" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

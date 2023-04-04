@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A19b" name="A19b - Priority and Due Dates - Scheduler" isExecutable="true" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:priority>
+        <apex:expressionType>static</apex:expressionType>
+        <apex:expression>3</apex:expression>
+      </apex:priority>
+      <apex:dueOn>
+        <apex:expressionType>oracleScheduler</apex:expressionType>
+        <apex:expression>FREQ=HOURLY;INTERVAL=5</apex:expression>
+      </apex:dueOn>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_0jpu8h5" name="start">
+      <bpmn:outgoing>Flow_1t6bruk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:incoming>Flow_1t6bruk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dmebxb</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1t6bruk" sourceRef="Event_0jpu8h5" targetRef="Activity_A" />
+    <bpmn:endEvent id="Event_0ys24c1" name="end">
+      <bpmn:incoming>Flow_1dmebxb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1dmebxb" sourceRef="Activity_A" targetRef="Event_0ys24c1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A19b">
+      <bpmndi:BPMNShape id="Event_0jpu8h5_di" bpmnElement="Event_0jpu8h5">
+        <dc:Bounds x="332" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="339" y="315" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sxned1_di" bpmnElement="Activity_A">
+        <dc:Bounds x="420" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ys24c1_di" bpmnElement="Event_0ys24c1">
+        <dc:Bounds x="572" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="581" y="315" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1t6bruk_di" bpmnElement="Flow_1t6bruk">
+        <di:waypoint x="368" y="290" />
+        <di:waypoint x="420" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dmebxb_di" bpmnElement="Flow_1dmebxb">
+        <di:waypoint x="520" y="290" />
+        <di:waypoint x="572" y="290" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

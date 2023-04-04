@@ -27,6 +27,9 @@ create or replace package body test_016_splitting_gw_errors as
     g_dgrm_a16a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a16a );
     g_prcs_dgrm_id := g_dgrm_a16a_id;
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a16a_id);
+
     -- create a new instance
     g_prcs_id := flow_api_pkg.flow_create(
        pi_dgrm_id   => g_prcs_dgrm_id

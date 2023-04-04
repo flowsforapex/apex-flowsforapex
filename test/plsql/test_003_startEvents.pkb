@@ -54,6 +54,17 @@ create or replace package body test_003_startEvents is
      g_dgrm_a03f_id := test_helper.set_dgrm_id (pi_dgrm_name => g_model_a03f);
      g_dgrm_a03g_id := test_helper.set_dgrm_id (pi_dgrm_name => g_model_a03g);
      g_dgrm_a03h_id := test_helper.set_dgrm_id (pi_dgrm_name => g_model_a03h);
+
+     -- parse the diagrams
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03a_id);
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03b_id);
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03c_id);
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03d_id);
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03e_id);
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03f_id);
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03g_id);
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a03h_id);
+
    end setup_tests;
 
    --test(03a - no start event)

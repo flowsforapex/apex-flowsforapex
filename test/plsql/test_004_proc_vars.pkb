@@ -18,6 +18,9 @@ create or replace package body test_004_proc_vars is
   g_prcs_id_3       flow_processes.prcs_id%type;
   g_prcs_id_4       flow_processes.prcs_id%type;
   g_prcs_id_5       flow_processes.prcs_id%type;
+  g_prcs_id_6       flow_processes.prcs_id%type;
+  g_prcs_id_7       flow_processes.prcs_id%type;
+  g_prcs_id_8       flow_processes.prcs_id%type;
   g_prcs_dgrm_id  flow_diagrams.dgrm_id%type; -- process level diagram id
   g_dgrm_a04a_id  flow_diagrams.dgrm_id%type;
 
@@ -31,6 +34,9 @@ create or replace package body test_004_proc_vars is
     -- get dgrm_ids to use for comparison
     g_dgrm_a04a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a04a );
     g_prcs_dgrm_id := g_dgrm_a04a_id;
+
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_prcs_dgrm_id);
 
     -- all running and ready for tests 
 
@@ -878,6 +884,287 @@ create or replace package body test_004_proc_vars is
 
    end var_case_sensitivity_date;
 
+  -- test(3a. Bad Format data - number)
+  procedure bad_format_num
+   is
+      l_prcs_id  flow_processes.prcs_id%type;
+      l_dgrm_id  flow_diagrams.dgrm_id%type;
+      l_actual   sys_refcursor;
+      l_expected sys_refcursor;
+      l_num_var_name varchar2(10) := 'num_var';
+      l_bad_val      varchar2(10) := 'abc';
+      l_actual_num number;
+
+   
+      l_rec flow_process_variables%rowtype;
+   begin
+    -- create a new instance
+    g_prcs_id_6 := flow_api_pkg.flow_create(
+       pi_dgrm_id   => g_prcs_dgrm_id
+     , pi_prcs_name => g_test_prcs_name
+    );
+    l_dgrm_id := g_dgrm_a04a_id;
+    l_prcs_id := g_prcs_id_6;
+    -- check no existing process variables
+    
+    open l_actual for
+    select *
+    from flow_process_variables
+    where prov_prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_have_count( 0 );
+    
+    -- start process and check running status
+    
+    flow_api_pkg.flow_start( p_process_id => l_prcs_id );
+
+    open l_expected for
+        select
+        g_prcs_dgrm_id                              as prcs_dgrm_id,
+        g_test_prcs_name                            as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );  
+     
+    -- check subflow running
+   
+      open l_expected for
+         select
+            l_prcs_id           as sbfl_prcs_id,
+            l_dgrm_id           as sbfl_dgrm_id,
+            'A'                 as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running as sbfl_status
+         from dual;
+
+      open l_actual for
+         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+         from flow_subflows 
+         where sbfl_prcs_id = l_prcs_id
+         and sbfl_status not like 'split';
+
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+      open l_expected for
+          select l_dgrm_id as prcs_dgrm_id
+               , g_test_prcs_name as prcs_name
+               , flow_constants_pkg.gc_prcs_status_running as prcs_status 
+            from dual;
+
+      open l_actual for
+         select prcs_dgrm_id, prcs_name, prcs_status from flow_processes where prcs_id = l_prcs_id;
+
+      ut.expect( l_actual ).to_equal( l_expected );  
+
+      -- check no existing process variables
+
+      open l_actual for
+      select *
+      from flow_process_variables
+      where prov_prcs_id = l_prcs_id;
+      ut.expect( l_actual ).to_have_count( 0 );
+
+      -- ready to start test
+
+      -- Set variable originally to lower case value
+      flow_process_vars.set_var(
+           pi_prcs_id     => l_prcs_id
+         , pi_var_name     => l_num_var_name
+         , pi_num_value   => l_bad_val
+      );
+
+   end bad_format_num;
+
+  -- test(3b. Bad Format data - date)
+
+  procedure bad_format_date
+   is
+      l_prcs_id  flow_processes.prcs_id%type;
+      l_dgrm_id  flow_diagrams.dgrm_id%type;
+      l_actual   sys_refcursor;
+      l_expected sys_refcursor;
+      l_date_var_name varchar2(20) := 'num_date';
+      l_bad_val      varchar2(30) := '12 ter 1984';
+      l_actual_num number;
+
+   
+      l_rec flow_process_variables%rowtype;
+   begin
+    -- create a new instance
+    g_prcs_id_7 := flow_api_pkg.flow_create(
+       pi_dgrm_id   => g_prcs_dgrm_id
+     , pi_prcs_name => g_test_prcs_name
+    );
+    l_dgrm_id := g_dgrm_a04a_id;
+    l_prcs_id := g_prcs_id_7;
+    -- check no existing process variables
+    
+    open l_actual for
+    select *
+    from flow_process_variables
+    where prov_prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_have_count( 0 );
+    
+    -- start process and check running status
+    
+    flow_api_pkg.flow_start( p_process_id => l_prcs_id );
+
+    open l_expected for
+        select
+        g_prcs_dgrm_id                              as prcs_dgrm_id,
+        g_test_prcs_name                            as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );  
+     
+    -- check subflow running
+   
+      open l_expected for
+         select
+            l_prcs_id           as sbfl_prcs_id,
+            l_dgrm_id           as sbfl_dgrm_id,
+            'A'                 as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running as sbfl_status
+         from dual;
+
+      open l_actual for
+         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+         from flow_subflows 
+         where sbfl_prcs_id = l_prcs_id
+         and sbfl_status not like 'split';
+
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+      open l_expected for
+          select l_dgrm_id as prcs_dgrm_id
+               , g_test_prcs_name as prcs_name
+               , flow_constants_pkg.gc_prcs_status_running as prcs_status 
+            from dual;
+
+      open l_actual for
+         select prcs_dgrm_id, prcs_name, prcs_status from flow_processes where prcs_id = l_prcs_id;
+
+      ut.expect( l_actual ).to_equal( l_expected );  
+
+      -- check no existing process variables
+
+      open l_actual for
+      select *
+      from flow_process_variables
+      where prov_prcs_id = l_prcs_id;
+      ut.expect( l_actual ).to_have_count( 0 );
+
+      -- ready to start test
+
+      -- Set variable originally to lower case value
+      flow_process_vars.set_var(
+           pi_prcs_id     => l_prcs_id
+         , pi_var_name     => l_date_var_name
+         , pi_date_value   => l_bad_val
+      );
+
+   end bad_format_date;
+
+
+  -- test(3c. Bad Format data - tstz)
+  procedure bad_format_tstz
+   is
+      l_prcs_id  flow_processes.prcs_id%type;
+      l_dgrm_id  flow_diagrams.dgrm_id%type;
+      l_actual   sys_refcursor;
+      l_expected sys_refcursor;
+      l_tstz_var_name varchar2(20) := 'tstz_var';
+      l_bad_val      varchar2(30) := '2023-MAR-08 18:30:15 GMT';
+      l_actual_num number;
+
+   
+      l_rec flow_process_variables%rowtype;
+   begin
+    -- create a new instance
+    g_prcs_id_8 := flow_api_pkg.flow_create(
+       pi_dgrm_id   => g_prcs_dgrm_id
+     , pi_prcs_name => g_test_prcs_name
+    );
+    l_dgrm_id := g_dgrm_a04a_id;
+    l_prcs_id := g_prcs_id_8;
+    -- check no existing process variables
+    
+    open l_actual for
+    select *
+    from flow_process_variables
+    where prov_prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_have_count( 0 );
+    
+    -- start process and check running status
+    
+    flow_api_pkg.flow_start( p_process_id => l_prcs_id );
+
+    open l_expected for
+        select
+        g_prcs_dgrm_id                              as prcs_dgrm_id,
+        g_test_prcs_name                            as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );  
+     
+    -- check subflow running
+   
+      open l_expected for
+         select
+            l_prcs_id           as sbfl_prcs_id,
+            l_dgrm_id           as sbfl_dgrm_id,
+            'A'                 as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running as sbfl_status
+         from dual;
+
+      open l_actual for
+         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+         from flow_subflows 
+         where sbfl_prcs_id = l_prcs_id
+         and sbfl_status not like 'split';
+
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+      open l_expected for
+          select l_dgrm_id as prcs_dgrm_id
+               , g_test_prcs_name as prcs_name
+               , flow_constants_pkg.gc_prcs_status_running as prcs_status 
+            from dual;
+
+      open l_actual for
+         select prcs_dgrm_id, prcs_name, prcs_status from flow_processes where prcs_id = l_prcs_id;
+
+      ut.expect( l_actual ).to_equal( l_expected );  
+
+      -- check no existing process variables
+
+      open l_actual for
+      select *
+      from flow_process_variables
+      where prov_prcs_id = l_prcs_id;
+      ut.expect( l_actual ).to_have_count( 0 );
+
+      -- ready to start test
+
+      -- Set variable originally to lower case value
+      flow_process_vars.set_var(
+           pi_prcs_id     => l_prcs_id
+         , pi_var_name     => l_tstz_var_name
+         , pi_tstz_value   => l_bad_val
+      );
+
+   end bad_format_tstz;
+
   -- afterall
   procedure tear_down_tests 
   is
@@ -892,6 +1179,12 @@ create or replace package body test_004_proc_vars is
                              p_comment  => 'Ran by utPLSQL as Test Suite 004');
     flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_5,
                              p_comment  => 'Ran by utPLSQL as Test Suite 004');
+    flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_6,
+                             p_comment  => 'Ran by utPLSQL as Test Suite 004');   
+    flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_7,
+                             p_comment  => 'Ran by utPLSQL as Test Suite 004');    
+    flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_8,
+                             p_comment  => 'Ran by utPLSQL as Test Suite 004');                                                                                
     ut.expect( v('APP_SESSION')).to_be_null;
            
   end tear_down_tests;

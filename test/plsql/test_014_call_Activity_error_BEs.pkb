@@ -46,6 +46,13 @@ create or replace package body test_014_call_Activity_error_BEs is
 
     g_prcs_dgrm_id := g_dgrm_a14a_id;
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a14a_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a14b_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a14c_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a14d_id);
+
+
     -- create a new instance
     g_prcs_id := flow_api_pkg.flow_create(
        pi_dgrm_id   => g_prcs_dgrm_id
