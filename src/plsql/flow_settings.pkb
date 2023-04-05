@@ -273,9 +273,9 @@ as
   end get_priority;
 
   function get_vc2_expression
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  ( pi_prcs_id       flow_processes.prcs_id%type default null
+  , pi_sbfl_id       flow_subflows.sbfl_id%type default null
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2 default null
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return flow_types_pkg.t_bpmn_attribute_vc2
   is
@@ -285,6 +285,7 @@ as
     l_expression_kind                 apex_json.t_kind;
     e_param_proc_var_invalid_type     exception;
     e_param_expr_invalid_type         exception;
+    e_param_type_requires_prcs_id     exception;
     l_return_value                    flow_types_pkg.t_bpmn_attribute_vc2;
     l_result_rec                      flow_proc_vars_int.t_proc_var_value;
   begin
@@ -292,6 +293,11 @@ as
     ( 'get_vc2_expression'
     , 'pi_expr'   , pi_expr
     );
+    
+    if pi_expr is null then
+      return null;
+    end if;
+
     apex_json.parse ( p_source => pi_expr);
 
     l_expression_type  := apex_json.get_varchar2 ( p_path => 'expressionType');
@@ -307,6 +313,10 @@ as
     when l_expression_type = flow_constants_pkg.gc_expr_type_static then
       l_return_value := l_expression;
     when l_expression_type = flow_constants_pkg.gc_expr_type_proc_var then
+      if pi_prcs_id is null then 
+        -- proc var setting type cannot be used without a prcs_id
+        raise e_param_type_requires_prcs_id; 
+      end if;
       case flow_proc_vars_int.get_var_type ( pi_prcs_id   => pi_prcs_id
                                            , pi_var_name  => l_expression
                                            , pi_scope     => pi_scope
@@ -350,17 +360,22 @@ as
     end case;
     return l_return_value;
   exception
+    when e_param_type_requires_prcs_id then
+      flow_errors.handle_general_error (pi_message_key => 'settings-procvar-no-prcs');
+      -- $F4AMESSAGE 'settings-procvar-no-prcs' || 'Settings cannot specify Process Variable without a Process ID.'
     when others then 
       apex_debug.info 
-      ( p_message => ' --- Error evaluating Setting.  Expression is invalid.  Expression: %0. '
+      ( p_message => ' --- Error evaluating Setting.  Expression is invalid.  Expression: %0. SQL Error: %1'
       , p0 => l_expression
+      , p1 => sqlerrm
       );  
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_message_key    => 'settings-error'
       , p0 => l_expression
+      , p1 => sqlerrm
       );  
-      -- $F4AMESSAGE 'settings-error' || 'Error evaluating Setting. Expression is invalid.  Expression: %0.' 
+      -- $F4AMESSAGE 'settings-error' || 'Error evaluating Setting. Expression is invalid.  Expression: %0. SQL Error: %1' 
   end get_vc2_expression;
 
   function get_clob_expression

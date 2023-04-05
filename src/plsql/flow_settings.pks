@@ -11,15 +11,15 @@ as
 
   --- Datatype Specific Settings Getters - Use if setting has no special options
   function get_vc2_expression
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  ( pi_prcs_id       flow_processes.prcs_id%type default null
+  , pi_sbfl_id       flow_subflows.sbfl_id%type default null
+  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2 default null
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return   flow_types_pkg.t_bpmn_attribute_vc2;
 
   function get_clob_expression
-  ( pi_prcs_id       flow_processes.prcs_id%type
-  , pi_sbfl_id       flow_subflows.sbfl_id%type
+  ( pi_prcs_id       flow_processes.prcs_id%type  default null
+  , pi_sbfl_id       flow_subflows.sbfl_id%type  default null
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return   clob;

@@ -11,11 +11,11 @@ as
 */
 
   function exec_flows_sql
-  ( pi_prcs_id        flow_processes.prcs_id%type
-  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  ( pi_prcs_id        flow_processes.prcs_id%type default null
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_sql_text       varchar2
   , pi_result_type    varchar2  
-  , pi_scope          flow_subflows.sbfl_scope%type
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
   ) return flow_proc_vars_int.t_proc_var_value
   as  
@@ -40,20 +40,23 @@ as
     l_result_rec.var_type   := pi_result_type;
 
     l_sql_text := rtrim ( l_sql_text, ';');
-    -- substitute any F4A Process Variables
-    flow_proc_vars_int.do_substitution
-    ( pi_prcs_id => pi_prcs_id
-    , pi_sbfl_id => pi_sbfl_id
-    , pi_scope   => pi_scope
-    , pio_string => l_sql_text
-    );
-    -- get bind parameters
-    l_bind_parameters := flow_proc_vars_int.get_parameter_list
-                            ( pi_expr               => l_sql_text
-                            , pi_prcs_id            => pi_prcs_id
-                            , pi_sbfl_id            => pi_sbfl_id
-                            , pi_scope              => pi_scope
-                            );
+
+    if pi_prcs_id is not null then
+      -- substitute any F4A Process Variables
+      flow_proc_vars_int.do_substitution
+      ( pi_prcs_id => pi_prcs_id
+      , pi_sbfl_id => pi_sbfl_id
+      , pi_scope   => pi_scope
+      , pio_string => l_sql_text
+      );
+      -- get bind parameters
+      l_bind_parameters := flow_proc_vars_int.get_parameter_list
+                              ( pi_expr               => l_sql_text
+                              , pi_prcs_id            => pi_prcs_id
+                              , pi_sbfl_id            => pi_sbfl_id
+                              , pi_scope              => pi_scope
+                              );
+    end if;
     l_context := apex_exec.open_query_context
                       ( p_location          => apex_exec.c_location_local_db
                       , p_sql_query         => l_sql_text
@@ -227,10 +230,10 @@ as
   end exec_flows_sql;
 
   function exec_flows_plsql_vc2
-  ( pi_prcs_id         flow_processes.prcs_id%type
-  , pi_sbfl_id         flow_subflows.sbfl_id%type
+  ( pi_prcs_id         flow_processes.prcs_id%type default null
+  , pi_sbfl_id         flow_subflows.sbfl_id%type default null
   , pi_plsql_text      varchar2
-  , pi_scope           flow_subflows.sbfl_scope%type
+  , pi_scope           flow_subflows.sbfl_scope%type default 0
   , pi_expr_type       flow_types_pkg.t_expr_type
   , pi_bind_parameters apex_exec.t_parameters
   ) return flow_proc_vars_int.t_proc_var_value
@@ -276,10 +279,10 @@ as
   end exec_flows_plsql_vc2;
 
   function exec_flows_plsql_num
-  ( pi_prcs_id        flow_processes.prcs_id%type
-  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  ( pi_prcs_id        flow_processes.prcs_id%type default null
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_plsql_text     varchar2
-  , pi_scope          flow_subflows.sbfl_scope%type
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
   , pi_bind_parameters apex_exec.t_parameters
   ) return flow_proc_vars_int.t_proc_var_value
@@ -330,10 +333,10 @@ as
   end exec_flows_plsql_num;
 
   function exec_flows_plsql_date
-  ( pi_prcs_id        flow_processes.prcs_id%type
-  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  ( pi_prcs_id        flow_processes.prcs_id%type default null
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_plsql_text     varchar2
-  , pi_scope          flow_subflows.sbfl_scope%type
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
   , pi_bind_parameters apex_exec.t_parameters
   ) return flow_proc_vars_int.t_proc_var_value
@@ -386,10 +389,10 @@ as
   end exec_flows_plsql_date;
 
   function exec_flows_plsql_tstz
-  ( pi_prcs_id        flow_processes.prcs_id%type
-  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  ( pi_prcs_id        flow_processes.prcs_id%type default null
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_plsql_text     varchar2
-  , pi_scope          flow_subflows.sbfl_scope%type
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
   , pi_bind_parameters apex_exec.t_parameters
   ) return flow_proc_vars_int.t_proc_var_value
@@ -445,11 +448,11 @@ as
   end exec_flows_plsql_tstz;
 
   function exec_flows_plsql
-  ( pi_prcs_id        flow_processes.prcs_id%type
-  , pi_sbfl_id        flow_subflows.sbfl_id%type
+  ( pi_prcs_id        flow_processes.prcs_id%type default null
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_plsql_text     varchar2
   , pi_result_type    varchar2  
-  , pi_scope          flow_subflows.sbfl_scope%type
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
   ) return flow_proc_vars_int.t_proc_var_value
   is
@@ -464,20 +467,22 @@ as
     , 'plsql text', pi_plsql_text
     , 'plsql type' , pi_expr_type 
     );
-    -- substitute any F4A Process Variables
-    flow_proc_vars_int.do_substitution
-    ( pi_prcs_id => pi_prcs_id
-    , pi_sbfl_id => pi_sbfl_id
-    , pi_scope   => pi_scope
-    , pio_string => l_expr
-    );
-    -- get bind parameters
-    l_bind_parameters := flow_proc_vars_int.get_parameter_list
-                            ( pi_expr               => l_expr
-                            , pi_prcs_id            => pi_prcs_id
-                            , pi_sbfl_id            => pi_sbfl_id
-                            , pi_scope              => pi_scope
-                            );    
+    if pi_prcs_id is not null then
+      -- substitute any F4A Process Variables
+      flow_proc_vars_int.do_substitution
+      ( pi_prcs_id => pi_prcs_id
+      , pi_sbfl_id => pi_sbfl_id
+      , pi_scope   => pi_scope
+      , pio_string => l_expr
+      );
+      -- get bind parameters
+      l_bind_parameters := flow_proc_vars_int.get_parameter_list
+                              ( pi_expr               => l_expr
+                              , pi_prcs_id            => pi_prcs_id
+                              , pi_sbfl_id            => pi_sbfl_id
+                              , pi_scope              => pi_scope
+                              );    
+    end if;
 
     case pi_result_type 
     when flow_constants_pkg.gc_prov_var_type_varchar2 then 
