@@ -489,5 +489,40 @@
         "dgrm_status":"draft",
         "dgrm_category":"Testing",
         "file":"A19g - Priority and Due Dates - Func Bodies_0.bpmn"
-    }   
+    },
+    { 
+        "dgrm_name":"A020a - Diagram Startability - Static",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A020a - Diagram Startability - Static_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A020b - Diagram Startability - SQLSingle",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A020b - Diagram Startability - SQLSingle_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A020c - Diagram Startability - SQLMulti",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A020c - Diagram Startability - SQLMulti_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A020d - Diagram Startability - Expression",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A020d - Diagram Startability - Expression_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A020e- Diagram Startability - FuncBody",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A020e- Diagram Startability - FuncBody_0.bpmn" 
+    }
 ]
