@@ -580,16 +580,22 @@ as
       select lane_id
            , lane_name
            , lane_type
+           , lane_is_role
+           , lane_role
            , node_refs
            , child_laneset
         from xmltable
              (
-               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+               xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                             , 'https://flowsforapex.org' as "apex"
+                             )
              , '*' passing l_lanes_xml
                columns
-                 lane_id       varchar2(50  char) path '@id'
+                 lane_id       varchar2( 50 char) path '@id'
                , lane_name     varchar2(200 char) path '@name'
-               , lane_type     varchar2(50  char) path 'name()'
+               , lane_type     varchar2( 50 char) path 'name()'
+               , lane_is_role  varchar2( 50 char) path '@apex:isRole'
+               , lane_role     varchar2(200 char) path '@apex:role'
                , node_refs     sys.xmltype        path '* except bpmn:childLaneSet'
                , child_laneset sys.xmltype        path 'bpmn:childLaneSet'
              )
@@ -602,6 +608,24 @@ as
       , pi_objt_tag_name       => lane_rec.lane_type
       , pi_objt_parent_bpmn_id => l_laneset_id
       );
+
+      if lane_rec.lane_is_role is not null then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => lane_rec.lane_id
+        , pi_attribute_name => 'apex:isRole'
+        , pi_value          => lane_rec.lane_is_role
+        );
+      end if;
+
+      if lane_rec.lane_is_role is not null then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => lane_rec.lane_id
+        , pi_attribute_name => 'apex:role'
+        , pi_value          => lane_rec.lane_role
+        );
+      end if;
 
       if lane_rec.child_laneset is not null then
         -- ignore flowNodeRefs on this level as they duplicate lower levels
