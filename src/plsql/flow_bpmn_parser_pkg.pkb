@@ -891,6 +891,7 @@ as
     pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
   , pi_ext_type     in varchar2
   , pi_exp_type     in varchar2
+  , pi_exp_fmt_mask in varchar2
   , pi_exp_val      in clob
   )
   as
@@ -915,6 +916,10 @@ as
       l_ext_object.put( 'expression', pi_exp_val );
     end if;
 
+    if pi_exp_fmt_mask is not null then
+      l_ext_object.put( 'formatMask', pi_exp_fmt_mask );
+    end if;
+
     l_apex_object.put( replace(pi_ext_type, 'apex:'), l_ext_object );
   end parse_simple_expression;
 
@@ -930,17 +935,19 @@ as
                      , extension_data
                      , extension_exp_type
                      , extension_exp_val
+                     , extension_fmt_mask
                      , extension_text
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '/bpmn:extensionElements/*' passing pi_extension_xml
                          columns
-                           extension_type     varchar2(50 char) path 'name()'
-                         , extension_data     sys.xmltype       path '*'
-                         , extension_exp_type varchar2(50 char) path 'apex:expressionType'
-                         , extension_exp_val  clob              path 'apex:expression'
-                         , extension_text     clob              path 'text()'
+                           extension_type     varchar2( 50 char) path 'name()'
+                         , extension_data     sys.xmltype        path '*'
+                         , extension_exp_type varchar2( 50 char) path 'apex:expressionType'
+                         , extension_exp_val  clob               path 'apex:expression'
+                         , extension_fmt_mask varchar2(200 char) path 'apex:formatMask'
+                         , extension_text     clob               path 'text()'
                        ) 
                )
     loop
@@ -1005,6 +1012,7 @@ as
           pi_objt_bpmn_id => pi_bpmn_id
         , pi_ext_type     => rec.extension_type
         , pi_exp_type     => rec.extension_exp_type
+        , pi_exp_fmt_mask => rec.extension_fmt_mask
         , pi_exp_val      => rec.extension_exp_val
         );
       elsif rec.extension_type = flow_constants_pkg.gc_apex_custom_extension then
@@ -1035,6 +1043,7 @@ as
       select ext_type
            , exp_type
            , exp_value
+           , exp_fmt_mask
            , ext_text
         from xmltable
              (
@@ -1042,10 +1051,11 @@ as
                              , 'https://flowsforapex.org' as "apex")
              , '/bpmn:extensionElements/*' passing pi_xml
                columns
-                 ext_type  varchar2( 50 char) path 'name()'
-               , exp_type  varchar2( 50 char) path 'apex:expressionType'
-               , exp_value clob               path 'apex:expression'
-               , ext_text  clob               path 'text()'
+                 ext_type     varchar2( 50 char) path 'name()'
+               , exp_type     varchar2( 50 char) path 'apex:expressionType'
+               , exp_value    clob               path 'apex:expression'
+               , exp_fmt_mask varchar2(200 char) path 'apex:formatMask'
+               , ext_text     clob               path 'text()'
              ) ext
     ) loop
       if rec.exp_type is not null then
@@ -1054,6 +1064,7 @@ as
           pi_objt_bpmn_id => pi_objt_bpmn_id
         , pi_ext_type     => rec.ext_type
         , pi_exp_type     => rec.exp_type
+        , pi_exp_fmt_mask => rec.exp_fmt_mask
         , pi_exp_val      => rec.exp_value
         );
       elsif rec.ext_type = flow_constants_pkg.gc_apex_custom_extension then
