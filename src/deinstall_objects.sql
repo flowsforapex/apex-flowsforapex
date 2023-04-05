@@ -88,6 +88,8 @@ drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
 drop view flow_instance_diagrams_lov;
 drop view flow_diagrams_instanciated_lov;
+drop view flow_startable_diagrams_vw;
+
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
@@ -107,6 +109,7 @@ drop table flow_step_event_log cascade constraints;
 drop table flow_variable_event_log cascade constraints;
 drop table flow_configuration cascade constraints;
 drop table flow_messages cascade constraints;
+drop table flow_statistics cascade constraints;
 
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects

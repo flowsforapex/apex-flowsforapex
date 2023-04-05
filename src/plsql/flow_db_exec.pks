@@ -43,20 +43,20 @@ as
 
 
   function exec_flows_sql
-  ( pi_prcs_id        flow_processes.prcs_id%type
+  ( pi_prcs_id        flow_processes.prcs_id%type  default null
   , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_sql_text       varchar2
   , pi_result_type    varchar2  
-  , pi_scope          flow_subflows.sbfl_scope%type
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
   ) return flow_proc_vars_int.t_proc_var_value;
 
   function exec_flows_plsql
-  ( pi_prcs_id        flow_processes.prcs_id%type
+  ( pi_prcs_id        flow_processes.prcs_id%type  default null
   , pi_sbfl_id        flow_subflows.sbfl_id%type default null
   , pi_plsql_text     varchar2
   , pi_result_type    varchar2  
-  , pi_scope          flow_subflows.sbfl_scope%type
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
   ) return flow_proc_vars_int.t_proc_var_value;
 

@@ -255,6 +255,9 @@ begin
     values ( 'settings-priority-error', c_load_lang, q'[Error evaluating Priority. Priority expression is invalid.  Expression: %0.  Priority 3 used instead.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'settings-error', c_load_lang, q'[Error evaluating Setting. Expression is invalid.  Expression: %0.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'settings-procvar-no-prcs', c_load_lang, q'[Settings cannot specify Process Variable without a Process ID.]' );
+
 
   commit;
 end;
