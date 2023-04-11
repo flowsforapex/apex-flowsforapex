@@ -580,16 +580,22 @@ as
       select lane_id
            , lane_name
            , lane_type
+           , lane_is_role
+           , lane_role
            , node_refs
            , child_laneset
         from xmltable
              (
-               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+               xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                             , 'https://flowsforapex.org' as "apex"
+                             )
              , '*' passing l_lanes_xml
                columns
-                 lane_id       varchar2(50  char) path '@id'
+                 lane_id       varchar2( 50 char) path '@id'
                , lane_name     varchar2(200 char) path '@name'
-               , lane_type     varchar2(50  char) path 'name()'
+               , lane_type     varchar2( 50 char) path 'name()'
+               , lane_is_role  varchar2( 50 char) path '@apex:isRole'
+               , lane_role     varchar2(200 char) path '@apex:role'
                , node_refs     sys.xmltype        path '* except bpmn:childLaneSet'
                , child_laneset sys.xmltype        path 'bpmn:childLaneSet'
              )
@@ -602,6 +608,24 @@ as
       , pi_objt_tag_name       => lane_rec.lane_type
       , pi_objt_parent_bpmn_id => l_laneset_id
       );
+
+      if lane_rec.lane_is_role is not null then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => lane_rec.lane_id
+        , pi_attribute_name => 'apex:isRole'
+        , pi_value          => lane_rec.lane_is_role
+        );
+      end if;
+
+      if lane_rec.lane_is_role is not null then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => lane_rec.lane_id
+        , pi_attribute_name => 'apex:role'
+        , pi_value          => lane_rec.lane_role
+        );
+      end if;
 
       if lane_rec.child_laneset is not null then
         -- ignore flowNodeRefs on this level as they duplicate lower levels
@@ -891,6 +915,7 @@ as
     pi_objt_bpmn_id in flow_types_pkg.t_bpmn_id
   , pi_ext_type     in varchar2
   , pi_exp_type     in varchar2
+  , pi_exp_fmt_mask in varchar2
   , pi_exp_val      in clob
   )
   as
@@ -915,6 +940,10 @@ as
       l_ext_object.put( 'expression', pi_exp_val );
     end if;
 
+    if pi_exp_fmt_mask is not null then
+      l_ext_object.put( 'formatMask', pi_exp_fmt_mask );
+    end if;
+
     l_apex_object.put( replace(pi_ext_type, 'apex:'), l_ext_object );
   end parse_simple_expression;
 
@@ -930,17 +959,19 @@ as
                      , extension_data
                      , extension_exp_type
                      , extension_exp_val
+                     , extension_fmt_mask
                      , extension_text
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
                        , '/bpmn:extensionElements/*' passing pi_extension_xml
                          columns
-                           extension_type     varchar2(50 char) path 'name()'
-                         , extension_data     sys.xmltype       path '*'
-                         , extension_exp_type varchar2(50 char) path 'apex:expressionType'
-                         , extension_exp_val  clob              path 'apex:expression'
-                         , extension_text     clob              path 'text()'
+                           extension_type     varchar2( 50 char) path 'name()'
+                         , extension_data     sys.xmltype        path '*'
+                         , extension_exp_type varchar2( 50 char) path 'apex:expressionType'
+                         , extension_exp_val  clob               path 'apex:expression'
+                         , extension_fmt_mask varchar2(200 char) path 'apex:formatMask'
+                         , extension_text     clob               path 'text()'
                        ) 
                )
     loop
@@ -1005,6 +1036,7 @@ as
           pi_objt_bpmn_id => pi_bpmn_id
         , pi_ext_type     => rec.extension_type
         , pi_exp_type     => rec.extension_exp_type
+        , pi_exp_fmt_mask => rec.extension_fmt_mask
         , pi_exp_val      => rec.extension_exp_val
         );
       elsif rec.extension_type = flow_constants_pkg.gc_apex_custom_extension then
@@ -1035,6 +1067,7 @@ as
       select ext_type
            , exp_type
            , exp_value
+           , exp_fmt_mask
            , ext_text
         from xmltable
              (
@@ -1042,10 +1075,11 @@ as
                              , 'https://flowsforapex.org' as "apex")
              , '/bpmn:extensionElements/*' passing pi_xml
                columns
-                 ext_type  varchar2( 50 char) path 'name()'
-               , exp_type  varchar2( 50 char) path 'apex:expressionType'
-               , exp_value clob               path 'apex:expression'
-               , ext_text  clob               path 'text()'
+                 ext_type     varchar2( 50 char) path 'name()'
+               , exp_type     varchar2( 50 char) path 'apex:expressionType'
+               , exp_value    clob               path 'apex:expression'
+               , exp_fmt_mask varchar2(200 char) path 'apex:formatMask'
+               , ext_text     clob               path 'text()'
              ) ext
     ) loop
       if rec.exp_type is not null then
@@ -1054,6 +1088,7 @@ as
           pi_objt_bpmn_id => pi_objt_bpmn_id
         , pi_ext_type     => rec.ext_type
         , pi_exp_type     => rec.exp_type
+        , pi_exp_fmt_mask => rec.exp_fmt_mask
         , pi_exp_val      => rec.exp_value
         );
       elsif rec.ext_type = flow_constants_pkg.gc_apex_custom_extension then
@@ -1146,15 +1181,17 @@ as
                      , children.child_value
                      , children.child_details
                      , children.extension_elements
+                     , children.message_ref
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
                                       , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_xml
                          columns
-                           child_type         varchar2(50 char)    path 'name()'
-                         , child_id           varchar2(50 char)    path '@id'
+                           child_type         varchar2(  50 char)  path 'name()'
+                         , child_id           varchar2(  50 char)  path '@id'
                          , child_value        varchar2(4000 char)  path 'text()'
+                         , message_ref        varchar2(  50 char)  path '@messageRef'
                          , child_details      sys.xmltype          path '* except bpmn:incoming except bpmn:outgoing'
                          , extension_elements sys.xmltype          path 'bpmn:extensionElements'
                        ) children
@@ -1175,72 +1212,91 @@ as
         end if;
       else
         -- register the child which has details
-        if rec.child_type = flow_constants_pkg.gc_bpmn_timer_event_definition then
+        case rec.child_type
+          when flow_constants_pkg.gc_bpmn_timer_event_definition then
           -- if custom (Flows) type then all processing is done by using the extension element
-          if rec.extension_elements is not null then
-            parse_extension_elements
-            ( 
-              pi_bpmn_id       => pi_objt_bpmn_id
-            , pi_extension_xml => rec.extension_elements
-            );
-          -- if standard type just register value inside tag
-          else
+            if rec.extension_elements is not null then
+              parse_extension_elements
+              ( 
+                pi_bpmn_id       => pi_objt_bpmn_id
+              , pi_extension_xml => rec.extension_elements
+              );
+            -- if standard type just register value inside tag
+            else
+              select details.detail_type
+                   , details.detail_id
+                   , details.detail_value
+                into l_detail_type
+                   , l_detail_id
+                   , l_detail_value
+                from xmltable
+                     (
+                       xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                     , '*' passing rec.child_details
+                       columns
+                         detail_type        varchar2(50 char)    path 'name()'
+                       , detail_id          varchar2(50 char)    path '@id'
+                       , detail_value       varchar2(4000 char)  path 'text()'
+                     ) details
+                ;
+  
+              -- register the timer type
+              register_object_attribute
+              (
+                pi_objt_bpmn_id   => pi_objt_bpmn_id
+              , pi_attribute_name => flow_constants_pkg.gc_timer_type_key
+              , pi_value          => l_detail_type
+              );
+  
+              register_object_attribute
+              (
+                pi_objt_bpmn_id   => pi_objt_bpmn_id
+              , pi_attribute_name => flow_constants_pkg.gc_timer_def_key
+              , pi_value          => l_detail_value
+              );
+            end if;
+          -- custom processStatus attribute on terminateEndEvents
+          when flow_constants_pkg.gc_bpmn_terminate_event_definition then
             select details.detail_type
-                 , details.detail_id
                  , details.detail_value
               into l_detail_type
-                 , l_detail_id
                  , l_detail_value
               from xmltable
                    (
                      xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                    , '*' passing rec.child_details
                      columns
-                       detail_type        varchar2(50 char)    path 'name()'
-                     , detail_id          varchar2(50 char)    path '@id'
-                     , detail_value       varchar2(4000 char)  path 'text()'
+                       detail_type  varchar2(50 char) path   'name()'
+                     , detail_value varchar2(4000 char) path 'text()'
                    ) details
-              ;
-
-            -- register the timer type
-            register_object_attribute
-            (
-              pi_objt_bpmn_id   => pi_objt_bpmn_id
-            , pi_attribute_name => flow_constants_pkg.gc_timer_type_key
-            , pi_value          => l_detail_type
-            );
-
-            register_object_attribute
-            (
-              pi_objt_bpmn_id   => pi_objt_bpmn_id
-            , pi_attribute_name => flow_constants_pkg.gc_timer_def_key
-            , pi_value          => l_detail_value
-            );
-          end if;
-        -- custom processStatus attribute on terminateEndEvents
-        elsif rec.child_type = flow_constants_pkg.gc_bpmn_terminate_event_definition then
-          select details.detail_type
-               , details.detail_value
-            into l_detail_type
-               , l_detail_value
-            from xmltable
-                 (
-                   xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                 , '*' passing rec.child_details
-                   columns
-                     detail_type  varchar2(50 char) path   'name()'
-                   , detail_value varchar2(4000 char) path 'text()'
-                 ) details
-          ;
-          if l_detail_type = flow_constants_pkg.gc_apex_process_status then
-            register_object_attribute
-            (
-              pi_objt_bpmn_id   => pi_objt_bpmn_id
-            , pi_attribute_name => flow_constants_pkg.gc_terminate_result
-            , pi_value          => l_detail_value
-            );
-          end if;
-	    end if;
+            ;
+            if l_detail_type = flow_constants_pkg.gc_apex_process_status then
+              register_object_attribute
+              (
+                pi_objt_bpmn_id   => pi_objt_bpmn_id
+              , pi_attribute_name => flow_constants_pkg.gc_terminate_result
+              , pi_value          => l_detail_value
+              );
+            end if;
+          when flow_constants_pkg.gc_bpmn_message_event_definition then
+            if rec.message_ref is not null then
+              register_object_attribute
+              (
+                pi_objt_bpmn_id   => pi_objt_bpmn_id
+              , pi_attribute_name => 'messageRef'
+              , pi_value          => rec.message_ref
+              );
+            end if;
+            if rec.extension_elements is not null then
+              parse_extension_elements
+              ( 
+                pi_bpmn_id       => pi_objt_bpmn_id
+              , pi_extension_xml => rec.extension_elements
+              );
+            end if;
+          else
+            null;
+	      end case;
 
       end if;
 
@@ -1402,7 +1458,15 @@ as
                      , steps.target_ref
                      , steps.default_conn
                      , steps.attached_to
-                     , case steps.interrupting when 'false' then 0 else 1 end as interrupting
+                     , case steps.steps_type
+                         when flow_constants_pkg.gc_bpmn_boundary_event then
+                           case steps.interrupting
+                             when flow_constants_pkg.gc_vcbool_false then 0
+                             else 1
+                           end
+                         else
+                           null
+                       end as interrupting
                      , steps.conn_sequence
                      , steps.child_elements
                      , steps.extension_elements
@@ -1790,6 +1854,39 @@ as
       null;
   end parse_collaboration;
 
+  procedure parse_messages
+  (
+    pi_xml in sys.xmltype
+  )
+  as
+  begin
+
+    for rec in (
+      select message_id
+           , message_name
+           , message_type
+        from xmltable
+             (
+               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+             , '/bpmn:definitions/bpmn:message' passing pi_xml
+               columns
+                 message_id   varchar2(50  char) path '@id'
+               , message_name varchar2(200 char) path '@name'
+               , message_type varchar2(50  char) path 'name()'
+             )
+    ) loop
+
+      register_object
+      (
+        pi_objt_bpmn_id => rec.message_id
+      , pi_objt_tag_name => rec.message_type
+      , pi_objt_name => rec.message_name
+      );
+
+    end loop;
+
+  end parse_messages;
+
   procedure reset
   as
   begin
@@ -1834,6 +1931,8 @@ as
 
     -- parse out collaboration part first
     parse_collaboration( pi_xml => sys.xmltype(l_dgrm_content) );
+    -- grab any message definitions
+    parse_messages( pi_xml => sys.xmltype(l_dgrm_content) );
     -- start recursive processsing of xml
     parse_xml( pi_xml => sys.xmltype(l_dgrm_content), pi_parent_id => null );
 
