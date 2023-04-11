@@ -46,12 +46,17 @@ create table flow_stats_history
 create index flow_sths_ix on flow_stats_history (sths_date);
 
 alter table flow_stats_history
+  add constraint flow_sths_pk
+    primary key (sths_id)
+;
+
+alter table flow_stats_history
   add constraint flow_sths_status_ck
     check (sths_status in ('SUCCESS', 'ERROR') );
 
 alter table flow_stats_type
   add constraint flow_sths_type_ck
-    check (sths_type in ('DAY', 'MONTH', 'QUARTER') );
+    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER') );
 
 -- add stats tables
 
