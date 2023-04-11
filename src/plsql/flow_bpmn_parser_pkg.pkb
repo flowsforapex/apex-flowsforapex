@@ -519,206 +519,6 @@ as
     ;
   end cleanup_parsing_tables;
 
-  procedure parse_flow_node_refs
-  (
-    pi_lane_refs_xml  in sys.xmltype
-  , pi_parent_bpmn_id in flow_types_pkg.t_bpmn_id
-  )
-  as
-  begin
-    for node_rec in (
-        select nodes.node_ref
-          from xmltable
-             (
-               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-             , '*' passing pi_lane_refs_xml
-               columns
-                 node_ref   varchar2(50 char) path 'text()'
-             ) nodes
-    ) loop
-      g_lane_refs( node_rec.node_ref ) := pi_parent_bpmn_id;
-    end loop;
-  end parse_flow_node_refs;
-
-  procedure parse_laneset
-  (
-    pi_laneset_xml    in sys.xmltype
-  , pi_parent_bpmn_id in flow_types_pkg.t_bpmn_id
-  )
-  as
-    l_laneset_id  flow_types_pkg.t_bpmn_id;
-    l_laneset_tag flow_types_pkg.t_bpmn_id;
-    l_lanes_xml   sys.xmltype;
-  begin
-
-    select laneset_id
-         , laneset_tag
-         , lanes_xml
-      into l_laneset_id
-         , l_laneset_tag
-         , l_lanes_xml
-      from xmltable
-           (
-             xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                           , 'https://flowsforapex.org' as "apex")
-           , '*' passing pi_laneset_xml
-             columns
-               laneset_id    varchar2(50 char) path '@id'
-             , laneset_tag   varchar2(50 char) path 'name()'
-             , lanes_xml     sys.xmltype       path '*'
-           )
-    ;
-
-    register_object
-    (
-      pi_objt_bpmn_id        => l_laneset_id
-    , pi_objt_tag_name       => l_laneset_tag
-    , pi_objt_parent_bpmn_id => pi_parent_bpmn_id
-    );
-
-    for lane_rec in (
-      select lane_id
-           , lane_name
-           , lane_type
-           , lane_is_role
-           , lane_role
-           , node_refs
-           , child_laneset
-        from xmltable
-             (
-               xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
-                             , 'https://flowsforapex.org' as "apex"
-                             )
-             , '*' passing l_lanes_xml
-               columns
-                 lane_id       varchar2( 50 char) path '@id'
-               , lane_name     varchar2(200 char) path '@name'
-               , lane_type     varchar2( 50 char) path 'name()'
-               , lane_is_role  varchar2( 50 char) path '@apex:isRole'
-               , lane_role     varchar2(200 char) path '@apex:role'
-               , node_refs     sys.xmltype        path '* except bpmn:childLaneSet'
-               , child_laneset sys.xmltype        path 'bpmn:childLaneSet'
-             )
-    ) loop
-
-      register_object
-      (
-        pi_objt_bpmn_id        => lane_rec.lane_id
-      , pi_objt_name           => lane_rec.lane_name
-      , pi_objt_tag_name       => lane_rec.lane_type
-      , pi_objt_parent_bpmn_id => l_laneset_id
-      );
-
-      if lane_rec.lane_is_role is not null then
-        register_object_attribute
-        (
-          pi_objt_bpmn_id   => lane_rec.lane_id
-        , pi_attribute_name => 'apex:isRole'
-        , pi_value          => lane_rec.lane_is_role
-        );
-      end if;
-
-      if lane_rec.lane_is_role is not null then
-        register_object_attribute
-        (
-          pi_objt_bpmn_id   => lane_rec.lane_id
-        , pi_attribute_name => 'apex:role'
-        , pi_value          => lane_rec.lane_role
-        );
-      end if;
-
-      if lane_rec.child_laneset is not null then
-        -- ignore flowNodeRefs on this level as they duplicate lower levels
-        -- jump into childLaneSet parsing (recursion)
-        parse_laneset
-        (
-          pi_laneset_xml    => lane_rec.child_laneset
-        , pi_parent_bpmn_id => lane_rec.lane_id
-        );
-      else
-        parse_flow_node_refs
-        (
-          pi_lane_refs_xml  => lane_rec.node_refs
-        , pi_parent_bpmn_id => lane_rec.lane_id
-        );
-      end if;
-
-    end loop;
-
-  end parse_laneset;
-
-  function find_subtag_name
-  (
-    pi_xml in sys.xmltype
-  )
-    return flow_types_pkg.t_bpmn_id
-  as
-    c_nsmap        constant flow_types_pkg.t_vc200 := flow_constants_pkg.gc_nsmap;
-    l_return                flow_types_pkg.t_bpmn_id;
-  begin
-    l_return :=
-      case
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_terminate_event_definition, nsmap => c_nsmap ) = 1   then flow_constants_pkg.gc_bpmn_terminate_event_definition
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_timer_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_timer_event_definition
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_date, nsmap => c_nsmap ) = 1                   then flow_constants_pkg.gc_timer_type_date
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_duration, nsmap => c_nsmap ) = 1               then flow_constants_pkg.gc_timer_type_duration
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1                  then flow_constants_pkg.gc_timer_type_cycle
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_error_event_definition
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1  then flow_constants_pkg.gc_bpmn_escalation_event_definition
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1        then flow_constants_pkg.gc_bpmn_link_event_definition
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_message_event_definition, nsmap => c_nsmap ) = 1     then flow_constants_pkg.gc_bpmn_message_event_definition
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_conditional_event_definition, nsmap => c_nsmap ) = 1 then flow_constants_pkg.gc_bpmn_conditional_event_definition
-        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_signal_event_definition, nsmap => c_nsmap ) = 1      then flow_constants_pkg.gc_bpmn_signal_event_definition
-        else null
-      end
-    ;
-
-    return l_return;
-  end find_subtag_name;
-
-  procedure parse_process_variables
-  (
-    pi_bpmn_id         in flow_types_pkg.t_bpmn_id
-  , pi_execution_point in varchar2
-  , pi_proc_vars_xml   in sys.xmltype
-  )
-  as
-  begin
-    for rec in (
-                select variable_sequence
-                     , variable_name
-                     , case variable_type
-                         when 'TIMESTAMP_WITH_TIME_ZONE' then 'TIMESTAMP WITH TIME ZONE'
-                         else variable_type
-                       end as variable_type
-                     , expression_type
-                     , expression_value
-                  from xmltable
-                       (
-                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
-                       , '*' passing pi_proc_vars_xml
-                         columns
-                           variable_sequence number              path 'apex:varSequence'
-                         , variable_name     varchar2(50 char)   path 'apex:varName'
-                         , variable_type     varchar2(50 char)   path 'apex:varDataType'
-                         , expression_type   varchar2(200 char)  path 'apex:varExpressionType'
-                         , expression_value  varchar2(4000 char) path 'apex:varExpression'
-                       )
-               )
-    loop
-      register_object_expression
-      (
-        pi_objt_bpmn_id    => pi_bpmn_id
-      , pi_expr_set        => pi_execution_point
-      , pi_expr_order      => rec.variable_sequence
-      , pi_expr_var_name   => rec.variable_name
-      , pi_expr_var_type   => rec.variable_type
-      , pi_expr_type       => rec.expression_type
-      , pi_expr_expression => rec.expression_value
-      );
-    end loop;
-  end parse_process_variables;
-
   procedure parse_page_items
   (
     pi_bpmn_id         in flow_types_pkg.t_bpmn_id
@@ -753,7 +553,7 @@ as
     l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
     l_apex_object.put( 'pageItems', l_page_items );
   end parse_page_items;
-
+  
   procedure parse_parameters
   (
     pi_bpmn_id        in flow_types_pkg.t_bpmn_id
@@ -860,6 +660,49 @@ as
       end if;
     end loop;
   end parse_task_subtypes;
+
+  procedure parse_process_variables
+  (
+    pi_bpmn_id         in flow_types_pkg.t_bpmn_id
+  , pi_execution_point in varchar2
+  , pi_proc_vars_xml   in sys.xmltype
+  )
+  as
+  begin
+    for rec in (
+                select variable_sequence
+                     , variable_name
+                     , case variable_type
+                         when 'TIMESTAMP_WITH_TIME_ZONE' then 'TIMESTAMP WITH TIME ZONE'
+                         else variable_type
+                       end as variable_type
+                     , expression_type
+                     , expression_value
+                  from xmltable
+                       (
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
+                       , '*' passing pi_proc_vars_xml
+                         columns
+                           variable_sequence number              path 'apex:varSequence'
+                         , variable_name     varchar2(50 char)   path 'apex:varName'
+                         , variable_type     varchar2(50 char)   path 'apex:varDataType'
+                         , expression_type   varchar2(200 char)  path 'apex:varExpressionType'
+                         , expression_value  varchar2(4000 char) path 'apex:varExpression'
+                       )
+               )
+    loop
+      register_object_expression
+      (
+        pi_objt_bpmn_id    => pi_bpmn_id
+      , pi_expr_set        => pi_execution_point
+      , pi_expr_order      => rec.variable_sequence
+      , pi_expr_var_name   => rec.variable_name
+      , pi_expr_var_type   => rec.variable_type
+      , pi_expr_type       => rec.expression_type
+      , pi_expr_expression => rec.expression_value
+      );
+    end loop;
+  end parse_process_variables;
 
   procedure parse_custom_timers
   (
@@ -1049,6 +892,171 @@ as
       end if;
     end loop;
   end parse_extension_elements;
+
+  procedure parse_flow_node_refs
+  (
+    pi_lane_refs_xml  in sys.xmltype
+  , pi_parent_bpmn_id in flow_types_pkg.t_bpmn_id
+  )
+  as
+  begin
+    for node_rec in (
+        select nodes.node_ref
+          from xmltable
+             (
+               xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+             , '*' passing pi_lane_refs_xml
+               columns
+                 node_ref   varchar2(50 char) path 'text()'
+             ) nodes
+    ) loop
+      g_lane_refs( node_rec.node_ref ) := pi_parent_bpmn_id;
+    end loop;
+  end parse_flow_node_refs;
+
+  procedure parse_laneset
+  (
+    pi_laneset_xml    in sys.xmltype
+  , pi_parent_bpmn_id in flow_types_pkg.t_bpmn_id
+  )
+  as
+    l_laneset_id  flow_types_pkg.t_bpmn_id;
+    l_laneset_tag flow_types_pkg.t_bpmn_id;
+    l_lanes_xml   sys.xmltype;
+  begin
+
+    select laneset_id
+         , laneset_tag
+         , lanes_xml
+      into l_laneset_id
+         , l_laneset_tag
+         , l_lanes_xml
+      from xmltable
+           (
+             xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                           , 'https://flowsforapex.org' as "apex")
+           , '*' passing pi_laneset_xml
+             columns
+               laneset_id    varchar2(50 char) path '@id'
+             , laneset_tag   varchar2(50 char) path 'name()'
+             , lanes_xml     sys.xmltype       path '*'
+           )
+    ;
+
+    register_object
+    (
+      pi_objt_bpmn_id        => l_laneset_id
+    , pi_objt_tag_name       => l_laneset_tag
+    , pi_objt_parent_bpmn_id => pi_parent_bpmn_id
+    );
+
+    for lane_rec in (
+      select lane_id
+           , lane_name
+           , lane_type
+           , lane_is_role
+           , lane_role
+           , node_refs
+           , child_laneset
+           , lane_extensions
+        from xmltable
+             (
+               xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
+                             , 'https://flowsforapex.org' as "apex"
+                             )
+             , '*' passing l_lanes_xml
+               columns
+                 lane_id         varchar2( 50 char) path '@id'
+               , lane_name       varchar2(200 char) path '@name'
+               , lane_type       varchar2( 50 char) path 'name()'
+               , lane_is_role    varchar2( 50 char) path '@apex:isRole'
+               , lane_role       varchar2(200 char) path '@apex:role'
+               , node_refs       sys.xmltype        path '* except bpmn:childLaneSet except bpmn:extensionElements'
+               , child_laneset   sys.xmltype        path 'bpmn:childLaneSet'
+               , lane_extensions sys.xmltype        path 'bpmn:extensionElements'
+             )
+    ) loop
+
+      register_object
+      (
+        pi_objt_bpmn_id        => lane_rec.lane_id
+      , pi_objt_name           => lane_rec.lane_name
+      , pi_objt_tag_name       => lane_rec.lane_type
+      , pi_objt_parent_bpmn_id => l_laneset_id
+      );
+
+      if lane_rec.lane_is_role is not null then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => lane_rec.lane_id
+        , pi_attribute_name => 'apex:isRole'
+        , pi_value          => lane_rec.lane_is_role
+        );
+      end if;
+
+      if lane_rec.lane_is_role is not null then
+        register_object_attribute
+        (
+          pi_objt_bpmn_id   => lane_rec.lane_id
+        , pi_attribute_name => 'apex:role'
+        , pi_value          => lane_rec.lane_role
+        );
+      end if;
+
+      parse_extension_elements
+      (
+        pi_bpmn_id       => lane_rec.lane_id
+      , pi_extension_xml => lane_rec.lane_extensions
+      );
+
+      if lane_rec.child_laneset is not null then
+        -- ignore flowNodeRefs on this level as they duplicate lower levels
+        -- jump into childLaneSet parsing (recursion)
+        parse_laneset
+        (
+          pi_laneset_xml    => lane_rec.child_laneset
+        , pi_parent_bpmn_id => lane_rec.lane_id
+        );
+      else
+        parse_flow_node_refs
+        (
+          pi_lane_refs_xml  => lane_rec.node_refs
+        , pi_parent_bpmn_id => lane_rec.lane_id
+        );
+      end if;
+
+    end loop;
+
+  end parse_laneset;
+
+  function find_subtag_name
+  (
+    pi_xml in sys.xmltype
+  )
+    return flow_types_pkg.t_bpmn_id
+  as
+    c_nsmap        constant flow_types_pkg.t_vc200 := flow_constants_pkg.gc_nsmap;
+    l_return                flow_types_pkg.t_bpmn_id;
+  begin
+    l_return :=
+      case
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_terminate_event_definition, nsmap => c_nsmap ) = 1   then flow_constants_pkg.gc_bpmn_terminate_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_timer_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_timer_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_date, nsmap => c_nsmap ) = 1                   then flow_constants_pkg.gc_timer_type_date
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_duration, nsmap => c_nsmap ) = 1               then flow_constants_pkg.gc_timer_type_duration
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_timer_type_cycle, nsmap => c_nsmap ) = 1                  then flow_constants_pkg.gc_timer_type_cycle
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_error_event_definition, nsmap => c_nsmap ) = 1       then flow_constants_pkg.gc_bpmn_error_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_escalation_event_definition, nsmap => c_nsmap ) = 1  then flow_constants_pkg.gc_bpmn_escalation_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_link_event_definition, nsmap => c_nsmap ) = 1        then flow_constants_pkg.gc_bpmn_link_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_message_event_definition, nsmap => c_nsmap ) = 1     then flow_constants_pkg.gc_bpmn_message_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_conditional_event_definition, nsmap => c_nsmap ) = 1 then flow_constants_pkg.gc_bpmn_conditional_event_definition
+        when pi_xml.existsNode( xpath => '/' || flow_constants_pkg.gc_bpmn_signal_event_definition, nsmap => c_nsmap ) = 1      then flow_constants_pkg.gc_bpmn_signal_event_definition
+        else null
+      end
+    ;
+
+    return l_return;
+  end find_subtag_name;
 
   procedure parse_process_extensions
   (
@@ -1767,6 +1775,8 @@ as
     l_collab_name  flow_types_pkg.t_vc200;
     l_collab_type  flow_types_pkg.t_bpmn_id;
     l_collab_nodes sys.xmltype;
+
+    l_conn_attributes sys.json_object_t;
   begin
 
     select collab_id
@@ -1804,20 +1814,25 @@ as
                       , node_src_ref
                       , node_tgt_ref
                       , node_cat_ref
+                      , node_extensions
                    from xmltable
                         (
                           xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                         , '*' passing l_collab_nodes
                           columns
-                            node_id       varchar2(50  char) path '@id'
-                          , node_name     varchar2(200 char) path '@name'
-                          , node_type     varchar2(50  char) path 'name()'
-                          , node_proc_ref varchar2(50  char) path '@processRef'
-                          , node_src_ref  varchar2(50  char) path '@sourceRef'
-                          , node_tgt_ref  varchar2(50  char) path '@targetRef'
-                          , node_cat_ref  varchar2(50  char) path '@categoryValueRef'
+                            node_id         varchar2( 50 char) path '@id'
+                          , node_name       varchar2(200 char) path '@name'
+                          , node_type       varchar2( 50 char) path 'name()'
+                          , node_proc_ref   varchar2( 50 char) path '@processRef'
+                          , node_src_ref    varchar2( 50 char) path '@sourceRef'
+                          , node_tgt_ref    varchar2( 50 char) path '@targetRef'
+                          , node_cat_ref    varchar2( 50 char) path '@categoryValueRef'
+                          , node_extensions sys.xmltype        path 'bpmn:extensionElements'
                         ) collab_nodes
     ) loop
+
+      l_conn_attributes := null;
+
       case
         when rec.node_src_ref is null then
           register_object
@@ -1827,14 +1842,31 @@ as
           , pi_objt_name           => rec.node_name
           , pi_objt_parent_bpmn_id => l_collab_id
           );
+          if rec.node_extensions is not null then
+            parse_extension_elements
+            (
+              pi_bpmn_id       => rec.node_id
+            , pi_extension_xml => rec.node_extensions
+            );
+          end if;
           case rec.node_type
             when flow_constants_pkg.gc_bpmn_participant then
-              -- add check for not null
-              g_collab_refs(rec.node_proc_ref) := rec.node_id;
+              if rec.node_proc_ref is not null then
+                g_collab_refs(rec.node_proc_ref) := rec.node_id;
+              end if;
             else
               null;
           end case;
         else
+
+          if rec.node_extensions is not null then
+            parse_connection_extensions
+            (
+              pi_conn_bpmn_id     => rec.node_id
+            , pi_xml              => rec.node_extensions
+            , pio_conn_attributes => l_conn_attributes
+            );
+          end if;
           register_connection
           (
             pi_conn_bpmn_id     => rec.node_id
@@ -1844,7 +1876,7 @@ as
           , pi_conn_tag_name    => rec.node_type
           , pi_conn_origin      => null
           , pi_conn_sequence    => null
-          , pi_conn_attributes  => null
+          , pi_conn_attributes  => l_conn_attributes
           );
       end case;
     end loop;
