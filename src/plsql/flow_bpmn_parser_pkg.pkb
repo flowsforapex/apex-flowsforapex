@@ -1767,6 +1767,8 @@ as
     l_collab_name  flow_types_pkg.t_vc200;
     l_collab_type  flow_types_pkg.t_bpmn_id;
     l_collab_nodes sys.xmltype;
+
+    l_conn_attributes sys.json_object_t;
   begin
 
     select collab_id
@@ -1804,20 +1806,25 @@ as
                       , node_src_ref
                       , node_tgt_ref
                       , node_cat_ref
+                      , node_extensions
                    from xmltable
                         (
                           xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                         , '*' passing l_collab_nodes
                           columns
-                            node_id       varchar2(50  char) path '@id'
-                          , node_name     varchar2(200 char) path '@name'
-                          , node_type     varchar2(50  char) path 'name()'
-                          , node_proc_ref varchar2(50  char) path '@processRef'
-                          , node_src_ref  varchar2(50  char) path '@sourceRef'
-                          , node_tgt_ref  varchar2(50  char) path '@targetRef'
-                          , node_cat_ref  varchar2(50  char) path '@categoryValueRef'
+                            node_id         varchar2( 50 char) path '@id'
+                          , node_name       varchar2(200 char) path '@name'
+                          , node_type       varchar2( 50 char) path 'name()'
+                          , node_proc_ref   varchar2( 50 char) path '@processRef'
+                          , node_src_ref    varchar2( 50 char) path '@sourceRef'
+                          , node_tgt_ref    varchar2( 50 char) path '@targetRef'
+                          , node_cat_ref    varchar2( 50 char) path '@categoryValueRef'
+                          , node_extensions sys.xmltype        path 'bpmn:extensionElements'
                         ) collab_nodes
     ) loop
+
+      l_conn_attributes := null;
+
       case
         when rec.node_src_ref is null then
           register_object
@@ -1827,14 +1834,31 @@ as
           , pi_objt_name           => rec.node_name
           , pi_objt_parent_bpmn_id => l_collab_id
           );
+          if rec.node_extensions is not null then
+            parse_extension_elements
+            (
+              pi_bpmn_id       => rec.node_id
+            , pi_extension_xml => rec.node_extensions
+            );
+          end if;
           case rec.node_type
             when flow_constants_pkg.gc_bpmn_participant then
-              -- add check for not null
-              g_collab_refs(rec.node_proc_ref) := rec.node_id;
+              if rec.node_proc_ref is not null then
+                g_collab_refs(rec.node_proc_ref) := rec.node_id;
+              end if;
             else
               null;
           end case;
         else
+
+          if rec.node_extensions is not null then
+            parse_connection_extensions
+            (
+              pi_conn_bpmn_id     => rec.node_id
+            , pi_xml              => rec.node_extensions
+            , pio_conn_attributes => l_conn_attributes
+            );
+          end if;
           register_connection
           (
             pi_conn_bpmn_id     => rec.node_id
@@ -1844,7 +1868,7 @@ as
           , pi_conn_tag_name    => rec.node_type
           , pi_conn_origin      => null
           , pi_conn_sequence    => null
-          , pi_conn_attributes  => null
+          , pi_conn_attributes  => l_conn_attributes
           );
       end case;
     end loop;
