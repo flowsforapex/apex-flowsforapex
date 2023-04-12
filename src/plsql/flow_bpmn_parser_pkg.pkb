@@ -9,6 +9,7 @@ as
 -- Created    2020         Moritz Klein (MT AG)
 -- Modified   2022-08-10   Moritz Klein (MT AG)
 -- Modified   2023-03-10   Moritz Klein (MT GmbH)
+-- Modified   2023-04-12   Moritz Klein (MT GmbH)
 --
 */
 
@@ -1476,6 +1477,7 @@ as
                            null
                        end as interrupting
                      , steps.conn_sequence
+                     , steps.task_type
                      , steps.child_elements
                      , steps.extension_elements
                      , steps.step
@@ -1485,15 +1487,16 @@ as
                                        , 'https://flowsforapex.org' as "apex")
                        , '*' passing pi_xml
                          columns
-                           steps_type         varchar2(50  char) path 'name()'
+                           steps_type         varchar2( 50 char) path 'name()'
                          , steps_name         varchar2(200 char) path '@name'
-                         , steps_id           varchar2(50  char) path '@id'
-                         , source_ref         varchar2(50  char) path '@sourceRef'
-                         , target_ref         varchar2(50  char) path '@targetRef'
-                         , default_conn       varchar2(50  char) path '@default'
-                         , attached_to        varchar2(50  char) path '@attachedToRef'
-                         , interrupting       varchar2(50  char) path '@cancelActivity'
+                         , steps_id           varchar2( 50 char) path '@id'
+                         , source_ref         varchar2( 50 char) path '@sourceRef'
+                         , target_ref         varchar2( 50 char) path '@targetRef'
+                         , default_conn       varchar2( 50 char) path '@default'
+                         , attached_to        varchar2( 50 char) path '@attachedToRef'
+                         , interrupting       varchar2( 50 char) path '@cancelActivity'
                          , conn_sequence      number             path '@apex:sequence'
+                         , task_type          varchar2( 50 char) path '@apex:type'
                          , child_elements     sys.xmltype        path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
                          , extension_elements sys.xmltype        path 'bpmn:extensionElements'
                          , step               sys.xmltype        path '.'
@@ -1539,6 +1542,15 @@ as
         , pi_objt_attached_to    => rec.attached_to
         , pi_objt_interrupting   => rec.interrupting
         );
+
+        if rec.task_type is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.steps_id
+          , pi_attribute_name => flow_constants_pkg.gc_task_type_key
+          , pi_value          => rec.task_type
+          );
+        end if;
 
         if rec.steps_type = 'bpmn:callActivity' then
           parse_call_activity
