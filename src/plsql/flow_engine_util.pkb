@@ -714,14 +714,13 @@ procedure get_number_of_connections
   function apex_json_array_join
   ( p_json_array in apex_t_varchar2
   )
-  return flow_types_pkg.t_bpmn_attribute_vc2
+  return clob
   is 
-    l_return flow_types_pkg.t_bpmn_attribute_vc2;
+    l_return clob;
   begin
     apex_debug.info( p_message => '-- Joining APEX JSON Array to vc2, size %0', p0 => p_json_array.count );
-    for i in 1..p_json_array.count  loop
-      l_return := l_return || p_json_array( i ) || apex_application.lf;
-    end loop;
+
+    l_return := apex_string.join_clob( p_table => p_json_array );
 
     apex_debug.info( p_message => '-- returned string', p0 => l_return);
     return l_return;
