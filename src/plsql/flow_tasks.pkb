@@ -27,9 +27,15 @@ create or replace package body flow_tasks as
     if l_return is null then
       apex_debug.warn
       (
-        p_message => 'No task type found for object %s'
+        p_message => 'No task type found for object %0'
       , p0        =>  pi_objt_id
       );
+    else
+      apex_debug.message
+      (
+        p_message => 'Task type %0'
+      , p0        =>  l_return
+      );    
     end if;
 
     return l_return;
