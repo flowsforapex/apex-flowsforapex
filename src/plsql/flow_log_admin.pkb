@@ -229,17 +229,6 @@ create or replace package body flow_log_admin as
 
   end purge_message_logs;
 
-  /*function validate_db_archive_location
-  ( p_table       flow_types_pkg.t_vc200
-  , p_id_column   flow_types_pkg.t_vc200
-  , p_blob_column flow_types_pkg.t_vc200
-  ) return boolean -- true if validated
-  is
-  begin
-    begin
-      select 
-  end validate_db_archive_location;*/
-
   function get_archive_location
   ( p_archive_type   in varchar2
   )
@@ -260,12 +249,13 @@ create or replace package body flow_log_admin as
     , p0 => p_archive_type
     , p1 => l_destination_json
     );                         
-
+dbms_output.put_line('archive destination'||l_destination_json);
     apex_json.parse (p_source => l_destination_json);
 
     l_archive_location.destination_type            := apex_json.get_varchar2 (p_path => 'destinationType');
 
     apex_debug.message (p_message => '--- Destination Type : %0', p0=> l_archive_location.destination_type);  
+    dbms_output.put_line('--- Destination Type : '||l_archive_location.destination_type);
 
     case l_archive_location.destination_type 
     when flow_constants_pkg.gc_config_archive_destination_table then
@@ -501,6 +491,7 @@ create or replace package body flow_log_admin as
     );
     -- get list of process instances to archive, if a single p_process_id was not passed in.
     -- get all completed ('completed' or 'terminated') non-archived instances
+            dbms_output.put_line('Archiving starting');
     if p_process_id is null then
       select prcs.prcs_id
         bulk collect into l_instances
@@ -520,15 +511,19 @@ create or replace package body flow_log_admin as
     , p0 => l_instances.count);
 
     if l_instances.count > 0 then
+     dbms_output.put_line('getting location');
       -- get archive location
       l_archive_location := get_archive_location (p_archive_type => flow_constants_pkg.gc_config_logging_archive_location);
+      dbms_output.put_line('got location');
       -- loop over instances
       for instance in 1 .. l_instances.count
       loop
         -- lock flow_processes?
+        dbms_output.put_line('Archiving process '||l_instances(instance).prcs_id);
         archive_instance ( p_process_id => l_instances(instance).prcs_id
                          , p_archive_location => l_archive_location
                          );
+        
         -- commit?
       end loop;      
     end if;
