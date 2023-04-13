@@ -326,6 +326,16 @@ as
                                                             , pi_scope     => pi_scope
                                                             , pi_var_name  => l_expression
                                                             ) );
+      when flow_constants_pkg.gc_prov_var_type_number then
+        l_return_value := to_char ( flow_proc_vars_int.get_var_num  ( pi_prcs_id   => pi_prcs_id
+                                                            , pi_scope     => pi_scope
+                                                            , pi_var_name  => l_expression
+                                                            ) );
+      when flow_constants_pkg.gc_prov_var_type_clob then
+        l_return_value := ( flow_proc_vars_int.get_var_clob ( pi_prcs_id   => pi_prcs_id
+                                                            , pi_scope     => pi_scope
+                                                            , pi_var_name  => l_expression
+                                                            ) );                                                         
       else
         raise e_param_proc_var_invalid_type;
       end case;

@@ -46,7 +46,7 @@ create or replace package body flow_message_util as
       into l_message_name_json
          , l_key_json
          , l_value_json
-         , l_payload_variable
+         , l_msg_sub.payload_var
       from flow_objects objt
      where objt.objt_bpmn_id = p_msg_object_bpmn_id
        and objt.objt_dgrm_id = p_dgrm_id 
@@ -57,7 +57,7 @@ create or replace package body flow_message_util as
     , p0 => l_message_name_json
     , p1 => l_key_json
     , p2 => l_value_json
-    , p3 => l_payload_variable
+    , p3 => l_msg_sub.payload_var
     );
 
       if l_message_name_json is not null then
@@ -90,13 +90,12 @@ create or replace package body flow_message_util as
     , p0 => l_msg_sub.message_name
     , p1 => l_msg_sub.key_name
     , p2 => l_msg_sub.key_value
-    , p3 => l_payload_variable
+    , p3 => l_msg_sub.payload_var
     );
 
     l_msg_sub.prcs_id        := p_sbfl_info.sbfl_prcs_id;
     l_msg_sub.sbfl_id        := p_sbfl_info.sbfl_id;
     l_msg_sub.step_key       := p_sbfl_info.sbfl_step_key;
-    l_msg_sub.payload_var    := l_payload_variable;
   
     return l_msg_sub;
   end get_msg_subscription_details;
@@ -129,7 +128,7 @@ create or replace package body flow_message_util as
 
     -- get message and correlation settings and evaluate them
       -- get the userTask subtype  
-    select objt.objt_attributes."apex"."endPoint"
+    select objt.objt_attributes."apex"."endpoint"
          , objt.objt_attributes."apex"."messageName"
          , objt.objt_attributes."apex"."correlationKey"
          , objt.objt_attributes."apex"."correlationValue"
@@ -186,7 +185,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_endpoint_json is not null then 
-        l_message.endpoint    := flow_settings.get_endpoint
+        l_message.endpoint    := flow_settings.get_vc2_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_endpoint_json

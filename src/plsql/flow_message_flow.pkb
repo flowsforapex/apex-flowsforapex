@@ -38,6 +38,14 @@ create or replace package body flow_message_flow as
     , systimestamp
     , p_subscription_details.payload_var
     ) returning msub_id into l_msub_id;
+
+    apex_debug.message ( p_message => 'Message subscription %0 created for Message %1 Key %2 Value %3 Payload %4'
+    , p0 => l_msub_id
+    , p1 => p_subscription_details.message_name
+    , p2 => p_subscription_details.key_name
+    , p3 => p_subscription_details.key_value
+    , p4 => p_subscription_details.payload_var
+    );
     return l_msub_id;
   end subscribe;
 
@@ -56,7 +64,7 @@ create or replace package body flow_message_flow as
     l_session_id        number;
   begin
     begin
-      -- attempt the correlation based on 1))% match of message name, key and value
+      -- attempt the correlation based on 100% match of message name, key and value
       select msub.*
         into l_msub
         from flow_message_subscriptions msub
