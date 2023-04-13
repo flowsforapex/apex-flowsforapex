@@ -28,3 +28,7 @@
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
 }
+.FLOWS-DARK .djs-palette {
+  --palette-background-color: #2b3035;
+  --palette-entry-color: white;
+}

@@ -64,6 +64,7 @@
       if ( this.options.useNavigatedViewer ) {
         this.enabledModules.push(bpmnViewer.customModules.MoveCanvasModule);
         this.enabledModules.push(bpmnViewer.customModules.ZoomScrollModule);
+        this.enabledModules.push(bpmnViewer.customModules.customPaletteProviderModule);
       }
 
       this.bpmnViewer$ = new bpmnViewer.Viewer({
@@ -202,7 +203,10 @@
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
             // reset breadcrumb
-            if (!oldLoaded) this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
+            if (!oldLoaded) {
+                this.bpmnViewer$.get('callActivityModule').trimBreadcrumbTo(0)
+                this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
+            }
           }
           else {
             // get first (only) entry
