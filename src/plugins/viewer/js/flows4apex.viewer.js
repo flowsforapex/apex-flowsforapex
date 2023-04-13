@@ -27,6 +27,10 @@ function PaletteProvider(palette, translate, eventBus, canvas) {
   this._eventBus = eventBus;
   this._canvas = canvas;
 
+  palette._needsCollapse = function (availableHeight, entries) {
+    return false;
+  };
+
   palette.registerProvider(this);
 }
 
