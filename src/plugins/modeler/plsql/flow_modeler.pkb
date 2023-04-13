@@ -181,7 +181,7 @@ as
     );
     l_id      := apex_json.get_number( p_values => l_values, p_path => 'regions[1].data.id' );
     l_content := apex_json.get_clob( p_values => l_values, p_path => 'regions[1].data.content');
-    flow_diagram.update_diagram
+    flow_bpmn_parser_pkg.update_diagram
     (
       pi_dgrm_id      => l_id
     , pi_dgrm_content => l_content
@@ -527,12 +527,18 @@ as
                when 'plsqlExpression' then
                   v_input := 'declare dummy varchar2(4000) :='
                               || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
+               when 'plsqlRawExpression' then -- use the same snippet as non-raw
+                  v_input := 'declare dummy varchar2(4000) :='
+                              || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
                when 'plsqlExpressionBoolean' then
                   v_input := 'declare dummy boolean :='
                               || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
                when 'plsqlFunctionBody' then
                   v_input := 'declare function dummy return varchar2 is begin'
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+               when 'plsqlRawFunctionBody' then -- use the same snippet as non-raw
+                  v_input := 'declare function dummy return varchar2 is begin'
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';               
                when 'plsqlFunctionBodyBoolean' then
                   v_input := 'declare function dummy return boolean is begin'
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
