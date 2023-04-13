@@ -2,6 +2,125 @@ var bpmnViewer;
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./lib/viewerPalette/PaletteProvider.js":
+/*!**********************************************!*\
+  !*** ./lib/viewerPalette/PaletteProvider.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PaletteProvider)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll_ZoomScroll__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll/ZoomScroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/ZoomScroll.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+
+
+
+/**
+ * A palette provider for BPMN 2.0 elements.
+ */
+function PaletteProvider(palette, translate, eventBus, canvas) {
+  this._palette = palette;
+  this._translate = translate;
+  this._eventBus = eventBus;
+  this._canvas = canvas;
+
+  palette._needsCollapse = function (availableHeight, entries) {
+    return false;
+  };
+
+  palette.registerProvider(this);
+}
+
+PaletteProvider.$inject = ['palette', 'translate', 'eventBus', 'canvas'];
+
+PaletteProvider.prototype.getPaletteEntries = function (element) {
+  var actions = {};
+  var translate = this._translate;
+  var eventBus = this._eventBus;
+  var canvas = this._canvas;
+
+  var zoomScroll = new diagram_js_lib_navigation_zoomscroll_ZoomScroll__WEBPACK_IMPORTED_MODULE_0__["default"]({}, eventBus, canvas);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(actions, {
+    'zoom-in': {
+      group: 'controls',
+      className: 'fa fa-search-plus',
+      title: translate('Zoom In'),
+      action: {
+        click: function (event) {
+          zoomScroll.zoom(1, 0);
+        },
+      },
+    },
+    'zoom-out': {
+      group: 'controls',
+      className: 'fa fa-search-minus',
+      title: translate('Zoom Out'),
+      action: {
+        click: function (event) {
+          zoomScroll.zoom(-1, 0);
+        },
+      },
+    },
+    'zoom-reset': {
+      group: 'controls',
+      className: 'fa fa-fit-to-size',
+      title: translate('Reset Zoom'),
+      action: {
+        click: function (event) {
+          zoomScroll.reset();
+        },
+      },
+    },
+    'save-svg': {
+      group: 'controls',
+      className: 'fa fa-image',
+      title: translate('Download SVG'),
+      action: {
+        click: function (event) {
+          saveSVG();
+        },
+      },
+    },
+  });
+
+  return actions;
+};
+
+
+/***/ }),
+
+/***/ "./lib/viewerPalette/index.js":
+/*!************************************!*\
+  !*** ./lib/viewerPalette/index.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/features/palette */ "./node_modules/diagram-js/lib/features/palette/index.js");
+/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js");
+/* harmony import */ var _PaletteProvider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PaletteProvider.js */ "./lib/viewerPalette/PaletteProvider.js");
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_palette__WEBPACK_IMPORTED_MODULE_1__["default"], diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_2__["default"]],
+  __init__: ["paletteProvider"],
+  paletteProvider: ["type", _PaletteProvider_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
+});
+
+
+/***/ }),
+
 /***/ "./modules/callActivityModule/CallActivityModule.js":
 /*!**********************************************************!*\
   !*** ./modules/callActivityModule/CallActivityModule.js ***!
@@ -93,6 +212,10 @@ CustomDrilldown.prototype.addOverlay = function (element) {
 
       // update breadcrumb
       _self.updateBreadcrumb();
+
+      // move down sub process breadcrumb
+      const subProcessBreadcrumb = document.querySelector('.bjs-breadcrumbs:not(#callActivityBreadcrumb)');
+      subProcessBreadcrumb.style.top = '60px';
 
       // invoke loadDiagram of widget
       _self._widget.loadDiagram();
@@ -209,16 +332,15 @@ CustomDrilldown.prototype.setBreadcrumbVisbility = function () {
     this.setPositioning(true);
   } else {
     this._breadcrumb.style.display = 'none';
+    // move up sub process breadcrumb
+    const subProcessBreadcrumb = document.querySelector('.bjs-breadcrumbs:not(#callActivityBreadcrumb)');
+    subProcessBreadcrumb.style.top = '30px';
   }
 };
 
 CustomDrilldown.prototype.setPositioning = function () {
-  // this._canvas.zoom('fit-viewport');
-  
-  // if (breadcrumbVisible) {
-    const breadcrumbHeight = this._breadcrumb.offsetHeight;
-    this._canvas.scroll({ dx: 0, dy: 30 + breadcrumbHeight + 30 });
-  // }
+  const breadcrumbHeight = this._breadcrumb.offsetHeight;
+  this._canvas.scroll({ dx: 0, dy: 30 + breadcrumbHeight + 30 });
 };
 
 CustomDrilldown.$inject = [
@@ -441,26 +563,44 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+/**
+ * @typedef {import('didi').ModuleDeclaration} ModuleDeclaration
+ *
+ * @typedef {import('./BaseViewer').BaseModelerOptions} BaseModelerOptions
+ * @typedef {import('./BaseViewer').ModdleElement} ModdleElement
+ * @typedef {import('./BaseViewer').ImportXMLResult} ImportXMLResult
+ * @typedef {import('./BaseViewer').ImportXMLError} ImportXMLError
+ * @typedef {import('./BaseViewer').ImportDefinitionsResult} ImportDefinitionsResult
+ * @typedef {import('./BaseViewer').ImportDefinitionsError} ImportDefinitionsError
+ * @typedef {import('./BaseViewer').ModdleElement} ModdleElement
+ * @typedef {import('./BaseViewer').ModdleElementsById} ModdleElementsById
+ * @typedef {import('./BaseViewer').OpenResult} OpenResult
+ * @typedef {import('./BaseViewer').OpenError} OpenError
+ * @typedef {import('./BaseViewer').SaveXMLOptions} SaveXMLOptions
+ * @typedef {import('./BaseViewer').SaveXMLResult} SaveXMLResult
+ */
+
 /**
  * A base viewer for BPMN 2.0 diagrams.
  *
  * Have a look at {@link Viewer}, {@link NavigatedViewer} or {@link Modeler} for
  * bundles that include actual features.
  *
- * @param {Object} [options] configuration options to pass to the viewer
- * @param {DOMElement} [options.container] the container to render the viewer in, defaults to body.
- * @param {string|number} [options.width] the width of the viewer
- * @param {string|number} [options.height] the height of the viewer
- * @param {Object} [options.moddleExtensions] extension packages to provide
- * @param {Array<didi.Module>} [options.modules] a list of modules to override the default modules
- * @param {Array<didi.Module>} [options.additionalModules] a list of modules to use with the default modules
+ * @param {BaseModelerOptions} [options] The options to configure the viewer.
  */
 function BaseViewer(options) {
 
+  /**
+   * @type {BaseModelerOptions}
+   */
   options = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, DEFAULT_OPTIONS, options);
 
   this._moddle = this._createModdle(options);
 
+  /**
+   * @type {HTMLElement}
+   */
   this._container = this._createContainer(options);
 
   /* <project-logo> */
@@ -475,22 +615,6 @@ function BaseViewer(options) {
 (0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(BaseViewer, diagram_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
 
 /**
-* The importXML result.
-*
-* @typedef {Object} ImportXMLResult
-*
-* @property {Array<string>} warnings
-*/
-
-/**
-* The importXML error.
-*
-* @typedef {Error} ImportXMLError
-*
-* @property {Array<string>} warnings
-*/
-
-/**
  * Parse and render a BPMN 2.0 diagram.
  *
  * Once finished the viewer reports back the result to the
@@ -500,7 +624,7 @@ function BaseViewer(options) {
  *
  * During import the viewer will fire life-cycle events:
  *
- *   * import.parse.start (about to read model from xml)
+ *   * import.parse.start (about to read model from XML)
  *   * import.parse.complete (model read; may have worked or not)
  *   * import.render.start (graphical import start)
  *   * import.render.complete (graphical import finished)
@@ -508,10 +632,18 @@ function BaseViewer(options) {
  *
  * You can use these events to hook into the life-cycle.
  *
- * @param {string} xml the BPMN 2.0 xml
- * @param {ModdleElement<BPMNDiagram>|string} [bpmnDiagram] BPMN diagram or id of diagram to render (if not provided, the first one will be rendered)
+ * @throws {ImportXMLError} An error thrown during the import of the XML.
  *
- * Returns {Promise<ImportXMLResult, ImportXMLError>}
+ * @fires BaseViewer#ImportParseStart
+ * @fires BaseViewer#ImportParseComplete
+ * @fires Importer#ImportRenderStart
+ * @fires Importer#ImportRenderComplete
+ * @fires BaseViewer#ImportDone
+ *
+ * @param {string} xml The BPMN 2.0 XML to be imported.
+ * @param {ModdleElement|string} [bpmnDiagram] The optional diagram or Id of the BPMN diagram to open.
+ *
+ * @return {Promise<ImportXMLResult>} A promise resolving with warnings that were produced during the import.
  */
 BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function importXML(xml, bpmnDiagram) {
 
@@ -547,6 +679,14 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
 
     // hook in pre-parse listeners +
     // allow xml manipulation
+
+    /**
+     * A `import.parse.start` event.
+     *
+     * @event BaseViewer#ImportParseStart
+     * @type {Object}
+     * @property {string} xml The XML that is to be parsed.
+     */
     xml = this._emit('import.parse.start', { xml: xml }) || xml;
 
     let parseResult;
@@ -569,6 +709,18 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
 
     // hook in post parse listeners +
     // allow definitions manipulation
+
+    /**
+     * A `import.parse.complete` event.
+     *
+     * @event BaseViewer#ImportParseComplete
+     * @type {Object}
+     * @property {Error|null} error An error thrown when parsing the XML.
+     * @property {ModdleElement} definitions The definitions model element.
+     * @property {ModdleElementsById} elementsById The model elements by ID.
+     * @property {ModdleElement[]} references The referenced model elements.
+     * @property {string[]} warnings The warnings produced when parsing the XML.
+     */
     definitions = this._emit('import.parse.complete', ParseCompleteEvent({
       error: null,
       definitions: definitions,
@@ -581,6 +733,14 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
 
     aggregatedWarnings = aggregatedWarnings.concat(importResult.warnings);
 
+    /**
+     * A `import.parse.complete` event.
+     *
+     * @event BaseViewer#ImportDone
+     * @type {Object}
+     * @property {ImportXMLError|null} error An error thrown during import.
+     * @property {string[]} warnings The warnings.
+     */
     this._emit('import.done', { error: null, warnings: aggregatedWarnings });
 
     return { warnings: aggregatedWarnings };
@@ -597,21 +757,6 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
   }
 });
 
-/**
-* The importDefinitions result.
-*
-* @typedef {Object} ImportDefinitionsResult
-*
-* @property {Array<string>} warnings
-*/
-
-/**
-* The importDefinitions error.
-*
-* @typedef {Error} ImportDefinitionsError
-*
-* @property {Array<string>} warnings
-*/
 
 /**
  * Import parsed definitions and render a BPMN 2.0 diagram.
@@ -628,10 +773,12 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
  *
  * You can use these events to hook into the life-cycle.
  *
- * @param {ModdleElement<Definitions>} definitions parsed BPMN 2.0 definitions
- * @param {ModdleElement<BPMNDiagram>|string} [bpmnDiagram] BPMN diagram or id of diagram to render (if not provided, the first one will be rendered)
+ * @throws {ImportDefinitionsError} An error thrown during the import of the definitions.
  *
- * Returns {Promise<ImportDefinitionsResult, ImportDefinitionsError>}
+ * @param {ModdleElement} definitions The definitions.
+ * @param {ModdleElement|string} [bpmnDiagram] The optional diagram or ID of the BPMN diagram to open.
+ *
+ * @return {Promise<ImportDefinitionsResult>} A promise resolving with warnings that were produced during the import.
  */
 BaseViewer.prototype.importDefinitions = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function importDefinitions(definitions, bpmnDiagram) {
   this._setDefinitions(definitions);
@@ -640,21 +787,6 @@ BaseViewer.prototype.importDefinitions = (0,_util_CompatibilityUtil__WEBPACK_IMP
   return { warnings: result.warnings };
 });
 
-/**
- * The open result.
- *
- * @typedef {Object} OpenResult
- *
- * @property {Array<string>} warnings
- */
-
-/**
-* The open error.
-*
-* @typedef {Error} OpenError
-*
-* @property {Array<string>} warnings
-*/
 
 /**
  * Open diagram of previously imported XML.
@@ -671,9 +803,11 @@ BaseViewer.prototype.importDefinitions = (0,_util_CompatibilityUtil__WEBPACK_IMP
  *
  * You can use these events to hook into the life-cycle.
  *
- * @param {string|ModdleElement<BPMNDiagram>} [bpmnDiagramOrId] id or the diagram to open
+ * @throws {OpenError} An error thrown during opening.
  *
- * Returns {Promise<OpenResult, OpenError>}
+ * @param {ModdleElement|string} bpmnDiagramOrId The diagram or Id of the BPMN diagram to open.
+ *
+ * @return {Promise<OpenResult>} A promise resolving with warnings that were produced during opening.
  */
 BaseViewer.prototype.open = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function open(bpmnDiagramOrId) {
 
@@ -715,14 +849,6 @@ BaseViewer.prototype.open = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_
 });
 
 /**
- * The saveXML result.
- *
- * @typedef {Object} SaveXMLResult
- *
- * @property {string} xml
- */
-
-/**
  * Export the currently displayed BPMN 2.0 diagram as
  * a BPMN 2.0 XML document.
  *
@@ -736,11 +862,14 @@ BaseViewer.prototype.open = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_
  *
  * You can use these events to hook into the life-cycle.
  *
- * @param {Object} [options] export options
- * @param {boolean} [options.format=false] output formatted XML
- * @param {boolean} [options.preamble=true] output preamble
+ * @throws {Error} An error thrown during export.
  *
- * Returns {Promise<SaveXMLResult, Error>}
+ * @fires BaseViewer#SaveXMLStart
+ * @fires BaseViewer#SaveXMLDone
+ *
+ * @param {SaveXMLOptions} [options] The options.
+ *
+ * @return {Promise<SaveXMLResult>} A promise resolving with the XML.
  */
 BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function saveXML(options) {
 
@@ -755,6 +884,14 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
     }
 
     // allow to fiddle around with definitions
+
+    /**
+     * A `saveXML.start` event.
+     *
+     * @event BaseViewer#SaveXMLStart
+     * @type {Object}
+     * @property {ModdleElement} definitions The definitions model element.
+     */
     definitions = this._emit('saveXML.start', {
       definitions
     }) || definitions;
@@ -771,6 +908,14 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
 
   const result = error ? { error } : { xml };
 
+  /**
+   * A `saveXML.done` event.
+   *
+   * @event BaseViewer#SaveXMLDone
+   * @type {Object}
+   * @property {Error} [error] An error thrown when saving the XML.
+   * @property {string} [xml] The saved XML.
+   */
   this._emit('saveXML.done', result);
 
   if (error) {
@@ -780,13 +925,6 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
   return result;
 });
 
-/**
- * The saveSVG result.
- *
- * @typedef {Object} SaveSVGResult
- *
- * @property {string} svg
- */
 
 /**
  * Export the currently displayed BPMN 2.0 diagram as
@@ -801,11 +939,13 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
  *
  * You can use these events to hook into the life-cycle.
  *
- * @param {Object} [options]
+ * @throws {Error} An error thrown during export.
  *
- * Returns {Promise<SaveSVGResult, Error>}
+ * @fires BaseViewer#SaveSVGDone
+ *
+ * @return {Promise<SaveSVGResult>} A promise resolving with the SVG.
  */
-BaseViewer.prototype.saveSVG = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function saveSVG(options = {}) {
+BaseViewer.prototype.saveSVG = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function saveSVG() {
   this._emit('saveSVG.start');
 
   let svg, err;
@@ -834,6 +974,14 @@ BaseViewer.prototype.saveSVG = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
     err = e;
   }
 
+  /**
+   * A `saveSVG.done` event.
+   *
+   * @event BaseViewer#SaveSVGDone
+   * @type {Object}
+   * @property {Error} [error] An error thrown when saving the SVG.
+   * @property {string} [svg] The saved SVG.
+   */
   this._emit('saveSVG.done', {
     error: err,
     svg: svg
@@ -882,6 +1030,11 @@ BaseViewer.prototype._setDefinitions = function(definitions) {
   this._definitions = definitions;
 };
 
+/**
+ * Return modules to instantiate with.
+ *
+ * @return {ModuleDeclaration[]} The modules.
+ */
 BaseViewer.prototype.getModules = function() {
   return this._modules;
 };
@@ -889,10 +1042,8 @@ BaseViewer.prototype.getModules = function() {
 /**
  * Remove all drawn elements from the viewer.
  *
- * After calling this method the viewer can still
- * be reused for opening another diagram.
- *
- * @method BaseViewer#clear
+ * After calling this method the viewer can still be reused for opening another
+ * diagram.
  */
 BaseViewer.prototype.clear = function() {
   if (!this.getDefinitions()) {
@@ -906,8 +1057,8 @@ BaseViewer.prototype.clear = function() {
 };
 
 /**
- * Destroy the viewer instance and remove all its
- * remainders from the document tree.
+ * Destroy the viewer instance and remove all its remainders from the document
+ * tree.
  */
 BaseViewer.prototype.destroy = function() {
 
@@ -919,29 +1070,34 @@ BaseViewer.prototype.destroy = function() {
 };
 
 /**
- * Register an event listener
+ * Register an event listener.
  *
- * Remove a previously added listener via {@link #off(event, callback)}.
+ * Remove an event listener via {@link BaseViewer#off}.
  *
- * @param {string} event
- * @param {number} [priority]
- * @param {Function} callback
- * @param {Object} [that]
+ * @param {string|string[]} events The event(s) to listen to.
+ * @param {number} [priority] The priority with which to listen.
+ * @param {EventCallback} callback The callback.
+ * @param {*} [that] Value of `this` the callback will be called with.
  */
-BaseViewer.prototype.on = function(event, priority, callback, target) {
-  return this.get('eventBus').on(event, priority, callback, target);
+BaseViewer.prototype.on = function(events, priority, callback, that) {
+  return this.get('eventBus').on(events, priority, callback, that);
 };
 
 /**
- * De-register an event listener
+ * Remove an event listener.
  *
- * @param {string} event
- * @param {Function} callback
+ * @param {string|string[]} events The event(s).
+ * @param {Function} [callback] The callback.
  */
-BaseViewer.prototype.off = function(event, callback) {
-  this.get('eventBus').off(event, callback);
+BaseViewer.prototype.off = function(events, callback) {
+  this.get('eventBus').off(events, callback);
 };
 
+/**
+ * Attach the viewer to an HTML element.
+ *
+ * @param {HTMLElement} parentNode The parent node to attach to.
+ */
 BaseViewer.prototype.attachTo = function(parentNode) {
 
   if (!parentNode) {
@@ -968,10 +1124,20 @@ BaseViewer.prototype.attachTo = function(parentNode) {
   this.get('canvas').resized();
 };
 
+/**
+ * Get the definitions model element.
+ *
+ * @returns {ModdleElement} The definitions model element.
+ */
 BaseViewer.prototype.getDefinitions = function() {
   return this._definitions;
 };
 
+/**
+ * Detach the viewer.
+ *
+ * @fires BaseViewer#DetachEvent
+ */
 BaseViewer.prototype.detach = function() {
 
   const container = this._container,
@@ -981,6 +1147,12 @@ BaseViewer.prototype.detach = function() {
     return;
   }
 
+  /**
+   * A `detach` event.
+   *
+   * @event BaseViewer#DetachEvent
+   * @type {Object}
+   */
   this._emit('detach', {});
 
   parentNode.removeChild(container);
@@ -988,7 +1160,7 @@ BaseViewer.prototype.detach = function() {
 
 BaseViewer.prototype._init = function(container, moddle, options) {
 
-  const baseModules = options.modules || this.getModules(),
+  const baseModules = options.modules || this.getModules(options),
         additionalModules = options.additionalModules || [],
         staticModules = [
           {
@@ -1018,7 +1190,7 @@ BaseViewer.prototype._init = function(container, moddle, options) {
  * @param  {string} type
  * @param  {Object} event
  *
- * @return {Object} event processing result (if any)
+ * @return {Object} The return value after calling all event listeners.
  */
 BaseViewer.prototype._emit = function(type, event) {
   return this.get('eventBus').fire(type, event);
@@ -1183,6 +1355,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
+ * @typedef { import('./BaseViewer').BaseViewerOptions } BaseViewerOptions
+ */
+
+/**
  * A viewer for BPMN 2.0 diagrams.
  *
  * Have a look at {@link NavigatedViewer} or {@link Modeler} for bundles that include
@@ -1221,13 +1397,7 @@ __webpack_require__.r(__webpack_exports__);
  * bpmnViewer.importXML(...);
  * ```
  *
- * @param {Object} [options] configuration options to pass to the viewer
- * @param {DOMElement} [options.container] the container to render the viewer in, defaults to body.
- * @param {string|number} [options.width] the width of the viewer
- * @param {string|number} [options.height] the height of the viewer
- * @param {Object} [options.moddleExtensions] extension packages to provide
- * @param {Array<didi.Module>} [options.modules] a list of modules to override the default modules
- * @param {Array<didi.Module>} [options.additionalModules] a list of modules to use with the default modules
+ * @param {BaseViewerOptions} [options] The options to configure the viewer.
  */
 function Viewer(options) {
   _BaseViewer__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
@@ -1283,19 +1453,19 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getDi": () => (/* reexport safe */ _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi),
 /* harmony export */   "black": () => (/* binding */ black),
-/* harmony export */   "isTypedEvent": () => (/* binding */ isTypedEvent),
-/* harmony export */   "isThrowEvent": () => (/* binding */ isThrowEvent),
-/* harmony export */   "isCollection": () => (/* binding */ isCollection),
-/* harmony export */   "getSemantic": () => (/* binding */ getSemantic),
-/* harmony export */   "getFillColor": () => (/* binding */ getFillColor),
-/* harmony export */   "getStrokeColor": () => (/* binding */ getStrokeColor),
-/* harmony export */   "getLabelColor": () => (/* binding */ getLabelColor),
 /* harmony export */   "getCirclePath": () => (/* binding */ getCirclePath),
-/* harmony export */   "getRoundRectPath": () => (/* binding */ getRoundRectPath),
+/* harmony export */   "getDi": () => (/* reexport safe */ _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi),
 /* harmony export */   "getDiamondPath": () => (/* binding */ getDiamondPath),
-/* harmony export */   "getRectPath": () => (/* binding */ getRectPath)
+/* harmony export */   "getFillColor": () => (/* binding */ getFillColor),
+/* harmony export */   "getLabelColor": () => (/* binding */ getLabelColor),
+/* harmony export */   "getRectPath": () => (/* binding */ getRectPath),
+/* harmony export */   "getRoundRectPath": () => (/* binding */ getRoundRectPath),
+/* harmony export */   "getSemantic": () => (/* binding */ getSemantic),
+/* harmony export */   "getStrokeColor": () => (/* binding */ getStrokeColor),
+/* harmony export */   "isCollection": () => (/* binding */ isCollection),
+/* harmony export */   "isThrowEvent": () => (/* binding */ isThrowEvent),
+/* harmony export */   "isTypedEvent": () => (/* binding */ isTypedEvent)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
@@ -1465,15 +1635,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ BpmnRenderer)
 /* harmony export */ });
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! inherits-browser */ "./node_modules/inherits-browser/dist/index.es.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var diagram_js_lib_draw_BaseRenderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/draw/BaseRenderer */ "./node_modules/diagram-js/lib/draw/BaseRenderer.js");
 /* harmony import */ var _util_DiUtil__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util/DiUtil */ "./node_modules/bpmn-js/lib/util/DiUtil.js");
 /* harmony import */ var _features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../features/label-editing/LabelUtil */ "./node_modules/bpmn-js/lib/features/label-editing/LabelUtil.js");
 /* harmony import */ var _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./BpmnRenderUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 /* harmony import */ var diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/util/RenderUtil */ "./node_modules/diagram-js/lib/util/RenderUtil.js");
-/* harmony import */ var _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./BpmnRenderUtil */ "./node_modules/bpmn-js/lib/draw/BpmnRenderUtil.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BpmnRenderUtil */ "./node_modules/bpmn-js/lib/draw/BpmnRenderUtil.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! diagram-js/lib/util/SvgTransformUtil */ "./node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 /* harmony import */ var ids__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ids */ "./node_modules/ids/dist/index.esm.js");
 
@@ -1526,33 +1696,33 @@ function BpmnRenderer(
 
   var markers = {};
 
-  var computeStyle = styles.computeStyle;
+  function shapeStyle(attrs) {
+    return styles.computeStyle(attrs, {
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round',
+      stroke: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.black,
+      strokeWidth: 2,
+      fill: 'white'
+    });
+  }
+
+  function lineStyle(attrs) {
+    return styles.computeStyle(attrs, [ 'no-fill' ], {
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round',
+      stroke: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.black,
+      strokeWidth: 2
+    });
+  }
 
   function addMarker(id, options) {
-    var attrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({
-      fill: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black,
-      strokeWidth: 1,
-      strokeLinecap: 'round',
-      strokeDasharray: 'none'
-    }, options.attrs);
+    var {
+      ref = { x: 0, y: 0 },
+      scale = 1,
+      element
+    } = options;
 
-    var ref = options.ref || { x: 0, y: 0 };
-
-    var scale = options.scale || 1;
-
-    // fix for safari / chrome / firefox bug not correctly
-    // resetting stroke dash array
-    if (attrs.strokeDasharray === 'none') {
-      attrs.strokeDasharray = [ 10000, 1 ];
-    }
-
-    var marker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('marker');
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(options.element, attrs);
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(marker, options.element);
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(marker, {
+    var marker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('marker', {
       id: id,
       viewBox: '0 0 20 20',
       refX: ref.x,
@@ -1562,15 +1732,17 @@ function BpmnRenderer(
       orient: 'auto'
     });
 
-    var defs = (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.query)('defs', canvas._svg);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(marker, element);
+
+    var defs = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)('defs', canvas._svg);
 
     if (!defs) {
-      defs = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('defs');
+      defs = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('defs');
 
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(canvas._svg, defs);
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(canvas._svg, defs);
     }
 
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(defs, marker);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(defs, marker);
 
     markers[id] = marker;
   }
@@ -1594,105 +1766,132 @@ function BpmnRenderer(
   function createMarker(id, type, fill, stroke) {
 
     if (type === 'sequenceflow-end') {
-      var sequenceflowEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('path');
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
+      var sequenceflowEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
+        d: 'M 1 5 L 11 10 L 1 15 Z',
+        ...shapeStyle({
+          fill: stroke,
+          stroke: stroke,
+          strokeWidth: 1
+        })
+      });
 
       addMarker(id, {
         element: sequenceflowEnd,
         ref: { x: 11, y: 10 },
-        scale: 0.5,
-        attrs: {
-          fill: stroke,
-          stroke: stroke
-        }
+        scale: 0.5
       });
     }
 
     if (type === 'messageflow-start') {
-      var messageflowStart = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('circle');
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(messageflowStart, { cx: 6, cy: 6, r: 3.5 });
+      var messageflowStart = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('circle', {
+        cx: 6,
+        cy: 6,
+        r: 3.5,
+        ...shapeStyle({
+          fill: fill,
+          stroke: stroke,
+          strokeWidth: 1,
+
+          // fix for safari / chrome / firefox bug not correctly
+          // resetting stroke dash array
+          strokeDasharray: [ 10000, 1 ]
+        })
+      });
 
       addMarker(id, {
         element: messageflowStart,
-        attrs: {
-          fill: fill,
-          stroke: stroke
-        },
         ref: { x: 6, y: 6 }
       });
     }
 
     if (type === 'messageflow-end') {
-      var messageflowEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('path');
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(messageflowEnd, { d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z' });
+      var messageflowEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
+        d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z',
+        ...shapeStyle({
+          fill: fill,
+          stroke: stroke,
+          strokeWidth: 1,
+
+          // fix for safari / chrome / firefox bug not correctly
+          // resetting stroke dash array
+          strokeDasharray: [ 10000, 1 ]
+        })
+      });
 
       addMarker(id, {
         element: messageflowEnd,
-        attrs: {
-          fill: fill,
-          stroke: stroke,
-          strokeLinecap: 'butt'
-        },
         ref: { x: 8.5, y: 5 }
       });
     }
 
     if (type === 'association-start') {
-      var associationStart = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('path');
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(associationStart, { d: 'M 11 5 L 1 10 L 11 15' });
+      var associationStart = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
+        d: 'M 11 5 L 1 10 L 11 15',
+        ...lineStyle({
+          fill: 'none',
+          stroke: stroke,
+          strokeWidth: 1.5,
+
+          // fix for safari / chrome / firefox bug not correctly
+          // resetting stroke dash array
+          strokeDasharray: [ 10000, 1 ]
+        })
+      });
 
       addMarker(id, {
         element: associationStart,
-        attrs: {
-          fill: 'none',
-          stroke: stroke,
-          strokeWidth: 1.5
-        },
         ref: { x: 1, y: 10 },
         scale: 0.5
       });
     }
 
     if (type === 'association-end') {
-      var associationEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('path');
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(associationEnd, { d: 'M 1 5 L 11 10 L 1 15' });
+      var associationEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
+        d: 'M 1 5 L 11 10 L 1 15',
+        ...lineStyle({
+          fill: 'none',
+          stroke: stroke,
+          strokeWidth: 1.5,
+
+          // fix for safari / chrome / firefox bug not correctly
+          // resetting stroke dash array
+          strokeDasharray: [ 10000, 1 ]
+        })
+      });
 
       addMarker(id, {
         element: associationEnd,
-        attrs: {
-          fill: 'none',
-          stroke: stroke,
-          strokeWidth: 1.5
-        },
-        ref: { x: 12, y: 10 },
+        ref: { x: 11, y: 10 },
         scale: 0.5
       });
     }
 
     if (type === 'conditional-flow-marker') {
-      var conditionalflowMarker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('path');
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(conditionalflowMarker, { d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z' });
-
-      addMarker(id, {
-        element: conditionalflowMarker,
-        attrs: {
+      var conditionalFlowMarker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
+        d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z',
+        ...shapeStyle({
           fill: fill,
           stroke: stroke
-        },
+        })
+      });
+
+      addMarker(id, {
+        element: conditionalFlowMarker,
         ref: { x: -1, y: 10 },
         scale: 0.5
       });
     }
 
     if (type === 'conditional-default-flow-marker') {
-      var conditionaldefaultflowMarker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('path');
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(conditionaldefaultflowMarker, { d: 'M 6 4 L 10 16' });
+      var defaultFlowMarker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
+        d: 'M 6 4 L 10 16',
+        ...shapeStyle({
+          stroke: stroke
+        })
+      });
 
       addMarker(id, {
-        element: conditionaldefaultflowMarker,
-        attrs: {
-          stroke: stroke
-        },
+        element: defaultFlowMarker,
         ref: { x: 0, y: 10 },
         scale: 0.5
       });
@@ -1701,18 +1900,14 @@ function BpmnRenderer(
 
   function drawCircle(parentGfx, width, height, offset, attrs) {
 
-    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_2__.isObject)(offset)) {
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_5__.isObject)(offset)) {
       attrs = offset;
       offset = 0;
     }
 
     offset = offset || 0;
 
-    attrs = computeStyle(attrs, {
-      stroke: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black,
-      strokeWidth: 2,
-      fill: 'white'
-    });
+    attrs = shapeStyle(attrs);
 
     if (attrs.fill === 'none') {
       delete attrs.fillOpacity;
@@ -1721,46 +1916,40 @@ function BpmnRenderer(
     var cx = width / 2,
         cy = height / 2;
 
-    var circle = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('circle');
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(circle, {
+    var circle = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('circle', {
       cx: cx,
       cy: cy,
-      r: Math.round((width + height) / 4 - offset)
+      r: Math.round((width + height) / 4 - offset),
+      ...attrs
     });
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(circle, attrs);
 
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(parentGfx, circle);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, circle);
 
     return circle;
   }
 
   function drawRect(parentGfx, width, height, r, offset, attrs) {
 
-    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_2__.isObject)(offset)) {
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_5__.isObject)(offset)) {
       attrs = offset;
       offset = 0;
     }
 
     offset = offset || 0;
 
-    attrs = computeStyle(attrs, {
-      stroke: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black,
-      strokeWidth: 2,
-      fill: 'white'
-    });
+    attrs = shapeStyle(attrs);
 
-    var rect = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('rect');
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(rect, {
+    var rect = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('rect', {
       x: offset,
       y: offset,
       width: width - offset * 2,
       height: height - offset * 2,
       rx: r,
-      ry: r
+      ry: r,
+      ...attrs
     });
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(rect, attrs);
 
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(parentGfx, rect);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, rect);
 
     return rect;
   }
@@ -1770,61 +1959,74 @@ function BpmnRenderer(
     var x_2 = width / 2;
     var y_2 = height / 2;
 
-    var points = [ { x: x_2, y: 0 }, { x: width, y: y_2 }, { x: x_2, y: height }, { x: 0, y: y_2 } ];
+    var points = [
+      { x: x_2, y: 0 },
+      { x: width, y: y_2 },
+      { x: x_2, y: height },
+      { x: 0, y: y_2 }
+    ];
 
     var pointsString = points.map(function(point) {
       return point.x + ',' + point.y;
     }).join(' ');
 
-    attrs = computeStyle(attrs, {
-      stroke: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black,
-      strokeWidth: 2,
-      fill: 'white'
-    });
+    attrs = shapeStyle(attrs);
 
-    var polygon = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('polygon');
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(polygon, {
+    var polygon = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('polygon', {
+      ...attrs,
       points: pointsString
     });
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(polygon, attrs);
 
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(parentGfx, polygon);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, polygon);
 
     return polygon;
   }
 
-  function drawLine(parentGfx, waypoints, attrs) {
-    attrs = computeStyle(attrs, [ 'no-fill' ], {
-      stroke: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black,
-      strokeWidth: 2,
-      fill: 'none'
-    });
+  /**
+   * @param {SVGElement} parentGfx
+   * @param {Point[]} waypoints
+   * @param {any} attrs
+   * @param {number} [radius]
+   *
+   * @return {SVGElement}
+   */
+  function drawLine(parentGfx, waypoints, attrs, radius) {
+    attrs = lineStyle(attrs);
 
-    var line = (0,diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_6__.createLine)(waypoints, attrs);
+    var line = (0,diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_6__.createLine)(waypoints, attrs, radius);
 
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(parentGfx, line);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, line);
 
     return line;
   }
 
+  /**
+   * @param {SVGElement} parentGfx
+   * @param {Point[]} waypoints
+   * @param {any} attrs
+   *
+   * @return {SVGElement}
+   */
+  function drawConnectionSegments(parentGfx, waypoints, attrs) {
+    return drawLine(parentGfx, waypoints, attrs, 5);
+  }
+
   function drawPath(parentGfx, d, attrs) {
 
-    attrs = computeStyle(attrs, [ 'no-fill' ], {
-      strokeWidth: 2,
-      stroke: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black
+    attrs = lineStyle(attrs);
+
+    var path = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
+      ...attrs,
+      d
     });
 
-    var path = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('path');
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(path, { d: d });
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(path, attrs);
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(parentGfx, path);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, path);
 
     return path;
   }
 
   function drawMarker(type, parentGfx, path, attrs) {
-    return drawPath(parentGfx, path, (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({ 'data-marker': type }, attrs));
+    return drawPath(parentGfx, path, (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.assign)({ 'data-marker': type }, attrs));
   }
 
   function renderer(type) {
@@ -1839,8 +2041,8 @@ function BpmnRenderer(
 
   function renderEventContent(element, parentGfx) {
 
-    var event = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
-    var isThrowing = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isThrowEvent)(event);
+    var event = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
+    var isThrowing = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isThrowEvent)(event);
 
     if (event.eventDefinitions && event.eventDefinitions.length > 1) {
       if (event.parallelMultiple) {
@@ -1851,43 +2053,43 @@ function BpmnRenderer(
       }
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:MessageEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:MessageEventDefinition')) {
       return renderer('bpmn:MessageEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:TimerEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:TimerEventDefinition')) {
       return renderer('bpmn:TimerEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:ConditionalEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:ConditionalEventDefinition')) {
       return renderer('bpmn:ConditionalEventDefinition')(parentGfx, element);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:SignalEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:SignalEventDefinition')) {
       return renderer('bpmn:SignalEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:EscalationEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:EscalationEventDefinition')) {
       return renderer('bpmn:EscalationEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:LinkEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:LinkEventDefinition')) {
       return renderer('bpmn:LinkEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:ErrorEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:ErrorEventDefinition')) {
       return renderer('bpmn:ErrorEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:CancelEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:CancelEventDefinition')) {
       return renderer('bpmn:CancelEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:CompensateEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:CompensateEventDefinition')) {
       return renderer('bpmn:CompensateEventDefinition')(parentGfx, element, isThrowing);
     }
 
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isTypedEvent)(event, 'bpmn:TerminateEventDefinition')) {
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:TerminateEventDefinition')) {
       return renderer('bpmn:TerminateEventDefinition')(parentGfx, element, isThrowing);
     }
 
@@ -1896,7 +2098,7 @@ function BpmnRenderer(
 
   function renderLabel(parentGfx, label, options) {
 
-    options = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({
+    options = (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.assign)({
       size: {
         width: 100
       }
@@ -1904,22 +2106,22 @@ function BpmnRenderer(
 
     var text = textRenderer.createText(label || '', options);
 
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.classes)(text).add('djs-label');
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(text).add('djs-label');
 
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(parentGfx, text);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, text);
 
     return text;
   }
 
   function renderEmbeddedLabel(parentGfx, element, align) {
-    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
     return renderLabel(parentGfx, semantic.name, {
       box: element,
       align: align,
-      padding: 5,
+      padding: 7,
       style: {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
       }
     });
   }
@@ -1936,11 +2138,11 @@ function BpmnRenderer(
     return renderLabel(parentGfx, (0,_features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_7__.getLabel)(element), {
       box: box,
       fitBox: true,
-      style: (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(
+      style: (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.assign)(
         {},
         textRenderer.getExternalStyle(),
         {
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
         }
       )
     });
@@ -1954,23 +2156,13 @@ function BpmnRenderer(
       },
       align: 'center-middle',
       style: {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
       }
     });
 
     var top = -1 * element.height;
 
     (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__.transform)(textBox, 0, -top, 270);
-  }
-
-  function createPathFromConnection(connection) {
-    var waypoints = connection.waypoints;
-
-    var pathData = 'm  ' + waypoints[0].x + ',' + waypoints[0].y;
-    for (var i = 1; i < waypoints.length; i++) {
-      pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
-    }
-    return pathData;
   }
 
   var handlers = this.handlers = {
@@ -1984,18 +2176,17 @@ function BpmnRenderer(
     },
     'bpmn:StartEvent': function(parentGfx, element) {
       var attrs = {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       };
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
       if (!semantic.isInterrupting) {
         attrs = {
           strokeDasharray: '6',
-          strokeLinecap: 'round',
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
         };
       }
 
@@ -2017,8 +2208,8 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor) : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor);
-      var stroke = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor) : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor);
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor) : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor);
+      var stroke = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor) : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
 
       var messagePath = drawPath(parentGfx, pathData, {
         strokeWidth: 1,
@@ -2031,8 +2222,8 @@ function BpmnRenderer(
     'bpmn:TimerEventDefinition': function(parentGfx, element) {
       var circle = drawCircle(parentGfx, element.width, element.height, 0.2 * element.height, {
         strokeWidth: 2,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       var pathData = pathMap.getScaledPath('EVENT_TIMER_WH', {
@@ -2048,8 +2239,7 @@ function BpmnRenderer(
 
       drawPath(parentGfx, pathData, {
         strokeWidth: 2,
-        strokeLinecap: 'square',
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       for (var i = 0;i < 12; i++) {
@@ -2070,9 +2260,8 @@ function BpmnRenderer(
 
         drawPath(parentGfx, linePathData, {
           strokeWidth: 1,
-          strokeLinecap: 'square',
           transform: 'rotate(' + (i * 30) + ',' + height + ',' + width + ')',
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
         });
       }
 
@@ -2090,12 +2279,12 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
         fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
     },
     'bpmn:ConditionalEventDefinition': function(parentGfx, event) {
@@ -2112,7 +2301,7 @@ function BpmnRenderer(
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
     },
     'bpmn:LinkEventDefinition': function(parentGfx, event, isThrowing) {
@@ -2127,12 +2316,12 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
         fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
     },
     'bpmn:ErrorEventDefinition': function(parentGfx, event, isThrowing) {
@@ -2147,12 +2336,12 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
         fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
     },
     'bpmn:CancelEventDefinition': function(parentGfx, event, isThrowing) {
@@ -2167,12 +2356,12 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
 
       var path = drawPath(parentGfx, pathData, {
         strokeWidth: 1,
         fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
 
       (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__.rotate)(path, 45);
@@ -2191,12 +2380,12 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
         fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
     },
     'bpmn:SignalEventDefinition': function(parentGfx, event, isThrowing) {
@@ -2211,12 +2400,12 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
         fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
     },
     'bpmn:MultipleEventDefinition': function(parentGfx, event, isThrowing) {
@@ -2231,7 +2420,7 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
@@ -2252,15 +2441,15 @@ function BpmnRenderer(
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(event, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
       });
     },
     'bpmn:EndEvent': function(parentGfx, element) {
       var circle = renderer('bpmn:Event')(parentGfx, element, {
         strokeWidth: 4,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       renderEventContent(element, parentGfx, true);
@@ -2270,24 +2459,24 @@ function BpmnRenderer(
     'bpmn:TerminateEventDefinition': function(parentGfx, element) {
       var circle = drawCircle(parentGfx, element.width, element.height, 8, {
         strokeWidth: 4,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return circle;
     },
     'bpmn:IntermediateEvent': function(parentGfx, element) {
       var outer = renderer('bpmn:Event')(parentGfx, element, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        strokeWidth: 1.5,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       /* inner */
       drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, 'none'),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        strokeWidth: 1.5,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, 'none'),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       renderEventContent(element, parentGfx);
@@ -2310,8 +2499,8 @@ function BpmnRenderer(
 
     'bpmn:Task': function(parentGfx, element) {
       var attrs = {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       };
 
       var rect = renderer('bpmn:Activity')(parentGfx, element, attrs);
@@ -2333,8 +2522,8 @@ function BpmnRenderer(
 
       /* service bg */ drawPath(parentGfx, pathDataBG, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       var fillPathData = pathMap.getScaledPath('TASK_TYPE_SERVICE_FILL', {
@@ -2346,7 +2535,7 @@ function BpmnRenderer(
 
       /* service fill */ drawPath(parentGfx, fillPathData, {
         strokeWidth: 0,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor)
       });
 
       var pathData = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
@@ -2358,8 +2547,8 @@ function BpmnRenderer(
 
       /* service */ drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return task;
@@ -2379,8 +2568,8 @@ function BpmnRenderer(
 
       /* user path */ drawPath(parentGfx, pathData, {
         strokeWidth: 0.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       var pathData2 = pathMap.getScaledPath('TASK_TYPE_USER_2', {
@@ -2392,8 +2581,8 @@ function BpmnRenderer(
 
       /* user2 path */ drawPath(parentGfx, pathData2, {
         strokeWidth: 0.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       var pathData3 = pathMap.getScaledPath('TASK_TYPE_USER_3', {
@@ -2405,8 +2594,8 @@ function BpmnRenderer(
 
       /* user3 path */ drawPath(parentGfx, pathData3, {
         strokeWidth: 0.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return task;
@@ -2423,8 +2612,8 @@ function BpmnRenderer(
 
       /* manual path */ drawPath(parentGfx, pathData, {
         strokeWidth: 0.5, // 0.25,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return task;
@@ -2445,14 +2634,14 @@ function BpmnRenderer(
 
       /* send path */ drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor)
       });
 
       return task;
     },
     'bpmn:ReceiveTask' : function(parentGfx, element) {
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
       var task = renderer('bpmn:Task')(parentGfx, element);
       var pathData;
@@ -2482,8 +2671,8 @@ function BpmnRenderer(
 
       /* receive path */ drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return task;
@@ -2500,7 +2689,7 @@ function BpmnRenderer(
 
       /* script path */ drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return task;
@@ -2516,10 +2705,10 @@ function BpmnRenderer(
       });
 
       var businessHeaderPath = drawPath(parentGfx, headerPathData);
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(businessHeaderPath, {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(businessHeaderPath, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, '#aaaaaa'),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, '#aaaaaa'),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       var headerData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_MAIN', {
@@ -2530,26 +2719,28 @@ function BpmnRenderer(
       });
 
       var businessPath = drawPath(parentGfx, headerData);
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(businessPath, {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(businessPath, {
         strokeWidth: 1,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return task;
     },
     'bpmn:SubProcess': function(parentGfx, element, attrs) {
-      attrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
-      }, attrs);
+      attrs = {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        ...attrs
+      };
 
       var rect = renderer('bpmn:Activity')(parentGfx, element, attrs);
 
       var expanded = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_9__.isExpanded)(element);
 
       if ((0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_9__.isEventSubProcess)(element)) {
-        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(rect, {
-          strokeDasharray: '1,2'
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(rect, {
+          strokeDasharray: '0, 5.5',
+          strokeWidth: 2.5
         });
       }
 
@@ -2567,13 +2758,14 @@ function BpmnRenderer(
       return renderer('bpmn:SubProcess')(parentGfx, element);
     },
     'bpmn:Transaction': function(parentGfx, element) {
-      var outer = renderer('bpmn:SubProcess')(parentGfx, element);
+      var outer = renderer('bpmn:SubProcess')(parentGfx, element, { strokeWidth: 1.5 });
 
       var innerAttrs = styles.style([ 'no-fill', 'no-events' ], {
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        strokeWidth: 1.5
       });
 
-      /* inner path */ drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS - 2, INNER_OUTER_DIST, innerAttrs);
+      /* inner path */ drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS - 3, INNER_OUTER_DIST, innerAttrs);
 
       return outer;
     },
@@ -2584,10 +2776,13 @@ function BpmnRenderer(
     },
     'bpmn:Participant': function(parentGfx, element) {
 
+      var strokeWidth = 1.5;
+
       var attrs = {
         fillOpacity: DEFAULT_FILL_OPACITY,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        strokeWidth
       };
 
       var lane = renderer('bpmn:Lane')(parentGfx, element, attrs);
@@ -2599,23 +2794,24 @@ function BpmnRenderer(
           { x: 30, y: 0 },
           { x: 30, y: element.height }
         ], {
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+          strokeWidth
         });
-        var text = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element).name;
+        var text = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).name;
         renderLaneLabel(parentGfx, text, element);
       } else {
 
-        // Collapsed pool draw text inline
-        var text2 = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element).name;
+        // collapsed pool draw text inline
+        var text2 = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).name;
         renderLabel(parentGfx, text2, {
           box: element, align: 'center-middle',
           style: {
-            fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
+            fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
           }
         });
       }
 
-      var participantMultiplicity = !!((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element).participantMultiplicity);
+      var participantMultiplicity = !!((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).participantMultiplicity);
 
       if (participantMultiplicity) {
         renderer('ParticipantMultiplicityMarker')(parentGfx, element);
@@ -2624,13 +2820,15 @@ function BpmnRenderer(
       return lane;
     },
     'bpmn:Lane': function(parentGfx, element, attrs) {
-      var rect = drawRect(parentGfx, element.width, element.height, 0, (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
+      var rect = drawRect(parentGfx, element.width, element.height, 0, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
         fillOpacity: HIGH_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
-      }, attrs));
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        strokeWidth: 1.5,
+        ...attrs
+      });
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
       if (semantic.$type === 'bpmn:Lane') {
         var text = semantic.name;
@@ -2645,8 +2843,8 @@ function BpmnRenderer(
       /* circle path */
       drawCircle(parentGfx, element.width, element.height, element.height * 0.24, {
         strokeWidth: 2.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return diamond;
@@ -2668,8 +2866,8 @@ function BpmnRenderer(
       if (((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.getDi)(element).isMarkerVisible)) {
         drawPath(parentGfx, pathData, {
           strokeWidth: 1,
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
         });
       }
 
@@ -2691,8 +2889,8 @@ function BpmnRenderer(
 
       /* complex path */ drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return diamond;
@@ -2713,22 +2911,22 @@ function BpmnRenderer(
 
       /* parallel path */ drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return diamond;
     },
     'bpmn:EventBasedGateway': function(parentGfx, element) {
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
       var diamond = renderer('bpmn:Gateway')(parentGfx, element);
 
       /* outer circle path */ drawCircle(parentGfx, element.width, element.height, element.height * 0.20, {
         strokeWidth: 1,
         fill: 'none',
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       var type = semantic.eventGatewayType;
@@ -2747,13 +2945,11 @@ function BpmnRenderer(
           }
         });
 
-        var attrs = {
+        /* event path */ drawPath(parentGfx, pathData, {
           strokeWidth: 2,
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, 'none'),
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
-        };
-
-        /* event path */ drawPath(parentGfx, pathData, attrs);
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, 'none'),
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        });
       }
 
       if (type === 'Parallel') {
@@ -2769,19 +2965,17 @@ function BpmnRenderer(
           }
         });
 
-        var parallelPath = drawPath(parentGfx, pathData);
-        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(parallelPath, {
+        drawPath(parentGfx, pathData, {
           strokeWidth: 1,
           fill: 'none'
         });
       } else if (type === 'Exclusive') {
 
         if (!instantiate) {
-          var innerCircle = drawCircle(parentGfx, element.width, element.height, element.height * 0.26);
-          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(innerCircle, {
+          drawCircle(parentGfx, element.width, element.height, element.height * 0.26, {
             strokeWidth: 1,
             fill: 'none',
-            stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+            stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
           });
         }
 
@@ -2792,29 +2986,22 @@ function BpmnRenderer(
       return diamond;
     },
     'bpmn:Gateway': function(parentGfx, element) {
-      var attrs = {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
+      return drawDiamond(parentGfx, element.width, element.height, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
         fillOpacity: DEFAULT_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
-      };
-
-      return drawDiamond(parentGfx, element.width, element.height, attrs);
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      });
     },
     'bpmn:SequenceFlow': function(parentGfx, element) {
-      var pathData = createPathFromConnection(element);
+      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
 
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor);
-
-      var attrs = {
-        strokeLinejoin: 'round',
+      var path = drawConnectionSegments(parentGfx, element.waypoints, {
         markerEnd: marker('sequenceflow-end', fill, stroke),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
-      };
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      });
 
-      var path = drawPath(parentGfx, pathData, attrs);
-
-      var sequenceFlow = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+      var sequenceFlow = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
       var source;
 
@@ -2823,7 +3010,7 @@ function BpmnRenderer(
 
         // conditional flow marker
         if (sequenceFlow.conditionExpression && source.$instanceOf('bpmn:Activity')) {
-          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(path, {
+          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(path, {
             markerStart: marker('conditional-flow-marker', fill, stroke)
           });
         }
@@ -2831,7 +3018,7 @@ function BpmnRenderer(
         // default marker
         if (source.default && (source.$instanceOf('bpmn:Gateway') || source.$instanceOf('bpmn:Activity')) &&
             source.default === sequenceFlow) {
-          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(path, {
+          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(path, {
             markerStart: marker('conditional-default-flow-marker', fill, stroke)
           });
         }
@@ -2841,17 +3028,16 @@ function BpmnRenderer(
     },
     'bpmn:Association': function(parentGfx, element, attrs) {
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor);
+      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
 
-      attrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({
-        strokeDasharray: '0.5, 5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
-      }, attrs || {});
+      attrs = {
+        strokeDasharray: '0, 5',
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        ...attrs
+      };
 
       if (semantic.associationDirection === 'One' ||
           semantic.associationDirection === 'Both') {
@@ -2862,19 +3048,19 @@ function BpmnRenderer(
         attrs.markerStart = marker('association-start', fill, stroke);
       }
 
-      return drawLine(parentGfx, element.waypoints, attrs);
+      return drawConnectionSegments(parentGfx, element.waypoints, attrs);
     },
     'bpmn:DataInputAssociation': function(parentGfx, element) {
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor);
+      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
 
       return renderer('bpmn:Association')(parentGfx, element, {
         markerEnd: marker('association-end', fill, stroke)
       });
     },
     'bpmn:DataOutputAssociation': function(parentGfx, element) {
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor);
+      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
 
       return renderer('bpmn:Association')(parentGfx, element, {
         markerEnd: marker('association-end', fill, stroke)
@@ -2882,25 +3068,19 @@ function BpmnRenderer(
     },
     'bpmn:MessageFlow': function(parentGfx, element) {
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element),
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element),
           di = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.getDi)(element);
 
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor);
+      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
 
-      var pathData = createPathFromConnection(element);
-
-      var attrs = {
+      var path = drawConnectionSegments(parentGfx, element.waypoints, {
         markerEnd: marker('messageflow-end', fill, stroke),
         markerStart: marker('messageflow-start', fill, stroke),
-        strokeDasharray: '10, 12',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeWidth: '1.5px',
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
-      };
-
-      var path = drawPath(parentGfx, pathData, attrs);
+        strokeDasharray: '10, 11',
+        strokeWidth: 1.5,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      });
 
       if (semantic.messageRef) {
         var midPoint = path.getPointAtLength(path.getTotalLength() / 2);
@@ -2916,7 +3096,7 @@ function BpmnRenderer(
 
         if (di.messageVisibleKind === 'initiating') {
           messageAttrs.fill = 'white';
-          messageAttrs.stroke = _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black;
+          messageAttrs.stroke = _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.black;
         } else {
           messageAttrs.fill = '#888';
           messageAttrs.stroke = 'white';
@@ -2929,7 +3109,7 @@ function BpmnRenderer(
           align: 'center-top',
           fitBox: true,
           style: {
-            fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultLabelColor, defaultStrokeColor)
+            fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultLabelColor, defaultStrokeColor)
           }
         });
 
@@ -2958,14 +3138,14 @@ function BpmnRenderer(
       });
 
       var elementObject = drawPath(parentGfx, pathData, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
         fillOpacity: DEFAULT_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
-      if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.isCollection)(semantic)) {
+      if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isCollection)(semantic)) {
         renderDataItemCollection(parentGfx, element);
       }
 
@@ -2991,7 +3171,7 @@ function BpmnRenderer(
 
       /* output arrow path */ drawPath(parentGfx, arrowPathData, {
         strokeWidth: 1,
-        fill: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.black
+        fill: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.black
       });
 
       return elementObject;
@@ -3010,38 +3190,39 @@ function BpmnRenderer(
 
       var elementStore = drawPath(parentGfx, DATA_STORE_PATH, {
         strokeWidth: 2,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
         fillOpacity: DEFAULT_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       return elementStore;
     },
     'bpmn:BoundaryEvent': function(parentGfx, element) {
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element),
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element),
           cancel = semantic.cancelActivity;
 
       var attrs = {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        strokeWidth: 1.5,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       };
 
       if (!cancel) {
         attrs.strokeDasharray = '6';
-        attrs.strokeLinecap = 'round';
       }
 
       // apply fillOpacity
-      var outerAttrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({}, attrs, {
+      var outerAttrs = {
+        ...attrs,
         fillOpacity: 1
-      });
+      };
 
       // apply no-fill
-      var innerAttrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({}, attrs, {
+      var innerAttrs = {
+        ...attrs,
         fill: 'none'
-      });
+      };
 
       var outer = renderer('bpmn:Event')(parentGfx, element, outerAttrs);
 
@@ -3052,27 +3233,22 @@ function BpmnRenderer(
       return outer;
     },
     'bpmn:Group': function(parentGfx, element) {
-
-      var group = drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, {
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        strokeWidth: 1,
-        strokeDasharray: '8,3,1,3',
+      return drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, {
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        strokeWidth: 1.5,
+        strokeDasharray: '10,6,0,6',
         fill: 'none',
         pointerEvents: 'none'
       });
-
-      return group;
     },
     'label': function(parentGfx, element) {
       return renderExternalLabel(parentGfx, element);
     },
     'bpmn:TextAnnotation': function(parentGfx, element) {
-      var style = {
+      var textElement = drawRect(parentGfx, element.width, element.height, 0, 0, {
         'fill': 'none',
         'stroke': 'none'
-      };
-
-      var textElement = drawRect(parentGfx, element.width, element.height, 0, 0, style);
+      });
 
       var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
         xScaleFactor: 1,
@@ -3086,16 +3262,16 @@ function BpmnRenderer(
       });
 
       drawPath(parentGfx, textPathData, {
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
-      var text = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element).text || '';
+      var text = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).text || '';
       renderLabel(parentGfx, text, {
         box: element,
         align: 'left-top',
-        padding: 5,
+        padding: 7,
         style: {
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
         }
       });
 
@@ -3115,15 +3291,15 @@ function BpmnRenderer(
 
       drawMarker('participant-multiplicity', parentGfx, markerPath, {
         strokeWidth: 2,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
     },
     'SubProcessMarker': function(parentGfx, element) {
       var markerRect = drawRect(parentGfx, 14, 14, 0, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
 
       // Process marker is placed in the middle of the box
@@ -3142,8 +3318,8 @@ function BpmnRenderer(
       });
 
       drawMarker('sub-process', parentGfx, markerPath, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
     },
     'ParallelMarker': function(parentGfx, element, position) {
@@ -3159,8 +3335,8 @@ function BpmnRenderer(
       });
 
       drawMarker('parallel', parentGfx, markerPath, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
     },
     'SequentialMarker': function(parentGfx, element, position) {
@@ -3176,8 +3352,8 @@ function BpmnRenderer(
       });
 
       drawMarker('sequential', parentGfx, markerPath, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
     },
     'CompensationMarker': function(parentGfx, element, position) {
@@ -3194,8 +3370,8 @@ function BpmnRenderer(
 
       drawMarker('compensation', parentGfx, markerMath, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
     },
     'LoopMarker': function(parentGfx, element, position) {
@@ -3211,10 +3387,9 @@ function BpmnRenderer(
       });
 
       drawMarker('loop', parentGfx, markerPath, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        strokeLinecap: 'round',
+        strokeWidth: 1.5,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
         strokeMiterlimit: 0.5
       });
     },
@@ -3232,14 +3407,14 @@ function BpmnRenderer(
 
       drawMarker('adhoc', parentGfx, markerPath, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
       });
     }
   };
 
   function attachTaskMarkers(parentGfx, element, taskMarkers) {
-    var obj = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getSemantic)(element);
+    var obj = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
 
     var subprocess = taskMarkers && taskMarkers.indexOf('SubProcessMarker') !== -1;
     var position;
@@ -3262,7 +3437,7 @@ function BpmnRenderer(
       };
     }
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(taskMarkers, function(marker) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.forEach)(taskMarkers, function(marker) {
       renderer(marker)(parentGfx, element, position);
     });
 
@@ -3356,18 +3531,18 @@ BpmnRenderer.prototype.drawConnection = function(parentGfx, element) {
 BpmnRenderer.prototype.getShapePath = function(element) {
 
   if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.is)(element, 'bpmn:Event')) {
-    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getCirclePath)(element);
+    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getCirclePath)(element);
   }
 
   if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.is)(element, 'bpmn:Activity')) {
-    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getRoundRectPath)(element, TASK_BORDER_RADIUS);
+    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRoundRectPath)(element, TASK_BORDER_RADIUS);
   }
 
   if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.is)(element, 'bpmn:Gateway')) {
-    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getDiamondPath)(element);
+    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getDiamondPath)(element);
   }
 
-  return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_3__.getRectPath)(element);
+  return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRectPath)(element);
 };
 
 
@@ -5971,8 +6146,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "wrapForCompatibility": () => (/* binding */ wrapForCompatibility),
-/* harmony export */   "ensureCompatDiRef": () => (/* binding */ ensureCompatDiRef)
+/* harmony export */   "ensureCompatDiRef": () => (/* binding */ ensureCompatDiRef),
+/* harmony export */   "wrapForCompatibility": () => (/* binding */ wrapForCompatibility)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
@@ -6058,13 +6233,13 @@ function ensureCompatDiRef(businessObject) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isExpanded": () => (/* binding */ isExpanded),
-/* harmony export */   "isInterrupting": () => (/* binding */ isInterrupting),
-/* harmony export */   "isEventSubProcess": () => (/* binding */ isEventSubProcess),
-/* harmony export */   "hasEventDefinition": () => (/* binding */ hasEventDefinition),
+/* harmony export */   "hasCompensateEventDefinition": () => (/* binding */ hasCompensateEventDefinition),
 /* harmony export */   "hasErrorEventDefinition": () => (/* binding */ hasErrorEventDefinition),
 /* harmony export */   "hasEscalationEventDefinition": () => (/* binding */ hasEscalationEventDefinition),
-/* harmony export */   "hasCompensateEventDefinition": () => (/* binding */ hasCompensateEventDefinition)
+/* harmony export */   "hasEventDefinition": () => (/* binding */ hasEventDefinition),
+/* harmony export */   "isEventSubProcess": () => (/* binding */ isEventSubProcess),
+/* harmony export */   "isExpanded": () => (/* binding */ isExpanded),
+/* harmony export */   "isInterrupting": () => (/* binding */ isInterrupting)
 /* harmony export */ });
 /* harmony import */ var _ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
@@ -6143,11 +6318,11 @@ function hasCompensateEventDefinition(element) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "planeSuffix": () => (/* binding */ planeSuffix),
-/* harmony export */   "getShapeIdFromPlane": () => (/* binding */ getShapeIdFromPlane),
 /* harmony export */   "getPlaneIdFromShape": () => (/* binding */ getPlaneIdFromShape),
-/* harmony export */   "toPlaneId": () => (/* binding */ toPlaneId),
-/* harmony export */   "isPlane": () => (/* binding */ isPlane)
+/* harmony export */   "getShapeIdFromPlane": () => (/* binding */ getShapeIdFromPlane),
+/* harmony export */   "isPlane": () => (/* binding */ isPlane),
+/* harmony export */   "planeSuffix": () => (/* binding */ planeSuffix),
+/* harmony export */   "toPlaneId": () => (/* binding */ toPlaneId)
 /* harmony export */ });
 /* harmony import */ var _ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
@@ -6230,13 +6405,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DEFAULT_LABEL_SIZE": () => (/* binding */ DEFAULT_LABEL_SIZE),
 /* harmony export */   "FLOW_LABEL_INDENT": () => (/* binding */ FLOW_LABEL_INDENT),
-/* harmony export */   "isLabelExternal": () => (/* binding */ isLabelExternal),
-/* harmony export */   "hasExternalLabel": () => (/* binding */ hasExternalLabel),
+/* harmony export */   "getExternalLabelBounds": () => (/* binding */ getExternalLabelBounds),
+/* harmony export */   "getExternalLabelMid": () => (/* binding */ getExternalLabelMid),
 /* harmony export */   "getFlowLabelPosition": () => (/* binding */ getFlowLabelPosition),
 /* harmony export */   "getWaypointsMid": () => (/* binding */ getWaypointsMid),
-/* harmony export */   "getExternalLabelMid": () => (/* binding */ getExternalLabelMid),
-/* harmony export */   "getExternalLabelBounds": () => (/* binding */ getExternalLabelBounds),
-/* harmony export */   "isLabel": () => (/* binding */ isLabel)
+/* harmony export */   "hasExternalLabel": () => (/* binding */ hasExternalLabel),
+/* harmony export */   "isLabel": () => (/* binding */ isLabel),
+/* harmony export */   "isLabelExternal": () => (/* binding */ isLabelExternal)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
@@ -6407,10 +6582,10 @@ function isLabel(element) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "is": () => (/* binding */ is),
-/* harmony export */   "isAny": () => (/* binding */ isAny),
 /* harmony export */   "getBusinessObject": () => (/* binding */ getBusinessObject),
-/* harmony export */   "getDi": () => (/* binding */ getDi)
+/* harmony export */   "getDi": () => (/* binding */ getDi),
+/* harmony export */   "is": () => (/* binding */ is),
+/* harmony export */   "isAny": () => (/* binding */ isAny)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
@@ -6479,8 +6654,8 @@ function getDi(element) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "BPMNIO_IMG": () => (/* binding */ BPMNIO_IMG),
-/* harmony export */   "LOGO_STYLES": () => (/* binding */ LOGO_STYLES),
 /* harmony export */   "LINK_STYLES": () => (/* binding */ LINK_STYLES),
+/* harmony export */   "LOGO_STYLES": () => (/* binding */ LOGO_STYLES),
 /* harmony export */   "open": () => (/* binding */ open)
 /* harmony export */ });
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
@@ -6544,7 +6719,7 @@ var LIGHTBOX_MARKUP =
         BPMNIO_IMG +
       '</a>' +
       '<span>' +
-        'Web-based tooling for BPMN, DMN and CMMN diagrams ' +
+        'Web-based tooling for BPMN, DMN and forms ' +
         'powered by <a href="https://bpmn.io" target="_blank" rel="noopener">bpmn.io</a>.' +
       '</span>' +
     '</div>' +
@@ -6582,116 +6757,6 @@ function open() {
 
 /***/ }),
 
-/***/ "./node_modules/css.escape/css.escape.js":
-/*!***********************************************!*\
-  !*** ./node_modules/css.escape/css.escape.js ***!
-  \***********************************************/
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-/*! https://mths.be/cssescape v1.5.1 by @mathias | MIT license */
-;(function(root, factory) {
-	// https://github.com/umdjs/umd/blob/master/returnExports.js
-	if (true) {
-		// For Node.js.
-		module.exports = factory(root);
-	} else {}
-}(typeof __webpack_require__.g != 'undefined' ? __webpack_require__.g : this, function(root) {
-
-	if (root.CSS && root.CSS.escape) {
-		return root.CSS.escape;
-	}
-
-	// https://drafts.csswg.org/cssom/#serialize-an-identifier
-	var cssEscape = function(value) {
-		if (arguments.length == 0) {
-			throw new TypeError('`CSS.escape` requires an argument.');
-		}
-		var string = String(value);
-		var length = string.length;
-		var index = -1;
-		var codeUnit;
-		var result = '';
-		var firstCodeUnit = string.charCodeAt(0);
-		while (++index < length) {
-			codeUnit = string.charCodeAt(index);
-			// Note: there’s no need to special-case astral symbols, surrogate
-			// pairs, or lone surrogates.
-
-			// If the character is NULL (U+0000), then the REPLACEMENT CHARACTER
-			// (U+FFFD).
-			if (codeUnit == 0x0000) {
-				result += '\uFFFD';
-				continue;
-			}
-
-			if (
-				// If the character is in the range [\1-\1F] (U+0001 to U+001F) or is
-				// U+007F, […]
-				(codeUnit >= 0x0001 && codeUnit <= 0x001F) || codeUnit == 0x007F ||
-				// If the character is the first character and is in the range [0-9]
-				// (U+0030 to U+0039), […]
-				(index == 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
-				// If the character is the second character and is in the range [0-9]
-				// (U+0030 to U+0039) and the first character is a `-` (U+002D), […]
-				(
-					index == 1 &&
-					codeUnit >= 0x0030 && codeUnit <= 0x0039 &&
-					firstCodeUnit == 0x002D
-				)
-			) {
-				// https://drafts.csswg.org/cssom/#escape-a-character-as-code-point
-				result += '\\' + codeUnit.toString(16) + ' ';
-				continue;
-			}
-
-			if (
-				// If the character is the first character and is a `-` (U+002D), and
-				// there is no second character, […]
-				index == 0 &&
-				length == 1 &&
-				codeUnit == 0x002D
-			) {
-				result += '\\' + string.charAt(index);
-				continue;
-			}
-
-			// If the character is not handled by one of the above rules and is
-			// greater than or equal to U+0080, is `-` (U+002D) or `_` (U+005F), or
-			// is in one of the ranges [0-9] (U+0030 to U+0039), [A-Z] (U+0041 to
-			// U+005A), or [a-z] (U+0061 to U+007A), […]
-			if (
-				codeUnit >= 0x0080 ||
-				codeUnit == 0x002D ||
-				codeUnit == 0x005F ||
-				codeUnit >= 0x0030 && codeUnit <= 0x0039 ||
-				codeUnit >= 0x0041 && codeUnit <= 0x005A ||
-				codeUnit >= 0x0061 && codeUnit <= 0x007A
-			) {
-				// the character itself
-				result += string.charAt(index);
-				continue;
-			}
-
-			// Otherwise, the escaped character.
-			// https://drafts.csswg.org/cssom/#escape-a-character
-			result += '\\' + string.charAt(index);
-
-		}
-		return result;
-	};
-
-	if (!root.CSS) {
-		root.CSS = {};
-	}
-
-	root.CSS.escape = cssEscape;
-	return cssEscape;
-
-}));
-
-
-/***/ }),
-
 /***/ "./node_modules/diagram-js/lib/Diagram.js":
 /*!************************************************!*\
   !*** ./node_modules/diagram-js/lib/Diagram.js ***!
@@ -6710,13 +6775,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * @typedef { import('didi').ModuleDeclaration } Module
+ * @typedef {import('didi').InjectionContext} InjectionContext
+ * @typedef {import('didi').LocalsMap} LocalsMap
+ * @typedef {import('didi').ModuleDeclaration} ModuleDeclaration
+ *
+ * @typedef {import('./Diagram').DiagramOptions} DiagramOptions
  */
 
 /**
  * Bootstrap an injector from a list of modules, instantiating a number of default components
  *
- * @param {Array<Module>} modules
+ * @param {ModuleDeclaration[]} modules
  *
  * @return {Injector} a injector to use to access the components
  */
@@ -6731,7 +6800,8 @@ function bootstrap(modules) {
 /**
  * Creates an injector from passed options.
  *
- * @param {Object} options
+ * @param {DiagramOptions} [options]
+ *
  * @return {Injector}
  */
 function createInjector(options) {
@@ -6754,8 +6824,7 @@ function createInjector(options) {
  *
  * To register extensions with the diagram, pass them as Array<Module> to the constructor.
  *
- * @class djs.Diagram
- * @memberOf djs
+ * @class
  * @constructor
  *
  * @example
@@ -6793,9 +6862,9 @@ function createInjector(options) {
  *
  * // 'shape ... was added to the diagram' logged to console
  *
- * @param {Object} options
- * @param {Array<Module>} [options.modules] external modules to instantiate with the diagram
- * @param {Injector} [injector] an (optional) injector to bootstrap the diagram with
+ * @param {DiagramOptions} [options]
+ * @param {ModuleDeclaration[]} [options.modules] External modules to instantiate with the diagram.
+ * @param {Injector} [injector] An (optional) injector to bootstrap the diagram with.
  */
 function Diagram(options, injector) {
 
@@ -6805,22 +6874,23 @@ function Diagram(options, injector) {
   // API
 
   /**
-   * Resolves a diagram service
+   * Resolves a diagram service.
    *
    * @method Diagram#get
    *
-   * @param {string} name the name of the diagram service to be retrieved
-   * @param {boolean} [strict=true] if false, resolve missing services to null
+   * @param {string} name The name of the service to get.
+   * @param {boolean} [strict=true] If false, resolve missing services to null.
    */
   this.get = injector.get;
 
   /**
-   * Executes a function into which diagram services are injected
+   * Executes a function with its dependencies injected.
    *
    * @method Diagram#invoke
    *
-   * @param {Function|Object[]} fn the function to resolve
-   * @param {Object} locals a number of locals to use to resolve certain dependencies
+   * @param {Function} fn The function to be executed.
+   * @param {InjectionContext} [context] The context.
+   * @param {LocalsMap} [locals] The locals.
    */
   this.invoke = injector.invoke;
 
@@ -6883,33 +6953,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
+/**
+ * @typedef {import('../core/EventBus').default} EventBus
+ * @typedef {import(./CommandInterceptor).HandlerFunction} HandlerFunction
+ * @typedef {import(./CommandInterceptor).ComposeHandlerFunction} ComposeHandlerFunction
+ */
 
 var DEFAULT_PRIORITY = 1000;
 
 /**
- * A utility that can be used to plug-in into the command execution for
+ * A utility that can be used to plug into the command execution for
  * extension and/or validation.
+ *
+ * @class
+ * @constructor
  *
  * @param {EventBus} eventBus
  *
  * @example
  *
- * import inherits from 'inherits-browser';
- *
  * import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
  *
- * function CommandLogger(eventBus) {
- *   CommandInterceptor.call(this, eventBus);
+ * class CommandLogger extends CommandInterceptor {
+ *   constructor(eventBus) {
+ *     super(eventBus);
  *
- *   this.preExecute(function(event) {
- *     console.log('command pre-execute', event);
+ *   this.preExecute('shape.create', (event) => {
+ *     console.log('commandStack.shape-create.preExecute', event);
  *   });
  * }
- *
- * inherits(CommandLogger, CommandInterceptor);
- *
  */
 function CommandInterceptor(eventBus) {
+
+  /**
+   * @type {EventBus}
+   */
   this._eventBus = eventBus;
 }
 
@@ -6922,16 +7000,15 @@ function unwrapEvent(fn, that) {
 }
 
 /**
- * Register an interceptor for a command execution
- *
- * @param {string|Array<string>} [events] list of commands to register on
- * @param {string} [hook] command hook, i.e. preExecute, executed to listen on
- * @param {number} [priority] the priority on which to hook into the execution
- * @param {Function} handlerFn interceptor to be invoked with (event)
- * @param {boolean} unwrap if true, unwrap the event and pass (context, command, event) to the
- *                          listener instead
- * @param {Object} [that] Pass context (`this`) to the handler function
- */
+   * Intercept a command during one of the phases.
+   *
+   * @param {string|string[]} [events] One or more commands to intercept.
+   * @param {string} [hook] Phase during which to intercept command.
+   * @param {number} [priority] Priority with which command will be intercepted.
+   * @param {ComposeHandlerFunction|HandlerFunction} handlerFn Callback.
+   * @param {boolean} [unwrap] Whether the event should be unwrapped.
+   * @param {*} [that] `this` value the callback will be called with.
+   */
 CommandInterceptor.prototype.on = function(events, hook, priority, handlerFn, unwrap, that) {
 
   if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(hook) || (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(hook)) {
@@ -6987,24 +7064,19 @@ var hooks = [
 ];
 
 /*
- * Install hook shortcuts
- *
- * This will generate the CommandInterceptor#(preExecute|...|reverted) methods
- * which will in term forward to CommandInterceptor#on.
+ * Add prototype methods for each phase of command execution (e.g. execute,
+ * revert).
  */
 (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(hooks, function(hook) {
 
   /**
-   * {canExecute|preExecute|preExecuted|execute|executed|postExecute|postExecuted|revert|reverted}
+   * Add prototype method for a specific phase of command execution.
    *
-   * A named hook for plugging into the command execution
-   *
-   * @param {string|Array<string>} [events] list of commands to register on
-   * @param {number} [priority] the priority on which to hook into the execution
-   * @param {Function} handlerFn interceptor to be invoked with (event)
-   * @param {boolean} [unwrap=false] if true, unwrap the event and pass (context, command, event) to the
-   *                          listener instead
-   * @param {Object} [that] Pass context (`this`) to the handler function
+   * @param {string|string[]} [events] One or more commands to intercept.
+   * @param {number} [priority] Priority with which command will be intercepted.
+   * @param {ComposeHandlerFunction|HandlerFunction} handlerFn Callback.
+   * @param {boolean} [unwrap] Whether the event should be unwrapped.
+   * @param {*} [that] `this` value the callback will be called with.
    */
   CommandInterceptor.prototype[hook] = function(events, priority, handlerFn, unwrap, that) {
 
@@ -7054,6 +7126,26 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('.').ConnectionLike} ConnectionLike
+ * @typedef {import('.').RootLike} RootLike
+ * @typedef {import('.').ShapeLike} ShapeLike
+ *
+ * @typedef {import('./Canvas').CanvasConfig} CanvasConfig
+ * @typedef {import('./Canvas').CanvasLayer} CanvasLayer
+ * @typedef {import('./Canvas').CanvasLayers} CanvasLayers
+ * @typedef {import('./Canvas').CanvasPlane} CanvasPlane
+ * @typedef {import('./Canvas').CanvasViewbox} CanvasViewbox
+ *
+ * @typedef {import('./ElementRegistry').default} ElementRegistry
+ * @typedef {import('./EventBus').default} EventBus
+ * @typedef {import('./GraphicsFactory').default} GraphicsFactory
+ *
+ * @typedef {import('../util/Types').Dimensions} Dimensions
+ * @typedef {import('../util/Types').Point} Point
+ * @typedef {import('../util/Types').Rect} Rect
+ * @typedef {import('../util/Types').RectTRBL} RectTRBL
+ */
 
 function round(number, resolution) {
   return Math.round(number * resolution) / resolution;
@@ -7075,7 +7167,8 @@ function findRoot(element) {
  * Creates a HTML container element for a SVG element with
  * the given configuration
  *
- * @param  {Object} options
+ * @param {CanvasConfig} options
+ *
  * @return {HTMLElement} the container element
  */
 function createContainer(options) {
@@ -7088,7 +7181,7 @@ function createContainer(options) {
   // this way we can always get the correct container size
   // (this is impossible for <svg> elements at the moment)
   const parent = document.createElement('div');
-  parent.setAttribute('class', 'djs-container');
+  parent.setAttribute('class', 'djs-container djs-parent');
 
   (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(parent, {
     position: 'relative',
@@ -7135,21 +7228,34 @@ const REQUIRED_MODEL_ATTRS = {
  *
  * @emits Canvas#canvas.init
  *
- * @param {Object} config
+ * @param {CanvasConfig|null} config
  * @param {EventBus} eventBus
  * @param {GraphicsFactory} graphicsFactory
  * @param {ElementRegistry} elementRegistry
  */
 function Canvas(config, eventBus, graphicsFactory, elementRegistry) {
-
   this._eventBus = eventBus;
   this._elementRegistry = elementRegistry;
   this._graphicsFactory = graphicsFactory;
 
+  /**
+   * @type {number}
+   */
   this._rootsIdx = 0;
 
+  /**
+   * @type {CanvasLayers}
+   */
   this._layers = {};
+
+  /**
+   * @type {CanvasPlane[]}
+   */
   this._planes = [];
+
+  /**
+   * @type {RootLike|null}
+   */
   this._rootElement = null;
 
   this._init(config || {});
@@ -7174,6 +7280,8 @@ Canvas.$inject = [
  *    ...
  *   </svg>
  * </div>
+ *
+ * @param {CanvasConfig} config
  */
 Canvas.prototype._init = function(config) {
 
@@ -7195,7 +7303,7 @@ Canvas.prototype._init = function(config) {
     this._viewboxChanged = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.debounce)((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.bind)(this._viewboxChanged, this), 300);
   }
 
-  eventBus.on('diagram.init', function() {
+  eventBus.on('diagram.init', () => {
 
     /**
      * An event indicating that the canvas is ready to be drawn on.
@@ -7213,7 +7321,7 @@ Canvas.prototype._init = function(config) {
       viewport: viewport
     });
 
-  }, this);
+  });
 
   // reset viewbox on shape changes to
   // recompute the viewbox
@@ -7224,15 +7332,15 @@ Canvas.prototype._init = function(config) {
     'connection.removed',
     'elements.changed',
     'root.set'
-  ], function() {
+  ], () => {
     delete this._cachedViewbox;
-  }, this);
+  });
 
   eventBus.on('diagram.destroy', 500, this._destroy, this);
   eventBus.on('diagram.clear', 500, this._clear, this);
 };
 
-Canvas.prototype._destroy = function(emit) {
+Canvas.prototype._destroy = function() {
   this._eventBus.fire('canvas.destroy', {
     svg: this._svg,
     viewport: this._viewport
@@ -7279,7 +7387,7 @@ Canvas.prototype._clear = function() {
  * Returns the default layer on which
  * all elements are drawn.
  *
- * @returns {SVGElement}
+ * @return {SVGElement}  The SVG element of the layer.
  */
 Canvas.prototype.getDefaultLayer = function() {
   return this.getLayer(BASE_LAYER, PLANE_LAYER_INDEX);
@@ -7295,10 +7403,10 @@ Canvas.prototype.getDefaultLayer = function() {
  * A layer with a certain index is always created above all
  * existing layers with the same index.
  *
- * @param {string} name
- * @param {number} index
+ * @param {string} name The name of the layer.
+ * @param {number} [index] The index of the layer.
  *
- * @returns {SVGElement}
+ * @return {SVGElement} The SVG element of the layer.
  */
 Canvas.prototype.getLayer = function(name, index) {
 
@@ -7327,8 +7435,9 @@ Canvas.prototype.getLayer = function(name, index) {
  *
  * This is used to determine the node a layer should be inserted at.
  *
- * @param {Number} index
- * @returns {Number}
+ * @param {number} index
+ *
+ * @return {number}
  */
 Canvas.prototype._getChildIndex = function(index) {
   return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.reduce)(this._layers, function(childIndex, layer) {
@@ -7346,7 +7455,7 @@ Canvas.prototype._getChildIndex = function(index) {
  * @param {string} name
  * @param {number} [index=0]
  *
- * @return {Object} layer descriptor with { index, group: SVGGroup }
+ * @return {CanvasLayer}
  */
 Canvas.prototype._createLayer = function(name, index) {
 
@@ -7367,8 +7476,9 @@ Canvas.prototype._createLayer = function(name, index) {
 /**
  * Shows a given layer.
  *
- * @param {String} layer
- * @returns {SVGElement}
+ * @param {string} layer The name of the layer.
+ *
+ * @return {SVGElement} The SVG element of the layer.
  */
 Canvas.prototype.showLayer = function(name) {
 
@@ -7402,8 +7512,9 @@ Canvas.prototype.showLayer = function(name) {
 /**
  * Hides a given layer.
  *
- * @param {String} layer
- * @returns {SVGElement}
+ * @param {string} layer The name of the layer.
+ *
+ * @return {SVGElement} The SVG element of the layer.
  */
 Canvas.prototype.hideLayer = function(name) {
 
@@ -7445,7 +7556,7 @@ Canvas.prototype._removeLayer = function(name) {
 /**
  * Returns the currently active layer. Can be null.
  *
- * @returns {SVGElement|null}
+ * @return {CanvasLayer|null} The active layer of `null`.
  */
 Canvas.prototype.getActiveLayer = function() {
   const plane = this._findPlaneForRoot(this.getRootElement());
@@ -7461,9 +7572,9 @@ Canvas.prototype.getActiveLayer = function() {
 /**
  * Returns the plane which contains the given element.
  *
- * @param {string|djs.model.Base} element
+ * @param {ShapeLike|ConnectionLike|string} element The element or its ID.
  *
- * @return {djs.model.Base} root for element
+ * @return {RootLike|undefined} The root of the element.
  */
 Canvas.prototype.findRoot = function(element) {
   if (typeof element === 'string') {
@@ -7484,7 +7595,7 @@ Canvas.prototype.findRoot = function(element) {
 /**
  * Return a list of all root elements on the diagram.
  *
- * @return {djs.model.Root[]}
+ * @return {(RootLike)[]} The list of root elements.
  */
 Canvas.prototype.getRootElements = function() {
   return this._planes.map(function(plane) {
@@ -7503,7 +7614,7 @@ Canvas.prototype._findPlaneForRoot = function(rootElement) {
  * Returns the html element that encloses the
  * drawing canvas.
  *
- * @return {DOMNode}
+ * @return {HTMLElement} The HTML element of the container.
  */
 Canvas.prototype.getContainer = function() {
   return this._container;
@@ -7543,8 +7654,8 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
    *
    * @event element.marker.update
    * @type {Object}
-   * @property {djs.model.Element} element the shape
-   * @property {Object} gfx the graphical representation of the shape
+   * @property {Base} element the shape
+   * @property {SVGElement} gfx the graphical representation of the shape
    * @property {string} marker
    * @property {boolean} add true if the marker was added, false if it got removed
    */
@@ -7559,14 +7670,15 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
  * integrate extension into the marker life-cycle, too.
  *
  * @example
+ *
  * canvas.addMarker('foo', 'some-marker');
  *
  * const fooGfx = canvas.getGraphics('foo');
  *
  * fooGfx; // <g class="... some-marker"> ... </g>
  *
- * @param {string|djs.model.Base} element
- * @param {string} marker
+ * @param {ShapeLike|ConnectionLike|string} element The element or its ID.
+ * @param {string} marker The marker.
  */
 Canvas.prototype.addMarker = function(element, marker) {
   this._updateMarker(element, marker, true);
@@ -7579,18 +7691,18 @@ Canvas.prototype.addMarker = function(element, marker) {
  * Fires the element.marker.update event, making it possible to
  * integrate extension into the marker life-cycle, too.
  *
- * @param  {string|djs.model.Base} element
- * @param  {string} marker
+ * @param {ShapeLike|ConnectionLike|string} element The element or its ID.
+ * @param {string} marker The marker.
  */
 Canvas.prototype.removeMarker = function(element, marker) {
   this._updateMarker(element, marker, false);
 };
 
 /**
- * Check the existence of a marker on element.
+ * Check whether an element has a given marker.
  *
- * @param  {string|djs.model.Base} element
- * @param  {string} marker
+ * @param {ShapeLike|ConnectionLike|string} element The element or its ID.
+ * @param {string} marker The marker.
  */
 Canvas.prototype.hasMarker = function(element, marker) {
   if (!element.id) {
@@ -7608,8 +7720,8 @@ Canvas.prototype.hasMarker = function(element, marker) {
  * Fires the element.marker.update event, making it possible to
  * integrate extension into the marker life-cycle, too.
  *
- * @param  {string|djs.model.Base} element
- * @param  {string} marker
+ * @param {ShapeLike|ConnectionLike|string} element The element or its ID.
+ * @param {string} marker The marker.
  */
 Canvas.prototype.toggleMarker = function(element, marker) {
   if (this.hasMarker(element, marker)) {
@@ -7632,7 +7744,7 @@ Canvas.prototype.toggleMarker = function(element, marker) {
  * root elements can be null. This is used for applications that want to manage
  * root elements themselves.
  *
- * @returns {Object|djs.model.Root|null} rootElement.
+ * @return {RootLike} The current root element.
  */
 Canvas.prototype.getRootElement = function() {
   const rootElement = this._rootElement;
@@ -7648,11 +7760,10 @@ Canvas.prototype.getRootElement = function() {
 /**
  * Adds a given root element and returns it.
  *
- * @param {Object|djs.model.Root} rootElement
+ * @param {ShapeLike} [rootElement] The root element to be added.
  *
- * @return {Object|djs.model.Root} rootElement
+ * @return {RootLike} The added root element or an implicit root element.
  */
-
 Canvas.prototype.addRootElement = function(rootElement) {
   const idx = this._rootsIdx++;
 
@@ -7683,11 +7794,11 @@ Canvas.prototype.addRootElement = function(rootElement) {
 };
 
 /**
- * Removes a given rootElement and returns it.
+ * Removes a given root element and returns it.
  *
- * @param {djs.model.Root|String} rootElement
+ * @param {ShapeLike|string} rootElement The root element or its ID.
  *
- * @return {Object|djs.model.Root} rootElement
+ * @return {ShapeLike|undefined} The removed root element.
  */
 Canvas.prototype.removeRootElement = function(rootElement) {
 
@@ -7721,15 +7832,13 @@ Canvas.prototype.removeRootElement = function(rootElement) {
 };
 
 
-// root element handling //////////////////////
-
 /**
  * Sets a given element as the new root element for the canvas
  * and returns the new root element.
  *
- * @param {Object|djs.model.Root} rootElement
+ * @param {RootLike} rootElement The root element to be set.
  *
- * @return {Object|djs.model.Root} new root element
+ * @return {RootLike} The set root element.
  */
 Canvas.prototype.setRootElement = function(rootElement, override) {
 
@@ -7816,8 +7925,6 @@ Canvas.prototype._setRoot = function(rootElement, layer) {
   this._eventBus.fire('root.set', { element: rootElement });
 };
 
-// add functionality //////////////////////
-
 Canvas.prototype._ensureValid = function(type, element) {
   if (!element.id) {
     throw new Error('element must have an id');
@@ -7858,11 +7965,11 @@ Canvas.prototype._setParent = function(element, parent, parentIndex) {
  * Extensions may hook into these events to perform their magic.
  *
  * @param {string} type
- * @param {Object|djs.model.Base} element
- * @param {Object|djs.model.Base} [parent]
+ * @param {ConnectionLike|ShapeLike} element
+ * @param {ShapeLike} [parent]
  * @param {number} [parentIndex]
  *
- * @return {Object|djs.model.Base} the added element
+ * @return {ConnectionLike|ShapeLike} The added element.
  */
 Canvas.prototype._addElement = function(type, element, parent, parentIndex) {
 
@@ -7891,26 +7998,26 @@ Canvas.prototype._addElement = function(type, element, parent, parentIndex) {
 };
 
 /**
- * Adds a shape to the canvas
+ * Adds a shape to the canvas.
  *
- * @param {Object|djs.model.Shape} shape to add to the diagram
- * @param {djs.model.Base} [parent]
- * @param {number} [parentIndex]
+ * @param {ShapeLike} shape The shape to be added
+ * @param {ShapeLike} [parent] The shape's parent.
+ * @param {number} [parentIndex] The index at which to add the shape to the parent's children.
  *
- * @return {djs.model.Shape} the added shape
+ * @return {ShapeLike} The added shape.
  */
 Canvas.prototype.addShape = function(shape, parent, parentIndex) {
   return this._addElement('shape', shape, parent, parentIndex);
 };
 
 /**
- * Adds a connection to the canvas
+ * Adds a connection to the canvas.
  *
- * @param {Object|djs.model.Connection} connection to add to the diagram
- * @param {djs.model.Base} [parent]
- * @param {number} [parentIndex]
+ * @param {ConnectionLike} connection The connection to be added.
+ * @param {ShapeLike} [parent] The connection's parent.
+ * @param {number} [parentIndex] The index at which to add the connection to the parent's children.
  *
- * @return {djs.model.Connection} the added connection
+ * @return {ConnectionLike} The added connection.
  */
 Canvas.prototype.addConnection = function(connection, parent, parentIndex) {
   return this._addElement('connection', connection, parent, parentIndex);
@@ -7951,11 +8058,14 @@ Canvas.prototype._removeElement = function(element, type) {
 
 
 /**
- * Removes a shape from the canvas
+ * Removes a shape from the canvas.
  *
- * @param {string|djs.model.Shape} shape or shape id to be removed
+ * @fires ShapeRemoveEvent
+ * @fires ShapeRemovedEvent
  *
- * @return {djs.model.Shape} the removed shape
+ * @param {ShapeLike|string} shape The shape or its ID.
+ *
+ * @return {ShapeLike} The removed shape.
  */
 Canvas.prototype.removeShape = function(shape) {
 
@@ -7964,10 +8074,10 @@ Canvas.prototype.removeShape = function(shape) {
    *
    * @memberOf Canvas
    *
-   * @event shape.remove
+   * @event ShapeRemoveEvent
    * @type {Object}
-   * @property {djs.model.Shape} element the shape descriptor
-   * @property {Object} gfx the graphical representation of the shape
+   * @property {ShapeLike} element The shape.
+   * @property {SVGElement} gfx The graphical element.
    */
 
   /**
@@ -7975,21 +8085,24 @@ Canvas.prototype.removeShape = function(shape) {
    *
    * @memberOf Canvas
    *
-   * @event shape.removed
+   * @event ShapeRemoved
    * @type {Object}
-   * @property {djs.model.Shape} element the shape descriptor
-   * @property {Object} gfx the graphical representation of the shape
+   * @property {ShapeLike} element The shape.
+   * @property {SVGElement} gfx The graphical element.
    */
   return this._removeElement(shape, 'shape');
 };
 
 
 /**
- * Removes a connection from the canvas
+ * Removes a connection from the canvas.
  *
- * @param {string|djs.model.Connection} connection or connection id to be removed
+ * @fires ConnectionRemoveEvent
+ * @fires ConnectionRemovedEvent
  *
- * @return {djs.model.Connection} the removed connection
+ * @param {ConnectionLike|string} connection The connection or its ID.
+ *
+ * @return {ConnectionLike} The removed connection.
  */
 Canvas.prototype.removeConnection = function(connection) {
 
@@ -7998,10 +8111,10 @@ Canvas.prototype.removeConnection = function(connection) {
    *
    * @memberOf Canvas
    *
-   * @event connection.remove
+   * @event ConnectionRemoveEvent
    * @type {Object}
-   * @property {djs.model.Connection} element the connection descriptor
-   * @property {Object} gfx the graphical representation of the connection
+   * @property {ConnectionLike} element The connection.
+   * @property {SVGElement} gfx The graphical element.
    */
 
   /**
@@ -8011,20 +8124,20 @@ Canvas.prototype.removeConnection = function(connection) {
    *
    * @event connection.removed
    * @type {Object}
-   * @property {djs.model.Connection} element the connection descriptor
-   * @property {Object} gfx the graphical representation of the connection
+   * @property {ConnectionLike} element The connection.
+   * @property {SVGElement} gfx The graphical element.
    */
   return this._removeElement(connection, 'connection');
 };
 
 
 /**
- * Return the graphical object underlaying a certain diagram element
+ * Returns the graphical element of an element.
  *
- * @param {string|djs.model.Base} element descriptor of the element
- * @param {boolean} [secondary=false] whether to return the secondary connected element
+ * @param {ShapeLike|ConnectionLike|string} element The element or its ID.
+ * @param {boolean} [secondary=false] Whether to return the secondary graphical element.
  *
- * @return {SVGElement}
+ * @return {SVGElement} The graphical element.
  */
 Canvas.prototype.getGraphics = function(element, secondary) {
   return this._elementRegistry.getGraphics(element, secondary);
@@ -8096,13 +8209,9 @@ Canvas.prototype._viewboxChanged = function() {
  *   height: zoomedAndScrolledViewbox.outer.height
  * });
  *
- * @param  {Object} [box] the new view box to set
- * @param  {number} box.x the top left X coordinate of the canvas visible in view box
- * @param  {number} box.y the top left Y coordinate of the canvas visible in view box
- * @param  {number} box.width the visible width
- * @param  {number} box.height
+ * @param {Rect} [box] The viewbox to be set.
  *
- * @return {Object} the current view box
+ * @return {CanvasViewbox} The set viewbox.
  */
 Canvas.prototype.viewbox = function(box) {
 
@@ -8171,10 +8280,9 @@ Canvas.prototype.viewbox = function(box) {
 /**
  * Gets or sets the scroll of the canvas.
  *
- * @param {Object} [delta] the new scroll to apply.
+ * @param {Point} [delta] The scroll to be set.
  *
- * @param {number} [delta.dx]
- * @param {number} [delta.dy]
+ * @return {Point}
  */
 Canvas.prototype.scroll = function(delta) {
 
@@ -8198,9 +8306,8 @@ Canvas.prototype.scroll = function(delta) {
  * Scrolls the viewbox to contain the given element.
  * Optionally specify a padding to be applied to the edges.
  *
- * @param {Object|String} [element] the element to scroll to.
- * @param {Object|Number} [padding=100] the padding to be applied. Can also specify top, bottom, left and right.
- *
+ * @param {ShapeLike|ConnectionLike|string} element The element to scroll to or its ID.
+ * @param {RectTRBL|number} [padding=100] The padding to be applied. Can also specify top, bottom, left and right.
  */
 Canvas.prototype.scrollToElement = function(element, padding) {
   let defaultPadding = 100;
@@ -8268,17 +8375,17 @@ Canvas.prototype.scrollToElement = function(element, padding) {
 };
 
 /**
- * Gets or sets the current zoom of the canvas, optionally zooming
- * to the specified position.
+ * Gets or sets the current zoom of the canvas, optionally zooming to the
+ * specified position.
  *
- * The getter may return a cached zoom level. Call it with `false` as
- * the first argument to force recomputation of the current level.
+ * The getter may return a cached zoom level. Call it with `false` as the first
+ * argument to force recomputation of the current level.
  *
- * @param {string|number} [newScale] the new zoom level, either a number, i.e. 0.9,
- *                                   or `fit-viewport` to adjust the size to fit the current viewport
- * @param {string|Point} [center] the reference point { x: .., y: ..} to zoom to, 'auto' to zoom into mid or null
+ * @param {number|string} [newScale] The new zoom level, either a number,
+ * i.e. 0.9, or `fit-viewport` to adjust the size to fit the current viewport.
+ * @param {Point} [center] The reference point { x: ..., y: ...} to zoom to.
  *
- * @return {number} the current scale
+ * @return {number} The set zoom level.
  */
 Canvas.prototype.zoom = function(newScale, center) {
 
@@ -8401,9 +8508,9 @@ Canvas.prototype._setZoom = function(scale, center) {
 
 
 /**
- * Returns the size of the canvas
+ * Returns the size of the canvas.
  *
- * @return {Dimensions}
+ * @return {Dimensions} The size of the canvas.
  */
 Canvas.prototype.getSize = function() {
   return {
@@ -8414,14 +8521,14 @@ Canvas.prototype.getSize = function() {
 
 
 /**
- * Return the absolute bounding box for the given element
+ * Returns the absolute bounding box of an element.
  *
- * The absolute bounding box may be used to display overlays in the
- * callers (browser) coordinate system rather than the zoomed in/out
- * canvas coordinates.
+ * The absolute bounding box may be used to display overlays in the callers
+ * (browser) coordinate system rather than the zoomed in/out canvas coordinates.
  *
- * @param  {ElementDescriptor} element
- * @return {Bounds} the absolute bounding box
+ * @param {ShapeLike|ConnectionLike} element The element.
+ *
+ * @return {Rect} The element's absolute bounding box.
  */
 Canvas.prototype.getAbsoluteBBox = function(element) {
   const vbox = this.viewbox();
@@ -8456,8 +8563,7 @@ Canvas.prototype.getAbsoluteBBox = function(element) {
 };
 
 /**
- * Fires an event in order other modules can react to the
- * canvas resizing
+ * Fires an event so other modules can react to the canvas resizing.
  */
 Canvas.prototype.resized = function() {
 
@@ -8488,36 +8594,78 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * A factory for diagram-js shapes
+ * @typedef {import('../model/index').Base} Base
+ * @typedef {import('../model/index').Connection} Connection
+ * @typedef {import('../model/index').Label} Label
+ * @typedef {import('../model/index').Root} Root
+ * @typedef {import('../model/index').Shape} Shape
+ * @typedef {import('../model/index').ModelAttrsConnection} ModelAttrsConnection
+ * @typedef {import('../model/index').ModelAttrsLabel} ModelAttrsLabel
+ * @typedef {import('../model/index').ModelAttrsRoot} ModelAttrsRoot
+ * @typedef {import('../model/index').ModelAttrsShape} ModelAttrsShape
+ */
+
+/**
+ * A factory for model elements.
+ *
+ * @class
+ * @constructor
  */
 function ElementFactory() {
   this._uid = 12;
 }
 
-
+/**
+ * Create a root element.
+ *
+ * @param {ModelAttrsRoot} attrs The attributes of the root element to be created.
+ *
+ * @return {Root} The created root element.
+ */
 ElementFactory.prototype.createRoot = function(attrs) {
   return this.create('root', attrs);
 };
 
+/**
+ * Create a label.
+ *
+ * @param {ModelAttrsLabel} attrs The attributes of the label to be created.
+ *
+ * @return {Label} The created label.
+ */
 ElementFactory.prototype.createLabel = function(attrs) {
   return this.create('label', attrs);
 };
 
+/**
+ * Create a shape.
+ *
+ * @param {ModelAttrsShape} attrs The attributes of the shape to be created.
+ *
+ * @return {Shape} The created shape.
+ */
 ElementFactory.prototype.createShape = function(attrs) {
   return this.create('shape', attrs);
 };
 
+/**
+ * Create a connection.
+ *
+ * @param {ModelAttrsConnection} attrs The attributes of the connection to be created.
+ *
+ * @return {Connection} The created connection.
+ */
 ElementFactory.prototype.createConnection = function(attrs) {
   return this.create('connection', attrs);
 };
 
 /**
- * Create a model element with the given type and
- * a number of pre-set attributes.
+ * Create a model element of the given type with the given attributes.
  *
- * @param  {string} type
- * @param  {Object} attrs
- * @return {djs.model.Base} the newly created model instance
+ * @param {string} type The type of the model element.
+ * @param {Object} attrs The attributes of the model element.
+ *
+ * @return {Connection|Label|Root|Shape} The created model element.
  */
 ElementFactory.prototype.create = function(type, attrs) {
 
@@ -8548,11 +8696,21 @@ var ELEMENT_ID = 'data-element-id';
 
 
 
+/**
+ * @typedef {import('.').ElementLike} ElementLike
+ *
+ * @typedef {import('./EventBus').default} EventBus
+ *
+ * @typedef {import('./ElementRegistry').ElementRegistryCallback} ElementRegistryCallback
+ */
 
 /**
- * @class
- *
  * A registry that keeps track of all shapes in the diagram.
+ *
+ * @class
+ * @constructor
+ *
+ * @param {EventBus} eventBus
  */
 function ElementRegistry(eventBus) {
   this._elements = {};
@@ -8563,11 +8721,11 @@ function ElementRegistry(eventBus) {
 ElementRegistry.$inject = [ 'eventBus' ];
 
 /**
- * Register a pair of (element, gfx, (secondaryGfx)).
+ * Add an element and its graphical representation(s) to the registry.
  *
- * @param {djs.model.Base} element
- * @param {SVGElement} gfx
- * @param {SVGElement} [secondaryGfx] optional other element to register, too
+ * @param {ElementLike} element The element to be added.
+ * @param {SVGElement} gfx The primary graphical representation.
+ * @param {SVGElement} [secondaryGfx] The secondary graphical representation.
  */
 ElementRegistry.prototype.add = function(element, gfx, secondaryGfx) {
 
@@ -8586,9 +8744,9 @@ ElementRegistry.prototype.add = function(element, gfx, secondaryGfx) {
 };
 
 /**
- * Removes an element from the registry.
+ * Remove an element from the registry.
  *
- * @param {djs.model.Base} element
+ * @param {ElementLike|string} element
  */
 ElementRegistry.prototype.remove = function(element) {
   var elements = this._elements,
@@ -8609,10 +8767,10 @@ ElementRegistry.prototype.remove = function(element) {
 };
 
 /**
- * Update the id of an element
+ * Update an elements ID.
  *
- * @param {djs.model.Base} element
- * @param {string} newId
+ * @param {ElementLike|string} element The element or its ID.
+ * @param {string} newId The new ID.
  */
 ElementRegistry.prototype.updateId = function(element, newId) {
 
@@ -8638,11 +8796,11 @@ ElementRegistry.prototype.updateId = function(element, newId) {
 };
 
 /**
- * Update the graphics of an element
+ * Update the graphical representation of an element.
  *
- * @param {djs.model.Base} element
- * @param {SVGElement} gfx
- * @param {boolean} [secondary=false] whether to update the secondary connected element
+ * @param {ElementLike|string} element The element or its ID.
+ * @param {SVGElement} gfx The new graphical representation.
+ * @param {boolean} [secondary=false] Whether to update the secondary graphical representation.
  */
 ElementRegistry.prototype.updateGraphics = function(filter, gfx, secondary) {
   var id = filter.id || filter;
@@ -8663,17 +8821,17 @@ ElementRegistry.prototype.updateGraphics = function(filter, gfx, secondary) {
 };
 
 /**
- * Return the model element for a given id or graphics.
+ * Get the element with the given ID or graphical representation.
  *
  * @example
  *
  * elementRegistry.get('SomeElementId_1');
+ *
  * elementRegistry.get(gfx);
  *
+ * @param {string|SVGElement} filter The elements ID or graphical representation.
  *
- * @param {string|SVGElement} filter for selecting the element
- *
- * @return {djs.model.Base}
+ * @return {ElementLike|undefined} The element.
  */
 ElementRegistry.prototype.get = function(filter) {
   var id;
@@ -8691,9 +8849,9 @@ ElementRegistry.prototype.get = function(filter) {
 /**
  * Return all elements that match a given filter function.
  *
- * @param {Function} fn
+ * @param {ElementRegistryCallback} fn The filter function.
  *
- * @return {Array<djs.model.Base>}
+ * @return {ElementLike[]} The matching elements.
  */
 ElementRegistry.prototype.filter = function(fn) {
 
@@ -8709,11 +8867,11 @@ ElementRegistry.prototype.filter = function(fn) {
 };
 
 /**
- * Return the first element that satisfies the provided testing function.
+ * Return the first element that matches the given filter function.
  *
- * @param {Function} fn
+ * @param {Function} fn The filter function.
  *
- * @return {djs.model.Base}
+ * @return {ElementLike|undefined} The matching element.
  */
 ElementRegistry.prototype.find = function(fn) {
   var map = this._elements,
@@ -8732,18 +8890,18 @@ ElementRegistry.prototype.find = function(fn) {
 };
 
 /**
- * Return all rendered model elements.
+ * Get all elements.
  *
- * @return {Array<djs.model.Base>}
+ * @return {ElementLike[]} All elements.
  */
 ElementRegistry.prototype.getAll = function() {
   return this.filter(function(e) { return e; });
 };
 
 /**
- * Iterate over all diagram elements.
+ * Execute a given function for each element.
  *
- * @param {Function} fn
+ * @param {Function} fn The function to execute.
  */
 ElementRegistry.prototype.forEach = function(fn) {
 
@@ -8759,19 +8917,20 @@ ElementRegistry.prototype.forEach = function(fn) {
 };
 
 /**
- * Return the graphical representation of an element or its id.
+ * Return the graphical representation of an element.
  *
  * @example
+ *
  * elementRegistry.getGraphics('SomeElementId_1');
+ *
  * elementRegistry.getGraphics(rootElement); // <g ...>
  *
  * elementRegistry.getGraphics(rootElement, true); // <svg ...>
  *
+ * @param {ElementLike|string} filter The element or its ID.
+ * @param {boolean} [secondary=false] Whether to return the secondary graphical representation.
  *
- * @param {string|djs.model.Base} filter
- * @param {boolean} [secondary=false] whether to return the secondary connected element
- *
- * @return {SVGElement}
+ * @return {SVGElement} The graphical representation.
  */
 ElementRegistry.prototype.getGraphics = function(filter, secondary) {
   var id = filter.id || filter;
@@ -8781,12 +8940,11 @@ ElementRegistry.prototype.getGraphics = function(filter, secondary) {
 };
 
 /**
- * Validate the suitability of the given id and signals a problem
- * with an exception.
+ * Validate an ID and throw an error if invalid.
  *
  * @param {string} id
  *
- * @throws {Error} if id is empty or already assigned
+ * @throws {Error} Error indicating that the ID is invalid or already assigned.
  */
 ElementRegistry.prototype._validateId = function(id) {
   if (!id) {
@@ -8820,6 +8978,16 @@ var FN_REF = '__fn';
 var DEFAULT_PRIORITY = 1000;
 
 var slice = Array.prototype.slice;
+
+/**
+ * @typedef {import('./EventBus').Event} Event
+ * @typedef {import('./EventBus').EventCallback} EventCallback
+ *
+ * @typedef {Object} EventListener
+ * @property {Function} callback
+ * @property {EventListener|null} next
+ * @property {number} priority
+ */
 
 /**
  * A general purpose event bus.
@@ -8925,10 +9093,10 @@ function EventBus() {
  *
  * Returning anything but `undefined` from a listener will stop the listener propagation.
  *
- * @param {string|Array<string>} events
- * @param {number} [priority=1000] the priority in which this listener is called, larger is higher
- * @param {Function} callback
- * @param {Object} [that] Pass context (`this`) to the callback
+ * @param {string|string[]} events The event(s) to listen to.
+ * @param {number} [priority=1000] The priority with which to listen.
+ * @param {EventCallback} callback The callback.
+ * @param {*} [that] Value of `this` the callback will be called with.
  */
 EventBus.prototype.on = function(events, priority, callback, that) {
 
@@ -8968,12 +9136,12 @@ EventBus.prototype.on = function(events, priority, callback, that) {
 
 
 /**
- * Register an event listener that is executed only once.
+ * Register an event listener that is called only once.
  *
- * @param {string} event the event name to register for
- * @param {number} [priority=1000] the priority in which this listener is called, larger is higher
- * @param {Function} callback the callback to execute
- * @param {Object} [that] Pass context (`this`) to the callback
+ * @param {string} event The event to listen to.
+ * @param {number} [priority=1000] The priority with which to listen.
+ * @param {EventCallback} callback The callback.
+ * @param {*} [that] Value of `this` the callback will be called with.
  */
 EventBus.prototype.once = function(event, priority, callback, that) {
   var self = this;
@@ -9012,8 +9180,8 @@ EventBus.prototype.once = function(event, priority, callback, that) {
  *
  * If no callback is given, all listeners for a given event name are being removed.
  *
- * @param {string|Array<string>} events
- * @param {Function} [callback]
+ * @param {string|string[]} events The events.
+ * @param {EventCallback} [callback] The callback.
  */
 EventBus.prototype.off = function(events, callback) {
 
@@ -9029,11 +9197,11 @@ EventBus.prototype.off = function(events, callback) {
 
 
 /**
- * Create an EventBus event.
+ * Create an event recognized be the event bus.
  *
- * @param {Object} data
+ * @param {Object} data Event data.
  *
- * @return {Object} event, recognized by the eventBus
+ * @return {Event} An event that will be recognized by the event bus.
  */
 EventBus.prototype.createEvent = function(data) {
   var event = new InternalEvent();
@@ -9045,7 +9213,7 @@ EventBus.prototype.createEvent = function(data) {
 
 
 /**
- * Fires a named event.
+ * Fires an event.
  *
  * @example
  *
@@ -9067,12 +9235,11 @@ EventBus.prototype.createEvent = function(data) {
  *
  * events.fire({ type: 'foo' }, 'I am bar!');
  *
- * @param {string} [name] the optional event name
- * @param {Object} [event] the event object
- * @param {...Object} additional arguments to be passed to the callback functions
+ * @param {string} [type] The event type.
+ * @param {Object} [data] The event or event data.
+ * @param {...*} additional Additional arguments the callback will be called with.
  *
- * @return {boolean} the events return value, if specified or false if the
- *                   default action was prevented by listeners
+ * @return {*} The return value. Will be set to `false` if the default was prevented.
  */
 EventBus.prototype.fire = function(type, data) {
   var event,
@@ -9137,7 +9304,13 @@ EventBus.prototype.fire = function(type, data) {
   return returnValue;
 };
 
-
+/**
+ * Handle an error by firing an event.
+ *
+ * @param {Error} error The error to be handled.
+ *
+ * @return {boolean} Whether the error was handled.
+ */
 EventBus.prototype.handleError = function(error) {
   return this.fire('error', { error: error }) === false;
 };
@@ -9200,7 +9373,7 @@ EventBus.prototype._invokeListener = function(event, args, listener) {
   return returnValue;
 };
 
-/*
+/**
  * Add new listener with a certain priority to the list
  * of listeners (for the given event).
  *
@@ -9214,7 +9387,7 @@ EventBus.prototype._invokeListener = function(event, args, listener) {
  *    * after: [ 1500, 1500, (new=1300), 1000, 1000, (new=1000) ]
  *
  * @param {string} event
- * @param {Object} listener { priority, callback }
+ * @param {EventListener} listener
  */
 EventBus.prototype._addListener = function(event, newListener) {
 
@@ -9320,9 +9493,9 @@ InternalEvent.prototype.init = function(data) {
  * Invoke function. Be fast...
  *
  * @param {Function} fn
- * @param {Array<Object>} args
+ * @param {*[]} args
  *
- * @return {Any}
+ * @return {*}
  */
 function invokeFunction(fn, args) {
   return fn.apply(null, args);
@@ -9361,7 +9534,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * A factory that creates graphical elements
+ * @typedef {import('../model').ModelType} ModelType
+ * @typedef {import('../model').ModelTypeConnection} ModelTypeConnection
+ * @typedef {import('../model').ModelTypeShape} ModelTypeShape
+ *
+ * @typedef {import('.').ConnectionLike} ConnectionLike
+ * @typedef {import('.').ElementLike} ElementLike
+ * @typedef {import('.').ShapeLike} ShapeLike
+ *
+ * @typedef {import('./ElementRegistry').default} ElementRegistry
+ * @typedef {import('./EventBus').default} EventBus
+ */
+
+/**
+ * A factory that creates graphical elements.
  *
  * @param {EventBus} eventBus
  * @param {ElementRegistry} elementRegistry
@@ -9429,7 +9615,7 @@ GraphicsFactory.prototype._clear = function(gfx) {
  * </g>
  *
  * @param {string} type the type of the element, i.e. shape | connection
- * @param {SVGElement} [childrenGfx]
+ * @param {SVGElement} childrenGfx
  * @param {number} [parentIndex] position to create container in parent
  * @param {boolean} [isFrame] is frame element
  *
@@ -9467,11 +9653,25 @@ GraphicsFactory.prototype._createContainer = function(
   return gfx;
 };
 
+/**
+ * Create a graphical element.
+ *
+ * @param {ModelType} type The type of the element.
+ * @param {ElementLike} element The element.
+ * @param {number} [parentIndex] The index at which to add the graphical element to its parent's children.
+ *
+ * @return {SVGElement} The graphical element.
+ */
 GraphicsFactory.prototype.create = function(type, element, parentIndex) {
   var childrenGfx = this._getChildrenContainer(element.parent);
   return this._createContainer(type, childrenGfx, parentIndex, (0,_util_Elements__WEBPACK_IMPORTED_MODULE_3__.isFrameElement)(element));
 };
 
+/**
+ * Update the containments of the given elements.
+ *
+ * @param {ElementLike[]} elements The elements.
+ */
 GraphicsFactory.prototype.updateContainments = function(elements) {
 
   var self = this,
@@ -9507,30 +9707,63 @@ GraphicsFactory.prototype.updateContainments = function(elements) {
   });
 };
 
+/**
+ * Draw a shape.
+ *
+ * @param {SVGElement} visual The graphical element.
+ * @param {ShapeLike} element The shape.
+ */
 GraphicsFactory.prototype.drawShape = function(visual, element) {
   var eventBus = this._eventBus;
 
   return eventBus.fire('render.shape', { gfx: visual, element: element });
 };
 
+/**
+ * Get the path of a shape.
+ *
+ * @param {ShapeLike} element The shape.
+ *
+ * @return {string} The path of the shape.
+ */
 GraphicsFactory.prototype.getShapePath = function(element) {
   var eventBus = this._eventBus;
 
   return eventBus.fire('render.getShapePath', element);
 };
 
+/**
+ * Draw a connection.
+ *
+ * @param {SVGElement} visual The graphical element.
+ * @param {ConnectionLike} element The connection.
+ */
 GraphicsFactory.prototype.drawConnection = function(visual, element) {
   var eventBus = this._eventBus;
 
   return eventBus.fire('render.connection', { gfx: visual, element: element });
 };
 
-GraphicsFactory.prototype.getConnectionPath = function(waypoints) {
+/**
+ * Get the path of a connection.
+ *
+ * @param {ConnectionLike} element The connection.
+ *
+ * @return {string} The path of the connection.
+ */
+GraphicsFactory.prototype.getConnectionPath = function(connection) {
   var eventBus = this._eventBus;
 
-  return eventBus.fire('render.getConnectionPath', waypoints);
+  return eventBus.fire('render.getConnectionPath', connection);
 };
 
+/**
+ * Update an elements graphical representation.
+ *
+ * @param {ModelTypeShape|ModelTypeConnection} type The type of the element.
+ * @param {ElementLike} element The element.
+ * @param {SVGElement} gfx The graphical representation.
+ */
 GraphicsFactory.prototype.update = function(type, element, gfx) {
 
   // do NOT update root element
@@ -9560,6 +9793,11 @@ GraphicsFactory.prototype.update = function(type, element, gfx) {
   }
 };
 
+/**
+ * Remove a graphical element.
+ *
+ * @param {ElementLike} element The element.
+ */
 GraphicsFactory.prototype.remove = function(element) {
   var gfx = this._elementRegistry.getGraphics(element);
 
@@ -9636,6 +9874,14 @@ __webpack_require__.r(__webpack_exports__);
 var DEFAULT_RENDER_PRIORITY = 1000;
 
 /**
+ * @typedef {import('../model').Base} Base
+ * @typedef {import('../model').Connection} Connection
+ * @typedef {import('../model').Shape} Shape
+ *
+ * @typedef {import('../core/EventBus').default} EventBus
+ */
+
+/**
  * The base implementation of shape and connection renderers.
  *
  * @param {EventBus} eventBus
@@ -9673,52 +9919,51 @@ function BaseRenderer(eventBus, renderPriority) {
 }
 
 /**
- * Should check whether *this* renderer can render
- * the element/connection.
+ * Checks whether an element can be rendered.
  *
- * @param {element} element
+ * @param {Base} element The element to be rendered.
  *
- * @returns {boolean}
+ * @returns {boolean} Whether the element can be rendered.
  */
-BaseRenderer.prototype.canRender = function() {};
+BaseRenderer.prototype.canRender = function(element) {};
 
 /**
- * Provides the shape's snap svg element to be drawn on the `canvas`.
+ * Draws a shape.
  *
- * @param {djs.Graphics} visuals
- * @param {Shape} shape
+ * @param {SVGElement} visuals The SVG element to draw the shape into.
+ * @param {Shape} shape The shape to be drawn.
  *
- * @returns {Snap.svg} [returns a Snap.svg paper element ]
+ * @returns {SVGElement} The SVG element of the shape drawn.
  */
-BaseRenderer.prototype.drawShape = function() {};
+BaseRenderer.prototype.drawShape = function(visuals, shape) {};
 
 /**
- * Provides the shape's snap svg element to be drawn on the `canvas`.
+ * Draws a connection.
  *
- * @param {djs.Graphics} visuals
- * @param {Connection} connection
+ * @param {SVGElement} visuals The SVG element to draw the connection into.
+ * @param {Connection} connection The connection to be drawn.
  *
- * @returns {Snap.svg} [returns a Snap.svg paper element ]
+ * @returns {SVGElement} The SVG element of the connection drawn.
  */
-BaseRenderer.prototype.drawConnection = function() {};
+BaseRenderer.prototype.drawConnection = function(visuals, connection) {};
 
 /**
- * Gets the SVG path of a shape that represents it's visual bounds.
+ * Gets the SVG path of the graphical representation of a shape.
  *
- * @param {Shape} shape
+ * @param {Shape} shape The shape.
  *
- * @return {string} svg path
+ * @return {string} The SVG path of the shape.
  */
-BaseRenderer.prototype.getShapePath = function() {};
+BaseRenderer.prototype.getShapePath = function(shape) {};
 
 /**
- * Gets the SVG path of a connection that represents it's visual bounds.
+ * Gets the SVG path of the graphical representation of a connection.
  *
- * @param {Connection} connection
+ * @param {Connection} connection The connection.
  *
- * @return {string} svg path
+ * @return {string} The SVG path of the connection.
  */
-BaseRenderer.prototype.getConnectionPath = function() {};
+BaseRenderer.prototype.getConnectionPath = function(connection) {};
 
 
 /***/ }),
@@ -9751,6 +9996,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+/**
+ * @typedef {import('../core/EventBus').default} EventBus
+ * @typedef {import('./Styles').default} Styles
+ */
 
 // apply default renderer with lowest possible priority
 // so that it only kicks in if noone else could render
@@ -9887,9 +10137,9 @@ function Styles() {
   /**
    * Builds a style definition from a className, a list of traits and an object of additional attributes.
    *
-   * @param  {string} className
-   * @param  {Array<string>} traits
-   * @param  {Object} additionalAttrs
+   * @param {string} className
+   * @param {Array<string>} traits
+   * @param {Object} additionalAttrs
    *
    * @return {Object} the style defintion
    */
@@ -9902,8 +10152,8 @@ function Styles() {
   /**
    * Builds a style definition from a list of traits and an object of additional attributes.
    *
-   * @param  {Array<string>} traits
-   * @param  {Object} additionalAttrs
+   * @param {Array<string>} traits
+   * @param {Object} additionalAttrs
    *
    * @return {Object} the style defintion
    */
@@ -9972,6 +10222,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Elements */ "./node_modules/diagram-js/lib/util/Elements.js");
 
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../core/GraphicsFactory').default} GraphicsFactory
+ */
 
 /**
  * Adds change support to the diagram, including
@@ -10086,6 +10343,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../../model').Base} Base
+ *
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../draw/Styles').default} Styles
+ */
+
 function allowAll(event) { return true; }
 
 function allowPrimaryAndAuxiliary(event) {
@@ -10115,6 +10380,8 @@ var LOW_PRIORITY = 500;
  * prevents the original DOM operation.
  *
  * @param {EventBus} eventBus
+ * @param {ElementRegistry} elementRegistry
+ * @param {Styles} styles
  */
 function InteractionEvents(eventBus, elementRegistry, styles) {
 
@@ -10124,8 +10391,8 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
    * Fire an interaction event.
    *
    * @param {string} type local event name, e.g. element.click.
-   * @param {DOMEvent} event native event
-   * @param {djs.model.Base} [element] the diagram element to emit the event on;
+   * @param {MouseEvent|TouchEvent} event native event
+   * @param {Base} [element] the diagram element to emit the event on;
    *                                   defaults to the event target
    */
   function fire(type, event, element) {
@@ -10207,8 +10474,8 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
    * on the target shape or connection.
    *
    * @param {string} eventName the name of the triggered DOM event
-   * @param {MouseEvent} event
-   * @param {djs.model.Base} targetElement
+   * @param {MouseEvent|TouchEvent} event
+   * @param {Base} targetElement
    */
   function triggerMouseEvent(eventName, event, targetElement) {
 
@@ -10374,7 +10641,7 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
   /**
    * Create default hit for the given element.
    *
-   * @param {djs.model.Base} element
+   * @param {Base} element
    * @param {SVGElement} gfx
    *
    * @return {SVGElement} created hit
@@ -10446,8 +10713,8 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
   /**
    * Update default hit of the element.
    *
-   * @param  {djs.model.Base} element
-   * @param  {SVGElement} gfx
+   * @param {Base} element
+   * @param {SVGElement} gfx
    *
    * @return {SVGElement} updated hit
    */
@@ -10495,7 +10762,7 @@ InteractionEvents.$inject = [
  * @event element.hover
  *
  * @type {Object}
- * @property {djs.model.Base} element
+ * @property {Base} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10506,7 +10773,7 @@ InteractionEvents.$inject = [
  * @event element.out
  *
  * @type {Object}
- * @property {djs.model.Base} element
+ * @property {Base} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10517,7 +10784,7 @@ InteractionEvents.$inject = [
  * @event element.click
  *
  * @type {Object}
- * @property {djs.model.Base} element
+ * @property {Base} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10528,7 +10795,7 @@ InteractionEvents.$inject = [
  * @event element.dblclick
  *
  * @type {Object}
- * @property {djs.model.Base} element
+ * @property {Base} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10539,7 +10806,7 @@ InteractionEvents.$inject = [
  * @event element.mousedown
  *
  * @type {Object}
- * @property {djs.model.Base} element
+ * @property {Base} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10550,7 +10817,7 @@ InteractionEvents.$inject = [
  * @event element.mouseup
  *
  * @type {Object}
- * @property {djs.model.Base} element
+ * @property {Base} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10562,7 +10829,7 @@ InteractionEvents.$inject = [
  * @event element.contextmenu
  *
  * @type {Object}
- * @property {djs.model.Base} element
+ * @property {Base} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10615,6 +10882,12 @@ var LOW_PRIORITY = 500;
 
 
 
+/**
+ * @typedef {import('../../model').Base} Base
+ *
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../draw/Styles').default} Styles
+ */
 
 /**
  * @class
@@ -10624,9 +10897,8 @@ var LOW_PRIORITY = 500;
  *
  * @param {EventBus} eventBus
  * @param {Styles} styles
- * @param {ElementRegistry} elementRegistry
  */
-function Outline(eventBus, styles, elementRegistry) {
+function Outline(eventBus, styles) {
 
   this.offset = 6;
 
@@ -10640,7 +10912,7 @@ function Outline(eventBus, styles, elementRegistry) {
     (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({
       x: 10,
       y: 10,
-      rx: 3,
+      rx: 4,
       width: 100,
       height: 100
     }, OUTLINE_STYLE));
@@ -10684,8 +10956,8 @@ function Outline(eventBus, styles, elementRegistry) {
  * Updates the outline of a shape respecting the dimension of the
  * element and an outline offset.
  *
- * @param  {SVGElement} outline
- * @param  {djs.model.Base} element
+ * @param {SVGElement} outline
+ * @param {Base} element
  */
 Outline.prototype.updateShapeOutline = function(outline, element) {
 
@@ -10703,8 +10975,8 @@ Outline.prototype.updateShapeOutline = function(outline, element) {
  * Updates the outline of a connection respecting the bounding box of
  * the connection and an outline offset.
  *
- * @param  {SVGElement} outline
- * @param  {djs.model.Base} element
+ * @param {SVGElement} outline
+ * @param {Base} element
  */
 Outline.prototype.updateConnectionOutline = function(outline, connection) {
 
@@ -10773,6 +11045,18 @@ var ids = new _util_IdGenerator__WEBPACK_IMPORTED_MODULE_0__["default"]('ov');
 
 var LOW_PRIORITY = 500;
 
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('./Overlays').Overlay} Overlay
+ * @typedef {import('./Overlays').OverlayAttrs} OverlayAttrs
+ * @typedef {import('./Overlays').OverlayContainer} OverlayContainer
+ * @typedef {import('./Overlays').OverlaysConfig} OverlaysConfig
+ * @typedef {import('./Overlays').OverlaysConfigDefault} OverlaysConfigDefault
+ * @typedef {import('./Overlays').OverlaysFilter} OverlaysFilter
+ */
 
 /**
  * A service that allows users to attach overlays to diagram elements.
@@ -10782,6 +11066,7 @@ var LOW_PRIORITY = 500;
  * @example
  *
  * // add a pink badge on the top left of the shape
+ *
  * overlays.add(someShape, {
  *   position: {
  *     top: -5,
@@ -10833,19 +11118,21 @@ var LOW_PRIORITY = 500;
  *     }
  * }
  *
- * @param {Object} config
+ * @param {OverlaysConfig} config
  * @param {EventBus} eventBus
  * @param {Canvas} canvas
  * @param {ElementRegistry} elementRegistry
  */
 function Overlays(config, eventBus, canvas, elementRegistry) {
-
   this._eventBus = eventBus;
   this._canvas = canvas;
   this._elementRegistry = elementRegistry;
 
   this._ids = ids;
 
+  /**
+   * @type {OverlaysConfigDefault}
+   */
   this._overlayDefaults = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({
 
     // no show constraints
@@ -10856,16 +11143,18 @@ function Overlays(config, eventBus, canvas, elementRegistry) {
   }, config && config.defaults);
 
   /**
-   * Mapping overlayId -> overlay
+   * @type {Map<string, Overlay>}
    */
   this._overlays = {};
 
   /**
-   * Mapping elementId -> overlay container
+   * @type {OverlayContainer[]}
    */
   this._overlayContainers = [];
 
-  // root html element for all overlays
+  /**
+   * @type {HTMLElement}
+   */
   this._overlayRoot = createRoot(canvas.getContainer());
 
   this._init();
@@ -10881,12 +11170,12 @@ Overlays.$inject = [
 
 
 /**
- * Returns the overlay with the specified id or a list of overlays
+ * Returns the overlay with the specified ID or a list of overlays
  * for an element with a given type.
  *
  * @example
  *
- * // return the single overlay with the given id
+ * // return the single overlay with the given ID
  * overlays.get('some-id');
  *
  * // return all overlays for the shape
@@ -10895,16 +11184,12 @@ Overlays.$inject = [
  * // return all overlays on shape with type 'badge'
  * overlays.get({ element: someShape, type: 'badge' });
  *
- * // shape can also be specified as id
+ * // shape can also be specified as ID
  * overlays.get({ element: 'element-id', type: 'badge' });
  *
+ * @param {OverlaysFilter} search The filter to be used to find the overlay(s).
  *
- * @param {Object} search
- * @param {string} [search.id]
- * @param {string|djs.model.Base} [search.element]
- * @param {string} [search.type]
- *
- * @return {Object|Array<Object>} the overlay(s)
+ * @return {Overlay|Overlay[]} The overlay(s).
  */
 Overlays.prototype.get = function(search) {
 
@@ -10936,27 +11221,13 @@ Overlays.prototype.get = function(search) {
 };
 
 /**
- * Adds a HTML overlay to an element.
+ * Adds an HTML overlay to an element.
  *
- * @param {string|djs.model.Base}   element   attach overlay to this shape
- * @param {string}                  [type]    optional type to assign to the overlay
- * @param {Object}                  overlay   the overlay configuration
+ * @param {Base|string} element The element to add the overlay to.
+ * @param {string} [type] An optional type that can be used to filter.
+ * @param {OverlayAttrs} overlay The overlay.
  *
- * @param {string|DOMElement}       overlay.html                 html element to use as an overlay
- * @param {Object}                  [overlay.show]               show configuration
- * @param {number}                  [overlay.show.minZoom]       minimal zoom level to show the overlay
- * @param {number}                  [overlay.show.maxZoom]       maximum zoom level to show the overlay
- * @param {Object}                  overlay.position             where to attach the overlay
- * @param {number}                  [overlay.position.left]      relative to element bbox left attachment
- * @param {number}                  [overlay.position.top]       relative to element bbox top attachment
- * @param {number}                  [overlay.position.bottom]    relative to element bbox bottom attachment
- * @param {number}                  [overlay.position.right]     relative to element bbox right attachment
- * @param {boolean|Object}          [overlay.scale=true]         false to preserve the same size regardless of
- *                                                               diagram zoom
- * @param {number}                  [overlay.scale.min]
- * @param {number}                  [overlay.scale.max]
- *
- * @return {string}                 id that may be used to reference the overlay for update or removal
+ * @return {string} The overlay's ID that can be used to get or remove it.
  */
 Overlays.prototype.add = function(element, type, overlay) {
 
@@ -10997,11 +11268,11 @@ Overlays.prototype.add = function(element, type, overlay) {
 
 
 /**
- * Remove an overlay with the given id or all overlays matching the given filter.
+ * Remove an overlay with the given ID or all overlays matching the given filter.
  *
  * @see Overlays#get for filter options.
  *
- * @param {string|object} [filter]
+ * @param {OverlaysFilter} filter The filter to be used to find the overlay.
  */
 Overlays.prototype.remove = function(filter) {
 
@@ -11037,16 +11308,32 @@ Overlays.prototype.remove = function(filter) {
 
 };
 
+/**
+ * Checks whether overlays are shown.
+ *
+ * @returns {boolean} Whether overlays are shown.
+ */
+Overlays.prototype.isShown = function() {
+  return this._overlayRoot.style.display !== 'none';
+};
 
+/**
+ * Show all overlays.
+ */
 Overlays.prototype.show = function() {
   setVisible(this._overlayRoot);
 };
 
-
+/**
+ * Hide all overlays.
+ */
 Overlays.prototype.hide = function() {
   setVisible(this._overlayRoot, false);
 };
 
+/**
+ * Remove all overlays and their container.
+ */
 Overlays.prototype.clear = function() {
   this._overlays = {};
 
@@ -11440,6 +11727,522 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/diagram-js/lib/features/palette/Palette.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/diagram-js/lib/features/palette/Palette.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Palette)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_EscapeUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/EscapeUtil */ "./node_modules/diagram-js/lib/util/EscapeUtil.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+var TOGGLE_SELECTOR = '.djs-palette-toggle',
+    ENTRY_SELECTOR = '.entry',
+    ELEMENT_SELECTOR = TOGGLE_SELECTOR + ', ' + ENTRY_SELECTOR;
+
+var PALETTE_PREFIX = 'djs-palette-',
+    PALETTE_SHOWN_CLS = 'shown',
+    PALETTE_OPEN_CLS = 'open',
+    PALETTE_TWO_COLUMN_CLS = 'two-column';
+
+var DEFAULT_PRIORITY = 1000;
+
+
+/**
+ * A palette containing modeling elements.
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function Palette(eventBus, canvas) {
+
+  this._eventBus = eventBus;
+  this._canvas = canvas;
+
+  var self = this;
+
+  eventBus.on('tool-manager.update', function(event) {
+    var tool = event.tool;
+
+    self.updateToolHighlight(tool);
+  });
+
+  eventBus.on('i18n.changed', function() {
+    self._update();
+  });
+
+  eventBus.on('diagram.init', function() {
+
+    self._diagramInitialized = true;
+
+    self._rebuild();
+  });
+}
+
+Palette.$inject = [ 'eventBus', 'canvas' ];
+
+
+/**
+ * Register a provider with the palette
+ *
+ * @param {number} [priority=1000]
+ * @param {PaletteProvider} provider
+ *
+ * @example
+ * const paletteProvider = {
+ *   getPaletteEntries: function() {
+ *     return function(entries) {
+ *       return {
+ *         ...entries,
+ *         'entry-1': {
+ *           label: 'My Entry',
+ *           action: function() { alert("I have been clicked!"); }
+ *         }
+ *       };
+ *     }
+ *   }
+ * };
+ *
+ * palette.registerProvider(800, paletteProvider);
+ */
+Palette.prototype.registerProvider = function(priority, provider) {
+  if (!provider) {
+    provider = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  this._eventBus.on('palette.getProviders', priority, function(event) {
+    event.providers.push(provider);
+  });
+
+  this._rebuild();
+};
+
+
+/**
+ * Returns the palette entries
+ *
+ * @return {Object<string, PaletteEntryDescriptor>} map of entries
+ */
+Palette.prototype.getEntries = function() {
+  var providers = this._getProviders();
+
+  return providers.reduce(addPaletteEntries, {});
+};
+
+Palette.prototype._rebuild = function() {
+
+  if (!this._diagramInitialized) {
+    return;
+  }
+
+  var providers = this._getProviders();
+
+  if (!providers.length) {
+    return;
+  }
+
+  if (!this._container) {
+    this._init();
+  }
+
+  this._update();
+};
+
+/**
+ * Initialize
+ */
+Palette.prototype._init = function() {
+
+  var self = this;
+
+  var eventBus = this._eventBus;
+
+  var parentContainer = this._getParentContainer();
+
+  var container = this._container = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(Palette.HTML_MARKUP);
+
+  parentContainer.appendChild(container);
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(parentContainer).add(PALETTE_PREFIX + PALETTE_SHOWN_CLS);
+
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.delegate.bind(container, ELEMENT_SELECTOR, 'click', function(event) {
+
+    var target = event.delegateTarget;
+
+    if ((0,min_dom__WEBPACK_IMPORTED_MODULE_0__.matches)(target, TOGGLE_SELECTOR)) {
+      return self.toggle();
+    }
+
+    self.trigger('click', event);
+  });
+
+  // prevent drag propagation
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(container, 'mousedown', function(event) {
+    event.stopPropagation();
+  });
+
+  // prevent drag propagation
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.delegate.bind(container, ENTRY_SELECTOR, 'dragstart', function(event) {
+    self.trigger('dragstart', event);
+  });
+
+  eventBus.on('canvas.resized', this._layoutChanged, this);
+
+  eventBus.fire('palette.create', {
+    container: container
+  });
+};
+
+Palette.prototype._getProviders = function(id) {
+
+  var event = this._eventBus.createEvent({
+    type: 'palette.getProviders',
+    providers: []
+  });
+
+  this._eventBus.fire(event);
+
+  return event.providers;
+};
+
+/**
+ * Update palette state.
+ *
+ * @param {Object} [state] { open, twoColumn }
+ */
+Palette.prototype._toggleState = function(state) {
+
+  state = state || {};
+
+  var parent = this._getParentContainer(),
+      container = this._container;
+
+  var eventBus = this._eventBus;
+
+  var twoColumn;
+
+  var cls = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(container),
+      parentCls = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(parent);
+
+  if ('twoColumn' in state) {
+    twoColumn = state.twoColumn;
+  } else {
+    twoColumn = this._needsCollapse(parent.clientHeight, this._entries || {});
+  }
+
+  // always update two column
+  cls.toggle(PALETTE_TWO_COLUMN_CLS, twoColumn);
+  parentCls.toggle(PALETTE_PREFIX + PALETTE_TWO_COLUMN_CLS, twoColumn);
+
+  if ('open' in state) {
+    cls.toggle(PALETTE_OPEN_CLS, state.open);
+    parentCls.toggle(PALETTE_PREFIX + PALETTE_OPEN_CLS, state.open);
+  }
+
+  eventBus.fire('palette.changed', {
+    twoColumn: twoColumn,
+    open: this.isOpen()
+  });
+};
+
+Palette.prototype._update = function() {
+
+  var entriesContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.djs-palette-entries', this._container),
+      entries = this._entries = this.getEntries();
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.clear)(entriesContainer);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(entries, function(entry, id) {
+
+    var grouping = entry.group || 'default';
+
+    var container = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('[data-group=' + (0,_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_2__.escapeCSS)(grouping) + ']', entriesContainer);
+    if (!container) {
+      container = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<div class="group"></div>');
+      (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(container, 'data-group', grouping);
+
+      entriesContainer.appendChild(container);
+    }
+
+    var html = entry.html || (
+      entry.separator ?
+        '<hr class="separator" />' :
+        '<div class="entry" draggable="true"></div>');
+
+
+    var control = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(html);
+    container.appendChild(control);
+
+    if (!entry.separator) {
+      (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(control, 'data-action', id);
+
+      if (entry.title) {
+        (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(control, 'title', entry.title);
+      }
+
+      if (entry.className) {
+        addClasses(control, entry.className);
+      }
+
+      if (entry.imageUrl) {
+        var image = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<img>');
+        (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(image, 'src', entry.imageUrl);
+
+        control.appendChild(image);
+      }
+    }
+  });
+
+  // open after update
+  this.open();
+};
+
+
+/**
+ * Trigger an action available on the palette
+ *
+ * @param {string} action
+ * @param {Event} event
+ */
+Palette.prototype.trigger = function(action, event, autoActivate) {
+  var entry,
+      originalEvent,
+      button = event.delegateTarget || event.target;
+
+  if (!button) {
+    return event.preventDefault();
+  }
+
+  entry = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(button, 'data-action');
+  originalEvent = event.originalEvent || event;
+
+  return this.triggerEntry(entry, action, originalEvent, autoActivate);
+};
+
+Palette.prototype.triggerEntry = function(entryId, action, event, autoActivate) {
+  var entries = this._entries,
+      entry,
+      handler;
+
+  entry = entries[entryId];
+
+  // when user clicks on the palette and not on an action
+  if (!entry) {
+    return;
+  }
+
+  handler = entry.action;
+
+  if (this._eventBus.fire('palette.trigger', { entry, event }) === false) {
+    return;
+  }
+
+  // simple action (via callback function)
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isFunction)(handler)) {
+    if (action === 'click') {
+      return handler(event, autoActivate);
+    }
+  } else {
+    if (handler[action]) {
+      return handler[action](event, autoActivate);
+    }
+  }
+
+  // silence other actions
+  event.preventDefault();
+};
+
+Palette.prototype._layoutChanged = function() {
+  this._toggleState({});
+};
+
+/**
+ * Do we need to collapse to two columns?
+ *
+ * @param {number} availableHeight
+ * @param {Object} entries
+ *
+ * @return {boolean}
+ */
+Palette.prototype._needsCollapse = function(availableHeight, entries) {
+
+  // top margin + bottom toggle + bottom margin
+  // implementors must override this method if they
+  // change the palette styles
+  var margin = 20 + 10 + 20;
+
+  var entriesHeight = Object.keys(entries).length * 46;
+
+  return availableHeight < entriesHeight + margin;
+};
+
+/**
+ * Close the palette
+ */
+Palette.prototype.close = function() {
+
+  this._toggleState({
+    open: false,
+    twoColumn: false
+  });
+};
+
+
+/**
+ * Open the palette
+ */
+Palette.prototype.open = function() {
+  this._toggleState({ open: true });
+};
+
+
+Palette.prototype.toggle = function(open) {
+  if (this.isOpen()) {
+    this.close();
+  } else {
+    this.open();
+  }
+};
+
+Palette.prototype.isActiveTool = function(tool) {
+  return tool && this._activeTool === tool;
+};
+
+Palette.prototype.updateToolHighlight = function(name) {
+  var entriesContainer,
+      toolsContainer;
+
+  if (!this._toolsContainer) {
+    entriesContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.djs-palette-entries', this._container);
+
+    this._toolsContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('[data-group=tools]', entriesContainer);
+  }
+
+  toolsContainer = this._toolsContainer;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(toolsContainer.children, function(tool) {
+    var actionName = tool.getAttribute('data-action');
+
+    if (!actionName) {
+      return;
+    }
+
+    var toolClasses = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(tool);
+
+    actionName = actionName.replace('-tool', '');
+
+    if (toolClasses.contains('entry') && actionName === name) {
+      toolClasses.add('highlighted-entry');
+    } else {
+      toolClasses.remove('highlighted-entry');
+    }
+  });
+};
+
+
+/**
+ * Return true if the palette is opened.
+ *
+ * @example
+ *
+ * palette.open();
+ *
+ * if (palette.isOpen()) {
+ *   // yes, we are open
+ * }
+ *
+ * @return {boolean} true if palette is opened
+ */
+Palette.prototype.isOpen = function() {
+  return (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(this._container).has(PALETTE_OPEN_CLS);
+};
+
+/**
+ * Get container the palette lives in.
+ *
+ * @return {Element}
+ */
+Palette.prototype._getParentContainer = function() {
+  return this._canvas.getContainer();
+};
+
+
+/* markup definition */
+
+Palette.HTML_MARKUP =
+  '<div class="djs-palette">' +
+    '<div class="djs-palette-entries"></div>' +
+    '<div class="djs-palette-toggle"></div>' +
+  '</div>';
+
+
+// helpers //////////////////////
+
+function addClasses(element, classNames) {
+
+  var classes = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(element);
+
+  var actualClassNames = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isArray)(classNames) ? classNames : classNames.split(/\s+/g);
+  actualClassNames.forEach(function(cls) {
+    classes.add(cls);
+  });
+}
+
+function addPaletteEntries(entries, provider) {
+
+  var entriesOrUpdater = provider.getPaletteEntries();
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isFunction)(entriesOrUpdater)) {
+    return entriesOrUpdater(entries);
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(entriesOrUpdater, function(entry, id) {
+    entries[id] = entry;
+  });
+
+  return entries;
+}
+
+/***/ }),
+
+/***/ "./node_modules/diagram-js/lib/features/palette/index.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/diagram-js/lib/features/palette/index.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Palette */ "./node_modules/diagram-js/lib/features/palette/Palette.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'palette' ],
+  palette: [ 'type', _Palette__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/diagram-js/lib/features/root-elements/RootElementsBehavior.js":
 /*!************************************************************************************!*\
   !*** ./node_modules/diagram-js/lib/features/root-elements/RootElementsBehavior.js ***!
@@ -11457,13 +12260,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ */
 
 /**
  * A modeling behavior that ensures we set the correct root element
  * as we undo and redo commands.
  *
  * @param {Canvas} canvas
- * @param {didi.Injector} injector
+ * @param {Injector} injector
  */
 function RootElementsBehavior(canvas, injector) {
 
@@ -11530,6 +12338,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
 
 /**
  * A service that offers the current selection in a diagram.
@@ -11537,7 +12348,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @class
  *
- * @param {EventBus} eventBus the event bus
+ * @param {EventBus} eventBus
  */
 function Selection(eventBus, canvas) {
 
@@ -11593,8 +12404,8 @@ Selection.prototype.isSelected = function(element) {
  *
  * @method Selection#select
  *
- * @param  {Object|Object[]} elements element or array of elements to be selected
- * @param  {boolean} [add] whether the element(s) should be appended to the current selection, defaults to false
+ * @param {Object|Object[]} elements element or array of elements to be selected
+ * @param {boolean} [add] whether the element(s) should be appended to the current selection, defaults to false
  */
 Selection.prototype.select = function(elements, add) {
   var selectedElements = this._selectedElements,
@@ -11653,7 +12464,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('./Selection').default} Selection
+ */
 
+/**
+ * @param {EventBus} eventBus
+ * @param {Selection} selection
+ * @param {Canvas} canvas
+ * @param {ElementRegistry} elementRegistry
+ */
 function SelectionBehavior(eventBus, selection, canvas, elementRegistry) {
 
   // Select elements on create
@@ -11783,6 +12606,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('./Selection').default} Selection
+ */
+
 var MARKER_HOVER = 'hover',
     MARKER_SELECTED = 'selected';
 
@@ -11799,6 +12628,7 @@ var SELECTION_OUTLINE_PADDING = 6;
  *
  * @param {Canvas} canvas
  * @param {EventBus} eventBus
+ * @param {Selection} selection
  */
 function SelectionVisuals(canvas, eventBus, selection) {
   this._canvas = canvas;
@@ -11976,6 +12806,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ translate)
 /* harmony export */ });
 /**
+ * @typedef {import('./').Replacements} Replacements
+ */
+
+/**
  * A simple translation stub to be used for multi-language support
  * in diagrams. Can be easily replaced with a more sophisticated
  * solution.
@@ -11989,7 +12823,7 @@ __webpack_require__.r(__webpack_exports__);
  * }
  *
  * @param {string} template to interpolate
- * @param {Object} [replacements] a map with substitutes
+ * @param {Replacements} [replacements] a map with substitutes
  *
  * @return {string} the translated string
  */
@@ -12013,17 +12847,17 @@ function translate(template, replacements) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "roundBounds": () => (/* binding */ roundBounds),
-/* harmony export */   "roundPoint": () => (/* binding */ roundPoint),
-/* harmony export */   "asTRBL": () => (/* binding */ asTRBL),
 /* harmony export */   "asBounds": () => (/* binding */ asBounds),
+/* harmony export */   "asTRBL": () => (/* binding */ asTRBL),
+/* harmony export */   "filterRedundantWaypoints": () => (/* binding */ filterRedundantWaypoints),
 /* harmony export */   "getBoundsMid": () => (/* binding */ getBoundsMid),
 /* harmony export */   "getConnectionMid": () => (/* binding */ getConnectionMid),
-/* harmony export */   "getMid": () => (/* binding */ getMid),
-/* harmony export */   "getOrientation": () => (/* binding */ getOrientation),
 /* harmony export */   "getElementLineIntersection": () => (/* binding */ getElementLineIntersection),
 /* harmony export */   "getIntersections": () => (/* binding */ getIntersections),
-/* harmony export */   "filterRedundantWaypoints": () => (/* binding */ filterRedundantWaypoints)
+/* harmony export */   "getMid": () => (/* binding */ getMid),
+/* harmony export */   "getOrientation": () => (/* binding */ getOrientation),
+/* harmony export */   "roundBounds": () => (/* binding */ roundBounds),
+/* harmony export */   "roundPoint": () => (/* binding */ roundPoint)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/Geometry */ "./node_modules/diagram-js/lib/util/Geometry.js");
@@ -12035,6 +12869,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../model').Connection} Connection
+ *
+ * @typedef {import('../util/Types').DirectionTRBL} DirectionTRBL
+ * @typedef {import('../util/Types').Point} Point
+ * @typedef {import('../util/Types').Rect} Rect
+ * @typedef {import('../util/Types').RectTRBL} RectTRBL
+ */
 
 function roundBounds(bounds) {
   return {
@@ -12058,9 +12900,9 @@ function roundPoint(point) {
 /**
  * Convert the given bounds to a { top, left, bottom, right } descriptor.
  *
- * @param {Bounds|Point} bounds
+ * @param {Point|Rect} bounds
  *
- * @return {Object}
+ * @return {RectTRBL}
  */
 function asTRBL(bounds) {
   return {
@@ -12075,9 +12917,9 @@ function asTRBL(bounds) {
 /**
  * Convert a { top, left, bottom, right } to an objects bounds.
  *
- * @param {Object} trbl
+ * @param {RectTRBL} trbl
  *
- * @return {Bounds}
+ * @return {Rect}
  */
 function asBounds(trbl) {
   return {
@@ -12092,7 +12934,7 @@ function asBounds(trbl) {
 /**
  * Get the mid of the given bounds or point.
  *
- * @param {Bounds|Point} bounds
+ * @param {Point|Rect} bounds
  *
  * @return {Point}
  */
@@ -12107,7 +12949,7 @@ function getBoundsMid(bounds) {
 /**
  * Get the mid of the given Connection.
  *
- * @param {djs.Base.Connection} connection
+ * @param {Connection} connection
  *
  * @return {Point}
  */
@@ -12166,7 +13008,7 @@ function getConnectionMid(connection) {
 /**
  * Get the mid of the given Element.
  *
- * @param {djs.Base.Connection} connection
+ * @param {Connection} connection
  *
  * @return {Point}
  */
@@ -12187,11 +13029,11 @@ function getMid(element) {
  * A padding (positive or negative) may be passed to influence
  * horizontal / vertical orientation and intersection.
  *
- * @param {Bounds} rect
- * @param {Bounds} reference
+ * @param {Rect} rect
+ * @param {Rect} reference
  * @param {Point|number} padding
  *
- * @return {string} the orientation; one of top, top-left, left, ..., bottom, right or intersect.
+ * @return {DirectionTRBL} the orientation; one of top, top-left, left, ..., bottom, right or intersect.
  */
 function getOrientation(rect, reference, padding) {
 
@@ -12228,9 +13070,9 @@ function getOrientation(rect, reference, padding) {
 /**
  * Get intersection between an element and a line path.
  *
- * @param {PathDef} elementPath
- * @param {PathDef} linePath
- * @param {boolean} cropStart crop from start or end
+ * @param {string} elementPath
+ * @param {string} linePath
+ * @param {boolean} cropStart Whether to crop start or end.
  *
  * @return {Point}
  */
@@ -12327,10 +13169,10 @@ function isConnection(element) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Base": () => (/* binding */ Base),
-/* harmony export */   "Shape": () => (/* binding */ Shape),
-/* harmony export */   "Root": () => (/* binding */ Root),
-/* harmony export */   "Label": () => (/* binding */ Label),
 /* harmony export */   "Connection": () => (/* binding */ Connection),
+/* harmony export */   "Label": () => (/* binding */ Label),
+/* harmony export */   "Root": () => (/* binding */ Root),
+/* harmony export */   "Shape": () => (/* binding */ Shape),
 /* harmony export */   "create": () => (/* binding */ create)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
@@ -12347,14 +13189,6 @@ var parentRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name
     attacherRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'attachers', collection: true }, { name: 'host' }),
     outgoingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'outgoing', collection: true }, { name: 'source' }),
     incomingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'incoming', collection: true }, { name: 'target' });
-
-/**
- * @namespace djs.model
- */
-
-/**
- * @memberOf djs.model
- */
 
 /**
  * The basic graphical representation
@@ -12552,21 +13386,47 @@ var types = {
 };
 
 /**
- * Creates a new model element of the specified type
+ * Creates a model element of the given type.
  *
  * @method create
  *
  * @example
  *
- * var shape1 = Model.create('shape', { x: 10, y: 10, width: 100, height: 100 });
- * var shape2 = Model.create('shape', { x: 210, y: 210, width: 100, height: 100 });
+ * import * as Model from 'diagram-js/lib/model';
  *
- * var connection = Model.create('connection', { waypoints: [ { x: 110, y: 55 }, {x: 210, y: 55 } ] });
+ * const connection = Model.create('connection', {
+ *   waypoints: [
+ *     { x: 100, y: 100 },
+ *     { x: 200, y: 100 }
+ *   ]
+ * });
  *
- * @param  {string} type lower-cased model name
- * @param  {Object} attrs attributes to initialize the new model instance with
+ * const label = Model.create('label', {
+ *   x: 100,
+ *   y: 100,
+ *   width: 100,
+ *   height: 100,
+ *   labelTarget: shape
+ * });
  *
- * @return {Base} the new model instance
+ * const root = Model.create('root', {
+ *   x: 100,
+ *   y: 100,
+ *   width: 100,
+ *   height: 100
+ * });
+ *
+ * const shape = Model.create('shape', {
+ *   x: 100,
+ *   y: 100,
+ *   width: 100,
+ *   height: 100
+ * });
+ *
+ * @param {string} type The type of model element to be created.
+ * @param {Object} attrs Attributes to create the model element with.
+ *
+ * @return {Connection|Label|Root|Shape} The created model element.
  */
 function create(type, attrs) {
   var Type = types[type];
@@ -12604,6 +13464,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
 
 var THRESHOLD = 15;
 
@@ -12764,6 +13628,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
 
 var sign = Math.sign || function(n) {
   return n >= 0 ? 1 : -1;
@@ -12955,7 +13824,7 @@ ZoomScroll.prototype._zoom = function(delta, position, stepSize) {
 /**
  * Toggle the zoom scroll ability via mouse wheel.
  *
- * @param  {boolean} [newEnabled] new enabled state
+ * @param {boolean} [newEnabled] new enabled state
  */
 ZoomScroll.prototype.toggle = function toggle(newEnabled) {
 
@@ -12998,8 +13867,8 @@ ZoomScroll.prototype._init = function(newEnabled) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getStepSize": () => (/* binding */ getStepSize),
-/* harmony export */   "cap": () => (/* binding */ cap)
+/* harmony export */   "cap": () => (/* binding */ cap),
+/* harmony export */   "getStepSize": () => (/* binding */ getStepSize)
 /* harmony export */ });
 /* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Math */ "./node_modules/diagram-js/lib/util/Math.js");
 
@@ -13093,15 +13962,15 @@ function install(eventBus, eventName) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "remove": () => (/* binding */ remove),
 /* harmony export */   "add": () => (/* binding */ add),
-/* harmony export */   "indexOf": () => (/* binding */ indexOf)
+/* harmony export */   "indexOf": () => (/* binding */ indexOf),
+/* harmony export */   "remove": () => (/* binding */ remove)
 /* harmony export */ });
 /**
  * Failsafe remove an element from a collection
  *
- * @param  {Array<Object>} [collection]
- * @param  {Object} [element]
+ * @param {Array<Object>} [collection]
+ * @param {Object} [element]
  *
  * @return {number} the previous index of the element
  */
@@ -13202,9 +14071,9 @@ function indexOf(collection, element) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "has": () => (/* binding */ has),
 /* harmony export */   "set": () => (/* binding */ set),
-/* harmony export */   "unset": () => (/* binding */ unset),
-/* harmony export */   "has": () => (/* binding */ has)
+/* harmony export */   "unset": () => (/* binding */ unset)
 /* harmony export */ });
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 
@@ -13244,31 +14113,34 @@ function has(mode) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getParents": () => (/* binding */ getParents),
 /* harmony export */   "add": () => (/* binding */ add),
 /* harmony export */   "eachElement": () => (/* binding */ eachElement),
-/* harmony export */   "selfAndChildren": () => (/* binding */ selfAndChildren),
-/* harmony export */   "selfAndDirectChildren": () => (/* binding */ selfAndDirectChildren),
-/* harmony export */   "selfAndAllChildren": () => (/* binding */ selfAndAllChildren),
-/* harmony export */   "getClosure": () => (/* binding */ getClosure),
 /* harmony export */   "getBBox": () => (/* binding */ getBBox),
+/* harmony export */   "getClosure": () => (/* binding */ getClosure),
 /* harmony export */   "getEnclosedElements": () => (/* binding */ getEnclosedElements),
+/* harmony export */   "getParents": () => (/* binding */ getParents),
 /* harmony export */   "getType": () => (/* binding */ getType),
-/* harmony export */   "isFrameElement": () => (/* binding */ isFrameElement)
+/* harmony export */   "isFrameElement": () => (/* binding */ isFrameElement),
+/* harmony export */   "selfAndAllChildren": () => (/* binding */ selfAndAllChildren),
+/* harmony export */   "selfAndChildren": () => (/* binding */ selfAndChildren),
+/* harmony export */   "selfAndDirectChildren": () => (/* binding */ selfAndDirectChildren)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
 /**
- * @typedef { {x:number, y: number, width: number, height: number} } Bounds
+ * @typedef {import('../../model').Base} Base
+ * @typedef {import('../../model').Shape} Shape
+ *
+ * @typedef {import('../../type/Types').Rect} Rect
  */
 
 /**
  * Get parent elements.
  *
- * @param {Array<djs.model.base>} elements
+ * @param {Base[]} elements
  *
- * @returns {Array<djs.model.Base>}
+ * @returns {Base[]}
  */
 function getParents(elements) {
 
@@ -13302,7 +14174,7 @@ function getParent(element, parent) {
  * Adds an element to a collection and returns true if the
  * element was added.
  *
- * @param {Array<Object>} elements
+ * @param {Object[]} elements
  * @param {Object} e
  * @param {boolean} unique
  */
@@ -13323,9 +14195,9 @@ function add(elements, e, unique) {
  *
  * Recurse into all elements that are returned by `fn`.
  *
- * @param  {Object|Array<Object>} elements
- * @param  {Function} fn iterator function called with (element, index, recursionDepth)
- * @param  {number} [depth] maximum recursion depth
+ * @param {Object|Object[]} elements
+ * @param {Function} fn iterator function called with (element, index, recursionDepth)
+ * @param {number} [depth] maximum recursion depth
  */
 function eachElement(elements, fn, depth) {
 
@@ -13348,11 +14220,11 @@ function eachElement(elements, fn, depth) {
 /**
  * Collects self + child elements up to a given depth from a list of elements.
  *
- * @param  {djs.model.Base|Array<djs.model.Base>} elements the elements to select the children from
- * @param  {boolean} unique whether to return a unique result set (no duplicates)
- * @param  {number} maxDepth the depth to search through or -1 for infinite
+ * @param {Base|Base[]} elements the elements to select the children from
+ * @param {boolean} unique whether to return a unique result set (no duplicates)
+ * @param {number} maxDepth the depth to search through or -1 for infinite
  *
- * @return {Array<djs.model.Base>} found elements
+ * @return {Base[]} found elements
  */
 function selfAndChildren(elements, unique, maxDepth) {
   var result = [],
@@ -13379,10 +14251,10 @@ function selfAndChildren(elements, unique, maxDepth) {
 /**
  * Return self + direct children for a number of elements
  *
- * @param  {Array<djs.model.Base>} elements to query
- * @param  {boolean} allowDuplicates to allow duplicates in the result set
+ * @param {Base[]} elements to query
+ * @param {boolean} allowDuplicates to allow duplicates in the result set
  *
- * @return {Array<djs.model.Base>} the collected elements
+ * @return {Base[]} the collected elements
  */
 function selfAndDirectChildren(elements, allowDuplicates) {
   return selfAndChildren(elements, !allowDuplicates, 1);
@@ -13392,10 +14264,10 @@ function selfAndDirectChildren(elements, allowDuplicates) {
 /**
  * Return self + ALL children for a number of elements
  *
- * @param  {Array<djs.model.Base>} elements to query
- * @param  {boolean} allowDuplicates to allow duplicates in the result set
+ * @param {Base[]} elements to query
+ * @param {boolean} allowDuplicates to allow duplicates in the result set
  *
- * @return {Array<djs.model.Base>} the collected elements
+ * @return {Base[]} the collected elements
  */
 function selfAndAllChildren(elements, allowDuplicates) {
   return selfAndChildren(elements, !allowDuplicates, -1);
@@ -13406,7 +14278,7 @@ function selfAndAllChildren(elements, allowDuplicates) {
  * Gets the the closure for all selected elements,
  * their enclosed children and connections.
  *
- * @param {Array<djs.model.Base>} elements
+ * @param {Base[]} elements
  * @param {boolean} [isTopLevel=true]
  * @param {Object} [existingClosure]
  *
@@ -13489,10 +14361,10 @@ function getClosure(elements, isTopLevel, closure) {
  * Returns the surrounding bbox for all elements in
  * the array or the element primitive.
  *
- * @param {Array<djs.model.Shape>|djs.model.Shape} elements
+ * @param {Base|Base[]} elements
  * @param {boolean} [stopRecursion=false]
  *
- * @return {Bounds}
+ * @return {Rect}
  */
 function getBBox(elements, stopRecursion) {
 
@@ -13551,10 +14423,10 @@ function getBBox(elements, stopRecursion) {
  *   * If only bbox.x or bbox.y is specified, method return all elements with
  *     e.x > bbox.x or e.y > bbox.y
  *
- * @param {Array<djs.model.Shape>} elements List of Elements to search through
- * @param {djs.model.Shape} bbox the enclosing bbox.
+ * @param {Base[]} elements List of Elements to search through
+ * @param {Rect} bbox the enclosing bbox.
  *
- * @return {Array<djs.model.Shape>} enclosed elements
+ * @return {Base[]} enclosed elements
  */
 function getEnclosedElements(elements, bbox) {
 
@@ -13625,12 +14497,16 @@ function copyObject(src1, src2) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "escapeCSS": () => (/* reexport default from dynamic */ css_escape__WEBPACK_IMPORTED_MODULE_0___default.a),
+/* harmony export */   "escapeCSS": () => (/* binding */ escapeCSS),
 /* harmony export */   "escapeHTML": () => (/* binding */ escapeHTML)
 /* harmony export */ });
-/* harmony import */ var css_escape__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! css.escape */ "./node_modules/css.escape/css.escape.js");
-/* harmony import */ var css_escape__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(css_escape__WEBPACK_IMPORTED_MODULE_0__);
-
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeCSS(str) {
+  return CSS.escape(str);
+}
 
 var HTML_ESCAPE_MAP = {
   '&': '&amp;',
@@ -13711,24 +14587,29 @@ function toPoint(event) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getMidPoint": () => (/* binding */ getMidPoint),
 /* harmony export */   "pointDistance": () => (/* binding */ pointDistance),
-/* harmony export */   "pointsOnLine": () => (/* binding */ pointsOnLine),
-/* harmony export */   "pointsAligned": () => (/* binding */ pointsAligned),
-/* harmony export */   "pointsAlignedHorizontally": () => (/* binding */ pointsAlignedHorizontally),
-/* harmony export */   "pointsAlignedVertically": () => (/* binding */ pointsAlignedVertically),
 /* harmony export */   "pointInRect": () => (/* binding */ pointInRect),
-/* harmony export */   "getMidPoint": () => (/* binding */ getMidPoint)
+/* harmony export */   "pointsAligned": () => (/* binding */ pointsAligned),
+/* harmony export */   "pointsAlignedOnAxis": () => (/* binding */ pointsAlignedOnAxis),
+/* harmony export */   "pointsOnLine": () => (/* binding */ pointsOnLine)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
 /**
- * Computes the distance between two points
+ * @typedef {import('../util/Types').Axis} Axis
+ * @typedef {import('../util/Types').Point} Point
+ * @typedef {import('../util/Types').Rect} Rect
+ */
+
+/**
+ * Computes the distance between two points.
  *
- * @param  {Point}  p
- * @param  {Point}  q
+ * @param {Point} p
+ * @param {Point} q
  *
- * @return {number}  distance
+ * @return {number} The distance between the two points.
  */
 function pointDistance(a, b) {
   if (!a || !b) {
@@ -13743,12 +14624,12 @@ function pointDistance(a, b) {
 
 
 /**
- * Returns true if the point r is on the line between p and q
+ * Returns true if the point r is on the line between p and q.
  *
- * @param  {Point}  p
- * @param  {Point}  q
- * @param  {Point}  r
- * @param  {number} [accuracy=5] accuracy for points on line check (lower is better)
+ * @param {Point} p
+ * @param {Point} q
+ * @param {Point} r
+ * @param {number} [accuracy=5] The accuracy with which to check (lower is better).
  *
  * @return {boolean}
  */
@@ -13775,71 +14656,48 @@ var ALIGNED_THRESHOLD = 2;
 /**
  * Check whether two points are horizontally or vertically aligned.
  *
- * @param {Array<Point>|Point}
- * @param {Point}
+ * @param {Point[]|Point} a
+ * @param {Point} [b]
  *
- * @return {string|boolean}
+ * @return {string|boolean} If and how the two points are aligned ('h', 'v' or `false`).
  */
 function pointsAligned(a, b) {
-  var points;
+  var points = Array.from(arguments).flat();
 
-  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(a)) {
-    points = a;
-  } else {
-    points = [ a, b ];
-  }
+  const axisMap = {
+    'x': 'v',
+    'y': 'h'
+  };
 
-  if (pointsAlignedHorizontally(points)) {
-    return 'h';
-  }
-
-  if (pointsAlignedVertically(points)) {
-    return 'v';
+  for (const [ axis, orientation ] of Object.entries(axisMap)) {
+    if (pointsAlignedOnAxis(axis, points)) {
+      return orientation;
+    }
   }
 
   return false;
 }
 
-function pointsAlignedHorizontally(a, b) {
-  var points;
-
-  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(a)) {
-    points = a;
-  } else {
-    points = [ a, b ];
-  }
-
-  var firstPoint = points.slice().shift();
+/**
+ * @param {Axis} axis
+ * @param {Point[]} points
+ *
+ * @return {boolean}
+ */
+function pointsAlignedOnAxis(axis, points) {
+  const referencePoint = points[0];
 
   return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.every)(points, function(point) {
-    return Math.abs(firstPoint.y - point.y) <= ALIGNED_THRESHOLD;
+    return Math.abs(referencePoint[axis] - point[axis]) <= ALIGNED_THRESHOLD;
   });
 }
-
-function pointsAlignedVertically(a, b) {
-  var points;
-
-  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(a)) {
-    points = a;
-  } else {
-    points = [ a, b ];
-  }
-
-  var firstPoint = points.slice().shift();
-
-  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.every)(points, function(point) {
-    return Math.abs(firstPoint.x - point.x) <= ALIGNED_THRESHOLD;
-  });
-}
-
-
 
 /**
  * Returns true if the point p is inside the rectangle rect
  *
- * @param  {Point}  p
- * @param  {Rect} rect
- * @param  {number} tolerance
+ * @param {Point} p
+ * @param {Rect} rect
+ * @param {number} tolerance
  *
  * @return {boolean}
  */
@@ -13855,10 +14713,10 @@ function pointInRect(p, rect, tolerance) {
 /**
  * Returns a point in the middle of points p and q
  *
- * @param  {Point}  p
- * @param  {Point}  q
+ * @param {Point} p
+ * @param {Point} q
  *
- * @return {Point} middle point
+ * @return {Point} The mid point between the two points.
  */
 function getMidPoint(p, q) {
   return {
@@ -13879,8 +14737,8 @@ function getMidPoint(p, q) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getVisual": () => (/* binding */ getVisual),
-/* harmony export */   "getChildren": () => (/* binding */ getChildren)
+/* harmony export */   "getChildren": () => (/* binding */ getChildren),
+/* harmony export */   "getVisual": () => (/* binding */ getVisual)
 /* harmony export */ });
 /**
  * SVGs for elements are generated by the {@link GraphicsFactory}.
@@ -13890,11 +14748,11 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
- * Returns the visual part of a diagram element
+ * Returns the visual part of a diagram element.
  *
- * @param {Snap<SVGElement>} gfx
+ * @param {SVGElement} gfx
  *
- * @return {Snap<SVGElement>}
+ * @return {SVGElement}
  */
 function getVisual(gfx) {
   return gfx.childNodes[0];
@@ -13903,8 +14761,8 @@ function getVisual(gfx) {
 /**
  * Returns the children for a given diagram element.
  *
- * @param {Snap<SVGElement>} gfx
- * @return {Snap<SVGElement>}
+ * @param {SVGElement} gfx
+ * @return {SVGElement}
  */
 function getChildren(gfx) {
   return gfx.parentNode.childNodes[1];
@@ -13926,9 +14784,8 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Util that provides unique IDs.
  *
- * @class djs.util.IdGenerator
+ * @class
  * @constructor
- * @memberOf djs.util
  *
  * The ids can be customized via a given prefix and contain a random value to avoid collisions.
  *
@@ -13942,8 +14799,6 @@ function IdGenerator(prefix) {
 
 /**
  * Returns a next unique ID.
- *
- * @method djs.util.IdGenerator#next
  *
  * @returns {string} the id
  */
@@ -13968,8 +14823,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _PositionUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PositionUtil */ "./node_modules/diagram-js/lib/util/PositionUtil.js");
 /**
- * Get the logarithm of x with base 10
- * @param  {Integer} value
+ * Get the logarithm of x with base 10.
+ *
+ * @param {number} x
  */
 function log10(x) {
   return Math.log(x) / Math.log(10);
@@ -13989,13 +14845,13 @@ function log10(x) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isMac": () => (/* reexport safe */ _Platform__WEBPACK_IMPORTED_MODULE_0__.isMac),
-/* harmony export */   "isButton": () => (/* binding */ isButton),
-/* harmony export */   "isPrimaryButton": () => (/* binding */ isPrimaryButton),
-/* harmony export */   "isAuxiliaryButton": () => (/* binding */ isAuxiliaryButton),
-/* harmony export */   "isSecondaryButton": () => (/* binding */ isSecondaryButton),
 /* harmony export */   "hasPrimaryModifier": () => (/* binding */ hasPrimaryModifier),
-/* harmony export */   "hasSecondaryModifier": () => (/* binding */ hasSecondaryModifier)
+/* harmony export */   "hasSecondaryModifier": () => (/* binding */ hasSecondaryModifier),
+/* harmony export */   "isAuxiliaryButton": () => (/* binding */ isAuxiliaryButton),
+/* harmony export */   "isButton": () => (/* binding */ isButton),
+/* harmony export */   "isMac": () => (/* reexport safe */ _Platform__WEBPACK_IMPORTED_MODULE_0__.isMac),
+/* harmony export */   "isPrimaryButton": () => (/* binding */ isPrimaryButton),
+/* harmony export */   "isSecondaryButton": () => (/* binding */ isSecondaryButton)
 /* harmony export */ });
 /* harmony import */ var _Event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Event */ "./node_modules/diagram-js/lib/util/Event.js");
 /* harmony import */ var _Platform__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Platform */ "./node_modules/diagram-js/lib/util/Platform.js");
@@ -14108,16 +14964,29 @@ function delta(a, b) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "componentsToPath": () => (/* binding */ componentsToPath),
-/* harmony export */   "toSVGPoints": () => (/* binding */ toSVGPoints),
 /* harmony export */   "createLine": () => (/* binding */ createLine),
+/* harmony export */   "toSVGPoints": () => (/* binding */ toSVGPoints),
 /* harmony export */   "updateLine": () => (/* binding */ updateLine)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
 
 
 
+
+/**
+ * @typedef {(string|number)[]} Component
+ *
+ * @typedef {import('../util/Types').Point} Point
+ */
+
+/**
+ * @param {Component[]} elements
+ *
+ * @return {string}
+ */
 function componentsToPath(elements) {
-  return elements.join(',').replace(/,?([A-z]),?/g, '$1');
+  return elements.flat().join(',').replace(/,?([A-z]),?/g, '$1');
 }
 
 function toSVGPoints(points) {
@@ -14130,20 +14999,119 @@ function toSVGPoints(points) {
   return result;
 }
 
-function createLine(points, attrs) {
-
-  var line = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('polyline');
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(line, { points: toSVGPoints(points) });
-
-  if (attrs) {
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(line, attrs);
-  }
-
-  return line;
+function move(point) {
+  return [ 'M', point.x, point.y ];
 }
 
+function lineTo(point) {
+  return [ 'L', point.x, point.y ];
+}
+
+function curveTo(p1, p2, p3) {
+  return [ 'C', p1.x, p1.y, p2.x, p2.y, p3.x, p3.y ];
+}
+
+function drawPath(waypoints, cornerRadius) {
+  const pointCount = waypoints.length;
+
+  const path = [ move(waypoints[0]) ];
+
+  for (let i = 1; i < pointCount; i++) {
+
+    const pointBefore = waypoints[i - 1];
+    const point = waypoints[i];
+    const pointAfter = waypoints[i + 1];
+
+    if (!pointAfter || !cornerRadius) {
+      path.push(lineTo(point));
+
+      continue;
+    }
+
+    const effectiveRadius = Math.min(
+      cornerRadius,
+      vectorLength(point.x - pointBefore.x, point.y - pointBefore.y),
+      vectorLength(pointAfter.x - point.x, pointAfter.y - point.y)
+    );
+
+    if (!effectiveRadius) {
+      path.push(lineTo(point));
+
+      continue;
+    }
+
+    const beforePoint = getPointAtLength(point, pointBefore, effectiveRadius);
+    const beforePoint2 = getPointAtLength(point, pointBefore, effectiveRadius * .5);
+
+    const afterPoint = getPointAtLength(point, pointAfter, effectiveRadius);
+    const afterPoint2 = getPointAtLength(point, pointAfter, effectiveRadius * .5);
+
+    path.push(lineTo(beforePoint));
+    path.push(curveTo(beforePoint2, afterPoint2, afterPoint));
+  }
+
+  return path;
+}
+
+function getPointAtLength(start, end, length) {
+
+  const deltaX = end.x - start.x;
+  const deltaY = end.y - start.y;
+
+  const totalLength = vectorLength(deltaX, deltaY);
+
+  const percent = length / totalLength;
+
+  return {
+    x: start.x + deltaX * percent,
+    y: start.y + deltaY * percent
+  };
+}
+
+function vectorLength(x, y) {
+  return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+}
+
+/**
+ * @param {Point[]} points
+ * @param {*} [attrs]
+ * @param {number} [radius]
+ *
+ * @return {SVGElement}
+ */
+function createLine(points, attrs, radius) {
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(attrs)) {
+    radius = attrs;
+    attrs = null;
+  }
+
+  if (!attrs) {
+    attrs = {};
+  }
+
+  const line = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('path', attrs);
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(radius)) {
+    line.dataset.cornerRadius = String(radius);
+  }
+
+  return updateLine(line, points);
+}
+
+/**
+ * @param {SVGElement} gfx
+ * @param {Point[]} points
+ *
+ * @return {SVGElement}
+ */
 function updateLine(gfx, points) {
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(gfx, { points: toSVGPoints(points) });
+
+  const cornerRadius = parseInt(gfx.dataset.cornerRadius, 10) || 0;
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(gfx, {
+    d: componentsToPath(drawPath(points, cornerRadius))
+  });
 
   return gfx;
 }
@@ -14160,17 +15128,17 @@ function updateLine(gfx, points) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "transform": () => (/* binding */ transform),
-/* harmony export */   "translate": () => (/* binding */ translate),
 /* harmony export */   "rotate": () => (/* binding */ rotate),
-/* harmony export */   "scale": () => (/* binding */ scale)
+/* harmony export */   "scale": () => (/* binding */ scale),
+/* harmony export */   "transform": () => (/* binding */ transform),
+/* harmony export */   "translate": () => (/* binding */ translate)
 /* harmony export */ });
 /* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
 
 
 
 /**
- * @param {<SVGElement>} element
+ * @param {SVGElement} element
  * @param {number} x
  * @param {number} y
  * @param {number} angle
@@ -14248,6 +15216,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../util/Types').Dimensions} Dimensions
+ */
+
 var DEFAULT_BOX_PADDING = 0;
 
 var DEFAULT_LABEL_SIZE = {
@@ -14321,7 +15293,8 @@ function getTextBBox(text, fakeText) {
  *
  * Alters the lines passed.
  *
- * @param  {Array<string>} lines
+ * @param {string[]} lines
+ *
  * @return {Object} the line descriptor, an object { width, height, text }
  */
 function layoutNext(lines, maxWidth, fakeText) {
@@ -14366,8 +15339,9 @@ var SOFT_BREAK = '\u00AD';
  * Shortens a line based on spacing and hyphens.
  * Returns the shortened result on success.
  *
- * @param  {string} line
- * @param  {number} maxLength the maximum characters of the string
+ * @param {string} line
+ * @param {number} maxLength the maximum characters of the string
+ *
  * @return {string} the shortened string
  */
 function semanticShorten(line, maxLength) {
@@ -22897,9 +23871,11 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Flatten array, one level deep.
  *
- * @param {Array<?>} arr
+ * @template T
  *
- * @return {Array<?>}
+ * @param {T[][]} arr
+ *
+ * @return {T[]}
  */
 function flatten(arr) {
   return Array.prototype.concat.apply([], arr);
@@ -22932,6 +23908,11 @@ function isNumber(obj) {
   return nativeToString.call(obj) === '[object Number]';
 }
 
+/**
+ * @param {any} obj
+ *
+ * @return {boolean}
+ */
 function isFunction(obj) {
   const tag = nativeToString.call(obj);
 
@@ -22976,21 +23957,73 @@ function has(target, key) {
 }
 
 /**
+ * @template T
+ * @typedef { (
+ *   ((e: T) => boolean) |
+ *   ((e: T, idx: number) => boolean) |
+ *   ((e: T, key: string) => boolean) |
+ *   string |
+ *   number
+ * ) } Matcher
+ */
+
+/**
+ * @template T
+ * @template U
+ *
+ * @typedef { (
+ *   ((e: T) => U) | string | number
+ * ) } Extractor
+ */
+
+
+/**
+ * @template T
+ * @typedef { (val: T, key: any) => boolean } MatchFn
+ */
+
+/**
+ * @template T
+ * @typedef { T[] } ArrayCollection
+ */
+
+/**
+ * @template T
+ * @typedef { { [key: string]: T } } StringKeyValueCollection
+ */
+
+/**
+ * @template T
+ * @typedef { { [key: number]: T } } NumberKeyValueCollection
+ */
+
+/**
+ * @template T
+ * @typedef { StringKeyValueCollection<T> | NumberKeyValueCollection<T> } KeyValueCollection
+ */
+
+/**
+ * @template T
+ * @typedef { KeyValueCollection<T> | ArrayCollection<T> } Collection
+ */
+
+/**
  * Find element in collection.
  *
- * @param  {Array|Object} collection
- * @param  {Function|Object} matcher
+ * @template T
+ * @param {Collection<T>} collection
+ * @param {Matcher<T>} matcher
  *
  * @return {Object}
  */
 function find(collection, matcher) {
 
-  matcher = toMatcher(matcher);
+  const matchFn = toMatcher(matcher);
 
   let match;
 
   forEach(collection, function(val, key) {
-    if (matcher(val, key)) {
+    if (matchFn(val, key)) {
       match = val;
 
       return false;
@@ -23005,19 +24038,20 @@ function find(collection, matcher) {
 /**
  * Find element index in collection.
  *
- * @param  {Array|Object} collection
- * @param  {Function} matcher
+ * @template T
+ * @param {Collection<T>} collection
+ * @param {Matcher<T>} matcher
  *
- * @return {Object}
+ * @return {number}
  */
 function findIndex(collection, matcher) {
 
-  matcher = toMatcher(matcher);
+  const matchFn = toMatcher(matcher);
 
   let idx = isArray(collection) ? -1 : undefined;
 
   forEach(collection, function(val, key) {
-    if (matcher(val, key)) {
+    if (matchFn(val, key)) {
       idx = key;
 
       return false;
@@ -23029,19 +24063,22 @@ function findIndex(collection, matcher) {
 
 
 /**
- * Find element in collection.
+ * Filter elements in collection.
  *
- * @param  {Array|Object} collection
- * @param  {Function} matcher
+ * @template T
+ * @param {Collection<T>} collection
+ * @param {Matcher<T>} matcher
  *
- * @return {Array} result
+ * @return {T[]} result
  */
 function filter(collection, matcher) {
+
+  const matchFn = toMatcher(matcher);
 
   let result = [];
 
   forEach(collection, function(val, key) {
-    if (matcher(val, key)) {
+    if (matchFn(val, key)) {
       result.push(val);
     }
   });
@@ -23054,10 +24091,11 @@ function filter(collection, matcher) {
  * Iterate over collection; returning something
  * (non-undefined) will stop iteration.
  *
- * @param  {Array|Object} collection
- * @param  {Function} iterator
+ * @template T
+ * @param {Collection<T>} collection
+ * @param { ((item: T, idx: number) => (boolean|void)) | ((item: T, key: string) => (boolean|void)) } iterator
  *
- * @return {Object} return result that stopped the iteration
+ * @return {T} return result that stopped the iteration
  */
 function forEach(collection, iterator) {
 
@@ -23087,10 +24125,11 @@ function forEach(collection, iterator) {
 /**
  * Return collection without element.
  *
- * @param  {Array} arr
- * @param  {Function} matcher
+ * @template T
+ * @param {ArrayCollection<T>} arr
+ * @param {Matcher<T>} matcher
  *
- * @return {Array}
+ * @return {T[]}
  */
 function without(arr, matcher) {
 
@@ -23100,10 +24139,10 @@ function without(arr, matcher) {
 
   ensureArray(arr);
 
-  matcher = toMatcher(matcher);
+  const matchFn = toMatcher(matcher);
 
   return arr.filter(function(el, idx) {
-    return !matcher(el, idx);
+    return !matchFn(el, idx);
   });
 
 }
@@ -23112,11 +24151,14 @@ function without(arr, matcher) {
 /**
  * Reduce collection, returning a single result.
  *
- * @param  {Object|Array} collection
- * @param  {Function} iterator
- * @param  {Any} result
+ * @template T
+ * @template V
  *
- * @return {Any} result returned from last iterator
+ * @param {Collection<T>} collection
+ * @param {(result: V, entry: T, index: any) => V} iterator
+ * @param {V} result
+ *
+ * @return {V} result returned from last iterator
  */
 function reduce(collection, iterator, result) {
 
@@ -23220,8 +24262,8 @@ function values(collection) {
 /**
  * Group collection members by attribute.
  *
- * @param  {Object|Array} collection
- * @param  {Function} extractor
+ * @param {Object|Array} collection
+ * @param {Extractor} extractor
  *
  * @return {Object} map with { attrValue => [ a, b, c ] }
  */
@@ -23268,8 +24310,10 @@ const unionBy = uniqueBy;
 /**
  * Sort collection by criteria.
  *
- * @param  {Object|Array} collection
- * @param  {String|Function} extractor
+ * @template T
+ *
+ * @param {Collection<T>} collection
+ * @param {Extractor<T, number | string>} extractor
  *
  * @return {Array}
  */
@@ -23309,13 +24353,17 @@ function sortBy(collection, extractor) {
  *
  * @example
  *
+ * ```javascript
  * const matcher = matchPattern({ id: 1 });
  *
  * let element = find(elements, matcher);
+ * ```
  *
- * @param  {Object} pattern
+ * @template T
  *
- * @return {Function} matcherFn
+ * @param {T} pattern
+ *
+ * @return { (el: any) =>  boolean } matcherFn
  */
 function matchPattern(pattern) {
 
@@ -23329,13 +24377,30 @@ function matchPattern(pattern) {
 }
 
 
+/**
+ * @param {string | ((e: any) => any) } extractor
+ *
+ * @return { (e: any) => any }
+ */
 function toExtractor(extractor) {
+
+  /**
+   * @satisfies { (e: any) => any }
+   */
   return isFunction(extractor) ? extractor : (e) => {
+
+    // @ts-ignore: just works
     return e[extractor];
   };
 }
 
 
+/**
+ * @template T
+ * @param {Matcher<T>} matcher
+ *
+ * @return {MatchFn<T>}
+ */
 function toMatcher(matcher) {
   return isFunction(matcher) ? matcher : (e) => {
     return e === matcher;
@@ -23351,6 +24416,16 @@ function toNum(arg) {
   return Number(arg);
 }
 
+/* global setTimeout clearTimeout */
+
+/**
+ * @typedef { {
+ *   (...args: any[]): any;
+ *   flush: () => void;
+ *   cancel: () => void;
+ * } } DebouncedFunction
+ */
+
 /**
  * Debounce fn, calling it only once if the given time
  * elapsed between calls.
@@ -23361,7 +24436,7 @@ function toNum(arg) {
  * @param  {Function} fn
  * @param  {Number} timeout
  *
- * @return {Function} debounced function
+ * @return {DebouncedFunction} debounced function
  */
 function debounce(fn, timeout) {
 
@@ -23407,6 +24482,9 @@ function debounce(fn, timeout) {
     clear();
   }
 
+  /**
+   * @type { DebouncedFunction }
+   */
   function callback(...args) {
     lastNow = Date.now();
 
@@ -23481,9 +24559,13 @@ function assign(target, ...others) {
  *
  * This mutates the object and returns it.
  *
- * @param {Object} target The target of the set operation.
+ * @template T
+ *
+ * @param {T} target The target of the set operation.
  * @param {(string|number)[]} path The path to the nested value.
  * @param {any} value The value to set.
+ *
+ * @return {T}
  */
 function set(target, path, value) {
 
@@ -23531,6 +24613,8 @@ function set(target, path, value) {
  * @param {Object} target The target of the get operation.
  * @param {(string|number)[]} path The path to the nested value.
  * @param {any} [defaultValue] The value to return if no value exists.
+ *
+ * @return {any}
  */
 function get(target, path, defaultValue) {
 
@@ -23552,12 +24636,15 @@ function get(target, path, defaultValue) {
 }
 
 /**
- * Pick given properties from the target object.
+ * Pick properties from the given target.
  *
- * @param {Object} target
- * @param {Array} properties
+ * @template T
+ * @template {any[]} V
  *
- * @return {Object} target
+ * @param {T} target
+ * @param {V} properties
+ *
+ * @return Pick<T, V>
  */
 function pick(target, properties) {
 
@@ -23578,10 +24665,13 @@ function pick(target, properties) {
 /**
  * Pick all target properties, excluding the given ones.
  *
- * @param {Object} target
- * @param {Array} properties
+ * @template T
+ * @template {any[]} V
  *
- * @return {Object} target
+ * @param {T} target
+ * @param {V} properties
+ *
+ * @return {Omit<T, V>} target
  */
 function omit(target, properties) {
 
@@ -26495,7 +27585,7 @@ Moddle.prototype.getTypeDescriptor = function(type) {
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -26526,18 +27616,6 @@ Moddle.prototype.getTypeDescriptor = function(type) {
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
@@ -26566,12 +27644,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
-/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
-/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
-/* harmony import */ var _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/callActivityModule */ "./modules/callActivityModule/index.js");
-/* harmony import */ var _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/drilldownCentering */ "./modules/drilldownCentering/index.js");
-/* harmony import */ var _modules_styleModule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/styleModule */ "./modules/styleModule/index.js");
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+/* harmony import */ var _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/viewerPalette */ "./lib/viewerPalette/index.js");
+/* harmony import */ var _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/callActivityModule */ "./modules/callActivityModule/index.js");
+/* harmony import */ var _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/drilldownCentering */ "./modules/drilldownCentering/index.js");
+/* harmony import */ var _modules_styleModule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/styleModule */ "./modules/styleModule/index.js");
+
 
 
 
@@ -26581,13 +27661,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var bpmnViewer = {
-  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_3__["default"],
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_4__["default"],
   customModules: {
-    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_4__["default"],
-    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_5__["default"],
-    drilldownCentering: _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_1__["default"],
-    callActivityModule: _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_0__["default"],
-    styleModule: _modules_styleModule__WEBPACK_IMPORTED_MODULE_2__["default"]
+    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_5__["default"],
+    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_6__["default"],
+    drilldownCentering: _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__["default"],
+    callActivityModule: _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__["default"],
+    styleModule: _modules_styleModule__WEBPACK_IMPORTED_MODULE_3__["default"],
+    customPaletteProviderModule: _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
 };
 
