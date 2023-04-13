@@ -61,7 +61,7 @@ create or replace package body flow_message_util as
     );
 
       if l_message_name_json is not null then
-        l_msg_sub.message_name := flow_settings.get_message_name 
+        l_msg_sub.message_name := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_message_name_json
@@ -69,7 +69,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_key_json is not null then 
-        l_msg_sub.key_name     := flow_settings.get_correlation_key 
+        l_msg_sub.key_name     := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_key_json
@@ -77,7 +77,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_value_json is not null then 
-        l_msg_sub.key_value    := flow_settings.get_correlation_value
+        l_msg_sub.key_value    := flow_settings.get_vc2_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_value_json
@@ -154,7 +154,7 @@ create or replace package body flow_message_util as
     );
 
       if l_message_name_json is not null then
-        l_message.message_name := flow_settings.get_message_name 
+        l_message.message_name := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_message_name_json
@@ -162,7 +162,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_key_json is not null then 
-        l_message.key_name     := flow_settings.get_correlation_key 
+        l_message.key_name     := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_key_json
@@ -170,7 +170,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_value_json is not null then 
-        l_message.key_value    := flow_settings.get_correlation_value
+        l_message.key_value    := flow_settings.get_vc2_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_value_json
@@ -178,7 +178,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_payload_json is not null then 
-        l_message.payload    := flow_settings.get_payload
+        l_message.payload    := flow_settings.get_clob_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_payload_json

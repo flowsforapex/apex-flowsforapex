@@ -140,7 +140,7 @@ as
       end if;
 
       if l_potential_groups_json is not null then 
-        l_potential_groups := flow_settings.get_potential_groups 
+        l_potential_groups := flow_settings.get_vc2_expression
                       ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                       , pi_sbfl_id => p_sbfl_info.sbfl_id
                       , pi_expr    => l_potential_groups_json
@@ -148,7 +148,7 @@ as
                       );
       end if;
       if l_excluded_users_json is not null then 
-        l_excluded_users := flow_settings.get_excluded_users 
+        l_excluded_users := flow_settings.get_vc2_expression
                       ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                       , pi_sbfl_id => p_sbfl_info.sbfl_id
                       , pi_expr    => l_excluded_users_json
@@ -156,7 +156,7 @@ as
                       );
       end if;
       if l_potential_users_json is not null then 
-        l_potential_users := flow_settings.get_potential_users 
+        l_potential_users := flow_settings.get_vc2_expression 
                       ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                       , pi_sbfl_id => p_sbfl_info.sbfl_id
                       , pi_expr    => l_potential_users_json
