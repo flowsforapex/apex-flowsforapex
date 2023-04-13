@@ -24,7 +24,8 @@
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
         bpmnModeler.customModules.xmlModule,
-        bpmnModeler.customModules.drilldownCentering
+        bpmnModeler.customModules.drilldownCentering,
+        bpmnModeler.customModules.bpmnDiOrdering
       ];
 
       this.exporter = {
