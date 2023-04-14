@@ -100,6 +100,7 @@ as
     l_excluded_users_json     flow_types_pkg.t_bpmn_attribute_vc2;
     l_excluded_users          flow_subflows.sbfl_excluded_users%type;
     l_reservation             flow_subflows.sbfl_reservation%type;
+    l_is_unallocated          varchar2(10) := flow_constants_pkg.gc_vcbool_true;
   begin
     apex_debug.enter 
     ( 'process_APEX_page_task'
@@ -146,6 +147,7 @@ as
                       , pi_expr    => l_potential_groups_json
                       , pi_scope   => p_sbfl_info.sbfl_scope
                       );
+        l_is_unallocated := flow_constants_pkg.gc_vcbool_false;
       end if;
       if l_excluded_users_json is not null then 
         l_excluded_users := flow_settings.get_vc2_expression
@@ -154,6 +156,7 @@ as
                       , pi_expr    => l_excluded_users_json
                       , pi_scope   => p_sbfl_info.sbfl_scope
                       );
+        l_is_unallocated := flow_constants_pkg.gc_vcbool_false;
       end if;
       if l_potential_users_json is not null then 
         l_potential_users := flow_settings.get_vc2_expression 
@@ -162,6 +165,7 @@ as
                       , pi_expr    => l_potential_users_json
                       , pi_scope   => p_sbfl_info.sbfl_scope
                       );
+        l_is_unallocated := flow_constants_pkg.gc_vcbool_false;
         -- check if only 1 potential user & if so, auto-reserve
         if l_potential_groups is null and l_potential_users <> l_excluded_users then
           l_potential_users_t := apex_string.split ( p_str => l_potential_users, p_sep => ':');
@@ -174,13 +178,23 @@ as
         end if;       
       end if;
 
+      -- if no specific task allocation was found, (i.e., l_is_unallocated is true ) use the lane role already set on the subflow 
+      -- as the potential_group if it has a lane role
+
       update flow_subflows sbfl
          set sbfl.sbfl_last_update        = systimestamp
            , sbfl.sbfl_priority           = l_priority
            , sbfl.sbfl_due_on             = l_due_on
            , sbfl.sbfl_reservation        = l_reservation
            , sbfl.sbfl_potential_users    = l_potential_users
-           , sbfl.sbfl_potential_groups   = l_potential_groups
+           , sbfl.sbfl_potential_groups   = coalesce ( l_potential_groups
+                                                     , case 
+                                                       when l_is_unallocated = flow_constants_pkg.gc_vcbool_true 
+                                                        and sbfl_lane_isRole = flow_constants_pkg.gc_vcbool_true
+                                                       then 
+                                                         sbfl_lane_role
+                                                       else null end
+                                                      , null )                                                         
            , sbfl.sbfl_excluded_users     = l_excluded_users
            , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
                                                   , sys_context('userenv','os_user')

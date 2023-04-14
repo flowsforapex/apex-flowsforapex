@@ -1393,25 +1393,28 @@ begin
                                              );
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
-      set sbfl.sbfl_current        = l_step_info.target_objt_ref
-        , sbfl.sbfl_last_completed = l_sbfl_rec.sbfl_current
-        , sbfl.sbfl_became_current = l_timestamp
-        , sbfl.sbfl_step_key       = l_step_key
-        , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
-        , sbfl.sbfl_work_started   = null
-        , sbfl.sbfl_lane           = coalesce( l_step_info.target_objt_lane       , sbfl.sbfl_lane        , null)
-        , sbfl.sbfl_lane_name      = coalesce( l_step_info.target_objt_lane_name  , sbfl.sbfl_lane_name   , null)
-        , sbfl.sbfl_lane_isRole    = coalesce( l_step_info.target_objt_lane_isRole, sbfl.sbfl_lane_isRole , null)
-        , sbfl.sbfl_lane_role      = case l_step_info.target_objt_lane_isRole
-                                     when 'true' then l_step_info.target_objt_lane_role
-                                     when 'false' then null
-                                     else coalesce( sbfl.sbfl_lane_role   , null)
-                                     end
-        , sbfl.sbfl_last_update    = l_timestamp
-        , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
-                                              , sys_context('userenv','os_user')
-                                              , sys_context('userenv','session_user')
-                                              )  
+      set sbfl.sbfl_current           = l_step_info.target_objt_ref
+        , sbfl.sbfl_last_completed    = l_sbfl_rec.sbfl_current
+        , sbfl.sbfl_became_current    = l_timestamp
+        , sbfl.sbfl_step_key          = l_step_key
+        , sbfl.sbfl_status            = flow_constants_pkg.gc_sbfl_status_running
+        , sbfl.sbfl_work_started      = null
+        , sbfl.sbfl_potential_users   = null
+        , sbfl.sbfl_potential_groups  = null
+        , sbfl.sbfl_excluded_users    = null
+        , sbfl.sbfl_lane              = coalesce( l_step_info.target_objt_lane       , sbfl.sbfl_lane        , null)
+        , sbfl.sbfl_lane_name         = coalesce( l_step_info.target_objt_lane_name  , sbfl.sbfl_lane_name   , null)
+        , sbfl.sbfl_lane_isRole       = coalesce( l_step_info.target_objt_lane_isRole, sbfl.sbfl_lane_isRole , null)
+        , sbfl.sbfl_lane_role         = case l_step_info.target_objt_lane_isRole
+                                        when 'true' then l_step_info.target_objt_lane_role
+                                        when 'false' then null
+                                        else coalesce( sbfl.sbfl_lane_role   , null)
+                                        end
+        , sbfl.sbfl_last_update       = l_timestamp
+        , sbfl.sbfl_last_update_by    = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )  
     where sbfl.sbfl_prcs_id = p_process_id
       and sbfl.sbfl_id = p_subflow_id
     ;
