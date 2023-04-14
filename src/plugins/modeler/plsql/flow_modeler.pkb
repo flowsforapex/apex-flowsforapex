@@ -10,13 +10,18 @@ as
   as
     l_return apex_plugin.t_region_render_result;
 
-    l_plugin_mode flow_configuration.cfig_value%type;
+    l_show_custom_extensions flow_configuration.cfig_value%type;
   begin
     -- get config value for plugin mode
-    select cfig_value
-      into l_plugin_mode
-      from flow_configuration
-     where cfig_key = 'modeler_plugin_mode';
+    begin
+        select cfig_value
+        into l_show_custom_extensions
+        from flow_configuration
+        where cfig_key = 'modeler_show_custom_extensions';
+    exception
+        when no_data_found then
+            l_show_custom_extensions := 'false';
+    end;
 
     apex_plugin_util.debug_region
     (
@@ -46,8 +51,8 @@ as
         ) ||
         apex_javascript.add_attribute
         (
-          p_name      => 'pluginMode'
-        , p_value     => l_plugin_mode
+          p_name      => 'showCustomExtensions'
+        , p_value     => l_show_custom_extensions
         , p_add_comma => true
         ) ||
         '})'

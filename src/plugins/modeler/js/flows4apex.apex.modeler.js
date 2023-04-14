@@ -5,7 +5,7 @@
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null,
-      pluginMode: null,
+      showCustomExtensions: null,
     },
 
     _create: function () {
@@ -56,7 +56,7 @@
         linting: this.linting,
         bpmnRenderer: this.bpmnRenderer,
         exporter: this.exporter,
-        pluginMode: this.options.pluginMode
+        showCustomExtensions: (this.options.showCustomExtensions === 'true')
       } );
 
       // prevent click events from bubbling up the dom
