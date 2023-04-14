@@ -661,7 +661,7 @@ create or replace package body test_005_engine_misc as
           l_prcs_id as sbfl_prcs_id,
           l_dgrm_id as sbfl_dgrm_id,
           'Event_D' as sbfl_current,
-          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+          flow_constants_pkg.gc_sbfl_status_waiting_message sbfl_status
        from dual;
 
     open l_actual for
@@ -671,7 +671,13 @@ create or replace package body test_005_engine_misc as
        and sbfl_status not in ('split', 'in subprocess');
     ut.expect( l_actual ).to_equal( l_expected ).unordered;    
 
-    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Event_D');       
+    -- send the  expected message
+    flow_api_pkg.receive_message
+    ( p_message_name => 'InMessage'
+    , p_key_name     => 'KEY'
+    , p_key_value    => '1'
+    , p_payload      => 'MyPayload'
+    );
 
     open l_expected for
        select

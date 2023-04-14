@@ -1548,7 +1548,7 @@ as
           (
             pi_objt_bpmn_id   => rec.steps_id
           , pi_attribute_name => flow_constants_pkg.gc_task_type_key
-          , pi_value          => rec.task_type
+          , pi_value          => 'apex:'||rec.task_type
           );
         end if;
 

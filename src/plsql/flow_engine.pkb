@@ -905,6 +905,8 @@ begin
          , objt_target.objt_sub_tag_name
          , objt_lane.objt_bpmn_id
          , objt_lane.objt_name
+         , objt_lane.objt_attributes."apex"."isRole"
+         , objt_lane.objt_attributes."apex"."role"
       into l_step_info
       from flow_connections conn
       join flow_objects objt_source
@@ -984,6 +986,8 @@ begin
          , objt_current.objt_sub_tag_name
          , objt_lane.objt_bpmn_id
          , objt_lane.objt_name
+         , objt_lane.objt_attributes."apex"."isRole"
+         , objt_lane.objt_attributes."apex"."role"
       into l_step_info
       from flow_objects objt_current
       join flow_subflows sbfl
@@ -1395,8 +1399,14 @@ begin
         , sbfl.sbfl_step_key       = l_step_key
         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
         , sbfl.sbfl_work_started   = null
-        , sbfl.sbfl_lane           = coalesce( l_step_info.target_objt_lane     , sbfl.sbfl_lane     , null)
-        , sbfl.sbfl_lane_name      = coalesce( l_step_info.target_objt_lane_name, sbfl.sbfl_lane_name, null)
+        , sbfl.sbfl_lane           = coalesce( l_step_info.target_objt_lane       , sbfl.sbfl_lane        , null)
+        , sbfl.sbfl_lane_name      = coalesce( l_step_info.target_objt_lane_name  , sbfl.sbfl_lane_name   , null)
+        , sbfl.sbfl_lane_isRole    = coalesce( l_step_info.target_objt_lane_isRole, sbfl.sbfl_lane_isRole , null)
+        , sbfl.sbfl_lane_role      = case l_step_info.target_objt_lane_isRole
+                                     when 'true' then l_step_info.target_objt_lane_role
+                                     when 'false' then null
+                                     else coalesce( sbfl.sbfl_lane_role   , null)
+                                     end
         , sbfl.sbfl_last_update    = l_timestamp
         , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
                                               , sys_context('userenv','os_user')

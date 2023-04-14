@@ -28,9 +28,9 @@ as
     l_return.expr_type := l_expr_json.get_string( key => 'expressionType' );
 
     case l_expr_json.get_type( key => 'expression' )
-      when 'ARRAY' then
-        l_return.expr_value := l_expr_json.get_string( key => 'expression' );
       when 'SCALAR' then
+        l_return.expr_value := l_expr_json.get_string( key => 'expression' );
+      when 'ARRAY' then
         l_return.expr_value := flow_engine_util.json_array_join( l_expr_json.get_array( key => 'expression' ) );
       else
        null;
