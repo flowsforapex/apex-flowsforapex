@@ -167,12 +167,14 @@ as
                       );
         l_is_unallocated := flow_constants_pkg.gc_vcbool_false;
         -- check if only 1 potential user & if so, auto-reserve
-        if l_potential_groups is null and l_potential_users <> l_excluded_users then
+        if l_potential_groups is null then
           l_potential_users_t := apex_string.split ( p_str => l_potential_users, p_sep => ':');
           if l_potential_users_t is not null then
             if l_potential_users_t.count = 1 then
-              -- only 1 potential user so auto-reserve
-              l_reservation := l_potential_users_t(1);
+              if not apex_string_util.phrase_exists (p_phrase => l_potential_users_t(1), p_string => l_excluded_users) then
+                -- only 1 potential user who is not excluded so auto-reserve
+                l_reservation := l_potential_users_t(1);
+              end if;
             end if;
           end if;
         end if;       
