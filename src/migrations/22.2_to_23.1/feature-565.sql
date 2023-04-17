@@ -14,7 +14,10 @@ alter table flow_subflows add (
     sbfl_priority         NUMBER,
     sbfl_potential_users  VARCHAR2(4000 CHAR),
     sbfl_potential_groups VARCHAR2(4000 CHAR),
-    sbfl_excluded_users   VARCHAR2(4000 CHAR));
+    sbfl_excluded_users   VARCHAR2(4000 CHAR),
+    sbfl_lane_isRole      VARCHAR2(10 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_lane_role        VARCHAR2(200 CHAR) /*cannot always be looked up with callActivities so must include */
+    );
 
 alter table flow_step_event_log add (
    lgsf_due_on               TIMESTAMP WITH TIME ZONE, 

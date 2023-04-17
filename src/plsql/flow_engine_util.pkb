@@ -313,6 +313,8 @@ procedure get_number_of_connections
     l_new_subflow_context flow_types_pkg.t_subflow_context;
     l_lane                flow_objects.objt_bpmn_id%type;
     l_lane_name           flow_objects.objt_name%type;
+    l_lane_isRole         flow_subflows.sbfl_lane_isRole%type;
+    l_lane_role           flow_subflows.sbfl_lane_role%type;
     l_scope               flow_subflows.sbfl_scope%type := 0;
     l_level_parent        flow_subflows.sbfl_id%type := 0;
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
@@ -338,8 +340,12 @@ procedure get_number_of_connections
 
       select lane_objt.objt_bpmn_id
            , lane_objt.objt_name
+           , lane_objt.objt_attributes."apex"."isRole"
+           , lane_objt.objt_attributes."apex"."role"
         into l_lane
            , l_lane_name
+           , l_lane_isRole
+           , l_lane_role
         from flow_objects start_objt
    left join flow_objects lane_objt
           on start_objt.objt_objt_lane_id = lane_objt.objt_id
@@ -355,6 +361,8 @@ procedure get_number_of_connections
            , sbfl.sbfl_scope
            , sbfl.sbfl_lane
            , sbfl.sbfl_lane_name
+           , sbfl.sbfl_lane_isRole
+           , sbfl.sbfl_lane_role
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
                 when 'N' then sbfl.sbfl_calling_sbfl
@@ -364,6 +372,8 @@ procedure get_number_of_connections
            , l_scope
            , l_lane
            , l_lane_name
+           , l_lane_isRole
+           , l_lane_role
            , l_level_parent
         from flow_subflows sbfl
        where sbfl.sbfl_id = p_parent_subflow;
@@ -391,6 +401,8 @@ procedure get_number_of_connections
          , sbfl_scope
          , sbfl_lane
          , sbfl_lane_name
+         , sbfl_lane_isRole
+         , sbfl_lane_role
          , sbfl_is_following_ebg
          )
     values
@@ -415,6 +427,8 @@ procedure get_number_of_connections
          , l_scope
          , l_lane
          , l_lane_name
+         , l_lane_isRole
+         , l_lane_role
          , l_follows_ebg
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
@@ -714,14 +728,13 @@ procedure get_number_of_connections
   function apex_json_array_join
   ( p_json_array in apex_t_varchar2
   )
-  return flow_types_pkg.t_bpmn_attribute_vc2
+  return clob
   is 
-    l_return flow_types_pkg.t_bpmn_attribute_vc2;
+    l_return clob;
   begin
     apex_debug.info( p_message => '-- Joining APEX JSON Array to vc2, size %0', p0 => p_json_array.count );
-    for i in 1..p_json_array.count  loop
-      l_return := l_return || p_json_array( i ) || apex_application.lf;
-    end loop;
+
+    l_return := apex_string.join_clob( p_table => p_json_array );
 
     apex_debug.info( p_message => '-- returned string', p0 => l_return);
     return l_return;

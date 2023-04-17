@@ -38,10 +38,25 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
   ( p_completed_before         in date default trunc(sysdate)
   )
   is
-  begin
-    flow_log_admin.archive_completed_instances
-    ( p_completed_before         => p_completed_before
-    );
+      l_session_id   number;
+    begin  
+        if v('APP_SESSION') is null then
+          l_session_id := flow_apex_session.create_api_session(p_process_id => null);
+        end if;
+
+        flow_log_admin.archive_completed_instances
+        ( p_completed_before         => p_completed_before
+        );
+
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+    exception
+      when others then
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+        raise;      
   end archive_completed_instances;
 
 -- Performance Summary Functions

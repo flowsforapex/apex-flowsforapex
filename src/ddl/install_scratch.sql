@@ -149,6 +149,8 @@ CREATE TABLE flow_subflows (
     sbfl_is_following_ebg VARCHAR2(1 CHAR),
     sbfl_lane             VARCHAR2(50 CHAR),
     sbfl_lane_name        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_lane_isRole      VARCHAR2(10 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_lane_role        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
     sbfl_reservation      VARCHAR2(255 CHAR),
     sbfl_potential_users  VARCHAR2(4000 CHAR),
     sbfl_potential_groups VARCHAR2(4000 CHAR),

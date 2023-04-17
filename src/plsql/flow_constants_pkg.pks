@@ -128,7 +128,7 @@ as
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
 
   --receiveTask
-  gc_apex_receivetask_subtype_basic   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'basicApexMessage';
+  gc_apex_receivetask_subtype_basic   constant flow_types_pkg.t_bpmn_id :=  'basicApexMessage';
    
   -- execute PL/SQL tasks
   gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';

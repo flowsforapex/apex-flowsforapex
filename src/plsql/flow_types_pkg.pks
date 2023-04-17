@@ -23,6 +23,8 @@ as
   , target_objt_subtag      flow_objects.objt_sub_tag_name%type
   , target_objt_lane        flow_objects.objt_bpmn_id%type
   , target_objt_lane_name   flow_objects.objt_name%type
+  , target_objt_lane_isRole varchar2(10 char)
+  , target_objt_lane_role   flow_subflows.sbfl_potential_groups%type
   );
 
   type t_subflow_context is record
