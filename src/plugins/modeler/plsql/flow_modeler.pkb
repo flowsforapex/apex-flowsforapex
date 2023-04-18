@@ -355,7 +355,8 @@ as
       join flow_objects objt
         on dgrm.dgrm_id = objt.objt_dgrm_id
        and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-     where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true;
+     where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true
+     order by dgrm_name;
     l_diagram flow_diagrams.dgrm_name%type;
   begin
     l_result := '[{"label":"","value":""},';
@@ -375,7 +376,7 @@ as
     l_result clob;
 
     l_dgrm_id flow_diagrams.dgrm_id%type;
-    
+
     l_in_variables  clob;
     l_out_variables clob;
   begin
