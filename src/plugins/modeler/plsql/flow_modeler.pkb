@@ -486,9 +486,9 @@ as
           apex_json.write(
             p_name  => 'VALUE'
           , p_value => case l_parameter.static_id
-                      when 'PROCESS_ID' then '&F4A$PROCESS_ID.'
-                      when 'SUBFLOW_ID' then '&F4A$SUBFLOW_ID.'
-                      when 'STEP_KEY' then '&F4A$STEP_KEY.'
+                      when 'PROCESS_ID' then chr(38) || 'F4A$PROCESS_ID.'
+                      when 'SUBFLOW_ID' then chr(38) || 'F4A$SUBFLOW_ID.'
+                      when 'STEP_KEY' then chr(38) || 'F4A$STEP_KEY.'
                       else ''
                       end
           , p_write_null => true
