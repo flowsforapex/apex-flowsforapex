@@ -202,9 +202,10 @@
             this.diagramIdentifier = diagram.diagramIdentifier;
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
+
             // reset breadcrumb
             if (!oldLoaded) {
-                this.bpmnViewer$.get('callActivityModule').trimBreadcrumbTo(0)
+                this.bpmnViewer$.get('callActivityModule').resetBreadcrumb();
                 this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
             }
           }
