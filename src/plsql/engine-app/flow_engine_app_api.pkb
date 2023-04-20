@@ -1479,63 +1479,6 @@ as
     
   end get_scope;
 
-  /* page 9 */
-  
-
-  procedure set_settings(
-    pi_logging_language             in flow_configuration.cfig_value%type
-  , pi_logging_level                in flow_configuration.cfig_value%type
-  , pi_logging_hide_userid          in flow_configuration.cfig_value%type
-  , pi_logging_retain_logs          in flow_configuration.cfig_value%type
-  , pi_logging_archive_location     in flow_configuration.cfig_value%type
-  , pi_logging_archive_enabled      in flow_configuration.cfig_value%type
-  , pi_logging_msg_flow_recd        in flow_configuration.cfig_value%type
-  , pi_logging_msg_flow_retention   in flow_configuration.cfig_value%type
-  , pi_engine_app_mode              in flow_configuration.cfig_value%type
-  , pi_duplicate_step_prevention    in flow_configuration.cfig_value%type
-  , pi_default_workspace            in flow_configuration.cfig_value%type
-  , pi_default_email_sender         in flow_configuration.cfig_value%type
-  , pi_default_application          in flow_configuration.cfig_value%type
-  , pi_default_pageid               in flow_configuration.cfig_value%type
-  , pi_default_username             in flow_configuration.cfig_value%type
-  , pi_timer_max_cycles             in flow_configuration.cfig_value%type
-  , pi_timer_status                 in sys.all_scheduler_jobs.enabled%type
-  , pi_timer_repeat_interval        in sys.all_scheduler_jobs.repeat_interval%type
-  , pi_stats_retain_daily           in flow_configuration.cfig_value%type
-  , pi_stats_retain_month           in flow_configuration.cfig_value%type
-  , pi_stats_retain_qtr             in flow_configuration.cfig_value%type
-  )
-  as
-  begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language            , p_value => pi_logging_language);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level               , p_value => pi_logging_level);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid         , p_value => pi_logging_hide_userid);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs         , p_value => pi_logging_retain_logs);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_location    , p_value => pi_logging_archive_location);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled     , p_value => pi_logging_archive_enabled);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd   , p_value => pi_logging_msg_flow_recd);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow     , p_value => pi_logging_msg_flow_retention);      
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode             , p_value => pi_engine_app_mode);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_dup_step_prevention         , p_value => pi_duplicate_step_prevention);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_workspace           , p_value => pi_default_workspace);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_email_sender        , p_value => pi_default_email_sender);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application         , p_value => pi_default_application);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid              , p_value => pi_default_pageid);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username            , p_value => pi_default_username);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_timer_max_cycles            , p_value => pi_timer_max_cycles);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month  , p_value => pi_stats_retain_month);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr    , p_value => pi_stats_retain_qtr);
-
-      case pi_timer_status
-      when 'TRUE'  then flow_timers_pkg.enable_scheduled_job;
-      when 'FALSE' then flow_timers_pkg.disable_scheduled_job;
-      end case;
-
-      flow_timers_pkg.set_timer_repeat_interval( p_repeat_interval => pi_timer_repeat_interval);
-
-  end set_settings;
-
 
   /* page 11 */
 
@@ -1604,6 +1547,106 @@ as
               
     return l_has_error = 1;
   end has_error;
+
+
+  /* configuration */
+
+
+  procedure set_logging_settings(
+    pi_logging_language          in flow_configuration.cfig_value%type
+  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_hide_userid       in flow_configuration.cfig_value%type
+  , pi_logging_retain_logs       in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_location     in flow_configuration.cfig_value%type
+  , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
+  , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language          , p_value => pi_logging_language);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level             , p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid       , p_value => pi_logging_hide_userid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs       , p_value => pi_logging_retain_logs);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_location     , p_value => pi_logging_bpmn_location);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd , p_value => pi_logging_message_flow_recd);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow   , p_value => pi_logging_retain_msg_flow);
+
+  end set_logging_settings;
+
+
+  procedure set_archiving_settings(
+    pi_archiving_enabled  in flow_configuration.cfig_value%type
+  , pi_archiving_location in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled  , p_value => pi_archiving_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_location , p_value => pi_archiving_location);
+
+  end set_archiving_settings;
+
+
+  procedure set_statictis_settings(
+    pi_stats_retain_daily in flow_configuration.cfig_value%type
+  , pi_stats_retain_month in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month , p_value => pi_stats_retain_month);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr , p_value => pi_stats_retain_qtr);
+
+  end set_statictis_settings;
+
+
+  procedure set_engine_app_settings(
+    pi_engine_app_mode in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode , p_value => pi_engine_app_mode);
+
+  end set_engine_app_settings;
+
+
+  procedure set_engine_settings(
+    pi_duplicate_step_prevention in flow_configuration.cfig_value%type
+  , pi_default_workspace         in flow_configuration.cfig_value%type
+  , pi_default_email_sender      in flow_configuration.cfig_value%type
+  , pi_default_application       in flow_configuration.cfig_value%type
+  , pi_default_pageid            in flow_configuration.cfig_value%type
+  , pi_default_username          in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_dup_step_prevention  , p_value => pi_duplicate_step_prevention);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_workspace    , p_value => pi_default_workspace);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_email_sender , p_value => pi_default_email_sender);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application  , p_value => pi_default_application);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid       , p_value => pi_default_pageid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username     , p_value => pi_default_username);
+
+  end set_engine_settings;
+
+
+  procedure set_timers_settings(
+    pi_timer_max_cycles      in flow_configuration.cfig_value%type
+  , pi_timer_status          in sys.all_scheduler_jobs.enabled%type
+  , pi_timer_repeat_interval in sys.all_scheduler_jobs.repeat_interval%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_timer_max_cycles , p_value => pi_timer_max_cycles);
+
+      case pi_timer_status
+      when 'TRUE'  then flow_timers_pkg.enable_scheduled_job;
+      when 'FALSE' then flow_timers_pkg.disable_scheduled_job;
+      end case;
+
+      flow_timers_pkg.set_timer_repeat_interval( p_repeat_interval => pi_timer_repeat_interval);
+
+  end set_timers_settings;
 
 
 end flow_engine_app_api;
