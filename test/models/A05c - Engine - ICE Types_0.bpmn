@@ -84,7 +84,7 @@
       <bpmn:incoming>Flow_1l2kkxm</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1l2kkxm" sourceRef="Activity_AfterD" targetRef="Event_DEnd" />
-    <bpmn:intermediateCatchEvent id="Event_D" name="D">
+    <bpmn:intermediateCatchEvent id="Event_D" name="D" apex:type="basicApexMessage">
       <bpmn:incoming>Flow_09i4bz2</bpmn:incoming>
       <bpmn:outgoing>Flow_1m1mre0</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0ep7awy">
