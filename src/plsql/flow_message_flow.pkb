@@ -10,6 +10,7 @@ create or replace package body flow_message_flow as
   e_lock_timeout exception;
   pragma exception_init (e_lock_timeout, -3006);
 
+
   function subscribe
   ( p_subscription_details     in t_subscription_details
   ) return flow_message_subscriptions.msub_id%type
@@ -75,15 +76,10 @@ create or replace package body flow_message_flow as
       ;
     exception
         when no_data_found then
-          flow_errors.handle_general_error
-          ( pi_message_key => 'msgflow-not-correlated');
-          raise no_data_found;
+          raise e_msgflow_msg_not_correlated;
           -- logging of incorrect message handled in procedure exceptions below...
         when e_lock_timeout then
-          flow_errors.handle_general_error
-          ( pi_message_key => 'msgflow-lock-timeout-msub');
-          raise no_data_found;          
-          
+          raise e_msgflow_correlated_msg_locked;          
     end;
     -- message is correlated.  create an APEX session if coming from outside
     -- and then validate the step key to make sure the receive / catch is still current
@@ -106,14 +102,9 @@ create or replace package body flow_message_flow as
     exception
       when no_data_found then
           -- add some message-specific logging capability into here.
-          flow_errors.handle_general_error
-          ( pi_message_key => 'msgflow-no-longer-current-step');
-          raise no_data_found;
+          raise e_msgflow_mag_already_consumed ;
       when e_lock_timeout then
-          -- add some message-specific logging capability into here.
-          flow_errors.handle_general_error
-          ( pi_message_key => 'msgflow-lock-timeout-subflow');
-          raise no_data_found;          
+          raise e_msgflow_correlated_msg_locked;          
     end;
 
     -- store payload, if present
@@ -205,7 +196,8 @@ create or replace package body flow_message_flow as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is
-    l_message       flow_message_flow.t_flow_basic_message;
+    l_message               flow_message_flow.t_flow_basic_message;
+    e_msgflow_bad_endpoint  exception;
   begin
       apex_debug.enter 
     ( 'send_message'
@@ -225,6 +217,40 @@ create or replace package body flow_message_flow as
         , p_key_value       => l_message.key_value
         , p_payload         => l_message.payload
         );
+      exception
+        when e_msgflow_msg_not_correlated then
+          -- message sent did not match an existing subscription
+          flow_errors.handle_instance_error
+          ( pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+          , pi_sbfl_id      => p_sbfl_info.sbfl_id
+          , pi_message_key  => 'msgflow-not-correlated' 
+          );
+        when e_msgflow_correlated_msg_locked then
+          -- message sent correated but is locked by another message
+          flow_errors.handle_instance_error
+          ( pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+          , pi_sbfl_id      => p_sbfl_info.sbfl_id
+          , pi_message_key  => 'msgflow-lock-timeout-msub' 
+          );
+        when e_msgflow_mag_already_consumed then
+          -- message correlated but receiving object is no longer the current object in its subflow
+          flow_errors.handle_instance_error
+          ( pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+          , pi_sbfl_id      => p_sbfl_info.sbfl_id
+          , pi_message_key  => 'msgflow-no-longer-current-step'
+          );
+      end;
+    else
+      begin
+        raise e_msgflow_bad_endpoint;
+      exception
+        when e_msgflow_bad_endpoint then
+          flow_errors.handle_instance_error
+          ( pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+          , pi_sbfl_id      => p_sbfl_info.sbfl_id
+          , pi_message_key  => 'msgflow-endpoint-not-supported' 
+          , p0 => l_message.endpoint
+          );
       end;
     end case;
 

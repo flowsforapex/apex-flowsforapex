@@ -11,7 +11,7 @@ create or replace package flow_message_util
 --
 */
   accessible by ( flow_message_flow, flow_tasks, flow_engine , flow_instances 
-                , flow_engine_util )
+                , flow_engine_util , flow_boundary_events )
 as  
 
   function get_msg_subscription_details

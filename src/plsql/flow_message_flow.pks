@@ -27,6 +27,10 @@ create or replace package flow_message_flow as
   , payload       clob 
   );  
 
+  e_msgflow_msg_not_correlated exception;
+  e_msgflow_correlated_msg_locked exception;
+  e_msgflow_mag_already_consumed exception;
+
   function subscribe
   ( p_subscription_details     in t_subscription_details
   ) return flow_message_subscriptions.msub_id%type;
