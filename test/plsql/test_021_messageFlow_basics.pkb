@@ -1864,7 +1864,7 @@ create or replace package body test_021_messageFlow_basics as
     case p_BE2_fires
     when true then
       -- want timer to fire first so wait before sending message
-      dbms_session.sleep(12);
+      dbms_session.sleep(16);
 
       -- check all subflows correct
 
