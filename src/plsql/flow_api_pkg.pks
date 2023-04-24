@@ -592,6 +592,10 @@ flow_api_pkg.return_approval_result ( p_process_id      => :PROCESS_ID,
     p_intervalDS  interval day to second
   ) return number;
 
+    function intervalDStoHours (
+    p_intervalDS  interval day to second
+  ) return number;
+
 
 -- Manually Step Timers forward
 
