@@ -883,7 +883,7 @@ as
         , pi_exp_fmt_mask => rec.extension_fmt_mask
         , pi_exp_val      => rec.extension_exp_val
         );
-      elsif rec.extension_type = flow_constants_pkg.gc_apex_custom_extension then
+      else --rec.extension_type = flow_constants_pkg.gc_apex_custom_extension then
         register_object_attribute
         (
           pi_objt_bpmn_id   => pi_bpmn_id
