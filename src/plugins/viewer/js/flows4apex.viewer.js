@@ -250,7 +250,7 @@ CustomDrilldown.prototype.updateBreadcrumb = function () {
   var _self = this;
 
   // retrieve hierarchy
-  var { data, diagramIdentifier, callingDiagramIdentifier, callingObjectId } = this._widget;
+  const { data, diagramIdentifier, callingDiagramIdentifier, callingObjectId } = this._widget;
 
   // retrieve properties of current diagram
   var { breadcrumb } = data.find(
@@ -275,6 +275,9 @@ CustomDrilldown.prototype.updateBreadcrumb = function () {
 
     // clicked object
     var { index, diagramidentifier } = link.dataset;
+
+    // retrieve current(!) hierarchy
+    const { data } = _self._widget;
 
     // get new diagram from hierarchy
     var newDiagram = data.find(
@@ -308,15 +311,15 @@ CustomDrilldown.prototype.updateBreadcrumb = function () {
   this.toggleBreadcrumbVisibility();
 };
 
-CustomDrilldown.prototype.resetBreadcrumb = function() {
+CustomDrilldown.prototype.resetBreadcrumb = function () {
   // remove all entries
-  while(this._breadcrumb.firstChild) {
+  while (this._breadcrumb.firstChild) {
     this._breadcrumb.removeChild(this._breadcrumb.firstChild);
   }
 
   // toggle visibility
   this.toggleBreadcrumbVisibility();
-}
+};
 
 CustomDrilldown.prototype.trimBreadcrumbTo = function (index) {
   var flag = false;

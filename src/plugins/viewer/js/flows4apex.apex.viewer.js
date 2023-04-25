@@ -74,12 +74,9 @@
       });
 
       // prevent page submit + reload after button click
-      $(document).on("apexbeforepagesubmit", ( event ) => {
-        const blocking = ['bjs-drilldown'];
-        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
-          apex.event.gCancelFlag = true;
-        }
-      });  
+      $( document ).on( "apexbeforepagesubmit", ( event, request ) => {
+        if (!request) apex.event.gCancelFlag = true;
+      } );
 
       if ( this.options.refreshOnLoad ) {
         this.refresh();
