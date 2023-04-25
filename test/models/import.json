@@ -528,5 +528,51 @@
         "dgrm_status":"draft",
         "dgrm_category":"Testing",
         "file":"A20e - Diagram Startability - FuncBody_0.bpmn" 
+    },
+    {
+        "dgrm_name":"A21a - Messageflow - basics",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing","file":"A21a - Messageflow - basics_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21b - Messageflow - basics - no payload",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21b - Messageflow - basics - no payload_0.bpmn"
+        },
+    {
+        "dgrm_name":"A21c - Messageflow - bad endpoint",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21c - Messageflow - bad endpoint_0.bpmn"
+        },
+    {
+        "dgrm_name":"A21d - Messageflow - basics - Collaboration",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21d - Messageflow - basics - Collaboration_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21e - MessageFlow basics - Subscription Cancellation",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21e - MessageFlow basics - Subscription Cancellation_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21f - Basic Messageflow - EBG",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21f - Basic Messageflow - EBG_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21g - Basic Messageflow - Timer BE on ReceiveTask",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21g - Basic Messageflow - Timer BE on ReceiveTask_0.bpmn"
     }
 ]

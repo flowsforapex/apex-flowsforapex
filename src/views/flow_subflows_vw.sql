@@ -28,6 +28,8 @@ as
         , sbfl.sbfl_status
         , sbfl.sbfl_lane as sbfl_current_lane
         , sbfl.sbfl_lane_name as sbfl_current_lane_name
+        , sbfl.sbfl_lane_isrole
+        , sbfl.sbfl_lane_role
         , sbfl.sbfl_process_level
         , sbfl.sbfl_diagram_level
         , sbfl.sbfl_scope
