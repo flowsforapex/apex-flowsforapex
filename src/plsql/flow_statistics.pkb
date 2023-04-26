@@ -350,6 +350,7 @@ as
     -- delete and recreate, rather than update,  because not all instances might have a MTD summary for this month yet
     delete from flow_instance_stats
      where stpr_period = 'MTD';
+     commit;
     -- now create 'MONTH' summaries for any month that doesn't yet exist and MTD to current month
     insert into flow_instance_stats
         ( stpr_dgrm_id    
@@ -650,116 +651,142 @@ union all
         group by lgsf_sbfl_dgrm_id, lgsf_objt_id
 */
 
-       function get_last_successful_summary
-       ( p_type  flow_stats_history.sths_type%type)
-       return date
-       is
-         l_last_successful_summary  date;
-       begin
-         select nvl( trunc( max( sths.sths_date)), to_date('01-JAN-2020','DD-MON-YYYY'))
-             -- deemed start of Flows for APEX epoch!
-           into l_last_successful_summary
-           from flow_stats_history sths
-          where sths.sths_type = p_type
-            and sths.sths_status = flow_constants_pkg.gc_stats_outcome_success
-         ;
-         return l_last_successful_summary;
-       exception
-         when no_data_found then
-           return to_date('01-JAN-2020','DD-MON-YYYY'); -- deemed start of Flows for APEX epoch!
-       end get_last_successful_summary;
+  function get_last_successful_summary
+  ( p_type       flow_stats_history.sths_type%type
+  ,p_operation   flow_stats_history.sths_operation%type
+  )
+  return date
+  is
+    l_last_successful_summary  date;
+  begin
+    select nvl( trunc( max( sths.sths_date)), to_date('01-JAN-2020','DD-MON-YYYY'))
+        -- deemed start of Flows for APEX epoch!
+      into l_last_successful_summary
+      from flow_stats_history sths
+     where sths.sths_type      = p_type
+       and sths.sths_operation = p_operation
+       and sths.sths_status    = flow_constants_pkg.gc_stats_outcome_success
+    ;
+    return l_last_successful_summary;
+  exception
+    when no_data_found then
+      return to_date('01-JAN-2020','DD-MON-YYYY'); -- deemed start of Flows for APEX epoch!
+  end get_last_successful_summary;
 
 
 
-       procedure create_daily_summaries
-       ( p_start_date    in  date
-       )
-       is
-       begin
-         -- creates daily Summaries for all days between last successful run up to yesterday
-         -- create daily instance summary
-         create_daily_instance_summary (p_start_date => p_start_date);
-         -- create daily step summary
-         create_daily_step_summary (p_start_date => p_start_date);
-       end create_daily_summaries;
+  procedure create_daily_summaries
+  ( p_start_date    in  date
+  )
+  is
+  begin
+    -- creates daily Summaries for all days between last successful run up to yesterday
+    -- create daily instance summary
+    create_daily_instance_summary (p_start_date => p_start_date);
+    -- create daily step summary
+    create_daily_step_summary (p_start_date => p_start_date);
+  end create_daily_summaries;
 
-       procedure create_monthly_summaries
-       ( p_start_date   in date)
-       is
-       begin
-         -- creates monthly Summaries for all months between last successful run up to yesterday
-         -- create monthly instance summary
-         create_monthly_instance_summaries (p_start_date => p_start_date);
-         -- create monthly step summary
-         create_monthly_step_summaries (p_start_date => p_start_date);         --
-       end create_monthly_summaries;
+  procedure create_monthly_summaries
+  ( p_start_date   in date)
+  is
+  begin
+    -- creates monthly Summaries for all months between last successful run up to yesterday
+    -- create monthly instance summary
+    create_monthly_instance_summaries (p_start_date => p_start_date);
+    -- create monthly step summary
+    create_monthly_step_summaries (p_start_date => p_start_date);         --
+  end create_monthly_summaries;
 
-       procedure create_quarterly_summaries
-       is
-         l_last_summary_date  date;
-         l_start_date         date;
-         l_final_quarter      date;  -- final quarter start date included in this new summary
-       begin
-         -- get last successful quarterly summmary date
-         l_last_summary_date := get_last_successful_summary (p_type => flow_constants_pkg.gc_stats_period_quarter);
-         l_start_date := add_months (l_last_summary_date, 3);
-         -- create quarterly instance summary
-         create_quarterly_instance_summaries (p_start_date => l_start_date);
-         -- create quarterly step summary
-         create_quarterly_step_summaries (p_start_date => l_start_date);     
-         -- set last quarterly summary in hstory
+  procedure create_quarterly_summaries
+  is
+    l_last_summary_date                 date;
+    l_start_date                        date;
+    l_final_quarter                     date;  -- final quarter start date included in this new summary
+
+  begin
+    -- get last successful quarterly summmary date
+    l_last_summary_date := get_last_successful_summary ( p_type      => flow_constants_pkg.gc_stats_period_quarter
+                                                       , p_operation => flow_constants_pkg.gc_stats_operation_generate
+                                                       );
+    l_start_date := add_months (l_last_summary_date, 3);
+    -- create quarterly instance summary
+    create_quarterly_instance_summaries (p_start_date => l_start_date);
+    -- create quarterly step summary
+    create_quarterly_step_summaries (p_start_date => l_start_date);     
+    -- set last quarterly summary in hstory
          l_final_quarter := add_months( trunc(sysdate,'Q') , -3);
 
-         insert into flow_stats_history
-         ( sths_date 
-         , sths_status
-         , sths_type
-         , sths_errors
-         , sths_created_on
-         )
-         values 
-         ( l_final_quarter
-         , flow_constants_pkg.gc_stats_outcome_success
-         , flow_constants_pkg.gc_stats_period_quarter
-         , null
-         , systimestamp
-         )
-         ;
+    insert into flow_stats_history
+    ( sths_date 
+    , sths_status
+    , sths_type
+    , sths_operation
+    , sths_errors
+    , sths_created_on
+    )
+    values 
+    ( l_final_quarter
+    , flow_constants_pkg.gc_stats_outcome_success
+    , flow_constants_pkg.gc_stats_period_quarter
+    , flow_constants_pkg.gc_stats_operation_generate
+    , null
+    , systimestamp
+    )
+    ;
+  end create_quarterly_summaries;       
 
-       end create_quarterly_summaries;       
+  procedure run_daily_stats
+  is
+    l_last_successful_daily             date;
+    e_daily_summary_generation_error    exception;
+    e_monthly_summary_generation_error  exception;
+  begin
+    begin
+      -- get last successfully completed day
+      l_last_successful_daily := get_last_successful_summary 
+                                       ( p_type => flow_constants_pkg.gc_stats_period_day
+                                       , p_operation => flow_constants_pkg.gc_stats_operation_generate);
+      -- make daily summaries from last successfully completed day to yesterday night
+      create_daily_summaries (p_start_date => l_last_successful_daily +1 );
+      commit;
+    exception
+      when others then
+        raise e_daily_summary_generation_error;
+    end;
+    begin
+    -- run monthly and MTD summary
+      create_monthly_summaries (p_start_date => l_last_successful_daily +1 );
+      commit;
+      -- run quarterlies if required
+      if trunc(l_last_successful_daily,'Q') != trunc(sysdate,'Q') then
+           create_quarterly_summaries ;
+      end if;
 
-       procedure run_daily_stats
-       is
-         l_last_successful_daily     date;
-       begin
-         -- get last successfully completed day
-         l_last_successful_daily := get_last_successful_summary 
-                                          (p_type => flow_constants_pkg.gc_stats_period_day);
-         -- make daily summaries from last successfully completed day to yesterday night
-         create_daily_summaries (p_start_date => l_last_successful_daily +1 );
-         -- run monthly and MTD summary
-         create_monthly_summaries (p_start_date => l_last_successful_daily +1 );
-         -- run quartlies if required
-         if trunc(l_last_successful_daily,'Q') != trunc(sysdate,'Q') then
-              create_quarterly_summaries ;
-         end if;
-         -- if successful update Stats history
-         insert into flow_stats_history
-         ( sths_date 
-         , sths_status
-         , sths_type
-         , sths_errors
-         , sths_created_on
-         )
-         values 
-         ( trunc(sys_extract_utc(systimestamp))-1
-         , flow_constants_pkg.gc_stats_outcome_success
-         , flow_constants_pkg.gc_stats_period_day
-         , null
-         , systimestamp
-         );
-         -- end
-       end run_daily_stats;
+      -- if successful update Stats history
+      insert into flow_stats_history
+      ( sths_date 
+      , sths_status  
+      , sths_type
+      , sths_operation
+      , sths_errors
+      , sths_created_on
+      )
+      values 
+      ( trunc(sys_extract_utc(systimestamp))-1
+      , flow_constants_pkg.gc_stats_outcome_success
+      , flow_constants_pkg.gc_stats_period_day
+      , flow_constants_pkg.gc_stats_operation_generate
+      , null
+      , systimestamp
+      );
+      commit;
+    exception
+      when others then 
+        raise e_monthly_summary_generation_error;
+    end;
+    -- end
+  end run_daily_stats;
 
   procedure purge_statistics
   is
@@ -823,6 +850,7 @@ union all
         ( sths_date
         , sths_status
         , sths_type
+        , sths_operation
         , sths_comments
         , sths_created_on
         )
@@ -830,6 +858,7 @@ union all
         ( sysdate
         , flow_constants_pkg.gc_stats_outcome_success
         , flow_constants_pkg.gc_stats_period_day
+        , flow_constants_pkg.gc_stats_operation_purge
         , 'purge completed'
         , systimestamp
         );        
@@ -840,6 +869,7 @@ union all
         ( sths_date
         , sths_status
         , sths_type
+        , sths_operation
         , sths_comments
         , sths_errors
         , sths_created_on
@@ -848,6 +878,7 @@ union all
         ( sysdate
         , flow_constants_pkg.gc_stats_outcome_error
         , flow_constants_pkg.gc_stats_period_day
+        , flow_constants_pkg.gc_stats_operation_purge
         , 'error on purge'
         , dbms_utility.format_error_stack
         , systimestamp
