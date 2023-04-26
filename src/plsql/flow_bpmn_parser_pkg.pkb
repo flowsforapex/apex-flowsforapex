@@ -799,7 +799,7 @@ as
   as
   begin
     for rec in (
-                select extension_type
+                select replace(extension_type, 'apex:') as extension_type
                      , extension_data
                      , extension_exp_type
                      , extension_exp_val
@@ -820,11 +820,11 @@ as
                )
     loop
       -- Process Variables
-      if replace(rec.extension_type, 'apex:') in ( flow_constants_pkg.gc_expr_set_before_task, flow_constants_pkg.gc_expr_set_after_task
-                                                 , flow_constants_pkg.gc_expr_set_before_split, flow_constants_pkg.gc_expr_set_after_merge
-                                                 , flow_constants_pkg.gc_expr_set_before_event, flow_constants_pkg.gc_expr_set_on_event
-                                                 , flow_constants_pkg.gc_expr_set_in_variables, flow_constants_pkg.gc_expr_set_out_variables
-                                                 )
+      if rec.extension_type in ( flow_constants_pkg.gc_expr_set_before_task, flow_constants_pkg.gc_expr_set_after_task
+                               , flow_constants_pkg.gc_expr_set_before_split, flow_constants_pkg.gc_expr_set_after_merge
+                               , flow_constants_pkg.gc_expr_set_before_event, flow_constants_pkg.gc_expr_set_on_event
+                               , flow_constants_pkg.gc_expr_set_in_variables, flow_constants_pkg.gc_expr_set_out_variables
+                               )
       then
         parse_process_variables
         (
@@ -883,7 +883,7 @@ as
         , pi_exp_fmt_mask => rec.extension_fmt_mask
         , pi_exp_val      => rec.extension_exp_val
         );
-      else --rec.extension_type = flow_constants_pkg.gc_apex_custom_extension then
+      else
         register_object_attribute
         (
           pi_objt_bpmn_id   => pi_bpmn_id
@@ -1548,7 +1548,7 @@ as
           (
             pi_objt_bpmn_id   => rec.steps_id
           , pi_attribute_name => flow_constants_pkg.gc_task_type_key
-          , pi_value          => 'apex:'||rec.task_type
+          , pi_value          => rec.task_type
           );
         end if;
 
