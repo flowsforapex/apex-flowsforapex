@@ -56,9 +56,66 @@ alter table flow_stats_history
 
 alter table flow_stats_type
   add constraint flow_sths_type_ck
-    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER') );
+    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER', 'YEAR') );
 
 -- add stats tables
+
+create table flow_instance_stats
+( stpr_dgrm_id              number
+, stpr_period_start         date
+, stpr_period               varchar2(10 char)
+, stpr_created              number
+, stpr_started              number
+, stpr_error                number
+, stpr_completed            number
+, stpr_terminated           number
+, stpr_reset                number
+, stpr_duration_10pc_ivl    interval day(3) to second(0)
+, stpr_duration_50pc_ivl    interval day(3) to second(0)
+, stpr_duration_90pc_ivl    interval day(3) to second(0)
+, stpr_duration_max_ivl     interval day(3) to second(0)
+, stpr_duration_10pc_sec    number
+, stpr_duration_50pc_sec    number
+, stpr_duration_90pc_sec    number
+, stpr_duration_max_sec     number
+);
+
+create unique index flow_stpr_ux on flow_instance_stats (stpr_dgrm_id, stpr_period, stpr_period_start);
+
+alter table flow_instance_stats
+    add constraint flow_stpr_period_type_ck
+      check ( stpr_period in ('DAY' ,'MONTH', 'MTD', 'QUARTER','YEAR') );
+
+create table flow_step_stats
+( stsf_dgrm_id             number
+, stsf_objt_bpmn_id        varchar2(50 char)
+, stsf_tag_name            varchar2(50 char)
+, stsf_period_start        date
+, stsf_period              varchar2(10 char)
+, stsf_completed           number
+, stsf_duration_10pc_ivl   interval day(3) to second(3)
+, stsf_duration_50pc_ivl   interval day(3) to second(3)
+, stsf_duration_90pc_ivl   interval day(3) to second(3)
+, stsf_duration_max_ivl    interval day(3) to second(3)
+, stsf_duration_10pc_sec   number
+, stsf_duration_50pc_sec   number
+, stsf_duration_90pc_sec   number
+, stsf_duration_max_sec    number
+, stsf_waiting_10pc_ivl    interval day(3) to second(3)
+, stsf_waiting_50pc_ivl    interval day(3) to second(3)
+, stsf_waiting_90pc_ivl    interval day(3) to second(3)
+, stsf_waiting_max_ivl     interval day(3) to second(3)
+, stsf_waiting_10pc_sec    number
+, stsf_waiting_50pc_sec    number
+, stsf_waiting_90pc_sec    number
+, stsf_waiting_max_sec     number
+);
+
+create unique index flow_stsf_ux on flow_step_stats (stsf_dgrm_id, stsf_objt_bpmn_id, stsf_period, stsf_period_start);
+
+alter table flow_step_stats
+    add constraint flow_stsf_period_type_ck
+      check ( stsf_period in ('DAY' , 'MTD', 'MONTH', 'QUARTER','YEAR') );
 
 -- add flow_instance_timeline views
 

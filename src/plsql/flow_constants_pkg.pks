@@ -359,6 +359,9 @@ as
   gc_stats_outcome_success              constant varchar2(50 char) := 'SUCCESS';
   gc_stats_outcome_error                constant varchar2(50 char) := 'ERROR';
 
+  gc_stats_operation_generate           constant varchar2(20 char) := 'GENERATE';
+  gc_stats_operation_purge              constant varchar2(20 char) := 'PURGE';
+
 -- MIME types
 
   gc_mime_type_bpmn                     constant varchar2(50 char) := 'application/bpmn-xml';

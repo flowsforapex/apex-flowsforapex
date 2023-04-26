@@ -58,21 +58,27 @@ select null as app_id
             else null 
             end as details_link_target
      , sbfl.sbfl_due_on   
-     , floor((cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24) as due_in_hours
+     , flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) as due_in_hours
      , apex_util.get_since (p_value => sbfl.sbfl_due_on ) as due_in
      , case 
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 0 then 
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) <= 0 then 
               'OVERDUE'
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 1 then
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) < 1 then
               'NEXT_HOUR'
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 24 then
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) < 24 then
               'NEXT_24_HOURS'
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 168 then
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) < 168 then
               'NEXT_WEEK'
             else null
             end as due_code  
      , sbfl.sbfl_priority as priority
-     , 'medium' as priority_level
+     , case sbfl.sbfl_priority
+          when 1 then 'urgent'
+          when 2 then 'high'
+          when 3 then 'medium'
+          when 4 then 'low'
+          when 5 then 'lowest'
+        end as priority_level
      , prcs.prcs_init_by as initiator
      , lower(prcs.prcs_init_by) as initiator_lower
      , sbfl.sbfl_reservation as actual_owner

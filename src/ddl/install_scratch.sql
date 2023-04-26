@@ -552,7 +552,7 @@ create unique index flow_stpr_ux on flow_instance_stats (stpr_dgrm_id, stpr_peri
 
 alter table flow_instance_stats
     add constraint flow_stpr_period_type_ck
-      check ( stpr_period in ('DAY' ,'MONTH', 'QUARTER','YEAR') );
+      check ( stpr_period in ('DAY' ,'MONTH', 'MTD', 'QUARTER','YEAR') );
 
 create table flow_step_stats
 ( stsf_dgrm_id             number
