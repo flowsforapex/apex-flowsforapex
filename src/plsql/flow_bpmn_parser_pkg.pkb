@@ -800,6 +800,7 @@ as
   begin
     for rec in (
                 select replace(extension_type, 'apex:') as extension_type
+                     , extension_type as orig_extension_type
                      , extension_data
                      , extension_exp_type
                      , extension_exp_val
@@ -829,7 +830,7 @@ as
         parse_process_variables
         (
           pi_bpmn_id         => pi_bpmn_id
-        , pi_execution_point => replace(rec.extension_type, 'apex:')
+        , pi_execution_point => rec.extension_type
         , pi_proc_vars_xml   => rec.extension_data
         );
       -- Task Subtypes
@@ -887,7 +888,7 @@ as
         register_object_attribute
         (
           pi_objt_bpmn_id   => pi_bpmn_id
-        , pi_attribute_name => rec.extension_type
+        , pi_attribute_name => rec.orig_extension_type
         , pi_value          => rec.extension_text
         );
       end if;
