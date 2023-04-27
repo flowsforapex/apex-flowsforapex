@@ -74,10 +74,10 @@ create or replace package body test_021_messageFlow_basics as
     g_dgrm_a21f_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a21f );
     g_dgrm_a21g_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a21g );
 
-    --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21a_id);  -- REMOVE PARSE UNTIL 'NOT PARSING PAYLOADVARIABLE BUG" fixed
-    flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21b_id);  -- can parse nowbecause no payloadVariable defined
+    flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21a_id);
+    flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21b_id);
     flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21c_id);
-    -- flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21d_id);  -- REMOVE PARSE UNTIL 'NOT PARSING PAYLOADVARIABLE BUG" fixed
+    flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21d_id);
     flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21e_id);
     flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21f_id);
     flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a21g_id);
