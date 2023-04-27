@@ -105,35 +105,9 @@ as
   )
   is
   begin
-    -- delete existing MTD summaries
-    -- delete and recreate, rather than update,  because not all instances might have a MTD summary for this month yet
-    delete from flow_step_stats
-     where stsf_period = 'MTD';
     -- now create 'MONTH' summaries for any month that doesn't yet exist and MTD to current month
-    insert into flow_step_stats 
-            ( stsf_dgrm_id
-            , stsf_tag_name
-            , stsf_objt_bpmn_id
-            , stsf_period_start
-            , stsf_period
-            , stsf_duration_10pc_ivl
-            , stsf_duration_50pc_ivl
-            , stsf_duration_90pc_ivl
-            , stsf_duration_max_ivl
-            , stsf_duration_10pc_sec
-            , stsf_duration_50pc_sec
-            , stsf_duration_90pc_sec
-            , stsf_duration_max_sec
-            , stsf_waiting_10pc_ivl
-            , stsf_waiting_50pc_ivl
-            , stsf_waiting_90pc_ivl
-            , stsf_waiting_max_ivl
-            , stsf_waiting_10pc_sec
-            , stsf_waiting_50pc_sec
-            , stsf_waiting_90pc_sec
-            , stsf_waiting_max_sec  
-            , stsf_completed
-            )
+    merge into flow_step_stats tgt
+    using (        
     with mon as 
     (
       select stsf_dgrm_id, 
@@ -148,18 +122,18 @@ as
              sum ( ds.stsf_waiting_50pc_sec * ds.stsf_completed ) / sum (ds.stsf_completed) waiting_50pc_sec, 
              sum ( ds.stsf_waiting_90pc_sec * ds.stsf_completed ) / sum (ds.stsf_completed) waiting_90pc_sec, 
              sum ( ds.stsf_waiting_max_sec  * ds.stsf_completed ) / sum (ds.stsf_completed) waiting_max_sec,
-             sum ( stsf_completed) stsf_completed
+             sum ( stsf_completed) completed
       from   flow_step_stats ds
       where  ds.stsf_period = 'DAY'
       group by stsf_dgrm_id, stsf_tag_name, stsf_objt_bpmn_id, trunc(stsf_period_start, 'MM')
       order by stsf_dgrm_id, stsf_tag_name, stsf_objt_bpmn_id, trunc(stsf_period_start, 'MM')
     )
-    select mon.stsf_dgrm_id
+    select mon.stsf_dgrm_id 
          , mon.stsf_tag_name
          , mon.stsf_objt_bpmn_id
-         , mon.period_start
+         , mon.period_start as stsf_period_start
          , case when mon.period_start = trunc(sys_extract_utc(systimestamp),'MM') then 'MTD'
-                else 'MONTH' end as period
+                else 'MONTH' end as stsf_period
          , numtodsinterval (mon.duration_10pc_sec , 'SECOND') as duration_10pc_ivl
          , numtodsinterval (mon.duration_50pc_sec , 'SECOND') as duration_50pc_ivl
          , numtodsinterval (mon.duration_90pc_sec , 'SECOND') as duration_90pc_ivl
@@ -176,10 +150,80 @@ as
          , mon.waiting_50pc_sec
          , mon.waiting_90pc_sec
          , mon.waiting_max_sec
-         , mon.stsf_completed
+         , mon.completed
     from mon
-    where mon.period_start >= trunc(p_start_date,'MM');
-  
+    where mon.period_start >= trunc(p_start_date,'MM')
+    ) src 
+    on  ( src.stsf_dgrm_id      = tgt.stsf_dgrm_id
+      and src.stsf_tag_name     = tgt.stsf_tag_name
+      and src.stsf_objt_bpmn_id = tgt.stsf_objt_bpmn_id
+      and src.stsf_period_start = tgt.stsf_period_start
+      and src.stsf_period       = tgt.stsf_period )
+    when matched then 
+    update set tgt.stsf_duration_10pc_ivl  = src.duration_10pc_ivl
+            ,  tgt.stsf_duration_50pc_ivl  = src.duration_50pc_ivl
+            ,  tgt.stsf_duration_90pc_ivl  = src.duration_90pc_ivl
+            ,  tgt.stsf_duration_max_ivl   = src.duration_max_ivl
+            ,  tgt.stsf_duration_10pc_sec  = src.duration_10pc_sec
+            ,  tgt.stsf_duration_50pc_sec  = src.duration_50pc_sec
+            ,  tgt.stsf_duration_90pc_sec  = src.duration_90pc_sec
+            ,  tgt.stsf_duration_max_sec   = src.duration_max_sec
+            ,  tgt.stsf_waiting_10pc_ivl   = src.waiting_10pc_ivl
+            ,  tgt.stsf_waiting_50pc_ivl   = src.waiting_50pc_ivl
+            ,  tgt.stsf_waiting_90pc_ivl   = src.waiting_90pc_ivl
+            ,  tgt.stsf_waiting_max_ivl    = src.waiting_max_ivl
+            ,  tgt.stsf_waiting_10pc_sec   = src.waiting_10pc_sec
+            ,  tgt.stsf_waiting_50pc_sec   = src.waiting_50pc_sec
+            ,  tgt.stsf_waiting_90pc_sec   = src.waiting_90pc_sec
+            ,  tgt.stsf_waiting_max_sec    = src.waiting_max_sec
+            ,  tgt.stsf_completed          = src.completed
+    when not matched then 
+    insert (  tgt.stsf_dgrm_id
+            , tgt.stsf_tag_name
+            , tgt.stsf_objt_bpmn_id
+            , tgt.stsf_period_start
+            , tgt.stsf_period
+            , tgt.stsf_duration_10pc_ivl
+            , tgt.stsf_duration_50pc_ivl
+            , tgt.stsf_duration_90pc_ivl
+            , tgt.stsf_duration_max_ivl
+            , tgt.stsf_duration_10pc_sec
+            , tgt.stsf_duration_50pc_sec
+            , tgt.stsf_duration_90pc_sec
+            , tgt.stsf_duration_max_sec
+            , tgt.stsf_waiting_10pc_ivl
+            , tgt.stsf_waiting_50pc_ivl
+            , tgt.stsf_waiting_90pc_ivl
+            , tgt.stsf_waiting_max_ivl
+            , tgt.stsf_waiting_10pc_sec
+            , tgt.stsf_waiting_50pc_sec
+            , tgt.stsf_waiting_90pc_sec
+            , tgt.stsf_waiting_max_sec  
+            , tgt.stsf_completed
+            )
+    values  ( src.stsf_dgrm_id
+            , src.stsf_tag_name
+            , src.stsf_objt_bpmn_id
+            , src.stsf_period_start
+            , src.stsf_period
+            , src.duration_10pc_ivl
+            , src.duration_50pc_ivl
+            , src.duration_90pc_ivl
+            , src.duration_max_ivl
+            , src.duration_10pc_sec
+            , src.duration_50pc_sec
+            , src.duration_90pc_sec
+            , src.duration_max_sec
+            , src.waiting_10pc_ivl
+            , src.waiting_50pc_ivl
+            , src.waiting_90pc_ivl
+            , src.waiting_max_ivl
+            , src.waiting_10pc_sec
+            , src.waiting_50pc_sec
+            , src.waiting_90pc_sec
+            , src.waiting_max_sec  
+            , src.completed
+            );
   end create_monthly_step_summaries; 
 
   -- quarter step stats
@@ -346,70 +390,105 @@ as
   )
   is
   begin
-    -- delete existing MTD summaries
-    -- delete and recreate, rather than update,  because not all instances might have a MTD summary for this month yet
-    delete from flow_instance_stats
-     where stpr_period = 'MTD';
-     commit;
-    -- now create 'MONTH' summaries for any month that doesn't yet exist and MTD to current month
-    insert into flow_instance_stats
-        ( stpr_dgrm_id    
-        , stpr_period_start  
-        , stpr_period
-        , stpr_created    
-        , stpr_started    
-        , stpr_error      
-        , stpr_completed  
-        , stpr_terminated 
-        , stpr_reset      
-        , stpr_duration_10pc_ivl
-        , stpr_duration_50pc_ivl
-        , stpr_duration_90pc_ivl
-        , stpr_duration_max_ivl 
-        , stpr_duration_10pc_sec
-        , stpr_duration_50pc_sec
-        , stpr_duration_90pc_sec
-        , stpr_duration_max_sec 
-        )
-    with mon as 
-    (
-    select stpr_dgrm_id, 
-           trunc(stpr_period_start, 'MM') period_start, 
-           sum (stpr_created) stpr_created,
-           sum (stpr_started) stpr_started,
-           sum (stpr_error) stpr_error,
-           sum (stpr_completed) stpr_completed,
-           sum (stpr_terminated) stpr_terminated,
-           sum (stpr_reset) stpr_reset,
-           sum ( ds.stpr_duration_10pc_sec * ds.stpr_completed ) / sum (ds.stpr_completed) duration_10pc_sec,
-           sum ( ds.stpr_duration_50pc_sec * ds.stpr_completed ) / sum (ds.stpr_completed) duration_50pc_sec, 
-           sum ( ds.stpr_duration_90pc_sec * ds.stpr_completed ) / sum (ds.stpr_completed) duration_90pc_sec, 
-           sum ( ds.stpr_duration_max_sec * ds.stpr_completed  ) / sum (ds.stpr_completed) duration_max_sec
-    from   flow_instance_stats ds
-    where  ds.stpr_period = 'DAY'
-    group by stpr_dgrm_id, trunc(stpr_period_start, 'MM')
-    order by stpr_dgrm_id, trunc(stpr_period_start, 'MM')
-    )
-    select mon.stpr_dgrm_id
-         , mon.period_start
-         , case when mon.period_start = trunc(sys_extract_utc(systimestamp),'MM') then 'MTD'
-                else 'MONTH' end as period
-         , mon.stpr_created
-         , mon.stpr_started
-         , mon.stpr_error
-         , mon.stpr_completed
-         , mon.stpr_terminated
-         , mon.stpr_reset
-         , numtoDSinterval( mon.duration_10pc_sec, 'SECOND' )
-         , numtoDSinterval( mon.duration_50pc_sec, 'SECOND' )
-         , numtoDSinterval( mon.duration_90pc_sec, 'SECOND' )
-         , numtoDSinterval( mon.duration_max_sec , 'SECOND' )
-         , mon.duration_10pc_sec
-         , mon.duration_50pc_sec
-         , mon.duration_90pc_sec
-         , mon.duration_max_sec
-    from mon
-    where mon.period_start >= trunc(p_start_date,'MM');
+    -- now create 'MONTH' and 'MTD' summaries for any month that doesn't yet exist and MTD to current month
+    merge into flow_instance_stats tgt
+    using (
+      with mon as 
+      (
+      select stpr_dgrm_id, 
+             trunc(stpr_period_start, 'MM') period_start, 
+             sum (stpr_created) stpr_created,
+             sum (stpr_started) stpr_started,
+             sum (stpr_error) stpr_error,
+             sum (stpr_completed) stpr_completed,
+             sum (stpr_terminated) stpr_terminated,
+             sum (stpr_reset) stpr_reset,
+             sum ( ds.stpr_duration_10pc_sec * ds.stpr_completed ) / sum (ds.stpr_completed) duration_10pc_sec,
+             sum ( ds.stpr_duration_50pc_sec * ds.stpr_completed ) / sum (ds.stpr_completed) duration_50pc_sec, 
+             sum ( ds.stpr_duration_90pc_sec * ds.stpr_completed ) / sum (ds.stpr_completed) duration_90pc_sec, 
+             sum ( ds.stpr_duration_max_sec * ds.stpr_completed  ) / sum (ds.stpr_completed) duration_max_sec
+      from   flow_instance_stats ds
+      where  ds.stpr_period = 'DAY'
+      group by stpr_dgrm_id, trunc(stpr_period_start, 'MM')
+      order by stpr_dgrm_id, trunc(stpr_period_start, 'MM')
+      )
+      select mon.stpr_dgrm_id
+           , mon.period_start as stpr_period_start
+           , case when mon.period_start = trunc(sys_extract_utc(systimestamp),'MM') then 'MTD'
+                  else 'MONTH' end as stpr_period
+           , mon.stpr_created
+           , mon.stpr_started
+           , mon.stpr_error
+           , mon.stpr_completed
+           , mon.stpr_terminated
+           , mon.stpr_reset
+           , numtoDSinterval( mon.duration_10pc_sec, 'SECOND' ) as stpr_duration_10pc_ivl
+           , numtoDSinterval( mon.duration_50pc_sec, 'SECOND' ) as stpr_duration_50pc_ivl
+           , numtoDSinterval( mon.duration_90pc_sec, 'SECOND' ) as stpr_duration_90pc_ivl
+           , numtoDSinterval( mon.duration_max_sec , 'SECOND' ) as stpr_duration_max_ivl
+           , mon.duration_10pc_sec as stpr_duration_10pc_sec
+           , mon.duration_50pc_sec as stpr_duration_50pc_sec
+           , mon.duration_90pc_sec as stpr_duration_90pc_sec
+           , mon.duration_max_sec  as stpr_duration_max_sec
+      from mon
+      where mon.period_start >= trunc(p_start_date,'MM')
+      ) src
+    on (   src.stpr_dgrm_id      = tgt.stpr_dgrm_id    
+       and src.stpr_period_start = tgt.stpr_period_start  
+       and src.stpr_period       = tgt.stpr_period
+       )
+    when matched then 
+    update set tgt.stpr_created           = src.stpr_created
+             , tgt.stpr_started           = src.stpr_started
+             , tgt.stpr_error             = src.stpr_error
+             , tgt.stpr_completed         = src.stpr_completed
+             , tgt.stpr_terminated        = src.stpr_terminated
+             , tgt.stpr_reset             = src.stpr_reset
+             , tgt.stpr_duration_10pc_ivl = src.stpr_duration_10pc_ivl
+             , tgt.stpr_duration_50pc_ivl = src.stpr_duration_50pc_ivl
+             , tgt.stpr_duration_90pc_ivl = src.stpr_duration_90pc_ivl
+             , tgt.stpr_duration_max_ivl  = src.stpr_duration_max_ivl
+             , tgt.stpr_duration_10pc_sec = src.stpr_duration_10pc_sec
+             , tgt.stpr_duration_50pc_sec = src.stpr_duration_50pc_sec
+             , tgt.stpr_duration_90pc_sec = src.stpr_duration_90pc_sec
+             , tgt.stpr_duration_max_sec  = src.stpr_duration_max_sec
+    when not matched then
+    insert ( tgt.stpr_dgrm_id    
+           , tgt.stpr_period_start  
+           , tgt.stpr_period
+           , tgt.stpr_created    
+           , tgt.stpr_started    
+           , tgt.stpr_error      
+           , tgt.stpr_completed  
+           , tgt.stpr_terminated 
+           , tgt.stpr_reset      
+           , tgt.stpr_duration_10pc_ivl
+           , tgt.stpr_duration_50pc_ivl
+           , tgt.stpr_duration_90pc_ivl
+           , tgt.stpr_duration_max_ivl 
+           , tgt.stpr_duration_10pc_sec
+           , tgt.stpr_duration_50pc_sec
+           , tgt.stpr_duration_90pc_sec
+           , tgt.stpr_duration_max_sec 
+           )
+    values ( src.stpr_dgrm_id    
+           , src.stpr_period_start  
+           , src.stpr_period
+           , src.stpr_created    
+           , src.stpr_started    
+           , src.stpr_error      
+           , src.stpr_completed  
+           , src.stpr_terminated 
+           , src.stpr_reset      
+           , src.stpr_duration_10pc_ivl
+           , src.stpr_duration_50pc_ivl
+           , src.stpr_duration_90pc_ivl
+           , src.stpr_duration_max_ivl 
+           , src.stpr_duration_10pc_sec
+           , src.stpr_duration_50pc_sec
+           , src.stpr_duration_90pc_sec
+           , src.stpr_duration_max_sec 
+           ) ; 
 
   end create_monthly_instance_summaries;
 
@@ -652,8 +731,8 @@ union all
 */
 
   function get_last_successful_summary
-  ( p_type       flow_stats_history.sths_type%type
-  ,p_operation   flow_stats_history.sths_operation%type
+  ( p_type        flow_stats_history.sths_type%type
+  , p_operation   flow_stats_history.sths_operation%type
   )
   return date
   is
@@ -685,17 +764,66 @@ union all
     create_daily_instance_summary (p_start_date => p_start_date);
     -- create daily step summary
     create_daily_step_summary (p_start_date => p_start_date);
+
+    -- if successful update Stats history
+    insert into flow_stats_history
+    ( sths_date 
+    , sths_status  
+    , sths_type
+    , sths_operation
+    , sths_errors
+    , sths_created_on
+    )
+    values 
+    ( trunc(sys_extract_utc(systimestamp))-1
+    , flow_constants_pkg.gc_stats_outcome_success
+    , flow_constants_pkg.gc_stats_period_day
+    , flow_constants_pkg.gc_stats_operation_generate
+    , null
+    , systimestamp
+    );
+
+    commit;
+
   end create_daily_summaries;
 
   procedure create_monthly_summaries
-  ( p_start_date   in date)
   is
+    l_last_summary_date date;
+    l_start_date        date;
   begin
     -- creates monthly Summaries for all months between last successful run up to yesterday
+    -- get last successful quarterly summmary date
+    l_last_summary_date := get_last_successful_summary ( p_type      => flow_constants_pkg.gc_stats_period_month
+                                                       , p_operation => flow_constants_pkg.gc_stats_operation_generate
+                                                       )  ;
+    l_start_date := l_last_summary_date + 1;                                                   
+
     -- create monthly instance summary
-    create_monthly_instance_summaries (p_start_date => p_start_date);
+    create_monthly_instance_summaries (p_start_date => l_start_date);
     -- create monthly step summary
-    create_monthly_step_summaries (p_start_date => p_start_date);         --
+    create_monthly_step_summaries (p_start_date => l_start_date);   
+    
+    -- if successful update Stats history
+    insert into flow_stats_history
+    ( sths_date 
+    , sths_status  
+    , sths_type
+    , sths_operation
+    , sths_errors
+    , sths_created_on
+    )
+    values 
+    ( trunc(sys_extract_utc(systimestamp))-1
+    , flow_constants_pkg.gc_stats_outcome_success
+    , flow_constants_pkg.gc_stats_period_month
+    , flow_constants_pkg.gc_stats_operation_generate
+    , null
+    , systimestamp
+    );
+
+    commit;  
+        --
   end create_monthly_summaries;
 
   procedure create_quarterly_summaries
@@ -715,7 +843,7 @@ union all
     -- create quarterly step summary
     create_quarterly_step_summaries (p_start_date => l_start_date);     
     -- set last quarterly summary in hstory
-         l_final_quarter := add_months( trunc(sysdate,'Q') , -3);
+    l_final_quarter := add_months( trunc(sysdate,'Q') , -3);
 
     insert into flow_stats_history
     ( sths_date 
@@ -732,13 +860,15 @@ union all
     , flow_constants_pkg.gc_stats_operation_generate
     , null
     , systimestamp
-    )
-    ;
+    );
+
+    commit;
   end create_quarterly_summaries;       
 
   procedure run_daily_stats
   is
     l_last_successful_daily             date;
+    l_last_successful_quarterly         date;
     e_daily_summary_generation_error    exception;
     e_monthly_summary_generation_error  exception;
   begin
@@ -749,43 +879,24 @@ union all
                                        , p_operation => flow_constants_pkg.gc_stats_operation_generate);
       -- make daily summaries from last successfully completed day to yesterday night
       create_daily_summaries (p_start_date => l_last_successful_daily +1 );
-      commit;
     exception
       when others then
         raise e_daily_summary_generation_error;
     end;
     begin
     -- run monthly and MTD summary
-      create_monthly_summaries (p_start_date => l_last_successful_daily +1 );
-      commit;
-      -- run quarterlies if required
-      if trunc(l_last_successful_daily,'Q') != trunc(sysdate,'Q') then
-           create_quarterly_summaries ;
-      end if;
-
-      -- if successful update Stats history
-      insert into flow_stats_history
-      ( sths_date 
-      , sths_status  
-      , sths_type
-      , sths_operation
-      , sths_errors
-      , sths_created_on
-      )
-      values 
-      ( trunc(sys_extract_utc(systimestamp))-1
-      , flow_constants_pkg.gc_stats_outcome_success
-      , flow_constants_pkg.gc_stats_period_day
-      , flow_constants_pkg.gc_stats_operation_generate
-      , null
-      , systimestamp
-      );
-      commit;
+      create_monthly_summaries;
     exception
       when others then 
         raise e_monthly_summary_generation_error;
     end;
-    -- end
+    -- run quarterlies if required
+    l_last_successful_quarterly := get_last_successful_summary 
+                                   ( p_type => flow_constants_pkg.gc_stats_period_quarter
+                                   , p_operation => flow_constants_pkg.gc_stats_operation_generate);
+    if trunc(l_last_successful_quarterly,'Q') != trunc(sysdate,'Q') then
+         create_quarterly_summaries ;
+    end if;
   end run_daily_stats;
 
   procedure purge_statistics

@@ -607,6 +607,7 @@ create table flow_stats_history
 , sths_date       date
 , sths_status     varchar2(50 char)
 , sths_type       varchar2(20 char)
+, sths_operation  varchar2(20 char)
 , sths_errors     varchar2(4000 char)
 , sths_comments   varchar2(4000 char)
 , sths_created_on timestamp with time zone
@@ -627,4 +628,4 @@ alter table flow_stats_history
 
 alter table flow_stats_history
   add constraint flow_sths_type_ck
-    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER') );
+    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER', 'YEAR') );
