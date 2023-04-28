@@ -202,6 +202,10 @@ as
     , pi_prdg_id in flow_instance_diagrams.prdg_id%type
   ) return number;
 
+  procedure download_instance_summary(
+    pi_prcs_id in flow_processes.prcs_id%type
+  );
+
   /* page 11 */
 
   function create_instance(

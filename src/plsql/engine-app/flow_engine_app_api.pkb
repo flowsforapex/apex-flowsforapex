@@ -906,6 +906,23 @@ as
     return l_blob;
   end clob_to_blob;
 
+  procedure download_file(
+    p_file_name in varchar2,
+    p_mime_type in varchar2,
+    p_blob_content in blob
+  )
+  is
+    l_length integer;
+    l_blob_content blob := p_blob_content;
+  begin
+    l_length := sys.dbms_lob.getlength(l_blob_content);
+    owa_util.mime_header(p_mime_type, false) ;
+    htp.p('Content-length: ' || l_length);
+    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(p_file_name)||'"');
+    owa_util.http_header_close;
+    wpg_docload.download_file(l_blob_content);
+    apex_application.stop_apex_engine;
+  end download_file;
 
   procedure download_file(
       p_dgrm_id     in number,
@@ -918,7 +935,6 @@ as
     l_blob        blob;
     l_zip_file    blob;
     l_buffer      varchar2(32767);  
-    l_length      integer;
     l_desc_offset pls_integer := 1;
     l_src_offset  pls_integer := 1;
     l_lang        pls_integer := 0;
@@ -1019,13 +1035,12 @@ as
       l_mime_type := 'application/zip';
       l_file_name := 'F4A_'||to_char(systimestamp, 'YYYYMMDD_HH24MISS')||'.zip';
     end if;
-    l_length := dbms_lob.getlength(l_blob);
-    owa_util.mime_header(l_mime_type, false) ;
-    htp.p('Content-length: ' || l_length);
-    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(l_file_name)||'"');
-    owa_util.http_header_close;
-    wpg_docload.download_file(l_blob);
-    apex_application.stop_apex_engine;
+
+    download_file(
+      p_file_name    => l_file_name,
+      p_mime_type    => l_mime_type,
+      p_blob_content => l_blob
+    );
   end download_file;
 
 
@@ -1479,6 +1494,29 @@ as
     
   end get_scope;
 
+  procedure download_instance_summary(
+    pi_prcs_id in flow_processes.prcs_id%type
+  )
+  is
+    l_summary   clob;
+    l_file_name varchar2(300 char);
+    l_blob      blob;
+  begin
+    select prcs_id ||'_'|| prcs_name || '_' || to_char(current_date, 'YYYYDDMM_HH24MISS')
+      into l_file_name
+      from flow_instances_vw
+     where prcs_id = pi_prcs_id;
+
+    l_file_name := sanitize_file_name(l_file_name)||'.json';
+
+    l_summary := flow_admin_api.instance_summary(p_process_id => pi_prcs_id);
+    l_blob := clob_to_blob(l_summary);
+    download_file(
+      p_file_name    => l_file_name,
+      p_mime_type    => 'application/json',
+      p_blob_content => l_blob
+    );
+  end download_instance_summary;
 
   /* page 11 */
 
