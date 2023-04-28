@@ -74,12 +74,9 @@
       });
 
       // prevent page submit + reload after button click
-      $(document).on("apexbeforepagesubmit", ( event ) => {
-        const blocking = ['bjs-drilldown'];
-        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
-          apex.event.gCancelFlag = true;
-        }
-      });  
+      $( document ).on( "apexbeforepagesubmit", ( event, request ) => {
+        if (!request) apex.event.gCancelFlag = true;
+      } );
 
       if ( this.options.refreshOnLoad ) {
         this.refresh();
@@ -202,9 +199,10 @@
             this.diagramIdentifier = diagram.diagramIdentifier;
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
+
             // reset breadcrumb
             if (!oldLoaded) {
-                this.bpmnViewer$.get('callActivityModule').trimBreadcrumbTo(0)
+                this.bpmnViewer$.get('callActivityModule').resetBreadcrumb();
                 this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
             }
           }
