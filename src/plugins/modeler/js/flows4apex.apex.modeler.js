@@ -5,7 +5,7 @@
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null,
-      pluginMode: null,
+      showCustomExtensions: null,
     },
 
     _create: function () {
@@ -56,7 +56,7 @@
         linting: this.linting,
         bpmnRenderer: this.bpmnRenderer,
         exporter: this.exporter,
-        pluginMode: this.options.pluginMode
+        showCustomExtensions: (this.options.showCustomExtensions === 'true')
       } );
 
       // prevent click events from bubbling up the dom
@@ -79,11 +79,8 @@
       } );
 
       // prevent page submit + reload after button click
-      $( document ).on( "apexbeforepagesubmit", ( event ) => {
-        const blocking = ['bio-properties-panel-add-entry', 'bio-properties-panel-remove-entry'];
-        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
-          apex.event.gCancelFlag = true;
-        }
+      $( document ).on( "apexbeforepagesubmit", ( event, request ) => {
+        if (!request) apex.event.gCancelFlag = true;
       } );
 
       // register custom changed handler with APEX
@@ -118,12 +115,9 @@
 
       this.refresh();
     },
-
     loadDiagram: async function () {
-      
       var that = this;
       const bpmnModeler$ = this.bpmnModeler$;
-      
       try {
         var result = await bpmnModeler$.importXML( this.diagramContent );
 
@@ -140,28 +134,20 @@
         }
 
         this.zoom( "fit-viewport" );
-        
         that.changed = false;
-        
         bpmnModeler$.get( "eventBus" ).on( "commandStack.changed", function () {
           that.changed = true;
         } );
-
       } catch ( err ) {
         debug.error( "Loading Diagram failed.", err, this.diagram );
       }
     },
-
     zoom: function ( zoomOption ) {
       this.bpmnModeler$.get( "canvas" ).zoom( zoomOption );
     },
-
     refresh: function () {
-      
       var that = this;
-      
       debug.info( "Enter Refresh", this.options );
-      
       if ( this.changed ) {
         message.confirm(
           "Model has changed. Discard changes?",
@@ -175,12 +161,9 @@
         that._refreshCall();
       }
     },
-
     getDiagram: async function () {
-      
       var that = this;
       const bpmnModeler$ = that.bpmnModeler$;
-      
       try {
         const result = await bpmnModeler$.saveXML( { format: true } );
         const { xml } = result;
@@ -190,27 +173,21 @@
         throw err;
       }
     },
-
     getSVG: async function () {
-      
       const bpmnModeler$ = this.bpmnModeler$;
-      
       try {
         const result = await bpmnModeler$.saveSVG( { format: true } );
         const { svg } = result;
         const styledSVG = bpmnModeler$.get('xmlModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
-        
         return styledSVG;
       } catch ( err ) {
         debug.error( "Get SVG failed.", err );
         throw err;
       }
     },
-
     save: async function () {
       this._saveCall( await this.getDiagram() );
     },
-
     _refreshCall: function () {
       server
         .plugin(
@@ -230,7 +207,6 @@
           this.loadDiagram();
         } );
     },
-
     _saveCall: function ( xml ) {
       server
         .plugin( this.options.ajaxIdentifier, {
@@ -246,9 +222,7 @@
           x01: "SAVE",
         } )
         .then( ( pData ) => {
-          
           apex.message.clearErrors();
-          
           if ( pData.success ) {
             this.changed = false;
             message.showPageSuccess( pData.message );
