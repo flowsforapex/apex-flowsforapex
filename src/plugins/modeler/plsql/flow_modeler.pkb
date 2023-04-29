@@ -10,13 +10,18 @@ as
   as
     l_return apex_plugin.t_region_render_result;
 
-    l_plugin_mode flow_configuration.cfig_value%type;
+    l_show_custom_extensions flow_configuration.cfig_value%type;
   begin
     -- get config value for plugin mode
-    select cfig_value
-      into l_plugin_mode
-      from flow_configuration
-     where cfig_key = 'modeler_plugin_mode';
+    begin
+        select cfig_value
+        into l_show_custom_extensions
+        from flow_configuration
+        where cfig_key = 'modeler_show_custom_extensions';
+    exception
+        when no_data_found then
+            l_show_custom_extensions := 'false';
+    end;
 
     apex_plugin_util.debug_region
     (
@@ -46,8 +51,8 @@ as
         ) ||
         apex_javascript.add_attribute
         (
-          p_name      => 'pluginMode'
-        , p_value     => l_plugin_mode
+          p_name      => 'showCustomExtensions'
+        , p_value     => l_show_custom_extensions
         , p_add_comma => true
         ) ||
         '})'
@@ -350,7 +355,8 @@ as
       join flow_objects objt
         on dgrm.dgrm_id = objt.objt_dgrm_id
        and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-     where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true;
+     where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true
+     order by dgrm_name;
     l_diagram flow_diagrams.dgrm_name%type;
   begin
     l_result := '[{"label":"","value":""},';
@@ -370,7 +376,7 @@ as
     l_result clob;
 
     l_dgrm_id flow_diagrams.dgrm_id%type;
-    
+
     l_in_variables  clob;
     l_out_variables clob;
   begin
@@ -480,9 +486,9 @@ as
           apex_json.write(
             p_name  => 'VALUE'
           , p_value => case l_parameter.static_id
-                      when 'PROCESS_ID' then '&F4A$PROCESS_ID.'
-                      when 'SUBFLOW_ID' then '&F4A$SUBFLOW_ID.'
-                      when 'STEP_KEY' then '&F4A$STEP_KEY.'
+                      when 'PROCESS_ID' then chr(38) || 'F4A$PROCESS_ID.'
+                      when 'SUBFLOW_ID' then chr(38) || 'F4A$SUBFLOW_ID.'
+                      when 'STEP_KEY' then chr(38) || 'F4A$STEP_KEY.'
                       else ''
                       end
           , p_write_null => true
