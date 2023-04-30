@@ -527,7 +527,7 @@ create or replace package body flow_tasks as
     );
     
     case get_task_type( pi_objt_id => p_step_info.target_objt_id )
-    when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+    when flow_constants_pkg.gc_apex_basic_message then
         -- Flows for APEX Basic MessageFlow
         flow_message_flow.send_message
         ( p_sbfl_info => p_sbfl_info
@@ -602,12 +602,8 @@ create or replace package body flow_tasks as
     , p_subflow_id => p_sbfl_info.sbfl_id
     );  
         
---    case get_task_type( p_step_info.target_objt_id )
---    when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
-
-      case
-      when  get_task_type( p_step_info.target_objt_id ) in ( flow_constants_pkg.gc_apex_receivetask_subtype_basic -- temp
-                                                           , flow_constants_pkg.gc_message_task_type) then
+    case get_task_type( p_step_info.target_objt_id )
+      when flow_constants_pkg.gc_apex_basic_message then
  
         l_msg_sub            := flow_message_util.get_msg_subscription_details
                                 ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
@@ -636,8 +632,7 @@ create or replace package body flow_tasks as
         , p0 => l_msub_id
         );
 
-      when  get_task_type( p_step_info.target_objt_id ) = flow_constants_pkg.gc_apex_task_execute_plsql then        --- temp
---     when flow_constants_pkg.gc_apex_task_execute_plsql then
+      when  flow_constants_pkg.gc_apex_task_execute_plsql then
         -- set work started time
         flow_engine.start_step 
         ( p_process_id => p_sbfl_info.sbfl_prcs_id

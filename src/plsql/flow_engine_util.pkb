@@ -538,7 +538,7 @@ procedure get_number_of_connections
             end if;
           $END 
           -- cancel any message subscriptions
-          if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+          if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_basic_message then
             flow_message_util.cancel_subscription ( p_process_id  => p_process_id 
                                                   , p_subflow_id  => subflows_with_tasks.sbfl_id
                                                   );
