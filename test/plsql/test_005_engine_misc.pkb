@@ -761,7 +761,7 @@ create or replace package body test_005_engine_misc as
     -- Step into task with attached non interrupting timer.   4 cycles of 8 seconds
     test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_BeforeA');  
 
-    dbms_session.sleep(50);
+    dbms_session.sleep(52);
 
     -- check all parallel subflows running
     -- after 40 seconds (plus timer delay) should have just the main subflow + 4 reminder subflows.   No further BE subflow.

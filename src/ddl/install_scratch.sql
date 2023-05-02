@@ -563,7 +563,7 @@ create unique index flow_stpr_ux on flow_instance_stats (stpr_dgrm_id, stpr_peri
 
 alter table flow_instance_stats
     add constraint flow_stpr_period_type_ck
-      check ( stpr_period in ('DAY' ,'MONTH', 'QUARTER','YEAR') );
+      check ( stpr_period in ('DAY' ,'MONTH', 'MTD', 'QUARTER','YEAR') );
 
 create table flow_step_stats
 ( stsf_dgrm_id             number
@@ -618,6 +618,7 @@ create table flow_stats_history
 , sths_date       date
 , sths_status     varchar2(50 char)
 , sths_type       varchar2(20 char)
+, sths_operation  varchar2(20 char)
 , sths_errors     varchar2(4000 char)
 , sths_comments   varchar2(4000 char)
 , sths_created_on timestamp with time zone
@@ -638,4 +639,4 @@ alter table flow_stats_history
 
 alter table flow_stats_history
   add constraint flow_sths_type_ck
-    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER') );
+    check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER', 'YEAR') );
