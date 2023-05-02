@@ -85,6 +85,11 @@ as
   , pi_new_name     in flow_diagrams.dgrm_name%type 
   );
 
+  /* page 3 */
+  function check_version_mismatch(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2;
+
   /* page 4 */
 
   function get_region_title(

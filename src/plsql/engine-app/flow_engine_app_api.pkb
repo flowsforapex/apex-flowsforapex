@@ -717,6 +717,39 @@ as
     end loop;
   end copy_model;
 
+  /* page 3 */
+  function check_version_mismatch(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2
+  is
+    l_app_version       apex_applications.version%type;
+    l_datamodel_version flow_configuration.cfig_value%type;
+    l_code_version      varchar2(10) := flow_constants_pkg.gc_version;
+    l_message           varchar2(4000);
+  begin
+    select version
+    into l_app_version
+    from apex_applications
+    where application_id = p_app_id;
+   
+    select cfig_value
+    into l_datamodel_version
+    from flow_configuration
+    where cfig_key = 'version_now_installed';
+   
+    if (( l_app_version = l_datamodel_version )  and ( l_datamodel_version = l_code_version )) = false then
+        l_message := apex_lang.message(
+            p_name => 'APP_VERSION_MISMATCH',
+            p0     => l_app_version,
+            p1     => l_datamodel_version,
+            p2     => l_code_version
+        );
+    end if;
+
+    return l_message;
+
+  end check_version_mismatch;
+
 
   /* page 4 */
 
