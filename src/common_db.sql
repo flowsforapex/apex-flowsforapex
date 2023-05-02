@@ -57,6 +57,7 @@ PROMPT >> Installing Views
 @views/flow_diagrams_instanciated_lov.sql
 @views/flow_instance_timeline_vw.sql
 @views/flow_startable_diagrams_vw.sql
+@views/flow_message_subscriptions_vw.sql
 
 
 PROMPT >> Installing Package Bodies
@@ -113,6 +114,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_instance_log_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
+@views/engine-app/flow_p0008_message_subscriptions_vw.sql
 @views/engine-app/flow_p0008_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
 @views/engine-app/flow_p0010_vw.sql

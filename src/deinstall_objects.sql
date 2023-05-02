@@ -89,6 +89,7 @@ drop view flow_diagrams_vw;
 drop view flow_instance_diagrams_lov;
 drop view flow_diagrams_instanciated_lov;
 drop view flow_startable_diagrams_vw;
+drop view flow_message_subscriptions_vw;
 
 
 PROMPT >> Tables
