@@ -1,9 +1,6 @@
 PROMPT >> Removing Flows4APEX Database Objects
 PROMPT >> ====================================
 
-PROMPT >> Functions
-drop function apex_error_handling;
-
 PROMPT >> Packages
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
