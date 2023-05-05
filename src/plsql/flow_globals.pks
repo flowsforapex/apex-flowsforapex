@@ -17,6 +17,7 @@ as
   subflow_id flow_subflows.sbfl_id%type;
   step_key   flow_subflows.sbfl_step_key%type;
   scope      flow_subflows.sbfl_scope%type;
+  rest_call  boolean;
 
   function business_ref
   (pi_scope       flow_subflows.sbfl_scope%type default 0)
@@ -47,5 +48,12 @@ as
   function get_is_recursive_step
   return boolean;
 
+  procedure set_call_origin
+  (
+    p_origin in varchar2
+  );
+
+  procedure unset_call_origin;
+  
 end flow_globals;
 /
