@@ -9,6 +9,7 @@ as
     l_before_prcs_status flow_instances_vw.prcs_status%type;
     l_after_prcs_status flow_instances_vw.prcs_status%type;
     l_reload boolean := false;
+
   begin
     apex_debug.message( p_message => 'Action: %s', p0 => apex_application.g_x01 );
     if instr(apex_application.g_x01, 'bulk-') > 0 then
@@ -233,6 +234,18 @@ as
             , p_is_immediate  => case apex_application.g_x05 when 'Y' then true end
             , p_new_timestamp => case apex_application.g_x05 when 'N' then to_timestamp(apex_application.g_x06, v('APP_NLS_TIMESTAMP_FORMAT')) end
             , p_comment       => apex_application.g_x07
+          );
+        when 'RECEIVE-MESSAGE' then
+          for i in apex_application.g_f01.first..apex_application.g_f01.last
+          loop
+            l_clob := l_clob || apex_application.g_f01(i);
+          end loop;
+
+          flow_api_pkg.receive_message(
+            p_message_name => apex_application.g_x02,
+            p_key_name     => apex_application.g_x03,
+            p_key_value    => apex_application.g_x04,
+            p_payload      => l_clob
           );
         else
           apex_error.add_error

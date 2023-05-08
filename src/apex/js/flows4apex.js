@@ -42,6 +42,19 @@ function getBulkFlowInstanceData(action){
   };
 }
 
+function getMessageData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
+  return {
+    "x01": action,
+    "x02": apex.jQuery( el ).attr("data-message"),
+    "x03": apex.jQuery( el ).attr("data-key"),
+    "x04": apex.jQuery( el ).attr("data-value")
+  };
+}
+
 function getSubflowData(action, element){
   let el = element;
   if ( el.type === undefined || el.type !== "button") {
@@ -673,14 +686,14 @@ function bulkDeleteProcessVariable(action){
 function completeStep( action, element ){
   var data = getSubflowData(action, element);
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
   sendToServer(data, options);
 }
 
 function bulkCompleteStep( action ){
   var data = getBulkSubflowData( action );
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
   sendToServer(data, options);
 }
 
@@ -788,7 +801,7 @@ function rescheduleTimer ( action, element ){
     data.x07 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
        
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
     sendToServer(data, options);
   } else {
     openRescheduleTimerDialog( action, element );
@@ -804,11 +817,43 @@ function bulkRescheduleTimer ( action ){
     data.x04 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
        
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
     sendToServer(data, options);
   } else {
     openRescheduleTimerDialog( action, null );
   }
+}
+
+function receiveMessage( action, element ) {
+  if ( apex.jQuery( "#receive_message_dialog" ).dialog( "isOpen" ) ) {
+    var data = getMessageData( action, element );
+    var chunkedClob = apex.server.chunk(apex.item("P8_PAYLOAD").getValue());
+    if ( !Array.isArray( chunkedClob ) ) {
+      chunkedClob = [chunkedClob];
+    }
+    data.f01 = chunkedClob;
+    apex.theme.closeRegion( "receive_message_dialog" );
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
+    sendToServer(data, options);
+  } 
+  else {
+    openReceiveMessageDialog( action, element );
+  }
+  
+};
+
+function openReceiveMessageDialog(action, element){
+  apex
+    .jQuery( "#receive-message-btn" )
+    .attr( "data-message", apex.jQuery( element ).attr( "data-message" ) );
+  apex
+    .jQuery( "#receive-message-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+  apex
+    .jQuery( "#receive-message-btn" )
+    .attr( "data-value", apex.jQuery( element ).attr( "data-value" ) );
+  apex.theme.openRegion( "receive_message_dialog" );
 }
 
 function openRescheduleTimerDialog(action, element){
@@ -1010,6 +1055,12 @@ function initActions(){
           action: function( event, focusElement ) {
             bulkRescheduleTimer( this.name);
           }
+        },
+        {
+          name: "receive-message",
+          action: function ( event, focusElement ) {
+            receiveMessage( this.name, focusElement );
+          },
         }
       ] );
     }
