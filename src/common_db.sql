@@ -100,9 +100,6 @@ PROMPT >> Global App Package Specifications
 @plsql/engine-app/flow_engine_app_api.pks
 @plsql/engine-app/flow_theme_api.pks
 
-PROMPT >> Global Error Function
-@plsql/engine-app/apex_error_handling.sql
-
 PROMPT >> Page Views
 @views/engine-app/flow_p0002_diagrams_vw.sql
 @views/engine-app/flow_p0007_vw.sql

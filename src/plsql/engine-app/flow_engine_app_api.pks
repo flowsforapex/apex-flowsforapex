@@ -2,6 +2,11 @@ create or replace package flow_engine_app_api
   authid definer
 as
 
+  function apex_error_handling (
+    p_error in apex_error.t_error 
+  )
+  return apex_error.t_error_result;
+
   procedure handle_ajax;
 
   /* general */
