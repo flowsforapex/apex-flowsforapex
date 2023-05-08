@@ -90,6 +90,10 @@ as
     p_app_id number default apex_application.g_flow_id
   ) return varchar2;
 
+  function check_apex_upgrade(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2;
+
   /* page 4 */
 
   function get_region_title(

@@ -763,6 +763,36 @@ as
 
   end check_version_mismatch;
 
+  function check_apex_upgrade(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2
+  is
+    l_actual_version pls_integer;
+    l_actual_release pls_integer;
+    l_stored_version pls_integer := flow_apex_env.version;
+    l_stored_release pls_integer := flow_apex_env.release;
+    l_message        varchar2(4000);
+  begin
+    select  
+         to_number(substr(version_no, 1, instr(version_no, '.', 1, 1) - 1))
+       , to_number(substr(version_no, instr(version_no, '.', 1, 1) + 1, instr(version_no, '.', 1, 1) - 2))
+    into l_actual_version, l_actual_release
+    from apex_release;
+
+    if (( l_actual_version = l_stored_version ) and ( l_actual_release = l_stored_release )) = false then
+        l_message := apex_lang.message(
+            p_name => 'APP_APEX_UPGRADE_DETECTED',
+            p0     => l_actual_version,
+            p1     => l_actual_release,
+            p2     => l_stored_version,
+            p3     => l_stored_release
+        );
+    end if;
+
+    return l_message;
+
+  end check_apex_upgrade;
+
 
   /* page 4 */
 
