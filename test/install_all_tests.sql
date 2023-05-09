@@ -27,6 +27,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_018_gw_routing_exps.pks
 @plsql/test_019_priorityduedates.pks
 @plsql/test_021_messageflow_basics.pks
+@plsql/test_022_usertask_misc.pks
 
 PROMPT >> Installing Package Bodies
 
@@ -49,6 +50,7 @@ PROMPT >> Installing Package Bodies
 @plsql/test_018_gw_routing_exps.pkb
 @plsql/test_019_priorityduedates.pkb
 @plsql/test_021_messageflow_basics.pkb
+@plsql/test_022_usertask_misc.pkb
 
 PROMPT >> Engine Test Scripts Installed
 
