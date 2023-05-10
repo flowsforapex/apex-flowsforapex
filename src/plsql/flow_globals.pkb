@@ -92,5 +92,25 @@ as
     return business_ref ( pi_scope   => l_scope );
   end business_ref;
 
+  procedure set_call_origin
+  (
+    p_origin in varchar2
+  )
+  as
+  begin
+    case p_origin
+      when 'REST' then
+        rest_call := true;
+      else
+        null;
+    end case;
+  end set_call_origin;
+
+  procedure unset_call_origin
+  as
+  begin
+    rest_call := false;
+  end unset_call_origin;
+
 end flow_globals;
 /

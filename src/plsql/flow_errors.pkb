@@ -1,7 +1,7 @@
 create or replace package body flow_errors
 as 
 
-  g_logging_language        flow_configuration.cfig_value%type; 
+  g_logging_language        flow_configuration.cfig_value%type;
 
   procedure autonomous_write_to_instance_log
   ( pi_prcs_id        in flow_processes.prcs_id%type
@@ -189,6 +189,8 @@ as
     if flow_globals.get_is_recursive_step then
       -- errors written to log, status already set to error in autonomous session
       flow_globals.set_step_error (p_has_error => true);
+    elsif flow_globals.rest_call then
+      raise_application_error(-20001, l_message);
     else
       -- step belongs to current user's current session - use apex_error
       apex_error.add_error
@@ -235,10 +237,15 @@ as
                   , p8               => p8
                   , p9               => p9
                   );
-    apex_error.add_error
-      ( p_message => l_message
-      , p_display_location => apex_error.c_on_error_page
-      );
+
+    if flow_globals.rest_call then
+      raise_application_error(-20001, l_message);
+    else
+      apex_error.add_error
+        ( p_message => l_message
+        , p_display_location => apex_error.c_on_error_page
+        );
+    end if;
   end handle_general_error;
 
   -- initialize logging parameters
