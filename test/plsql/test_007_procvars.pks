@@ -56,10 +56,20 @@ create or replace package test_007_procvars as
   procedure varchar2_in_scope_call_sbfl_set_update;  
 
   --%test(G1 - VC2 call by sbfl_id with bad sbfl id - set insert)
+  --%throws(-20987)
   procedure varchar2_call_by_bad_sbfl_set_insert;
 
   --%test(G2 - VC2 call by sbfl_id with bad sbfl_id - set update)
+  --%throws(-20987)
   procedure varchar2_call_by_bad_sbfl_set_update;  
+
+  --%test(H1 - VC2 call by scope with bad scope - set insert)
+  --%throws(-20987)
+  procedure varchar2_call_by_bad_scope_set_insert;
+
+  --%test(H2 - VC2 call by scope with bad scope - set update)
+  --%throws(-20987)
+  procedure varchar2_call_by_bad_scope_set_update;  
 
 
   --%aftereach

@@ -846,6 +846,8 @@ create or replace package body test_007_procvars as
   procedure varchar2_call_by_bad_sbfl_set_insert
   is
   begin
+    flow_globals.set_is_recursive_step (false);
+    
     flow_process_vars.set_var ( pi_prcs_id  => g_prcs_id_a
                               , pi_var_name  => 'VarG1'
                               , pi_vc2_value  => 'TestG1'
@@ -871,6 +873,7 @@ create or replace package body test_007_procvars as
   procedure varchar2_call_by_bad_sbfl_set_update
   is
   begin
+    flow_globals.set_is_recursive_step (false);
     -- first set (insert) uses a valid sbfl_id
     flow_process_vars.set_var ( pi_prcs_id  => g_prcs_id_a
                               , pi_var_name  => 'VarG2'
@@ -912,6 +915,81 @@ create or replace package body test_007_procvars as
                   , p_error_on_null => false
                   );
     end varchar2_call_by_bad_sbfl_set_update;  
+
+
+  -- test(H1 - VC2 call by sbfl_id with bad scope - set insert)
+  procedure varchar2_call_by_bad_scope_set_insert
+  is
+  begin
+    flow_globals.set_is_recursive_step (false);
+    
+    flow_process_vars.set_var ( pi_prcs_id  => g_prcs_id_a
+                              , pi_var_name  => 'VarH1'
+                              , pi_vc2_value  => 'TestH1'
+                              , pi_scope      => 99999999
+                              );
+
+    test_procvars ( p_name          => 'VarH1'
+                  , p_type          => 'VARCHAR2'    
+                  , p_prcs_id       => g_prcs_id_a
+                  , p_sbfl_id       => g_sbfl_call1
+                  , p_scope         => 99999999
+                  , p_vc2           => 'TestH1'
+                  , p_number        => null     
+                  , p_date          => null    
+                  , p_tstz          => null
+                  , p_clob          => null   
+                  , p_error_on_null => false
+                  );
+
+    end varchar2_call_by_bad_scope_set_insert;              
+
+  -- test(H2 -VC2 call by sbfl_id with bad scope Set Update)
+  procedure varchar2_call_by_bad_scope_set_update
+  is
+  begin
+    flow_globals.set_is_recursive_step (false);
+    -- first set (insert) uses a valid scope
+    flow_process_vars.set_var ( pi_prcs_id  => g_prcs_id_a
+                              , pi_var_name  => 'VarH2'
+                              , pi_vc2_value  => 'TestH2'
+                              , pi_scope    => g_scope_call
+                              );                      
+
+    test_procvars ( p_name          => 'VarH2'
+                  , p_type          => 'VARCHAR2'    
+                  , p_prcs_id       => g_prcs_id_a
+                  , p_sbfl_id       => g_sbfl_call2
+                  , p_scope         => g_scope_call
+                  , p_vc2           => 'TestH2'
+                  , p_number        => null     
+                  , p_date          => null    
+                  , p_tstz          => null
+                  , p_clob          => null   
+                  , p_error_on_null => false
+                  );
+
+    -- do another set to test the update path with bad sbfl_id
+
+    flow_process_vars.set_var ( pi_prcs_id  => g_prcs_id_a
+                              , pi_var_name  => 'VarH2'
+                              , pi_vc2_value  => 'TestH2B'
+                              , pi_scope    => 99999999
+                              );   
+
+    test_procvars ( p_name          => 'VarH2'
+                  , p_type          => 'VARCHAR2'    
+                  , p_prcs_id       => g_prcs_id_a
+                  , p_sbfl_id       => g_sbfl_call2
+                  , p_scope         => 99999999
+                  , p_vc2           => 'TestH2B'
+                  , p_number        => null     
+                  , p_date          => null    
+                  , p_tstz          => null
+                  , p_clob          => null   
+                  , p_error_on_null => false
+                  );
+    end varchar2_call_by_bad_scope_set_update;  
 
   --aftereach
   procedure tear_down_tests  
