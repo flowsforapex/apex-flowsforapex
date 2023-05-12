@@ -133,6 +133,8 @@
           debug.warn( "Warnings during XML Import", warnings );
         }
 
+        bpmnModeler$.get('xmlModule').refactorElements();
+
         this.zoom( "fit-viewport" );
         that.changed = false;
         bpmnModeler$.get( "eventBus" ).on( "commandStack.changed", function () {
