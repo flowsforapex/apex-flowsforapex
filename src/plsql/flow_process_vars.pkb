@@ -456,6 +456,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_vc2;
 
 -- get_var_num:  number type - signature 1 - scope (or no scope) supplied
@@ -510,6 +511,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_num;
 
 -- get_var_date: date type - signature 1 - scope (or no scope) supplied
@@ -564,6 +566,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_date;
 
 -- get_var_CLOB:  CLOB type - signature 1 - scope (or no scope) supplied
@@ -618,6 +621,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_clob;
 
 -- get_var_date: timestamp type - signature 1 - scope (or no scope) supplied
@@ -672,6 +676,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_tstz;
 
 -- get type of a variable - signature 1 - with scope including default scope
@@ -726,6 +731,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_type;
 
 -- delete a variable - signature 1 - with scope including default scope

@@ -461,6 +461,7 @@ exception
       , p2 => pi_scope
       );
     -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+      raise;
     else
       return null;
     end if;
@@ -494,6 +495,7 @@ exception
       , p2 => pi_scope
       );
       -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+      raise;
     else
       return null;
     end if;
@@ -527,6 +529,7 @@ exception
       , p2 => pi_scope
       );
       -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+      raise;
     else
       return null;
     end if;
@@ -560,6 +563,7 @@ exception
       , p2 => pi_scope
       );
       -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+      raise;
     else
       return null;
     end if;
@@ -593,6 +597,7 @@ exception
       , p2 => pi_scope
       );
       -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+      raise;
     else
       return null;
     end if;
@@ -633,6 +638,7 @@ exception
       , p2 => pi_scope
       );
       -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+      raise;
     else
       return null;
     end if;
@@ -668,6 +674,7 @@ exception
       , p2 => pi_scope
       );
       -- $F4AMESSAGE 'var-get-error' || 'Error getting process variable %0 for process id %1 with scope %2.'
+      raise;
     else
       return null;
     end if;

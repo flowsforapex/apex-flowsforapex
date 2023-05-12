@@ -173,6 +173,62 @@
         "file":"A05d - Engine - Repeating Timer BE_0.bpmn"
     },
     {
+        "dgrm_name": "A06a - Lanes and Assignment - Child Lanesets",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06a - Lanes and Assignment - Child Lanesets_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06b - Lanes and Assignment - Roles from Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06b - Lanes and Assignment - Roles from Lanes_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06c - Lanes and Assignment - Lanes with SubProcs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06c - Lanes and Assignment - Lanes with SubProcs_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06d - Lanes and Assignment - No Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06d - Lanes and Assignment - No Lanes_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06e - Lanes and Assignment - No Lanes calls Laned Dgrm",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06e - Lanes and Assignment - No Lanes calls Laned Dgrm_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06f - Lanes and Assignment - Lanes calling Dgrm",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06f - Lanes and Assignment - Lanes calling Dgrm_0.bpmn"
+      },
+    {
+        "dgrm_name": "A07a - Process Variable API - Main",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A07a - Process Variable API - Main_0.bpmn"
+      },
+      {
+        "dgrm_name": "A07b - Process Variable API - Called Diagram",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A07b - Process Variable API - Called Diagram_0.bpmn"
+      },
+    {
         "dgrm_name": "A09p - Recursive Chain PQP Top",
         "dgrm_version": "0",
         "dgrm_status": "draft",
