@@ -15,6 +15,32 @@ as
   end get_config_value;
 
   -------------------------------------------------------------------------------------------------------------------
+  
+  procedure init( pi_client_id        varchar2
+                , pi_check_privilege  varchar2 )
+  as
+  begin
+
+    flow_globals.set_call_origin( p_origin => flow_rest_constants.c_config_origin );
+
+    owa_util.mime_header ('application/json', true); 
+
+    flow_rest_auth.check_privilege( pi_client_id       => pi_client_id 
+                                  , pi_privilege_name  => pi_check_privilege );                              
+
+  end init;
+
+  -------------------------------------------------------------------------------------------------------------------
+
+  procedure final
+  as
+  begin
+
+    flow_globals.unset_call_origin;
+    
+  end final;
+
+  -------------------------------------------------------------------------------------------------------------------
 
   procedure add_error( pio_object_jo in out nocopy json_object_t 
                      , pi_error_type in varchar2
@@ -35,54 +61,6 @@ as
     l_errors_ja := pio_object_jo.get_Array(flow_rest_constants.c_json_errors_key);
     l_errors_ja.append(l_error_jo);
   end add_error;
-
-  -------------------------------------------------------------------------------------------------------------------
-
-  procedure send_response_error( pi_sqlerrm     varchar2 
-                               , pi_stacktrace  varchar2 default null
-                               , pi_payload           json_element_t default null
-                               , pi_payload_attr_name varchar2 default null
-                               , po_status_code out number )
-  as
-    l_error_jo  json_object_t;
-  begin
-    l_error_jo := new json_object_t();
-    l_error_jo.put( key => 'success', val => false);
-    l_error_jo.put( key => 'message', val => pi_sqlerrm);
-    if pi_stacktrace is not null then 
-      l_error_jo.put( key => 'stacktrace', val => pi_stacktrace);
-    end if;
-    if pi_payload is not null then 
-      l_error_jo.put( key => pi_payload_attr_name, val => pi_payload );   
-    end if;
-    
-    --apex_util.prn(p_clob => l_error_jo.stringify, p_escape => false);
-    sys.htp.p(l_error_jo.stringify);
-    po_status_code := flow_rest_constants.c_http_code_ERROR;
-
-  end send_response_error;
-
-  -------------------------------------------------------------------------------------------------------------------
-
-  procedure send_response_success( pi_success_message   varchar2
-                                 , pi_payload           json_element_t default null
-                                 , pi_payload_attr_name varchar2 default null
-                                 , po_status_code       out number )
-  as
-    l_success_jo  json_object_t;
-  begin
-    l_success_jo := new json_object_t();
-    l_success_jo.put( key => 'success', val => true);
-    l_success_jo.put( key => 'message', val => pi_success_message);
-    if pi_payload is not null then 
-      l_success_jo.put( key => pi_payload_attr_name, val => pi_payload );   
-    end if;
-
-    --apex_util.prn(p_clob => l_success_jo.stringify, p_escape => false);
-    sys.htp.p(l_success_jo.stringify);
-    po_status_code := flow_rest_constants.c_http_code_OK;
-
-  end send_response_success;
 
   -------------------------------------------------------------------------------------------------------------------
 

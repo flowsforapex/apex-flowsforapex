@@ -1,8 +1,6 @@
 create or replace package body flow_rest_auth
 as
 
-  -------------------------------------------------------------------------------------------------------------------
-
   function get_rest_roles
     return flow_rest_roles_nt
     pipelined

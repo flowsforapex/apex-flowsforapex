@@ -10,22 +10,16 @@ as
 --
 */
 
-  function get_json_array_t( pi_json_object_t  json_object_t)
-    return json_array_t;
-
   function get_config_value( pi_key  flow_configuration.cfig_key%type )
     return flow_configuration.cfig_value%type;
+    
+  procedure init( pi_client_id        varchar2
+                , pi_check_privilege  varchar2 );
 
-  procedure send_response_error( pi_sqlerrm     varchar2 
-                               , pi_stacktrace  varchar2 default null
-                               , pi_payload           json_element_t default null
-                               , pi_payload_attr_name varchar2 default null
-                               , po_status_code out number );
+  procedure final;     
 
-  procedure send_response_success( pi_success_message   varchar2
-                                 , pi_payload           json_element_t default null
-                                 , pi_payload_attr_name varchar2 default null
-                                 , po_status_code       out number );                       
+  function get_json_array_t( pi_json_object_t  json_object_t)
+    return json_array_t;
 
   procedure verify_and_prepare_payload( pi_payload              json_element_t 
                                       , pi_array_allowed        boolean 

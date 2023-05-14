@@ -3,6 +3,7 @@ create or replace package flow_rest_constants
 as
   c_config_prefix    constant varchar2(50 char)  := 'rest_';
   c_config_key_base  constant varchar2(50 char)  := 'base';
+  c_config_origin    constant varchar2(4  char)  := 'REST';
 
   c_cgi_env_base_path   constant varchar2(50 char)  := 'X-APEX-BASE';
 
@@ -86,6 +87,11 @@ as
   c_rest_role_write    constant varchar2(50 char) := 'Flows for Apex - Write';
   c_rest_role_admin    constant varchar2(50 char) := 'Flows for Apex - Admin';
   c_rest_role_sep      constant varchar2(50 char) := ':';
+  
+  c_rest_schema_status_enabled    constant varchar2(50 char) := 'ENABLED';
+  c_rest_schema_status_disabled   constant varchar2(50 char) := 'DISABLED';
+  c_rest_module_status_published  constant varchar2(50 char) := 'PUBLISHED';
+  c_rest_current_version          constant varchar2(50 char) := 'v1';
 
   e_payload_not_acceptable exception;
   e_multiple_object_error  exception;
@@ -95,6 +101,15 @@ as
   e_process_unknown_status exception;
   e_step_unknown_operation exception;
   e_privilege_not_granted  exception;
+
+  PRAGMA EXCEPTION_INIT (e_payload_not_acceptable , -20101);
+  PRAGMA EXCEPTION_INIT (e_multiple_object_error  , -20102);
+  PRAGMA EXCEPTION_INIT (e_attribute_not_found    , -20103);
+  PRAGMA EXCEPTION_INIT (e_item_not_found         , -20104);
+  PRAGMA EXCEPTION_INIT (e_processing_error       , -20105);
+  PRAGMA EXCEPTION_INIT (e_process_unknown_status , -20106);
+  PRAGMA EXCEPTION_INIT (e_step_unknown_operation , -20107);
+  PRAGMA EXCEPTION_INIT (e_privilege_not_granted  , -20108);
 
 end flow_rest_constants;
 /

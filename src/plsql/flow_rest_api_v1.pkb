@@ -126,23 +126,6 @@ as
 
   -------------------------------------------------------------------------------------------------------------------
 
-  
-  -------------------------------------------------------------------------------------------------------------------
-
-  procedure init( pi_client_id        varchar2
-                , pi_check_privilege  varchar2 )
-  as
-  begin
-
-    owa_util.mime_header ('application/json', true); 
-
-    flow_rest_auth.check_privilege( pi_client_id       => pi_client_id 
-                                  , pi_privilege_name  => pi_check_privilege );
-
-  end init;
-
-  -------------------------------------------------------------------------------------------------------------------
-
   function get_business_ref_object( pi_business_ref  varchar2 )
     return json_object_t
   as
@@ -173,8 +156,8 @@ as
 
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -197,19 +180,19 @@ as
 
     po_forward_location := get_path( pi_path_endpoint => flow_rest_constants.c_path_processes
                                    , pi_object_id     => l_prcs_id );
-    
+
+    flow_rest.final;    
     commit;
 
     exception 
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
       when others then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
-
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => null
+                                     , pi_payload_attr_name  => null
+                                     , po_status_code        => po_status_code );
+      
   end processes_post;                       
 
   -------------------------------------------------------------------------------------------------------------------
@@ -223,8 +206,8 @@ as
     l_item_object      json_object_t;   
   begin
     
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
 
     flow_rest.verify_process_exists( pi_prcs_id  => pi_prcs_id );
@@ -237,33 +220,23 @@ as
 
     
     
-    flow_rest.send_response_success( pi_success_message => 'status updated' 
+    flow_rest_response.send_success( pi_success_message => 'status updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_process
                                                                            , pi_object_id    => pi_prcs_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
+    flow_rest.final;    
     commit;
 
     exception 
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when flow_rest_constants.e_attribute_not_found then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Attribute not found'
-                                     , pi_payload     => l_item_object
-                                     , pi_payload_attr_name => 'item'
-                                     , po_status_code       => po_status_code );
-      when flow_rest_constants.e_process_unknown_status then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Status unknown' 
-                                     , po_status_code => po_status_code );
       when others then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end processes_start_post;
 
@@ -279,8 +252,8 @@ as
     l_item_object      json_object_t;   
   begin
     
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     if pi_payload is null then 
       l_item_object := new json_object_t();
@@ -299,33 +272,23 @@ as
 
     
     
-    flow_rest.send_response_success( pi_success_message => 'status updated' 
+    flow_rest_response.send_success( pi_success_message => 'status updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_process
                                                                            , pi_object_id    => pi_prcs_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
+    flow_rest.final;    
     commit;
 
     exception 
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when flow_rest_constants.e_attribute_not_found then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Attribute not found'
-                                     , pi_payload     => pi_payload
-                                     , pi_payload_attr_name => 'item'
-                                     , po_status_code       => po_status_code );
-      when flow_rest_constants.e_process_unknown_status then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Status unknown' 
-                                     , po_status_code => po_status_code );
       when others then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end processes_reset_post;
 
@@ -341,8 +304,8 @@ as
     l_item_object      json_object_t;   
   begin
     
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     if pi_payload is null then 
       l_item_object := new json_object_t();
@@ -359,33 +322,23 @@ as
     flow_rest.process_status_update( pi_prcs_id  => pi_prcs_id
                                    , pi_payload  => l_item_object );
 
-    flow_rest.send_response_success( pi_success_message => 'status updated' 
+    flow_rest_response.send_success( pi_success_message => 'status updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_process
                                                                            , pi_object_id    => pi_prcs_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
+    flow_rest.final;    
     commit;
 
     exception 
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when flow_rest_constants.e_attribute_not_found then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Attribute not found'
-                                     , pi_payload     => pi_payload
-                                     , pi_payload_attr_name => 'item'
-                                     , po_status_code       => po_status_code );
-      when flow_rest_constants.e_process_unknown_status then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Status unknown' 
-                                     , po_status_code => po_status_code );
       when others then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end processes_terminate_post;
 
@@ -401,8 +354,8 @@ as
     l_item_object      json_object_t;   
   begin
     
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -413,34 +366,23 @@ as
     flow_rest.process_status_update( pi_prcs_id  => pi_prcs_id
                                    , pi_payload  => l_item_object );
 
-    flow_rest.send_response_success( pi_success_message => 'status updated' 
+    flow_rest_response.send_success( pi_success_message => 'status updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_process
                                                                            , pi_object_id    => pi_prcs_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
+    flow_rest.final;    
     commit;
 
     exception 
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when flow_rest_constants.e_attribute_not_found then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Attribute not found'
-                                     , pi_payload     => pi_payload
-                                     , pi_payload_attr_name => 'item'
-                                     , po_status_code       => po_status_code );
-      when flow_rest_constants.e_process_unknown_status then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => 'Status unknown' 
-                                     , po_status_code => po_status_code );
       when others then 
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
-
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
   end processes_put;
 
   -------------------------------------------------------------------------------------------------------------------
@@ -454,8 +396,8 @@ as
     l_item_object          json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_admin );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_admin );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -466,20 +408,20 @@ as
     flow_api_pkg.flow_delete( p_process_id => pi_prcs_id
                             , p_comment    => l_item_object.get_string('comment') );
 
-    flow_rest.send_response_success( pi_success_message => 'process deleted' 
+    flow_rest_response.send_success( pi_success_message => 'process deleted' 
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end processes_delete;    
 
@@ -495,8 +437,8 @@ as
     l_item_object      json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -506,23 +448,23 @@ as
                          , pi_payload  => l_item_object );
 
                         
-    flow_rest.send_response_success( pi_success_message => 'step updated' 
+    flow_rest_response.send_success( pi_success_message => 'step updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
                                                                            , pi_object_id    => pi_sbfl_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end steps_put;
   
@@ -538,8 +480,8 @@ as
     l_item_object      json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -551,23 +493,23 @@ as
                          , pi_payload  => l_item_object );
 
                         
-    flow_rest.send_response_success( pi_success_message => 'step updated' 
+    flow_rest_response.send_success( pi_success_message => 'step updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
                                                                            , pi_object_id    => pi_sbfl_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end steps_start_post;                               
 
@@ -583,8 +525,8 @@ as
     l_item_object      json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -596,23 +538,23 @@ as
                          , pi_payload  => l_item_object );
 
                         
-    flow_rest.send_response_success( pi_success_message => 'step updated' 
+    flow_rest_response.send_success( pi_success_message => 'step updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
                                                                            , pi_object_id    => pi_sbfl_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end steps_reserve_post;                          
 
@@ -628,8 +570,8 @@ as
     l_item_object      json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -641,23 +583,23 @@ as
                          , pi_payload  => l_item_object );
 
                         
-    flow_rest.send_response_success( pi_success_message => 'step updated' 
+    flow_rest_response.send_success( pi_success_message => 'step updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
                                                                            , pi_object_id    => pi_sbfl_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end steps_release_post;
 
@@ -673,8 +615,8 @@ as
     l_item_object      json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -686,23 +628,23 @@ as
                          , pi_payload  => l_item_object );
 
                         
-    flow_rest.send_response_success( pi_success_message => 'step updated' 
+    flow_rest_response.send_success( pi_success_message => 'step updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
                                                                            , pi_object_id    => pi_sbfl_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end steps_complete_post;
 
@@ -718,8 +660,8 @@ as
     l_item_object      json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -731,23 +673,23 @@ as
                          , pi_payload  => l_item_object );
 
                         
-    flow_rest.send_response_success( pi_success_message => 'step updated' 
+    flow_rest_response.send_success( pi_success_message => 'step updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
                                                                            , pi_object_id    => pi_sbfl_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end steps_restart_post;
 
@@ -763,8 +705,8 @@ as
     l_item_object      json_object_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -776,23 +718,23 @@ as
                          , pi_payload  => l_item_object );
 
                         
-    flow_rest.send_response_success( pi_success_message => 'step updated' 
+    flow_rest_response.send_success( pi_success_message => 'step updated' 
                                    , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
                                                                            , pi_object_id    => pi_sbfl_id )
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_item_object
+                                     , pi_payload_attr_name  => 'item'
+                                     , po_status_code        => po_status_code );
 
   end steps_reschedule_timer_post;                                    
 
@@ -809,8 +751,8 @@ as
 
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload       => pi_payload 
                                         , pi_array_allowed => true 
@@ -821,24 +763,22 @@ as
                                  , pi_add_error_msg  => true );
 
 
-    flow_rest.send_response_success( pi_success_message   => 'process variables updated' 
+    flow_rest_response.send_success( pi_success_message   => 'process variables updated' 
                                    , pi_payload           => l_prov_array
                                    , pi_payload_attr_name => 'items'
                                    , po_status_code       => po_status_code );
 
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , pi_payload     => l_prov_array
-                                     , pi_payload_attr_name => 'items'
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_prov_array
+                                     , pi_payload_attr_name  => 'items'
+                                     , po_status_code        => po_status_code );
 
   end process_vars_put;    
 
@@ -853,8 +793,8 @@ as
     l_prov_array   json_array_t;
   begin
 
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_admin );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_admin );
 
     flow_rest.verify_and_prepare_payload( pi_payload         => pi_payload 
                                         , pi_array_allowed   => false 
@@ -866,23 +806,21 @@ as
                                  , pio_prov_arr  => l_prov_array
                                  , pi_add_error_msg  => true );
 
-    flow_rest.send_response_success( pi_success_message   => 'process variables deleted' 
+    flow_rest_response.send_success( pi_success_message   => 'process variables deleted' 
                                    , pi_payload           => l_prov_array
                                    , pi_payload_attr_name => 'items'
                                    , po_status_code       => po_status_code );
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , pi_payload     => l_prov_array
-                                     , pi_payload_attr_name => 'items'
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_prov_array
+                                     , pi_payload_attr_name  => 'items'
+                                     , po_status_code        => po_status_code );
 
   end process_vars_delete;    
 
@@ -898,8 +836,8 @@ as
     l_msg_array json_array_t;
   begin
     
-    init( pi_client_id        => pi_current_user
-        , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
+    flow_rest.init( pi_client_id        => pi_current_user
+                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload         => pi_payload 
                                         , pi_array_allowed   => true 
@@ -908,23 +846,21 @@ as
     flow_rest.messages_update( pi_message_name  => pi_message_name
                              , pi_msg_arr       => l_msg_array );
 
-    flow_rest.send_response_success( pi_success_message   => 'message subscription updated' 
+    flow_rest_response.send_success( pi_success_message   => 'message subscription updated' 
                                    , pi_payload           => l_msg_array
                                    , pi_payload_attr_name => 'items'
                                    , po_status_code       => po_status_code );
+    flow_rest.final;    
     commit;
 
-    exception
-      when flow_rest_constants.e_privilege_not_granted then
-        rollback;
-        po_status_code := 401;
-      when others then
-        rollback;
-        flow_rest.send_response_error( pi_sqlerrm     => SQLERRM 
-                                     , pi_stacktrace  => dbms_utility.format_error_backtrace
-                                     , pi_payload     => l_msg_array
-                                     , pi_payload_attr_name => 'items'
-                                     , po_status_code => po_status_code );
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_msg_array
+                                     , pi_payload_attr_name  => 'items'
+                                     , po_status_code        => po_status_code );
 
   end messages_put;      
 
