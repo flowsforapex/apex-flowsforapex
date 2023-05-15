@@ -1,3 +1,4 @@
+create or replace package body flow_process_vars as
 /* 
 -- Flows for APEX - flow_process_vars.pkb
 -- 
@@ -8,9 +9,6 @@
 -- Edited  April 2022 - Richard Allen (Oracle)
 --
 */
-create or replace package body flow_process_vars
-as
-
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
@@ -26,9 +24,11 @@ procedure set_var
 )
 is 
   l_current     flow_subflows.sbfl_current%type;
+  e_bad_scope   exception;
 begin
   -- if scope is not 0, validate
-  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if pi_scope = 0 
+  or  flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 1
     flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
@@ -36,7 +36,18 @@ begin
       , pi_vc2_value    => pi_vc2_value
       , pi_scope        => pi_scope
       );
+  else
+    raise e_bad_scope;
   end if;
+exception
+  when e_bad_scope then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_message_key => 'var-bad-scope'
+      , p0 => pi_scope
+      , p1 => pi_var_name 
+      );
+      -- $F4AMESSAGE 'var-bad-scope' || 'Invalid scope (%0) supplied for process variable %1.'  
 end set_var;
 
 -- signature 1b - set varchar2 process variable using subflow_id for scope
@@ -91,9 +102,11 @@ procedure set_var
 )
 is 
   l_current     flow_subflows.sbfl_current%type;
+  e_bad_scope   exception;
 begin
   -- if scope is not 0, validate
-  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if pi_scope = 0 
+  or  flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 2
     flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
@@ -101,7 +114,18 @@ begin
       , pi_num_value    => pi_num_value
       , pi_scope        => pi_scope
       );
+  else
+    raise e_bad_scope;
   end if;
+exception
+  when e_bad_scope then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_message_key => 'var-bad-scope'
+      , p0 => pi_scope
+      , p1 => pi_var_name 
+      );
+      -- $F4AMESSAGE 'var-bad-scope' || 'Invalid scope (%0) supplied for process variable %1.'  
 end set_var;
 
 -- signature 2b - set number process variable using subflow_id for scope
@@ -156,9 +180,10 @@ procedure set_var
 )
 is 
   l_current     flow_subflows.sbfl_current%type;
+  e_bad_scope   exception;
 begin
-  -- if scope is not 0, validate
-  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if pi_scope = 0 
+  or  flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 3
     flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
@@ -166,7 +191,18 @@ begin
       , pi_date_value   => pi_date_value
       , pi_scope        => pi_scope
       );
+  else
+    raise e_bad_scope;
   end if;
+exception
+  when e_bad_scope then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_message_key => 'var-bad-scope'
+      , p0 => pi_scope
+      , p1 => pi_var_name 
+      );
+      -- $F4AMESSAGE 'var-bad-scope' || 'Invalid scope (%0) supplied for process variable %1.'  
 end set_var;
 
 -- signature 3b - set date process variable using subflow_id for scope
@@ -221,9 +257,11 @@ procedure set_var
 )
 is 
   l_current     flow_subflows.sbfl_current%type;
+  e_bad_scope   exception;
 begin
   -- if scope is not 0, validate
-  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if pi_scope = 0 
+  or  flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 4
     flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
@@ -231,7 +269,18 @@ begin
       , pi_clob_value   => pi_clob_value
       , pi_scope        => pi_scope
       );
+  else
+    raise e_bad_scope;
   end if;
+exception
+  when e_bad_scope then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_message_key => 'var-bad-scope'
+      , p0 => pi_scope
+      , p1 => pi_var_name 
+      );
+      -- $F4AMESSAGE 'var-bad-scope' || 'Invalid scope (%0) supplied for process variable %1.'  
 end set_var;
 
 -- signature 4b - set CLOB process variable using subflow_id for scope
@@ -286,9 +335,10 @@ procedure set_var
 )
 is 
   l_current     flow_subflows.sbfl_current%type;
+  e_bad_scope   exception;
 begin
-  -- if scope is not 0, validate
-  if flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+  if pi_scope = 0 
+  or  flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
     -- call internal set_var signature 3
     flow_proc_vars_int.set_var
       ( pi_prcs_id      => pi_prcs_id
@@ -296,7 +346,18 @@ begin
       , pi_tstz_value   => pi_tstz_value
       , pi_scope        => pi_scope
       );
+  else
+    raise e_bad_scope;
   end if;
+exception
+  when e_bad_scope then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_message_key => 'var-bad-scope'
+      , p0 => pi_scope
+      , p1 => pi_var_name 
+      );
+      -- $F4AMESSAGE 'var-bad-scope' || 'Invalid scope (%0) supplied for process variable %1.'  
 end set_var;
 
 -- signature 5b - set timestamp process variable using subflow_id for scope
@@ -395,6 +456,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_vc2;
 
 -- get_var_num:  number type - signature 1 - scope (or no scope) supplied
@@ -449,6 +511,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_num;
 
 -- get_var_date: date type - signature 1 - scope (or no scope) supplied
@@ -503,6 +566,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_date;
 
 -- get_var_CLOB:  CLOB type - signature 1 - scope (or no scope) supplied
@@ -557,6 +621,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_clob;
 
 -- get_var_date: timestamp type - signature 1 - scope (or no scope) supplied
@@ -611,6 +676,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_tstz;
 
 -- get type of a variable - signature 1 - with scope including default scope
@@ -665,6 +731,7 @@ exception
       , p1 => pi_prcs_id
       );
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
 end get_var_type;
 
 -- delete a variable - signature 1 - with scope including default scope

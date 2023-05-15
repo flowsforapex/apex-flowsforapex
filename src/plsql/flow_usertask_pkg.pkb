@@ -59,16 +59,13 @@ as
         on objt.objt_id = pi_objt_id
     ;
 
-    -- itemValues will run through substitution
-    -- other attributes not (yet?)
-    flow_proc_vars_int.do_substitution
-    ( 
-      pi_prcs_id  => pi_prcs_id
-    , pi_sbfl_id  => pi_sbfl_id
-    , pi_step_key => pi_step_key
-    , pio_string  => l_values 
-    , pi_scope    => pi_scope
-    );
+    -- substitution for all attributes (was values only pre-23.1)
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_application );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_page );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_request );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_clear_cache );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_items );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_values );
 
     return
       apex_page.get_url

@@ -259,6 +259,10 @@ begin
     values ( 'settings-procvar-no-prcs', c_load_lang, q'[Settings cannot specify Process Variable without a Process ID.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'msgflow-endpoint-not-supported', c_load_lang, q'[MessageFlow Endpoint specified ( %0 ) is not supported.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var-bad-scope', c_load_lang, q'[Invalid scope (%0) supplied for process variable.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var-get-error', c_load_lang, q'[Unable to get value of process variable %0.  See instance logs for details.]' );
 
   commit;
 end;

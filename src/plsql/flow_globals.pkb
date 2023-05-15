@@ -17,7 +17,7 @@ as
   -- g_error_on_step starts false when every step is processed but is set true if an error
   -- occurs in the engine during processing.  It is then used to determine whether to 
   -- commit or rollback the engine transaction at the end of step processing
-  g_is_recursive_step boolean;
+  g_is_recursive_step boolean := false;
   -- g_recursive_step is set to false for steps that are being performed by the user, and true
   -- for subsequent recursive steps that are performed by the engine (such as gateway steps, scriptTasks, etc.)
 
