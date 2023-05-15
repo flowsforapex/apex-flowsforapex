@@ -1742,7 +1742,6 @@ as
   , pi_logging_level             in flow_configuration.cfig_value%type
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_logging_retain_logs       in flow_configuration.cfig_value%type
-  , pi_logging_bpmn_location     in flow_configuration.cfig_value%type
   , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
   , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
   )
@@ -1752,7 +1751,6 @@ as
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level             , p_value => pi_logging_level);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid       , p_value => pi_logging_hide_userid);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs       , p_value => pi_logging_retain_logs);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_location     , p_value => pi_logging_bpmn_location);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd , p_value => pi_logging_message_flow_recd);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow   , p_value => pi_logging_retain_msg_flow);
 
@@ -1761,12 +1759,10 @@ as
 
   procedure set_archiving_settings(
     pi_archiving_enabled  in flow_configuration.cfig_value%type
-  , pi_archiving_location in flow_configuration.cfig_value%type
   )
   as
   begin
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled  , p_value => pi_archiving_enabled);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_location , p_value => pi_archiving_location);
 
   end set_archiving_settings;
 

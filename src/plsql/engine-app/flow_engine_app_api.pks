@@ -249,14 +249,12 @@ as
   , pi_logging_level             in flow_configuration.cfig_value%type
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_logging_retain_logs       in flow_configuration.cfig_value%type
-  , pi_logging_bpmn_location     in flow_configuration.cfig_value%type
   , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
   , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
   );
 
   procedure set_archiving_settings(
     pi_archiving_enabled  in flow_configuration.cfig_value%type
-  , pi_archiving_location in flow_configuration.cfig_value%type
   );
 
   procedure set_statictis_settings(
