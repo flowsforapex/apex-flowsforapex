@@ -142,6 +142,12 @@ as
     then
       -- this is already JSON, better store differently
       po_json_element := sys.json_object_t.parse( replace( replace( pi_value, chr(38)||'amp;', chr(38) ), chr(10) ) );
+    
+    elsif po_key = 'priority'
+    then
+      -- if the attribute priority ends up here it is the pre 23.1 way
+      -- we don't touch the diagram but will store the new definition in objt_attributes
+      po_json_element := sys.json_object_t.parse( '{ "expressionType":"plsqlRawExpression","expression":["' || pi_value || '"]}' );
     else
       po_json_element := null;
     end if; 
