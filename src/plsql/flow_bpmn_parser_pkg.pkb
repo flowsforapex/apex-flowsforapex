@@ -10,6 +10,7 @@ as
 -- Modified   2022-08-10   Moritz Klein (MT AG)
 -- Modified   2023-03-10   Moritz Klein (MT GmbH)
 -- Modified   2023-04-12   Moritz Klein (MT GmbH)
+-- Modified   2023-05-16   Moritz Klein (MT GmbH)
 --
 */
 
@@ -66,7 +67,10 @@ as
 
     if not g_objects.exists( pi_objt_bpmn_id ) then
       register_object( pi_objt_bpmn_id => pi_objt_bpmn_id );
-      g_objects(pi_objt_bpmn_id).objt_attributes := sys.json_object_t();
+    end if;
+
+    if g_objects(pi_objt_bpmn_id).objt_attributes is null then
+            g_objects(pi_objt_bpmn_id).objt_attributes := sys.json_object_t();
     end if;
 
     flow_parser_util.property_to_json
