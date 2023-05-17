@@ -686,5 +686,19 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A22a - UserTask - Settings Substitution_0.bpmn"
-    }
+    },
+    {
+        "dgrm_name": "A23a - Custom Extensions",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A23a - Custom Extensions_0.bpmn"
+      },
+      {
+        "dgrm_name": "A23b - Custom Extensions - In Lanesets",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A23b - Custom Extensions - In Lanesets_0.bpmn"
+      }
 ]
