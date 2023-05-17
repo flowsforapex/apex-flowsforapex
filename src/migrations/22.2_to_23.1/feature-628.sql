@@ -2,10 +2,11 @@ PROMPT >> Feature 628 - Adds Logging to Parser
 
 create table flow_parser_log 
 (
-  plog_id         number generated always as identity increment by 1 start with 1 not null 
-, plog_dgrm_id    number not null 
-, plog_log_time   timestamp not null 
-, plog_parse_step varchar2(128 char) 
+  plog_id         number generated always as identity increment by 1 start with 1 not null
+, plog_dgrm_id    number not null
+, plog_log_time   timestamp not null
+, plog_bpmn_id    varchar2( 50 char)
+, plog_parse_step varchar2(128 char)
 , plog_payload    clob
 );
 
