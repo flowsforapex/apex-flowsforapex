@@ -153,5 +153,42 @@ as
     end if; 
   end property_to_json;
 
+  function is_log_enabled
+    return boolean
+  as
+    l_value flow_configuration.cfig_value%type;
+  begin
+
+    select cfig_value
+      into l_value
+      from flow_configuration
+     where cfig_key = 'parser_log_enabled'
+    ;
+
+    return ( l_value = flow_constants_pkg.gc_vcbool_true );
+
+  exception
+    when no_data_found then
+      return false;
+  end is_log_enabled;
+
+  procedure log
+  (
+    pi_plog_dgrm_id    in flow_parser_log.plog_dgrm_id%type
+  , pi_plog_bpmn_id    in flow_parser_log.plog_bpmn_id%type
+  , pi_plog_parse_step in flow_parser_log.plog_parse_step%type
+  , pi_plog_payload    in flow_parser_log.plog_payload%type
+  )
+  as
+    pragma autonomous_transaction;
+  begin
+
+    insert into flow_parser_log ( plog_dgrm_id, plog_bpmn_id, plog_parse_step, plog_payload, plog_log_time )
+      values ( pi_plog_dgrm_id, pi_plog_bpmn_id, pi_plog_parse_step, pi_plog_payload, systimestamp )
+    ;
+    commit;
+
+  end log;
+
 end flow_parser_util;
 /
