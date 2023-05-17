@@ -640,3 +640,29 @@ alter table flow_stats_history
 alter table flow_stats_history
   add constraint flow_sths_type_ck
     check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER', 'YEAR') );
+
+create table flow_parser_log 
+(
+  plog_id number generated always as identity increment by 1 start with 1 not null 
+, plog_dgrm_id number not null 
+, plog_log_time timestamp not null 
+, plog_parse_step varchar2(128 char) 
+, plog_payload clob 
+, constraint flow_plog_pk primary key 
+  (
+    plog_id 
+  )
+  using index 
+  (
+      create unique index flow_parser_log_pk on flow_parser_log (plog_id asc) 
+  )
+  enable 
+);
+
+alter table flow_parser_log
+  add constraint flow_plog_pk primary key (plog_id)
+;
+
+create index flow_plog_ix1
+  on flow_parser_log( plog_dgrm_id, plog_log_time )
+;

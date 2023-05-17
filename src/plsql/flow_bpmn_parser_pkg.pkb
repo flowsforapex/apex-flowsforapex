@@ -14,6 +14,9 @@ as
 --
 */
 
+  -- Configuration Settings
+  g_log_enabled    boolean := false;
+
   -- Variables to hold data during parse run
   g_dgrm_id        flow_diagrams.dgrm_id%type;
   g_objects        flow_parser_util.t_objt_tab;
@@ -145,7 +148,7 @@ as
   , pi_conn_tag_name    in flow_connections.conn_tag_name%type
   , pi_conn_origin      in flow_connections.conn_origin%type
   , pi_conn_sequence    in flow_connections.conn_sequence%type
-  , pi_conn_attributes  in sys.json_object_t
+  , pi_conn_attributes  in sys.json_object_t default null
   )
   as
     l_conn_rec flow_parser_util.t_conn_rec;
@@ -162,6 +165,53 @@ as
       g_connections( pi_conn_bpmn_id ) := l_conn_rec;
     end if;
   end register_connection;
+
+  procedure register_connection_attribute
+  (
+    pi_conn_bpmn_id   in flow_types_pkg.t_bpmn_id
+  , pi_attribute_name in flow_types_pkg.t_bpmn_attributes_key
+  , pi_value          in clob
+  )
+  as
+    l_namespace        flow_types_pkg.t_vc200;
+    l_attribute        flow_types_pkg.t_vc200;
+    l_namespace_object sys.json_object_t;
+    l_json_element     sys.json_object_t;
+  begin
+
+    if g_connections(pi_conn_bpmn_id).conn_attributes is null then
+      g_connections(pi_conn_bpmn_id).conn_attributes := sys.json_object_t();
+    end if;
+
+    flow_parser_util.property_to_json
+    (
+      pi_property_name => pi_attribute_name
+    , pi_value         => pi_value
+    , po_namespace     => l_namespace
+    , po_key           => l_attribute
+    , po_json_element  => l_json_element
+    );
+
+    if l_namespace is not null then
+      flow_parser_util.guarantee_named_object
+      (
+        pio_attributes => g_connections(pi_conn_bpmn_id).conn_attributes
+      , pi_key         => l_namespace
+      );
+      l_namespace_object := g_connections(pi_conn_bpmn_id).conn_attributes.get_object( l_namespace );
+    else
+      l_namespace_object := g_connections(pi_conn_bpmn_id).conn_attributes;
+    end if;
+
+    if l_json_element is not null then
+      l_namespace_object.put( l_attribute, l_json_element );
+    elsif pi_value in ( flow_constants_pkg.gc_vcbool_true, flow_constants_pkg.gc_vcbool_false ) then
+      l_namespace_object.put( l_attribute, (pi_value = flow_constants_pkg.gc_vcbool_true) );
+    else
+      l_namespace_object.put( l_attribute, pi_value );
+    end if;
+
+  end register_connection_attribute;
 
   procedure insert_object
   (
@@ -802,6 +852,16 @@ as
   )
   as
   begin
+
+    if g_log_enabled then
+      flow_parser_util.log(
+        pi_plog_dgrm_id => g_dgrm_id
+      , pi_plog_bpmn_id => pi_bpmn_id
+      , pi_plog_parse_step => 'parse_extension_elements'
+      , pi_plog_payload => pi_extension_xml.getclobval
+      );
+    end if;
+    
     for rec in (
                 select replace(extension_type, 'apex:') as extension_type
                      , extension_type as orig_extension_type
@@ -1189,6 +1249,17 @@ as
     l_detail_value       flow_types_pkg.t_bpmn_attribute_vc2;
   begin
 
+    if g_log_enabled then
+      flow_parser_util.log
+      (
+        pi_plog_dgrm_id    => g_dgrm_id
+      , pi_plog_bpmn_id    => pi_objt_bpmn_id
+      , pi_plog_parse_step => 'parse_child_elements'
+      , pi_plog_payload    => pi_xml.getclobval
+      );
+    end if;
+
+
     for rec in (
                 select children.child_type
                      , children.child_id
@@ -1224,95 +1295,104 @@ as
           , pi_value           => rec.child_value
           );
         end if;
-      else
-        -- register the child which has details
-        case rec.child_type
-          when flow_constants_pkg.gc_bpmn_timer_event_definition then
-          -- if custom (Flows) type then all processing is done by using the extension element
-            if rec.extension_elements is not null then
-              parse_extension_elements
-              ( 
-                pi_bpmn_id       => pi_objt_bpmn_id
-              , pi_extension_xml => rec.extension_elements
-              );
-            -- if standard type just register value inside tag
-            else
-              select details.detail_type
-                   , details.detail_id
-                   , details.detail_value
-                into l_detail_type
-                   , l_detail_id
-                   , l_detail_value
-                from xmltable
-                     (
-                       xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                     , '*' passing rec.child_details
-                       columns
-                         detail_type        varchar2(50 char)    path 'name()'
-                       , detail_id          varchar2(50 char)    path '@id'
-                       , detail_value       varchar2(4000 char)  path 'text()'
-                     ) details
-                ;
-  
-              -- register the timer type
-              register_object_attribute
-              (
-                pi_objt_bpmn_id   => pi_objt_bpmn_id
-              , pi_attribute_name => flow_constants_pkg.gc_timer_type_key
-              , pi_value          => l_detail_type
-              );
-  
-              register_object_attribute
-              (
-                pi_objt_bpmn_id   => pi_objt_bpmn_id
-              , pi_attribute_name => flow_constants_pkg.gc_timer_def_key
-              , pi_value          => l_detail_value
-              );
-            end if;
-          -- custom processStatus attribute on terminateEndEvents
-          when flow_constants_pkg.gc_bpmn_terminate_event_definition then
+      end if;
+      -- register the child which has details
+      case rec.child_type
+        when flow_constants_pkg.gc_bpmn_timer_event_definition then
+        -- if custom (Flows) type then all processing is done by using the extension element
+          if rec.extension_elements is not null then
+            parse_extension_elements
+            ( 
+              pi_bpmn_id       => pi_objt_bpmn_id
+            , pi_extension_xml => rec.extension_elements
+            );
+          -- if standard type just register value inside tag
+          else
             select details.detail_type
+                 , details.detail_id
                  , details.detail_value
               into l_detail_type
+                 , l_detail_id
                  , l_detail_value
               from xmltable
                    (
                      xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                    , '*' passing rec.child_details
                      columns
-                       detail_type  varchar2(50 char) path   'name()'
-                     , detail_value varchar2(4000 char) path 'text()'
+                       detail_type        varchar2(50 char)    path 'name()'
+                     , detail_id          varchar2(50 char)    path '@id'
+                     , detail_value       varchar2(4000 char)  path 'text()'
                    ) details
             ;
-            if l_detail_type = flow_constants_pkg.gc_apex_process_status then
-              register_object_attribute
-              (
-                pi_objt_bpmn_id   => pi_objt_bpmn_id
-              , pi_attribute_name => flow_constants_pkg.gc_terminate_result
-              , pi_value          => l_detail_value
-              );
-            end if;
-          when flow_constants_pkg.gc_bpmn_message_event_definition then
-            if rec.message_ref is not null then
-              register_object_attribute
-              (
-                pi_objt_bpmn_id   => pi_objt_bpmn_id
-              , pi_attribute_name => 'messageRef'
-              , pi_value          => rec.message_ref
-              );
-            end if;
-            if rec.extension_elements is not null then
-              parse_extension_elements
-              ( 
-                pi_bpmn_id       => pi_objt_bpmn_id
-              , pi_extension_xml => rec.extension_elements
-              );
-            end if;
-          else
-            null;
-	      end case;
 
-      end if;
+            -- register the timer type
+            register_object_attribute
+            (
+              pi_objt_bpmn_id   => pi_objt_bpmn_id
+            , pi_attribute_name => flow_constants_pkg.gc_timer_type_key
+            , pi_value          => l_detail_type
+            );
+
+            register_object_attribute
+            (
+              pi_objt_bpmn_id   => pi_objt_bpmn_id
+            , pi_attribute_name => flow_constants_pkg.gc_timer_def_key
+            , pi_value          => l_detail_value
+            );
+          end if;
+        -- custom processStatus attribute on terminateEndEvents
+        when flow_constants_pkg.gc_bpmn_terminate_event_definition then
+          select details.detail_type
+               , details.detail_value
+            into l_detail_type
+               , l_detail_value
+            from xmltable
+                  (
+                    xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                  , '*' passing rec.child_details
+                    columns
+                      detail_type  varchar2(50 char) path   'name()'
+                    , detail_value varchar2(4000 char) path 'text()'
+                  ) details
+          ;
+          if l_detail_type = flow_constants_pkg.gc_apex_process_status then
+            register_object_attribute
+            (
+              pi_objt_bpmn_id   => pi_objt_bpmn_id
+            , pi_attribute_name => flow_constants_pkg.gc_terminate_result
+            , pi_value          => l_detail_value
+            );
+          end if;
+        when flow_constants_pkg.gc_bpmn_message_event_definition then
+
+          if g_log_enabled then
+            flow_parser_util.log
+            (
+              pi_plog_dgrm_id    => g_dgrm_id
+            , pi_plog_bpmn_id    => pi_objt_bpmn_id
+            , pi_plog_parse_step => 'when ' || flow_constants_pkg.gc_bpmn_message_event_definition
+            , pi_plog_payload    => rec.extension_elements.getclobval
+            );
+          end if;
+
+          if rec.message_ref is not null then
+            register_object_attribute
+            (
+              pi_objt_bpmn_id   => pi_objt_bpmn_id
+            , pi_attribute_name => 'messageRef'
+            , pi_value          => rec.message_ref
+            );
+          end if;
+          if rec.extension_elements is not null then
+            parse_extension_elements
+            ( 
+              pi_bpmn_id       => pi_objt_bpmn_id
+            , pi_extension_xml => rec.extension_elements
+            );
+          end if;
+        else
+          null;
+      end case;
 
     end loop;
 
@@ -1976,6 +2056,9 @@ as
     l_dgrm_content clob;
     l_has_changed boolean;
   begin
+    -- Check if logging is enabled
+    g_log_enabled := flow_parser_util.is_log_enabled;
+
     -- delete any existing parsed information before parsing again
     cleanup_parsing_tables;
 

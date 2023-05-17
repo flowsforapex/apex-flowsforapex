@@ -21,6 +21,7 @@ begin
   insert into flow_configuration (cfig_key, cfig_value) values ('default_username', 'FLOWS4APEX');
   insert into flow_configuration (cfig_key, cfig_value) values ('default_email_sender', '');
   insert into flow_configuration (cfig_key, cfig_value) values ('timer_max_cycles','1000');
+  insert into flow_configuration (cfig_key, cfig_value) values ( 'parser_log_enabled', 'false' );
   commit;
 end;
 /
