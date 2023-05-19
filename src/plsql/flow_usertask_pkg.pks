@@ -1,3 +1,4 @@
+create or replace package flow_usertask_pkg
 /* 
 -- Flows for APEX - flow_usertask_pkg.pks
 -- 
@@ -8,8 +9,6 @@
 -- Edited  13-Apr-2022 - Richard Allen (Oracle)
 --
 */
-
-create or replace package flow_usertask_pkg
   authid definer
 as
 

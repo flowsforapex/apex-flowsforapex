@@ -203,7 +203,33 @@ as
          and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
       ;
   end process_apex_page_task;
-      
+
+  function apex_task_pk_is_required
+  ( p_app_id          flow_types_pkg.t_bpmn_attribute_vc2
+  , p_task_static_id  flow_types_pkg.t_bpmn_attribute_vc2
+  ) return boolean
+  is
+    l_task_pk_required  boolean;
+    l_static_id            apex_appl_taskdefs.static_id%type;
+    l_actions_table_name   apex_appl_taskdefs.actions_table_name%type;
+    l_actions_sql_query    apex_appl_taskdefs.actions_sql_query%type;
+  begin
+    --
+    --  See if  the APEX Task needs a PK to be supplied. (for Actions Source Table or Actions Source Query)
+    --
+    select td.static_id
+         , td.actions_table_name
+         , td.actions_sql_query
+      into l_static_id
+         , l_actions_table_name
+         , l_actions_sql_query 
+      from apex_appl_taskdefs td
+     where td.application_id = p_app_id
+       and td.static_id      = p_task_static_id;
+  
+    return (l_actions_sql_query is not null) or (l_actions_table_name is not null);
+  end apex_task_pk_is_required;
+
 
   procedure process_apex_approval_task
   ( p_sbfl_info     in flow_subflows%rowtype
@@ -220,7 +246,10 @@ as
     l_parameters       flow_types_pkg.t_bpmn_attribute_vc2;
     l_business_ref     flow_types_pkg.t_bpmn_attribute_vc2;
     l_initiator        flow_types_pkg.t_bpmn_attribute_vc2;
-    l_priority         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority_setting flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority         flow_subflows.sbfl_priority%type;
+    l_due_on_setting   flow_types_pkg.t_bpmn_attribute_vc2; 
+    l_due_on           flow_subflows.sbfl_due_on%type;
     l_result_var       flow_types_pkg.t_bpmn_attribute_vc2;
     l_apex_task_id     number;
 
@@ -266,6 +295,7 @@ as
            , objt.objt_attributes."apex"."resultVariable"
            , objt.objt_attributes."apex"."initiator"  
            , objt.objt_attributes."apex"."priority"
+           , objt.objt_attributes."apex"."dueOn"
         into l_app_id
            , l_static_id
            , l_subject
@@ -273,7 +303,8 @@ as
            , l_business_ref
            , l_result_var
            , l_initiator
-           , l_priority
+           , l_priority_setting
+           , l_due_on_setting
         from flow_objects objt
        where objt.objt_bpmn_id = p_step_info.target_objt_ref
          and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
@@ -290,7 +321,17 @@ as
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_ref);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_priority);
+
+      l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
+                                               , pi_sbfl_id  => l_sbfl_id
+                                               , pi_expr     => l_priority_setting
+                                               , pi_scope    => l_scope
+                                               );
+      l_due_on :=   flow_settings.get_due_on   ( pi_prcs_id  => l_prcs_id
+                                               , pi_sbfl_id  => l_sbfl_id
+                                               , pi_expr     => l_due_on_setting
+                                               , pi_scope    => l_scope
+                                               );
       -- create parameters table
       for parameters in (
         select static_id
@@ -316,20 +357,34 @@ as
       end loop;
       -- check that priority is a valid priority 1-5 before passing
       begin
-        if l_priority not between 1 and 5 then
-          raise e_priority_invalid;
+        if l_priority is not null then
+          if l_priority not between 1 and 5 then
+            raise e_priority_invalid;
+          end if;
         end if;
       exception
         when value_error then
+          apex_debug.error
+          ( p_message => 'APEX Approval Task priority (%0) must be between 1 and 5'
+          , p0 => l_priority
+          );
           raise e_priority_invalid;
       end;
       -- check that business_ref is not null before passing (prevents "lost" tasks in APEX)
-      if coalesce(l_business_ref, flow_globals.business_ref) is null then
-        raise e_business_ref_null;
+      l_business_ref := coalesce(l_business_ref, flow_globals.business_ref);
+      if l_business_ref is null then
+        if apex_task_pk_is_required (p_app_id => l_app_id, p_task_static_id => l_static_id) then 
+          apex_debug.error
+          ( p_message => 'APEX Approval Task business ref is null'
+          , p0 => coalesce(l_business_ref, flow_globals.business_ref)
+          );
+          raise e_business_ref_null;
+        end if;
       end if;
 
       $IF not flow_apex_env.ver_le_21_2 $THEN     
-        -- create the task in APEX Approvals if after APEX v22.1
+        -- create the task in APEX Approvals if APEX >= v22.1
+        -- include due date if APEX >= 23.1
         begin
           l_apex_task_id := apex_approval.create_task
                          ( p_application_id     => l_app_id
@@ -339,16 +394,32 @@ as
                          , p_parameters         => l_task_parameters
                          , p_initiator          => l_initiator
                          , p_priority           => l_priority
+                         $IF not flow_apex_env.ver_le_22_2 $THEN
+                         , p_due_date           => l_due_on
+                         $END
                          );
           apex_debug.info 
           ( p_message => 'APEX Approval Task created - Approval Task Reference %0 created'
           , p0 => l_apex_task_id
           );  
 
+          -- v22.2 prompted for a return variable (l_return) but actually stored the result in a process variable 
+          -- named p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
+          -- for upwards compatibility for v23.1 and a few forward releases, if l_return is not specified
+          -- we will set l_return to p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
+          -- The origial decision to switch from an automatic name, based on bpmn_id||:task_id was maade to be consistent
+          -- with gateway variables, et al.   But including the ':' makes the results not bindable in a following gateway variable
+          -- expression - hence the switch to a named variable.
+          --
+
+          if l_result_var is null then
+            l_result_var := p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id;
+          end if;
+
           flow_proc_vars_int.set_var 
           ( pi_prcs_id      => l_prcs_id
           , pi_scope        => l_scope
-          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
+          , pi_var_name     => l_result_var
           , pi_num_value    => l_apex_task_id
           , pi_sbfl_id      => l_sbfl_id
           , pi_objt_bpmn_id => p_step_info.target_objt_ref

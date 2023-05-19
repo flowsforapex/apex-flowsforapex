@@ -88,6 +88,7 @@ create or replace package body test_021_messageFlow_basics as
   function run_messageflow_model
   ( p_prcs_name   in flow_processes.prcs_name%type
   , p_dgrm_id     in flow_diagrams.dgrm_id%type default g_dgrm_a21a_id
+  , p_test_id     in varchar2
   , p_path        in varchar2
   , p_role        in varchar2    -- 'send' or 'receive' (or 'send-manual' to skip after send tests)
   , p_has_payload in varchar2 default 'true'
@@ -126,10 +127,16 @@ create or replace package body test_021_messageFlow_basics as
          where p.prcs_id = l_prcs_id;
     ut.expect( l_actual ).to_equal( l_expected );
 
+    -- set proc var messageName with test-specific message name
+    flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
+                              , pi_var_name =>'messageName'
+                              , pi_vc2_value => 'MyMessage'||p_test_id
+                              , pi_scope => 0);
+
     -- check no existing process variables
 
     open l_expected for  
-      select 'messageName' as name, 'VARCHAR2' as type, 'MyMessage' as vc2
+      select 'messageName' as name, 'VARCHAR2' as type, 'MyMessage'||p_test_id as vc2
       from dual
       union
       select 'messageKey' as name, 'VARCHAR2' as type, 'keya21a' as vc2
@@ -182,10 +189,10 @@ create or replace package body test_021_messageFlow_basics as
       -- check if message subscription has been created
 
       open l_expected for
-        select l_prcs_id         as prcs_id
-             , 'MyMessage'       as message_name
-             , 'keya21a'         as message_key
-             , 'a21a'            as message_value
+        select l_prcs_id               as prcs_id
+             , 'MyMessage'||p_test_id  as message_name
+             , 'keya21a'               as message_key
+             , 'a21a'                  as message_value
              , case p_has_payload 
                when 'true' then 'returnPayload'  
                else ''  
@@ -222,11 +229,11 @@ create or replace package body test_021_messageFlow_basics as
       -- check if message subscription has been consumed
 
       open l_actual for
-        select msub_prcs_id      as prcs_id
-             , msub_message_name as message_name
-             , msub_key_name     as message_key
-             , msub_key_value    as message_value
-             , msub_payload_var  as payload_var   
+        select msub_prcs_id               as prcs_id
+             , msub_message_name          as message_name
+             , msub_key_name              as message_key
+             , msub_key_value             as message_value
+             , msub_payload_var           as payload_var   
           from flow_message_subscriptions
          where msub_prcs_id = p_rx_prcs_id;
       ut.expect(l_actual).to_be_empty;
@@ -270,6 +277,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A1'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -277,6 +285,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A1'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -305,6 +314,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A2'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -312,6 +322,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A2'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -339,6 +350,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A3'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -346,6 +358,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A3'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -373,6 +386,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A4'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -380,6 +394,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_a2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'A4'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -413,6 +428,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b1
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B1'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'false'
@@ -420,6 +436,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b2
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B1'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'false'
@@ -448,6 +465,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b1
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B2'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'false'
@@ -455,6 +473,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b2
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B2'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'false'
@@ -482,6 +501,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b1
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B3'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'false'
@@ -489,6 +509,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b2
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B3'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'false'
@@ -516,6 +537,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b1
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B4'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'false'
@@ -523,6 +545,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_b2
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'B4'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'false'
@@ -559,6 +582,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_c1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'C1'
                                        , p_path         => 'Send'
                                        , p_role         => 'send-manual'
                                        , p_has_payload  => 'true'
@@ -610,6 +634,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_c1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'C2'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send-manual'
                                        , p_has_payload  => 'true'
@@ -671,6 +696,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_d1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'D1'
                                        , p_path         => l_sending_path
                                        , p_role         => 'send-manual'
                                        , p_has_payload  => 'true'
@@ -709,6 +735,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_d2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'D1'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -772,6 +799,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_d1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'D2'
                                        , p_path         => l_sending_path
                                        , p_role         => 'send-manual'
                                        , p_has_payload  => 'true'
@@ -810,6 +838,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_d2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'D2'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -877,6 +906,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_e1
                                        , p_dgrm_id      => g_dgrm_a21c_id
+                                       , p_test_id      => 'E1'
                                        , p_path         => 'Send'
                                        , p_role         => 'send-manual'
                                        , p_has_payload  => 'false'
@@ -929,6 +959,7 @@ create or replace package body test_021_messageFlow_basics as
 
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_e1
                                        , p_dgrm_id      => g_dgrm_a21c_id
+                                       , p_test_id      => 'E2'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send-manual'
                                        , p_has_payload  => 'false'
@@ -984,6 +1015,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f1
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'F1'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'false'
@@ -991,6 +1023,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'F1'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -1019,6 +1052,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f1
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'F2'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'false'
@@ -1026,6 +1060,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f2
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'F2'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -1054,6 +1089,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'F3'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -1061,6 +1097,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f2
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'F3'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'false'
@@ -1080,7 +1117,7 @@ create or replace package body test_021_messageFlow_basics as
     flow_api_pkg.flow_delete(p_process_id  =>  l_prcs_tx,  p_comment  => 'Ran by utPLSQL as Test Suite 021');    
   end basic_receive_send_missing_payload;
 
-  -- test(F3 - ITE to ICE with missing Payload)
+  -- test(F4 - ITE to ICE with missing Payload)
   procedure basic_ICE_ITE_missing_payload
   is
     l_prcs_rx     flow_processes.prcs_id%type;
@@ -1089,6 +1126,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f1
                                        , p_dgrm_id      => g_dgrm_a21a_id
+                                       , p_test_id      => 'F4'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -1096,6 +1134,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_f2
                                        , p_dgrm_id      => g_dgrm_a21b_id
+                                       , p_test_id      => 'F4'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'false'
@@ -1131,6 +1170,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g1
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G1'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -1138,6 +1178,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g2
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G1'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -1166,6 +1207,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g1
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G2'
                                        , p_path         => 'Receive'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -1173,6 +1215,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g2
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G2'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -1200,6 +1243,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g1
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G3'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -1207,6 +1251,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g2
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G3'
                                        , p_path         => 'Send'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -1234,6 +1279,7 @@ create or replace package body test_021_messageFlow_basics as
   begin
     l_prcs_rx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g1
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G4'
                                        , p_path         => 'ICE'
                                        , p_role         => 'receive'
                                        , p_has_payload  => 'true'
@@ -1241,6 +1287,7 @@ create or replace package body test_021_messageFlow_basics as
                                        );
     l_prcs_tx := run_messageflow_model ( p_prcs_name    => g_test_prcs_name_g2
                                        , p_dgrm_id      => g_dgrm_a21d_id
+                                       , p_test_id      => 'G4'
                                        , p_path         => 'ITE'
                                        , p_role         => 'send'
                                        , p_has_payload  => 'true'
@@ -1429,6 +1476,7 @@ create or replace package body test_021_messageFlow_basics as
   procedure after_ebg_tester
   ( p_winning_path   flow_objects.objt_bpmn_id%type
   , p_do_timeout     boolean
+  , p_test_id        varchar2
   )
   is
     l_actual          sys_refcursor;
@@ -1461,6 +1509,14 @@ create or replace package body test_021_messageFlow_basics as
           from flow_processes p
          where p.prcs_id = l_prcs_id;
     ut.expect( l_actual ).to_equal( l_expected );
+
+    
+
+    -- set proc var messageName with test-specific message name
+    flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
+                              , pi_var_name =>'messageName'
+                              , pi_vc2_value => 'MyMessage'||p_test_id
+                              , pi_scope => 0);   
 
     -- check main subflows running
 
@@ -1524,25 +1580,25 @@ create or replace package body test_021_messageFlow_basics as
     -- check all subscriptions created
 
     open l_expected for
-      select l_prcs_id         as prcs_id
-           , 'MyMessage'       as message_name
-           , 'Processor'           as message_key
-           , 'Receive'         as message_value
-           , ''                as payload_var
+      select l_prcs_id              as prcs_id
+           , 'MyMessage'||p_test_id as message_name
+           , 'Processor'            as message_key
+           , 'Receive'              as message_value
+           , ''                     as payload_var
       from dual
       union
-      select l_prcs_id         as prcs_id
-           , 'MyMessage'       as message_name
-           , 'Processor'           as message_key
-           , 'ICEMessage1'         as message_value
-           , ''                as payload_var
+      select l_prcs_id              as prcs_id
+           , 'MyMessage'||p_test_id as message_name
+           , 'Processor'            as message_key
+           , 'ICEMessage1'          as message_value
+           , ''                     as payload_var
       from dual
       union
-      select l_prcs_id         as prcs_id
-           , 'MyMessage'       as message_name
-           , 'Processor'           as message_key
-           , 'ICEMessage2'         as message_value
-           , ''                as payload_var
+      select l_prcs_id              as prcs_id
+           , 'MyMessage'||p_test_id as message_name
+           , 'Processor'            as message_key
+           , 'ICEMessage2'          as message_value
+           , ''                     as payload_var
       from dual;      
     open l_actual for
       select msub_prcs_id      as prcs_id
@@ -1560,7 +1616,7 @@ create or replace package body test_021_messageFlow_basics as
       -- let the timer win
       dbms_session.sleep(15);
     else
-      flow_api_pkg.receive_message ( p_message_name => 'MyMessage' 
+      flow_api_pkg.receive_message ( p_message_name => 'MyMessage'||p_test_id 
                                    , p_key_name => 'Processor' 
                                    , p_key_value => p_winning_path
                                    );
@@ -1624,28 +1680,28 @@ create or replace package body test_021_messageFlow_basics as
   procedure afterEBG_receiveTask
   is
   begin
-    after_ebg_tester ( p_winning_path => 'Receive', p_do_timeout => false);
+    after_ebg_tester ( p_winning_path => 'Receive', p_do_timeout => false, p_test_id => 'I1');
   end afterEBG_receiveTask;
 
   -- test(I2 - Messageflow after EBG - MessageICE1 wins)
   procedure afterEBG_messageICE1
   is
   begin
-    after_ebg_tester ( p_winning_path => 'ICEMessage1', p_do_timeout => false);
+    after_ebg_tester ( p_winning_path => 'ICEMessage1', p_do_timeout => false, p_test_id => 'I2');
   end afterEBG_messageICE1;
 
   -- test(I3 - Messageflow after EBG - MessageICE2 wins)
   procedure afterEBG_messageICE2
   is
   begin
-    after_ebg_tester ( p_winning_path => 'ICEMessage2', p_do_timeout => false);
+    after_ebg_tester ( p_winning_path => 'ICEMessage2', p_do_timeout => false, p_test_id => 'I3');
   end afterEBG_messageICE2;
 
   -- test(I4 - Messageflow after EBG - Timer wins)
   procedure afterEBGtimer
   is
   begin
-    after_ebg_tester ( p_winning_path => 'ICETimer', p_do_timeout => true);
+    after_ebg_tester ( p_winning_path => 'ICETimer', p_do_timeout => true, p_test_id => 'I4');
   end afterEBGtimer;
 
 
