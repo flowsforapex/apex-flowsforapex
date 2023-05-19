@@ -854,11 +854,12 @@ as
   begin
 
     if g_log_enabled then
-      flow_parser_util.log(
-        pi_plog_dgrm_id => g_dgrm_id
-      , pi_plog_bpmn_id => pi_bpmn_id
+      flow_parser_util.log
+      (
+        pi_plog_dgrm_id    => g_dgrm_id
+      , pi_plog_bpmn_id    => pi_bpmn_id
       , pi_plog_parse_step => 'parse_extension_elements'
-      , pi_plog_payload => pi_extension_xml.getclobval
+      , pi_plog_payload    => pi_extension_xml
       );
     end if;
     
@@ -1255,7 +1256,7 @@ as
         pi_plog_dgrm_id    => g_dgrm_id
       , pi_plog_bpmn_id    => pi_objt_bpmn_id
       , pi_plog_parse_step => 'parse_child_elements'
-      , pi_plog_payload    => pi_xml.getclobval
+      , pi_plog_payload    => pi_xml
       );
     end if;
 
@@ -1307,7 +1308,17 @@ as
             , pi_extension_xml => rec.extension_elements
             );
           -- if standard type just register value inside tag
-          else
+          elsif rec.child_details is not null then
+            if g_log_enabled then
+              flow_parser_util.log
+              (
+                pi_plog_dgrm_id    => g_dgrm_id
+              , pi_plog_bpmn_id    => pi_objt_bpmn_id
+              , pi_plog_parse_step => 'parse_child_elements - not timer'
+              , pi_plog_payload    => rec.child_details
+              );
+            end if;
+
             select details.detail_type
                  , details.detail_id
                  , details.detail_value
@@ -1371,7 +1382,7 @@ as
               pi_plog_dgrm_id    => g_dgrm_id
             , pi_plog_bpmn_id    => pi_objt_bpmn_id
             , pi_plog_parse_step => 'when ' || flow_constants_pkg.gc_bpmn_message_event_definition
-            , pi_plog_payload    => rec.extension_elements.getclobval
+            , pi_plog_payload    => rec.extension_elements
             );
           end if;
 
