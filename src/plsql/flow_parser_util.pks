@@ -99,8 +99,22 @@ as
   , pi_plog_payload    in flow_parser_log.plog_payload%type
   );
 
+  procedure log
+  (
+    pi_plog_dgrm_id    in flow_parser_log.plog_dgrm_id%type
+  , pi_plog_bpmn_id    in flow_parser_log.plog_bpmn_id%type
+  , pi_plog_parse_step in flow_parser_log.plog_parse_step%type
+  , pi_plog_payload    in sys.xmltype
+  );
+
   function is_log_enabled
     return boolean
   ;
+
+  procedure clear_log
+  (
+    pi_plog_dgrm_id in flow_parser_log.plog_dgrm_id%type
+  );
+  
 end flow_parser_util;
 /
