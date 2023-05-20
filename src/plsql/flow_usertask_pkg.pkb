@@ -403,23 +403,10 @@ as
           , p0 => l_apex_task_id
           );  
 
-          -- v22.2 prompted for a return variable (l_return) but actually stored the result in a process variable 
-          -- named p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
-          -- for upwards compatibility for v23.1 and a few forward releases, if l_return is not specified
-          -- we will set l_return to p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
-          -- The origial decision to switch from an automatic name, based on bpmn_id||:task_id was maade to be consistent
-          -- with gateway variables, et al.   But including the ':' makes the results not bindable in a following gateway variable
-          -- expression - hence the switch to a named variable.
-          --
-
-          if l_result_var is null then
-            l_result_var := p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id;
-          end if;
-
           flow_proc_vars_int.set_var 
           ( pi_prcs_id      => l_prcs_id
           , pi_scope        => l_scope
-          , pi_var_name     => l_result_var
+          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
           , pi_num_value    => l_apex_task_id
           , pi_sbfl_id      => l_sbfl_id
           , pi_objt_bpmn_id => p_step_info.target_objt_ref

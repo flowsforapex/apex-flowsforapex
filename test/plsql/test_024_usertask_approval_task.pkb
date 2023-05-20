@@ -170,19 +170,97 @@ create or replace package body test_024_usertask_approval_task as
     -- check for task Id returned
 
     l_task_id :=      flow_process_vars.get_var_num ( pi_prcs_id => l_prcs_id
-                                                    , pi_var_name => 'Return_'||p_path
+                                                    , pi_var_name => 'Activity_Approval_A24'||p_path||':task_id'
                                                     , pi_sbfl_id => l_sbfl_id
                                                     );
     ut.expect(l_task_id).to_be_not_null();
+
+    -- check subflow status
+
+    open l_expected for
+       select
+          l_prcs_id                                           as sbfl_prcs_id,
+          l_dgrm_id                                           as sbfl_dgrm_id,
+          'Activity_Approval_A24'||p_path                     as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_waiting_approval  as sbfl_status
+       from dual;
+
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not like 'split';
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;    
   
-
+    -- change session to the approver
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    apex_session.create_session ( p_app_id => 106
+                                , p_page_id => 3
+                                , p_username => 'BO'
+                                );
     -- make the approval
-
     apex_approval.complete_task ( p_task_id => l_task_id
                                 , p_outcome => apex_approval.c_task_outcome_approved
                                 , p_autoclaim => true
                                 );
+    -- return to new session as original user
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    --apex_session.create_session ( p_app_id => 106
+    --                            , p_page_id => 3
+    --                            , p_username => 'FLOWSDEV2'
+    --                            );              
+    -- check workflow has moved forwards
 
+    open l_expected for
+       select
+          l_prcs_id                     as sbfl_prcs_id,
+          l_dgrm_id                     as sbfl_dgrm_id,
+          'Activity_AfterTest_'||p_path as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+       from dual;
+
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not like 'split';
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;    
+
+    -- check result was returned
+
+    l_actual_vc2 :=   flow_process_vars.get_var_vc2 ( pi_prcs_id => l_prcs_id
+                                                    , pi_var_name => 'Return_'||p_path
+                                                    , pi_sbfl_id => l_sbfl_id
+                                                    );
+    ut.expect(l_task_id).to_be_not_null();
+
+    -- step forward to End
+
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_AfterTest_'||p_path );    
+
+    -- check workflow has completed
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_completed as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );    
 
     return l_prcs_id;
   end apex_task_test_runner;
