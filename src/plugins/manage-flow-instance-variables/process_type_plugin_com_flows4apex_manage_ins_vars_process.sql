@@ -28,7 +28,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   13:28 Monday May 15, 2023
+--   Date and Time:   15:01 Sunday May 21, 2023
 --   Exported By:     C##LMOREAUX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -299,6 +299,11 @@ wwv_flow_api.create_plugin_attribute(
 '		"value": "2021-04-07T22:07:29.961Z"',
 '	},',
 '	{',
+'		"name": "Example_timestamp_var",',
+'		"type": "timestamp",',
+'		"value": "2021-04-07T22:07:29.961Z"',
+'	},',
+'	{',
 '		"name": "Example_clob_var",',
 '		"type": "clob",',
 '		"value": "long text"',
@@ -322,6 +327,11 @@ wwv_flow_api.create_plugin_attribute(
 '	{',
 '		"name": "Example_date_var",',
 '		"type": "date",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_timestamp_var",',
+'		"type": "timestamp",',
 '		"item": "ITEM_NAME"',
 '	},',
 '	{',
@@ -370,6 +380,11 @@ wwv_flow_api.create_plugin_attribute(
 '        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
 '        ),',
 '    json_object(',
+'          key ''name'' value ''example_timestamp_var''',
+'        , key ''type'' value ''timestamp''',
+'        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
+'        ),',
+'    json_object(',
 '          key ''name'' value ''examnple_clob_var''',
 '        , key ''type'' value ''clob''',
 '        , key ''value'' value to_clob(''this is a clob'')',
@@ -393,6 +408,11 @@ wwv_flow_api.create_plugin_attribute(
 '    json_object(',
 '          key ''name'' value ''example_date_var''',
 '        , key ''type'' value ''date''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_timestamp_var''',
+'        , key ''type'' value ''timestamp''',
 '        , key ''item'' value ''ITEM_NAME''',
 '        ),',
 '    json_object(',
