@@ -28,7 +28,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   13:28 Monday May 15, 2023
+--   Date and Time:   14:27 Sunday May 21, 2023
 --   Exported By:     C##LMOREAUX
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -503,6 +503,11 @@ wwv_flow_api.create_plugin_attribute(
 '		"value": "2021-04-07T22:07:29.961Z"',
 '	},',
 '	{',
+'		"name": "Example_timestamp_var",',
+'		"type": "timestamp",',
+'		"value": "2021-04-07T22:07:29.961Z"',
+'	},',
+'	{',
 '		"name": "Example_clob_var",',
 '		"type": "clob",',
 '		"value": "long text"',
@@ -543,6 +548,11 @@ wwv_flow_api.create_plugin_attribute(
 '    json_object(',
 '          key ''name'' value ''example_date_var''',
 '        , key ''type'' value ''date''',
+'        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_timestamp_var''',
+'        , key ''type'' value ''timestamp''',
 '        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
 '        ),',
 '    json_object(',
