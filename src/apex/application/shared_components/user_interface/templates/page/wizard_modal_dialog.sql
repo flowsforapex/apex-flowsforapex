@@ -4,8 +4,8 @@ begin
 --     TEMPLATE: WIZARD_MODAL_DIALOG
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -142,7 +142,7 @@ wwv_flow_api.create_template(
 ,p_reference_id=>2120348229686426515
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(88393979340008814)
+ p_id=>wwv_flow_api.id(1652911491043210)
 ,p_page_template_id=>wwv_flow_api.id(12495620021366880299)
 ,p_name=>'Wizard Body'
 ,p_placeholder=>'BODY'
@@ -151,7 +151,7 @@ wwv_flow_api.create_page_tmpl_display_point(
 ,p_max_fixed_grid_columns=>12
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(88394524330008814)
+ p_id=>wwv_flow_api.id(1653487033043210)
 ,p_page_template_id=>wwv_flow_api.id(12495620021366880299)
 ,p_name=>'Wizard Progress Bar'
 ,p_placeholder=>'REGION_POSITION_01'
@@ -159,7 +159,7 @@ wwv_flow_api.create_page_tmpl_display_point(
 ,p_glv_new_row=>true
 );
 wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(88394995347008814)
+ p_id=>wwv_flow_api.id(1653964275043210)
 ,p_page_template_id=>wwv_flow_api.id(12495620021366880299)
 ,p_name=>'Wizard Buttons'
 ,p_placeholder=>'REGION_POSITION_03'

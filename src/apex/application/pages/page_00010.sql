@@ -4,8 +4,8 @@ begin
 --     PAGE: 00010
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -26,8 +26,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220918213231'
+,p_last_updated_by=>'C##DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20230510104427'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -90,6 +90,11 @@ wwv_flow_api.create_page_plug(
 ,p_ajax_items_to_submit=>'P10_PRCS_ID,P10_PRCS_NAME'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_plug_query_no_data_found=>'No process selected'
+,p_plugin_init_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function( config ) {',
+'    config.allowDownload = false;',
+'    return config;',
+'}'))
 ,p_attribute_01=>'DGRM_CONTENT'
 ,p_attribute_02=>'ALL_CURRENT'
 ,p_attribute_03=>'PRDG_ID'
@@ -103,6 +108,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_12=>'BREADCRUMB'
 ,p_attribute_13=>'DRILLDOWN_ALLOWED'
 ,p_attribute_14=>'Y'
+,p_attribute_15=>'N'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12493545854579486121)
@@ -141,7 +147,7 @@ wwv_flow_api.create_page_plug(
 '      )',
 '  )'))
 ,p_plug_source_type=>'NATIVE_IR'
-,p_ajax_items_to_submit=>'P10_PRCS_ID,P10_PRCS_NAME,P10_FILTER_DGRM_ID'
+,p_ajax_items_to_submit=>'P10_FILTER_DGRM_ID'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_prn_content_disposition=>'ATTACHMENT'
 ,p_prn_document_header=>'APEX'
@@ -184,7 +190,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'FLOWS4APEX'
 ,p_internal_uid=>26094211779304629
 );
@@ -615,9 +621,8 @@ wwv_flow_api.create_page_item(
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'- Select -'
 ,p_cSize=>30
-,p_colspan=>6
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
-,p_item_template_options=>'#DEFAULT#'
+,p_item_template_options=>'#DEFAULT#:margin-left-none:margin-right-none'
 ,p_warn_on_unsaved_changes=>'I'
 ,p_is_persistent=>'N'
 ,p_lov_display_extra=>'YES'
@@ -921,6 +926,7 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>'flow_engine_app_api.set_viewport(:P10_DISPLAY_SETTING);'
 ,p_attribute_02=>'P10_DISPLAY_SETTING'
+,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 );
 wwv_flow_api.create_page_da_event(
@@ -946,6 +952,18 @@ wwv_flow_api.create_page_da_action(
 '     $(''#flow-instances input[type=checkbox][name=f01]'').prop(''checked'',false);',
 ' } '))
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(6180087025209945)
 ,p_name=>'Cancel Dialog'
@@ -954,18 +972,6 @@ wwv_flow_api.create_page_da_event(
 ,p_triggering_button_id=>wwv_flow_api.id(6179972139209944)
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'click'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(6180129920209946)
@@ -1022,6 +1028,7 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Set Viewport for BPMN-Viewer'
 ,p_process_sql_clob=>'flow_engine_app_api.add_viewport_script(''P10_DISPLAY_SETTING'');'
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_process(
@@ -1037,6 +1044,7 @@ wwv_flow_api.create_page_process(
 ', pi_objt_id => apex_application.g_x01',
 ', pi_title => apex_application.g_x02',
 ');'))
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;

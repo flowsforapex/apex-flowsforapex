@@ -4,8 +4,8 @@ begin
 --     PLUGIN: COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -17,13 +17,14 @@ wwv_flow_api.create_plugin(
 ,p_name=>'COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance'
 ,p_supported_ui_types=>'DESKTOP'
+,p_supported_component_types=>'APEX_APPLICATION_PAGE_PROC:APEX_APPL_AUTOMATION_ACTIONS'
 ,p_image_prefix => nvl(wwv_flow_application_install.get_static_plugin_file_prefix('PROCESS TYPE','COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'),'')
 ,p_api_version=>2
 ,p_execution_function=>'flow_plugin_manage_instance.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
-,p_version_identifier=>'22.2'
+,p_version_identifier=>'23.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
