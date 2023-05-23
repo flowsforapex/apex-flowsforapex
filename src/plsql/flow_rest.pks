@@ -13,10 +13,13 @@ as
   function get_config_value( pi_key  flow_configuration.cfig_key%type )
     return flow_configuration.cfig_value%type;
     
-  procedure init( pi_client_id        varchar2
-                , pi_check_privilege  varchar2 );
+  procedure initialize( pi_client_id varchar2
+                      , pi_method    varchar2 );
 
-  procedure final;     
+  procedure initialize( pi_client_id        varchar2
+                      , pi_check_privilege  varchar2 );
+
+  procedure cleanup;     
 
   function get_json_array_t( pi_json_object_t  json_object_t)
     return json_array_t;

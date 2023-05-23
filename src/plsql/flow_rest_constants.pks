@@ -101,6 +101,7 @@ as
   e_process_unknown_status exception;
   e_step_unknown_operation exception;
   e_privilege_not_granted  exception;
+  e_not_implemented        exception;
 
   PRAGMA EXCEPTION_INIT (e_payload_not_acceptable , -20101);
   PRAGMA EXCEPTION_INIT (e_multiple_object_error  , -20102);
@@ -110,6 +111,7 @@ as
   PRAGMA EXCEPTION_INIT (e_process_unknown_status , -20106);
   PRAGMA EXCEPTION_INIT (e_step_unknown_operation , -20107);
   PRAGMA EXCEPTION_INIT (e_privilege_not_granted  , -20108);
+  PRAGMA EXCEPTION_INIT (e_not_implemented        , -20200);
 
 end flow_rest_constants;
 /

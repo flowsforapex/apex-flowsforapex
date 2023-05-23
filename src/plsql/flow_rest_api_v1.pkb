@@ -2,6 +2,193 @@ create or replace package body flow_rest_api_v1
 as
 
 
+  procedure dispatch( pi_method           varchar2  --PUT/POST/DELETE
+                    , pi_endpoint         varchar2
+                    , pi_dgrm_id          flow_diagrams.dgrm_id%type default null
+                    , pi_prcs_id          flow_processes.prcs_id%type default null
+                    , pi_sbfl_id          flow_subflows.sbfl_id%type default null
+                    , pi_message_name     flow_message_subscriptions.msub_message_name%type default null
+                    , pi_payload          json_element_t 
+                    , pi_current_user     varchar2
+                    , po_status_code      out number 
+                    , po_forward_location out varchar2
+                    )
+  as
+    l_exc_payload            json_element_t;
+    l_exc_payload_attr_name  varchar2(200);
+  begin
+
+    flow_rest.initialize( pi_client_id => pi_current_user
+                        , pi_method    => pi_method );
+
+    flow_rest_logging.enter( pi_payload => pi_payload );
+    
+    case upper(pi_method)
+      when 'POST' then
+
+        case 
+          when regexp_like(pi_endpoint, '^v1/diagrams/[[:digit:]]+/processes$', 'i') then
+            flow_rest_api_v1.processes_post(  pi_dgrm_id          => pi_dgrm_id
+                                            , pi_payload          => pi_payload
+                                            , pi_current_user     => pi_current_user
+                                            , po_status_code      => po_status_code
+                                            , po_forward_location => po_forward_location
+                                            , po_exc_payload      => l_exc_payload
+                                            , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          else 
+            raise flow_rest_constants.e_not_implemented;
+        end case;
+
+      when 'PUT' then
+
+        case 
+          when regexp_like(pi_endpoint, '^v1/messages/[[:alnum:][:blank:][:punct:]]+$', 'i') then
+            flow_rest_api_v1.messages_put( pi_message_name     => pi_message_name
+                                         , pi_payload          => pi_payload
+                                         , pi_current_user     => pi_current_user
+                                         , po_status_code      => po_status_code
+                                         , po_forward_location => po_forward_location 
+                                         , po_exc_payload      => l_exc_payload
+                                         , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/start$', 'i') then
+            flow_rest_api_v1.processes_start_put( pi_prcs_id          => pi_prcs_id
+                                                , pi_current_user     => pi_current_user
+                                                , po_status_code      => po_status_code
+                                                , po_forward_location => po_forward_location 
+                                                , po_exc_payload      => l_exc_payload
+                                                , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/reset$', 'i') then
+            flow_rest_api_v1.processes_reset_put( pi_prcs_id          => pi_prcs_id
+                                                , pi_payload          => pi_payload
+                                                , pi_current_user     => pi_current_user
+                                                , po_status_code      => po_status_code
+                                                , po_forward_location => po_forward_location  
+                                                , po_exc_payload      => l_exc_payload
+                                                , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/terminate$', 'i') then
+            flow_rest_api_v1.processes_terminate_put( pi_prcs_id          => pi_prcs_id
+                                                    , pi_payload          => pi_payload
+                                                    , pi_current_user     => pi_current_user
+                                                    , po_status_code      => po_status_code
+                                                    , po_forward_location => po_forward_location 
+                                                    , po_exc_payload      => l_exc_payload
+                                                    , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+$', 'i') then
+            flow_rest_api_v1.processes_put( pi_prcs_id          => pi_prcs_id
+                                          , pi_payload          => pi_payload
+                                          , pi_current_user     => pi_current_user
+                                          , po_status_code      => po_status_code
+                                          , po_forward_location => po_forward_location 
+                                          , po_exc_payload      => l_exc_payload
+                                          , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+$', 'i') then
+            flow_rest_api_v1.steps_put( pi_sbfl_id          => pi_sbfl_id
+                                      , pi_payload          => pi_payload
+                                      , pi_current_user     => pi_current_user
+                                      , po_status_code      => po_status_code
+                                      , po_forward_location => po_forward_location 
+                                      , po_exc_payload      => l_exc_payload
+                                      , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/start$', 'i') then
+            flow_rest_api_v1.steps_start_put( pi_sbfl_id          => pi_sbfl_id
+                                            , pi_payload          => pi_payload
+                                            , pi_current_user     => pi_current_user
+                                            , po_status_code      => po_status_code
+                                            , po_forward_location => po_forward_location 
+                                            , po_exc_payload      => l_exc_payload
+                                            , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/reserve$', 'i') then
+            flow_rest_api_v1.steps_reserve_put( pi_sbfl_id          => pi_sbfl_id
+                                              , pi_payload          => pi_payload
+                                              , pi_current_user     => pi_current_user
+                                              , po_status_code      => po_status_code
+                                              , po_forward_location => po_forward_location 
+                                              , po_exc_payload      => l_exc_payload
+                                              , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/release$', 'i') then
+            flow_rest_api_v1.steps_release_put( pi_sbfl_id          => pi_sbfl_id
+                                              , pi_payload          => pi_payload
+                                              , pi_current_user     => pi_current_user
+                                              , po_status_code      => po_status_code
+                                              , po_forward_location => po_forward_location 
+                                              , po_exc_payload      => l_exc_payload
+                                              , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/complete$', 'i') then
+            flow_rest_api_v1.steps_complete_put( pi_sbfl_id          => pi_sbfl_id
+                                               , pi_payload          => pi_payload
+                                               , pi_current_user     => pi_current_user
+                                               , po_status_code      => po_status_code
+                                               , po_forward_location => po_forward_location 
+                                               , po_exc_payload      => l_exc_payload
+                                               , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/restart$', 'i') then
+            flow_rest_api_v1.steps_restart_put( pi_sbfl_id          => pi_sbfl_id
+                                              , pi_payload          => pi_payload
+                                              , pi_current_user     => pi_current_user
+                                              , po_status_code      => po_status_code
+                                              , po_forward_location => po_forward_location 
+                                              , po_exc_payload      => l_exc_payload
+                                              , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/reschedule_timer$', 'i') then
+            flow_rest_api_v1.steps_reschedule_timer_put( pi_sbfl_id          => pi_sbfl_id
+                                                       , pi_payload          => pi_payload
+                                                       , pi_current_user     => pi_current_user
+                                                       , po_status_code      => po_status_code
+                                                       , po_forward_location => po_forward_location 
+                                                       , po_exc_payload      => l_exc_payload
+                                                       , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/process_vars$', 'i') then
+            flow_rest_api_v1.process_vars_put( pi_prcs_id          => pi_prcs_id
+                                             , pi_payload          => pi_payload
+                                             , pi_current_user     => pi_current_user
+                                             , po_status_code      => po_status_code
+                                             , po_forward_location => po_forward_location 
+                                             , po_exc_payload      => l_exc_payload
+                                             , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          else 
+            raise flow_rest_constants.e_not_implemented;
+        end case;
+
+      when 'DELETE' then
+        case 
+          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+$', 'i') then
+            flow_rest_api_v1.processes_delete( pi_prcs_id      => pi_prcs_id
+                                             , pi_payload      => pi_payload
+                                             , pi_current_user => pi_current_user
+                                             , po_status_code  => po_status_code 
+                                             , po_exc_payload  => l_exc_payload
+                                             , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/process_vars$', 'i') then
+            flow_rest_api_v1.process_vars_delete( pi_prcs_id       => pi_prcs_id
+                                                , pi_payload       => pi_payload
+                                                , pi_current_user  => pi_current_user
+                                                , po_status_code   => po_status_code 
+                                                , po_exc_payload   => l_exc_payload
+                                                , po_exc_payload_attr_name => l_exc_payload_attr_name );
+          else
+            raise flow_rest_constants.e_not_implemented;
+        end case;                                                
+      else 
+        raise flow_rest_constants.e_not_implemented;
+    end case;
+
+    flow_rest_logging.finished( pi_payload => pi_payload );
+    flow_rest.cleanup;
+    commit;
+
+    exception 
+      when others then 
+        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
+                                     , pi_message            => SQLERRM 
+                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
+                                     , pi_payload            => l_exc_payload
+                                     , pi_payload_attr_name  => l_exc_payload_attr_name
+                                     , po_status_code        => po_status_code );
+
+  end dispatch;
+
+  -------------------------------------------------------------------------------------------------------------------
+
   function get_path( pi_path_endpoint  varchar2, pi_object_id  varchar2)
     return varchar2
   is
@@ -145,7 +332,9 @@ as
                           , pi_payload  json_element_t
                           , pi_current_user     varchar2
                           , po_status_code      out number
-                          , po_forward_location out varchar2)
+                          , po_forward_location out varchar2 
+                          , po_exc_payload      out json_element_t
+                          , po_exc_payload_attr_name out varchar2 )
   as
     pragma autonomous_transaction;
 
@@ -155,9 +344,6 @@ as
     l_error_occured     boolean := false;
 
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -181,35 +367,26 @@ as
     po_forward_location := get_path( pi_path_endpoint => flow_rest_constants.c_path_processes
                                    , pi_object_id     => l_prcs_id );
 
-    flow_rest.final;    
     commit;
 
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => null
-                                     , pi_payload_attr_name  => null
-                                     , po_status_code        => po_status_code );
+        raise;
       
   end processes_post;                       
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure processes_start_post( pi_prcs_id          flow_processes.prcs_id%type
-                                , pi_current_user     varchar2
-                                , po_status_code      out number 
-                                , po_forward_location out varchar2 )
+  procedure processes_start_put( pi_prcs_id          flow_processes.prcs_id%type
+                               , pi_current_user     varchar2
+                               , po_status_code      out number 
+                               , po_forward_location out varchar2
+                               , po_exc_payload      out json_element_t
+                               , po_exc_payload_attr_name out varchar2 )
   as 
-    pragma autonomous_transaction;
     l_item_object      json_object_t;   
   begin
     
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
-
-
     flow_rest.verify_process_exists( pi_prcs_id  => pi_prcs_id );
 
     l_item_object := new json_object_t();
@@ -226,34 +403,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end processes_start_post;
+  end processes_start_put;
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure processes_reset_post( pi_prcs_id          flow_processes.prcs_id%type
-                                , pi_payload          json_element_t  
-                                , pi_current_user     varchar2
-                                , po_status_code      out number 
-                                , po_forward_location out varchar2 )       
+  procedure processes_reset_put( pi_prcs_id          flow_processes.prcs_id%type
+                               , pi_payload          json_element_t  
+                               , pi_current_user     varchar2
+                               , po_status_code      out number 
+                               , po_forward_location out varchar2 
+                               , po_exc_payload      out json_element_t
+                               , po_exc_payload_attr_name out varchar2)       
   as 
-    pragma autonomous_transaction;
     l_item_object      json_object_t;   
   begin
-    
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     if pi_payload is null then 
       l_item_object := new json_object_t();
@@ -278,34 +447,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end processes_reset_post;
+  end processes_reset_put;
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure processes_terminate_post( pi_prcs_id          flow_processes.prcs_id%type
-                                    , pi_payload          json_element_t  
-                                    , pi_current_user     varchar2
-                                    , po_status_code      out number 
-                                    , po_forward_location out varchar2 )                                                         
+  procedure processes_terminate_put( pi_prcs_id          flow_processes.prcs_id%type
+                                   , pi_payload          json_element_t  
+                                   , pi_current_user     varchar2
+                                   , po_status_code      out number 
+                                   , po_forward_location out varchar2
+                                   , po_exc_payload      out json_element_t
+                                   , po_exc_payload_attr_name out varchar2 )                                                         
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;   
   begin
-    
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     if pi_payload is null then 
       l_item_object := new json_object_t();
@@ -328,34 +489,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end processes_terminate_post;
+  end processes_terminate_put;
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure processes_put( pi_prcs_id  flow_processes.prcs_id%type
-                         , pi_payload  json_element_t 
+  procedure processes_put( pi_prcs_id          flow_processes.prcs_id%type
+                         , pi_payload          json_element_t 
                          , pi_current_user     varchar2
-                         , po_status_code out number
-                         , po_forward_location out varchar2 )
+                         , po_status_code      out number
+                         , po_forward_location out varchar2 
+                         , po_exc_payload      out json_element_t
+                         , po_exc_payload_attr_name out varchar2)
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;   
   begin
-    
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -372,32 +525,24 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code       => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
   end processes_put;
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure processes_delete( pi_prcs_id  flow_processes.prcs_id%type
-                            , pi_payload  json_element_t 
+  procedure processes_delete( pi_prcs_id          flow_processes.prcs_id%type
+                            , pi_payload          json_element_t 
                             , pi_current_user     varchar2
-                            , po_status_code out number )
+                            , po_status_code      out number
+                            , po_exc_payload      out json_element_t
+                            , po_exc_payload_attr_name out varchar2 )
   as
-    pragma autonomous_transaction;
     l_item_object          json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_admin );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -411,34 +556,26 @@ as
     flow_rest_response.send_success( pi_success_message => 'process deleted' 
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
   end processes_delete;    
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure steps_put( pi_sbfl_id  flow_subflows.sbfl_id%type
-                     , pi_payload  json_element_t 
+  procedure steps_put( pi_sbfl_id          flow_subflows.sbfl_id%type
+                     , pi_payload          json_element_t 
                      , pi_current_user     varchar2
                      , po_status_code      out number 
-                     , po_forward_location out varchar2)
+                     , po_forward_location out varchar2
+                     , po_exc_payload      out json_element_t
+                     , po_exc_payload_attr_name out varchar2)
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -454,34 +591,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
   end steps_put;
   
   -------------------------------------------------------------------------------------------------------------------
   
-  procedure steps_start_post( pi_sbfl_id  flow_subflows.sbfl_id%type
-                            , pi_payload  json_element_t 
-                            , pi_current_user     varchar2
-                            , po_status_code      out number 
-                            , po_forward_location out varchar2)
+  procedure steps_start_put( pi_sbfl_id          flow_subflows.sbfl_id%type
+                           , pi_payload          json_element_t 
+                           , pi_current_user     varchar2
+                           , po_status_code      out number 
+                           , po_forward_location out varchar2
+                           , po_exc_payload      out json_element_t
+                           , po_exc_payload_attr_name out varchar2 )
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -499,34 +628,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end steps_start_post;                               
+  end steps_start_put;                               
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure steps_reserve_post( pi_sbfl_id  flow_subflows.sbfl_id%type
-                              , pi_payload  json_element_t 
-                              , pi_current_user     varchar2
-                              , po_status_code      out number 
-                              , po_forward_location out varchar2)
+  procedure steps_reserve_put( pi_sbfl_id          flow_subflows.sbfl_id%type
+                             , pi_payload          json_element_t 
+                             , pi_current_user     varchar2
+                             , po_status_code      out number 
+                             , po_forward_location out varchar2
+                             , po_exc_payload      out json_element_t
+                             , po_exc_payload_attr_name out varchar2)
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -544,34 +665,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end steps_reserve_post;                          
+  end steps_reserve_put;                          
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure steps_release_post( pi_sbfl_id  flow_subflows.sbfl_id%type
-                              , pi_payload  json_element_t 
-                              , pi_current_user     varchar2
-                              , po_status_code      out number 
-                              , po_forward_location out varchar2)
+  procedure steps_release_put( pi_sbfl_id          flow_subflows.sbfl_id%type
+                             , pi_payload          json_element_t 
+                             , pi_current_user     varchar2
+                             , po_status_code      out number 
+                             , po_forward_location out varchar2
+                             , po_exc_payload      out json_element_t
+                             , po_exc_payload_attr_name out varchar2)
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -589,34 +702,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end steps_release_post;
+  end steps_release_put;
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure steps_complete_post( pi_sbfl_id  flow_subflows.sbfl_id%type
-                               , pi_payload  json_element_t 
-                               , pi_current_user     varchar2
-                               , po_status_code      out number 
-                               , po_forward_location out varchar2)
+  procedure steps_complete_put( pi_sbfl_id          flow_subflows.sbfl_id%type
+                              , pi_payload          json_element_t 
+                              , pi_current_user     varchar2
+                              , po_status_code      out number 
+                              , po_forward_location out varchar2
+                              , po_exc_payload      out json_element_t
+                              , po_exc_payload_attr_name out varchar2)
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -634,34 +739,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end steps_complete_post;
+  end steps_complete_put;
 
   -------------------------------------------------------------------------------------------------------------------
   
-  procedure steps_restart_post( pi_sbfl_id  flow_subflows.sbfl_id%type
-                              , pi_payload  json_element_t 
-                              , pi_current_user     varchar2
-                              , po_status_code      out number 
-                              , po_forward_location out varchar2)
+  procedure steps_restart_put( pi_sbfl_id          flow_subflows.sbfl_id%type
+                             , pi_payload          json_element_t 
+                             , pi_current_user     varchar2
+                             , po_status_code      out number 
+                             , po_forward_location out varchar2
+                             , po_exc_payload      out json_element_t
+                             , po_exc_payload_attr_name out varchar2 )
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -679,34 +776,26 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end steps_restart_post;
+  end steps_restart_put;
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure steps_reschedule_timer_post( pi_sbfl_id  flow_subflows.sbfl_id%type
-                                       , pi_payload  json_element_t 
-                                       , pi_current_user     varchar2
-                                       , po_status_code      out number 
-                                       , po_forward_location out varchar2)
+  procedure steps_reschedule_timer_put( pi_sbfl_id          flow_subflows.sbfl_id%type
+                                      , pi_payload          json_element_t 
+                                      , pi_current_user     varchar2
+                                      , po_status_code      out number 
+                                      , po_forward_location out varchar2
+                                      , po_exc_payload      out json_element_t
+                                      , po_exc_payload_attr_name out varchar2 )
   as
-    pragma autonomous_transaction;
     l_item_object      json_object_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
                                         , pi_array_allowed        => false 
@@ -724,35 +813,27 @@ as
                                    , pi_payload_attr_name => 'links'
                                    , po_status_code     => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_item_object
-                                     , pi_payload_attr_name  => 'item'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_item_object;
+        po_exc_payload_attr_name := 'item';
+        raise;
 
-  end steps_reschedule_timer_post;                                    
+  end steps_reschedule_timer_put;                                    
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure process_vars_put( pi_prcs_id  flow_processes.prcs_id%type 
-                            , pi_payload  json_element_t 
+  procedure process_vars_put( pi_prcs_id          flow_processes.prcs_id%type 
+                            , pi_payload          json_element_t 
                             , pi_current_user     varchar2
                             , po_status_code      out number 
-                            , po_forward_location out varchar2)
+                            , po_forward_location out varchar2
+                            , po_exc_payload      out json_element_t
+                            , po_exc_payload_attr_name out varchar2 )
   as
-    pragma autonomous_transaction;
     l_prov_array   json_array_t;
 
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
 
     flow_rest.verify_and_prepare_payload( pi_payload       => pi_payload 
                                         , pi_array_allowed => true 
@@ -768,33 +849,25 @@ as
                                    , pi_payload_attr_name => 'items'
                                    , po_status_code       => po_status_code );
 
-    flow_rest.final;    
-    commit;
-
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_prov_array
-                                     , pi_payload_attr_name  => 'items'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_prov_array;
+        po_exc_payload_attr_name := 'items';
+        raise;
 
   end process_vars_put;    
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure process_vars_delete( pi_prcs_id  flow_processes.prcs_id%type 
-                               , pi_payload  json_element_t 
+  procedure process_vars_delete( pi_prcs_id          flow_processes.prcs_id%type 
+                               , pi_payload          json_element_t 
                                , pi_current_user     varchar2
-                               , po_status_code out number )
+                               , po_status_code      out number
+                               , po_exc_payload      out json_element_t
+                               , po_exc_payload_attr_name out varchar2 )
   as
-    pragma autonomous_transaction;
     l_prov_array   json_array_t;
   begin
-
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_admin );
 
     flow_rest.verify_and_prepare_payload( pi_payload         => pi_payload 
                                         , pi_array_allowed   => false 
@@ -810,35 +883,28 @@ as
                                    , pi_payload           => l_prov_array
                                    , pi_payload_attr_name => 'items'
                                    , po_status_code       => po_status_code );
-    flow_rest.final;    
-    commit;
 
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_prov_array
-                                     , pi_payload_attr_name  => 'items'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_prov_array;
+        po_exc_payload_attr_name := 'items';
+        raise;
 
   end process_vars_delete;    
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure messages_put( pi_message_name  flow_message_subscriptions.msub_message_name%type 
-                        , pi_payload       json_element_t 
+  procedure messages_put( pi_message_name     flow_message_subscriptions.msub_message_name%type 
+                        , pi_payload          json_element_t 
                         , pi_current_user     varchar2
                         , po_status_code      out number 
-                        , po_forward_location out varchar2 )
+                        , po_forward_location out varchar2 
+                        , po_exc_payload      out json_element_t
+                        , po_exc_payload_attr_name out varchar2)
   as
-    pragma autonomous_transaction;
     l_msg_array json_array_t;
   begin
     
-    flow_rest.init( pi_client_id        => pi_current_user
-                  , pi_check_privilege  => flow_rest_constants.c_rest_priv_write );
-
     flow_rest.verify_and_prepare_payload( pi_payload         => pi_payload 
                                         , pi_array_allowed   => true 
                                         , po_payload_array   => l_msg_array );
@@ -850,17 +916,12 @@ as
                                    , pi_payload           => l_msg_array
                                    , pi_payload_attr_name => 'items'
                                    , po_status_code       => po_status_code );
-    flow_rest.final;    
-    commit;
 
     exception 
       when others then 
-        flow_rest_errors.handle_error( pi_sqlcode            => SQLCODE
-                                     , pi_message            => SQLERRM 
-                                     , pi_stacktrace         => dbms_utility.format_error_backtrace 
-                                     , pi_payload            => l_msg_array
-                                     , pi_payload_attr_name  => 'items'
-                                     , po_status_code        => po_status_code );
+        po_exc_payload := l_msg_array;
+        po_exc_payload_attr_name := 'items';
+        raise;
 
   end messages_put;      
 

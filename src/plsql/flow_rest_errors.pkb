@@ -22,6 +22,12 @@ as
 
     rollback;
 
+    flow_rest_logging.error( pi_payload            => pi_payload
+                           , pi_error_code         => pi_sqlcode
+                           , pi_error_msg          => pi_message
+                           , pi_error_stacktrace   => pi_stacktrace
+                           );
+ 
     case pi_sqlcode
 
       when -20101 then -- e_payload_not_acceptable
@@ -39,11 +45,11 @@ as
       when -20107 then -- e_step_unknown_operation
         l_message :=  'Unkown operation for step';
       when -20108 then -- e_privilege_not_granted
-
         flow_rest_response.send_error( pi_sqlerrm     => 'Necessary privilege not granted'
                                      , po_status_code => po_status_code );
         po_status_code := 401;
-        
+      when -20200 then -- e_not_implemented
+        l_message :=  'Not implemented';
       else
 
         l_message := pi_message;
@@ -61,7 +67,7 @@ as
     
     po_status_code := nvl(po_status_code, flow_rest_constants.c_http_code_ERROR) ;
 
-    flow_rest.final;
+    flow_rest.cleanup;
 
   end handle_error;
 

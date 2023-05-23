@@ -16,10 +16,34 @@ as
 
   -------------------------------------------------------------------------------------------------------------------
   
-  procedure init( pi_client_id        varchar2
-                , pi_check_privilege  varchar2 )
+  procedure initialize( pi_client_id varchar2
+                      , pi_method    varchar2 )
+  as
+    l_check_privilege  varchar2(50 char);
+  begin
+
+    case upper(pi_method) 
+      when 'POST' then
+        l_check_privilege := flow_rest_constants.c_rest_priv_write;
+      when 'PUT'  then 
+        l_check_privilege := flow_rest_constants.c_rest_priv_write;
+      when 'DELET' then 
+        l_check_privilege := flow_rest_constants.c_rest_priv_admin;
+    end case;
+
+    flow_rest.initialize( pi_client_id        => pi_client_id
+                        , pi_check_privilege  => l_check_privilege ) ;             
+
+  end initialize;
+
+  -------------------------------------------------------------------------------------------------------------------
+
+  procedure initialize( pi_client_id        varchar2
+                      , pi_check_privilege  varchar2 )
   as
   begin
+
+    flow_rest_logging.initialize;
 
     flow_globals.set_call_origin( p_origin => flow_rest_constants.c_config_origin );
 
@@ -28,17 +52,18 @@ as
     flow_rest_auth.check_privilege( pi_client_id       => pi_client_id 
                                   , pi_privilege_name  => pi_check_privilege );                              
 
-  end init;
+  end initialize;
 
   -------------------------------------------------------------------------------------------------------------------
 
-  procedure final
+  procedure cleanup
   as
   begin
 
     flow_globals.unset_call_origin;
-    
-  end final;
+    flow_rest_logging.cleanup;
+
+  end cleanup;
 
   -------------------------------------------------------------------------------------------------------------------
 
