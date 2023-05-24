@@ -30,6 +30,8 @@ PROMPT >> Installing Package Specifications
 @plsql/test_019_priorityduedates.pks
 @plsql/test_021_messageflow_basics.pks
 @plsql/test_022_usertask_misc.pks
+@plsql/test_023_custom_extensions.pks
+@plsql/test_024_usertask_approval_task.pks
 
 PROMPT >> Installing Package Bodies
 
@@ -55,6 +57,8 @@ PROMPT >> Installing Package Bodies
 @plsql/test_019_priorityduedates.pkb
 @plsql/test_021_messageflow_basics.pkb
 @plsql/test_022_usertask_misc.pkb
+@plsql/test_023_custom_extensions.pkb
+@plsql/test_024_usertask_approval_task.pkb
 
 PROMPT >> Engine Test Scripts Installed
 

@@ -392,7 +392,11 @@ as
                          , p_subject            => l_subject
                          , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref) 
                          , p_parameters         => l_task_parameters
-                         , p_initiator          => l_initiator
+                         , p_initiator          => coalesce ( l_initiator
+                                                      , sys_context('apex$session','app_user') 
+                                                      , sys_context('userenv','os_user')
+                                                      , sys_context('userenv','session_user')
+                                                      ) 
                          , p_priority           => l_priority
                          $IF not flow_apex_env.ver_le_22_2 $THEN
                          , p_due_date           => l_due_on
@@ -480,15 +484,20 @@ as
     );
     $IF flow_apex_env.ver_le_21_2 $THEN
       null;
+      apex_debug.info 
+      ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1 -- BUT APEX VERSION HAS NO APPROVALS!'
+      , p0 => p_apex_task_id
+      , p1 => p_objt_bpmn_id
+      );
     $ELSE
       -- cancel task
       apex_approval.cancel_task (p_task_id => p_apex_task_id);
+      apex_debug.info 
+      ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1'
+      , p0 => p_apex_task_id
+      , p1 => p_objt_bpmn_id
+      );
     $END
-     apex_debug.info 
-    ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1'
-    , p0 => p_apex_task_id
-    , p1 => p_objt_bpmn_id
-    );
   exception
     when others then
       flow_errors.handle_instance_error
@@ -496,6 +505,7 @@ as
       , pi_message_key => 'apex-task-cancelation-error'
       , p0 => p_objt_bpmn_id
       , p1 => p_apex_task_id
+      , p2 => sqlerrm
       );
       -- $F4AMESSAGE 'apex-task-cancelation-error' || 'Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)' 
   end cancel_apex_task;

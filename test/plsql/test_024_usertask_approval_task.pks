@@ -26,6 +26,17 @@ create or replace package test_024_usertask_approval_task as
   --%test(C - Basic Approval Task - No Action Source )
   procedure basic_approval_no_action_source;
  
+  --%test(D - Basic Approval Task - Action Source Table - No PK Provided)
+  procedure basic_approval_action_source_table_no_pk;
+ 
+  --%test(E - Basic Approval Task - Action Source Query - No PK Provided)
+  procedure basic_approval_action_source_query_no_pk;
+
+  --%test(F - Basic Approval Task - Bad Priority Provided)
+  procedure basic_approval_action_source_query_bad_priority;
+
+  --%test(G - Approval Task cancelation when Subflow deleted)
+  procedure approval_task_cleanup_sbfl_deletion;
 
   --%afterall
   procedure tear_down_tests;
