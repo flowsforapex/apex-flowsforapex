@@ -12,7 +12,7 @@ create or replace package body test_022_usertask_misc as
 
   --  suite(22 Usertask Misc Features)
   g_model_a22a constant varchar2(100) := 'A22a - UserTask - Settings Substitution';
-  g_model_a22b constant varchar2(100) := 'A22b -';
+  g_model_a22b constant varchar2(100) := 'A22b - Other Task Types';
   g_model_a22c constant varchar2(100) := 'A22c -';
   g_model_a22d constant varchar2(100) := 'A22d -';
   g_model_a22e constant varchar2(100) := 'A22e -';
@@ -50,7 +50,7 @@ create or replace package body test_022_usertask_misc as
   
     -- get dgrm_ids to use for comparison
     g_dgrm_a22a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a22a );
-    --g_dgrm_a22b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a22b );
+    g_dgrm_a22b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a22b );
     --g_dgrm_a22c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a22c );
     --g_dgrm_a22d_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a22d );
     --g_dgrm_a22e_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a22e );
@@ -58,7 +58,7 @@ create or replace package body test_022_usertask_misc as
     --g_dgrm_a22g_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a22g );
 
     flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a22a_id);
-    --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a22b_id);
+    flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a22b_id);
     --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a22c_id);
     --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a22d_id);
     --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a22e_id);
@@ -252,13 +252,235 @@ create or replace package body test_022_usertask_misc as
                                                 );
   end pagetask_substitutions_2;
 
+  --------------------------------------------------------------------------------------------------------------
+  --
+  -- Other Task Basics
+  --
+  --------------------------------------------------------------------------------------------------------------
+
+  procedure other_tasks_basic
+  is
+    l_actual          sys_refcursor;
+    l_expected        sys_refcursor;
+    l_actual_vc2      varchar2(2000);
+    l_expected_vc2    varchar2(2000);
+    l_actual_num      number;
+    l_expected_num    number;
+    l_dgrm_id         flow_diagrams.dgrm_id%type;
+    l_prcs_name       flow_processes.prcs_name%type;
+    l_prcs_id         flow_processes.prcs_id%type;
+    l_sbfl_id         flow_subflows.sbfl_id%type;
+    l_step_key        flow_subflows.sbfl_step_key%type;
+    l_task_id         number;
+  begin
+    -- get dgrm_id to use for comparaison
+    l_dgrm_id     := g_dgrm_a22b_id;
+    l_prcs_name   := g_test_prcs_name_b;
+    -- create a new instance
+    l_prcs_id := flow_api_pkg.flow_create
+                  ( pi_dgrm_id   => l_dgrm_id
+                  , pi_prcs_name => l_prcs_name
+                  );
+    g_prcs_id_b  := l_prcs_id;
+    -- check no existing process variables
+    
+    open l_actual for
+    select *
+    from flow_process_variables
+    where prov_prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_have_count( 0 );
+    
+    -- start process and check running status
+    
+    flow_api_pkg.flow_start( p_process_id => l_prcs_id );
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );   
+
+    -- check subflow status
+
+    open l_expected for
+       select
+          l_prcs_id                   as sbfl_prcs_id,
+          l_dgrm_id                   as sbfl_dgrm_id,
+          'Activity_PreTest'          as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+       from dual;
+
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not like 'split';
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;        
+
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_PreTest');  
+
+    -- Check Manual Task
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );   
+
+    -- check subflow status
+
+    open l_expected for
+       select
+          l_prcs_id                                 as sbfl_prcs_id,
+          l_dgrm_id                                 as sbfl_dgrm_id,
+          'Activity_Manual'                         as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+       from dual;
+
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not like 'split';
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;        
+
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_Manual');      
+
+    -- Check BRT - will run through to After_BRT    
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );   
+
+    -- check subflow status
+
+    open l_expected for
+       select
+          l_prcs_id                   as sbfl_prcs_id,
+          l_dgrm_id                   as sbfl_dgrm_id,
+          'Activity_After_BRT_PLSQL'  as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+       from dual;
+
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not like 'split';
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;        
+
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_After_BRT_PLSQL');    
+
+    -- Check ServiceTask PLSQL - will run through to After_Service_PLSQL   
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );   
+
+    -- check subflow status
+
+    open l_expected for
+       select
+          l_prcs_id                   as sbfl_prcs_id,
+          l_dgrm_id                   as sbfl_dgrm_id,
+          'Activity_After_Service_PLSQL'  as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+       from dual;
+
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not like 'split';
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;        
+
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_After_Service_PLSQL');          
+
+    -- Check ScriptTask - will run through to After_ScriptTask  
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );   
+
+    -- check subflow status
+
+    open l_expected for
+       select
+          l_prcs_id                   as sbfl_prcs_id,
+          l_dgrm_id                   as sbfl_dgrm_id,
+          'Activity_After_Script_PLSQL'  as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+       from dual;
+
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not like 'split';
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;        
+
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_After_Script_PLSQL');  
+
+    -- complete the workflow  
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_completed   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );   
+
+
+  end other_tasks_basic;
+
   --afterall
   procedure tear_down_tests  
   is
   begin
      flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_a1,  p_comment  => 'Ran by utPLSQL as Test Suite 022');
      flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_a2,  p_comment  => 'Ran by utPLSQL as Test Suite 022');
-    -- flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_b,  p_comment  => 'Ran by utPLSQL as Test Suite 022');
+     flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_b,   p_comment  => 'Ran by utPLSQL as Test Suite 022');
     -- flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_c,  p_comment  => 'Ran by utPLSQL as Test Suite 022');
     -- flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_d,  p_comment  => 'Ran by utPLSQL as Test Suite 022');
     -- flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_e,  p_comment  => 'Ran by utPLSQL as Test Suite 022');

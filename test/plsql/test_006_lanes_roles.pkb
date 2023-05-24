@@ -1321,8 +1321,8 @@ create or replace package body test_006_lanes_roles as
          where p.prcs_id = test_prcs_id;
     ut.expect( l_actual ).to_equal( l_expected ); 
 
-    flow_api_pkg.flow_delete(p_process_id  =>  test_prcs_id,
-                             p_comment  => 'Ran by utPLSQL as Test 5 for Lane Test');
+    --flow_api_pkg.flow_delete(p_process_id  =>  test_prcs_id,
+    --                         p_comment  => 'Ran by utPLSQL as Test 5 for Lane Test');
 
   end exec_diagram_with_calls_both_have_lanes;
 

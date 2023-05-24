@@ -22,6 +22,9 @@ create or replace package test_022_usertask_misc as
   --%test(A2 - Usertask Page Task parameter substitutions)
   procedure pagetask_substitutions_2;
 
+  --%test(B - Minor Tasks Smoke Test)
+  procedure other_tasks_basic;
+
   --%afterall
   procedure tear_down_tests;
 

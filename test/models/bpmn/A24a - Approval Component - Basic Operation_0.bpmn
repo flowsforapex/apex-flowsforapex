@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A24a" name="24a - Approval Component - Basic Operation" isExecutable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_1x50t9n</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_PreTest_A" name="PreTest A">
+      <bpmn:incoming>Flow_A</bpmn:incoming>
+      <bpmn:outgoing>Flow_16oik1e</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1x50t9n" sourceRef="Event_Start" targetRef="Activity_Setup" />
+    <bpmn:sequenceFlow id="Flow_16oik1e" sourceRef="Activity_PreTest_A" targetRef="Activity_Approval_A24A" />
+    <bpmn:userTask id="Activity_Approval_A24A" name="Approval A24A" apex:type="apexApproval" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:apexApproval>
+          <apex:applicationId>106</apex:applicationId>
+          <apex:taskStaticId>A24A_SIMPLE_TASK_WITH_TASK_PK</apex:taskStaticId>
+          <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>
+          <apex:parameters>
+            <apex:parameter>
+              <apex:parStaticId>PROCESS_ID</apex:parStaticId>
+              <apex:parDataType>String</apex:parDataType>
+              <apex:parValue>&amp;F4A$PROCESS_ID.</apex:parValue>
+            </apex:parameter>
+            <apex:parameter>
+              <apex:parStaticId>MY_TEXT</apex:parStaticId>
+              <apex:parDataType>String</apex:parDataType>
+              <apex:parValue>My_text_message</apex:parValue>
+            </apex:parameter>
+          </apex:parameters>
+          <apex:resultVariable>Return_A</apex:resultVariable>
+        </apex:apexApproval>
+        <apex:priority>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>Default_test_priority</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>interval</apex:expressionType>
+          <apex:expression>PT12H</apex:expression>
+        </apex:dueOn>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16oik1e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ityq7e</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="Activity_AfterTest_A" name="AfterTest_A">
+      <bpmn:incoming>Flow_0ityq7e</bpmn:incoming>
+      <bpmn:outgoing>Flow_119sw9n</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ityq7e" sourceRef="Activity_Approval_A24A" targetRef="Activity_AfterTest_A" />
+    <bpmn:endEvent id="Event_EndA" name="EndA">
+      <bpmn:incoming>Flow_119sw9n</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_119sw9n" sourceRef="Activity_AfterTest_A" targetRef="Event_EndA" />
+    <bpmn:task id="Activity_Setup" name="Setup">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Default_test_priority</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>4</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1x50t9n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tdp180</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_A" name=":F4A$path = &#39;A&#39;" sourceRef="Gateway_Choose_Path" targetRef="Activity_PreTest_A" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$path = 'A'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_Choose_Path" name="Choose Path?" default="Flow_C">
+      <bpmn:incoming>Flow_0tdp180</bpmn:incoming>
+      <bpmn:outgoing>Flow_A</bpmn:outgoing>
+      <bpmn:outgoing>Flow_B</bpmn:outgoing>
+      <bpmn:outgoing>Flow_C</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0tdp180" sourceRef="Activity_Setup" targetRef="Gateway_Choose_Path" />
+    <bpmn:task id="Activity_PreTest_B" name="PreTest B">
+      <bpmn:incoming>Flow_B</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m64eas</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="Activity_Approval_A24B" name="Approval A24B" apex:type="apexApproval" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:apexApproval>
+          <apex:applicationId>106</apex:applicationId>
+          <apex:taskStaticId>A24B_SIMPLE_TASK_ACTION_QUERY</apex:taskStaticId>
+          <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>
+          <apex:parameters>
+            <apex:parameter>
+              <apex:parStaticId>PROCESS_ID</apex:parStaticId>
+              <apex:parDataType>String</apex:parDataType>
+              <apex:parValue>&amp;F4A$PROCESS_ID.</apex:parValue>
+            </apex:parameter>
+            <apex:parameter>
+              <apex:parStaticId>MY_TEXT</apex:parStaticId>
+              <apex:parDataType>String</apex:parDataType>
+              <apex:parValue>My_text_message</apex:parValue>
+            </apex:parameter>
+          </apex:parameters>
+          <apex:resultVariable>Return_B</apex:resultVariable>
+        </apex:apexApproval>
+        <apex:priority>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>Default_test_priority</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>interval</apex:expressionType>
+          <apex:expression>PT12H</apex:expression>
+        </apex:dueOn>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m64eas</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dn2nge</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="Activity_AfterTest_B" name="AfterTest_B">
+      <bpmn:incoming>Flow_0dn2nge</bpmn:incoming>
+      <bpmn:outgoing>Flow_0j4vqez</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_EndB" name="EndB">
+      <bpmn:incoming>Flow_0j4vqez</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0m64eas" sourceRef="Activity_PreTest_B" targetRef="Activity_Approval_A24B" apex:sequence="10" />
+    <bpmn:sequenceFlow id="Flow_0dn2nge" sourceRef="Activity_Approval_A24B" targetRef="Activity_AfterTest_B" />
+    <bpmn:sequenceFlow id="Flow_0j4vqez" sourceRef="Activity_AfterTest_B" targetRef="Event_EndB" />
+    <bpmn:task id="Activity_PreTest_C" name="PreTest C">
+      <bpmn:incoming>Flow_C</bpmn:incoming>
+      <bpmn:outgoing>Flow_00hvn43</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="Activity_Approval_A24C" name="Approval A24C" apex:type="apexApproval" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:apexApproval>
+          <apex:applicationId>106</apex:applicationId>
+          <apex:taskStaticId>A24C_SIMPLE_TASK_NO_ACTION_SOURCE</apex:taskStaticId>
+          <apex:parameters>
+            <apex:parameter>
+              <apex:parStaticId>PROCESS_ID</apex:parStaticId>
+              <apex:parDataType>String</apex:parDataType>
+              <apex:parValue>&amp;F4A$PROCESS_ID.</apex:parValue>
+            </apex:parameter>
+            <apex:parameter>
+              <apex:parStaticId>MY_TEXT</apex:parStaticId>
+              <apex:parDataType>String</apex:parDataType>
+              <apex:parValue>My_text_message</apex:parValue>
+            </apex:parameter>
+          </apex:parameters>
+          <apex:resultVariable>Return_C</apex:resultVariable>
+        </apex:apexApproval>
+        <apex:priority>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>Default_test_priority</apex:expression>
+        </apex:priority>
+        <apex:dueOn>
+          <apex:expressionType>interval</apex:expressionType>
+          <apex:expression>PT12H</apex:expression>
+        </apex:dueOn>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00hvn43</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qv8uqp</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="Activity_AfterTest_C" name="AfterTest_C">
+      <bpmn:incoming>Flow_0qv8uqp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b9p2bd</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_EndC" name="EndC">
+      <bpmn:incoming>Flow_0b9p2bd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_00hvn43" sourceRef="Activity_PreTest_C" targetRef="Activity_Approval_A24C" />
+    <bpmn:sequenceFlow id="Flow_0qv8uqp" sourceRef="Activity_Approval_A24C" targetRef="Activity_AfterTest_C" />
+    <bpmn:sequenceFlow id="Flow_0b9p2bd" sourceRef="Activity_AfterTest_C" targetRef="Event_EndC" />
+    <bpmn:sequenceFlow id="Flow_B" name=":F4A$path = &#39;B&#39;" sourceRef="Gateway_Choose_Path" targetRef="Activity_PreTest_B" apex:sequence="30">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$path = 'B'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_C" name=":F4A$path = &#39;C&#39;" sourceRef="Gateway_Choose_Path" targetRef="Activity_PreTest_C" apex:sequence="40">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$path = 'C'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A24a">
+      <bpmndi:BPMNShape id="Event_11tfy78_di" bpmnElement="Event_Start">
+        <dc:Bounds x="112" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="118" y="595" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02vge6v_di" bpmnElement="Activity_PreTest_A">
+        <dc:Bounds x="540" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ptul25_di" bpmnElement="Activity_Approval_A24A">
+        <dc:Bounds x="700" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gldnli_di" bpmnElement="Activity_AfterTest_A">
+        <dc:Bounds x="860" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14v5n5w_di" bpmnElement="Event_EndA">
+        <dc:Bounds x="1022" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1027" y="425" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cohtje_di" bpmnElement="Activity_Setup">
+        <dc:Bounds x="220" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0t0k1zr_di" bpmnElement="Gateway_Choose_Path" isMarkerVisible="true">
+        <dc:Bounds x="365" y="545" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="357" y="602" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0jrc3jh" bpmnElement="Activity_PreTest_B">
+        <dc:Bounds x="540" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0x0xhvc" bpmnElement="Activity_Approval_A24B">
+        <dc:Bounds x="700" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rxhchn" bpmnElement="Activity_AfterTest_B">
+        <dc:Bounds x="860" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0f80jtg" bpmnElement="Event_EndB">
+        <dc:Bounds x="1022" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1027" y="595" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0txpkeu" bpmnElement="Activity_PreTest_C">
+        <dc:Bounds x="540" y="720" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1adr86s" bpmnElement="Activity_Approval_A24C">
+        <dc:Bounds x="700" y="720" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1aa9zxq" bpmnElement="Activity_AfterTest_C">
+        <dc:Bounds x="860" y="720" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y8z44e" bpmnElement="Event_EndC">
+        <dc:Bounds x="1022" y="742" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1026" y="785" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1x50t9n_di" bpmnElement="Flow_1x50t9n">
+        <di:waypoint x="148" y="570" />
+        <di:waypoint x="220" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16oik1e_di" bpmnElement="Flow_16oik1e">
+        <di:waypoint x="640" y="400" />
+        <di:waypoint x="700" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ityq7e_di" bpmnElement="Flow_0ityq7e">
+        <di:waypoint x="800" y="400" />
+        <di:waypoint x="860" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_119sw9n_di" bpmnElement="Flow_119sw9n">
+        <di:waypoint x="960" y="400" />
+        <di:waypoint x="1022" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0putczw_di" bpmnElement="Flow_A">
+        <di:waypoint x="390" y="545" />
+        <di:waypoint x="390" y="400" />
+        <di:waypoint x="540" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="422" y="363" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tdp180_di" bpmnElement="Flow_0tdp180">
+        <di:waypoint x="320" y="570" />
+        <di:waypoint x="365" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1lw9qw7" bpmnElement="Flow_0m64eas">
+        <di:waypoint x="640" y="570" />
+        <di:waypoint x="700" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_19cdfvv" bpmnElement="Flow_0dn2nge">
+        <di:waypoint x="800" y="570" />
+        <di:waypoint x="860" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0ny1nhs" bpmnElement="Flow_0j4vqez">
+        <di:waypoint x="960" y="570" />
+        <di:waypoint x="1022" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0fjpi3u" bpmnElement="Flow_00hvn43">
+        <di:waypoint x="640" y="760" />
+        <di:waypoint x="700" y="760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_12iqgdf" bpmnElement="Flow_0qv8uqp">
+        <di:waypoint x="800" y="760" />
+        <di:waypoint x="860" y="760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1pn0zqt" bpmnElement="Flow_0b9p2bd">
+        <di:waypoint x="960" y="760" />
+        <di:waypoint x="1022" y="760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06m4ohs_di" bpmnElement="Flow_B">
+        <di:waypoint x="415" y="570" />
+        <di:waypoint x="540" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="441" y="552" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13k9xz5_di" bpmnElement="Flow_C">
+        <di:waypoint x="390" y="595" />
+        <di:waypoint x="390" y="760" />
+        <di:waypoint x="540" y="760" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="441" y="733" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

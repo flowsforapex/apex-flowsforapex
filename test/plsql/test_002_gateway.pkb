@@ -134,7 +134,7 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
 
-      flow_api_pkg.flow_delete(p_process_id => l_prcs_id);
+      --flow_api_pkg.flow_delete(p_process_id => l_prcs_id);
    end exclusive_no_route;
 
    --test(b. exclusive gateway - default routing)
@@ -2056,10 +2056,10 @@ create or replace package body test_002_gateway is
       -- test 3 is torn down in the test runner
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_4);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_5);
-      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);
+      --flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_7);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_8);
-      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_9);
+      --flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_9);
    end;
 
 end test_002_gateway;
