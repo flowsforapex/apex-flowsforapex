@@ -86,7 +86,7 @@ set timr.timr_callback =
             on sbfl.sbfl_current = cur_objt.objt_bpmn_id
            and sbfl.sbfl_dgrm_id = cur_objt.objt_dgrm_id
           where sbfl.sbfl_id = timr.timr_sbfl_id
-
+;
 
 
 -- in addition, know in flow_subflows if the current event follows on from a Event Based Gateway
