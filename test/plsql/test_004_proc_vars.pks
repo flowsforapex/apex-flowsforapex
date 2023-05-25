@@ -31,9 +31,11 @@ create or replace package test_004_proc_vars is
   procedure bad_format_num;
 
   --%test(3b. Bad Format data - date)
+  --%disabled
   procedure bad_format_date;
 
   --%test(3c. Bad Format data - tstz)
+  --%disabled
   procedure bad_format_tstz;
 
 

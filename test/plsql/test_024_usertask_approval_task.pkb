@@ -536,7 +536,7 @@ create or replace package body test_024_usertask_approval_task as
       into l_actual_vc2
       from apex_tasks
       where  task_id = l_task_id;
-    ut.expect(l_actual_vc2).to_equal('CANCELLED');
+    ut.expect(l_actual_vc2).to_equal('CANCELED');
 
   end approval_task_cleanup_sbfl_deletion;
 
