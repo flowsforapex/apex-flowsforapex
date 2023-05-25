@@ -1353,26 +1353,38 @@ as
           end if;
         -- custom processStatus attribute on terminateEndEvents
         when flow_constants_pkg.gc_bpmn_terminate_event_definition then
-          select details.detail_type
-               , details.detail_value
-            into l_detail_type
-               , l_detail_value
-            from xmltable
-                  (
-                    xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                  , '*' passing rec.child_details
-                    columns
-                      detail_type  varchar2(50 char) path   'name()'
-                    , detail_value varchar2(4000 char) path 'text()'
-                  ) details
-          ;
-          if l_detail_type = flow_constants_pkg.gc_apex_process_status then
-            register_object_attribute
+          if g_log_enabled then
+            flow_parser_util.log
             (
-              pi_objt_bpmn_id   => pi_objt_bpmn_id
-            , pi_attribute_name => flow_constants_pkg.gc_terminate_result
-            , pi_value          => l_detail_value
+              pi_plog_dgrm_id    => g_dgrm_id
+            , pi_plog_bpmn_id    => pi_objt_bpmn_id
+            , pi_plog_parse_step => 'when ' || flow_constants_pkg.gc_bpmn_terminate_event_definition
+            , pi_plog_payload    => rec.child_details
             );
+          end if;
+
+          if rec.child_details is not null then
+            select details.detail_type
+                 , details.detail_value
+              into l_detail_type
+                 , l_detail_value
+              from xmltable
+                    (
+                      xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                    , '*' passing rec.child_details
+                      columns
+                        detail_type  varchar2(50 char) path   'name()'
+                      , detail_value varchar2(4000 char) path 'text()'
+                    ) details
+            ;
+            if l_detail_type = flow_constants_pkg.gc_apex_process_status then
+              register_object_attribute
+              (
+                pi_objt_bpmn_id   => pi_objt_bpmn_id
+              , pi_attribute_name => flow_constants_pkg.gc_terminate_result
+              , pi_value          => l_detail_value
+              );
+            end if;
           end if;
         when flow_constants_pkg.gc_bpmn_message_event_definition then
 
@@ -1555,6 +1567,16 @@ as
     l_objt_sub_tag_name flow_objects.objt_sub_tag_name%type;
     l_conn_attributes   sys.json_object_t;
   begin
+    if g_log_enabled then
+      flow_parser_util.log
+      (
+        pi_plog_dgrm_id    => g_dgrm_id
+      , pi_plog_bpmn_id    => pi_proc_bpmn_id
+      , pi_plog_parse_step => 'parse_steps'
+      , pi_plog_payload    => pi_xml
+      );
+    end if;
+
     for rec in (
                 select steps.steps_type
                      , steps.steps_name
@@ -1599,6 +1621,33 @@ as
                        ) steps
                )
     loop
+      if g_log_enabled then
+
+        flow_parser_util.log
+        (
+          pi_plog_dgrm_id    => g_dgrm_id
+        , pi_plog_bpmn_id    => rec.steps_id
+        , pi_plog_parse_step => 'parse_steps - loop step'
+        , pi_plog_payload    => rec.step
+        );
+
+        flow_parser_util.log
+        (
+          pi_plog_dgrm_id    => g_dgrm_id
+        , pi_plog_bpmn_id    => rec.steps_id
+        , pi_plog_parse_step => 'parse_steps - loop childElements'
+        , pi_plog_payload    => rec.child_elements
+        );
+
+        flow_parser_util.log
+        (
+          pi_plog_dgrm_id    => g_dgrm_id
+        , pi_plog_bpmn_id    => rec.steps_id
+        , pi_plog_parse_step => 'parse_steps - loop extensionElements'
+        , pi_plog_payload    => rec.extension_elements
+        );
+
+      end if;
 
       if rec.source_ref is null then -- assume objects don't have a sourceRef attribute
 
