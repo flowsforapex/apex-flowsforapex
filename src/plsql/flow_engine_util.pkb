@@ -511,6 +511,7 @@ procedure get_number_of_connections
             from flow_subflows sbfl
             join flow_objects objt
               on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+             and sbfl.sbfl_current = objt.objt_bpmn_id
            where sbfl.sbfl_prcs_id = p_process_id
              and sbfl.sbfl_process_level = p_process_level
              and objt.objt_tag_name in ( flow_constants_pkg.gc_bpmn_usertask
