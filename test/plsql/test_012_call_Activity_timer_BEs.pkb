@@ -394,7 +394,7 @@ create or replace package body test_012_call_Activity_timer_BEs is
    flow_api_pkg.step_timers;
    dbms_session.sleep(2); */
 
-   dbms_session.sleep(12);
+   dbms_session.sleep(16);
 
    -- test status of main and afterBE subflows after becoming current
     open l_expected for     

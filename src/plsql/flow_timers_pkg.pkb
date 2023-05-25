@@ -143,6 +143,14 @@ create or replace package body flow_timers_pkg as
             , p0 => pi_sbfl_id          
             );
             -- $F4AMESSAGE 'timer-object-not-found' || 'Object with timer not found in get_timer_definition. Subflow %0.'
+          when too_many_rows then
+            flow_errors.handle_instance_error
+            ( pi_prcs_id     => pi_prcs_id
+            , pi_sbfl_id     => pi_sbfl_id
+            , pi_message_key => 'boundary-event-too-many'
+            , p0 => flow_constants_pkg.gc_bpmn_timer_event_definition
+            );
+            -- $F4AMESSAGE 'boundary-event-too-many' || 'More than one %0 boundaryEvent found on sub process.'              
         end;
     end;
     apex_debug.info

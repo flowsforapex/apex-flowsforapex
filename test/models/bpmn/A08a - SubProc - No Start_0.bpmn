@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A08a" name="A08a - Subproc - No Start" isExecutable="true" apex:isStartable="true" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_1qpar7e</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:incoming>Flow_1qpar7e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hpie3z</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1qpar7e" sourceRef="Event_Start" targetRef="Activity_A" />
+    <bpmn:sequenceFlow id="Flow_0hpie3z" sourceRef="Activity_A" targetRef="Activity_B" />
+    <bpmn:subProcess id="Activity_B" name="B">
+      <bpmn:incoming>Flow_0hpie3z</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kdgrbh</bpmn:outgoing>
+      <bpmn:task id="Activity_B1" name="B1">
+        <bpmn:outgoing>Flow_1uajrv9</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:endEvent id="Event_BEnd" name="BEnd">
+        <bpmn:incoming>Flow_1uajrv9</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1uajrv9" sourceRef="Activity_B1" targetRef="Event_BEnd" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_0kdgrbh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0kdgrbh" sourceRef="Activity_B" targetRef="Event_End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A08a">
+      <bpmndi:BPMNShape id="Event_0o9vmf0_di" bpmnElement="Event_Start">
+        <dc:Bounds x="332" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="338" y="415" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14id24e_di" bpmnElement="Activity_A">
+        <dc:Bounds x="420" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gv8f0u_di" bpmnElement="Activity_B" isExpanded="true">
+        <dc:Bounds x="680" y="310" width="350" height="200" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wan2hx_di" bpmnElement="Activity_B1">
+        <dc:Bounds x="760" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0329zfa_di" bpmnElement="Event_BEnd">
+        <dc:Bounds x="912" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="917" y="415" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1uajrv9_di" bpmnElement="Flow_1uajrv9">
+        <di:waypoint x="860" y="390" />
+        <di:waypoint x="912" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_08piy1i_di" bpmnElement="Event_End">
+        <dc:Bounds x="1192" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="435" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1qpar7e_di" bpmnElement="Flow_1qpar7e">
+        <di:waypoint x="368" y="390" />
+        <di:waypoint x="420" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hpie3z_di" bpmnElement="Flow_0hpie3z">
+        <di:waypoint x="520" y="390" />
+        <di:waypoint x="680" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kdgrbh_di" bpmnElement="Flow_0kdgrbh">
+        <di:waypoint x="1030" y="410" />
+        <di:waypoint x="1192" y="410" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

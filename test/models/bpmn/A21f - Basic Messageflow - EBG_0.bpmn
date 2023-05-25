@@ -20,8 +20,8 @@
     <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="basicApexMessage">
       <bpmn:extensionElements>
         <apex:messageName>
-          <apex:expressionType>plsqlRawExpression</apex:expressionType>
-          <apex:expression>'MyMessage'</apex:expression>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messagename</apex:expression>
         </apex:messageName>
         <apex:correlationKey>
           <apex:expressionType>plsqlRawExpression</apex:expressionType>
@@ -42,8 +42,8 @@
       <bpmn:messageEventDefinition id="MessageEventDefinition_0mkhhdo">
         <bpmn:extensionElements>
           <apex:messageName>
-            <apex:expressionType>plsqlRawExpression</apex:expressionType>
-            <apex:expression>'MyMessage'</apex:expression>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messagename</apex:expression>
           </apex:messageName>
           <apex:correlationKey>
             <apex:expressionType>plsqlRawExpression</apex:expressionType>
@@ -63,8 +63,8 @@
       <bpmn:messageEventDefinition id="MessageEventDefinition_0yqmzvh">
         <bpmn:extensionElements>
           <apex:messageName>
-            <apex:expressionType>plsqlRawExpression</apex:expressionType>
-            <apex:expression>'MyMessage'</apex:expression>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messagename</apex:expression>
           </apex:messageName>
           <apex:correlationKey>
             <apex:expressionType>plsqlRawExpression</apex:expressionType>

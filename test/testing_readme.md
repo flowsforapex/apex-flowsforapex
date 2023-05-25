@@ -16,13 +16,15 @@ Using the github repository, go through the following steps to install the test 
 
 3. Install the Test Scripts into your workspace.
    1. Run the `install_all_tests.sql` script (contained in `\test`).  This installs the test_helper package, plus a package for each test suite.
-4. You should now be able to run all of the tests.
+4. Install any Test Apps in the `test/apps` folder.   These contain things like APEX Approval Task Definitions.   You will need to install the version of these files that matches the APEX version installed in your test environment.
+5. You should now be able to run all of the tests.
 
 ## Adding New Tests ##
 
 - add a new plsql package for each suite.  You can see the naming conventions...
 - create one or more models for the suite.  You can see the naming conventions...
 - add the models to the `import.sql` manifest file
+- if necessary, add any applications...
 
 ## Old Installation Instructions - Installing the BPMN Files
 

@@ -130,26 +130,14 @@ create or replace package body flow_message_flow as
                                                    );
 
     if l_log_msg = flow_constants_pkg.gc_vcbool_true then
-
-      insert into flow_message_received_log
-      ( lgrx_message_name
-      , lgrx_key_name
-      , lgrx_key_value
-      , lgrx_payload
-      , lgrx_was_correlated
-      , lgrx_prcs_id
-      , lgrx_sbfl_id
-      , lgrx_received_on
-      )
-      values
-      ( p_message_name
-      , p_key_name
-      , p_key_value
-      , p_payload
-      , l_was_correlated
-      , l_msub.msub_prcs_id
-      , l_msub.msub_sbfl_id
-      , systimestamp
+      flow_message_util.autonomous_write_to_messageflow_log
+      ( p_message_name        => p_message_name 
+      , p_key_name            => p_key_name
+      , p_key_value           => p_key_value
+      , p_payload             => p_payload
+      , p_was_correlated      => l_was_correlated
+      , p_prcs_id             => l_msub.msub_prcs_id
+      , p_sbfl_id             => l_msub.msub_sbfl_id   
       );
     end if;
 

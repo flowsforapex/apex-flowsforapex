@@ -16,6 +16,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_005_engine_misc.pks
 @plsql/test_006_lanes_roles.pks
 @plsql/test_007_procvars.pks
+@plsql/test_008_subproc_misc.pks
 @plsql/test_009_call_activity_nesting.pks
 @plsql/test_010_variable_expression.pks
 @plsql/test_011_var_exps_in_callActivities.pks
@@ -29,6 +30,8 @@ PROMPT >> Installing Package Specifications
 @plsql/test_019_priorityduedates.pks
 @plsql/test_021_messageflow_basics.pks
 @plsql/test_022_usertask_misc.pks
+@plsql/test_023_custom_extensions.pks
+@plsql/test_024_usertask_approval_task.pks
 
 PROMPT >> Installing Package Bodies
 
@@ -40,6 +43,7 @@ PROMPT >> Installing Package Bodies
 @plsql/test_005_engine_misc.pkb
 @plsql/test_006_lanes_roles.pkb
 @plsql/test_007_procvars.pkb
+@plsql/test_008_subproc_misc.pkb
 @plsql/test_009_call_activity_nesting.pkb
 @plsql/test_010_variable_expression.pkb
 @plsql/test_011_var_exps_in_callActivities.pkb
@@ -53,6 +57,8 @@ PROMPT >> Installing Package Bodies
 @plsql/test_019_priorityduedates.pkb
 @plsql/test_021_messageflow_basics.pkb
 @plsql/test_022_usertask_misc.pkb
+@plsql/test_023_custom_extensions.pkb
+@plsql/test_024_usertask_approval_task.pkb
 
 PROMPT >> Engine Test Scripts Installed
 

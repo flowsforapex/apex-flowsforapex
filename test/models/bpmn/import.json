@@ -228,6 +228,55 @@
         "dgrm_category": "Testing",
         "file": "A07b - Process Variable API - Called Diagram_0.bpmn"
       },
+        {
+          "dgrm_name": "A08a - SubProc - No Start",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08a - SubProc - No Start_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08b - SubProc - Two Starts",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08b - SubProc - Two Starts_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08c - SubProc - Two Int Timer BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08c - SubProc - Two Int Timer BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08d - SubProc - Two Int Error BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08d - SubProc - Two Int Error BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08e - SubProc - Two Int Esc BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08e - SubProc - Two Int Esc BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08f - SubProc - Int plus Non Int Esc BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08f - SubProc - Int plus Non Int Esc BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08g - SubProc - Int Timer with nested SubProc",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08g - SubProc - Int Timer with nested SubProc_0.bpmn"
+        },
     {
         "dgrm_name": "A09p - Recursive Chain PQP Top",
         "dgrm_version": "0",
@@ -637,5 +686,40 @@
         "dgrm_status": "draft",
         "dgrm_category": "Testing",
         "file": "A22a - UserTask - Settings Substitution_0.bpmn"
+    },
+    {
+      "dgrm_name": "A22b - Other Task Types",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A22b - Other Task Types_0.bpmn"
+    },
+    {
+      "dgrm_name": "A23a - Custom Extensions",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A23a - Custom Extensions_0.bpmn"
+    },
+    {
+      "dgrm_name": "A23b - Custom Extensions - In Lanesets",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A23b - Custom Extensions - In Lanesets_0.bpmn"
+    },
+    {
+      "dgrm_name": "A24a - Approval Component - Basic Operation",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A24a - Approval Component - Basic Operation_0.bpmn"
+    },
+    {
+      "dgrm_name": "A24b - Approval Task - Task Cancelation",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A24b - Approval Task - Task Cancelation_0.bpmn"
     }
 ]
