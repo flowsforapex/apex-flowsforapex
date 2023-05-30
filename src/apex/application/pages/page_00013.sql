@@ -4,8 +4,8 @@ begin
 --     PAGE: 00013
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -35,8 +35,8 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#:t-Dialog--noPadding'
 ,p_dialog_width=>'70%'
 ,p_dialog_css_classes=>'f4a-dynamic-title'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220819085738'
+,p_last_updated_by=>'C##MOKLEIN'
+,p_last_upd_yyyymmddhh24miss=>'20230413172035'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(12635446510220640)
@@ -108,7 +108,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'DAMTHOR'
 ,p_internal_uid=>5519619992437209
 );
@@ -244,7 +244,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'DAMTHOR'
 ,p_internal_uid=>16967786479177907
 );
@@ -396,7 +396,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'LMOREAUX'
 ,p_internal_uid=>12632654932220612
 );
@@ -596,7 +596,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'LMOREAUX'
 ,p_internal_uid=>60861002375537208
 );
@@ -753,7 +753,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'DAMTHOR'
 ,p_internal_uid=>2497980793177024
 );
@@ -937,7 +937,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'DAMTHOR'
 ,p_internal_uid=>2497368023177018
 );
@@ -1002,8 +1002,8 @@ end;
 /
 begin
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -1121,6 +1121,7 @@ wwv_flow_api.create_worksheet(
 ,p_max_row_count=>'1000000'
 ,p_no_data_found_message=>'No attributes found.'
 ,p_show_search_bar=>'N'
+,p_report_list_mode=>'TABS'
 ,p_fixed_header=>'NONE'
 ,p_show_detail_link=>'N'
 ,p_owner=>'LMOREAUX'
@@ -1144,6 +1145,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_allow_pivot=>'N'
 ,p_allow_hide=>'N'
 ,p_column_type=>'CLOB'
+,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_static_id=>'JSON'
 ,p_rpt_show_filter_lov=>'N'
 );
@@ -1204,7 +1206,8 @@ wwv_flow_api.create_report_region(
 '  pi_prcs_id => :P13_PRCS_ID',
 ', pi_objt_id => :P13_OBJT_ID',
 ')'))
-,p_display_condition_type=>'PLSQL_EXPRESSION'
+,p_display_when_cond2=>'PLSQL'
+,p_display_condition_type=>'EXPRESSION'
 ,p_ajax_enabled=>'Y'
 ,p_query_row_template=>wwv_flow_api.id(12495548550946880181)
 ,p_query_num_rows=>15
@@ -1338,6 +1341,7 @@ wwv_flow_api.create_page_computation(
 ,p_computation_item=>'P13_VAR_TAB_NAME'
 ,p_computation_point=>'BEFORE_BOX_BODY'
 ,p_computation_type=>'FUNCTION_BODY'
+,p_computation_language=>'PLSQL'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'declare',
 '    l_objt_tag_name flow_objects.objt_tag_name%type;',

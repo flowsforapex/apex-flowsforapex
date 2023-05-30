@@ -57,6 +57,7 @@ PROMPT >> Installing Views
 @views/flow_diagrams_instanciated_lov.sql
 @views/flow_instance_timeline_vw.sql
 @views/flow_startable_diagrams_vw.sql
+@views/flow_message_subscriptions_vw.sql
 
 
 PROMPT >> Installing Package Bodies
@@ -99,9 +100,6 @@ PROMPT >> Global App Package Specifications
 @plsql/engine-app/flow_engine_app_api.pks
 @plsql/engine-app/flow_theme_api.pks
 
-PROMPT >> Global Error Function
-@plsql/engine-app/apex_error_handling.sql
-
 PROMPT >> Page Views
 @views/engine-app/flow_p0002_diagrams_vw.sql
 @views/engine-app/flow_p0007_vw.sql
@@ -113,6 +111,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_instance_log_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
+@views/engine-app/flow_p0008_message_subscriptions_vw.sql
 @views/engine-app/flow_p0008_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
 @views/engine-app/flow_p0010_vw.sql

@@ -4,8 +4,8 @@ begin
 --     REGION TEMPLATE: STANDARD
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -53,7 +53,7 @@ wwv_flow_api.create_plug_template(
 ,p_translate_this_template=>'N'
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(88466677718008844)
+ p_id=>wwv_flow_api.id(1704478665043229)
 ,p_plug_template_id=>wwv_flow_api.id(12495582446800880234)
 ,p_name=>'Region Body'
 ,p_placeholder=>'BODY'
@@ -62,7 +62,7 @@ wwv_flow_api.create_plug_tmpl_display_point(
 ,p_max_fixed_grid_columns=>12
 );
 wwv_flow_api.create_plug_tmpl_display_point(
- p_id=>wwv_flow_api.id(88467241904008845)
+ p_id=>wwv_flow_api.id(1704909208043229)
 ,p_plug_template_id=>wwv_flow_api.id(12495582446800880234)
 ,p_name=>'Sub Regions'
 ,p_placeholder=>'SUB_REGIONS'

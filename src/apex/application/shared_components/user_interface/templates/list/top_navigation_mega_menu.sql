@@ -4,8 +4,8 @@ begin
 --     REGION TEMPLATE: TOP_NAVIGATION_MEGA_MENU
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -114,7 +114,7 @@ wwv_flow_api.create_list_template(
 ,p_a02_label=>'Badge Value'
 ,p_a03_label=>'Description'
 ,p_a04_label=>'List Item Class'
-,p_a05_label=>'Shortcut'
+,p_a05_label=>'Shortcut Key'
 ,p_a06_label=>'Link Target'
 ,p_a07_label=>'Badge Class'
 ,p_a08_label=>'Menu Item Class'

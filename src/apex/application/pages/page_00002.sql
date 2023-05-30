@@ -4,8 +4,8 @@ begin
 --     PAGE: 00002
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -107,7 +107,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_owner=>'FLOWS4APEX'
 ,p_internal_uid=>24214476360956128
 );
@@ -610,9 +610,11 @@ wwv_flow_api.create_page_validation(
 '  pi_dgrm_id_list => :P2_DGRM_ID',
 ', pi_new_version => :P2_NEW_VERSION',
 ');'))
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
 ,p_validation_condition=>':request = ''ADD_VERSION'' and :P2_BULK_ACTION = ''Y'''
-,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_validation_condition2=>'PLSQL'
+,p_validation_condition_type=>'EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(26401222533737000)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
@@ -625,9 +627,11 @@ wwv_flow_api.create_page_validation(
 '  pi_dgrm_id => :P2_DGRM_ID',
 ', pi_new_version => :P2_NEW_VERSION',
 ');'))
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
 ,p_validation_condition=>':request = ''ADD_VERSION'' and :P2_BULK_ACTION = ''N'''
-,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_validation_condition2=>'PLSQL'
+,p_validation_condition_type=>'EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(26401222533737000)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
@@ -640,9 +644,11 @@ wwv_flow_api.create_page_validation(
 '  pi_dgrm_id_list => :P2_DGRM_ID',
 ', pi_new_name => :P2_NEW_NAME',
 ');'))
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
 ,p_validation_condition=>':request = ''COPY_MODEL'' and :P2_BULK_ACTION = ''Y'''
-,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_validation_condition2=>'PLSQL'
+,p_validation_condition_type=>'EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(7938841081499711)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
@@ -654,9 +660,11 @@ wwv_flow_api.create_page_validation(
 'return flow_engine_app_api.validate_flow_copy(',
 '  pi_new_name => :P2_NEW_NAME',
 ');'))
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
 ,p_validation_condition=>':request = ''COPY_MODEL'' and :P2_BULK_ACTION = ''N'''
-,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_validation_condition2=>'PLSQL'
+,p_validation_condition_type=>'EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(7938841081499711)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
@@ -862,6 +870,7 @@ wwv_flow_api.create_page_process(
 '  pi_dgrm_id_list => :P2_DGRM_ID',
 ', pi_new_version => :P2_NEW_VERSION',
 ');'))
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'ADD_VERSION'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
@@ -878,6 +887,7 @@ wwv_flow_api.create_page_process(
 '  pi_dgrm_id_list => :P2_DGRM_ID',
 ', pi_new_name => :P2_NEW_NAME',
 ');'))
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'COPY_MODEL'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
@@ -890,6 +900,7 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Set Selection in Collection'
 ,p_process_sql_clob=>'flow_engine_app_api.copy_selection_to_collection;'
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'EXPORT_FLOW,ADD_VERSION,COPY_FLOW'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'

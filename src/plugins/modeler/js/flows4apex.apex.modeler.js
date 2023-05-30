@@ -72,6 +72,9 @@
           else if (input && input.classList.contains('bio-properties-panel-toggle-switch__slider')) {
             // allow toggle switch
           }
+          else if (event.target.tagName == 'A') {
+            // allow links
+          }
           else {
             event.stopPropagation();
             return false;
