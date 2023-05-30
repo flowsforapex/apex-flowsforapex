@@ -129,8 +129,6 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-set-error', c_load_lang, q'[Error creating process variable %0 for process id %1 in scope %2.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'var-get-error', c_load_lang, q'[Error getting process variable %0 for process id %1 in scope %2.]' );
-  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-update-error', c_load_lang, q'[Error updating process variable %0 for process id %1 in scope %2.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-delete-error', c_load_lang, q'[Error deleting process variable %0 for process id %1 in scope %2.]' );
@@ -257,7 +255,12 @@ begin
     values ( 'settings-error', c_load_lang, q'[Error evaluating Setting. Expression is invalid.  Expression: %0.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'settings-procvar-no-prcs', c_load_lang, q'[Settings cannot specify Process Variable without a Process ID.]' );
-
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'msgflow-endpoint-not-supported', c_load_lang, q'[MessageFlow Endpoint specified ( %0 ) is not supported.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var-bad-scope', c_load_lang, q'[Invalid scope (%0) supplied for process variable.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var-get-error', c_load_lang, q'[Unable to get value of process variable %0.  See instance logs for details.]' );
 
   commit;
 end;

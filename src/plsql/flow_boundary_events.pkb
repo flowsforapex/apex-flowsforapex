@@ -282,6 +282,11 @@ is
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );
+    -- clean up any subscriptions for message events on the object
+    flow_message_util.cancel_subscription
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );
     -- generate a step key & insert in the update...use later
     l_timestamp := systimestamp;
     l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_subflow_id

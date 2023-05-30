@@ -8,7 +8,8 @@
       itemsToSubmit: null,
       noDataFoundMessage: "Could not load Diagram",
       refreshOnLoad: false,
-      useNavigatedViewer: false,
+      showToolbar: false,
+      enableMousewheelZoom: false,
       addHighlighting: false,
       enableCallActivities: false,
       config: {
@@ -26,7 +27,8 @@
           "fill": "#d2423b",
           "border": "black",
           "label": "white"
-        }
+        },
+        allowDownload: true,
       }
     },
 
@@ -61,25 +63,27 @@
         defaultLabelColor: "var(--default-stroke-color)",
       }
 
-      if ( this.options.useNavigatedViewer ) {
-        this.enabledModules.push(bpmnViewer.customModules.MoveCanvasModule);
-        this.enabledModules.push(bpmnViewer.customModules.ZoomScrollModule);
+      if ( this.options.showToolbar ) {
         this.enabledModules.push(bpmnViewer.customModules.customPaletteProviderModule);
+      }
+      if ( this.options.enableMousewheelZoom ) {
+        this.enabledModules.push(bpmnViewer.customModules.ZoomScrollModule);
+      }
+      if ( this.options.showToolbar || this.options.enableMousewheelZoom) {
+        this.enabledModules.push(bpmnViewer.customModules.MoveCanvasModule);
       }
 
       this.bpmnViewer$ = new bpmnViewer.Viewer({
           container: "#" + this.canvasId,
           additionalModules: this.enabledModules,
-          bpmnRenderer: this.bpmnRenderer
+          bpmnRenderer: this.bpmnRenderer,
+          config: this.options.config
       });
 
       // prevent page submit + reload after button click
-      $(document).on("apexbeforepagesubmit", ( event ) => {
-        const blocking = ['bjs-drilldown'];
-        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
-          apex.event.gCancelFlag = true;
-        }
-      });  
+      $( document ).on( "apexbeforepagesubmit", ( event, request ) => {
+        if (!request) apex.event.gCancelFlag = true;
+      } );
 
       if ( this.options.refreshOnLoad ) {
         this.refresh();
@@ -141,9 +145,7 @@
     },
 
     addHighlighting: function() {
-      this.bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
-      this.bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
-      this.bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+      this.bpmnViewer$.get('styleModule').highlightElements(this.current, this.completed, this.error);
     },
 
     zoom: function( zoomOption ) {
@@ -159,7 +161,7 @@
         const { svg } = result;
         
         if ( this.options.addHighlighting ) {
-          return bpmnViewer$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+          return bpmnViewer$.get('styleModule').addStyleToSVG(svg);
         }
 
         return svg;
@@ -202,9 +204,10 @@
             this.diagramIdentifier = diagram.diagramIdentifier;
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
+
             // reset breadcrumb
             if (!oldLoaded) {
-                this.bpmnViewer$.get('callActivityModule').trimBreadcrumbTo(0)
+                this.bpmnViewer$.get('callActivityModule').resetBreadcrumb();
                 this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
             }
           }

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A21f" name="A21f MessageFlow and Event Based Gateways" isExecutable="true" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_03sw70g</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_BeforeGateway" name="BeforeGateway">
+      <bpmn:incoming>Flow_03sw70g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ey34y6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_03sw70g" sourceRef="Event_Start" targetRef="Activity_BeforeGateway" />
+    <bpmn:sequenceFlow id="Flow_1ey34y6" sourceRef="Activity_BeforeGateway" targetRef="Gateway_1wgstis" />
+    <bpmn:eventBasedGateway id="Gateway_1wgstis" name="EBG">
+      <bpmn:incoming>Flow_1ey34y6</bpmn:incoming>
+      <bpmn:outgoing>Flow_07vgiw0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_13515ga</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1siv5zn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_009p1i1</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="basicApexMessage">
+      <bpmn:extensionElements>
+        <apex:messageName>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messagename</apex:expression>
+        </apex:messageName>
+        <apex:correlationKey>
+          <apex:expressionType>plsqlRawExpression</apex:expressionType>
+          <apex:expression>'Processor'</apex:expression>
+        </apex:correlationKey>
+        <apex:correlationValue>
+          <apex:expressionType>plsqlRawExpression</apex:expressionType>
+          <apex:expression>'Receive'</apex:expression>
+        </apex:correlationValue>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07vgiw0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z7lv2k</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="Flow_07vgiw0" sourceRef="Gateway_1wgstis" targetRef="Activity_Receive" />
+    <bpmn:intermediateCatchEvent id="Event_ICEMessage1" name="ICEMessage1" apex:type="basicApexMessage">
+      <bpmn:incoming>Flow_13515ga</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nrp589</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0mkhhdo">
+        <bpmn:extensionElements>
+          <apex:messageName>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messagename</apex:expression>
+          </apex:messageName>
+          <apex:correlationKey>
+            <apex:expressionType>plsqlRawExpression</apex:expressionType>
+            <apex:expression>'Processor'</apex:expression>
+          </apex:correlationKey>
+          <apex:correlationValue>
+            <apex:expressionType>plsqlRawExpression</apex:expressionType>
+            <apex:expression>'ICE'||'Message1'</apex:expression>
+          </apex:correlationValue>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_13515ga" sourceRef="Gateway_1wgstis" targetRef="Event_ICEMessage1" />
+    <bpmn:intermediateCatchEvent id="Event_ICEMessage2" name="ICEMessage2" apex:type="basicApexMessage">
+      <bpmn:incoming>Flow_1siv5zn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aufudp</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0yqmzvh">
+        <bpmn:extensionElements>
+          <apex:messageName>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messagename</apex:expression>
+          </apex:messageName>
+          <apex:correlationKey>
+            <apex:expressionType>plsqlRawExpression</apex:expressionType>
+            <apex:expression>'Processor'</apex:expression>
+          </apex:correlationKey>
+          <apex:correlationValue>
+            <apex:expressionType>plsqlRawExpression</apex:expressionType>
+            <apex:expression>'ICE'||'Message2'</apex:expression>
+          </apex:correlationValue>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1siv5zn" sourceRef="Gateway_1wgstis" targetRef="Event_ICEMessage2" />
+    <bpmn:intermediateCatchEvent id="Event_ICETimer" name="ICETimer">
+      <bpmn:incoming>Flow_009p1i1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yh856b</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1kq124i" apex:timerType="oracleDuration">
+        <bpmn:extensionElements>
+          <apex:oracleDuration>
+            <apex:intervalDS>000 00:00:05</apex:intervalDS>
+          </apex:oracleDuration>
+        </bpmn:extensionElements>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_009p1i1" sourceRef="Gateway_1wgstis" targetRef="Event_ICETimer" />
+    <bpmn:task id="Activity_After_Receive" name="After Receive">
+      <bpmn:incoming>Flow_0z7lv2k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lbe0co</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0z7lv2k" sourceRef="Activity_Receive" targetRef="Activity_After_Receive" />
+    <bpmn:task id="Activity_After_ICEMessage1" name="After ICEMessage1">
+      <bpmn:incoming>Flow_0nrp589</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bexo21</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0nrp589" sourceRef="Event_ICEMessage1" targetRef="Activity_After_ICEMessage1" />
+    <bpmn:task id="Activity_After_ICEMessage2" name="After ICEMessage2">
+      <bpmn:incoming>Flow_0aufudp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1j37tji</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0aufudp" sourceRef="Event_ICEMessage2" targetRef="Activity_After_ICEMessage2" />
+    <bpmn:task id="Activity_After_ICETimer" name="After ICETimer">
+      <bpmn:incoming>Flow_1yh856b</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fp8uvo</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1yh856b" sourceRef="Event_ICETimer" targetRef="Activity_After_ICETimer" />
+    <bpmn:endEvent id="Event_ICETimerEnd" name="ICETimerEnd">
+      <bpmn:incoming>Flow_0fp8uvo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0fp8uvo" sourceRef="Activity_After_ICETimer" targetRef="Event_ICETimerEnd" apex:sequence="10" />
+    <bpmn:endEvent id="Event_ICEMessage2End" name="ICEMessage2End">
+      <bpmn:incoming>Flow_1j37tji</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1j37tji" sourceRef="Activity_After_ICEMessage2" targetRef="Event_ICEMessage2End" />
+    <bpmn:endEvent id="Event_ICEMessage1End" name="ICEMessage1End">
+      <bpmn:incoming>Flow_0bexo21</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0bexo21" sourceRef="Activity_After_ICEMessage1" targetRef="Event_ICEMessage1End" />
+    <bpmn:endEvent id="Event_ReceiveEnd" name="ReceiveEnd">
+      <bpmn:incoming>Flow_0lbe0co</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0lbe0co" sourceRef="Activity_After_Receive" targetRef="Event_ReceiveEnd" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A21f">
+      <bpmndi:BPMNShape id="Event_1md9c7x_di" bpmnElement="Event_Start">
+        <dc:Bounds x="332" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="338" y="485" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1d1xskx_di" bpmnElement="Activity_BeforeGateway">
+        <dc:Bounds x="420" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0z1agiw_di" bpmnElement="Gateway_1wgstis">
+        <dc:Bounds x="575" y="435" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="568" y="403" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_063omhq_di" bpmnElement="Activity_Receive">
+        <dc:Bounds x="710" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0s13zp9_di" bpmnElement="Event_ICEMessage1">
+        <dc:Bounds x="712" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="696" y="485" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0oi3p42_di" bpmnElement="Event_ICEMessage2">
+        <dc:Bounds x="712" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="696" y="595" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ju3fea_di" bpmnElement="Event_ICETimer">
+        <dc:Bounds x="712" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="707" y="705" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02bui9i_di" bpmnElement="Activity_After_Receive">
+        <dc:Bounds x="900" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lza23k_di" bpmnElement="Activity_After_ICEMessage1">
+        <dc:Bounds x="900" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f1lgah_di" bpmnElement="Activity_After_ICEMessage2">
+        <dc:Bounds x="900" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1n0ie5j_di" bpmnElement="Activity_After_ICETimer">
+        <dc:Bounds x="900" y="640" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1848vm5_di" bpmnElement="Event_ICETimerEnd">
+        <dc:Bounds x="1152" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1137" y="705" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hglcll_di" bpmnElement="Event_ICEMessage2End">
+        <dc:Bounds x="1152" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1126" y="595" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1be6xv8_di" bpmnElement="Event_ICEMessage1End">
+        <dc:Bounds x="1152" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1126" y="485" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0a3m14i_di" bpmnElement="Event_ReceiveEnd">
+        <dc:Bounds x="1152" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1140" y="345" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_03sw70g_di" bpmnElement="Flow_03sw70g">
+        <di:waypoint x="368" y="460" />
+        <di:waypoint x="420" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ey34y6_di" bpmnElement="Flow_1ey34y6">
+        <di:waypoint x="520" y="460" />
+        <di:waypoint x="575" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07vgiw0_di" bpmnElement="Flow_07vgiw0">
+        <di:waypoint x="600" y="435" />
+        <di:waypoint x="600" y="320" />
+        <di:waypoint x="710" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13515ga_di" bpmnElement="Flow_13515ga">
+        <di:waypoint x="625" y="460" />
+        <di:waypoint x="712" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1siv5zn_di" bpmnElement="Flow_1siv5zn">
+        <di:waypoint x="600" y="485" />
+        <di:waypoint x="600" y="570" />
+        <di:waypoint x="712" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_009p1i1_di" bpmnElement="Flow_009p1i1">
+        <di:waypoint x="600" y="485" />
+        <di:waypoint x="600" y="680" />
+        <di:waypoint x="712" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z7lv2k_di" bpmnElement="Flow_0z7lv2k">
+        <di:waypoint x="810" y="320" />
+        <di:waypoint x="900" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nrp589_di" bpmnElement="Flow_0nrp589">
+        <di:waypoint x="748" y="460" />
+        <di:waypoint x="900" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aufudp_di" bpmnElement="Flow_0aufudp">
+        <di:waypoint x="748" y="570" />
+        <di:waypoint x="900" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yh856b_di" bpmnElement="Flow_1yh856b">
+        <di:waypoint x="748" y="680" />
+        <di:waypoint x="900" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fp8uvo_di" bpmnElement="Flow_0fp8uvo">
+        <di:waypoint x="1000" y="680" />
+        <di:waypoint x="1152" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j37tji_di" bpmnElement="Flow_1j37tji">
+        <di:waypoint x="1000" y="570" />
+        <di:waypoint x="1152" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bexo21_di" bpmnElement="Flow_0bexo21">
+        <di:waypoint x="1000" y="460" />
+        <di:waypoint x="1152" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lbe0co_di" bpmnElement="Flow_0lbe0co">
+        <di:waypoint x="1000" y="320" />
+        <di:waypoint x="1152" y="320" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

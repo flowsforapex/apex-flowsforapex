@@ -88,9 +88,9 @@ as
   gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
   
   -- userTask
-  gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexPage';
-  gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexApproval';
-  gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'externalUrl';
+  gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
+  gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';
+  gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := 'externalUrl';
 
   gc_apex_usertask_application_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
   gc_apex_usertask_page_id            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
@@ -110,7 +110,7 @@ as
   gc_apex_usertask_parameters         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'parameters';
 
   --serviceTask
-  gc_apex_servicetask_send_mail       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sendMail';
+  gc_apex_servicetask_send_mail       constant flow_types_pkg.t_bpmn_id := 'sendMail';
 
   gc_apex_servicetask_email_from      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailFrom';
   gc_apex_servicetask_email_to        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailTo';
@@ -128,10 +128,10 @@ as
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
 
   --receiveTask
-  gc_apex_receivetask_subtype_basic   constant flow_types_pkg.t_bpmn_id :=  'basicApexMessage';
+  gc_apex_basic_message   constant flow_types_pkg.t_bpmn_id := 'basicApexMessage';
    
   -- execute PL/SQL tasks
-  gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
+  gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := 'executePlsql';
 
   gc_apex_task_plsql_engine     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
   gc_apex_task_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
@@ -141,9 +141,9 @@ as
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
 
   -- Oracle format timer definitions
-  gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
-  gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';
-  gc_timer_type_oracle_cycle          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleCycle';
+  gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := 'oracleDate';
+  gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := 'oracleDuration';
+  gc_timer_type_oracle_cycle          constant flow_types_pkg.t_bpmn_id := 'oracleCycle';
 
   gc_apex_timer_date                  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'date';
   gc_apex_timer_format_mask           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'formatMask';
@@ -357,6 +357,9 @@ as
 
   gc_stats_outcome_success              constant varchar2(50 char) := 'SUCCESS';
   gc_stats_outcome_error                constant varchar2(50 char) := 'ERROR';
+
+  gc_stats_operation_generate           constant varchar2(20 char) := 'GENERATE';
+  gc_stats_operation_purge              constant varchar2(20 char) := 'PURGE';
 
 -- MIME types
 

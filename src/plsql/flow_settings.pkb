@@ -264,7 +264,8 @@ as
       , pi_message_key    => 'apex-task-priority-error'
       , p0 => l_priority
       );  
-      -- $F4AMESSAGE 'apex-task-priority-error' || 'Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.'    
+      -- $F4AMESSAGE 'apex-task-priority-error' || 'Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0. Priority 3 used instead.'   
+      return null; 
     when others then 
       apex_debug.info 
       ( p_message => ' --- Error evaluating Priority.  Priority expression is invalid.  Expression: %0.  priority 3 returned.'

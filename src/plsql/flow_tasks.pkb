@@ -527,7 +527,7 @@ create or replace package body flow_tasks as
     );
     
     case get_task_type( pi_objt_id => p_step_info.target_objt_id )
-    when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+    when flow_constants_pkg.gc_apex_basic_message then
         -- Flows for APEX Basic MessageFlow
         flow_message_flow.send_message
         ( p_sbfl_info => p_sbfl_info
@@ -596,9 +596,14 @@ create or replace package body flow_tasks as
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
 
-    
+    -- set boundaryEvent Timers, if any
+    flow_boundary_events.set_boundary_timers 
+    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+    , p_subflow_id => p_sbfl_info.sbfl_id
+    );  
+        
     case get_task_type( p_step_info.target_objt_id )
-    when flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+      when flow_constants_pkg.gc_apex_basic_message then
  
         l_msg_sub            := flow_message_util.get_msg_subscription_details
                                 ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref
@@ -626,7 +631,8 @@ create or replace package body flow_tasks as
         ( p_message => '-- ReceiveTask subscription created - message subscription id: %0'
         , p0 => l_msub_id
         );
-    when flow_constants_pkg.gc_apex_task_execute_plsql then
+
+      when  flow_constants_pkg.gc_apex_task_execute_plsql then
         -- set work started time
         flow_engine.start_step 
         ( p_process_id => p_sbfl_info.sbfl_prcs_id
@@ -663,6 +669,8 @@ create or replace package body flow_tasks as
     l_current             flow_objects.objt_bpmn_id%type;
     l_scope               flow_process_variables.prov_scope%type;
     l_dgrm_id             flow_diagrams.dgrm_id%type;
+    l_follows_ebg         flow_subflows.sbfl_is_following_ebg%type; 
+    l_parent_sbfl         flow_subflows.sbfl_sbfl_id%type;
     e_incorrect_step_key  exception;
   begin
     apex_debug.enter 
@@ -684,9 +692,13 @@ create or replace package body flow_tasks as
       select sbfl.sbfl_step_key
            , sbfl.sbfl_current
            , sbfl.sbfl_dgrm_id
+           , sbfl.sbfl_is_following_ebg
+           , sbfl.sbfl_sbfl_id
         into l_required_step_key
            , l_current
            , l_dgrm_id
+           , l_follows_ebg
+           , l_parent_sbfl
         from flow_objects objt
         join flow_subflows sbfl
           on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
@@ -706,27 +718,41 @@ create or replace package body flow_tasks as
         null; -- tbi
     end; 
 
-    -- set subflow to running
-    update flow_subflows sbfl
-       set sbfl.sbfl_last_update    = systimestamp
-         , sbfl.sbfl_work_started   = systimestamp
-         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
-         , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                , sys_context('userenv','os_user')
-                                                , sys_context('userenv','session_user')
-                                                )  
-     where sbfl.sbfl_id       = p_subflow_id
-       and sbfl.sbfl_prcs_id  = p_process_id
-      ;
-    -- log message receipt event
+    -- handle a receivetask following an Event Based Gateway
+
+    case  l_follows_ebg 
+    when  'Y' then
+        -- we have an eventBasedGateway - handle cleaning up the other forward paths
+        flow_engine.handle_event_gateway_event 
+        (
+          p_process_id => p_process_id
+        , p_parent_subflow_id => l_parent_sbfl
+        , p_cleared_subflow_id => p_subflow_id
+        );      
+
+    else 
+      -- set subflow to running
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_work_started   = systimestamp
+           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where sbfl.sbfl_id       = p_subflow_id
+         and sbfl.sbfl_prcs_id  = p_process_id
+        ;
+      -- log message receipt event
 
 
-    -- step subflow forward
-    flow_engine.flow_complete_step 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_step_key   => p_step_key
-    );
+      -- step subflow forward
+      flow_engine.flow_complete_step 
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      , p_step_key   => p_step_key
+      );
+    end case;
 
   end receiveTask_callback;
   

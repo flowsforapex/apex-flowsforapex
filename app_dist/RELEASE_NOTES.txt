@@ -48,7 +48,8 @@ HISTORY
   - Adds explicit definition of relationship (or not) between Lanes and APEX roles/groups.
   - Adds Timestamp with Time Zone datatype option for Process Variables.
   - Adds binding of Process Variables into PL/SQL scripts, variable expressions, and element settings.
-  - Adds support for binding non-varchar2 typed (i.e., number, date, timestamp with time zone) process variabless. 
+  - Adds support for binding non-varchar2 typed (i.e., number, date, timestamp with time zone) process variables. 
+  - Allows processvariable substitutions to be used in all of the parameters of an APEX Page task.
   - Adds 'is Startable' information to Processes, along with users and groups that can start a process.
   - Allows BPMN diagrams to contain Groups and attached Annotations.
   - Adds Automation to create daily, month-to-date, monthly, and quarterly statistics on process and step performance.

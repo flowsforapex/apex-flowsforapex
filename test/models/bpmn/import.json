@@ -173,6 +173,111 @@
         "file":"A05d - Engine - Repeating Timer BE_0.bpmn"
     },
     {
+        "dgrm_name": "A06a - Lanes and Assignment - Child Lanesets",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06a - Lanes and Assignment - Child Lanesets_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06b - Lanes and Assignment - Roles from Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06b - Lanes and Assignment - Roles from Lanes_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06c - Lanes and Assignment - Lanes with SubProcs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06c - Lanes and Assignment - Lanes with SubProcs_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06d - Lanes and Assignment - No Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06d - Lanes and Assignment - No Lanes_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06e - Lanes and Assignment - No Lanes calls Laned Dgrm",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06e - Lanes and Assignment - No Lanes calls Laned Dgrm_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06f - Lanes and Assignment - Lanes calling Dgrm",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06f - Lanes and Assignment - Lanes calling Dgrm_0.bpmn"
+      },
+    {
+        "dgrm_name": "A07a - Process Variable API - Main",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A07a - Process Variable API - Main_0.bpmn"
+      },
+      {
+        "dgrm_name": "A07b - Process Variable API - Called Diagram",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A07b - Process Variable API - Called Diagram_0.bpmn"
+      },
+        {
+          "dgrm_name": "A08a - SubProc - No Start",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08a - SubProc - No Start_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08b - SubProc - Two Starts",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08b - SubProc - Two Starts_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08c - SubProc - Two Int Timer BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08c - SubProc - Two Int Timer BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08d - SubProc - Two Int Error BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08d - SubProc - Two Int Error BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08e - SubProc - Two Int Esc BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08e - SubProc - Two Int Esc BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08f - SubProc - Int plus Non Int Esc BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08f - SubProc - Int plus Non Int Esc BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08g - SubProc - Int Timer with nested SubProc",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08g - SubProc - Int Timer with nested SubProc_0.bpmn"
+        },
+    {
         "dgrm_name": "A09p - Recursive Chain PQP Top",
         "dgrm_version": "0",
         "dgrm_status": "draft",
@@ -528,5 +633,93 @@
         "dgrm_status":"draft",
         "dgrm_category":"Testing",
         "file":"A20e - Diagram Startability - FuncBody_0.bpmn" 
+    },
+    {
+        "dgrm_name":"A21a - Messageflow - basics",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing","file":"A21a - Messageflow - basics_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21b - Messageflow - basics - no payload",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21b - Messageflow - basics - no payload_0.bpmn"
+        },
+    {
+        "dgrm_name":"A21c - Messageflow - bad endpoint",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21c - Messageflow - bad endpoint_0.bpmn"
+        },
+    {
+        "dgrm_name":"A21d - Messageflow - basics - Collaboration",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21d - Messageflow - basics - Collaboration_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21e - MessageFlow basics - Subscription Cancellation",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21e - MessageFlow basics - Subscription Cancellation_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21f - Basic Messageflow - EBG",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21f - Basic Messageflow - EBG_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21g - Basic Messageflow - Timer BE on ReceiveTask",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21g - Basic Messageflow - Timer BE on ReceiveTask_0.bpmn"
+    },
+    {
+        "dgrm_name": "A22a - UserTask - Settings Substitution",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A22a - UserTask - Settings Substitution_0.bpmn"
+    },
+    {
+      "dgrm_name": "A22b - Other Task Types",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A22b - Other Task Types_0.bpmn"
+    },
+    {
+      "dgrm_name": "A23a - Custom Extensions",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A23a - Custom Extensions_0.bpmn"
+    },
+    {
+      "dgrm_name": "A23b - Custom Extensions - In Lanesets",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A23b - Custom Extensions - In Lanesets_0.bpmn"
+    },
+    {
+      "dgrm_name": "A24a - Approval Component - Basic Operation",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A24a - Approval Component - Basic Operation_0.bpmn"
+    },
+    {
+      "dgrm_name": "A24b - Approval Task - Task Cancelation",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A24b - Approval Task - Task Cancelation_0.bpmn"
     }
 ]

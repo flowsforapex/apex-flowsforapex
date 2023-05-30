@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A22b" name="A22b - Other Tasks - Basic" isExecutable="true" apex:isStartable="true" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:priority>
+        <apex:expressionType>static</apex:expressionType>
+        <apex:expression>3</apex:expression>
+      </apex:priority>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_19yiarx</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_PreTest" name="PreTest">
+      <bpmn:incoming>Flow_19yiarx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0glcuij</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_19yiarx" sourceRef="Event_Start" targetRef="Activity_PreTest" />
+    <bpmn:sequenceFlow id="Flow_0glcuij" sourceRef="Activity_PreTest" targetRef="Activity_Manual" />
+    <bpmn:manualTask id="Activity_Manual" name="Manual">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeManual</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>Manual</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0glcuij</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r6wsw0</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_1r6wsw0" sourceRef="Activity_Manual" targetRef="Activity_BRT_PLSQL" />
+    <bpmn:businessRuleTask id="Activity_BRT_PLSQL" name="BRT_PLSQL" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>null;</apex:plsqlCode>
+        </apex:executePlsql>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeBRT_PLSQL</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>BRT_PLSQL</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1r6wsw0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w98v8a</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_1w98v8a" sourceRef="Activity_BRT_PLSQL" targetRef="Activity_After_BRT_PLSQL" />
+    <bpmn:serviceTask id="Activity_Service_PLSQL" name="Service_PLSQL" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>null;</apex:plsqlCode>
+        </apex:executePlsql>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeService_PLSQL</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>Service_PLSQL</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0dk31ec</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fzucqm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1fzucqm" sourceRef="Activity_Service_PLSQL" targetRef="Activity_After_Service_PLSQL" />
+    <bpmn:scriptTask id="Activity_Script_PLSQL" name="Script_PLSQL" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>null;</apex:plsqlCode>
+        </apex:executePlsql>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BeforeScriptPLSQL</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>Script_PLSQL</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1o2ql4p</bpmn:incoming>
+      <bpmn:outgoing>Flow_16ztuoq</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_1fyint5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_16ztuoq" sourceRef="Activity_Script_PLSQL" targetRef="Activity_After_Script_PLSQL" />
+    <bpmn:task id="Activity_After_Script_PLSQL" name="After Script_PLSQL">
+      <bpmn:incoming>Flow_16ztuoq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fyint5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1fyint5" sourceRef="Activity_After_Script_PLSQL" targetRef="Event_End" />
+    <bpmn:task id="Activity_After_Service_PLSQL" name="After Service_PLSQL">
+      <bpmn:incoming>Flow_1fzucqm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1o2ql4p</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1o2ql4p" sourceRef="Activity_After_Service_PLSQL" targetRef="Activity_Script_PLSQL" />
+    <bpmn:task id="Activity_After_BRT_PLSQL" name="After BRT_PLSQL">
+      <bpmn:incoming>Flow_1w98v8a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dk31ec</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0dk31ec" sourceRef="Activity_After_BRT_PLSQL" targetRef="Activity_Service_PLSQL" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A22b">
+      <bpmndi:BPMNShape id="Event_0n6660b_di" bpmnElement="Event_Start">
+        <dc:Bounds x="242" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="248" y="465" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dsvnb5_di" bpmnElement="Activity_PreTest">
+        <dc:Bounds x="330" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0exfaje_di" bpmnElement="Activity_Manual">
+        <dc:Bounds x="490" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ultauv_di" bpmnElement="Activity_BRT_PLSQL">
+        <dc:Bounds x="650" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bh2iqn_di" bpmnElement="Activity_Service_PLSQL">
+        <dc:Bounds x="950" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w6sqb6_di" bpmnElement="Activity_Script_PLSQL">
+        <dc:Bounds x="1220" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1e4yiow_di" bpmnElement="Event_End">
+        <dc:Bounds x="1512" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1520" y="465" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ryx2zx_di" bpmnElement="Activity_After_Script_PLSQL">
+        <dc:Bounds x="1370" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11gbddh_di" bpmnElement="Activity_After_Service_PLSQL">
+        <dc:Bounds x="1090" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1v3utn9_di" bpmnElement="Activity_After_BRT_PLSQL">
+        <dc:Bounds x="810" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_19yiarx_di" bpmnElement="Flow_19yiarx">
+        <di:waypoint x="278" y="440" />
+        <di:waypoint x="330" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0glcuij_di" bpmnElement="Flow_0glcuij">
+        <di:waypoint x="430" y="440" />
+        <di:waypoint x="490" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r6wsw0_di" bpmnElement="Flow_1r6wsw0">
+        <di:waypoint x="590" y="440" />
+        <di:waypoint x="650" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w98v8a_di" bpmnElement="Flow_1w98v8a">
+        <di:waypoint x="750" y="440" />
+        <di:waypoint x="810" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fzucqm_di" bpmnElement="Flow_1fzucqm">
+        <di:waypoint x="1050" y="440" />
+        <di:waypoint x="1090" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16ztuoq_di" bpmnElement="Flow_16ztuoq">
+        <di:waypoint x="1320" y="440" />
+        <di:waypoint x="1370" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fyint5_di" bpmnElement="Flow_1fyint5">
+        <di:waypoint x="1470" y="440" />
+        <di:waypoint x="1512" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o2ql4p_di" bpmnElement="Flow_1o2ql4p">
+        <di:waypoint x="1190" y="440" />
+        <di:waypoint x="1220" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dk31ec_di" bpmnElement="Flow_0dk31ec">
+        <di:waypoint x="910" y="440" />
+        <di:waypoint x="950" y="440" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

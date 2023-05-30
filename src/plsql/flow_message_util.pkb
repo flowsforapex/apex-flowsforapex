@@ -13,6 +13,43 @@ create or replace package body flow_message_util as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  procedure autonomous_write_to_messageflow_log
+    ( p_message_name     in flow_message_received_log.lgrx_message_name%type 
+    , p_key_name         in flow_message_received_log.lgrx_key_name%type   
+    , p_key_value        in flow_message_received_log.lgrx_key_value%type 
+    , p_payload          in flow_message_received_log.lgrx_payload%type 
+    , p_was_correlated   in flow_message_received_log.lgrx_was_correlated%type    
+    , p_prcs_id          in flow_message_received_log.lgrx_prcs_id%type 
+    , p_sbfl_id          in flow_message_received_log.lgrx_sbfl_id%type    
+    )
+  is
+    pragma autonomous_transaction;
+  begin
+
+      insert into flow_message_received_log
+      ( lgrx_message_name
+      , lgrx_key_name
+      , lgrx_key_value
+      , lgrx_payload
+      , lgrx_was_correlated
+      , lgrx_prcs_id
+      , lgrx_sbfl_id
+      , lgrx_received_on
+      )
+      values
+      ( p_message_name
+      , p_key_name
+      , p_key_value
+      , p_payload
+      , p_was_correlated
+      , p_prcs_id
+      , p_sbfl_id
+      , systimestamp
+      );
+      -- commit as an autonomous transaction
+      commit;
+  end autonomous_write_to_messageflow_log;
+
   function get_msg_subscription_details
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
   , p_dgrm_id                   flow_diagrams.dgrm_id%type

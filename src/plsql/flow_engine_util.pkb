@@ -507,10 +507,11 @@ procedure get_number_of_connections
                , sbfl.sbfl_scope
                , objt.objt_tag_name
                , objt.objt_sub_tag_name
-               , objt.objt_attributes."subType" subtype
+               , objt.objt_attributes."taskType" tasktype
             from flow_subflows sbfl
             join flow_objects objt
               on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+             and sbfl.sbfl_current = objt.objt_bpmn_id
            where sbfl.sbfl_prcs_id = p_process_id
              and sbfl.sbfl_process_level = p_process_level
              and objt.objt_tag_name in ( flow_constants_pkg.gc_bpmn_usertask
@@ -522,7 +523,7 @@ procedure get_number_of_connections
           -- clear any approval tasks (only runs on APEX 22.1 upwards)
           $IF NOT FLOW_APEX_ENV.VER_LE_21_2  
           $THEN
-            if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_usertask_apex_approval then
+            if subflows_with_tasks.tasktype = flow_constants_pkg.gc_apex_usertask_apex_approval then
               -- get apex taskID
               l_apex_task_id := flow_proc_vars_int.get_var_num
                                   ( pi_prcs_id   => p_process_id
@@ -538,7 +539,7 @@ procedure get_number_of_connections
             end if;
           $END 
           -- cancel any message subscriptions
-          if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+          if subflows_with_tasks.tasktype = flow_constants_pkg.gc_apex_basic_message then
             flow_message_util.cancel_subscription ( p_process_id  => p_process_id 
                                                   , p_subflow_id  => subflows_with_tasks.sbfl_id
                                                   );
