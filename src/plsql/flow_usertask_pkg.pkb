@@ -210,13 +210,16 @@ as
   ) return boolean
   is
     l_task_pk_required  boolean;
+$IF NOT flow_apex_env.ver_le_21 $THEN
     l_static_id            apex_appl_taskdefs.static_id%type;
     l_actions_table_name   apex_appl_taskdefs.actions_table_name%type;
     l_actions_sql_query    apex_appl_taskdefs.actions_sql_query%type;
+$END
   begin
     --
     --  See if  the APEX Task needs a PK to be supplied. (for Actions Source Table or Actions Source Query)
     --
+$IF NOT flow_apex_env.ver_le_21 $THEN
     select td.static_id
          , td.actions_table_name
          , td.actions_sql_query
@@ -228,6 +231,9 @@ as
        and td.static_id      = p_task_static_id;
   
     return (l_actions_sql_query is not null) or (l_actions_table_name is not null);
+$ELSE
+    return null;
+$END
   end apex_task_pk_is_required;
 
 
