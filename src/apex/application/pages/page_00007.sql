@@ -22,8 +22,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage7();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'C##DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20230505172120'
+,p_last_updated_by=>'C##LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20230530123010'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -1044,7 +1044,7 @@ wwv_flow_api.create_page_item(
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>60
-,p_cMaxlength=>600
+,p_cMaxlength=>150
 ,p_read_only_when=>'P7_DGRM_STATUS'
 ,p_read_only_when2=>'draft'
 ,p_read_only_when_type=>'VAL_OF_ITEM_IN_COND_NOT_EQ_COND2'
@@ -1070,7 +1070,7 @@ wwv_flow_api.create_page_item(
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>32
-,p_cMaxlength=>40
+,p_cMaxlength=>10
 ,p_read_only_when=>'P7_DGRM_STATUS'
 ,p_read_only_when2=>'draft'
 ,p_read_only_when_type=>'VAL_OF_ITEM_IN_COND_NOT_EQ_COND2'
@@ -1120,7 +1120,7 @@ wwv_flow_api.create_page_item(
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'No Category'
 ,p_cSize=>60
-,p_cMaxlength=>120
+,p_cMaxlength=>30
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'

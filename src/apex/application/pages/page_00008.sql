@@ -34,7 +34,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230510105234'
+,p_last_upd_yyyymmddhh24miss=>'20230530123345'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(3510821361851721)
@@ -1715,6 +1715,31 @@ wwv_flow_api.create_page_item(
 ,p_attribute_04=>'BOTH'
 );
 wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(3747988967530343)
+,p_name=>'P8_PROV_VAR_TSTZ'
+,p_item_sequence=>90
+,p_item_plug_id=>wwv_flow_api.id(8394514514345632)
+,p_prompt=>'Value'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_field_template=>wwv_flow_api.id(12495522548744880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_warn_on_unsaved_changes=>'I'
+,p_inline_help_text=>'Required format: YYYY-MM-DD HH24:MI:SS TZR'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(3748085871530344)
+,p_name=>'P8_PROV_VAR_TSTZ_VALID'
+,p_item_sequence=>100
+,p_item_plug_id=>wwv_flow_api.id(8394514514345632)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'N'
+);
+wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(5681449489037014)
 ,p_name=>'P8_PRCS_ID'
 ,p_source_data_type=>'NUMBER'
@@ -1899,6 +1924,18 @@ wwv_flow_api.create_page_item(
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'BOTH'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(5983384367464473)
 ,p_name=>'P8_PROV_VAR_NAME'
@@ -1923,25 +1960,13 @@ wwv_flow_api.create_page_item(
 ,p_item_default=>'VARCHAR2'
 ,p_prompt=>'Type'
 ,p_display_as=>'NATIVE_RADIOGROUP'
-,p_lov=>'STATIC2:Varchar2;VARCHAR2,Number;NUMBER,Date;DATE,Clob;CLOB'
+,p_lov=>'STATIC2:Varchar2;VARCHAR2,Number;NUMBER,Date;DATE,Clob;CLOB,Timestamp With Time Zone;TIMESTAMP WITH TIME ZONE'
 ,p_field_template=>wwv_flow_api.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--radioButtonGroup'
 ,p_warn_on_unsaved_changes=>'I'
 ,p_lov_display_extra=>'YES'
-,p_attribute_01=>'4'
+,p_attribute_01=>'5'
 ,p_attribute_02=>'NONE'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(5984111734464474)
@@ -1991,7 +2016,7 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(5985303463464474)
 ,p_name=>'P8_PROV_VAR_CLOB'
-,p_item_sequence=>90
+,p_item_sequence=>110
 ,p_item_plug_id=>wwv_flow_api.id(8394514514345632)
 ,p_prompt=>'Value'
 ,p_display_as=>'NATIVE_TEXTAREA'
@@ -2655,6 +2680,7 @@ wwv_flow_api.create_page_da_action(
 'apex.item("P8_PROV_VAR_VC2").hide();',
 'apex.item("P8_PROV_VAR_NUM").hide();',
 'apex.item("P8_PROV_VAR_DATE").hide();',
+'apex.item("P8_PROV_VAR_TSTZ").hide();',
 'apex.item("P8_PROV_VAR_CLOB").hide();',
 'switch(varType) {',
 '    case "VARCHAR2" : ',
@@ -2665,6 +2691,9 @@ wwv_flow_api.create_page_da_action(
 '        break;',
 '    case "DATE":',
 '        apex.item("P8_PROV_VAR_DATE").show();',
+'        break;',
+'    case "TIMESTAMP WITH TIME ZONE":',
+'        apex.item("P8_PROV_VAR_TSTZ").show();',
 '        break;',
 '    case "CLOB":',
 '        apex.item("P8_PROV_VAR_CLOB").show();',
@@ -2890,6 +2919,18 @@ wwv_flow_api.create_page_da_action(
 '',
 'Prism.highlightAll();'))
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(62707920017232549)
 ,p_name=>'Change Set Now'
@@ -2931,18 +2972,6 @@ wwv_flow_api.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'click'
 );
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(3511347587851726)
 ,p_event_id=>wwv_flow_api.id(3511206012851725)
@@ -2952,6 +2981,75 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_CLOSE_REGION'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(3510821361851721)
+);
+wwv_flow_api.create_page_da_event(
+ p_id=>wwv_flow_api.id(3748125304530345)
+,p_name=>'On Change Prob Var Timestamp With Time Zone Value'
+,p_event_sequence=>380
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P8_PROV_VAR_TSTZ'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'change'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(3748214983530346)
+,p_event_id=>wwv_flow_api.id(3748125304530345)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_DISABLE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(5982997862464473)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(3748394460530347)
+,p_event_id=>wwv_flow_api.id(3748125304530345)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_DISABLE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(5982517441464472)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(3748406279530348)
+,p_event_id=>wwv_flow_api.id(3748125304530345)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P8_PROV_VAR_TSTZ_VALID'
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_app_api.check_is_tstz(',
+'  pi_value => :P8_PROV_VAR_TSTZ',
+', pi_format_mask => :APP_NLS_TIMESTAMP_TZ_FORMAT',
+')'))
+,p_attribute_07=>'P8_PROV_VAR_TSTZ'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(3748529700530349)
+,p_event_id=>wwv_flow_api.id(3748125304530345)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_ENABLE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(5982997862464473)
+);
+wwv_flow_api.create_page_da_action(
+ p_id=>wwv_flow_api.id(3748626209530350)
+,p_event_id=>wwv_flow_api.id(3748125304530345)
+,p_event_result=>'TRUE'
+,p_action_sequence=>50
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_ENABLE'
+,p_affected_elements_type=>'BUTTON'
+,p_affected_button_id=>wwv_flow_api.id(5982517441464472)
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(3509125998851704)
