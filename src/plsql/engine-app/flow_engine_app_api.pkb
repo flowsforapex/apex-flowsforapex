@@ -276,6 +276,14 @@ as
               , pi_date_value => to_date(apex_application.g_x05, v('APP_DATE_TIME_FORMAT'))
               , pi_scope      => apex_application.g_x06
               );
+            when 'TIMESTAMP WITH TIME ZONE' then
+              flow_process_vars.set_var
+              (
+                pi_prcs_id    => apex_application.g_x02
+              , pi_var_name   => apex_application.g_x03
+              , pi_tstz_value => to_timestamp_tz(apex_application.g_x05, flow_constants_pkg.gc_prov_default_tstz_format)
+              , pi_scope      => apex_application.g_x06
+              );
             when 'CLOB' then
               for i in apex_application.g_f01.first..apex_application.g_f01.last
               loop
@@ -1544,6 +1552,19 @@ as
       return flow_constants_pkg.gc_false;
   end check_is_date;
 
+  function check_is_tstz(
+    pi_value       in varchar2,
+    pi_format_mask in varchar2)
+  return varchar2
+  as
+    l_dummy_tstz timestamp with time zone;
+  begin 
+    l_dummy_tstz := to_timestamp_tz(pi_value, pi_format_mask);
+    return flow_constants_pkg.gc_true;
+  exception
+    when others then  
+      return flow_constants_pkg.gc_false;
+  end check_is_tstz;
 
   function check_is_number(
     pi_value in varchar2)
@@ -1568,6 +1589,7 @@ as
     l_prov_var_vc2  flow_process_variables.prov_var_vc2%type;
     l_prov_var_num  flow_process_variables.prov_var_num%type;
     l_prov_var_date flow_process_variables.prov_var_date%type;
+    l_prov_var_tstz flow_process_variables.prov_var_tstz%type;
     l_prov_var_clob flow_process_variables.prov_var_clob%type;
   begin
     -- Initialize
@@ -1592,6 +1614,11 @@ as
                              pi_prcs_id  => l_prov_prcs_id,
                              pi_var_name => l_prov_var_name,
                              pi_scope    => l_prov_scope);
+      when 'TIMESTAMP WITH TIME ZONE' then
+        l_prov_var_tstz := flow_process_vars.get_var_tstz(
+                             pi_prcs_id  => l_prov_prcs_id,
+                             pi_var_name => l_prov_var_name,
+                             pi_scope    => l_prov_scope);
       when 'CLOB' then
           l_prov_var_clob := flow_process_vars.get_var_clob(
                                pi_prcs_id  => l_prov_prcs_id,
@@ -1604,6 +1631,7 @@ as
     apex_json.write( p_name => 'vc2_value', p_value => l_prov_var_vc2);
     apex_json.write( p_name => 'num_value', p_value => to_char(l_prov_var_num));
     apex_json.write( p_name => 'date_value', p_value => to_char(l_prov_var_date, v('APP_DATE_TIME_FORMAT')));
+    apex_json.write( p_name => 'tstz_value', p_value => to_char(l_prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format));
     apex_json.write( p_name => 'clob_value', p_value => l_prov_var_clob);
     apex_json.close_all;
     

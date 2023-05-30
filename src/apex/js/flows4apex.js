@@ -484,6 +484,8 @@ function addProcessVariable(action, focusElement){
           data.x05 = apex.item("P8_PROV_VAR_NUM").getValue();
         } else if ( data.x04 === "DATE" ) {
           data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
+        } else if ( data.x04 === "TIMESTAMP WITH TIME ZONE" ) {
+          data.x05 = apex.item("P8_PROV_VAR_TSTZ").getValue();
         } else if ( data.x04 === "CLOB" ) {
           var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
           if ( !Array.isArray( chunkedClob ) ) {
@@ -561,6 +563,8 @@ function updateProcessVariable(action, focusElement){
           data.x05 = apex.item("P8_PROV_VAR_NUM").getValue();
         } else if ( data.x04 === "DATE" ) {
           data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
+        } else if ( data.x04 === "TIMESTAMP WITH TIME ZONE" ) {
+          data.x05 = apex.item("P8_PROV_VAR_TSTZ").getValue();
         } else if ( data.x04 === "CLOB" ) {
           var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
           if ( !Array.isArray( chunkedClob ) ) {
@@ -616,25 +620,36 @@ function updateProcessVariable(action, focusElement){
                 apex.item("P8_PROV_VAR_VC2").setValue(data.vc2_value);
                 apex.item("P8_PROV_VAR_NUM").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setValue("");
                 apex.item("P8_PROV_VAR_VC2").setFocus();
               } else if ( varType === "NUMBER") {
                 apex.item("P8_PROV_VAR_NUM").setValue(data.num_value);
                 apex.item("P8_PROV_VAR_VC2").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setValue("");
                 apex.item("P8_PROV_VAR_NUM").setFocus();
               } else if ( varType === "DATE") {
                 apex.item("P8_PROV_VAR_DATE").setValue(data.date_value);
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_VC2").setValue("");
                 apex.item("P8_PROV_VAR_NUM").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setFocus();
+              } else if ( varType === "TIMESTAMP WITH TIME ZONE") {
+                apex.item("P8_PROV_VAR_TSTZ").setValue(data.tstz_value);
+                apex.item("P8_PROV_VAR_VC2").setValue("");
+                apex.item("P8_PROV_VAR_NUM").setValue("");
+                apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_CLOB").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setFocus();
               } else if ( varType === "CLOB") {
                 apex.item("P8_PROV_VAR_CLOB").setValue(data.clob_value);
                 apex.item("P8_PROV_VAR_VC2").setValue("");
                 apex.item("P8_PROV_VAR_NUM").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setFocus();
               } 
               apex.jQuery("#add-prov-var-btn").hide();

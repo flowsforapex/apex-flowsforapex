@@ -199,6 +199,11 @@ as
     pi_format_mask in varchar2)
     return varchar2;
 
+  function check_is_tstz(
+    pi_value       in varchar2,
+    pi_format_mask in varchar2)
+    return varchar2;
+
   function check_is_number(
     pi_value in varchar2)
     return varchar2;
