@@ -398,8 +398,7 @@ begin
        where prov.prov_prcs_id           = pi_prcs_id
          and prov.prov_scope             = pi_scope
          and upper(prov.prov_var_name)   = upper(pi_var_value.var_name)
-         and prov.prov_var_type          = flow_constants_pkg.gc_prov_var_type_clob
-           ;
+      ;
     when others then
       l_action := 'var-set-error';
       raise;
@@ -1122,9 +1121,10 @@ end delete_var;
                           );
           end case;
 
-        apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
+        apex_debug.info (p_message => 'bind variables found : %0 value : %1 scope : %2 '
           , p0 => l_bind.name
           , p1 => l_bind.value
+          , p2 => pi_scope
           );                              
         l_bind_list(l_indx) := l_bind;
         l_indx := l_var_list.next (l_indx);
@@ -1184,12 +1184,13 @@ end delete_var;
             l_parameter.name := flow_constants_pkg.gc_substitution_flow_identifier||l_parameter.name;
           end case;
 
-        apex_debug.info (p_message => 'bind variables found : %0 data type: %2 numvalue : %1  dateval : %3 vc2val : %4'
+        apex_debug.info (p_message => 'bind variables found : %0 scope : %5 data type: %2 numvalue : %1  dateval : %3 vc2val : %4'
           , p0 => l_parameter.name
           , p1 => to_char(l_parameter.value.number_value)
           , p2 => l_parameter.data_type
           , p3 => to_char(l_parameter.value.date_value)
           , p4 => l_parameter.value.varchar2_value
+          , p5 => pi_scope
           );                              
         l_parameters(l_indx) := l_parameter;
         l_indx := l_var_list.next (l_indx);
