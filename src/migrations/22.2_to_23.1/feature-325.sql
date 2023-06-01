@@ -122,11 +122,11 @@ alter table flow_step_stats
 
 -- add retention config
 
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_retain_logs_after_prcs_completion_days','60');
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_archive_instance_summaries','false');
-  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_daily_summaries_days','185');
-  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_monthly_summaries_months','9');
-  insert into flow_configuration (cfig_key, cfig_value) values ('stats_retain_quarterly_summaries_months','60');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_retain_logs_after_prcs_completion_days',p_value => '60');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_archive_instance_summaries'            ,p_value => 'false');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_daily_summaries_days'             ,p_value => '185');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_monthly_summaries_months'         ,p_value => '9');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_quarterly_summaries_months'       ,p_value => '60');
 
 -- modify flow_flow_event_log
 
