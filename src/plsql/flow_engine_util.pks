@@ -1,6 +1,6 @@
 create or replace package flow_engine_util
   authid definer
--- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances, flow_plsql_runner_pkg)
+-- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances, flow_plsql_runner_pkg, flow_admin_api)
 as 
 /* 
 -- Flows for APEX - flow_engine_util.pks
@@ -20,9 +20,9 @@ as
   ) return flow_configuration.cfig_value%type;
 
   procedure set_config_value
-  ( 
-    p_config_key in flow_configuration.cfig_key%type,
-    p_value      in flow_configuration.cfig_value%type
+  ( p_config_key      in flow_configuration.cfig_key%type,
+    p_value           in flow_configuration.cfig_value%type,
+    p_update_if_set   in boolean default true
   );
 
   function get_object_tag
