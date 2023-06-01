@@ -90,4 +90,15 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
     );
   end set_config_value;
 
+  function get_config_value
+  ( p_config_key        in flow_configuration.cfig_key%type
+  , p_default_value     in flow_configuration.cfig_value%type
+  ) return flow_configuration.cfig_value%type
+  is
+  begin
+    return flow_engine_util.get_config_value ( p_config_key     => p_config_key 
+                                             , p_default_value  => p_default_value
+                                             );       
+  end get_config_value;
+
 end flow_admin_api;
