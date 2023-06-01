@@ -129,8 +129,6 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-set-error', c_load_lang, q'[Error creating process variable %0 for process id %1 in scope %2.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'var-get-error', c_load_lang, q'[Error getting process variable %0 for process id %1 in scope %2.]' );
-  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-update-error', c_load_lang, q'[Error updating process variable %0 for process id %1 in scope %2.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-delete-error', c_load_lang, q'[Error deleting process variable %0 for process id %1 in scope %2.]' );

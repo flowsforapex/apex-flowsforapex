@@ -37,4 +37,12 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
 
   procedure purge_statistics;
 
+-- set configuration parameters
+
+  procedure set_config_value
+  ( p_config_key        in flow_configuration.cfig_key%type,
+    p_value             in flow_configuration.cfig_value%type,
+    p_update_if_set     in boolean default true
+  );
+
 end flow_admin_api;

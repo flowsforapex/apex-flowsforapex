@@ -36,13 +36,32 @@ as
 
   procedure set_config_value
   (
-    p_config_key in flow_configuration.cfig_key%type
-  , p_value      in flow_configuration.cfig_value%type)
-  as
+    p_config_key      in flow_configuration.cfig_key%type
+  , p_value           in flow_configuration.cfig_value%type
+  , p_update_if_set   in boolean default true
+  )
+  is
+    l_exists      number;
   begin
-    update flow_configuration
-       set cfig_value = p_value
+    select count(cfig_key)
+      into l_exists
+      from flow_configuration
      where cfig_key = p_config_key;
+    
+    if l_exists > 0 and p_update_if_set then 
+      update flow_configuration
+         set cfig_value = p_value
+       where cfig_key = p_config_key;
+    elsif l_exists = 0 then
+      insert into flow_configuration
+      ( cfig_key
+      , cfig_value
+      )
+      values
+      ( p_config_key
+      , p_value
+      );
+    end if;
   end set_config_value;
 
   function step_key
