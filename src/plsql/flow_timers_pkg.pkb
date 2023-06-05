@@ -7,6 +7,7 @@ create or replace package body flow_timers_pkg as
 -- Created 2020        Franco Soldaro
 -- Edited  2020        Moritz Klein - MT AG  
 -- Edited  24-Feb-2023 Richard Allen, Oracle
+-- Edited  05-Jun-2023 Louis Moreaux, Insum
 --
 */
   lock_timeout             exception;
@@ -1089,10 +1090,15 @@ end reschedule_timer;
   as
     l_status  sys.all_scheduler_jobs.enabled%type;
   begin
-    select enabled
-      into l_status
-      from sys.all_scheduler_jobs
-     where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    begin
+      select enabled
+        into l_status
+        from sys.all_scheduler_jobs
+      where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    exception 
+      when no_data_found then
+      l_status := 'FALSE';
+    end;
     return l_status;
   end get_timer_status;
     
