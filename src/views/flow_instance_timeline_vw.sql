@@ -111,4 +111,4 @@ select 'variable set' as operation
      , lgvr_prcs_id as prcs_id 
   from    flow_variable_event_log
 order by performed_on
-with read only
+with read only;

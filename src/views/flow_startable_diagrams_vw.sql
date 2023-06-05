@@ -13,7 +13,7 @@
 */
 create or replace view flow_startable_diagrams 
 as 
-select dgrm.dgrm_id  -- Note this View is only available inside an APEX session
+select dgrm.dgrm_id
      , dgrm.dgrm_name
      , dgrm.dgrm_version
      , dgrm.dgrm_status
