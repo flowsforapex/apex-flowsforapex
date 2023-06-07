@@ -184,7 +184,7 @@ create or replace package body flow_message_flow as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is
-    l_message               flow_message_flow.t_flow_basic_message;
+    l_message               flow_message_flow.t_flow_simple_message;
     e_msgflow_bad_endpoint  exception;
   begin
       apex_debug.enter 

@@ -19,7 +19,7 @@ create or replace package flow_message_flow as
   , payload_var   flow_message_subscriptions.msub_payload_var%type
   );   
 
-  type t_flow_basic_message is record
+  type t_flow_simple_message is record
   ( endpoint      flow_types_pkg.t_vc200
   , message_name  flow_message_subscriptions.msub_message_name%type
   , key_name      flow_message_subscriptions.msub_key_name%type

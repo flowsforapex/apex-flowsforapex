@@ -36,7 +36,7 @@ Then by moving forward on `Before ErrorEnd` this will cause the top sub process 
           <bpmn:incoming>Flow_0qnnm8b</bpmn:incoming>
         </bpmn:endEvent>
         <bpmn:sequenceFlow id="Flow_0qnnm8b" sourceRef="Activity_Receive" targetRef="Event_A1End" />
-        <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="basicApexMessage">
+        <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="simpleMessage">
           <bpmn:extensionElements>
             <apex:messageName>
               <apex:expressionType>sqlQuerySingle</apex:expressionType>

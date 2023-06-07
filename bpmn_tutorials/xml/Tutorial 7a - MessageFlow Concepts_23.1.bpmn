@@ -57,14 +57,14 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1bw7mvj" sourceRef="Activity_1u4gq6u" targetRef="Gateway_1gb2wji" />
     <bpmn:sequenceFlow id="Flow_0a9vat2" sourceRef="Gateway_1gb2wji" targetRef="Activity_0mhkzh2" apex:sequence="10" />
-    <bpmn:sendTask id="Activity_0mhkzh2" name="SendTask" apex:type="basicApexMessage">
+    <bpmn:sendTask id="Activity_0mhkzh2" name="SendTask" apex:type="simpleMessage">
       <bpmn:incoming>Flow_0a9vat2</bpmn:incoming>
       <bpmn:outgoing>Flow_1co4h5b</bpmn:outgoing>
     </bpmn:sendTask>
     <bpmn:sequenceFlow id="Flow_111ldh8" sourceRef="Gateway_1gb2wji" targetRef="Activity_0zzol2u" apex:sequence="20" />
     <bpmn:sequenceFlow id="Flow_0wa3yvx" sourceRef="Gateway_1gb2wji" targetRef="Event_0m1a6k2" apex:sequence="30" />
     <bpmn:sequenceFlow id="Flow_1u9z9zl" sourceRef="Gateway_1gb2wji" targetRef="Event_02gdru8" apex:sequence="40" />
-    <bpmn:intermediateThrowEvent id="Event_0m1a6k2" name="Message Throw Event" apex:type="basicApexMessage">
+    <bpmn:intermediateThrowEvent id="Event_0m1a6k2" name="Message Throw Event" apex:type="simpleMessage">
       <bpmn:incoming>Flow_0wa3yvx</bpmn:incoming>
       <bpmn:outgoing>Flow_0umsd4h</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0v9snn7" />
@@ -87,11 +87,11 @@
     <bpmn:sequenceFlow id="Flow_1pxnz40" sourceRef="Activity_0fixygu" targetRef="Gateway_12krons" apex:sequence="10" />
     <bpmn:sequenceFlow id="Flow_0umsd4h" sourceRef="Event_0m1a6k2" targetRef="Gateway_12krons" apex:sequence="10" />
     <bpmn:sequenceFlow id="Flow_0vmcx38" sourceRef="Event_02gdru8" targetRef="Gateway_12krons" apex:sequence="10" />
-    <bpmn:receiveTask id="Activity_0zzol2u" name="ReceiveTask" apex:type="basicApexMessage">
+    <bpmn:receiveTask id="Activity_0zzol2u" name="ReceiveTask" apex:type="simpleMessage">
       <bpmn:incoming>Flow_111ldh8</bpmn:incoming>
       <bpmn:outgoing>Flow_149xi7o</bpmn:outgoing>
     </bpmn:receiveTask>
-    <bpmn:intermediateCatchEvent id="Event_02gdru8" name="Message Catch Event" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="Event_02gdru8" name="Message Catch Event" apex:type="simpleMessage">
       <bpmn:incoming>Flow_1u9z9zl</bpmn:incoming>
       <bpmn:outgoing>Flow_0vmcx38</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_10qaiem" />

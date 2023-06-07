@@ -178,7 +178,7 @@
       <bpmn:outgoing>Flow_0aan4va</bpmn:outgoing>
     </bpmn:manualTask>
     <bpmn:sequenceFlow id="Flow_1lpmk0k" sourceRef="Gateway_parallelGateway" targetRef="Activity_sendTask" />
-    <bpmn:sendTask id="Activity_sendTask" name="sendTask" apex:type="basicApexMessage">
+    <bpmn:sendTask id="Activity_sendTask" name="sendTask" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:customExtension>{"object":"sendTask"}</apex:customExtension>
       </bpmn:extensionElements>
@@ -186,7 +186,7 @@
       <bpmn:outgoing>Flow_08ky0ip</bpmn:outgoing>
     </bpmn:sendTask>
     <bpmn:sequenceFlow id="Flow_08ky0ip" sourceRef="Activity_sendTask" targetRef="Activity_0s1satj" />
-    <bpmn:receiveTask id="Activity_0s1satj" name="receiveTask" apex:type="basicApexMessage">
+    <bpmn:receiveTask id="Activity_0s1satj" name="receiveTask" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:customExtension>{"object":"receiveTask"}</apex:customExtension>
       </bpmn:extensionElements>
@@ -194,7 +194,7 @@
       <bpmn:outgoing>Flow_1eimn9s</bpmn:outgoing>
     </bpmn:receiveTask>
     <bpmn:sequenceFlow id="Flow_1eimn9s" sourceRef="Activity_0s1satj" targetRef="Event_messageCatch" />
-    <bpmn:intermediateCatchEvent id="Event_messageCatch" name="messageCatch" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="Event_messageCatch" name="messageCatch" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:customExtension>{"object":"messageCatch"}</apex:customExtension>
       </bpmn:extensionElements>
@@ -203,7 +203,7 @@
       <bpmn:messageEventDefinition id="MessageEventDefinition_1qpiv0y" />
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_1ycneiw" sourceRef="Event_messageCatch" targetRef="Event_messageThrow" />
-    <bpmn:intermediateThrowEvent id="Event_messageThrow" name="messageThrow" apex:type="basicApexMessage">
+    <bpmn:intermediateThrowEvent id="Event_messageThrow" name="messageThrow" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:customExtension>{"object":"messageThrow"}</apex:customExtension>
       </bpmn:extensionElements>
@@ -236,7 +236,7 @@
       <bpmn:outgoing>Flow_0xjmsrp</bpmn:outgoing>
     </bpmn:eventBasedGateway>
     <bpmn:sequenceFlow id="Flow_1twmwb0" sourceRef="Gateway_eventBasedGateway" targetRef="Event_messageCatch2" />
-    <bpmn:intermediateCatchEvent id="Event_messageCatch2" name="messageCatch2" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="Event_messageCatch2" name="messageCatch2" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:customExtension>{"object":"messageCatch2"}</apex:customExtension>
       </bpmn:extensionElements>

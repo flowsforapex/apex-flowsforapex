@@ -89,7 +89,7 @@ begin
       ,q'[      <bpmn:incoming>Flow_1l2kkxm</bpmn:incoming>]'
       ,q'[    </bpmn:endEvent>]'
       ,q'[    <bpmn:sequenceFlow id="Flow_1l2kkxm" sourceRef="Activity_AfterD" targetRef="Event_DEnd" />]'
-      ,q'[    <bpmn:intermediateCatchEvent id="Event_D" name="D" apex:type="basicApexMessage">]'
+      ,q'[    <bpmn:intermediateCatchEvent id="Event_D" name="D" apex:type="simpleMessage">]'
       ,q'[      <bpmn:incoming>Flow_09i4bz2</bpmn:incoming>]'
       ,q'[      <bpmn:outgoing>Flow_1m1mre0</bpmn:outgoing>]'
       ,q'[      <bpmn:messageEventDefinition id="MessageEventDefinition_0ep7awy">]'

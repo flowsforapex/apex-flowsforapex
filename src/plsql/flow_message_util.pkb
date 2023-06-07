@@ -141,7 +141,7 @@ create or replace package body flow_message_util as
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
   , p_dgrm_id                   flow_diagrams.dgrm_id%type
   , p_sbfl_info                 flow_subflows%rowtype
-  ) return flow_message_flow.t_flow_basic_message
+  ) return flow_message_flow.t_flow_simple_message
   is
     l_endpoint_json     flow_types_pkg.t_bpmn_attribute_vc2;
     l_endpoint          flow_types_pkg.t_vc200;
@@ -153,7 +153,7 @@ create or replace package body flow_message_util as
     l_value             flow_message_subscriptions.msub_key_value%type;
     l_payload_json      flow_types_pkg.t_bpmn_attribute_vc2;
     l_payload           clob;
-    l_message           flow_message_flow.t_flow_basic_message;
+    l_message           flow_message_flow.t_flow_simple_message;
 
   begin
     apex_debug.enter 
@@ -161,7 +161,7 @@ create or replace package body flow_message_util as
     , 'p_msg_object_bpmn_id', p_msg_object_bpmn_id
     );
 
-    l_message   := flow_message_flow.t_flow_basic_message();
+    l_message   := flow_message_flow.t_flow_simple_message();
 
     -- get message and correlation settings and evaluate them
       -- get the userTask subtype  
