@@ -168,3 +168,14 @@ div#attributes-ir th#JSON {
 .a-IRR-table pre[class*="language-"] {
 	padding: 1em 0 1em 0 !important;
 }
+
+/*Instance timeline*/
+#instance-timeline-cr .t-Timeline-item {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: #dfdfdf4d 0.5px solid;
+}
+
+#instance-timeline-cr .t-Timeline--compact .t-Timeline-user {
+  vertical-align: middle;
+}
