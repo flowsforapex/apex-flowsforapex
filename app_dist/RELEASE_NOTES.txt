@@ -17,7 +17,7 @@ PREREQUISITES
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "flowsforapex_apex201.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "flowsforapex_apex202.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
 - Refresh the theme when installing the app in APEX versions 21.1 or higher
