@@ -24,7 +24,7 @@ as
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
   , p_dgrm_id                   flow_diagrams.dgrm_id%type
   , p_sbfl_info                 flow_subflows%rowtype
-  ) return flow_message_flow.t_flow_basic_message;
+  ) return flow_message_flow.t_flow_simple_message;
 
   procedure lock_subscription
   ( p_process_id                 flow_processes.prcs_id%type

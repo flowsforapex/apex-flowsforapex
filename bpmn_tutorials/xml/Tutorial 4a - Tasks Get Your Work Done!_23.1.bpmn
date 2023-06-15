@@ -56,11 +56,11 @@ twitter: @FlowquestR</bpmn:documentation>
     </bpmn:businessRuleTask>
     <bpmn:sequenceFlow id="Flow_1pjx0pk" sourceRef="Activity_0l6ac3x" targetRef="Activity_1wg9nda" />
     <bpmn:sequenceFlow id="Flow_104w405" sourceRef="Activity_1wg9nda" targetRef="Event_1da6vg3" />
-    <bpmn:sendTask id="Activity_0l6ac3x" name="SendTask&#10;- sends a message to another process" apex:type="basicApexMessage">
+    <bpmn:sendTask id="Activity_0l6ac3x" name="SendTask&#10;- sends a message to another process" apex:type="simpleMessage">
       <bpmn:incoming>Flow_0mxa79i</bpmn:incoming>
       <bpmn:outgoing>Flow_1pjx0pk</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:receiveTask id="Activity_1wg9nda" name="ReceiveTask&#10;- receives a message from another process" apex:type="basicApexMessage">
+    <bpmn:receiveTask id="Activity_1wg9nda" name="ReceiveTask&#10;- receives a message from another process" apex:type="simpleMessage">
       <bpmn:incoming>Flow_1pjx0pk</bpmn:incoming>
       <bpmn:outgoing>Flow_104w405</bpmn:outgoing>
     </bpmn:receiveTask>

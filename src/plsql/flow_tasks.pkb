@@ -527,7 +527,7 @@ create or replace package body flow_tasks as
     );
     
     case get_task_type( pi_objt_id => p_step_info.target_objt_id )
-    when flow_constants_pkg.gc_apex_basic_message then
+    when flow_constants_pkg.gc_simple_message then
         -- Flows for APEX Basic MessageFlow
         flow_message_flow.send_message
         ( p_sbfl_info => p_sbfl_info
@@ -603,7 +603,7 @@ create or replace package body flow_tasks as
     );  
         
     case get_task_type( p_step_info.target_objt_id )
-      when flow_constants_pkg.gc_apex_basic_message then
+      when flow_constants_pkg.gc_simple_message then
  
         l_msg_sub            := flow_message_util.get_msg_subscription_details
                                 ( p_msg_object_bpmn_id      => p_step_info.target_objt_ref

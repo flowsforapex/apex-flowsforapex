@@ -5,7 +5,7 @@
       <bpmn:outgoing>Flow_10cbwc9</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_10cbwc9" sourceRef="Event_078jhcp" targetRef="Activity_Before" />
-    <bpmn:intermediateThrowEvent id="ITE" name="ITE" apex:type="basicApexMessage">
+    <bpmn:intermediateThrowEvent id="ITE" name="ITE" apex:type="simpleMessage">
       <bpmn:incoming>Flow_0u9rc68</bpmn:incoming>
       <bpmn:outgoing>Flow_1148c6v</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_03dkrir">
@@ -98,7 +98,7 @@ end case;</bpmn:conditionExpression>
 else return false;
 end case;</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:intermediateCatchEvent id="ICE" name="ICE" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="ICE" name="ICE" apex:type="simpleMessage">
       <bpmn:incoming>Flow_10th9vn</bpmn:incoming>
       <bpmn:outgoing>Flow_16rs7dc</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0xcaexo">
@@ -134,7 +134,7 @@ end case;</bpmn:conditionExpression>
 else return false;
 end case;</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sendTask id="Send" name="Send" apex:type="basicApexMessage">
+    <bpmn:sendTask id="Send" name="Send" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:endpoint>
           <apex:expressionType>static</apex:expressionType>
@@ -175,7 +175,7 @@ end case;</bpmn:conditionExpression>
 else return false;
 end case;</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:receiveTask id="Receive" name="Receive" apex:type="basicApexMessage">
+    <bpmn:receiveTask id="Receive" name="Receive" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:messageName>
           <apex:expressionType>processVariable</apex:expressionType>

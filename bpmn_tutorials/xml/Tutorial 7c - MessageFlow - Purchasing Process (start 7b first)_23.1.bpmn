@@ -51,7 +51,7 @@ MessageFlow will become more useful in a future release when we allow a message 
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_1n4muoi" sourceRef="Event_1925gah" targetRef="Activity_0uij13c" />
     <bpmn:sequenceFlow id="Flow_0fewogt" sourceRef="Activity_0uij13c" targetRef="Activity_1kiolhv" />
-    <bpmn:sendTask id="Activity_1kiolhv" name="place order" apex:type="basicApexMessage">
+    <bpmn:sendTask id="Activity_1kiolhv" name="place order" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:endpoint>
           <apex:expressionType>static</apex:expressionType>
@@ -91,7 +91,7 @@ MessageFlow will become more useful in a future release when we allow a message 
       <bpmn:outgoing>Flow_0rkz3tu</bpmn:outgoing>
       <bpmn:outgoing>Flow_1n3p80m</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:intermediateCatchEvent id="Event_Rx_Confirmation" name="Receive Supplier Confirmation" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="Event_Rx_Confirmation" name="Receive Supplier Confirmation" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:customExtension>{"myICEtask":"myICEmessage"}</apex:customExtension>
       </bpmn:extensionElements>
