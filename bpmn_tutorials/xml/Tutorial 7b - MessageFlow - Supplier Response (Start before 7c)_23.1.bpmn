@@ -24,7 +24,7 @@ It waits 10 seconds (so you have time to look at the variables in the Suppliers 
     <bpmn:association id="Association_0gxxtlt" sourceRef="Participant_102lqrd" targetRef="TextAnnotation_0lxkz3b" />
   </bpmn:collaboration>
   <bpmn:process id="Process_7c" isExecutable="false">
-    <bpmn:intermediateThrowEvent id="Event_Send_Order_Conf" name="Send Order Confirmation" apex:type="basicApexMessage">
+    <bpmn:intermediateThrowEvent id="Event_Send_Order_Conf" name="Send Order Confirmation" apex:type="simpleMessage">
       <bpmn:incoming>Flow_0ogqyre</bpmn:incoming>
       <bpmn:outgoing>Flow_1et9ql9</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0ueukib">
@@ -73,7 +73,7 @@ It waits 10 seconds (so you have time to look at the variables in the Suppliers 
     <bpmn:startEvent id="Event_0yj6hva" name="Start">
       <bpmn:outgoing>Flow_0tgqz99</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:receiveTask id="Activity_133cc7v" name="Receive Orders" apex:type="basicApexMessage">
+    <bpmn:receiveTask id="Activity_133cc7v" name="Receive Orders" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:messageName>
           <apex:expressionType>static</apex:expressionType>

@@ -41,7 +41,7 @@ begin
       ,q'[          <bpmn:incoming>Flow_0qnnm8b</bpmn:incoming>]'
       ,q'[        </bpmn:endEvent>]'
       ,q'[        <bpmn:sequenceFlow id="Flow_0qnnm8b" sourceRef="Activity_Receive" targetRef="Event_A1End" />]'
-      ,q'[        <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="basicApexMessage">]'
+      ,q'[        <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="simpleMessage">]'
       ,q'[          <bpmn:extensionElements>]'
       ,q'[            <apex:messageName>]'
       ,q'[              <apex:expressionType>sqlQuerySingle</apex:expressionType>]'

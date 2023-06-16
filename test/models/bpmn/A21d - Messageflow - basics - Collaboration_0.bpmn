@@ -12,7 +12,7 @@
     <bpmn:startEvent id="Event_078jhcp" name="Start">
       <bpmn:outgoing>Flow_10cbwc9</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:intermediateThrowEvent id="ITE" name="ITE" apex:type="basicApexMessage">
+    <bpmn:intermediateThrowEvent id="ITE" name="ITE" apex:type="simpleMessage">
       <bpmn:incoming>Flow_0u9rc68</bpmn:incoming>
       <bpmn:outgoing>Flow_1148c6v</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_03dkrir">
@@ -145,7 +145,7 @@ end case;</bpmn:conditionExpression>
     <bpmn:sequenceFlow id="Flow_0ktvql5" sourceRef="Activity_AfterSend" targetRef="Event_SendEnd" />
     <bpmn:sequenceFlow id="Flow_1gx36mi" sourceRef="Receive" targetRef="Activity_AfterReceive" />
     <bpmn:sequenceFlow id="Flow_122voy1" sourceRef="Activity_AfterReceive" targetRef="Event_ReceiveEnd" apex:sequence="10" />
-    <bpmn:sendTask id="Send" name="Send" apex:type="basicApexMessage">
+    <bpmn:sendTask id="Send" name="Send" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:endpoint>
           <apex:expressionType>static</apex:expressionType>
@@ -171,7 +171,7 @@ end case;</bpmn:conditionExpression>
       <bpmn:incoming>Flow_1nhu01n</bpmn:incoming>
       <bpmn:outgoing>Flow_0a7ljx8</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:intermediateCatchEvent id="ICE" name="ICE" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="ICE" name="ICE" apex:type="simpleMessage">
       <bpmn:incoming>Flow_10th9vn</bpmn:incoming>
       <bpmn:outgoing>Flow_16rs7dc</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0xcaexo">
@@ -192,7 +192,7 @@ end case;</bpmn:conditionExpression>
         </bpmn:extensionElements>
       </bpmn:messageEventDefinition>
     </bpmn:intermediateCatchEvent>
-    <bpmn:receiveTask id="Receive" name="Receive" apex:type="basicApexMessage">
+    <bpmn:receiveTask id="Receive" name="Receive" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:messageName>
           <apex:expressionType>processVariable</apex:expressionType>

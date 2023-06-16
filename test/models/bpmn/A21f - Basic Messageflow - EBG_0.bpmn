@@ -17,7 +17,7 @@
       <bpmn:outgoing>Flow_1siv5zn</bpmn:outgoing>
       <bpmn:outgoing>Flow_009p1i1</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="basicApexMessage">
+    <bpmn:receiveTask id="Activity_Receive" name="Receive" apex:type="simpleMessage">
       <bpmn:extensionElements>
         <apex:messageName>
           <apex:expressionType>processVariable</apex:expressionType>
@@ -36,7 +36,7 @@
       <bpmn:outgoing>Flow_0z7lv2k</bpmn:outgoing>
     </bpmn:receiveTask>
     <bpmn:sequenceFlow id="Flow_07vgiw0" sourceRef="Gateway_1wgstis" targetRef="Activity_Receive" />
-    <bpmn:intermediateCatchEvent id="Event_ICEMessage1" name="ICEMessage1" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="Event_ICEMessage1" name="ICEMessage1" apex:type="simpleMessage">
       <bpmn:incoming>Flow_13515ga</bpmn:incoming>
       <bpmn:outgoing>Flow_0nrp589</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0mkhhdo">
@@ -57,7 +57,7 @@
       </bpmn:messageEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_13515ga" sourceRef="Gateway_1wgstis" targetRef="Event_ICEMessage1" />
-    <bpmn:intermediateCatchEvent id="Event_ICEMessage2" name="ICEMessage2" apex:type="basicApexMessage">
+    <bpmn:intermediateCatchEvent id="Event_ICEMessage2" name="ICEMessage2" apex:type="simpleMessage">
       <bpmn:incoming>Flow_1siv5zn</bpmn:incoming>
       <bpmn:outgoing>Flow_0aufudp</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0yqmzvh">

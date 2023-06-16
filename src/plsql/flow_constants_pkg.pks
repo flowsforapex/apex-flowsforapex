@@ -127,7 +127,7 @@ as
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
 
-  --receiveTask
+  --messageFlow messaging protocol
   gc_simple_message   constant flow_types_pkg.t_bpmn_id := 'simpleMessage';
    
   -- execute PL/SQL tasks
