@@ -21,5 +21,6 @@ set define off;
 @"Tutorial 7a - MessageFlow Concepts_23.1.sql";
 @"Tutorial 7b - MessageFlow - Supplier Response (Start before 7c)_23.1.sql";
 @"Tutorial 7c - MessageFlow - Purchasing Process (start 7b first)_23.1.sql";
+@"Tutorial 8a - The Full Monty (the top half!)_23.1.sql";
 @"Tutorial 8c - Background Session Configuration_23.1.sql";
 
