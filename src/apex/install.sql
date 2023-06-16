@@ -18,8 +18,6 @@ prompt --install
 @@application/shared_components/navigation/lists/p10_instance_row_action_menu.sql
 @@application/shared_components/navigation/lists/desktop_navigation_bar.sql
 @@application/shared_components/navigation/lists/desktop_navigation_menu.sql
-@@application/shared_components/files/rest_postman_zip.sql
-@@application/shared_components/files/rest_module_v1_sql.sql
 @@application/shared_components/files/css_flows4apex_css.sql
 @@application/shared_components/files/js_flows4apex_js.sql
 @@application/shared_components/files/js_flows4apex_min_js.sql

@@ -34,7 +34,7 @@ wwv_flow_api.create_plugin(
 ,p_subscribe_plugin_settings=>true
 ,p_version_identifier=>'23.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
-,p_files_version=>850
+,p_files_version=>851
 );
 wwv_flow_api.create_plugin_attribute(
  p_id=>wwv_flow_api.id(49041559670646437847)

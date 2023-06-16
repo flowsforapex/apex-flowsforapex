@@ -1137,6 +1137,12 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(4774216918721288)
+,p_name=>'APP_ERR_PROV_VAR_TSTZ_NOT_TSTZ'
+,p_message_text=>'Value must be a timestamp'
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(68531466314574340)
 ,p_name=>'APP_ERR_PROV_VAR_TYPE_EMPTY'
 ,p_message_language=>'de'
@@ -2090,18 +2096,6 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Reiniciar Etapa'
 ,p_is_js_message=>true
 );
-wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(3524783067400924)
-,p_name=>'APP_VERSION_MISMATCH'
-,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'We have identified that the application version, data model and code do not match:',
-'<ul>',
-'<li>application version: %0</li>',
-'<li>data model version: %1</li>',
-'<li>code version : %2</li>',
-'</ul>',
-'Please contact your administrator to avoid any problems.'))
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -2113,6 +2107,18 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(3524783067400924)
+,p_name=>'APP_VERSION_MISMATCH'
+,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'We have identified that the application version, data model and code do not match:',
+'<ul>',
+'<li>application version: %0</li>',
+'<li>data model version: %1</li>',
+'<li>code version : %2</li>',
+'</ul>',
+'Please contact your administrator to avoid any problems.'))
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(68532517789574341)

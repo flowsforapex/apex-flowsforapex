@@ -23,8 +23,26 @@ wwv_flow_api.create_page(
 '    font-size: 1.1rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'C##DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20230420132130'
+,p_last_updated_by=>'C##LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20230614075533'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(4548240290043011)
+,p_plug_name=>'Additonal Installation Step Not Complete'
+,p_region_template_options=>'#DEFAULT#:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--warning'
+,p_plug_template=>wwv_flow_api.id(12495613507239880288)
+,p_plug_display_sequence=>50
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_display_point=>'BODY'
+,p_plug_source=>'To use the Timers feature of Flows for APEX, you must complete additional installation step that can be found <a href="https://flowsforapex.org/latest/installation/#post-installation-task-1-additional-step-to-use-timers" target="_blank">here</a>.'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_plug_display_condition_type=>'NOT_EXISTS'
+,p_plug_display_when_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select 1',
+'  from sys.all_scheduler_jobs',
+' where job_name = ''APEX_FLOW_STEP_TIMERS_J'';'))
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5273399411803742)
@@ -35,6 +53,11 @@ wwv_flow_api.create_page_plug(
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'BODY'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_plug_display_condition_type=>'EXISTS'
+,p_plug_display_when_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select 1',
+'  from sys.all_scheduler_jobs',
+' where job_name = ''APEX_FLOW_STEP_TIMERS_J'';'))
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );

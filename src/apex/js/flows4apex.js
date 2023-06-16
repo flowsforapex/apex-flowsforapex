@@ -112,7 +112,20 @@ function sendToServer(dataToSend, options = {}){
   result
     .done( function ( data ) {
       if ( !data.success ) {
-        apex.debug.error( "Something went wrong..." );
+        if (data.message !== undefined && data.message !== null) {
+          apex.message.clearErrors();
+
+          apex.message.showErrors([
+              {
+                  type:       "error",
+                  location:   "page",
+                  message:    data.message,
+                  unsafe:     false
+              }
+          ]);
+        } else {
+          apex.debug.error( "Something went wrong..." );
+        }
       } else {
         if ( options.messageKey !== undefined ){
           apex.message.showPageSuccess( apex.lang.getMessage( options.messageKey ) );
@@ -407,6 +420,28 @@ function getVariableErrors(){
           }
         );
       } 
+    } else if ( varType === "TIMESTAMP WITH TIME ZONE" ) {
+      if ( apex.item("P8_PROV_VAR_TSTZ").isEmpty() ) {
+        errors.push(
+          {
+            type:       "error",
+            location:   [ "inline" ],
+            pageItem:   "P8_PROV_VAR_TSTZ",
+            message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_VALUE_EMPTY" ),
+            unsafe:     false
+          }
+        );
+      } else if ( apex.item("P8_PROV_VAR_TSTZ_VALID").getValue() === "N" ) {
+        errors.push(
+          {
+            type:       "error",
+            location:   [ "inline" ],
+            pageItem:   "P8_PROV_VAR_TSTZ",
+            message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_TSTZ_NOT_TSTZ" ),
+            unsafe:     false
+          }
+        );
+      } 
     } else if ( varType === "CLOB" ) {
       if ( apex.item("P8_PROV_VAR_CLOB").isEmpty() ) {
         errors.push(
@@ -501,6 +536,7 @@ function addProcessVariable(action, focusElement){
 
       sendToServer(data, options);
     } else {
+      apex.message.clearErrors();
       apex.message.showErrors( errors );
     }
   } else {

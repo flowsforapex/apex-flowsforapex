@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##JDOPPELREITER'
-,p_last_upd_yyyymmddhh24miss=>'20230426063414'
+,p_last_upd_yyyymmddhh24miss=>'20230616150641'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2362908411158415)
@@ -40,11 +40,11 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2343931822104541)
-,p_plug_name=>'ORDS Clients'
+,p_plug_name=>'OAUTH Clients'
 ,p_parent_plug_id=>wwv_flow_api.id(2362908411158415)
-,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
-,p_plug_display_sequence=>10
+,p_plug_display_sequence=>20
 ,p_plug_display_point=>'BODY'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -167,6 +167,18 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_columns=>'NAME:DESCRIPTION:CLIENT_ID:SUPPORT_EMAIL:SUPPORT_URI'
 );
 wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(4722613539681901)
+,p_plug_name=>'Configuration'
+,p_parent_plug_id=>wwv_flow_api.id(2362908411158415)
+,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_plug_template=>wwv_flow_api.id(12495582446800880234)
+,p_plug_display_sequence=>10
+,p_plug_display_point=>'BODY'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2363080166158416)
 ,p_plug_name=>'Prerequisites missing'
 ,p_region_template_options=>'#DEFAULT#:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--info'
@@ -207,7 +219,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_template=>wwv_flow_api.id(12495609856182880263)
 ,p_plug_display_sequence=>20
 ,p_plug_display_point=>'BODY'
-,p_plug_source=>'<li>Rest Module not installed. Please download and execute: <a href="#APP_IMAGES#rest/module_v1.sql">rest_modules.sql</a></li>'
+,p_plug_source=>'<li>REST module not installed. Please follow the installation guide at: <a href="https://flowsforapex.org/latest/installation" target="_blank">https://flowsforapex.org/latest/installation</a></li>'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_plug_display_condition_type=>'FUNCTION_BODY'
 ,p_plug_display_when_condition=>'return not flow_rest_install.is_rest_enabled;'
@@ -243,16 +255,71 @@ wwv_flow_api.create_page_button(
 ,p_button_redirect_url=>'f?p=&APP_ID.:31:&SESSION.::&DEBUG.:31'
 );
 wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(2362607418158412)
+ p_id=>wwv_flow_api.id(4723087919681905)
 ,p_button_sequence=>10
-,p_button_plug_id=>wwv_flow_api.id(19992522503359785)
-,p_button_name=>'POSTMAN'
-,p_button_action=>'REDIRECT_URL'
+,p_button_plug_id=>wwv_flow_api.id(4722613539681901)
+,p_button_name=>'SAVE'
+,p_button_action=>'SUBMIT'
 ,p_button_template_options=>'#DEFAULT#'
 ,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
-,p_button_image_alt=>'Download Postman Testsuite'
-,p_button_position=>'REGION_TEMPLATE_NEXT'
-,p_button_redirect_url=>'#APP_IMAGES#rest/postman.zip'
+,p_button_is_hot=>'Y'
+,p_button_image_alt=>'Apply Changes'
+,p_button_position=>'REGION_TEMPLATE_EDIT'
+,p_button_condition=>'return flow_rest_install.is_rest_enabled and flow_rest_install.is_module_published;'
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'FUNCTION_BODY'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(4722790490681902)
+,p_name=>'P30_LOGGING_REST_INCOMING_CALLS'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(4722613539681901)
+,p_prompt=>'Log Incoming Rest Calls'
+,p_display_as=>'NATIVE_YES_NO'
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_01=>'APPLICATION'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(4722861639681903)
+,p_name=>'P30_LOGGING_REST_RETAIN_LOGS'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_api.id(4722613539681901)
+,p_prompt=>'Retain Logs (Days) (not yet implemented)'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(4723201073681907)
+,p_computation_sequence=>10
+,p_computation_item=>'P30_LOGGING_REST_INCOMING_CALLS'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation_language=>'PLSQL'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>  flow_rest_logging.c_log_rest_incoming',
+'         , p_default_value => flow_rest_logging.c_log_rest_incoming_default',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(4723389675681908)
+,p_computation_sequence=>20
+,p_computation_item=>'P30_LOGGING_REST_RETAIN_LOGS'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation_language=>'PLSQL'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>  flow_rest_logging.c_log_rest_incoming_retain_days',
+'         , p_default_value => flow_rest_logging.c_log_rest_incoming_retain_days_default',
+'       );'))
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(2352493486104549)
@@ -272,6 +339,23 @@ wwv_flow_api.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(2343931822104541)
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(4723167093681906)
+,p_process_sequence=>10
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'Save Config'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_rest_logging.set_logging_config( pi_log_rest_incoming         => :P30_LOGGING_REST_INCOMING_CALLS',
+'                                    , pi_log_rest_incoming_retain  => :P30_LOGGING_REST_RETAIN_LOGS );'))
+,p_process_clob_language=>'PLSQL'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when_button_id=>wwv_flow_api.id(4723087919681905)
+,p_process_when=>'return flow_rest_install.is_rest_enabled and flow_rest_install.is_module_published;'
+,p_process_when_type=>'FUNCTION_BODY'
+,p_process_when2=>'PLSQL'
+,p_process_success_message=>'Rest Configuration saved!'
 );
 wwv_flow_api.component_end;
 end;
