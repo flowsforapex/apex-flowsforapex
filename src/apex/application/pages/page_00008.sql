@@ -34,7 +34,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230530123345'
+,p_last_upd_yyyymmddhh24miss=>'20230613201403'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(3510821361851721)
@@ -3024,7 +3024,7 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flow_engine_app_api.check_is_tstz(',
 '  pi_value => :P8_PROV_VAR_TSTZ',
-', pi_format_mask => :APP_NLS_TIMESTAMP_TZ_FORMAT',
+', pi_format_mask => flow_constants_pkg.gc_prov_default_tstz_format',
 ')'))
 ,p_attribute_07=>'P8_PROV_VAR_TSTZ'
 ,p_attribute_08=>'Y'

@@ -18,24 +18,14 @@ wwv_flow_api.create_page(
 ,p_alias=>'INSTANCE-TIMELINE-P20-PRCS-NAME'
 ,p_step_title=>'Instance Timeline - &P20_PRCS_NAME.'
 ,p_autocomplete_on_off=>'OFF'
-,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.t-Timeline-item {',
-'  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);',
-'  margin-bottom: 2rem;',
-'  border: #dfdfdf4d 0.5px solid;',
-'}',
-'',
-'.t-Timeline--compact .t-Timeline-user {',
-'  vertical-align: middle;',
-'}',
-''))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230509194459'
+,p_last_upd_yyyymmddhh24miss=>'20230613202337'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(2033643917569015)
 ,p_name=>'Search Results'
+,p_region_name=>'instance-timeline-cr'
 ,p_template=>wwv_flow_api.id(12495582446800880234)
 ,p_display_sequence=>20
 ,p_include_in_reg_disp_sel_yn=>'Y'
