@@ -9,6 +9,10 @@ as
 -- Created  19-JAN-2023  Jörg Doppelreiter (solicon IT GmbH)
 --
 */
+  function get_apex_host
+    return varchar2;
+
+  procedure set_apex_host;
 
   function get_config_value( pi_key  flow_configuration.cfig_key%type )
     return flow_configuration.cfig_value%type;

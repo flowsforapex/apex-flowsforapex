@@ -12,9 +12,13 @@ as
     l_error_jo := new json_object_t();
     l_error_jo.put( key => 'success', val => false);
     l_error_jo.put( key => 'message', val => pi_sqlerrm);
+
+    /*
     if pi_stacktrace is not null then 
       l_error_jo.put( key => 'stacktrace', val => pi_stacktrace);
     end if;
+    */
+
     if pi_payload is not null then 
       l_error_jo.put( key => pi_payload_attr_name, val => pi_payload );   
     end if;

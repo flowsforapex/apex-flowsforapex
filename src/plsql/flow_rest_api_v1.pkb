@@ -1,7 +1,6 @@
 create or replace package body flow_rest_api_v1
 as
 
-
   procedure dispatch( pi_method           varchar2  --PUT/POST/DELETE
                     , pi_endpoint         varchar2
                     , pi_dgrm_id          flow_diagrams.dgrm_id%type default null
@@ -193,7 +192,12 @@ as
     return varchar2
   is
   begin
-    return replace( flow_rest.get_config_value( pi_key => flow_rest_constants.c_config_key_base) || flow_rest_constants.c_module || pi_path_endpoint,':id', pi_object_id);
+
+    if flow_rest.get_apex_host is null then 
+      flow_rest.set_apex_host;
+    end if;
+
+    return replace( flow_rest.get_apex_host || flow_rest_constants.c_module || pi_path_endpoint,':id', pi_object_id);
   end get_path;
   
   -------------------------------------------------------------------------------------------------------------------

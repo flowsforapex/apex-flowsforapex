@@ -98,6 +98,11 @@
 								{
 									"key": "status",
 									"value": "all"
+								},
+								{
+									"key": "name",
+									"value": "ionCo",
+									"disabled": true
 								}
 							]
 						}
@@ -484,7 +489,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{host}}{{module}}processes/:prcs_id/start",
@@ -518,7 +523,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{host}}{{module}}processes/:prcs_id/reset",
@@ -552,7 +557,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -1256,7 +1261,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "status",
@@ -1320,7 +1325,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "status",
@@ -1384,7 +1389,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "status",
@@ -1448,7 +1453,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "status",
@@ -1512,7 +1517,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "status",
@@ -1576,7 +1581,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "status",
@@ -1803,6 +1808,33 @@
 							],
 							"path": [
 								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "utils/print_cgi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{module}}utils/print_cgi",
+							"host": [
+								"{{host}}{{module}}utils"
+							],
+							"path": [
+								"print_cgi"
 							]
 						}
 					},

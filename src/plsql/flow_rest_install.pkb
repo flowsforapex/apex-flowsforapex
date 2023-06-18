@@ -34,5 +34,15 @@ as
 
   end is_module_published;
     
+  -------------------------------------------------------------------------------------------------------------------
+
+  procedure set_base_url( pi_base_url  varchar2 )
+  as
+  begin
+    flow_engine_util.set_config_value( p_config_key => flow_rest_constants.c_config_prefix || flow_rest_constants.c_config_key_base
+                                     , p_value      => pi_base_url );
+  end set_base_url;
+
+
 end flow_rest_install;
 /

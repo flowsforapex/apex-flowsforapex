@@ -9,5 +9,7 @@ as
                               , pi_module_prefix varchar2 default flow_rest_constants.c_rest_current_version )
     return boolean;
 
+  procedure set_base_url( pi_base_url  varchar2 );
+
 end flow_rest_install;
 /

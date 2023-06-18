@@ -10,7 +10,7 @@ as
   as
 
     l_message  varchar2(2000);
-
+    
     function remove_ora_numer( pi_msg  varchar2 )
       return varchar2
     is
@@ -31,7 +31,7 @@ as
     case pi_sqlcode
 
       when -20101 then -- e_payload_not_acceptable
-        l_message :=  'Payload can not be accepted';
+        l_message :=  'Payload not accepted';
       when -20102 then -- e_multiple_object_error
         l_message :=  'Multiple objects found';
       when -20103 then -- e_attribute_not_found

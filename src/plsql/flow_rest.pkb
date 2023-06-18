@@ -1,6 +1,40 @@
 create or replace package body flow_rest
 as
 
+  req_apex_host  varchar2(4000);
+
+  function get_apex_host
+    return varchar2
+  as
+  begin
+    return req_apex_host;
+  end get_apex_host;
+
+  -------------------------------------------------------------------------------------------------------------------
+
+  procedure set_apex_host
+  as
+  begin
+
+    req_apex_host := flow_rest.get_config_value( pi_key => flow_rest_constants.c_config_key_base);
+
+    if req_apex_host is null then
+      begin
+        req_apex_host :=  owa_util.get_cgi_env('X-APEX-BASE');
+      exception
+        when others then 
+          null;
+      end;
+    end if;
+
+    if req_apex_host is not null and trim(req_apex_host) not like '%/' then
+      req_apex_host := req_apex_host || '/';
+    end if;
+    
+  end set_apex_host;
+
+  -------------------------------------------------------------------------------------------------------------------
+
   function get_config_value( pi_key  flow_configuration.cfig_key%type )
     return flow_configuration.cfig_value%type
   as
@@ -27,7 +61,7 @@ as
         l_check_privilege := flow_rest_constants.c_rest_priv_write;
       when 'PUT'  then 
         l_check_privilege := flow_rest_constants.c_rest_priv_write;
-      when 'DELET' then 
+      when 'DELETE' then 
         l_check_privilege := flow_rest_constants.c_rest_priv_admin;
     end case;
 
@@ -44,6 +78,8 @@ as
   begin
 
     flow_rest_logging.initialize;
+
+    set_apex_host;
 
     flow_globals.set_call_origin( p_origin => flow_rest_constants.c_config_origin );
 
