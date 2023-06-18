@@ -1,6 +1,77 @@
 create or replace package body flow_engine_app_api
 as
 
+  function apex_error_handling (
+    p_error in apex_error.t_error 
+  )
+  return apex_error.t_error_result
+  is
+    l_result          apex_error.t_error_result;
+    l_reference_id    number;
+    l_constraint_name varchar2(255);
+  begin
+    l_result := apex_error.init_error_result (
+                    p_error => p_error );
+                    
+    -- If it's an internal error raised by APEX, like an invalid statement or
+    -- code which can't be executed, the error text might contain security sensitive
+    -- information. To avoid this security problem we can rewrite the error to
+    -- a generic error message and log the original error message for further
+    -- investigation by the help desk.
+    if p_error.is_internal_error then
+      -- mask all errors that are not common runtime errors (Access Denied
+      -- errors raised by application / page authorization and all errors
+      -- regarding session and session state)
+      if not p_error.is_common_runtime_error then
+        -- log error for example with an autonomous transaction and return
+        -- l_reference_id as reference#
+        -- l_reference_id := log_error (
+        --                       p_error => p_error );
+        --
+
+        -- Change the message to the generic error message which doesn't expose
+        -- any sensitive information.
+        l_result.message         := 'An unexpected internal application error has occurred. '||
+                                    'Please fill a bug at  https://github.com/flowsforapex/apex-flowsforapex/issues'||
+                                    ' for further investigation.';
+        l_result.additional_info := null;
+      end if;
+    else
+      -- Note: If you want to have friendlier ORA error messages, you can also define
+      --       a text message with the name pattern APEX.ERROR.ORA-number
+      --       There is no need to implement custom code for that.
+
+      -- If it's a constraint violation like
+      --
+      --   -) ORA-00001: unique constraint violated
+      --   -) ORA-02091: transaction rolled back (-> can hide a deferred constraint)
+      --   -) ORA-02290: check constraint violated
+      --   -) ORA-02291: integrity constraint violated - parent key not found
+      --   -) ORA-02292: integrity constraint violated - child record found
+      --
+      -- we try to get a friendly error message from APEX Text Messages.
+      -- If we don't find the constraint in APEX text message then create it
+      if p_error.ora_sqlcode in (-1, -2091, -2290, -2291, -2292) then
+        l_constraint_name := apex_error.extract_constraint_name (
+                                   p_error => p_error );
+
+        l_result.message := apex_lang.message( l_constraint_name );
+
+      end if;
+
+      -- If no associated page item/tabular form column has been set, we can use
+      -- apex_error.auto_set_associated_item to automatically guess the affected
+      -- error field by examine the ORA error for constraint names or column names.
+      if l_result.page_item_name is null and l_result.column_alias is null then
+          apex_error.auto_set_associated_item (
+              p_error        => p_error,
+              p_error_result => l_result );
+      end if;
+    end if;
+
+    return l_result;
+  end apex_error_handling;
+
   procedure handle_ajax
   as 
     l_error_occured boolean := false;
@@ -9,6 +80,7 @@ as
     l_before_prcs_status flow_instances_vw.prcs_status%type;
     l_after_prcs_status flow_instances_vw.prcs_status%type;
     l_reload boolean := false;
+
   begin
     apex_debug.message( p_message => 'Action: %s', p0 => apex_application.g_x01 );
     if instr(apex_application.g_x01, 'bulk-') > 0 then
@@ -204,6 +276,14 @@ as
               , pi_date_value => to_date(apex_application.g_x05, v('APP_DATE_TIME_FORMAT'))
               , pi_scope      => apex_application.g_x06
               );
+            when 'TIMESTAMP WITH TIME ZONE' then
+              flow_process_vars.set_var
+              (
+                pi_prcs_id    => apex_application.g_x02
+              , pi_var_name   => apex_application.g_x03
+              , pi_tstz_value => to_timestamp_tz(apex_application.g_x05, flow_constants_pkg.gc_prov_default_tstz_format)
+              , pi_scope      => apex_application.g_x06
+              );
             when 'CLOB' then
               for i in apex_application.g_f01.first..apex_application.g_f01.last
               loop
@@ -233,6 +313,18 @@ as
             , p_is_immediate  => case apex_application.g_x05 when 'Y' then true end
             , p_new_timestamp => case apex_application.g_x05 when 'N' then to_timestamp(apex_application.g_x06, v('APP_NLS_TIMESTAMP_FORMAT')) end
             , p_comment       => apex_application.g_x07
+          );
+        when 'RECEIVE-MESSAGE' then
+          for i in apex_application.g_f01.first..apex_application.g_f01.last
+          loop
+            l_clob := l_clob || apex_application.g_f01(i);
+          end loop;
+
+          flow_api_pkg.receive_message(
+            p_message_name => apex_application.g_x02,
+            p_key_name     => apex_application.g_x03,
+            p_key_value    => apex_application.g_x04,
+            p_payload      => l_clob
           );
         else
           apex_error.add_error
@@ -717,6 +809,69 @@ as
     end loop;
   end copy_model;
 
+  /* page 3 */
+  function check_version_mismatch(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2
+  is
+    l_app_version       apex_applications.version%type;
+    l_datamodel_version flow_configuration.cfig_value%type;
+    l_code_version      varchar2(10) := flow_constants_pkg.gc_version;
+    l_message           varchar2(4000);
+  begin
+    select version
+    into l_app_version
+    from apex_applications
+    where application_id = p_app_id;
+   
+    select cfig_value
+    into l_datamodel_version
+    from flow_configuration
+    where cfig_key = 'version_now_installed';
+   
+    if (( l_app_version = l_datamodel_version )  and ( l_datamodel_version = l_code_version )) = false then
+        l_message := apex_lang.message(
+            p_name => 'APP_VERSION_MISMATCH',
+            p0     => l_app_version,
+            p1     => l_datamodel_version,
+            p2     => l_code_version
+        );
+    end if;
+
+    return l_message;
+
+  end check_version_mismatch;
+
+  function check_apex_upgrade(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2
+  is
+    l_actual_version pls_integer;
+    l_actual_release pls_integer;
+    l_stored_version pls_integer := flow_apex_env.version;
+    l_stored_release pls_integer := flow_apex_env.release;
+    l_message        varchar2(4000);
+  begin
+    select  
+         to_number(substr(version_no, 1, instr(version_no, '.', 1, 1) - 1))
+       , to_number(substr(version_no, instr(version_no, '.', 1, 1) + 1, instr(version_no, '.', 1, 1) - 2))
+    into l_actual_version, l_actual_release
+    from apex_release;
+
+    if (( l_actual_version = l_stored_version ) and ( l_actual_release = l_stored_release )) = false then
+        l_message := apex_lang.message(
+            p_name => 'APP_APEX_UPGRADE_DETECTED',
+            p0     => l_actual_version,
+            p1     => l_actual_release,
+            p2     => l_stored_version,
+            p3     => l_stored_release
+        );
+    end if;
+
+    return l_message;
+
+  end check_apex_upgrade;
+
 
   /* page 4 */
 
@@ -831,7 +986,7 @@ as
     end loop;
     l_buffer := '  ));';
     l_buffer := l_buffer||utl_tcp.crlf;
-    l_buffer := l_buffer||'  flow_bpmn_parser_pkg.upload_and_parse('||utl_tcp.crlf;
+    l_buffer := l_buffer||'  flow_diagram.upload_and_parse('||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;
@@ -906,6 +1061,23 @@ as
     return l_blob;
   end clob_to_blob;
 
+  procedure download_file(
+    p_file_name in varchar2,
+    p_mime_type in varchar2,
+    p_blob_content in blob
+  )
+  is
+    l_length integer;
+    l_blob_content blob := p_blob_content;
+  begin
+    l_length := sys.dbms_lob.getlength(l_blob_content);
+    owa_util.mime_header(p_mime_type, false) ;
+    htp.p('Content-length: ' || l_length);
+    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(p_file_name)||'"');
+    owa_util.http_header_close;
+    wpg_docload.download_file(l_blob_content);
+    apex_application.stop_apex_engine;
+  end download_file;
 
   procedure download_file(
       p_dgrm_id     in number,
@@ -918,7 +1090,6 @@ as
     l_blob        blob;
     l_zip_file    blob;
     l_buffer      varchar2(32767);  
-    l_length      integer;
     l_desc_offset pls_integer := 1;
     l_src_offset  pls_integer := 1;
     l_lang        pls_integer := 0;
@@ -1019,13 +1190,12 @@ as
       l_mime_type := 'application/zip';
       l_file_name := 'F4A_'||to_char(systimestamp, 'YYYYMMDD_HH24MISS')||'.zip';
     end if;
-    l_length := dbms_lob.getlength(l_blob);
-    owa_util.mime_header(l_mime_type, false) ;
-    htp.p('Content-length: ' || l_length);
-    htp.p('Content-Disposition: attachment; filename="'||sanitize_file_name(l_file_name)||'"');
-    owa_util.http_header_close;
-    wpg_docload.download_file(l_blob);
-    apex_application.stop_apex_engine;
+
+    download_file(
+      p_file_name    => l_file_name,
+      p_mime_type    => l_mime_type,
+      p_blob_content => l_blob
+    );
   end download_file;
 
 
@@ -1382,6 +1552,19 @@ as
       return flow_constants_pkg.gc_false;
   end check_is_date;
 
+  function check_is_tstz(
+    pi_value       in varchar2,
+    pi_format_mask in varchar2)
+  return varchar2
+  as
+    l_dummy_tstz timestamp with time zone;
+  begin 
+    l_dummy_tstz := to_timestamp_tz(pi_value, pi_format_mask);
+    return flow_constants_pkg.gc_true;
+  exception
+    when others then  
+      return flow_constants_pkg.gc_false;
+  end check_is_tstz;
 
   function check_is_number(
     pi_value in varchar2)
@@ -1406,6 +1589,7 @@ as
     l_prov_var_vc2  flow_process_variables.prov_var_vc2%type;
     l_prov_var_num  flow_process_variables.prov_var_num%type;
     l_prov_var_date flow_process_variables.prov_var_date%type;
+    l_prov_var_tstz flow_process_variables.prov_var_tstz%type;
     l_prov_var_clob flow_process_variables.prov_var_clob%type;
   begin
     -- Initialize
@@ -1430,6 +1614,11 @@ as
                              pi_prcs_id  => l_prov_prcs_id,
                              pi_var_name => l_prov_var_name,
                              pi_scope    => l_prov_scope);
+      when 'TIMESTAMP WITH TIME ZONE' then
+        l_prov_var_tstz := flow_process_vars.get_var_tstz(
+                             pi_prcs_id  => l_prov_prcs_id,
+                             pi_var_name => l_prov_var_name,
+                             pi_scope    => l_prov_scope);
       when 'CLOB' then
           l_prov_var_clob := flow_process_vars.get_var_clob(
                                pi_prcs_id  => l_prov_prcs_id,
@@ -1442,6 +1631,7 @@ as
     apex_json.write( p_name => 'vc2_value', p_value => l_prov_var_vc2);
     apex_json.write( p_name => 'num_value', p_value => to_char(l_prov_var_num));
     apex_json.write( p_name => 'date_value', p_value => to_char(l_prov_var_date, v('APP_DATE_TIME_FORMAT')));
+    apex_json.write( p_name => 'tstz_value', p_value => to_char(l_prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format));
     apex_json.write( p_name => 'clob_value', p_value => l_prov_var_clob);
     apex_json.close_all;
     
@@ -1479,63 +1669,29 @@ as
     
   end get_scope;
 
-  /* page 9 */
-  
-
-  procedure set_settings(
-    pi_logging_language             in flow_configuration.cfig_value%type
-  , pi_logging_level                in flow_configuration.cfig_value%type
-  , pi_logging_hide_userid          in flow_configuration.cfig_value%type
-  , pi_logging_retain_logs          in flow_configuration.cfig_value%type
-  , pi_logging_archive_location     in flow_configuration.cfig_value%type
-  , pi_logging_archive_enabled      in flow_configuration.cfig_value%type
-  , pi_logging_msg_flow_recd        in flow_configuration.cfig_value%type
-  , pi_logging_msg_flow_retention   in flow_configuration.cfig_value%type
-  , pi_engine_app_mode              in flow_configuration.cfig_value%type
-  , pi_duplicate_step_prevention    in flow_configuration.cfig_value%type
-  , pi_default_workspace            in flow_configuration.cfig_value%type
-  , pi_default_email_sender         in flow_configuration.cfig_value%type
-  , pi_default_application          in flow_configuration.cfig_value%type
-  , pi_default_pageid               in flow_configuration.cfig_value%type
-  , pi_default_username             in flow_configuration.cfig_value%type
-  , pi_timer_max_cycles             in flow_configuration.cfig_value%type
-  , pi_timer_status                 in sys.all_scheduler_jobs.enabled%type
-  , pi_timer_repeat_interval        in sys.all_scheduler_jobs.repeat_interval%type
-  , pi_stats_retain_daily           in flow_configuration.cfig_value%type
-  , pi_stats_retain_month           in flow_configuration.cfig_value%type
-  , pi_stats_retain_qtr             in flow_configuration.cfig_value%type
+  procedure download_instance_summary(
+    pi_prcs_id in flow_processes.prcs_id%type
   )
-  as
+  is
+    l_summary   clob;
+    l_file_name varchar2(300 char);
+    l_blob      blob;
   begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language            , p_value => pi_logging_language);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level               , p_value => pi_logging_level);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid         , p_value => pi_logging_hide_userid);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs         , p_value => pi_logging_retain_logs);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_location    , p_value => pi_logging_archive_location);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled     , p_value => pi_logging_archive_enabled);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd   , p_value => pi_logging_msg_flow_recd);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow     , p_value => pi_logging_msg_flow_retention);      
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode             , p_value => pi_engine_app_mode);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_dup_step_prevention         , p_value => pi_duplicate_step_prevention);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_workspace           , p_value => pi_default_workspace);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_email_sender        , p_value => pi_default_email_sender);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application         , p_value => pi_default_application);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid              , p_value => pi_default_pageid);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username            , p_value => pi_default_username);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_timer_max_cycles            , p_value => pi_timer_max_cycles);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month  , p_value => pi_stats_retain_month);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr    , p_value => pi_stats_retain_qtr);
+    select prcs_id ||'_'|| prcs_name || '_' || to_char(current_date, 'YYYYDDMM_HH24MISS')
+      into l_file_name
+      from flow_instances_vw
+     where prcs_id = pi_prcs_id;
 
-      case pi_timer_status
-      when 'TRUE'  then flow_timers_pkg.enable_scheduled_job;
-      when 'FALSE' then flow_timers_pkg.disable_scheduled_job;
-      end case;
+    l_file_name := sanitize_file_name(l_file_name)||'.json';
 
-      flow_timers_pkg.set_timer_repeat_interval( p_repeat_interval => pi_timer_repeat_interval);
-
-  end set_settings;
-
+    l_summary := flow_admin_api.instance_summary(p_process_id => pi_prcs_id);
+    l_blob := clob_to_blob(l_summary);
+    download_file(
+      p_file_name    => l_file_name,
+      p_mime_type    => 'application/json',
+      p_blob_content => l_blob
+    );
+  end download_instance_summary;
 
   /* page 11 */
 
@@ -1604,6 +1760,102 @@ as
               
     return l_has_error = 1;
   end has_error;
+
+
+  /* configuration */
+
+
+  procedure set_logging_settings(
+    pi_logging_language          in flow_configuration.cfig_value%type
+  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_hide_userid       in flow_configuration.cfig_value%type
+  , pi_logging_retain_logs       in flow_configuration.cfig_value%type
+  , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
+  , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language          , p_value => pi_logging_language);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level             , p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid       , p_value => pi_logging_hide_userid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs       , p_value => pi_logging_retain_logs);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd , p_value => pi_logging_message_flow_recd);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow   , p_value => pi_logging_retain_msg_flow);
+
+  end set_logging_settings;
+
+
+  procedure set_archiving_settings(
+    pi_archiving_enabled  in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled  , p_value => pi_archiving_enabled);
+
+  end set_archiving_settings;
+
+
+  procedure set_statictis_settings(
+    pi_stats_retain_daily in flow_configuration.cfig_value%type
+  , pi_stats_retain_month in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month , p_value => pi_stats_retain_month);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr , p_value => pi_stats_retain_qtr);
+
+  end set_statictis_settings;
+
+
+  procedure set_engine_app_settings(
+    pi_engine_app_mode in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode , p_value => pi_engine_app_mode);
+
+  end set_engine_app_settings;
+
+
+  procedure set_engine_settings(
+    pi_duplicate_step_prevention in flow_configuration.cfig_value%type
+  , pi_default_workspace         in flow_configuration.cfig_value%type
+  , pi_default_email_sender      in flow_configuration.cfig_value%type
+  , pi_default_application       in flow_configuration.cfig_value%type
+  , pi_default_pageid            in flow_configuration.cfig_value%type
+  , pi_default_username          in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_dup_step_prevention  , p_value => pi_duplicate_step_prevention);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_workspace    , p_value => pi_default_workspace);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_email_sender , p_value => pi_default_email_sender);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application  , p_value => pi_default_application);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid       , p_value => pi_default_pageid);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username     , p_value => pi_default_username);
+
+  end set_engine_settings;
+
+
+  procedure set_timers_settings(
+    pi_timer_max_cycles      in flow_configuration.cfig_value%type
+  , pi_timer_status          in sys.all_scheduler_jobs.enabled%type
+  , pi_timer_repeat_interval in sys.all_scheduler_jobs.repeat_interval%type
+  )
+  as
+  begin
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_timer_max_cycles , p_value => pi_timer_max_cycles);
+
+      case pi_timer_status
+      when 'TRUE'  then flow_timers_pkg.enable_scheduled_job;
+      when 'FALSE' then flow_timers_pkg.disable_scheduled_job;
+      end case;
+
+      flow_timers_pkg.set_timer_repeat_interval( p_repeat_interval => pi_timer_repeat_interval);
+
+  end set_timers_settings;
 
 
 end flow_engine_app_api;

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A07a" name="A07a - ProcessVariable API tester" isExecutable="true" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:priority>
+        <apex:expressionType>static</apex:expressionType>
+        <apex:expression>2</apex:expression>
+      </apex:priority>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_0ey8j29</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_BeforeTests" name="Before Tests">
+      <bpmn:incoming>Flow_0ey8j29</bpmn:incoming>
+      <bpmn:outgoing>Flow_1up34gj</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ey8j29" sourceRef="Event_Start" targetRef="Activity_BeforeTests" />
+    <bpmn:sequenceFlow id="Flow_1up34gj" sourceRef="Activity_BeforeTests" targetRef="Activity_SubProcA" />
+    <bpmn:subProcess id="Activity_SubProcA" name="SubProc A">
+      <bpmn:incoming>Flow_1up34gj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wu6ur6</bpmn:outgoing>
+      <bpmn:startEvent id="Event_AStart" name="AStart">
+        <bpmn:outgoing>Flow_1exkato</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:task id="Activity_A1" name="A1">
+        <bpmn:incoming>Flow_1exkato</bpmn:incoming>
+        <bpmn:outgoing>Flow_0pvcuhe</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="Flow_1exkato" sourceRef="Event_AStart" targetRef="Activity_A1" />
+      <bpmn:sequenceFlow id="Flow_0pvcuhe" sourceRef="Activity_A1" targetRef="Activity_A2Call" />
+      <bpmn:callActivity id="Activity_A2Call" name="A2 Call" apex:manualInput="false" apex:calledDiagram="A07b - Process Variable API - Called Diagram" apex:calledDiagramVersionSelection="latestVersion">
+        <bpmn:incoming>Flow_0pvcuhe</bpmn:incoming>
+        <bpmn:outgoing>Flow_199spjk</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:task id="Activity_A3" name="A3">
+        <bpmn:incoming>Flow_199spjk</bpmn:incoming>
+        <bpmn:outgoing>Flow_09kieuj</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="Flow_199spjk" sourceRef="Activity_A2Call" targetRef="Activity_A3" />
+      <bpmn:endEvent id="Event_AEnd" name="AEnd">
+        <bpmn:incoming>Flow_09kieuj</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_09kieuj" sourceRef="Activity_A3" targetRef="Event_AEnd" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_1wu6ur6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1wu6ur6" sourceRef="Activity_SubProcA" targetRef="Event_End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A07a">
+      <bpmndi:BPMNShape id="Event_0922oy8_di" bpmnElement="Event_Start">
+        <dc:Bounds x="382" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="388" y="375" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u3xrll_di" bpmnElement="Activity_BeforeTests">
+        <dc:Bounds x="470" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0m8623o_di" bpmnElement="Activity_SubProcA">
+        <dc:Bounds x="630" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0off8cy_di" bpmnElement="Event_End">
+        <dc:Bounds x="792" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="800" y="375" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ey8j29_di" bpmnElement="Flow_0ey8j29">
+        <di:waypoint x="418" y="350" />
+        <di:waypoint x="470" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1up34gj_di" bpmnElement="Flow_1up34gj">
+        <di:waypoint x="570" y="350" />
+        <di:waypoint x="630" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wu6ur6_di" bpmnElement="Flow_1wu6ur6">
+        <di:waypoint x="730" y="350" />
+        <di:waypoint x="792" y="350" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_16oyd1x">
+    <bpmndi:BPMNPlane id="BPMNPlane_0g82x8i" bpmnElement="Activity_SubProcA">
+      <bpmndi:BPMNShape id="Event_15ie333_di" bpmnElement="Event_AStart">
+        <dc:Bounds x="-788" y="-158" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-785" y="-115" width="31" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_150dcyj_di" bpmnElement="Activity_A1">
+        <dc:Bounds x="-700" y="-180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q0oog3_di" bpmnElement="Activity_A2Call">
+        <dc:Bounds x="-540" y="-180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1btmlo2_di" bpmnElement="Activity_A3">
+        <dc:Bounds x="-380" y="-180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0hp89sq_di" bpmnElement="Event_AEnd">
+        <dc:Bounds x="-218" y="-158" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-213" y="-115" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1exkato_di" bpmnElement="Flow_1exkato">
+        <di:waypoint x="-752" y="-140" />
+        <di:waypoint x="-700" y="-140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pvcuhe_di" bpmnElement="Flow_0pvcuhe">
+        <di:waypoint x="-600" y="-140" />
+        <di:waypoint x="-540" y="-140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_199spjk_di" bpmnElement="Flow_199spjk">
+        <di:waypoint x="-440" y="-140" />
+        <di:waypoint x="-380" y="-140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09kieuj_di" bpmnElement="Flow_09kieuj">
+        <di:waypoint x="-280" y="-140" />
+        <di:waypoint x="-218" y="-140" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

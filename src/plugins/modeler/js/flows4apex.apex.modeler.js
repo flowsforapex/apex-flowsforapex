@@ -5,7 +5,7 @@
     options: {
       ajaxIdentifier: null,
       itemsToSubmit: null,
-      pluginMode: null,
+      showCustomExtensions: null,
     },
 
     _create: function () {
@@ -24,7 +24,8 @@
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
         bpmnModeler.customModules.xmlModule,
-        bpmnModeler.customModules.drilldownCentering
+        bpmnModeler.customModules.drilldownCentering,
+        bpmnModeler.customModules.bpmnDiOrdering
       ];
 
       this.exporter = {
@@ -55,7 +56,7 @@
         linting: this.linting,
         bpmnRenderer: this.bpmnRenderer,
         exporter: this.exporter,
-        pluginMode: this.options.pluginMode
+        showCustomExtensions: (this.options.showCustomExtensions === 'true')
       } );
 
       // prevent click events from bubbling up the dom
@@ -71,6 +72,9 @@
           else if (input && input.classList.contains('bio-properties-panel-toggle-switch__slider')) {
             // allow toggle switch
           }
+          else if (event.target.tagName == 'A') {
+            // allow links
+          }
           else {
             event.stopPropagation();
             return false;
@@ -78,11 +82,8 @@
       } );
 
       // prevent page submit + reload after button click
-      $( document ).on( "apexbeforepagesubmit", ( event ) => {
-        const blocking = ['bio-properties-panel-add-entry', 'bio-properties-panel-remove-entry'];
-        if (blocking.some(className => event.target.activeElement.classList.contains(className))) {
-          apex.event.gCancelFlag = true;
-        }
+      $( document ).on( "apexbeforepagesubmit", ( event, request ) => {
+        if (!request) apex.event.gCancelFlag = true;
       } );
 
       // register custom changed handler with APEX
@@ -134,6 +135,8 @@
         if ( warnings.length > 0 ) {
           debug.warn( "Warnings during XML Import", warnings );
         }
+
+        bpmnModeler$.get('xmlModule').refactorElements();
 
         this.zoom( "fit-viewport" );
         that.changed = false;

@@ -38,10 +38,25 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
   ( p_completed_before         in date default trunc(sysdate)
   )
   is
-  begin
-    flow_log_admin.archive_completed_instances
-    ( p_completed_before         => p_completed_before
-    );
+      l_session_id   number;
+    begin  
+        if v('APP_SESSION') is null then
+          l_session_id := flow_apex_session.create_api_session(p_process_id => null);
+        end if;
+
+        flow_log_admin.archive_completed_instances
+        ( p_completed_before         => p_completed_before
+        );
+
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+    exception
+      when others then
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+        raise;      
   end archive_completed_instances;
 
 -- Performance Summary Functions
@@ -59,4 +74,32 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
     flow_statistics.purge_statistics;
   end purge_statistics;
 
+  -- Configuration Parameters
+
+  procedure set_config_value
+  ( p_config_key        in flow_configuration.cfig_key%type,
+    p_value             in flow_configuration.cfig_value%type,
+    p_update_if_set     in boolean default true
+  )
+  is
+  begin
+    flow_engine_util.set_config_value
+    ( p_config_key      => p_config_key
+    , p_value           => p_value
+    , p_update_if_set   => p_update_if_set
+    );
+  end set_config_value;
+
+  function get_config_value
+  ( p_config_key        in flow_configuration.cfig_key%type
+  , p_default_value     in flow_configuration.cfig_value%type
+  ) return flow_configuration.cfig_value%type
+  is
+  begin
+    return flow_engine_util.get_config_value ( p_config_key     => p_config_key 
+                                             , p_default_value  => p_default_value
+                                             );       
+  end get_config_value;
+
 end flow_admin_api;
+/

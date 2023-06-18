@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:collaboration id="Collaboration_0g9lgkn">
+    <bpmn:participant id="Participant_0whbbt7" name="OrderingProcess" processRef="Process_1qvz266" />
+    <bpmn:participant id="Participant_0t5pyah" name="Supplier&#39;s Ordering Process (Empty Pool / black Box) (this is the Process in Tutorial 7b)" />
+    <bpmn:messageFlow id="Flow_1mhnxug" name="Send Order" sourceRef="Activity_1kiolhv" targetRef="Participant_0t5pyah" />
+    <bpmn:messageFlow id="Flow_0rbamsj" name="Receive Acknowledement" sourceRef="Participant_0t5pyah" targetRef="Event_Rx_Confirmation" />
+    <bpmn:textAnnotation id="TextAnnotation_0xxeo4v">
+      <bpmn:text>Study this Tutorial before. you run it.
+
+Note how the Correlation Keys and Message Names are built using real entity values - rather than using pseudo values like process ID or a GUID to coordinate a transaction across the two processes.
+
+The example is a little simplified for understanding.
+
+Start this process.  Look at the Process Variables being sent to and from the other process.
+
+MessageFlow will become more useful in a future release when we allow a message to start a process, also message catch boundary events to interrupt a subProcess, and message throw end events to signal when a process has completed.  Also the ability to decouple sender and receiver across different workspaces or different servers.  This is just a taster.....</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0is679k" sourceRef="Participant_0t5pyah" targetRef="TextAnnotation_0xxeo4v" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1qvz266">
+    <bpmn:extensionElements>
+      <apex:customExtension>{"mytask":"mytaskmessage"}</apex:customExtension>
+    </bpmn:extensionElements>
+    <bpmn:laneSet id="LaneSet_1o73f33">
+      <bpmn:lane id="Lane_1prtuuy" name="Sales" apex:isRole="true" apex:role="SALES">
+        <bpmn:flowNodeRef>Event_1925gah</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0uij13c</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1kiolhv</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1y3nrel</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_Rx_Confirmation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1i00eqo</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0nondgq</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_08bqvjs</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1tpgaxx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_TimeOut_5m</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Event_1925gah">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"mytask":"mytaskmessage"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1n4muoi</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_0uij13c" name="get data">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"mytask":"mytaskmessage"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1n4muoi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fewogt</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1n4muoi" sourceRef="Event_1925gah" targetRef="Activity_0uij13c" />
+    <bpmn:sequenceFlow id="Flow_0fewogt" sourceRef="Activity_0uij13c" targetRef="Activity_1kiolhv" />
+    <bpmn:sendTask id="Activity_1kiolhv" name="place order" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:endpoint>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>local</apex:expression>
+        </apex:endpoint>
+        <apex:messageName>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>SendPO</apex:expression>
+        </apex:messageName>
+        <apex:correlationKey>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>CustomerID</apex:expression>
+        </apex:correlationKey>
+        <apex:correlationValue>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>100</apex:expression>
+        </apex:correlationValue>
+        <apex:customExtension>{"mySendtask":"mySendtaskmessage"}</apex:customExtension>
+        <apex:payload>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>BUSINESS_REF</apex:expression>
+        </apex:payload>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fewogt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rqi2lg</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0rqi2lg" name="MyFlow" sourceRef="Activity_1kiolhv" targetRef="Gateway_1y3nrel" apex:sequence="10">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"test":"seqFlow"}</apex:customExtension>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:eventBasedGateway id="Gateway_1y3nrel">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"myEBGtask":"myEBGmessage"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rqi2lg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rkz3tu</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1n3p80m</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="Event_Rx_Confirmation" name="Receive Supplier Confirmation" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"myICEtask":"myICEmessage"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rkz3tu</bpmn:incoming>
+      <bpmn:outgoing>Flow_17nxy1b</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0ozlcqv">
+        <bpmn:extensionElements>
+          <apex:messageName>
+            <apex:expressionType>static</apex:expressionType>
+            <apex:expression>OrderConfirmation</apex:expression>
+          </apex:messageName>
+          <apex:correlationKey>
+            <apex:expressionType>static</apex:expressionType>
+            <apex:expression>PONumber</apex:expression>
+          </apex:correlationKey>
+          <apex:correlationValue>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>BUSINESS_REF</apex:expression>
+          </apex:correlationValue>
+          <apex:payloadVariable>SuppliersSORef</apex:payloadVariable>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0rkz3tu" sourceRef="Gateway_1y3nrel" targetRef="Event_Rx_Confirmation" />
+    <bpmn:task id="Activity_1i00eqo" name="A">
+      <bpmn:incoming>Flow_17nxy1b</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t46fc2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_17nxy1b" sourceRef="Event_Rx_Confirmation" targetRef="Activity_1i00eqo" apex:sequence="10">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"mytask":"mytaskmessage"}</apex:customExtension>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0nondgq">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"myend":"myendmessage"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0t46fc2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0t46fc2" sourceRef="Activity_1i00eqo" targetRef="Event_0nondgq" />
+    <bpmn:sequenceFlow id="Flow_1n3p80m" sourceRef="Gateway_1y3nrel" targetRef="Event_TimeOut_5m" />
+    <bpmn:sequenceFlow id="Flow_0birqg8" sourceRef="Event_TimeOut_5m" targetRef="Activity_1tpgaxx" />
+    <bpmn:sequenceFlow id="Flow_1cj17tx" sourceRef="Activity_1tpgaxx" targetRef="Event_08bqvjs" />
+    <bpmn:endEvent id="Event_08bqvjs">
+      <bpmn:incoming>Flow_1cj17tx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_1tpgaxx" name="B">
+      <bpmn:incoming>Flow_0birqg8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cj17tx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="Event_TimeOut_5m" name="TimeOut (5m)">
+      <bpmn:incoming>Flow_1n3p80m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0birqg8</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0vyum3w">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:textAnnotation id="TextAnnotation_1qij4jn">
+      <bpmn:text>Sends the Order to the Supplier (in Tutorial 7b) - who must be already waiting for an order.
+
+The Message sends the Customer Number as a correlation key, with the Purchase Order in the Payload
+
+For simplicity - the Payload here only contains our PO number (= the Business Ref of this process)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1uhi33h" sourceRef="Activity_1kiolhv" targetRef="TextAnnotation_1qij4jn" />
+    <bpmn:textAnnotation id="TextAnnotation_1ku4brw">
+      <bpmn:text>We then wait for an Acknowledgement from the supplier, along with the Suppliers Sales Order ID.
+
+The Supplier will usually respond in 10-20 seconds - so examine variables, and hit refresh after 20 sec...</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0e2y9pw" sourceRef="Event_Rx_Confirmation" targetRef="TextAnnotation_1ku4brw" />
+    <bpmn:textAnnotation id="TextAnnotation_0wdxv9l">
+      <bpmn:text>Note this pattern of a Message Catch Event (rather than a ReceiveTask) following on from an Event Based Gateway, and with a Timer Catch Event in parallel to act as a timeout timer.
+
+Its much more common to use this pattern, rather than a Receive Task with a Timer Boundary Event, to model message events...</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1fflm4b" sourceRef="Event_TimeOut_5m" targetRef="TextAnnotation_0wdxv9l" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0g9lgkn">
+      <bpmndi:BPMNShape id="Participant_0whbbt7_di" bpmnElement="Participant_0whbbt7" isHorizontal="true">
+        <dc:Bounds x="210" y="230" width="1028" height="480" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1prtuuy_di" bpmnElement="Lane_1prtuuy" isHorizontal="true">
+        <dc:Bounds x="240" y="230" width="998" height="480" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1qij4jn_di" bpmnElement="TextAnnotation_1qij4jn">
+        <dc:Bounds x="440" y="530" width="250" height="166" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1ku4brw_di" bpmnElement="TextAnnotation_1ku4brw">
+        <dc:Bounds x="860" y="280" width="310" height="82" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0wdxv9l_di" bpmnElement="TextAnnotation_0wdxv9l">
+        <dc:Bounds x="830" y="598" width="370" height="96" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1925gah_di" bpmnElement="Event_1925gah">
+        <dc:Bounds x="292" y="392" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uij13c_di" bpmnElement="Activity_0uij13c">
+        <dc:Bounds x="380" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tmm9k5_di" bpmnElement="Activity_1kiolhv">
+        <dc:Bounds x="540" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0witrck_di" bpmnElement="Gateway_1y3nrel">
+        <dc:Bounds x="705" y="385" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kaz3ec_di" bpmnElement="Event_Rx_Confirmation">
+        <dc:Bounds x="822" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="788" y="435" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i00eqo_di" bpmnElement="Activity_1i00eqo">
+        <dc:Bounds x="930" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nondgq_di" bpmnElement="Event_0nondgq">
+        <dc:Bounds x="1102" y="392" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08bqvjs_di" bpmnElement="Event_08bqvjs">
+        <dc:Bounds x="1102" y="512" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tpgaxx_di" bpmnElement="Activity_1tpgaxx">
+        <dc:Bounds x="930" y="490" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ydcxct_di" bpmnElement="Event_TimeOut_5m">
+        <dc:Bounds x="822" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="808" y="555" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1uhi33h_di" bpmnElement="Association_1uhi33h">
+        <di:waypoint x="568" y="450" />
+        <di:waypoint x="525" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0e2y9pw_di" bpmnElement="Association_0e2y9pw">
+        <di:waypoint x="851" y="396" />
+        <di:waypoint x="880" y="362" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1fflm4b_di" bpmnElement="Association_1fflm4b">
+        <di:waypoint x="848" y="546" />
+        <di:waypoint x="873" y="598" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n4muoi_di" bpmnElement="Flow_1n4muoi">
+        <di:waypoint x="328" y="410" />
+        <di:waypoint x="380" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fewogt_di" bpmnElement="Flow_0fewogt">
+        <di:waypoint x="480" y="410" />
+        <di:waypoint x="540" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rqi2lg_di" bpmnElement="Flow_0rqi2lg">
+        <di:waypoint x="640" y="410" />
+        <di:waypoint x="705" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="654" y="392" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rkz3tu_di" bpmnElement="Flow_0rkz3tu">
+        <di:waypoint x="755" y="410" />
+        <di:waypoint x="822" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17nxy1b_di" bpmnElement="Flow_17nxy1b">
+        <di:waypoint x="858" y="410" />
+        <di:waypoint x="930" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t46fc2_di" bpmnElement="Flow_0t46fc2">
+        <di:waypoint x="1030" y="410" />
+        <di:waypoint x="1102" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n3p80m_di" bpmnElement="Flow_1n3p80m">
+        <di:waypoint x="730" y="435" />
+        <di:waypoint x="730" y="530" />
+        <di:waypoint x="822" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0birqg8_di" bpmnElement="Flow_0birqg8">
+        <di:waypoint x="858" y="530" />
+        <di:waypoint x="930" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cj17tx_di" bpmnElement="Flow_1cj17tx">
+        <di:waypoint x="1030" y="530" />
+        <di:waypoint x="1102" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_03p6awf_di" bpmnElement="Participant_0t5pyah" isHorizontal="true">
+        <dc:Bounds x="210" y="150" width="1028" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0xxeo4v_di" bpmnElement="TextAnnotation_0xxeo4v">
+        <dc:Bounds x="420" y="-50" width="760" height="180" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0is679k_di" bpmnElement="Association_0is679k">
+        <di:waypoint x="538" y="150" />
+        <di:waypoint x="290" y="110" />
+        <di:waypoint x="290" y="14" />
+        <di:waypoint x="420" y="-8" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mhnxug_di" bpmnElement="Flow_1mhnxug">
+        <di:waypoint x="590" y="370" />
+        <di:waypoint x="590" y="210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="511" y="253" width="57" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rbamsj_di" bpmnElement="Flow_0rbamsj">
+        <di:waypoint x="840" y="210" />
+        <di:waypoint x="840" y="392" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="848" y="246" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

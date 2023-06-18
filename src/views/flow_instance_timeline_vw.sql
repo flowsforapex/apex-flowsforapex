@@ -1,3 +1,15 @@
+/* 
+-- Flows for APEX - flow_instance_timeline_vw.sql
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
+--
+-- Created    01-Feb-2023  Richard Allen (Oracle)
+-- Edited     05-Jun-2023  Louis Moreaux, Insum
+--
+-- This view shows timeline of all logged events for a process
+--
+--
+*/
 create or replace view flow_instance_timeline_vw as
 select 'created' operation
      , 'Instance Created' description
@@ -111,4 +123,4 @@ select 'variable set' as operation
      , lgvr_prcs_id as prcs_id 
   from    flow_variable_event_log
 order by performed_on
-with read only
+with read only;

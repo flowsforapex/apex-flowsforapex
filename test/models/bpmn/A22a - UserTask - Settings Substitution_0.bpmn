@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_u92n8o2f" isExecutable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_0d2hbz6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_Pre_Test" name="Pre_Test">
+      <bpmn:incoming>Flow_0d2hbz6</bpmn:incoming>
+      <bpmn:outgoing>Flow_07yh64e</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0d2hbz6" sourceRef="Event_Start" targetRef="Activity_Pre_Test" />
+    <bpmn:exclusiveGateway id="Gateway_Choose" name="Choose" default="Flow_B">
+      <bpmn:incoming>Flow_07yh64e</bpmn:incoming>
+      <bpmn:outgoing>Flow_A</bpmn:outgoing>
+      <bpmn:outgoing>Flow_B</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_07yh64e" sourceRef="Activity_Pre_Test" targetRef="Gateway_Choose" />
+    <bpmn:task id="Activity_SetupA" name="SetupA">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>app_id</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>100</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>page_id</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>1</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>request</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>SUBMIT</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>clear_cache</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>1</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>4</apex:varSequence>
+            <apex:varName>items</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>item1</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>5</apex:varSequence>
+            <apex:varName>values</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>value1</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_A</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zmkchv</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_A" name="App_to_Call = &#39;A&#39;" sourceRef="Gateway_Choose" targetRef="Activity_SetupA" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$app_to_call = 'A'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_B" name="App_to_Call = &#39;B&#39;" sourceRef="Gateway_Choose" targetRef="Activity_SetupB" apex:sequence="20" />
+    <bpmn:exclusiveGateway id="Gateway_Merge" name="Merge">
+      <bpmn:incoming>Flow_0zmkchv</bpmn:incoming>
+      <bpmn:incoming>Flow_1f24wf6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rc5bew</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0zmkchv" sourceRef="Activity_SetupA" targetRef="Gateway_Merge" apex:sequence="10" />
+    <bpmn:sequenceFlow id="Flow_1rc5bew" sourceRef="Gateway_Merge" targetRef="Activity_chosen_usertask" apex:sequence="10" />
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_05lmd61</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_05lmd61" sourceRef="Activity_chosen_usertask" targetRef="Event_End" />
+    <bpmn:task id="Activity_SetupB" name="SetupB">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>app_id</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>200</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>page_id</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>request</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>UPDATE</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>clear_cache</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>4</apex:varSequence>
+            <apex:varName>items</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>item2</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>5</apex:varSequence>
+            <apex:varName>values</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>value2</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_B</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f24wf6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1f24wf6" sourceRef="Activity_SetupB" targetRef="Gateway_Merge" />
+    <bpmn:userTask id="Activity_chosen_usertask" name="chosen usertask" apex:type="apexPage" apex:manualInput="true">
+      <bpmn:extensionElements>
+        <apex:apexPage>
+          <apex:applicationId>&amp;F4A$app_id.</apex:applicationId>
+          <apex:pageId>&amp;F4A$page_id.</apex:pageId>
+          <apex:request>&amp;F4A$request.</apex:request>
+          <apex:cache>&amp;F4A$clear_cache.</apex:cache>
+          <apex:pageItems>
+            <apex:pageItem>
+              <apex:itemName>&amp;F4A$items.</apex:itemName>
+              <apex:itemValue>&amp;F4A$values.</apex:itemValue>
+            </apex:pageItem>
+          </apex:pageItems>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1rc5bew</bpmn:incoming>
+      <bpmn:outgoing>Flow_05lmd61</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_u92n8o2f">
+      <bpmndi:BPMNShape id="Event_16qw0dn_di" bpmnElement="Event_Start">
+        <dc:Bounds x="322" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="328" y="545" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hkal3e_di" bpmnElement="Activity_Pre_Test">
+        <dc:Bounds x="410" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_17i513w_di" bpmnElement="Gateway_Choose" isMarkerVisible="true">
+        <dc:Bounds x="565" y="495" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="572" y="465" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ffh3vy_di" bpmnElement="Activity_SetupA">
+        <dc:Bounds x="670" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1izgvws_di" bpmnElement="Gateway_Merge" isMarkerVisible="true">
+        <dc:Bounds x="845" y="495" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="854" y="465" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lo5d3z_di" bpmnElement="Event_End">
+        <dc:Bounds x="1152" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1160" y="545" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0mry9xv" bpmnElement="Activity_SetupB">
+        <dc:Bounds x="670" y="590" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oa6k1z_di" bpmnElement="Activity_chosen_usertask">
+        <dc:Bounds x="970" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0d2hbz6_di" bpmnElement="Flow_0d2hbz6">
+        <di:waypoint x="358" y="520" />
+        <di:waypoint x="410" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07yh64e_di" bpmnElement="Flow_07yh64e">
+        <di:waypoint x="510" y="520" />
+        <di:waypoint x="565" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ee848j_di" bpmnElement="Flow_A">
+        <di:waypoint x="615" y="520" />
+        <di:waypoint x="670" y="520" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="587" y="443" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00biyih_di" bpmnElement="Flow_B">
+        <di:waypoint x="590" y="545" />
+        <di:waypoint x="590" y="630" />
+        <di:waypoint x="670" y="630" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="557" y="643" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zmkchv_di" bpmnElement="Flow_0zmkchv">
+        <di:waypoint x="770" y="520" />
+        <di:waypoint x="845" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rc5bew_di" bpmnElement="Flow_1rc5bew">
+        <di:waypoint x="895" y="520" />
+        <di:waypoint x="970" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05lmd61_di" bpmnElement="Flow_05lmd61">
+        <di:waypoint x="1070" y="520" />
+        <di:waypoint x="1152" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f24wf6_di" bpmnElement="Flow_1f24wf6">
+        <di:waypoint x="770" y="630" />
+        <di:waypoint x="870" y="630" />
+        <di:waypoint x="870" y="545" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

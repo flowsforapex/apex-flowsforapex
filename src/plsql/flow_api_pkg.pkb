@@ -474,6 +474,17 @@ create or replace package body flow_api_pkg as
            );
   end intervalDStoSec;
 
+  function intervalDStoHours (
+    p_intervalDS  interval day to second
+  ) return number
+  is
+    l_sec number;
+  begin
+    return ( extract( day   from p_intervalDS) * 24
+           + extract( hour  from p_intervalDS)      
+           );
+  end intervalDStoHours;
+
 -- Manually Step Forward Timers
 
   procedure step_timers

@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:collaboration id="Collaboration_0ho7t0d">
+    <bpmn:extensionElements>
+      <apex:customExtension>{"object":"collaboration"}</apex:customExtension>
+    </bpmn:extensionElements>
+    <bpmn:participant id="Participant_1qiexsk" name="My Process" processRef="Process_9i61gtwo" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_9i61gtwo" name="Process_A23b" isExecutable="false">
+    <bpmn:extensionElements>
+      <apex:customExtension>{"object":"process"}</apex:customExtension>
+    </bpmn:extensionElements>
+    <bpmn:laneSet id="LaneSet_1rh04lm">
+      <bpmn:lane id="Lane_1nhwmfv" name="Sales" apex:isRole="false">
+        <bpmn:extensionElements>
+          <apex:customExtension>{"object":"lane"}</apex:customExtension>
+        </bpmn:extensionElements>
+        <bpmn:flowNodeRef>Event_startEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_userTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_serviceTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0mhneim</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_timerBE</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_13hzk5f</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_13po8am" name="Finance" apex:isRole="false">
+        <bpmn:flowNodeRef>Activity_callActivity</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_exclusive</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_parallelGateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0f8ir35</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0p52srl</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_EndD</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_sendTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0s1satj</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_messageCatch</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_messageThrow</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_inclusiveGateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_ICE</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_eventBasedGateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_messageCatch2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_timerICE</bpmn:flowNodeRef>
+        <bpmn:childLaneSet id="LaneSet_1r9mioi">
+          <bpmn:lane id="Lane_1b4xxlq" name="AR" apex:isRole="false">
+            <bpmn:extensionElements>
+              <apex:customExtension>{"object":"lane"}</apex:customExtension>
+            </bpmn:extensionElements>
+            <bpmn:flowNodeRef>Activity_callActivity</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Gateway_exclusive</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Activity_0p52srl</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_EndD</bpmn:flowNodeRef>
+          </bpmn:lane>
+          <bpmn:lane id="Lane_0zqczf5" name="AP" apex:isRole="false">
+            <bpmn:flowNodeRef>Gateway_parallelGateway</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Activity_0f8ir35</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Activity_sendTask</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Activity_0s1satj</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_messageCatch</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_messageThrow</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Gateway_inclusiveGateway</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_ICE</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Gateway_eventBasedGateway</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_messageCatch2</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_timerICE</bpmn:flowNodeRef>
+          </bpmn:lane>
+        </bpmn:childLaneSet>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Event_startEvent" name="Start">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"startEvent"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1n0wbru</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_task" name="task">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"task"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1n0wbru</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o9xpgd</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1n0wbru" sourceRef="Event_startEvent" targetRef="Activity_task" />
+    <bpmn:sequenceFlow id="Flow_0o9xpgd" sourceRef="Activity_task" targetRef="Gateway_exclusive" />
+    <bpmn:sequenceFlow id="Flow_B" name=":F4A$path = &#39;B&#39;" sourceRef="Gateway_exclusive" targetRef="Activity_userTask" apex:sequence="10">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"flowB"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$path = 'B'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_userTask" name="userTask" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"userTask"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_B</bpmn:incoming>
+      <bpmn:outgoing>Flow_11fy01h</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_11fy01h" sourceRef="Activity_userTask" targetRef="Activity_serviceTask" />
+    <bpmn:serviceTask id="Activity_serviceTask" name="serviceTask" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"serviceTask"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11fy01h</bpmn:incoming>
+      <bpmn:outgoing>Flow_1onfvqf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0mhneim" name="EndB">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"endEvent"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1onfvqf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1onfvqf" sourceRef="Activity_serviceTask" targetRef="Event_0mhneim" />
+    <bpmn:sequenceFlow id="Flow_D" name=":F4A$path = &#39;D&#39;" sourceRef="Gateway_exclusive" targetRef="Activity_0p52srl" apex:sequence="20">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"flowD"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$path = 'D'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:subProcess id="Activity_0p52srl" name="subProcess">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"subProcess"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_D</bpmn:incoming>
+      <bpmn:outgoing>Flow_0paewmr</bpmn:outgoing>
+      <bpmn:startEvent id="Event_1po0at6" name="subStart">
+        <bpmn:outgoing>Flow_1ftxv7c</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_1ftxv7c" sourceRef="Event_1po0at6" targetRef="Activity_businessRuleTask" />
+      <bpmn:endEvent id="Event_11h9ord" name="subEnd">
+        <bpmn:incoming>Flow_0uaf93n</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0uaf93n" sourceRef="Activity_businessRuleTask" targetRef="Event_11h9ord" />
+      <bpmn:businessRuleTask id="Activity_businessRuleTask" name="businessRuleTask" apex:type="executePlsql">
+        <bpmn:extensionElements>
+          <apex:customExtension>{"object":"businessRuleTask"}</apex:customExtension>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1ftxv7c</bpmn:incoming>
+        <bpmn:outgoing>Flow_0uaf93n</bpmn:outgoing>
+      </bpmn:businessRuleTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0paewmr" sourceRef="Activity_0p52srl" targetRef="Activity_callActivity" />
+    <bpmn:callActivity id="Activity_callActivity" name="callActivity" apex:manualInput="false" apex:calledDiagramVersionSelection="latestVersion">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"callActivity"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0paewmr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lo519q</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="Event_EndD" name="EndD">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"endEvent"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lo519q</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0lo519q" sourceRef="Activity_callActivity" targetRef="Event_EndD" />
+    <bpmn:exclusiveGateway id="Gateway_exclusive" name="exclusiveGateway" default="Flow_D">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"exclusiveGateway"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0o9xpgd</bpmn:incoming>
+      <bpmn:outgoing>Flow_B</bpmn:outgoing>
+      <bpmn:outgoing>Flow_D</bpmn:outgoing>
+      <bpmn:outgoing>Flow_07b2l54</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_07b2l54" sourceRef="Gateway_exclusive" targetRef="Gateway_parallelGateway" apex:sequence="30" />
+    <bpmn:parallelGateway id="Gateway_parallelGateway" name="parallelGateway">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"parallelGateway"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07b2l54</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rn6vdx</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1lpmk0k</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0rn6vdx" sourceRef="Gateway_parallelGateway" targetRef="Activity_0f8ir35" />
+    <bpmn:manualTask id="Activity_0f8ir35" name="manualTask">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"manualTask"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rn6vdx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aan4va</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_1lpmk0k" sourceRef="Gateway_parallelGateway" targetRef="Activity_sendTask" />
+    <bpmn:sendTask id="Activity_sendTask" name="sendTask" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"sendTask"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1lpmk0k</bpmn:incoming>
+      <bpmn:outgoing>Flow_08ky0ip</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_08ky0ip" sourceRef="Activity_sendTask" targetRef="Activity_0s1satj" />
+    <bpmn:receiveTask id="Activity_0s1satj" name="receiveTask" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"receiveTask"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08ky0ip</bpmn:incoming>
+      <bpmn:outgoing>Flow_1eimn9s</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="Flow_1eimn9s" sourceRef="Activity_0s1satj" targetRef="Event_messageCatch" />
+    <bpmn:intermediateCatchEvent id="Event_messageCatch" name="messageCatch" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"messageCatch"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1eimn9s</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ycneiw</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1qpiv0y" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1ycneiw" sourceRef="Event_messageCatch" targetRef="Event_messageThrow" />
+    <bpmn:intermediateThrowEvent id="Event_messageThrow" name="messageThrow" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"messageThrow"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ycneiw</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1eb7lxd" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0aan4va" sourceRef="Activity_0f8ir35" targetRef="Gateway_inclusiveGateway" />
+    <bpmn:inclusiveGateway id="Gateway_inclusiveGateway" name="inclusiveGateway">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"inclusiveGateway"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0aan4va</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q0puwi</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0w9zb7l</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:intermediateThrowEvent id="Event_ICE" name="ICE">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"ICE"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0q0puwi</bpmn:incoming>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0q0puwi" sourceRef="Gateway_inclusiveGateway" targetRef="Event_ICE" apex:sequence="10" />
+    <bpmn:sequenceFlow id="Flow_0w9zb7l" sourceRef="Gateway_inclusiveGateway" targetRef="Gateway_eventBasedGateway" apex:sequence="20" />
+    <bpmn:eventBasedGateway id="Gateway_eventBasedGateway" name="eventBasedGateway">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"eventBasedGateway"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0w9zb7l</bpmn:incoming>
+      <bpmn:outgoing>Flow_1twmwb0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0xjmsrp</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:sequenceFlow id="Flow_1twmwb0" sourceRef="Gateway_eventBasedGateway" targetRef="Event_messageCatch2" />
+    <bpmn:intermediateCatchEvent id="Event_messageCatch2" name="messageCatch2" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"messageCatch2"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1twmwb0</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_163jb3h" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0xjmsrp" sourceRef="Gateway_eventBasedGateway" targetRef="Event_timerICE" />
+    <bpmn:intermediateCatchEvent id="Event_timerICE" name="timerICE">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"timerICE"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0xjmsrp</bpmn:incoming>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0xgmy3g" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:boundaryEvent id="Event_timerBE" name="timerBE" attachedToRef="Activity_userTask">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"timerBE"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_03p3lhl</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1rkslz4" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_03p3lhl" sourceRef="Event_timerBE" targetRef="Activity_13hzk5f" />
+    <bpmn:scriptTask id="Activity_13hzk5f" name="scriptTask" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>null;</apex:plsqlCode>
+        </apex:executePlsql>
+        <apex:customExtension>{"object":"scriptTask"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_03p3lhl</bpmn:incoming>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ho7t0d">
+      <bpmndi:BPMNShape id="Participant_1qiexsk_di" bpmnElement="Participant_1qiexsk" isHorizontal="true">
+        <dc:Bounds x="225" y="162" width="1075" height="748" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_13po8am_di" bpmnElement="Lane_13po8am" isHorizontal="true">
+        <dc:Bounds x="255" y="440" width="1045" height="470" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0zqczf5_di" bpmnElement="Lane_0zqczf5" isHorizontal="true">
+        <dc:Bounds x="285" y="570" width="1015" height="340" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1b4xxlq_di" bpmnElement="Lane_1b4xxlq" isHorizontal="true">
+        <dc:Bounds x="285" y="440" width="1015" height="130" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1nhwmfv_di" bpmnElement="Lane_1nhwmfv" isHorizontal="true">
+        <dc:Bounds x="255" y="162" width="1045" height="278" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1acbdcv_di" bpmnElement="Event_startEvent">
+        <dc:Bounds x="352" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="358" y="335" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eayzsk_di" bpmnElement="Activity_task">
+        <dc:Bounds x="440" y="270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f8hk4b_di" bpmnElement="Activity_userTask">
+        <dc:Bounds x="700" y="270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1v1awpc_di" bpmnElement="Activity_serviceTask">
+        <dc:Bounds x="860" y="270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mhneim_di" bpmnElement="Event_0mhneim">
+        <dc:Bounds x="1022" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1027" y="335" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ev3qgu_di" bpmnElement="Activity_0p52srl">
+        <dc:Bounds x="700" y="460" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bwyry3_di" bpmnElement="Activity_callActivity">
+        <dc:Bounds x="860" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ghqgj6_di" bpmnElement="Event_EndD">
+        <dc:Bounds x="1022" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1026" y="525" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0yy0mfh_di" bpmnElement="Gateway_exclusive" isMarkerVisible="true">
+        <dc:Bounds x="595" y="475" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="515" y="463" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_09evqby_di" bpmnElement="Gateway_parallelGateway">
+        <dc:Bounds x="665" y="675" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="580" y="713" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oeev56_di" bpmnElement="Activity_0f8ir35">
+        <dc:Bounds x="740" y="590" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_048yjg0_di" bpmnElement="Activity_sendTask">
+        <dc:Bounds x="740" y="770" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jhmlbn_di" bpmnElement="Activity_0s1satj">
+        <dc:Bounds x="870" y="770" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0af8woi_di" bpmnElement="Event_messageCatch">
+        <dc:Bounds x="1002" y="792" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="984" y="835" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ul7i0h_di" bpmnElement="Event_messageThrow">
+        <dc:Bounds x="1102" y="792" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1083" y="835" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0omjr77_di" bpmnElement="Gateway_inclusiveGateway">
+        <dc:Bounds x="865" y="605" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="847" y="581" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lhe0hn_di" bpmnElement="Event_ICE">
+        <dc:Bounds x="942" y="612" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="951" y="655" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0s71mky_di" bpmnElement="Gateway_eventBasedGateway">
+        <dc:Bounds x="995" y="695" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="909" y="686" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06fasw2_di" bpmnElement="Event_messageCatch2">
+        <dc:Bounds x="1102" y="702" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1081" y="745" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0qbnjfn_di" bpmnElement="Event_timerICE">
+        <dc:Bounds x="1102" y="612" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1099" y="655" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kbwzvz_di" bpmnElement="Activity_13hzk5f">
+        <dc:Bounds x="1070" y="340" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16u5wmh_di" bpmnElement="Event_timerBE">
+        <dc:Bounds x="742" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="375" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1n0wbru_di" bpmnElement="Flow_1n0wbru">
+        <di:waypoint x="388" y="310" />
+        <di:waypoint x="440" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o9xpgd_di" bpmnElement="Flow_0o9xpgd">
+        <di:waypoint x="490" y="350" />
+        <di:waypoint x="490" y="505" />
+        <di:waypoint x="596" y="501" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1g6zbrf_di" bpmnElement="Flow_B">
+        <di:waypoint x="620" y="475" />
+        <di:waypoint x="620" y="310" />
+        <di:waypoint x="700" y="310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="602" y="283" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11fy01h_di" bpmnElement="Flow_11fy01h">
+        <di:waypoint x="800" y="310" />
+        <di:waypoint x="860" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1onfvqf_di" bpmnElement="Flow_1onfvqf">
+        <di:waypoint x="960" y="310" />
+        <di:waypoint x="1022" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_192jy2b_di" bpmnElement="Flow_D">
+        <di:waypoint x="645" y="500" />
+        <di:waypoint x="700" y="500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="632" y="443" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0paewmr_di" bpmnElement="Flow_0paewmr">
+        <di:waypoint x="800" y="500" />
+        <di:waypoint x="860" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lo519q_di" bpmnElement="Flow_0lo519q">
+        <di:waypoint x="960" y="500" />
+        <di:waypoint x="1022" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07b2l54_di" bpmnElement="Flow_07b2l54">
+        <di:waypoint x="620" y="525" />
+        <di:waypoint x="620" y="700" />
+        <di:waypoint x="665" y="700" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rn6vdx_di" bpmnElement="Flow_0rn6vdx">
+        <di:waypoint x="690" y="675" />
+        <di:waypoint x="690" y="630" />
+        <di:waypoint x="740" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lpmk0k_di" bpmnElement="Flow_1lpmk0k">
+        <di:waypoint x="690" y="725" />
+        <di:waypoint x="690" y="810" />
+        <di:waypoint x="740" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08ky0ip_di" bpmnElement="Flow_08ky0ip">
+        <di:waypoint x="840" y="810" />
+        <di:waypoint x="870" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eimn9s_di" bpmnElement="Flow_1eimn9s">
+        <di:waypoint x="970" y="810" />
+        <di:waypoint x="1002" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ycneiw_di" bpmnElement="Flow_1ycneiw">
+        <di:waypoint x="1038" y="810" />
+        <di:waypoint x="1102" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aan4va_di" bpmnElement="Flow_0aan4va">
+        <di:waypoint x="840" y="630" />
+        <di:waypoint x="865" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q0puwi_di" bpmnElement="Flow_0q0puwi">
+        <di:waypoint x="915" y="630" />
+        <di:waypoint x="942" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w9zb7l_di" bpmnElement="Flow_0w9zb7l">
+        <di:waypoint x="890" y="655" />
+        <di:waypoint x="890" y="720" />
+        <di:waypoint x="995" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1twmwb0_di" bpmnElement="Flow_1twmwb0">
+        <di:waypoint x="1045" y="720" />
+        <di:waypoint x="1102" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xjmsrp_di" bpmnElement="Flow_0xjmsrp">
+        <di:waypoint x="1020" y="695" />
+        <di:waypoint x="1020" y="630" />
+        <di:waypoint x="1102" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03p3lhl_di" bpmnElement="Flow_03p3lhl">
+        <di:waypoint x="760" y="368" />
+        <di:waypoint x="760" y="380" />
+        <di:waypoint x="1070" y="380" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_0afta5x">
+    <bpmndi:BPMNPlane id="BPMNPlane_0y2bw5d" bpmnElement="Activity_0p52srl">
+      <bpmndi:BPMNShape id="Event_1po0at6_di" bpmnElement="Event_1po0at6">
+        <dc:Bounds x="-488" y="-158" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-490" y="-115" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11h9ord_di" bpmnElement="Event_11h9ord">
+        <dc:Bounds x="-248" y="-158" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-249" y="-115" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0n4k1wl_di" bpmnElement="Activity_businessRuleTask">
+        <dc:Bounds x="-400" y="-180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ftxv7c_di" bpmnElement="Flow_1ftxv7c">
+        <di:waypoint x="-452" y="-140" />
+        <di:waypoint x="-400" y="-140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uaf93n_di" bpmnElement="Flow_0uaf93n">
+        <di:waypoint x="-300" y="-140" />
+        <di:waypoint x="-248" y="-140" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

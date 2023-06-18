@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A07b" name="A07b - Process Variable API" isExecutable="false" apex:isCallable="true" apex:manualInput="false">
+    <bpmn:documentation>Diagram to test Process Variable API using Scope.  Note the diagram has more than 1 subflow, so calls by subflow ID can use a sbfl_id != diagram_level</bpmn:documentation>
+    <bpmn:startEvent id="Event_BStart" name="BStart">
+      <bpmn:outgoing>Flow_13kwjcp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_B1" name="ActivityB1">
+      <bpmn:incoming>Flow_0wybxfu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ibkqdu</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_13kwjcp" sourceRef="Event_BStart" targetRef="Gateway_144i6ph" />
+    <bpmn:sequenceFlow id="Flow_0wybxfu" sourceRef="Gateway_144i6ph" targetRef="Activity_B1" apex:sequence="10" />
+    <bpmn:parallelGateway id="Gateway_144i6ph">
+      <bpmn:incoming>Flow_13kwjcp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wybxfu</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0187m3j</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_0dd9ziy">
+      <bpmn:incoming>Flow_0ibkqdu</bpmn:incoming>
+      <bpmn:incoming>Flow_0e1pa6i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qsj06e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0ibkqdu" sourceRef="Activity_B1" targetRef="Gateway_0dd9ziy" />
+    <bpmn:task id="Activity_B2" name="ActivityB2">
+      <bpmn:incoming>Flow_0187m3j</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e1pa6i</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0187m3j" sourceRef="Gateway_144i6ph" targetRef="Activity_B2" />
+    <bpmn:sequenceFlow id="Flow_0e1pa6i" sourceRef="Activity_B2" targetRef="Gateway_0dd9ziy" apex:sequence="10" />
+    <bpmn:endEvent id="Event_BEnd" name="BEnd">
+      <bpmn:incoming>Flow_0qsj06e</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0qsj06e" sourceRef="Gateway_0dd9ziy" targetRef="Event_BEnd" apex:sequence="10" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A07b">
+      <bpmndi:BPMNShape id="Event_0669htv_di" bpmnElement="Event_BStart">
+        <dc:Bounds x="362" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="365" y="465" width="31" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1mliwb4_di" bpmnElement="Gateway_144i6ph">
+        <dc:Bounds x="465" y="415" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mgi0ay_di" bpmnElement="Activity_B1">
+        <dc:Bounds x="570" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0dd9ziy_di" bpmnElement="Gateway_0dd9ziy" isMarkerVisible="true">
+        <dc:Bounds x="745" y="415" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s44gqr_di" bpmnElement="Activity_B2">
+        <dc:Bounds x="570" y="510" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0rdrh1f_di" bpmnElement="Event_BEnd">
+        <dc:Bounds x="872" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="877" y="465" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_13kwjcp_di" bpmnElement="Flow_13kwjcp">
+        <di:waypoint x="398" y="440" />
+        <di:waypoint x="465" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wybxfu_di" bpmnElement="Flow_0wybxfu">
+        <di:waypoint x="490" y="415" />
+        <di:waypoint x="490" y="360" />
+        <di:waypoint x="570" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ibkqdu_di" bpmnElement="Flow_0ibkqdu">
+        <di:waypoint x="670" y="360" />
+        <di:waypoint x="770" y="360" />
+        <di:waypoint x="770" y="415" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0187m3j_di" bpmnElement="Flow_0187m3j">
+        <di:waypoint x="490" y="465" />
+        <di:waypoint x="490" y="550" />
+        <di:waypoint x="570" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e1pa6i_di" bpmnElement="Flow_0e1pa6i">
+        <di:waypoint x="670" y="550" />
+        <di:waypoint x="770" y="550" />
+        <di:waypoint x="770" y="465" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qsj06e_di" bpmnElement="Flow_0qsj06e">
+        <di:waypoint x="795" y="440" />
+        <di:waypoint x="872" y="440" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

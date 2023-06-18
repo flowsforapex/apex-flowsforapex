@@ -26,7 +26,7 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_settings.pks
 @plsql/flow_reservations.pks
 @plsql/flow_proc_vars_int.pks
-@plsql/flow_util.pks
+@plsql/flow_db_exec.pks
 @plsql/flow_process_vars.pks
 @plsql/flow_expressions.pks
 @plsql/flow_usertask_pkg.pks
@@ -63,6 +63,9 @@ PROMPT >> Installing Views
 @views/flow_diagrams_vw.sql
 @views/flow_instance_diagrams_lov.sql
 @views/flow_diagrams_instanciated_lov.sql
+@views/flow_instance_timeline_vw.sql
+@views/flow_startable_diagrams_vw.sql
+@views/flow_message_subscriptions_vw.sql
 @views/flow_rest_diagrams_vw.sql
 @views/flow_rest_message_subscriptions_vw.sql
 @views/flow_rest_process_vars_vw.sql
@@ -74,7 +77,7 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_process_vars.pkb
 @plsql/flow_expressions.pkb
 @plsql/flow_settings.pkb
-@plsql/flow_util.pkb
+@plsql/flow_db_exec.pkb
 @plsql/flow_message_flow.pkb
 @plsql/flow_message_util.pkb
 @plsql/flow_reservations.pkb
@@ -117,9 +120,6 @@ PROMPT >> Global App Package Specifications
 @plsql/engine-app/flow_engine_app_api.pks
 @plsql/engine-app/flow_theme_api.pks
 
-PROMPT >> Global Error Function
-@plsql/engine-app/apex_error_handling.sql
-
 PROMPT >> Page Views
 @views/engine-app/flow_p0002_diagrams_vw.sql
 @views/engine-app/flow_p0007_vw.sql
@@ -131,6 +131,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_instance_log_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
+@views/engine-app/flow_p0008_message_subscriptions_vw.sql
 @views/engine-app/flow_p0008_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
 @views/engine-app/flow_p0010_vw.sql
@@ -145,6 +146,8 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
+@views/engine-app/flow_p0020_instance_timeline_vw.sql
+
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb

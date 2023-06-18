@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A19e" name="A19e - Priority and Due Dates - SQL" isExecutable="true" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:priority>
+        <apex:expressionType>sqlQuerySingle</apex:expressionType>
+        <apex:expression>select 4 from dual</apex:expression>
+      </apex:priority>
+      <apex:dueOn>
+        <apex:expressionType>sqlQuerySingle</apex:expressionType>
+        <apex:expression>select to_timestamp_tz('2023-06-21 23:59:59 AMERICA/LOS_ANGELES','YYYY-MM-DD HH24:MI:SS TZR')
+from dual;</apex:expression>
+      </apex:dueOn>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_1glrne1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:incoming>Flow_1glrne1</bpmn:incoming>
+      <bpmn:outgoing>Flow_18wgddz</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1glrne1" sourceRef="Event_Start" targetRef="Activity_A" />
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_18wgddz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_18wgddz" sourceRef="Activity_A" targetRef="Event_End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A19e">
+      <bpmndi:BPMNShape id="Event_1r74j9c_di" bpmnElement="Event_Start">
+        <dc:Bounds x="352" y="352" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="358" y="395" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0v2ucpo_di" bpmnElement="Activity_A">
+        <dc:Bounds x="440" y="330" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1a4yofo_di" bpmnElement="Event_End">
+        <dc:Bounds x="592" y="352" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="600" y="395" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1glrne1_di" bpmnElement="Flow_1glrne1">
+        <di:waypoint x="388" y="370" />
+        <di:waypoint x="440" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18wgddz_di" bpmnElement="Flow_18wgddz">
+        <di:waypoint x="540" y="370" />
+        <di:waypoint x="592" y="370" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

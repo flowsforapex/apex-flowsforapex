@@ -4,8 +4,8 @@ begin
 --     PAGE: 00007
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -22,8 +22,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'initPage7();'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20221010213745'
+,p_last_updated_by=>'C##LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20230530123010'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -140,7 +140,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'C'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_detail_link=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:#DGRM_ID#'
 ,p_detail_link_text=>'<span class="fa fa-edit" aria-hidden="true"></span>'
 ,p_owner=>'LMOREAUX'
@@ -289,7 +289,7 @@ wwv_flow_api.create_worksheet(
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'C'
 ,p_show_notify=>'Y'
-,p_download_formats=>'CSV:HTML:EMAIL:XLS:PDF:RTF'
+,p_download_formats=>'CSV:HTML:EMAIL:XLSX:PDF:RTF'
 ,p_detail_link=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:#DGRM_ID#'
 ,p_detail_link_text=>'<span class="fa fa-edit" aria-hidden="true"></span>'
 ,p_owner=>'LMOREAUX'
@@ -549,6 +549,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_09=>'N'
 ,p_attribute_11=>'Y'
 ,p_attribute_14=>'N'
+,p_attribute_15=>'N'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(34402779943171413)
@@ -792,7 +793,8 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'BODY'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_released'
-,p_button_condition_type=>'PLSQL_EXPRESSION'
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_icon_css_classes=>'fa-ban'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -812,7 +814,8 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'BODY'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>':P7_DGRM_ID is not null and :P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_draft'
-,p_button_condition_type=>'PLSQL_EXPRESSION'
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_icon_css_classes=>'fa-check'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'N'
@@ -831,7 +834,8 @@ wwv_flow_api.create_page_button(
 ,p_button_position=>'BODY'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_condition=>':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_deprecated'
-,p_button_condition_type=>'PLSQL_EXPRESSION'
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_icon_css_classes=>'fa-archive'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'N'
@@ -877,7 +881,8 @@ wwv_flow_api.create_page_button(
 'flow_diagram.diagram_is_modifiable(',
 '  pi_dgrm_id => :P7_DGRM_ID',
 ')'))
-,p_button_condition_type=>'PLSQL_EXPRESSION'
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_icon_css_classes=>'fa-apex'
 );
 wwv_flow_api.create_page_button(
@@ -943,8 +948,8 @@ end;
 /
 begin
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -1039,7 +1044,7 @@ wwv_flow_api.create_page_item(
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>60
-,p_cMaxlength=>600
+,p_cMaxlength=>150
 ,p_read_only_when=>'P7_DGRM_STATUS'
 ,p_read_only_when2=>'draft'
 ,p_read_only_when_type=>'VAL_OF_ITEM_IN_COND_NOT_EQ_COND2'
@@ -1065,7 +1070,7 @@ wwv_flow_api.create_page_item(
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>32
-,p_cMaxlength=>40
+,p_cMaxlength=>10
 ,p_read_only_when=>'P7_DGRM_STATUS'
 ,p_read_only_when2=>'draft'
 ,p_read_only_when_type=>'VAL_OF_ITEM_IN_COND_NOT_EQ_COND2'
@@ -1085,7 +1090,8 @@ wwv_flow_api.create_page_item(
 ,p_item_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_source_plug_id=>wwv_flow_api.id(26003019626877931)
 ,p_item_default=>'flow_constants_pkg.gc_dgrm_status_draft'
-,p_item_default_type=>'PLSQL_EXPRESSION'
+,p_item_default_type=>'EXPRESSION'
+,p_item_default_language=>'PLSQL'
 ,p_prompt=>'Status'
 ,p_source=>'DGRM_STATUS'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
@@ -1114,7 +1120,7 @@ wwv_flow_api.create_page_item(
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'No Category'
 ,p_cSize=>60
-,p_cMaxlength=>120
+,p_cMaxlength=>30
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
@@ -1167,7 +1173,8 @@ wwv_flow_api.create_page_computation(
 ,p_computation_sequence=>10
 ,p_computation_item=>'FLOW_PAGE_TITLE'
 ,p_computation_point=>'AFTER_HEADER'
-,p_computation_type=>'PLSQL_EXPRESSION'
+,p_computation_type=>'EXPRESSION'
+,p_computation_language=>'PLSQL'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flow_engine_app_api.get_page_title(',
 '  pi_dgrm_id => :P7_DGRM_ID',
@@ -1181,6 +1188,7 @@ wwv_flow_api.create_page_computation(
 ,p_computation_item=>'P7_ENGINE_APP_MODE'
 ,p_computation_point=>'BEFORE_BOX_BODY'
 ,p_computation_type=>'FUNCTION_BODY'
+,p_computation_language=>'PLSQL'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'return flow_engine_util.get_config_value(',
 '  p_config_key => ''engine_app_mode''',
@@ -1196,6 +1204,7 @@ wwv_flow_api.create_page_validation(
 '  pi_dgrm_name => :P7_DGRM_NAME',
 ', pi_dgrm_version => :P7_NEW_VERSION',
 ');'))
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
 ,p_validation_condition=>'ADD_VERSION'
 ,p_validation_condition_type=>'REQUEST_EQUALS_CONDITION'
@@ -1540,9 +1549,11 @@ wwv_flow_api.create_page_process(
 ', pi_cascade       => :p7_cascade',
 ', pi_request       => :request',
 ');'))
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>':request not in ( ''DARK_MODE'', ''LIGHT_MODE'', ''RESET_LIGHT'', ''RESET_DARK'')'
-,p_process_when_type=>'PLSQL_EXPRESSION'
+,p_process_when_type=>'EXPRESSION'
+,p_process_when2=>'PLSQL'
 ,p_process_success_message=>'Action processed.'
 );
 wwv_flow_api.create_page_process(
@@ -1577,6 +1588,7 @@ wwv_flow_api.create_page_process(
 ', pi_objt_id => apex_application.g_x01',
 ', pi_title => apex_application.g_x02',
 ');'))
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;

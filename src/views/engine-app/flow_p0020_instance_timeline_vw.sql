@@ -41,27 +41,12 @@ select prcs_id
         when 'finish called model' then event_comment
         else 'Object '||objt||'  subflow ' ||subflow||' • variable '||proc_var||' • value '||value        
        end as event_desc
-     , 'u-color-'||( ora_hash(objt,44) + 1 )||' '||
-        'fa fa-clock-o'
-/*      case operation
-        when 'step current' then 'fa fa-circle-o'
-        when 'step started' then 'fa fa-play-circle'
-        when 'step completed' then 'fa fa-check-circle'
-        when 'completed' then 'fa fa-dot-circle'
-        when 'started' then 'fa fa-circle-o'
-        when 'created' then 'fa fa-server-new'
-        when 'reset' then 'fa fa-fast-backward'
-        when 'error' then 'fa fa-exclamation-circle'
-        when 'variable set' then 'fa fa-window-terminal'
-        when 'Gateway Processed' then 'fa fa-index'
-        when 'start called model' then 'fa fa-box-arrow-in-south'
-        when 'finish called model' then 'fa fa-box-arrow-out-north'
-       end */ as USER_COLOR
+     , 'u-color-44 fa fa-clock-o' as USER_COLOR
      , case operation
         when 'step current' then 'fa fa-circle-o'
         when 'step started' then 'fa fa-play-circle-o'
         when 'step completed' then 'fa fa-check-circle-o'
-        when 'completed' then 'fa fa-dot-circle'
+        when 'completed' then 'fa fa-dot-circle-o'
         when 'started' then 'fa fa-circle-o'
         when 'created' then 'fa fa-server-new'
         when 'reset' then 'fa fa-fast-backward'
@@ -78,4 +63,4 @@ select prcs_id
      , subflow
      , process_level
      , performed_by
-from flow_instance_timeline_vw 
+from flow_instance_timeline_vw;

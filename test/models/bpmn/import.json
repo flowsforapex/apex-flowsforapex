@@ -1,0 +1,725 @@
+[
+    {
+        "dgrm_name": "A01 - Basic Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A01 - Basic Model_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02a - Exclusive Gateway No Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02a - Exclusive Gateway No Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02b - Exclusive Gateway Default Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02b - Exclusive Gateway Default Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02c - Exclusive Gateway Routing",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02c - Exclusive Gateway Routing_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02d - Inclusive Gateway No Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02d - Inclusive Gateway No Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02e - Inclusive Gateway Default Route",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02e - Inclusive Gateway Default Route_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02f - Inclusive Gateway Routing",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02f - Inclusive Gateway Routing_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02g - Parallel Gateway",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02g - Parallel Gateway_0.bpmn"
+    },
+    {
+        "dgrm_name": "A02h - Event Based Gateway",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02h - Event Based Gateway_0.bpmn"
+    },  {
+        "dgrm_name": "A02i - Inc GW Merge and Resplit",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02i - Inc GW Merge and Resplit_0.bpmn"
+      },
+      {
+        "dgrm_name": "A02j - Par GW Merge and Resplit",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02j - Par GW Merge and Resplit_0.bpmn"
+      },
+      {
+        "dgrm_name": "A02k - Inc GW Merge and Resplit - GRExps",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A02k - Inc GW Merge and Resplit - GRExps_0.bpmn"
+      },
+    {
+        "dgrm_name": "A03a - Model with No Start Event",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03a - Model with No Start Event_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03b - Model with multiple Start Events",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03b - Model with multiple Start Events_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03c - Model with one good Start Event",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03c - Model with one good Start Event_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03d - Model with one start event of bad type",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03d - Model with one start event of bad type_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03e - Model with one start event with good timer",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03e - Model with one start event with good timer_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03f - Model with one start event with bad timer definition",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03f - Model with one start event with bad timer definition_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03g - Model with one start event with bad on-event var exp",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03g - Model with one start event with bad on-event var exp_0.bpmn"
+    },
+    {
+        "dgrm_name": "A03h - Model with one start event with bad before-event var exp",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A03h - Model with one start event with bad before-event var exp_0.bpmn"
+    },
+    {
+        "dgrm_name": "A04a - Basic Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A04a - Basic Model_0.bpmn"
+    },
+    {
+        "dgrm_name":"A05a - Engine - Terminations",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05a - Engine - Terminations_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05b - Engine - Bad Links",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05b - Engine - Bad Links_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05c - Engine - ICE Types",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05c - Engine - ICE Types_0.bpmn"
+        },
+    {
+        "dgrm_name":"A05d - Engine - Repeating Timer BE",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A05d - Engine - Repeating Timer BE_0.bpmn"
+    },
+    {
+        "dgrm_name": "A06a - Lanes and Assignment - Child Lanesets",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06a - Lanes and Assignment - Child Lanesets_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06b - Lanes and Assignment - Roles from Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06b - Lanes and Assignment - Roles from Lanes_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06c - Lanes and Assignment - Lanes with SubProcs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06c - Lanes and Assignment - Lanes with SubProcs_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06d - Lanes and Assignment - No Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06d - Lanes and Assignment - No Lanes_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06e - Lanes and Assignment - No Lanes calls Laned Dgrm",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06e - Lanes and Assignment - No Lanes calls Laned Dgrm_0.bpmn"
+      },
+      {
+        "dgrm_name": "A06f - Lanes and Assignment - Lanes calling Dgrm",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A06f - Lanes and Assignment - Lanes calling Dgrm_0.bpmn"
+      },
+    {
+        "dgrm_name": "A07a - Process Variable API - Main",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A07a - Process Variable API - Main_0.bpmn"
+      },
+      {
+        "dgrm_name": "A07b - Process Variable API - Called Diagram",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A07b - Process Variable API - Called Diagram_0.bpmn"
+      },
+        {
+          "dgrm_name": "A08a - SubProc - No Start",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08a - SubProc - No Start_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08b - SubProc - Two Starts",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08b - SubProc - Two Starts_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08c - SubProc - Two Int Timer BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08c - SubProc - Two Int Timer BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08d - SubProc - Two Int Error BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08d - SubProc - Two Int Error BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08e - SubProc - Two Int Esc BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08e - SubProc - Two Int Esc BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08f - SubProc - Int plus Non Int Esc BEs",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08f - SubProc - Int plus Non Int Esc BEs_0.bpmn"
+        },
+        {
+          "dgrm_name": "A08g - SubProc - Int Timer with nested SubProc",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": "Testing",
+          "file": "A08g - SubProc - Int Timer with nested SubProc_0.bpmn"
+        },
+    {
+        "dgrm_name": "A09p - Recursive Chain PQP Top",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09p - Recursive Chain PQP Top_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09q - Recursive Chain PQP Bottom",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09q - Recursive Chain PQP Bottom_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09r - Recursive Chain RSTR Top",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09r - Recursive Chain RSTR Top_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09s - Recursive Chain RSTR Middle",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09s - Recursive Chain RSTR Middle_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09t - Recursive Chain RSTR Bottom",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09t - Recursive Chain RSTR Bottom_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09u - Calling non-callable diagram",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09u - Calling non-callable diagram_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09v - Called Non-Callable Model",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09v - Called Non-Callable Model_0.bpmn"
+    },
+    {
+        "dgrm_name": "A09w - Self Calling",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A09w - Self Calling_0.bpmn"
+    },
+    {
+        "dgrm_name": "A10 - Variable Expressions Types",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A10 - Variable Expressions Types_0.bpmn"
+    },
+    {
+        "dgrm_name": "A11a - Variable Exp Types with CallActivity",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A11a - Variable Exp Types with CallActivity_0.bpmn"
+    },
+    {
+        "dgrm_name": "A11b - Variable Exp Types with CallActivity",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A11b - Variable Exp Types with CallActivity_0.bpmn"
+    },
+    {
+        "dgrm_name": "A12a - Boundary Events with Call Activities",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A12a - Boundary Events with Call Activities_0.bpmn"
+    },
+    {
+        "dgrm_name": "A12b - Called Activity with 10 Second Delay",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A12b - Called Activity with 10 Second Delay_0.bpmn"
+    },
+    {
+        "dgrm_name": "A12c - Called Activity with 2 Second Delay",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A12c - Called Activity with 2 Second Delay_0.bpmn"
+    },
+    {
+        "dgrm_name": "A13a - Escalation BEs with Call Activities",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A13a - Escalation BEs with Call Activities_0.bpmn"
+    },
+    {
+        "dgrm_name": "A13b - Called Activity with Escalation End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A13b - Called Activity with Escalation End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A13c - Called Activity with Escalation ITE",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A13c - Called Activity with Escalation ITE_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14a - Error BEs with Call Activities",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14a - Error BEs with Call Activities_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14b - Called Activity with Error End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14b - Called Activity with Error End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14c - Called Activity with Normal End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14c - Called Activity with Normal End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A14d - Called Activity with Terminate End",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A14d - Called Activity with Terminate End_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15a - Single Diagram Lanes with SubProcs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15a - Single Diagram Lanes with SubProcs_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15b - Single Diagram with No Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15b - Single Diagram with No Lanes_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15c - Calling Diagram noLanes calls Diagram with Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15c - Calling Diagram noLanes calls Diagram with Lanes_0.bpmn"
+    },
+    {
+        "dgrm_name": "A15d - Calling Diagram with Lanes",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A15d - Calling Diagram with Lanes_0.bpmn"
+    },
+    {
+        "dgrm_name": "A16a - Inc Gateway Tx Boundaries",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A16a - Inc Gateway Tx Boundaries_0.bpmn"
+    },
+    {
+        "dgrm_name": "A17a - Exc GW Errors and Restarts",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A17a - Exc GW Errors and Restarts_0.bpmn"
+    },
+    {
+        "dgrm_name": "A18a - GW Routing Exps - basic exprs",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A18a - GW Routing Exps - basic exprs_0.bpmn"
+    },
+    {
+        "dgrm_name": "A18b - GW Routing Exps - basic func bodies",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A18b - GW Routing Exps - basic func bodies_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18c - Inclusive GW AB C is Def no Condition",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18c - Inclusive GW AB C is Def no Condition_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18d - Inclusive GW AB C is Def has Condition",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18d - Inclusive GW AB C is Def has Condition_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18e - Inclusive GW AB C no Condition no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18e - Inclusive GW AB C no Condition no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18f - Inclusive GW ABC Condition no Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18f - Inclusive GW ABC Condition no Def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18g - Inclusive GW ABC No Conds No Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18g - Inclusive GW ABC No Conds No Def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18h - Exclusive GW AB Cond C no Cond no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18h - Exclusive GW AB Cond C no Cond no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18i - Exclusive GW AB C def has cond",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18i - Exclusive GW AB C def has cond_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18j - Exclusive GW AB C no cond no def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18j - Exclusive GW AB C no cond no def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18k - Exclusive GW ABC Conds No def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18k - Exclusive GW ABC Conds No def_0.bpmn"
+    },
+    {
+      "dgrm_name": "A18l - Exclusive GW ABC No Conds No Def",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A18l - Exclusive GW ABC No Conds No Def_0.bpmn"
+    },
+    {
+      "dgrm_name":"A19a - Priority and Due Dates",
+      "dgrm_version":"0",
+      "dgrm_status":"draft",
+      "dgrm_category":"Testing",
+      "file":"A19a - Priority and Due Dates_0.bpmn"
+    },
+    {
+      "dgrm_name":"A19b - Priority and Due Dates - Scheduler",
+      "dgrm_version":"0",
+      "dgrm_status":"draft",
+      "dgrm_category":"Testing",
+      "file":"A19b - Priority and Due Dates - Scheduler_0.bpmn"
+    },
+    {
+      "dgrm_name":"A19c - Priority and Due Dates - Interval",
+      "dgrm_version":"0",
+      "dgrm_status":"draft",
+      "dgrm_category":"Testing",
+      "file":"A19c - Priority and Due Dates - Interval_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19d - Priority and Due Dates - Proc Var",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19d - Priority and Due Dates - Proc Var_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19e - Priority and Due Dates - SQL",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19e - Priority and Due Dates - SQL_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19f - Priority and Due Dates - Expressions",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19f - Priority and Due Dates - Expressions_0.bpmn"
+    },
+    {
+        "dgrm_name":"A19g - Priority and Due Dates - Func Bodies",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A19g - Priority and Due Dates - Func Bodies_0.bpmn"
+    },
+    { 
+        "dgrm_name":"A20a - Diagram Startability - Static",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A20a - Diagram Startability - Static_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A20b - Diagram Startability - SQLSingle",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A20b - Diagram Startability - SQLSingle_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A20c - Diagram Startability - SQLMulti",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A20c - Diagram Startability - SQLMulti_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A20d - Diagram Startability - Expression",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A20d - Diagram Startability - Expression_0.bpmn"
+    },
+    {	
+        "dgrm_name":"A20e - Diagram Startability - FuncBody",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A20e - Diagram Startability - FuncBody_0.bpmn" 
+    },
+    {
+        "dgrm_name":"A21a - Messageflow - basics",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing","file":"A21a - Messageflow - basics_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21b - Messageflow - basics - no payload",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21b - Messageflow - basics - no payload_0.bpmn"
+        },
+    {
+        "dgrm_name":"A21c - Messageflow - bad endpoint",
+        "dgrm_version":"0","dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21c - Messageflow - bad endpoint_0.bpmn"
+        },
+    {
+        "dgrm_name":"A21d - Messageflow - basics - Collaboration",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21d - Messageflow - basics - Collaboration_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21e - MessageFlow basics - Subscription Cancellation",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21e - MessageFlow basics - Subscription Cancellation_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21f - Basic Messageflow - EBG",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21f - Basic Messageflow - EBG_0.bpmn"
+    },
+    {
+        "dgrm_name":"A21g - Basic Messageflow - Timer BE on ReceiveTask",
+        "dgrm_version":"0",
+        "dgrm_status":"draft",
+        "dgrm_category":"Testing",
+        "file":"A21g - Basic Messageflow - Timer BE on ReceiveTask_0.bpmn"
+    },
+    {
+        "dgrm_name": "A22a - UserTask - Settings Substitution",
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A22a - UserTask - Settings Substitution_0.bpmn"
+    },
+    {
+      "dgrm_name": "A22b - Other Task Types",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A22b - Other Task Types_0.bpmn"
+    },
+    {
+      "dgrm_name": "A23a - Custom Extensions",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A23a - Custom Extensions_0.bpmn"
+    },
+    {
+      "dgrm_name": "A23b - Custom Extensions - In Lanesets",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A23b - Custom Extensions - In Lanesets_0.bpmn"
+    },
+    {
+      "dgrm_name": "A24a - Approval Component - Basic Operation",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A24a - Approval Component - Basic Operation_0.bpmn"
+    },
+    {
+      "dgrm_name": "A24b - Approval Task - Task Cancelation",
+      "dgrm_version": "0",
+      "dgrm_status": "draft",
+      "dgrm_category": "Testing",
+      "file": "A24b - Approval Task - Task Cancelation_0.bpmn"
+    }
+]

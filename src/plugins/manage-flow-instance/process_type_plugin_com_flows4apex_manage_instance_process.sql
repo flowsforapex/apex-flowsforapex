@@ -6,19 +6,19 @@ whenever sqlerror exit sql.sqlcode rollback
 -- ORACLE Application Express (APEX) export file
 --
 -- You should run the script connected to SQL*Plus as the Oracle user
--- APEX_200100 or as the owner (parsing schema) of the application.
+-- APEX_200200 or as the owner (parsing schema) of the application.
 --
 -- NOTE: Calls to apex_application_install override the defaults below.
 --
 --------------------------------------------------------------------------------
 begin
 wwv_flow_api.import_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>63504938970163399
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
-,p_default_owner=>'FLOWS211'
+,p_default_owner=>'FLOWS4APEX'
 );
 end;
 /
@@ -28,15 +28,15 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   16:45 Tuesday August 30, 2022
---   Exported By:     LMOREAUX
+--   Date and Time:   14:27 Sunday May 21, 2023
+--   Exported By:     C##LMOREAUX
 --   Flashback:       0
 --   Export Type:     Component Export
 --   Manifest
 --     PLUGIN: 92418934266670712
 --   Manifest End
---   Version:         20.1.0.00.13
---   Instance ID:     250167802641663
+--   Version:         20.2.0.00.20
+--   Instance ID:     204275825414274
 --
 
 begin
@@ -52,12 +52,13 @@ wwv_flow_api.create_plugin(
 ,p_name=>'COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance'
 ,p_supported_ui_types=>'DESKTOP'
+,p_supported_component_types=>'APEX_APPLICATION_PAGE_PROC:APEX_APPL_AUTOMATION_ACTIONS'
 ,p_api_version=>2
 ,p_execution_function=>'flow_plugin_manage_instance.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
-,p_version_identifier=>'22.2'
+,p_version_identifier=>'23.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -502,6 +503,11 @@ wwv_flow_api.create_plugin_attribute(
 '		"value": "2021-04-07T22:07:29.961Z"',
 '	},',
 '	{',
+'		"name": "Example_timestamp_var",',
+'		"type": "timestamp",',
+'		"value": "2021-04-07T22:07:29.961Z"',
+'	},',
+'	{',
 '		"name": "Example_clob_var",',
 '		"type": "clob",',
 '		"value": "long text"',
@@ -542,6 +548,11 @@ wwv_flow_api.create_plugin_attribute(
 '    json_object(',
 '          key ''name'' value ''example_date_var''',
 '        , key ''type'' value ''date''',
+'        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_timestamp_var''',
+'        , key ''type'' value ''timestamp''',
 '        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
 '        ),',
 '    json_object(',

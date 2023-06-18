@@ -2,6 +2,11 @@ create or replace package flow_engine_app_api
   authid definer
 as
 
+  function apex_error_handling (
+    p_error in apex_error.t_error 
+  )
+  return apex_error.t_error_result;
+
   procedure handle_ajax;
 
   /* general */
@@ -84,6 +89,15 @@ as
     pi_dgrm_id_list in varchar2
   , pi_new_name     in flow_diagrams.dgrm_name%type 
   );
+
+  /* page 3 */
+  function check_version_mismatch(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2;
+
+  function check_apex_upgrade(
+    p_app_id number default apex_application.g_flow_id
+  ) return varchar2;
 
   /* page 4 */
 
@@ -185,6 +199,11 @@ as
     pi_format_mask in varchar2)
     return varchar2;
 
+  function check_is_tstz(
+    pi_value       in varchar2,
+    pi_format_mask in varchar2)
+    return varchar2;
+
   function check_is_number(
     pi_value in varchar2)
     return varchar2;
@@ -202,30 +221,8 @@ as
     , pi_prdg_id in flow_instance_diagrams.prdg_id%type
   ) return number;
 
-  /* page 9 */
-
-  procedure set_settings(
-    pi_logging_language             in flow_configuration.cfig_value%type
-  , pi_logging_level                in flow_configuration.cfig_value%type
-  , pi_logging_hide_userid          in flow_configuration.cfig_value%type
-  , pi_logging_retain_logs          in flow_configuration.cfig_value%type
-  , pi_logging_archive_location     in flow_configuration.cfig_value%type
-  , pi_logging_archive_enabled      in flow_configuration.cfig_value%type
-  , pi_logging_msg_flow_recd        in flow_configuration.cfig_value%type
-  , pi_logging_msg_flow_retention   in flow_configuration.cfig_value%type
-  , pi_engine_app_mode              in flow_configuration.cfig_value%type
-  , pi_duplicate_step_prevention    in flow_configuration.cfig_value%type
-  , pi_default_workspace            in flow_configuration.cfig_value%type
-  , pi_default_email_sender         in flow_configuration.cfig_value%type
-  , pi_default_application          in flow_configuration.cfig_value%type
-  , pi_default_pageid               in flow_configuration.cfig_value%type
-  , pi_default_username             in flow_configuration.cfig_value%type
-  , pi_timer_max_cycles             in flow_configuration.cfig_value%type
-  , pi_timer_status                 in sys.all_scheduler_jobs.enabled%type
-  , pi_timer_repeat_interval        in sys.all_scheduler_jobs.repeat_interval%type
-  , pi_stats_retain_daily           in flow_configuration.cfig_value%type
-  , pi_stats_retain_month           in flow_configuration.cfig_value%type
-  , pi_stats_retain_qtr             in flow_configuration.cfig_value%type
+  procedure download_instance_summary(
+    pi_prcs_id in flow_processes.prcs_id%type
   );
 
   /* page 11 */
@@ -250,6 +247,45 @@ as
     pi_prcs_id in flow_processes.prcs_id%type,
     pi_objt_id in flow_subflows.sbfl_current%type)
   return boolean;
+
+  /* configuration */
+  procedure set_logging_settings(
+    pi_logging_language          in flow_configuration.cfig_value%type
+  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_hide_userid       in flow_configuration.cfig_value%type
+  , pi_logging_retain_logs       in flow_configuration.cfig_value%type
+  , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
+  , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  );
+
+  procedure set_archiving_settings(
+    pi_archiving_enabled  in flow_configuration.cfig_value%type
+  );
+
+  procedure set_statictis_settings(
+    pi_stats_retain_daily in flow_configuration.cfig_value%type
+  , pi_stats_retain_month in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
+  );
+
+  procedure set_engine_app_settings(
+    pi_engine_app_mode in flow_configuration.cfig_value%type
+  );
+
+  procedure set_engine_settings(
+    pi_duplicate_step_prevention in flow_configuration.cfig_value%type
+  , pi_default_workspace         in flow_configuration.cfig_value%type
+  , pi_default_email_sender      in flow_configuration.cfig_value%type
+  , pi_default_application       in flow_configuration.cfig_value%type
+  , pi_default_pageid            in flow_configuration.cfig_value%type
+  , pi_default_username          in flow_configuration.cfig_value%type
+  );
+
+  procedure set_timers_settings(
+    pi_timer_max_cycles       in flow_configuration.cfig_value%type
+  , pi_timer_status           in sys.all_scheduler_jobs.enabled%type
+  , pi_timer_repeat_interval  in sys.all_scheduler_jobs.repeat_interval%type
+  );
 
 end flow_engine_app_api;
 /

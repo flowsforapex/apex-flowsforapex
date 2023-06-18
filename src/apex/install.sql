@@ -4,6 +4,7 @@ prompt --install
 @@application/create_application.sql
 @@application/shared_components/navigation/lists/p8_subflow_row_action_menu.sql
 @@application/shared_components/navigation/lists/p10_instance_header_action_menu.sql
+@@application/shared_components/navigation/lists/p9_configuration_pages.sql
 @@application/shared_components/navigation/lists/p8_subflow_header_action_menu.sql
 @@application/shared_components/navigation/lists/p8_action_menu.sql
 @@application/shared_components/navigation/lists/p8_variable_row_action_menu.sql
@@ -76,6 +77,7 @@ prompt --install
 @@application/shared_components/user_interface/lovs/diagrams_parsed_lov.sql
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
 @@application/shared_components/user_interface/lovs/flow_instance_diagrams_lov.sql
+@@application/shared_components/user_interface/lovs/flow_rest_roles.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p13_object_attributes.sql
 @@application/shared_components/user_interface/lovs/p13_var_exp_set_on.sql
@@ -88,6 +90,7 @@ prompt --install
 @@application/pages/page_groups.sql
 @@application/comments.sql
 @@application/shared_components/navigation/breadcrumbs/breadcrumb.sql
+@@application/shared_components/navigation/breadcrumbentry.sql
 @@application/shared_components/user_interface/templates/page/minimal_no_navigation.sql
 @@application/shared_components/user_interface/templates/page/standard.sql
 @@application/shared_components/user_interface/templates/page/wizard_modal_dialog.sql
@@ -100,6 +103,7 @@ prompt --install
 @@application/shared_components/user_interface/templates/button/text_with_icon.sql
 @@application/shared_components/user_interface/templates/button/text.sql
 @@application/shared_components/user_interface/templates/button/icon.sql
+@@application/shared_components/user_interface/templates/region/cards_container.sql
 @@application/shared_components/user_interface/templates/region/wizard_container.sql
 @@application/shared_components/user_interface/templates/region/title_bar.sql
 @@application/shared_components/user_interface/templates/region/tabs_container.sql
@@ -162,6 +166,10 @@ prompt --install
 @@application/shared_components/globalization/messages.sql
 @@application/shared_components/globalization/dyntranslations.sql
 @@application/shared_components/user_interface/shortcuts/delete_confirm_msg.sql
+@@application/shared_components/automations/flows_for_apex_daily_instance_archive.sql
+@@application/shared_components/automations/flows_for_apex_purge_statistics.sql
+@@application/shared_components/automations/flows_for_apex_gather_daily_statistics.sql
+@@application/shared_components/automations/flows_for_apex_purge_logs.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
 @@application/shared_components/plugins/region_type/com_flows4apex_modeler_region.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_ins_vars_process.sql
@@ -184,6 +192,20 @@ prompt --install
 @@application/pages/page_00012.sql
 @@application/pages/page_00013.sql
 @@application/pages/page_00014.sql
+@@application/pages/page_00015.sql
+@@application/pages/page_00016.sql
+@@application/pages/page_00017.sql
+@@application/pages/page_00020.sql
+@@application/pages/page_00030.sql
+@@application/pages/page_00031.sql
+@@application/pages/page_00032.sql
+@@application/pages/page_00033.sql
+@@application/pages/page_00034.sql
+@@application/pages/page_00035.sql
+@@application/pages/page_00036.sql
+@@application/pages/page_00037.sql
+@@application/pages/page_00038.sql
+@@application/pages/page_00100.sql
 @@application/pages/page_09999.sql
 @@application/deployment/definition.sql
 @@application/deployment/checks.sql
