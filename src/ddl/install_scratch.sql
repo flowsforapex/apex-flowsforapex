@@ -674,6 +674,4 @@ create table flow_rest_event_log (
 , lgrt_error_stacktrace     CLOB
 );
 
-insert into flow_configuration(cfig_key, cfig_value) values('logging_rest_incoming_calls','Y');
-insert into flow_configuration(cfig_key, cfig_value) values('logging_rest_incoming_calls_retain_days','60');
-insert into flow_configuration(cfig_key, cfig_value) values('rest_base',null);
+
