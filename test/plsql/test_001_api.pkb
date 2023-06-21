@@ -37,6 +37,10 @@ create or replace package body test_001_api is
       -- get dgrm_id to use for comparaison
       l_dgrm_id := get_dgrm_id( model_a1 );
 
+      -- parse the diagrams
+      flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id);
+
+
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
            pi_dgrm_name => model_a1

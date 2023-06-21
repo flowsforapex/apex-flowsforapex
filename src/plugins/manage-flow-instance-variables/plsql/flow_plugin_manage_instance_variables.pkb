@@ -386,6 +386,49 @@ create or replace package body flow_plugin_manage_instance_variables as
                                           ); 
                            end;');
                   end case;
+               when 'timestamp' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prov_var_name
+                     , p1 => l_prov_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_timestamp('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_tstz(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
+                  );
+                  case l_attribute4
+                     when 'set' then
+                        l_json_element := l_process_variable.get('value');
+                        begin
+                           if instr( l_process_variable.get_String('value'), 'T' ) > 0 then
+                              l_ts := to_timestamp_tz( replace ( l_process_variable.get_String('value'), 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' ); 
+                           else
+                              l_ts := to_timestamp_tz( l_process_variable.get_String('value'), 'YYYY-MM-DD TZR' ); 
+                           end if;
+                        exception when others then
+                           raise e_invalid_date;
+                        end;
+                        flow_process_vars.set_var(
+                          pi_prcs_id    => l_prcs_id
+						      , pi_scope      => l_prov_scope									
+                        , pi_var_name   => l_prov_var_name
+                        , pi_date_value => l_process_variable.get_timestamp('value')
+                        );
+                     when 'get' then
+                        apex_exec.execute_plsql(   'begin
+                           :' || l_item_name || ' :=  flow_process_vars.get_var_tstz(
+                                                pi_prcs_id  => '||l_prcs_id||'
+											            , pi_scope     => '||l_prov_scope||'										
+                                             , pi_var_name => '''||l_prov_var_name||'''
+                                          ); 
+                           end;');
+                  end case;
                when 'clob' then
                   apex_debug.info(
                      p_message => '......Name: %s - Type: %s - Value %s'
@@ -477,6 +520,8 @@ create or replace package body flow_plugin_manage_instance_variables as
             l_items(rec.item_name).format_mask := case rec.item_type 
                                                      when 'DATE' 
                                                         then coalesce( rec.format_mask, v('APP_NLS_DATE_FORMAT') )
+                                                     when 'TIMESTAMP WITH TIME ZONE' 
+                                                        then coalesce( rec.format_mask, v('APP_NLS_TIMESTAMP_TZ_FORMAT') ) 
                                                      else
                                                          rec.format_mask
                                                   end;
@@ -619,6 +664,43 @@ create or replace package body flow_plugin_manage_instance_variables as
                                         ), l_items(l_item_name).format_mask )
                         );
                   end case;
+            when 'TIMESTAMP WITH TIME ZONE' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prov_var_name
+                     , p1 => l_prov_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then apex_util.get_session_state( p_item => l_item_name )
+                                 when 'get' 
+                                    then to_char(
+                                            flow_process_vars.get_var_tstz(
+                                               pi_prcs_id  => l_prcs_id
+											            , pi_scope    => l_prov_scope   
+                                             , pi_var_name => l_prov_var_name
+                                            ), l_items(l_item_name).format_mask 
+                                          )
+                             end 
+                  );
+                  case l_attribute4
+                     when 'set' then
+                        flow_process_vars.set_var(
+                             pi_prcs_id    => l_prcs_id
+						         , pi_scope      => l_prov_scope
+                           , pi_var_name   => l_prov_var_name
+                           , pi_tstz_value => to_timestamp_tz( apex_util.get_session_state( p_item => l_item_name ) , l_items(l_item_name).format_mask )
+                        );
+                     when 'get' then
+                        apex_util.set_session_state( 
+                             p_name  => l_item_name
+                           , p_value => to_char(
+                                          flow_process_vars.get_var_tstz(
+                                             pi_prcs_id  => l_prcs_id
+										             , pi_scope    => l_prov_scope	 
+                                           , pi_var_name => l_prov_var_name
+                                        ), l_items(l_item_name).format_mask )
+                        );
+                  end case;      
             when 'CLOB' then
                apex_debug.info(
                   p_message => '......Name: %s - Type: %s - Value %s'

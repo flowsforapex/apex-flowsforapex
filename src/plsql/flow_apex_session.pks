@@ -14,11 +14,15 @@ as
   ) return number;
 
   function create_api_session
-  ( p_process_id         in flow_processes.prcs_id%type
+  ( p_process_id         in flow_processes.prcs_id%type default null
   ) return number;
 
   function create_api_session
   ( p_subflow_id         in flow_subflows.sbfl_id%type
+  ) return number;
+
+  function create_api_session
+  ( p_function          in varchar2
   ) return number;
 
   procedure delete_session

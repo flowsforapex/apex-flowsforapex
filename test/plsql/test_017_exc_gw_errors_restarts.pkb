@@ -28,6 +28,9 @@ create or replace package body test_017_exc_gw_errors_restarts as
     g_dgrm_a17a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a17a );
     g_prcs_dgrm_id := g_dgrm_a17a_id;
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a17a_id);
+
     -- create a new instance
     g_prcs_id := flow_api_pkg.flow_create(
        pi_dgrm_id   => g_prcs_dgrm_id

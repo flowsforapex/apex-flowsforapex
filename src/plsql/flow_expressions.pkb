@@ -241,7 +241,7 @@ as
     , 'sql text' , pi_expression.expr_expression
     );
 
-    l_result_rec := flow_util.exec_flows_sql
+    l_result_rec := flow_db_exec.exec_flows_sql
                     ( pi_prcs_id      => pi_prcs_id
                     , pi_sbfl_id      => pi_sbfl_id
                     , pi_sql_text     => pi_expression.expr_expression
@@ -296,7 +296,7 @@ as
     , 'plsql text' , pi_expression.expr_expression
     );
 
-    l_result_rec := flow_util.exec_flows_plsql
+    l_result_rec := flow_db_exec.exec_flows_plsql
                     ( pi_prcs_id      => pi_prcs_id
                     , pi_sbfl_id      => pi_sbfl_id
                     , pi_plsql_text   => pi_expression.expr_expression
@@ -413,6 +413,7 @@ as
             , pi_expr_scope   => pi_expr_scope             
             );  
           else
+              pragma coverage ('not_feasible');
               null;
         end case;
       end loop;
@@ -457,6 +458,7 @@ as
     );
   exception
     when no_data_found then
+      pragma coverage ('not_feasible');
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id

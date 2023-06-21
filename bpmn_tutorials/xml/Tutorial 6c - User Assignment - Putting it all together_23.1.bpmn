@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:collaboration id="Collaboration_0w37ggk">
+    <bpmn:participant id="Participant_1lsw9xv" name="Expense Reimbursement Process" processRef="Process_f78hz1j5" />
+    <bpmn:textAnnotation id="TextAnnotation_1w8l7jz">
+      <bpmn:text>In this Model, See how we use various mechanisms to assign tasks to people...
+
+Any employee can file an expense claim -- but once they do, any rework goes to the originator.  And Approving the Expenses has to be done by the originator's manager, not by just any manager.  And paying the expenses can be done by anyone holding the Accts Payable Expenses role in the Finance Team.
+
+Look at this model to see how we use Lanes, Lane Roles, Process Variables, and Task Assignment settings based on an SQL Query to get all of these tasks performed by the correct person or people.
+
+Having the workflow definition tied to the database enables you to build very powerful process models....</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1rb8dv3" sourceRef="Event_07h3npi" targetRef="TextAnnotation_1w8l7jz" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_f78hz1j5" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1wckkhm">
+      <bpmn:lane id="Lane_1heaz13" name="Employee" apex:isRole="false">
+        <bpmn:flowNodeRef>Event_07h3npi</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_17d1qse</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1xfh2o5</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0jqrewd" name="Line Manager" apex:isRole="false">
+        <bpmn:flowNodeRef>Activity_05irww6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0g8imb3</bpmn:flowNodeRef>
+        <bpmn:childLaneSet id="LaneSet_0b0q9rm" />
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1cdvys2" name="Finance - ACCts Payable" apex:isRole="true" apex:role="FINANCE-AP-EXPENSES">
+        <bpmn:flowNodeRef>Activity_1d0x2un</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_048i897</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1rxtwce</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Event_07h3npi">
+      <bpmn:outgoing>Flow_10x7qam</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_10x7qam" sourceRef="Event_07h3npi" targetRef="Activity_17d1qse" />
+    <bpmn:userTask id="Activity_17d1qse" name="Make Expense Claim" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:afterTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>ORIGINATOR</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>
+            <apex:varExpression>select exp_empno
+  from expense_claim
+ where exp_claim_id = :F4A$BUSINESS_REF</apex:varExpression>
+          </apex:processVariable>
+        </apex:afterTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10x7qam</bpmn:incoming>
+      <bpmn:incoming>Flow_1utt5ar</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hyv87c</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0hyv87c" sourceRef="Activity_17d1qse" targetRef="Activity_05irww6" />
+    <bpmn:userTask id="Activity_05irww6" name="Manager Review" apex:type="apexApproval" apex:manualInput="true">
+      <bpmn:extensionElements>
+        <apex:apexApproval>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:resultVariable>EXP_APPROVED</apex:resultVariable>
+        </apex:apexApproval>
+        <apex:potentialUsers>
+          <apex:expressionType>sqlQuerySingle</apex:expressionType>
+          <apex:expression>select mgr.ename
+  from emp mgr
+  join emp originator
+    on originator.mgr = mgr.empno
+ where originator.empn0 = :F4A$ORIGINATOR</apex:expression>
+        </apex:potentialUsers>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0hyv87c</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b8ltiw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0g8imb3" name="Approved?">
+      <bpmn:incoming>Flow_0b8ltiw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rghka5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_07qvq2z</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0b8ltiw" sourceRef="Activity_05irww6" targetRef="Gateway_0g8imb3" />
+    <bpmn:sequenceFlow id="Flow_0rghka5" name=":F4A$APPROVED = &#39;Y&#39;" sourceRef="Gateway_0g8imb3" targetRef="Activity_1rxtwce" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$EXP_APPROVED = 'Y'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_1d0x2un" name="Make Payment">
+      <bpmn:incoming>Flow_0fp9ehs</bpmn:incoming>
+      <bpmn:outgoing>Flow_10mx95n</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0fp9ehs" sourceRef="Activity_1rxtwce" targetRef="Activity_1d0x2un" />
+    <bpmn:sequenceFlow id="Flow_10mx95n" sourceRef="Activity_1d0x2un" targetRef="Activity_048i897" />
+    <bpmn:serviceTask id="Activity_048i897" name="Notify Employee" apex:type="executePlsql">
+      <bpmn:incoming>Flow_10mx95n</bpmn:incoming>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_07qvq2z" name=":F4A$EXP_APPROVED = &#39;N&#39;" sourceRef="Gateway_0g8imb3" targetRef="Activity_1xfh2o5" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$EXP_APPROVED = 'N'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1utt5ar" sourceRef="Activity_1xfh2o5" targetRef="Activity_17d1qse" />
+    <bpmn:userTask id="Activity_1xfh2o5" name="Rework Claim" apex:type="apexPage" apex:manualInput="true">
+      <bpmn:extensionElements>
+        <apex:potentialUsers>
+          <apex:expressionType>sqlQuerySingle</apex:expressionType>
+          <apex:expression>select ename
+  from emp
+ where empno = :F4A$ORIGINATOR</apex:expression>
+        </apex:potentialUsers>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07qvq2z</bpmn:incoming>
+      <bpmn:outgoing>Flow_1utt5ar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1rxtwce" name="Arrange Payment" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:incoming>Flow_0rghka5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fp9ehs</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:textAnnotation id="TextAnnotation_1j723td">
+      <bpmn:text>Claim sets Process Variable 'ORIGINATOR' to the Employee ID (empno) of the Employee</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1luyp15" sourceRef="Activity_17d1qse" targetRef="TextAnnotation_1j723td" />
+    <bpmn:textAnnotation id="TextAnnotation_0rornk9">
+      <bpmn:text>See that This Task is Assigned to the Employee who originated the process.
+
+Look at Task Assignment - set by a SQL Query to the user who oriented the process...</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_136oa8m" sourceRef="Activity_1xfh2o5" targetRef="TextAnnotation_0rornk9" />
+    <bpmn:textAnnotation id="TextAnnotation_0spwhxv">
+      <bpmn:text>See how the Task for the Manager's. Review is assigned to their manager set by a SQL query to get the Originator's Manager from the EMPLOYEE table...
+
+And Manager needs be the Claiming Employee's Manager, not just any manager in the company.  So we don't map the Manager Lane to a role - but instead use the Task Assignment by SQL Query to look up the appropriate manager and assign them the approval task.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ka600q" sourceRef="Activity_05irww6" targetRef="TextAnnotation_0spwhxv" />
+    <bpmn:textAnnotation id="TextAnnotation_0xje0fi">
+      <bpmn:text>This task is assigned to a Role - the Finance - Accts Payable _ Expenses Clerk role.  Anyone holding that role can perform this task...</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_17p3o3l" sourceRef="Activity_1rxtwce" targetRef="TextAnnotation_0xje0fi" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0w37ggk">
+      <bpmndi:BPMNShape id="Participant_1lsw9xv_di" bpmnElement="Participant_1lsw9xv" isHorizontal="true">
+        <dc:Bounds x="270" y="90" width="1600" height="820" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1heaz13_di" bpmnElement="Lane_1heaz13" isHorizontal="true">
+        <dc:Bounds x="300" y="90" width="1570" height="330" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0jqrewd_di" bpmnElement="Lane_0jqrewd" isHorizontal="true">
+        <dc:Bounds x="300" y="420" width="1570" height="230" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1cdvys2_di" bpmnElement="Lane_1cdvys2" isHorizontal="true">
+        <dc:Bounds x="300" y="650" width="1570" height="260" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1j723td_di" bpmnElement="TextAnnotation_1j723td">
+        <dc:Bounds x="670" y="130" width="190" height="90" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0rornk9_di" bpmnElement="TextAnnotation_0rornk9">
+        <dc:Bounds x="980" y="134" width="340" height="82" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0spwhxv_di" bpmnElement="TextAnnotation_0spwhxv">
+        <dc:Bounds x="440" y="710" width="330" height="180" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0xje0fi_di" bpmnElement="TextAnnotation_0xje0fi">
+        <dc:Bounds x="1060" y="660" width="500" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07h3npi_di" bpmnElement="Event_07h3npi">
+        <dc:Bounds x="412" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0we3s6f_di" bpmnElement="Activity_17d1qse">
+        <dc:Bounds x="500" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_143ubv9_di" bpmnElement="Activity_05irww6">
+        <dc:Bounds x="670" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0g8imb3_di" bpmnElement="Gateway_0g8imb3" isMarkerVisible="true">
+        <dc:Bounds x="845" y="505" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="783" y="493" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1d0x2un_di" bpmnElement="Activity_1d0x2un">
+        <dc:Bounds x="1130" y="740" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yxt9tw_di" bpmnElement="Activity_048i897">
+        <dc:Bounds x="1300" y="740" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wpm7mn_di" bpmnElement="Activity_1xfh2o5">
+        <dc:Bounds x="820" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pbfrvi_di" bpmnElement="Activity_1rxtwce">
+        <dc:Bounds x="960" y="740" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1luyp15_di" bpmnElement="Association_1luyp15">
+        <di:waypoint x="598" y="235" />
+        <di:waypoint x="670" y="182" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_136oa8m_di" bpmnElement="Association_136oa8m">
+        <di:waypoint x="918" y="234" />
+        <di:waypoint x="980" y="187" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ka600q_di" bpmnElement="Association_1ka600q">
+        <di:waypoint x="678" y="569" />
+        <di:waypoint x="526" y="710" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_17p3o3l_di" bpmnElement="Association_17p3o3l">
+        <di:waypoint x="1048" y="740" />
+        <di:waypoint x="1060" y="728" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10x7qam_di" bpmnElement="Flow_10x7qam">
+        <di:waypoint x="448" y="270" />
+        <di:waypoint x="500" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hyv87c_di" bpmnElement="Flow_0hyv87c">
+        <di:waypoint x="550" y="310" />
+        <di:waypoint x="550" y="530" />
+        <di:waypoint x="670" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b8ltiw_di" bpmnElement="Flow_0b8ltiw">
+        <di:waypoint x="770" y="530" />
+        <di:waypoint x="845" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rghka5_di" bpmnElement="Flow_0rghka5">
+        <di:waypoint x="870" y="555" />
+        <di:waypoint x="870" y="780" />
+        <di:waypoint x="960" y="780" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="878" y="566" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fp9ehs_di" bpmnElement="Flow_0fp9ehs">
+        <di:waypoint x="1060" y="780" />
+        <di:waypoint x="1130" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10mx95n_di" bpmnElement="Flow_10mx95n">
+        <di:waypoint x="1230" y="780" />
+        <di:waypoint x="1300" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07qvq2z_di" bpmnElement="Flow_07qvq2z">
+        <di:waypoint x="870" y="505" />
+        <di:waypoint x="870" y="310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="876" y="462" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1utt5ar_di" bpmnElement="Flow_1utt5ar">
+        <di:waypoint x="820" y="270" />
+        <di:waypoint x="600" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1w8l7jz_di" bpmnElement="TextAnnotation_1w8l7jz">
+        <dc:Bounds x="680" y="-90" width="670" height="170" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1rb8dv3_di" bpmnElement="Association_1rb8dv3">
+        <di:waypoint x="442" y="257" />
+        <di:waypoint x="680" y="-17" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

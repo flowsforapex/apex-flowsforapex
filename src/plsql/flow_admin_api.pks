@@ -6,7 +6,8 @@ create or replace package flow_admin_api
 --
 -- Created    11-Feb-2023   Richard Allen, Oracle
 */
- /**
+
+/**
 FLOWS FOR APEX ADMIN API
 =========================
 
@@ -37,4 +38,18 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
 
   procedure purge_statistics;
 
+-- set configuration parameters
+
+  procedure set_config_value
+  ( p_config_key        in flow_configuration.cfig_key%type,
+    p_value             in flow_configuration.cfig_value%type,
+    p_update_if_set     in boolean default true
+  );
+
+  function get_config_value
+  ( p_config_key        in flow_configuration.cfig_key%type
+  , p_default_value     in flow_configuration.cfig_value%type
+  ) return flow_configuration.cfig_value%type;
+
 end flow_admin_api;
+/

@@ -7,6 +7,7 @@ create or replace package body flow_timers_pkg as
 -- Created 2020        Franco Soldaro
 -- Edited  2020        Moritz Klein - MT AG  
 -- Edited  24-Feb-2023 Richard Allen, Oracle
+-- Edited  05-Jun-2023 Louis Moreaux, Insum
 --
 */
   lock_timeout             exception;
@@ -143,6 +144,14 @@ create or replace package body flow_timers_pkg as
             , p0 => pi_sbfl_id          
             );
             -- $F4AMESSAGE 'timer-object-not-found' || 'Object with timer not found in get_timer_definition. Subflow %0.'
+          when too_many_rows then
+            flow_errors.handle_instance_error
+            ( pi_prcs_id     => pi_prcs_id
+            , pi_sbfl_id     => pi_sbfl_id
+            , pi_message_key => 'boundary-event-too-many'
+            , p0 => flow_constants_pkg.gc_bpmn_timer_event_definition
+            );
+            -- $F4AMESSAGE 'boundary-event-too-many' || 'More than one %0 boundaryEvent found on sub process.'              
         end;
     end;
     apex_debug.info
@@ -1081,10 +1090,15 @@ end reschedule_timer;
   as
     l_status  sys.all_scheduler_jobs.enabled%type;
   begin
-    select enabled
-      into l_status
-      from sys.all_scheduler_jobs
-     where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    begin
+      select enabled
+        into l_status
+        from sys.all_scheduler_jobs
+      where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    exception 
+      when no_data_found then
+      l_status := 'FALSE';
+    end;
     return l_status;
   end get_timer_status;
     

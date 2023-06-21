@@ -2,7 +2,7 @@ create or replace package body test_010_variable_expressions is
 /* 
 -- Flows for APEX - test_010_variable_expressions.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 --
 -- Created 10-Mar-2022   Louis Moreaux - Insum
 -- Edited  09-May-2022   Richard Allen - Oracle
@@ -16,6 +16,8 @@ create or replace package body test_010_variable_expressions is
     g_sbfl_sqlMulti         flow_subflows.sbfl_id%type;
     g_sbfl_expression       flow_subflows.sbfl_id%type;
     g_sbfl_funcBody         flow_subflows.sbfl_id%type;
+    g_sbfl_raw_expression   flow_subflows.sbfl_id%type;
+    g_sbfl_raw_funcBody     flow_subflows.sbfl_id%type;
     g_prcs_id  flow_processes.prcs_id%type;
     g_dgrm_id  flow_diagrams.dgrm_id%type;
       
@@ -35,6 +37,10 @@ create or replace package body test_010_variable_expressions is
    begin
         -- get dgrm_id to use for comparaison
         set_dgrm_id( g_model_a10 );
+
+        -- parse the diagrams
+        flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_id);
+
 
         -- create a new instance
         g_prcs_id := flow_api_pkg.flow_create(
@@ -113,6 +119,20 @@ create or replace package body test_010_variable_expressions is
             'FuncBody' as sbfl_current,
             flow_constants_pkg.gc_sbfl_status_running sbfl_status
          from dual
+         union
+         select
+            g_prcs_id as sbfl_prcs_id,
+            g_dgrm_id as sbfl_dgrm_id,
+            'RawExpression' as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+         from dual
+         union
+         select
+            g_prcs_id as sbfl_prcs_id,
+            g_dgrm_id as sbfl_dgrm_id,
+            'RawFuncBody' as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+         from dual
          ;
 
       open l_actual for
@@ -159,7 +179,18 @@ create or replace package body test_010_variable_expressions is
         from flow_subflows
        where sbfl_prcs_id = g_prcs_id
          and sbfl_current = 'FuncBody';         
-      
+         
+      select sbfl_id
+        into g_sbfl_raw_expression
+        from flow_subflows
+       where sbfl_prcs_id = g_prcs_id
+         and sbfl_current = 'RawExpression';         
+         
+      select sbfl_id
+        into g_sbfl_raw_funcbody
+        from flow_subflows
+       where sbfl_prcs_id = g_prcs_id
+         and sbfl_current = 'RawFuncBody';        
       -- all running and ready for tests
    end set_up_process;
    
@@ -235,6 +266,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'StaticVC2'
             and prov_var_num   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -270,6 +302,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name like 'Static%'
             and prov_var_vc2   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -301,11 +334,44 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'StaticDate'
             and prov_var_num   is null
             and prov_var_vc2 is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );      
       
-      
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test Num
+        open l_expected for
+            select
+                'StaticTSTZ' as prov_var_name,
+                '2023-03-21 14:35:30 GMT' as prov_var_tstz
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'StaticTSTZ'
+            and prov_var_num   is null
+            and prov_var_date  is null
+            and prov_var_vc2 is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );         
+
         -- get step key
         select sbfl_step_key
         into l_step_key
@@ -353,6 +419,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'CopyStaticVC2'
             and prov_var_num   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -388,6 +455,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name like 'CopyStatic%'
             and prov_var_vc2   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -403,7 +471,7 @@ create or replace package body test_010_variable_expressions is
         , p_subflow_id => l_sbfl_id
         , p_step_key => l_step_key);
         
-        -- test Num
+        -- test Date
         open l_expected for
             select
                 'CopyStaticDate' as prov_var_name,
@@ -419,10 +487,42 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'CopyStaticDate'
             and prov_var_num   is null
             and prov_var_vc2 is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );  
       
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test TSTZ
+        open l_expected for
+            select
+                'CopyStaticTSTZ' as prov_var_name,
+                '2023-03-21 14:35:30 GMT' as prov_var_tstz
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'CopyStaticTSTZ'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_date is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );  
       
         -- set up CLOB to copy
         flow_process_vars.set_var
@@ -460,6 +560,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'CopyStaticCLOB'
             and prov_var_num   is null
             and prov_var_vc2 is null
+            and prov_var_tstz is null
             and prov_var_date is null;
 
       ut.expect( l_actual ).to_equal( l_expected );  
@@ -511,6 +612,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'SQLSingleVC2'
             and prov_var_num   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -541,6 +643,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'SQLSingleNumber'
             and prov_var_vc2   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -572,10 +675,44 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'SQLSingleDate'
             and prov_var_num   is null
             and prov_var_vc2 is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
-      
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test Num
+        open l_expected for
+            select
+                'SQLSingleTSTZ' as prov_var_name,
+                '2022-01-01 15:30:15 AMERICA/LOS_ANGELES' as prov_var_tstz
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'SQLSingleTSTZ'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_date is null
+            and prov_var_clob is null;
+
+        ut.expect( l_actual ).to_equal( l_expected );   
+           
       
         -- get step key
         select sbfl_step_key
@@ -624,6 +761,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'SQLMultiVC2'
             and prov_var_num   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -680,6 +818,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'ExpressionVC2'
             and prov_var_num   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -710,6 +849,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'ExpressionNumber'
             and prov_var_vc2   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -725,7 +865,7 @@ create or replace package body test_010_variable_expressions is
         , p_subflow_id => l_sbfl_id
         , p_step_key => l_step_key);
         
-        -- test Num
+        -- test Date
         open l_expected for
             select
                 'ExpressionDate' as prov_var_name,
@@ -741,11 +881,43 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'ExpressionDate'
             and prov_var_num   is null
             and prov_var_vc2 is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
       
-      
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test TSTZ
+        open l_expected for
+            select
+                'ExpressionTSTZ' as prov_var_name,
+                '2023-03-15 18:23:42 EUROPE/PARIS' as prov_var_tstz
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'ExpressionTSTZ'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_date is null
+            and prov_var_clob is null;
+
+        ut.expect( l_actual ).to_equal( l_expected );         
         -- get step key
         select sbfl_step_key
         into l_step_key
@@ -794,6 +966,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'FuncBodyVC2'
             and prov_var_num   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -824,6 +997,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'FuncBodyNumber'
             and prov_var_vc2   is null
             and prov_var_date is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -839,7 +1013,7 @@ create or replace package body test_010_variable_expressions is
         , p_subflow_id => l_sbfl_id
         , p_step_key => l_step_key);
         
-        -- test Num
+        -- test Date
         open l_expected for
             select
                 'FuncBodyDate' as prov_var_name,
@@ -855,11 +1029,44 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'FuncBodyDate'
             and prov_var_num   is null
             and prov_var_vc2 is null
+            and prov_var_tstz is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
       
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test TSTZ
+        open l_expected for
+            select
+                'FuncBodyTSTZ' as prov_var_name,
+                '2022-01-01 20:00:00 EUROPE/PARIS' as prov_var_tstz
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'FuncBodyTSTZ'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_date is null
+            and prov_var_clob is null;
+
+        ut.expect( l_actual ).to_equal( l_expected );   
       
+            
         -- get step key
         select sbfl_step_key
         into l_step_key
@@ -872,7 +1079,308 @@ create or replace package body test_010_variable_expressions is
         , p_step_key => l_step_key);      
       
     end var_exp_funcbody;  
+
     
+    procedure var_exp_raw_expression
+    is
+      l_actual   sys_refcursor;
+      l_expected sys_refcursor;
+      l_step_key flow_subflows.sbfl_step_key%type;
+      l_sbfl_id  flow_subflows.sbfl_id%type;
+    begin
+        l_sbfl_id := g_sbfl_raw_expression;
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+
+        ut.expect( apex_error.have_errors_occurred(), 'apex thinks it has a problem!').to_be_false;
+        ut.expect( v('APP_SESSION')).to_be_null;
+
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test VC2
+        open l_expected for
+            select
+                'RawExpressionVC2' as prov_var_name,
+                'KING is UPPERCASE' as prov_var_vc2
+            from dual;
+         
+        open l_actual for
+            select prov_var_name, prov_var_vc2
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'VARCHAR2'
+            and prov_var_name = 'RawExpressionVC2'
+            and prov_var_num   is null
+            and prov_var_date is null
+            and prov_var_tstz is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test Num
+        open l_expected for
+            select
+                'RawExpressionNumber' as prov_var_name,
+                42 as prov_var_num
+            from dual;
+         
+        open l_actual for
+            select prov_var_name, prov_var_num as prov_var_num
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'NUMBER'
+            and prov_var_name = 'RawExpressionNumber'
+            and prov_var_vc2   is null
+            and prov_var_date is null
+            and prov_var_tstz is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test Date
+        open l_expected for
+            select
+                'RawExpressionDate' as prov_var_name,
+                to_date('2022-04-01 14:00:00', 'YYYY-MM-DD HH24:MI:SS') as prov_var_date
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, prov_var_date as prov_var_date
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'DATE'
+            and prov_var_name = 'RawExpressionDate'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_tstz is null
+            and prov_var_clob is null;
+
+        ut.expect( l_actual ).to_equal( l_expected );   
+      
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test TSTZ
+        open l_expected for
+            select
+                'RawExpressionTSTZ' as prov_var_name,
+                to_timestamp_tz( '2023-03-15 18:23:42 EUROPE/PARIS','YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, prov_var_tstz as prov_var_tstz
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'RawExpressionTSTZ'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_date is null
+            and prov_var_clob is null;
+
+        ut.expect( l_actual ).to_equal( l_expected );         
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow to complete subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);      
+      
+    end var_exp_raw_expression;  
+
+
+    procedure var_exp_raw_funcbody
+    is
+      l_actual   sys_refcursor;
+      l_expected sys_refcursor;
+      l_step_key flow_subflows.sbfl_step_key%type;
+      l_sbfl_id  flow_subflows.sbfl_id%type;
+    begin
+        l_sbfl_id := g_sbfl_raw_funcbody;
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test VC2
+        open l_expected for
+            select
+                'RawFuncBodyVC2' as prov_var_name,
+                'September' as prov_var_vc2
+            from dual;
+         
+        open l_actual for
+            select prov_var_name, prov_var_vc2
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'VARCHAR2'
+            and prov_var_name = 'RawFuncBodyVC2'
+            and prov_var_num   is null
+            and prov_var_date is null
+            and prov_var_tstz is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test Num
+        open l_expected for
+            select
+                'RawFuncBodyNumber' as prov_var_name,
+                226.8 as prov_var_num
+            from dual;
+         
+        open l_actual for
+            select prov_var_name, prov_var_num as prov_var_num
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'NUMBER'
+            and prov_var_name = 'RawFuncBodyNumber'
+            and prov_var_vc2   is null
+            and prov_var_date is null
+            and prov_var_tstz is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test Date
+        open l_expected for
+            select
+                'RawFuncBodyDate' as prov_var_name,
+                to_date ('2022-04-01 14:00:00','YYYY-MM-DD HH24:MI:SS') as prov_var_date
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name, prov_var_date as prov_var_date
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'DATE'
+            and prov_var_name = 'RawFuncBodyDate'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_tstz is null
+            and prov_var_clob is null;
+
+        ut.expect( l_actual ).to_equal( l_expected );   
+      
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test TSTZ
+        open l_expected for
+            select
+                'RawFuncBodyTSTZ' as prov_var_name,
+                to_timestamp_tz ('2022-01-01 20:00:00 EUROPE/PARIS' , 'YYYY-MM-DD HH24:MI:SS TZR')as prov_var_tstz
+            from dual;
+
+         
+        open l_actual for
+            select prov_var_name,  prov_var_tstz 
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'RawFuncBodyTSTZ'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_date is null
+            and prov_var_clob is null;
+
+        ut.expect( l_actual ).to_equal( l_expected );   
+      
+            
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow to complete subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);      
+      
+    end var_exp_raw_funcbody;  
+     
     procedure var_exp_process_completed
     is
       l_actual   sys_refcursor;

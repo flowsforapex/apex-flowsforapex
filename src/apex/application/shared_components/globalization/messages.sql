@@ -4,8 +4,8 @@ begin
 --     MESSAGES: 100
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -17,8 +17,8 @@ end;
 /
 begin
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -239,12 +239,23 @@ end;
 /
 begin
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(3703354379634692)
+,p_name=>'APP_APEX_UPGRADE_DETECTED'
+,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'An APEX upgrade have been detected:',
+'<ul>',
+'<li>running version: %0.%1</li>',
+'<li>stored version: %2.%3</li>',
+'</ul>',
+'You must follow the documentation <a href="#" >here</a> to resolve it.'))
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(68534481144574343)
@@ -1051,6 +1062,18 @@ wwv_flow_api.create_message(
 ,p_message_text=>'El nombre de variable debe tener un valor'
 ,p_is_js_message=>true
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(68513326741573601)
 ,p_name=>'APP_ERR_PROV_VAR_NAME_EMPTY'
@@ -1064,18 +1087,6 @@ wwv_flow_api.create_message(
 ,p_message_language=>'ja'
 ,p_message_text=>unistr('\5909\6570\540D\306B\306F\5024\304C\5FC5\8981\3067\3059')
 ,p_is_js_message=>true
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(68525386560574214)
@@ -1123,6 +1134,12 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_ERR_PROV_VAR_NUM_NOT_NUMBER'
 ,p_message_language=>'pt-br'
 ,p_message_text=>unistr('O valor deve ser um n\00FAmero')
+,p_is_js_message=>true
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(4774216918721288)
+,p_name=>'APP_ERR_PROV_VAR_TSTZ_NOT_TSTZ'
+,p_message_text=>'Value must be a timestamp'
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2079,6 +2096,30 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Reiniciar Etapa'
 ,p_is_js_message=>true
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(3524783067400924)
+,p_name=>'APP_VERSION_MISMATCH'
+,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'We have identified that the application version, data model and code do not match:',
+'<ul>',
+'<li>application version: %0</li>',
+'<li>data model version: %1</li>',
+'<li>code version : %2</li>',
+'</ul>',
+'Please contact your administrator to avoid any problems.'))
+);
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(68532517789574341)
 ,p_name=>'APP_VIEW'
@@ -2105,18 +2146,6 @@ wwv_flow_api.create_message(
 ,p_message_language=>'fr'
 ,p_message_text=>'Voir'
 ,p_is_js_message=>true
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(68520567527573769)
@@ -2219,8 +2248,8 @@ end;
 /
 begin
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -2336,8 +2365,8 @@ end;
 /
 begin
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -2430,8 +2459,8 @@ end;
 /
 begin
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0

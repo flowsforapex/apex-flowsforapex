@@ -129,8 +129,6 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-set-error', c_load_lang, q'[Error creating process variable %0 for process id %1 in scope %2.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'var-get-error', c_load_lang, q'[Error getting process variable %0 for process id %1 in scope %2.]' );
-  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-update-error', c_load_lang, q'[Error updating process variable %0 for process id %1 in scope %2.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-delete-error', c_load_lang, q'[Error deleting process variable %0 for process id %1 in scope %2.]' );
@@ -221,7 +219,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'apex-task-creation-error', c_load_lang, q'[Error creating APEX Workflow task %0 in application %1.  see debug for details.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-priority-error', c_load_lang, q'[Error creating APEX Workflow task - invalid priority %0.]' );
+    values ( 'apex-task-priority-error', c_load_lang, q'[Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'apex-task-multiple-processes', c_load_lang, q'[Error creating APEX session.  BPMN diagram contains multiple Process objects.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -245,7 +243,24 @@ begin
     values ( 'msgflow-lock-timeout-msub', c_load_lang, q'[Message Subscription locked by another user.   Try again.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'msgflow-lock-timeout-subflow', c_load_lang, q'[Message receiver unable to lock subflow.  Try again.]' ); 
-
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'logging-diagram-event', c_load_lang, q'[Flows - Internal error while logging a Diagram Event.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'due-on-interval-error', c_load_lang, q'[Error evaluating Due On.  Interval expression is invalid.  Interval: %0.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'due-on-error', c_load_lang, q'[Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp used instead.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'settings-priority-error', c_load_lang, q'[Error evaluating Priority. Priority expression is invalid.  Expression: %0.  Priority 3 used instead.]' ); 
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'settings-error', c_load_lang, q'[Error evaluating Setting. Expression is invalid.  Expression: %0.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'settings-procvar-no-prcs', c_load_lang, q'[Settings cannot specify Process Variable without a Process ID.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'msgflow-endpoint-not-supported', c_load_lang, q'[MessageFlow Endpoint specified ( %0 ) is not supported.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var-bad-scope', c_load_lang, q'[Invalid scope (%0) supplied for process variable.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var-get-error', c_load_lang, q'[Unable to get value of process variable %0.  See instance logs for details.]' );
 
   commit;
 end;

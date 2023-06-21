@@ -4,8 +4,8 @@ begin
 --     PLUGIN: COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -17,13 +17,14 @@ wwv_flow_api.create_plugin(
 ,p_name=>'COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance Variables'
 ,p_supported_ui_types=>'DESKTOP'
+,p_supported_component_types=>'APEX_APPLICATION_PAGE_PROC'
 ,p_image_prefix => nvl(wwv_flow_application_install.get_static_plugin_file_prefix('PROCESS TYPE','COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS'),'')
 ,p_api_version=>2
 ,p_execution_function=>'flow_plugin_manage_instance_variables.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage <i>Flows for APEX</i> Flow Instance Variable(s). The plug-in allows you to get or set variable(s).'
-,p_version_identifier=>'22.2'
+,p_version_identifier=>'23.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(
@@ -264,6 +265,11 @@ wwv_flow_api.create_plugin_attribute(
 '		"value": "2021-04-07T22:07:29.961Z"',
 '	},',
 '	{',
+'		"name": "Example_timestamp_var",',
+'		"type": "timestamp",',
+'		"value": "2021-04-07T22:07:29.961Z"',
+'	},',
+'	{',
 '		"name": "Example_clob_var",',
 '		"type": "clob",',
 '		"value": "long text"',
@@ -287,6 +293,11 @@ wwv_flow_api.create_plugin_attribute(
 '	{',
 '		"name": "Example_date_var",',
 '		"type": "date",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_timestamp_var",',
+'		"type": "timestamp",',
 '		"item": "ITEM_NAME"',
 '	},',
 '	{',
@@ -335,6 +346,11 @@ wwv_flow_api.create_plugin_attribute(
 '        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
 '        ),',
 '    json_object(',
+'          key ''name'' value ''example_timestamp_var''',
+'        , key ''type'' value ''timestamp''',
+'        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
+'        ),',
+'    json_object(',
 '          key ''name'' value ''examnple_clob_var''',
 '        , key ''type'' value ''clob''',
 '        , key ''value'' value to_clob(''this is a clob'')',
@@ -358,6 +374,11 @@ wwv_flow_api.create_plugin_attribute(
 '    json_object(',
 '          key ''name'' value ''example_date_var''',
 '        , key ''type'' value ''date''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_timestamp_var''',
+'        , key ''type'' value ''timestamp''',
 '        , key ''item'' value ''ITEM_NAME''',
 '        ),',
 '    json_object(',

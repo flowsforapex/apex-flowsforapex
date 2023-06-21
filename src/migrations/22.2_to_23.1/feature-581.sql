@@ -23,30 +23,40 @@ create table flow_message_subscriptions (
 );
 
 alter table flow_message_subscriptions
-    add constraint msub_prcs_fk FOREIGN KEY ( msub_prcs_id )
+  add constraint flow_msub_pk primary key ( msub_id )
+;
+
+alter table flow_message_subscriptions
+    add constraint flow_msub_prcs_fk FOREIGN KEY ( msub_prcs_id )
         references flow_processes (prcs_id)
             ON DELETE CASCADE;
 
 alter table flow_message_subscriptions
-    add constraint msub_sbfl_fk FOREIGN KEY ( msub_sbfl_id )
+    add constraint flow_msub_sbfl_fk FOREIGN KEY ( msub_sbfl_id )
         references flow_subflows (sbfl_id)
             ON DELETE CASCADE;
 
 alter table flow_message_subscriptions
-    add constraint msub_uk UNIQUE (msub_message_name, msub_key_name, msub_key_value);
+    add constraint flow_msub_uk UNIQUE (msub_message_name, msub_key_name, msub_key_value);
+
+create index flow_msub_prcs_sbfl_ix on flow_message_subscriptions( msub_prcs_id, msub_sbfl_id );
 
 create table flow_message_received_log
-( lgrx_id                   number generated always as identity (start with 1) not null
-, lgrx_message_name	        varchar2(200 char)
-, lgrx_key_name	            varchar2(200 char)
-, lgrx_key_value	        varchar2(200 char)
-, lgrx_payload              clob
-, lgrx_prcs_id	            number
-, lgrx_sbfl_id	            number
-, lgrx_received_on          timestamp with time zone
-, lgrx_was_correlated       varchar2(1 char)
-, lgrx_comment              varchar2(200 char)
+( lgrx_id              number generated always as identity (start with 1) not null
+, lgrx_message_name	   varchar2(200 char)
+, lgrx_key_name	       varchar2(200 char)
+, lgrx_key_value	     varchar2(200 char)
+, lgrx_payload         clob
+, lgrx_prcs_id	       number
+, lgrx_sbfl_id	       number
+, lgrx_received_on     timestamp with time zone
+, lgrx_was_correlated  varchar2(1 char)
+, lgrx_comment         varchar2(200 char)
 );
+
+alter table flow_message_received_log
+  add constraint flow_lgrx_pk primary key ( lgrx_id )
+;
 
 --- experimental code for timer callbacks
 --- migration would require every open timer to be given a callback routine,
@@ -76,7 +86,7 @@ set timr.timr_callback =
             on sbfl.sbfl_current = cur_objt.objt_bpmn_id
            and sbfl.sbfl_dgrm_id = cur_objt.objt_dgrm_id
           where sbfl.sbfl_id = timr.timr_sbfl_id
-
+;
 
 
 -- in addition, know in flow_subflows if the current event follows on from a Event Based Gateway

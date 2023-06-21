@@ -6,19 +6,19 @@ whenever sqlerror exit sql.sqlcode rollback
 -- ORACLE Application Express (APEX) export file
 --
 -- You should run the script connected to SQL*Plus as the Oracle user
--- APEX_200100 or as the owner (parsing schema) of the application.
+-- APEX_200200 or as the owner (parsing schema) of the application.
 --
 -- NOTE: Calls to apex_application_install override the defaults below.
 --
 --------------------------------------------------------------------------------
 begin
 wwv_flow_api.import_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
-,p_default_workspace_id=>63504938970163399
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
-,p_default_owner=>'FLOWS211'
+,p_default_owner=>'FLOWS4APEX'
 );
 end;
 /
@@ -28,15 +28,15 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   16:45 Tuesday August 30, 2022
---   Exported By:     LMOREAUX
+--   Date and Time:   13:28 Monday May 15, 2023
+--   Exported By:     C##LMOREAUX
 --   Flashback:       0
 --   Export Type:     Component Export
 --   Manifest
 --     PLUGIN: 151286992364012459
 --   Manifest End
---   Version:         20.1.0.00.13
---   Instance ID:     250167802641663
+--   Version:         20.2.0.00.20
+--   Instance ID:     204275825414274
 --
 
 begin
@@ -52,12 +52,13 @@ wwv_flow_api.create_plugin(
 ,p_name=>'COM.FLOWS4APEX.MANAGE_STEP.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance Step'
 ,p_supported_ui_types=>'DESKTOP'
+,p_supported_component_types=>'APEX_APPLICATION_PAGE_PROC'
 ,p_api_version=>2
 ,p_execution_function=>'flow_plugin_manage_instance_step.execution'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
-,p_version_identifier=>'22.2'
+,p_version_identifier=>'23.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_api.create_plugin_attribute(

@@ -36,13 +36,32 @@ as
 
   procedure set_config_value
   (
-    p_config_key in flow_configuration.cfig_key%type
-  , p_value      in flow_configuration.cfig_value%type)
-  as
+    p_config_key      in flow_configuration.cfig_key%type
+  , p_value           in flow_configuration.cfig_value%type
+  , p_update_if_set   in boolean default true
+  )
+  is
+    l_exists      number;
   begin
-    update flow_configuration
-       set cfig_value = p_value
+    select count(cfig_key)
+      into l_exists
+      from flow_configuration
      where cfig_key = p_config_key;
+    
+    if l_exists > 0 and p_update_if_set then 
+      update flow_configuration
+         set cfig_value = p_value
+       where cfig_key = p_config_key;
+    elsif l_exists = 0 then
+      insert into flow_configuration
+      ( cfig_key
+      , cfig_value
+      )
+      values
+      ( p_config_key
+      , p_value
+      );
+    end if;
   end set_config_value;
 
   function step_key
@@ -313,6 +332,8 @@ procedure get_number_of_connections
     l_new_subflow_context flow_types_pkg.t_subflow_context;
     l_lane                flow_objects.objt_bpmn_id%type;
     l_lane_name           flow_objects.objt_name%type;
+    l_lane_isRole         flow_subflows.sbfl_lane_isRole%type;
+    l_lane_role           flow_subflows.sbfl_lane_role%type;
     l_scope               flow_subflows.sbfl_scope%type := 0;
     l_level_parent        flow_subflows.sbfl_id%type := 0;
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
@@ -338,8 +359,12 @@ procedure get_number_of_connections
 
       select lane_objt.objt_bpmn_id
            , lane_objt.objt_name
+           , lane_objt.objt_attributes."apex"."isRole"
+           , lane_objt.objt_attributes."apex"."role"
         into l_lane
            , l_lane_name
+           , l_lane_isRole
+           , l_lane_role
         from flow_objects start_objt
    left join flow_objects lane_objt
           on start_objt.objt_objt_lane_id = lane_objt.objt_id
@@ -355,6 +380,8 @@ procedure get_number_of_connections
            , sbfl.sbfl_scope
            , sbfl.sbfl_lane
            , sbfl.sbfl_lane_name
+           , sbfl.sbfl_lane_isRole
+           , sbfl.sbfl_lane_role
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
                 when 'N' then sbfl.sbfl_calling_sbfl
@@ -364,6 +391,8 @@ procedure get_number_of_connections
            , l_scope
            , l_lane
            , l_lane_name
+           , l_lane_isRole
+           , l_lane_role
            , l_level_parent
         from flow_subflows sbfl
        where sbfl.sbfl_id = p_parent_subflow;
@@ -391,6 +420,8 @@ procedure get_number_of_connections
          , sbfl_scope
          , sbfl_lane
          , sbfl_lane_name
+         , sbfl_lane_isRole
+         , sbfl_lane_role
          , sbfl_is_following_ebg
          )
     values
@@ -415,6 +446,8 @@ procedure get_number_of_connections
          , l_scope
          , l_lane
          , l_lane_name
+         , l_lane_isRole
+         , l_lane_role
          , l_follows_ebg
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
@@ -493,10 +526,11 @@ procedure get_number_of_connections
                , sbfl.sbfl_scope
                , objt.objt_tag_name
                , objt.objt_sub_tag_name
-               , objt.objt_attributes."subType" subtype
+               , objt.objt_attributes."taskType" tasktype
             from flow_subflows sbfl
             join flow_objects objt
               on sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
+             and sbfl.sbfl_current = objt.objt_bpmn_id
            where sbfl.sbfl_prcs_id = p_process_id
              and sbfl.sbfl_process_level = p_process_level
              and objt.objt_tag_name in ( flow_constants_pkg.gc_bpmn_usertask
@@ -508,7 +542,7 @@ procedure get_number_of_connections
           -- clear any approval tasks (only runs on APEX 22.1 upwards)
           $IF NOT FLOW_APEX_ENV.VER_LE_21_2  
           $THEN
-            if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_usertask_apex_approval then
+            if subflows_with_tasks.tasktype = flow_constants_pkg.gc_apex_usertask_apex_approval then
               -- get apex taskID
               l_apex_task_id := flow_proc_vars_int.get_var_num
                                   ( pi_prcs_id   => p_process_id
@@ -524,7 +558,7 @@ procedure get_number_of_connections
             end if;
           $END 
           -- cancel any message subscriptions
-          if subflows_with_tasks.subtype = flow_constants_pkg.gc_apex_receivetask_subtype_basic then
+          if subflows_with_tasks.tasktype = flow_constants_pkg.gc_simple_message then
             flow_message_util.cancel_subscription ( p_process_id  => p_process_id 
                                                   , p_subflow_id  => subflows_with_tasks.sbfl_id
                                                   );
@@ -688,7 +722,7 @@ procedure get_number_of_connections
   as
     l_return clob;
   begin
-    apex_debug.info( p_message => '-- Joing JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
+    apex_debug.info( p_message => '-- Joining JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
     for i in 0..p_json_array.get_size - 1 loop
       l_return := l_return || p_json_array.get_string( i ) || apex_application.lf;
     end loop;
@@ -710,6 +744,60 @@ procedure get_number_of_connections
       return null;
     end if;
   end json_array_join;
+
+  function apex_json_array_join
+  ( p_json_array in apex_t_varchar2
+  )
+  return clob
+  is 
+    l_return clob;
+  begin
+    apex_debug.info( p_message => '-- Joining APEX JSON Array to vc2, size %0', p0 => p_json_array.count );
+
+    l_return := apex_string.join_clob( p_table => p_json_array );
+
+    apex_debug.info( p_message => '-- returned string', p0 => l_return);
+    return l_return;
+  end apex_json_array_join;
+
+  function clob_to_blob
+  ( 
+    pi_clob in clob
+  ) return blob
+  as
+  $if flow_apex_env.ver_le_22_1 $then
+    l_blob   blob;
+    l_dstoff pls_integer := 1;
+    l_srcoff pls_integer := 1;
+    l_lngctx pls_integer := 0;
+    l_warn   pls_integer;
+  $end
+  begin
+
+  $if flow_apex_env.ver_le_22_1 $then
+    sys.dbms_lob.createtemporary
+    ( lob_loc => l_blob
+    , cache   => true
+    , dur     => sys.dbms_lob.call
+    );    
+
+    sys.dbms_lob.converttoblob
+    ( dest_lob     => l_blob
+    , src_clob     => pi_clob
+    , amount       => sys.dbms_lob.lobmaxsize
+    , dest_offset  => l_dstoff
+    , src_offset   => l_srcoff
+    , blob_csid    => nls_charset_id( 'AL32UTF8' )
+    , lang_context => l_lngctx
+    , warning      => l_warn
+    );
+
+    return l_blob;
+  $else
+    return apex_util.clob_to_blob( p_clob => pi_clob );
+  $end
+
+  end clob_to_blob;
 
 
   -- initialise step key enforcement parameter

@@ -13,6 +13,43 @@ create or replace package body flow_message_util as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  procedure autonomous_write_to_messageflow_log
+    ( p_message_name     in flow_message_received_log.lgrx_message_name%type 
+    , p_key_name         in flow_message_received_log.lgrx_key_name%type   
+    , p_key_value        in flow_message_received_log.lgrx_key_value%type 
+    , p_payload          in flow_message_received_log.lgrx_payload%type 
+    , p_was_correlated   in flow_message_received_log.lgrx_was_correlated%type    
+    , p_prcs_id          in flow_message_received_log.lgrx_prcs_id%type 
+    , p_sbfl_id          in flow_message_received_log.lgrx_sbfl_id%type    
+    )
+  is
+    pragma autonomous_transaction;
+  begin
+
+      insert into flow_message_received_log
+      ( lgrx_message_name
+      , lgrx_key_name
+      , lgrx_key_value
+      , lgrx_payload
+      , lgrx_was_correlated
+      , lgrx_prcs_id
+      , lgrx_sbfl_id
+      , lgrx_received_on
+      )
+      values
+      ( p_message_name
+      , p_key_name
+      , p_key_value
+      , p_payload
+      , p_was_correlated
+      , p_prcs_id
+      , p_sbfl_id
+      , systimestamp
+      );
+      -- commit as an autonomous transaction
+      commit;
+  end autonomous_write_to_messageflow_log;
+
   function get_msg_subscription_details
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
   , p_dgrm_id                   flow_diagrams.dgrm_id%type
@@ -46,7 +83,7 @@ create or replace package body flow_message_util as
       into l_message_name_json
          , l_key_json
          , l_value_json
-         , l_payload_variable
+         , l_msg_sub.payload_var
       from flow_objects objt
      where objt.objt_bpmn_id = p_msg_object_bpmn_id
        and objt.objt_dgrm_id = p_dgrm_id 
@@ -57,11 +94,11 @@ create or replace package body flow_message_util as
     , p0 => l_message_name_json
     , p1 => l_key_json
     , p2 => l_value_json
-    , p3 => l_payload_variable
+    , p3 => l_msg_sub.payload_var
     );
 
       if l_message_name_json is not null then
-        l_msg_sub.message_name := flow_settings.get_message_name 
+        l_msg_sub.message_name := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_message_name_json
@@ -69,7 +106,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_key_json is not null then 
-        l_msg_sub.key_name     := flow_settings.get_correlation_key 
+        l_msg_sub.key_name     := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_key_json
@@ -77,7 +114,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_value_json is not null then 
-        l_msg_sub.key_value    := flow_settings.get_correlation_value
+        l_msg_sub.key_value    := flow_settings.get_vc2_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_value_json
@@ -90,13 +127,12 @@ create or replace package body flow_message_util as
     , p0 => l_msg_sub.message_name
     , p1 => l_msg_sub.key_name
     , p2 => l_msg_sub.key_value
-    , p3 => l_payload_variable
+    , p3 => l_msg_sub.payload_var
     );
 
     l_msg_sub.prcs_id        := p_sbfl_info.sbfl_prcs_id;
     l_msg_sub.sbfl_id        := p_sbfl_info.sbfl_id;
     l_msg_sub.step_key       := p_sbfl_info.sbfl_step_key;
-    l_msg_sub.payload_var    := l_payload_variable;
   
     return l_msg_sub;
   end get_msg_subscription_details;
@@ -105,7 +141,7 @@ create or replace package body flow_message_util as
   ( p_msg_object_bpmn_id        flow_objects.objt_bpmn_id%type
   , p_dgrm_id                   flow_diagrams.dgrm_id%type
   , p_sbfl_info                 flow_subflows%rowtype
-  ) return flow_message_flow.t_flow_basic_message
+  ) return flow_message_flow.t_flow_simple_message
   is
     l_endpoint_json     flow_types_pkg.t_bpmn_attribute_vc2;
     l_endpoint          flow_types_pkg.t_vc200;
@@ -117,7 +153,7 @@ create or replace package body flow_message_util as
     l_value             flow_message_subscriptions.msub_key_value%type;
     l_payload_json      flow_types_pkg.t_bpmn_attribute_vc2;
     l_payload           clob;
-    l_message           flow_message_flow.t_flow_basic_message;
+    l_message           flow_message_flow.t_flow_simple_message;
 
   begin
     apex_debug.enter 
@@ -125,11 +161,11 @@ create or replace package body flow_message_util as
     , 'p_msg_object_bpmn_id', p_msg_object_bpmn_id
     );
 
-    l_message   := flow_message_flow.t_flow_basic_message();
+    l_message   := flow_message_flow.t_flow_simple_message();
 
     -- get message and correlation settings and evaluate them
       -- get the userTask subtype  
-    select objt.objt_attributes."apex"."endPoint"
+    select objt.objt_attributes."apex"."endpoint"
          , objt.objt_attributes."apex"."messageName"
          , objt.objt_attributes."apex"."correlationKey"
          , objt.objt_attributes."apex"."correlationValue"
@@ -154,7 +190,7 @@ create or replace package body flow_message_util as
     );
 
       if l_message_name_json is not null then
-        l_message.message_name := flow_settings.get_message_name 
+        l_message.message_name := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_message_name_json
@@ -162,7 +198,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_key_json is not null then 
-        l_message.key_name     := flow_settings.get_correlation_key 
+        l_message.key_name     := flow_settings.get_vc2_expression 
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_key_json
@@ -170,7 +206,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_value_json is not null then 
-        l_message.key_value    := flow_settings.get_correlation_value
+        l_message.key_value    := flow_settings.get_vc2_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_value_json
@@ -178,7 +214,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_payload_json is not null then 
-        l_message.payload    := flow_settings.get_payload
+        l_message.payload    := flow_settings.get_clob_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_payload_json
@@ -186,7 +222,7 @@ create or replace package body flow_message_util as
                                 );
       end if;
       if l_endpoint_json is not null then 
-        l_message.endpoint    := flow_settings.get_endpoint
+        l_message.endpoint    := flow_settings.get_vc2_expression
                                 ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
                                 , pi_sbfl_id => p_sbfl_info.sbfl_id
                                 , pi_expr    => l_endpoint_json

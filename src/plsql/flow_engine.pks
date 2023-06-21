@@ -33,6 +33,12 @@ procedure restart_step
   , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
   );
+
+procedure handle_event_gateway_event
+  ( p_process_id         in flow_processes.prcs_id%type
+  , p_parent_subflow_id  in flow_subflows.sbfl_id%type
+  , p_cleared_subflow_id in flow_subflows.sbfl_id%type
+  );
   
 end flow_engine;
 /

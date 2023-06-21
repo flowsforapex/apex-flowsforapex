@@ -46,6 +46,28 @@ create or replace package body test_002_gateway is
       return l_dgrm_id;
    end get_dgrm_id;
 
+   -- beforeall
+   procedure set_up_tests
+   is
+   begin
+     -- parse the diagrams
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a2));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a3));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a4));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a5));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a6));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a7));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a8));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a9));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a10));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a11));
+     flow_bpmn_parser_pkg.parse(pi_dgrm_id => get_dgrm_id(model_a12));
+
+
+   end set_up_tests;
+
+
+
    --test(a. exclusive gateway - no route provided)
 
    procedure exclusive_no_route
@@ -112,7 +134,7 @@ create or replace package body test_002_gateway is
 
       ut.expect( l_actual ).to_equal( l_expected );
 
-      flow_api_pkg.flow_delete(p_process_id => l_prcs_id);
+      --flow_api_pkg.flow_delete(p_process_id => l_prcs_id);
    end exclusive_no_route;
 
    --test(b. exclusive gateway - default routing)
@@ -2034,10 +2056,10 @@ create or replace package body test_002_gateway is
       -- test 3 is torn down in the test runner
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_4);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_5);
-      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);
+      --flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_7);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_8);
-      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_9);
+      --flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_9);
    end;
 
 end test_002_gateway;

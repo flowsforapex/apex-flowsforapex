@@ -1,9 +1,6 @@
 PROMPT >> Removing Flows4APEX Database Objects
 PROMPT >> ====================================
 
-PROMPT >> Functions
-drop function apex_error_handling;
-
 PROMPT >> Packages
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
@@ -16,10 +13,9 @@ drop package flow_parser_util;
 drop package flow_migrate_xml_pkg;
 drop package flow_expressions;
 drop package flow_settings;
-drop package flow_util;
+drop package flow_db_exec;
 drop package flow_message_flow;
 drop package flow_message_util;
-drop package flow_process_vars;
 drop package flow_proc_vars_int;
 drop package flow_instances;
 drop package flow_engine;
@@ -89,6 +85,9 @@ drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
 drop view flow_instance_diagrams_lov;
 drop view flow_diagrams_instanciated_lov;
+drop view flow_startable_diagrams_vw;
+drop view flow_message_subscriptions_vw;
+
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
@@ -108,6 +107,7 @@ drop table flow_step_event_log cascade constraints;
 drop table flow_variable_event_log cascade constraints;
 drop table flow_configuration cascade constraints;
 drop table flow_messages cascade constraints;
+drop table flow_statistics cascade constraints;
 
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
