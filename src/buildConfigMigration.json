@@ -40,6 +40,7 @@
       , { "content_type": "plaintext", "path": "migrations/22.2_to_23.1/", "name": "feature-581.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/22.2_to_23.1/", "name": "feature-603.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/22.2_to_23.1/", "name": "feature-628.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "migrations/22.2_to_23.1/", "name": "feature-rest-api.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/22.2_to_23.1/", "name": "set_flows_version.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_apex_env.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_types_pkg.pks", "add_show_errors": false }

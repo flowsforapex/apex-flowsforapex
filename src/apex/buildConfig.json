@@ -95,6 +95,14 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_log_admin.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_admin_api.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_statistics.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_constants.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_auth.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_logging.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_response.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_errors.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_api_v1.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_install.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_theme_api.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance/plsql/", "name": "flow_plugin_manage_instance.pks", "add_show_errors": false }
@@ -134,6 +142,11 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_timeline_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_startable_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_message_subscriptions_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_diagrams_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_message_subscriptions_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_process_vars_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_processes_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_subflows_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0002_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_diagrams_var_vw.sql", "add_show_errors": false }
@@ -209,6 +222,14 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_log_admin.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_admin_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_statistics.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_constants.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_auth.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_logging.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_response.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_errors.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_api_v1.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_install.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_theme_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance/plsql/", "name": "flow_plugin_manage_instance.pkb", "add_show_errors": false }
