@@ -1,1 +1,0 @@
-create type flow_rest_roles_nt as table of flow_rest_role_ot;

@@ -1,6 +1,12 @@
 create or replace package flow_rest_auth
   authid definer
 as
+  type flow_rest_role_ot is record
+  (
+    role_id   number,
+    role_name varchar2(255)
+  );
+  type flow_rest_roles_nt is table of flow_rest_role_ot;
 
   function get_rest_roles
     return flow_rest_roles_nt

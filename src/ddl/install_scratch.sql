@@ -677,13 +677,3 @@ create table flow_rest_event_log (
 insert into flow_configuration(cfig_key, cfig_value) values('logging_rest_incoming_calls','Y');
 insert into flow_configuration(cfig_key, cfig_value) values('logging_rest_incoming_calls_retain_days','60');
 insert into flow_configuration(cfig_key, cfig_value) values('rest_base',null);
-
-create type flow_rest_role_ot as object
-(
-  role_id   number,
-  role_name varchar2(255)
-);
-/
-
-create type flow_rest_roles_nt as table of flow_rest_role_ot;
-/

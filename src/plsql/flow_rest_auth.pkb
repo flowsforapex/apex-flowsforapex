@@ -2,7 +2,7 @@ create or replace package body flow_rest_auth
 as
 
   function get_rest_roles
-    return flow_rest_roles_nt
+    return flow_rest_auth.flow_rest_roles_nt
     pipelined
   as
     l_roles apex_application_global.vc_arr2;  
@@ -16,7 +16,7 @@ as
                         from user_ords_roles 
                         where name in (select column_value from table(l_roles)))
     loop
-      PIPE ROW (flow_rest_role_ot ( rec_roles.id, rec_roles.name ));
+      PIPE ROW (flow_rest_auth.flow_rest_role_ot ( rec_roles.id, rec_roles.name ));
     end loop;
     return;
 
