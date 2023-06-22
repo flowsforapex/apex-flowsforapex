@@ -36,6 +36,14 @@ drop package flow_globals;
 drop package flow_diagram;
 drop package flow_theme_api;
 drop package flow_apex_env;
+drop package flow_rest_constants;
+drop package flow_rest;
+drop package flow_rest_auth;
+drop package flow_rest_logging;
+drop package flow_rest_response;
+drop package flow_rest_errors;
+drop package flow_rest_api_v1;
+drop package flow_rest_install;
 
 PROMPT >> Modeler Plugin Objects
 drop package flow_modeler;
@@ -87,6 +95,11 @@ drop view flow_instance_diagrams_lov;
 drop view flow_diagrams_instanciated_lov;
 drop view flow_startable_diagrams_vw;
 drop view flow_message_subscriptions_vw;
+drop view flow_rest_diagrams_vw;
+drop view flow_rest_message_subscriptions_vw;
+drop view flow_rest_process_vars_vw;
+drop view flow_rest_processes_vw;
+drop view flow_rest_subflows_vw;
 
 
 PROMPT >> Tables
@@ -108,7 +121,7 @@ drop table flow_variable_event_log cascade constraints;
 drop table flow_configuration cascade constraints;
 drop table flow_messages cascade constraints;
 drop table flow_statistics cascade constraints;
-
+drop table flow_rest_event_log cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================

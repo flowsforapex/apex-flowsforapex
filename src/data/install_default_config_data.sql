@@ -21,6 +21,10 @@ begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_email_sender'                          ,p_value => '');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'timer_max_cycles'                              ,p_value => '1000');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'parser_log_enabled'                            ,p_value => 'false' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_rest_incoming_calls'                   ,p_value => 'Y' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_rest_incoming_calls_retain_days'       ,p_value => '60' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'rest_base'                                     ,p_value => null );
+
   commit;
 end;
 /

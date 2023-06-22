@@ -23,6 +23,7 @@ PROMPT >> -------------------------------------------
 @@feature-581.sql
 @@feature-603.sql
 @@feature-628.sql
+@@feature-rest-api.sql
 
 @@set_flows_version.sql
 

@@ -41,6 +41,14 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_log_admin.pks
 @plsql/flow_admin_api.pks
 @plsql/flow_statistics.pks
+@plsql/flow_rest_constants.pks
+@plsql/flow_rest.pks
+@plsql/flow_rest_auth.pks
+@plsql/flow_rest_logging.pks
+@plsql/flow_rest_response.pks
+@plsql/flow_rest_errors.pks
+@plsql/flow_rest_api_v1.pks
+@plsql/flow_rest_install.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -58,7 +66,11 @@ PROMPT >> Installing Views
 @views/flow_instance_timeline_vw.sql
 @views/flow_startable_diagrams_vw.sql
 @views/flow_message_subscriptions_vw.sql
-
+@views/flow_rest_diagrams_vw.sql
+@views/flow_rest_message_subscriptions_vw.sql
+@views/flow_rest_process_vars_vw.sql
+@views/flow_rest_processes_vw.sql
+@views/flow_rest_subflows_vw.sql
 
 PROMPT >> Installing Package Bodies
 @plsql/flow_proc_vars_int.pkb
@@ -93,6 +105,14 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_log_admin.pkb
 @plsql/flow_admin_api.pkb
 @plsql/flow_statistics.pkb
+@plsql/flow_rest_constants.pkb
+@plsql/flow_rest.pkb
+@plsql/flow_rest_auth.pkb
+@plsql/flow_rest_logging.pkb
+@plsql/flow_rest_response.pkb
+@plsql/flow_rest_errors.pkb
+@plsql/flow_rest_api_v1.pkb
+@plsql/flow_rest_install.pkb
 
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
