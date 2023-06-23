@@ -256,6 +256,11 @@ as
   gc_prov_suffix_task_id              constant  varchar2(50 char) := ':task_id';
   gc_prov_suffix_route                constant  varchar2(50 char) := ':route';  
 
+  -- Task List Contexts
+
+  gc_task_list_context_single         constant varchar2(30 char) := 'SINGLE_PROCESS';
+  gc_task_list_context_my_tasks       constant varchar2(30 char) := 'MY_TASKS';
+
   -- Process Variable and Gateway Routing Variable Expression Types
   gc_apex_expression constant flow_types_pkg.t_bpmn_attribute_vc2 := 'conditionExpression';
 
