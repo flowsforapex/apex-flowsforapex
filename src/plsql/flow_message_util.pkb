@@ -151,7 +151,7 @@ create or replace package body flow_message_util as
     l_key               flow_message_subscriptions.msub_key_name%type;
     l_value_json        flow_types_pkg.t_bpmn_attribute_vc2;
     l_value             flow_message_subscriptions.msub_key_value%type;
-    l_payload_json      flow_types_pkg.t_bpmn_attribute_vc2;
+    l_payload_json      clob;
     l_payload           clob;
     l_message           flow_message_flow.t_flow_simple_message;
 

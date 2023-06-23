@@ -187,7 +187,7 @@ create or replace package body flow_message_flow as
     l_message               flow_message_flow.t_flow_simple_message;
     e_msgflow_bad_endpoint  exception;
   begin
-      apex_debug.enter 
+    apex_debug.enter 
     ( 'send_message'
     , 'p_msg_object_bpmn_id', p_step_info.target_objt_ref
     );
@@ -195,6 +195,15 @@ create or replace package body flow_message_flow as
                                               , p_dgrm_id             => p_sbfl_info.sbfl_dgrm_id
                                               , p_sbfl_info           => p_sbfl_info 
                                               );
+
+    apex_debug.trace
+    (
+      p_message => 'Received message details -- %0;%1;%2;%3'
+    , p0 => l_message.message_name
+    , p1 => l_message.key_name
+    , p2 => l_message.key_value
+    , p3 => l_message.payload
+    );
 
     case l_message.endpoint 
     when 'local' then

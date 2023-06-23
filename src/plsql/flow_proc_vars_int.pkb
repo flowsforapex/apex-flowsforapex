@@ -910,24 +910,17 @@ end delete_var;
                                   , flow_instances.priority (p_process_id => pi_prcs_id)
                                   );
           else
-            -- own implementation of get_vc_var
-            -- Reason:
-            -- The general implementation immediately adds to APEX error stack
-            begin
-              select prov.prov_var_vc2
-                into l_replacement_value
-                from flow_process_variables prov
-               where prov.prov_prcs_id          = pi_prcs_id
-                 and prov.prov_scope            = pi_scope
-                 and upper(prov.prov_var_name)  = upper(l_f4a_substitutions(i))
-              ;
+            l_replacement_value :=
+              get_var_as_vc2
+              (
+                pi_prcs_id           => pi_prcs_id
+              , pi_var_name          => l_f4a_substitutions(i)
+              , pi_scope             => pi_scope
+              , pi_exception_on_null => false
+              );
+            if l_replacement_value is not null then
               pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), l_replacement_value );
-            exception
-              when no_data_found then
-                -- no data found will be ignored
-                -- do like APEX and leave original in place
-                null;
-            end;
+            end if;
         end case;
       end loop;
     end if;
