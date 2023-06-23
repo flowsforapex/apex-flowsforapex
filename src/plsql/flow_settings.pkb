@@ -138,6 +138,8 @@ as
                       , pi_expr_type    => l_expr_details.expr_type 
                       );
       l_return_tstz := l_result_rec.var_tstz;
+    else 
+      l_return_tstz := null;
     end case;
     return l_return_tstz;
   exception
@@ -152,10 +154,10 @@ as
       , p0                => substr(l_expr_details.expr_value, 4000)
       );  
       -- $F4AMESSAGE 'due-on-interval-error' || 'Error evaluating Due On.  Interval expression is invalid.  Interval: %0.'  
-      return systimestamp;  
+      return null;  
     when others then
       apex_debug.info 
-      ( p_message => ' --- Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp returned.'
+      ( p_message => ' --- Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  '
       , p0 => substr(l_expr_details.expr_value, 4000)
       );  
       flow_errors.handle_instance_error
@@ -163,8 +165,8 @@ as
       , pi_message_key    => 'due-on-error'
       , p0 => substr(l_expr_details.expr_value, 4000)
       );  
-      -- $F4AMESSAGE 'due-on-error' || 'Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp used instead.'  
-      return systimestamp;  
+      -- $F4AMESSAGE 'due-on-error' || 'Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.'  
+      return null;  
   end get_due_on;
 
   function get_priority

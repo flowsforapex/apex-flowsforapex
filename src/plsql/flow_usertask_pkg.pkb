@@ -328,16 +328,22 @@ $END
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
 
-      l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
-                                               , pi_sbfl_id  => l_sbfl_id
-                                               , pi_expr     => l_priority_setting
-                                               , pi_scope    => l_scope
-                                               );
-      l_due_on :=   flow_settings.get_due_on   ( pi_prcs_id  => l_prcs_id
-                                               , pi_sbfl_id  => l_sbfl_id
-                                               , pi_expr     => l_due_on_setting
-                                               , pi_scope    => l_scope
-                                               );
+      if l_priority_setting is not null then
+        l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
+                                                 , pi_sbfl_id  => l_sbfl_id
+                                                 , pi_expr     => l_priority_setting
+                                                 , pi_scope    => l_scope
+                                                 );
+      end if;
+
+      if l_due_on_setting is not null then                                          
+        l_due_on :=   flow_settings.get_due_on   ( pi_prcs_id  => l_prcs_id
+                                                 , pi_sbfl_id  => l_sbfl_id
+                                                 , pi_expr     => l_due_on_setting
+                                                 , pi_scope    => l_scope
+                                                 );
+      end if; 
+
       -- create parameters table
       for parameters in (
         select static_id
