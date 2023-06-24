@@ -6,6 +6,8 @@
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
 PROMPT >> Installing Package Specifications
+PROMPT >>
+PROMPT >> Engine
 @plsql/flow_apex_env.pks
 @plsql/flow_types_pkg.pks
 @plsql/flow_constants_pkg.pks
@@ -41,6 +43,9 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_log_admin.pks
 @plsql/flow_admin_api.pks
 @plsql/flow_statistics.pks
+
+PROMPT >>
+PROMPT >> REST API Support
 @plsql/flow_rest_constants.pks
 @plsql/flow_rest.pks
 @plsql/flow_rest_auth.pks
@@ -73,6 +78,8 @@ PROMPT >> Installing Views
 @views/flow_rest_subflows_vw.sql
 
 PROMPT >> Installing Package Bodies
+PROMPT >>
+PROMPT >> Engine
 @plsql/flow_proc_vars_int.pkb
 @plsql/flow_process_vars.pkb
 @plsql/flow_expressions.pkb
@@ -105,7 +112,10 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_log_admin.pkb
 @plsql/flow_admin_api.pkb
 @plsql/flow_statistics.pkb
-@plsql/flow_rest_constants.pkb
+
+PROMPT >>
+PROMPT >> REST API Support
+set define off
 @plsql/flow_rest.pkb
 @plsql/flow_rest_auth.pkb
 @plsql/flow_rest_logging.pkb
@@ -114,6 +124,8 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_rest_api_v1.pkb
 @plsql/flow_rest_install.pkb
 
+set define '^'
+set concat '.'
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
 PROMPT >> Global App Package Specifications

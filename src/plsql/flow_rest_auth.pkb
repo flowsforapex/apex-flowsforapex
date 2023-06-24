@@ -2,7 +2,7 @@ create or replace package body flow_rest_auth
 as
 
   function get_rest_roles
-    return flow_rest_auth.flow_rest_roles_nt
+    return flow_rest_roles_nt
     pipelined
   as
     l_roles apex_application_global.vc_arr2;  
