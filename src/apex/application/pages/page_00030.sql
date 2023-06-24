@@ -21,7 +21,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##JDOPPELREITER'
-,p_last_upd_yyyymmddhh24miss=>'20230616150641'
+,p_last_upd_yyyymmddhh24miss=>'20230618101707'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2362908411158415)
@@ -272,7 +272,7 @@ wwv_flow_api.create_page_button(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(4722790490681902)
 ,p_name=>'P30_LOGGING_REST_INCOMING_CALLS'
-,p_item_sequence=>10
+,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(4722613539681901)
 ,p_prompt=>'Log Incoming Rest Calls'
 ,p_display_as=>'NATIVE_YES_NO'
@@ -283,9 +283,22 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(4722861639681903)
 ,p_name=>'P30_LOGGING_REST_RETAIN_LOGS'
-,p_item_sequence=>20
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(4722613539681901)
 ,p_prompt=>'Retain Logs (Days) (not yet implemented)'
+,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_cSize=>5
+,p_colspan=>2
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_03=>'right'
+);
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(5655634694360001)
+,p_name=>'P30_BASE_URL'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(4722613539681901)
+,p_prompt=>'Base-URL'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
@@ -296,8 +309,21 @@ wwv_flow_api.create_page_item(
 ,p_attribute_05=>'BOTH'
 );
 wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(4723201073681907)
+ p_id=>wwv_flow_api.id(5655772217360002)
 ,p_computation_sequence=>10
+,p_computation_item=>'P30_BASE_URL'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation_language=>'PLSQL'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>  flow_rest_constants.c_config_prefix || flow_rest_constants.c_config_key_base',
+'         , p_default_value => null',
+'       );'))
+);
+wwv_flow_api.create_page_computation(
+ p_id=>wwv_flow_api.id(4723201073681907)
+,p_computation_sequence=>20
 ,p_computation_item=>'P30_LOGGING_REST_INCOMING_CALLS'
 ,p_computation_point=>'BEFORE_BOX_BODY'
 ,p_computation_type=>'FUNCTION_BODY'
@@ -310,7 +336,7 @@ wwv_flow_api.create_page_computation(
 );
 wwv_flow_api.create_page_computation(
  p_id=>wwv_flow_api.id(4723389675681908)
-,p_computation_sequence=>20
+,p_computation_sequence=>30
 ,p_computation_item=>'P30_LOGGING_REST_RETAIN_LOGS'
 ,p_computation_point=>'BEFORE_BOX_BODY'
 ,p_computation_type=>'FUNCTION_BODY'
@@ -347,6 +373,8 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Save Config'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_rest_install.set_base_url( pi_base_url => :P30_BASE_URL );',
+'',
 'flow_rest_logging.set_logging_config( pi_log_rest_incoming         => :P30_LOGGING_REST_INCOMING_CALLS',
 '                                    , pi_log_rest_incoming_retain  => :P30_LOGGING_REST_RETAIN_LOGS );'))
 ,p_process_clob_language=>'PLSQL'

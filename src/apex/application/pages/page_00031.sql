@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##JDOPPELREITER'
-,p_last_upd_yyyymmddhh24miss=>'20230514173755'
+,p_last_upd_yyyymmddhh24miss=>'20230618115636'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2333314435104525)
@@ -339,6 +339,8 @@ wwv_flow_api.create_page_item(
 'select role_name',
 '     , role_id',
 '  from table(flow_rest_auth.get_rest_roles)'))
+,p_field_template=>wwv_flow_api.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
 ,p_lov_display_extra=>'NO'
 ,p_attribute_01=>'1'
 );
