@@ -138,6 +138,8 @@ as
                       , pi_expr_type    => l_expr_details.expr_type 
                       );
       l_return_tstz := l_result_rec.var_tstz;
+    else 
+      l_return_tstz := null;
     end case;
     return l_return_tstz;
   exception
@@ -152,10 +154,10 @@ as
       , p0                => substr(l_expr_details.expr_value, 4000)
       );  
       -- $F4AMESSAGE 'due-on-interval-error' || 'Error evaluating Due On.  Interval expression is invalid.  Interval: %0.'  
-      return systimestamp;  
+      return null;  
     when others then
       apex_debug.info 
-      ( p_message => ' --- Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp returned.'
+      ( p_message => ' --- Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  '
       , p0 => substr(l_expr_details.expr_value, 4000)
       );  
       flow_errors.handle_instance_error
@@ -163,8 +165,8 @@ as
       , pi_message_key    => 'due-on-error'
       , p0 => substr(l_expr_details.expr_value, 4000)
       );  
-      -- $F4AMESSAGE 'due-on-error' || 'Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.  systimestamp used instead.'  
-      return systimestamp;  
+      -- $F4AMESSAGE 'due-on-error' || 'Error evaluating Due On.  Due On expression is invalid.  Interval Expression: %0.'  
+      return null;  
   end get_due_on;
 
   function get_priority
@@ -308,6 +310,12 @@ as
 
    case 
       when l_expr_details.expr_type = flow_constants_pkg.gc_expr_type_static then
+        flow_proc_vars_int.do_substitution 
+        ( pi_prcs_id   => pi_prcs_id
+        , pi_sbfl_id   => pi_sbfl_id
+        , pi_scope     => pi_scope
+        , pio_string   => l_expr_details.expr_value
+        );
         l_return_value := l_expr_details.expr_value;
       when l_expr_details.expr_type = flow_constants_pkg.gc_expr_type_proc_var then
         if pi_prcs_id is null then 
@@ -387,7 +395,7 @@ as
   function get_clob_expression
   ( pi_prcs_id       flow_processes.prcs_id%type
   , pi_sbfl_id       flow_subflows.sbfl_id%type
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_expr          clob
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return clob
   is
@@ -401,13 +409,19 @@ as
     apex_debug.enter 
     ( p_routine_name => 'get_clob_expression'
     , p_name01       => 'pi_expr'
-    , p_value01      => substr(pi_expr, 4000)
+    , p_value01      => dbms_lob.substr(pi_expr, 4000)
     );
 
     l_expr_details := get_expression_details( pi_expr_data  => pi_expr );
 
    case 
       when l_expr_details.expr_type = flow_constants_pkg.gc_expr_type_static then
+        flow_proc_vars_int.do_substitution 
+        ( pi_prcs_id   => pi_prcs_id
+        , pi_sbfl_id   => pi_sbfl_id
+        , pi_scope     => pi_scope
+        , pio_string   => l_expr_details.expr_value
+        );
         l_return_value := l_expr_details.expr_value;
       when l_expr_details.expr_type = flow_constants_pkg.gc_expr_type_proc_var then
         case flow_proc_vars_int.get_var_type ( pi_prcs_id   => pi_prcs_id

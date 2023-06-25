@@ -12,6 +12,62 @@ create or replace package flow_api_pkg
 FLOWS FOR APEX ENGINE API
 =========================
 
+Types
+=====
+
+Type flows_api_pkg.task_list_item.
+
+**/
+
+type t_task_list_item is record 
+   ( manager                 varchar2( 20)
+   , app_id                  number
+   , task_id                 number
+   , task_def_id             number
+   , task_def_name           varchar2( 255)
+   , task_def_static_id      varchar2( 255)
+   , subject                 varchar2(1000)
+   , task_type               varchar2(  32)
+   , details_app_id          number
+   , details_app_name        varchar2( 255)
+   , details_link_target     varchar2(4000)
+   , due_on                  timestamp with time zone
+   , due_in_hours            number
+   , due_in                  varchar2( 255)
+   , due_code                varchar2(  32)
+   , priority                number(1)
+   , priority_level          varchar2( 255)
+   , initiator               varchar2( 255)
+   , initiator_lower         varchar2( 255)
+   , actual_owner            varchar2( 255)
+   , actual_owner_lower      varchar2( 255)
+   , potential_owners        varchar2(4000)
+   , potential_groups        varchar2(4000)
+   , excluded_owners         varchar2(4000)
+   , state_code              varchar2(  32)
+   , state                   varchar2( 255)
+   , is_completed            varchar2(   1)
+   , outcome_code            varchar2(  32)
+   , outcome                 varchar2( 255)
+   , badge_css_classes       varchar2( 255)
+   , badge_text              varchar2( 255)
+   , created_ago_hours       number
+   , created_ago             varchar2( 255)
+   , created_by              varchar2( 255)
+   , created_on              timestamp with time zone
+   , last_updated_by         varchar2( 255)
+   , last_updated_on         timestamp with time zone
+   , process_id              number
+   , subflow_id              number
+   , step_key                varchar2(20)
+);
+
+ type t_task_list_items is table of t_task_list_item;
+
+/**
+package
+=======
+
 The `flow_api_pkg` package gives you access to the Flows for APEX engine, and allows you to perform:
 -  Flow Instance Operations, allowing you to Create, Start, Reset, Terminate and Delete a Process Instance.
 -  Flow Step Operations, allowing you to Complete, Reserve, Release, or signal Starting a Process Step.
@@ -487,6 +543,23 @@ begin
 end;
 ```
 **/
+
+  function get_current_tasks
+  ( p_context    in varchar2 default flow_constants_pkg.gc_task_list_context_my_tasks
+  , p_prcs_id    in flow_processes.prcs_id%type default null
+  , p_user       in varchar2 default null
+  , p_groups     in varchar2 default null
+  )
+  return t_task_list_items pipelined;
+  /**
+Function get_current_tasks
+This function is a pipelined table function which is used to create the Flows for APEX task list.
+Depending upon the value of p_context, the data returned by the function varies.
+
+For p_context = 'MY_TASKS', the task list generated shows the current userTasks for the user.
+For p_context = 'SINGLE_PROCESS', the task list generated shows all of current userTasks and Approval tasks for process instance p_prcs_id.   This is used by the Task Monitor of the Flows for APEX application.
+
+  **/
    function get_current_usertask_url (
       p_process_id in flow_processes.prcs_id%type -- Process ID
 ,

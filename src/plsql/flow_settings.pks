@@ -20,7 +20,7 @@ as
   function get_clob_expression
   ( pi_prcs_id       flow_processes.prcs_id%type  default null
   , pi_sbfl_id       flow_subflows.sbfl_id%type  default null
-  , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_expr          clob
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return   clob;
 
