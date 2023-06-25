@@ -18,6 +18,24 @@ wwv_flow_api.create_language_map(
 ,p_direction_right_to_left=>'N'
 );
 wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(5648198079050972)
+,p_translation_flow_id=>100007
+,p_translation_flow_language_cd=>'ko'
+,p_direction_right_to_left=>'N'
+);
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(5672514122653306)
+,p_translation_flow_id=>100008
+,p_translation_flow_language_cd=>'zh-tw'
+,p_direction_right_to_left=>'N'
+);
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(5672660075655263)
+,p_translation_flow_id=>100009
+,p_translation_flow_language_cd=>'zh-cn'
+,p_direction_right_to_left=>'N'
+);
+wwv_flow_api.create_language_map(
  p_id=>wwv_flow_api.id(9033928420999483)
 ,p_translation_flow_id=>100001
 ,p_translation_flow_language_cd=>'fr'

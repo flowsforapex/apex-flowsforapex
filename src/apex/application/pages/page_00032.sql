@@ -25,7 +25,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230515132205'
+,p_last_upd_yyyymmddhh24miss=>'20230625101845'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(11160422865040074)
@@ -196,7 +196,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P32_LOGGING_MESSAGE_FLOW_RECD'
 ,p_item_sequence=>60
 ,p_item_plug_id=>wwv_flow_api.id(11160422865040074)
-,p_prompt=>'Log Inbound MessageFlow (not yet implemented)'
+,p_prompt=>'Log Inbound MessageFlow'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
@@ -211,7 +211,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P32_LOGGING_RETAIN_MSG_FLOW'
 ,p_item_sequence=>70
 ,p_item_plug_id=>wwv_flow_api.id(11160422865040074)
-,p_prompt=>'Message Flow Log Retention (Days) (not yet implemented)'
+,p_prompt=>'Message Flow Log Retention (Days)'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
