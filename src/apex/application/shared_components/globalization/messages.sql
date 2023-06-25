@@ -60,7 +60,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('APEX\30DA\30FC\30B8')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169330023041498)
+ p_id=>wwv_flow_api.id(7311947823288843)
 ,p_name=>'APEX:APEXPAGE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('APEX \D398\C774\C9C0')
@@ -72,10 +72,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('P\00E1gina APEX')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200828299044194)
+ p_id=>wwv_flow_api.id(7305408402254996)
 ,p_name=>'APEX:APEXPAGE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'APEX Page'
+,p_message_text=>unistr('APEX \9875')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7194547895043714)
@@ -119,7 +119,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('PL/SQL\306E\5B9F\884C')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169489074041498)
+ p_id=>wwv_flow_api.id(7312049155288843)
 ,p_name=>'APEX:EXECUTEPLSQL'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('PL/SQL \C2E4\D589')
@@ -131,10 +131,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Executar PL/SQL'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200975644044194)
+ p_id=>wwv_flow_api.id(7305545049254996)
 ,p_name=>'APEX:EXECUTEPLSQL'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Execute PL/SQL'
+,p_message_text=>unistr('\6267\884C PL/SQL')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7194609108043714)
@@ -178,7 +178,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\30B5\30A4\30AF\30EB(Oracle)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169570148041498)
+ p_id=>wwv_flow_api.id(7312101068288843)
 ,p_name=>'APEX:ORACLECYCLE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C8FC\AE30(Oracle)')
@@ -190,10 +190,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Ciclo (Oracle)'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201087972044194)
+ p_id=>wwv_flow_api.id(7305601090254996)
 ,p_name=>'APEX:ORACLECYCLE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Cycle (Oracle)'
+,p_message_text=>unistr('\5468\671F (Oracle)')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7194778776043714)
@@ -237,7 +237,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\65E5\4ED8(Oracle)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7170168876041498)
+ p_id=>wwv_flow_api.id(7312738748288843)
 ,p_name=>'APEX:ORACLEDATE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C77C\C790(Oracle)')
@@ -249,10 +249,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Data (Oracle)'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201636118044194)
+ p_id=>wwv_flow_api.id(7306288954254996)
 ,p_name=>'APEX:ORACLEDATE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Date (Oracle)'
+,p_message_text=>unistr('\65E5\671F (Oracle)')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7195363982043715)
@@ -296,7 +296,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\671F\9593(Oracle)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169730836041498)
+ p_id=>wwv_flow_api.id(7312387247288843)
 ,p_name=>'APEX:ORACLEDURATION'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\AE30\AC04(Oracle)')
@@ -308,10 +308,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('Dura\00E7\00E3o (Oracle)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201297025044194)
+ p_id=>wwv_flow_api.id(7305860273254996)
 ,p_name=>'APEX:ORACLEDURATION'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Duration (Oracle)'
+,p_message_text=>unistr('\6301\7EED\65F6\95F4 (Oracle)')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7194928897043714)
@@ -355,7 +355,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\96FB\5B50\30E1\30FC\30EB\306E\9001\4FE1')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169616416041498)
+ p_id=>wwv_flow_api.id(7312267700288843)
 ,p_name=>'APEX:SENDMAIL'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C804\C790\BA54\C77C \C804\C1A1')
@@ -367,10 +367,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Enviar e-mail'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201150101044194)
+ p_id=>wwv_flow_api.id(7305763485254996)
 ,p_name=>'APEX:SENDMAIL'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Send Email'
+,p_message_text=>unistr('\53D1\9001\7535\5B50\90AE\4EF6')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7194891834043714)
@@ -462,7 +462,7 @@ unistr('<li>\683C\7D0D\3055\308C\305F\30D0\30FC\30B8\30E7\30F3: %2.%3</li>'),
 unistr('\89E3\6C7A\3059\308B\306B\306F\3001\30C9\30AD\30E5\30E1\30F3\30C8<a href="#" >\3053\3053</a>\306B\5F93\3046\5FC5\8981\304C\3042\308A\307E\3059\3002')))
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7164465478041495)
+ p_id=>wwv_flow_api.id(7307019072288841)
 ,p_name=>'APP_APEX_UPGRADE_DETECTED'
 ,p_message_language=>'ko'
 ,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -486,7 +486,7 @@ unistr('<li>vers\00E3o armazenada: %2.%3</li>'),
 unistr('\00C9 necess\00E1rio seguir a documenta\00E7\00E3o <a href="#" >aqui</a> para resolv\00EA-la.')))
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7195990992044192)
+ p_id=>wwv_flow_api.id(7300502042254992)
 ,p_name=>'APP_APEX_UPGRADE_DETECTED'
 ,p_message_language=>'zh-cn'
 ,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -551,7 +551,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169118366041497)
+ p_id=>wwv_flow_api.id(7311756524288843)
 ,p_name=>'APP_COMPLETE_STEP'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C644\B8CC')
@@ -565,10 +565,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200655740044194)
+ p_id=>wwv_flow_api.id(7305217458254996)
 ,p_name=>'APP_COMPLETE_STEP'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Complete'
+,p_message_text=>unistr('\5B8C\6210')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -620,7 +620,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166802706041496)
+ p_id=>wwv_flow_api.id(7309495788288842)
 ,p_name=>'APP_CONFIRM_ARCHIVE_MODEL'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774 \BAA8\B378\C744 \C544\CE74\C774\BE0C\D558\B824\ACE0 \D569\B2C8\B2E4. \ACC4\C18D\D558\C2DC\ACA0\C2B5\B2C8\AE4C?')
@@ -634,10 +634,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198333493044193)
+ p_id=>wwv_flow_api.id(7302931261254994)
 ,p_name=>'APP_CONFIRM_ARCHIVE_MODEL'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'You are about to archive this model. Do you want to continue?'
+,p_message_text=>unistr('\60A8\5373\5C06\5B58\6863\6B64\6A21\578B\3002\662F\5426\8981\7EE7\7EED\FF1F')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -689,7 +689,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7164884428041495)
+ p_id=>wwv_flow_api.id(7307423274288841)
 ,p_name=>'APP_CONFIRM_DELETE_INSTANCE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C0AD\C81C\B429\B2C8\B2E4. \C124\BA85\C744 \CD94\AC00\D558\ACE0(\C120\D0DD\C0AC\D56D) \D655\C778\C744 \B204\B974\C2ED\C2DC\C624.')
@@ -703,10 +703,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196319590044192)
+ p_id=>wwv_flow_api.id(7300975772254993)
 ,p_name=>'APP_CONFIRM_DELETE_INSTANCE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'This will delete the flow instance. Please add a comment (optional) and click confirm.'
+,p_message_text=>unistr('\8FD9\5C06\5220\9664\6D41\7A0B\5B9E\4F8B\3002\8BF7\6DFB\52A0\5907\6CE8\FF08\53EF\9009\FF09\FF0C\7136\540E\5355\51FB\201C\786E\8BA4\201D\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -758,7 +758,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165876376041496)
+ p_id=>wwv_flow_api.id(7308400474288841)
 ,p_name=>'APP_CONFIRM_DELETE_PROCESS_VARIABLE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D504\B85C\C138\C2A4 \BCC0\C218\AC00 \C0AD\C81C\B429\B2C8\B2E4. \C124\BA85\C744 \CD94\AC00\D558\ACE0(\C120\D0DD\C0AC\D56D) \D655\C778\C744 \B204\B974\C2ED\C2DC\C624.')
@@ -772,10 +772,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197328337044192)
+ p_id=>wwv_flow_api.id(7301943226254994)
 ,p_name=>'APP_CONFIRM_DELETE_PROCESS_VARIABLE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'This will delete the process variable. Please add a comment (optional) and click confirm.'
+,p_message_text=>unistr('\8FD9\5C06\5220\9664\8FDB\7A0B\53D8\91CF\3002\8BF7\6DFB\52A0\5907\6CE8\FF08\53EF\9009\FF09\FF0C\7136\540E\5355\51FB\201C\786E\8BA4\201D\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -827,7 +827,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168682984041497)
+ p_id=>wwv_flow_api.id(7311274847288843)
 ,p_name=>'APP_CONFIRM_DEPRECATE_MODEL'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774 \BAA8\B378\C744 \B354 \C774\C0C1 \C0AC\C6A9\B418\C9C0 \C54A\B294 \AC83\C73C\B85C \D45C\C2DC\D558\B824\ACE0 \D569\B2C8\B2E4. \ACC4\C18D\D558\C2DC\ACA0\C2B5\B2C8\AE4C?')
@@ -841,10 +841,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200101972044194)
+ p_id=>wwv_flow_api.id(7304779820254995)
 ,p_name=>'APP_CONFIRM_DEPRECATE_MODEL'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'You are about to mark as deprecated this model. Do you want to continue?'
+,p_message_text=>unistr('\60A8\5373\5C06\6807\8BB0\4E3A\5DF2\5F03\7528\6B64\6A21\578B\3002\662F\5426\8981\7EE7\7EED\FF1F')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -896,7 +896,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167610635041497)
+ p_id=>wwv_flow_api.id(7310262046288842)
 ,p_name=>'APP_CONFIRM_EDIT_RELEASE_DIAGRAM'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\B9B4\B9AC\C988\B41C \BAA8\B378\C758 \B2E4\C774\C5B4\ADF8\B7A8\C744 \C218\C815\D558\B824\ACE0 \D569\B2C8\B2E4. \C774 \ACBD\C6B0 \D574\B2F9 \BAA8\B378\C758 \C2E4\D589 \C911\C778 \C778\C2A4\D134\C2A4\AC00 \C190\C0C1\B420 \C218 \C788\C2B5\B2C8\B2E4. \ACC4\C18D\D558\C2DC\ACA0\C2B5\B2C8\AE4C?')
@@ -910,10 +910,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199104026044193)
+ p_id=>wwv_flow_api.id(7303790919254995)
 ,p_name=>'APP_CONFIRM_EDIT_RELEASE_DIAGRAM'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Your are about to modify a diagram of a released model. That could possibly breaks running instances of that model. Do you want to continue?'
+,p_message_text=>unistr('\60A8\5C06\8981\4FEE\6539\5DF2\53D1\5E03\6A21\578B\7684\56FE\8868\3002\8FD9\53EF\80FD\4F1A\7834\574F\8BE5\6A21\578B\7684\8FD0\884C\5B9E\4F8B\3002\662F\5426\8981\7EE7\7EED\FF1F')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -965,7 +965,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168758869041497)
+ p_id=>wwv_flow_api.id(7311339586288843)
 ,p_name=>'APP_CONFIRM_RELEASE_MODEL'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774 \BAA8\B378\C744 \B9B4\B9AC\C2A4\D558\B824\ACE0 \D569\B2C8\B2E4. \ADF8\B7EC\BA74 \D604\C7AC \B9B4\B9AC\C2A4\B41C \BC84\C804\C774 \B354 \C774\C0C1 \C0AC\C6A9\B418\C9C0 \C54A\B294 \AC83\C73C\B85C \D45C\C2DC\B429\B2C8\B2E4. \ACC4\C18D\D558\C2DC\ACA0\C2B5\B2C8\AE4C?')
@@ -979,10 +979,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200286532044194)
+ p_id=>wwv_flow_api.id(7304834798254995)
 ,p_name=>'APP_CONFIRM_RELEASE_MODEL'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'You are about to release this model, this will mark as deprecated the current released version. Do you want to continue?'
+,p_message_text=>unistr('\60A8\5373\5C06\53D1\5E03\6B64\6A21\578B\FF0C\8FD9\4F1A\5C06\5F53\524D\53D1\5E03\7684\7248\672C\6807\8BB0\4E3A\5DF2\8FC7\65F6\3002\662F\5426\8981\7EE7\7EED\FF1F')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1034,7 +1034,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166980320041496)
+ p_id=>wwv_flow_api.id(7309524808288842)
 ,p_name=>'APP_CONFIRM_RELEASE_STEP'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\B2E8\ACC4\C5D0\C11C \C608\C57D\C744 \B9B4\B9AC\C2A4\D558\B824\ACE0 \D569\B2C8\B2E4. \ACC4\C18D\D558\C2DC\ACA0\C2B5\B2C8\AE4C?')
@@ -1048,10 +1048,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198429847044193)
+ p_id=>wwv_flow_api.id(7303050809254994)
 ,p_name=>'APP_CONFIRM_RELEASE_STEP'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'You are about to release reservation on step(s). Do you want to continue?'
+,p_message_text=>unistr('\60A8\5C06\5728\6B65\9AA4\4E2D\91CA\653E\4FDD\7559\3002\662F\5426\8981\7EE7\7EED\FF1F')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1103,7 +1103,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7164650055041495)
+ p_id=>wwv_flow_api.id(7307287004288841)
 ,p_name=>'APP_CONFIRM_RESET_INSTANCE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\ADF8\B7EC\BA74 \D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C7AC\C124\C815\B429\B2C8\B2E4. \C124\BA85\C744 \CD94\AC00\D558\ACE0(\C120\D0DD\C0AC\D56D) \D655\C778\C744 \B204\B974\C2ED\C2DC\C624.')
@@ -1117,10 +1117,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196114635044192)
+ p_id=>wwv_flow_api.id(7300789027254993)
 ,p_name=>'APP_CONFIRM_RESET_INSTANCE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'This will reset the flow instance. Please add a comment (optional) and click confirm.'
+,p_message_text=>unistr('\8FD9\5C06\91CD\7F6E\6D41\7A0B\5B9E\4F8B\3002\8BF7\6DFB\52A0\5907\6CE8\FF08\53EF\9009\FF09\FF0C\7136\540E\5355\51FB\201C\786E\8BA4\201D\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1128,13 +1128,6 @@ wwv_flow_api.create_message(
 ,p_name=>'APP_CONFIRM_RESET_INSTANCE'
 ,p_message_language=>'zh-tw'
 ,p_message_text=>unistr('\9019\6703\91CD\8A2D\6D41\7A0B\5BE6\4F8B\3002\8ACB\65B0\589E\8A3B\89E3 (\9078\64C7\6027)\FF0C\7136\5F8C\6309\4E00\4E0B\78BA\8A8D\3002')
-,p_is_js_message=>true
-);
-wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7134126038837681)
-,p_name=>'APP_CONFIRM_RESTART_STEP'
-,p_message_language=>'de'
-,p_message_text=>unistr('Subflow wird neu gestartet. Bitte f\00FCgen sie einen Kommentar hinzu (optional) und best\00E4tigen sie.')
 ,p_is_js_message=>true
 );
 wwv_flow_api.component_end;
@@ -1148,6 +1141,13 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_message(
+ p_id=>wwv_flow_api.id(7134126038837681)
+,p_name=>'APP_CONFIRM_RESTART_STEP'
+,p_message_language=>'de'
+,p_message_text=>unistr('Subflow wird neu gestartet. Bitte f\00FCgen sie einen Kommentar hinzu (optional) und best\00E4tigen sie.')
+,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7072975164227666)
@@ -1184,7 +1184,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165740295041496)
+ p_id=>wwv_flow_api.id(7308364085288841)
 ,p_name=>'APP_CONFIRM_RESTART_STEP'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774\B807\AC8C \D558\BA74 \D558\C704 \D50C\B85C\C6B0\AC00 \B2E4\C2DC \C2DC\C791\B429\B2C8\B2E4. \C124\BA85\C744 \CD94\AC00\D558\ACE0(\C120\D0DD\C0AC\D56D) \D655\C778\C744 \B204\B974\C2ED\C2DC\C624.')
@@ -1198,10 +1198,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197257310044192)
+ p_id=>wwv_flow_api.id(7301876838254994)
 ,p_name=>'APP_CONFIRM_RESTART_STEP'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'This will restart the subflow. Please add a comment (optional) and click confirm.'
+,p_message_text=>unistr('\8FD9\5C06\91CD\65B0\542F\52A8\5B50\6D41\7A0B\3002\8BF7\6DFB\52A0\5907\6CE8\FF08\53EF\9009\FF09\FF0C\7136\540E\5355\51FB\201C\786E\8BA4\201D\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1253,7 +1253,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7164729010041495)
+ p_id=>wwv_flow_api.id(7307361617288841)
 ,p_name=>'APP_CONFIRM_TERMINATE_INSTANCE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C885\B8CC\B429\B2C8\B2E4. \C124\BA85\C744 \CD94\AC00\D558\ACE0(\C120\D0DD\C0AC\D56D) \D655\C778\C744 \B204\B974\C2ED\C2DC\C624.')
@@ -1267,10 +1267,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196283303044192)
+ p_id=>wwv_flow_api.id(7300804262254993)
 ,p_name=>'APP_CONFIRM_TERMINATE_INSTANCE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'This will terminate the flow instance. Please add a comment (optional) and click confirm.'
+,p_message_text=>unistr('\8FD9\5C06\7EC8\6B62\6D41\7A0B\5B9E\4F8B\3002\8BF7\6DFB\52A0\5907\6CE8\FF08\53EF\9009\FF09\FF0C\7136\540E\5355\51FB\201C\786E\8BA4\201D\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1322,7 +1322,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169032306041497)
+ p_id=>wwv_flow_api.id(7311625732288843)
 ,p_name=>'APP_DELETE_INSTANCE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4 \C0AD\C81C')
@@ -1336,10 +1336,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200541007044194)
+ p_id=>wwv_flow_api.id(7305152279254996)
 ,p_name=>'APP_DELETE_INSTANCE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Delete Flow Instance'
+,p_message_text=>unistr('\5220\9664\6D41\7A0B\5B9E\4F8B')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1391,7 +1391,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168565752041497)
+ p_id=>wwv_flow_api.id(7311176516288843)
 ,p_name=>'APP_DIAGRAM_INSTANCES_NB'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774 \D50C\B85C\C6B0\C640 \C5F0\AD00\B41C %0\AC1C\C758 \D504\B85C\C138\C2A4 \C778\C2A4\D134\C2A4\AC00 \C788\C2B5\B2C8\B2E4.')
@@ -1405,10 +1405,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200017470044193)
+ p_id=>wwv_flow_api.id(7304673016254995)
 ,p_name=>'APP_DIAGRAM_INSTANCES_NB'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'There are %0 process instances associated to this flow.'
+,p_message_text=>unistr('\6709 %0 \4E2A\8FDB\7A0B\5B9E\4F8B\4E0E\6B64\6D41\7A0B\5173\8054\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1460,7 +1460,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166685123041496)
+ p_id=>wwv_flow_api.id(7309287591288842)
 ,p_name=>'APP_ERR_GATEWAY_CONNECTION_EMPTY'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C811\C18D\C744 \C120\D0DD\D558\C2ED\C2DC\C624.')
@@ -1474,10 +1474,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198122566044193)
+ p_id=>wwv_flow_api.id(7302776913254994)
 ,p_name=>'APP_ERR_GATEWAY_CONNECTION_EMPTY'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Please select a connection'
+,p_message_text=>unistr('\8BF7\9009\62E9\8FDE\63A5')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1537,7 +1537,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166536027041496)
+ p_id=>wwv_flow_api.id(7309177009288842)
 ,p_name=>'APP_ERR_GATEWAY_ONLY_ONE_CONNECTION'
 ,p_message_language=>'ko'
 ,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -1553,11 +1553,11 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198014891044193)
+ p_id=>wwv_flow_api.id(7302699342254994)
 ,p_name=>'APP_ERR_GATEWAY_ONLY_ONE_CONNECTION'
 ,p_message_language=>'zh-cn'
 ,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'Please select only one connection',
+unistr('\8BF7\4EC5\9009\62E9\4E00\4E2A\8FDE\63A5'),
 ''))
 ,p_is_js_message=>true
 );
@@ -1612,7 +1612,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167863779041497)
+ p_id=>wwv_flow_api.id(7310450415288842)
 ,p_name=>'APP_ERR_MODEL_EXIST'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BAA8\B378 "%0" \BC84\C804 %1\C774(\AC00) \C774\BBF8 \C788\C2B5\B2C8\B2E4.')
@@ -1626,10 +1626,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199372701044193)
+ p_id=>wwv_flow_api.id(7303990071254995)
 ,p_name=>'APP_ERR_MODEL_EXIST'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Model "%0" Version %1 already exists.'
+,p_message_text=>unistr('\6A21\578B "%0" \7248\672C %1 \5DF2\5B58\5728\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1681,7 +1681,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167787095041497)
+ p_id=>wwv_flow_api.id(7310320080288842)
 ,p_name=>'APP_ERR_MODEL_VERSION_EXIST'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BC84\C804\C774 \C774\BBF8 \C874\C7AC\D569\B2C8\B2E4.')
@@ -1695,10 +1695,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199235137044193)
+ p_id=>wwv_flow_api.id(7303823223254995)
 ,p_name=>'APP_ERR_MODEL_VERSION_EXIST'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Version already exists.'
+,p_message_text=>unistr('\7248\672C\5DF2\5B58\5728\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1750,7 +1750,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7170278650041498)
+ p_id=>wwv_flow_api.id(7312876325288843)
 ,p_name=>'APP_ERR_ONLY_DRAFT'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\CD08\C548 \BAA8\B378\C5D0 \B300\D574\C11C\B9CC \ACB9\CCD0\C501\B2C8\B2E4.')
@@ -1764,10 +1764,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201760188044194)
+ p_id=>wwv_flow_api.id(7306325092254996)
 ,p_name=>'APP_ERR_ONLY_DRAFT'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Overwrite only possible for draft models.'
+,p_message_text=>unistr('\53EA\80FD\8986\76D6\8349\7A3F\6A21\578B\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1819,7 +1819,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166461624041496)
+ p_id=>wwv_flow_api.id(7309098893288842)
 ,p_name=>'APP_ERR_PROV_VAR_DATE_NOT_DATE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\AC12\C740 \C77C\C790\C5EC\C57C \D569\B2C8\B2E4.')
@@ -1833,10 +1833,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197949842044193)
+ p_id=>wwv_flow_api.id(7302584186254994)
 ,p_name=>'APP_ERR_PROV_VAR_DATE_NOT_DATE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Value must be a date'
+,p_message_text=>unistr('\503C\5FC5\987B\4E3A\65E5\671F')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1888,7 +1888,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166022009041496)
+ p_id=>wwv_flow_api.id(7308605087288842)
 ,p_name=>'APP_ERR_PROV_VAR_NAME_EMPTY'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BCC0\C218 \C774\B984\C5D0\B294 \AC12\C774 \C788\C5B4\C57C \D569\B2C8\B2E4.')
@@ -1902,10 +1902,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197504291044192)
+ p_id=>wwv_flow_api.id(7302120157254994)
 ,p_name=>'APP_ERR_PROV_VAR_NAME_EMPTY'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Variable Name must have a value'
+,p_message_text=>unistr('\53D8\91CF\540D\79F0\5FC5\987B\5177\6709\503C')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -1957,7 +1957,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166359341041496)
+ p_id=>wwv_flow_api.id(7308972679288842)
 ,p_name=>'APP_ERR_PROV_VAR_NUM_NOT_NUMBER'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\AC12\C740 \C22B\C790\C5EC\C57C \D569\B2C8\B2E4.')
@@ -1971,10 +1971,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197857039044192)
+ p_id=>wwv_flow_api.id(7302479884254994)
 ,p_name=>'APP_ERR_PROV_VAR_NUM_NOT_NUMBER'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Value must be a number'
+,p_message_text=>unistr('\503C\5FC5\987B\4E3A\6570\5B57')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2026,7 +2026,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7164501527041495)
+ p_id=>wwv_flow_api.id(7307117414288841)
 ,p_name=>'APP_ERR_PROV_VAR_TSTZ_NOT_TSTZ'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\AC12\C740 \C2DC\AC04\AE30\B85D\C774\C5B4\C57C \D569\B2C8\B2E4.')
@@ -2040,7 +2040,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196029928044192)
+ p_id=>wwv_flow_api.id(7300697441254993)
 ,p_name=>'APP_ERR_PROV_VAR_TSTZ_NOT_TSTZ'
 ,p_message_language=>'zh-cn'
 ,p_message_text=>unistr('\503C\5FC5\987B\4E3A\65F6\95F4\6233')
@@ -2052,6 +2052,18 @@ wwv_flow_api.create_message(
 ,p_message_language=>'zh-tw'
 ,p_message_text=>unistr('\503C\5FC5\9808\662F\6642\6233')
 ,p_is_js_message=>true
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7134563224837681)
@@ -2072,18 +2084,6 @@ wwv_flow_api.create_message(
 ,p_message_language=>'es'
 ,p_message_text=>'El tipo de variable debe tener un valor'
 ,p_is_js_message=>true
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7185068474043112)
@@ -2107,7 +2107,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166159425041496)
+ p_id=>wwv_flow_api.id(7308729558288842)
 ,p_name=>'APP_ERR_PROV_VAR_TYPE_EMPTY'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BCC0\C218 \C720\D615\C5D0\B294 \AC12\C774 \C788\C5B4\C57C \D569\B2C8\B2E4.')
@@ -2121,10 +2121,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197668731044192)
+ p_id=>wwv_flow_api.id(7302268098254994)
 ,p_name=>'APP_ERR_PROV_VAR_TYPE_EMPTY'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Variable Type must have a value'
+,p_message_text=>unistr('\53D8\91CF\7C7B\578B\5FC5\987B\5177\6709\503C')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2176,7 +2176,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166229874041496)
+ p_id=>wwv_flow_api.id(7308880595288842)
 ,p_name=>'APP_ERR_PROV_VAR_VALUE_EMPTY'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\AC12\C5D0\B294 \AC12\C774 \C788\C5B4\C57C \D569\B2C8\B2E4.')
@@ -2190,10 +2190,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197775928044192)
+ p_id=>wwv_flow_api.id(7302372394254994)
 ,p_name=>'APP_ERR_PROV_VAR_VALUE_EMPTY'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Value must have a value'
+,p_message_text=>unistr('\503C\5FC5\987B\5177\6709\503C')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2245,7 +2245,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168441348041497)
+ p_id=>wwv_flow_api.id(7311038504288843)
 ,p_name=>'APP_INSTANCE_CREATED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C778\C2A4\D134\C2A4\AC00 \C0DD\C131\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2259,10 +2259,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199945812044193)
+ p_id=>wwv_flow_api.id(7304584951254995)
 ,p_name=>'APP_INSTANCE_CREATED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Instance created.'
+,p_message_text=>unistr('\5DF2\521B\5EFA\5B9E\4F8B\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2314,7 +2314,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165257212041496)
+ p_id=>wwv_flow_api.id(7307855068288841)
 ,p_name=>'APP_INSTANCE_DELETED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C0AD\C81C\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2328,10 +2328,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196794788044192)
+ p_id=>wwv_flow_api.id(7301386833254993)
 ,p_name=>'APP_INSTANCE_DELETED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Flow instance deleted.'
+,p_message_text=>unistr('\5DF2\5220\9664\6D41\7A0B\5B9E\4F8B\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2383,7 +2383,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165015875041495)
+ p_id=>wwv_flow_api.id(7307661135288841)
 ,p_name=>'APP_INSTANCE_RESET'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C7AC\C124\C815\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2397,10 +2397,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196521175044192)
+ p_id=>wwv_flow_api.id(7301167029254993)
 ,p_name=>'APP_INSTANCE_RESET'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Flow instance reset.'
+,p_message_text=>unistr('\6D41\7A0B\5B9E\4F8B\91CD\7F6E\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2452,7 +2452,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7164960536041495)
+ p_id=>wwv_flow_api.id(7307538316288841)
 ,p_name=>'APP_INSTANCE_STARTED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C2DC\C791\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2466,10 +2466,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196477724044192)
+ p_id=>wwv_flow_api.id(7301065698254993)
 ,p_name=>'APP_INSTANCE_STARTED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Flow instance started.'
+,p_message_text=>unistr('\6D41\7A0B\5B9E\4F8B\5DF2\542F\52A8\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2521,7 +2521,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165142470041496)
+ p_id=>wwv_flow_api.id(7307724182288841)
 ,p_name=>'APP_INSTANCE_TERMINATED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C885\B8CC\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2535,10 +2535,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196613288044192)
+ p_id=>wwv_flow_api.id(7301208003254993)
 ,p_name=>'APP_INSTANCE_TERMINATED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Flow instance terminated.'
+,p_message_text=>unistr('\6D41\7A0B\5B9E\4F8B\5DF2\7EC8\6B62\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2584,7 +2584,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\30E2\30C7\30EB\304C\30B3\30D4\30FC\3055\308C\307E\3057\305F\3002')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7166787427041496)
+ p_id=>wwv_flow_api.id(7309330865288842)
 ,p_name=>'APP_MODEL_COPIED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BAA8\B378\C774 \BCF5\C0AC\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2596,10 +2596,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Modelo copiado.'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198280590044193)
+ p_id=>wwv_flow_api.id(7302861908254994)
 ,p_name=>'APP_MODEL_COPIED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Model copied.'
+,p_message_text=>unistr('\5DF2\590D\5236\6A21\578B\3002')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7191976453043713)
@@ -2649,7 +2649,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168300209041497)
+ p_id=>wwv_flow_api.id(7310930144288843)
 ,p_name=>'APP_MODEL_IMPORTED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BAA8\B378\C744 \C784\D3EC\D2B8\D588\C2B5\B2C8\B2E4.')
@@ -2663,10 +2663,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199836135044193)
+ p_id=>wwv_flow_api.id(7304429272254995)
 ,p_name=>'APP_MODEL_IMPORTED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Model imported.'
+,p_message_text=>unistr('\5DF2\5BFC\5165\6A21\578B\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2718,7 +2718,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169275549041498)
+ p_id=>wwv_flow_api.id(7311826367288843)
 ,p_name=>'APP_NEW_VERSION_ADDED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C0C8 \BC84\C804\C774 \CD94\AC00\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2732,10 +2732,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200786766044194)
+ p_id=>wwv_flow_api.id(7305337063254996)
 ,p_name=>'APP_NEW_VERSION_ADDED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'New version added.'
+,p_message_text=>unistr('\5DF2\6DFB\52A0\65B0\7248\672C\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2787,7 +2787,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168250984041497)
+ p_id=>wwv_flow_api.id(7310807689288843)
 ,p_name=>'APP_OVERWRITE_WARN'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\AE30\C874 \BAA8\B378\C5D0 \C5F0\AD00\B41C \C2E4\D589 \C911\C778 \C778\C2A4\D134\C2A4\AC00 \C788\C744 \ACBD\C6B0 \C774\B85C \C778\D574 \C624\B958\AC00 \BC1C\C0DD\D560 \C218 \C788\C2B5\B2C8\B2E4. \ACC4\C18D\D558\C2DC\ACA0\C2B5\B2C8\AE4C?')
@@ -2801,10 +2801,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199744210044193)
+ p_id=>wwv_flow_api.id(7304365653254995)
 ,p_name=>'APP_OVERWRITE_WARN'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'If there are running instances associated to the existing model, then these might cause errors. Are you sure to continue?'
+,p_message_text=>unistr('\5982\679C\5B58\5728\4E0E\73B0\6709\6A21\578B\5173\8054\7684\6B63\5728\8FD0\884C\7684\5B9E\4F8B\FF0C\5219\8FD9\4E9B\5B9E\4F8B\53EF\80FD\4F1A\5BFC\81F4\9519\8BEF\3002\662F\5426\786E\5B9A\8981\7EE7\7EED\FF1F')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2856,7 +2856,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165429616041496)
+ p_id=>wwv_flow_api.id(7308048354288841)
 ,p_name=>'APP_PROCESS_VARIABLE_ADDED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D504\B85C\C138\C2A4 \BCC0\C218\AC00 \CD94\AC00\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2870,10 +2870,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196957644044192)
+ p_id=>wwv_flow_api.id(7301590568254994)
 ,p_name=>'APP_PROCESS_VARIABLE_ADDED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Process variable added.'
+,p_message_text=>unistr('\5DF2\6DFB\52A0\8FDB\7A0B\53D8\91CF\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2925,7 +2925,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165972856041496)
+ p_id=>wwv_flow_api.id(7308584013288841)
 ,p_name=>'APP_PROCESS_VARIABLE_DELETED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D504\B85C\C138\C2A4 \BCC0\C218\AC00 \C0AD\C81C\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -2939,10 +2939,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197497707044192)
+ p_id=>wwv_flow_api.id(7302060366254994)
 ,p_name=>'APP_PROCESS_VARIABLE_DELETED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Process variable deleted.'
+,p_message_text=>unistr('\6D41\7A0B\53D8\91CF\5DF2\5220\9664\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -2994,7 +2994,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165528525041496)
+ p_id=>wwv_flow_api.id(7308153593288841)
 ,p_name=>'APP_PROCESS_VARIABLE_SAVED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D504\B85C\C138\C2A4 \BCC0\C218\AC00 \C800\C7A5\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -3008,10 +3008,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197097858044192)
+ p_id=>wwv_flow_api.id(7301615306254994)
 ,p_name=>'APP_PROCESS_VARIABLE_SAVED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Process variable saved.'
+,p_message_text=>unistr('\8FDB\7A0B\53D8\91CF\5DF2\4FDD\5B58\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3027,6 +3027,18 @@ wwv_flow_api.create_message(
 ,p_message_language=>'de'
 ,p_message_text=>unistr('Neu-ausl\00F6sen')
 ,p_is_js_message=>true
+);
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(73507335747013782)
@@ -3063,23 +3075,11 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7170594997041498)
+ p_id=>wwv_flow_api.id(7313192369288844)
 ,p_name=>'APP_RESCHEDULE_TIMER'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C2A4\CF00\C904 \C870\C815')
 ,p_is_js_message=>true
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7214613120045493)
@@ -3089,10 +3089,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7202050400044195)
+ p_id=>wwv_flow_api.id(7306644535254996)
 ,p_name=>'APP_RESCHEDULE_TIMER'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Reschedule'
+,p_message_text=>unistr('\91CD\65B0\8BA1\5212')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3144,7 +3144,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168813357041497)
+ p_id=>wwv_flow_api.id(7311442149288843)
 ,p_name=>'APP_RESET_INSTANCE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4 \C7AC\C124\C815')
@@ -3158,10 +3158,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200310842044194)
+ p_id=>wwv_flow_api.id(7304953975254995)
 ,p_name=>'APP_RESET_INSTANCE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Reset Flow Instance'
+,p_message_text=>unistr('\91CD\7F6E\6D41\7A0B\5B9E\4F8B')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3213,7 +3213,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165658663041496)
+ p_id=>wwv_flow_api.id(7308210418288841)
 ,p_name=>'APP_RESTART_STEP'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C7AC\C2DC\C791')
@@ -3227,10 +3227,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7197168579044192)
+ p_id=>wwv_flow_api.id(7301719511254994)
 ,p_name=>'APP_RESTART_STEP'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Re-start'
+,p_message_text=>unistr('\91CD\65B0\542F\52A8')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3282,7 +3282,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7165314152041496)
+ p_id=>wwv_flow_api.id(7307902084288841)
 ,p_name=>'APP_SUBLFOW_RESTARTED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D558\C704 \D50C\B85C\C6B0\AC00 \C7AC\C2DC\C791\B418\C5C8\C2B5\B2C8\B2E4.')
@@ -3296,10 +3296,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7196867244044192)
+ p_id=>wwv_flow_api.id(7301465463254993)
 ,p_name=>'APP_SUBLFOW_RESTARTED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Subflow restarted.'
+,p_message_text=>unistr('\5B50\6D41\7A0B\5DF2\91CD\65B0\542F\52A8\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3345,7 +3345,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\5165\51FA\529B\30DE\30C3\30D4\30F3\30B0')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7170440963041498)
+ p_id=>wwv_flow_api.id(7313000683288844)
 ,p_name=>'APP_TAB_IN_OUT_MAPPING'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C785\B825/\CD9C\B825 \B9E4\D551')
@@ -3357,10 +3357,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('Mapeamento de Entrada/Sa\00EDda')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201921529044194)
+ p_id=>wwv_flow_api.id(7306563759254996)
 ,p_name=>'APP_TAB_IN_OUT_MAPPING'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'In/Out Mapping'
+,p_message_text=>unistr('\4F20\5165/\8F93\51FA\6620\5C04')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7195626173043715)
@@ -3404,7 +3404,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\5909\6570\5F0F')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7170301162041498)
+ p_id=>wwv_flow_api.id(7312969146288844)
 ,p_name=>'APP_TAB_VAR_EXP'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BCC0\C218 \D45C\D604\C2DD')
@@ -3416,10 +3416,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('Express\00F5es de Vari\00E1vel')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201843021044194)
+ p_id=>wwv_flow_api.id(7306451002254996)
 ,p_name=>'APP_TAB_VAR_EXP'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Variable Expressions'
+,p_message_text=>unistr('\53D8\91CF\8868\8FBE\5F0F')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7195549885043715)
@@ -3469,7 +3469,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168953259041497)
+ p_id=>wwv_flow_api.id(7311528705288843)
 ,p_name=>'APP_TERMINATE_INSTANCE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \C778\C2A4\D134\C2A4 \C885\B8CC')
@@ -3483,10 +3483,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7200486517044194)
+ p_id=>wwv_flow_api.id(7305038641254996)
 ,p_name=>'APP_TERMINATE_INSTANCE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Terminate Flow Instance'
+,p_message_text=>unistr('\7EC8\6B62\6D41\7A0B\5B9E\4F8B')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3532,7 +3532,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('%0 - \30D0\30FC\30B8\30E7\30F3%1')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167449921041497)
+ p_id=>wwv_flow_api.id(7310011607288842)
 ,p_name=>'APP_TITLE_MODEL'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('%0 - \BC84\C804 %1')
@@ -3544,10 +3544,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('%0 - Vers\00E3o %1')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198922842044193)
+ p_id=>wwv_flow_api.id(7303500019254995)
 ,p_name=>'APP_TITLE_MODEL'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'%0 - Version %1'
+,p_message_text=>unistr('%0 - \7248\672C %1')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7192688305043714)
@@ -3591,7 +3591,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\65B0\898F\30E2\30C7\30EB')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167370475041497)
+ p_id=>wwv_flow_api.id(7309965979288842)
 ,p_name=>'APP_TITLE_NEW_MODEL'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C0C8 \BAA8\B378')
@@ -3603,10 +3603,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Novo modelo'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198883704044193)
+ p_id=>wwv_flow_api.id(7303432433254995)
 ,p_name=>'APP_TITLE_NEW_MODEL'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'New Model'
+,p_message_text=>unistr('\65B0\5EFA\6A21\578B')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7192546044043714)
@@ -3656,7 +3656,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167573218041497)
+ p_id=>wwv_flow_api.id(7310123949288842)
 ,p_name=>'APP_TITLE_RESTART_STEP'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\B2E8\ACC4 \C7AC\C2DC\C791')
@@ -3670,10 +3670,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199000048044193)
+ p_id=>wwv_flow_api.id(7303650167254995)
 ,p_name=>'APP_TITLE_RESTART_STEP'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Re-start Step'
+,p_message_text=>unistr('\91CD\65B0\542F\52A8\6B65\9AA4')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3761,7 +3761,7 @@ unistr('<li>\30B3\30FC\30C9\30FB\30D0\30FC\30B8\30E7\30F3: %2</li>'),
 unistr('\554F\984C\3092\56DE\907F\3059\308B\306B\306F\3001\7BA1\7406\8005\306B\9023\7D61\3057\3066\304F\3060\3055\3044\3002')))
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7164361768041495)
+ p_id=>wwv_flow_api.id(7306991424288841)
 ,p_name=>'APP_VERSION_MISMATCH'
 ,p_message_language=>'ko'
 ,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -3787,7 +3787,7 @@ unistr('<li>vers\00E3o do c\00F3digo: %2</li>'),
 'Entre em contato com o administrador para evitar problemas.'))
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7195857216044192)
+ p_id=>wwv_flow_api.id(7300481436254992)
 ,p_name=>'APP_VERSION_MISMATCH'
 ,p_message_language=>'zh-cn'
 ,p_message_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -3854,7 +3854,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167239557041497)
+ p_id=>wwv_flow_api.id(7309831622288842)
 ,p_name=>'APP_VIEW'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\BCF4\AE30')
@@ -3868,10 +3868,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198751261044193)
+ p_id=>wwv_flow_api.id(7303381110254995)
 ,p_name=>'APP_VIEW'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'View'
+,p_message_text=>unistr('\67E5\770B')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3923,7 +3923,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167054674041496)
+ p_id=>wwv_flow_api.id(7309612553288842)
 ,p_name=>'APP_VIEWER_TITLE_NO_PROCESS'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \BDF0\C5B4')
@@ -3937,10 +3937,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198565742044193)
+ p_id=>wwv_flow_api.id(7303175338254994)
 ,p_name=>'APP_VIEWER_TITLE_NO_PROCESS'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Flow Viewer'
+,p_message_text=>unistr('\6D41\7A0B\67E5\770B\5668')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -3992,7 +3992,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167196726041497)
+ p_id=>wwv_flow_api.id(7309717285288842)
 ,p_name=>'APP_VIEWER_TITLE_PROCESS_SELECTED'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\D50C\B85C\C6B0 \BDF0\C5B4(%0)')
@@ -4006,10 +4006,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7198640392044193)
+ p_id=>wwv_flow_api.id(7303215994254994)
 ,p_name=>'APP_VIEWER_TITLE_PROCESS_SELECTED'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Flow Viewer (%0)'
+,p_message_text=>unistr('\6D41\7A0B\67E5\770B\5668 (%0)')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -4067,7 +4067,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\30B5\30A4\30AF\30EB(ISO 8601)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7170099314041498)
+ p_id=>wwv_flow_api.id(7312634227288843)
 ,p_name=>'BPMN:TIMECYCLE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C8FC\AE30(ISO 8601)')
@@ -4079,10 +4079,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Ciclo (ISO 8601)'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201520375044194)
+ p_id=>wwv_flow_api.id(7306155133254996)
 ,p_name=>'BPMN:TIMECYCLE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Cycle (ISO 8601)'
+,p_message_text=>unistr('\5468\671F (ISO 8601)')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7195246751043715)
@@ -4126,7 +4126,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\65E5\4ED8(ISO 8601)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169825498041498)
+ p_id=>wwv_flow_api.id(7312488661288843)
 ,p_name=>'BPMN:TIMEDATE'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C77C\C790(ISO 8601)')
@@ -4138,10 +4138,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>'Data (ISO 8601)'
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201312395044194)
+ p_id=>wwv_flow_api.id(7305956522254996)
 ,p_name=>'BPMN:TIMEDATE'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Date (ISO 8601)'
+,p_message_text=>unistr('\65E5\671F (ISO 8601)')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7195052945043715)
@@ -4185,7 +4185,7 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('\671F\9593(ISO 8601)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7169964733041498)
+ p_id=>wwv_flow_api.id(7312562726288843)
 ,p_name=>'BPMN:TIMEDURATION'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\AE30\AC04(ISO 8601)')
@@ -4197,10 +4197,10 @@ wwv_flow_api.create_message(
 ,p_message_text=>unistr('Dura\00E7\00E3o (ISO 8601)')
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7201423381044194)
+ p_id=>wwv_flow_api.id(7306078669254996)
 ,p_name=>'BPMN:TIMEDURATION'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Duration (ISO 8601)'
+,p_message_text=>unistr('\6301\7EED\65F6\95F4 (ISO 8601)')
 );
 wwv_flow_api.create_message(
  p_id=>wwv_flow_api.id(7195197811043715)
@@ -4262,7 +4262,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168110200041497)
+ p_id=>wwv_flow_api.id(7310707461288843)
 ,p_name=>'DGRM_UK'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774\B984 \BC0F \C0C1\D0DC\AC00 \B3D9\C77C\D55C \D50C\B85C\C6B0\AC00 \C774\BBF8 \C788\C2B5\B2C8\B2E4.')
@@ -4276,10 +4276,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199612956044193)
+ p_id=>wwv_flow_api.id(7304217366254995)
 ,p_name=>'DGRM_UK'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'A flow already exists with the same name and status.'
+,p_message_text=>unistr('\5DF2\5B58\5728\5177\6709\76F8\540C\540D\79F0\548C\72B6\6001\7684\6D41\7A0B\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -4331,7 +4331,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7168086523041497)
+ p_id=>wwv_flow_api.id(7310669434288842)
 ,p_name=>'DGRM_UK2'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774 \C774\B984\C774 \C788\ACE0 \C0C1\D0DC\AC00 ''\B9B4\B9AC\C988\B428''\C778 \D50C\B85C\C6B0\AC00 \C774\BBF8 \C788\C2B5\B2C8\B2E4. \AE30\C874 \D50C\B85C\C6B0 \C0C1\D0DC\B97C \B354 \C774\C0C1 \C0AC\C6A9\B418\C9C0 \C54A\AC70\B098 \C544\CE74\C774\BE0C\B41C \D6C4 \B2E4\C2DC \C784\D3EC\D2B8\B85C \BCC0\ACBD\D569\B2C8\B2E4.')
@@ -4345,10 +4345,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199505924044193)
+ p_id=>wwv_flow_api.id(7304119211254995)
 ,p_name=>'DGRM_UK2'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'A flow with this name and having a status of ''released'' already exists. Change the existing flow status to deprecated or archived and re-import.'
+,p_message_text=>unistr('\5177\6709\6B64\540D\79F0\4E14\72B6\6001\4E3A\201C\5DF2\53D1\653E\201D\7684\6D41\7A0B\5DF2\5B58\5728\3002\5C06\73B0\6709\6D41\7A0B\72B6\6001\66F4\6539\4E3A\5DF2\5F03\7528\6216\5DF2\5B58\6863\5E76\91CD\65B0\5BFC\5165\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
@@ -4412,7 +4412,7 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7167958490041497)
+ p_id=>wwv_flow_api.id(7310575164288842)
 ,p_name=>'PRCS_DGRM_FK'
 ,p_message_language=>'ko'
 ,p_message_text=>unistr('\C774 \D50C\B85C\C6B0\B97C \C0AC\C6A9\D558\B294 \D504\B85C\C138\C2A4 \C778\C2A4\D134\C2A4\AC00 \C874\C7AC\D569\B2C8\B2E4. \ACC4\B2E8\C2DD \C635\C158\C744 \C0AC\C6A9\D558\C5EC \D50C\B85C\C6B0 \BC0F \D504\B85C\C138\C2A4 \C778\C2A4\D134\C2A4\B97C \C81C\AC70\D569\B2C8\B2E4.')
@@ -4426,10 +4426,10 @@ wwv_flow_api.create_message(
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
- p_id=>wwv_flow_api.id(7199429228044193)
+ p_id=>wwv_flow_api.id(7304098201254995)
 ,p_name=>'PRCS_DGRM_FK'
 ,p_message_language=>'zh-cn'
-,p_message_text=>'Process instances using this flow exist. Use cascade option to remove flow and process instances.'
+,p_message_text=>unistr('\5B58\5728\4F7F\7528\6B64\6D41\7684\6D41\7A0B\5B9E\4F8B\3002\4F7F\7528\7EA7\8054\9009\9879\5220\9664\6D41\548C\6D41\7A0B\5B9E\4F8B\3002')
 ,p_is_js_message=>true
 );
 wwv_flow_api.create_message(
