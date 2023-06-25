@@ -55,8 +55,8 @@ wwv_flow_api.create_flow(
 ,p_error_handling_function=>'flow_engine_app_api.apex_error_handling'
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Workflow'
-,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230625101932'
+,p_last_updated_by=>'C##DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20230625203150'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>1094
 ,p_ui_type_name => null
