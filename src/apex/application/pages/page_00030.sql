@@ -20,8 +20,8 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'C##JDOPPELREITER'
-,p_last_upd_yyyymmddhh24miss=>'20230618101707'
+,p_last_updated_by=>'C##LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20230625101831'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2362908411158415)
@@ -285,7 +285,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P30_LOGGING_REST_RETAIN_LOGS'
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(4722613539681901)
-,p_prompt=>'Retain Logs (Days) (not yet implemented)'
+,p_prompt=>'Retain Logs (Days)'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
 ,p_cSize=>5
 ,p_colspan=>2
