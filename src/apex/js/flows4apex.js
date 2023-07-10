@@ -159,9 +159,10 @@ function sendToServer(dataToSend, options = {}){
     } ); 
 }
 
-function downloadAsSVG(){
+function downloadAsSVG(event){
+  var regionId = $(event.target).parents('.t-Region').attr('id');
   apex
-    .region( "flow-monitor" )
+    .region( regionId )
     .getSVG()
     .then( ( svg ) => {
       var svgBlob = new Blob( [svg], {
