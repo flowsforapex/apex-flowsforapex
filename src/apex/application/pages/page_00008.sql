@@ -34,7 +34,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230613201403'
+,p_last_upd_yyyymmddhh24miss=>'20230706154628'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(3510821361851721)
@@ -453,6 +453,120 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_02=>'HTML'
 );
 wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(2570542357060505)
+,p_plug_name=>'Task List Entries'
+,p_region_name=>'task-list'
+,p_parent_plug_id=>wwv_flow_api.id(30368937979343097)
+,p_region_css_classes=>'js-react-on-prcs'
+,p_region_template_options=>'#DEFAULT#'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_api.id(1792064716043263)
+,p_plug_display_sequence=>100
+,p_plug_display_point=>'BODY'
+,p_query_type=>'SQL'
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select *',
+'  from table (',
+'      flow_api_pkg.get_current_tasks',
+'            ( p_context => ''SINGLE_PROCESS''',
+'            , p_prcs_id => :P8_PRCS_ID ))'))
+,p_optimizer_hint=>'APEX$USE_NO_GROUPING_SETS'
+,p_lazy_loading=>false
+,p_plug_source_type=>'NATIVE_CARDS'
+,p_ajax_items_to_submit=>'P8_PRCS_ID'
+,p_plug_query_num_rows_type=>'SCROLL'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_plug_query_no_data_found=>'No Tasks'
+,p_show_total_row_count=>false
+);
+wwv_flow_api.create_card(
+ p_id=>wwv_flow_api.id(2570671262060506)
+,p_region_id=>wwv_flow_api.id(2570542357060505)
+,p_layout_type=>'ROW'
+,p_title_adv_formatting=>false
+,p_title_column_name=>'SUBJECT'
+,p_sub_title_adv_formatting=>true
+,p_sub_title_html_expr=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<small role="group" aria-label="Task Details">',
+'    <strong>&TASK_DEF_NAME!HTML.</strong>',
+'{if INITIATOR/}',
+'    <span role="separator" aria-label="&middot;"> &middot; </span> Initiated by &INITIATOR_LOWER!HTML. ',
+'{endif/}',
+'{if !IS_COMPLETED/}',
+'    {case DUE_CODE/}',
+'        {when OVERDUE/}',
+'            <span role="separator" aria-label="&middot;"> &middot; </span><strong class="u-danger-text">Due &DUE_IN.</strong>',
+'        {when NEXT_HOUR/}',
+'            <span role="separator" aria-label="&middot;"> &middot; </span> <strong class="u-danger-text">Due &DUE_IN.</strong>',
+'        {when NEXT_24_HOURS/}',
+'            <span role="separator" aria-label="&middot;"> &middot; </span> <span class="u-danger-text">Due &DUE_IN.</span>',
+'        {otherwise/}',
+'            {if DUE_IN/}<span role="separator" aria-label="&middot;"> &middot; </span> <span>Due &DUE_IN.</span>{endif/}',
+'    {endcase/}',
+'{endif/}',
+'{if !IS_COMPLETED/}',
+'    {case PRIORITY/}',
+'        {when 1/}',
+'            <span role="separator" aria-label="&middot;"> &middot; </span> <strong class="u-danger-text">Urgent</strong>',
+'        {when 2/}',
+'            <span role="separator" aria-label="&middot;"> &middot; </span> <span class="u-danger-text">High priority</span>',
+'    {endcase/}',
+'{endif/}',
+'</small>'))
+,p_body_adv_formatting=>false
+,p_second_body_adv_formatting=>false
+,p_badge_column_name=>'BADGE_TEXT'
+,p_badge_css_classes=>'&BADGE_CSS_CLASSES.'
+,p_media_adv_formatting=>false
+,p_pk1_column_name=>'TASK_ID'
+);
+wwv_flow_api.create_card_action(
+ p_id=>wwv_flow_api.id(2570792162060507)
+,p_card_id=>wwv_flow_api.id(2570671262060506)
+,p_action_type=>'TITLE'
+,p_display_sequence=>10
+,p_link_target_type=>'REDIRECT_URL'
+,p_link_target=>'&DETAILS_LINK_TARGET.'
+);
+wwv_flow_api.create_card_action(
+ p_id=>wwv_flow_api.id(2570853105060508)
+,p_card_id=>wwv_flow_api.id(2570671262060506)
+,p_action_type=>'BUTTON'
+,p_position=>'PRIMARY'
+,p_display_sequence=>20
+,p_label=>'Approve'
+,p_link_target_type=>'REDIRECT_URL'
+,p_link_target=>'#'
+,p_link_attributes=>'data-id="&TASK_ID."'
+,p_button_display_type=>'TEXT_WITH_ICON'
+,p_icon_css_classes=>'fa-check-square u-success-text'
+,p_action_css_classes=>'approve'
+,p_is_hot=>false
+,p_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_condition_expr1=>'TASK_TYPE'
+,p_condition_expr2=>'APPROVAL'
+,p_exec_cond_for_each_row=>true
+);
+wwv_flow_api.create_card_action(
+ p_id=>wwv_flow_api.id(2570994574060509)
+,p_card_id=>wwv_flow_api.id(2570671262060506)
+,p_action_type=>'BUTTON'
+,p_position=>'SECONDARY'
+,p_display_sequence=>30
+,p_label=>'Reject'
+,p_link_target_type=>'REDIRECT_URL'
+,p_link_target=>'#'
+,p_link_attributes=>'data-id="&TASK_ID."'
+,p_button_display_type=>'TEXT_WITH_ICON'
+,p_icon_css_classes=>'fa-times u-danger-text'
+,p_action_css_classes=>'reject'
+,p_is_hot=>false
+,p_condition_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_condition_expr1=>'TASK_TYPE'
+,p_condition_expr2=>'APPROVAL'
+,p_exec_cond_for_each_row=>true
+);
+wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(3509332876851706)
 ,p_plug_name=>'Message Subscriptions'
 ,p_region_name=>'message-subscriptions'
@@ -858,6 +972,18 @@ wwv_flow_api.create_page_plug(
 ,p_list_template_id=>wwv_flow_api.id(12495525309455880143)
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(166753193485966384)
 ,p_plug_name=>'Subflows'
@@ -995,18 +1121,6 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'DATE'
 ,p_column_alignment=>'CENTER'
 ,p_tz_dependent=>'N'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(5959540044464442)
@@ -1777,6 +1891,18 @@ wwv_flow_api.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(5681710279037017)
 ,p_name=>'P8_PRCS_STATUS'
@@ -1923,18 +2049,6 @@ wwv_flow_api.create_page_item(
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'BOTH'
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(5983384367464473)
@@ -2778,6 +2892,18 @@ wwv_flow_api.create_page_da_action(
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_da_action(
  p_id=>wwv_flow_api.id(6430710216417617)
 ,p_event_id=>wwv_flow_api.id(6429724013417607)
@@ -2918,18 +3044,6 @@ wwv_flow_api.create_page_da_action(
 '});',
 '',
 'Prism.highlightAll();'))
-);
-wwv_flow_api.component_end;
-end;
-/
-begin
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(62707920017232549)
