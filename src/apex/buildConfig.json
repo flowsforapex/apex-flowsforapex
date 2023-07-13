@@ -41,8 +41,12 @@
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_en.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_es.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_fr.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_it.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_ja.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_ko.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_pt-br.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_zh-cn.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_zh-tw.sql", "add_show_errors": false }
       ]
     }
   , {
@@ -222,7 +226,6 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_log_admin.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_admin_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_statistics.pkb", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_constants.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_auth.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_logging.pkb", "add_show_errors": false }

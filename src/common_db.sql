@@ -186,5 +186,9 @@ PROMPT >> Engine Messages
 @data/install_engine_messages_en.sql
 @data/install_engine_messages_es.sql
 @data/install_engine_messages_fr.sql
+@data/install_engine_messages_it.sql
 @data/install_engine_messages_ja.sql
+@data/install_engine_messages_ko.sql
 @data/install_engine_messages_pt-br.sql
+@data/install_engine_messages_zh-cn.sql
+@data/install_engine_messages_zh-tw.sql
