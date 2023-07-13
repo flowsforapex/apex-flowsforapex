@@ -159,9 +159,10 @@ function sendToServer(dataToSend, options = {}){
     } ); 
 }
 
-function downloadAsSVG(){
+function downloadAsSVG(event){
+  var regionId = $(event.target).parents('.t-Region').attr('id');
   apex
-    .region( "flow-monitor" )
+    .region( regionId )
     .getSVG()
     .then( ( svg ) => {
       var svgBlob = new Blob( [svg], {
@@ -737,14 +738,14 @@ function bulkDeleteProcessVariable(action){
 function completeStep( action, element ){
   var data = getSubflowData(action, element);
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
   sendToServer(data, options);
 }
 
 function bulkCompleteStep( action ){
   var data = getBulkSubflowData( action );
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
   sendToServer(data, options);
 }
 
@@ -755,7 +756,7 @@ function restartStep( action, element){
     data.x05 = getConfirmComment();
     var options = {};
     options.messageKey = "APP_SUBLFOW_RESTARTED";
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "task-list"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_TITLE_RESTART_STEP" );
@@ -769,7 +770,7 @@ function bulkRestartStep( action, element ){
     data.x02 = getConfirmComment();
     
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "task-list"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_TITLE_RESTART_STEP" );
@@ -798,7 +799,7 @@ function reserveStep( action, element ){
     data.x05 = apex.item("P8_RESERVATION").getValue();
 
     var options = {};
-    options.refreshRegion = ["subflows"];
+    options.refreshRegion = ["subflows", "task-list"];
     sendToServer(data, options);
   } else {
     openReservationDialog( action, element );
@@ -812,7 +813,7 @@ function bulkReserveStep( action ){
     data.x02 = apex.item("P8_RESERVATION").getValue();
     
     var options = {};
-    options.refreshRegion = ["subflows"];
+    options.refreshRegion = ["subflows", "task-list"];
     sendToServer(data, options);
   } else {
     openReservationDialog( action, null );
@@ -825,7 +826,7 @@ function releaseStep( action, element ){
       var data = getSubflowData(action, element);
       
       var options = {};
-      options.refreshRegion = ["subflows"];
+      options.refreshRegion = ["subflows", "task-list"];
       sendToServer(data, options);
     }
   });
@@ -837,7 +838,7 @@ function bulkReleaseStep( action ){
       var data = getBulkSubflowData(action);
       
       var options = {};
-      options.refreshRegion = ["subflows"];
+      options.refreshRegion = ["subflows", "task-list"];
       sendToServer(data, options);
     }
   });
@@ -852,7 +853,7 @@ function rescheduleTimer ( action, element ){
     data.x07 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
        
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
     sendToServer(data, options);
   } else {
     openRescheduleTimerDialog( action, element );
@@ -868,7 +869,7 @@ function bulkRescheduleTimer ( action ){
     data.x04 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
        
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
     sendToServer(data, options);
   } else {
     openRescheduleTimerDialog( action, null );
@@ -885,7 +886,7 @@ function receiveMessage( action, element ) {
     data.f01 = chunkedClob;
     apex.theme.closeRegion( "receive_message_dialog" );
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
     sendToServer(data, options);
   } 
   else {
