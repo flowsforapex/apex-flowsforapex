@@ -63,6 +63,6 @@ left join flow_connections conn
 left join flow_timers timr
        on timr.timr_prcs_id = sbfl.sbfl_prcs_id
       and timr.timr_sbfl_id = sbfl.sbfl_id
-      and timr.timr_status != 'E'
+      and timr.timr_status in ('C', 'A', 'B')
 with read only
 ;
