@@ -11,6 +11,7 @@ as
 
   c_module    constant varchar2(200 char) := 'v1/';      
 
+  -- Path definitions (used for links)
   c_path_diagrams           constant varchar2(200 char) := 'diagrams/:id';
   c_path_diagram_processes  constant varchar2(200 char) := 'diagrams/:id/processes';
   c_path_processes          constant varchar2(200 char) := 'processes/:id';
@@ -21,11 +22,13 @@ as
   c_path_steps              constant varchar2(200 char) := 'steps/:id';
   c_path_message_subscriptions   constant varchar2(200 char) := 'processes/:id/message_subscriptions';
 
+  -- Allowed HTTP Action Definition
   c_http_action_get     constant varchar2(3 char)   := 'GET';
   c_http_action_post    constant varchar2(4 char)   := 'POST';
   c_http_action_put     constant varchar2(3 char)   := 'PUT';
   c_http_action_delete  constant varchar2(6 char)   := 'DELETE';
 
+  -- Response Codes
   c_http_code_OK        constant number := 200;
   c_http_code_ERROR     constant number := 500;
 
@@ -101,6 +104,7 @@ as
   e_process_unknown_status exception;
   e_step_unknown_operation exception;
   e_privilege_not_granted  exception;
+  e_payload_processing     exception;
   e_not_implemented        exception;
 
   PRAGMA EXCEPTION_INIT (e_payload_not_acceptable , -20101);
@@ -111,6 +115,7 @@ as
   PRAGMA EXCEPTION_INIT (e_process_unknown_status , -20106);
   PRAGMA EXCEPTION_INIT (e_step_unknown_operation , -20107);
   PRAGMA EXCEPTION_INIT (e_privilege_not_granted  , -20108);
+  PRAGMA EXCEPTION_INIT (e_payload_processing     , -20109);
   PRAGMA EXCEPTION_INIT (e_not_implemented        , -20200);
 
 end flow_rest_constants;

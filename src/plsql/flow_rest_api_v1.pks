@@ -12,7 +12,7 @@ as
                     , pi_prcs_id          flow_processes.prcs_id%type default null
                     , pi_sbfl_id          flow_subflows.sbfl_id%type default null
                     , pi_message_name     flow_message_subscriptions.msub_message_name%type default null
-                    , pi_payload          json_element_t 
+                    , pi_payload          blob 
                     , pi_current_user     varchar2
                     , po_status_code      out number 
                     , po_forward_location out varchar2

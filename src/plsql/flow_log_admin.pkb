@@ -229,6 +229,32 @@ create or replace package body flow_log_admin as
 
   end purge_message_logs;
 
+  procedure purge_rest_logs
+  ( p_retention_period_days    in number default null
+  )
+  is
+    l_log_retain_days    flow_configuration.cfig_value%type;
+    l_purge_interval     interval day(4) to second(0);
+  begin
+    apex_debug.enter ('purge_rest_logs'
+    , 'p_retention_period_days', p_retention_period_days);
+
+    -- if retention period not specified, get configuration parameter or default
+    if p_retention_period_days is null then
+      l_log_retain_days     := flow_engine_util.get_config_value 
+                               ( p_config_key  => flow_rest_logging.c_log_rest_incoming_retain_days
+                               , p_default_value  => flow_rest_logging.c_log_rest_incoming_retain_days_default
+                               );   
+      l_purge_interval   := to_dsinterval ('P'||trim( both from l_log_retain_days)||'D');
+    else
+      l_purge_interval   := to_dsinterval ('P'||trim( both from p_retention_period_days)||'D');   
+    end if;
+
+    delete from flow_rest_event_log
+    where lgrt_timestamp < systimestamp - l_purge_interval;
+
+  end purge_rest_logs;
+
   function get_archive_location
   ( p_archive_type   in varchar2
   )

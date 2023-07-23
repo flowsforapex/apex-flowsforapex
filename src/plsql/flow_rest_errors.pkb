@@ -22,12 +22,6 @@ as
 
     rollback;
 
-    flow_rest_logging.error( pi_payload            => pi_payload
-                           , pi_error_code         => pi_sqlcode
-                           , pi_error_msg          => pi_message
-                           , pi_error_stacktrace   => pi_stacktrace
-                           );
- 
     case pi_sqlcode
 
       when -20101 then -- e_payload_not_acceptable
@@ -48,6 +42,8 @@ as
         flow_rest_response.send_error( pi_sqlerrm     => 'Necessary privilege not granted'
                                      , po_status_code => po_status_code );
         po_status_code := 401;
+      when -20109 then --e_payload_processing
+        l_message :=  'JSON Payload can not be processed';
       when -20200 then -- e_not_implemented
         l_message :=  'Not implemented';
       else
@@ -55,6 +51,13 @@ as
         l_message := pi_message;
 
     end case;
+
+    flow_rest_logging.error( pi_payload            => pi_payload
+                           , pi_error_code         => pi_sqlcode
+                           , pi_error_msg          => l_message
+                           , pi_error_stacktrace   => pi_stacktrace
+                           );
+ 
 
     if nvl(po_status_code, -1) != 401 then 
       flow_rest_response.send_error(  pi_sqlerrm            => remove_ora_numer(l_message)

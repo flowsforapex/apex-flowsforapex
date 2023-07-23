@@ -103,6 +103,28 @@ as
 
   -------------------------------------------------------------------------------------------------------------------
 
+  function blob_to_json( pi_body  blob )
+    return json_element_t
+  as
+    l_ret_json  json_element_t;
+  begin
+    
+      if pi_body is not null and dbms_lob.getLength( pi_body ) > 0 then     
+          l_ret_json := json_element_t.parse(pi_body); 
+      else
+        l_ret_json := json_object_t();
+      end if;    
+    
+    return l_ret_json;
+
+    exception
+      when others then 
+        raise flow_rest_constants.e_payload_processing;
+
+  end blob_to_json; 
+
+  -------------------------------------------------------------------------------------------------------------------
+
   procedure add_error( pio_object_jo in out nocopy json_object_t 
                      , pi_error_type in varchar2
                      , pi_error_msg  in varchar2 )
