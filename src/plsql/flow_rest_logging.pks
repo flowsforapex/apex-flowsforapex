@@ -2,15 +2,15 @@ create or replace package flow_rest_logging
   authid definer
 as
 
-  c_log_info_enter     constant varchar2(10) := 'ENTER';
-  c_log_info_finished  constant varchar2(10) := 'FINISHED';
-  c_log_info_error     constant varchar2(10) := 'ERROR';
+  c_log_info_enter     constant varchar2(10 char) := 'ENTER';
+  c_log_info_finished  constant varchar2(10 char) := 'FINISHED';
+  c_log_info_error     constant varchar2(10 char) := 'ERROR';
 
-  c_log_rest_incoming              constant varchar2(50) := 'logging_rest_incoming_calls';
-  c_log_rest_incoming_retain_days  constant varchar2(50) := 'logging_rest_incoming_calls_retain_days';
+  c_log_rest_incoming              constant varchar2(50 char) := 'logging_rest_incoming_calls';
+  c_log_rest_incoming_retain_days  constant varchar2(50 char) := 'logging_rest_incoming_calls_retain_days';
 
-  c_log_rest_incoming_default              constant varchar2(50) := 'Y';
-  c_log_rest_incoming_retain_days_default  constant varchar2(50) := '60';
+  c_log_rest_incoming_default              constant varchar2(50 char) := 'Y';
+  c_log_rest_incoming_retain_days_default  constant varchar2(50 char) := '60';
 
   procedure initialize;
   procedure cleanup;

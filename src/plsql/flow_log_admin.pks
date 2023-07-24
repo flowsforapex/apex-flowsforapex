@@ -41,6 +41,10 @@ create or replace package flow_log_admin
   ( p_retention_period_days    in number default null
   );
 
+  procedure purge_rest_logs
+  ( p_retention_period_days    in number default null
+  );
+
   function archive_bpmn_diagram
   ( p_dgrm_id            flow_diagrams.dgrm_id%type
   , p_dgrm_content       flow_diagrams.dgrm_content%type

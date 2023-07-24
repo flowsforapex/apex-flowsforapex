@@ -7,20 +7,30 @@ as
                     , pi_prcs_id          flow_processes.prcs_id%type default null
                     , pi_sbfl_id          flow_subflows.sbfl_id%type default null
                     , pi_message_name     flow_message_subscriptions.msub_message_name%type default null
-                    , pi_payload          json_element_t 
+                    , pi_payload          blob 
                     , pi_current_user     varchar2
                     , po_status_code      out number 
                     , po_forward_location out varchar2
                     )
   as
+    l_payload                json_element_t;
     l_exc_payload            json_element_t;
     l_exc_payload_attr_name  varchar2(200);
   begin
 
     flow_rest.initialize( pi_client_id => pi_current_user
                         , pi_method    => pi_method );
+    
+    begin
+      l_payload := flow_rest.blob_to_json(pi_payload);
+      exception 
+        when others then
+          l_exc_payload_attr_name := 'payload';
+          l_exc_payload := new json_object_t('{ "content": "'|| apex_escape.json(to_clob(pi_payload)) ||'" }' ); 
+          raise;
+    end;
 
-    flow_rest_logging.enter( pi_payload => pi_payload );
+    flow_rest_logging.enter( pi_payload => l_payload );
     
     case upper(pi_method)
       when 'POST' then
@@ -28,7 +38,7 @@ as
         case 
           when regexp_like(pi_endpoint, '^v1/diagrams/[[:digit:]]+/processes$', 'i') then
             flow_rest_api_v1.processes_post(  pi_dgrm_id          => pi_dgrm_id
-                                            , pi_payload          => pi_payload
+                                            , pi_payload          => l_payload
                                             , pi_current_user     => pi_current_user
                                             , po_status_code      => po_status_code
                                             , po_forward_location => po_forward_location
@@ -43,7 +53,7 @@ as
         case 
           when regexp_like(pi_endpoint, '^v1/messages/[[:alnum:][:blank:][:punct:]]+$', 'i') then
             flow_rest_api_v1.messages_put( pi_message_name     => pi_message_name
-                                         , pi_payload          => pi_payload
+                                         , pi_payload          => l_payload
                                          , pi_current_user     => pi_current_user
                                          , po_status_code      => po_status_code
                                          , po_forward_location => po_forward_location 
@@ -58,7 +68,7 @@ as
                                                 , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/reset$', 'i') then
             flow_rest_api_v1.processes_reset_put( pi_prcs_id          => pi_prcs_id
-                                                , pi_payload          => pi_payload
+                                                , pi_payload          => l_payload
                                                 , pi_current_user     => pi_current_user
                                                 , po_status_code      => po_status_code
                                                 , po_forward_location => po_forward_location  
@@ -66,7 +76,7 @@ as
                                                 , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/terminate$', 'i') then
             flow_rest_api_v1.processes_terminate_put( pi_prcs_id          => pi_prcs_id
-                                                    , pi_payload          => pi_payload
+                                                    , pi_payload          => l_payload
                                                     , pi_current_user     => pi_current_user
                                                     , po_status_code      => po_status_code
                                                     , po_forward_location => po_forward_location 
@@ -74,7 +84,7 @@ as
                                                     , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+$', 'i') then
             flow_rest_api_v1.processes_put( pi_prcs_id          => pi_prcs_id
-                                          , pi_payload          => pi_payload
+                                          , pi_payload          => l_payload
                                           , pi_current_user     => pi_current_user
                                           , po_status_code      => po_status_code
                                           , po_forward_location => po_forward_location 
@@ -82,7 +92,7 @@ as
                                           , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+$', 'i') then
             flow_rest_api_v1.steps_put( pi_sbfl_id          => pi_sbfl_id
-                                      , pi_payload          => pi_payload
+                                      , pi_payload          => l_payload
                                       , pi_current_user     => pi_current_user
                                       , po_status_code      => po_status_code
                                       , po_forward_location => po_forward_location 
@@ -90,7 +100,7 @@ as
                                       , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/start$', 'i') then
             flow_rest_api_v1.steps_start_put( pi_sbfl_id          => pi_sbfl_id
-                                            , pi_payload          => pi_payload
+                                            , pi_payload          => l_payload
                                             , pi_current_user     => pi_current_user
                                             , po_status_code      => po_status_code
                                             , po_forward_location => po_forward_location 
@@ -98,7 +108,7 @@ as
                                             , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/reserve$', 'i') then
             flow_rest_api_v1.steps_reserve_put( pi_sbfl_id          => pi_sbfl_id
-                                              , pi_payload          => pi_payload
+                                              , pi_payload          => l_payload
                                               , pi_current_user     => pi_current_user
                                               , po_status_code      => po_status_code
                                               , po_forward_location => po_forward_location 
@@ -106,7 +116,7 @@ as
                                               , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/release$', 'i') then
             flow_rest_api_v1.steps_release_put( pi_sbfl_id          => pi_sbfl_id
-                                              , pi_payload          => pi_payload
+                                              , pi_payload          => l_payload
                                               , pi_current_user     => pi_current_user
                                               , po_status_code      => po_status_code
                                               , po_forward_location => po_forward_location 
@@ -114,7 +124,7 @@ as
                                               , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/complete$', 'i') then
             flow_rest_api_v1.steps_complete_put( pi_sbfl_id          => pi_sbfl_id
-                                               , pi_payload          => pi_payload
+                                               , pi_payload          => l_payload
                                                , pi_current_user     => pi_current_user
                                                , po_status_code      => po_status_code
                                                , po_forward_location => po_forward_location 
@@ -122,7 +132,7 @@ as
                                                , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/restart$', 'i') then
             flow_rest_api_v1.steps_restart_put( pi_sbfl_id          => pi_sbfl_id
-                                              , pi_payload          => pi_payload
+                                              , pi_payload          => l_payload
                                               , pi_current_user     => pi_current_user
                                               , po_status_code      => po_status_code
                                               , po_forward_location => po_forward_location 
@@ -130,7 +140,7 @@ as
                                               , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/reschedule_timer$', 'i') then
             flow_rest_api_v1.steps_reschedule_timer_put( pi_sbfl_id          => pi_sbfl_id
-                                                       , pi_payload          => pi_payload
+                                                       , pi_payload          => l_payload
                                                        , pi_current_user     => pi_current_user
                                                        , po_status_code      => po_status_code
                                                        , po_forward_location => po_forward_location 
@@ -138,7 +148,7 @@ as
                                                        , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/process_vars$', 'i') then
             flow_rest_api_v1.process_vars_put( pi_prcs_id          => pi_prcs_id
-                                             , pi_payload          => pi_payload
+                                             , pi_payload          => l_payload
                                              , pi_current_user     => pi_current_user
                                              , po_status_code      => po_status_code
                                              , po_forward_location => po_forward_location 
@@ -152,14 +162,14 @@ as
         case 
           when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+$', 'i') then
             flow_rest_api_v1.processes_delete( pi_prcs_id      => pi_prcs_id
-                                             , pi_payload      => pi_payload
+                                             , pi_payload      => l_payload
                                              , pi_current_user => pi_current_user
                                              , po_status_code  => po_status_code 
                                              , po_exc_payload  => l_exc_payload
                                              , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+/process_vars$', 'i') then
             flow_rest_api_v1.process_vars_delete( pi_prcs_id       => pi_prcs_id
-                                                , pi_payload       => pi_payload
+                                                , pi_payload       => l_payload
                                                 , pi_current_user  => pi_current_user
                                                 , po_status_code   => po_status_code 
                                                 , po_exc_payload   => l_exc_payload
@@ -171,7 +181,7 @@ as
         raise flow_rest_constants.e_not_implemented;
     end case;
 
-    flow_rest_logging.finished( pi_payload => pi_payload );
+    flow_rest_logging.finished( pi_payload => l_payload );
     flow_rest.cleanup;
     commit;
 

@@ -23,7 +23,10 @@ as
   procedure initialize( pi_client_id        varchar2
                       , pi_check_privilege  varchar2 );
 
-  procedure cleanup;     
+  procedure cleanup; 
+
+  function blob_to_json( pi_body  blob)
+    return json_element_t;    
 
   function get_json_array_t( pi_json_object_t  json_object_t)
     return json_array_t;

@@ -153,7 +153,7 @@ as
     if is_event_log_enabled 
     then
     
-      if l_payload_clob is not null then 
+      if pi_payload is not null then 
         l_payload_clob := pi_payload.to_clob;
       end if;
 
