@@ -26,8 +26,8 @@ wwv_flow_api.create_page(
 '}'))
 ,p_step_template=>wwv_flow_api.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'C##DAMTHOR'
-,p_last_upd_yyyymmddhh24miss=>'20230510104427'
+,p_last_updated_by=>'C##LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20230725073232'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6177850959209923)
@@ -286,10 +286,10 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'BTN'
 ,p_display_order=>100
 ,p_column_identifier=>'J'
-,p_column_label=>'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="instance-header-action" data-menu="instance_header_action_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span><'
-||'/button>'
+,p_column_label=>'<button type="button" title="&APP_TEXT$APP_P10_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P10_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="instance-header-action" data-menu="instance_header_action_men'
+||'u"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon flow-instance-actions-btn js-menuButton" ',
+'<button type="button" title="&APP_TEXT$APP_P10_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P10_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon flow-instance-actions-btn js-menuButton" ',
 '        data-menu="instance_row_action_menu"',
 '        data-prcs="#PRCS_ID#"',
 '        data-status="#PRCS_STATUS#"',
@@ -378,9 +378,9 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'Q'
 ,p_column_label=>'Quick Action'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" class="t-Button t-Button--icon t-Button--iconLeft t-Button--link js-actionButton"',
+'<button type="button" title="&APP_TEXT$APP_P10_ACTION_DETAILS." aria-label="&APP_TEXT$APP_P10_ACTION_DETAILS." class="t-Button t-Button--icon t-Button--iconLeft t-Button--link js-actionButton"',
 'data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#" data-action="open-flow-instance-details">',
-'<span aria-hidden="true" class="t-Icon t-Icon--left fa fa-search"></span>Details</button>'))
+'<span aria-hidden="true" class="t-Icon t-Icon--left fa fa-search"></span>&APP_TEXT$APP_P10_ACTION_DETAILS.</button>'))
 ,p_column_type=>'STRING'
 ,p_display_text_as=>'WITHOUT_MODIFICATION'
 ,p_column_alignment=>'CENTER'

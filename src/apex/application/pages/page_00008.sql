@@ -34,7 +34,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230706154628'
+,p_last_upd_yyyymmddhh24miss=>'20230725073441'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(3510821361851721)
@@ -695,8 +695,8 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_identifier=>'L'
 ,p_column_label=>'Quick Action'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" data-action="receive-message" data-message="#MSUB_MESSAGE_NAME#" data-key="#MSUB_KEY_NAME#" data-value="#MSUB_KEY_VALUE#"><span aria-hidden="true"'
-||' class="t-Icon t-Icon--left fa fa-box-arrow-in-east"></span>Receive Message</button>',
+'<button type="button" title="&APP_TEXT$APP_P8_RECEIVE_MESSAGE." aria-label="&APP_TEXT$APP_P8_RECEIVE_MESSAGE." class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" data-action="receive-message" data-message="#MSUB_MESSAGE'
+||'_NAME#" data-key="#MSUB_KEY_NAME#" data-value="#MSUB_KEY_VALUE#"><span aria-hidden="true" class="t-Icon t-Icon--left fa fa-box-arrow-in-east"></span>&APP_TEXT$APP_P8_RECEIVE_MESSAGE.</button>',
 ''))
 ,p_column_type=>'STRING'
 );
@@ -849,9 +849,10 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'ACTION'
 ,p_display_order=>60
 ,p_column_identifier=>'J'
-,p_column_label=>'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" data-menu="variable_header_action_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>'
+,p_column_label=>'<button type="button" title="&APP_TEXT$APP_P8_VAR_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_VAR_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" data-menu="variable_header_action_menu"><span aria-hidden="'
+||'true" class="t-Icon fa fa-bars"></span></button>'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon #CURRENT_CLASS# variable-actions-btn js-menuButton" ',
+'<button type="button" title="&APP_TEXT$APP_P8_VAR_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_VAR_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon #CURRENT_CLASS# variable-actions-btn js-menuButton" ',
 'data-menu="variable_row_action_menu"',
 'data-name="#PROV_VAR_NAME#"',
 'data-type="#PROV_VAR_TYPE#"',
@@ -1199,9 +1200,10 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'ACTIONS'
 ,p_display_order=>150
 ,p_column_identifier=>'K'
-,p_column_label=>'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" data-menu="subflow_header_action_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>'
+,p_column_label=>'<button type="button" title="&APP_TEXT$APP_P8_SBFL_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_SBFL_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" data-menu="subflow_header_action_menu"><span aria-hidden='
+||'"true" class="t-Icon fa fa-bars"></span></button>'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon #CURRENT_CLASS# subflow-actions-btn js-menuButton" ',
+'<button type="button" title="&APP_TEXT$APP_P8_SBFL_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_SBFL_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon #CURRENT_CLASS# subflow-actions-btn js-menuButton" ',
 'data-menu="subflow_row_action_menu"',
 'data-prcs="#SBFL_PRCS_ID#"',
 'data-sbfl="#SBFL_ID#"',
