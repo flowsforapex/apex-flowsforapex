@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230530123010'
+,p_last_upd_yyyymmddhh24miss=>'20230724053915'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(7937843762499701)
@@ -206,7 +206,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_display_order=>90
 ,p_column_identifier=>'I'
 ,p_column_label=>'Has Recursion'
-,p_column_html_expression=>'<span class="#HAS_RECURSION_ICON#" aria-label="Has recursion" title="Has recursion"></span>'
+,p_column_html_expression=>'<span class="#HAS_RECURSION_ICON#" aria-label="&APP_TEXT$APP_P7_HAS_RECURSION." title="&APP_TEXT$APP_P7_HAS_RECURSION."></span>'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'CENTER'
 );
@@ -934,15 +934,6 @@ wwv_flow_api.create_page_button(
 ,p_icon_css_classes=>'fa-plus'
 ,p_database_action=>'INSERT'
 );
-wwv_flow_api.create_page_branch(
- p_id=>wwv_flow_api.id(24216692251956150)
-,p_branch_action=>'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:2::&success_msg=#SUCCESS_MSG#'
-,p_branch_point=>'AFTER_PROCESSING'
-,p_branch_type=>'REDIRECT_URL'
-,p_branch_sequence=>10
-,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
-,p_branch_condition=>'DELETE'
-);
 wwv_flow_api.component_end;
 end;
 /
@@ -954,6 +945,15 @@ wwv_flow_api.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_page_branch(
+ p_id=>wwv_flow_api.id(24216692251956150)
+,p_branch_action=>'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:2::&success_msg=#SUCCESS_MSG#'
+,p_branch_point=>'AFTER_PROCESSING'
+,p_branch_type=>'REDIRECT_URL'
+,p_branch_sequence=>10
+,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_branch_condition=>'DELETE'
 );
 wwv_flow_api.create_page_branch(
  p_id=>wwv_flow_api.id(34402504419171411)

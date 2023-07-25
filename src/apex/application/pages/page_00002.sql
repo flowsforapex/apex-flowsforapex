@@ -21,8 +21,8 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'initPage2();'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220919110329'
+,p_last_updated_by=>'C##LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20230725093110'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(5522803511864949)
@@ -186,9 +186,10 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'BTN'
 ,p_display_order=>80
 ,p_column_identifier=>'G'
-,p_column_label=>'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="header-action" data-menu="header_actions_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>'
+,p_column_label=>'<button type="button" title="&APP_TEXT$APP_P2_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P2_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="header-action" data-menu="header_actions_menu"><span aria-hidde'
+||'n="true" class="t-Icon fa fa-bars"></span></button>'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<button type="button" title="Actions" aria-label="Actions" class="t-Button t-Button--noLabel t-Button--icon js-menuButton" ',
+'<button type="button" title="&APP_TEXT$APP_P2_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P2_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" ',
 '        data-menu="row_actions_menu"',
 '        data-dgrm="#DGRM_ID#">',
 '    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
@@ -243,7 +244,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'INSTANCE_CREATED'
 ,p_display_order=>120
 ,p_column_identifier=>'M'
-,p_column_label=>'<i class="status_icon fa fa-plus-circle-o"></i>Created'
+,p_column_label=>'<i class="status_icon fa fa-plus-circle-o" data-status="created"></i>&APP_TEXT$APP_STATUS_CREATED.'
 ,p_column_html_expression=>'<a href=#INSTANCE_CREATED_LINK#>#INSTANCE_CREATED#</a>'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'CENTER'
@@ -253,7 +254,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'INSTANCE_RUNNING'
 ,p_display_order=>130
 ,p_column_identifier=>'N'
-,p_column_label=>'<i class="status_icon fa fa-play-circle-o"></i>Running'
+,p_column_label=>'<i class="status_icon fa fa-play-circle-o" data-status="running"></i>&APP_TEXT$APP_STATUS_RUNNING.'
 ,p_column_html_expression=>'<a href=#INSTANCE_RUNNING_LINK#>#INSTANCE_RUNNING#</a>'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'CENTER'
@@ -263,7 +264,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'INSTANCE_COMPLETED'
 ,p_display_order=>140
 ,p_column_identifier=>'O'
-,p_column_label=>'<i class="status_icon fa fa-check-circle-o"></i>Completed'
+,p_column_label=>'<i class="status_icon fa fa-check-circle-o" data-status="completed"></i>&APP_TEXT$APP_STATUS_COMPLETED.'
 ,p_column_html_expression=>'<a href=#INSTANCE_COMPLETED_LINK#>#INSTANCE_COMPLETED#</a>'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'CENTER'
@@ -273,7 +274,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'INSTANCE_TERMINATED'
 ,p_display_order=>150
 ,p_column_identifier=>'T'
-,p_column_label=>'<i class="status_icon fa fa-stop-circle-o"></i>Terminated'
+,p_column_label=>'<i class="status_icon fa fa-stop-circle-o" data-status="terminated"></i>&APP_TEXT$APP_STATUS_TERMINATED.'
 ,p_column_html_expression=>'<a href=#INSTANCE_TERMINATED_LINK#>#INSTANCE_TERMINATED#</a>'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'CENTER'
@@ -283,7 +284,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_db_column_name=>'INSTANCE_ERROR'
 ,p_display_order=>160
 ,p_column_identifier=>'P'
-,p_column_label=>'<i class="status_icon fa fa-exclamation-circle-o"></i>Error'
+,p_column_label=>'<i class="status_icon fa fa-exclamation-circle-o" data-status="error"></i>&APP_TEXT$APP_STATUS_ERROR.'
 ,p_column_html_expression=>'<a href=#INSTANCE_ERROR_LINK#>#INSTANCE_ERROR#</a>'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'CENTER'
@@ -810,16 +811,16 @@ wwv_flow_api.create_page_da_action(
 '$("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after(''<th colspan="5" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>'');',
 '',
 '$( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {',
-'      var text = $( this ).text();',
-'      if ( text == "Created" ) {',
+'      var status = $( this ).children("i").data("status");',
+'      if ( status == "created" ) {',
 '        $( this ).parent().addClass( "ffa-color--created" );',
-'      } else if ( text == "Completed" ) {',
+'      } else if ( status == "completed" ) {',
 '        $( this ).parent().addClass( "ffa-color--completed" );',
-'      } else if ( text == "Running" ) {',
+'      } else if ( status == "running" ) {',
 '        $( this ).parent().addClass( "ffa-color--running" );',
-'      } else if ( text == "Terminated" ) {',
+'      } else if ( status == "terminated" ) {',
 '        $( this ).parent().addClass( "ffa-color--terminated" );',
-'      } else if ( text == "Error" ) {',
+'      } else if ( status == "error" ) {',
 '        $( this ).parent().addClass( "ffa-color--error" );',
 '      }',
 '    } );',
@@ -893,6 +894,18 @@ wwv_flow_api.create_page_process(
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 ,p_process_success_message=>'&APP_TEXT$APP_MODEL_COPIED.'
 );
+wwv_flow_api.component_end;
+end;
+/
+begin
+wwv_flow_api.component_begin (
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(34632414579575826)
 ,p_process_sequence=>10
@@ -905,6 +918,7 @@ wwv_flow_api.create_page_process(
 ,p_process_when=>'EXPORT_FLOW,ADD_VERSION,COPY_FLOW'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'
 );
+null;
 wwv_flow_api.component_end;
 end;
 /

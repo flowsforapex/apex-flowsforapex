@@ -1280,16 +1280,16 @@ function initPage2() {
       );
 
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
-      var text = $( this ).text();
-      if ( text == "Created" ) {
+      var status = $( this ).children("i").data("status");
+      if ( status == "created" ) {
         $( this ).parent().addClass( "ffa-color--created" );
-      } else if ( text == "Completed" ) {
+      } else if ( status == "completed" ) {
         $( this ).parent().addClass( "ffa-color--completed" );
-      } else if ( text == "Running" ) {
+      } else if ( status == "running" ) {
         $( this ).parent().addClass( "ffa-color--running" );
-      } else if ( text == "Terminated" ) {
+      } else if ( status == "terminated" ) {
         $( this ).parent().addClass( "ffa-color--terminated" );
-      } else if ( text == "Error" ) {
+      } else if ( status == "error" ) {
         $( this ).parent().addClass( "ffa-color--error" );
       }
     } );
