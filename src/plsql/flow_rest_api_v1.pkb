@@ -82,22 +82,6 @@ as
                                                     , po_forward_location => po_forward_location 
                                                     , po_exc_payload      => l_exc_payload
                                                     , po_exc_payload_attr_name => l_exc_payload_attr_name );
-          when regexp_like(pi_endpoint, '^v1/processes/[[:digit:]]+$', 'i') then
-            flow_rest_api_v1.processes_put( pi_prcs_id          => pi_prcs_id
-                                          , pi_payload          => l_payload
-                                          , pi_current_user     => pi_current_user
-                                          , po_status_code      => po_status_code
-                                          , po_forward_location => po_forward_location 
-                                          , po_exc_payload      => l_exc_payload
-                                          , po_exc_payload_attr_name => l_exc_payload_attr_name );
-          when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+$', 'i') then
-            flow_rest_api_v1.steps_put( pi_sbfl_id          => pi_sbfl_id
-                                      , pi_payload          => l_payload
-                                      , pi_current_user     => pi_current_user
-                                      , po_status_code      => po_status_code
-                                      , po_forward_location => po_forward_location 
-                                      , po_exc_payload      => l_exc_payload
-                                      , po_exc_payload_attr_name => l_exc_payload_attr_name );
           when regexp_like(pi_endpoint, '^v1/steps/[[:digit:]]+/start$', 'i') then
             flow_rest_api_v1.steps_start_put( pi_sbfl_id          => pi_sbfl_id
                                             , pi_payload          => l_payload
@@ -404,7 +388,8 @@ as
     flow_rest.verify_process_exists( pi_prcs_id  => pi_prcs_id );
 
     l_item_object := new json_object_t();
-    l_item_object.put('status','start');
+
+    l_item_object.put( flow_rest_constants.c_process_status, flow_rest_constants.c_process_status_start);
 
     flow_rest.process_status_update( pi_prcs_id  => pi_prcs_id
                                    , pi_payload  => l_item_object );
@@ -446,7 +431,7 @@ as
                                           , po_payload_object => l_item_object );
     end if;
 
-    l_item_object.put('status','reset');
+    l_item_object.put( flow_rest_constants.c_process_status, flow_rest_constants.c_process_status_reset);
 
     flow_rest.verify_process_exists( pi_prcs_id  => pi_prcs_id );
 
@@ -490,7 +475,7 @@ as
                                           , po_payload_object => l_item_object );
     end if;
 
-    l_item_object.put('status','reset');
+    l_item_object.put( flow_rest_constants.c_process_status, flow_rest_constants.c_process_status_terminate);
 
     flow_rest.verify_process_exists( pi_prcs_id  => pi_prcs_id );
 
@@ -510,41 +495,6 @@ as
         raise;
 
   end processes_terminate_put;
-
-  -------------------------------------------------------------------------------------------------------------------
-
-  procedure processes_put( pi_prcs_id          flow_processes.prcs_id%type
-                         , pi_payload          json_element_t 
-                         , pi_current_user     varchar2
-                         , po_status_code      out number
-                         , po_forward_location out varchar2 
-                         , po_exc_payload      out json_element_t
-                         , po_exc_payload_attr_name out varchar2)
-  as
-    l_item_object      json_object_t;   
-  begin
-
-    flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
-                                        , pi_array_allowed        => false 
-                                        , po_payload_object       => l_item_object );
-
-    flow_rest.verify_process_exists( pi_prcs_id  => pi_prcs_id );
-
-    flow_rest.process_status_update( pi_prcs_id  => pi_prcs_id
-                                   , pi_payload  => l_item_object );
-
-    flow_rest_response.send_success( pi_success_message => 'status updated' 
-                                   , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_process
-                                                                           , pi_object_id    => pi_prcs_id )
-                                   , pi_payload_attr_name => 'links'
-                                   , po_status_code       => po_status_code );
-
-    exception 
-      when others then 
-        po_exc_payload := l_item_object;
-        po_exc_payload_attr_name := 'item';
-        raise;
-  end processes_put;
 
   -------------------------------------------------------------------------------------------------------------------
 
@@ -578,41 +528,6 @@ as
 
   end processes_delete;    
 
-  -------------------------------------------------------------------------------------------------------------------
-
-  procedure steps_put( pi_sbfl_id          flow_subflows.sbfl_id%type
-                     , pi_payload          json_element_t 
-                     , pi_current_user     varchar2
-                     , po_status_code      out number 
-                     , po_forward_location out varchar2
-                     , po_exc_payload      out json_element_t
-                     , po_exc_payload_attr_name out varchar2)
-  as
-    l_item_object      json_object_t;
-  begin
-
-    flow_rest.verify_and_prepare_payload( pi_payload              => pi_payload 
-                                        , pi_array_allowed        => false 
-                                        , po_payload_object       => l_item_object );
-
-    flow_rest.step_update( pi_sbfl_id  => pi_sbfl_id
-                         , pi_payload  => l_item_object );
-
-                        
-    flow_rest_response.send_success( pi_success_message => 'step updated' 
-                                   , pi_payload         => get_links_array ( pi_object_type  => flow_rest_constants.c_object_type_step
-                                                                           , pi_object_id    => pi_sbfl_id )
-                                   , pi_payload_attr_name => 'links'
-                                   , po_status_code     => po_status_code );
-
-    exception 
-      when others then 
-        po_exc_payload := l_item_object;
-        po_exc_payload_attr_name := 'item';
-        raise;
-
-  end steps_put;
-  
   -------------------------------------------------------------------------------------------------------------------
   
   procedure steps_start_put( pi_sbfl_id          flow_subflows.sbfl_id%type
@@ -926,7 +841,7 @@ as
     flow_rest.messages_update( pi_message_name  => pi_message_name
                              , pi_msg_arr       => l_msg_array );
 
-    flow_rest_response.send_success( pi_success_message   => 'message subscription updated' 
+    flow_rest_response.send_success( pi_success_message   => 'message processed' 
                                    , pi_payload           => l_msg_array
                                    , pi_payload_attr_name => 'items'
                                    , po_status_code       => po_status_code );

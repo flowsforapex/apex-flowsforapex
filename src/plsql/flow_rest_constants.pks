@@ -38,6 +38,7 @@ as
   c_object_type_step           constant varchar2(100 char) := 'step';
   c_object_type_step_usertask  constant varchar2(100 char) := 'usertask_url';
 
+  c_process_status            constant varchar2(20 char) := 'status';
   c_process_status_start      constant varchar2(20 char) := 'start';
   c_process_status_reset      constant varchar2(20 char) := 'reset';
   c_process_status_terminate  constant varchar2(20 char) := 'terminate';
