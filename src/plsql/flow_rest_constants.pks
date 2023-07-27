@@ -84,12 +84,15 @@ as
   
   -- Rest Roles and Privileges
   c_rest_grant_type    constant varchar2(50 char) := 'client_credentials';
+  c_rest_priv_access   constant varchar2(50 char) := 'flowsforapex.access';
   c_rest_priv_read     constant varchar2(50 char) := 'flowsforapex.read';
   c_rest_priv_write    constant varchar2(50 char) := 'flowsforapex.write';
   c_rest_priv_admin    constant varchar2(50 char) := 'flowsforapex.admin';
+  c_rest_priv_messages constant varchar2(50 char) := 'flowsforapex.messages';
   c_rest_role_read     constant varchar2(50 char) := 'Flows for Apex - Read';
   c_rest_role_write    constant varchar2(50 char) := 'Flows for Apex - Write';
   c_rest_role_admin    constant varchar2(50 char) := 'Flows for Apex - Admin';
+  c_rest_role_messages constant varchar2(50 char) := 'Flows for Apex - Messages';
   c_rest_role_sep      constant varchar2(50 char) := ':';
   
   c_rest_schema_status_enabled    constant varchar2(50 char) := 'ENABLED';

@@ -18,8 +18,24 @@ as
   function get_client_roles( pi_id  user_ords_clients.id%type )
     return apex_application_global.vc_arr2;
 
+  -- check if client has flowsforapex.read privilege (used for GET operations)
+  -- return 1 if true or 0 if false
+  function has_privilege_read( pi_client_id       varchar2)
+    return number;
+
+  -- check if client has flowsforapex.admin privilege (used for GET operations)
+  -- return 1 if true or 0 if false
+  function has_privilege_admin( pi_client_id      varchar2)
+    return number;
+
   procedure check_privilege( pi_client_id       varchar2 -- client_id is returned by implicit parameter :current_user
                            , pi_privilege_name  varchar2 );
+
+  procedure create_client( pi_name           varchar2
+                         , pi_owner          varchar2
+                         , pi_description    varchar2
+                         , pi_support_email  varchar2
+                         , pi_support_uri    varchar2 );
 
   procedure update_client_roles( pi_id     user_ords_clients.id%type
                                , pi_roles  apex_application_global.vc_arr2); -- array of user_ords_roles.id

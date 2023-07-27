@@ -693,7 +693,8 @@ as
   begin
 
     flow_rest.initialize( pi_client_id => pi_current_user
-                        , pi_method    => pi_method );
+                        , pi_method    => pi_method 
+                        , pi_endpoint  => pi_endpoint );
     
     begin
       l_payload := flow_rest.blob_to_json(pi_payload);
