@@ -20,6 +20,12 @@ as
   c_path_process_reset      constant varchar2(200 char) := 'processes/:id/reset';
   c_path_process_terminate  constant varchar2(200 char) := 'processes/:id/terminate';
   c_path_steps              constant varchar2(200 char) := 'steps/:id';
+  c_path_steps_start        constant varchar2(200 char) := 'steps/:id/start';
+  c_path_steps_reserve      constant varchar2(200 char) := 'steps/:id/reserve';
+  c_path_steps_release      constant varchar2(200 char) := 'steps/:id/release';
+  c_path_steps_complete     constant varchar2(200 char) := 'steps/:id/complete';
+  c_path_steps_restart      constant varchar2(200 char) := 'steps/:id/restart';
+  c_path_steps_reschedule_timer  constant varchar2(200 char) := 'steps/:id/reschedule_timer';
   c_path_message_subscriptions   constant varchar2(200 char) := 'processes/:id/message_subscriptions';
 
   -- Allowed HTTP Action Definition

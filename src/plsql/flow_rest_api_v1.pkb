@@ -81,16 +81,19 @@ as
         l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_diagram_processes, pi_object_id, flow_rest_constants.c_http_action_post));
       when flow_rest_constants.c_object_type_process then 
         l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_processes, pi_object_id, flow_rest_constants.c_http_action_get));
-        l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_processes, pi_object_id, flow_rest_constants.c_http_action_put));
         l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_processes, pi_object_id, flow_rest_constants.c_http_action_delete));
-        l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_process_start, pi_object_id, flow_rest_constants.c_http_action_post));
-        l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_process_reset, pi_object_id, flow_rest_constants.c_http_action_post));
-        l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_process_terminate, pi_object_id, flow_rest_constants.c_http_action_post));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_process_start, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_process_reset, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_process, flow_rest_constants.c_path_process_terminate, pi_object_id, flow_rest_constants.c_http_action_put));
         l_links.append( get_link_json( flow_rest_constants.c_object_type_process_vars, flow_rest_constants.c_path_process_vars, pi_object_id, flow_rest_constants.c_http_action_get));
         l_links.append( get_link_json( flow_rest_constants.c_object_type_process_vars, flow_rest_constants.c_path_process_vars, pi_object_id, flow_rest_constants.c_http_action_put));
       when flow_rest_constants.c_object_type_step then
-        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps, pi_object_id, flow_rest_constants.c_http_action_get));
-        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps_start, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps_reserve, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps_release, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps_complete, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps_restart, pi_object_id, flow_rest_constants.c_http_action_put));
+        l_links.append( get_link_json( flow_rest_constants.c_object_type_step, flow_rest_constants.c_path_steps_reschedule_timer, pi_object_id, flow_rest_constants.c_http_action_put));
         add_usertask_url( l_links, flow_rest_constants.c_object_type_step_usertask, pi_object_id, flow_rest_constants.c_http_action_get);
       else 
         null;
