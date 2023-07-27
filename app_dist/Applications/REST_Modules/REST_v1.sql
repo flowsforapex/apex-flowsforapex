@@ -768,6 +768,65 @@ Role "Flows for Apex - Admin" needed.',
       p_description    => '',
       p_comments       => NULL);      
 
+  l_roles.DELETE;
+  l_modules.DELETE;
+  l_patterns.DELETE;
+
+  l_roles(1)   := 'Flows for Apex - Admin';
+
+  ORDS.DEFINE_PRIVILEGE(
+      p_privilege_name => 'flowsforapex.admin',
+      p_roles          => l_roles,
+      p_patterns       => l_patterns,
+      p_modules        => l_modules,
+      p_label          => 'flowsforapex.admin',
+      p_description    => '',
+      p_comments       => NULL);      
+
+  l_roles.DELETE;
+  l_modules.DELETE;
+  l_patterns.DELETE;
+
+  l_roles(1)   := 'Flows for Apex - Messages';
+
+  ORDS.DEFINE_PRIVILEGE(
+      p_privilege_name => 'flowsforapex.messages',
+      p_roles          => l_roles,
+      p_patterns       => l_patterns,
+      p_modules        => l_modules,
+      p_label          => 'flowsforapex.messages',
+      p_description    => '',
+      p_comments       => NULL);      
+
+  l_roles.DELETE;
+  l_modules.DELETE;
+  l_patterns.DELETE;
+
+  l_roles(1)   := 'Flows for Apex - Read';
+
+  ORDS.DEFINE_PRIVILEGE(
+      p_privilege_name => 'flowsforapex.read',
+      p_roles          => l_roles,
+      p_patterns       => l_patterns,
+      p_modules        => l_modules,
+      p_label          => 'flowsforapex.read',
+      p_description    => '',
+      p_comments       => NULL);      
+
+  l_roles.DELETE;
+  l_modules.DELETE;
+  l_patterns.DELETE;
+
+  l_roles(1)   := 'Flows for Apex - Write';
+
+  ORDS.DEFINE_PRIVILEGE(
+      p_privilege_name => 'flowsforapex.write',
+      p_roles          => l_roles,
+      p_patterns       => l_patterns,
+      p_modules        => l_modules,
+      p_label          => 'flowsforapex.write',
+      p_description    => '',
+      p_comments       => NULL);    
 
   COMMIT; 
 
