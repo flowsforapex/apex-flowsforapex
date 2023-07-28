@@ -23,7 +23,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'C##JDOPPELREITER'
-,p_last_upd_yyyymmddhh24miss=>'20230618115636'
+,p_last_upd_yyyymmddhh24miss=>'20230727102901'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2333314435104525)
@@ -368,14 +368,11 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Create Client'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'OAUTH.CREATE_CLIENT(',
-'   p_name            => :P31_NAME,',
-'   p_grant_type      => ''client_credentials'',',
-'   p_owner           => :P31_OWNER,',
-'   p_description     => :P31_DESCRIPTION,',
-'   p_support_email   => :P31_SUPPORT_EMAIL,',
-'   p_support_uri     => :P31_SUPPORT_URI,',
-'   p_privilege_names => ''flowsforapex.read'');',
+'flow_rest_auth.create_client( pi_name           => :P31_NAME',
+'                            , pi_owner          => :P31_OWNER',
+'                            , pi_description    => :P31_DESCRIPTION',
+'                            , pi_support_email  => :P31_SUPPORT_EMAIL',
+'                            , pi_support_uri    => :P31_SUPPORT_URI );',
 '',
 ':P31_ID := flow_rest_auth.get_client_id(pi_name => :P31_NAME);'))
 ,p_process_clob_language=>'PLSQL'
