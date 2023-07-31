@@ -78,31 +78,33 @@ alter table flow_message_received_log
 
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_ck_following_ebg_yn CHECK (sbfl_is_following_ebg in ('Y','N'));
 
-update_flow_timers timr
-set timr.timr_callback = 
-        select cur_objt.objt_tag_name
-          from flow_subflows sbfl
-          join flow_objects cur_objt
-            on sbfl.sbfl_current = cur_objt.objt_bpmn_id
-           and sbfl.sbfl_dgrm_id = cur_objt.objt_dgrm_id
-          where sbfl.sbfl_id = timr.timr_sbfl_id
+
+update flow_timers timr
+   set timr.timr_callback = ( select cur_objt.objt_tag_name
+                                from flow_subflows sbfl
+                                join flow_objects cur_objt
+                                  on sbfl.sbfl_current = cur_objt.objt_bpmn_id
+                                 and sbfl.sbfl_dgrm_id = cur_objt.objt_dgrm_id
+                               where sbfl.sbfl_id = timr.timr_sbfl_id
+                            )
 ;
 
 
 -- in addition, know in flow_subflows if the current event follows on from a Event Based Gateway
  
 update flow_subflows sbfl
-set sbfl.sbfl_is_following_ebg = 'Y'
-where sbfl.sbfl_current in (
-             select cur_objt.objt_bpmn_id
-               from flow_objects cur_objt
-               join flow_diagrams dgrm
-                 on dgrm.dgrm_id = cur_objt.objt_dgrm_id
-               join flow_objects prev_objt 
-                 on cur_objt.objt_dgrm_id = prev_objt.objt_dgrm_id
-               join flow_connections conn
-                 on conn.conn_dgrm_id = cur_objt.objt_dgrm_id
-                and conn.conn_tgt_objt_id = cur_objt.objt_id
-                and conn.conn_src_objt_id = prev_objt.objt_id
-              where cur_objt.objt_tag_name = 'bpmn:intermediateCatchEvent'
-                and prev_objt.objt_tag_name = 'bpmn:eventBasedGateway');
+   set sbfl.sbfl_is_following_ebg = 'Y'
+ where sbfl.sbfl_current in ( select cur_objt.objt_bpmn_id
+                                from flow_objects cur_objt
+                                join flow_diagrams dgrm
+                                  on dgrm.dgrm_id = cur_objt.objt_dgrm_id
+                                join flow_objects prev_objt 
+                                  on cur_objt.objt_dgrm_id = prev_objt.objt_dgrm_id
+                                join flow_connections conn
+                                  on conn.conn_dgrm_id = cur_objt.objt_dgrm_id
+                                 and conn.conn_tgt_objt_id = cur_objt.objt_id
+                                 and conn.conn_src_objt_id = prev_objt.objt_id
+                               where cur_objt.objt_tag_name = 'bpmn:intermediateCatchEvent'
+                                 and prev_objt.objt_tag_name = 'bpmn:eventBasedGateway'
+                            )
+;

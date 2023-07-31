@@ -12,9 +12,7 @@ PROMPT >> ------------------------------------------------------
 
 WHENEVER SQLERROR exit
 
-
-@@pre-migration-check-issue-xx.sql
-
+PROMPT >> Nothing needed this time.
 
 
 WHENEVER SQLERROR continue

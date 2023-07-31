@@ -39,8 +39,8 @@ create table flow_stats_history
 , sths_operation  varchar2(20 char)
 , sths_errors     varchar2(4000 char)
 , sths_comments   varchar2(4000 char)
-, sths_created_on systimestamp with time zone
-, sths_updated_on systimestamp with time zone
+, sths_created_on timestamp with time zone
+, sths_updated_on timestamp with time zone
 , sths_updated_by varchar2(50 char)
 );
 
@@ -55,7 +55,7 @@ alter table flow_stats_history
   add constraint flow_sths_status_ck
     check (sths_status in ('SUCCESS', 'ERROR') );
 
-alter table flow_stats_type
+alter table flow_stats_history
   add constraint flow_sths_type_ck
     check (sths_type in ('DAY', 'MONTH', 'MTD', 'QUARTER', 'YEAR') );
 
@@ -121,13 +121,15 @@ alter table flow_step_stats
 -- add flow_instance_timeline views
 
 -- add retention config
-
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_retain_logs_after_prcs_completion_days',p_value => '60');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_archive_instance_summaries'            ,p_value => 'false');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_daily_summaries_days'             ,p_value => '185');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_monthly_summaries_months'         ,p_value => '9');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_quarterly_summaries_months'       ,p_value => '60');
-
+begin
+  flow_engine_util.set_config_value ( p_config_key => 'logging_retain_logs_after_prcs_completion_days',p_value => '60' );
+  flow_engine_util.set_config_value ( p_config_key => 'logging_archive_instance_summaries'            ,p_value => 'false' );
+  flow_engine_util.set_config_value ( p_config_key => 'stats_retain_daily_summaries_days'             ,p_value => '185' );
+  flow_engine_util.set_config_value ( p_config_key => 'stats_retain_monthly_summaries_months'         ,p_value => '9' );
+  flow_engine_util.set_config_value ( p_config_key => 'stats_retain_quarterly_summaries_months'       ,p_value => '60' );
+  commit;
+end;
+/
 -- modify flow_flow_event_log
 
   alter table flow_flow_event_log 
