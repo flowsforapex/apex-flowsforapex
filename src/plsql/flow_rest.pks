@@ -18,7 +18,8 @@ as
     return flow_configuration.cfig_value%type;
     
   procedure initialize( pi_client_id varchar2
-                      , pi_method    varchar2 );
+                      , pi_method    varchar2
+                      , pi_endpoint  varchar2 );
 
   procedure initialize( pi_client_id        varchar2
                       , pi_check_privilege  varchar2 );

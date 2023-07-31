@@ -20,6 +20,12 @@ as
   c_path_process_reset      constant varchar2(200 char) := 'processes/:id/reset';
   c_path_process_terminate  constant varchar2(200 char) := 'processes/:id/terminate';
   c_path_steps              constant varchar2(200 char) := 'steps/:id';
+  c_path_steps_start        constant varchar2(200 char) := 'steps/:id/start';
+  c_path_steps_reserve      constant varchar2(200 char) := 'steps/:id/reserve';
+  c_path_steps_release      constant varchar2(200 char) := 'steps/:id/release';
+  c_path_steps_complete     constant varchar2(200 char) := 'steps/:id/complete';
+  c_path_steps_restart      constant varchar2(200 char) := 'steps/:id/restart';
+  c_path_steps_reschedule_timer  constant varchar2(200 char) := 'steps/:id/reschedule_timer';
   c_path_message_subscriptions   constant varchar2(200 char) := 'processes/:id/message_subscriptions';
 
   -- Allowed HTTP Action Definition
@@ -38,6 +44,7 @@ as
   c_object_type_step           constant varchar2(100 char) := 'step';
   c_object_type_step_usertask  constant varchar2(100 char) := 'usertask_url';
 
+  c_process_status            constant varchar2(20 char) := 'status';
   c_process_status_start      constant varchar2(20 char) := 'start';
   c_process_status_reset      constant varchar2(20 char) := 'reset';
   c_process_status_terminate  constant varchar2(20 char) := 'terminate';
@@ -83,12 +90,15 @@ as
   
   -- Rest Roles and Privileges
   c_rest_grant_type    constant varchar2(50 char) := 'client_credentials';
+  c_rest_priv_access   constant varchar2(50 char) := 'flowsforapex.access';
   c_rest_priv_read     constant varchar2(50 char) := 'flowsforapex.read';
   c_rest_priv_write    constant varchar2(50 char) := 'flowsforapex.write';
   c_rest_priv_admin    constant varchar2(50 char) := 'flowsforapex.admin';
+  c_rest_priv_messages constant varchar2(50 char) := 'flowsforapex.messages';
   c_rest_role_read     constant varchar2(50 char) := 'Flows for Apex - Read';
   c_rest_role_write    constant varchar2(50 char) := 'Flows for Apex - Write';
   c_rest_role_admin    constant varchar2(50 char) := 'Flows for Apex - Admin';
+  c_rest_role_messages constant varchar2(50 char) := 'Flows for Apex - Messages';
   c_rest_role_sep      constant varchar2(50 char) := ':';
   
   c_rest_schema_status_enabled    constant varchar2(50 char) := 'ENABLED';

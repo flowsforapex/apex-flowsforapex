@@ -11,6 +11,7 @@ as
     l_roles(1) := flow_rest_constants.c_rest_role_read;
     l_roles(2) := flow_rest_constants.c_rest_role_write;
     l_roles(3) := flow_rest_constants.c_rest_role_admin;
+    l_roles(4) := flow_rest_constants.c_rest_role_messages;
 
     for rec_roles in (select id, name 
                         from user_ords_roles 
@@ -77,6 +78,40 @@ as
 
   -------------------------------------------------------------------------------------------------------------------
 
+  function has_privilege_read( pi_client_id       varchar2)
+    return number
+  as
+  begin
+
+    if has_privilege( pi_client_id       => pi_client_id
+                    , pi_privilege_name  => flow_rest_constants.c_rest_priv_read)
+    then 
+      return 1;
+    else
+      return 0;
+    end if;
+
+  end has_privilege_read;
+
+  -------------------------------------------------------------------------------------------------------------------
+
+  function has_privilege_admin( pi_client_id       varchar2)
+    return number
+  as
+  begin
+
+    if has_privilege( pi_client_id       => pi_client_id
+                    , pi_privilege_name  => flow_rest_constants.c_rest_priv_admin)
+    then 
+      return 1;
+    else
+      return 0;
+    end if;
+
+  end has_privilege_admin;
+
+  -------------------------------------------------------------------------------------------------------------------
+
   procedure check_privilege( pi_client_id       varchar2 -- client_id is returned by implicit parameter :current_user
                            , pi_privilege_name  varchar2 )
   as
@@ -89,6 +124,24 @@ as
     end if;
 
   end check_privilege;                       
+
+  -------------------------------------------------------------------------------------------------------------------
+
+  procedure create_client( pi_name           varchar2
+                         , pi_owner          varchar2
+                         , pi_description    varchar2
+                         , pi_support_email  varchar2
+                         , pi_support_uri    varchar2 )
+  as
+  begin   
+    OAUTH.CREATE_CLIENT( p_name            => pi_name,
+                         p_grant_type      => flow_rest_constants.c_rest_grant_type,
+                         p_owner           => pi_owner,
+                         p_description     => pi_description,
+                         p_support_email   => pi_support_email,
+                         p_support_uri     => pi_support_uri,
+                         p_privilege_names => flow_rest_constants.c_rest_priv_access );
+  end create_client;                     
 
   -------------------------------------------------------------------------------------------------------------------
   procedure update_client_roles( pi_id     user_ords_clients.id%type

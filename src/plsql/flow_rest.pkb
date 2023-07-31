@@ -51,7 +51,8 @@ as
   -------------------------------------------------------------------------------------------------------------------
   
   procedure initialize( pi_client_id varchar2
-                      , pi_method    varchar2 )
+                      , pi_method    varchar2 
+                      , pi_endpoint  varchar2 )
   as
     l_check_privilege  varchar2(50 char);
   begin
@@ -59,8 +60,12 @@ as
     case upper(pi_method) 
       when 'POST' then
         l_check_privilege := flow_rest_constants.c_rest_priv_write;
-      when 'PUT'  then 
-        l_check_privilege := flow_rest_constants.c_rest_priv_write;
+      when 'PUT'  then         
+        if regexp_like(pi_endpoint, '^v1/messages/[[:alnum:][:blank:][:punct:]]+$', 'i') then
+          l_check_privilege := flow_rest_constants.c_rest_priv_messages;
+        else
+          l_check_privilege := flow_rest_constants.c_rest_priv_write;
+        end if;
       when 'DELETE' then 
         l_check_privilege := flow_rest_constants.c_rest_priv_admin;
     end case;
