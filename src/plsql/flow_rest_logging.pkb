@@ -65,7 +65,7 @@ as
 
       l_payload_clob := pi_payload.to_clob;
 
-      INSERT INTO flows4apex.flow_rest_event_log (
+      INSERT INTO flow_rest_event_log (
           lgrt_call_guid
         , lgrt_client_id
         , lgrt_log_info
@@ -108,7 +108,7 @@ as
     then
       l_payload_clob := pi_payload.to_clob;
 
-      INSERT INTO flows4apex.flow_rest_event_log (
+      INSERT INTO flow_rest_event_log (
           lgrt_call_guid
         , lgrt_client_id
         , lgrt_log_info
@@ -157,7 +157,7 @@ as
         l_payload_clob := pi_payload.to_clob;
       end if;
 
-      INSERT INTO flows4apex.flow_rest_event_log (
+      INSERT INTO flow_rest_event_log (
           lgrt_call_guid
         , lgrt_client_id
         , lgrt_log_info

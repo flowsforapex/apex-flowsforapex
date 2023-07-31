@@ -33,6 +33,12 @@ order by object_type
        , object_name
 ;
 
+PROMPT >> Enable DBMS_SCHEDULER job 
+begin
+  flow_timers_pkg.enable_scheduled_job;
+end;
+/
+
 PROMPT >> Please make sure your Flows for APEX installation configuration is correct.
 PROMPT >> Check our migration guide in the docs for any post-installation tasks.
 

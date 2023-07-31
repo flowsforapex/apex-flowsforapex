@@ -282,11 +282,25 @@ create or replace package body test_018_gw_routing_exps as
             'Activity_TaskB1'            as sbfl_current,
             flow_constants_pkg.gc_sbfl_status_running as sbfl_status
          from dual
-         union
+         union all
          select
             test_prcs_id        as sbfl_prcs_id,
             test_dgrm_id        as sbfl_dgrm_id,
             'Activity_TaskB3'            as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status  
+          from dual     
+         union all
+         select
+            test_prcs_id        as sbfl_prcs_id,
+            test_dgrm_id        as sbfl_dgrm_id,
+            'Activity_TaskB4'            as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status  
+          from dual     
+         union all
+         select
+            test_prcs_id        as sbfl_prcs_id,
+            test_dgrm_id        as sbfl_dgrm_id,
+            'Activity_TaskB5'            as sbfl_current,
             flow_constants_pkg.gc_sbfl_status_running sbfl_status  
           from dual     
          ;
@@ -303,6 +317,8 @@ create or replace package body test_018_gw_routing_exps as
 
     test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB1');     
     test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB3');         
+    test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB4');     
+    test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB5');         
 
     -- check process running state
 
@@ -790,11 +806,25 @@ create or replace package body test_018_gw_routing_exps as
             'Activity_TaskB1'            as sbfl_current,
             flow_constants_pkg.gc_sbfl_status_running as sbfl_status
          from dual
-         union
+         union all
          select
             test_prcs_id        as sbfl_prcs_id,
             test_dgrm_id        as sbfl_dgrm_id,
             'Activity_TaskB3'            as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status  
+          from dual     
+         union all
+         select
+            test_prcs_id        as sbfl_prcs_id,
+            test_dgrm_id        as sbfl_dgrm_id,
+            'Activity_TaskB4'            as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status  
+          from dual     
+         union all
+         select
+            test_prcs_id        as sbfl_prcs_id,
+            test_dgrm_id        as sbfl_dgrm_id,
+            'Activity_TaskB5'            as sbfl_current,
             flow_constants_pkg.gc_sbfl_status_running sbfl_status  
           from dual     
          ;
@@ -811,6 +841,8 @@ create or replace package body test_018_gw_routing_exps as
 
     test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB1');     
     test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB3');         
+    test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB4');     
+    test_helper.step_forward(pi_prcs_id => test_prcs_id, pi_current => 'Activity_TaskB5');         
 
     -- check process running state
 
