@@ -350,7 +350,8 @@ begin
     pi_dgrm_name => 'A21c - Messageflow - bad endpoint',
     pi_dgrm_version => '0',
     pi_dgrm_category => 'Testing',
-    pi_dgrm_content => l_dgrm_content
+    pi_dgrm_content => l_dgrm_content,
+    pi_force_overwrite => true
 );
 end;
 /

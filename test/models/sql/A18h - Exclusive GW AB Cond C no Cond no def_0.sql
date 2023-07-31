@@ -149,7 +149,8 @@ begin
     pi_dgrm_name => 'A18h - Exclusive GW AB Cond C no Cond no def',
     pi_dgrm_version => '0',
     pi_dgrm_category => 'Testing',
-    pi_dgrm_content => l_dgrm_content
+    pi_dgrm_content => l_dgrm_content,
+    pi_force_overwrite => true
 );
 end;
 /
