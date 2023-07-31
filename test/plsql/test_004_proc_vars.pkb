@@ -707,6 +707,7 @@ create or replace package body test_004_proc_vars is
 
    procedure var_case_sensitivity_date
    is
+      c_date_fmt constant varchar2(10) := 'YYYY-MM-DD';
       l_prcs_id  flow_processes.prcs_id%type;
       l_dgrm_id  flow_diagrams.dgrm_id%type;
       l_actual   sys_refcursor;
@@ -714,9 +715,9 @@ create or replace package body test_004_proc_vars is
       l_date_var_name_lc varchar2(10) := 'date_var';
       l_date_var_name_uc varchar2(10) := 'DATE_VAR';
       l_date_var_name_mc varchar2(10) := 'dAtE_vaR';
-      l_date_lc_val      varchar2(20) := '01-JAN-2022';
-      l_date_uc_val      varchar2(20) := '11-FEB-2022';
-      l_date_mc_val      varchar2(20) := '22-MAR-2022';
+      l_date_lc_val      varchar2(20) := '2022-01-01';
+      l_date_uc_val      varchar2(20) := '2022-02-11';
+      l_date_mc_val      varchar2(20) := '2022-03-22';
       l_actual_vc2 varchar2(4000);
       l_actual_num number;
       l_actual_date date;
@@ -798,7 +799,7 @@ create or replace package body test_004_proc_vars is
       flow_process_vars.set_var(
            pi_prcs_id     => l_prcs_id
          , pi_var_name    => l_date_var_name_lc
-         , pi_date_value   => to_date(l_date_lc_val,'DD-MON-YYYY')
+         , pi_date_value   => to_date(l_date_lc_val,c_date_fmt)
       );
 
       -- check now exactly 1 process variable
@@ -813,7 +814,7 @@ create or replace package body test_004_proc_vars is
          select 
             l_date_var_name_lc                        as prov_var_name, 
             'DATE'                                    as prov_var_type, 
-            to_date(l_date_lc_val,'DD-MON-YYYY')      as prov_var_date
+            to_date(l_date_lc_val,c_date_fmt)      as prov_var_date
          from dual;
 
       open l_actual for 
@@ -843,7 +844,7 @@ create or replace package body test_004_proc_vars is
          select 
             l_date_var_name_lc                            as prov_var_name,  -- should keep original name
             'DATE'                                        as prov_var_type, 
-            to_date( l_date_mc_val ,'DD-MON-YYYY')        as prov_var_date     -- but reset the value
+            to_date( l_date_mc_val ,c_date_fmt)        as prov_var_date     -- but reset the value
          from dual;
 
       open l_actual for 
@@ -872,7 +873,7 @@ create or replace package body test_004_proc_vars is
          select 
             l_date_var_name_lc                          as prov_var_name,  -- should keep original name
             'DATE'                                      as prov_var_type, 
-            to_date(l_date_uc_val ,'DD-MON-YYYY')       as prov_var_date    -- but reset the value
+            to_date(l_date_uc_val ,c_date_fmt)       as prov_var_date    -- but reset the value
          from dual;
 
       open l_actual for 
