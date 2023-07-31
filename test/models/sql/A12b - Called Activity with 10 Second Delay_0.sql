@@ -6,7 +6,7 @@ begin
       q'[<?xml version="1.0" encoding="UTF-8"?>]'
       ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">]'
       ,q'[  <bpmn:process id="Process_10SecDelay" name="10SecDelay" isExecutable="false" apex:isCallable="true" apex:manualInput="false">]'
-      ,q'[    <bpmn:documentation>This Process just implements a 20 Second delay via an ICE with Timer Defined as PT20S then returns.</bpmn:documentation>]'
+      ,q'[    <bpmn:documentation>This Process just implements a 10 Second delay via an ICE with Timer Defined as PT20S then returns.</bpmn:documentation>]'
       ,q'[    <bpmn:startEvent id="Event_1p87ip5" name="Start 10s Delay">]'
       ,q'[      <bpmn:outgoing>Flow_0m5f8c0</bpmn:outgoing>]'
       ,q'[    </bpmn:startEvent>]'
