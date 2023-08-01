@@ -1021,10 +1021,15 @@ end reschedule_timer;
   as
     l_repeat_interval  sys.all_scheduler_jobs.repeat_interval%type;
   begin
-    select repeat_interval
-      into l_repeat_interval
-      from sys.all_scheduler_jobs
-     where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    begin
+      select repeat_interval
+        into l_repeat_interval
+        from sys.all_scheduler_jobs
+       where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    exception
+      when no_data_found then
+        l_repeat_interval := null;
+    end;
     return l_repeat_interval;
   end get_timer_repeat_interval;
 
@@ -1094,7 +1099,7 @@ end reschedule_timer;
       select enabled
         into l_status
         from sys.all_scheduler_jobs
-      where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+       where job_name = 'APEX_FLOW_STEP_TIMERS_J';
     exception 
       when no_data_found then
       l_status := 'FALSE';
@@ -1119,6 +1124,23 @@ end reschedule_timer;
     sys.dbms_scheduler.enable( name => 'apex_flow_step_timers_j' );
     end;]';
   end enable_scheduled_job;
+
+  function timer_job_exists
+    return boolean
+  as
+    l_dummy number;
+  begin
+    select 1
+      into l_dummy
+      from sys.all_scheduler_jobs
+     where job_name = 'APEX_FLOW_STEP_TIMERS_J'
+    ;
+    return true;
+  exception
+    when no_data_found then
+      return false;
+
+  end timer_job_exists;
 
 end flow_timers_pkg;
 /

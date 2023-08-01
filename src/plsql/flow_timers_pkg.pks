@@ -182,6 +182,13 @@ procedure reschedule_timer
   return varchar2;
 
 /******************************************************************************
+  timer_job_exists
+    Tells if the job for running timers exists.
+******************************************************************************/
+  function timer_job_exists
+    return boolean;
+
+/******************************************************************************
   disable_scheduled_job
     disable the scheduled job processing of timers.
 ******************************************************************************/
