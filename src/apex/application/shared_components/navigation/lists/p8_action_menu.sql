@@ -113,7 +113,7 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(14295838249027758)
 ,p_list_item_display_sequence=>110
 ,p_list_item_link_text=>'Refresh'
-,p_list_item_link_target=>'javascript:apex.region(''subflows'').refresh();apex.region(''flow-monitor'').refresh();apex.region(''flow-instance-detail'').refresh();apex.region(''process-variables'').refresh();'
+,p_list_item_link_target=>'javascript:apex.region(''subflows'').refresh();apex.region(''flow-monitor'').refresh();apex.region(''flow-instance-detail'').refresh();apex.region(''process-variables'').refresh();apex.region(''message-subscriptions'').refresh();apex.region(''task-list'').refresh();'
 ,p_list_item_icon=>'fa-refresh'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
