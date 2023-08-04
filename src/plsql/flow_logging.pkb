@@ -24,18 +24,40 @@ create or replace package body flow_logging as
   is
     l_log_dgrm_content  boolean;
     l_diagram_location  flow_flow_event_log.lgfl_dgrm_archive_location%type;
+    l_dgrm_name         flow_diagrams.dgrm_name%type;
+    l_dgrm_version      flow_diagrams.dgrm_version%type;
+    l_dgrm_status       flow_diagrams.dgrm_status%type;
+    l_dgrm_category     flow_diagrams.dgrm_category%type;
   begin
+    apex_debug.enter('Log diagram event');
     if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_secure
                           , flow_constants_pkg.gc_config_logging_level_full
                           ) 
     then
-      if p_dgrm_content is not null and p_dgrm_status != flow_constants_pkg.gc_dgrm_status_draft then
+      if p_dgrm_content is not null and coalesce(p_dgrm_status, 'X') != flow_constants_pkg.gc_dgrm_status_draft then
         l_log_dgrm_content := true;
         -- copy the new bpmn content to the bpmn archive (table or OCI object storage)
         l_diagram_location := flow_log_admin.archive_bpmn_diagram ( p_dgrm_id       => p_dgrm_id
                                                                   , p_dgrm_content  => p_dgrm_content
                                                                   );
       end if;
+
+      begin
+        select 
+            coalesce(p_dgrm_name, dgrm_name)
+          , coalesce(p_dgrm_version, dgrm_version)
+          , coalesce(p_dgrm_status, dgrm_status)
+          , coalesce(p_dgrm_category, dgrm_category)
+          into l_dgrm_name, l_dgrm_version, l_dgrm_status, l_dgrm_category
+          from flow_diagrams
+        where dgrm_id = p_dgrm_id;
+      exception 
+        when no_data_found then
+          l_dgrm_name     := p_dgrm_name;
+          l_dgrm_version  := p_dgrm_version;
+          l_dgrm_status   := p_dgrm_status;
+          l_dgrm_category := p_dgrm_category;
+      end;
 
       insert into flow_flow_event_log
       ( lgfl_dgrm_id
@@ -50,10 +72,10 @@ create or replace package body flow_logging as
       )
       values
       ( p_dgrm_id
-      , p_dgrm_name
-      , p_dgrm_version
-      , p_dgrm_status
-      , p_dgrm_category
+      , l_dgrm_name
+      , l_dgrm_version
+      , l_dgrm_status
+      , l_dgrm_category
       , l_diagram_location
       , coalesce  ( sys_context('apex$session','app_user') 
                   , sys_context('userenv','os_user')
