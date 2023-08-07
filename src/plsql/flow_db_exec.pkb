@@ -475,6 +475,10 @@ as
       , pi_scope   => pi_scope
       , pio_string => l_expr
       );
+
+      -- strip any trailing ; as our wrapper code adds it.
+      l_expr := rtrim(l_expr, ';');
+
       -- get bind parameters
       l_bind_parameters := flow_proc_vars_int.get_parameter_list
                               ( pi_expr               => l_expr
