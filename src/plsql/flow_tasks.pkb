@@ -611,26 +611,29 @@ create or replace package body flow_tasks as
                                 , p_sbfl_info               => p_sbfl_info
                                 );
         l_msg_sub.callback  := flow_constants_pkg.gc_bpmn_receivetask;
-  
-        -- create subscription for the awaited message 
-        l_msub_id := flow_message_flow.subscribe ( p_subscription_details => l_msg_sub);
-  
-        -- update subflow into 'waiting for message' status
-        update flow_subflows sbfl
-           set sbfl.sbfl_last_update    = systimestamp
-             , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_message
-             , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                    , sys_context('userenv','os_user')
-                                                    , sys_context('userenv','session_user')
-                                                    )  
-         where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
-           and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
-          ;
-        -- log subscription event
-        apex_debug.message 
-        ( p_message => '-- ReceiveTask subscription created - message subscription id: %0'
-        , p0 => l_msub_id
-        );
+
+        if not flow_globals.get_step_error then
+
+          -- create subscription for the awaited message 
+          l_msub_id := flow_message_flow.subscribe ( p_subscription_details => l_msg_sub);
+    
+          -- update subflow into 'waiting for message' status
+          update flow_subflows sbfl
+            set sbfl.sbfl_last_update    = systimestamp
+              , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_message
+              , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                      , sys_context('userenv','os_user')
+                                                      , sys_context('userenv','session_user')
+                                                      )  
+          where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
+            and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
+            ;
+          -- log subscription event
+          apex_debug.message 
+          ( p_message => '-- ReceiveTask subscription created - message subscription id: %0'
+          , p0 => l_msub_id
+          );
+        end if;
 
       when  flow_constants_pkg.gc_apex_task_execute_plsql then
         -- set work started time
