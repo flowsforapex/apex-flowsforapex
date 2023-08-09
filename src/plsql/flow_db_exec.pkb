@@ -477,7 +477,11 @@ as
       );
 
       -- strip any trailing ; as our wrapper code adds it.
-      l_expr := rtrim(l_expr, ';');
+      -- But only for expressions, functions need it still.
+      if pi_expr_type in ( flow_constants_pkg.gc_expr_type_plsql_expression, flow_constants_pkg.gc_expr_type_plsql_raw_expression )
+      then
+        l_expr := rtrim(l_expr, ';');
+      end if;
 
       -- get bind parameters
       l_bind_parameters := flow_proc_vars_int.get_parameter_list
