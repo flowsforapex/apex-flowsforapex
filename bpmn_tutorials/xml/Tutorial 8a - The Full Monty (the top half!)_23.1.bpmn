@@ -91,6 +91,17 @@
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BUSINESS_REF</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlRawExpression</apex:varExpressionType>
+            <apex:varExpression>coalesce( flow_globals.business_ref, to_char(flow_globals.process_id) )</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1u5kfn1</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:task id="Activity_stdTask" name="standard Task">
