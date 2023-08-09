@@ -201,6 +201,10 @@ create or replace package body flow_log_admin as
                            where  lgpr_prcs_event = flow_constants_pkg.gc_prcs_event_completed
                            and    lgpr_timestamp < systimestamp - l_purge_interval);
 
+    flow_log_admin.purge_message_logs(p_retention_period_days => p_retention_period_days);
+
+    flow_log_admin.purge_rest_logs(p_retention_period_days => p_retention_period_days);
+
   end purge_instance_logs;
 
   procedure purge_message_logs
