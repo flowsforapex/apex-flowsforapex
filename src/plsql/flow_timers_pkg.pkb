@@ -1132,7 +1132,7 @@ end reschedule_timer;
   begin
     select 1
       into l_dummy
-      from sys.all_scheduler_jobs
+      from sys.user_scheduler_jobs
      where job_name = 'APEX_FLOW_STEP_TIMERS_J'
     ;
     return true;
