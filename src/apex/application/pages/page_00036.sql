@@ -23,8 +23,8 @@ wwv_flow_api.create_page(
 '    font-size: 1.1rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230614075533'
+,p_last_updated_by=>'C##DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20230809133930'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(4548240290043011)
@@ -98,6 +98,11 @@ wwv_flow_api.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Apply Changes'
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
+,p_button_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select 1',
+'  from sys.all_scheduler_jobs',
+' where job_name = ''APEX_FLOW_STEP_TIMERS_J'';'))
+,p_button_condition_type=>'EXISTS'
 ,p_icon_css_classes=>'fa-save'
 );
 wwv_flow_api.create_page_item(
