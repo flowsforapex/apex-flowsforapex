@@ -18,9 +18,10 @@ wwv_flow_api.create_page(
 ,p_alias=>'INSTANCE-TIMELINE-P20-PRCS-NAME'
 ,p_step_title=>'Instance Timeline - &P20_PRCS_NAME.'
 ,p_autocomplete_on_off=>'OFF'
+,p_step_template=>wwv_flow_api.id(12495635610083880376)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230613202337'
+,p_last_upd_yyyymmddhh24miss=>'20230802170707'
 );
 wwv_flow_api.create_report_region(
  p_id=>wwv_flow_api.id(2033643917569015)
@@ -32,7 +33,6 @@ wwv_flow_api.create_report_region(
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#:t-Timeline--compact'
 ,p_new_grid_row=>false
-,p_display_column=>3
 ,p_display_point=>'BODY'
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'TABLE'
@@ -209,8 +209,7 @@ wwv_flow_api.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_api.id(12495582446800880234)
 ,p_plug_display_sequence=>10
-,p_plug_grid_column_span=>2
-,p_plug_display_point=>'BODY'
+,p_plug_display_point=>'REGION_POSITION_02'
 ,p_plug_source_type=>'NATIVE_FACETED_SEARCH'
 ,p_filtered_region_id=>wwv_flow_api.id(2033643917569015)
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
@@ -232,17 +231,6 @@ wwv_flow_api.create_page_plug(
 ,p_menu_id=>wwv_flow_api.id(12495636486941880396)
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
 ,p_menu_template_id=>wwv_flow_api.id(12495520300515880126)
-);
-wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(2036466068569043)
-,p_button_sequence=>30
-,p_button_plug_id=>wwv_flow_api.id(2116559170571265)
-,p_button_name=>'RESET'
-,p_button_action=>'SUBMIT'
-,p_button_template_options=>'#DEFAULT#'
-,p_button_template_id=>wwv_flow_api.id(12495521767510880126)
-,p_button_image_alt=>'Reset'
-,p_button_position=>'BELOW_BOX'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(2035540233569034)

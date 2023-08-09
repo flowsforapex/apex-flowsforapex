@@ -20,8 +20,9 @@ wwv_flow_api.create_flow_process(
 ,p_process_sql_clob=>'flow_theme_api.reset_theme_mode(:REQUEST);'
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'RESET_DARK RESET_LIGHT'
-,p_process_when_type=>'REQUEST_IN_CONDITION'
+,p_process_when=>':request in (''RESET_DARK'', ''RESET_LIGHT'')'
+,p_process_when_type=>'EXPRESSION'
+,p_process_when2=>'PLSQL'
 );
 wwv_flow_api.component_end;
 end;

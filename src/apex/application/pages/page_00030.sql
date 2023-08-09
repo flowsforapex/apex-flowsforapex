@@ -20,8 +20,8 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230625101831'
+,p_last_updated_by=>'C##JDOPPELREITER'
+,p_last_upd_yyyymmddhh24miss=>'20230809093118'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(2362908411158415)
@@ -222,7 +222,7 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source=>'<li>REST module not installed. Please follow the installation guide at: <a href="https://flowsforapex.org/latest/installation" target="_blank">https://flowsforapex.org/latest/installation</a></li>'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_plug_display_condition_type=>'FUNCTION_BODY'
-,p_plug_display_when_condition=>'return not flow_rest_install.is_rest_enabled;'
+,p_plug_display_when_condition=>'return not flow_rest_install.is_module_published;'
 ,p_plug_display_when_cond2=>'PLSQL'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
