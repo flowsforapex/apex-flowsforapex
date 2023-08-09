@@ -23,7 +23,8 @@ INSTALLING THE APPLICATION
 - Refresh the theme when installing the app in APEX versions 21.1 or higher
   Note: switching the theme style is not supported.
 - Optionally, you can now import the demo app in the same way by using file "flowsforapex_sample_app_apex202.sql"
-- Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
+- Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the supplied script enable_timers.sql in your workspace schema
+- Optionally, you can enable REST access by enabling this through SQL Workshop>RESTful Services and executing the supplied script REST_v1.sql in your workspace schema  
 
 MIGRATING EXISTING INSTALLATIONS
 - Always backup your existing installation first
