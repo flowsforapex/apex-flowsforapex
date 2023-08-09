@@ -27,7 +27,7 @@
     , "build_type": "concat"
     , "build_path": "apex/"
     , "script_path": "apex/supportingObjects"
-    , "script_name": "Data"
+    , "script_name": "ConfigData"
     , "script_extension": "sql"
     , "log_extension": "log"
     , "add_newline": true
@@ -37,12 +37,46 @@
     , "content":
       [
         { "content_type": "plaintext", "path": "/", "name": "install_default_config_data.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_de.sql", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "data/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Translations_1"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_de.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_en.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_es.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_fr.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_it.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_ja.sql", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "data/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
+    , "script_name": "Translations_2"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_ja.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_ko.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_pt-br.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "install_engine_messages_zh-cn.sql", "add_show_errors": false }
