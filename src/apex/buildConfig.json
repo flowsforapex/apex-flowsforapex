@@ -243,23 +243,6 @@
       ]
     }
   , {
-      "base_path": "../"
-    , "search_path": "plsql/"
-    , "build_type": "concat"
-    , "build_path": "apex/"
-    , "script_path": "apex/supportingObjects"
-    , "script_name": "Functions"
-    , "script_extension": "sql"
-    , "log_extension": "log"
-    , "add_newline": true
-    , "version": "01.00.00"
-    , "schema_name": "FLOWS4APEX"
-    , "keepTempFiles": false
-    , "content":
-      [
-      ]
-    }
-  , {
       "base_path": "../../"
     , "search_path": "bpmn_tutorials/"
     , "build_type": "concat"
