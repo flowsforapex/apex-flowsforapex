@@ -1,6 +1,15 @@
-create or replace package body flow_timers_pkg
-as
-
+create or replace package body flow_timers_pkg as
+/* 
+-- Flows for APEX - flow_timers_pkg.pkb
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+--
+-- Created 2020        Franco Soldaro
+-- Edited  2020        Moritz Klein - MT AG  
+-- Edited  24-Feb-2023 Richard Allen, Oracle
+-- Edited  05-Jun-2023 Louis Moreaux, Insum
+--
+*/
   lock_timeout             exception;
   e_invalid_duration       exception;
   pragma exception_init (lock_timeout, -3006);  
@@ -135,6 +144,14 @@ as
             , p0 => pi_sbfl_id          
             );
             -- $F4AMESSAGE 'timer-object-not-found' || 'Object with timer not found in get_timer_definition. Subflow %0.'
+          when too_many_rows then
+            flow_errors.handle_instance_error
+            ( pi_prcs_id     => pi_prcs_id
+            , pi_sbfl_id     => pi_sbfl_id
+            , pi_message_key => 'boundary-event-too-many'
+            , p0 => flow_constants_pkg.gc_bpmn_timer_event_definition
+            );
+            -- $F4AMESSAGE 'boundary-event-too-many' || 'More than one %0 boundaryEvent found on sub process.'              
         end;
     end;
     apex_debug.info
@@ -271,7 +288,7 @@ as
           l_timr_id   := null;      
           l_timr_run  := null;
         end if;
-        flow_engine.flow_handle_event
+        flow_engine.timer_callback
         (
           p_process_id => l_timers.timr_prcs_id
         , p_subflow_id => l_timers.timr_sbfl_id
@@ -322,11 +339,11 @@ as
 
   procedure get_iso_duration
   (
-    in_string     in     varchar2
-  , in_start_ts   in     timestamp with time zone default null
-  , out_start_ts     out timestamp with time zone
-  , out_interv_ym in out interval year to month
-  , out_interv_ds in out interval day to second
+    in_string       in     varchar2
+  , in_start_tstz   in     timestamp with time zone default null
+  , out_start_tstz  out    timestamp with time zone
+  , out_interv_ym   in out interval year to month
+  , out_interv_ds   in out interval day to second
   )
   as
     type t_duration_components is table of number index by varchar2(1 char);
@@ -372,7 +389,7 @@ as
       out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
       out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
 
-      out_start_ts  := coalesce( in_start_ts, systimestamp ) + out_interv_ym + out_interv_ds;
+      out_start_tstz  := coalesce( in_start_tstz, systimestamp ) + out_interv_ym + out_interv_ds;
     else
       raise e_invalid_duration;
     end if;
@@ -388,9 +405,11 @@ as
     pi_prcs_id    in flow_processes.prcs_id%type
   , pi_sbfl_id    in flow_subflows.sbfl_id%type 
   , pi_step_key   in flow_subflows.sbfl_step_key%type default null
+  , pi_callback     in flow_timers.timr_callback%type
+  , pi_callback_par in flow_timers.timr_callback_par%type  
   )
   as
-    l_parsed_ts           flow_timers.timr_start_on%type;
+    l_parsed_tstz         flow_timers.timr_start_on%type;
     l_parsed_duration_ym  flow_timers.timr_interval_ym%type;
     l_parsed_duration_ds  flow_timers.timr_interval_ds%type;
     l_repeat_times        flow_timers.timr_repeat_times%type;
@@ -441,7 +460,7 @@ as
                                                 )
             when flow_constants_pkg.gc_prov_var_type_date then
                 -- substitution parameter is a date process var = already an Oracle date
-                l_parsed_ts :=
+                l_parsed_tstz :=
                   flow_proc_vars_int.get_var_date
                   ( 
                     pi_prcs_id  => pi_prcs_id
@@ -450,15 +469,15 @@ as
                   )
                 ;
             when flow_constants_pkg.gc_prov_var_type_varchar2 then
-                l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
-                                                 ( pi_prcs_id  => pi_prcs_id
-                                                 , pi_var_name => substr  ( l_timer_def.timer_definition,6
-                                                                        , length(l_timer_def.timer_definition)-6
-                                                                          )
-                                                 , pi_scope    => l_scope
-                                                 )
-                                                , flow_constants_pkg.gc_prov_default_date_format
-                                                );
+                l_parsed_tstz := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
+                                                  ( pi_prcs_id  => pi_prcs_id
+                                                  , pi_var_name => substr  ( l_timer_def.timer_definition,6
+                                                                           , length(l_timer_def.timer_definition)-6
+                                                                           )
+                                                  , pi_scope    => l_scope
+                                                  ),
+                                                   flow_constants_pkg.gc_prov_default_date_format
+                                                 );
             end case;
           elsif substr(l_timer_def.timer_definition,1,1) = 'T' then
             -- check for just an ISO Time, and then get next time that time of day occurs (today/tomorrow)
@@ -466,15 +485,15 @@ as
             case 
               when  (sysdate - to_date(to_char(sysdate,'YYYY-MM-DD ')||l_time_string,'YYYY-MM-DD HH24:MI:SS')) < 0 then
                 -- today
-                l_parsed_ts := to_timestamp_tz( to_char (sysdate,'YYYY-MM-DD ')||l_time_string, 'YYYY-MM-DD HH24:MI:SS');
+                l_parsed_tstz := to_timestamp_tz( to_char (sysdate,'YYYY-MM-DD ')||l_time_string, 'YYYY-MM-DD HH24:MI:SS');
               else
                 -- tomorrow
-                l_parsed_ts := to_timestamp_tz(to_char ( sysdate+1,'YYYY-MM-DD ')||l_time_string,'YYYY-MM-DD HH24:MI:SS');
+                l_parsed_tstz := to_timestamp_tz(to_char ( sysdate+1,'YYYY-MM-DD ')||l_time_string,'YYYY-MM-DD HH24:MI:SS');
             end case;
 
           else
             -- assume we have an ISO date-time
-            l_parsed_ts := to_timestamp_tz( replace ( l_timer_def.timer_definition, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
+            l_parsed_tstz := to_timestamp_tz( replace ( l_timer_def.timer_definition, 'T', ' ' ), 'YYYY-MM-DD HH24:MI:SS TZR' );
           end if;
         when flow_constants_pkg.gc_timer_type_duration then
           -- ISO 8601 Duration - check for substitution of process variable
@@ -490,11 +509,11 @@ as
           end if;     
           get_iso_duration
           (
-            in_string     => l_timer_def.timer_definition
-          , in_start_ts   => systimestamp
-          , out_start_ts  => l_parsed_ts
-          , out_interv_ym => l_parsed_duration_ym
-          , out_interv_ds => l_parsed_duration_ds
+            in_string       => l_timer_def.timer_definition
+          , in_start_tstz   => systimestamp
+          , out_start_tstz  => l_parsed_tstz
+          , out_interv_ym   => l_parsed_duration_ym
+          , out_interv_ds   => l_parsed_duration_ds
           );
         when flow_constants_pkg.gc_timer_type_cycle then
           -- ISO 8601 Cycle - check for substitution of process variable
@@ -526,11 +545,11 @@ as
                                                   );
           get_iso_duration
           (
-            in_string     => l_timer_def.timer_definition
-          , in_start_ts   => systimestamp
-          , out_start_ts  => l_parsed_ts
-          , out_interv_ym => l_parsed_duration_ym
-          , out_interv_ds => l_parsed_duration_ds
+            in_string       => l_timer_def.timer_definition
+          , in_start_tstz   => systimestamp
+          , out_start_tstz  => l_parsed_tstz
+          , out_interv_ym   => l_parsed_duration_ym
+          , out_interv_ds   => l_parsed_duration_ds
           );
         when flow_constants_pkg.gc_timer_type_oracle_date then
 
@@ -541,7 +560,7 @@ as
                                                  )
             when flow_constants_pkg.gc_prov_var_type_date then
                 -- substitution parameter is a date process var = already an Oracle date
-                l_parsed_ts :=
+                l_parsed_tstz :=
                   flow_proc_vars_int.get_var_date
                   ( 
                     pi_prcs_id  => pi_prcs_id
@@ -551,7 +570,7 @@ as
                 ;
             when flow_constants_pkg.gc_prov_var_type_varchar2 then
                 -- substitution parameter is a vc2 - use the specified format mask
-                l_parsed_ts := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
+                l_parsed_tstz := to_timestamp_tz ( flow_proc_vars_int.get_var_vc2
                                                   ( pi_prcs_id  => pi_prcs_id
                                                   , pi_var_name => substr  ( l_timer_def.oracle_date,6
                                                                                     , length(l_timer_def.oracle_date)-6
@@ -563,7 +582,7 @@ as
             end case;
           else
             -- just use the specified date and format mask
-            l_parsed_ts := to_timestamp ( l_timer_def.oracle_date, l_timer_def.oracle_format_mask);
+            l_parsed_tstz := to_timestamp ( l_timer_def.oracle_date, l_timer_def.oracle_format_mask);
           end if;
         when flow_constants_pkg.gc_timer_type_oracle_duration then 
           -- handle possible vc2-typed subsitutions for both parameters
@@ -579,7 +598,7 @@ as
                                              );
           l_parsed_duration_ds := to_dsinterval ( nvl ( l_timer_def.oracle_duration_ds , '000 00:00:00') );
           l_parsed_duration_ym := to_yminterval ( nvl ( l_timer_def.oracle_duration_ym, '0-0') );
-          l_parsed_ts := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
+          l_parsed_tstz := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
 
         when flow_constants_pkg.gc_timer_type_oracle_cycle then
           -- oracle cycle timer - all 3 parameters can be substituted with vc2-type proc var
@@ -606,7 +625,7 @@ as
                               , p_default_value => flow_constants_pkg.gc_config_default_timer_max_cycles
                               );
           end if;
-          l_parsed_ts           := systimestamp + to_dsinterval ( l_timer_def.start_interval_ds );
+          l_parsed_tstz         := systimestamp + to_dsinterval ( l_timer_def.start_interval_ds );
           l_parsed_duration_ym  := to_yminterval ('0-0');  -- UI currently does not allow YM input so set to 0
           l_parsed_duration_ds  := to_dsinterval ( l_timer_def.repeat_interval_ds );
         else
@@ -658,6 +677,8 @@ as
       , timr_interval_ym
       , timr_interval_ds
       , timr_repeat_times
+      , timr_callback
+      , timr_callback_par
       )
       values
       (
@@ -668,10 +689,12 @@ as
       , l_timer_def.timer_type
       , systimestamp
       , c_created
-      , l_parsed_ts
+      , l_parsed_tstz
       , l_parsed_duration_ym
       , l_parsed_duration_ds
       , l_repeat_times
+      , pi_callback 
+      , pi_callback_par 
       )
     ;
 
@@ -679,14 +702,16 @@ as
 
   procedure start_repeat_timer
   (
-    pi_prcs_id    in flow_processes.prcs_id%type
-  , pi_sbfl_id    in flow_subflows.sbfl_id%type 
-  , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
-  , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type 
+  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
+  , pi_callback     in flow_timers.timr_callback%type
+  , pi_callback_par in flow_timers.timr_callback_par%type  
+  , pi_run          in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
+  , pi_timr_id      in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
-    l_parsed_ts           flow_timers.timr_start_on%type;
+    l_parsed_tstz         flow_timers.timr_start_on%type;
     l_parsed_duration_ym  flow_timers.timr_interval_ym%type;
     l_parsed_duration_ds  flow_timers.timr_interval_ds%type;
     l_repeat_times        flow_timers.timr_repeat_times%type;
@@ -714,6 +739,8 @@ as
     , timr_interval_ym
     , timr_interval_ds
     , timr_repeat_times
+    , timr_callback
+    , timr_callback_par
     ) 
     select
       pi_timr_id
@@ -728,6 +755,8 @@ as
     , old_timr.timr_interval_ym
     , old_timr.timr_interval_ds
     , old_timr.timr_repeat_times
+    , pi_callback 
+    , pi_callback_par 
     from flow_timers old_timr
     where old_timr.timr_id = pi_timr_id
       and old_timr.timr_run = pi_run - 1
@@ -738,14 +767,16 @@ as
 
   procedure start_timer
   (
-    pi_prcs_id    in flow_processes.prcs_id%type
-  , pi_sbfl_id    in flow_subflows.sbfl_id%type 
-  , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
-  , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type 
+  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
+  , pi_callback     in flow_timers.timr_callback%type
+  , pi_callback_par in flow_timers.timr_callback_par%type default null
+  , pi_run          in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
+  , pi_timr_id      in flow_timers.timr_id%type default null -- only set on repeats
   )
   as
-    l_parsed_ts           flow_timers.timr_start_on%type;
+    l_parsed_tstz         flow_timers.timr_start_on%type;
     l_parsed_duration_ym  flow_timers.timr_interval_ym%type;
     l_parsed_duration_ds  flow_timers.timr_interval_ds%type;
     l_repeat_times        flow_timers.timr_repeat_times%type;
@@ -756,24 +787,29 @@ as
     , 'prcs_id', pi_prcs_id
     , 'sbfl_id', pi_sbfl_id
     , 'step_key', pi_step_key
+    , 'callback', pi_callback
     , 'timr_id (repeats)', pi_timr_id
     , 'timer run', pi_run
     );
     if pi_run = 1 and pi_timr_id is null then
       -- starting the first run of a new timer
       start_new_timer
-      ( pi_prcs_id   => pi_prcs_id   
-      , pi_sbfl_id   => pi_sbfl_id  
-      , pi_step_key  => pi_step_key 
+      ( pi_prcs_id      => pi_prcs_id   
+      , pi_sbfl_id      => pi_sbfl_id  
+      , pi_step_key     => pi_step_key 
+      , pi_callback     => pi_callback
+      , pi_callback_par => pi_callback_par
       );
     elsif pi_run > 1 and pi_timr_id is not null then
         -- starting a repeat cycle of a existing timer (on a new sbfl)
       start_repeat_timer
-      ( pi_prcs_id   => pi_prcs_id   
-      , pi_sbfl_id   => pi_sbfl_id  
-      , pi_step_key  => pi_step_key 
-      , pi_run       => pi_run
-      , pi_timr_id   => pi_timr_id
+      ( pi_prcs_id      => pi_prcs_id   
+      , pi_sbfl_id      => pi_sbfl_id  
+      , pi_step_key     => pi_step_key 
+      , pi_callback     => pi_callback
+      , pi_callback_par => pi_callback_par
+      , pi_run          => pi_run
+      , pi_timr_id      => pi_timr_id
       );  
     else
         flow_errors.handle_instance_error
@@ -980,6 +1016,97 @@ end reschedule_timer;
     ;
   end delete_process_timers;
 
+  function get_timer_repeat_interval
+  return sys.all_scheduler_jobs.repeat_interval%type
+  as
+    l_repeat_interval  sys.all_scheduler_jobs.repeat_interval%type;
+  begin
+    begin
+      select repeat_interval
+        into l_repeat_interval
+        from sys.all_scheduler_jobs
+       where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    exception
+      when no_data_found then
+        l_repeat_interval := null;
+    end;
+    return l_repeat_interval;
+  end get_timer_repeat_interval;
+
+  procedure set_timer_repeat_interval 
+  ( p_repeat_interval  in  varchar2
+  )
+  is
+    l_existing_value                sys.all_scheduler_jobs.repeat_interval%type;
+    l_host_url                      varchar2(4000);
+    e_scheduler_repeat_too_small  exception;
+  begin
+    apex_debug.enter
+    ( 'set_timer_repeat_interval'
+    , 'p_repeat_interval', p_repeat_interval 
+    );
+    -- check if this is actually an update, if not, ignore it.
+    l_existing_value := get_timer_repeat_interval;
+
+    if l_existing_value = p_repeat_interval then
+      -- no chages required
+      null;
+    else
+      -- changes required
+      l_host_url := apex_util.host_url;
+      
+      if ( l_host_url like '%apex.oracle.com%'
+         or l_host_url like '%apex.oraclecorp.com%' 
+         )
+      then 
+        if p_repeat_interval like '%SECONDLY%' then
+          raise e_scheduler_repeat_too_small;
+        end if;
+      end if;      
+      -- go ahead with the update
+      sys.dbms_scheduler.set_attribute
+      ( name => 'APEX_FLOW_STEP_TIMERS_J'
+      , attribute => 'repeat_interval'
+      , value => p_repeat_interval
+      );
+      apex_debug.message
+      ( p_message => '--- Timer scheduler repeat interval set.  Host: %0 Requested Interval %1'
+      , p0 => l_host_url
+      , p1 => p_repeat_interval
+      );
+    end if;
+  exception
+    when e_scheduler_repeat_too_small then
+      apex_debug.message
+      ( p_message => 'Attempt to set timer repeat interval too frequent.  Host: %0 Requested Interval %1'
+      , p0 => l_host_url
+      , p1 => p_repeat_interval
+      );
+      flow_errors.handle_general_error
+      (pi_message_key  => 'scheduler-repeat-shared-env'
+      , p0  => l_host_url
+      , p1  => p_repeat_interval
+      );
+      -- $F4AMESSAGE 'scheduler-repeat-shared-env' || 'Timer repeat interval too frequent for host (%0) Requested Interval %1.  Must be greater than 1 Minute.'
+  end set_timer_repeat_interval;
+
+  function get_timer_status
+  return varchar2
+  as
+    l_status  sys.all_scheduler_jobs.enabled%type;
+  begin
+    begin
+      select enabled
+        into l_status
+        from sys.all_scheduler_jobs
+       where job_name = 'APEX_FLOW_STEP_TIMERS_J';
+    exception 
+      when no_data_found then
+      l_status := 'FALSE';
+    end;
+    return l_status;
+  end get_timer_status;
+    
   procedure disable_scheduled_job
   as
   begin
@@ -987,7 +1114,7 @@ end reschedule_timer;
     q'[begin
     sys.dbms_scheduler.disable( name => 'apex_flow_step_timers_j' );
     end;]';
-  end;
+  end disable_scheduled_job;
 
   procedure enable_scheduled_job
   as
@@ -996,7 +1123,24 @@ end reschedule_timer;
     q'[begin
     sys.dbms_scheduler.enable( name => 'apex_flow_step_timers_j' );
     end;]';
-  end;
+  end enable_scheduled_job;
+
+  function timer_job_exists
+    return boolean
+  as
+    l_dummy number;
+  begin
+    select 1
+      into l_dummy
+      from sys.user_scheduler_jobs
+     where job_name = 'APEX_FLOW_STEP_TIMERS_J'
+    ;
+    return true;
+  exception
+    when no_data_found then
+      return false;
+
+  end timer_job_exists;
 
 end flow_timers_pkg;
 /

@@ -51,8 +51,10 @@ is
           if not flow_globals.get_step_error then 
             -- interupting timer.  set timer on current object in current subflow
             flow_timers_pkg.start_timer
-            ( pi_prcs_id => p_process_id
-            , pi_sbfl_id => p_subflow_id
+            ( pi_prcs_id      => p_process_id
+            , pi_sbfl_id      => p_subflow_id
+            , pi_callback     => flow_constants_pkg.gc_bpmn_boundary_event
+            , pi_callback_par => 'interrupting'
             );
             l_parent_tag := ':SIT';  -- (Self, Interrupting, Timer)
           end if;
@@ -83,9 +85,11 @@ is
           -- test for any step errors
           if not flow_globals.get_step_error then 
             flow_timers_pkg.start_timer
-            ( pi_prcs_id  => p_process_id
-            , pi_sbfl_id  => l_new_non_int_timer_sbfl.sbfl_id
-            , pi_step_key => l_new_non_int_timer_sbfl.step_key
+            ( pi_prcs_id      => p_process_id
+            , pi_sbfl_id      => l_new_non_int_timer_sbfl.sbfl_id
+            , pi_step_key     => l_new_non_int_timer_sbfl.step_key
+            , pi_callback     => flow_constants_pkg.gc_bpmn_boundary_event
+            , pi_callback_par => 'non-interrupting'
             );
             -- test again for any step errors
             if not flow_globals.get_step_error then 
@@ -275,6 +279,11 @@ is
     end if;
     -- clean up any other boundary timers on the object
     flow_boundary_events.unset_boundary_timers 
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    );
+    -- clean up any subscriptions for message events on the object
+    flow_message_util.cancel_subscription
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );

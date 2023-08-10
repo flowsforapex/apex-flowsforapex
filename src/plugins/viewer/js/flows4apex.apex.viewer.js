@@ -8,7 +8,8 @@
       itemsToSubmit: null,
       noDataFoundMessage: "Could not load Diagram",
       refreshOnLoad: false,
-      useNavigatedViewer: false,
+      showToolbar: false,
+      enableMousewheelZoom: false,
       addHighlighting: false,
       enableCallActivities: false,
       config: {
@@ -26,10 +27,13 @@
           "fill": "#d2423b",
           "border": "black",
           "label": "white"
-        }
+        },
+        allowDownload: true,
       }
     },
+
     _create: function() {
+
       this._defaultXml =
         "<?xml version='1.0' encoding='UTF-8'?>" +
         "<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/bpmn' exporter='bpmn-js (https://demo.bpmn.io)' exporterVersion='7.2.0'>" +
@@ -39,29 +43,55 @@
         "</bpmndi:BPMNDiagram>" +
         "</bpmn:definitions>";
       this.regionId    = this.element[0].id;
+      this.viewerWrap  = this.regionId + "_viewer";
       this.canvasId    = this.regionId + "_canvas";
-      this.enabledModules = [];
+      this.enabledModules = [
+        bpmnViewer.customModules.drilldownCentering
+      ];
+
       if ( this.options.addHighlighting ) {
         this.enabledModules.push(bpmnViewer.customModules.styleModule);
       }
+
       if ( this.options.enableCallActivities ) {
-        this.enabledModules.push(bpmnViewer.customModules.subProcessModule);
+        this.enabledModules.push(bpmnViewer.customModules.callActivityModule);
       }
+
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
         defaultLabelColor: "var(--default-stroke-color)",
       }
-      if ( this.options.useNavigatedViewer ) {
-        this.bpmnViewer$ = new bpmnViewer.NavigatedViewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
-      } else {
-        this.bpmnViewer$ = new bpmnViewer.Viewer({ container: "#" + this.canvasId, additionalModules: this.enabledModules, bpmnRenderer: this.bpmnRenderer });
+
+      if ( this.options.showToolbar ) {
+        this.enabledModules.push(bpmnViewer.customModules.customPaletteProviderModule);
       }
+      if ( this.options.enableMousewheelZoom ) {
+        this.enabledModules.push(bpmnViewer.customModules.ZoomScrollModule);
+      }
+      if ( this.options.showToolbar || this.options.enableMousewheelZoom) {
+        this.enabledModules.push(bpmnViewer.customModules.MoveCanvasModule);
+      }
+
+      this.bpmnViewer$ = new bpmnViewer.Viewer({
+          container: "#" + this.canvasId,
+          additionalModules: this.enabledModules,
+          bpmnRenderer: this.bpmnRenderer,
+          config: this.options.config
+      });
+
+      // prevent page submit + reload after button click
+      $( document ).on( "apexbeforepagesubmit", ( event, request ) => {
+        if (!request) apex.event.gCancelFlag = true;
+      } );
+
       if ( this.options.refreshOnLoad ) {
         this.refresh();
       }
+
       this._registerEvents();
-      region.create( this.regionId, {
+      
+      region.create(this.regionId, {
         widget: () => { return this.element; },
         refresh: () => { this.refresh(); },
         reset: () => { this.reset(); },
@@ -74,21 +104,32 @@
       });
     },
     loadDiagram: async function() {
+      
       $( "#" + this.canvasId ).show();
       $( "#" + this.regionId + " span.nodatafound" ).hide();
+      
       const bpmnViewer$ = this.bpmnViewer$;
+      
       try {
         const result = await bpmnViewer$.importXML( this.diagram || this._defaultXml );
         const { warnings } = result;
+        
         if ( warnings.length > 0 ) {
           apex.debug.warn( "Warnings during XML Import", warnings );
         }
+        
         this.zoom( "fit-viewport" );
+        
         if ( this.options.addHighlighting ) {
-          bpmnViewer$.get('styleModule').addStylesToElements(this.current, this.options.config.currentStyle);
-          bpmnViewer$.get('styleModule').addStylesToElements(this.completed, this.options.config.completedStyle);
-          bpmnViewer$.get('styleModule').addStylesToElements(this.error, this.options.config.errorStyle);
+          const eventBus = bpmnViewer$.get('eventBus');
+
+          eventBus.on('root.set', () => {
+            this.addHighlighting();
+          });
+
+          this.addHighlighting();
         }
+
         // trigger load event
         event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", 
           { 
@@ -97,45 +138,60 @@
             callingObjectId: this.callingObjectId
           } 
         );
+
       } catch (err) {
         apex.debug.error( "Loading Diagram failed.", err, this.diagram );
       }
     },
-    zoom: function( zoomOption ) {
-      this.bpmnViewer$.get( "canvas" ).zoom( zoomOption );
+
+    addHighlighting: function() {
+      this.bpmnViewer$.get('styleModule').highlightElements(this.current, this.completed, this.error);
     },
+
+    zoom: function( zoomOption ) {
+      this.bpmnViewer$.get( "canvas" ).zoom( zoomOption, 'auto' );
+    },
+
     getSVG: async function() {
+
       const bpmnViewer$ = this.bpmnViewer$;
+      
       try {
         const result = await bpmnViewer$.saveSVG({ format: true });
         const { svg } = result;
+        
         if ( this.options.addHighlighting ) {
-          return bpmnViewer$.get('styleModule').addToSVGStyle(svg,'.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+          return bpmnViewer$.get('styleModule').addStyleToSVG(svg);
         }
+
         return svg;
+      
       } catch (err) {
         apex.debug.error( "Get SVG failed.", err );
         throw err;
       }
     },
+
     refresh: function() {
+
       apex.debug.info( "Enter Refresh", this.options );
+      
       apex.server.plugin( this.options.ajaxIdentifier, {
         pageItems: $( this.options.itemsToSubmit, apex.gPageContext$ )
       }, {
         refreshObject: "#" + this.canvasId,
         loadingIndicator: "#" + this.canvasId
-      }).then( pData => {
+      })
+      .then( pData => {
         if ( pData.found ) {
+
           var diagram;
           var oldLoaded = true;
           
           // use call activities
           if ( this.options.enableCallActivities ) {
             // set widget reference to viewer module
-            this.bpmnViewer$.get('subProcessModule').setWidget(this);
-            // show/hide breadcrumb
-            (pData.data.length > 1) ? $('#breadcrumb').show() : $('#breadcrumb').hide();
+            this.bpmnViewer$.get('callActivityModule').setWidget(this);
             // load old diagram (if possible)
             diagram = pData.data.find(d => d.diagramIdentifier === this.diagramIdentifier);
             // otherwise: get root entry
@@ -148,12 +204,14 @@
             this.diagramIdentifier = diagram.diagramIdentifier;
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
+
             // reset breadcrumb
-            if (!oldLoaded) this.bpmnViewer$.get('subProcessModule').resetBreadcrumb();
+            if (!oldLoaded) {
+                this.bpmnViewer$.get('callActivityModule').resetBreadcrumb();
+                this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
+            }
           }
           else {
-            // hide breadcrumb
-            $('#breadcrumb').hide();
             // get first (only) entry
             diagram = pData.data[0];
             this.diagramIdentifier = diagram.diagramIdentifier;
@@ -172,7 +230,9 @@
           // load diagram
           this.loadDiagram();
         } else {
+
           $( "#" + this.canvasId ).hide();
+          
           if (pData.message) {
             apex.message.clearErrors();
             message.showErrors( [
@@ -190,6 +250,7 @@
         }
       });
     },
+
     _registerEvents: function() {
       const capturedEvents = [
         "element.hover",

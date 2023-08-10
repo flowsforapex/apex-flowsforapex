@@ -41,7 +41,7 @@ as
     , conn_tag_name    flow_types_pkg.t_bpmn_id
     , conn_origin      flow_types_pkg.t_bpmn_id
     , conn_sequence    number
-    , conn_attributes  clob
+    , conn_attributes  sys.json_object_t
     );
   type t_conn_tab is table of t_conn_rec index by flow_types_pkg.t_bpmn_id;
 
@@ -51,21 +51,30 @@ as
   type t_id_lookup_tab is table of number index by flow_types_pkg.t_bpmn_id;
 
   -- Methods
+  procedure split_property_name
+  (
+    pi_property_name  in        varchar2
+  , po_namespace     out nocopy varchar2
+  , po_key           out nocopy varchar2
+  );
+
+  function get_property_key( pi_property_name in varchar2 )
+    return varchar2;
 
   procedure guarantee_apex_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   );
 
   procedure guarantee_bpmn_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   );
 
   procedure guarantee_named_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
-  , pi_key              in varchar2
+    pio_attributes in out nocopy sys.json_object_t
+  , pi_key         in varchar2
   );
 
   function get_lines_array
@@ -82,5 +91,30 @@ as
   , po_json_element  out nocopy sys.json_element_t
   );
 
+  procedure log
+  (
+    pi_plog_dgrm_id    in flow_parser_log.plog_dgrm_id%type
+  , pi_plog_bpmn_id    in flow_parser_log.plog_bpmn_id%type
+  , pi_plog_parse_step in flow_parser_log.plog_parse_step%type
+  , pi_plog_payload    in flow_parser_log.plog_payload%type
+  );
+
+  procedure log
+  (
+    pi_plog_dgrm_id    in flow_parser_log.plog_dgrm_id%type
+  , pi_plog_bpmn_id    in flow_parser_log.plog_bpmn_id%type
+  , pi_plog_parse_step in flow_parser_log.plog_parse_step%type
+  , pi_plog_payload    in sys.xmltype
+  );
+
+  function is_log_enabled
+    return boolean
+  ;
+
+  procedure clear_log
+  (
+    pi_plog_dgrm_id in flow_parser_log.plog_dgrm_id%type
+  );
+  
 end flow_parser_util;
 /

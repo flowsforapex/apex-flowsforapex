@@ -18,6 +18,13 @@ END;
 
 -------------
 -- RUN JOB
+-- See Documentation at url https://flowsforapex.org/latest/about-timer-execution/
+-- For Production Jobs, decide on your required frequency.  No more often than 'FREQ=SECONDLY;INTERVAL=10'
+
+-- For Demo Environments/ POC / sample apps:
+-- For Oracle shared environments apex.oracle.com and apex.oraclecorp.com, minimum interval is once per minute
+-- Please use the Flows for APEX Application to Disable timers if you are not going to be using your demo environment
+-- for several days.
 -------------
 BEGIN
 DBMS_SCHEDULER.create_job (
@@ -25,7 +32,7 @@ DBMS_SCHEDULER.create_job (
     program_name    => 'APEX_FLOW_STEP_TIMERS_P',
     job_style       => 'LIGHTWEIGHT',
     start_date      => SYSTIMESTAMP,
-    repeat_interval => 'FREQ=SECONDLY;INTERVAL=10',
+    repeat_interval => 'FREQ=MINUTELY;INTERVAL=5',
     enabled         => TRUE
 );
 

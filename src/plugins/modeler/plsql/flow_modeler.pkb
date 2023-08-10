@@ -9,7 +9,20 @@ as
     return apex_plugin.t_region_render_result
   as
     l_return apex_plugin.t_region_render_result;
+
+    l_show_custom_extensions flow_configuration.cfig_value%type;
   begin
+    -- get config value for plugin mode
+    begin
+        select cfig_value
+        into l_show_custom_extensions
+        from flow_configuration
+        where cfig_key = 'modeler_show_custom_extensions';
+    exception
+        when no_data_found then
+            l_show_custom_extensions := 'false';
+    end;
+
     apex_plugin_util.debug_region
     (
       p_plugin => p_plugin
@@ -34,6 +47,12 @@ as
         (
           p_name      => 'itemsToSubmit'
         , p_value     => apex_plugin_util.page_item_names_to_jquery( p_page_item_names => p_region.ajax_items_to_submit )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'showCustomExtensions'
+        , p_value     => l_show_custom_extensions
         , p_add_comma => true
         ) ||
         '})'
@@ -167,7 +186,7 @@ as
     );
     l_id      := apex_json.get_number( p_values => l_values, p_path => 'regions[1].data.id' );
     l_content := apex_json.get_clob( p_values => l_values, p_path => 'regions[1].data.content');
-    flow_bpmn_parser_pkg.update_diagram
+    flow_diagram.update_diagram
     (
       pi_dgrm_id      => l_id
     , pi_dgrm_content => l_content
@@ -199,12 +218,15 @@ as
     cursor c_applications is select * from apex_applications order by application_name;
     l_application apex_applications%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_applications;
     loop
         fetch c_applications into l_application;
         exit when c_applications%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_application.application_name || '","value":"' || l_application.application_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_application.application_id || ' - ' || l_application.application_name ||
+          '","value":"' || l_application.application_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -215,15 +237,18 @@ as
   as
     l_result clob;
     l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
-    cursor c_pages is select * from apex_application_pages where application_id = l_application_id order by page_name;
+    cursor c_pages is select * from apex_application_pages where application_id = l_application_id order by page_id;
     l_page apex_application_pages%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_pages;
     loop
         fetch c_pages into l_page;
         exit when c_pages%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_page.page_name || '","value":"' || l_page.page_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_page.page_id || ' - ' || l_page.page_name ||
+          '","value":"' || l_page.page_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -238,12 +263,12 @@ as
     cursor c_items is select * from apex_application_page_items where application_id = l_application_id and page_id = l_page_id order by item_name;
     l_item apex_application_page_items%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_items;
     loop
         fetch c_items into l_item;
         exit when c_items%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_item.item_name || '","value":"' || l_item.item_name || '"},';
+        l_result := l_result || '{"label":"' || l_item.item_name || '","value":"' || l_item.item_name || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -256,12 +281,15 @@ as
     cursor c_applications is select * from apex_applications where application_id in (select application_id from apex_appl_email_templates) order by application_name;
     l_application apex_applications%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_applications;
     loop
         fetch c_applications into l_application;
         exit when c_applications%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_application.application_name || '","value":"' || l_application.application_id || '"},';
+        l_result :=
+          l_result ||
+          '{"label":"' || l_application.application_id || ' - ' || l_application.application_name ||
+          '","value":"' || l_application.application_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -275,12 +303,12 @@ as
     cursor c_templates is select * from apex_appl_email_templates where application_id = l_application_id order by name;
     l_template apex_appl_email_templates%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_templates;
     loop
         fetch c_templates into l_template;
         exit when c_templates%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_template.name || '","value":"' || l_template.static_id || '"},';
+        l_result := l_result || '{"label":"' || l_template.name || '","value":"' || l_template.static_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -320,7 +348,6 @@ as
   procedure get_diagrams
   as
     l_result clob;
-    
     cursor c_diagrams
         is
     select distinct dgrm_name
@@ -328,16 +355,16 @@ as
       join flow_objects objt
         on dgrm.dgrm_id = objt.objt_dgrm_id
        and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-     where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true;
-    
+     where objt.objt_attributes."apex"."isCallable" = flow_constants_pkg.gc_vcbool_true
+     order by dgrm_name;
     l_diagram flow_diagrams.dgrm_name%type;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_diagrams;
     loop
         fetch c_diagrams into l_diagram;
         exit when c_diagrams%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_diagram || '","value":"' || l_diagram || '"},';
+        l_result := l_result || '{"label":"' || l_diagram || '","value":"' || l_diagram || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -349,7 +376,7 @@ as
     l_result clob;
 
     l_dgrm_id flow_diagrams.dgrm_id%type;
-    
+
     l_in_variables  clob;
     l_out_variables clob;
   begin
@@ -378,12 +405,12 @@ as
     cursor c_users is select * from apex_workspace_apex_users order by user_name;
     l_user apex_workspace_apex_users%rowtype;
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     open c_users;
     loop
         fetch c_users into l_user;
         exit when c_users%NOTFOUND;
-        l_result := l_result || '{"name":"' || l_user.user_name || '","value":"' || l_user.user_name || '"},';
+        l_result := l_result || '{"label":"' || l_user.user_name || '","value":"' || l_user.user_name || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
@@ -402,7 +429,7 @@ as
       l_task_def apex_appl_taskdefs%rowtype;
     $END
   begin
-    l_result := '[{"name":"","value":""},';
+    l_result := '[{"label":"","value":""},';
     $IF flow_apex_env.ver_le_21_2
     $THEN
     $ELSE
@@ -410,7 +437,7 @@ as
       loop
           fetch c_task_defs into l_task_def;
           exit when c_task_defs%NOTFOUND;
-          l_result := l_result || '{"name":"' || l_task_def.name || '","value":"' || l_task_def.static_id || '"},';
+          l_result := l_result || '{"label":"' || l_task_def.name || '","value":"' || l_task_def.static_id || '"},';
     end loop;
     $END
     l_result := rtrim(l_result, ',') || ']';
@@ -459,9 +486,9 @@ as
           apex_json.write(
             p_name  => 'VALUE'
           , p_value => case l_parameter.static_id
-                      when 'PROCESS_ID' then '&F4A$PROCESS_ID.'
-                      when 'SUBFLOW_ID' then '&F4A$SUBFLOW_ID.'
-                      when 'STEP_KEY' then '&F4A$STEP_KEY.'
+                      when 'PROCESS_ID' then chr(38) || 'F4A$PROCESS_ID.'
+                      when 'SUBFLOW_ID' then chr(38) || 'F4A$SUBFLOW_ID.'
+                      when 'STEP_KEY' then chr(38) || 'F4A$STEP_KEY.'
                       else ''
                       end
           , p_write_null => true
@@ -506,12 +533,18 @@ as
                when 'plsqlExpression' then
                   v_input := 'declare dummy varchar2(4000) :='
                               || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
+               when 'plsqlRawExpression' then -- use the same snippet as non-raw
+                  v_input := 'declare dummy varchar2(4000) :='
+                              || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
                when 'plsqlExpressionBoolean' then
                   v_input := 'declare dummy boolean :='
                               || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
                when 'plsqlFunctionBody' then
                   v_input := 'declare function dummy return varchar2 is begin'
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+               when 'plsqlRawFunctionBody' then -- use the same snippet as non-raw
+                  v_input := 'declare function dummy return varchar2 is begin'
+                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';               
                when 'plsqlFunctionBodyBoolean' then
                   v_input := 'declare function dummy return boolean is begin'
                               || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';

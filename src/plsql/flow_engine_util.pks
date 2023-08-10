@@ -1,6 +1,6 @@
 create or replace package flow_engine_util
   authid definer
--- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances, flow_plsql_runner_pkg)
+-- accessible by (flow_engine, flow_gateways, flow_boundary_events, flow_timers_pkg, flow_logging, flow_instances, flow_plsql_runner_pkg, flow_admin_api)
 as 
 /* 
 -- Flows for APEX - flow_engine_util.pks
@@ -20,9 +20,9 @@ as
   ) return flow_configuration.cfig_value%type;
 
   procedure set_config_value
-  ( 
-    p_config_key in flow_configuration.cfig_key%type,
-    p_value      in flow_configuration.cfig_value%type
+  ( p_config_key      in flow_configuration.cfig_key%type,
+    p_value           in flow_configuration.cfig_value%type,
+    p_update_if_set   in boolean default true
   );
 
   function get_object_tag
@@ -101,6 +101,7 @@ as
     , p_new_scope                 in boolean default false
     , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
+    , p_follows_ebg               in boolean default false
     ) return flow_types_pkg.t_subflow_context
     ;
 
@@ -122,6 +123,16 @@ as
   (
     p_json_array in clob
   ) return clob;
+
+  function apex_json_array_join
+  ( p_json_array in apex_t_varchar2
+  )
+  return clob;
+
+  function clob_to_blob
+  ( 
+    pi_clob in clob
+  ) return blob;
 
 end flow_engine_util;
 /

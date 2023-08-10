@@ -41,6 +41,11 @@ create or replace package body test_013_call_Activity_escalation_BEs is
     g_dgrm_a13b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a13b );
     g_dgrm_a13c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a13c );
 
+        -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a13a_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a13b_id);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => g_dgrm_a13c_id);
+
     g_prcs_dgrm_id := g_dgrm_a13a_id;
 
     -- create a new instance

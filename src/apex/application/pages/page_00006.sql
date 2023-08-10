@@ -4,8 +4,8 @@ begin
 --     PAGE: 00006
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -22,8 +22,8 @@ wwv_flow_api.create_page(
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220913095650'
+,p_last_updated_by=>'C##LMOREAUX'
+,p_last_upd_yyyymmddhh24miss=>'20230724054511'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(19000369704190884)
@@ -202,6 +202,7 @@ wwv_flow_api.create_page_item(
 ,p_attribute_01=>'APEX_APPLICATION_TEMP_FILES'
 ,p_attribute_09=>'REQUEST'
 ,p_attribute_10=>'N'
+,p_attribute_12=>'INLINE'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(24211819068956102)
@@ -288,10 +289,12 @@ wwv_flow_api.create_page_validation(
 ,p_validation_name=>'File is not null'
 ,p_validation_sequence=>20
 ,p_validation=>'return flow_engine_app_api.is_file_uploaded(pi_file_name => :P6_FILE);'
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please select a #LABEL#.'
 ,p_validation_condition=>':P6_IMPORT_FROM = ''file'' or :P6_MODE = ''multi'''
-,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_validation_condition2=>'PLSQL'
+,p_validation_condition_type=>'EXPRESSION'
 ,p_associated_item=>wwv_flow_api.id(19018652597332904)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );
@@ -305,10 +308,12 @@ wwv_flow_api.create_page_validation(
 '        pi_dgrm_content => :P6_DGRM_CONTENT,',
 '        pi_file_name => :P6_FILE',
 '    );'))
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
 ,p_error_message=>'Please check the flow provided.'
 ,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MODE = ''single'''
-,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_validation_condition2=>'PLSQL'
+,p_validation_condition_type=>'EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_validation(
@@ -319,9 +324,11 @@ wwv_flow_api.create_page_validation(
 'return flow_engine_app_api.is_valid_multi_file_archive(',
 '        pi_file_name => :P6_FILE',
 '    );'))
+,p_validation2=>'PLSQL'
 ,p_validation_type=>'FUNC_BODY_RETURNING_ERR_TEXT'
 ,p_validation_condition=>'apex_error.have_errors_occurred = false and :P6_MODE = ''multi'''
-,p_validation_condition_type=>'PLSQL_EXPRESSION'
+,p_validation_condition2=>'PLSQL'
+,p_validation_condition_type=>'EXPRESSION'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.create_page_validation(
@@ -516,6 +523,7 @@ wwv_flow_api.create_page_process(
 '                 );',
 '    :P6_DGRM_ID := l_dgrm_id;',
 'end;'))
+,p_process_clob_language=>'PLSQL'
 ,p_process_error_message=>'Model already exists. Use force overwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MODE'
@@ -535,6 +543,7 @@ wwv_flow_api.create_page_process(
 '    pi_force_overwrite => :P6_FORCE_OVERWRITE',
 ');',
 ''))
+,p_process_clob_language=>'PLSQL'
 ,p_process_error_message=>'Model already exists. Use force overwrite.'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P6_MODE'

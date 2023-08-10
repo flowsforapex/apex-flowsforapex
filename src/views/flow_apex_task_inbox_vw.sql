@@ -57,22 +57,28 @@ select null as app_id
               )
             else null 
             end as details_link_target
-     , sbfl.sbfl_became_current + interval '1' day as due_on    --- F4A v22.2 All Tasks due in 24 Hours!
-     , floor((cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24) as due_in_hours
-     , apex_util.get_since (p_value => sbfl.sbfl_became_current + interval '1' day) as due_in
+     , sbfl.sbfl_due_on   
+     , flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) as due_in_hours
+     , apex_util.get_since (p_value => sbfl.sbfl_due_on ) as due_in
      , case 
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 0 then 
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) <= 0 then 
               'OVERDUE'
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 1 then
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) < 1 then
               'NEXT_HOUR'
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 24 then
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) < 24 then
               'NEXT_24_HOURS'
-            when (cast(sbfl.sbfl_became_current as date) + 1 - sysdate )*24 < 168 then
+            when flow_api_pkg.intervalDStoHours(sbfl.sbfl_due_on - systimestamp) < 168 then
               'NEXT_WEEK'
             else null
             end as due_code  
-     , 3 as priority
-     , 'medium' as priority_level
+     , sbfl.sbfl_priority as priority
+     , case sbfl.sbfl_priority
+          when 1 then 'urgent'
+          when 2 then 'high'
+          when 3 then 'medium'
+          when 4 then 'low'
+          when 5 then 'lowest'
+        end as priority_level
      , prcs.prcs_init_by as initiator
      , lower(prcs.prcs_init_by) as initiator_lower
      , sbfl.sbfl_reservation as actual_owner
@@ -83,7 +89,7 @@ select null as app_id
      , null as outcome_code
      , null as outcome
      , null as badge_css_classes
-     , 'Ready for Action' as badge_text
+     , nvl2 (sbfl.sbfl_reservation, null, 'unassigned') as badge_text
      , floor((sysdate - cast(sbfl_became_current as date) )*24) as created_ago_hours
      , apex_util.get_since(p_value => sbfl_became_current)  as created_ago
      , prcs.prcs_init_by as created_by     

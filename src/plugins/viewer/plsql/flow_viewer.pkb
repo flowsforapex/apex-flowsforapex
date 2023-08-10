@@ -17,11 +17,10 @@ as
       p_plugin => p_plugin
     , p_region => p_region
     );
-
-    sys.htp.p( '<div id="breadcrumb"></div>' );
-    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="flows4apex-viewer ' || v('THEME_PLUGIN_CLASS') || '" style="display: none;"></div>' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_viewer" class="flows4apex-viewer ' || v('THEME_PLUGIN_CLASS') || '">' );
+    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="canvas" style="display: none;"></div>' );
     sys.htp.p( '<span id="' || p_region.static_id || '_ndf" class="nodatafound" style="display: none;">' || coalesce(p_region.no_data_found_message, 'No data found.') || '</span>' );
-
+    sys.htp.p( '</div>' );
     apex_javascript.add_onload_code
     (
       p_code => 'apex.jQuery("#' || p_region.static_id || '").viewer({' ||
@@ -51,7 +50,7 @@ as
                   ) ||
                   apex_javascript.add_attribute
                   (
-                    p_name      => 'useNavigatedViewer'
+                    p_name      => 'showToolbar'
                   , p_value     => ( p_region.attribute_11 = 'Y' )
                   , p_add_comma => true
                   ) ||
@@ -67,6 +66,12 @@ as
                   , p_value     => ( p_region.attribute_14 = 'Y' )
                   , p_add_comma => true
                   ) ||  
+                  apex_javascript.add_attribute
+                  (
+                    p_name      => 'enableMousewheelZoom'
+                  , p_value     => ( p_region.attribute_15 = 'Y' )
+                  , p_add_comma => true
+                  ) ||
                   '"config":' || p_region.init_javascript_code || '({})' ||
                 '})'
     );

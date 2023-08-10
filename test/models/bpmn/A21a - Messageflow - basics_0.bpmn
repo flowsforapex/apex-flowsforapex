@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A21a" name="A21a - Basic MessageFlow" isExecutable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_078jhcp" name="Start">
+      <bpmn:outgoing>Flow_10cbwc9</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_10cbwc9" sourceRef="Event_078jhcp" targetRef="Activity_Before" />
+    <bpmn:intermediateThrowEvent id="ITE" name="ITE" apex:type="simpleMessage">
+      <bpmn:incoming>Flow_0u9rc68</bpmn:incoming>
+      <bpmn:outgoing>Flow_1148c6v</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_03dkrir">
+        <bpmn:extensionElements>
+          <apex:endpoint>
+            <apex:expressionType>static</apex:expressionType>
+            <apex:expression>local</apex:expression>
+          </apex:endpoint>
+          <apex:messageName>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messageName</apex:expression>
+          </apex:messageName>
+          <apex:correlationKey>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messageKey</apex:expression>
+          </apex:correlationKey>
+          <apex:correlationValue>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messageValue</apex:expression>
+          </apex:correlationValue>
+          <apex:payload>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messagePayload</apex:expression>
+          </apex:payload>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:task id="Activity_AfterITE" name="After ITE">
+      <bpmn:incoming>Flow_1148c6v</bpmn:incoming>
+      <bpmn:outgoing>Flow_00v5eu3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1148c6v" sourceRef="ITE" targetRef="Activity_AfterITE" />
+    <bpmn:endEvent id="Event_ITEEnd" name="ITEEnd">
+      <bpmn:incoming>Flow_00v5eu3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_00v5eu3" sourceRef="Activity_AfterITE" targetRef="Event_ITEEnd" />
+    <bpmn:task id="Activity_Before" name="Before">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>messageKey</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>keya21a</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>messageName</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>MyMessage</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>messageValue</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>a21a</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>messagePayload</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>originalPayload</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10cbwc9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b0bmnc</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0b0bmnc" sourceRef="Activity_Before" targetRef="Gateway_0d8vbql" />
+    <bpmn:exclusiveGateway id="Gateway_0d8vbql" name="switch">
+      <bpmn:incoming>Flow_0b0bmnc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0u9rc68</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10th9vn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1nhu01n</bpmn:outgoing>
+      <bpmn:outgoing>Flow_13sn2b2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0u9rc68" name="path = &#39;ITE&#39;" sourceRef="Gateway_0d8vbql" targetRef="ITE" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlFunctionBody">case :F4A$path
+ when 'ITE' then return true;
+else return false;
+end case;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10th9vn" name="path = &#39;ICE&#39;" sourceRef="Gateway_0d8vbql" targetRef="ICE" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlFunctionBody">case :F4A$path
+ when 'ICE' then return true;
+else return false;
+end case;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateCatchEvent id="ICE" name="ICE" apex:type="simpleMessage">
+      <bpmn:incoming>Flow_10th9vn</bpmn:incoming>
+      <bpmn:outgoing>Flow_16rs7dc</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0xcaexo">
+        <bpmn:extensionElements>
+          <apex:messageName>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messageName</apex:expression>
+          </apex:messageName>
+          <apex:correlationKey>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messageKey</apex:expression>
+          </apex:correlationKey>
+          <apex:correlationValue>
+            <apex:expressionType>processVariable</apex:expressionType>
+            <apex:expression>messageValue</apex:expression>
+          </apex:correlationValue>
+          <apex:payloadVariable>returnPayload</apex:payloadVariable>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="Activity_AfterICE" name="After ICE">
+      <bpmn:incoming>Flow_16rs7dc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rlvoek</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_16rs7dc" sourceRef="ICE" targetRef="Activity_AfterICE" />
+    <bpmn:endEvent id="Event_ICEEnd" name="ICEEnd">
+      <bpmn:incoming>Flow_0rlvoek</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0rlvoek" sourceRef="Activity_AfterICE" targetRef="Event_ICEEnd" />
+    <bpmn:sequenceFlow id="Flow_1nhu01n" name="path = &#39;Send&#39;" sourceRef="Gateway_0d8vbql" targetRef="Send" apex:sequence="30">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlFunctionBody">case :F4A$path
+ when 'Send' then return true;
+else return false;
+end case;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sendTask id="Send" name="Send" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:endpoint>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>local</apex:expression>
+        </apex:endpoint>
+        <apex:messageName>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messageName</apex:expression>
+        </apex:messageName>
+        <apex:correlationKey>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messageKey</apex:expression>
+        </apex:correlationKey>
+        <apex:correlationValue>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messageValue</apex:expression>
+        </apex:correlationValue>
+        <apex:payload>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messagePayload</apex:expression>
+        </apex:payload>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nhu01n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a7ljx8</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:task id="Activity_AfterSend" name="After SendTask">
+      <bpmn:incoming>Flow_0a7ljx8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ktvql5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0a7ljx8" sourceRef="Send" targetRef="Activity_AfterSend" />
+    <bpmn:endEvent id="Event_SendEnd" name="SendEnd">
+      <bpmn:incoming>Flow_0ktvql5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ktvql5" sourceRef="Activity_AfterSend" targetRef="Event_SendEnd" />
+    <bpmn:sequenceFlow id="Flow_13sn2b2" name="path = &#39;Receive&#39;" sourceRef="Gateway_0d8vbql" targetRef="Receive" apex:sequence="40">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlFunctionBody">case :F4A$path
+ when 'Receive' then return true;
+else return false;
+end case;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:receiveTask id="Receive" name="Receive" apex:type="simpleMessage">
+      <bpmn:extensionElements>
+        <apex:messageName>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messageName</apex:expression>
+        </apex:messageName>
+        <apex:correlationKey>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messageKey</apex:expression>
+        </apex:correlationKey>
+        <apex:correlationValue>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>messageValue</apex:expression>
+        </apex:correlationValue>
+        <apex:payloadVariable>returnPayload</apex:payloadVariable>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_13sn2b2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gx36mi</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:task id="Activity_AfterReceive" name="After Receive">
+      <bpmn:incoming>Flow_1gx36mi</bpmn:incoming>
+      <bpmn:outgoing>Flow_122voy1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1gx36mi" sourceRef="Receive" targetRef="Activity_AfterReceive" />
+    <bpmn:endEvent id="Event_ReceiveEnd" name="ReceiveEnd">
+      <bpmn:incoming>Flow_122voy1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_122voy1" sourceRef="Activity_AfterReceive" targetRef="Event_ReceiveEnd" apex:sequence="10" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A21a">
+      <bpmndi:BPMNShape id="Event_078jhcp_di" bpmnElement="Event_078jhcp">
+        <dc:Bounds x="162" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="168" y="495" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04w6zzy_di" bpmnElement="ITE">
+        <dc:Bounds x="642" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="651" y="495" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09ryfbc_di" bpmnElement="Activity_AfterITE">
+        <dc:Bounds x="740" y="430" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_023t4ki_di" bpmnElement="Event_ITEEnd">
+        <dc:Bounds x="902" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="902" y="495" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ius2or_di" bpmnElement="Activity_Before">
+        <dc:Bounds x="270" y="430" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0d8vbql_di" bpmnElement="Gateway_0d8vbql" isMarkerVisible="true">
+        <dc:Bounds x="415" y="445" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="374" y="433" width="31" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03abwhg_di" bpmnElement="ICE">
+        <dc:Bounds x="642" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="651" y="605" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0e91je8_di" bpmnElement="Activity_AfterICE">
+        <dc:Bounds x="740" y="540" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tsgkvz_di" bpmnElement="Event_ICEEnd">
+        <dc:Bounds x="902" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="901" y="605" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hxbrc5_di" bpmnElement="Send">
+        <dc:Bounds x="610" y="650" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mgopxu_di" bpmnElement="Activity_AfterSend">
+        <dc:Bounds x="760" y="650" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pbphoc_di" bpmnElement="Event_SendEnd">
+        <dc:Bounds x="912" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="907" y="715" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ouv7wz_di" bpmnElement="Receive">
+        <dc:Bounds x="610" y="760" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12b9wva_di" bpmnElement="Activity_AfterReceive">
+        <dc:Bounds x="760" y="760" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v2m07w_di" bpmnElement="Event_ReceiveEnd">
+        <dc:Bounds x="912" y="782" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="900" y="825" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_10cbwc9_di" bpmnElement="Flow_10cbwc9">
+        <di:waypoint x="198" y="470" />
+        <di:waypoint x="270" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1148c6v_di" bpmnElement="Flow_1148c6v">
+        <di:waypoint x="678" y="470" />
+        <di:waypoint x="740" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00v5eu3_di" bpmnElement="Flow_00v5eu3">
+        <di:waypoint x="840" y="470" />
+        <di:waypoint x="902" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b0bmnc_di" bpmnElement="Flow_0b0bmnc">
+        <di:waypoint x="370" y="470" />
+        <di:waypoint x="415" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u9rc68_di" bpmnElement="Flow_0u9rc68">
+        <di:waypoint x="465" y="470" />
+        <di:waypoint x="642" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="527" y="452" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10th9vn_di" bpmnElement="Flow_10th9vn">
+        <di:waypoint x="440" y="495" />
+        <di:waypoint x="440" y="580" />
+        <di:waypoint x="642" y="580" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="521" y="553" width="57" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16rs7dc_di" bpmnElement="Flow_16rs7dc">
+        <di:waypoint x="678" y="580" />
+        <di:waypoint x="740" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rlvoek_di" bpmnElement="Flow_0rlvoek">
+        <di:waypoint x="840" y="580" />
+        <di:waypoint x="902" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nhu01n_di" bpmnElement="Flow_1nhu01n">
+        <di:waypoint x="440" y="495" />
+        <di:waypoint x="440" y="690" />
+        <di:waypoint x="610" y="690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="518" y="653" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a7ljx8_di" bpmnElement="Flow_0a7ljx8">
+        <di:waypoint x="710" y="690" />
+        <di:waypoint x="760" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ktvql5_di" bpmnElement="Flow_0ktvql5">
+        <di:waypoint x="860" y="690" />
+        <di:waypoint x="912" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13sn2b2_di" bpmnElement="Flow_13sn2b2">
+        <di:waypoint x="440" y="495" />
+        <di:waypoint x="440" y="800" />
+        <di:waypoint x="610" y="800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="491" y="773" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gx36mi_di" bpmnElement="Flow_1gx36mi">
+        <di:waypoint x="710" y="800" />
+        <di:waypoint x="760" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_122voy1_di" bpmnElement="Flow_122voy1">
+        <di:waypoint x="860" y="800" />
+        <di:waypoint x="912" y="800" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

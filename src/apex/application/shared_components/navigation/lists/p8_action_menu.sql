@@ -4,8 +4,8 @@ begin
 --     LIST: P8_ACTION_MENU
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -64,6 +64,22 @@ wwv_flow_api.create_list_item(
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(2128118443982532)
+,p_list_item_display_sequence=>65
+,p_list_item_link_text=>'Show Instance Timeline'
+,p_list_item_link_target=>'f?p=&APP_ID.:20:&SESSION.::&DEBUG.::P20_PRCS_ID,P20_PRCS_NAME:&P10_PRCS_ID.,&P10_PRCS_NAME.:'
+,p_list_item_icon=>'fa-sequence'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(3528025546791202)
+,p_list_item_display_sequence=>67
+,p_list_item_link_text=>'Instance Summary'
+,p_list_item_link_target=>'javascript:apex.page.submit(''INSTANCE_SUMMARY'');'
+,p_list_item_icon=>'fa-download'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(12015017232750300)
 ,p_list_item_display_sequence=>70
 ,p_list_item_link_text=>'Download (SVG)'
@@ -97,8 +113,16 @@ wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(14295838249027758)
 ,p_list_item_display_sequence=>110
 ,p_list_item_link_text=>'Refresh'
-,p_list_item_link_target=>'javascript:apex.region(''subflows'').refresh();apex.region(''flow-monitor'').refresh();apex.region(''flow-instance-detail'').refresh();apex.region(''process-variables'').refresh();'
+,p_list_item_link_target=>'javascript:apex.region(''subflows'').refresh();apex.region(''flow-monitor'').refresh();apex.region(''flow-instance-detail'').refresh();apex.region(''process-variables'').refresh();apex.region(''message-subscriptions'').refresh();apex.region(''task-list'').refresh();'
 ,p_list_item_icon=>'fa-refresh'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(3597012048710221)
+,p_list_item_display_sequence=>115
+,p_list_item_link_text=>'Step Timers'
+,p_list_item_link_target=>'javascript:apex.page.submit(''STEP_TIMERS'');'
+,p_list_item_icon=>'fa-clock-o'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_api.create_list_item(

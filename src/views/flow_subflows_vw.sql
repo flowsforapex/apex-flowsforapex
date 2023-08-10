@@ -21,15 +21,22 @@ as
         , sbfl.sbfl_step_key
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_became_current
+        , sbfl.sbfl_due_on
         , sbfl.sbfl_last_update
         , sbfl.sbfl_last_update_by
+        , sbfl.sbfl_priority
         , sbfl.sbfl_status
         , sbfl.sbfl_lane as sbfl_current_lane
         , sbfl.sbfl_lane_name as sbfl_current_lane_name
+        , sbfl.sbfl_lane_isrole
+        , sbfl.sbfl_lane_role
         , sbfl.sbfl_process_level
         , sbfl.sbfl_diagram_level
         , sbfl.sbfl_scope
         , sbfl.sbfl_reservation
+        , sbfl.sbfl_potential_users
+        , sbfl.sbfl_potential_groups
+        , sbfl.sbfl_excluded_users
         , objt_curr.objt_id as sbfl_current_objt_id
         , prcs.prcs_init_ts as sbfl_prcs_init_ts
         , case sbfl.sbfl_status 
@@ -56,6 +63,6 @@ left join flow_connections conn
 left join flow_timers timr
        on timr.timr_prcs_id = sbfl.sbfl_prcs_id
       and timr.timr_sbfl_id = sbfl.sbfl_id
-      and timr.timr_status != 'E'
+      and timr.timr_status in ('C', 'A', 'B')
 with read only
 ;

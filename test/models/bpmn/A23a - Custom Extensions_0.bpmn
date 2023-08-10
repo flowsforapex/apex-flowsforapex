@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
+  <bpmn:process id="Process_A23a" name="A23a - Custom Extensions a" isExecutable="false" apex:isStartable="true" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:customExtension>{"object" : "Process A23a"}</apex:customExtension>
+    </bpmn:extensionElements>
+    <bpmn:serviceTask id="Activity_ServiceTask_C" name="ServiceTask_C" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Activity_ServiceTask_C"}</apex:customExtension>
+        <apex:executePlsql>
+          <apex:plsqlCode>null;</apex:plsqlCode>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_116xrkz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0357sf8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_EndB" name="EndB">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"EndB"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0357sf8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0357sf8" sourceRef="Activity_ServiceTask_C" targetRef="Event_EndB" />
+    <bpmn:userTask id="Activity_userTask_B" name="userTask_B" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Activity_userTask_B"}</apex:customExtension>
+        <apex:apexPage>
+          <apex:applicationId>100</apex:applicationId>
+          <apex:pageId>3</apex:pageId>
+          <apex:pageItems>
+            <apex:pageItem />
+            <apex:pageItem>
+              <apex:itemName>PROCESS_ID</apex:itemName>
+              <apex:itemValue>&amp;F4A$PROCESS_ID.</apex:itemValue>
+            </apex:pageItem>
+            <apex:pageItem>
+              <apex:itemName>SUBFLOW_ID</apex:itemName>
+              <apex:itemValue>&amp;F4A$SUBFLOW_ID.</apex:itemValue>
+            </apex:pageItem>
+            <apex:pageItem>
+              <apex:itemName>STEP_KEY</apex:itemName>
+              <apex:itemValue>&amp;F4A$STEP_KEY.</apex:itemValue>
+            </apex:pageItem>
+          </apex:pageItems>
+        </apex:apexPage>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_RouteB</bpmn:incoming>
+      <bpmn:outgoing>Flow_116xrkz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_116xrkz" sourceRef="Activity_userTask_B" targetRef="Activity_ServiceTask_C" />
+    <bpmn:task id="Activity_Task_A" name="Task_A">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Activity_Task_A"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06pf89a</bpmn:incoming>
+      <bpmn:outgoing>Flow_01jmfkq</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Event_Start"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_06pf89a</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_06pf89a" sourceRef="Event_Start" targetRef="Activity_Task_A" />
+    <bpmn:endEvent id="Event_TermEndD" name="TermEndD">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"TermEndD"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ny28e1</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0h3xnwt">
+        <apex:processStatus>completed</apex:processStatus>
+      </bpmn:terminateEventDefinition>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="Activity_SubProcess_D" name="SubProcess_D">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Activity_SubProcess_D"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_RouteD</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ddbygs</bpmn:outgoing>
+      <bpmn:endEvent id="Event_DEnd" name="DEnd">
+        <bpmn:extensionElements>
+          <apex:customExtension>{"object":"DEnd"}</apex:customExtension>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1eqx5fn</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:task id="Activity_DSub" name="DSub">
+        <bpmn:extensionElements>
+          <apex:customExtension>{"object":"DSub"}</apex:customExtension>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1jt61sg</bpmn:incoming>
+        <bpmn:outgoing>Flow_1eqx5fn</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="Flow_1eqx5fn" sourceRef="Activity_DSub" targetRef="Event_DEnd" />
+      <bpmn:startEvent id="Event_DStart" name="DStart">
+        <bpmn:extensionElements>
+          <apex:customExtension>{"object":"DStart"}</apex:customExtension>
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_1jt61sg</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_1jt61sg" sourceRef="Event_DStart" targetRef="Activity_DSub" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1ddbygs" sourceRef="Activity_SubProcess_D" targetRef="Activity_CallActivityE" />
+    <bpmn:exclusiveGateway id="Gateway_A" name="A">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Gateway_A"}</apex:customExtension>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01jmfkq</bpmn:incoming>
+      <bpmn:outgoing>Flow_RouteD</bpmn:outgoing>
+      <bpmn:outgoing>Flow_RouteB</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_RouteD" name="RouteD" sourceRef="Gateway_A" targetRef="Activity_SubProcess_D" apex:sequence="20">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Flow_RouteD"}</apex:customExtension>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_RouteB" name="RouteB" sourceRef="Gateway_A" targetRef="Activity_userTask_B" apex:sequence="10">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Flow_RouteB"}</apex:customExtension>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_01jmfkq" sourceRef="Activity_Task_A" targetRef="Gateway_A" />
+    <bpmn:callActivity id="Activity_CallActivityE" name="CallActivity_E" apex:manualInput="false" apex:calledDiagram="A12b - Called Activity with 10 Second Delay" apex:calledDiagramVersionSelection="latestVersion">
+      <bpmn:extensionElements>
+        <apex:customExtension>{"object":"Activity_CallActivityE"}</apex:customExtension>
+        <apex:inVariables>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>BUSINESS_REF</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>processVariable</apex:varExpressionType>
+            <apex:varExpression>BUSINESS_REF</apex:varExpression>
+          </apex:processVariable>
+        </apex:inVariables>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ddbygs</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ny28e1</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1ny28e1" sourceRef="Activity_CallActivityE" targetRef="Event_TermEndD" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A23a">
+      <bpmndi:BPMNShape id="Activity_1kjkhyo_di" bpmnElement="Activity_ServiceTask_C">
+        <dc:Bounds x="770" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0s5aqxw_di" bpmnElement="Event_EndB">
+        <dc:Bounds x="932" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="937" y="325" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q0vefh_di" bpmnElement="Activity_userTask_B">
+        <dc:Bounds x="610" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xvhjcy_di" bpmnElement="Activity_Task_A">
+        <dc:Bounds x="350" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02c3o6f_di" bpmnElement="Event_Start">
+        <dc:Bounds x="262" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="268" y="325" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_105dnip_di" bpmnElement="Event_TermEndD">
+        <dc:Bounds x="932" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="926" y="435" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gyogyh_di" bpmnElement="Activity_SubProcess_D">
+        <dc:Bounds x="610" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1tp62o7_di" bpmnElement="Gateway_A" isMarkerVisible="true">
+        <dc:Bounds x="505" y="275" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="496" y="273" width="8" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bm0mf2_di" bpmnElement="Activity_CallActivityE">
+        <dc:Bounds x="770" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0357sf8_di" bpmnElement="Flow_0357sf8">
+        <di:waypoint x="870" y="300" />
+        <di:waypoint x="932" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_116xrkz_di" bpmnElement="Flow_116xrkz">
+        <di:waypoint x="710" y="300" />
+        <di:waypoint x="770" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06pf89a_di" bpmnElement="Flow_06pf89a">
+        <di:waypoint x="298" y="300" />
+        <di:waypoint x="350" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ddbygs_di" bpmnElement="Flow_1ddbygs">
+        <di:waypoint x="710" y="410" />
+        <di:waypoint x="770" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vwflce_di" bpmnElement="Flow_RouteD">
+        <di:waypoint x="530" y="325" />
+        <di:waypoint x="530" y="410" />
+        <di:waypoint x="610" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="541" y="365" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_021o5jp_di" bpmnElement="Flow_RouteB">
+        <di:waypoint x="555" y="300" />
+        <di:waypoint x="610" y="300" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="567" y="282" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01jmfkq_di" bpmnElement="Flow_01jmfkq">
+        <di:waypoint x="450" y="300" />
+        <di:waypoint x="505" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ny28e1_di" bpmnElement="Flow_1ny28e1">
+        <di:waypoint x="870" y="410" />
+        <di:waypoint x="932" y="410" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_0rfzjqi">
+    <bpmndi:BPMNPlane id="BPMNPlane_1o2gh5t" bpmnElement="Activity_SubProcess_D">
+      <bpmndi:BPMNShape id="Event_0aexi2c_di" bpmnElement="Event_DEnd">
+        <dc:Bounds x="-588" y="-178" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-584" y="-135" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h34i4d_di" bpmnElement="Activity_DSub">
+        <dc:Bounds x="-740" y="-200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bc1ze2_di" bpmnElement="Event_DStart">
+        <dc:Bounds x="-828" y="-178" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-826" y="-135" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1eqx5fn_di" bpmnElement="Flow_1eqx5fn">
+        <di:waypoint x="-640" y="-160" />
+        <di:waypoint x="-588" y="-160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jt61sg_di" bpmnElement="Flow_1jt61sg">
+        <di:waypoint x="-792" y="-160" />
+        <di:waypoint x="-740" y="-160" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

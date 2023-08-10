@@ -22,6 +22,8 @@ select   prcs_id
             'u-color-30'
           else null
           end as prcs_status_css
+       , prcs_priority
+       , prcs_due_on
        , prcs_init_ts
        , 'Initiated '||apex_util.get_since (p_value => prcs_init_ts) as prcs_init_since
        , prcs_init_by

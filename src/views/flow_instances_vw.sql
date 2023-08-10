@@ -6,10 +6,14 @@ as
        , dgrm.dgrm_name
        , dgrm.dgrm_version
        , dgrm.dgrm_status
+       , prcs.prcs_priority
        , dgrm.dgrm_category
        , prcs.prcs_status
        , prcs.prcs_init_ts
        , prcs.prcs_init_by
+       , prcs.prcs_start_ts
+       , prcs.prcs_due_on
+       , prcs.prcs_complete_ts
        , prcs.prcs_last_update
        , prcs.prcs_last_update_by
        , prov.prov_var_vc2 as prcs_business_ref

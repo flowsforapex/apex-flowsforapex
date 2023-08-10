@@ -75,6 +75,9 @@ create or replace package body test_009_call_Activity_nesting as
 
     l_test_name := 'Test 09 w Self Calling';
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id_w);
+
     -- create instance
 
     test_prcs_id := flow_api_pkg.flow_create(
@@ -108,6 +111,9 @@ create or replace package body test_009_call_Activity_nesting as
 
     l_test_name := 'Test 09 pq Indirect Recursion a';
 
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id_p);
+
     -- create instance
 
     test_prcs_id := flow_api_pkg.flow_create(
@@ -139,6 +145,9 @@ create or replace package body test_009_call_Activity_nesting as
     l_dgrm_id_r := test_helper.set_dgrm_id( pi_dgrm_name => test_dgrm_id_name_r );
 
     l_test_name := 'Test 09 rstr Indirect Recursion b';
+
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id_r);
 
     -- create instance
 
@@ -175,6 +184,10 @@ create or replace package body test_009_call_Activity_nesting as
     l_dgrm_id_v := test_helper.set_dgrm_id( pi_dgrm_name => test_dgrm_id_name_v );
 
     l_test_name := 'Test 09 uv Non-Callable Diagram';
+
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id_u);
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_id_v);
 
     -- create instance
 

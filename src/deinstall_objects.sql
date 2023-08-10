@@ -1,9 +1,6 @@
 PROMPT >> Removing Flows4APEX Database Objects
 PROMPT >> ====================================
 
-PROMPT >> Functions
-drop function apex_error_handling;
-
 PROMPT >> Packages
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
@@ -15,11 +12,15 @@ drop package flow_bpmn_parser_pkg;
 drop package flow_parser_util;
 drop package flow_migrate_xml_pkg;
 drop package flow_expressions;
-drop package flow_process_vars;
+drop package flow_settings;
+drop package flow_db_exec;
+drop package flow_message_flow;
+drop package flow_message_util;
 drop package flow_proc_vars_int;
 drop package flow_instances;
 drop package flow_engine;
 drop package flow_api_pkg;
+drop package flow_admin_api;
 drop package flow_timers_pkg;
 drop package flow_reservations;
 drop package flow_gateways;
@@ -35,6 +36,17 @@ drop package flow_globals;
 drop package flow_diagram;
 drop package flow_theme_api;
 drop package flow_apex_env;
+drop package flow_log_admin;
+drop package flow_process_vars;
+drop package flow_statistics;
+drop package flow_rest_constants;
+drop package flow_rest;
+drop package flow_rest_auth;
+drop package flow_rest_logging;
+drop package flow_rest_response;
+drop package flow_rest_errors;
+drop package flow_rest_api_v1;
+drop package flow_rest_install;
 
 PROMPT >> Modeler Plugin Objects
 drop package flow_modeler;
@@ -56,6 +68,7 @@ drop view flow_p0008_instance_details_vw;
 drop view flow_p0007_called_diagrams_vw;
 drop view flow_p0007_calling_diagrams_vw;
 drop view flow_p0008_instance_log_vw;
+drop view flow_p0008_message_subscriptions_vw;
 drop view flow_p0008_subflows_vw;
 drop view flow_p0008_variables_vw;
 drop view flow_p0008_vw;
@@ -72,10 +85,12 @@ drop view flow_p0014_instance_log_vw;
 drop view flow_p0014_step_log_vw;
 drop view flow_p0014_subflows_vw;
 drop view flow_p0014_variable_log_vw;
+drop view flow_p0020_instance_timeline_vw;
 drop view flow_task_inbox_vw;
 drop view flow_instance_connections_lov;
 drop view flow_instance_gateways_lov;
 drop view flow_instance_details_vw;
+drop view flow_instance_timeline_vw;
 drop view flow_instance_variables_vw;
 drop view flow_instances_vw;
 drop view flow_subflows_vw;
@@ -84,10 +99,19 @@ drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
 drop view flow_instance_diagrams_lov;
 drop view flow_diagrams_instanciated_lov;
+drop view flow_startable_diagrams_vw;
+drop view flow_message_subscriptions_vw;
+drop view flow_rest_diagrams_vw;
+drop view flow_rest_message_subscriptions_vw;
+drop view flow_rest_process_vars_vw;
+drop view flow_rest_processes_vw;
+drop view flow_rest_subflows_vw;
+
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
 drop table flow_objects cascade constraints;
+drop table flow_message_subscriptions cascade constraints;
 drop table flow_processes cascade constraints;
 drop table flow_subflows cascade constraints;
 drop table flow_subflow_log cascade constraints;
@@ -102,7 +126,12 @@ drop table flow_step_event_log cascade constraints;
 drop table flow_variable_event_log cascade constraints;
 drop table flow_configuration cascade constraints;
 drop table flow_messages cascade constraints;
-
+drop table flow_instance_stats cascade constraints;
+drop table flow_message_received_log cascade constraints;
+drop table flow_parser_log cascade constraints;
+drop table flow_stats_history cascade constraints;
+drop table flow_step_stats cascade constraints;
+drop table flow_rest_event_log cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================

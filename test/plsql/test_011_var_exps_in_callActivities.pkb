@@ -43,6 +43,10 @@ create or replace package body test_011_var_exps_in_callActivities is
       l_dgrm_a_id := get_dgrm_id( model_a11a );
       l_dgrm_b_id := get_dgrm_id( model_a11b );
 
+      -- parse the diagrams
+      flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_a_id);
+      flow_bpmn_parser_pkg.parse(pi_dgrm_id => l_dgrm_b_id);
+
       -- create a new instance
       l_prcs_id := flow_api_pkg.flow_create(
            pi_dgrm_id   => l_dgrm_a_id

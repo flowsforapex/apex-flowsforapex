@@ -4,12 +4,36 @@ begin
 --     LANGUAGE MAP: 100
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(2717958559026966)
+,p_translation_flow_id=>100006
+,p_translation_flow_language_cd=>'it'
+,p_direction_right_to_left=>'N'
+);
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(5648198079050972)
+,p_translation_flow_id=>100007
+,p_translation_flow_language_cd=>'ko'
+,p_direction_right_to_left=>'N'
+);
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(5672514122653306)
+,p_translation_flow_id=>100008
+,p_translation_flow_language_cd=>'zh-tw'
+,p_direction_right_to_left=>'N'
+);
+wwv_flow_api.create_language_map(
+ p_id=>wwv_flow_api.id(5672660075655263)
+,p_translation_flow_id=>100009
+,p_translation_flow_language_cd=>'zh-cn'
+,p_direction_right_to_left=>'N'
 );
 wwv_flow_api.create_language_map(
  p_id=>wwv_flow_api.id(9033928420999483)

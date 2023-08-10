@@ -1,17 +1,18 @@
+create or replace package flow_constants_pkg
 /* 
 -- Flows for APEX - flow_constants_pkg.pks
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
 --
--- Created 2020   Moritz Klein - MT AG  
+-- Created 2020        Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
+-- Edited  10-Mar-2023 Moritz Klein, MT GmbH
 --
 */
-create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '22.2.0';
+  gc_version constant varchar2(10 char) := '23.1';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';
@@ -33,6 +34,7 @@ as
   gc_bpmn_participant                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'participant';
   gc_bpmn_collaboration                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'collaboration';
   gc_bpmn_lane_set                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'laneSet';
+  gc_bpmn_child_lane_set               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'childLaneSet';
   gc_bpmn_lane                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'lane';
 
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
@@ -73,6 +75,8 @@ as
   gc_bpmn_manualtask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'manualTask';
   gc_bpmn_scripttask                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'scriptTask';
   gc_bpmn_businessruletask             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'businessRuleTask';
+  gc_bpmn_sendtask                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sendTask';
+  gc_bpmn_receivetask                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'receiveTask';
   
   gc_bpmn_text                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'text';
 
@@ -84,16 +88,16 @@ as
   gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
   
   -- userTask
-  gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexPage';
-  gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexApproval';
-  gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'externalUrl';
+  gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
+  gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';
+  gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := 'externalUrl';
 
   gc_apex_usertask_application_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
   gc_apex_usertask_page_id            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
   gc_apex_usertask_request            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'request';
   gc_apex_usertask_cache              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'cache';
 
-  gc_apex_usertask_page_items          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
+  gc_apex_usertask_page_items         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageItems';
   gc_apex_usertask_item               constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemName';
   gc_apex_usertask_value              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'itemValue';
 
@@ -106,7 +110,7 @@ as
   gc_apex_usertask_parameters         constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'parameters';
 
   --serviceTask
-  gc_apex_servicetask_send_mail       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sendMail';
+  gc_apex_servicetask_send_mail       constant flow_types_pkg.t_bpmn_id := 'sendMail';
 
   gc_apex_servicetask_email_from      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailFrom';
   gc_apex_servicetask_email_to        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'emailTo';
@@ -122,9 +126,12 @@ as
   gc_apex_servicetask_body_html       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyHTML';
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
+
+  --messageFlow messaging protocol
+  gc_simple_message   constant flow_types_pkg.t_bpmn_id := 'simpleMessage';
    
   -- execute PL/SQL tasks
-  gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'executePlsql';
+  gc_apex_task_execute_plsql    constant flow_types_pkg.t_bpmn_id := 'executePlsql';
 
   gc_apex_task_plsql_engine     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'engine';
   gc_apex_task_plsql_code       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'plsqlCode';
@@ -134,9 +141,9 @@ as
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
 
   -- Oracle format timer definitions
-  gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDate';
-  gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleDuration';
-  gc_timer_type_oracle_cycle          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'oracleCycle';
+  gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := 'oracleDate';
+  gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := 'oracleDuration';
+  gc_timer_type_oracle_cycle          constant flow_types_pkg.t_bpmn_id := 'oracleCycle';
 
   gc_apex_timer_date                  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'date';
   gc_apex_timer_format_mask           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'formatMask';
@@ -146,13 +153,17 @@ as
   gc_apex_timer_repeat_interval_ds    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'repeatIntervalDS';
   gc_apex_timer_max_runs              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'maxRuns';
 
-  -- Callable Process Tags
+  -- Process Tags
   gc_apex_process_callable            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isCallable';
+  gc_apex_process_startable           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isStartable';
 
   -- callActivity tags
   gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
   gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
   gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
+
+  -- Custom Extension Tag
+  gc_apex_custom_extension            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'customExtension';
 
   -- Diagram calling methods
   gc_dgrm_version_named_version       constant flow_types_pkg.t_bpmn_attributes_key := 'namedVersion';
@@ -173,9 +184,13 @@ as
   gc_substitution_process_id          constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_ID';
   gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
   gc_substitution_step_key            constant flow_types_pkg.t_bpmn_attributes_key := 'STEP_KEY';
-  gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$([a-zA-Z0-9:\_\-]*)' || gc_substitution_postfix;
+  gc_substitution_scope               constant flow_types_pkg.t_bpmn_attributes_key := 'SCOPE';
+  gc_substitution_process_priority    constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_PRIORITY';
+  
+
+  gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$([a-zA-Z0-9:\_\-]+)' || gc_substitution_postfix;
   gc_bind_prefix                      constant flow_types_pkg.t_single_vc2          := ':';
-  gc_bind_pattern                     constant flow_types_pkg.t_bpmn_attributes_key := gc_bind_prefix || 'F4A\$([a-zA-Z0-9:\_\-]*)';
+  gc_bind_pattern                     constant flow_types_pkg.t_bpmn_attributes_key := gc_bind_prefix || 'F4A\$([a-zA-Z0-9:\_]+)';
 
   -- Diagram Versioning Status
   gc_dgrm_status_draft                constant  varchar2(10 char) := 'draft';
@@ -190,6 +205,7 @@ as
   gc_sbfl_status_waiting_gateway      constant  varchar2(20 char) := 'waiting at gateway';
   gc_sbfl_status_waiting_event        constant  varchar2(20 char) := 'waiting for event';
   gc_sbfl_status_waiting_approval     constant  varchar2(20 char) := 'waiting for approval';
+  gc_sbfl_status_waiting_message      constant  varchar2(20 char) := 'waiting for message';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
@@ -205,17 +221,20 @@ as
   gc_prcs_status_error                constant  varchar2(20 char) := 'error';
 
   -- Process Instance Events
-  gc_prcs_event_created              constant  varchar2(20 char) := gc_prcs_status_created;
-  gc_prcs_event_started              constant  varchar2(20 char) := 'started';
-  gc_prcs_event_completed            constant  varchar2(20 char) := gc_prcs_status_completed;
-  gc_prcs_event_terminated           constant  varchar2(20 char) := gc_prcs_status_terminated;
-  gc_prcs_event_reset                constant  varchar2(20 char) := 'reset';
-  gc_prcs_event_error                constant  varchar2(20 char) := gc_prcs_status_error;
-  gc_prcs_event_restart_step         constant  varchar2(20 char) := 'restart step';
-  gc_prcs_event_deleted              constant  varchar2(20 char) := 'deleted';
-  gc_prcs_event_rescheduled          constant  varchar2(20 char) := 'rescheduled';
-  gc_prcs_event_enter_call           constant  varchar2(20 char) := 'start called model';
-  gc_prcs_event_leave_call           constant  varchar2(20 char) := 'finish called model';
+  gc_prcs_event_created               constant  varchar2(20 char) := gc_prcs_status_created;
+  gc_prcs_event_started               constant  varchar2(20 char) := 'started';
+  gc_prcs_event_completed             constant  varchar2(20 char) := gc_prcs_status_completed;
+  gc_prcs_event_terminated            constant  varchar2(20 char) := gc_prcs_status_terminated;
+  gc_prcs_event_reset                 constant  varchar2(20 char) := 'reset';
+  gc_prcs_event_error                 constant  varchar2(20 char) := gc_prcs_status_error;
+  gc_prcs_event_restart_step          constant  varchar2(20 char) := 'restart step';
+  gc_prcs_event_deleted               constant  varchar2(20 char) := 'deleted';
+  gc_prcs_event_rescheduled           constant  varchar2(20 char) := 'rescheduled';
+  gc_prcs_event_enter_call            constant  varchar2(20 char) := 'start called model';
+  gc_prcs_event_leave_call            constant  varchar2(20 char) := 'finish called model';
+  gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
+  gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
+  gc_prcs_event_warning               constant  varchar2(20 char) := 'warning';
 
   -- Process Variable Datatypes
 
@@ -223,8 +242,10 @@ as
   gc_prov_var_type_date               constant  varchar2(50 char) := 'DATE';
   gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
   gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
+  gc_prov_var_type_tstz               constant  varchar2(50 char) := 'TIMESTAMP WITH TIME ZONE';
 
   gc_prov_default_date_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS';
+  gc_prov_default_tstz_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS TZR';
 
   -- Standard Process Variables
 
@@ -235,16 +256,29 @@ as
   gc_prov_suffix_task_id              constant  varchar2(50 char) := ':task_id';
   gc_prov_suffix_route                constant  varchar2(50 char) := ':route';  
 
+  -- Task List Contexts
+
+  gc_task_list_context_single         constant varchar2(30 char) := 'SINGLE_PROCESS';
+  gc_task_list_context_my_tasks       constant varchar2(30 char) := 'MY_TASKS';
+
   -- Process Variable and Gateway Routing Variable Expression Types
   gc_apex_expression constant flow_types_pkg.t_bpmn_attribute_vc2 := 'conditionExpression';
 
-  gc_expr_type_static                 constant flow_types_pkg.t_expr_type := 'static';
-  gc_expr_type_proc_var               constant flow_types_pkg.t_expr_type := 'processVariable';
-  gc_expr_type_item                   constant flow_types_pkg.t_expr_type := 'item';
-  gc_expr_type_sql                    constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
-  gc_expr_type_sql_delimited_list     constant flow_types_pkg.t_expr_type := 'sqlQueryList';
-  gc_expr_type_plsql_function_body    constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';
-  gc_expr_type_plsql_expression       constant flow_types_pkg.t_expr_type := 'plsqlExpression';
+  gc_expr_type_static                   constant flow_types_pkg.t_expr_type := 'static';
+  gc_expr_type_proc_var                 constant flow_types_pkg.t_expr_type := 'processVariable';
+  gc_expr_type_item                     constant flow_types_pkg.t_expr_type := 'item';
+  gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
+  gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
+  gc_expr_type_plsql_function_body      constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';  -- vc2 typed functionbody (e.g., date returns vc2)
+  gc_expr_type_plsql_expression         constant flow_types_pkg.t_expr_type := 'plsqlExpression';    -- vc2 typed expression  (e.g., date returns vc2)
+  gc_expr_type_plsql_raw_function_body  constant flow_types_pkg.t_expr_type := 'plsqlRawFunctionBody';  -- raw functionbody  (e.g., date returns date)
+  gc_expr_type_plsql_raw_expression     constant flow_types_pkg.t_expr_type := 'plsqlRawExpression';    -- raw expression  (e.g., date returns date)
+
+
+  gc_date_value_type_date             constant flow_types_pkg.t_expr_type := 'date';
+  gc_date_value_type_time_of_day      constant flow_types_pkg.t_expr_type := 'timeOfDay';
+  gc_date_value_type_interval         constant flow_types_pkg.t_expr_type := 'interval';
+  gc_date_value_type_oracle_scheduler constant flow_types_pkg.t_expr_type := 'oracleScheduler';
 
 -- Process Variable Expression sets and CallActivity in-Out sets
   gc_expr_set_before_task             constant flow_types_pkg.t_expr_set := 'beforeTask';
@@ -264,44 +298,78 @@ as
 
 -- Config Parameter Keys
 
-  gc_config_logging_level             constant varchar2(50 char) := 'logging_level';
-  gc_config_logging_hide_userid       constant varchar2(50 char) := 'logging_hide_userid';
-  gc_config_logging_language          constant varchar2(50 char) := 'logging_language';
-  gc_config_engine_app_mode           constant varchar2(50 char) := 'engine_app_mode';
-  gc_config_dup_step_prevention       constant varchar2(50 char) := 'duplicate_step_prevention';
-  gc_config_timer_max_cycles          constant varchar2(50 char) := 'timer_max_cycles';
-  gc_config_default_workspace         constant varchar2(50 char) := 'default_workspace';
-  gc_config_default_application       constant varchar2(50 char) := 'default_application';
-  gc_config_default_pageid            constant varchar2(50 char) := 'default_pageid';
-  gc_config_default_username          constant varchar2(50 char) := 'default_username';
-  gc_config_default_email_sender      constant varchar2(50 char) := 'default_email_sender';
+  gc_config_logging_level               constant varchar2(50 char) := 'logging_level';
+  gc_config_logging_hide_userid         constant varchar2(50 char) := 'logging_hide_userid';
+  gc_config_logging_language            constant varchar2(50 char) := 'logging_language';
+  gc_config_logging_retain_logs         constant varchar2(50 char) := 'logging_retain_logs_after_prcs_completion_days';
+  gc_config_logging_archive_location    constant varchar2(50 char) := 'logging_archive_location';
+  gc_config_logging_archive_enabled     constant varchar2(50 char) := 'logging_archive_instance_summaries';
+  gc_config_logging_message_flow_recd   constant varchar2(50 char) := 'logging_received_message_flow';
+  gc_config_logging_retain_msg_flow     constant varchar2(50 char) := 'logging_retain_message_flow_days';
+  gc_config_logging_bpmn_location       constant varchar2(50 char) := 'logging_bpmn_location';
+  gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
+  gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
+  gc_config_timer_max_cycles            constant varchar2(50 char) := 'timer_max_cycles';
+  gc_config_default_workspace           constant varchar2(50 char) := 'default_workspace';
+  gc_config_default_application         constant varchar2(50 char) := 'default_application';
+  gc_config_default_pageid              constant varchar2(50 char) := 'default_pageid';
+  gc_config_default_username            constant varchar2(50 char) := 'default_username';
+  gc_config_default_email_sender        constant varchar2(50 char) := 'default_email_sender';
+  gc_config_stats_retain_summary_daily  constant varchar2(50 char) := 'stats_retain_daily_summaries_days';
+  gc_config_stats_retain_summary_month  constant varchar2(50 char) := 'stats_retain_monthly_summaries_months';
+  gc_config_stats_retain_summary_qtr    constant varchar2(50 char) := 'stats_retain_quarterly_summaries_months';
+
 
 -- Config Parameter Valid Values (when not true / false or numeric)
 
-  gc_config_logging_level_none         constant varchar2(2000 char) := 'none';      -- none
-  gc_config_logging_level_standard     constant varchar2(2000 char) := 'standard';  -- instances and tasks
-  gc_config_logging_level_secure       constant varchar2(2000 char) := 'secure';    -- standard + diagram changes
-  gc_config_logging_level_full         constant varchar2(2000 char) := 'full';      -- secure + variable changes
-  gc_config_engine_app_mode_dev        constant varchar2(2000 char) := 'development';
-  gc_config_engine_app_mode_prod       constant varchar2(2000 char) := 'production';
-  gc_config_dup_step_prevention_legacy constant varchar2(2000 char) := 'legacy';   -- null step key allowed
-  gc_config_dup_step_prevention_strict constant varchar2(2000 char) := 'strict';   -- step key enforced
+  gc_config_logging_level_none               constant varchar2(2000 char) := 'none';        -- none
+  gc_config_logging_level_standard           constant varchar2(2000 char) := 'standard';    -- instances and tasks
+  gc_config_logging_level_secure             constant varchar2(2000 char) := 'secure';      -- standard + diagram changes
+  gc_config_logging_level_full               constant varchar2(2000 char) := 'full';        -- secure + variable changes
+  gc_config_engine_app_mode_dev              constant varchar2(2000 char) := 'development';
+  gc_config_engine_app_mode_prod             constant varchar2(2000 char) := 'production';
+  gc_config_dup_step_prevention_legacy       constant varchar2(2000 char) := 'legacy';      -- null step key allowed
+  gc_config_dup_step_prevention_strict       constant varchar2(2000 char) := 'strict';      -- step key enforced
+  gc_config_archive_destination_table        constant varchar2(2000 char) := 'TABLE';       -- To Database Table
+  gc_config_archive_destination_oci_api      constant varchar2(2000 char) := 'OCI-API';     -- OCI using API Key
+  gc_config_archive_destination_oci_preauth  constant varchar2(2000 char) := 'OCI-PREAUTH'; -- OCI using PreAuth
 
 
 -- Config Parameter Default Values
 
-  gc_config_default_logging_level             constant varchar2(2000 char) := gc_config_logging_level_standard;
-  gc_config_default_logging_hide_userid       constant varchar2(2000 char) := 'false';
-  gc_config_default_logging_language          constant varchar2(2000 char) := 'en';
-  gc_config_default_engine_app_mode           constant varchar2(2000 char) := 'production';
-  gc_config_default_dup_step_prevention       constant varchar2(2000 char) := 'legacy';
-  gc_config_default_default_workspace         constant varchar2(2000 char) := 'FLOWS4APEX';
-  gc_config_default_default_application       constant varchar2(2000 char) := '100';
-  gc_config_default_default_pageID            constant varchar2(2000 char) := '1';
-  gc_config_default_default_username          constant varchar2(2000 char) := 'FLOWS4APEX';
-  gc_config_default_timer_max_cycles          constant varchar2(2000 char) := '1000';
+  gc_config_default_logging_level               constant varchar2(2000 char) := gc_config_logging_level_standard;
+  gc_config_default_logging_hide_userid         constant varchar2(2000 char) := gc_vcbool_false;
+  gc_config_default_logging_language            constant varchar2(2000 char) := 'en';
+  gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := gc_vcbool_false;
+  gc_config_default_logging_recd_msg            constant varchar2(2000 char) := gc_vcbool_false;
+  gc_config_default_engine_app_mode             constant varchar2(2000 char) := 'production';
+  gc_config_default_dup_step_prevention         constant varchar2(2000 char) := 'legacy';
+  gc_config_default_default_workspace           constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_default_application         constant varchar2(2000 char) := '100';
+  gc_config_default_default_pageID              constant varchar2(2000 char) := '1';
+  gc_config_default_default_username            constant varchar2(2000 char) := 'FLOWS4APEX';
+  gc_config_default_timer_max_cycles            constant varchar2(2000 char) := '1000';
+  gc_config_default_log_retain_logs             constant varchar2(2000 char) := '60';
+  gc_config_default_log_retain_msg_flow_logs    constant varchar2(2000 char) := '7';
+  gc_config_default_stats_retain_summary_daily  constant varchar2(2000 char) := '180';
+  gc_config_default_stats_retain_summary_month  constant varchar2(2000 char) := '9';
+  gc_config_default_stats_retain_summary_qtr    constant varchar2(2000 char) := '36';
 
+-- Staistics Period
+  gc_stats_period_day                   constant varchar2(20 char) := 'DAY';
+  gc_stats_period_month                 constant varchar2(20 char) := 'MONTH';
+  gc_stats_period_quarter               constant varchar2(20 char) := 'QUARTER';
 
+  gc_stats_outcome_success              constant varchar2(50 char) := 'SUCCESS';
+  gc_stats_outcome_error                constant varchar2(50 char) := 'ERROR';
+
+  gc_stats_operation_generate           constant varchar2(20 char) := 'GENERATE';
+  gc_stats_operation_purge              constant varchar2(20 char) := 'PURGE';
+
+-- MIME types
+
+  gc_mime_type_bpmn                     constant varchar2(50 char) := 'application/bpmn-xml';
+  gc_mime_type_json                     constant varchar2(50 char) := 'application/json';
 
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>

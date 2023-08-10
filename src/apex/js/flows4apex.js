@@ -42,6 +42,19 @@ function getBulkFlowInstanceData(action){
   };
 }
 
+function getMessageData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
+  return {
+    "x01": action,
+    "x02": apex.jQuery( el ).attr("data-message"),
+    "x03": apex.jQuery( el ).attr("data-key"),
+    "x04": apex.jQuery( el ).attr("data-value")
+  };
+}
+
 function getSubflowData(action, element){
   let el = element;
   if ( el.type === undefined || el.type !== "button") {
@@ -99,7 +112,20 @@ function sendToServer(dataToSend, options = {}){
   result
     .done( function ( data ) {
       if ( !data.success ) {
-        apex.debug.error( "Something went wrong..." );
+        if (data.message !== undefined && data.message !== null) {
+          apex.message.clearErrors();
+
+          apex.message.showErrors([
+              {
+                  type:       "error",
+                  location:   "page",
+                  message:    data.message,
+                  unsafe:     false
+              }
+          ]);
+        } else {
+          apex.debug.error( "Something went wrong..." );
+        }
       } else {
         if ( options.messageKey !== undefined ){
           apex.message.showPageSuccess( apex.lang.getMessage( options.messageKey ) );
@@ -133,9 +159,10 @@ function sendToServer(dataToSend, options = {}){
     } ); 
 }
 
-function downloadAsSVG(){
+function downloadAsSVG(event){
+  var regionId = $(event.target).parents('.t-Region').attr('id');
   apex
-    .region( "flow-monitor" )
+    .region( regionId )
     .getSVG()
     .then( ( svg ) => {
       var svgBlob = new Blob( [svg], {
@@ -394,6 +421,28 @@ function getVariableErrors(){
           }
         );
       } 
+    } else if ( varType === "TIMESTAMP WITH TIME ZONE" ) {
+      if ( apex.item("P8_PROV_VAR_TSTZ").isEmpty() ) {
+        errors.push(
+          {
+            type:       "error",
+            location:   [ "inline" ],
+            pageItem:   "P8_PROV_VAR_TSTZ",
+            message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_VALUE_EMPTY" ),
+            unsafe:     false
+          }
+        );
+      } else if ( apex.item("P8_PROV_VAR_TSTZ_VALID").getValue() === "N" ) {
+        errors.push(
+          {
+            type:       "error",
+            location:   [ "inline" ],
+            pageItem:   "P8_PROV_VAR_TSTZ",
+            message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_TSTZ_NOT_TSTZ" ),
+            unsafe:     false
+          }
+        );
+      } 
     } else if ( varType === "CLOB" ) {
       if ( apex.item("P8_PROV_VAR_CLOB").isEmpty() ) {
         errors.push(
@@ -471,6 +520,8 @@ function addProcessVariable(action, focusElement){
           data.x05 = apex.item("P8_PROV_VAR_NUM").getValue();
         } else if ( data.x04 === "DATE" ) {
           data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
+        } else if ( data.x04 === "TIMESTAMP WITH TIME ZONE" ) {
+          data.x05 = apex.item("P8_PROV_VAR_TSTZ").getValue();
         } else if ( data.x04 === "CLOB" ) {
           var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
           if ( !Array.isArray( chunkedClob ) ) {
@@ -486,6 +537,7 @@ function addProcessVariable(action, focusElement){
 
       sendToServer(data, options);
     } else {
+      apex.message.clearErrors();
       apex.message.showErrors( errors );
     }
   } else {
@@ -548,6 +600,8 @@ function updateProcessVariable(action, focusElement){
           data.x05 = apex.item("P8_PROV_VAR_NUM").getValue();
         } else if ( data.x04 === "DATE" ) {
           data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
+        } else if ( data.x04 === "TIMESTAMP WITH TIME ZONE" ) {
+          data.x05 = apex.item("P8_PROV_VAR_TSTZ").getValue();
         } else if ( data.x04 === "CLOB" ) {
           var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
           if ( !Array.isArray( chunkedClob ) ) {
@@ -603,25 +657,36 @@ function updateProcessVariable(action, focusElement){
                 apex.item("P8_PROV_VAR_VC2").setValue(data.vc2_value);
                 apex.item("P8_PROV_VAR_NUM").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setValue("");
                 apex.item("P8_PROV_VAR_VC2").setFocus();
               } else if ( varType === "NUMBER") {
                 apex.item("P8_PROV_VAR_NUM").setValue(data.num_value);
                 apex.item("P8_PROV_VAR_VC2").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setValue("");
                 apex.item("P8_PROV_VAR_NUM").setFocus();
               } else if ( varType === "DATE") {
                 apex.item("P8_PROV_VAR_DATE").setValue(data.date_value);
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_VC2").setValue("");
                 apex.item("P8_PROV_VAR_NUM").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setFocus();
+              } else if ( varType === "TIMESTAMP WITH TIME ZONE") {
+                apex.item("P8_PROV_VAR_TSTZ").setValue(data.tstz_value);
+                apex.item("P8_PROV_VAR_VC2").setValue("");
+                apex.item("P8_PROV_VAR_NUM").setValue("");
+                apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_CLOB").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setFocus();
               } else if ( varType === "CLOB") {
                 apex.item("P8_PROV_VAR_CLOB").setValue(data.clob_value);
                 apex.item("P8_PROV_VAR_VC2").setValue("");
                 apex.item("P8_PROV_VAR_NUM").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setValue("");
+                apex.item("P8_PROV_VAR_TSTZ").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setFocus();
               } 
               apex.jQuery("#add-prov-var-btn").hide();
@@ -673,14 +738,14 @@ function bulkDeleteProcessVariable(action){
 function completeStep( action, element ){
   var data = getSubflowData(action, element);
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
   sendToServer(data, options);
 }
 
 function bulkCompleteStep( action ){
   var data = getBulkSubflowData( action );
   var options = {};
-  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+  options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
   sendToServer(data, options);
 }
 
@@ -691,7 +756,7 @@ function restartStep( action, element){
     data.x05 = getConfirmComment();
     var options = {};
     options.messageKey = "APP_SUBLFOW_RESTARTED";
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "task-list"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_TITLE_RESTART_STEP" );
@@ -705,7 +770,7 @@ function bulkRestartStep( action, element ){
     data.x02 = getConfirmComment();
     
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "task-list"];
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_RESTART_STEP", "APP_TITLE_RESTART_STEP" );
@@ -734,7 +799,7 @@ function reserveStep( action, element ){
     data.x05 = apex.item("P8_RESERVATION").getValue();
 
     var options = {};
-    options.refreshRegion = ["subflows"];
+    options.refreshRegion = ["subflows", "task-list"];
     sendToServer(data, options);
   } else {
     openReservationDialog( action, element );
@@ -748,7 +813,7 @@ function bulkReserveStep( action ){
     data.x02 = apex.item("P8_RESERVATION").getValue();
     
     var options = {};
-    options.refreshRegion = ["subflows"];
+    options.refreshRegion = ["subflows", "task-list"];
     sendToServer(data, options);
   } else {
     openReservationDialog( action, null );
@@ -761,7 +826,7 @@ function releaseStep( action, element ){
       var data = getSubflowData(action, element);
       
       var options = {};
-      options.refreshRegion = ["subflows"];
+      options.refreshRegion = ["subflows", "task-list"];
       sendToServer(data, options);
     }
   });
@@ -773,7 +838,7 @@ function bulkReleaseStep( action ){
       var data = getBulkSubflowData(action);
       
       var options = {};
-      options.refreshRegion = ["subflows"];
+      options.refreshRegion = ["subflows", "task-list"];
       sendToServer(data, options);
     }
   });
@@ -788,7 +853,7 @@ function rescheduleTimer ( action, element ){
     data.x07 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
        
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
     sendToServer(data, options);
   } else {
     openRescheduleTimerDialog( action, element );
@@ -804,11 +869,43 @@ function bulkRescheduleTimer ( action ){
     data.x04 = apex.item("P8_RESCHEDULE_TIMER_COMMENT").getValue();
        
     var options = {};
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
     sendToServer(data, options);
   } else {
     openRescheduleTimerDialog( action, null );
   }
+}
+
+function receiveMessage( action, element ) {
+  if ( apex.jQuery( "#receive_message_dialog" ).dialog( "isOpen" ) ) {
+    var data = getMessageData( action, element );
+    var chunkedClob = apex.server.chunk(apex.item("P8_PAYLOAD").getValue());
+    if ( !Array.isArray( chunkedClob ) ) {
+      chunkedClob = [chunkedClob];
+    }
+    data.f01 = chunkedClob;
+    apex.theme.closeRegion( "receive_message_dialog" );
+    var options = {};
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
+    sendToServer(data, options);
+  } 
+  else {
+    openReceiveMessageDialog( action, element );
+  }
+  
+};
+
+function openReceiveMessageDialog(action, element){
+  apex
+    .jQuery( "#receive-message-btn" )
+    .attr( "data-message", apex.jQuery( element ).attr( "data-message" ) );
+  apex
+    .jQuery( "#receive-message-btn" )
+    .attr( "data-key", apex.jQuery( element ).attr( "data-key" ) );
+  apex
+    .jQuery( "#receive-message-btn" )
+    .attr( "data-value", apex.jQuery( element ).attr( "data-value" ) );
+  apex.theme.openRegion( "receive_message_dialog" );
 }
 
 function openRescheduleTimerDialog(action, element){
@@ -1010,6 +1107,12 @@ function initActions(){
           action: function( event, focusElement ) {
             bulkRescheduleTimer( this.name);
           }
+        },
+        {
+          name: "receive-message",
+          action: function ( event, focusElement ) {
+            receiveMessage( this.name, focusElement );
+          },
         }
       ] );
     }
@@ -1177,16 +1280,16 @@ function initPage2() {
       );
 
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
-      var text = $( this ).text();
-      if ( text == "Created" ) {
+      var status = $( this ).children("i").data("status");
+      if ( status == "created" ) {
         $( this ).parent().addClass( "ffa-color--created" );
-      } else if ( text == "Completed" ) {
+      } else if ( status == "completed" ) {
         $( this ).parent().addClass( "ffa-color--completed" );
-      } else if ( text == "Running" ) {
+      } else if ( status == "running" ) {
         $( this ).parent().addClass( "ffa-color--running" );
-      } else if ( text == "Terminated" ) {
+      } else if ( status == "terminated" ) {
         $( this ).parent().addClass( "ffa-color--terminated" );
-      } else if ( text == "Error" ) {
+      } else if ( status == "error" ) {
         $( this ).parent().addClass( "ffa-color--error" );
       }
     } );

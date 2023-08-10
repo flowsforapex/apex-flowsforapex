@@ -1,0 +1,139 @@
+
+
+FOR PROCESS
+
+
+{
+  "apex": {
+    "applicationId": "100",
+    "pageId": "3",
+    "username": "FLOWSDEV2",
+    "priority": {
+      "expressionType": "static",
+      "expression": "2"
+    },
+    "isStartable": "true",
+    "potentialStartingUsers": {
+      "expressionType": "static",
+      "expression": "FLOWSDEV2:RICALLEN"
+    },
+    "potentialStartingGroups": {
+      "expressionType": "static",
+      "expression": "SALES:MARKETING"
+    },
+    "dueOn": {
+      "expressionType": "duration",
+      "expression": "P45DT6H15M"
+    }          
+  }
+}
+
+FOR USERTASK1
+
+{"taskType":"apex:apexPage",
+  "apex":
+  {
+  "applicationId":"100",
+  "pageId":"9",
+  "pageItems":[
+    {"name":"PROCESS_ID",
+    "value":"&F4A$PROCESS_ID."},
+    {"name":"SUBFLOW_ID",
+    "value":"&F4A$SUBFLOW_ID."},
+    {"name":"STEP_KEY",
+    "value":"&F4A$STEP_KEY."}
+    ],
+  "priority": {
+    "expressionType": "static",
+    "expression": "3"
+  },
+  "potentialUsers": {
+    "expressionType": "static",
+    "expression": "FLOWSDEV2:RICALLEN"
+  },
+  "potentialGroups": {
+    "expressionType": "static",
+    "expression": "SALES:MARKETING"
+  },
+  "dueOn": {
+    "expressionType": "static",
+    "expression": "17-12-2017 19:45:30 US/Pacific",
+    "formatMask": "DD-MM-YYYY HH24:MI:SS TZR"
+  }    
+  }}
+
+FOR USERTASK2
+
+{"taskType":"apex:apexPage",
+  "apex":{
+    "applicationId":"107",
+    "pageId":"7",
+    "pageItems":[
+      {"name":"PROCESS_ID",
+      "value":"&F4A$PROCESS_ID."},
+      {"name":"SUBFLOW_ID",
+      "value":"&F4A$SUBFLOW_ID."},
+      {"name":"STEP_KEY",
+      "value":"&F4A$STEP_KEY."}
+      ],
+    "priority": {
+      "expressionType": "plsqlRawExpression",
+      "expression": ":F4A$process_priority + 2"
+    },
+    "potentialUsers": {
+      "expressionType": "static",
+      "expression": "FLOWSDEV2:RICALLEN"
+    },
+    "potentialGroups": {
+      "expressionType": "sqlQueryList",
+      "expression": "select dname from dept where deptno in (20,30)"
+    },
+    "excludedUsers": {
+      "expressionType": "sqlQuerySingle",
+      "expression": "select ename from emp where job = 'PRESIDENT'"
+    },
+    "dueOn": {
+      "expressionType": "duration",
+      "expression": "010 12:30:15"
+    }            
+  }
+}
+
+
+FOR USERTASK3
+
+{"taskType":"apex:apexPage",
+  "apex":{
+    "applicationId":"107",
+    "pageId":"7",
+    "pageItems":[
+      {"name":"PROCESS_ID",
+      "value":"&F4A$PROCESS_ID."},
+      {"name":"SUBFLOW_ID",
+      "value":"&F4A$SUBFLOW_ID."},
+      {"name":"STEP_KEY",
+      "value":"&F4A$STEP_KEY."}
+      ],
+    "priority": {
+      "expressionType": "static",
+      "expression": "4"
+    },
+    "potentialUsers": {
+      "expressionType": "static",
+      "expression": "RICALLEN"
+    },
+    "potentialGroups": {
+      "expressionType": "sqlQueryList",
+      "expression": "select dname from dept where deptno =60"
+    },
+    "excludedUsers": {
+      "expressionType": "sqlQuerySingle",
+      "expression": "select ename from emp where job = 'PRESIDENT'"
+    },
+    "dueOn": {
+      "expressionType": "plsqlRawExpression",
+      "expression": "to_timestamp_tz ( '17-12-2023 19:45:30 CET','DD-MM-YYYY HH24:MI:SS TZR')"
+    }            
+  }
+}
+

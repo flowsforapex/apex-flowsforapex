@@ -106,10 +106,7 @@ as
     l_take_route            boolean;
     l_expr                  clob;
     l_expr_type             flow_types_pkg.t_expr_type;
-    l_bind                  apex_plugin_util.t_bind;
     l_bind_list             apex_plugin_util.t_bind_list;
-    l_var_list              apex_t_varchar2 := apex_t_varchar2();
-    l_indx                  pls_integer;
     l_expressions           number;
     l_has_default           boolean;
     l_default_has_condition boolean;
@@ -207,38 +204,11 @@ as
             , p0 => l_expr
             , p1 => l_expr_type);
 
-          l_var_list := apex_string.grep 
-                      ( p_str => l_expr
-                      , p_pattern =>  flow_constants_pkg.gc_bind_pattern
-                      , p_modifier => 'i'
-                      , p_subexpression => '1'
-                      );
-          if l_var_list is not null then
-            l_indx := l_var_list.first;
-            -- create bind list and get bind values
-            apex_debug.info('Expression : ' ||l_expr|| ' Contains Bind Tokens : '|| apex_string.join(l_var_list, ':'));
-            while l_indx is not null 
-            loop
-              l_bind.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
-              l_bind.value := flow_proc_vars_int.get_var_as_vc2
-                                ( pi_prcs_id            => pi_prcs_id
-                                , pi_var_name           => l_var_list(l_indx)
-                                , pi_scope              => pi_scope
-                                , pi_exception_on_null  => false
-                                );
-              apex_debug.info (p_message => 'bind variables found : %0 value : %1  '
-                , p0 => l_bind.name
-                , p1 => l_bind.value
-                );                              
-              l_bind_list(l_indx) := l_bind;
-              l_indx := l_var_list.next (l_indx);
-            end loop;
-          else
-            -- no bind variables, nothing to do as we reset bind-list for each loop
-            apex_debug.info (p_message => 'Expression contains no bind variables.  Expression : %0 type : %1  '
-              , p0 => l_expr
-              , p1 => l_expr_type); 
-          end if;
+          l_bind_list := flow_proc_vars_int.get_bind_list ( pi_expr    => l_expr
+                                                          , pi_prcs_id => pi_prcs_id
+                                                          , pi_sbfl_id => pi_sbfl_id
+                                                          , pi_scope   => pi_scope
+                                                          );
 
           begin
             case l_expr_type  
@@ -619,9 +589,7 @@ as
       -- reset step_had_error flag
       flow_globals.set_step_error ( p_has_error => false);
       -- check subflow still exists and lock it(in case earlier loop terminated everything in level)
-      if flow_engine_util.lock_subflow
-        ( p_subflow_id => l_new_subflows(new_subflow).sbfl_id
-        )
+      if flow_engine_util.lock_subflow( p_subflow_id => l_new_subflows(new_subflow).sbfl_id)
       then
         -- step into first step on the new path
         flow_engine.flow_complete_step    
@@ -946,6 +914,7 @@ as
         , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
         , p_new_proc_level         => false    
         , p_dgrm_id                => p_sbfl_info.sbfl_dgrm_id
+        , p_follows_ebg            => true
         )
       ;
       l_new_subflow.route   := new_path.route;

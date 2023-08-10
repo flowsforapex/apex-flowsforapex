@@ -43,12 +43,15 @@ create or replace package body test_015_lanes_parse_execute as
     test_dgrm_id  flow_diagrams.dgrm_id%type;
   begin
     test_dgrm_id := g_dgrm_a15a_id;
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => test_dgrm_id);
+
     -- verify no of object parsed from diagram
       open l_actual for
         select * 
         from   flow_objects
         where  objt_dgrm_id = test_dgrm_id;
-      ut.expect( l_actual ).to_have_count( 22 );
+      ut.expect( l_actual ).to_have_count( 23 );
 
     -- verify no of items with lanes
       open l_actual for
@@ -108,12 +111,15 @@ create or replace package body test_015_lanes_parse_execute as
     test_dgrm_id  flow_diagrams.dgrm_id%type;
   begin
     test_dgrm_id := g_dgrm_a15d_id;
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => test_dgrm_id);
+
     -- verify no of object parsed from diagram
       open l_actual for
         select * 
         from   flow_objects
         where  objt_dgrm_id = test_dgrm_id;
-      ut.expect( l_actual ).to_have_count( 17 );
+      ut.expect( l_actual ).to_have_count( 18 );
 
     -- verify no of items with lanes
       open l_actual for
@@ -164,6 +170,9 @@ create or replace package body test_015_lanes_parse_execute as
     test_dgrm_id  flow_diagrams.dgrm_id%type;
   begin
     test_dgrm_id := g_dgrm_a15b_id;
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => test_dgrm_id);
+
     -- verify no of object parsed from diagram
       open l_actual for
         select * 
@@ -209,6 +218,9 @@ create or replace package body test_015_lanes_parse_execute as
     test_dgrm_id  flow_diagrams.dgrm_id%type;
   begin
     test_dgrm_id := g_dgrm_a15c_id;
+    -- parse the diagrams
+    flow_bpmn_parser_pkg.parse(pi_dgrm_id => test_dgrm_id);
+
     -- verify no of object parsed from diagram
       open l_actual for
         select *

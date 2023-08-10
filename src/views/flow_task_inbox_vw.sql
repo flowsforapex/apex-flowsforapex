@@ -39,7 +39,12 @@ as
         , sbfl_status
         , sbfl_current_lane
         , sbfl_current_lane_name
+        , sbfl_potential_users
+        , sbfl_potential_groups
+        , sbfl_excluded_users        
         , sbfl_reservation
+        , sbfl.sbfl_priority
+        , sbfl.sbfl_due_on
         , prov.prov_var_vc2 as sbfl_business_ref
      from flow_subflows_vw sbfl
      left join flow_process_variables prov

@@ -6,12 +6,16 @@
 PROMPT >> Installing Engine Objects
 PROMPT >> =================
 PROMPT >> Installing Package Specifications
+PROMPT >>
+PROMPT >> Engine
 @plsql/flow_apex_env.pks
 @plsql/flow_types_pkg.pks
 @plsql/flow_constants_pkg.pks
 @plsql/flow_migrate_xml_pkg.pks
 @plsql/flow_parser_util.pks
 @plsql/flow_bpmn_parser_pkg.pks
+@plsql/flow_message_flow.pks
+@plsql/flow_message_util.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_engine_util.pks
 @plsql/flow_gateways.pks
@@ -21,8 +25,10 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_timers_pkg.pks
 @plsql/flow_instances.pks
 @plsql/flow_engine.pks
+@plsql/flow_settings.pks
 @plsql/flow_reservations.pks
 @plsql/flow_proc_vars_int.pks
+@plsql/flow_db_exec.pks
 @plsql/flow_process_vars.pks
 @plsql/flow_expressions.pks
 @plsql/flow_usertask_pkg.pks
@@ -34,6 +40,20 @@ PROMPT >> Installing Package Specifications
 @plsql/flow_globals.pks
 @plsql/flow_errors.pks
 @plsql/flow_diagram.pks
+@plsql/flow_log_admin.pks
+@plsql/flow_admin_api.pks
+@plsql/flow_statistics.pks
+
+PROMPT >>
+PROMPT >> REST API Support
+@plsql/flow_rest_constants.pks
+@plsql/flow_rest.pks
+@plsql/flow_rest_auth.pks
+@plsql/flow_rest_logging.pks
+@plsql/flow_rest_response.pks
+@plsql/flow_rest_errors.pks
+@plsql/flow_rest_api_v1.pks
+@plsql/flow_rest_install.pks
 
 PROMPT >> Installing Views
 @views/flow_instances_vw.sql
@@ -48,11 +68,25 @@ PROMPT >> Installing Views
 @views/flow_diagrams_vw.sql
 @views/flow_instance_diagrams_lov.sql
 @views/flow_diagrams_instanciated_lov.sql
+@views/flow_instance_timeline_vw.sql
+@views/flow_startable_diagrams_vw.sql
+@views/flow_message_subscriptions_vw.sql
+@views/flow_rest_diagrams_vw.sql
+@views/flow_rest_message_subscriptions_vw.sql
+@views/flow_rest_process_vars_vw.sql
+@views/flow_rest_processes_vw.sql
+@views/flow_rest_subflows_vw.sql
 
 PROMPT >> Installing Package Bodies
+PROMPT >>
+PROMPT >> Engine
 @plsql/flow_proc_vars_int.pkb
 @plsql/flow_process_vars.pkb
 @plsql/flow_expressions.pkb
+@plsql/flow_settings.pkb
+@plsql/flow_db_exec.pkb
+@plsql/flow_message_flow.pkb
+@plsql/flow_message_util.pkb
 @plsql/flow_reservations.pkb
 @plsql/flow_engine_util.pkb
 @plsql/flow_gateways.pkb
@@ -75,15 +109,28 @@ PROMPT >> Installing Package Bodies
 @plsql/flow_globals.pkb
 @plsql/flow_errors.pkb
 @plsql/flow_diagram.pkb
+@plsql/flow_log_admin.pkb
+@plsql/flow_admin_api.pkb
+@plsql/flow_statistics.pkb
 
+PROMPT >>
+PROMPT >> REST API Support
+set define off
+@plsql/flow_rest.pkb
+@plsql/flow_rest_auth.pkb
+@plsql/flow_rest_logging.pkb
+@plsql/flow_rest_response.pkb
+@plsql/flow_rest_errors.pkb
+@plsql/flow_rest_api_v1.pkb
+@plsql/flow_rest_install.pkb
+
+set define '^'
+set concat '.'
 PROMPT >> Installing Engine-App Objects
 PROMPT >> =============================
 PROMPT >> Global App Package Specifications
 @plsql/engine-app/flow_engine_app_api.pks
 @plsql/engine-app/flow_theme_api.pks
-
-PROMPT >> Global Error Function
-@plsql/engine-app/apex_error_handling.sql
 
 PROMPT >> Page Views
 @views/engine-app/flow_p0002_diagrams_vw.sql
@@ -96,6 +143,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_instance_log_vw.sql
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
+@views/engine-app/flow_p0008_message_subscriptions_vw.sql
 @views/engine-app/flow_p0008_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
 @views/engine-app/flow_p0010_vw.sql
@@ -110,6 +158,8 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
+@views/engine-app/flow_p0020_instance_timeline_vw.sql
+
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb
@@ -136,5 +186,9 @@ PROMPT >> Engine Messages
 @data/install_engine_messages_en.sql
 @data/install_engine_messages_es.sql
 @data/install_engine_messages_fr.sql
+@data/install_engine_messages_it.sql
 @data/install_engine_messages_ja.sql
+@data/install_engine_messages_ko.sql
 @data/install_engine_messages_pt-br.sql
+@data/install_engine_messages_zh-cn.sql
+@data/install_engine_messages_zh-tw.sql

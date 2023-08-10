@@ -17,7 +17,7 @@ as
   -- g_error_on_step starts false when every step is processed but is set true if an error
   -- occurs in the engine during processing.  It is then used to determine whether to 
   -- commit or rollback the engine transaction at the end of step processing
-  g_is_recursive_step boolean;
+  g_is_recursive_step boolean := false;
   -- g_recursive_step is set to false for steps that are being performed by the user, and true
   -- for subsequent recursive steps that are performed by the engine (such as gateway steps, scriptTasks, etc.)
 
@@ -91,6 +91,26 @@ as
                                           , p_subflow_id => pi_sbfl_id);             
     return business_ref ( pi_scope   => l_scope );
   end business_ref;
+
+  procedure set_call_origin
+  (
+    p_origin in varchar2
+  )
+  as
+  begin
+    case p_origin
+      when 'REST' then
+        rest_call := true;
+      else
+        null;
+    end case;
+  end set_call_origin;
+
+  procedure unset_call_origin
+  as
+  begin
+    rest_call := false;
+  end unset_call_origin;
 
 end flow_globals;
 /

@@ -20,12 +20,23 @@ create or replace package test_004_proc_vars is
   --%test(2. Case sensitivity of Proc Vars - vc2)
   procedure var_case_sensitivity_vc2;
 
-  --%test(2. Case sensitivity of Proc Vars - date)
+  --%test(2. Case sensitivity of Proc Vars - number)
   procedure var_case_sensitivity_num;
 
-    --%test(2. Case sensitivity of Proc Vars - number)
+  --%test(2. Case sensitivity of Proc Vars - date)
   procedure var_case_sensitivity_date;
 
+  --%test(3a. Bad Format data - number)
+  --%throws(-06502,-06512)
+  procedure bad_format_num;
+
+  --%test(3b. Bad Format data - date)
+  --%disabled
+  procedure bad_format_date;
+
+  --%test(3c. Bad Format data - tstz)
+  --%disabled
+  procedure bad_format_tstz;
 
 
   --%afterall

@@ -10,39 +10,43 @@ as
   e_apex_session_multiple_processes   exception;
 
   function get_session_parameters 
-  ( p_dgrm_id         flow_diagrams.dgrm_id%type
+  ( p_dgrm_id         flow_diagrams.dgrm_id%type default null
   )
   return t_session_parameters
   as
     l_var_value             flow_subflows.sbfl_current%type;
     l_session_parameters    t_session_parameters;
   begin
-    begin
-      select jt.app_id
-           , jt.page_id
-           , jt.username
-        into l_session_parameters
-        from flow_objects objt
-           , json_table( objt.objt_attributes, '$.apex'
-               columns
-                 app_id   varchar2(4000) path '$.applicationId'
-               , page_id  varchar2(4000) path '$.pageId'
-               , username varchar2(4000) path '$.username'
-             ) jt
-       where objt.objt_dgrm_id  = p_dgrm_id
-         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-      ;
-    exception
-      when too_many_rows then
-        apex_debug.info ( p_message => 'flow_apex_session - multiple bpmn:process events found in model.  Multiple not yet supported.  raising Error');
-        raise e_apex_session_multiple_processes;
-        /* Note for future:  Session information is available from bpmn:process in diagram.  We currently support bpmn:process or bpmn:collaboration as the top 
-        level in the XML but dont create a flow_object for the collaboration object.   So top level is the bpmn:participation.
-        when we support collaboration properly (i.e., support message flow between participations), this code will need to be revisited.
-        */
-      when no_data_found then
-        apex_debug.info ( p_message => 'flow_apex_session - no session parameters found from diagram.');
-    end;
+    -- null dgrm_id case is for running archives - no process or diagram is running
+    if p_dgrm_id is not null then
+      begin
+        select jt.app_id
+             , jt.page_id
+             , jt.username
+          into l_session_parameters
+          from flow_objects objt
+             , json_table( objt.objt_attributes, '$.apex'
+                 columns
+                   app_id   varchar2(4000) path '$.applicationId'
+                 , page_id  varchar2(4000) path '$.pageId'
+                 , username varchar2(4000) path '$.username'
+               ) jt
+         where objt.objt_dgrm_id  = p_dgrm_id
+           and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+        ;
+      exception
+        when too_many_rows then
+          apex_debug.info ( p_message => 'flow_apex_session - multiple bpmn:process events found in model.  Multiple not yet supported.  raising Error');
+          raise e_apex_session_multiple_processes;
+          /* Note for future:  Session information is available from bpmn:process in diagram.  We currently support bpmn:process or bpmn:collaboration as the top 
+          level in the XML but dont create a flow_object for the collaboration object.   So top level is the bpmn:participation.
+          when we support collaboration properly (i.e., support message flow between participations), this code will need to be revisited.
+          */
+        when no_data_found then
+          apex_debug.info ( p_message => 'flow_apex_session - no session parameters found from diagram.');
+      end;
+    end if;
+
 
     if (  l_session_parameters.app_id is null
        or l_session_parameters.page_id is null 
@@ -237,8 +241,8 @@ as
   end create_async_session;
 
  function create_api_session
-  ( p_dgrm_id         in flow_diagrams.dgrm_id%type
-  , p_prcs_id         in flow_processes.prcs_id%type
+  ( p_dgrm_id         in flow_diagrams.dgrm_id%type default null
+  , p_prcs_id         in flow_processes.prcs_id%type default null
   ) return number
   is 
     l_session_id             number;
@@ -256,12 +260,20 @@ as
         );
     exception
       when flow_constants_pkg.ge_invalid_session_params then
+        if p_prcs_id is not null then
           flow_errors.handle_instance_error
           ( pi_prcs_id      => p_prcs_id
           , pi_message_key  => 'async-invalid_params'
           , p0              => 'API Call'
           );
           raise flow_constants_pkg.ge_invalid_session_params;
+        else
+          flow_errors.handle_general_error
+          ( pi_message_key  => 'async-invalid_params'
+          , p0 => 'Default Parameters in Configurations'
+          );
+          raise flow_constants_pkg.ge_invalid_session_params;
+        end if;
     end;
     return v('APP_SESSION');
   end create_api_session;
@@ -295,6 +307,19 @@ as
      where prcs.prcs_id = p_process_id
     ;
     return create_api_session (p_dgrm_id => l_dgrm_id, p_prcs_id => p_process_id);
+  end create_api_session;
+
+  function create_api_session
+  ( p_function          in varchar2
+  ) return number
+  is 
+    l_dgrm_id      flow_diagrams.dgrm_id%type;
+  begin
+    if p_function = 'archive' then 
+      return create_api_session (p_prcs_id => null, p_dgrm_id => null);
+    else
+      return null;
+    end if;
   end create_api_session;
 
   procedure delete_session

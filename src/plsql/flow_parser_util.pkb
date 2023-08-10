@@ -1,7 +1,6 @@
 create or replace package body flow_parser_util
 as
 
-  -- Private Methods
   procedure split_property_name
   (
     pi_property_name  in        varchar2
@@ -22,49 +21,63 @@ as
 
   end split_property_name;
 
-  -- Public Methods
+  function get_property_key( pi_property_name in varchar2 )
+    return varchar2
+  as
+    l_namespace varchar2(32767);
+    l_key       varchar2(32767);
+  begin
+    split_property_name
+    (
+      pi_property_name => pi_property_name
+    , po_namespace     => l_namespace
+    , po_key           => l_key
+    );
+    return l_key;
+  end get_property_key;
+
   procedure guarantee_apex_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   )
   as
     c_key constant varchar2(20) := 'apex';
   begin
     -- Initialize the main object if not done already
-    pio_objt_attributes := coalesce( pio_objt_attributes, sys.json_object_t() );
+    pio_attributes := coalesce( pio_attributes, sys.json_object_t() );
     -- Create empty "apex" object if not existing
-    if not pio_objt_attributes.has( c_key ) then
-      pio_objt_attributes.put( c_key, sys.json_object_t() );
+    if not pio_attributes.has( c_key ) then
+      pio_attributes.put( c_key, sys.json_object_t() );
     end if;
   end guarantee_apex_object;
 
   procedure guarantee_bpmn_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
+    pio_attributes in out nocopy sys.json_object_t
   )
   as
     c_key constant varchar2(20) := 'bpmn';
   begin
     -- Initialize the main object if not done already
-    pio_objt_attributes := coalesce( pio_objt_attributes, sys.json_object_t() );
+    pio_attributes := coalesce( pio_attributes, sys.json_object_t() );
     -- Create empty "bpmn" object if not existing
-    if not pio_objt_attributes.has( c_key ) then
-      pio_objt_attributes.put( c_key, sys.json_object_t() );
+    if not pio_attributes.has( c_key ) then
+      pio_attributes.put( c_key, sys.json_object_t() );
     end if;
   end guarantee_bpmn_object;
 
   procedure guarantee_named_object
   (
-    pio_objt_attributes in out nocopy sys.json_object_t
-  , pi_key              in varchar2
+    pio_attributes in out nocopy sys.json_object_t
+  , pi_key         in varchar2
   )
   as
   begin
     -- Initialize the main object if not done already
-    pio_objt_attributes := coalesce( pio_objt_attributes, sys.json_object_t() );
+    pio_attributes := coalesce( pio_attributes, sys.json_object_t() );
     -- Create empty "pi_key" object if not existing
-    if not pio_objt_attributes.has( pi_key ) then
-      pio_objt_attributes.put( pi_key, sys.json_object_t() );
+    if not pio_attributes.has( pi_key ) then
+      pio_attributes.put( pi_key, sys.json_object_t() );
     end if;
   end guarantee_named_object;
 
@@ -123,14 +136,106 @@ as
                            )
     then
       po_json_element := get_lines_array( pi_str => pi_value );
-    elsif pi_property_name = flow_constants_pkg.gc_apex_servicetask_placeholder
+    elsif pi_property_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
+                              , flow_constants_pkg.gc_apex_custom_extension
+                              )
     then
       -- this is already JSON, better store differently
-      po_json_element := sys.json_object_t.parse( pi_value );
+      po_json_element := sys.json_object_t.parse( replace( replace( pi_value, chr(38)||'amp;', chr(38) ), chr(10) ) );
+    
+    elsif po_key = 'priority'
+    then
+      -- if the attribute priority ends up here it is the pre 23.1 way
+      -- we don't touch the diagram but will store the new definition in objt_attributes
+      po_json_element := sys.json_object_t.parse( '{ "expressionType":"plsqlRawExpression","expression":["' || pi_value || '"]}' );
     else
       po_json_element := null;
     end if; 
   end property_to_json;
+
+  function is_log_enabled
+    return boolean
+  as
+    l_value flow_configuration.cfig_value%type;
+  begin
+
+    select cfig_value
+      into l_value
+      from flow_configuration
+     where cfig_key = 'parser_log_enabled'
+    ;
+
+    return ( l_value = flow_constants_pkg.gc_vcbool_true );
+
+  exception
+    when no_data_found then
+      return false;
+  end is_log_enabled;
+
+  procedure log_internal
+  (
+    pi_plog_dgrm_id    in flow_parser_log.plog_dgrm_id%type
+  , pi_plog_bpmn_id    in flow_parser_log.plog_bpmn_id%type
+  , pi_plog_parse_step in flow_parser_log.plog_parse_step%type
+  , pi_plog_payload    in flow_parser_log.plog_payload%type
+  )
+  as
+    pragma autonomous_transaction;
+  begin
+    insert into flow_parser_log ( plog_dgrm_id, plog_bpmn_id, plog_parse_step, plog_payload, plog_log_time )
+      values ( pi_plog_dgrm_id, pi_plog_bpmn_id, pi_plog_parse_step, pi_plog_payload, systimestamp )
+    ;
+    commit;
+  end log_internal;
+
+  procedure log
+  (
+    pi_plog_dgrm_id    in flow_parser_log.plog_dgrm_id%type
+  , pi_plog_bpmn_id    in flow_parser_log.plog_bpmn_id%type
+  , pi_plog_parse_step in flow_parser_log.plog_parse_step%type
+  , pi_plog_payload    in flow_parser_log.plog_payload%type
+  )
+  as
+  begin
+
+    flow_parser_util.log_internal
+    (
+      pi_plog_dgrm_id    => pi_plog_dgrm_id
+    , pi_plog_bpmn_id    => pi_plog_bpmn_id
+    , pi_plog_parse_step => pi_plog_parse_step
+    , pi_plog_payload    => pi_plog_payload
+    );
+
+  end log;
+
+  procedure log
+  (
+    pi_plog_dgrm_id    in flow_parser_log.plog_dgrm_id%type
+  , pi_plog_bpmn_id    in flow_parser_log.plog_bpmn_id%type
+  , pi_plog_parse_step in flow_parser_log.plog_parse_step%type
+  , pi_plog_payload    in sys.xmltype
+  )
+  as
+  begin
+
+    flow_parser_util.log_internal
+    (
+        pi_plog_dgrm_id    => pi_plog_dgrm_id
+      , pi_plog_bpmn_id    => pi_plog_bpmn_id
+      , pi_plog_parse_step => pi_plog_parse_step
+      , pi_plog_payload    => case when pi_plog_payload is not null then pi_plog_payload.getclobval else null end
+    );
+
+  end log;
+
+  procedure clear_log
+  (
+    pi_plog_dgrm_id in flow_parser_log.plog_dgrm_id%type
+  )
+  as
+  begin
+    delete from flow_parser_log where plog_dgrm_id = pi_plog_dgrm_id;
+  end clear_log;
 
 end flow_parser_util;
 /

@@ -508,8 +508,8 @@
 },
 {
   "text_key" : "apex-task-priority-error",
-  "source" : "Error creating APEX Workflow task - invalid priority %0.",
-  "target" : "Error creating APEX Workflow task - invalid priority %0."
+  "source" : "Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.",
+  "target" : "Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0."
 },
 {
   "text_key" : "apex-task-multiple-processes",
@@ -520,6 +520,17 @@
   "text_key" : "call-diagram-not-callable",
   "source" : "You tried to call a diagram %0 that is marked as being not callable.",
   "target" : "You tried to call a diagram %0 that is marked as being not callable."
+},
+{
+  "text_key" : "diagram-archive-has-instances",
+  "source" : "You tried to archive a diagram that has running instances.",
+  "target" : "You tried to archive a diagram that has running instances."
+},
+{
+"text_key" : "var_exp_sql_too_many_values",
+"source" : "Error setting process variable %1 in process id %0 (set %2).  Query returns more than one value.",
+"target" : "Error setting process variable %1 in process id %0 (set %2).  Query returns more than one value."
 }
+
 ]
 }

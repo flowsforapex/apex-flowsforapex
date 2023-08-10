@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v22.2                 *
+*            Flows for APEX v23.1                 *
 *          Installation instructions              *
 *                                                 *
 ***************************************************
@@ -10,20 +10,21 @@ DOCUMENTATION / SOURCE CODE / FURTHER INFORMATION
 
 PREREQUISITES
 - Oracle Database 19c or higher (all editions supported)
-- Oracle Application Express 20.1 or higher
+- Oracle Application Express 20.2 or higher
 - APEX workspace with at least 50 MB space
 - Google Chrome 85+ / Firefox 77+ / Edge 85+ / Safari 13.1 - if possible, use the latest version
 
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "flowsforapex_apex201.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "flowsforapex_apex202.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
-- Refresh the theme when installing the app in APEX versions 20.2 or higher
+- Refresh the theme when installing the app in APEX versions 21.1 or higher
   Note: switching the theme style is not supported.
-- Optionally, you can now import the demo app in the same way by using file "flowsforapex_sample_app_apex201.sql"
-- Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the script enable_timers.sql in your workspace schema
+- Optionally, you can now import the demo app in the same way by using file "flowsforapex_sample_app_apex202.sql"
+- Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the supplied script enable_timers.sql in your workspace schema
+- Optionally, you can enable REST access by enabling this through SQL Workshop>RESTful Services and executing the supplied script REST_v1.sql in your workspace schema  
 
 MIGRATING EXISTING INSTALLATIONS
 - Always backup your existing installation first
@@ -32,10 +33,35 @@ MIGRATING EXISTING INSTALLATIONS
 - Run migrate_all.sql
 
 Migration notes:
-- Please be aware that you can only migrate to the subsequent release (ie. 22.1 to 22.2 , but not 21.2 to 22.2)
+- Please be aware that you can only migrate to the subsequent release (ie. 22.2 to 23.1 , but not 22.1 to 23.1)
 
 
 HISTORY
+
+* v23.1
+  - Adds Due Dates and Priorities to bpmn:processes and to bpmn:userTasks, allowing declarative tracking of scheduling, priority and due dates.
+  - Adds Task Assignment to bpmn:userTasks, allowing easier declarative assignment of tasks to potential users and groups.
+  - Adds REST-enabling of the Flows for APEX API 
+  - Major upgrade to the BPMN Modeler, with new, modern-looking properties panel.
+  - Enhanced support for modeling and viewing of collapsed subProcesses that can be easily expanded / collapsed.
+  - Adds support for BPMN Child Lane sets, allowing nesting of lane sets inside parent lanes.
+  - Adds explicit definition of relationship (or not) between Lanes and APEX roles/groups.
+  - Adds Timestamp with Time Zone datatype option for Process Variables.
+  - Adds binding of Process Variables into PL/SQL scripts, variable expressions, and element settings.
+  - Adds support for binding non-varchar2 typed (i.e., number, date, timestamp with time zone) process variables. 
+  - Allows process variable substitutions to be used in all of the parameters of an APEX Page task.
+  - Adds 'is Startable' information to Processes, along with users and groups that can start a process.
+  - Allows BPMN diagrams to contain Groups and attached Annotations.
+  - Adds Automation to create daily, month-to-date, monthly, and quarterly statistics on process and step performance.
+  - Enhances Flows for APEX Application dashboard to display process and step performance, errors, and waiting time statistics.
+  - Adds auditing / logging of changes made to process diagrams, to complete the existing logging capabilities
+  - Adds the ability to create a summary document, as a JSON document, describing all actions taken to run a process instance.
+  - Adds an Automation creating archive summaries for all recently completed process instances into an archive table or OCI Object Storage.
+  - Adds an automation for automated purging of old logging data and statistics summaries.
+  - Allows an administrator to easily change the timer polling frequency, or temporarily enable / disable timers on non-production systems.
+  - Experimental Feature - Adds MessageFlow between sendTasks, receiveTasks, Intermediate Message Catch and Throw events. Phase 1 of more...
+  - Adds support for additional languages Italian, Simplified Chinese, Traditional Chinese, Korean.
+  - Required APEX version increased to APEX v20.2
 
 * v22.2
   - Adds BPMN Call Activities, allowing a process diagram to call another process diagram, passing and returning in/out variables.

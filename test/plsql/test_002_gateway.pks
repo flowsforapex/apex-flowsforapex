@@ -12,6 +12,9 @@ create or replace package test_002_gateway is
    --%rollback(manual)
 
    -- Need to add tests for completing order
+   
+   --%beforeall
+   procedure set_up_tests;
 
    --%test(a. exclusive gateway - no route provided)
    procedure exclusive_no_route;

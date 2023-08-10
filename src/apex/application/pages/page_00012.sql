@@ -4,8 +4,8 @@ begin
 --     PAGE: 00012
 --   Manifest End
 wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.03.31'
-,p_release=>'20.1.0.00.13'
+ p_version_yyyy_mm_dd=>'2020.10.01'
+,p_release=>'20.2.0.00.20'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -20,8 +20,8 @@ wwv_flow_api.create_page(
 ,p_step_title=>'Flow Monitor - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch:t-Dialog--noPadding'
-,p_last_updated_by=>'LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20220907220953'
+,p_last_updated_by=>'C##DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20230505154912'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(6161598858353963900)
@@ -53,6 +53,7 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_12=>'BREADCRUMB'
 ,p_attribute_13=>'DRILLDOWN_ALLOWED'
 ,p_attribute_14=>'Y'
+,p_attribute_15=>'N'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(7334819132307030)
@@ -114,7 +115,8 @@ wwv_flow_api.create_page_computation(
 ,p_computation_sequence=>10
 ,p_computation_item=>'P12_PRCS_NAME'
 ,p_computation_point=>'BEFORE_HEADER'
-,p_computation_type=>'PLSQL_EXPRESSION'
+,p_computation_type=>'EXPRESSION'
+,p_computation_language=>'PLSQL'
 ,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flow_engine_app_api.get_prcs_name(',
 '  pi_prcs_id => :P12_PRCS_ID',
@@ -242,6 +244,7 @@ wwv_flow_api.create_page_process(
 ', pi_objt_id => apex_application.g_x01',
 ', pi_title => apex_application.g_x02',
 ');'))
+,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 );
 wwv_flow_api.component_end;

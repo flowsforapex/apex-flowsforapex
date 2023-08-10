@@ -1,3 +1,4 @@
+create or replace package flow_usertask_pkg
 /* 
 -- Flows for APEX - flow_usertask_pkg.pks
 -- 
@@ -8,8 +9,6 @@
 -- Edited  13-Apr-2022 - Richard Allen (Oracle)
 --
 */
-
-create or replace package flow_usertask_pkg
   authid definer
 as
 
@@ -22,6 +21,11 @@ as
   , pi_scope    in flow_subflows.sbfl_scope%type default 0
   ) return varchar2;
 
+  procedure process_apex_page_task
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  );
+  
   procedure process_apex_approval_task
   ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info

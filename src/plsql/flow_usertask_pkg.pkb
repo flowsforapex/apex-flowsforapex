@@ -59,16 +59,13 @@ as
         on objt.objt_id = pi_objt_id
     ;
 
-    -- itemValues will run through substitution
-    -- other attributes not (yet?)
-    flow_proc_vars_int.do_substitution
-    ( 
-      pi_prcs_id  => pi_prcs_id
-    , pi_sbfl_id  => pi_sbfl_id
-    , pi_step_key => pi_step_key
-    , pio_string  => l_values 
-    , pi_scope    => pi_scope
-    );
+    -- substitution for all attributes (was values only pre-23.1)
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_application );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_page );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_request );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_clear_cache );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_items );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_values );
 
     return
       apex_page.get_url
@@ -82,6 +79,163 @@ as
       )
     ;
   end get_url;
+
+  procedure process_apex_page_task
+  ( p_sbfl_info     in flow_subflows%rowtype
+  , p_step_info     in flow_types_pkg.flow_step_info
+  )
+  is 
+    l_priority_json           flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority                flow_subflows.sbfl_priority%type;
+    l_due_on_json             flow_types_pkg.t_bpmn_attribute_vc2;
+    l_due_on                  flow_subflows.sbfl_due_on%type;
+    l_potential_users_json    flow_types_pkg.t_bpmn_attribute_vc2;
+    l_potential_users         flow_subflows.sbfl_potential_users%type;
+    l_potential_users_t       apex_t_varchar2;
+    l_potential_groups_json   flow_types_pkg.t_bpmn_attribute_vc2;
+    l_potential_groups        flow_subflows.sbfl_potential_groups%type;
+    l_excluded_users_json     flow_types_pkg.t_bpmn_attribute_vc2;
+    l_excluded_users          flow_subflows.sbfl_excluded_users%type;
+    l_reservation             flow_subflows.sbfl_reservation%type;
+    l_is_unallocated          varchar2(10) := flow_constants_pkg.gc_vcbool_true;
+  begin
+    apex_debug.enter 
+    ( 'process_APEX_page_task'
+    , 'p_step_info.target_objt_tag'   , p_step_info.target_objt_tag 
+    , 'p_step_info.target_objt_subtag', p_step_info.target_objt_subtag 
+    );
+      -- get the userTask subtype  
+    select objt.objt_attributes."apex"."priority"
+         , objt.objt_attributes."apex"."dueOn"
+         , objt.objt_attributes."apex"."potentialUsers"
+         , objt.objt_attributes."apex"."potentialGroups"
+         , objt.objt_attributes."apex"."excludedUsers"
+      into l_priority_json
+         , l_due_on_json
+         , l_potential_users_json
+         , l_potential_groups_json 
+         , l_excluded_users_json
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_step_info.target_objt_ref
+       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+       ;
+
+      if l_priority_json is not null then
+        l_priority := flow_settings.get_priority 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_priority_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+      if l_due_on_json is not null then 
+        l_due_on   := flow_settings.get_due_on 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_due_on_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+      end if;
+
+      if l_potential_groups_json is not null then 
+        l_potential_groups := flow_settings.get_vc2_expression
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_potential_groups_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+        l_is_unallocated := flow_constants_pkg.gc_vcbool_false;
+      end if;
+      if l_excluded_users_json is not null then 
+        l_excluded_users := flow_settings.get_vc2_expression
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_excluded_users_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+        l_is_unallocated := flow_constants_pkg.gc_vcbool_false;
+      end if;
+      if l_potential_users_json is not null then 
+        l_potential_users := flow_settings.get_vc2_expression 
+                      ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                      , pi_sbfl_id => p_sbfl_info.sbfl_id
+                      , pi_expr    => l_potential_users_json
+                      , pi_scope   => p_sbfl_info.sbfl_scope
+                      );
+        l_is_unallocated := flow_constants_pkg.gc_vcbool_false;
+        -- check if only 1 potential user & if so, auto-reserve
+        if l_potential_groups is null then
+          l_potential_users_t := apex_string.split ( p_str => l_potential_users, p_sep => ':');
+          if l_potential_users_t is not null then
+            if l_potential_users_t.count = 1 then
+              if not apex_string_util.phrase_exists (p_phrase => l_potential_users_t(1), p_string => l_excluded_users) then
+                -- only 1 potential user who is not excluded so auto-reserve
+                l_reservation := l_potential_users_t(1);
+              end if;
+            end if;
+          end if;
+        end if;       
+      end if;
+
+      -- if no specific task allocation was found, (i.e., l_is_unallocated is true ) use the lane role already set on the subflow 
+      -- as the potential_group if it has a lane role
+
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update        = systimestamp
+           , sbfl.sbfl_priority           = l_priority
+           , sbfl.sbfl_due_on             = l_due_on
+           , sbfl.sbfl_reservation        = l_reservation
+           , sbfl.sbfl_potential_users    = l_potential_users
+           , sbfl.sbfl_potential_groups   = coalesce ( l_potential_groups
+                                                     , case 
+                                                       when l_is_unallocated = flow_constants_pkg.gc_vcbool_true 
+                                                        and sbfl_lane_isRole = flow_constants_pkg.gc_vcbool_true
+                                                       then 
+                                                         sbfl_lane_role
+                                                       else null end
+                                                      , null )                                                         
+           , sbfl.sbfl_excluded_users     = l_excluded_users
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where sbfl.sbfl_id       = p_sbfl_info.sbfl_id
+         and sbfl.sbfl_prcs_id  = p_sbfl_info.sbfl_prcs_id
+      ;
+  end process_apex_page_task;
+
+  function apex_task_pk_is_required
+  ( p_app_id          flow_types_pkg.t_bpmn_attribute_vc2
+  , p_task_static_id  flow_types_pkg.t_bpmn_attribute_vc2
+  ) return boolean
+  is
+    l_task_pk_required  boolean;
+$IF NOT flow_apex_env.ver_le_21 $THEN
+    l_static_id            apex_appl_taskdefs.static_id%type;
+    l_actions_table_name   apex_appl_taskdefs.actions_table_name%type;
+    l_actions_sql_query    apex_appl_taskdefs.actions_sql_query%type;
+$END
+  begin
+    --
+    --  See if  the APEX Task needs a PK to be supplied. (for Actions Source Table or Actions Source Query)
+    --
+$IF NOT flow_apex_env.ver_le_21 $THEN
+    select td.static_id
+         , td.actions_table_name
+         , td.actions_sql_query
+      into l_static_id
+         , l_actions_table_name
+         , l_actions_sql_query 
+      from apex_appl_taskdefs td
+     where td.application_id = p_app_id
+       and td.static_id      = p_task_static_id;
+  
+    return (l_actions_sql_query is not null) or (l_actions_table_name is not null);
+$ELSE
+    return null;
+$END
+  end apex_task_pk_is_required;
+
 
   procedure process_apex_approval_task
   ( p_sbfl_info     in flow_subflows%rowtype
@@ -98,10 +252,15 @@ as
     l_parameters       flow_types_pkg.t_bpmn_attribute_vc2;
     l_business_ref     flow_types_pkg.t_bpmn_attribute_vc2;
     l_initiator        flow_types_pkg.t_bpmn_attribute_vc2;
-    l_priority         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority_setting flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority         flow_subflows.sbfl_priority%type;
+    l_due_on_setting   flow_types_pkg.t_bpmn_attribute_vc2; 
+    l_due_on           flow_subflows.sbfl_due_on%type;
     l_result_var       flow_types_pkg.t_bpmn_attribute_vc2;
     l_apex_task_id     number;
-    e_priority_invalid exception;
+
+    e_priority_invalid   exception;
+    e_business_ref_null  exception;
     $IF flow_apex_env.ver_le_21 $THEN
       -- only need this for testing as apex_approval should fail if attempt to run without apex 22.1+
       type t_task_parameter  is record
@@ -142,6 +301,7 @@ as
            , objt.objt_attributes."apex"."resultVariable"
            , objt.objt_attributes."apex"."initiator"  
            , objt.objt_attributes."apex"."priority"
+           , objt.objt_attributes."apex"."dueOn"
         into l_app_id
            , l_static_id
            , l_subject
@@ -149,7 +309,8 @@ as
            , l_business_ref
            , l_result_var
            , l_initiator
-           , l_priority
+           , l_priority_setting
+           , l_due_on_setting
         from flow_objects objt
        where objt.objt_bpmn_id = p_step_info.target_objt_ref
          and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
@@ -166,7 +327,23 @@ as
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_ref);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
       flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_priority);
+
+      if l_priority_setting is not null then
+        l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
+                                                 , pi_sbfl_id  => l_sbfl_id
+                                                 , pi_expr     => l_priority_setting
+                                                 , pi_scope    => l_scope
+                                                 );
+      end if;
+
+      if l_due_on_setting is not null then                                          
+        l_due_on :=   flow_settings.get_due_on   ( pi_prcs_id  => l_prcs_id
+                                                 , pi_sbfl_id  => l_sbfl_id
+                                                 , pi_expr     => l_due_on_setting
+                                                 , pi_scope    => l_scope
+                                                 );
+      end if; 
+
       -- create parameters table
       for parameters in (
         select static_id
@@ -192,26 +369,50 @@ as
       end loop;
       -- check that priority is a valid priority 1-5 before passing
       begin
-        if l_priority not between 1 and 5 then
-          raise e_priority_invalid;
+        if l_priority is not null then
+          if l_priority not between 1 and 5 then
+            raise e_priority_invalid;
+          end if;
         end if;
       exception
         when value_error then
+          apex_debug.error
+          ( p_message => 'APEX Approval Task priority (%0) must be between 1 and 5'
+          , p0 => l_priority
+          );
           raise e_priority_invalid;
       end;
-
+      -- check that business_ref is not null before passing (prevents "lost" tasks in APEX)
+      l_business_ref := coalesce(l_business_ref, flow_globals.business_ref);
+      if l_business_ref is null then
+        if apex_task_pk_is_required (p_app_id => l_app_id, p_task_static_id => l_static_id) then 
+          apex_debug.error
+          ( p_message => 'APEX Approval Task business ref is null'
+          , p0 => coalesce(l_business_ref, flow_globals.business_ref)
+          );
+          raise e_business_ref_null;
+        end if;
+      end if;
 
       $IF not flow_apex_env.ver_le_21_2 $THEN     
-        -- create the task in APEX Approvals if after APEX v22.1
+        -- create the task in APEX Approvals if APEX >= v22.1
+        -- include due date if APEX >= 23.1
         begin
           l_apex_task_id := apex_approval.create_task
                          ( p_application_id     => l_app_id
                          , p_task_def_static_id => l_static_id
                          , p_subject            => l_subject
-                         , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref, null) 
+                         , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref) 
                          , p_parameters         => l_task_parameters
-                         , p_initiator          => l_initiator
+                         , p_initiator          => coalesce ( l_initiator
+                                                      , sys_context('apex$session','app_user') 
+                                                      , sys_context('userenv','os_user')
+                                                      , sys_context('userenv','session_user')
+                                                      ) 
                          , p_priority           => l_priority
+                         $IF not flow_apex_env.ver_le_22_2 $THEN
+                         , p_due_date           => l_due_on
+                         $END
                          );
           apex_debug.info 
           ( p_message => 'APEX Approval Task created - Approval Task Reference %0 created'
@@ -244,11 +445,21 @@ as
             , p0 => l_priority
             );  
             flow_errors.handle_instance_error
-            ( pi_prcs_id        => l_priority
+            ( pi_prcs_id        => l_prcs_id
             , pi_message_key    => 'apex-task-priority-error'
             , p0 => l_priority
             );  
-            -- $F4AMESSAGE 'apex-task-priority-error' || 'Error creating APEX Workflow task - invalid priority %0.'           
+            -- $F4AMESSAGE 'apex-task-priority-error' || 'Error creating APEX Workflow task - invalid priority %0.'    
+          when e_business_ref_null then
+            apex_debug.info
+            ( p_message => ' --- Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.'
+            );
+            flow_errors.handle_instance_error
+            ( pi_prcs_id        => l_prcs_id
+            , pi_message_key    => 'apex-task-business-ref-null'
+            );  
+            -- $F4AMESSAGE 'apex-task-business-ref-null' || 'Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.'             
+
           when others then
             apex_debug.info 
             ( p_message => ' --- Error creating APEX Approval Task.  AppID %0 TaskStaticID %1 Subject %2 DetailPK %3 Initiator %4 Priority %5.'
@@ -285,15 +496,20 @@ as
     );
     $IF flow_apex_env.ver_le_21_2 $THEN
       null;
+      apex_debug.info 
+      ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1 -- BUT APEX VERSION HAS NO APPROVALS!'
+      , p0 => p_apex_task_id
+      , p1 => p_objt_bpmn_id
+      );
     $ELSE
       -- cancel task
       apex_approval.cancel_task (p_task_id => p_apex_task_id);
+      apex_debug.info 
+      ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1'
+      , p0 => p_apex_task_id
+      , p1 => p_objt_bpmn_id
+      );
     $END
-     apex_debug.info 
-    ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1'
-    , p0 => p_apex_task_id
-    , p1 => p_objt_bpmn_id
-    );
   exception
     when others then
       flow_errors.handle_instance_error
@@ -301,6 +517,7 @@ as
       , pi_message_key => 'apex-task-cancelation-error'
       , p0 => p_objt_bpmn_id
       , p1 => p_apex_task_id
+      , p2 => sqlerrm
       );
       -- $F4AMESSAGE 'apex-task-cancelation-error' || 'Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)' 
   end cancel_apex_task;

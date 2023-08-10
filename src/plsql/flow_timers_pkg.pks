@@ -1,14 +1,26 @@
 create or replace package flow_timers_pkg
-  authid definer
--- accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg )
-as
-/******************************************************************************
- Purpose:
+/* 
+-- Flows for APEX - flow_timers_pkg.pks
+-- 
+-- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
+--
+-- Created 2020        Franco Soldaro
+-- Edited  2020        Moritz Klein - MT AG  
+-- Edited  24-Feb-2023 Richard Allen, Oracle
+--
+Purpose:
    Provides support to timers in Flows for APEX.
 
  Grants required:
    CREATE JOB
+
+
 ******************************************************************************/
+  authid definer
+-- accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg
+--               , flow_admin_api )
+as
+
 
 /******************************************************************************
   CONSTANTS
@@ -41,11 +53,13 @@ as
 ******************************************************************************/
   procedure start_timer
   (
-    pi_prcs_id    in flow_processes.prcs_id%type
-  , pi_sbfl_id    in flow_subflows.sbfl_id%type
-  , pi_step_key   in flow_subflows.sbfl_step_key%type default null
-  , pi_run        in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
-  , pi_timr_id    in flow_timers.timr_id%type default null -- only set on repeats
+    pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type
+  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
+  , pi_callback     in flow_timers.timr_callback%type
+  , pi_callback_par in flow_timers.timr_callback_par%type default null
+  , pi_run          in flow_timers.timr_run%type default 1 -- 1 original, 2-> repeats
+  , pi_timr_id      in flow_timers.timr_id%type default null -- only set on repeats
   );
 
 /******************************************************************************
@@ -141,6 +155,38 @@ procedure reschedule_timer
     po_return_code  out  number
   );
 
+
+/******************************************************************************
+  get_timer_repeat_interval
+    get the repeat interval of the timer scheduler job.
+******************************************************************************/
+  function get_timer_repeat_interval
+  return sys.all_scheduler_jobs.repeat_interval%type
+  ;
+
+/******************************************************************************
+  set_timer_repeat_interval
+    set the repeat interval of the timer scheduler job (uses dbms_scheduler syntax)
+******************************************************************************/
+
+  procedure set_timer_repeat_interval 
+  ( p_repeat_interval  in  varchar2
+  );
+
+/******************************************************************************
+  get_timer_status
+    disable the scheduled job processing of timers.
+******************************************************************************/
+
+  function get_timer_status
+  return varchar2;
+
+/******************************************************************************
+  timer_job_exists
+    Tells if the job for running timers exists.
+******************************************************************************/
+  function timer_job_exists
+    return boolean;
 
 /******************************************************************************
   disable_scheduled_job
