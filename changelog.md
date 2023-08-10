@@ -1,6 +1,32 @@
-# Flows for APEX - Changelog
+# Flows for APEX - Changelog #
 
-## v22.2
+## v23.1 ##
+
+- Adds Due Dates and Priorities to bpmn:processes and to bpmn:userTasks, allowing declarative tracking of scheduling, priority and due dates.
+- Adds Task Assignment to bpmn:userTasks, allowing easier declarative assignment of tasks to potential users and groups.
+- Adds REST-enabling of the Flows for APEX API 
+- Major upgrade to the BPMN Modeler, with new, modern-looking properties panel.
+- Enhanced support for modeling and viewing of collapsed subProcesses that can be easily expanded / collapsed.
+- Adds support for BPMN Child Lane sets, allowing nesting of lane sets inside parent lanes.
+- Adds explicit definition of relationship (or not) between Lanes and APEX roles/groups.
+- Adds Timestamp with Time Zone datatype option for Process Variables.
+- Adds binding of Process Variables into PL/SQL scripts, variable expressions, and element settings.
+- Adds support for binding non-varchar2 typed (i.e., number, date, timestamp with time zone) process variables. 
+- Allows process variable substitutions to be used in all of the parameters of an APEX Page task.
+- Adds 'is Startable' information to Processes, along with users and groups that can start a process.
+- Allows BPMN diagrams to contain Groups and attached Annotations.
+- Adds Automation to create daily, month-to-date, monthly, and quarterly statistics on process and step performance.
+- Enhances Flows for APEX Application dashboard to display process and step performance, errors, and waiting time statistics.
+- Adds auditing / logging of changes made to process diagrams, to complete the existing logging capabilities
+- Adds the ability to create a summary document, as a JSON document, describing all actions taken to run a process instance.
+- Adds an Automation creating archive summaries for all recently completed process instances into an archive table or OCI Object Storage.
+- Adds an automation for automated purging of old logging data and statistics summaries.
+- Allows an administrator to easily change the timer polling frequency, or temporarily enable / disable timers on non-production systems.
+- Experimental Feature - Adds MessageFlow between sendTasks, receiveTasks, Intermediate Message Catch and Throw events. Phase 1 of more...
+- Adds support for additional languages Italian, Simplified Chinese, Traditional Chinese, Korean.
+- Required APEX version increased to APEX v20.2
+
+## v22.2 ##
 
 - Adds BPMN Call Activities, allowing a process diagram to call another process diagram, passing and returning in/out variables.
 - Adds scoping to process variables at diagram level to support call activities.
@@ -20,7 +46,7 @@
 - Enhanced engine testing regime now introduced through utPLSQL regression test suites.
 - Enhanced sample app "Expense Claims" to reflect features added to Flows for APEX v22.2. 
 
-## v22.1
+## v22.1 ##
 
 - Adds repeating timers for non-interrupting boundary events - facilitating repeated reminders.
 
@@ -36,12 +62,10 @@
 - Added flow_globals.step_key and flow_globals.business_ref to get these values.
 - Enhanced the sample app "Expense Claims" to reflect all features added to Flows for APEX 22.1. 
 
-
-## v21.1
+## v21.1 ##
 
 - Introduces model-based declarative process variable expressions to set process variables before and after each step.
 - Introduces 3 process plugins to ease application integration:
-
   - Manage Flow Instance, for controlling instance creation, starting, termination, reset and deletion.
   - Manage Flow Instance Step, for controlling step statrt, reservation, release and completion.
   - Manage Flow Instance Variables, for transferring process variable content to and from APEX page items.
@@ -73,7 +97,7 @@
 - Removes deprecated v4 API calls flow_next_step, flow_next_branch.
 - Removes next_step_type from subflow view (non longer required since V4)
 
-## v5.1.2
+## v5.1.2 ##
 
 - Added business reference to views
   - flow_task_inbox_vw
@@ -82,7 +106,7 @@
 - Introduced the demo app "Holiday Approval"
 - The demo app "Order Shipment" is now deprecated
 
-## v5.1.1
+## v5.1.1 ##
 
 - Fixed several bugs occuring when all of the objects after an event object or a gateway are scriptTasks or serviceTasks, causing process not to be marked as Completed when finished.
 - Fixed a bug causing the first task after an Interrupting Escalation Boundary Event to be skipped
@@ -90,7 +114,7 @@
 - Fixed a problem with diagram export file names being too long
 - Fixed serviceTask missing engine option for type "Run PL/SQL code"
 
-## v5.1.0
+## v5.1.0 ##
 
 - Introduces process diagram versioning and lifecycle management.
 - Supports diagram import and export to XML or SQL files from the Flows for APEX application.
@@ -103,7 +127,7 @@
 - Added upgrade support to installation process.
 - Hey, we even have our own logo now!
 
-## v5.0.1
+## v5.0.1 ##
 
 - Enables process variables to be used when specifying timer definitions
 - Fixed bug that rises when reusing an ID across flows
@@ -113,7 +137,7 @@
 - When processing timers errors that occur mark respective timer as broken but don't break job anymore
 - Added "Add Gateway Route" to Flow Control for convenience when adding a process variable for a gateway
 
-## v5.0.0
+## v5.0.0 ##
 
 - Support for userTask objects that can now run an APEX page, defined inside modeler
 - Support for scriptTask objects that can run a PL/SQL script, defined inside modeler
@@ -137,7 +161,7 @@
 - Enhanced documentation.
 - Cleaner flow_api_pkg by separation of engine components into flow_engine
 
-## v4.0.0
+## v4.0.0 ##
 
 - New Subflow architecture to support Parallel Gateways, Sub Processes
 - Support for subprocesses (n levels deep)
@@ -154,24 +178,24 @@
   - Timed Start Events
   - Timer Intermediate Catch Events
 
-## v3.0.0
+## v3.0.0 ##
 
 - XML parsing now done using PL/SQL only
 - Upgraded all bpmn.io libraries to 7.2.0
 - Support for subprocesses (one level deep)
 - Fixed minor bugs and adopted coding standards
 
-## v2.0.0
+## v2.0.0 ##
 
 - Reworked API package
 - Added demo app
 - Checked for coding standards
 
-## v1.0.1
+## v1.0.1 ##
 
 - Fixed a few bugs
 - Annotations in Flows are now supported
 
-## v1.0
+## v1.0 ##
 
 - Initial Release
