@@ -23,8 +23,8 @@ wwv_flow_api.create_page(
 '    font-size: 1.1rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230614075533'
+,p_last_updated_by=>'C##DAMTHOR'
+,p_last_upd_yyyymmddhh24miss=>'20230809141723'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(4548240290043011)
@@ -36,11 +36,9 @@ wwv_flow_api.create_page_plug(
 ,p_plug_display_point=>'BODY'
 ,p_plug_source=>'To use the Timers feature of Flows for APEX, you must complete additional installation step that can be found <a href="https://flowsforapex.org/latest/installation/#post-installation-task-1-additional-step-to-use-timers" target="_blank">here</a>.'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_plug_display_condition_type=>'NOT_EXISTS'
-,p_plug_display_when_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select 1',
-'  from sys.all_scheduler_jobs',
-' where job_name = ''APEX_FLOW_STEP_TIMERS_J'';'))
+,p_plug_display_condition_type=>'EXPRESSION'
+,p_plug_display_when_condition=>'not flow_timers_pkg.timer_job_exists'
+,p_plug_display_when_cond2=>'PLSQL'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
@@ -53,11 +51,9 @@ wwv_flow_api.create_page_plug(
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'BODY'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_plug_display_condition_type=>'EXISTS'
-,p_plug_display_when_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select 1',
-'  from sys.all_scheduler_jobs',
-' where job_name = ''APEX_FLOW_STEP_TIMERS_J'';'))
+,p_plug_display_condition_type=>'EXPRESSION'
+,p_plug_display_when_condition=>'flow_timers_pkg.timer_job_exists'
+,p_plug_display_when_cond2=>'PLSQL'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
@@ -76,18 +72,6 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_api.create_page_button(
- p_id=>wwv_flow_api.id(3245470113234738)
-,p_button_sequence=>20
-,p_button_name=>'SAVE'
-,p_button_action=>'SUBMIT'
-,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
-,p_button_template_id=>wwv_flow_api.id(12495521691135880126)
-,p_button_is_hot=>'Y'
-,p_button_image_alt=>'Apply Changes'
-,p_button_position=>'REGION_TEMPLATE_NEXT'
-,p_icon_css_classes=>'fa-save'
-);
-wwv_flow_api.create_page_button(
  p_id=>wwv_flow_api.id(3311591865325268)
 ,p_button_sequence=>20
 ,p_button_plug_id=>wwv_flow_api.id(24203633870580280)
@@ -98,6 +82,9 @@ wwv_flow_api.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Apply Changes'
 ,p_button_position=>'REGION_TEMPLATE_NEXT'
+,p_button_condition=>'flow_timers_pkg.timer_job_exists'
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_icon_css_classes=>'fa-save'
 );
 wwv_flow_api.create_page_item(
@@ -105,7 +92,11 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P36_TIMER_STATUS'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_api.id(5273399411803742)
+,p_use_cache_before_default=>'NO'
 ,p_prompt=>'Timers Enabled'
+,p_source=>'flow_timers_pkg.get_timer_status'
+,p_source_type=>'EXPRESSION'
+,p_source_language=>'PLSQL'
 ,p_display_as=>'NATIVE_YES_NO'
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
@@ -120,7 +111,11 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P36_TIMER_REPEAT_INTERVAL'
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_api.id(5273399411803742)
+,p_use_cache_before_default=>'NO'
 ,p_prompt=>'Timer Repeat Interval'
+,p_source=>'flow_timers_pkg.get_timer_repeat_interval'
+,p_source_type=>'EXPRESSION'
+,p_source_language=>'PLSQL'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_field_template=>wwv_flow_api.id(12495522847445880132)
@@ -146,7 +141,15 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P36_TIMER_MAX_CYCLES'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_api.id(5273399411803742)
+,p_use_cache_before_default=>'NO'
 ,p_prompt=>'Timer Max Cycles'
+,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'flow_engine_util.get_config_value(',
+'           p_config_key =>flow_constants_pkg.gc_config_timer_max_cycles',
+'         , p_default_value => flow_constants_pkg.gc_config_default_timer_max_cycles',
+'       )'))
+,p_source_type=>'EXPRESSION'
+,p_source_language=>'PLSQL'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
 ,p_cSize=>30
 ,p_colspan=>3
@@ -154,37 +157,6 @@ wwv_flow_api.create_page_item(
 ,p_item_template_options=>'#DEFAULT#'
 ,p_inline_help_text=>'For cycle timers, this will defined the maximum number of execution.'
 ,p_attribute_03=>'left'
-);
-wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(3252627894234741)
-,p_computation_sequence=>150
-,p_computation_item=>'P36_TIMER_STATUS'
-,p_computation_point=>'BEFORE_BOX_BODY'
-,p_computation_type=>'FUNCTION_BODY'
-,p_computation_language=>'PLSQL'
-,p_computation=>'return flow_timers_pkg.get_timer_status;'
-);
-wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(3253069202234741)
-,p_computation_sequence=>160
-,p_computation_item=>'P36_TIMER_REPEAT_INTERVAL'
-,p_computation_point=>'BEFORE_BOX_BODY'
-,p_computation_type=>'FUNCTION_BODY'
-,p_computation_language=>'PLSQL'
-,p_computation=>'return flow_timers_pkg.get_timer_repeat_interval;'
-);
-wwv_flow_api.create_page_computation(
- p_id=>wwv_flow_api.id(3286502282239506)
-,p_computation_sequence=>170
-,p_computation_item=>'P36_TIMER_MAX_CYCLES'
-,p_computation_point=>'BEFORE_BOX_BODY'
-,p_computation_type=>'FUNCTION_BODY'
-,p_computation_language=>'PLSQL'
-,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'return flow_engine_util.get_config_value(',
-'           p_config_key =>flow_constants_pkg.gc_config_timer_max_cycles',
-'         , p_default_value => flow_constants_pkg.gc_config_default_timer_max_cycles',
-'       );'))
 );
 wwv_flow_api.create_page_process(
  p_id=>wwv_flow_api.id(3257766356234742)
@@ -200,7 +172,6 @@ wwv_flow_api.create_page_process(
 ');'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when_button_id=>wwv_flow_api.id(3245470113234738)
 ,p_process_success_message=>'Changes saved.'
 );
 wwv_flow_api.component_end;
