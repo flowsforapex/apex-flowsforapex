@@ -17,6 +17,13 @@ create or replace package body flow_message_flow as
   is
     l_msub_id      flow_message_subscriptions.msub_id%type;
   begin
+    apex_debug.message ( p_message => 'Trying to create subscription for Message %0 Key %1 Value %2 Payload %3'
+    , p0 => p_subscription_details.message_name
+    , p1 => p_subscription_details.key_name
+    , p2 => p_subscription_details.key_value
+    , p3 => p_subscription_details.payload_var
+    );
+
     insert into flow_message_subscriptions
     ( msub_message_name
     , msub_key_name

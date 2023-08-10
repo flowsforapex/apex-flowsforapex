@@ -376,6 +376,7 @@ as
   exception
     when e_param_type_requires_prcs_id then
       flow_errors.handle_general_error (pi_message_key => 'settings-procvar-no-prcs');
+      return null;
       -- $F4AMESSAGE 'settings-procvar-no-prcs' || 'Settings cannot specify Process Variable without a Process ID.'
     when others then 
       apex_debug.info 
@@ -388,7 +389,8 @@ as
       , pi_message_key    => 'settings-error'
       , p0 => substr(l_expr_details.expr_value, 4000)
       , p1 => sqlerrm
-      );  
+      ); 
+      return null;
       -- $F4AMESSAGE 'settings-error' || 'Error evaluating Setting. Expression is invalid.  Expression: %0. SQL Error: %1' 
   end get_vc2_expression;
 
