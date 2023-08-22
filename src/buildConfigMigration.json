@@ -9,24 +9,7 @@
     , "build_type": "concat"
     , "build_path": "/"
     , "script_path": "/"
-    , "script_name": "premigrate_engine_22.2_to_23.1"
-    , "script_extension": "sql"
-    , "log_extension": "log"
-    , "add_newline": true
-    , "version": "01.00.00"
-    , "schema_name": "FLOWS4APEX"
-    , "keepTempFiles": false
-    , "content":
-      [
-      ]
-    },
-    {
-      "base_path": "/"
-    , "search_path": "/"
-    , "build_type": "concat"
-    , "build_path": "/"
-    , "script_path": "/"
-    , "script_name": "migrate_engine_22.2_to_23.1"
+    , "script_name": "01_migrate_engine_222_231"
     , "script_extension": "sql"
     , "log_extension": "log"
     , "add_newline": true
@@ -100,12 +83,29 @@
       , { "content_type": "plaintext", "path": "views/", "name": "flow_instance_timeline_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_startable_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_message_subscriptions_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_diagrams_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_message_subscriptions_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_process_vars_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_processes_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_subflows_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_proc_vars_int.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_diagrams_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_message_subscriptions_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_process_vars_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_processes_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_subflows_vw.sql", "add_show_errors": false }
+      ]
+    },
+    {
+      "base_path": "/"
+    , "search_path": "/"
+    , "build_type": "concat"
+    , "build_path": "/"
+    , "script_path": "/"
+    , "script_name": "02_migrate_engine_222_231"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "plsql/", "name": "flow_proc_vars_int.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_process_vars.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_expressions.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_settings.pkb", "add_show_errors": false }
@@ -120,7 +120,24 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_services.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_instances.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_engine.pkb", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_api_pkg.pkb", "add_show_errors": false }
+      ]
+    },
+    {
+      "base_path": "/"
+    , "search_path": "/"
+    , "build_type": "concat"
+    , "build_path": "/"
+    , "script_path": "/"
+    , "script_name": "03_migrate_engine_222_231"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "plsql/", "name": "flow_api_pkg.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_migrate_xml_pkg.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_parser_util.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_bpmn_parser_pkg.pkb", "add_show_errors": false }
@@ -152,7 +169,7 @@
     , "build_type": "concat"
     , "build_path": "/"
     , "script_path": "/"
-    , "script_name": "migrate_engine_app_and_data_22.2_to_23.1"
+    , "script_name": "04_migrate_engine_app_and_data_222_231"
     , "script_extension": "sql"
     , "log_extension": "log"
     , "add_newline": true
@@ -194,7 +211,24 @@
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0014_subflows_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0014_variable_log_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0020_instance_timeline_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pkb", "add_show_errors": false }
+      ]
+    },
+    {
+      "base_path": "/"
+    , "search_path": "/"
+    , "build_type": "concat"
+    , "build_path": "/"
+    , "script_path": "/"
+    , "script_name": "05_migrate_engine_app_and_data_222_231"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_engine_app_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/engine-app/", "name": "flow_theme_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance/plsql/", "name": "flow_plugin_manage_instance.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plugins/manage-flow-instance-step/plsql/", "name": "flow_plugin_manage_instance_step.pkb", "add_show_errors": false }
@@ -205,8 +239,12 @@
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_en.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_es.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_fr.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_it.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_ja.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_ko.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_pt-br.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_zh-cn.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_zh-tw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "", "name": "parse_all_diagrams.sql", "add_show_errors": false }
       ]
     }
