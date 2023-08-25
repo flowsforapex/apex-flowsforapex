@@ -246,6 +246,7 @@
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_zh-cn.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "data", "name": "install_engine_messages_zh-tw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "", "name": "parse_all_diagrams.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "../hotfix/v23-1", "name": "missing-config-parameters.sql", "add_show_errors": false }
       ]
     }
   ]
