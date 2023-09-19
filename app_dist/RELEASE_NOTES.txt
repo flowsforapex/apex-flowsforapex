@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v23.1                 *
+*            Flows for APEX v24.1                 *
 *          Installation instructions              *
 *                                                 *
 ***************************************************
@@ -33,10 +33,12 @@ MIGRATING EXISTING INSTALLATIONS
 - Run migrate_all.sql
 
 Migration notes:
-- Please be aware that you can only migrate to the subsequent release (ie. 22.2 to 23.1 , but not 22.1 to 23.1)
+- Please be aware that you can only migrate to the subsequent release (ie. 23.1 to 24.1 , but not 22.1 to 24.1)
 
 
 HISTORY
+
+* v24.1
 
 * v23.1
   - Adds Due Dates and Priorities to bpmn:processes and to bpmn:userTasks, allowing declarative tracking of scheduling, priority and due dates.
