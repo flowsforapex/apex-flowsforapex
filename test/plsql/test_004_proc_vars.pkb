@@ -829,7 +829,7 @@ create or replace package body test_004_proc_vars is
       flow_process_vars.set_var(
            pi_prcs_id     => l_prcs_id
          , pi_var_name    => l_date_var_name_mc
-         , pi_date_value  => l_date_mc_val
+         , pi_date_value  => to_date(l_date_mc_val, c_date_fmt)
       );
 
       -- check now still exactly 1 process variable
@@ -858,7 +858,7 @@ create or replace package body test_004_proc_vars is
       flow_process_vars.set_var(
            pi_prcs_id     => l_prcs_id
          , pi_var_name    => l_date_var_name_uc
-         , pi_date_value  => l_date_uc_val
+         , pi_date_value  => to_date(l_date_uc_val, c_date_fmt)
       );
 
       -- check now still exactly 1 process variable

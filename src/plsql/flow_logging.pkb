@@ -173,6 +173,7 @@ create or replace package body flow_logging as
     ( sflg_prcs_id
     , sflg_objt_id
     , sflg_sbfl_id
+    , sflg_step_key
     , sflg_last_updated
     , sflg_dgrm_id
     , sflg_diagram_level
@@ -181,6 +182,7 @@ create or replace package body flow_logging as
     select p_process_id
          , p_completed_object
          , p_subflow_id
+         , sbfl.sbfl_step_key
          , sysdate
          , sbfl.sbfl_dgrm_id
          , sbfl.sbfl_diagram_level
@@ -199,6 +201,7 @@ create or replace package body flow_logging as
       ( lgsf_prcs_id 
       , lgsf_objt_id 
       , lgsf_sbfl_id 
+      , lgsf_step_key
       , lgsf_sbfl_process_level
       , lgsf_last_completed
       , lgsf_status_when_complete
@@ -207,12 +210,15 @@ create or replace package body flow_logging as
       , lgsf_started 
       , lgsf_completed
       , lgsf_reservation
+      , lgsf_due_on
+      , lgsf_priority
       , lgsf_user
       , lgsf_comment
       )
       select sbfl.sbfl_prcs_id
            , p_completed_object
            , sbfl.sbfl_id
+           , sbfl.sbfl_step_key
            , sbfl.sbfl_process_level
            , sbfl.sbfl_last_completed
            , sbfl.sbfl_status
@@ -221,6 +227,8 @@ create or replace package body flow_logging as
            , sbfl.sbfl_work_started
            , systimestamp
            , sbfl.sbfl_reservation
+           , sbfl.sbfl_due_on
+           , sbfl.sbfl_priority
           , case g_logging_hide_userid 
             when 'true' then 
               null

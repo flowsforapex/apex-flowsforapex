@@ -14,6 +14,10 @@ create or replace package body test_024_usertask_approval_task as
   -- suite(24 usertask - approval task)
   -- rollback(manual)
 
+  g_human_task_app_id  constant number := 133;
+  g_approver_user      constant varchar2(40) := 'BO';
+  g_testing_user       constant varchar2(40) := 'FLOWSDEV';
+
   g_model_a24a constant varchar2(100) := 'A24a - Approval Component - Basic Operation';
   g_model_a24b constant varchar2(100) := 'A24b - Approval Task - Task Cancelation';
   g_model_a24c constant varchar2(100) := 'A24c -';
@@ -230,9 +234,9 @@ create or replace package body test_024_usertask_approval_task as
           when others then 
             null;
         end;
-        apex_session.create_session ( p_app_id => 106
+        apex_session.create_session ( p_app_id => g_human_task_app_id 
                                     , p_page_id => 3
-                                    , p_username => 'BO'
+                                    , p_username => g_approver_user 
                                     );
         -- make the approval
         apex_approval.complete_task ( p_task_id => l_task_id
@@ -246,9 +250,9 @@ create or replace package body test_024_usertask_approval_task as
           when others then 
             null;
         end;
-        --apex_session.create_session ( p_app_id => 106
+        --apex_session.create_session ( p_app_id => g_human_task_app_id 
         --                            , p_page_id => 3
-        --                            , p_username => 'FLOWSDEV2'
+        --                            , p_username => g_testing_user 
         --                            );              
         -- check workflow has moved forwards
 
