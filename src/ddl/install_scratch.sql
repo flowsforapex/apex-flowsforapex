@@ -118,6 +118,7 @@ CREATE TABLE flow_subflow_log (
     sflg_prcs_id       NUMBER NOT NULL,
     sflg_objt_id       VARCHAR2(50) NOT NULL,
     sflg_sbfl_id       NUMBER NOT NULL,
+    sflg_step_key      VARCHAR2(20 CHAR),
     sflg_dgrm_id       NUMBER,
     sflg_diagram_level NUMBER,
     sflg_last_updated  DATE,
@@ -485,6 +486,7 @@ create table flow_step_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL
 , lgsf_objt_id       		VARCHAR2(50) NOT NULL
 , lgsf_sbfl_id      		NUMBER NOT NULL
+, lgsf_step_key             VARCHAR2(20 CHAR)
 , lgsf_sbfl_process_level   NUMBER
 , lgsf_last_completed 	    VARCHAR2(50) 
 , lgsf_status_when_complete VARCHAR2(20)
