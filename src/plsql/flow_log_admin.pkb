@@ -53,7 +53,7 @@ create or replace package body flow_log_admin as
        'processID'    value p.prcs_id,
        'mainDiagram'  value p.prcs_dgrm_id,
        'processName'  value p.prcs_name,
-       'businessID'   value prov.prov.prov_var_vc2,
+       'businessID'   value prov.prov_var_vc2,
        'priority'     value p.prcs_priority,
        'prcs_status'  value p.prcs_status,
        'prcs_init_ts' value p.prcs_init_ts,
