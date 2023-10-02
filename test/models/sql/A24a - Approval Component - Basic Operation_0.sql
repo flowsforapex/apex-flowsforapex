@@ -7,6 +7,17 @@ begin
       ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">]'
       ,q'[  <bpmn:process id="Process_A24a" name="24a - Approval Component - Basic Operation" isExecutable="false" apex:manualInput="false">]'
       ,q'[    <bpmn:startEvent id="Event_Start" name="Start">]'
+      ,q'[      <bpmn:extensionElements>]'
+      ,q'[        <apex:onEvent>]'
+      ,q'[          <apex:processVariable>]'
+      ,q'[            <apex:varSequence>0</apex:varSequence>]'
+      ,q'[            <apex:varName>Ste24_Test_App_ID</apex:varName>]'
+      ,q'[            <apex:varDataType>VARCHAR2</apex:varDataType>]'
+      ,q'[            <apex:varExpressionType>static</apex:varExpressionType>]'
+      ,q'[            <apex:varExpression>101</apex:varExpression>]'
+      ,q'[          </apex:processVariable>]'
+      ,q'[        </apex:onEvent>]'
+      ,q'[      </bpmn:extensionElements>]'
       ,q'[      <bpmn:outgoing>Flow_1x50t9n</bpmn:outgoing>]'
       ,q'[    </bpmn:startEvent>]'
       ,q'[    <bpmn:task id="Activity_PreTest_A" name="PreTest A">]'
@@ -15,10 +26,10 @@ begin
       ,q'[    </bpmn:task>]'
       ,q'[    <bpmn:sequenceFlow id="Flow_1x50t9n" sourceRef="Event_Start" targetRef="Activity_Setup" />]'
       ,q'[    <bpmn:sequenceFlow id="Flow_16oik1e" sourceRef="Activity_PreTest_A" targetRef="Activity_Approval_A24A" />]'
-      ,q'[    <bpmn:userTask id="Activity_Approval_A24A" name="Approval A24A" apex:type="apexApproval" apex:manualInput="false">]'
+      ,q'[    <bpmn:userTask id="Activity_Approval_A24A" name="Approval A24A" apex:type="apexApproval" apex:manualInput="true">]'
       ,q'[      <bpmn:extensionElements>]'
       ,q'[        <apex:apexApproval>]'
-      ,q'[          <apex:applicationId>106</apex:applicationId>]'
+      ,q'[          <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>]'
       ,q'[          <apex:taskStaticId>A24A_SIMPLE_TASK_WITH_TASK_PK</apex:taskStaticId>]'
       ,q'[          <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>]'
       ,q'[          <apex:parameters>]'
@@ -85,10 +96,10 @@ begin
       ,q'[      <bpmn:incoming>Flow_B</bpmn:incoming>]'
       ,q'[      <bpmn:outgoing>Flow_0m64eas</bpmn:outgoing>]'
       ,q'[    </bpmn:task>]'
-      ,q'[    <bpmn:userTask id="Activity_Approval_A24B" name="Approval A24B" apex:type="apexApproval" apex:manualInput="false">]'
+      ,q'[    <bpmn:userTask id="Activity_Approval_A24B" name="Approval A24B" apex:type="apexApproval" apex:manualInput="true">]'
       ,q'[      <bpmn:extensionElements>]'
       ,q'[        <apex:apexApproval>]'
-      ,q'[          <apex:applicationId>106</apex:applicationId>]'
+      ,q'[          <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>]'
       ,q'[          <apex:taskStaticId>A24B_SIMPLE_TASK_ACTION_QUERY</apex:taskStaticId>]'
       ,q'[          <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>]'
       ,q'[          <apex:parameters>]'
@@ -131,10 +142,10 @@ begin
       ,q'[      <bpmn:incoming>Flow_C</bpmn:incoming>]'
       ,q'[      <bpmn:outgoing>Flow_00hvn43</bpmn:outgoing>]'
       ,q'[    </bpmn:task>]'
-      ,q'[    <bpmn:userTask id="Activity_Approval_A24C" name="Approval A24C" apex:type="apexApproval" apex:manualInput="false">]'
+      ,q'[    <bpmn:userTask id="Activity_Approval_A24C" name="Approval A24C" apex:type="apexApproval" apex:manualInput="true">]'
       ,q'[      <bpmn:extensionElements>]'
       ,q'[        <apex:apexApproval>]'
-      ,q'[          <apex:applicationId>106</apex:applicationId>]'
+      ,q'[          <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>]'
       ,q'[          <apex:taskStaticId>A24C_SIMPLE_TASK_NO_ACTION_SOURCE</apex:taskStaticId>]'
       ,q'[          <apex:parameters>]'
       ,q'[            <apex:parameter>]'
@@ -327,8 +338,7 @@ begin
     pi_dgrm_name => 'A24a - Approval Component - Basic Operation',
     pi_dgrm_version => '0',
     pi_dgrm_category => 'Testing',
-    pi_dgrm_content => l_dgrm_content,
-    pi_force_overwrite => true
+    pi_dgrm_content => l_dgrm_content
 );
 end;
 /

@@ -9,6 +9,17 @@
       <bpmn:incoming>Flow_1kwnoug</bpmn:incoming>
       <bpmn:outgoing>Flow_17n9htl</bpmn:outgoing>
       <bpmn:startEvent id="Event_AStart" name="AStart">
+        <bpmn:extensionElements>
+          <apex:onEvent>
+            <apex:processVariable>
+              <apex:varSequence>0</apex:varSequence>
+              <apex:varName>Ste24_Test_App_ID</apex:varName>
+              <apex:varDataType>VARCHAR2</apex:varDataType>
+              <apex:varExpressionType>static</apex:varExpressionType>
+              <apex:varExpression>101</apex:varExpression>
+            </apex:processVariable>
+          </apex:onEvent>
+        </bpmn:extensionElements>
         <bpmn:outgoing>Flow_1rl9v3e</bpmn:outgoing>
       </bpmn:startEvent>
       <bpmn:sequenceFlow id="Flow_1rl9v3e" sourceRef="Event_AStart" targetRef="Gateway_16dc89x" />
@@ -27,10 +38,10 @@
           <bpmn:incoming>Flow_A</bpmn:incoming>
           <bpmn:outgoing>Flow_16oik1e</bpmn:outgoing>
         </bpmn:task>
-        <bpmn:userTask id="Activity_Approval_A24A" name="Approval A24A" apex:type="apexApproval" apex:manualInput="false">
+        <bpmn:userTask id="Activity_Approval_A24A" name="Approval A24A" apex:type="apexApproval" apex:manualInput="true">
           <bpmn:extensionElements>
             <apex:apexApproval>
-              <apex:applicationId>106</apex:applicationId>
+              <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>
               <apex:taskStaticId>A24A_SIMPLE_TASK_WITH_TASK_PK</apex:taskStaticId>
               <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>
               <apex:parameters>
@@ -87,10 +98,10 @@
           <bpmn:incoming>Flow_B</bpmn:incoming>
           <bpmn:outgoing>Flow_0m64eas</bpmn:outgoing>
         </bpmn:task>
-        <bpmn:userTask id="Activity_Approval_A24B" name="Approval A24B" apex:type="apexApproval" apex:manualInput="false">
+        <bpmn:userTask id="Activity_Approval_A24B" name="Approval A24B" apex:type="apexApproval" apex:manualInput="true">
           <bpmn:extensionElements>
             <apex:apexApproval>
-              <apex:applicationId>106</apex:applicationId>
+              <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>
               <apex:taskStaticId>A24B_SIMPLE_TASK_ACTION_QUERY</apex:taskStaticId>
               <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>
               <apex:parameters>
@@ -126,10 +137,10 @@
           <bpmn:incoming>Flow_C</bpmn:incoming>
           <bpmn:outgoing>Flow_00hvn43</bpmn:outgoing>
         </bpmn:task>
-        <bpmn:userTask id="Activity_Approval_A24C" name="Approval A24C" apex:type="apexApproval" apex:manualInput="false">
+        <bpmn:userTask id="Activity_Approval_A24C" name="Approval A24C" apex:type="apexApproval" apex:manualInput="true">
           <bpmn:extensionElements>
             <apex:apexApproval>
-              <apex:applicationId>106</apex:applicationId>
+              <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>
               <apex:taskStaticId>A24C_SIMPLE_TASK_NO_ACTION_SOURCE</apex:taskStaticId>
               <apex:parameters>
                 <apex:parameter>
@@ -203,16 +214,6 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A24b">
-      <bpmndi:BPMNShape id="Activity_12bajhl_di" bpmnElement="Activity_AfterSub">
-        <dc:Bounds x="1510" y="105" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0t9f6fl_di" bpmnElement="Event_MainEnd">
-        <dc:Bounds x="1652" y="127" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1648" y="170" width="44" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0fjs89n_di" bpmnElement="Event_Start">
         <dc:Bounds x="92" y="22" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -231,16 +232,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0i7u1vb_di" bpmnElement="Gateway_16dc89x">
         <dc:Bounds x="345" y="25" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1a37w9i_di" bpmnElement="Activity_Pre-terminate">
-        <dc:Bounds x="490" y="440" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0nt1y3j_di" bpmnElement="Event_Terminate">
-        <dc:Bounds x="692" y="462" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="685" y="505" width="50" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1dnzbnj_di" bpmnElement="Activity_ASub" isExpanded="true">
         <dc:Bounds x="490" y="-240" width="900" height="650" />
@@ -359,6 +350,16 @@
         <di:waypoint x="1280" y="310" />
         <di:waypoint x="1332" y="310" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1a37w9i_di" bpmnElement="Activity_Pre-terminate">
+        <dc:Bounds x="490" y="440" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nt1y3j_di" bpmnElement="Event_Terminate">
+        <dc:Bounds x="692" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="685" y="505" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1rl9v3e_di" bpmnElement="Flow_1rl9v3e">
         <di:waypoint x="288" y="50" />
         <di:waypoint x="345" y="50" />
@@ -376,6 +377,16 @@
         <di:waypoint x="590" y="480" />
         <di:waypoint x="692" y="480" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_12bajhl_di" bpmnElement="Activity_AfterSub">
+        <dc:Bounds x="1510" y="105" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0t9f6fl_di" bpmnElement="Event_MainEnd">
+        <dc:Bounds x="1652" y="127" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1648" y="170" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1kwnoug_di" bpmnElement="Flow_1kwnoug">
         <di:waypoint x="128" y="40" />
         <di:waypoint x="220" y="40" />
