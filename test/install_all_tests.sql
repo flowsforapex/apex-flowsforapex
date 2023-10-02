@@ -9,6 +9,7 @@ PROMPT >> =================
 PROMPT >> Installing Package Specifications
 
 @plsql/test-helpers/test_helper.pks
+@plsql/test_constants.pks
 @plsql/test_001_api.pks
 @plsql/test_002_gateway.pks
 @plsql/test_003_startEvents.pks
