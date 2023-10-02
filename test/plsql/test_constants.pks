@@ -1,7 +1,7 @@
 create or replace package test_constants
 as
 /* 
--- Flows for APEX - test_constants.pkb
+-- Flows for APEX - test_constants.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
 --
