@@ -891,10 +891,13 @@ is
 begin
   apex_debug.enter 
   ( 'get_next_step_info'
-  , 'Process ID',  p_process_id
-  , 'Subflow ID', p_subflow_id
+  , 'Process ID',    p_process_id
+  , 'Subflow ID',    p_subflow_id
+  , 'Forward Route', p_forward_route
   );
 -- Find next subflow step
+  -- rewritten original LEFT JOIN query because of database 23.3 bug 35862529 which returns incorrect values on left join when including json attributes
+  -- workaround - remove json columns from select list and query separately if lane_bpmn_is is not null
   begin
     select sbfl.sbfl_dgrm_id
          , objt_source.objt_tag_name
@@ -905,9 +908,17 @@ begin
          , objt_target.objt_sub_tag_name
          , objt_lane.objt_bpmn_id
          , objt_lane.objt_name
-         , objt_lane.objt_attributes."apex"."isRole"
-         , objt_lane.objt_attributes."apex"."role"
-      into l_step_info
+--         , objt_lane.objt_attributes."apex"."isRole"
+--         , objt_lane.objt_attributes."apex"."role"
+      into l_step_info.dgrm_id
+         , l_step_info.source_objt_tag 
+         , l_step_info.source_objt_id 
+         , l_step_info.target_objt_id 
+         , l_step_info.target_objt_ref
+         , l_step_info.target_objt_tag
+         , l_step_info.target_objt_subtag
+         , l_step_info.target_objt_lane
+         , l_step_info.target_objt_lane_name 
       from flow_connections conn
       join flow_objects objt_source
         on conn.conn_src_objt_id = objt_source.objt_id
@@ -922,10 +933,32 @@ begin
         on objt_target.objt_objt_lane_id = objt_lane.objt_id
        and objt_target.objt_dgrm_id = objt_lane.objt_dgrm_id
      where conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
-       and conn.conn_bpmn_id like nvl2( p_forward_route, p_forward_route, '%' )
+       and ( p_forward_route is null
+             OR  ( p_forward_route is not null AND conn.conn_bpmn_id = p_forward_route )
+           )
        and sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
     ;
+    if l_step_info.target_objt_lane is not null then
+      begin
+        -- workaround for database 23.3 bug 35862529 
+        select lane.objt_attributes."apex"."isRole"
+             , lane.objt_attributes."apex"."role"
+          into l_step_info.target_objt_lane_isRole
+             , l_step_info.target_objt_lane_role
+          from flow_objects lane
+         where lane.objt_bpmn_id  = l_step_info.target_objt_lane
+           and lane.objt_dgrm_id  = l_step_info.dgrm_id
+        ;
+      exception
+        when no_data_found then
+          apex_debug.message 
+          ( p_message => '-- Lane %0 json attributes data not found'
+          , p0 => l_step_info.target_objt_lane
+          );
+          raise;
+      end;
+    end if;
   exception
     when no_data_found then
       flow_errors.handle_instance_error
@@ -976,6 +1009,8 @@ begin
   , 'Subflow ID', p_subflow_id
   );
 -- Find next subflow step
+  -- rewritten original LEFT JOIN query because of database 23.3 bug 35862529 which returns incorrect values on left join when including json attributes
+  -- workaround - remove json columns from select list and query separately if lane_bpmn_is is not null
   begin
     select sbfl.sbfl_dgrm_id
          , null 
@@ -986,9 +1021,17 @@ begin
          , objt_current.objt_sub_tag_name
          , objt_lane.objt_bpmn_id
          , objt_lane.objt_name
-         , objt_lane.objt_attributes."apex"."isRole"
-         , objt_lane.objt_attributes."apex"."role"
-      into l_step_info
+--         , objt_lane.objt_attributes."apex"."isRole"
+--         , objt_lane.objt_attributes."apex"."role"
+      into l_step_info.dgrm_id
+         , l_step_info.source_objt_tag 
+         , l_step_info.source_objt_id 
+         , l_step_info.target_objt_id 
+         , l_step_info.target_objt_ref
+         , l_step_info.target_objt_tag
+         , l_step_info.target_objt_subtag
+         , l_step_info.target_objt_lane
+         , l_step_info.target_objt_lane_name 
       from flow_objects objt_current
       join flow_subflows sbfl
         on sbfl.sbfl_current = objt_current.objt_bpmn_id 
@@ -1000,7 +1043,26 @@ begin
        and sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_current = p_current_bpmn_id
     ;
-    return l_step_info;
+    if l_step_info.target_objt_lane is not null then
+      begin
+        -- workaround for database 23.3 bug 35862529 
+        select lane.objt_attributes."apex"."isRole"
+             , lane.objt_attributes."apex"."role"
+          into l_step_info.target_objt_lane_isRole
+             , l_step_info.target_objt_lane_role
+          from flow_objects lane
+         where lane.objt_bpmn_id  = l_step_info.target_objt_lane
+           and lane.objt_dgrm_id  = l_step_info.dgrm_id
+        ;
+      exception
+        when no_data_found then 
+          apex_debug.message 
+          ( p_message => '-- Lane %0 json attributes data not found'
+          , p0 => l_step_info.target_objt_lane
+          );
+          raise;
+      end;
+    end if;
   exception
   when no_data_found then
     flow_errors.handle_general_error
@@ -1013,6 +1075,7 @@ begin
     );
     -- $F4AMESSAGE 'more_than_1_forward_path' || 'More than 1 forward path found when only 1 allowed.'      
   end;
+  return l_step_info;
 end get_restart_step_info;
 
 procedure restart_failed_timer_step

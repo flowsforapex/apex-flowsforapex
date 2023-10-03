@@ -356,22 +356,27 @@ procedure get_number_of_connections
 
     if p_parent_subflow is  null then
     -- initial subflow in process.   Get starting Lane info. (could be null)
-
-      select lane_objt.objt_bpmn_id
-           , lane_objt.objt_name
-           , lane_objt.objt_attributes."apex"."isRole"
-           , lane_objt.objt_attributes."apex"."role"
-        into l_lane
-           , l_lane_name
-           , l_lane_isRole
-           , l_lane_role
-        from flow_objects start_objt
-   left join flow_objects lane_objt
-          on start_objt.objt_objt_lane_id = lane_objt.objt_id
-         and start_objt.objt_dgrm_id      = lane_objt.objt_dgrm_id
-       where start_objt.objt_dgrm_id = p_dgrm_id
-         and start_objt.objt_bpmn_id = p_starting_object
-      ;
+    -- database 23.3 bug 35862529 means this will return NDF if there are no lanes so we handle (ignore) the NDF
+      begin
+        select lane_objt.objt_bpmn_id
+             , lane_objt.objt_name
+             , lane_objt.objt_attributes."apex"."isRole"
+             , lane_objt.objt_attributes."apex"."role"
+          into l_lane
+             , l_lane_name
+             , l_lane_isRole
+             , l_lane_role
+          from flow_objects start_objt
+          left join flow_objects lane_objt
+            on start_objt.objt_objt_lane_id = lane_objt.objt_id
+           and start_objt.objt_dgrm_id      = lane_objt.objt_dgrm_id
+         where start_objt.objt_dgrm_id = p_dgrm_id
+           and start_objt.objt_bpmn_id = p_starting_object
+        ;
+      exception
+        when no_data_found then
+          null;
+      end;
     else
     -- new subflow in existing process
     -- get process level, diagram level, scope, calling subflow for copy down unless this is the initial subflow in a process

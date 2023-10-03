@@ -197,7 +197,7 @@ wwv_flow_imp_shared.create_task_def_participant(
 ,p_participant_type=>'POTENTIAL_OWNER'
 ,p_identity_type=>'USER'
 ,p_value_type=>'STATIC'
-,p_value=>'BO'
+,p_value=>'FLOWSTESTER1'
 );
 wwv_flow_imp_shared.create_task_def_participant(
  p_id=>wwv_flow_imp.id(24606904391274450)
@@ -205,7 +205,7 @@ wwv_flow_imp_shared.create_task_def_participant(
 ,p_participant_type=>'POTENTIAL_OWNER'
 ,p_identity_type=>'USER'
 ,p_value_type=>'STATIC'
-,p_value=>'FLOWSDEV2'
+,p_value=>'FLOWSTESTER2'
 );
 end;
 /
@@ -263,7 +263,7 @@ wwv_flow_imp_shared.create_task_def_participant(
 ,p_participant_type=>'POTENTIAL_OWNER'
 ,p_identity_type=>'USER'
 ,p_value_type=>'STATIC'
-,p_value=>'BO'
+,p_value=>'FLOWSTESTER1'
 );
 wwv_flow_imp_shared.create_task_def_participant(
  p_id=>wwv_flow_imp.id(24607231395276295)
@@ -271,7 +271,7 @@ wwv_flow_imp_shared.create_task_def_participant(
 ,p_participant_type=>'POTENTIAL_OWNER'
 ,p_identity_type=>'USER'
 ,p_value_type=>'STATIC'
-,p_value=>'FLOWSDEV2'
+,p_value=>'FLOWSTESTER2'
 );
 end;
 /
@@ -325,7 +325,7 @@ wwv_flow_imp_shared.create_task_def_participant(
 ,p_participant_type=>'POTENTIAL_OWNER'
 ,p_identity_type=>'USER'
 ,p_value_type=>'STATIC'
-,p_value=>'BO'
+,p_value=>'FLOWSTESTER1'
 );
 wwv_flow_imp_shared.create_task_def_participant(
  p_id=>wwv_flow_imp.id(24607579876277875)
@@ -333,7 +333,7 @@ wwv_flow_imp_shared.create_task_def_participant(
 ,p_participant_type=>'POTENTIAL_OWNER'
 ,p_identity_type=>'USER'
 ,p_value_type=>'STATIC'
-,p_value=>'FLOWSDEV2'
+,p_value=>'FLOWSTESTER2'
 );
 end;
 /

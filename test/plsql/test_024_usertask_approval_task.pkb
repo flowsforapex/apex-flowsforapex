@@ -14,9 +14,9 @@ create or replace package body test_024_usertask_approval_task as
   -- suite(24 usertask - approval task)
   -- rollback(manual)
 
-  g_human_task_app_id  constant number := 133;
-  g_approver_user      constant varchar2(40) := 'BO';
-  g_testing_user       constant varchar2(40) := 'FLOWSDEV';
+  g_human_task_app_id  constant varchar2(6)  := test_constants.gc_Ste24_Test_App_ID ;
+  g_approver_user      constant varchar2(40) := test_constants.gc_tester1;
+  g_testing_user       constant varchar2(40) := test_constants.gc_tester2;
 
   g_model_a24a constant varchar2(100) := 'A24a - Approval Component - Basic Operation';
   g_model_a24b constant varchar2(100) := 'A24b - Approval Task - Task Cancelation';
@@ -133,6 +133,13 @@ create or replace package body test_024_usertask_approval_task as
       from flow_subflows
      where sbfl_prcs_id = l_prcs_id
        and sbfl_current = 'Activity_Setup';
+
+    -- set the app_id (important for Approval Tasks)
+
+    flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
+                              , pi_var_name => 'Ste24_Test_App_ID'
+                              , pi_vc2_value =>  g_human_task_app_id
+                              );
 
     -- set the path proc var
 
@@ -428,6 +435,13 @@ create or replace package body test_024_usertask_approval_task as
           from flow_processes p
          where p.prcs_id = l_prcs_id;
     ut.expect( l_actual ).to_equal( l_expected );   
+
+    -- set the app_id (important for Approval Tasks)
+
+    flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
+                              , pi_var_name => 'Ste24_Test_App_ID'
+                              , pi_vc2_value =>  g_human_task_app_id
+                              );
 
     -- set the path proc var & business_ref
 
