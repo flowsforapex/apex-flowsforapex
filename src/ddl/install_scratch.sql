@@ -261,11 +261,25 @@ create table flow_message_subscriptions (
     msub_prcs_id	        number,	
     msub_sbfl_id	        number,	
     msub_step_key	        varchar2( 20 char),	
+    msub_dgrm_id            number,
     msub_callback           varchar2(200 char),
     msub_callback_par       varchar2(200 char),
     msub_payload_var        varchar2(50 char),
     msub_created	        timestamp with time zone	
 );
+
+comment on column flow_message_subscriptions.msub_id                is 'Message Subscription ID';
+comment on column flow_message_subscriptions.msub_message_name      is 'Message Name that must be supplied with received message';
+comment on column flow_message_subscriptions.msub_key_name          is 'Message Key Name that must be supplied with intermediate message';
+comment on column flow_message_subscriptions.msub_key_value         is 'Message Key Value that must be supplied with intermediate message';
+comment on column flow_message_subscriptions.msub_prcs_id           is 'Process ID to call back for intermediate message';
+comment on column flow_message_subscriptions.msub_sbfl_id           is 'Subflow ID to call back for intermediate message';
+comment on column flow_message_subscriptions.msub_step_key          is 'Step Key  to call back for intermediate message';
+comment on column flow_message_subscriptions.msub_dgrm_id           is 'Diagram ID to use for message start event';
+comment on column flow_message_subscriptions.msub_callback          is 'routine to use for callback';
+comment on column flow_message_subscriptions.msub_callback_par      is 'parameter to use on callback';
+comment on column flow_message_subscriptions.msub_payload_var       is 'process variable to return payload variable into';
+comment on column flow_message_subscriptions.msub_created           is 'timestamp of subscription creation';
 
 alter table flow_message_subscriptions
   add constraint flow_msub_pk primary key ( msub_id )
@@ -275,6 +289,7 @@ alter table flow_message_subscriptions
     add constraint flow_msub_uk UNIQUE (msub_message_name, msub_key_name, msub_key_value);
 
 create index flow_msub_prcs_sbfl_ix on flow_message_subscriptions( msub_prcs_id, msub_sbfl_id );  
+
 
 
 ALTER TABLE flow_connections
@@ -358,7 +373,11 @@ alter table flow_message_subscriptions
         references flow_subflows (sbfl_id)
             ON DELETE CASCADE;
 
-
+alter table flow_message_subscriptions
+    add constraint flow_msub_dgrm_fk FOREIGN KEY ( msub_dgrm_id )
+        references flow_diagrams (dgrm_id)
+            ON DELETE CASCADE;
+            
 -- Oracle SQL Developer Data Modeler Summary Report: 
 -- 
 -- CREATE TABLE                             8
