@@ -31,7 +31,9 @@ create or replace package body flow_message_flow as
     , msub_prcs_id
     , msub_sbfl_id
     , msub_step_key
+    , msub_dgrm_id
     , msub_callback
+    , msub_callback_par
     , msub_created
     , msub_payload_var
     )
@@ -42,7 +44,9 @@ create or replace package body flow_message_flow as
     , p_subscription_details.prcs_id
     , p_subscription_details.sbfl_id
     , p_subscription_details.step_key
+    , p_subscription_details.dgrm_id
     , p_subscription_details.callback
+    , p_subscription_details.callback_par
     , systimestamp
     , p_subscription_details.payload_var
     ) returning msub_id into l_msub_id;
@@ -64,6 +68,7 @@ create or replace package body flow_message_flow as
     , p_payload       clob default null
     )
   is
+    l_prcs_id           flow_processes.prcs_id%type;
     l_scope             flow_subflows.sbfl_scope%type;
     l_current           flow_subflows.sbfl_current%type;
     l_msub              flow_message_subscriptions%rowtype;
@@ -71,65 +76,73 @@ create or replace package body flow_message_flow as
     l_was_correlated    flow_types_pkg.t_single_vc2 := flow_constants_pkg.gc_false;
     l_session_id        number;
   begin
-    begin
-      -- attempt the correlation based on 100% match of message name, key and value
-      select msub.*
-        into l_msub
-        from flow_message_subscriptions msub
-       where msub.msub_message_name    = p_message_name
-         and msub.msub_key_name        = p_key_name
-         and msub.msub_key_value       = p_key_value
-         for update of msub_id wait 2
-      ;
-    exception
+    if (p_key_name is null and p_key_value is null) then
+      -- message start event
+        begin
+        -- attempt the correlation based on match of message name
+        select msub.*
+          into l_msub
+          from flow_message_subscriptions msub
+         where msub.msub_message_name    = p_message_name
+           and msub.msub_key_name        is null
+           and msub.msub_key_value       is null
+        ;
+      exception
+          when no_data_found then
+            raise e_msgflow_msg_not_correlated;
+            -- logging of incorrect message handled in procedure exceptions below...
+          when e_lock_timeout then
+            raise e_msgflow_correlated_msg_locked;          
+      end;
+      -- message is correlated.  create an APEX session if coming from outside
+      if v('APP_SESSION') is null then
+        l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
+      end if; 
+
+    else
+      -- intermediate message catch / receive
+      begin
+        -- attempt the correlation based on 100% match of message name, key and value
+        select msub.*
+          into l_msub
+          from flow_message_subscriptions msub
+         where msub.msub_message_name    = p_message_name
+           and msub.msub_key_name        = p_key_name
+           and msub.msub_key_value       = p_key_value
+           for update of msub_id wait 2
+        ;
+      exception
+          when no_data_found then
+            raise e_msgflow_msg_not_correlated;
+            -- logging of incorrect message handled in procedure exceptions below...
+          when e_lock_timeout then
+            raise e_msgflow_correlated_msg_locked;          
+      end;
+      -- message is correlated.  create an APEX session if coming from outside
+      -- and then validate the step key to make sure the receive / catch is still current
+      if v('APP_SESSION') is null then
+        l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
+      end if; 
+      -- validate step key, get scope and current object, and lock subflow
+      begin
+        select sbfl_scope
+             , sbfl_current
+          into l_scope
+             , l_current
+          from flow_subflows
+         where sbfl_id        = l_msub.msub_sbfl_id
+           and sbfl_prcs_id   = l_msub.msub_prcs_id
+           and sbfl_step_key  = l_msub.msub_step_key
+           for update of sbfl_current
+        ;
+        l_was_correlated  := flow_constants_pkg.gc_true;
+      exception
         when no_data_found then
-          raise e_msgflow_msg_not_correlated;
-          -- logging of incorrect message handled in procedure exceptions below...
+            -- add some message-specific logging capability into here.
+            raise e_msgflow_mag_already_consumed ;
         when e_lock_timeout then
-          raise e_msgflow_correlated_msg_locked;          
-    end;
-    -- message is correlated.  create an APEX session if coming from outside
-    -- and then validate the step key to make sure the receive / catch is still current
-    if v('APP_SESSION') is null then
-      l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
-    end if; 
-    -- validate step key, get scope and current object, and lock subflow
-    begin
-      select sbfl_scope
-           , sbfl_current
-        into l_scope
-           , l_current
-        from flow_subflows
-       where sbfl_id        = l_msub.msub_sbfl_id
-         and sbfl_prcs_id   = l_msub.msub_prcs_id
-         and sbfl_step_key  = l_msub.msub_step_key
-         for update of sbfl_current
-      ;
-      l_was_correlated  := flow_constants_pkg.gc_true;
-    exception
-      when no_data_found then
-          -- add some message-specific logging capability into here.
-          raise e_msgflow_mag_already_consumed ;
-      when e_lock_timeout then
-          raise e_msgflow_correlated_msg_locked;          
-    end;
-
-    -- store payload, if present
-    if ( p_payload is not null 
-       and l_msub.msub_payload_var is not null ) then 
-
-      flow_proc_vars_int.set_var
-      ( pi_prcs_id      => l_msub.msub_prcs_id
-      , pi_sbfl_id      => l_msub.msub_sbfl_id
-      , pi_var_name     => l_msub.msub_payload_var
-      , pi_clob_value   => p_payload
-      , pi_objt_bpmn_id => l_current
-      , pi_scope        => l_scope
-      );
-      apex_debug.message 
-      ( p_message => '-- incoming mesage payload stored in proc var %0'
-      , p0 => l_msub.msub_payload_var
-      );
+            raise e_msgflow_correlated_msg_locked;          
+      end;
     end if;
 
     l_log_msg := flow_engine_util.get_config_value ( p_config_key     => flow_constants_pkg.gc_config_logging_message_flow_recd
@@ -151,6 +164,15 @@ create or replace package body flow_message_flow as
     case l_msub.msub_callback
     when flow_constants_pkg.gc_bpmn_receivetask then
       -- Call Back is for a bpmn:receiveTask message
+      flow_message_util.save_payload
+      ( p_process_id      => l_msub.msub_prcs_id
+      , p_subflow_id      => l_msub.msub_sbfl_id
+      , p_payload_var     => l_msub.msub_payload_var
+      , p_payload         => p_payload
+      , p_objt_bpmn_id    => l_current
+      , p_scope           => l_scope
+      );
+
       -- do the delete before the callback because the callback will do a next-step, which commits at step end
       delete from flow_message_subscriptions
        where msub_id = l_msub.msub_id;
@@ -161,8 +183,19 @@ create or replace package body flow_message_flow as
       , p_step_key      => l_msub.msub_step_key
       , p_msub_id       => l_msub.msub_id
       );
+
     when flow_constants_pkg.gc_bpmn_intermediate_catch_event then
       -- Call Back is for a bpmn:intermediateCatchEvent - message subtype (Message Catch Event)
+
+      flow_message_util.save_payload
+      ( p_process_id      => l_msub.msub_prcs_id
+      , p_subflow_id      => l_msub.msub_sbfl_id
+      , p_payload_var     => l_msub.msub_payload_var
+      , p_payload         => p_payload
+      , p_objt_bpmn_id    => l_current
+      , p_scope           => l_scope
+      );
+
       -- do the delete before the callback because the callback will do a next-step, which commits at step end
       delete from flow_message_subscriptions
        where msub_id = l_msub.msub_id;
@@ -172,6 +205,26 @@ create or replace package body flow_message_flow as
       , p_subflow_id    => l_msub.msub_sbfl_id
       , p_step_key      => l_msub.msub_step_key
       );
+
+    when flow_constants_pkg.gc_bpmn_start_event then
+      l_prcs_id :=  flow_instances.create_process
+                    ( p_dgrm_id   => l_msub.msub_dgrm_id
+                    , p_prcs_name => 'Started from incoming message'
+                    );
+
+      flow_message_util.save_payload
+      ( p_process_id      => l_prcs_id
+      , p_payload_var     => l_msub.msub_payload_var
+      , p_payload         => p_payload
+      , p_objt_bpmn_id    => l_msub.msub_callback_par
+      , p_scope           => 0
+      );      
+
+      flow_instances.start_process
+      ( p_process_id             => l_prcs_id
+      , p_event_starting_object  => l_msub.msub_callback_par
+      );
+      
     end case;
 
     -- tear down APEX Session if this was an external call.

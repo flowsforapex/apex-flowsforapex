@@ -242,6 +242,35 @@ create or replace package body flow_message_util as
     return l_message;
   end prepare_message;
 
+
+  procedure save_payload
+  ( p_process_id             in  flow_processes.prcs_id%type
+  , p_subflow_id             in  flow_subflows.sbfl_id%type default null
+  , p_payload_var            in  flow_process_variables.prov_var_name%type
+  , p_payload                in  clob
+  , p_scope                  in  flow_subflows.sbfl_scope%type default 0
+  , p_objt_bpmn_id           in  flow_objects.objt_bpmn_id%type
+  )
+  is
+  begin
+    if ( p_payload is not null 
+       and p_payload_var is not null ) then 
+
+      flow_proc_vars_int.set_var
+      ( pi_prcs_id      => p_process_id
+      , pi_sbfl_id      => p_subflow_id
+      , pi_var_name     => p_payload_var
+      , pi_clob_value   => p_payload
+      , pi_objt_bpmn_id => p_objt_bpmn_id
+      , pi_scope        => p_scope
+      );
+      apex_debug.message 
+      ( p_message => '-- incoming mesage payload stored in proc var %0'
+      , p0 => p_payload_var
+      );    
+    end if;
+  end save_payload;
+
   procedure lock_subscription
   ( p_process_id                    flow_processes.prcs_id%type
   , p_subflow_id                    flow_subflows.sbfl_id%type

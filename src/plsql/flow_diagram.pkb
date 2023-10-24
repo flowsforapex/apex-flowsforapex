@@ -294,44 +294,59 @@ as
     end if;
   end diagram_is_modifiable;
 
-  function get_start_event(
-    pi_dgrm_id    in flow_diagrams.dgrm_id%type,
-    pi_prcs_id    in flow_processes.prcs_id%type)
-  return flow_objects.objt_bpmn_id%type
-  is
-    e_unsupported_start_type exception;
-    l_objt_bpmn_id           flow_subflows.sbfl_current%type;
+  function get_start_event
+  ( p_dgrm_id                 in flow_diagrams.dgrm_id%type
+  , p_process_id              in flow_processes.prcs_id%type
+  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null
+  ) return flow_objects%rowtype
+  is 
+    l_starting_object     flow_objects%rowtype;
   begin
-      -- get the starting object 
-      select objt.objt_bpmn_id
-        into l_objt_bpmn_id
-        from flow_objects objt
-        join flow_objects parent
-          on objt.objt_objt_id = parent.objt_id
-       where objt.objt_dgrm_id = pi_dgrm_id
-         and parent.objt_dgrm_id = pi_dgrm_id
-         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_start_event  
-         and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-         ;
-    apex_debug.info
-    ( p_message => 'Found starting object %0 in diagram %1'
-    , p0 => l_objt_bpmn_id
-    , p1 => pi_dgrm_id
-    );
-    return l_objt_bpmn_id;
-  exception
-    when too_many_rows then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'start-multiple-start-events'
+    begin
+      if p_event_starting_object is null then 
+        -- get the starting object 
+        select objt.*
+          into l_starting_object
+          from flow_objects objt
+          join flow_objects parent
+            on parent.objt_id       = objt.objt_objt_id
+           and parent.objt_dgrm_id  = objt.objt_dgrm_id
+           and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         where objt.objt_dgrm_id    = p_dgrm_id
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event  
+           and (    objt.objt_sub_tag_name is null 
+               or   objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition )
+        ;
+      else 
+        -- get the specified starting object
+        select objt.*
+          into l_starting_object
+          from flow_objects objt
+         where objt.objt_dgrm_id = p_dgrm_id
+           and objt.objt_bpmn_id = p_event_starting_object
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event 
+        ;
+      end if;
+
+      apex_debug.info
+      ( p_message => 'Found starting object %0'
+      , p0 =>l_starting_object.objt_bpmn_id
       );
-      -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
-    when no_data_found then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'start-no-start-event'
-      );
-      -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
+    exception
+      when too_many_rows then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-multiple-start-events'
+        );
+        -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
+      when no_data_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-no-start-event'
+        );
+        -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
+    end;
+    return l_starting_object;
   end get_start_event;
 
   function get_current_diagram

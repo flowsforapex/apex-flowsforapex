@@ -74,7 +74,7 @@ as
   is
     l_call_definition           t_call_def;
     l_called_dgrm_id            flow_diagrams.dgrm_id%type;
-    l_called_start_objt_bpmn_id flow_objects.objt_bpmn_id%type;
+    l_called_start_objt         flow_objects%rowtype;
     l_called_subflow_context    flow_types_pkg.t_subflow_context;
     l_calling_sbfl_scope        flow_subflows.sbfl_scope%type;
     l_prdg_id                   flow_instance_diagrams.prdg_id%type;
@@ -105,9 +105,9 @@ as
 
     -- find start object
 
-    l_called_start_objt_bpmn_id := flow_diagram.get_start_event 
-                                    ( pi_dgrm_id => l_called_dgrm_id
-                                    , pi_prcs_id => p_process_id
+    l_called_start_objt    := flow_diagram.get_start_event 
+                                    ( p_dgrm_id       => l_called_dgrm_id
+                                    , p_process_id    => p_process_id
                                     );
 
     -- create initial subflow in called activity (set new dgrm id, new scope)
@@ -116,7 +116,7 @@ as
       ( p_process_id              => p_process_id
       , p_parent_subflow          => p_subflow_id
       , p_starting_object         => p_step_info.target_objt_ref -- parent callActivity activity
-      , p_current_object          => l_called_start_objt_bpmn_id -- callActivity Start event
+      , p_current_object          => l_called_start_objt.objt_bpmn_id -- callActivity Start event
       , p_route                   => 'call main'
       , p_last_completed          => p_sbfl_info.sbfl_current
       , p_status                  => flow_constants_pkg.gc_sbfl_status_running 
@@ -197,7 +197,7 @@ as
           then
             -- run on-event expressions for child startEvent (inside called diagram scope)
             flow_expressions.process_expressions
-            ( pi_objt_bpmn_id => l_called_start_objt_bpmn_id 
+            ( pi_objt_bpmn_id => l_called_start_objt.objt_bpmn_id 
             , pi_set          => flow_constants_pkg.gc_expr_set_on_event
             , pi_prcs_id      => p_process_id
             , pi_sbfl_id      => l_called_subflow_context.sbfl_id

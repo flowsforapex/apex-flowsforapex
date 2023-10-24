@@ -42,14 +42,23 @@ as
   ( p_process_id                 flow_processes.prcs_id%type
   );
 
+  procedure save_payload
+  ( p_process_id             in  flow_processes.prcs_id%type
+  , p_subflow_id             in  flow_subflows.sbfl_id%type default null
+  , p_payload_var            in  flow_process_variables.prov_var_name%type
+  , p_payload                in  clob
+  , p_scope                  in  flow_subflows.sbfl_scope%type default 0
+  , p_objt_bpmn_id           in  flow_objects.objt_bpmn_id%type 
+  );
+
   procedure autonomous_write_to_messageflow_log
-  ( p_message_name     in flow_message_received_log.lgrx_message_name%type 
-  , p_key_name         in flow_message_received_log.lgrx_key_name%type   
-  , p_key_value        in flow_message_received_log.lgrx_key_value%type 
-  , p_payload          in flow_message_received_log.lgrx_payload%type 
-  , p_was_correlated   in flow_message_received_log.lgrx_was_correlated%type    
-  , p_prcs_id          in flow_message_received_log.lgrx_prcs_id%type 
-  , p_sbfl_id          in flow_message_received_log.lgrx_sbfl_id%type    
+  ( p_message_name           in  flow_message_received_log.lgrx_message_name%type 
+  , p_key_name               in  flow_message_received_log.lgrx_key_name%type   
+  , p_key_value              in  flow_message_received_log.lgrx_key_value%type 
+  , p_payload                in  flow_message_received_log.lgrx_payload%type 
+  , p_was_correlated         in  flow_message_received_log.lgrx_was_correlated%type    
+  , p_prcs_id                in  flow_message_received_log.lgrx_prcs_id%type 
+  , p_sbfl_id                in  flow_message_received_log.lgrx_sbfl_id%type    
   );
   
 end flow_message_util;
