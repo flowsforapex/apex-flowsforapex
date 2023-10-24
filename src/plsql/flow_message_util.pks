@@ -11,7 +11,7 @@ create or replace package flow_message_util
 --
 */
   accessible by ( flow_message_flow, flow_tasks, flow_engine , flow_instances 
-                , flow_engine_util , flow_boundary_events )
+                , flow_engine_util , flow_boundary_events , flow_diagram)
 as  
 
   function get_msg_subscription_details
@@ -33,6 +33,15 @@ as
   procedure cancel_subscription
   ( p_process_id                 flow_processes.prcs_id%type
   , p_subflow_id                 flow_subflows.sbfl_id%type
+  );
+
+  procedure cancel_subscription
+  ( p_msub_id                    flow_message_subscriptions.msub_id%type
+  );
+
+  procedure cancel_diagram_subscriptions
+  ( p_dgrm_id                    flow_diagrams.dgrm_id%type
+  , p_callback                   flow_message_subscriptions.msub_callback%type
   );
 
   procedure lock_instance_subscriptions

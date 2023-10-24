@@ -303,6 +303,25 @@ create or replace package body flow_message_util as
             and msub_sbfl_id = p_subflow_id;
   end cancel_subscription;
   
+  procedure cancel_subscription
+  ( p_msub_id                       flow_message_subscriptions.msub_id%type
+  )
+  is
+  begin
+    delete from flow_message_subscriptions
+          where msub_id = p_msub_id;
+  end cancel_subscription;
+
+  procedure cancel_diagram_subscriptions
+  ( p_dgrm_id                       flow_diagrams.dgrm_id%type
+  , p_callback                      flow_message_subscriptions.msub_callback%type
+  )
+  is
+  begin
+    delete from flow_message_subscriptions
+          where msub_dgrm_id  = p_dgrm_id
+            and msub_callback = p_callback;
+  end cancel_diagram_subscriptions;
 
   procedure lock_instance_subscriptions
   ( p_process_id                    flow_processes.prcs_id%type
