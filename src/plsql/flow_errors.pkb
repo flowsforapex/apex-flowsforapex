@@ -143,6 +143,11 @@ as
     ( 'handle_instance_error'
     , 'pi_sbfl_id', pi_sbfl_id
     , 'pi_message_key', pi_message_key
+    , 'p0', p0
+    , 'p1', p1
+    , 'p2', p2
+    , 'p3', p3
+    , 'p4', p4
     , 'is_recursive' , case when flow_globals.get_is_recursive_step then 'true' else 'false' end
     );
     -- get the message template in the correct language, or fall through to default language

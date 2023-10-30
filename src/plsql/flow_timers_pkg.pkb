@@ -290,11 +290,14 @@ create or replace package body flow_timers_pkg as
         end if;
         flow_engine.timer_callback
         (
-          p_process_id => l_timers.timr_prcs_id
-        , p_subflow_id => l_timers.timr_sbfl_id
-        , p_step_key   => l_timers.timr_step_key
-        , p_timr_id    => l_timr_id
-        , p_run        => l_timr_run
+          p_process_id    => l_timers.timr_prcs_id
+        , p_subflow_id    => l_timers.timr_sbfl_id
+        , p_step_key      => l_timers.timr_step_key
+        , p_timr_id       => l_timr_id
+        , p_run           => l_timr_run
+        , p_callback      => l_timers.timr_callback
+        , p_callback_par  => l_timers.timr_callback_par
+        , p_event_type    => flow_constants_pkg.gc_bpmn_timer_event_definition
         );
         -- drop the session
         if l_apex_session is not null then

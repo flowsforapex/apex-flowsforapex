@@ -133,9 +133,10 @@ as
 
     if not flow_globals.get_step_error then 
       -- set boundaryEvent Timers on parent, if any
-      flow_boundary_events.set_boundary_timers 
+      flow_boundary_events.set_boundary_events 
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
+      , p_sbfl_info  => p_sbfl_info
       );  
       if not flow_globals.get_step_error then 
         -- Check again, then Update parent subflow to 'in callActivity'

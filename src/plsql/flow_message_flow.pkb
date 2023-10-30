@@ -161,8 +161,8 @@ create or replace package body flow_message_flow as
       );
     end if;
 
-    case l_msub.msub_callback
-    when flow_constants_pkg.gc_bpmn_receivetask then
+    case 
+    when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_receivetask then
       -- Call Back is for a bpmn:receiveTask message
       flow_message_util.save_payload
       ( p_process_id      => l_msub.msub_prcs_id
@@ -184,8 +184,9 @@ create or replace package body flow_message_flow as
       , p_msub_id       => l_msub.msub_id
       );
 
-    when flow_constants_pkg.gc_bpmn_intermediate_catch_event then
-      -- Call Back is for a bpmn:intermediateCatchEvent - message subtype (Message Catch Event)
+    when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_intermediate_catch_event 
+      or l_msub.msub_callback = flow_constants_pkg.gc_bpmn_boundary_event then
+      -- Call Back is for a bpmn:intermediateCatchEvent or Boundary Event - message subtype (Message Catch Event)
 
       flow_message_util.save_payload
       ( p_process_id      => l_msub.msub_prcs_id
@@ -204,9 +205,12 @@ create or replace package body flow_message_flow as
       ( p_process_id    => l_msub.msub_prcs_id
       , p_subflow_id    => l_msub.msub_sbfl_id
       , p_step_key      => l_msub.msub_step_key
+      , p_callback      => l_msub.msub_callback
+      , p_callback_par  => l_msub.msub_callback_par
+      , p_event_type    => flow_constants_pkg.gc_bpmn_message_event_definition
       );
 
-    when flow_constants_pkg.gc_bpmn_start_event then
+    when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_start_event then
       l_prcs_id :=  flow_instances.create_process
                     ( p_dgrm_id   => l_msub.msub_dgrm_id
                     , p_prcs_name => 'Started from incoming message'

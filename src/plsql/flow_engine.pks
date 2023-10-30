@@ -10,6 +10,9 @@ as
   , p_step_key      in flow_subflows.sbfl_step_key%type
   , p_timr_id       in flow_timers.timr_id%type default null
   , p_run           in flow_timers.timr_run%type default null
+  , p_callback      in flow_timers.timr_callback%type default null
+  , p_callback_par  in flow_timers.timr_callback_par%type default null
+  , p_event_type    in flow_objects.objt_sub_tag_name%type
   ); 
 procedure flow_complete_step
   ( p_process_id        in flow_processes.prcs_id%type
