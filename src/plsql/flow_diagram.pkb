@@ -511,6 +511,7 @@ as
              , objt.objt_bpmn_id
              , objt.objt_sub_tag_name
              , objt.objt_attributes."apex"."messageName"."expression" message_name
+             , objt.objt_attributes."apex"."payloadVariable" payload_var
           from flow_objects objt
          where objt_dgrm_id      = pi_dgrm_id
            and objt_tag_name     = flow_constants_pkg.gc_bpmn_start_event
@@ -522,6 +523,7 @@ as
       l_subscription.dgrm_id      := pi_dgrm_id;
       l_subscription.callback     := flow_constants_pkg.gc_bpmn_start_event;
       l_subscription.callback_par := message_start_events.objt_bpmn_id;
+      l_subscription.payload_var  := message_start_events.payload_var;
 
       l_msub_id := flow_message_flow.subscribe (p_subscription_details => l_subscription);
 
@@ -614,7 +616,7 @@ as
 
     flow_message_util.cancel_diagram_subscriptions 
     ( p_dgrm_id   => pi_dgrm_id
-    , p_callback  => flow_constants_pkg.gc_bpmn_message_event_definition
+    , p_callback  => flow_constants_pkg.gc_bpmn_start_event
     );
 
     update flow_diagrams

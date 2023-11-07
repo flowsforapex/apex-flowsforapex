@@ -253,6 +253,12 @@ create or replace package body flow_message_util as
   )
   is
   begin
+    apex_debug.enter 
+    ( 'save_payload'
+    , 'p_payload_var', p_payload_var
+    , 'p_payload', p_payload
+    );
+
     if ( p_payload is not null 
        and p_payload_var is not null ) then 
 
