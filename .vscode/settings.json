@@ -9,5 +9,6 @@
       "source.organizeImports",
       "source.fixAll.eslint"
     ]
-  }
+  },
+  "svn.ignoreMissingSvnWarning": true
 }

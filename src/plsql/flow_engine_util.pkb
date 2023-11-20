@@ -135,6 +135,21 @@ as
     return ( l_cnt = 1 );
   end check_subflow_exists;
 
+  function is_multi_instance
+  ( 
+    p_objt_attribute   in flow_objects.objt_attributes%type
+  ) return boolean
+  is
+    l_expr_json    sys.json_object_t;
+    l_sequential   flow_types_pkg.t_bpmn_attribute_vc2
+  begin
+    l_expr_json  := sys.json_object_t( jsn=> p_objt_attribute);
+    l_sequential := l_expr_json.get_string (key = "isSequential");
+
+    if l_sequential = 'true' then 
+
+  return
+  end is_multi_instance;
 
 function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type

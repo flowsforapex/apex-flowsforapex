@@ -25,6 +25,7 @@ as
   , target_objt_lane_name   flow_objects.objt_name%type
   , target_objt_lane_isRole varchar2(10 char)
   , target_objt_lane_role   flow_subflows.sbfl_potential_groups%type
+  , target_objt_attributes  json_element_t
   );
 
   type t_subflow_context is record

@@ -18,8 +18,8 @@ PROMPT >> Running Schema Upgrade from 23.1 to 24.1
 PROMPT >> -------------------------------------------
 
 
--- @@feature-xxx.sql
--- @@feature-xxx.sql
+@@feature-681.sql
+@@feature-666.sql
 
 @@set_flows_version.sql
 

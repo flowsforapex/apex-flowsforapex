@@ -818,6 +818,18 @@ begin
   , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
   , 'Subflow ID', p_sbfl_rec.sbfl_id
   );
+
+  -- if step is multi-instance, conduct end of iteration steps
+
+    -- copy output variable to outputCollection(i)
+
+    -- evaluate CompletionCondition
+
+    -- if not complete and isSequential, start the next iteration
+
+    -- if complete terminate any incomplete iterations (don't copy output(i) to outputCollection
+    -- then terminate the iteration by returning to iteration parent & issueing next Step
+
   -- evaluate and set any post-step variable expressions on the last object
   if p_current_step_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
@@ -910,6 +922,7 @@ begin
          , objt_lane.objt_name
 --         , objt_lane.objt_attributes."apex"."isRole"
 --         , objt_lane.objt_attributes."apex"."role"
+         , json_element_t.parse(objt_target.objt_attributes)
       into l_step_info.dgrm_id
          , l_step_info.source_objt_tag 
          , l_step_info.source_objt_id 
@@ -919,6 +932,7 @@ begin
          , l_step_info.target_objt_subtag
          , l_step_info.target_objt_lane
          , l_step_info.target_objt_lane_name 
+         , l_step_info.target_objt_attributes
       from flow_connections conn
       join flow_objects objt_source
         on conn.conn_src_objt_id = objt_source.objt_id
@@ -1023,6 +1037,7 @@ begin
          , objt_lane.objt_name
 --         , objt_lane.objt_attributes."apex"."isRole"
 --         , objt_lane.objt_attributes."apex"."role"
+         , json_object_t.parse(objt_current.objt_attributes)
       into l_step_info.dgrm_id
          , l_step_info.source_objt_tag 
          , l_step_info.source_objt_id 
@@ -1032,6 +1047,7 @@ begin
          , l_step_info.target_objt_subtag
          , l_step_info.target_objt_lane
          , l_step_info.target_objt_lane_name 
+         , l_step_info.target_objt_attributes
       from flow_objects objt_current
       join flow_subflows sbfl
         on sbfl.sbfl_current = objt_current.objt_bpmn_id 
@@ -1133,33 +1149,6 @@ begin
       , p_is_immediate  => true
       , p_comment       => 'Restart Immediate Broken Timer'
       );
-  /*-- evaluate and set any on-event variable expressions from the timer object
-  flow_expressions.process_expressions
-    ( pi_objt_id     => p_step_info.target_objt_id
-    , pi_set         => flow_constants_pkg.gc_expr_set_on_event
-    , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
-    , pi_sbfl_id     => p_sbfl_rec.sbfl_id
-    , pi_var_scope   => p_sbfl_rec.sbfl_scope
-    , pi_expr_scope  => p_sbfl_rec.sbfl_scope
-  );
-  -- test for any errors
-  if flow_globals.get_step_error then
-    -- has step errors from expressions
-    flow_errors.set_error_status
-    ( pi_prcs_id => p_sbfl_rec.sbfl_prcs_id
-    , pi_sbfl_id => p_sbfl_rec.sbfl_id
-    );
-  else
-  /*  -- step forward onto next step
-    flow_complete_step
-    ( p_process_id => p_sbfl_rec.sbfl_prcs_id
-    , p_subflow_id => p_sbfl_rec.sbfl_id
-    , p_step_key   => p_sbfl_rec.sbfl_step_key
-    );
-    -- reschedule  timer to fire in next step cycle
-
-
-  end if;*/
 
 end restart_failed_timer_step;
 
@@ -1503,6 +1492,10 @@ begin
     , p_lock_process => false
     , p_lock_subflow => true
     );
+    -- Check for multi-instance and if so, start iteration
+    
+
+    -- Run the step
     run_step 
     ( p_sbfl_rec => l_sbfl_rec
     , p_step_info => l_step_info 

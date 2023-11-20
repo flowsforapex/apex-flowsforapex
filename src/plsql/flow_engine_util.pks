@@ -43,6 +43,11 @@ as
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean;
 
+  function is_multi_instance
+  ( 
+    p_objt_attribute   in flow_objects.objt_attributes%type
+  ) return boolean;
+
   function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
