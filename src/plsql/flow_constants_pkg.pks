@@ -7,12 +7,13 @@ create or replace package flow_constants_pkg
 -- Created 2020        Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
 -- Edited  10-Mar-2023 Moritz Klein, MT GmbH
+-- Edited  03-Jan-2024 R Allen, Flowquest Consulting
 --
 */
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '23.1';
+  gc_version constant varchar2(10 char) := '24.1';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';
@@ -176,6 +177,12 @@ as
   gc_task_type_key                    constant flow_types_pkg.t_bpmn_id := 'taskType';
 
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
+
+  gc_iteration_parallel               constant flow_types_pkg.t_vc20 := 'parallel';
+  gc_iteration_sequential             constant flow_types_pkg.t_vc20 := 'sequential';
+  gc_iteration_loop                   constant flow_types_pkg.t_vc20 := 'loop';
+
+  gc_iteration_collection_delim_vc2   constant flow_types_pkg.t_vc20 := 'delimitedVarchar';
 
   -- Flows 4 APEX Substitution Strings
   gc_substitution_flow_identifier     constant varchar2(10 char)                    := 'F4A$';
@@ -373,7 +380,9 @@ as
 
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="' || gc_version || '">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" 
+exporter="Flows for APEX" exporterVersion="' || gc_version || '">
 <bpmn:process id="Process_#RANDOM_PRCS_ID#" isExecutable="false" />
 <bpmndi:BPMNDiagram id="BPMNDiagram_1">
 <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_#RANDOM_PRCS_ID#" />
@@ -381,6 +390,5 @@ as
 </bpmn:definitions>
 ';
 
-
 end flow_constants_pkg;
-/
+

@@ -9,9 +9,18 @@ as
 -- Created    06-May-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
 -- Modified   2022-07-18   Moritz Klein (MT AG)
+-- Modified   09-Jan-2024  Richard Allen, Flowquest Consulting
 --
 */
   type t_new_sbfls is table of flow_types_pkg.t_subflow_context;
+  type t_iteration_vars is record
+  ( input_type        flow_types_pkg.t_vc20
+  , input_collection  flow_process_variables.prov_var_name%type
+  , input_variable    flow_process_variables.prov_var_name%type
+  , output_type       flow_types_pkg.t_vc20
+  , output_collection flow_process_variables.prov_var_name%type
+  , output_variable   flow_process_variables.prov_var_name%type
+  );
 
   e_no_route_found          exception;
   e_bad_routing_expression  exception;
@@ -401,17 +410,23 @@ as
           --mark parent split subflow ready to restart
           l_subflow := p_sbfl_info.sbfl_sbfl_id;
           update flow_subflows parent_sbfl
-              set parent_sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_proceed_gateway
-                , parent_sbfl.sbfl_current        = p_step_info.target_objt_ref
-                , parent_sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current  -- last step of final child sbfl pre-merge
-                , parent_sbfl.sbfl_last_update    = systimestamp
-                , parent_sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
-                                                             , sys_context('userenv','os_user')
-                                                             , sys_context('userenv','session_user')
-                                                             )  
-            where parent_sbfl.sbfl_last_completed = p_sbfl_info.sbfl_starting_object
-              and parent_sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_split  
-              and parent_sbfl.sbfl_id             = p_sbfl_info.sbfl_sbfl_id
+              set parent_sbfl.sbfl_status                   = flow_constants_pkg.gc_sbfl_status_proceed_gateway
+                , parent_sbfl.sbfl_current                  = p_step_info.target_objt_ref
+                , parent_sbfl.sbfl_iteration_type           = null
+                , parent_sbfl.sbfl_loop_counter             = null
+                , parent_sbfl.sbfl_loop_total_instances     = null
+                , parent_sbfl.sbfl_loop_active_instances    = null
+                , parent_sbfl.sbfl_loop_completed_instances = null
+                , parent_sbfl.sbfl_loop_terminated_instances= null 
+                , parent_sbfl.sbfl_last_completed           = p_sbfl_info.sbfl_current  -- last step of final child sbfl pre-merge
+                , parent_sbfl.sbfl_last_update              = systimestamp
+                , parent_sbfl.sbfl_last_update_by           = coalesce ( sys_context('apex$session','app_user') 
+                                                                       , sys_context('userenv','os_user')
+                                                                       , sys_context('userenv','session_user')
+                                                                       )  
+            where parent_sbfl.sbfl_last_completed           = p_sbfl_info.sbfl_starting_object
+              and parent_sbfl.sbfl_status                   = flow_constants_pkg.gc_sbfl_status_split  
+              and parent_sbfl.sbfl_id                       = p_sbfl_info.sbfl_sbfl_id
           ;
         exception
           when lock_timeout then
@@ -605,6 +620,164 @@ as
     flow_globals.set_step_error ( p_has_error => false);
   end gateway_split;
 
+  procedure iteration_split
+    ( p_subflow_id     in flow_subflows.sbfl_id%type 
+    , p_sbfl_info      in flow_subflows%rowtype
+    , p_step_info      in flow_types_pkg.flow_step_info
+    )
+  is 
+    l_new_subflows      t_new_sbfls := t_new_sbfls();
+    l_new_subflow       flow_types_pkg.t_subflow_context;
+    l_input_collection  flow_objects.objt_attributes%type;
+    t_input_collection  apex_t_varchar2;
+    l_loop_counter      number;
+    l_num_iterations    number;
+    l_json_def          varchar2(32767);
+    l_jo                json_object_t;  
+    l_iteration_vars    t_iteration_vars;
+  begin 
+    apex_debug.enter 
+    ( 'iteration_split'
+    , 'p_sbfl_info.sbfl_current' , p_sbfl_info.sbfl_current
+    , 'p_step_info.target_objt_ref' , p_step_info.target_objt_ref
+    , 'target_objt_attributes', p_step_info.target_objt_attributes
+    );
+    -- note that p_subflow_id might be different to the subflow in p_sbfl_info.sbfl_id
+    -- we have splitting gateway going forward
+    -- Current Subflow into status split 
+    update flow_subflows sbfl
+        set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
+          , sbfl.sbfl_current        = p_step_info.target_objt_ref
+          , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_split  
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
+      where sbfl.sbfl_id = p_subflow_id
+        and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+    ;
+    -- get all forward parallel paths and create subflows for them
+    -- these are paths forward of p_step_info.target_objt_ref as we are doing double step
+    -- create subflows in one loop then step through them again in second loop
+    -- to prevent some subflows getting to following merge gateway before all subflows are created (causes race condition)
+    
+  l_json_def  := json_query (p_step_info.target_objt_attributes 
+                            , '$.apex.customExtension.multiInstanceLoopCharacteristics.loopCharacteristics');
+  apex_debug.message (p_message => 'JSON Loop Definition: %0', p0 => l_json_def);
+  l_jo        := json_object_t.parse (l_json_def);
+
+  l_iteration_vars.input_type         := l_jo.get_String('inputType');
+  l_iteration_vars.input_collection   := l_jo.get_String('inputCollection');
+  l_iteration_vars.input_variable     := l_jo.get_String('inputVariable');
+
+    apex_debug.message 
+    ( p_message => 'Input Collection Variable Name: %0'
+    , p0 => l_iteration_vars.input_collection
+    );
+
+  case l_iteration_vars.input_type 
+  when flow_constants_pkg.gc_iteration_collection_delim_vc2 then
+    -- input collection is colon delimited VC2 contained in input_collection
+    -- for initial test this is a colon delimited string directly inside the json
+    l_input_collection := flow_proc_vars_int.get_var_vc2 ( pi_prcs_id   => p_sbfl_info.sbfl_prcs_id
+                                                         , pi_var_name  => l_iteration_vars.input_collection
+                                                         , pi_scope     => p_sbfl_info.sbfl_scope
+                                                         , pi_exception_on_null  => true 
+                                                         );
+    apex_debug.message 
+    ( p_message => 'Input Collection Variable: %0'
+    , p0 => l_input_collection
+    );
+
+    t_input_collection := apex_string.split (p_str => l_input_collection, p_sep => ':');
+    l_num_iterations   := t_input_collection.count;
+
+    apex_debug.message 
+    ( p_message => 'Input Collection Length (after splitting): %0'
+    , p0 => t_input_collection.count
+    );
+  end case;
+    
+    for i in 1..l_num_iterations  
+    loop
+      -- path is included in list of chosen forward paths.
+      apex_debug.info
+      ( p_message => 'starting parallel flow for %0 - loop %1'
+      , p0        => p_step_info.target_objt_tag
+      , p1        => i
+      );
+
+      l_new_subflow :=
+        flow_engine_util.subflow_start
+        ( p_process_id             => p_sbfl_info.sbfl_prcs_id         
+        , p_parent_subflow         => p_subflow_id       
+        , p_starting_object        => p_step_info.target_objt_ref         
+        , p_current_object         => p_step_info.target_objt_ref          
+        , p_route                  => p_step_info.target_objt_ref ||' - Iteration '||to_char(i,'0999')        
+        , p_last_completed         => p_sbfl_info.sbfl_current 
+        , p_status                 => flow_constants_pkg.gc_sbfl_status_created
+        , p_parent_sbfl_proc_level => p_sbfl_info.sbfl_process_level
+        , p_new_proc_level         => true
+        , p_new_scope              => true
+        , p_loop_counter           => i
+        , p_iteration_type         => p_step_info.target_objt_iteration
+        , p_dgrm_id                => p_sbfl_info.sbfl_dgrm_id
+        );
+      l_new_subflow.route   := p_step_info.target_objt_ref ||' - Iteration '||to_char(i,'0999') ;
+      l_new_subflows.extend;
+      l_new_subflows (l_new_subflows.last) := l_new_subflow;
+
+
+    end loop;
+--    -- log gateway as completed
+--    flow_logging.log_step_completion   
+--    ( p_process_id => p_sbfl_info.sbfl_prcs_id
+--    , p_subflow_id => p_subflow_id
+--    , p_completed_object => p_step_info.target_objt_ref 
+--    );
+    -- update parent status now split and no current object
+     update flow_subflows sbfl
+        set sbfl.sbfl_current                   = null
+          , sbfl.sbfl_last_completed            = p_step_info.target_objt_ref
+          , sbfl.sbfl_loop_total_instances      = l_num_iterations 
+          , sbfl.sbfl_loop_active_instances     = l_num_iterations 
+          , sbfl.sbfl_loop_completed_instances  = 0
+          , sbfl.sbfl_loop_terminated_instances = 0
+          , sbfl.sbfl_last_update    = systimestamp
+          , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
+      where sbfl.sbfl_id = p_subflow_id
+        and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id;
+
+    -- commit the transaction
+    commit;
+    
+    apex_debug.info ( p_message => 'New Iteration Subflow Creation Committed');
+    
+    for new_subflow in 1.. l_new_subflows.count
+    loop
+      -- reset step_had_error flag
+      flow_globals.set_step_error ( p_has_error => false);
+      -- check subflow still exists and lock it(in case earlier loop terminated everything in level)
+      if flow_engine_util.lock_subflow( p_subflow_id => l_new_subflows(new_subflow).sbfl_id)
+      then
+        -- step into first step on the new path
+        flow_engine.flow_complete_step    
+        ( p_process_id        => p_sbfl_info.sbfl_prcs_id
+        , p_subflow_id        => l_new_subflows(new_subflow).sbfl_id
+        , p_step_key          => l_new_subflows(new_subflow).step_key
+        , p_forward_route     => l_new_subflows(new_subflow).route
+        , p_log_as_completed  => false
+        );
+      end if;
+    end loop;
+    -- reset step_had_error flag
+    flow_globals.set_step_error ( p_has_error => false);
+  end iteration_split;
+
   procedure process_para_incl_Gateway
     ( p_sbfl_info     in flow_subflows%rowtype
     , p_step_info     in flow_types_pkg.flow_step_info
@@ -619,29 +792,44 @@ as
     l_num_unfinished_subflows   number;
     l_forward_routes            apex_t_varchar2 := apex_t_varchar2();
     l_step_key                  flow_subflows.sbfl_step_key%type;
+    l_is_actual_gateway         boolean;  -- set if the object is really a gateway (vs. an iteration acting as a gateway)
 /*    l_new_subflows              t_new_sbfls := t_new_sbfls();
     l_new_subflow               flow_types_pkg.t_subflow_context; */ -- think these not used
   begin
     apex_debug.enter 
     ( 'process_para_incl_Gateway'
-    , 'p_step_info.target_objt_tag' , p_step_info.target_objt_tag
-    , 'p_step_info.target_objt_ref' , p_step_info.target_objt_ref
+    , 'p_step_info.target_objt_tag'       , p_step_info.target_objt_tag
+    , 'p_step_info.target_objt_ref'       , p_step_info.target_objt_ref
+    , 'p_step_info.target_objt_iteration' , nvl( p_step_info.target_objt_iteration, 'Null')
     );
-    -- get number of forward and backward connections
-    flow_engine_util.get_number_of_connections
-    ( pi_dgrm_id => p_step_info.dgrm_id
-    , pi_target_objt_id => p_step_info.target_objt_id
-    , pi_conn_type => flow_constants_pkg.gc_bpmn_sequence_flow
-    , po_num_back_connections => l_num_back_connections
-    , po_num_forward_connections => l_num_forward_connections
-    );
+    if p_step_info.target_objt_treat_as_tag is null and p_sbfl_info.sbfl_loop_counter is null then 
+      -- for actual gateway get number of forward and backward connections
+      flow_engine_util.get_number_of_connections
+      ( pi_dgrm_id => p_step_info.dgrm_id
+      , pi_target_objt_id => p_step_info.target_objt_id
+      , pi_conn_type => flow_constants_pkg.gc_bpmn_sequence_flow
+      , po_num_back_connections => l_num_back_connections
+      , po_num_forward_connections => l_num_forward_connections
+      );
+      l_is_actual_gateway := true;
+    elsif p_step_info.target_objt_treat_as_tag = flow_constants_pkg.gc_bpmn_gateway_parallel 
+    and p_sbfl_info.sbfl_loop_counter is null then
+      l_is_actual_gateway := false;
+      l_num_back_connections    := 1;
+      l_num_forward_connections := 99;
+    elsif p_step_info.target_objt_treat_as_tag = flow_constants_pkg.gc_bpmn_gateway_parallel 
+    and p_sbfl_info.sbfl_loop_counter is not null then
+      l_is_actual_gateway := false;
+      l_num_back_connections    := 99;
+      l_num_forward_connections := 1;
+    end if;
 
     l_gateway_forward_status := 'proceed';
     l_sbfl_id  := p_sbfl_info.sbfl_id;
 
     if l_num_back_connections > 1  then
       apex_debug.info
-      ( p_message => '%0 Gateway Merging %1'
+      ( p_message => '%0 Parallel Merging %1'
       , p0        => p_step_info.target_objt_tag
       , p1        => p_step_info.target_objt_ref
       );  
@@ -658,57 +846,71 @@ as
       if l_num_forward_connections > 1 then
         -- we have splitting gateway going forward
         apex_debug.info 
-        ( p_message => '%0 Gateway Splitting %1 - %2 forward paths'
+        ( p_message => '%0 Parallel Splitting %1 - %2 forward paths'
         , p0 => p_step_info.target_objt_tag
         , p1 => p_step_info.target_objt_ref
         , p2 => l_num_forward_connections
         );       
-        -- process any before-split expression set
-        flow_expressions.process_expressions
-        ( pi_objt_id     => p_step_info.target_objt_id
-        , pi_set         => flow_constants_pkg.gc_expr_set_before_split
-        , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id     => l_sbfl_id
-        , pi_var_scope   => p_sbfl_info.sbfl_scope
-        , pi_expr_scope  => p_sbfl_info.sbfl_scope
-        );        
+        if l_is_actual_gateway then
+          -- process any before-split expression set
+          flow_expressions.process_expressions
+          ( pi_objt_id     => p_step_info.target_objt_id
+          , pi_set         => flow_constants_pkg.gc_expr_set_before_split
+          , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
+          , pi_sbfl_id     => l_sbfl_id
+          , pi_var_scope   => p_sbfl_info.sbfl_scope
+          , pi_expr_scope  => p_sbfl_info.sbfl_scope
+          );
+        end if;      
         -- test for any errors so far - if so, skip finding a route
         if not flow_globals.get_step_error then 
           apex_debug.info ( p_message => 'process_para_incl_Gateway: step has no errors after evaluating expressions');
 
-          case p_step_info.target_objt_tag
-          when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
-            l_forward_routes := get_gateway_route
-            ( pi_prcs_id       => p_sbfl_info.sbfl_prcs_id
-            , pi_sbfl_id       => l_sbfl_id --l_sbfl_id?
-            , pi_objt_bpmn_id   => p_step_info.target_objt_ref
-            , pi_objt_tag       => p_step_info.target_objt_tag
-            , pi_scope          => p_sbfl_info.sbfl_scope
-            );
-            apex_debug.info
-            ( p_message => 'Forward routes for inclusiveGateway %0 : %1'
-            , p0 => p_step_info.target_objt_ref
-            , p1 => apex_string.join(l_forward_routes,':')
-            );
-            flow_logging.log_instance_event
-            ( p_process_id  => p_sbfl_info.sbfl_prcs_id
-            , p_objt_bpmn_id  => p_step_info.target_objt_ref
-            , p_event  => 'Gateway Processed'
-            , p_comment  => 'Chosen Paths : '||apex_string.join(l_forward_routes,':')
-            );
-          when flow_constants_pkg.gc_bpmn_gateway_parallel then 
-            l_forward_routes.extend;
-            l_forward_routes(l_forward_routes.first) := 'parallel';  -- just needs to be some not null string
-          end case;
+          if l_is_actual_gateway then
+            case p_step_info.target_objt_tag
+            when flow_constants_pkg.gc_bpmn_gateway_inclusive then 
+              -- actual inclusive gateway
+              l_forward_routes := get_gateway_route
+              ( pi_prcs_id       => p_sbfl_info.sbfl_prcs_id
+              , pi_sbfl_id       => l_sbfl_id --l_sbfl_id?
+              , pi_objt_bpmn_id   => p_step_info.target_objt_ref
+              , pi_objt_tag       => p_step_info.target_objt_tag
+              , pi_scope          => p_sbfl_info.sbfl_scope
+              );
+              apex_debug.info
+              ( p_message => 'Forward routes for inclusiveGateway %0 : %1'
+              , p0 => p_step_info.target_objt_ref
+              , p1 => apex_string.join(l_forward_routes,':')
+              );
+              flow_logging.log_instance_event
+              ( p_process_id  => p_sbfl_info.sbfl_prcs_id
+              , p_objt_bpmn_id  => p_step_info.target_objt_ref
+              , p_event  => 'Gateway Processed'
+              , p_comment  => 'Chosen Paths : '||apex_string.join(l_forward_routes,':')
+              );
+            when flow_constants_pkg.gc_bpmn_gateway_parallel then 
+              -- actual parallel gateway
+              l_forward_routes.extend;
+              l_forward_routes(l_forward_routes.first) := 'parallel';  -- just needs to be some not null string
+            end case;
+          end if; 
           -- test for any errors again - if so, skip doing the split
           if not flow_globals.get_step_error then 
             apex_debug.info ( p_message => 'process_para_incl_Gateway: step has no errors after evaluating routes');
-            gateway_split
-            ( p_subflow_id => l_sbfl_id
-            , p_sbfl_info  => p_sbfl_info
-            , p_step_info  => p_step_info
-            , p_gateway_routes => l_forward_routes
-            );
+            if l_is_actual_gateway then
+              gateway_split
+              ( p_subflow_id => l_sbfl_id
+              , p_sbfl_info  => p_sbfl_info
+              , p_step_info  => p_step_info
+              , p_gateway_routes => l_forward_routes
+              );
+            else
+              iteration_split
+              ( p_subflow_id => l_sbfl_id
+              , p_sbfl_info  => p_sbfl_info
+              , p_step_info  => p_step_info
+              );              
+            end if;
           else
             -- has step errors from evaluating route
             flow_errors.set_error_status

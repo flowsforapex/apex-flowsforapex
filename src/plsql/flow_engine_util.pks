@@ -10,6 +10,7 @@ as
 --
 -- Created  April-2021  Richard Allen (Flowquest) - for  MT AG
 -- Modified 2022-07-18  Moritz Klein (MT AG)
+-- Modified 09-Jan-2024  Richard Allen, Flowquest Consulting
 --
 */
 
@@ -43,10 +44,10 @@ as
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean;
 
-  function is_multi_instance
-  ( 
-    p_objt_attribute   in flow_objects.objt_attributes%type
-  ) return boolean;
+  --function is_multi_instance
+  --( 
+  --  p_objt_attribute   in flow_objects.objt_attributes%type
+  --) return boolean;
 
   function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
@@ -107,6 +108,8 @@ as
     , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     , p_follows_ebg               in boolean default false
+    , p_loop_counter              in number default null
+    , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
     ) return flow_types_pkg.t_subflow_context
     ;
 

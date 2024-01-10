@@ -126,39 +126,44 @@ CREATE TABLE flow_subflow_log (
 );
 
 CREATE TABLE flow_subflows (
-    sbfl_id               NUMBER
+    sbfl_id                         NUMBER
         GENERATED ALWAYS AS IDENTITY ( START WITH 1 NOCACHE )
     NOT NULL,
-    sbfl_prcs_id          NUMBER NOT NULL,
-    sbfl_dgrm_id          NUMBER NOT NULL,
-    sbfl_sbfl_id          NUMBER,
-    sbfl_process_level    NUMBER,
-    sbfl_diagram_level    NUMBER,
-    sbfl_calling_sbfl     NUMBER,
-    sbfl_iteration_count  NUMBER,
-    sbfl_scope            NUMBER,
-    sbfl_starting_object  VARCHAR2(50 CHAR),
-    sbfl_route            VARCHAR2(100 CHAR),
-    sbfl_last_completed   VARCHAR2(50 CHAR),
-    sbfl_current          VARCHAR2(50 CHAR),
-    sbfl_step_key         VARCHAR2(20 CHAR) not null,
-    sbfl_due_on           TIMESTAMP WITH TIME ZONE,
-    sbfl_priority         NUMBER,
-    sbfl_status           VARCHAR2(20 CHAR),
-    sbfl_became_current   TIMESTAMP WITH TIME ZONE,
-    sbfl_work_started     TIMESTAMP WITH TIME ZONE,
-    sbfl_has_events       VARCHAR2(200 CHAR),
-    sbfl_is_following_ebg VARCHAR2(1 CHAR),
-    sbfl_lane             VARCHAR2(50 CHAR),
-    sbfl_lane_name        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
-    sbfl_lane_isRole      VARCHAR2(10 CHAR), /*cannot always be looked up with callActivities so must include */
-    sbfl_lane_role        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
-    sbfl_reservation      VARCHAR2(255 CHAR),
-    sbfl_potential_users  VARCHAR2(4000 CHAR),
-    sbfl_potential_groups VARCHAR2(4000 CHAR),
-    sbfl_excluded_users   VARCHAR2(4000 CHAR),
-    sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL,
-    sbfl_last_update_by   VARCHAR2(255 CHAR)
+    sbfl_prcs_id                    NUMBER NOT NULL,
+    sbfl_dgrm_id                    NUMBER NOT NULL,
+    sbfl_sbfl_id                    NUMBER,
+    sbfl_process_level              NUMBER,
+    sbfl_diagram_level              NUMBER,
+    sbfl_calling_sbfl               NUMBER,
+    sbfl_scope                      NUMBER,
+    sbfl_starting_object            VARCHAR2(50 CHAR),
+    sbfl_route                      VARCHAR2(100 CHAR),
+    sbfl_last_completed             VARCHAR2(50 CHAR),
+    sbfl_current                    VARCHAR2(50 CHAR),
+    sbfl_step_key                   VARCHAR2(20 CHAR) not null,
+    sbfl_due_on                     TIMESTAMP WITH TIME ZONE,
+    sbfl_priority                   NUMBER,
+    sbfl_status                     VARCHAR2(20 CHAR),
+    sbfl_became_current             TIMESTAMP WITH TIME ZONE,
+    sbfl_work_started               TIMESTAMP WITH TIME ZONE,
+    sbfl_has_events                 VARCHAR2(200 CHAR),
+    sbfl_is_following_ebg           VARCHAR2(1 CHAR),
+    sbfl_lane                       VARCHAR2(50 CHAR),
+    sbfl_lane_name                  VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_lane_isRole                VARCHAR2(10 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_lane_role                  VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_reservation                VARCHAR2(255 CHAR),
+    sbfl_potential_users            VARCHAR2(4000 CHAR),
+    sbfl_potential_groups           VARCHAR2(4000 CHAR),
+    sbfl_excluded_users             VARCHAR2(4000 CHAR),
+    sbfl_iteration_type             VARCHAR2(10 CHAR),
+    sbfl_loop_counter               NUMBER,
+    sbfl_loop_total_instances       NUMBER,
+    sbfl_loop_active_instances      NUMBER,
+    sbfl_loop_completed_instances   NUMBER,
+    sbfl_loop_terminated_instances  NUMBER,
+    sbfl_last_update                TIMESTAMP WITH TIME ZONE NOT NULL,
+    sbfl_last_update_by             VARCHAR2(255 CHAR)
 );
 
 COMMENT ON COLUMN flow_subflows.sbfl_dgrm_id is
