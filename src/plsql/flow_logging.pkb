@@ -264,7 +264,8 @@ create or replace package body flow_logging as
   , p_var_num           in flow_process_variables.prov_var_num%type default null
   , p_var_date          in flow_process_variables.prov_var_date%type default null
   , p_var_clob          in flow_process_variables.prov_var_clob%type default null
-  , p_var_tstz            in flow_process_variables.prov_var_tstz%type default null
+  , p_var_tstz          in flow_process_variables.prov_var_tstz%type default null
+  , p_var_json          in flow_process_variables.prov_var_json%type default null
   )
   as 
   begin 
@@ -283,6 +284,7 @@ create or replace package body flow_logging as
       , lgvr_var_date   
       , lgvr_var_clob   
       , lgvr_var_tstz  
+      , lgvr_var_json
       )
       values
       ( p_process_id
@@ -298,6 +300,7 @@ create or replace package body flow_logging as
       , p_var_date 
       , p_var_clob  
       , p_var_tstz 
+      , p_var_json
       );
     end if;
   exception

@@ -420,6 +420,7 @@ create table flow_process_variables
 , prov_var_date     date
 , prov_var_tstz     timestamp with time zone
 , prov_var_clob     clob
+, prov_var_json     clob
 , prov_var_name_uc  varchar2(50 char) generated always as ( upper(prov_var_name) )
 );
 
@@ -429,6 +430,8 @@ alter table flow_process_variables add constraint prov_pk primary key (prov_prcs
 alter table flow_process_variables add constraint prov_prcs_fk foreign key (prov_prcs_id)
    references flow_processes (prcs_id)
    on delete cascade;
+
+alter table flow_process_variables add constraint prov_is_json check ( prov_var_json is json);
 
 
 CREATE TABLE flow_object_expressions (
@@ -523,6 +526,7 @@ create table flow_variable_event_log
 , lgvr_var_date 			date
 , lgvr_var_tstz 			timestamp with time zone
 , lgvr_var_clob 			clob
+, lgvr_var_json             clob
 );
 
 create index flow_lgvr_ix on flow_variable_event_log (lgvr_prcs_id, lgvr_scope, lgvr_var_name);

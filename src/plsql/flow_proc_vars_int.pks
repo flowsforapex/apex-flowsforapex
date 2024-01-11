@@ -8,6 +8,7 @@ as
 --
 -- Created    12-Apr-2022  Richard Allen (Oracle)
 -- Modified   11-Aug-2022  Moritz Klein (MT AG)
+-- Modified   10-Jan-2024  Richard Allen (Flowquest Consulting Ltd)
 --
 */
 
@@ -25,6 +26,7 @@ as
  , var_date     flow_process_variables.prov_var_date%type
  , var_clob     flow_process_variables.prov_var_clob%type
  , var_tstz     flow_process_variables.prov_var_tstz%type
+ , var_json     flow_process_variables.prov_var_json%type
  ); 
  
 procedure set_var
@@ -79,6 +81,16 @@ procedure set_var
 
 procedure set_var
 ( pi_prcs_id      in flow_processes.prcs_id%type
+, pi_var_name     in flow_process_variables.prov_var_name%type
+, pi_json_value   in flow_process_variables.prov_var_json%type
+, pi_sbfl_id      in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set     in flow_object_expressions.expr_set%type default null
+, pi_scope        in flow_process_variables.prov_scope%type default 0
+);
+
+procedure set_var
+( pi_prcs_id      in flow_processes.prcs_id%type
 , pi_var_value    in t_proc_var_value
 , pi_sbfl_id      in flow_subflows.sbfl_id%type default null
 , pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
@@ -121,6 +133,13 @@ function get_var_tstz
 , pi_scope              in flow_process_variables.prov_scope%type default 0
 , pi_exception_on_null  in boolean default false
 ) return flow_process_variables.prov_var_tstz%type;
+
+function get_var_json
+( pi_prcs_id            in flow_processes.prcs_id%type
+, pi_var_name           in flow_process_variables.prov_var_name%type
+, pi_scope              in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null  in boolean default false
+) return flow_process_variables.prov_var_json%type;
 
 function get_var_value
 ( pi_prcs_id            in flow_processes.prcs_id%type
