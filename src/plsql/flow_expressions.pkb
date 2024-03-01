@@ -5,9 +5,11 @@ as
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
   -- (c) Copyright MT AG, 2021-2022.
+  -- (c) Copyright Flowquest Consulting Limited. 2021-2024.
   --
   -- Created    22-Mar-2021  Richard Allen (Flowquest, for MT AG)
   -- Modified   12-Apr-2022  Richard Allen (Oracle)
+  -- Modified   11-Feb-2024  Richard Allen (Flowquest)
   --
   */  
   type t_expr_rec is record
@@ -392,6 +394,7 @@ as
             );
           when l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql  
             or l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql_delimited_list
+            or l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql_json_array
           then
             set_sql
             ( pi_prcs_id      => pi_prcs_id

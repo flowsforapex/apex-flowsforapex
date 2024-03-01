@@ -1,5 +1,7 @@
 # BPMN Loops and Iterators
 
+This feature allows certain bpmn objects (tasks, subProcesses, and Call Activities) to be executed multiple times for each member of a collection.  Execution of the multiple instances can occur sequentially or in parallel.
+
 ## Basic Concept of Operation
 
 At the start of each step, `flow_engine.complete_step` tests to see if the new step contains a `standardLoopCharacteristics` or `multiInstanceLoopCharacteristics` tag.  If so, iteration processing is started.
@@ -27,15 +29,34 @@ When each iteration is started:
 
  ## Iteration Input and Output Data 
  
-General Concept is that there should be an array of input data - each row creates the data for an iteration.  For loop counter = 1, data in array row 0 (0 based) is used to create the variables inside iteration 1 (1 based).  
+General Concept is that there should be a collection - an array of input data - each member of the collection creates the data for an iteration.  For loop counter = 1, data in array row 0 (0 based) is used to create the variables inside iteration 1 (1 based).  
 
 Output data is specified as a list of variables.   Each iteration can add a value for each output variable.  When an iteration completes, the output variables for the iteration with `loop counter x` are added to the output array row (x-1). 
 
-### Methods for Specifying Input Data.
+### Methods for Specifying Input Collection
 
-1.  Array of Single Values in a VC2 Colon Delimited List (e.g., a list created by a SQL Multi function).  These could, for example, be an array of primary keys of rows to be processed.
-2. Matrix of Multi-Values Specified by a SQL Query.  At Iteration Start, we would execute the query returning values into a JSON table.  The multi-iteration would execute once for each row in the JSON table.  Variables inside the iterations would be named based on the returned column names / aliases from the query.
-3. JSON array.  Similar to option 2, but in this case the user is responsible for supplying the JSON array that we use for the iterations.
+1.  Array of Values in a VC2 Colon Delimited List (e.g., a list created by a SQL Multi function).  These could, for example, be an array of primary keys of rows to be processed.
+2.  JSON array.  A JSON array that we use for the iterations.
+3. Matrix of Multi-Values Specified by a SQL Query.  At Iteration Start, we would execute the query returning values into a JSON table.  The multi-iteration would execute once for each row in the JSON table.  Variables inside the iterations would be named based on the returned column names / aliases from the query.
+
+
+| Method |  Expression type | expressionType | Expression (expression) | Other Parameters | Note |
+| --- | --- | --- | --- | --- | ---|
+| Static List | Static List (Colon separated List) | static |static content | Input Variable Name (inputVariable)| separator is ':' |
+| Static Array | Static Array (JSON Array) | static |static content | static | |
+| Process Variable | Process Variable (Colon separated List) | processVariable | variable name | Input Variable Name (inputVariable) | VC2 or CLOB |
+| Process Variable | Process Variable (JSON Array) | processVariable| variable name | | VC2, CLOB or JSON |
+| SQL Query | SQL Query | sqlQueryArray | SQL query text | | 1 or more columns |
+| PL/SQL Expression |  Expression |plsqlRawExpression | PL/SQl Expression | | returning JSON table |
+| PL/SQL Function Body  |  Function Body | plsqlRawFunctionBody| PL/SQL function | | returning JSON table |
+
+Notes:
+
+1.  JSON, SQL query, PL/SQL expression and function methods can return multiple columns.  each column returned wiill use the column name to create a process variable name in the iteration instance.  
+2.  Static List and process variables containing a colon delimited list will contain just 1 input value per iteration instance.   The process variable inside the iteration is specified in the third parameter, `Input Parameter Name`.
+3.  Variables will be created using the type of the query result or JSON item.  Colon delimited varchar2 methods will create varchar2 process variables.
+4.  JSON tables are indexed starting at 0.   BPMN Loop Counter values start from 1.  So items for Loop Counter `n` are in the JSON row `n-1`.
+
 
 ### Control Variables
 
@@ -88,11 +109,15 @@ Syntax for this should be similar / equivalent to the `bpmn:conditionExpression`
        <bpmn:outgoing>Flow_0r4hhoj</bpmn:outgoing>
        <bpmn:multiInstanceLoopCharacteristics>
           <bpmn:extensionElements>
-             <apex:loopCharacteristics 
-                inputType="delimitedVarchar|jsonTable" inputCollection="CInputs" 
-                inputElement="CInput" 
-                outputType="delimitedVarchar|jsonTable" outputCollection="COutputs" 
-                outputElement="COutput" />
+               <apex:inputCollection>
+                   <expressionType>"expression_type"</expressionType>
+                   <expression>"expression" </expression>
+                   <inputElement>"InputVariable" </inputElement>
+               </apex:inputCollection>
+               <apex:outputCollection>
+                   outputType="delimitedVarchar|jsonTable" outputCollection="COutputs" 
+                   outputElement="COutput" 
+              </apex:outputCollection>
           </bpmn:extensionElements>
           <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">=WhenDone</bpmn:completionCondition>
       </bpmn:multiInstanceLoopCharacteristics>
@@ -196,7 +221,7 @@ A1 issues a `flow_complete_step`.  The following occurs:
 1.   Add `target_objt_treat_like_tag` to `flow_types_pkg.flow_step_info`.   Set to `bpmn:parallelGateway` for first pass of a parallel iteration.  
 2.   Change flow_engine.run_step to use coalesce( `target_objt_treat_like_tag`, `target_objt_tag`) 
 3.   `flow_gateways.gateway_split` Add in-parameter `p_iteration` boolean - default false.   Set to `true` if the gateway is being used to implement a parallel iteration marking, rather than a parallel gateway.
-4.   `flow_gateways.gateway_split` needs an alternate way to create te array of `new_paths` based on the Input Collection.
+4.   `flow_gateways.gateway_split` needs an alternate way to create te array of `new_paths` based on the Input Collection.  This is sufficiently different to a gateway split to create a parallel procedure `flow_gateways.iteration_split`.
 5.   `flow_gateways.gateway_split` add `p_new_scope` and `p_loopCounter` when creating new subflows.
 6.   `flow_engine_util.subflow_start` already has parameter `p_new_scope`.   Add parameter `p_loopCounter`.  Also add `p_loopCounter` to its return type.
 

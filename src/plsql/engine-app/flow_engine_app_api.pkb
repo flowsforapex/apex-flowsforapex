@@ -215,6 +215,7 @@ as
           , p_subflow_id    => apex_application.g_x03
           , p_step_key      => apex_application.g_x04
           );
+                  apex_debug.message (p_message => 'ajax handler happy');
         when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
           (
@@ -334,11 +335,17 @@ as
           );
       end case;
 
+        apex_debug.message (p_message => 'after ajax handler case end');
       if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
         select prcs_status
         into l_after_prcs_status
         from flow_instances_vw
         where prcs_id = apex_application.g_x02;
+        
+        apex_debug.message (p_message => 'after ajax handler befoe status %0 after status %1'
+        , p0 => l_before_prcs_status
+        , p1 => l_after_prcs_status
+        );
 
         if l_before_prcs_status != l_after_prcs_status then
           l_reload := true;

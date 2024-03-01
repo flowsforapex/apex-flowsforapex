@@ -1,10 +1,9 @@
 /*
   Migration Script for Release 23.1 to 24.1
 
-  Created  RAllen   19 Sep 2023
+  Created  Richard Allen, Flowquest    11 Jan 2024
 
-
-  (c) Copyright Oracle Corporation and/or its affiliates.  2023.
+  (c) Copyright Flowquest Consulting Limited and/or its affiliates.  2024.
 
 */
 

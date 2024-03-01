@@ -4,6 +4,7 @@ create or replace package body flow_engine as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024.
 --
 -- Created  11-Sep-2020  Richard Allen (Flowquest)
 -- Modified 30-May-2022  Moritz Klein (MT AG)
@@ -13,15 +14,6 @@ create or replace package body flow_engine as
 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
-
-  type t_iteration_vars is record
-  ( input_type        flow_types_pkg.t_vc20
-  , input_collection  flow_process_variables.prov_var_name%type
-  , input_variable    flow_process_variables.prov_var_name%type
-  , output_type       flow_types_pkg.t_vc20
-  , output_collection flow_process_variables.prov_var_name%type
-  , output_variable   flow_process_variables.prov_var_name%type
-  );
 
   function flow_get_matching_link_object
   ( p_process_id    in flow_processes.prcs_id%type
@@ -124,7 +116,7 @@ begin
       where sbfl.sbfl_id = p_subflow_id
           and sbfl.sbfl_prcs_id = p_process_id
       ;
-      -- pass the step_key through unchanged & use on the receiving ICE
+      -- pass the step_key through unchanged and use on the receiving ICE
       flow_complete_step
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
@@ -135,52 +127,10 @@ begin
     end if;
 end flow_process_link_event;
 
-function get_iteration_type
-( p_step_info         flow_types_pkg.flow_step_info
-) return varchar2
-is
-  l_iteration_type     varchar2(10);
-begin
-  -- get loop characteristics
-  if json_exists (p_step_info.target_objt_attributes, '$.apex.customExtension.multiInstanceLoopCharacteristics.isSequential') then
-    l_iteration_type := flow_constants_pkg.gc_iteration_sequential;
-  elsif json_exists (p_step_info.target_objt_attributes, '$.apex.customExtension.multiInstanceLoopCharacteristics') then
-    l_iteration_type := flow_constants_pkg.gc_iteration_parallel;
-  elsif json_exists (p_step_info.target_objt_attributes, '$.apex.customExtension.standardInstanceLoopCharacteristics') then
-    l_iteration_type := flow_constants_pkg.gc_iteration_loop;
-  else 
-    l_iteration_type := null;
-  end if;
-  return l_iteration_type;
-end get_iteration_type;
+--============================================================================================
+--  B P M N   O B J E C T   P R O C E S S O R S 
+--============================================================================================
 
-function get_iteration_vars
-( p_sbfl_info         flow_subflows%rowtype
-, p_step_info         flow_types_pkg.flow_step_info
-) return t_iteration_vars
-is
-  l_iteration_vars    t_iteration_vars;
-  json_def            varchar2(32767);
-  jo                  json_object_t;          
-begin
-  json_def  := json_query (p_step_info.target_objt_attributes, '$..loopCharacteristics');
-  jo        := json_object_t.parse (json_def);
-
-  l_iteration_vars.input_type         := jo.get_String('inputType');
-  l_iteration_vars.input_collection   := jo.get_String('inputCollection');
-  l_iteration_vars.input_variable     := jo.get_String('inputVariable');
-  l_iteration_vars.output_type        := jo.get_String('outputType');
-  l_iteration_vars.output_collection  := jo.get_String('outputCollection');
-  l_iteration_vars.output_variable    := jo.get_String('outputVariable');
-
-  return l_iteration_vars;
-end get_iteration_vars;
-
-/*
-============================================================================================
-  B P M N   O B J E C T   P R O C E S S O R S 
-============================================================================================
-*/
 
   procedure process_endEvent
     ( p_process_id    in flow_processes.prcs_id%type
@@ -538,7 +488,7 @@ begin
         and sbfl.sbfl_prcs_id = p_process_id
         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
           ; 
-    -- generate a step key & insert in the update...use later
+    -- generate a step key and insert in the update...use later
     l_timestamp := systimestamp;
     l_forward_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_parent_subflow_id
                                                     , pi_current => l_current_object
@@ -855,37 +805,30 @@ end timer_callback;
 ****
 *************************************************************************************************************/
 
-procedure finish_current_step
+function finish_current_step
 ( p_sbfl_rec          in flow_subflows%rowtype
-, p_current_step_tag  in flow_objects.objt_tag_name%type
 , p_log_as_completed  in boolean default true
-)
+) return boolean
 is
+  l_current_step_tag      flow_objects.objt_tag_name%type;
+  l_iteration_is_complete boolean;
 begin
   -- runs all of the post-step operations for the old current task (handling post- expressionsa, releasing reservations, etc.)
   apex_debug.enter 
   ( 'finish_current_step'
   , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
   , 'Subflow ID', p_sbfl_rec.sbfl_id
+  , 'Current Step', p_sbfl_rec.sbfl_current
   );
 
-  -- if step is multi-instance, conduct end of iteration steps
-
-
-    -- copy output variable to outputCollection(i)
-
-    -- evaluate CompletionCondition
-
-    -- if not complete and isSequential, start the next iteration
-
-    -- if complete terminate any incomplete iterations (don't copy output(i) to outputCollection
-    -- then terminate the iteration by returning to iteration parent & issueing next Step
+  l_current_step_tag := flow_engine_util.get_object_tag (p_sbfl_info => p_sbfl_rec);
 
   -- evaluate and set any post-step variable expressions on the last object
-  if p_current_step_tag in 
+  if l_current_step_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
   , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask 
   , flow_constants_pkg.gc_bpmn_sendtask , flow_constants_pkg.gc_bpmn_receivetask )
+  and p_sbfl_rec.sbfl_iteration_type is null 
   then 
     flow_expressions.process_expressions
       ( pi_objt_bpmn_id   => p_sbfl_rec.sbfl_current
@@ -897,7 +840,7 @@ begin
     );
   end if;
   -- clean up any boundary events left over from the previous activity
-  if (p_current_step_tag in ( flow_constants_pkg.gc_bpmn_subprocess
+  if (l_current_step_tag in ( flow_constants_pkg.gc_bpmn_subprocess
                             , flow_constants_pkg.gc_bpmn_call_activity
                             , flow_constants_pkg.gc_bpmn_task
                             , flow_constants_pkg.gc_bpmn_usertask
@@ -914,6 +857,17 @@ begin
       flow_boundary_events.unset_boundary_timers 
       ( p_process_id => p_sbfl_rec.sbfl_prcs_id
       , p_subflow_id => p_sbfl_rec.sbfl_id);
+  end if;
+
+  if p_sbfl_rec.sbfl_loop_counter is not null then
+    case p_sbfl_rec.sbfl_iteration_type
+    when flow_constants_pkg.gc_iteration_sequential then
+      l_iteration_is_complete := flow_iterations.sequential_complete_step (p_sbfl_info => p_sbfl_rec);
+    when flow_constants_pkg.gc_iteration_loop then 
+      l_iteration_is_complete := flow_iterations.loop_complete_step (p_sbfl_info => p_sbfl_rec); 
+    else 
+      null;   
+    end case;
   end if;
 
   if p_log_as_completed then
@@ -934,17 +888,20 @@ begin
   end if;
 
   apex_debug.info
-  ( p_message => 'Post Step Operations completed for current step %1 on subflow %0.'
+  ( p_message => 'Post Step Operations completed for current step %1 on subflow %0. Iteration Complete: %2'
   , p0        => p_sbfl_rec.sbfl_id
   , p1        => p_sbfl_rec.sbfl_current
+  , p2        => case l_iteration_is_complete when true then 'True' else 'False' end
   );
-
+  return l_iteration_is_complete;
 end finish_current_step;
 
 function get_step_info
-( p_sbfl_rec          in flow_subflows%rowtype
-, p_forward_route     in flow_connections.conn_bpmn_id%type default null
-, p_is_restart        in boolean default false
+( p_sbfl_rec                in flow_subflows%rowtype
+, p_forward_route           in flow_connections.conn_bpmn_id%type default null
+, p_is_restart              in boolean default false
+, p_iteration_is_complete   in boolean default false
+, p_previous_step           in flow_objects.objt_bpmn_id%type default null
 ) return flow_types_pkg.flow_step_info
 is
   l_dgrm_id               flow_diagrams.dgrm_id%type;
@@ -957,20 +914,23 @@ begin
   , 'Subflow ID',    p_sbfl_rec.sbfl_id
   , 'Restart',       case p_is_restart when true then 'True' else 'False' end
   , 'Forward Route', p_forward_route
+  , 'Iteration Complete', case p_iteration_is_complete when true then 'True' else 'False' end
   );
   begin
     case
     when ( p_sbfl_rec.sbfl_iteration_type is null and not p_is_restart )  -- usual next step case
-      or ( p_sbfl_rec.sbfl_iteration_type = flow_constants_pkg.gc_iteration_sequential 
-           and p_sbfl_rec.sbfl_loop_counter = p_sbfl_rec.sbfl_loop_total_instances) -- current step is final sequential iteration
+      or ( p_sbfl_rec.sbfl_iteration_type in ( flow_constants_pkg.gc_iteration_sequential 
+                                             , flow_constants_pkg.gc_iteration_loop)
+           and p_iteration_is_complete) -- current step is final sequential or loop iteration
     then
       -- Find next subflow step
       -- rewritten original LEFT JOIN query because of database 23.3 bug 35862529 (fixed db 23.4) which returns incorrect values on left join when including json attributes
       -- workaround - remove json columns from select list and query separately if lane_bpmn_is is not null
-      select sbfl.sbfl_dgrm_id
+      select p_sbfl_rec.sbfl_dgrm_id
            , objt_source.objt_tag_name
            , objt_source.objt_id
            , conn.conn_tgt_objt_id
+           , objt_target.objt_name
            , objt_target.objt_bpmn_id
            , objt_target.objt_tag_name   
            , null 
@@ -989,9 +949,6 @@ begin
         join flow_objects objt_target
           on conn.conn_tgt_objt_id = objt_target.objt_id
          and conn.conn_dgrm_id     = objt_target.objt_dgrm_id
-        join flow_subflows sbfl
-          on sbfl.sbfl_current = objt_source.objt_bpmn_id 
-         and sbfl.sbfl_dgrm_id = conn.conn_dgrm_id
         left 
         join flow_objects objt_lane
           on objt_target.objt_objt_lane_id = objt_lane.objt_id
@@ -1000,17 +957,18 @@ begin
          and ( p_forward_route is null
                OR  ( p_forward_route is not null AND conn.conn_bpmn_id = p_forward_route )
              )
-         and sbfl.sbfl_prcs_id = p_sbfl_rec.sbfl_prcs_id
-         and sbfl.sbfl_id      = p_sbfl_rec.sbfl_id
+         and conn.conn_dgrm_id        = p_sbfl_rec.sbfl_dgrm_id
+         and objt_source.objt_bpmn_id = coalesce (p_previous_step, p_sbfl_rec.sbfl_current)
       ;
 --    when p_is_restart 
 --      or p_sbfl_rec.sbfl_iteration_type = flow_constants_pkg.gc_iteration_parallel 
 --    then
     else
-      select sbfl.sbfl_dgrm_id
+      select p_sbfl_rec.sbfl_dgrm_id
            , null 
            , null
            , objt_current.objt_id
+           , objt_current.objt_name
            , objt_current.objt_bpmn_id
            , objt_current.objt_tag_name  
            , null  
@@ -1023,16 +981,12 @@ begin
            , null
         into l_step_info
         from flow_objects objt_current
-        join flow_subflows sbfl
-          on sbfl.sbfl_current = objt_current.objt_bpmn_id 
-         and sbfl.sbfl_dgrm_id = objt_current.objt_dgrm_id
         left 
         join flow_objects objt_lane
           on objt_current.objt_objt_lane_id = objt_lane.objt_id
          and objt_current.objt_dgrm_id      = objt_lane.objt_dgrm_id
-       where sbfl.sbfl_prcs_id  = p_sbfl_rec.sbfl_prcs_id
-         and sbfl.sbfl_id       = p_sbfl_rec.sbfl_id
---         and sbfl.sbfl_current = p_current_bpmn_id
+       where objt_current.objt_bpmn_id = p_sbfl_rec.sbfl_current
+         and objt_current.objt_dgrm_id = p_sbfl_rec.sbfl_dgrm_id
       ;
     end case;
 
@@ -1057,28 +1011,16 @@ begin
       end;
     end if;
 
-    l_step_info.target_objt_iteration := get_iteration_type( p_step_info => l_step_info);
-
-    case l_step_info.target_objt_iteration 
-    when flow_constants_pkg.gc_iteration_parallel then
-      if  p_sbfl_rec.sbfl_loop_counter is null then
-        -- step is the first phase of a parallel multiInstanceLoop and so we should treat it like a parallel gateway
-        l_step_info.target_objt_treat_as_tag  := flow_constants_pkg.gc_bpmn_gateway_parallel;
-        l_step_info.target_objt_subtag        := null;
-      elsif p_sbfl_rec.sbfl_loop_counter is not null 
-      and   p_sbfl_rec.sbfl_status != flow_constants_pkg.gc_sbfl_status_created then
-        -- step is the final phase of parallel multiinstance and we should treat like merging parallel gateway
-        l_step_info.target_objt_treat_as_tag  := flow_constants_pkg.gc_bpmn_gateway_parallel;
-        l_step_info.target_objt_subtag        := null;
-      else
-        -- is the iterated task in the 2nd phase of the parallel gateway split.  Treat as the actual object
-        null;
+    if l_step_info.target_objt_attributes is not null then
+      l_step_info.target_objt_iteration := flow_engine_util.get_iteration_type (l_step_info);
+      if l_step_info.target_objt_iteration is not null then
+        flow_iterations.add_iteration_to_step_info 
+        ( p_step_info       => l_step_info
+        , p_sbfl_rec        => p_sbfl_rec
+        );
       end if;
-    when flow_constants_pkg.gc_iteration_sequential then
-      null;
-    else
-      null;
-    end case;
+    end if;
+
   exception
     when no_data_found then
       flow_errors.handle_instance_error
@@ -1181,6 +1123,9 @@ begin
   ( 'run_step'
   , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
   , 'Subflow ID', p_sbfl_rec.sbfl_id
+  , 'Loop Counter', p_sbfl_rec.sbfl_loop_counter
+  , 'SBFL Iteration Type', p_sbfl_rec.sbfl_iteration_type
+  , 'Step Iteration Type', p_step_info.target_objt_iteration
   );
 
   apex_debug.info 
@@ -1237,6 +1182,17 @@ begin
       , pi_var_scope   => p_sbfl_rec.sbfl_scope
       , pi_expr_scope  => p_sbfl_rec.sbfl_scope
     );
+  end if;
+
+  if  p_sbfl_rec.sbfl_loop_counter is not null then
+    case p_sbfl_rec.sbfl_iteration_type 
+    when flow_constants_pkg.gc_iteration_sequential then
+      flow_iterations.sequential_start_step ( p_sbfl_info => p_sbfl_rec);
+    when flow_constants_pkg.gc_iteration_loop then
+      flow_iterations.loop_start_step ( p_sbfl_info => p_sbfl_rec);   
+    else
+      null;
+    end case;   
   end if;
 
   case coalesce (p_step_info.target_objt_treat_as_tag, p_step_info.target_objt_tag)
@@ -1365,13 +1321,16 @@ procedure flow_complete_step
 , p_recursive_call    in boolean default true
 )
 is
-  l_sbfl_rec              flow_subflows%rowtype;
-  l_step_info             flow_types_pkg.flow_step_info;
-  l_dgrm_id               flow_diagrams.dgrm_id%type;
-  l_timestamp             flow_subflows.sbfl_became_current%type;
-  l_step_key              flow_subflows.sbfl_step_key%type;
-  l_next_loop_counter     number;
-  l_total_loop_instances  number;
+  l_sbfl_rec                  flow_subflows%rowtype;
+  l_step_info                 flow_types_pkg.flow_step_info;
+  l_dgrm_id                   flow_diagrams.dgrm_id%type;
+  l_timestamp                 flow_subflows.sbfl_became_current%type;
+  l_step_key                  flow_subflows.sbfl_step_key%type;
+  l_previous_step             flow_objects.objt_bpmn_id%type;  
+  l_next_loop_counter         number;
+  l_total_loop_instances      number;
+  l_iteration_is_complete     boolean;
+  l_next_step_confirmed       boolean := false;
  -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
   apex_debug.enter 
@@ -1414,20 +1373,13 @@ begin
       flow_timers_pkg.lock_timer(p_process_id, p_subflow_id);
     end if;
 
-    -- Find next subflow step
-    l_step_info := get_step_info 
-    ( p_sbfl_rec   => l_sbfl_rec
-    , p_forward_route => p_forward_route
-    );
- 
-    if not flow_globals.get_step_error then
-      -- complete the current step by doing the post-step operations
-      finish_current_step
-      ( p_sbfl_rec => l_sbfl_rec
-      , p_current_step_tag => l_step_info.source_objt_tag
-      , p_log_as_completed => p_log_as_completed
-      );
-    else
+    -- complete the current step by doing the post-step operations
+    l_iteration_is_complete :=  finish_current_step
+                                ( p_sbfl_rec => l_sbfl_rec
+                                , p_log_as_completed => p_log_as_completed
+                                );
+
+    if flow_globals.get_step_error then
       rollback;
       if p_recursive_call then
         -- set error status on instance and subflow
@@ -1441,8 +1393,97 @@ begin
       , p0        => p_subflow_id
       , p1        => l_sbfl_rec.sbfl_current
       );      
+    else
+      l_previous_step := l_sbfl_rec.sbfl_current;
+      while not l_next_step_confirmed loop
+        -- if next step is an iteration over a collection, check that the collection has members before confirming 
+        -- it is the next step.  If not, step forward again by picking the next step
+        -- start by finding the next subflow step
+        l_step_info := get_step_info  ( p_sbfl_rec              => l_sbfl_rec
+                                      , p_forward_route         => p_forward_route
+                                      , p_iteration_is_complete => l_iteration_is_complete
+                                      , p_previous_step         => l_previous_step
+                                      );    
+        -- control iteration progression
+        case l_step_info.target_objt_iteration 
+        when flow_constants_pkg.gc_iteration_sequential then
+          if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref
+          then
+            -- for sequential iteration we use the original subflow for the iterands so need 
+            -- to set loop info on the original subflow. 
+            -- sequential iteration info is set when iteration subflows are created
 
-    end if;
+            l_total_loop_instances := flow_iterations.sequential_init ( p_sbfl_info => l_sbfl_rec
+                                                                      , p_step_info => l_step_info
+                                                                      );
+            l_next_loop_counter    := 1;
+            if l_total_loop_instances = 0 then
+              -- next step is a sequential loop of 0 members - move on to next step
+              apex_debug.message ( p_message => 'Loop Collection is empty - skipping process step %0.'
+                                 , p0 => l_step_info.target_objt_ref);
+              -- log current step as completed before releasing the reservation
+              flow_logging.log_step_completion   
+              ( p_process_id        => l_sbfl_rec.sbfl_prcs_id
+              , p_subflow_id        => l_sbfl_rec.sbfl_id
+              , p_completed_object  => l_step_info.target_objt_ref
+              );
+              -- set old step to the step to be skipped, then repeat the loop to get to the following step
+              l_previous_step := l_step_info.target_objt_ref;
+              continue;
+            end if; -- empty collection
+            -- new non-empty collection...
+            l_next_step_confirmed  := true;            
+          else 
+            -- loop counter has value - so iteration is in progress
+            l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
+            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
+            l_next_step_confirmed  := true;
+          end if; -- loop counter
+        when flow_constants_pkg.gc_iteration_parallel then
+          l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
+          l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
+          l_next_step_confirmed  := true;
+        when flow_constants_pkg.gc_iteration_loop then
+          if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref then
+            -- new bpmn loop step
+            -- for loop iteration we use the original subflow for the iterands so need 
+            -- to set loop info on the original subflow. 
+            -- loop iteration info is set when iteration subflows are created
+
+            l_total_loop_instances := flow_iterations.loop_init ( p_sbfl_info => l_sbfl_rec
+                                                                , p_step_info => l_step_info
+                                                                );
+            l_next_loop_counter    := 1;
+            l_total_loop_instances := 1;
+--            if l_total_loop_instances = 0 then
+--              -- next step is a sequential loop of 0 members - move on to next step
+--              apex_debug.message ( p_message => 'Loop Collection is empty - skipping process step %0.'
+--                                 , p0 => l_step_info.target_objt_ref);
+--              -- log current step as completed before releasing the reservation
+--              flow_logging.log_step_completion   
+--              ( p_process_id        => l_sbfl_rec.sbfl_prcs_id
+--              , p_subflow_id        => l_sbfl_rec.sbfl_id
+--              , p_completed_object  => l_step_info.target_objt_ref
+--              );
+--              -- set old step to the step to be skipped, then repeat the loop to get to the following step
+--              l_previous_step := l_step_info.target_objt_ref;
+--              continue;
+--            end if; -- empty collection
+            -- new non-empty collection...
+            l_next_step_confirmed  := true;            
+          else 
+            -- loop counter has value - so iteration is in progress
+            l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
+            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances +1;
+            l_next_step_confirmed  := true;
+          end if; -- loop counter
+        else -- not an iteration
+          l_next_loop_counter := null;
+          l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances; 
+          l_next_step_confirmed  := true;
+        end case; -- iteration type
+      end loop;
+    end if; -- step error
   end if; -- step key valid
 
   -- end of post-step operations for previous step
@@ -1466,24 +1507,7 @@ begin
                                              , pi_current         => l_step_info.target_objt_ref
                                              , pi_became_current  => l_timestamp
                                              );
-    if l_step_info.target_objt_iteration = flow_constants_pkg.gc_iteration_sequential then
-      if l_sbfl_rec.sbfl_loop_counter is null then
-        -- for sequential iteration we use the original subflow for the iterands so need 
-        -- to set loop info on the original subflow. 
-        -- sequential iteration info is set when iteration subflows are created
-        l_next_loop_counter    := 1;
-        l_total_loop_instances := 3; -- FIX!!!
-      else 
-        l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
-        l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
-      end if;
-    elsif l_step_info.target_objt_iteration = flow_constants_pkg.gc_iteration_parallel then
-      l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
-      l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
-    else
-      l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
-      l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances; 
-    end if; 
+
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
       set sbfl.sbfl_current           = l_step_info.target_objt_ref
@@ -1504,11 +1528,7 @@ begin
                                         else coalesce( sbfl.sbfl_lane_role   , null)
                                         end
         , sbfl.sbfl_loop_counter      = l_next_loop_counter
-        , sbfl.sbfl_iteration_type    = case l_step_info.target_objt_iteration
-                                        when flow_constants_pkg.gc_iteration_sequential
-                                          then l_step_info.target_objt_iteration
-                                        else sbfl.sbfl_iteration_type
-                                        end
+        , sbfl.sbfl_iteration_type    = l_step_info.target_objt_iteration
         , sbfl.sbfl_loop_total_instances
                                       = l_total_loop_instances
         , sbfl.sbfl_last_update       = l_timestamp
@@ -1525,6 +1545,10 @@ begin
     ( p_message => 'Subflow %0 : Step End Committed for step %1'
     , p0        => p_subflow_id
     , p1        => l_sbfl_rec.sbfl_current
+    , p2        => case l_sbfl_rec.sbfl_loop_counter 
+                        when null then ''
+                        else ' ['||l_sbfl_rec.sbfl_loop_counter ||']'
+                        end
     );
   
 

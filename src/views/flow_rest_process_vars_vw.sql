@@ -17,5 +17,6 @@ create or replace view flow_rest_process_vars_vw
               , 'date',     pv.prov_var_date
               , 'clob',     pv.prov_var_clob
               , 'timestamp with time zone', pv.prov_var_tstz
+              , 'json', pv.prov_var_json
               , null ) as value
   from flow_process_variables pv;

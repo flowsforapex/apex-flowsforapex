@@ -3,8 +3,10 @@
 --   site:      Oracle Database 12cR2
 --   type:      Oracle Database 12cR2
 
--- edited by Richard Allen Feb 2022
+-- edited by Richard Allen (Oracle) Feb 2022
 -- (c) Copyright, Oracle Corporation and/or its associates.  2020-2023.
+-- edited by Richard Allen (Flowquest) Jan 2024
+-- (c) Copyright, Flowquest Consulting Limited. 2024
 
 
 -- predefined type, no DDL - SDO_GEOMETRY
@@ -157,11 +159,9 @@ CREATE TABLE flow_subflows (
     sbfl_potential_groups           VARCHAR2(4000 CHAR),
     sbfl_excluded_users             VARCHAR2(4000 CHAR),
     sbfl_iteration_type             VARCHAR2(10 CHAR),
+    sbfl_iteration_path             VARCHAR2(4000 CHAR),
     sbfl_loop_counter               NUMBER,
     sbfl_loop_total_instances       NUMBER,
-    sbfl_loop_active_instances      NUMBER,
-    sbfl_loop_completed_instances   NUMBER,
-    sbfl_loop_terminated_instances  NUMBER,
     sbfl_last_update                TIMESTAMP WITH TIME ZONE NOT NULL,
     sbfl_last_update_by             VARCHAR2(255 CHAR)
 );

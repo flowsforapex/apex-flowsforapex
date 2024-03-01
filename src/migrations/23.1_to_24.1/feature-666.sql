@@ -1,3 +1,12 @@
+/*
+  Migration Script for Feature 666 - Iterstions, Loops, and JSON Process Variables
+
+  Created  RAllen, Flowquest    11 Jan 2024
+
+
+  (c) Copyright Flowquest Consulting Limited and/or its affiliates.  2024.
+
+*/
 PROMPT >> Create Iterations
 
 PROMPT >> Database Changes
@@ -16,9 +25,7 @@ begin
                          sbfl_iteration_type             VARCHAR2(10 CHAR),
                          sbfl_loop_counter               NUMBER,
                          sbfl_loop_total_instances       NUMBER,
-                         sbfl_loop_active_instances      NUMBER,
-                         sbfl_loop_completed_instances   NUMBER,
-                         sbfl_loop_terminated_instances  NUMBER                         
+                         sbfl_iteration_path             VARCHAR2(4000 CHAR),                     
                          )';
   end if;
 

@@ -1,4 +1,14 @@
 create or replace package flow_types_pkg
+/* 
+-- Flows for APEX - flow_types_pkg.pks
+-- 
+-- (c) Copyright MT AG, 2020-2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024.
+--
+-- Created  11-Sep-2020  Moritz Klein (MT AG)
+-- Modified 09-Jan-2024  Richard Allen, Flowquest Consulting
+--
+*/
   authid definer
 as
 
@@ -20,6 +30,7 @@ as
   , source_objt_tag           flow_objects.objt_tag_name%type
   , source_objt_id            flow_objects.objt_id%type
   , target_objt_id            flow_objects.objt_id%type
+  , target_objt_name          flow_objects.objt_name%type
   , target_objt_ref           flow_objects.objt_bpmn_id%type
   , target_objt_tag           flow_objects.objt_tag_name%type
   , target_objt_treat_as_tag  flow_objects.objt_tag_name%type
@@ -37,6 +48,12 @@ as
   , step_key          flow_subflows.sbfl_step_key%type
   , route             flow_subflows.sbfl_route%type
   , scope             flow_subflows.sbfl_scope%type
+  );
+
+  type t_iteration_vars is record
+  ( type            flow_types_pkg.t_vc20
+  , collection_var  flow_process_variables.prov_var_name%type
+  , inside_var      flow_process_variables.prov_var_name%type
   );
 
 end flow_types_pkg;

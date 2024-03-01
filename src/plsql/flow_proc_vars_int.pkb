@@ -5,6 +5,7 @@ as
 -- Flows for APEX - flow_proc_vars_int.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created    12-Apr-2022  Richard Allen (Oracle)
 -- Modified   11-Aug-2022  Moritz Klein (MT AG)
@@ -377,7 +378,7 @@ begin
       ( pi_prcs_id
       , pi_scope
       , pi_var_name
-      , flow_constants_pkg.gc_prov_var_type_tstz
+      , flow_constants_pkg.gc_prov_var_type_json
       , pi_json_value
       );
   exception
@@ -420,6 +421,42 @@ exception
 end set_var;
 
 procedure set_var
+( pi_prcs_id      in flow_processes.prcs_id%type
+, pi_var_name     in flow_process_variables.prov_var_name%type
+, pi_json_element in sys.json_element_t
+, pi_sbfl_id      in flow_subflows.sbfl_id%type default null
+, pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null 
+, pi_expr_set     in flow_object_expressions.expr_set%type default null
+, pi_scope        in flow_process_variables.prov_scope%type default 0
+)
+is
+  l_json_val      clob;
+begin 
+  l_json_val := pi_json_element.to_clob;
+
+  set_var
+  ( pi_prcs_id      => pi_prcs_id 
+  , pi_var_name     => pi_var_name
+  , pi_json_value   => l_json_val
+  , pi_sbfl_id      => pi_sbfl_id
+  , pi_objt_bpmn_id => pi_objt_bpmn_id
+  , pi_expr_set     => pi_expr_set
+  , pi_scope        => pi_scope 
+  );
+exception
+  when others then
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_message_key    => 'var-set-error'         
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
+    , p2 => pi_scope
+    );
+    -- $F4AMESSAGE 'var-set-error' || 'Error setting process variable %0 for process id %1 in scope %2.'
+end set_var;
+
+procedure set_var
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_value in t_proc_var_value
 , pi_sbfl_id in flow_subflows.sbfl_id%type default null
@@ -441,6 +478,7 @@ begin
       , prov_var_date
       , prov_var_tstz
       , prov_var_clob
+      , prov_var_json
       ) values
       ( pi_prcs_id
       , pi_scope
@@ -451,6 +489,7 @@ begin
       , pi_var_value.var_date
       , pi_var_value.var_tstz
       , pi_var_value.var_clob
+      , pi_var_value.var_json
       );
   exception
     when dup_val_on_index then
@@ -481,7 +520,8 @@ begin
   , p_var_num           => pi_var_value.var_num
   , p_var_date          => pi_var_value.var_date
   , p_var_clob          => pi_var_value.var_clob
-  , p_var_tstz            => pi_var_value.var_tstz
+  , p_var_tstz          => pi_var_value.var_tstz
+  , p_var_json          => pi_var_value.var_json
   );
 exception
   when others then
@@ -702,6 +742,23 @@ exception
     end if;
 end get_var_json;
 
+function get_var_json_element
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null in boolean default false
+) return sys.json_element_t
+is 
+   l_json_value   flow_process_variables.prov_var_json%type;
+begin 
+   l_json_value := get_var_json ( pi_prcs_id            => pi_prcs_id
+                                , pi_var_name           => pi_var_name
+                                , pi_scope              => pi_scope
+                                , pi_exception_on_null  => pi_exception_on_null
+                                );
+   return sys.json_element_t.parse(l_json_value);
+end get_var_json_element;
+
 function get_var_value
 ( pi_prcs_id in flow_processes.prcs_id%type
 , pi_var_name in flow_process_variables.prov_var_name%type
@@ -866,6 +923,105 @@ end delete_var;
            , pi_scope    => pi_scope
            );
   end get_business_ref;
+
+function lock_var 
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_scope      in flow_process_variables.prov_scope%type default 0
+) return boolean
+is
+  l_is_locked   boolean;
+  l_prcs_id     flow_processes.prcs_id%type;
+begin
+  select prov_prcs_id
+    into l_prcs_id
+    from flow_process_variables
+   where prov_prcs_id  = pi_prcs_id
+     and upper(prov_var_name)  = upper(pi_var_name)
+     and prov_scope    = pi_scope
+  for update of prov_var_type wait 2;
+  return true;
+exception
+  when  others then
+    flow_errors.handle_instance_error
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_message_key    => 'var-lock-error'       
+    , p0 => pi_var_name
+    , p1 => pi_prcs_id
+    , p2 => pi_scope
+    );
+    -- $F4AMESSAGE 'var-lock-error' || 'Error locking process variable %0 for process id %1.'
+    return false;
+end lock_var;
+
+  procedure set_vars_from_json_object
+  ( pi_prcs_id      in  flow_processes.prcs_id%type
+  , pi_sbfl_id      in  flow_subflows.sbfl_id%type default null
+  , pi_scope        in  flow_subflows.sbfl_scope%type default 0
+  , pi_json         in  sys.json_object_t
+  , pi_objt_bpmn_id in  flow_objects.objt_bpmn_id%type default null
+  )
+  is
+    l_key               varchar2(4000);
+    l_keys              json_key_list;
+    l_element_type      varchar2(50);
+    l_var               t_proc_var_value;
+  begin
+    l_keys := pi_json.get_keys;
+
+    for i in 1..l_keys.count loop
+      l_var             := t_proc_var_value();
+
+      l_var.var_name     := l_keys(i);
+
+      l_element_type := pi_json.get_type(l_keys(i));
+
+      apex_debug.info
+      ( p_message => 'Creating proc var name %0 Json type %1'
+      , p0        => l_var.var_name
+      , p1        => l_element_type
+      );
+
+      case l_element_type
+      when 'SCALAR' then 
+        case 
+        when pi_json.get(l_keys(i)).is_string then
+          l_var.var_type  := flow_constants_pkg.gc_prov_var_type_varchar2;
+          l_var.var_vc2   := pi_json.get_string(l_keys(i));
+        when pi_json.get(l_keys(i)).is_number then
+          l_var.var_type  := flow_constants_pkg.gc_prov_var_type_number;
+          l_var.var_num   := pi_json.get_number(l_keys(i));      
+        when pi_json.get(l_keys(i)).is_date then
+          l_var.var_type  := flow_constants_pkg.gc_prov_var_type_date;
+          l_var.var_date  := pi_json.get_date(l_keys(i));  
+        when pi_json.get(l_keys(i)).is_timestamp then
+          l_var.var_type  := flow_constants_pkg.gc_prov_var_type_tstz;
+          l_var.var_tstz  := pi_json.get_timestamp(l_keys(i));  
+        end case;
+      when 'OBJECT' then
+          l_var.var_type  := flow_constants_pkg.gc_prov_var_type_json;
+          l_var.var_json  := pi_json.get_object(l_keys(i)).to_clob;
+      when 'ARRAY' then
+          l_var.var_type  := flow_constants_pkg.gc_prov_var_type_json;
+          l_var.var_json   := pi_json.get_array(l_keys(i)).to_clob;
+      end case;
+
+      apex_debug.info
+      ( p_message => 'Creating proc var name %0 Proc var type %1'
+      , p0        => l_var.var_name
+      , p1        => l_var.var_type
+      );
+
+      set_var 
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_var_value    => l_var
+      , pi_sbfl_id      => pi_sbfl_id
+      , pi_objt_bpmn_id => pi_objt_bpmn_id
+      , pi_expr_set     => 'Iteration '|| to_char(i,'9999')
+      , pi_scope        => pi_scope
+      );
+    end loop;
+  end set_vars_from_json_object;
 
 -- group delete for all vars in a process (used at process deletion, process reset)
 
@@ -1237,12 +1393,31 @@ end delete_var;
   , pi_prcs_id  in  flow_processes.prcs_id%type
   , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   , pi_scope    in  flow_subflows.sbfl_scope%type
+  , pi_state_params   in  apex_exec.t_parameters default apex_exec.c_empty_parameters
   ) return apex_exec.t_parameters
   is
     l_parameter             apex_exec.t_parameter;
     l_parameters            apex_exec.t_parameters;
     l_var_list              apex_t_varchar2 := apex_t_varchar2();
     l_indx                  pls_integer;
+    l_bind_name             apex_exec.t_column_name;
+
+    function check_state_params
+    ( pi_state_params  in  apex_exec.t_parameters default apex_exec.c_empty_parameters
+    , pi_var           in  varchar2    
+    ) return apex_exec.t_parameter
+    is 
+      l_value     apex_exec.t_parameter;
+    begin
+      for i in pi_state_params.first..pi_state_params.last loop
+        if upper(pi_var) = pi_state_params(i).name then
+          apex_debug.message ('Found State Param %0', p0=> pi_var);
+          return pi_state_params(i);
+        end if;
+      end loop;
+      return null;
+    end check_state_params;
+
   begin
     l_parameters := apex_exec.t_parameters();
     apex_debug.info('t_parameters initialised');
@@ -1259,23 +1434,32 @@ end delete_var;
       while l_indx is not null 
       loop
         l_parameter.name  := flow_constants_pkg.gc_substitution_flow_identifier || l_var_list(l_indx);
-        case upper(l_var_list(l_indx))
-          when flow_constants_pkg.gc_substitution_process_id then
+        l_bind_name := upper(l_var_list(l_indx));
+        case 
+          when l_bind_name = flow_constants_pkg.gc_substitution_process_id then
             l_parameter.value.number_value  := pi_prcs_id;
             l_parameter.data_type           := apex_exec.c_data_type_number;
-          when flow_constants_pkg.gc_substitution_subflow_id then
+          when l_bind_name = flow_constants_pkg.gc_substitution_subflow_id then
             l_parameter.value.number_value  := pi_sbfl_id;
             l_parameter.data_type           := apex_exec.c_data_type_number;
-          when flow_constants_pkg.gc_substitution_scope then
+          when l_bind_name = flow_constants_pkg.gc_substitution_scope then
             l_parameter.value.number_value  := pi_scope;
             l_parameter.data_type           := apex_exec.c_data_type_number;      
-          when flow_constants_pkg.gc_substitution_process_priority then
+          when l_bind_name = flow_constants_pkg.gc_substitution_process_priority then
             l_parameter.value.number_value  := flow_instances.priority (p_process_id => pi_prcs_id);
-            l_parameter.data_type           := apex_exec.c_data_type_number;     
+            l_parameter.data_type           := apex_exec.c_data_type_number;   
+          when l_bind_name  in ( flow_constants_pkg.gc_substitution_loop_counter 
+                               , flow_constants_pkg.gc_substitution_total_instances
+                               , flow_constants_pkg.gc_substitution_active_instances
+                               , flow_constants_pkg.gc_substitution_completed_instances
+                               , flow_constants_pkg.gc_substitution_terminated_instances ) then
+            l_parameter := check_state_params ( pi_state_params => pi_state_params
+                                              , pi_var => upper(l_var_list(l_indx)));  
+            l_parameter.name := flow_constants_pkg.gc_substitution_flow_identifier||l_parameter.name;                            
           else  
             l_parameter := get_var_as_parameter
                           ( pi_prcs_id            => pi_prcs_id
-                          , pi_var_name           => l_var_list(l_indx)
+                          , pi_var_name           => l_var_list(l_indx) 
                           , pi_scope              => pi_scope
                           , pi_exception_on_null  => false
                           );
@@ -1298,6 +1482,56 @@ end delete_var;
     end if;
     return l_parameters;
   end get_parameter_list; 
+
+  function get_vars_as_json_object
+  ( pi_prcs_id   in flow_processes.prcs_id%type
+  , pi_scope     in flow_subflows.sbfl_scope%type
+  , pi_var_list  in flow_types_pkg.t_bpmn_attribute_vc2
+  ) return sys.json_object_t
+  is
+    l_var_list   apex_t_varchar2;
+    l_var_value  t_proc_var_value;
+    l_var_obj    sys.json_object_t;
+  begin
+    apex_debug.enter ( 'get_vars_as_json_object'
+    ,'pi_prcs_id', pi_prcs_id
+    ,'pi_scope', pi_scope
+    ,'pi_var_list', pi_var_list
+    );
+    -- split var list
+    l_var_list := apex_string.split ( p_str => pi_var_list, p_sep => ':');
+
+    l_var_obj := new sys.json_object_t;
+    if l_var_list.count > 0 then 
+      for i in l_var_list.first..l_var_list.last Loop
+        apex_debug.message ('Var name %0', p0 => l_var_list(i));
+        l_var_value := get_var_value  ( pi_prcs_id   => pi_prcs_id
+                                      , pi_var_name  => l_var_list(i)
+                                      , pi_scope     => pi_scope
+                                      );
+        apex_debug.message ('Var type: %0 vc2: %1 num: %2', 
+        p0 => l_var_value.var_type, p1 => l_var_value.var_vc2, p2 => l_var_value.var_num
+        );
+        case l_var_value.var_type
+        when flow_constants_pkg.gc_prov_var_type_varchar2 then
+          l_var_obj.put(l_var_value.var_name,l_var_value.var_vc2);
+        when flow_constants_pkg.gc_prov_var_type_date then
+          l_var_obj.put(l_var_value.var_name,l_var_value.var_date);
+        when flow_constants_pkg.gc_prov_var_type_number then
+          l_var_obj.put(l_var_value.var_name,l_var_value.var_num);
+        when flow_constants_pkg.gc_prov_var_type_tstz then
+          l_var_obj.put(l_var_value.var_name,cast( l_var_value.var_tstz as timestamp));
+        when flow_constants_pkg.gc_prov_var_type_json then
+          l_var_obj.put(l_var_value.var_name,l_var_value.var_json);
+        when flow_constants_pkg.gc_prov_var_type_clob then
+          l_var_obj.put(l_var_value.var_name,l_var_value.var_clob);
+        else
+          l_var_obj.put_null(l_var_list(i));
+        end case;
+      end loop;
+    end if;
+    return l_var_obj;
+  end get_vars_as_json_object;
 
 end flow_proc_vars_int;
 /

@@ -1,6 +1,9 @@
 /*
   Contains all calls which do not differ between scratch or migrate.
   Pretty much everything which has "create or replace" option
+  Items in Community Edition should install package spec and body here.
+  Items that are in Enterprise Edition should just add the package header here.   
+  -- Package body for Enterprise Edition objects are installed by entedition_db.sql
 */
 
 PROMPT >> Installing Engine Objects
@@ -43,6 +46,7 @@ PROMPT >> Engine
 @plsql/flow_log_admin.pks
 @plsql/flow_admin_api.pks
 @plsql/flow_statistics.pks
+@plsql/flow_iterations.pks
 
 PROMPT >>
 PROMPT >> REST API Support
@@ -112,6 +116,7 @@ PROMPT >> Engine
 @plsql/flow_log_admin.pkb
 @plsql/flow_admin_api.pkb
 @plsql/flow_statistics.pkb
+@plsql/flow_iterations.pkb
 
 PROMPT >>
 PROMPT >> REST API Support

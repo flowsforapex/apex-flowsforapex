@@ -7,6 +7,7 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created  April-2021  Richard Allen (Flowquest) - for  MT AG
 -- Modified 2022-07-18  Moritz Klein (MT AG)
@@ -29,6 +30,10 @@ as
   function get_object_tag
   ( p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
   , p_dgrm_id      in flow_diagrams.dgrm_id%type  
+  ) return flow_objects.objt_tag_name%type;
+
+  function get_object_tag
+  ( p_sbfl_info   in flow_subflows%rowtype
   ) return flow_objects.objt_tag_name%type;
   
   function get_object_subtag
@@ -70,6 +75,10 @@ as
   , p_lock_process  in boolean default false
   ) return flow_subflows%rowtype;
 
+  function get_iteration_type
+  ( p_step_info     in flow_types_pkg.flow_step_info
+  ) return varchar2;
+
   function step_key
   ( pi_sbfl_id        in flow_subflows.sbfl_id%type default null
   , pi_current        in flow_subflows.sbfl_current%type default null
@@ -110,6 +119,7 @@ as
     , p_follows_ebg               in boolean default false
     , p_loop_counter              in number default null
     , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
+    , p_iteration_path            in varchar2 default null
     ) return flow_types_pkg.t_subflow_context
     ;
 

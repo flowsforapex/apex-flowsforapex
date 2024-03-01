@@ -4,9 +4,11 @@ as
 -- Flows for APEX - flow_db_exec.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
+-- (c) Copyright Flowquest Consulting Limited. 2024.
 --
 -- Created  08-Dec-2022  Richard Allen (Oracle Corporation)
 -- Changed  21-FEB-2023  Moritz Klein (MT GmbH)
+-- Changed  11-feb-2024  Richard Allen (Flowquest Consulting)
 --
 */
   c_wrap_vc2_expr_pre       constant flow_types_pkg.t_expr_type := q'#begin :BIND_OUT_VAR := #';
@@ -41,6 +43,9 @@ as
   c_wrap_tstz_raw_func_pre  constant flow_types_pkg.t_expr_type := q'#declare function x return timestamp with time zone is begin #';
   c_wrap_tstz_raw_func_post constant flow_types_pkg.t_expr_type := q'#return null; end; begin :BIND_OUT_VAR := to_char(x, '#'||flow_constants_pkg.gc_prov_default_tstz_format||q'#'); end;#';
 
+  c_wrap_bool_expr_pre      constant flow_types_pkg.t_expr_type := q'#begin :BIND_OUT_VAR := case #';
+  c_wrap_bool_expr_post     constant flow_types_pkg.t_expr_type := q'# when true then 'true' else 'false' end; end;#';
+
 
   function exec_flows_sql
   ( pi_prcs_id        flow_processes.prcs_id%type  default null
@@ -58,6 +63,7 @@ as
   , pi_result_type    varchar2  
   , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
+  , pi_state_params   apex_exec.t_parameters default apex_exec.c_empty_parameters
   ) return flow_proc_vars_int.t_proc_var_value;
 
   -- pi_expr_type    = flow_constants_pkg.gc_expr_type_plsql_function_body 

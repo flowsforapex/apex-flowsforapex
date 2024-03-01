@@ -3,9 +3,15 @@ as
   select sbfl.sbfl_id
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_current_name as sbfl_current
+       , sbfl.sbfl_iteration_path
        , sbfl.sbfl_step_key
        , sbfl.sbfl_sbfl_dgrm_id
        , sbfl.sbfl_diagram_level
+       , sbfl.sbfl_process_level
+       , sbfl.sbfl_loop_counter
+       , sbfl.sbfl_loop_total_instances
+       , sbfl.sbfl_scope
+       , sbfl.sbfl_calling_sbfl
        , ( select nvl(objt.objt_name ,'Main Diagram')
              from flow_objects objt
              join flow_instance_diagrams prdg 
@@ -29,6 +35,7 @@ as
              when 'waiting for event' then 'fa fa-hand-stop-o'
              when 'waiting for approval' then 'fa fa-question-square-o'
              when 'waiting for message' then 'fa fa-envelope-o'
+             when 'waiting iterations' then 'fa fa-align-justify fa-rotate-90'
          end as sbfl_status_icon
        , sbfl.sbfl_priority
        , sbfl.sbfl_due_on
