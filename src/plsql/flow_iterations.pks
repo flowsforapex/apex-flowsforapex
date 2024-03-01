@@ -4,5 +4,7 @@ as
 
   procedure test;
 
+  procedure test2;
+
 end flow_iterations;
 /
