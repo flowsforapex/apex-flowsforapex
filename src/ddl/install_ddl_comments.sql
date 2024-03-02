@@ -39,45 +39,29 @@ comment on column flow_diagrams.dgrm_category     is ' ';
 comment on column flow_diagrams.dgrm_last_update  is ' '; 
 comment on column flow_diagrams.dgrm_content      is ' '; 
 
-comment on column FLOW_CONFIGURATION.CFIG_KEY is ' ';                       
-comment on column FLOW_CONFIGURATION.CFIG_VALUE is ' ';                     
-comment on column FLOW_CONNECTIONS.CONN_ID is ' ';                          
-comment on column FLOW_CONNECTIONS.CONN_BPMN_ID is ' ';                     
-comment on column FLOW_CONNECTIONS.CONN_DGRM_ID is ' ';                     
-comment on column FLOW_CONNECTIONS.CONN_NAME is ' ';                        
-comment on column FLOW_CONNECTIONS.CONN_SRC_OBJT_ID is ' ';                 
-comment on column FLOW_CONNECTIONS.CONN_TGT_OBJT_ID is ' ';                 
-comment on column FLOW_CONNECTIONS.CONN_TAG_NAME is ' ';                    
-comment on column FLOW_CONNECTIONS.CONN_ORIGIN is ' ';                      
-comment on column FLOW_CONNECTIONS.CONN_IS_DEFAULT is ' ';                  
-comment on column FLOW_CONNECTIONS.CONN_SEQUENCE is ' ';                    
-comment on column FLOW_CONNECTIONS.CONN_ATTRIBUTES is ' ';                  
-comment on column FLOW_DIAGRAMS.DGRM_ID is ' ';                             
-comment on column FLOW_DIAGRAMS.DGRM_NAME is ' ';                           
-comment on column FLOW_DIAGRAMS.DGRM_VERSION is ' ';                        
-comment on column FLOW_DIAGRAMS.DGRM_STATUS is ' ';                         
-comment on column FLOW_DIAGRAMS.DGRM_CATEGORY is ' ';                       
-comment on column FLOW_DIAGRAMS.DGRM_LAST_UPDATE is ' ';                    
-comment on column FLOW_DIAGRAMS.DGRM_CONTENT is ' ';                        
-comment on column FLOW_DIAGRAMS_INSTANCIATED_LOV.DGRM_ID is ' ';            
-comment on column FLOW_DIAGRAMS_INSTANCIATED_LOV.DGRM_NAME is ' ';          
-comment on column FLOW_DIAGRAMS_INSTANCIATED_LOV.DGRM_VERSION is ' ';       
-comment on column FLOW_DIAGRAMS_INSTANCIATED_LOV.DGRM_STATUS is ' ';        
-comment on column FLOW_DIAGRAMS_INSTANCIATED_LOV.DGRM_CATEGORY is ' ';      
-comment on column FLOW_DIAGRAMS_PARSED_LOV.DGRM_ID is ' ';                  
-comment on column FLOW_DIAGRAMS_PARSED_LOV.DGRM_NAME is ' ';                
-comment on column FLOW_DIAGRAMS_PARSED_LOV.DGRM_VERSION is ' ';             
-comment on column FLOW_DIAGRAMS_PARSED_LOV.DGRM_STATUS is ' ';              
-comment on column FLOW_DIAGRAMS_PARSED_LOV.DGRM_CATEGORY is ' ';            
+comment on column FLOW_CONNECTIONS.CONN_ID is 'Connection ID. A system generated unique identifier for a connection.  Note that the Connection ID changes when a diagram is re-parsed.';                          
+comment on column FLOW_CONNECTIONS.CONN_BPMN_ID is 'The unique identifier for a connection that is contained in the BPMN process diagram.';                     
+comment on column FLOW_CONNECTIONS.CONN_DGRM_ID is 'The diagram ID for the diagram containing this connection.  Foreign Key to flow_diagrams.';                     
+comment on column FLOW_CONNECTIONS.CONN_NAME is 'The textual name for this connection.';                        
+comment on column FLOW_CONNECTIONS.CONN_SRC_OBJT_ID is 'Object ID for source object that this connection comes from.';                 
+comment on column FLOW_CONNECTIONS.CONN_TGT_OBJT_ID is 'Object ID for target object that this connection goes to';                 
+comment on column FLOW_CONNECTIONS.CONN_TAG_NAME is 'The BPMN tag / connection type of this connection.   For example, bpmn:messageFlow.';                    
+comment on column FLOW_CONNECTIONS.CONN_ORIGIN is 'denotes whether the source object in contained in a PROCESS or a SUBPROCESS.';                      
+comment on column FLOW_CONNECTIONS.CONN_IS_DEFAULT is 'denotes if this connection is the default path from the source object, for example after a gateway.';                  
+comment on column FLOW_CONNECTIONS.CONN_SEQUENCE is 'When an object has multiple connections, the sequence determines the order in which they are  evaluated.';                    
+comment on column FLOW_CONNECTIONS.CONN_ATTRIBUTES is 'contains additional connection attributes stored as a json object.';       
+      
 comment on column FLOW_DIAGRAMS_VW.DGRM_ID is ' ';                          
 comment on column FLOW_DIAGRAMS_VW.DGRM_NAME is ' ';                        
 comment on column FLOW_DIAGRAMS_VW.DGRM_VERSION is ' ';                     
 comment on column FLOW_DIAGRAMS_VW.DGRM_STATUS is ' ';                      
 comment on column FLOW_DIAGRAMS_VW.DGRM_CATEGORY is ' ';                    
 comment on column FLOW_DIAGRAMS_VW.DGRM_LAST_UPDATE is ' ';                 
-comment on column FLOW_DIAGRAMS_VW.DGRM_CONTENT is ' ';                     
+comment on column FLOW_DIAGRAMS_VW.DGRM_CONTENT is ' ';       
+
 comment on column FLOW_DIAGRAM_CATEGORIES_LOV.D is ' ';                     
-comment on column FLOW_DIAGRAM_CATEGORIES_LOV.R is ' ';                     
+comment on column FLOW_DIAGRAM_CATEGORIES_LOV.R is ' ';     
+
 comment on column FLOW_FLOW_EVENT_LOG.LGFL_DGRM_ID is ' ';                  
 comment on column FLOW_FLOW_EVENT_LOG.LGFL_DGRM_NAME is ' ';                
 comment on column FLOW_FLOW_EVENT_LOG.LGFL_DGRM_VERSION is ' ';             
@@ -87,10 +71,8 @@ comment on column FLOW_FLOW_EVENT_LOG.LGFL_TIMESTAMP is ' ';
 comment on column FLOW_FLOW_EVENT_LOG.LGFL_USER is ' ';                     
 comment on column FLOW_FLOW_EVENT_LOG.LGFL_COMMENT is ' ';                  
 comment on column FLOW_FLOW_EVENT_LOG.LGFL_DGRM_ARCHIVE_LOCATION is ' ';    
-comment on column FLOW_INSTANCES_VW.PRCS_ID is ' ';                         
 
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'                  
-___________________________________________________________________________ 
+comment on column FLOW_INSTANCES_VW.PRCS_ID is ' ';
 comment on column FLOW_INSTANCES_VW.PRCS_NAME is ' ';                       
 comment on column FLOW_INSTANCES_VW.DGRM_ID is ' ';                         
 comment on column FLOW_INSTANCES_VW.DGRM_NAME is ' ';                       
@@ -106,13 +88,15 @@ comment on column FLOW_INSTANCES_VW.PRCS_DUE_ON is ' ';
 comment on column FLOW_INSTANCES_VW.PRCS_COMPLETE_TS is ' ';                
 comment on column FLOW_INSTANCES_VW.PRCS_LAST_UPDATE is ' ';                
 comment on column FLOW_INSTANCES_VW.PRCS_LAST_UPDATE_BY is ' ';             
-comment on column FLOW_INSTANCES_VW.PRCS_BUSINESS_REF is ' ';               
+comment on column FLOW_INSTANCES_VW.PRCS_BUSINESS_REF is ' ';    
+
 comment on column FLOW_INSTANCE_CONNECTIONS_LOV.CONN_BPMN_ID is ' ';        
 comment on column FLOW_INSTANCE_CONNECTIONS_LOV.CONN_NAME is ' ';           
 comment on column FLOW_INSTANCE_CONNECTIONS_LOV.CONN_SRC_OBJT_ID is ' ';    
 comment on column FLOW_INSTANCE_CONNECTIONS_LOV.SRC_OBJT_BPMN_ID is ' ';    
 comment on column FLOW_INSTANCE_CONNECTIONS_LOV.PRCS_ID is ' ';             
-comment on column FLOW_INSTANCE_CONNECTIONS_LOV.PRDG_ID is ' ';             
+comment on column FLOW_INSTANCE_CONNECTIONS_LOV.PRDG_ID is ' ';    
+
 comment on column FLOW_INSTANCE_DETAILS_VW.PRCS_ID is ' ';                  
 comment on column FLOW_INSTANCE_DETAILS_VW.PRCS_NAME is ' ';                
 comment on column FLOW_INSTANCE_DETAILS_VW.PRDG_ID is ' ';                  
@@ -132,20 +116,20 @@ comment on column FLOW_INSTANCE_DETAILS_VW.ALL_COMPLETED is ' ';
 comment on column FLOW_INSTANCE_DETAILS_VW.LAST_COMPLETED is ' ';           
 comment on column FLOW_INSTANCE_DETAILS_VW.ALL_CURRENT is ' ';              
 comment on column FLOW_INSTANCE_DETAILS_VW.ALL_ERRORS is ' ';               
-comment on column FLOW_INSTANCE_DETAILS_VW.PRCS_BUSINESS_REF is ' ';        
-comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_ID is ' ';                    
-comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_PRDG_ID is ' ';               
-comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_PRCS_ID is ' ';               
-comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_DGRM_ID is ' ';               
-comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_CALLING_DGRM is ' ';          
-comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_CALLING_OBJT is ' ';          
-comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_DIAGRAM_LEVEL is ' ';         
+comment on column FLOW_INSTANCE_DETAILS_VW.PRCS_BUSINESS_REF is ' ';     
 
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'                 
-__________________________________________________________________________ 
+comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_ID is 'The unique numeric ID for the use of a diagram in a process instance.';                    
+comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_PRDG_ID is 'Parent prdg_id (prdg_id of Calling Diagram)';               
+comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_PRCS_ID is 'The process instance ID.  Foreign Key to flow_processes.   Each process instance must be run using one or more instance-diagram usages.';               
+comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_DGRM_ID is 'The diagram ID of the diagram being used for this process instance.  Foreign key to flow_diagrams.';               
+comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_CALLING_DGRM is 'For diagram usage below the main diagram for an instance, this shows the diagram ID of the diagram which called it.  Foreign key to flow_diagrams.  ';          
+comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_CALLING_OBJT is 'For diagram usage below the main diagram for an instance, this shows the object bpmn id of the object which called it.  Foreign key to flow_objects. ';          
+comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_DIAGRAM_LEVEL is 'The diagram level assigned to usage of this diagram in this process instance.  Is set to the subflow id of the first subflow run from this diagram.'; 
+
 comment on column FLOW_INSTANCE_DIAGRAMS_LOV.CALLING_DIAGRAM is ' ';       
 comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_ID is ' ';               
-comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_PRCS_ID is ' ';          
+comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_PRCS_ID is ' ';     
+
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_PRCS_ID is ' ';             
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_OBJT_ID is ' ';             
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_DGRM_ID is ' ';             
@@ -156,7 +140,8 @@ comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_TIMESTAMP is ' ';
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_DURATION is ' ';            
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_USER is ' ';                
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_COMMENT is ' ';             
-comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_ERROR_INFO is ' ';          
+comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_ERROR_INFO is ' ';     
+
 comment on column FLOW_INSTANCE_GATEWAYS_LOV.OBJT_ID is ' ';               
 comment on column FLOW_INSTANCE_GATEWAYS_LOV.OBJT_BPMN_ID is ' ';          
 comment on column FLOW_INSTANCE_GATEWAYS_LOV.CALLING_OBJECT is ' ';        
@@ -166,7 +151,8 @@ comment on column FLOW_INSTANCE_GATEWAYS_LOV.PRCS_ID is ' ';
 comment on column FLOW_INSTANCE_GATEWAYS_LOV.PRDG_DIAGRAM_LEVEL is ' ';    
 comment on column FLOW_INSTANCE_GATEWAYS_LOV.PRDG_DGRM_ID is ' ';          
 comment on column FLOW_INSTANCE_GATEWAYS_LOV.PRDG_PRDG_ID is ' ';          
-comment on column FLOW_INSTANCE_GATEWAYS_LOV.PRDG_ID is ' ';               
+comment on column FLOW_INSTANCE_GATEWAYS_LOV.PRDG_ID is ' ';     
+
 comment on column FLOW_INSTANCE_STATS.STPR_DGRM_ID is ' ';                 
 comment on column FLOW_INSTANCE_STATS.STPR_PERIOD_START is ' ';            
 comment on column FLOW_INSTANCE_STATS.STPR_PERIOD is ' ';                  
@@ -183,7 +169,8 @@ comment on column FLOW_INSTANCE_STATS.STPR_DURATION_MAX_IVL is ' ';
 comment on column FLOW_INSTANCE_STATS.STPR_DURATION_10PC_SEC is ' ';       
 comment on column FLOW_INSTANCE_STATS.STPR_DURATION_50PC_SEC is ' ';       
 comment on column FLOW_INSTANCE_STATS.STPR_DURATION_90PC_SEC is ' ';       
-comment on column FLOW_INSTANCE_STATS.STPR_DURATION_MAX_SEC is ' ';        
+comment on column FLOW_INSTANCE_STATS.STPR_DURATION_MAX_SEC is ' ';    
+
 comment on column FLOW_INSTANCE_TIMELINE_VW.OPERATION is ' ';              
 comment on column FLOW_INSTANCE_TIMELINE_VW.DESCRIPTION is ' ';            
 comment on column FLOW_INSTANCE_TIMELINE_VW.OBJT is ' ';                   
@@ -191,13 +178,11 @@ comment on column FLOW_INSTANCE_TIMELINE_VW.SUBFLOW is ' ';
 comment on column FLOW_INSTANCE_TIMELINE_VW.PROCESS_LEVEL is ' ';          
 comment on column FLOW_INSTANCE_TIMELINE_VW.PROC_VAR is ' ';               
 comment on column FLOW_INSTANCE_TIMELINE_VW.VALUE is ' ';                  
-comment on column FLOW_INSTANCE_TIMELINE_VW.EVENT_COMMENT is ' ';          
-
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'                   
-____________________________________________________________________________ 
+comment on column FLOW_INSTANCE_TIMELINE_VW.EVENT_COMMENT is ' ';
 comment on column FLOW_INSTANCE_TIMELINE_VW.PERFORMED_ON is ' ';             
 comment on column FLOW_INSTANCE_TIMELINE_VW.PERFORMED_BY is ' ';             
-comment on column FLOW_INSTANCE_TIMELINE_VW.PRCS_ID is ' ';                  
+comment on column FLOW_INSTANCE_TIMELINE_VW.PRCS_ID is ' ';   
+
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_PRCS_ID is ' ';            
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_VAR_NAME is ' ';           
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_SCOPE is ' ';              
@@ -209,10 +194,12 @@ comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_VAR_TSTZ is ' ';
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_VAR_CLOB is ' ';           
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_VAR_JSON is ' ';           
 comment on column FLOW_INSTANCE_VARIABLES_VW.PRCS_NAME is ' ';               
-comment on column FLOW_INSTANCE_VARIABLES_VW.PRCS_STATUS is ' ';             
-comment on column FLOW_MESSAGES.FMSG_MESSAGE_KEY is ' ';                     
-comment on column FLOW_MESSAGES.FMSG_LANG is ' ';                            
-comment on column FLOW_MESSAGES.FMSG_MESSAGE_CONTENT is ' ';                 
+comment on column FLOW_INSTANCE_VARIABLES_VW.PRCS_STATUS is ' ';      
+
+comment on column FLOW_MESSAGES.FMSG_MESSAGE_KEY is 'Error Message key';                     
+comment on column FLOW_MESSAGES.FMSG_LANG is 'Language of the error message';                            
+comment on column FLOW_MESSAGES.FMSG_MESSAGE_CONTENT is 'Error Message text in fmsg_lang language.';     
+
 comment on column FLOW_MESSAGE_RECEIVED_LOG.LGRX_ID is ' ';                  
 comment on column FLOW_MESSAGE_RECEIVED_LOG.LGRX_MESSAGE_NAME is ' ';        
 comment on column FLOW_MESSAGE_RECEIVED_LOG.LGRX_KEY_NAME is ' ';            
@@ -223,6 +210,7 @@ comment on column FLOW_MESSAGE_RECEIVED_LOG.LGRX_SBFL_ID is ' ';
 comment on column FLOW_MESSAGE_RECEIVED_LOG.LGRX_RECEIVED_ON is ' ';         
 comment on column FLOW_MESSAGE_RECEIVED_LOG.LGRX_WAS_CORRELATED is ' ';      
 comment on column FLOW_MESSAGE_RECEIVED_LOG.LGRX_COMMENT is ' ';             
+
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS.MSUB_ID is ' ';                 
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS.MSUB_MESSAGE_NAME is ' ';       
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS.MSUB_KEY_NAME is ' ';           
@@ -234,6 +222,7 @@ comment on column FLOW_MESSAGE_SUBSCRIPTIONS.MSUB_CALLBACK is ' ';
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS.MSUB_CALLBACK_PAR is ' ';       
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS.MSUB_PAYLOAD_VAR is ' ';        
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS.MSUB_CREATED is ' ';            
+
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_ID is ' ';              
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_MESSAGE_NAME is ' ';    
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_KEY_NAME is ' ';        
@@ -243,22 +232,21 @@ comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_SBFL_ID is ' ';
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_STEP_KEY is ' ';        
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_CALLBACK is ' ';        
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_CALLBACK_PAR is ' ';    
-comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_PAYLOAD_VAR is ' ';     
-
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'              
-_______________________________________________________________________ 
+comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_PAYLOAD_VAR is ' '; 
 comment on column FLOW_MESSAGE_SUBSCRIPTIONS_VW.MSUB_CREATED is ' ';    
-comment on column FLOW_OBJECTS.OBJT_ID is ' ';                          
-comment on column FLOW_OBJECTS.OBJT_BPMN_ID is ' ';                     
-comment on column FLOW_OBJECTS.OBJT_DGRM_ID is ' ';                     
-comment on column FLOW_OBJECTS.OBJT_NAME is ' ';                        
-comment on column FLOW_OBJECTS.OBJT_TAG_NAME is ' ';                    
-comment on column FLOW_OBJECTS.OBJT_SUB_TAG_NAME is ' ';                
-comment on column FLOW_OBJECTS.OBJT_OBJT_ID is ' ';                     
-comment on column FLOW_OBJECTS.OBJT_OBJT_LANE_ID is ' ';                
-comment on column FLOW_OBJECTS.OBJT_ATTACHED_TO is ' ';                 
-comment on column FLOW_OBJECTS.OBJT_INTERRUPTING is ' ';                
-comment on column FLOW_OBJECTS.OBJT_ATTRIBUTES is ' ';                  
+
+comment on column FLOW_OBJECTS.OBJT_ID is 'Object ID. A system generated unique identifier for an object.  Note that the Object ID changes when a diagram is re-parsed. ';                          
+comment on column FLOW_OBJECTS.OBJT_BPMN_ID is 'The unique identifier for an object that is contained in the BPMN process diagram.';                     
+comment on column FLOW_OBJECTS.OBJT_DGRM_ID is 'The diagram ID for the diagram containing this object.  Foreign Key to flow_diagrams.';                     
+comment on column FLOW_OBJECTS.OBJT_NAME is 'The textual name for this object.';                        
+comment on column FLOW_OBJECTS.OBJT_TAG_NAME is 'The BPMN tag / object type of this object.   For example, bpmn:task or bpmn:subProcess.';                    
+comment on column FLOW_OBJECTS.OBJT_SUB_TAG_NAME is 'The BPMN sub-tag / object sub-type of this object. For example, a terminate end event would have subtag of terminateEventDefinition';                
+comment on column FLOW_OBJECTS.OBJT_OBJT_ID is 'Parent object.  Foreign key to flow_objects.  Each object may have one or more child objects.';                     
+comment on column FLOW_OBJECTS.OBJT_OBJT_LANE_ID is 'This object may be inside one and only one lane.  Foreign key to flow_objects.';                
+comment on column FLOW_OBJECTS.OBJT_ATTACHED_TO is 'This object may be attached  to one and only one parent object.  Foreign key to flow_objects.  Used when boundary events are attached to an object.';                 
+comment on column FLOW_OBJECTS.OBJT_INTERRUPTING is 'Used for boundary events.   Denotes if the boundary event is interupting or not interrupting.';                
+comment on column FLOW_OBJECTS.OBJT_ATTRIBUTES is ' contains additional object attributes stored as a json object.';             
+
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_ID is ' ';               
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_OBJT_ID is ' ';          
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_SET is ' ';              
@@ -267,25 +255,28 @@ comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_VAR_NAME is ' ';
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_VAR_TYPE is ' ';         
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_TYPE is ' ';             
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_EXPRESSION is ' ';       
+
 comment on column FLOW_PARSER_LOG.PLOG_ID is ' ';                       
 comment on column FLOW_PARSER_LOG.PLOG_DGRM_ID is ' ';                  
 comment on column FLOW_PARSER_LOG.PLOG_BPMN_ID is ' ';                  
 comment on column FLOW_PARSER_LOG.PLOG_LOG_TIME is ' ';                 
 comment on column FLOW_PARSER_LOG.PLOG_PARSE_STEP is ' ';               
-comment on column FLOW_PARSER_LOG.PLOG_PAYLOAD is ' ';                  
+comment on column FLOW_PARSER_LOG.PLOG_PAYLOAD is ' ';              
+
 comment on column FLOW_PROCESSES.PRCS_ID is ' ';                        
 comment on column FLOW_PROCESSES.PRCS_DGRM_ID is ' ';                   
 comment on column FLOW_PROCESSES.PRCS_NAME is ' ';                      
 comment on column FLOW_PROCESSES.PRCS_STATUS is ' ';                    
 comment on column FLOW_PROCESSES.PRCS_INIT_TS is ' ';                   
 comment on column FLOW_PROCESSES.PRCS_INIT_BY is ' ';                   
-comment on column FLOW_PROCESSES.PRCS_START_TS is ' ';                  
-comment on column FLOW_PROCESSES.PRCS_COMPLETE_TS is ' ';               
+comment on column FLOW_PROCESSES.PRCS_START_TS is 'Timestamp for process start.  Resets if process instance is reset.';                  
+comment on column FLOW_PROCESSES.PRCS_COMPLETE_TS is 'Timestamp for process end when instance is in states "completed" or "terminated".';               
 comment on column FLOW_PROCESSES.PRCS_DUE_ON is ' ';                    
-comment on column FLOW_PROCESSES.PRCS_ARCHIVED_TS is ' ';               
+comment on column FLOW_PROCESSES.PRCS_ARCHIVED_TS is 'Timestamp for process archive.  Resets if process instance is reset.';               
 comment on column FLOW_PROCESSES.PRCS_PRIORITY is ' ';                  
 comment on column FLOW_PROCESSES.PRCS_LAST_UPDATE is ' ';               
-comment on column FLOW_PROCESSES.PRCS_LAST_UPDATE_BY is ' ';            
+comment on column FLOW_PROCESSES.PRCS_LAST_UPDATE_BY is ' ';     
+
 comment on column FLOW_PROCESS_VARIABLES.PROV_PRCS_ID is ' ';           
 comment on column FLOW_PROCESS_VARIABLES.PROV_SCOPE is ' ';             
 comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_NAME is ' ';          
@@ -295,17 +286,16 @@ comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_NUM is ' ';
 comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_DATE is ' ';          
 comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_TSTZ is ' ';          
 comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_CLOB is ' ';          
-comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_JSON is ' ';          
+comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_JSON is ' '; 
+comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_NAME_UC is ' ';  
 
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'               
-________________________________________________________________________ 
-comment on column FLOW_PROCESS_VARIABLES.PROV_VAR_NAME_UC is ' ';        
 comment on column FLOW_REST_DIAGRAMS_VW.DGRM_ID is ' ';                  
 comment on column FLOW_REST_DIAGRAMS_VW.NAME is ' ';                     
 comment on column FLOW_REST_DIAGRAMS_VW.VERSION is ' ';                  
 comment on column FLOW_REST_DIAGRAMS_VW.STATUS is ' ';                   
 comment on column FLOW_REST_DIAGRAMS_VW.CATEGORY is ' ';                 
-comment on column FLOW_REST_DIAGRAMS_VW.LINKS is ' ';                    
+comment on column FLOW_REST_DIAGRAMS_VW.LINKS is ' ';         
+
 comment on column FLOW_REST_EVENT_LOG.LGRT_ID is ' ';                    
 comment on column FLOW_REST_EVENT_LOG.LGRT_CALL_GUID is ' ';             
 comment on column FLOW_REST_EVENT_LOG.LGRT_CLIENT_ID is ' ';             
@@ -318,6 +308,7 @@ comment on column FLOW_REST_EVENT_LOG.LGRT_PAYLOAD is ' ';
 comment on column FLOW_REST_EVENT_LOG.LGRT_ERROR_CODE is ' ';            
 comment on column FLOW_REST_EVENT_LOG.LGRT_ERROR_MSG is ' ';             
 comment on column FLOW_REST_EVENT_LOG.LGRT_ERROR_STACKTRACE is ' ';      
+
 comment on column FLOW_REST_MESSAGE_SUBSCRIPTIONS_VW.MSUB_ID is ' ';     
 comment on column FLOW_REST_MESSAGE_SUBSCRIPTIONS_VW.NAME is ' ';        
 comment on column FLOW_REST_MESSAGE_SUBSCRIPTIONS_VW.KEY is ' ';         
@@ -325,6 +316,7 @@ comment on column FLOW_REST_MESSAGE_SUBSCRIPTIONS_VW.VALUE is ' ';
 comment on column FLOW_REST_MESSAGE_SUBSCRIPTIONS_VW.PRCS_ID is ' ';     
 comment on column FLOW_REST_MESSAGE_SUBSCRIPTIONS_VW.SBFL_ID is ' ';     
 comment on column FLOW_REST_MESSAGE_SUBSCRIPTIONS_VW.STEP_KEY is ' ';    
+
 comment on column FLOW_REST_PROCESSES_VW.DGRM_ID is ' ';                 
 comment on column FLOW_REST_PROCESSES_VW.PRCS_ID is ' ';                 
 comment on column FLOW_REST_PROCESSES_VW.NAME is ' ';                    
@@ -332,12 +324,14 @@ comment on column FLOW_REST_PROCESSES_VW.STATUS is ' ';
 comment on column FLOW_REST_PROCESSES_VW.INIT_TS is ' ';                 
 comment on column FLOW_REST_PROCESSES_VW.INIT_BY is ' ';                 
 comment on column FLOW_REST_PROCESSES_VW.PROCESS_VARS is ' ';            
-comment on column FLOW_REST_PROCESSES_VW.LINKS is ' ';                   
+comment on column FLOW_REST_PROCESSES_VW.LINKS is ' ';          
+
 comment on column FLOW_REST_PROCESS_VARS_VW.PRCS_ID is ' ';              
 comment on column FLOW_REST_PROCESS_VARS_VW.SCOPE is ' ';                
 comment on column FLOW_REST_PROCESS_VARS_VW.NAME is ' ';                 
 comment on column FLOW_REST_PROCESS_VARS_VW.TYPE is ' ';                 
-comment on column FLOW_REST_PROCESS_VARS_VW.VALUE is ' ';                
+comment on column FLOW_REST_PROCESS_VARS_VW.VALUE is ' ';       
+
 comment on column FLOW_REST_SUBFLOWS_VW.PRCS_ID is ' ';                  
 comment on column FLOW_REST_SUBFLOWS_VW.SBFL_ID is ' ';                  
 comment on column FLOW_REST_SUBFLOWS_VW.SBFL_SBFL_ID is ' ';             
@@ -345,15 +339,13 @@ comment on column FLOW_REST_SUBFLOWS_VW.PROCESS_LEVEL is ' ';
 comment on column FLOW_REST_SUBFLOWS_VW.DIAGRAM_LEVEL is ' ';            
 comment on column FLOW_REST_SUBFLOWS_VW.CALLING_SBFL is ' ';             
 comment on column FLOW_REST_SUBFLOWS_VW.SCOPE is ' ';                    
-comment on column FLOW_REST_SUBFLOWS_VW.current is ' ';                  
+comment on column FLOW_REST_SUBFLOWS_VW.CURRENT is ' ';                  
 comment on column FLOW_REST_SUBFLOWS_VW.STEP_KEY is ' ';                 
-comment on column FLOW_REST_SUBFLOWS_VW.STATUS is ' ';                   
-
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'                        
-_________________________________________________________________________________ 
+comment on column FLOW_REST_SUBFLOWS_VW.STATUS is ' '; 
 comment on column FLOW_REST_SUBFLOWS_VW.BECAME_CURRENT is ' ';                    
 comment on column FLOW_REST_SUBFLOWS_VW.RESERVATION is ' ';                       
-comment on column FLOW_REST_SUBFLOWS_VW.LINKS is ' ';                             
+comment on column FLOW_REST_SUBFLOWS_VW.LINKS is ' ';        
+
 comment on column FLOW_STARTABLE_DIAGRAMS_VW.DGRM_ID is ' ';                      
 comment on column FLOW_STARTABLE_DIAGRAMS_VW.DGRM_NAME is ' ';                    
 comment on column FLOW_STARTABLE_DIAGRAMS_VW.DGRM_VERSION is ' ';                 
@@ -363,6 +355,7 @@ comment on column FLOW_STARTABLE_DIAGRAMS_VW.PROCESS_BPMN_ID is ' ';
 comment on column FLOW_STARTABLE_DIAGRAMS_VW.POTENTIAL_STARTING_USERS is ' ';     
 comment on column FLOW_STARTABLE_DIAGRAMS_VW.POTENTIAL_STARTING_GROUPS is ' ';    
 comment on column FLOW_STARTABLE_DIAGRAMS_VW.EXCLUDED_STARTING_USERS is ' ';      
+
 comment on column FLOW_STATS_HISTORY.STHS_ID is ' ';                              
 comment on column FLOW_STATS_HISTORY.STHS_DATE is ' ';                            
 comment on column FLOW_STATS_HISTORY.STHS_STATUS is ' ';                          
@@ -372,7 +365,8 @@ comment on column FLOW_STATS_HISTORY.STHS_ERRORS is ' ';
 comment on column FLOW_STATS_HISTORY.STHS_COMMENTS is ' ';                        
 comment on column FLOW_STATS_HISTORY.STHS_CREATED_ON is ' ';                      
 comment on column FLOW_STATS_HISTORY.STHS_UPDATED_ON is ' ';                      
-comment on column FLOW_STATS_HISTORY.STHS_UPDATED_BY is ' ';                      
+comment on column FLOW_STATS_HISTORY.STHS_UPDATED_BY is ' ';        
+
 comment on column FLOW_STEP_EVENT_LOG.LGSF_PRCS_ID is ' ';                        
 comment on column FLOW_STEP_EVENT_LOG.LGSF_OBJT_ID is ' ';                        
 comment on column FLOW_STEP_EVENT_LOG.LGSF_SBFL_ID is ' ';                        
@@ -388,7 +382,8 @@ comment on column FLOW_STEP_EVENT_LOG.LGSF_RESERVATION is ' ';
 comment on column FLOW_STEP_EVENT_LOG.LGSF_DUE_ON is ' ';                         
 comment on column FLOW_STEP_EVENT_LOG.LGSF_PRIORITY is ' ';                       
 comment on column FLOW_STEP_EVENT_LOG.LGSF_USER is ' ';                           
-comment on column FLOW_STEP_EVENT_LOG.LGSF_COMMENT is ' ';                        
+comment on column FLOW_STEP_EVENT_LOG.LGSF_COMMENT is ' ';      
+
 comment on column FLOW_STEP_STATS.STSF_DGRM_ID is ' ';                            
 comment on column FLOW_STEP_STATS.STSF_OBJT_BPMN_ID is ' ';                       
 comment on column FLOW_STEP_STATS.STSF_TAG_NAME is ' ';                           
@@ -399,10 +394,7 @@ comment on column FLOW_STEP_STATS.STSF_DURATION_10PC_IVL is ' ';
 comment on column FLOW_STEP_STATS.STSF_DURATION_50PC_IVL is ' ';                  
 comment on column FLOW_STEP_STATS.STSF_DURATION_90PC_IVL is ' ';                  
 comment on column FLOW_STEP_STATS.STSF_DURATION_MAX_IVL is ' ';                   
-comment on column FLOW_STEP_STATS.STSF_DURATION_10PC_SEC is ' ';                  
-
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'           
-____________________________________________________________________ 
+comment on column FLOW_STEP_STATS.STSF_DURATION_10PC_SEC is ' '; 
 comment on column FLOW_STEP_STATS.STSF_DURATION_50PC_SEC is ' ';     
 comment on column FLOW_STEP_STATS.STSF_DURATION_90PC_SEC is ' ';     
 comment on column FLOW_STEP_STATS.STSF_DURATION_MAX_SEC is ' ';      
@@ -413,15 +405,18 @@ comment on column FLOW_STEP_STATS.STSF_WAITING_MAX_IVL is ' ';
 comment on column FLOW_STEP_STATS.STSF_WAITING_10PC_SEC is ' ';      
 comment on column FLOW_STEP_STATS.STSF_WAITING_50PC_SEC is ' ';      
 comment on column FLOW_STEP_STATS.STSF_WAITING_90PC_SEC is ' ';      
-comment on column FLOW_STEP_STATS.STSF_WAITING_MAX_SEC is ' ';       
+comment on column FLOW_STEP_STATS.STSF_WAITING_MAX_SEC is ' ';    
+
 comment on column FLOW_SUBFLOWS.SBFL_ID is ' ';                      
 comment on column FLOW_SUBFLOWS.SBFL_PRCS_ID is ' ';                 
-comment on column FLOW_SUBFLOWS.SBFL_DGRM_ID is ' ';                 
-comment on column FLOW_SUBFLOWS.SBFL_SBFL_ID is ' ';                 
-comment on column FLOW_SUBFLOWS.SBFL_PROCESS_LEVEL is ' ';           
-comment on column FLOW_SUBFLOWS.SBFL_DIAGRAM_LEVEL is ' ';           
-comment on column FLOW_SUBFLOWS.SBFL_CALLING_SBFL is ' ';            
-comment on column FLOW_SUBFLOWS.SBFL_SCOPE is ' ';                   
+comment on column FLOW_SUBFLOWS.SBFL_DGRM_ID is 'Diagram to be used on this Subflow. For top level process diagrams, this is same as prcs_dgrm_id.  When in a Call Activity, it is the Called Diagram.  Foreign Key to flow_diagrams.';                 
+comment on column FLOW_SUBFLOWS.SBFL_SBFL_ID is 'Parent Subflow. Foreign key to flow_subflows. Each subflow may be the child of a parent subflow. Note that the parent may no longer exist if is has completed before its child.';                 
+comment on column FLOW_SUBFLOWS.SBFL_PROCESS_LEVEL is 'Process level of initial subflow in an instance is 0. 
+    On starting a new SubProcess, CallActivity, or parallel iteration a new level is started having Process Level = its initial Subflow ID';           
+comment on column FLOW_SUBFLOWS.SBFL_DIAGRAM_LEVEL is 'Diagram level of initial diagram in an instance is 0. 
+    On starting a new CallActivity, a new level is started having Diagram Level = its initial Subflow ID.';           
+comment on column FLOW_SUBFLOWS.SBFL_CALLING_SBFL is 'At all process levels except 0 (main), this contains the Subflow ID of the parent object in the calling process level';            
+comment on column FLOW_SUBFLOWS.SBFL_SCOPE is 'Variable scope to used for variables in this Subflow.  Generally = Diagram Level, except in iteration or other special cases.';                   
 comment on column FLOW_SUBFLOWS.SBFL_STARTING_OBJECT is ' ';         
 comment on column FLOW_SUBFLOWS.SBFL_ROUTE is ' ';                   
 comment on column FLOW_SUBFLOWS.SBFL_LAST_COMPLETED is ' ';          
@@ -447,14 +442,12 @@ comment on column FLOW_SUBFLOWS.SBFL_LOOP_COUNTER is ' ';
 comment on column FLOW_SUBFLOWS.SBFL_LOOP_TOTAL_INSTANCES is ' ';    
 comment on column FLOW_SUBFLOWS.SBFL_LAST_UPDATE is ' ';             
 comment on column FLOW_SUBFLOWS.SBFL_LAST_UPDATE_BY is ' ';          
-comment on column FLOW_SUBFLOWS.SBFL_ITERATION_PATH is ' ';          
+comment on column FLOW_SUBFLOWS.SBFL_ITERATION_PATH is ' ';   
+
 comment on column FLOW_SUBFLOWS_VW.SBFL_ID is ' ';                   
 comment on column FLOW_SUBFLOWS_VW.SBFL_SBFL_ID is ' ';              
 comment on column FLOW_SUBFLOWS_VW.SBFL_PRCS_ID is ' ';              
-comment on column FLOW_SUBFLOWS_VW.SBFL_PROCESS_NAME is ' ';         
-
-'COMMENTONCOLUMN'||TABLE_NAME||'.'||COLUMN_NAME||'IS'''';'              
-_______________________________________________________________________ 
+comment on column FLOW_SUBFLOWS_VW.SBFL_PROCESS_NAME is ' ';
 comment on column FLOW_SUBFLOWS_VW.SBFL_DGRM_ID is ' ';                 
 comment on column FLOW_SUBFLOWS_VW.SBFL_SBFL_DGRM_ID is ' ';            
 comment on column FLOW_SUBFLOWS_VW.SBFL_DGRM_NAME is ' ';               
@@ -494,7 +487,8 @@ comment on column FLOW_SUBFLOWS_VW.SBFL_POTENTIAL_GROUPS is ' ';
 comment on column FLOW_SUBFLOWS_VW.SBFL_EXCLUDED_USERS is ' ';          
 comment on column FLOW_SUBFLOWS_VW.SBFL_CURRENT_OBJT_ID is ' ';         
 comment on column FLOW_SUBFLOWS_VW.SBFL_PRCS_INIT_TS is ' ';            
-comment on column FLOW_SUBFLOWS_VW.TIMR_START_ON is ' ';                
+comment on column FLOW_SUBFLOWS_VW.TIMR_START_ON is ' ';    
+
 comment on column FLOW_SUBFLOW_LOG.SFLG_PRCS_ID is ' ';                 
 comment on column FLOW_SUBFLOW_LOG.SFLG_OBJT_ID is ' ';                 
 comment on column FLOW_SUBFLOW_LOG.SFLG_SBFL_ID is ' ';                 
@@ -503,7 +497,7 @@ comment on column FLOW_SUBFLOW_LOG.SFLG_DGRM_ID is ' ';
 comment on column FLOW_SUBFLOW_LOG.SFLG_DIAGRAM_LEVEL is ' ';           
 comment on column FLOW_SUBFLOW_LOG.SFLG_LAST_UPDATED is ' ';            
 comment on column FLOW_SUBFLOW_LOG.SFLG_NOTES is ' ';  
-                 
+
 comment on column FLOW_TASK_INBOX_VW.SBFL_ID is ' '; 
 comment on column FLOW_TASK_INBOX_VW.SBFL_SBFL_ID is ' ';                 
 comment on column FLOW_TASK_INBOX_VW.SBFL_PRCS_ID is ' ';                 
@@ -548,11 +542,11 @@ comment on column FLOW_TIMERS.TIMR_STEP_KEY is ' ';
 comment on column FLOW_TIMERS.TIMR_TYPE is ' ';                           
 comment on column FLOW_TIMERS.TIMR_LAST_RUN is ' ';                       
 comment on column FLOW_TIMERS.TIMR_CREATED_ON is ' ';                     
-comment on column FLOW_TIMERS.TIMR_STATUS is ' ';                         
-comment on column FLOW_TIMERS.TIMR_START_ON is ' ';                       
-comment on column FLOW_TIMERS.TIMR_INTERVAL_YM is ' ';                    
-comment on column FLOW_TIMERS.TIMR_INTERVAL_DS is ' ';                    
-comment on column FLOW_TIMERS.TIMR_REPEAT_TIMES is ' ';                   
+comment on column FLOW_TIMERS.TIMR_STATUS is 'Status of the timer. For the status codes see constant definitions in FLOW_TIMERS_PKG package declaration.';                         
+comment on column FLOW_TIMERS.TIMR_START_ON is 'Expected start datetime. Used for both date and duration definitions.';                       
+comment on column FLOW_TIMERS.TIMR_INTERVAL_YM is 'Interval YM for cycles.';                    
+comment on column FLOW_TIMERS.TIMR_INTERVAL_DS is 'Interval DS for cycles.';                    
+comment on column FLOW_TIMERS.TIMR_REPEAT_TIMES is 'Number of runs for cycles.';                   
 comment on column FLOW_TIMERS.TIMR_CALLBACK is ' ';                       
 comment on column FLOW_TIMERS.TIMR_CALLBACK_PAR is ' ';     
 
@@ -569,4 +563,7 @@ comment on column FLOW_VARIABLE_EVENT_LOG.LGVR_VAR_NUM is ' ';
 comment on column FLOW_VARIABLE_EVENT_LOG.LGVR_VAR_DATE is ' ';     
 comment on column FLOW_VARIABLE_EVENT_LOG.LGVR_VAR_TSTZ is ' ';     
 comment on column FLOW_VARIABLE_EVENT_LOG.LGVR_VAR_CLOB is ' ';     
-comment on column FLOW_VARIABLE_EVENT_LOG.LGVR_VAR_JSON is ' ';     
+comment on column FLOW_VARIABLE_EVENT_LOG.LGVR_VAR_JSON is ' ';    
+
+comment on column FLOW_CONFIGURATION.CFIG_KEY is 'Configuration parameter key';                       
+comment on column FLOW_CONFIGURATION.CFIG_VALUE is 'Configuration parameter value';   

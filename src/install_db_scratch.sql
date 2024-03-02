@@ -8,6 +8,8 @@ PROMPT >> Installing Tables
 @ddl/install_scratch.sql
 PROMPT >> Common Objects
 @common_db.sql
+PROMPT >> Adding Comments
+@ddl/install_ddl_comments.sql
 
 PROMPT >> Initial Engine Configuration
 PROMPT >> =============================

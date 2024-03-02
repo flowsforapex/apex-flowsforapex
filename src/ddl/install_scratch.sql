@@ -103,15 +103,6 @@ CREATE TABLE flow_processes (
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
 
-comment on column flow_processes.prcs_start_ts is 
- 'Timestamp for process start.  Resets if process instance is reset.';
-
-comment on column flow_processes.prcs_complete_ts is 
- 'Timestamp for process end when instance is in states "completed" or "terminated".';
-
-  comment on column flow_processes.prcs_archived_ts is 
- 'Timestamp for process archive.  Resets if process instance is reset. ';
-
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
 
 create index flow_prcs_dgrm_status_ix on flow_processes (prcs_dgrm_id, prcs_status);
@@ -166,27 +157,6 @@ CREATE TABLE flow_subflows (
     sbfl_last_update_by             VARCHAR2(255 CHAR)
 );
 
-COMMENT ON COLUMN flow_subflows.sbfl_dgrm_id is
-    'Diagram to be used on this Subflow. For top level process diagrams, this is same as prcs_dgrm_id.  When in a Call Activity, it is the Called Diagram';
-
-COMMENT ON COLUMN flow_subflows.sbfl_sbfl_id is
-    'Parent Subflow of this Subflow.  Note that the parent may no longer exist if is has completed before its child.';
-
-COMMENT ON COLUMN flow_subflows.sbfl_process_level is
-    'Process level of initial subflow in an instance is 0. 
-    On starting a new SubProcess or CallActivity, a new level is started having Process Level = its initial Subflow ID';
-
-COMMENT ON COLUMN flow_subflows.sbfl_diagram_level is 
-    'Diagram level of initial diagram in an instance is 0. 
-    On starting a new CallActivity, a new level is started having Diagram Level = its initial Subflow ID';
-
-COMMENT ON COLUMN flow_subflows.sbfl_calling_sbfl is
-    'At all process levels except 0 (main), this contains the Subflow ID of the parent object in the calling process level';
-
-COMMENT ON COLUMN flow_subflows.sbfl_scope is
-    'Variable scope to used for variables in this Subflow.  Generally = Diagram Level, except in iteration or other special cases.';
-
-
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_pk PRIMARY KEY ( sbfl_id );
 
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_ck_following_ebg_yn CHECK (sbfl_is_following_ebg in ('Y','N'));
@@ -203,9 +173,6 @@ CREATE TABLE flow_instance_diagrams (
     prdg_calling_objt   VARCHAR2(50 CHAR),
     prdg_diagram_level  NUMBER
 );
-
-COMMENT ON COLUMN flow_instance_diagrams.prdg_prdg_id is
-    'Parent prdg_id (prdg_id of Calling Diagram)';
 
 alter table flow_instance_diagrams
   add constraint flow_prdg_pk primary key ( prdg_id )
@@ -233,22 +200,6 @@ CREATE TABLE flow_timers (
     timr_callback      VARCHAR2(200 CHAR),
     timr_callback_par  varchar2(200 CHAR)
 );
-
-COMMENT ON COLUMN flow_timers.timr_status IS
-    'Status of the timer. For the status codes see constant definitions in FLOW_TIMERS_PKG package declaration.';
-
-COMMENT ON COLUMN flow_timers.timr_start_on IS
-    'Expected start datetime.
-Used for both date and duration definitions.';
-
-COMMENT ON COLUMN flow_timers.timr_interval_ym IS
-    'Interval YM for cycles.';
-
-COMMENT ON COLUMN flow_timers.timr_interval_ds IS
-    'Interval DS for cycles.';
-
-COMMENT ON COLUMN flow_timers.timr_repeat_times IS
-    'Number of runs for cycles.';
 
 CREATE INDEX timr_prcs_sbfl_ix ON
     flow_timers (
