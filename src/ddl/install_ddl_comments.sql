@@ -14,7 +14,7 @@ comment on table flow_object_expressions    is 'Flows for APEX table containing 
 comment on table flow_processes             is 'Flows for APEX table containing live run-time state of process instances. ';
 comment on table flow_subflows              is 'Flows for APEX table containing live run-time state of the subflows currently running as part process instance. ';
 comment on table flow_process_variables     is 'Flows for APEX table containing live run-time state of process variables that have been set for a process instance. ';
-comment on table flow_subflog_log           is 'Flows for APEX table containing live run-time state of all steps of a process instance that have been completed.';
+comment on table flow_subflow_log           is 'Flows for APEX table containing live run-time state of all steps of a process instance that have been completed.';
 comment on table flow_instance_diagrams     is 'Flows for APEX table containing live run-time usage of process diagrams by a process instance,  This is mainly used for real-time tracking of BPMN Call Activities ';
 comment on table flow_timers                is 'Flows for APEX table containing live run-time state of all timers set on current process instances. ';
 comment on table flow_message_subscriptions is 'Flows for APEX table containing live run-time state of all current message subscriptions for all process instances, used for process collaboration and BPMN messageFlow. ';
@@ -339,7 +339,7 @@ comment on column FLOW_REST_SUBFLOWS_VW.PROCESS_LEVEL is ' ';
 comment on column FLOW_REST_SUBFLOWS_VW.DIAGRAM_LEVEL is ' ';            
 comment on column FLOW_REST_SUBFLOWS_VW.CALLING_SBFL is ' ';             
 comment on column FLOW_REST_SUBFLOWS_VW.SCOPE is ' ';                    
-comment on column FLOW_REST_SUBFLOWS_VW.CURRENT is ' ';                  
+comment on column FLOW_REST_SUBFLOWS_VW."current" is ' ';                  
 comment on column FLOW_REST_SUBFLOWS_VW.STEP_KEY is ' ';                 
 comment on column FLOW_REST_SUBFLOWS_VW.STATUS is ' '; 
 comment on column FLOW_REST_SUBFLOWS_VW.BECAME_CURRENT is ' ';                    
