@@ -856,6 +856,7 @@ begin
     from flow_timers timr 
    where timr.timr_prcs_id = p_process_id
      and timr.timr_sbfl_id = p_subflow_id
+     and timr.timr_status = flow_timers_pkg.c_created
      for update wait 5
   ;
   if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
