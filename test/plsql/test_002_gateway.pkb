@@ -2063,3 +2063,4 @@ create or replace package body test_002_gateway is
    end;
 
 end test_002_gateway;
+/

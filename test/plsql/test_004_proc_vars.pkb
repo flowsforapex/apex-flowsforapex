@@ -1191,3 +1191,4 @@ create or replace package body test_004_proc_vars is
   end tear_down_tests;
 
 end test_004_proc_vars;
+/

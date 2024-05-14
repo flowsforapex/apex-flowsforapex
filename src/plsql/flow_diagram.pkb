@@ -564,7 +564,7 @@ as
       );
     end if; */
 
-    -- depracate existing released version of model if one exists
+    -- deprecate existing released version of model if one exists
     begin
       select dgrm_id
         into l_dgrm_id_deprecated

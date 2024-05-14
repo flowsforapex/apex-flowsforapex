@@ -217,3 +217,4 @@ create or replace package body test_023_custom_extensions as
   end tear_down_tests;
 
 end test_023_custom_extensions;
+/

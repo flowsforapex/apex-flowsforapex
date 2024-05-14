@@ -61,6 +61,59 @@ create or replace package body flow_message_flow as
     return l_msub_id;
   end subscribe;
 
+  function correlate_start_event
+    ( p_message_name  flow_message_subscriptions.msub_message_name%type 
+    ) return flow_message_subscriptions%rowtype
+  is
+    l_msub              flow_message_subscriptions%rowtype;
+  begin
+    begin
+      -- attempt the correlation based on match of message name
+      select msub.*
+        into l_msub
+        from flow_message_subscriptions msub
+       where msub.msub_message_name    = p_message_name
+         and msub.msub_key_name        is null
+         and msub.msub_key_value       is null
+      ;
+    exception
+        when no_data_found then
+          raise e_msgflow_msg_not_correlated;
+          -- logging of incorrect message handled in procedure exceptions below...
+        when e_lock_timeout then
+          raise e_msgflow_correlated_msg_locked;          
+    end;
+    return l_msub;
+  end correlate_start_event;
+
+  function correlate_catch_event
+    ( p_message_name  flow_message_subscriptions.msub_message_name%type 
+    , p_key_name      flow_message_subscriptions.msub_key_name%type
+    , p_key_value     flow_message_subscriptions.msub_key_value%type
+    ) return flow_message_subscriptions%rowtype
+  is
+    l_msub              flow_message_subscriptions%rowtype;
+  begin
+    begin
+      -- attempt the correlation based on 100% match of message name, key and value
+      select msub.*
+        into l_msub
+        from flow_message_subscriptions msub
+       where msub.msub_message_name    = p_message_name
+         and msub.msub_key_name        = p_key_name
+         and msub.msub_key_value       = p_key_value
+         for update of msub_id wait 2
+      ;
+    exception
+        when no_data_found then
+          raise e_msgflow_msg_not_correlated;
+          -- logging of incorrect message handled in procedure exceptions below...
+        when e_lock_timeout then
+          raise e_msgflow_correlated_msg_locked;          
+    end;
+    return l_msub;
+  end correlate_catch_event;
+
   procedure receive_message
     ( p_message_name  flow_message_subscriptions.msub_message_name%type
     , p_key_name      flow_message_subscriptions.msub_key_name%type
@@ -77,47 +130,17 @@ create or replace package body flow_message_flow as
     l_session_id        number;
   begin
     if (p_key_name is null and p_key_value is null) then
-      -- message start event
-        begin
-        -- attempt the correlation based on match of message name
-        select msub.*
-          into l_msub
-          from flow_message_subscriptions msub
-         where msub.msub_message_name    = p_message_name
-           and msub.msub_key_name        is null
-           and msub.msub_key_value       is null
-        ;
-      exception
-          when no_data_found then
-            raise e_msgflow_msg_not_correlated;
-            -- logging of incorrect message handled in procedure exceptions below...
-          when e_lock_timeout then
-            raise e_msgflow_correlated_msg_locked;          
-      end;
+      l_msub := correlate_start_event ( p_message_name => p_message_name);
       -- message is correlated.  create an APEX session if coming from outside
       if v('APP_SESSION') is null then
         l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
       end if; 
-
     else
       -- intermediate message catch / receive
-      begin
-        -- attempt the correlation based on 100% match of message name, key and value
-        select msub.*
-          into l_msub
-          from flow_message_subscriptions msub
-         where msub.msub_message_name    = p_message_name
-           and msub.msub_key_name        = p_key_name
-           and msub.msub_key_value       = p_key_value
-           for update of msub_id wait 2
-        ;
-      exception
-          when no_data_found then
-            raise e_msgflow_msg_not_correlated;
-            -- logging of incorrect message handled in procedure exceptions below...
-          when e_lock_timeout then
-            raise e_msgflow_correlated_msg_locked;          
-      end;
+      l_msub := correlate_catch_event  ( p_message_name => p_message_name
+                                      , p_key_name      => p_key_name
+                                      , p_key_value     => p_key_value  
+                                      );
       -- message is correlated.  create an APEX session if coming from outside
       -- and then validate the step key to make sure the receive / catch is still current
       if v('APP_SESSION') is null then
@@ -222,7 +245,7 @@ create or replace package body flow_message_flow as
       , p_payload         => p_payload
       , p_objt_bpmn_id    => l_msub.msub_callback_par
       , p_scope           => 0
-      );      
+      );     
 
       flow_instances.start_process
       ( p_process_id             => l_prcs_id

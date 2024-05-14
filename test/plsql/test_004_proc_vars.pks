@@ -43,3 +43,4 @@ create or replace package test_004_proc_vars is
   procedure tear_down_tests;
 
 end test_004_proc_vars;
+/

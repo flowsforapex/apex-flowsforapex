@@ -56,3 +56,4 @@ create or replace package test_017_exc_gw_errors_restarts as
   procedure tear_down_tests;
 
 end test_017_exc_gw_errors_restarts;
+/

@@ -414,3 +414,4 @@ create or replace package test_007_procvars as
   procedure tear_down_tests;
 
 end test_007_procvars;
+/

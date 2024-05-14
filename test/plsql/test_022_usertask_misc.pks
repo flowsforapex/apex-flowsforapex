@@ -29,3 +29,4 @@ create or replace package test_022_usertask_misc as
   procedure tear_down_tests;
 
 end test_022_usertask_misc;
+/

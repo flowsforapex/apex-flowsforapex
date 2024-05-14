@@ -1405,3 +1405,4 @@ create or replace package body test_010_variable_expressions is
     end var_exp_process_completed;
 
 end test_010_variable_expressions;
+/

@@ -48,3 +48,4 @@ create or replace package test_016_splitting_gw_errors as
   procedure tear_down_tests;
 
 end test_016_splitting_gw_errors;
+/

@@ -37,8 +37,8 @@ create or replace package flow_message_flow as
   ( p_subscription_details     in t_subscription_details
   ) return flow_message_subscriptions.msub_id%type;
 
-  procedure unsubscribe
-  ( )
+  --procedure unsubscribe
+  --( );
 
   procedure receive_message
   ( p_message_name  flow_message_subscriptions.msub_message_name%type

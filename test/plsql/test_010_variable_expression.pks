@@ -48,3 +48,4 @@ create or replace package test_010_variable_expressions is
     procedure tear_down_process;
 
 end test_010_variable_expressions;
+/

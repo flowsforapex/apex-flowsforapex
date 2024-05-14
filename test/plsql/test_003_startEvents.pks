@@ -54,3 +54,4 @@ create or replace package test_003_startEvents is
    procedure tear_down_tests;
 
 end test_003_startEvents;
+/

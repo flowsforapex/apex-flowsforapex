@@ -26,3 +26,4 @@ create or replace package test_023_custom_extensions as
   procedure tear_down_tests;
 
 end test_023_custom_extensions;
+/

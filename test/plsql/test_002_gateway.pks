@@ -81,3 +81,4 @@ create or replace package test_002_gateway is
    procedure tear_down_tests;
    
 end test_002_gateway;
+/
