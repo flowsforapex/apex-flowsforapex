@@ -263,6 +263,8 @@ begin
     values ( 'msgflow-endpoint-not-supported', c_load_lang, q'[MessageFlow Endpoint specified ( %0 ) is not supported.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-bad-scope', c_load_lang, q'[Invalid scope (%0) supplied for process variable.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'feature-requires-ee', c_load_lang, q'[Processing this feature requires licensing Flows for APEX Enterprise Edition.]' );
 
   commit;
 end;

@@ -17,7 +17,7 @@ PROMPT >> ------------------------------------------------------
 PROMPT >> Running Schema Upgrade from 23.1 to 24.1
 PROMPT >> -------------------------------------------
 
-
+@feature-add-edition.sql
 @feature-681.sql
 @feature-687.sql
 

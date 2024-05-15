@@ -32,6 +32,7 @@ create or replace package flow_message_flow as
   e_msgflow_msg_not_correlated exception;
   e_msgflow_correlated_msg_locked exception;
   e_msgflow_mag_already_consumed exception;
+  e_msgflow_feature_requires_ee exception;
 
   function subscribe
   ( p_subscription_details     in t_subscription_details

@@ -61,31 +61,6 @@ create or replace package body flow_message_flow as
     return l_msub_id;
   end subscribe;
 
-  function correlate_start_event
-    ( p_message_name  flow_message_subscriptions.msub_message_name%type 
-    ) return flow_message_subscriptions%rowtype
-  is
-    l_msub              flow_message_subscriptions%rowtype;
-  begin
-    begin
-      -- attempt the correlation based on match of message name
-      select msub.*
-        into l_msub
-        from flow_message_subscriptions msub
-       where msub.msub_message_name    = p_message_name
-         and msub.msub_key_name        is null
-         and msub.msub_key_value       is null
-      ;
-    exception
-        when no_data_found then
-          raise e_msgflow_msg_not_correlated;
-          -- logging of incorrect message handled in procedure exceptions below...
-        when e_lock_timeout then
-          raise e_msgflow_correlated_msg_locked;          
-    end;
-    return l_msub;
-  end correlate_start_event;
-
   function correlate_catch_event
     ( p_message_name  flow_message_subscriptions.msub_message_name%type 
     , p_key_name      flow_message_subscriptions.msub_key_name%type
@@ -114,6 +89,39 @@ create or replace package body flow_message_flow as
     return l_msub;
   end correlate_catch_event;
 
+  procedure ICE_save_payload_and_callback
+   ( p_msub           in flow_message_subscriptions%rowtype
+   , p_payload        in clob default null
+   , p_current   in flow_subflows.sbfl_id%type 
+   , p_scope          in flow_subflows.sbfl_scope%type
+   ) 
+  is
+  begin
+      -- Call Back is for a bpmn:intermediateCatchEvent - message subtype (Message Catch Event)
+      flow_message_util.save_payload
+      ( p_process_id      => p_msub.msub_prcs_id
+      , p_subflow_id      => p_msub.msub_sbfl_id
+      , p_payload_var     => p_msub.msub_payload_var
+      , p_payload         => p_payload
+      , p_objt_bpmn_id    => p_current
+      , p_scope           => p_scope
+      );
+
+      -- do the delete before the callback because the callback will do a next-step, which commits at step end
+      delete from flow_message_subscriptions
+       where msub_id = p_msub.msub_id;
+
+      flow_engine.timer_callback 
+      ( p_process_id    => p_msub.msub_prcs_id
+      , p_subflow_id    => p_msub.msub_sbfl_id
+      , p_step_key      => p_msub.msub_step_key
+      , p_callback      => p_msub.msub_callback
+      , p_callback_par  => p_msub.msub_callback_par
+      , p_event_type    => flow_constants_pkg.gc_bpmn_message_event_definition
+      );
+
+  end ICE_save_payload_and_callback;
+
   procedure receive_message
     ( p_message_name  flow_message_subscriptions.msub_message_name%type
     , p_key_name      flow_message_subscriptions.msub_key_name%type
@@ -130,11 +138,15 @@ create or replace package body flow_message_flow as
     l_session_id        number;
   begin
     if (p_key_name is null and p_key_value is null) then
-      l_msub := correlate_start_event ( p_message_name => p_message_name);
-      -- message is correlated.  create an APEX session if coming from outside
-      if v('APP_SESSION') is null then
-        l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
-      end if; 
+      $IF flow_apex_env.ee $THEN
+        l_msub := flow_message_flow_ee.correlate_start_event ( p_message_name => p_message_name);
+        -- message is correlated.  create an APEX session if coming from outside
+        if v('APP_SESSION') is null then
+          l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
+        end if; 
+      $ELSE
+        raise e_msgflow_feature_requires_ee;
+      $END
     else
       -- intermediate message catch / receive
       l_msub := correlate_catch_event  ( p_message_name => p_message_name
@@ -206,52 +218,34 @@ create or replace package body flow_message_flow as
       , p_step_key      => l_msub.msub_step_key
       , p_msub_id       => l_msub.msub_id
       );
-
-    when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_intermediate_catch_event 
-      or l_msub.msub_callback = flow_constants_pkg.gc_bpmn_boundary_event then
-      -- Call Back is for a bpmn:intermediateCatchEvent or Boundary Event - message subtype (Message Catch Event)
-
-      flow_message_util.save_payload
-      ( p_process_id      => l_msub.msub_prcs_id
-      , p_subflow_id      => l_msub.msub_sbfl_id
-      , p_payload_var     => l_msub.msub_payload_var
-      , p_payload         => p_payload
-      , p_objt_bpmn_id    => l_current
-      , p_scope           => l_scope
+    when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_intermediate_catch_event then
+      ICE_save_payload_and_callback
+      ( p_msub     => l_msub
+      , p_payload  => p_payload
+      , p_current  => l_current
+      , p_scope    => l_scope
       );
-
-      -- do the delete before the callback because the callback will do a next-step, which commits at step end
-      delete from flow_message_subscriptions
-       where msub_id = l_msub.msub_id;
-
-      flow_engine.timer_callback 
-      ( p_process_id    => l_msub.msub_prcs_id
-      , p_subflow_id    => l_msub.msub_sbfl_id
-      , p_step_key      => l_msub.msub_step_key
-      , p_callback      => l_msub.msub_callback
-      , p_callback_par  => l_msub.msub_callback_par
-      , p_event_type    => flow_constants_pkg.gc_bpmn_message_event_definition
-      );
-
+    when  l_msub.msub_callback = flow_constants_pkg.gc_bpmn_boundary_event then
+      $IF flow_apex_env.ee $THEN
+        flow_message_flow_ee.b_event_save_payload_and_callback
+        ( p_msub     => l_msub
+        , p_payload  => p_payload
+        , p_current  => l_current
+        , p_scope    => l_scope
+        );
+      $ELSE
+        raise e_msgflow_feature_requires_ee;
+      $END
     when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_start_event then
-      l_prcs_id :=  flow_instances.create_process
-                    ( p_dgrm_id   => l_msub.msub_dgrm_id
-                    , p_prcs_name => 'Started from incoming message'
-                    );
+      $IF flow_apex_env.ee $THEN
+        flow_message_flow_ee.start_event_save_payload_and_callback
+        ( p_msub     => l_msub
+        , p_payload  => p_payload
+        );
+      $ELSE
+        raise e_msgflow_feature_requires_ee;
+      $END
 
-      flow_message_util.save_payload
-      ( p_process_id      => l_prcs_id
-      , p_payload_var     => l_msub.msub_payload_var
-      , p_payload         => p_payload
-      , p_objt_bpmn_id    => l_msub.msub_callback_par
-      , p_scope           => 0
-      );     
-
-      flow_instances.start_process
-      ( p_process_id             => l_prcs_id
-      , p_event_starting_object  => l_msub.msub_callback_par
-      );
-      
     end case;
 
     -- tear down APEX Session if this was an external call.
@@ -322,6 +316,13 @@ create or replace package body flow_message_flow as
           ( pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
           , pi_sbfl_id      => p_sbfl_info.sbfl_id
           , pi_message_key  => 'msgflow-no-longer-current-step'
+          );
+        when e_msgflow_feature_requires_ee then
+          -- feature not supported without Enterprise Edition licence
+          flow_errors.handle_instance_error
+          ( pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
+          , pi_sbfl_id      => p_sbfl_info.sbfl_id
+          , pi_message_key  => 'feature-requires-ee'
           );
       end;
     else
