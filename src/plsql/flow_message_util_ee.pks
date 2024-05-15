@@ -1,6 +1,6 @@
-create or replace package flow_message_flow_ee
+create or replace package flow_message_util_ee
 /* 
--- Flows for APEX - flow_message_flow_ee.pks
+-- Flows for APEX - flow_message_util_ee.pks
 -- 
 -- (c) Copyright Flowqueat Limited and / or its affiliates, 2024.
 -- Package Spec released under Flows for APEX Community Edition MIT licence.
@@ -26,4 +26,10 @@ as
     , p_payload        in clob default null
     );
 
-end flow_message_flow_ee;
+    procedure cancel_diagram_subscriptions
+    ( p_dgrm_id        in flow_diagrams.dgrm_id%type
+    , p_callback       in flow_message_subscriptions.msub_callback%type
+    );
+
+end flow_message_util_ee;
+/

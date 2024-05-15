@@ -614,10 +614,12 @@ as
   as
   begin
 
-    flow_message_util.cancel_diagram_subscriptions 
-    ( p_dgrm_id   => pi_dgrm_id
-    , p_callback  => flow_constants_pkg.gc_bpmn_start_event
-    );
+    $IF flow_apex_env.ee $THEN
+      flow_message_util_ee.cancel_diagram_subscriptions 
+      ( p_dgrm_id   => pi_dgrm_id
+      , p_callback  => flow_constants_pkg.gc_bpmn_start_event
+      );
+    $END
 
     update flow_diagrams
        set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated

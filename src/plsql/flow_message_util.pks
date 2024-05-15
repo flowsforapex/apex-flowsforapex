@@ -11,7 +11,7 @@ create or replace package flow_message_util
 --
 */
   accessible by ( flow_message_flow, flow_tasks, flow_engine , flow_instances 
-                , flow_engine_util , flow_boundary_events , flow_diagram)
+                , flow_engine_util , flow_boundary_events , flow_diagram, flow_message_util_ee )
 as  
 
   function get_msg_subscription_details
@@ -30,6 +30,7 @@ as
   ( p_process_id                 flow_processes.prcs_id%type
   , p_subflow_id                 flow_subflows.sbfl_id%type
   );
+  
   procedure cancel_subscription
   ( p_process_id                 flow_processes.prcs_id%type
   , p_subflow_id                 flow_subflows.sbfl_id%type
@@ -37,11 +38,6 @@ as
 
   procedure cancel_subscription
   ( p_msub_id                    flow_message_subscriptions.msub_id%type
-  );
-
-  procedure cancel_diagram_subscriptions
-  ( p_dgrm_id                    flow_diagrams.dgrm_id%type
-  , p_callback                   flow_message_subscriptions.msub_callback%type
   );
 
   procedure lock_instance_subscriptions
@@ -69,6 +65,19 @@ as
   , p_prcs_id                in  flow_message_received_log.lgrx_prcs_id%type 
   , p_sbfl_id                in  flow_message_received_log.lgrx_sbfl_id%type    
   );
+
+  procedure intermed_save_payload_and_callback
+   ( p_msub           in flow_message_subscriptions%rowtype
+   , p_payload        in clob default null
+   , p_current        in flow_subflows.sbfl_id%type 
+   , p_scope          in flow_subflows.sbfl_scope%type
+   );
+
+  function correlate_catch_event
+    ( p_message_name  flow_message_subscriptions.msub_message_name%type 
+    , p_key_name      flow_message_subscriptions.msub_key_name%type
+    , p_key_value     flow_message_subscriptions.msub_key_value%type
+    ) return flow_message_subscriptions%rowtype;
   
 end flow_message_util;
 /
