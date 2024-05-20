@@ -308,13 +308,13 @@ create or replace package body flow_message_util as
   procedure intermed_save_payload_and_callback
    ( p_msub           in flow_message_subscriptions%rowtype
    , p_payload        in clob default null
-   , p_current   in flow_subflows.sbfl_id%type 
+   , p_current        in flow_objects.objt_bpmn_id%type 
    , p_scope          in flow_subflows.sbfl_scope%type
    ) 
   is
   begin
       -- Call Back is for a bpmn:intermediateCatchEvent - message subtype (Message Catch Event)
-      flow_message_util.save_payload
+      save_payload
       ( p_process_id      => p_msub.msub_prcs_id
       , p_subflow_id      => p_msub.msub_sbfl_id
       , p_payload_var     => p_msub.msub_payload_var

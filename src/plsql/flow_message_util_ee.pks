@@ -17,7 +17,7 @@ as
     procedure b_event_save_payload_and_callback
     ( p_msub           in flow_message_subscriptions%rowtype
     , p_payload        in clob default null
-    , p_current   in flow_subflows.sbfl_id%type 
+    , p_current        in flow_objects.objt_bpmn_id%type 
     , p_scope          in flow_subflows.sbfl_scope%type
     );
 

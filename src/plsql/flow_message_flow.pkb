@@ -79,6 +79,7 @@ create or replace package body flow_message_flow as
     if (p_key_name is null and p_key_value is null) then
       $IF flow_apex_env.ee $THEN
         l_msub := flow_message_util_ee.correlate_start_event ( p_message_name => p_message_name);
+        l_was_correlated  := flow_constants_pkg.gc_true;
         -- message is correlated.  create an APEX session if coming from outside
         if v('APP_SESSION') is null then
           l_session_id := flow_apex_session.create_api_session (p_subflow_id => l_msub.msub_sbfl_id);
@@ -92,6 +93,7 @@ create or replace package body flow_message_flow as
                                                         , p_key_name      => p_key_name
                                                         , p_key_value     => p_key_value  
                                                         );
+      apex_debug.message ( p_message => 'intermediate catch or receive correlated');                                                  
       -- message is correlated.  create an APEX session if coming from outside
       -- and then validate the step key to make sure the receive / catch is still current
       if v('APP_SESSION') is null then
@@ -110,6 +112,8 @@ create or replace package body flow_message_flow as
            for update of sbfl_current
         ;
         l_was_correlated  := flow_constants_pkg.gc_true;
+        apex_debug.message ( p_message => 'intermediate catch or receive step key validated');                                                  
+
       exception
         when no_data_found then
             -- add some message-specific logging capability into here.
@@ -137,6 +141,14 @@ create or replace package body flow_message_flow as
 
     case 
     when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_receivetask then
+      apex_debug.message 
+      ( p_message => 'receivetask callback. prcs_id %0 sbfl_id %1 l_current %2 scope %3 msub_id %4'
+      , p0 => l_msub.msub_prcs_id
+      , p1 => l_msub.msub_sbfl_id
+      , p2 => l_current
+      , p3 => l_scope
+      , p4 => l_msub.msub_id
+      );
       -- Call Back is for a bpmn:receiveTask message
       flow_message_util.save_payload
       ( p_process_id      => l_msub.msub_prcs_id
@@ -158,6 +170,15 @@ create or replace package body flow_message_flow as
       , p_msub_id       => l_msub.msub_id
       );
     when l_msub.msub_callback = flow_constants_pkg.gc_bpmn_intermediate_catch_event then
+      apex_debug.message 
+      ( p_message => 'ICE callback. prcs_id %0 sbfl_id %1 l_current %2 scope %3 msub_id %4 callback param: %5'
+      , p0 => l_msub.msub_prcs_id
+      , p1 => l_msub.msub_sbfl_id
+      , p2 => l_current
+      , p3 => l_scope
+      , p4 => l_msub.msub_id
+      , p5 => p_msub.msub_callback_par
+      );
       flow_message_util.intermed_save_payload_and_callback
       ( p_msub     => l_msub
       , p_payload  => p_payload

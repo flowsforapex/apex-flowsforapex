@@ -1,3 +1,4 @@
+create or replace package flow_diagram
 /* 
 -- Flows for APEX - flow_diagram.pks
 -- 
@@ -9,7 +10,6 @@
 -- Modified 16-Mar-2023  Richard Allen - Oracle 
 --
 */
-create or replace package flow_diagram
   authid definer
 as
 

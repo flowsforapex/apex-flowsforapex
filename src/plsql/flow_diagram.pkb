@@ -12,8 +12,6 @@ as
 --
 */
   
-
-
   function upload_diagram
   (
     pi_dgrm_name       in flow_diagrams.dgrm_name%type
