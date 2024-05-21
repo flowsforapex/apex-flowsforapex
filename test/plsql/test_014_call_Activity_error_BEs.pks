@@ -10,6 +10,7 @@ create or replace package test_014_call_Activity_error_BEs is
 
   --%suite(14 Call Activity Error Boundary Events)
   --%rollback(manual)
+  --%tag(short,ce,ee)
 
   --%beforeall
   procedure set_up_process;

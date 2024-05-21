@@ -6,6 +6,7 @@ create or replace package test_004_proc_vars is
 
    --%suite(04 Process Variable operations)
    --%rollback(manual)
+   --%tag(short,ce,ee)
 
    -- Need to add tests for by name, by name and version, by id
    -- Maybe need to test the versionning logic as well here?

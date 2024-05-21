@@ -12,6 +12,7 @@ create or replace package test_007_procvars as
 
   --%suite(07 Process Variables API)
   --%rollback(manual)
+  --%tag(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;

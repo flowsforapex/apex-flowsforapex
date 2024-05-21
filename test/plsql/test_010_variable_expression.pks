@@ -10,6 +10,7 @@ create or replace package test_010_variable_expressions is
 */
     --%suite(10 Variable Expressions)
     --%rollback(manual)
+    --%tag(short,ce,ee)
 
     --%beforeall
     procedure set_up_process;

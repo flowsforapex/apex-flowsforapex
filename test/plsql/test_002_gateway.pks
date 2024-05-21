@@ -10,6 +10,7 @@ create or replace package test_002_gateway is
 */
    --%suite(02 Basic Gateway Operation)
    --%rollback(manual)
+   --%tag(short,ce,ee)
 
    -- Need to add tests for completing order
    
@@ -75,6 +76,7 @@ create or replace package test_002_gateway is
    procedure parallel_merge_resplit;
 
    --%test (h. event based gateway - uses timer)
+   --%tag(timer)
    procedure event_based;
 
    --%afterall

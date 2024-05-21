@@ -12,6 +12,7 @@ create or replace package test_009_call_Activity_nesting as
 
   --%suite(09 Call Activity Nesting)
   --%rollback(manual)
+  --%tag(short,ce,ee)
 
   --%beforeall
   --%disabled

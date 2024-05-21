@@ -12,6 +12,7 @@ create or replace package test_008_subproc_misc as
 
   --%suite(08 SubProcesses Misc)
   --%rollback(manual)
+  --%tag(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;
@@ -23,6 +24,7 @@ create or replace package test_008_subproc_misc as
   procedure subproc_two_starts;
 
   --%test(C - Subprocess with 2 Int Timer Boundary Events)
+  --%tag(timer)
   procedure subproc_two_int_timer_BEs;
 
   --%test(D - Subprocess with 2 Error Boundary Events)
@@ -35,6 +37,7 @@ create or replace package test_008_subproc_misc as
   procedure subproc_int_plus_non_int_esc_BEs;
 
   --%test(G - Subprocess with Int Timer and Nested SubProc )
+  --%tag(timer)
   procedure subproc_int_timer_fires_nested_subproc;
 
 

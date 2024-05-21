@@ -12,6 +12,7 @@ create or replace package test_019_priorityDueDates as
 
   --%suite(19 Gateway Routing Expressions)
   --%rollback(manual)
+  --%tag(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;

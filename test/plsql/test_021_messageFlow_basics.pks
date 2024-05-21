@@ -12,6 +12,7 @@ create or replace package test_021_messageFlow_basics as
 
   --%suite(21 MessageFlow Basics)
   --%rollback(manual)
+  --%tag(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;

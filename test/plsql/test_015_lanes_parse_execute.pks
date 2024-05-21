@@ -12,6 +12,7 @@ create or replace package test_015_lanes_parse_execute as
 
   --%suite(15 Lane parsing and execution)
   --%rollback(manual)
+  --%tag(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;
