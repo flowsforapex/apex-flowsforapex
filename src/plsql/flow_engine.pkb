@@ -171,10 +171,14 @@ end flow_process_link_event;
     );
     -- check for message throw end Event
     if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_message_event_definition then
-      flow_message_flow.send_message
-      ( p_sbfl_info  => p_sbfl_info
-      , p_step_info  => p_step_info
-      );      
+      $IF flow_apex_env.ee $THEN
+        flow_message_util_ee.end_event_send_message
+        ( p_sbfl_info  => p_sbfl_info
+        , p_step_info  => p_step_info
+        ); 
+      $ELSE
+        raise e_feature_requires_ee;
+      $END 
     end if;
 
     -- update the subflow before logging
@@ -1184,7 +1188,7 @@ procedure run_step
 , p_step_info         in flow_types_pkg.flow_step_info
 )
 is
-
+  e_feature_requires_ee exception;
 begin
   apex_debug.enter 
   ( 'run_step'
@@ -1355,6 +1359,13 @@ begin
       , p0 => p_sbfl_rec.sbfl_id
       );
       -- $F4AMESSAGE 'no_next_step_found' || 'No Next Step Found on subflow %0.  Check your process diagram.'  
+    when e_feature_requires_ee then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
+      , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_message_key => 'feature-requires-ee'
+      );
+      -- $F4AMESSAGE 'no_next_step_found' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.' 
     when flow_plsql_runner_pkg.e_plsql_script_failed then
       null;
   -- let error run back to run_step

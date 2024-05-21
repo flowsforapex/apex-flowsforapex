@@ -31,5 +31,10 @@ as
     , p_callback       in flow_message_subscriptions.msub_callback%type
     );
 
+    procedure end_event_send_message
+    ( p_sbfl_info     in flow_subflows%rowtype
+    , p_step_info     in flow_types_pkg.flow_step_info
+    );
+    
 end flow_message_util_ee;
 /
