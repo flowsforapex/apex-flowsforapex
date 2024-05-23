@@ -114,13 +114,24 @@ as
           if l_expression_text != to_char ( to_timestamp_tz ( l_expression_text
                                           , flow_constants_pkg.gc_prov_default_tstz_format )
                                           , flow_constants_pkg.gc_prov_default_tstz_format ) then 
-          raise e_var_exp_date_format_error;
+            raise e_var_exp_date_format_error;
           end if;
         exception
           when others then
             raise e_var_exp_date_format_error;
         end;
         l_result_rec.var_tstz := to_timestamp_tz(l_expression_text, flow_constants_pkg.gc_prov_default_tstz_format);
+    when flow_constants_pkg.gc_prov_var_type_json then
+        -- test is correct json (lax)
+        begin
+          if l_expression_text is not json then
+            raise e_var_exp_json_format_error;
+          end if;
+        exception
+          when others then
+            raise e_var_exp_json_format_error;
+        end;
+        l_result_rec.var_json := l_expression_text;
     end case;
     -- set proc variable
     flow_proc_vars_int.set_var 
@@ -141,7 +152,17 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'      
+      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'   
+    when e_var_exp_json_format_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_json_format'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_json_format' || 'Error setting Process Variable %1: Incorrect JSON Format (Subflow: %0, Set: %3.)'     
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
@@ -204,6 +225,12 @@ as
                                     , pi_var_name => pi_expression.expr_expression
                                     , pi_scope    => pi_expr_scope
                                     );  
+    when flow_constants_pkg.gc_prov_var_type_json then
+        l_result_rec.var_json  := flow_proc_vars_int.get_var_json 
+                                    ( pi_prcs_id  => pi_prcs_id
+                                    , pi_var_name => pi_expression.expr_expression
+                                    , pi_scope    => pi_expr_scope
+                                    );
     end case; 
     -- set proc variable
     flow_proc_vars_int.set_var 
