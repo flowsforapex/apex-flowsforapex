@@ -34,10 +34,13 @@ create or replace package body test_011_var_exps_in_callActivities is
 
    procedure var_exp_all_types
    is
-      l_prcs_id  flow_processes.prcs_id%type;
-      l_dgrm_id  flow_diagrams.dgrm_id%type;
-      l_actual   sys_refcursor;
-      l_expected sys_refcursor;
+      l_prcs_id         flow_processes.prcs_id%type;
+      l_dgrm_id         flow_diagrams.dgrm_id%type;
+      l_actual          sys_refcursor;
+      l_expected        sys_refcursor;      
+      l_actual_json_txt clob;
+      l_actual_json     sys.json_element_t;
+      l_expected_json   sys.json_element_t;
    begin
       -- get dgrm_id to use for comparaison
       l_dgrm_a_id := get_dgrm_id( model_a11a );
@@ -130,9 +133,35 @@ create or replace package body test_011_var_exps_in_callActivities is
          and prov_scope = 0
          and prov_var_num is null
          and prov_var_date is null
-         and prov_var_clob is null;
+         and prov_var_clob is null
+         and prov_var_json is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+      -- separately check the json variable using json comparison
+
+      l_expected_json := sys.json_element_t.parse( '[ 
+                                                     { "ENAME":"JONES" ,"EMPNO":7566 } ,
+                                                     { "ENAME":"SCOTT" ,"EMPNO":7788 } ,
+                                                     { "ENAME":"FORD" ,"EMPNO":7902 } ,
+                                                     { "ENAME":"SMITH" ,"EMPNO":7369 } ,
+                                                     { "ENAME":"ADAMS" ,"EMPNO":7876 } 
+                                                   ]' );
+
+      select prov_var_json
+      into   l_actual_json_txt
+      from   flow_process_variables
+      where  prov_prcs_id = l_prcs_id
+         and prov_var_type = 'JSON'
+         and prov_scope = 0
+         and prov_var_num is null
+         and prov_var_date is null
+         and prov_var_clob is null;
+
+      l_actual_json := sys.json_element_t.parse (l_actual_json_txt);
+
+      ut.expect (l_actual_json).to_equal (l_expected_json);
+
 
       -- step the process forward into the callActivity.  This will call diagram A11b
       flow_api_pkg.flow_complete_step 
@@ -221,9 +250,37 @@ create or replace package body test_011_var_exps_in_callActivities is
          and prov_var_name like 'Called_Invar_%'
          and prov_var_num is null
          and prov_var_date is null
+         and prov_var_json is null
          and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+   
+      -- separately check the json Invariable got created in the called scope using json comparison
+
+      l_expected_json := sys.json_element_t.parse( '[ 
+                                                     { "ENAME":"JONES" ,"EMPNO":7566 } ,
+                                                     { "ENAME":"SCOTT" ,"EMPNO":7788 } ,
+                                                     { "ENAME":"FORD" ,"EMPNO":7902 } ,
+                                                     { "ENAME":"SMITH" ,"EMPNO":7369 } ,
+                                                     { "ENAME":"ADAMS" ,"EMPNO":7876 } 
+                                                   ]' );
+
+      select prov_var_json
+      into   l_actual_json_txt
+      from   flow_process_variables
+      where  prov_prcs_id = l_prcs_id
+         and prov_var_type = 'JSON'
+         and prov_scope = l_scope_a11b
+         and prov_var_name like 'Called_Invar_SQLArrayJSON'
+         and prov_var_num is null
+         and prov_var_date is null
+         and prov_var_clob is null;
+
+      l_actual_json := sys.json_element_t.parse (l_actual_json_txt);
+
+      ut.expect (l_actual_json).to_equal (l_expected_json);
+
 
       -- check the local Variables got created in the called scope
       open l_expected for
@@ -266,9 +323,35 @@ create or replace package body test_011_var_exps_in_callActivities is
          and prov_var_name like 'VarExp_InCalled_%'
          and prov_var_num is null
          and prov_var_date is null
+         and prov_var_json is null
          and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+      -- separately check the json variable got created in the called scope using json comparison
+
+      l_expected_json := sys.json_element_t.parse( '[ 
+                                                     { "ENAME":"JONES" ,"EMPNO":7566 } ,
+                                                     { "ENAME":"SCOTT" ,"EMPNO":7788 } ,
+                                                     { "ENAME":"FORD" ,"EMPNO":7902 } ,
+                                                     { "ENAME":"SMITH" ,"EMPNO":7369 } ,
+                                                     { "ENAME":"ADAMS" ,"EMPNO":7876 } 
+                                                   ]' );
+
+      select prov_var_json
+      into   l_actual_json_txt
+      from   flow_process_variables
+      where  prov_prcs_id = l_prcs_id
+         and prov_var_type = 'JSON'
+         and prov_scope = l_scope_a11b
+         and prov_var_name like 'VarExp_InCalled_SQLArrayJSON'
+         and prov_var_num is null
+         and prov_var_date is null
+         and prov_var_clob is null;
+
+      l_actual_json := sys.json_element_t.parse (l_actual_json_txt);
+
+      ut.expect (l_actual_json).to_equal (l_expected_json);
 
    -- step the process forward back into the callActivity.  This will return to diagram A11a
       flow_api_pkg.flow_complete_step 
@@ -318,9 +401,37 @@ create or replace package body test_011_var_exps_in_callActivities is
          and prov_var_name like 'Called_Outvar_%'
          and prov_var_num is null
          and prov_var_date is null
+         and prov_var_json is null
          and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+
+      -- separately check the json outvariable got created in the calling scope using json comparison
+
+      l_expected_json := sys.json_element_t.parse( '[ 
+                                                     { "ENAME":"JONES" ,"EMPNO":7566 } ,
+                                                     { "ENAME":"SCOTT" ,"EMPNO":7788 } ,
+                                                     { "ENAME":"FORD" ,"EMPNO":7902 } ,
+                                                     { "ENAME":"SMITH" ,"EMPNO":7369 } ,
+                                                     { "ENAME":"ADAMS" ,"EMPNO":7876 } 
+                                                   ]' );
+
+      select prov_var_json
+      into   l_actual_json_txt
+      from   flow_process_variables
+      where  prov_prcs_id = l_prcs_id
+         and prov_var_type = 'JSON'
+         and prov_scope = l_scope_a11b
+         and prov_var_name like 'Called_Outvar_SQLArrayJSON'
+         and prov_var_num is null
+         and prov_var_date is null
+         and prov_var_clob is null;
+
+      l_actual_json := sys.json_element_t.parse (l_actual_json_txt);
+
+      ut.expect (l_actual_json).to_equal (l_expected_json);
+
 
    end var_exp_all_types;
 
@@ -334,3 +445,4 @@ create or replace package body test_011_var_exps_in_callActivities is
 
 
 end test_011_var_exps_in_callActivities;
+/

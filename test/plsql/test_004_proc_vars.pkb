@@ -53,18 +53,29 @@ create or replace package body test_004_proc_vars is
       l_num_var_name varchar2(10) := 'num_var';
       l_date_var_name varchar2(10) := 'date_var';
       l_clob_var_name varchar2(10) := 'clob_var';
-      l_tstz_var_name   varchar2(10)   := 'tstz_var';
+      l_tstz_var_name varchar2(10)   := 'tstz_var';
+      l_json_var_name varchar2(10)   := 'json_var';
       l_expected_vc2  varchar2(4000) := 'TEST';
       l_expected_num  number := 1000;
       l_expected_date date := to_date('01/01/2022', 'DD/MM/YYYY');
       l_expected_tstz   timestamp with time zone := to_timestamp_tz('01/01/2022 13:10:10 US/Pacific',
                          'DD/MM/YYYY HH24:MI:SS TZR');
       l_expected_clob clob := to_clob('TEST');
+      l_expected_json clob := to_clob(
+                                       '[
+                                         { "ENAME":"JONES" ,"EMPNO":7566 } ,
+                                         { "ENAME":"SCOTT" ,"EMPNO":7788 } ,
+                                         { "ENAME":"FORD" ,"EMPNO":7902 } ,
+                                         { "ENAME":"SMITH" ,"EMPNO":7369 } ,
+                                         { "ENAME":"ADAMS" ,"EMPNO":7876 } 
+                                       ]'
+                                     );
       l_actual_vc2 varchar2(4000);
       l_actual_num number;
       l_actual_date date;
-      l_actual_tstz   timestamp with time zone;  
+      l_actual_tstz timestamp with time zone;  
       l_actual_clob clob;
+      l_actual_json clob;
    
       l_rec flow_process_variables%rowtype;
    begin
@@ -164,6 +175,7 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_date ).to_be_null();
       ut.expect( l_rec.prov_var_clob ).to_be_null(); 
       ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
+      ut.expect( l_rec.prov_var_json ).to_be_null(); 
 
 
       flow_process_vars.set_var(
@@ -198,6 +210,7 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_date ).to_be_null();
       ut.expect( l_rec.prov_var_clob ).to_be_null();
       ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
+      ut.expect( l_rec.prov_var_json ).to_be_null(); 
  
 
       flow_process_vars.set_var(
@@ -231,7 +244,8 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_vc2 ).to_be_null();
       ut.expect( l_rec.prov_var_num ).to_be_null();
       ut.expect( l_rec.prov_var_clob ).to_be_null(); 
-      ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
+      ut.expect( l_rec.prov_var_tstz ).to_be_null();
+      ut.expect( l_rec.prov_var_json ).to_be_null(); 
 
 
       flow_process_vars.set_var(
@@ -266,6 +280,7 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_num ).to_be_null();
       ut.expect( l_rec.prov_var_date ).to_be_null(); 
       ut.expect( l_rec.prov_var_tstz ).to_be_null(); 
+      ut.expect( l_rec.prov_var_json ).to_be_null();
 
 
       flow_process_vars.set_var(
@@ -300,6 +315,43 @@ create or replace package body test_004_proc_vars is
       ut.expect( l_rec.prov_var_num ).to_be_null();
       ut.expect( l_rec.prov_var_clob ).to_be_null(); 
       ut.expect( l_rec.prov_var_date ).to_be_null(); 
+      ut.expect( l_rec.prov_var_json ).to_be_null();
+
+-- JSON - NOTE THIS IS USING PROC_VAR_INT to set the variable as 24.2 FLOW_PROCESS_VARIABLES JSON IS NOT YET AVAILABLE
+
+      flow_proc_vars_int.set_var(
+           pi_prcs_id => l_prcs_id
+         , pi_var_name => l_json_var_name
+         , pi_json_value => l_expected_json
+      );
+
+      open l_expected for
+         select 
+            l_json_var_name            as prov_var_name, 
+            'JSON'                     as prov_var_type, 
+            l_expected_json            as prov_var_json
+         from dual;
+
+      open l_actual for 
+         select prov_var_name, prov_var_type, prov_var_json 
+         from flow_process_variables
+         where prov_prcs_id = l_prcs_id
+         and prov_var_name = l_json_var_name;
+   
+      ut.expect( l_actual ).to_equal( l_expected ); 
+
+      open l_actual for 
+         select *
+         from flow_process_variables
+         where prov_prcs_id = l_prcs_id
+         and prov_var_name = l_json_var_name;
+      fetch l_actual into l_rec;
+
+      ut.expect( l_rec.prov_var_vc2 ).to_be_null();
+      ut.expect( l_rec.prov_var_num ).to_be_null();
+      ut.expect( l_rec.prov_var_clob ).to_be_null(); 
+      ut.expect( l_rec.prov_var_date ).to_be_null(); 
+      ut.expect( l_rec.prov_var_tstz ).to_be_null();
 
       -- Get variables
       l_actual_vc2 := flow_process_vars.get_var_vc2(
@@ -343,6 +395,14 @@ create or replace package body test_004_proc_vars is
 
       ut.expect( l_actual_tstz ).to_equal( l_expected_tstz );
 
+--    for > 24.1 when we externalize json proc vars.
+
+--      l_actual_json := flow_process_vars.get_var_json(
+--           pi_prcs_id  => l_prcs_id
+--         , pi_var_name => l_json_var_name
+--      );
+--
+--      ut.expect( l_actual_json ).to_equal( l_expected_json );
 
    end basic_flow_variables;
 
@@ -362,6 +422,7 @@ create or replace package body test_004_proc_vars is
       l_actual_num number;
       l_actual_date date;
       l_actual_clob clob;
+      l_actual_json clob;
    
       l_rec flow_process_variables%rowtype;
    begin
@@ -1191,3 +1252,4 @@ create or replace package body test_004_proc_vars is
   end tear_down_tests;
 
 end test_004_proc_vars;
+/

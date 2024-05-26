@@ -3,9 +3,11 @@ create or replace package body test_010_variable_expressions is
 -- Flows for APEX - test_010_variable_expressions.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
+-- (c) Copyright Flowquest Consulting Limited and / or its affiliates, 2024.
 --
 -- Created 10-Mar-2022   Louis Moreaux - Insum
 -- Edited  09-May-2022   Richard Allen - Oracle
+-- Edited  23-May-2024
 --
 */
 
@@ -14,6 +16,7 @@ create or replace package body test_010_variable_expressions is
     g_sbfl_procvar          flow_subflows.sbfl_id%type;
     g_sbfl_sqlSingle        flow_subflows.sbfl_id%type;
     g_sbfl_sqlMulti         flow_subflows.sbfl_id%type;
+    g_sbfl_sqlArray         flow_subflows.sbfl_id%type;
     g_sbfl_expression       flow_subflows.sbfl_id%type;
     g_sbfl_funcBody         flow_subflows.sbfl_id%type;
     g_sbfl_raw_expression   flow_subflows.sbfl_id%type;
@@ -109,6 +112,13 @@ create or replace package body test_010_variable_expressions is
          select
             g_prcs_id as sbfl_prcs_id,
             g_dgrm_id as sbfl_dgrm_id,
+            'SQLArray' as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running sbfl_status
+         from dual
+         union
+         select
+            g_prcs_id as sbfl_prcs_id,
+            g_dgrm_id as sbfl_dgrm_id,
             'Expression' as sbfl_current,
             flow_constants_pkg.gc_sbfl_status_running sbfl_status
          from dual
@@ -167,7 +177,13 @@ create or replace package body test_010_variable_expressions is
         from flow_subflows
        where sbfl_prcs_id = g_prcs_id
          and sbfl_current = 'SQLMulti';         
-         
+          
+      select sbfl_id
+        into g_sbfl_sqlarray
+        from flow_subflows
+       where sbfl_prcs_id = g_prcs_id
+         and sbfl_current = 'SQLArray';   
+
       select sbfl_id
         into g_sbfl_expression
         from flow_subflows
@@ -234,10 +250,13 @@ create or replace package body test_010_variable_expressions is
    
    procedure var_exp_static
    is
-      l_actual   sys_refcursor;
-      l_expected sys_refcursor;
-      l_step_key flow_subflows.sbfl_step_key%type;
-      l_sbfl_id  flow_subflows.sbfl_id%type;
+      l_actual          sys_refcursor;
+      l_expected        sys_refcursor;
+      l_actual_json_txt clob;
+      l_actual_json     sys.json_element_t;
+      l_expected_json   sys.json_element_t;
+      l_step_key        flow_subflows.sbfl_step_key%type;
+      l_sbfl_id         flow_subflows.sbfl_id%type;
    begin
         l_sbfl_id := g_sbfl_static;
         -- get step key
@@ -267,6 +286,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -303,6 +323,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_vc2   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -334,6 +355,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_name = 'StaticDate'
             and prov_var_num   is null
             and prov_var_vc2 is null
+            and prov_var_json is null
             and prov_var_tstz is null
             and prov_var_clob is null;
 
@@ -368,9 +390,42 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date  is null
             and prov_var_vc2 is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );         
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test Num
+        l_expected_json := json_element_t.parse( 
+                '[ { "ENAME":"JONES" ,"EMPNO":7566 } ,{ "ENAME":"SCOTT" ,"EMPNO":7788 } ]' );
+
+            select prov_var_json
+            into   l_actual_json_txt
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'JSON'
+            and prov_var_name = 'StaticJSON'
+            and prov_var_num   is null
+            and prov_var_date  is null
+            and prov_var_vc2 is null
+            and prov_var_clob is null
+            and prov_var_tstz is null;
+
+        l_actual_json := json_element_t.parse (l_actual_json_txt);
+
+      ut.expect( l_actual_json ).to_equal( l_expected_json );         
+
 
         -- get step key
         select sbfl_step_key
@@ -389,6 +444,9 @@ create or replace package body test_010_variable_expressions is
    is
       l_actual   sys_refcursor;
       l_expected sys_refcursor;
+      l_actual_json_txt clob;
+      l_actual_json     sys.json_element_t;
+      l_expected_json   sys.json_element_t;
       l_step_key flow_subflows.sbfl_step_key%type;
       l_sbfl_id  flow_subflows.sbfl_id%type;
    begin
@@ -420,6 +478,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -456,6 +515,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_vc2   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -488,6 +548,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );  
@@ -520,6 +581,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_date is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );  
@@ -537,7 +599,7 @@ create or replace package body test_010_variable_expressions is
         into l_step_key
         from flow_subflows
         where sbfl_id = l_sbfl_id;
-        --step forward on subflow to complete subflow
+        --step forward on subflow 
         flow_api_pkg.flow_complete_step
         ( p_process_id => g_prcs_id
         , p_subflow_id => l_sbfl_id
@@ -561,9 +623,42 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_date is null;
 
       ut.expect( l_actual ).to_equal( l_expected );  
+
+        
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow 
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+      
+        
+        -- test JSON
+        l_expected_json := json_element_t.parse('[ { "ENAME":"JONES" ,"EMPNO":7566 } ,{ "ENAME":"SCOTT" ,"EMPNO":7788 } ]');
+
+        select prov_var_json
+        into l_actual_json_txt
+        from flow_process_variables
+        where prov_prcs_id = g_prcs_id
+        and prov_var_type = 'JSON'
+        and prov_var_name = 'CopyStaticJSON'
+        and prov_var_num   is null
+        and prov_var_vc2 is null
+        and prov_var_tstz is null
+        and prov_var_clob is null
+        and prov_var_date is null;
+
+        l_actual_json := json_element_t.parse(l_actual_json_txt);
+
+      ut.expect( l_actual_json ).to_equal( l_expected_json );  
       
         -- get step key
         select sbfl_step_key
@@ -613,6 +708,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -644,6 +740,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_vc2   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -676,6 +773,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -709,6 +807,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_date is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -762,6 +861,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -779,7 +879,68 @@ create or replace package body test_010_variable_expressions is
         
     end  var_exp_sqlmulti;
     
-    
+     
+    procedure var_exp_sqlarray
+    is
+      l_actual   sys_refcursor;
+      l_expected sys_refcursor;
+      l_actual_json_txt clob;
+      l_actual_json     sys.json_element_t;
+      l_expected_json   sys.json_element_t;
+      l_step_key flow_subflows.sbfl_step_key%type;
+      l_sbfl_id  flow_subflows.sbfl_id%type;
+    begin
+        l_sbfl_id := g_sbfl_sqlarray;
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+        -- test VC2
+        l_expected_json := json_element_t.parse (
+                '[ { "ENAME":"JONES" ,"EMPNO":7566 ,"HIREDATE":"1981-04-02T00:00:00Z" } ,
+                { "ENAME":"SCOTT" ,"EMPNO":7788 ,"HIREDATE":"1982-12-09T00:00:00Z" } ,
+                { "ENAME":"FORD" ,"EMPNO":7902 ,"HIREDATE":"1981-12-03T00:00:00Z" } ,
+                { "ENAME":"SMITH" ,"EMPNO":7369 ,"HIREDATE":"1980-12-17T00:00:00Z" } ,
+                { "ENAME":"ADAMS" ,"EMPNO":7876 ,"HIREDATE":"1983-01-12T00:00:00Z" } ]' );
+         
+        
+        select prov_var_json
+        into l_actual_json_txt
+        from flow_process_variables
+        where prov_prcs_id = g_prcs_id
+        and prov_var_type = 'JSON'
+        and prov_var_name = 'SQLArrayJSON'
+        and prov_var_num  is null
+        and prov_var_date is null
+        and prov_var_tstz is null
+        and prov_var_vc2  is null
+        and prov_var_clob is null;
+
+        l_actual_json := sys.json_element_t.parse(l_actual_json_txt);
+
+      ut.expect( l_actual_json ).to_equal( l_expected_json );
+
+        -- get step key
+        select sbfl_step_key
+        into l_step_key
+        from flow_subflows
+        where sbfl_id = l_sbfl_id;
+        --step forward on subflow to completion
+        flow_api_pkg.flow_complete_step
+        ( p_process_id => g_prcs_id
+        , p_subflow_id => l_sbfl_id
+        , p_step_key => l_step_key);
+        
+    end  var_exp_sqlarray;
+
+
     procedure var_exp_expression
     is
       l_actual   sys_refcursor;
@@ -819,6 +980,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -850,6 +1012,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_vc2   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -882,6 +1045,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -915,6 +1079,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_date is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );         
@@ -967,6 +1132,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -998,6 +1164,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_vc2   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -1030,6 +1197,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -1062,6 +1230,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_date is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -1120,6 +1289,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -1151,6 +1321,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_vc2   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -1183,6 +1354,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -1216,6 +1388,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_date is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );         
@@ -1268,6 +1441,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected );
@@ -1299,6 +1473,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_vc2   is null
             and prov_var_date is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
       ut.expect( l_actual ).to_equal( l_expected ).unordered;
@@ -1331,6 +1506,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_tstz is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -1363,6 +1539,7 @@ create or replace package body test_010_variable_expressions is
             and prov_var_num   is null
             and prov_var_vc2 is null
             and prov_var_date is null
+            and prov_var_json is null
             and prov_var_clob is null;
 
         ut.expect( l_actual ).to_equal( l_expected );   
@@ -1405,3 +1582,4 @@ create or replace package body test_010_variable_expressions is
     end var_exp_process_completed;
 
 end test_010_variable_expressions;
+/
