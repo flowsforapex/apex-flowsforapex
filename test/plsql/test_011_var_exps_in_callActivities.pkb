@@ -233,12 +233,12 @@ create or replace package body test_011_var_exps_in_callActivities is
          union
          select
             'Called_Invar_ExpressionVC2' as prov_var_name,
-            'KING is UPPERCASE' as prov_var_vc2
+            'KING' as prov_var_vc2
          from dual
          union
          select
             'Called_Invar_FuncBodyVC2' as prov_var_name,
-            'January' as prov_var_vc2
+            'KING' as prov_var_vc2
          from dual;
 
       open l_actual for
@@ -306,12 +306,12 @@ create or replace package body test_011_var_exps_in_callActivities is
          union
          select
             'VarExp_InCalled_ExpressionVC2' as prov_var_name,
-            'KING is UPPERCASE' as prov_var_vc2
+            'Jones' as prov_var_vc2
          from dual
          union
          select
             'VarExp_InCalled_FuncBodyVC2' as prov_var_name,
-            'January' as prov_var_vc2
+            'January Is Initcap' as prov_var_vc2
          from dual;
 
       open l_actual for
@@ -331,12 +331,10 @@ create or replace package body test_011_var_exps_in_callActivities is
       -- separately check the json variable got created in the called scope using json comparison
 
       l_expected_json := sys.json_element_t.parse( '[ 
-                                                     { "ENAME":"JONES" ,"EMPNO":7566 } ,
-                                                     { "ENAME":"SCOTT" ,"EMPNO":7788 } ,
-                                                     { "ENAME":"FORD" ,"EMPNO":7902 } ,
-                                                     { "ENAME":"SMITH" ,"EMPNO":7369 } ,
-                                                     { "ENAME":"ADAMS" ,"EMPNO":7876 } 
-                                                   ]' );
+                                                       { "ENAME":"KING" ,"EMPNO":7839 } ,
+                                                       { "ENAME":"CLARK" ,"EMPNO":7782 } ,
+                                                       { "ENAME":"MILLER" ,"EMPNO":7934 } 
+                                                    ]' );
 
       select prov_var_json
       into   l_actual_json_txt
@@ -384,7 +382,7 @@ create or replace package body test_011_var_exps_in_callActivities is
          union
          select
             'Called_Outvar_ExpressionVC2' as prov_var_name,
-            'KING is UPPERCASE' as prov_var_vc2
+            'King' as prov_var_vc2
          from dual
          union
          select
@@ -422,7 +420,7 @@ create or replace package body test_011_var_exps_in_callActivities is
       from   flow_process_variables
       where  prov_prcs_id = l_prcs_id
          and prov_var_type = 'JSON'
-         and prov_scope = l_scope_a11b
+         and prov_scope = 0
          and prov_var_name like 'Called_Outvar_SQLArrayJSON'
          and prov_var_num is null
          and prov_var_date is null

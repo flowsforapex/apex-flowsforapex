@@ -4,9 +4,11 @@ create or replace package body flow_process_vars as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
+-- (c) Copyright Flowquest Consulting Limited, 2020-2024.
 --
 -- Created september-2020  Richard Allen (Flowquest) 
 -- Edited  April 2022 - Richard Allen (Oracle)
+-- Edited 24-May-2024 - Richard Allen (Flowquest Consulting Limited)
 --
 */
   lock_timeout exception;
@@ -623,6 +625,116 @@ exception
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
     raise;
 end get_var_clob;
+
+-- get_var_JSON:  JSON type - signature 1 - scope (or no scope) supplied
+
+function get_var_json
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_json%type
+is 
+begin
+  return flow_proc_vars_int.get_var_json
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+end get_var_json;
+
+-- get_var_JSON:  JSON type - signature 2 - subflow_id supplied
+
+function get_var_json
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_exception_on_null in boolean default false
+) return flow_process_variables.prov_var_json%type
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+begin 
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  return flow_proc_vars_int.get_var_json
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
+end get_var_json;
+
+-- get_var_JSON_element:  JSON type returning json_element_t - signature 1 - scope (or no scope) supplied
+
+function get_var_json_element
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_scope in flow_process_variables.prov_scope%type default 0
+, pi_exception_on_null in boolean default false
+) return sys.json_element_t
+is 
+begin
+  return flow_proc_vars_int.get_var_json_element
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => pi_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+end get_var_json_element;
+
+-- get_var_JSON_element:  JSON type returning json_element_t - signature 2 - subflow_id supplied
+
+function get_var_json_element
+( pi_prcs_id in flow_processes.prcs_id%type
+, pi_var_name in flow_process_variables.prov_var_name%type
+, pi_sbfl_id in flow_subflows.sbfl_id%type
+, pi_exception_on_null in boolean default false
+) return sys.json_element_t
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+begin 
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+    into l_scope
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  return flow_proc_vars_int.get_var_json_element
+              ( pi_prcs_id            => pi_prcs_id
+              , pi_var_name           => pi_var_name
+              , pi_scope              => l_scope
+              , pi_exception_on_null  => pi_exception_on_null
+              );
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+    raise;
+end get_var_json_element;
 
 -- get_var_date: timestamp type - signature 1 - scope (or no scope) supplied
 
