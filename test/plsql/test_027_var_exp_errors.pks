@@ -9,7 +9,7 @@ create or replace package test_027_var_exp_errors
 */
 is 
   --%suite(27 Variable Expression Errors)
-  --%tag
+  --%tags(ce,ee,short)
   --%rollback(manual)
   
   --%beforeall
@@ -18,25 +18,25 @@ is
   --%test('1 - Bad Static Date Format')
   procedure bad_static_date;
 
-  --%test('1 - Bad Static TSTZ Format')
+  --%test('2 - Bad Static TSTZ Format')
   procedure bad_static_tstz;
 
-  --%test('1 - Bad Static Num Format')
+  --%test('3 - Bad Static Num Format')
   procedure bad_static_num;
 
-  --%test('1 - Bad Static JSON Format')
+  --%test('4 - Bad Static JSON Format')
   procedure bad_static_json;
 
-  --%test('1 - Bad Single SQL')
+  --%test('5 - Bad Single SQL')
   procedure bad_single_sql;
 
-  --%test('1 - Bad Multi SQL')
+  --%test('6 - Bad Multi SQL')
   procedure bad_multi_sql;
 
-  --%test('1 - Bad PLSQL Expression')
+  --%test('7 - Bad PLSQL Expression')
   procedure bad_plsql_expression;
 
-  --%test('1 - Bad PLSQL Function Body')
+  --%test('8 - Bad PLSQL Function Body')
   procedure bad_plsql_func_body;
 
   --%afterall

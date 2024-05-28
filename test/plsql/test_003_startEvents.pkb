@@ -20,7 +20,7 @@ create or replace package body test_003_startEvents is
   g_model_a03g constant varchar2(100) := 'A03g - Model with one start event with bad on-event var exp';
   g_model_a03h constant varchar2(100) := 'A03h - Model with one start event with bad before-event var exp';
 
-  g_test_prcs_name constant varchar2(100) := 'test 003 - startTimers';
+  g_test_prcs_name constant varchar2(100) := 'test 003 - start events';
 
   g_prcs_id       flow_processes.prcs_id%type;
   g_prcs_dgrm_id  flow_diagrams.dgrm_id%type; -- process level diagram id
@@ -41,6 +41,7 @@ create or replace package body test_003_startEvents is
   g_prcs_id_6    number;
   g_prcs_id_7    number;
   g_prcs_id_8    number;
+  g_prcs_id_9    number;
   
    --beforeall
    procedure setup_tests
@@ -485,6 +486,65 @@ create or replace package body test_003_startEvents is
                                 
    end  bad_before_event_2;
 
+   --test(03i - attempt to start a running process)
+   procedure start_running_process
+   is
+      l_actual          sys_refcursor;
+      l_expected        sys_refcursor;
+      l_actual_vc2      varchar2(200);
+      l_actual_number   number;
+      test_dgrm_id      flow_diagrams.dgrm_id%type := g_dgrm_a03c_id;
+      test_prcs_id      flow_processes.prcs_id%type;
+      test_sbfl_id      flow_subflows.sbfl_id%type;
+      test_prcs_name    flow_processes.prcs_name%type := g_test_prcs_name;
+  begin
+      -- create a new instance
+      test_prcs_id := flow_api_pkg.flow_create(
+           pi_dgrm_id   => test_dgrm_id
+         , pi_prcs_name => 'test03c - good_start'
+      );
+      g_prcs_id_9 := test_prcs_id;
+
+      flow_api_pkg.flow_start( p_process_id => test_prcs_id );
+
+    open l_expected for
+        select
+        test_dgrm_id                                as prcs_dgrm_id,
+        'test03c - good_start'                      as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = test_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );  
+     
+    -- check  subflow running
+   
+      open l_expected for
+         select
+            test_prcs_id      as sbfl_prcs_id,
+            test_dgrm_id      as sbfl_dgrm_id,
+            'A'               as sbfl_current,
+            flow_constants_pkg.gc_sbfl_status_running as sbfl_status
+         from dual   
+         ;
+
+      open l_actual for
+         select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+         from flow_subflows 
+         where sbfl_prcs_id = test_prcs_id
+         and sbfl_status not like 'split';
+
+      ut.expect( l_actual ).to_equal( l_expected ).unordered;
+
+      -- try to start it a second time while it is already started
+
+      flow_api_pkg.flow_start( p_process_id => test_prcs_id );
+
+    
+   end start_running_process;
+
    --afterall
    
    procedure tear_down_tests
@@ -498,6 +558,8 @@ create or replace package body test_003_startEvents is
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_6);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_7);
       flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_8);
+      flow_api_pkg.flow_delete ( p_process_id => g_prcs_id_9);
    end tear_down_tests;
 
 end test_003_startEvents;
+/

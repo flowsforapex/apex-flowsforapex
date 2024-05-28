@@ -50,7 +50,12 @@ create or replace package test_003_startEvents is
    --%test(03h-2 - timer startEvent with bad before-event var exp - restart)
    procedure bad_before_event_2;
 
+   --%test(03i - attempt to start a running process)
+   --%throws(-20987)
+   procedure start_running_process;
+
    --%afterall
    procedure tear_down_tests;
 
 end test_003_startEvents;
+/
