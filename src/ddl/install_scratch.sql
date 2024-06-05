@@ -108,14 +108,15 @@ ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
 create index flow_prcs_dgrm_status_ix on flow_processes (prcs_dgrm_id, prcs_status);
 
 CREATE TABLE flow_subflow_log (
-    sflg_prcs_id       NUMBER NOT NULL,
-    sflg_objt_id       VARCHAR2(50) NOT NULL,
-    sflg_sbfl_id       NUMBER NOT NULL,
-    sflg_step_key      VARCHAR2(20 CHAR),
-    sflg_dgrm_id       NUMBER,
-    sflg_diagram_level NUMBER,
-    sflg_last_updated  DATE,
-    sflg_notes         VARCHAR2(200)
+    sflg_prcs_id                NUMBER NOT NULL,
+    sflg_objt_id                VARCHAR2(50) NOT NULL,
+    sflg_sbfl_id                NUMBER NOT NULL,
+    sflg_step_key               VARCHAR2(20 CHAR),
+    sflg_dgrm_id                NUMBER,
+    sflg_diagram_level          NUMBER,
+    sflg_sbfl_iteration_path    VARCHAR2(4000 CHAR),
+    sflg_last_updated           DATE,
+    sflg_notes                  VARCHAR2(200)
 );
 
 CREATE TABLE flow_subflows (

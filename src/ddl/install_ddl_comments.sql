@@ -407,8 +407,8 @@ comment on column FLOW_STEP_STATS.STSF_WAITING_50PC_SEC is ' ';
 comment on column FLOW_STEP_STATS.STSF_WAITING_90PC_SEC is ' ';      
 comment on column FLOW_STEP_STATS.STSF_WAITING_MAX_SEC is ' ';    
 
-comment on column FLOW_SUBFLOWS.SBFL_ID is ' ';                      
-comment on column FLOW_SUBFLOWS.SBFL_PRCS_ID is ' ';                 
+comment on column FLOW_SUBFLOWS.SBFL_ID is 'Subflow ID';                      
+comment on column FLOW_SUBFLOWS.SBFL_PRCS_ID is 'Parent Process ID.  Foreign Key to flow_processes.   Each subflow must be part of one and only process instance. ';                 
 comment on column FLOW_SUBFLOWS.SBFL_DGRM_ID is 'Diagram to be used on this Subflow. For top level process diagrams, this is same as prcs_dgrm_id.  When in a Call Activity, it is the Called Diagram.  Foreign Key to flow_diagrams.';                 
 comment on column FLOW_SUBFLOWS.SBFL_SBFL_ID is 'Parent Subflow. Foreign key to flow_subflows. Each subflow may be the child of a parent subflow. Note that the parent may no longer exist if is has completed before its child.';                 
 comment on column FLOW_SUBFLOWS.SBFL_PROCESS_LEVEL is 'Process level of initial subflow in an instance is 0. 
@@ -437,12 +437,12 @@ comment on column FLOW_SUBFLOWS.SBFL_RESERVATION is ' ';
 comment on column FLOW_SUBFLOWS.SBFL_POTENTIAL_USERS is ' ';         
 comment on column FLOW_SUBFLOWS.SBFL_POTENTIAL_GROUPS is ' ';        
 comment on column FLOW_SUBFLOWS.SBFL_EXCLUDED_USERS is ' ';          
-comment on column FLOW_SUBFLOWS.SBFL_ITERATION_TYPE is ' ';          
-comment on column FLOW_SUBFLOWS.SBFL_LOOP_COUNTER is ' ';            
-comment on column FLOW_SUBFLOWS.SBFL_LOOP_TOTAL_INSTANCES is ' ';    
+comment on column FLOW_SUBFLOWS.SBFL_ITERATION_TYPE is 'Type of iteration if current object is a LOOP or a PARALLEL or SEQUENTIAL iteration.';          
+comment on column FLOW_SUBFLOWS.SBFL_LOOP_COUNTER is 'The Loop Counter (1 to n) if the current object is part of a loop, parallel or sequential iteration.';            
+comment on column FLOW_SUBFLOWS.SBFL_LOOP_TOTAL_INSTANCES is 'Total number of iterations to be made on the current object. ';    
 comment on column FLOW_SUBFLOWS.SBFL_LAST_UPDATE is ' ';             
 comment on column FLOW_SUBFLOWS.SBFL_LAST_UPDATE_BY is ' ';          
-comment on column FLOW_SUBFLOWS.SBFL_ITERATION_PATH is ' ';   
+comment on column FLOW_SUBFLOWS.SBFL_ITERATION_PATH is 'Path of current subflow if any parent objects are iterations or loops.  Each upstream instance is in format <iterating object bpmn id>[loop_counter]';   
 
 comment on column FLOW_SUBFLOWS_VW.SBFL_ID is ' ';                   
 comment on column FLOW_SUBFLOWS_VW.SBFL_SBFL_ID is ' ';              

@@ -177,6 +177,7 @@ create or replace package body flow_logging as
     , sflg_last_updated
     , sflg_dgrm_id
     , sflg_diagram_level
+    , sflg_sbfl_iteration_path
     , sflg_notes
     )
     select p_process_id
@@ -186,6 +187,7 @@ create or replace package body flow_logging as
          , sysdate
          , sbfl.sbfl_dgrm_id
          , sbfl.sbfl_diagram_level
+         , sbfl.sbfl_iteration_path
          , p_notes
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
