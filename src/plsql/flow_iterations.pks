@@ -41,7 +41,7 @@ as
 
   function sequential_complete_step
   ( p_sbfl_info             in flow_subflows%rowtype
-  ) return boolean;
+  ) return flow_types_pkg.t_iteration_status;
 
   function loop_init
   ( p_sbfl_info             in flow_subflows%rowtype
@@ -54,7 +54,7 @@ as
 
   function loop_complete_step
   ( p_sbfl_info             in flow_subflows%rowtype
-  ) return boolean;
+  ) return flow_types_pkg.t_iteration_status;
 
   function create_iteration_array
   ( pi_prcs_id              in flow_processes.prcs_id%type

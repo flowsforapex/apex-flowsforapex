@@ -15,11 +15,11 @@ as
   type expression_details_t is
     record
     (
-      expr_type       flow_types_pkg.t_bpmn_attribute_vc2
-    , expr_value      clob
-    , expr_fmt        flow_types_pkg.t_bpmn_attribute_vc2
-    , expr_inside_var flow_types_pkg.t_bpmn_attribute_vc2
-    , expr_subject    flow_types_pkg.t_bpmn_attribute_vc2
+      expr_type         flow_types_pkg.t_bpmn_attribute_vc2
+    , expr_value        clob
+    , expr_fmt          flow_types_pkg.t_bpmn_attribute_vc2
+    , expr_inside_var   flow_types_pkg.t_bpmn_attribute_vc2
+    , expr_description  flow_types_pkg.t_bpmn_attribute_vc2
     );
 
   function get_expression_details( pi_expr_json in json_object_t )
@@ -39,8 +39,8 @@ as
     end case;
     
     l_return.expr_fmt               := pi_expr_json.get_string( key => 'formatMask' );
-    l_return.expr_inside_var         := pi_expr_json.get_string( key => 'insideVariable' );
-    l_return.expr_subject           := pi_expr_json.get_string( key => 'subject');
+    l_return.expr_inside_var        := pi_expr_json.get_string( key => 'insideVariable' );
+    l_return.expr_description       := pi_expr_json.get_string( key => 'description');
 
     return l_return;
   end get_expression_details;
@@ -523,11 +523,13 @@ as
     l_settings       flow_types_pkg.t_iteration_vars;
     l_details        expression_details_t;
   begin
+    apex_debug.enter ( 'get_iteration_settings');
     l_details := get_expression_details ( pi_expr_data  => pi_expr);
 
     l_settings.type              := l_details.expr_type;
     l_settings.collection_var    := l_details.expr_value;
     l_settings.inside_var        := l_details.expr_inside_var;
+    l_settings.description       := l_details.expr_description;
     return l_settings;
   end get_iteration_settings;   
 

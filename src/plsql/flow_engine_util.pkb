@@ -363,6 +363,8 @@ end get_object_tag;
     , p_loop_counter              in number default null
     , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
     , p_iteration_path            in varchar2 default null
+    , p_iteration_var             in flow_process_variables.prov_var_name%type default null
+    , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
@@ -474,6 +476,8 @@ end get_object_tag;
          , sbfl_loop_counter
          , sbfl_iteration_type
          , sbfl_iteration_path
+         , sbfl_iteration_var
+         , sbfl_iteration_var_scope
          )
     values
          ( p_process_id
@@ -502,7 +506,9 @@ end get_object_tag;
          , l_follows_ebg
          , p_loop_counter
          , p_iteration_type
-         , l_new_iteration_path               
+         , l_new_iteration_path   
+         , p_iteration_var
+         , p_iteration_var_scope            
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 

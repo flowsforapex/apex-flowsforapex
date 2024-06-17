@@ -808,10 +808,10 @@ end timer_callback;
 function finish_current_step
 ( p_sbfl_rec          in flow_subflows%rowtype
 , p_log_as_completed  in boolean default true
-) return boolean
+) return flow_types_pkg.t_iteration_status
 is
   l_current_step_tag      flow_objects.objt_tag_name%type;
-  l_iteration_is_complete boolean;
+  l_iteration_status      flow_types_pkg.t_iteration_status;
 begin
   -- runs all of the post-step operations for the old current task (handling post- expressionsa, releasing reservations, etc.)
   apex_debug.enter 
@@ -862,9 +862,9 @@ begin
   if p_sbfl_rec.sbfl_loop_counter is not null then
     case p_sbfl_rec.sbfl_iteration_type
     when flow_constants_pkg.gc_iteration_sequential then
-      l_iteration_is_complete := flow_iterations.sequential_complete_step (p_sbfl_info => p_sbfl_rec);
+      l_iteration_status := flow_iterations.sequential_complete_step (p_sbfl_info => p_sbfl_rec);
     when flow_constants_pkg.gc_iteration_loop then 
-      l_iteration_is_complete := flow_iterations.loop_complete_step (p_sbfl_info => p_sbfl_rec); 
+      l_iteration_status := flow_iterations.loop_complete_step (p_sbfl_info => p_sbfl_rec); 
     else 
       null;   
     end case;
@@ -876,6 +876,7 @@ begin
     ( p_process_id        => p_sbfl_rec.sbfl_prcs_id
     , p_subflow_id        => p_sbfl_rec.sbfl_id
     , p_completed_object  => p_sbfl_rec.sbfl_current
+    , p_iteration_status  => l_iteration_status
     );
   end if;
   -- release subflow reservation
@@ -891,9 +892,9 @@ begin
   ( p_message => 'Post Step Operations completed for current step %1 on subflow %0. Iteration Complete: %2'
   , p0        => p_sbfl_rec.sbfl_id
   , p1        => p_sbfl_rec.sbfl_current
-  , p2        => case l_iteration_is_complete when true then 'True' else 'False' end
+  , p2        => case l_iteration_status.is_complete when true then 'True' else 'False' end
   );
-  return l_iteration_is_complete;
+  return l_iteration_status;
 end finish_current_step;
 
 function get_step_info
@@ -1329,7 +1330,7 @@ is
   l_previous_step             flow_objects.objt_bpmn_id%type;  
   l_next_loop_counter         number;
   l_total_loop_instances      number;
-  l_iteration_is_complete     boolean;
+  l_iteration_status          flow_types_pkg.t_iteration_status;
   l_next_step_confirmed       boolean := false;
  -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
@@ -1374,10 +1375,10 @@ begin
     end if;
 
     -- complete the current step by doing the post-step operations
-    l_iteration_is_complete :=  finish_current_step
-                                ( p_sbfl_rec => l_sbfl_rec
-                                , p_log_as_completed => p_log_as_completed
-                                );
+    l_iteration_status  :=  finish_current_step
+                            ( p_sbfl_rec => l_sbfl_rec
+                            , p_log_as_completed => p_log_as_completed
+                            );
 
     if flow_globals.get_step_error then
       rollback;
@@ -1401,7 +1402,7 @@ begin
         -- start by finding the next subflow step
         l_step_info := get_step_info  ( p_sbfl_rec              => l_sbfl_rec
                                       , p_forward_route         => p_forward_route
-                                      , p_iteration_is_complete => l_iteration_is_complete
+                                      , p_iteration_is_complete => l_iteration_status.is_complete
                                       , p_previous_step         => l_previous_step
                                       );    
         -- control iteration progression
@@ -1409,6 +1410,7 @@ begin
         when flow_constants_pkg.gc_iteration_sequential then
           if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref
           then
+            -- next step is a new sequential iteration
             -- for sequential iteration we use the original subflow for the iterands so need 
             -- to set loop info on the original subflow. 
             -- sequential iteration info is set when iteration subflows are created
@@ -1435,6 +1437,7 @@ begin
             l_next_step_confirmed  := true;            
           else 
             -- loop counter has value - so iteration is in progress
+            -- next step is the next sequential iteration of an existing iteration
             l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
             l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
             l_next_step_confirmed  := true;
@@ -1445,7 +1448,7 @@ begin
           l_next_step_confirmed  := true;
         when flow_constants_pkg.gc_iteration_loop then
           if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref then
-            -- new bpmn loop step
+            -- next step is a new bpmn loop 
             -- for loop iteration we use the original subflow for the iterands so need 
             -- to set loop info on the original subflow. 
             -- loop iteration info is set when iteration subflows are created
@@ -1455,29 +1458,17 @@ begin
                                                                 );
             l_next_loop_counter    := 1;
             l_total_loop_instances := 1;
---            if l_total_loop_instances = 0 then
---              -- next step is a sequential loop of 0 members - move on to next step
---              apex_debug.message ( p_message => 'Loop Collection is empty - skipping process step %0.'
---                                 , p0 => l_step_info.target_objt_ref);
---              -- log current step as completed before releasing the reservation
---              flow_logging.log_step_completion   
---              ( p_process_id        => l_sbfl_rec.sbfl_prcs_id
---              , p_subflow_id        => l_sbfl_rec.sbfl_id
---              , p_completed_object  => l_step_info.target_objt_ref
---              );
---              -- set old step to the step to be skipped, then repeat the loop to get to the following step
---              l_previous_step := l_step_info.target_objt_ref;
---              continue;
---            end if; -- empty collection
             -- new non-empty collection...
             l_next_step_confirmed  := true;            
           else 
+            -- next step is the next iteration of an existing loop
             -- loop counter has value - so iteration is in progress
             l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
             l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances +1;
             l_next_step_confirmed  := true;
           end if; -- loop counter
-        else -- not an iteration
+        else 
+          -- next step is not an iteration or loop 
           l_next_loop_counter := null;
           l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances; 
           l_next_step_confirmed  := true;
@@ -1510,29 +1501,31 @@ begin
 
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
-      set sbfl.sbfl_current           = l_step_info.target_objt_ref
-        , sbfl.sbfl_last_completed    = l_sbfl_rec.sbfl_current
-        , sbfl.sbfl_became_current    = l_timestamp
-        , sbfl.sbfl_step_key          = l_step_key
-        , sbfl.sbfl_status            = flow_constants_pkg.gc_sbfl_status_running
-        , sbfl.sbfl_work_started      = null
-        , sbfl.sbfl_potential_users   = null
-        , sbfl.sbfl_potential_groups  = null
-        , sbfl.sbfl_excluded_users    = null
-        , sbfl.sbfl_lane              = coalesce( l_step_info.target_objt_lane       , sbfl.sbfl_lane        , null)
-        , sbfl.sbfl_lane_name         = coalesce( l_step_info.target_objt_lane_name  , sbfl.sbfl_lane_name   , null)
-        , sbfl.sbfl_lane_isRole       = coalesce( l_step_info.target_objt_lane_isRole, sbfl.sbfl_lane_isRole , null)
-        , sbfl.sbfl_lane_role         = case l_step_info.target_objt_lane_isRole
-                                        when 'true' then l_step_info.target_objt_lane_role
-                                        when 'false' then null
-                                        else coalesce( sbfl.sbfl_lane_role   , null)
-                                        end
-        , sbfl.sbfl_loop_counter      = l_next_loop_counter
-        , sbfl.sbfl_iteration_type    = l_step_info.target_objt_iteration
+      set sbfl.sbfl_current             = l_step_info.target_objt_ref
+        , sbfl.sbfl_last_completed      = l_sbfl_rec.sbfl_current
+        , sbfl.sbfl_became_current      = l_timestamp
+        , sbfl.sbfl_step_key            = l_step_key
+        , sbfl.sbfl_status              = flow_constants_pkg.gc_sbfl_status_running
+        , sbfl.sbfl_work_started        = null
+        , sbfl.sbfl_potential_users     = null
+        , sbfl.sbfl_potential_groups    = null
+        , sbfl.sbfl_excluded_users      = null
+        , sbfl.sbfl_lane                = coalesce( l_step_info.target_objt_lane       , sbfl.sbfl_lane        , null)
+        , sbfl.sbfl_lane_name           = coalesce( l_step_info.target_objt_lane_name  , sbfl.sbfl_lane_name   , null)
+        , sbfl.sbfl_lane_isRole         = coalesce( l_step_info.target_objt_lane_isRole, sbfl.sbfl_lane_isRole , null)
+        , sbfl.sbfl_lane_role           = case l_step_info.target_objt_lane_isRole
+                                          when 'true' then l_step_info.target_objt_lane_role
+                                          when 'false' then null
+                                          else coalesce( sbfl.sbfl_lane_role   , null)
+                                          end
+        , sbfl.sbfl_loop_counter        = l_next_loop_counter
+        , sbfl.sbfl_iteration_type      = l_step_info.target_objt_iteration
         , sbfl.sbfl_loop_total_instances
-                                      = l_total_loop_instances
-        , sbfl.sbfl_last_update       = l_timestamp
-        , sbfl.sbfl_last_update_by    = coalesce ( sys_context('apex$session','app_user') 
+                                        = l_total_loop_instances
+        , sbfl.sbfl_iteration_var       = l_iteration_status.iteration_var
+        , sbfl.sbfl_iteration_var_scope = l_iteration_status.var_scope
+        , sbfl.sbfl_last_update         = l_timestamp
+        , sbfl.sbfl_last_update_by      = coalesce ( sys_context('apex$session','app_user') 
                                                  , sys_context('userenv','os_user')
                                                  , sys_context('userenv','session_user')
                                                  )  

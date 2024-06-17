@@ -113,8 +113,10 @@ CREATE TABLE flow_subflow_log (
     sflg_sbfl_id                NUMBER NOT NULL,
     sflg_step_key               VARCHAR2(20 CHAR),
     sflg_dgrm_id                NUMBER,
+    sflg_scope                  NUMBER,
     sflg_diagram_level          NUMBER,
     sflg_sbfl_iteration_path    VARCHAR2(4000 CHAR),
+    sflg_iteration_var          VARCHAR2(50 CHAR),
     sflg_last_updated           DATE,
     sflg_notes                  VARCHAR2(200)
 );
@@ -152,6 +154,8 @@ CREATE TABLE flow_subflows (
     sbfl_excluded_users             VARCHAR2(4000 CHAR),
     sbfl_iteration_type             VARCHAR2(10 CHAR),
     sbfl_iteration_path             VARCHAR2(4000 CHAR),
+    sbfl_iteration_var              VARCHAR2(50 CHAR),
+    sbfl_iteration_var_scope        NUMBER,
     sbfl_loop_counter               NUMBER,
     sbfl_loop_total_instances       NUMBER,
     sbfl_last_update                TIMESTAMP WITH TIME ZONE NOT NULL,

@@ -19,7 +19,7 @@ as
         , sbfl.sbfl_current
         , coalesce( objt_curr.objt_name ||case 
                                           when sbfl_loop_counter is null then ''
-                                          else ' ['||sbfl_loop_counter||']'
+                                          else '['||sbfl_loop_counter||']'
                                           end
                   , sbfl.sbfl_current 
                   ) as sbfl_current_name

@@ -54,6 +54,13 @@ as
   ( type            flow_types_pkg.t_vc20
   , collection_var  flow_process_variables.prov_var_name%type
   , inside_var      flow_process_variables.prov_var_name%type
+  , description     varchar2(4000)
+  );
+  
+  type t_iteration_status is record
+  ( iteration_var   flow_process_variables.prov_var_name%type
+  , var_scope       flow_subflows.sbfl_scope%type
+  , is_complete     boolean
   );
 
 end flow_types_pkg;

@@ -120,6 +120,8 @@ as
     , p_loop_counter              in number default null
     , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
     , p_iteration_path            in varchar2 default null
+    , p_iteration_var             in flow_process_variables.prov_var_name%type default null
+    , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     ) return flow_types_pkg.t_subflow_context
     ;
 

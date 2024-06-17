@@ -1,5 +1,5 @@
 /*
-  Migration Script for Feature 666 - Iterstions, Loops, and JSON Process Variables
+  Migration Script for Feature 666 - Iterations, Loops, and JSON Process Variables
 
   Created  RAllen, Flowquest    11 Jan 2024
 
@@ -29,6 +29,30 @@ begin
                          )';
   end if;
 
+    select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SBFL_ITERATION_VAR'
+     and upper(table_name)  = 'FLOW_SUBFLOWS';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflows add (
+                         sbfl_iteration_var              VARCHAR2(50 CHAR)               
+                         )';
+  end if;
+
+    select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SBFL_ITERATION_VAR_SCOPE'
+     and upper(table_name)  = 'FLOW_SUBFLOWS';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflows add (
+                         sbfl_iteration_var_scope     NUMBER                   
+                         )';
+  end if;
+
   select count(*) 
     into v_column_exists
     from user_tab_cols
@@ -51,6 +75,30 @@ begin
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_subflow_log add (
                              sflg_sbfl_iteration_path    VARCHAR2(4000 CHAR)                    
+                         )';
+  end if;
+
+  select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SFLG_ITERATION_VAR'
+     and upper(table_name)  = 'FLOW_SUBFLOW_LOG';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflow_log add (
+                             sflg_iteration_var    VARCHAR2(50 CHAR)                    
+                         )';
+  end if;
+
+  select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SFLG_SCOPE'
+     and upper(table_name)  = 'FLOW_SUBFLOW_LOG';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflow_log add (
+                             sflg_scope    NUMBER                   
                          )';
   end if;
 
