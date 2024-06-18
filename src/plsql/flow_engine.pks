@@ -27,6 +27,7 @@ procedure flow_complete_step
   , p_step_key          in flow_subflows.sbfl_step_key%type default null
   , p_forward_route     in flow_connections.conn_bpmn_id%type default null   
   , p_log_as_completed  in boolean default true
+  , p_reset_step_key    in boolean default false
   , p_recursive_call    in boolean default true
   );
 

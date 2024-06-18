@@ -77,7 +77,18 @@ as
   , pi_new_status           in varchar2 
   , pi_output_vars          in sys.json_object_t default null
   , pi_sbfl_id              in flow_subflows.sbfl_id%type default null
+  , pi_step_key             in flow_subflows.sbfl_step_key%type default null
   , pio_iter_array          in out nocopy sys.json_array_t
+  );
+
+  procedure set_iteration_array_status 
+  ( pi_prcs_id          in flow_processes.prcs_id%type
+  , pi_sbfl_id          in flow_subflows.sbfl_id%type default null
+  , pi_step_key         in flow_subflows.sbfl_step_key%type default null
+  , pi_scope            in flow_subflows.sbfl_scope%type
+  , pi_prov_var_name    in flow_process_variables.prov_var_name%type
+  , pi_loop_counter     in flow_subflows.sbfl_loop_counter%type
+  , pi_new_status       in varchar2
   );
 
   function iteration_completion_condition_met

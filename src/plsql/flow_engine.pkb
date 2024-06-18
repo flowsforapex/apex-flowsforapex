@@ -1321,6 +1321,7 @@ procedure flow_complete_step
 , p_step_key          in flow_subflows.sbfl_step_key%type default null
 , p_forward_route     in flow_connections.conn_bpmn_id%type default null
 , p_log_as_completed  in boolean default true
+, p_reset_step_key    in boolean default false -- only set for initial call after splitting parallel iteration
 , p_recursive_call    in boolean default true
 )
 is
@@ -1341,11 +1342,8 @@ begin
   , 'Process ID',  p_process_id
   , 'Subflow ID', p_subflow_id
   , 'Supplied Step Key', p_step_key
-  , 'recursive_call', case when p_recursive_call then 
-                                                    'true' 
-                                                 else 
-                                                    'false' 
-                                                 end
+  , 'recursive_call', case when p_recursive_call then 'true'  else 'false'  end
+  , 'reset_step_key', case when p_reset_step_key then 'true'  else 'false'  end
   );
   flow_globals.set_is_recursive_step (p_is_recursive_step => p_recursive_call);
   -- Get current object and current subflow info and lock it
@@ -1449,6 +1447,18 @@ begin
             l_next_step_confirmed  := true;
           end if; -- loop counter
         when flow_constants_pkg.gc_iteration_parallel then
+          if p_reset_step_key then
+            -- the next step is the iterating object (not the 2nd phase ogf the implicit parallel gateway)
+            -- so reset the step key in the iteration array
+            flow_iteration.set_iteration_array_status
+            ( pi_prcs_id        => p_process_id
+            , pi_loop_counter   => l_sbfl_rec.sbfl_loop_counter
+            , pi_new_status     => flow_constants_pkg.gc_iteration_status_running 
+            , pi_step_key       => l_step_info.target_objt_step_key
+            , pi_scope          => l_sbfl_rec.sbfl_iteration_var_scope
+            , pi_prov_var_name  => l_sbfl_rec.sbfl_iteration_var
+            );
+          end if;
           l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
           l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
           l_next_step_confirmed  := true;
