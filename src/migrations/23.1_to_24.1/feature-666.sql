@@ -11,9 +11,28 @@ PROMPT >> Create Iterations
 
 PROMPT >> Database Changes
 
+  CREATE TABLE flow_iterations (
+      fita_prcs_id        NUMBER NOT NULL,
+      fita_parent_bpmn_id VARCHAR2(50 CHAR) not null,
+      fita_step_key       VARCHAR2(20 CHAR) not null,
+      fita_iteration_var  VARCHAR2(50 CHAR) not null,
+      fita_var_scope          NUMBER not null
+  );
+
+  alter table flow_iterations
+    add constraint flow_fita_pk primary key ( fita_prcs_id
+                                            , fita_iteration_var
+                                            , fita_var_scope);
+
+  create index flow_fita_step_key_ix on flow_iterations 
+                                        ( fita_prcs_id
+                                        , fita_step_key);
+                                        
 declare
   v_column_exists number := 0;  
+  v_table_exists  number := 0;  
 begin
+
   select count(*) 
     into v_column_exists
     from user_tab_cols

@@ -489,11 +489,11 @@ begin
         and conn.conn_tag_name = flow_constants_pkg.gc_bpmn_sequence_flow
           ; 
     -- generate a step key and insert in the update...use later
-    l_timestamp := systimestamp;
+
     l_forward_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_parent_subflow_id
                                                     , pi_current => l_current_object
-                                                    , pi_became_current => l_timestamp 
                                                     );
+    l_timestamp := systimestamp;
 
      update flow_subflows sbfl
         set sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
@@ -862,9 +862,9 @@ begin
   if p_sbfl_rec.sbfl_loop_counter is not null then
     case p_sbfl_rec.sbfl_iteration_type
     when flow_constants_pkg.gc_iteration_sequential then
-      l_iteration_status := flow_iterations.sequential_complete_step (p_sbfl_info => p_sbfl_rec);
+      l_iteration_status := flow_iteration.sequential_complete_step (p_sbfl_info => p_sbfl_rec);
     when flow_constants_pkg.gc_iteration_loop then 
-      l_iteration_status := flow_iterations.loop_complete_step (p_sbfl_info => p_sbfl_rec); 
+      l_iteration_status := flow_iteration.loop_complete_step (p_sbfl_info => p_sbfl_rec); 
     else 
       null;   
     end case;
@@ -942,6 +942,7 @@ begin
            , null -- objt_lane.objt_attributes."apex"."role"
            , objt_target.objt_attributes
            , null
+           , null
         into l_step_info
         from flow_connections conn
         join flow_objects objt_source
@@ -980,6 +981,7 @@ begin
            , null -- objt_lane.objt_attributes."apex"."role"
            , objt_current.objt_attributes
            , null
+           , null
         into l_step_info
         from flow_objects objt_current
         left 
@@ -1015,7 +1017,7 @@ begin
     if l_step_info.target_objt_attributes is not null then
       l_step_info.target_objt_iteration := flow_engine_util.get_iteration_type (l_step_info);
       if l_step_info.target_objt_iteration is not null then
-        flow_iterations.add_iteration_to_step_info 
+        flow_iteration.add_iteration_to_step_info 
         ( p_step_info       => l_step_info
         , p_sbfl_rec        => p_sbfl_rec
         );
@@ -1188,9 +1190,9 @@ begin
   if  p_sbfl_rec.sbfl_loop_counter is not null then
     case p_sbfl_rec.sbfl_iteration_type 
     when flow_constants_pkg.gc_iteration_sequential then
-      flow_iterations.sequential_start_step ( p_sbfl_info => p_sbfl_rec);
+      flow_iteration.sequential_start_step ( p_sbfl_info => p_sbfl_rec);
     when flow_constants_pkg.gc_iteration_loop then
-      flow_iterations.loop_start_step ( p_sbfl_info => p_sbfl_rec);   
+      flow_iteration.loop_start_step ( p_sbfl_info => p_sbfl_rec);   
     else
       null;
     end case;   
@@ -1404,7 +1406,11 @@ begin
                                       , p_forward_route         => p_forward_route
                                       , p_iteration_is_complete => l_iteration_status.is_complete
                                       , p_previous_step         => l_previous_step
-                                      );    
+                                      );  
+        -- get next step key
+        l_step_info.target_objt_step_key  := flow_engine_util.step_key ( pi_sbfl_id         => p_subflow_id
+                                                                  , pi_current         => l_step_info.target_objt_ref
+                                                                  );
         -- control iteration progression
         case l_step_info.target_objt_iteration 
         when flow_constants_pkg.gc_iteration_sequential then
@@ -1415,7 +1421,7 @@ begin
             -- to set loop info on the original subflow. 
             -- sequential iteration info is set when iteration subflows are created
 
-            l_total_loop_instances := flow_iterations.sequential_init ( p_sbfl_info => l_sbfl_rec
+            l_total_loop_instances := flow_iteration.sequential_init ( p_sbfl_info => l_sbfl_rec
                                                                       , p_step_info => l_step_info
                                                                       );
             l_next_loop_counter    := 1;
@@ -1453,7 +1459,7 @@ begin
             -- to set loop info on the original subflow. 
             -- loop iteration info is set when iteration subflows are created
 
-            l_total_loop_instances := flow_iterations.loop_init ( p_sbfl_info => l_sbfl_rec
+            l_total_loop_instances := flow_iteration.loop_init ( p_sbfl_info => l_sbfl_rec
                                                                 , p_step_info => l_step_info
                                                                 );
             l_next_loop_counter    := 1;
@@ -1494,17 +1500,13 @@ begin
     );
   else
     l_timestamp := systimestamp;
-    l_step_key  := flow_engine_util.step_key ( pi_sbfl_id         => p_subflow_id
-                                             , pi_current         => l_step_info.target_objt_ref
-                                             , pi_became_current  => l_timestamp
-                                             );
 
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
       set sbfl.sbfl_current             = l_step_info.target_objt_ref
         , sbfl.sbfl_last_completed      = l_sbfl_rec.sbfl_current
         , sbfl.sbfl_became_current      = l_timestamp
-        , sbfl.sbfl_step_key            = l_step_key
+        , sbfl.sbfl_step_key            = l_step_info.target_objt_step_key
         , sbfl.sbfl_status              = flow_constants_pkg.gc_sbfl_status_running
         , sbfl.sbfl_work_started        = null
         , sbfl.sbfl_potential_users     = null

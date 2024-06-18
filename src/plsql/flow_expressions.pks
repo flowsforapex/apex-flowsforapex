@@ -15,7 +15,7 @@ create or replace package flow_expressions
 
   authid current_user
   accessible by ( flow_engine, flow_boundary_events, flow_call_activities, 
-                  flow_gateways, flow_instances, flow_subprocesses, flow_iterations)
+                  flow_gateways, flow_instances, flow_subprocesses, flow_iteration)
 as 
   e_var_exp_date_format_error exception;
   e_var_exp_json_format_error exception;

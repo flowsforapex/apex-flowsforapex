@@ -669,7 +669,7 @@ as
          and p_sbfl_info.sbfl_loop_counter is not null 
       then
         -- we have merging gateway.  do the merge. returns 'wait' if flow is waiting at gateway, 'proceed' if merged
-        l_gateway_forward_status := flow_iterations.parallel_merge ( p_sbfl_info  => p_sbfl_info
+        l_gateway_forward_status := flow_iteration.parallel_merge ( p_sbfl_info  => p_sbfl_info
                                                                     , p_step_info  => p_step_info
                                                                     );
       else      
@@ -747,7 +747,7 @@ as
               );
             else
               ---- Add Edition IFDEF code here... If Enterprise compile this
-              flow_iterations.parallel_split
+              flow_iteration.parallel_split
               ( p_subflow_id => l_sbfl_id
               , p_sbfl_info  => p_sbfl_info
               , p_step_info  => p_step_info

@@ -12,7 +12,7 @@ create or replace package flow_engine
   accessible by ( flow_api_pkg, flow_instances, flow_gateways, flow_tasks
                 , flow_boundary_events, flow_timers_pkg, flow_subprocesses
                 , flow_call_activities, flow_usertask_pkg, flow_message_flow
-                , flow_iterations)
+                , flow_iteration)
 as 
   procedure timer_callback
   ( p_process_id    in flow_processes.prcs_id%type

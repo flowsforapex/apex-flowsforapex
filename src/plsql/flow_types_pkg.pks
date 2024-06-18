@@ -41,6 +41,7 @@ as
   , target_objt_lane_role     flow_subflows.sbfl_potential_groups%type
   , target_objt_attributes    flow_objects.objt_attributes%type
   , target_objt_iteration     flow_subflows.sbfl_iteration_type%type
+  , target_objt_step_key      flow_subflows.sbfl_step_key%type
   );
 
   type t_subflow_context is record

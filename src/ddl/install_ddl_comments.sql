@@ -30,6 +30,7 @@ comment on table flow_step_stats            is 'Flows for APEX table containing 
 comment on table flow_stats_history         is 'Flows for APEX table containing details on when flow statistics were gathered.';
 comment on table flow_configuration         is 'Flows for APEX table containing system configuration options currently active for the Flows for APEX system';
 comment on table flow_messages              is 'Flows for APEX table containing language-specific error and warning messages used by Flows for APEX.';
+comment on table flow_iterations      is 'Flows for APEX table containing live run-time state of all iteration arrays created for a process instance.';
 
 comment on column flow_diagrams.dgrm_id           is 'Unique reference number for a diagram'; 
 comment on column flow_diagrams.dgrm_name         is 'diagram name - often the business process name'; 
@@ -128,7 +129,13 @@ comment on column FLOW_INSTANCE_DIAGRAMS.PRDG_DIAGRAM_LEVEL is 'The diagram leve
 
 comment on column FLOW_INSTANCE_DIAGRAMS_LOV.CALLING_DIAGRAM is ' ';       
 comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_ID is ' ';               
-comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_PRCS_ID is ' ';     
+comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_PRCS_ID is ' ';  
+
+comment on column flow_iterations.fita_prcs_id is 'The parent process instance ID. Foreign Key to flow_processes.   Each process instance must be used to describe iterations or loops in one and only one proces instance.';
+comment on column flow_iterations.fita_parent_bpmn_id is 'The parent object (object bpmn id) for this iteration, i.e., the object that is being iterated or looped over.';
+comment on column flow_iterations.fita_step_key       is 'The step key of the parent object for this iteration';
+comment on column flow_iterations.fita_iteration_var  is 'The process variable name containing the iteration array for this iteration or loop as a json variable.';
+comment on column flow_iterations.fita_var_scope    is 'The process variable scope containing the iteration array for this iteration or loop as a json variable.';
 
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_PRCS_ID is ' ';             
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_OBJT_ID is ' ';             

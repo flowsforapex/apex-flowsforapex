@@ -46,7 +46,7 @@ PROMPT >> Engine
 @plsql/flow_log_admin.pks
 @plsql/flow_admin_api.pks
 @plsql/flow_statistics.pks
-@plsql/flow_iterations.pks
+@plsql/flow_iteration.pks
 
 PROMPT >>
 PROMPT >> REST API Support

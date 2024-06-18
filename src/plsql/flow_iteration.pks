@@ -1,7 +1,7 @@
-create or replace package flow_iterations
+create or replace package flow_iteration
 as
 /* 
--- Flows for APEX Enterprise Edition - flow_iterations.pks
+-- Flows for APEX Enterprise Edition - flow_iteration.pks
 -- 
 -- (c) Copyright Flowquest Consulting Limited, 2024.
 --
@@ -88,5 +88,5 @@ as
   , pi_scope             in flow_subflows.sbfl_scope%type
   ) return boolean;
 
-end flow_iterations;
+end flow_iteration;
 /
