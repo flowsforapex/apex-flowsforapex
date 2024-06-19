@@ -90,6 +90,7 @@ as
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
   gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';
+  gc_apex_usertask_simple_form        constant flow_types_pkg.t_bpmn_id := 'apexSimpleForm';
   gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := 'externalUrl';
 
   gc_apex_usertask_application_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
