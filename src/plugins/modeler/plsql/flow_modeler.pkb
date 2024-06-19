@@ -186,7 +186,7 @@ as
     );
     l_id      := apex_json.get_number( p_values => l_values, p_path => 'regions[1].data.id' );
     l_content := apex_json.get_clob( p_values => l_values, p_path => 'regions[1].data.content');
-    flow_diagram.update_diagram
+    flow_bpmn_parser_pkg.update_diagram
     (
       pi_dgrm_id      => l_id
     , pi_dgrm_content => l_content
@@ -500,12 +500,32 @@ as
   end get_json_parameters;
 
 
+  procedure get_form_templates
+  as
+    l_result clob;
+    cursor c_form_templates is select * from form_templates order by ftpl_name;
+    l_form_template form_templates%rowtype;
+  begin
+    l_result := '[{"label":"","value":""},';
+    open c_form_templates;
+    loop
+        fetch c_form_templates into l_form_template;
+        exit when c_form_templates%NOTFOUND;
+        l_result := l_result || '{"label":"' || l_form_template.ftpl_name || '","value":"' || l_form_template.ftpl_id || '"},';
+    end loop;
+    l_result := rtrim(l_result, ',') || ']';
+    htp.p(l_result);
+  end get_form_templates;
+
+
   procedure parse_code
   as
-    v_cur int;
+    v_cur     int;
     v_command varchar2(100);
-    v_input varchar2(4000);
-    l_result clob := '{"message":""}';
+    v_input   varchar2(4000);
+    v_json    json_element_t;
+    
+    l_result  clob := '{"message":""}';
   begin
     if (apex_application.g_x02 is not null) then
         case apex_application.g_x03
@@ -528,35 +548,42 @@ as
             end if;
         when 'plsql' then
             case apex_application.g_x04
-               when 'plsqlProcess' then
-                  v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
-               when 'plsqlExpression' then
-                  v_input := 'declare dummy varchar2(4000) :='
-                              || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
-               when 'plsqlRawExpression' then -- use the same snippet as non-raw
-                  v_input := 'declare dummy varchar2(4000) :='
-                              || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
-               when 'plsqlExpressionBoolean' then
-                  v_input := 'declare dummy boolean :='
-                              || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
-               when 'plsqlFunctionBody' then
-                  v_input := 'declare function dummy return varchar2 is begin'
-                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
-               when 'plsqlRawFunctionBody' then -- use the same snippet as non-raw
-                  v_input := 'declare function dummy return varchar2 is begin'
-                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';               
-               when 'plsqlFunctionBodyBoolean' then
-                  v_input := 'declare function dummy return boolean is begin'
-                              || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+            when 'plsqlProcess' then
+                v_input := 'begin' || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end;';
+            when 'plsqlExpression' then
+                v_input := 'declare dummy varchar2(4000) :='
+                           || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
+            when 'plsqlRawExpression' then -- use the same snippet as non-raw
+                v_input := 'declare dummy varchar2(4000) :='
+                           || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
+            when 'plsqlExpressionBoolean' then
+                v_input := 'declare dummy boolean :='
+                           || apex_application.lf || rtrim(apex_application.g_x02, ';') || ';' || apex_application.lf || 'begin null; end;';
+            when 'plsqlFunctionBody' then
+                v_input := 'declare function dummy return varchar2 is begin'
+                           || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
+            when 'plsqlRawFunctionBody' then -- use the same snippet as non-raw
+                v_input := 'declare function dummy return varchar2 is begin'
+                           || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';               
+            when 'plsqlFunctionBodyBoolean' then
+                v_input := 'declare function dummy return boolean is begin'
+                           || apex_application.lf || apex_application.g_x02 || apex_application.lf || 'end; begin null; end;';
             end case;
             begin
-                    v_cur := dbms_sql.open_cursor();
-                    dbms_sql.parse(v_cur, v_input, dbms_sql.native);
-                    dbms_sql.close_cursor(v_cur);
-                    l_result := '{"message":"Validation successful","success":"true"}';
-                exception
-                    when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '","success":"false"}';
-                end;
+                v_cur := dbms_sql.open_cursor();
+                dbms_sql.parse(v_cur, v_input, dbms_sql.native);
+                dbms_sql.close_cursor(v_cur);
+                l_result := '{"message":"Validation successful","success":"true"}';
+            exception
+                when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '","success":"false"}';
+            end;
+        when 'json' then
+            begin
+                v_json := json_element_t.parse(apex_application.g_x02);
+                l_result := '{"message":"Validation successful","success":"true"}';
+            exception
+               when others then l_result := '{"message":"' || apex_escape.json(sqlerrm) || '","success":"false"}';
+            end;
         end case;
     end if;
     htp.p(l_result);
@@ -587,6 +614,7 @@ as
       when 'GET_USERNAMES' then get_usernames;
       when 'GET_TASKS' then get_tasks;
       when 'GET_JSON_PARAMETERS' then get_json_parameters;
+      when 'GET_FORM_TEMPLATES' then get_form_templates;
       else null;
     end case;
     return l_return;
