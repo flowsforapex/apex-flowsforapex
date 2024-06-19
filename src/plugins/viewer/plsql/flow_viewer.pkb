@@ -72,6 +72,12 @@ as
                   , p_value     => ( p_region.attribute_15 = 'Y' )
                   , p_add_comma => true
                   ) ||
+                  apex_javascript.add_attribute
+                  (
+                    p_name      => 'useBPMNcolors'
+                  , p_value     => ( p_region.attribute_16 = 'Y' )
+                  , p_add_comma => true
+                  ) ||
                   '"config":' || p_region.init_javascript_code || '({})' ||
                 '})'
     );

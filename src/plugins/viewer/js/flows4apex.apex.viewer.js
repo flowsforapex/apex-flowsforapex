@@ -11,6 +11,7 @@
       showToolbar: false,
       enableMousewheelZoom: false,
       addHighlighting: false,
+      useBPMNcolors: false,
       enableCallActivities: false,
       config: {
         currentStyle: {
@@ -49,7 +50,7 @@
         bpmnViewer.customModules.drilldownCentering
       ];
 
-      if ( this.options.addHighlighting ) {
+      if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
         this.enabledModules.push(bpmnViewer.customModules.styleModule);
       }
 
@@ -120,14 +121,14 @@
         
         this.zoom( "fit-viewport" );
         
-        if ( this.options.addHighlighting ) {
+        if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
           const eventBus = bpmnViewer$.get('eventBus');
 
           eventBus.on('root.set', () => {
-            this.addHighlighting();
+            this.updateColors();
           });
 
-          this.addHighlighting();
+          this.updateColors();
         }
 
         // trigger load event
@@ -144,8 +145,16 @@
       }
     },
 
-    addHighlighting: function() {
-      this.bpmnViewer$.get('styleModule').highlightElements(this.current, this.completed, this.error);
+    updateColors: function() {
+      if (!this.options.useBPMNcolors) {
+        this.bpmnViewer$.get('styleModule').resetBPMNcolors();
+      }
+
+      this.bpmnViewer$.get('styleModule').resetHighlighting();
+
+      if (this.options.addHighlighting) {
+        this.bpmnViewer$.get('styleModule').highlightElements(this.current, this.completed, this.error);
+      }
     },
 
     zoom: function( zoomOption ) {
