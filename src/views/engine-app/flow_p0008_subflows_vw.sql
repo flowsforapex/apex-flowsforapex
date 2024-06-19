@@ -36,6 +36,7 @@ as
              when 'waiting for approval' then 'fa fa-question-square-o'
              when 'waiting for message' then 'fa fa-envelope-o'
              when 'waiting iterations' then 'fa fa-align-justify fa-rotate-90'
+             when 'iterating' then 'fa fa-align-justify fa-rotate-90'
          end as sbfl_status_icon
        , sbfl.sbfl_priority
        , sbfl.sbfl_due_on

@@ -571,7 +571,8 @@ end get_object_tag;
            and parent_sbfl.sbfl_id      = child_sbfl.sbfl_calling_sbfl
 --         where parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
          where parent_sbfl.sbfl_status in ( flow_constants_pkg.gc_sbfl_status_in_subprocess
-                                          , flow_constants_pkg.gc_sbfl_status_in_callactivity )
+                                          , flow_constants_pkg.gc_sbfl_status_in_callactivity 
+                                          , flow_constants_pkg.gc_sbfl_status_iterating)
            and parent_sbfl.sbfl_process_level = p_process_level
            and parent_sbfl.sbfl_prcs_id = p_process_id
       )

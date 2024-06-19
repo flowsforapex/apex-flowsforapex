@@ -224,6 +224,7 @@ as
   gc_sbfl_status_waiting_iter         constant  varchar2(20 char) := 'waiting iterations';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
+  gc_sbfl_status_iterating            constant  varchar2(20 char) := 'iterating';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
   gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
