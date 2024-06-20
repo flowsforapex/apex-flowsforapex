@@ -11,6 +11,7 @@ as
 -- Modified   2023-03-10   Moritz Klein (MT GmbH)
 -- Modified   2023-04-12   Moritz Klein (MT GmbH)
 -- Modified   2023-05-16   Moritz Klein (MT GmbH)
+-- Modified   2024-07-19   Moritz Klein (Hyand Solutions GmbH)
 --
 */
 
@@ -941,6 +942,16 @@ as
         );
       -- Standard Expressions with expressionType and expression nested
       elsif rec.extension_exp_type is not null then
+        if g_log_enabled then
+          flow_parser_util.log
+          (
+            pi_plog_dgrm_id    => g_dgrm_id
+          , pi_plog_bpmn_id    => pi_bpmn_id
+          , pi_plog_parse_step => 'when standard expression'
+          , pi_plog_payload    => 'extension_type: ' || rec.extension_type
+          );
+        end if;
+
         parse_simple_expression
         (
           pi_objt_bpmn_id => pi_bpmn_id
@@ -959,6 +970,83 @@ as
       end if;
     end loop;
   end parse_extension_elements;
+
+  procedure parse_iterator_attributes
+  (
+    pi_objt_bpmn_id       in flow_types_pkg.t_bpmn_id
+  , pi_iterator_type      in varchar2
+  , pi_is_sequential      in varchar2
+  , pi_extension_elements in sys.xmltype
+  )
+  as
+    l_apex_object      sys.json_object_t;
+    l_iterator_object  sys.json_object_t := sys.json_object_t();
+    l_ext_object       sys.json_object_t;
+  begin
+    if g_log_enabled then
+      flow_parser_util.log
+      (
+        pi_plog_dgrm_id    => g_dgrm_id
+      , pi_plog_bpmn_id    => pi_objt_bpmn_id
+      , pi_plog_parse_step => 'register_iterator_attributes'
+      , pi_plog_payload    => pi_extension_elements
+      );
+    end if;
+
+    if not g_objects.exists( pi_objt_bpmn_id ) then
+      register_object( pi_objt_bpmn_id => pi_objt_bpmn_id );
+      g_objects(pi_objt_bpmn_id).objt_attributes := sys.json_object_t();
+    end if;
+    flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_objt_bpmn_id).objt_attributes );
+    l_apex_object := g_objects(pi_objt_bpmn_id).objt_attributes.get_object( 'apex' );
+
+    l_iterator_object.put( key => 'isSequential', val => case when pi_is_sequential = flow_constants_pkg.gc_vcbool_true then true else false end );
+
+    for rec in (
+                select replace(extension_type, 'apex:') as extension_type
+                     , extension_type as orig_extension_type
+                     , extension_data
+                     , extension_exp_type
+                     , extension_exp_val
+                     , inside_variable
+                  from xmltable
+                       (
+                         xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
+                       , '/bpmn:extensionElements/*' passing pi_extension_elements
+                         columns
+                           extension_type     varchar2(  50 char) path 'name()'
+                         , extension_data     sys.xmltype         path '*'
+                         , extension_exp_type varchar2(  50 char) path 'apex:expressionType'
+                         , extension_exp_val  clob                path 'apex:expression'
+                         , inside_variable    varchar2(4000 char) path 'apex:insideVariable'
+                       ) 
+               )
+    loop
+
+      l_ext_object := sys.json_object_t();
+
+      l_ext_object.put( key => 'expressionType', val => rec.extension_exp_type );
+
+      if rec.extension_exp_type in ( flow_constants_pkg.gc_expr_type_sql, flow_constants_pkg.gc_expr_type_sql_delimited_list
+                                   , flow_constants_pkg.gc_expr_type_plsql_expression, flow_constants_pkg.gc_expr_type_plsql_function_body
+                                   , flow_constants_pkg.gc_expr_type_plsql_raw_expression, flow_constants_pkg.gc_expr_type_plsql_raw_function_body
+                                   )
+      then
+        l_ext_object.put( 'expression', flow_parser_util.get_lines_array( pi_str => rec.extension_exp_val ) );
+      else
+        l_ext_object.put( 'expression', rec.extension_exp_val );
+      end if;
+
+      if rec.inside_variable is not null then
+        l_ext_object.put( key => 'insideVariable', val => rec.inside_variable );
+      end if;
+
+      l_iterator_object.put( key => rec.extension_type, val => l_ext_object );
+    end loop;
+    
+    l_apex_object.put( key => replace( pi_iterator_type, 'bpmn:' ), val => l_iterator_object );
+
+  end parse_iterator_attributes;
 
   procedure parse_flow_node_refs
   (
@@ -1268,6 +1356,7 @@ as
                      , children.child_details
                      , children.extension_elements
                      , children.message_ref
+                     , children.is_sequential
                   from xmltable
                        (
                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn"
@@ -1278,6 +1367,7 @@ as
                          , child_id           varchar2(  50 char)  path '@id'
                          , child_value        varchar2(4000 char)  path 'text()'
                          , message_ref        varchar2(  50 char)  path '@messageRef'
+                         , is_sequential      varchar2(  50 char)  path '@isSequential'
                          , child_details      sys.xmltype          path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
                          , extension_elements sys.xmltype          path 'bpmn:extensionElements'
                        ) children
@@ -1413,6 +1503,42 @@ as
             , pi_extension_xml => rec.extension_elements
             );
           end if;
+        when flow_constants_pkg.gc_bpmn_multi_instance_loop then
+          if g_log_enabled then
+            flow_parser_util.log
+            (
+              pi_plog_dgrm_id    => g_dgrm_id
+            , pi_plog_bpmn_id    => pi_objt_bpmn_id
+            , pi_plog_parse_step => 'when ' || flow_constants_pkg.gc_bpmn_multi_instance_loop
+            , pi_plog_payload    => 'isSequential: ' || rec.is_sequential
+            );
+          end if;
+
+          parse_iterator_attributes
+          (
+            pi_objt_bpmn_id       => pi_objt_bpmn_id
+          , pi_iterator_type      => rec.child_type
+          , pi_is_sequential      => rec.is_sequential
+          , pi_extension_elements => rec.extension_elements
+          );
+        when flow_constants_pkg.gc_bpmn_standard_loop then
+          if g_log_enabled then
+            flow_parser_util.log
+            (
+              pi_plog_dgrm_id    => g_dgrm_id
+            , pi_plog_bpmn_id    => pi_objt_bpmn_id
+            , pi_plog_parse_step => 'when ' || flow_constants_pkg.gc_bpmn_standard_loop
+            , pi_plog_payload    => 'isSequential: ' || rec.is_sequential
+            );
+          end if;
+
+          parse_iterator_attributes
+          (
+            pi_objt_bpmn_id       => pi_objt_bpmn_id
+          , pi_iterator_type      => rec.child_type
+          , pi_is_sequential      => rec.is_sequential
+          , pi_extension_elements => rec.extension_elements
+          );
         else
           null;
       end case;

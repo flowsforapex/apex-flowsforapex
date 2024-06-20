@@ -82,6 +82,9 @@ as
   
   gc_bpmn_text                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'text';
 
+  gc_bpmn_multi_instance_loop         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'multiInstanceLoopCharacteristics';
+  gc_bpmn_standard_loop               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'standardLoopCharacteristics';
+
   -- APEX Extensions to BPMN
   -- bpmnProcess
   gc_apex_process_workspace           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'workspace';
@@ -163,6 +166,11 @@ as
   gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
   gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
   gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
+
+  -- Iterator Tags
+  gc_apex_iterator_input            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'inputCollection';
+  gc_apex_iterator_output           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'outputCollection';
+  gc_apex_iterator_completion_cond  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'completionCondition';
 
   -- Custom Extension Tag
   gc_apex_custom_extension            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'customExtension';
@@ -289,6 +297,8 @@ as
   gc_expr_type_static                   constant flow_types_pkg.t_expr_type := 'static';
   gc_expr_type_proc_var                 constant flow_types_pkg.t_expr_type := 'processVariable';
   gc_expr_type_item                     constant flow_types_pkg.t_expr_type := 'item';
+  gc_expr_type_array                    constant flow_types_pkg.t_expr_type := 'ARRAY';
+  gc_expr_type_list                     constant flow_types_pkg.t_expr_type := 'LIST';
   gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
   gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
   gc_expr_type_sql_json_array           constant flow_types_pkg.t_expr_type := 'sqlQueryArray';
