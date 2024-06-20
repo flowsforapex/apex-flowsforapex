@@ -297,8 +297,8 @@ as
   gc_expr_type_static                   constant flow_types_pkg.t_expr_type := 'static';
   gc_expr_type_proc_var                 constant flow_types_pkg.t_expr_type := 'processVariable';
   gc_expr_type_item                     constant flow_types_pkg.t_expr_type := 'item';
-  gc_expr_type_array                    constant flow_types_pkg.t_expr_type := 'ARRAY';
-  gc_expr_type_list                     constant flow_types_pkg.t_expr_type := 'LIST';
+  gc_expr_type_array                    constant flow_types_pkg.t_expr_type := 'processVariableArray';
+  gc_expr_type_list                     constant flow_types_pkg.t_expr_type := 'processVariableList';
   gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
   gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
   gc_expr_type_sql_json_array           constant flow_types_pkg.t_expr_type := 'sqlQueryArray';

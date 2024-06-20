@@ -332,12 +332,15 @@ end get_object_tag;
     l_iteration_type     varchar2(10);
   begin
     -- get loop characteristics
-    if json_exists (p_step_info.target_objt_attributes,    '$.apex.customExtension.multiInstanceLoopCharacteristics.isSequential') then
-      l_iteration_type := flow_constants_pkg.gc_iteration_sequential;
-    elsif json_exists (p_step_info.target_objt_attributes, '$.apex.customExtension.multiInstanceLoopCharacteristics.isLoop') then
+    if json_exists (p_step_info.target_objt_attributes, '$.apex.standardLoopCharacteristics') then
       l_iteration_type := flow_constants_pkg.gc_iteration_loop;
-    elsif json_exists (p_step_info.target_objt_attributes, '$.apex.customExtension.multiInstanceLoopCharacteristics') then
-      l_iteration_type := flow_constants_pkg.gc_iteration_parallel;
+    elsif json_exists (p_step_info.target_objt_attributes, '$.apex.multiInstanceLoopCharacteristics') then
+      case json_value (p_step_info.target_objt_attributes, '$.apex.multiInstanceLoopCharacteristics.isSequential' returning boolean)
+      when true then
+        l_iteration_type := flow_constants_pkg.gc_iteration_sequential;
+      when false then
+        l_iteration_type := flow_constants_pkg.gc_iteration_parallel;
+      end case;
     else 
       l_iteration_type := null;
     end if;
