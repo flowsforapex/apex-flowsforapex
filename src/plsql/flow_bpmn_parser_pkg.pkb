@@ -1009,6 +1009,7 @@ as
                      , extension_exp_type
                      , extension_exp_val
                      , inside_variable
+                     , exp_description
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
@@ -1019,6 +1020,7 @@ as
                          , extension_exp_type varchar2(  50 char) path 'apex:expressionType'
                          , extension_exp_val  clob                path 'apex:expression'
                          , inside_variable    varchar2(4000 char) path 'apex:insideVariable'
+                         , exp_description    varchar2(4000 char) path 'apex:description'
                        ) 
                )
     loop
@@ -1039,6 +1041,10 @@ as
 
       if rec.inside_variable is not null then
         l_ext_object.put( key => 'insideVariable', val => rec.inside_variable );
+      end if;
+
+      if rec.exp_description is not null then
+        l_ext_object.put( key => 'description', val => rec.exp_description );
       end if;
 
       l_iterator_object.put( key => rec.extension_type, val => l_ext_object );
