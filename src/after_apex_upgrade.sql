@@ -1,5 +1,5 @@
 /*
-Upgrades the APEX version enviroment & recompiles all PL/SQL packages
+Upgrades the APEX version enviroment and recompiles all PL/SQL packages
 Run this after an APEX version upgrade
 */
 
@@ -67,6 +67,7 @@ alter package flow_tasks compile specification;
 alter package flow_services compile specification;
 alter package flow_timers_pkg compile specification;
 alter package flow_instances compile specification;
+alter package flow_iteration compile specification;
 alter package flow_engine compile specification;
 alter package flow_settings compile specification;
 alter package flow_reservations compile specification;
