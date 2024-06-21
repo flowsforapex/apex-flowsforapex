@@ -124,13 +124,29 @@
         
         if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
           const eventBus = bpmnViewer$.get('eventBus');
-
-          eventBus.on('root.set', () => {
-            this.updateColors(this.current, this.completed, this.error);
-          });
+          const multiInstanceModule = bpmnViewer$.get('multiInstanceModule');
+          const styleModule = bpmnViewer$.get('styleModule');
 
           this.updateColors(this.current, this.completed, this.error);
+          
+          eventBus.on('root.set', (event) => {
+            const element = event.element;
+
+            if (!this.options.useBPMNcolors) {
+              styleModule.resetBPMNcolors();
+            }
+
+            styleModule.resetHighlighting();
+
+            if (!multiInstanceModule.isMultiInstanceSubProcess(element)) {
+              if (this.options.addHighlighting) {
+                styleModule.highlightElements(this.current, this.completed, this.error);
+              }
+            }
+          });
         }
+
+        console.log(this);
 
         if (this.iterationData) {
           this.bpmnViewer$.get('multiInstanceModule').addOverlays();
@@ -151,15 +167,25 @@
     },
 
     updateColors: function(current, completed, error) {
-      if (!this.options.useBPMNcolors) {
-        this.bpmnViewer$.get('styleModule').resetBPMNcolors();
-      }
 
-      this.bpmnViewer$.get('styleModule').resetHighlighting();
+      const styleModule = this.bpmnViewer$.get('styleModule');
+
+      this.resetColors();
 
       if (this.options.addHighlighting) {
-        this.bpmnViewer$.get('styleModule').highlightElements(current, completed, error);
+        styleModule.highlightElements(current, completed, error);
       }
+    },
+
+    resetColors: function() {
+
+      const styleModule = this.bpmnViewer$.get('styleModule');
+
+      if (!this.options.useBPMNcolors) {
+        styleModule.resetBPMNcolors();
+      }
+
+      styleModule.resetHighlighting();
     },
 
     zoom: function( zoomOption ) {
@@ -242,7 +268,13 @@
 
           // set diagram content
           this.diagram = diagram.diagram;
-          this.iterationData = JSON.parse(diagram.iterationData);
+
+          try {
+            this.iterationData = JSON.parse(diagram.iterationData); // TODO possible to to this in plsql already?
+          }
+          catch(e) {
+            this.iterationData = null;
+          }
 
           // load diagram
           this.loadDiagram();
