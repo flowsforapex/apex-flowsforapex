@@ -5,7 +5,8 @@
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created    Nov-2020 Moritz Klein,  MT AG
--- Edited  16-Mar-2022 Richard Allen, Oracle Corporation  
+-- Edited  16-Mar-2022 Richard Allen, Oracle Corporation
+-- Edited  21-Jun-2024 Dennis Amthor, Hyand Solutions GmbH
 --
 */
 create or replace view flow_instance_details_vw
@@ -45,6 +46,20 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
    where sbfl_current is not null
      and sbfl_status = 'error'
 group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
+), iterations as (
+    select fita_prcs_id as prcs_id
+         , json_objectagg
+           (
+                key fita_parent_bpmn_id
+                value prov_var_json
+                returning clob
+           ) as iteration_data
+      from flow_iterations
+      join flow_process_variables
+        on fita_prcs_id = prov_prcs_id
+       and fita_iteration_var = prov_var_name
+       and fita_var_scope = prov_scope
+     group by fita_prcs_id
 )
   select prcs.prcs_id
        , prcs.prcs_name
@@ -81,6 +96,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
               and aerr.diagram_level =  prdg.prdg_diagram_level
          ) as all_errors
        , prov.prov_var_vc2 as prcs_business_ref
+       , iter.iteration_data
     from flow_processes prcs
     join flow_instance_diagrams prdg
       on prdg.prdg_prcs_id = prcs.prcs_id
@@ -91,4 +107,6 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
      and prov.prov_var_name = 'BUSINESS_REF'
      and prov.prov_var_type = 'VARCHAR2'
      and prov.prov_scope    = 0
+    left join iterations iter
+      on prcs.prcs_id = iter.prcs_id
 with read only;

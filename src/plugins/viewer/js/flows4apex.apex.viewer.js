@@ -47,7 +47,8 @@
       this.viewerWrap  = this.regionId + "_viewer";
       this.canvasId    = this.regionId + "_canvas";
       this.enabledModules = [
-        bpmnViewer.customModules.drilldownCentering
+        bpmnViewer.customModules.drilldownCentering,
+        bpmnViewer.customModules.multiInstanceModule
       ];
 
       if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
@@ -125,10 +126,14 @@
           const eventBus = bpmnViewer$.get('eventBus');
 
           eventBus.on('root.set', () => {
-            this.updateColors();
+            this.updateColors(this.current, this.completed, this.error);
           });
 
-          this.updateColors();
+          this.updateColors(this.current, this.completed, this.error);
+        }
+
+        if (this.iterationData) {
+          this.bpmnViewer$.get('multiInstanceModule').addOverlays();
         }
 
         // trigger load event
@@ -145,7 +150,7 @@
       }
     },
 
-    updateColors: function() {
+    updateColors: function(current, completed, error) {
       if (!this.options.useBPMNcolors) {
         this.bpmnViewer$.get('styleModule').resetBPMNcolors();
       }
@@ -153,7 +158,7 @@
       this.bpmnViewer$.get('styleModule').resetHighlighting();
 
       if (this.options.addHighlighting) {
-        this.bpmnViewer$.get('styleModule').highlightElements(this.current, this.completed, this.error);
+        this.bpmnViewer$.get('styleModule').highlightElements(current, completed, error);
       }
     },
 
@@ -196,6 +201,8 @@
 
           var diagram;
           var oldLoaded = true;
+
+          this.bpmnViewer$.get('multiInstanceModule').setWidget(this);
           
           // use call activities
           if ( this.options.enableCallActivities ) {
@@ -235,6 +242,7 @@
 
           // set diagram content
           this.diagram = diagram.diagram;
+          this.iterationData = JSON.parse(diagram.iterationData);
 
           // load diagram
           this.loadDiagram();
