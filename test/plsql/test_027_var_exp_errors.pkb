@@ -12,7 +12,7 @@ is
   -- tag
   -- rollback(manual)
 
-  -- uses models 19a-g
+  -- uses models 27a-g
   g_model_a27a constant varchar2(100) := 'A27a - Variable Expression Errors';
 
   g_test_prcs_name_a constant varchar2(100) := 'test 027 - variable expression errors a';
