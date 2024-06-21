@@ -1009,7 +1009,7 @@ as
                      , extension_exp_type
                      , extension_exp_val
                      , inside_variable
-                     , exp_description
+                     , extension_text
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
@@ -1020,34 +1020,36 @@ as
                          , extension_exp_type varchar2(  50 char) path 'apex:expressionType'
                          , extension_exp_val  clob                path 'apex:expression'
                          , inside_variable    varchar2(4000 char) path 'apex:insideVariable'
-                         , exp_description    varchar2(4000 char) path 'apex:description'
+                         , extension_text     clob                path 'text()'
                        ) 
                )
     loop
 
       l_ext_object := sys.json_object_t();
 
-      l_ext_object.put( key => 'expressionType', val => rec.extension_exp_type );
+      if rec.extension_exp_type != 'description' then
+        l_ext_object.put( key => 'expressionType', val => rec.extension_exp_type );
 
-      if rec.extension_exp_type in ( flow_constants_pkg.gc_expr_type_sql, flow_constants_pkg.gc_expr_type_sql_delimited_list
-                                   , flow_constants_pkg.gc_expr_type_plsql_expression, flow_constants_pkg.gc_expr_type_plsql_function_body
-                                   , flow_constants_pkg.gc_expr_type_plsql_raw_expression, flow_constants_pkg.gc_expr_type_plsql_raw_function_body
-                                   )
-      then
-        l_ext_object.put( 'expression', flow_parser_util.get_lines_array( pi_str => rec.extension_exp_val ) );
+        if rec.extension_exp_type in ( flow_constants_pkg.gc_expr_type_sql, flow_constants_pkg.gc_expr_type_sql_delimited_list
+                                    , flow_constants_pkg.gc_expr_type_plsql_expression, flow_constants_pkg.gc_expr_type_plsql_function_body
+                                    , flow_constants_pkg.gc_expr_type_plsql_raw_expression, flow_constants_pkg.gc_expr_type_plsql_raw_function_body
+                                    )
+        then
+          l_ext_object.put( 'expression', flow_parser_util.get_lines_array( pi_str => rec.extension_exp_val ) );
+        else
+          l_ext_object.put( 'expression', rec.extension_exp_val );
+        end if;
+
+        if rec.inside_variable is not null then
+          l_ext_object.put( key => 'insideVariable', val => rec.inside_variable );
+        end if;
+
+        l_iterator_object.put( key => rec.extension_type, val => l_ext_object );
       else
-        l_ext_object.put( 'expression', rec.extension_exp_val );
+        if rec.extension_text is not null then
+          l_iterator_object.put( key => 'description', val => rec.extension_text );
+        end if;
       end if;
-
-      if rec.inside_variable is not null then
-        l_ext_object.put( key => 'insideVariable', val => rec.inside_variable );
-      end if;
-
-      if rec.exp_description is not null then
-        l_ext_object.put( key => 'description', val => rec.exp_description );
-      end if;
-
-      l_iterator_object.put( key => rec.extension_type, val => l_ext_object );
     end loop;
     
     l_apex_object.put( key => replace( pi_iterator_type, 'bpmn:' ), val => l_iterator_object );
