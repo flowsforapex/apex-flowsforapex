@@ -988,7 +988,7 @@ as
       (
         pi_plog_dgrm_id    => g_dgrm_id
       , pi_plog_bpmn_id    => pi_objt_bpmn_id
-      , pi_plog_parse_step => 'register_iterator_attributes'
+      , pi_plog_parse_step => 'parse_iterator_attributes'
       , pi_plog_payload    => pi_extension_elements
       );
     end if;
@@ -1730,6 +1730,7 @@ as
                        end as interrupting
                      , steps.conn_sequence
                      , steps.task_type
+                     , steps.is_sequential
                      , steps.child_elements
                      , steps.extension_elements
                      , steps.step
@@ -1749,6 +1750,7 @@ as
                          , interrupting       varchar2( 50 char) path '@cancelActivity'
                          , conn_sequence      number             path '@apex:sequence'
                          , task_type          varchar2( 50 char) path '@apex:type'
+                         , is_sequential      varchar2( 50 char) path '@isSequential'
                          , child_elements     sys.xmltype        path '* except bpmn:incoming except bpmn:outgoing except bpmn:extensionElements'
                          , extension_elements sys.xmltype        path 'bpmn:extensionElements'
                          , step               sys.xmltype        path '.'
@@ -1757,11 +1759,21 @@ as
     loop
       if g_log_enabled then
 
+        if rec.steps_id is null then
+          flow_parser_util.log
+          (
+            pi_plog_dgrm_id    => g_dgrm_id
+          , pi_plog_bpmn_id    => pi_proc_bpmn_id
+          , pi_plog_parse_step => 'parse_steps - loop'
+          , pi_plog_payload    => 'No step_id. In process of type ' || pi_proc_type || ' with id ' || pi_proc_bpmn_id
+          );
+        end if;
+
         flow_parser_util.log
         (
           pi_plog_dgrm_id    => g_dgrm_id
         , pi_plog_bpmn_id    => rec.steps_id
-        , pi_plog_parse_step => 'parse_steps - loop step'
+        , pi_plog_parse_step => 'parse_steps - loop step data'
         , pi_plog_payload    => rec.step
         );
 
@@ -1769,7 +1781,7 @@ as
         (
           pi_plog_dgrm_id    => g_dgrm_id
         , pi_plog_bpmn_id    => rec.steps_id
-        , pi_plog_parse_step => 'parse_steps - loop childElements'
+        , pi_plog_parse_step => 'parse_steps - loop childElements data'
         , pi_plog_payload    => rec.child_elements
         );
 
@@ -1777,13 +1789,32 @@ as
         (
           pi_plog_dgrm_id    => g_dgrm_id
         , pi_plog_bpmn_id    => rec.steps_id
-        , pi_plog_parse_step => 'parse_steps - loop extensionElements'
+        , pi_plog_parse_step => 'parse_steps - loop extensionElements data'
         , pi_plog_payload    => rec.extension_elements
         );
 
       end if;
 
-      if rec.source_ref is null then -- assume objects don't have a sourceRef attribute
+      -- Iterator found as step, shortcut other processing
+      if rec.steps_type in ( flow_constants_pkg.gc_bpmn_multi_instance_loop, flow_constants_pkg.gc_bpmn_standard_loop ) then
+        if g_log_enabled then
+          flow_parser_util.log
+          (
+            pi_plog_dgrm_id    => g_dgrm_id
+          , pi_plog_bpmn_id    => pi_proc_bpmn_id
+          , pi_plog_parse_step => 'parse_steps - loop -> found iterator of type ' || rec.steps_type
+          , pi_plog_payload    => rec.extension_elements
+          );
+        end if;
+
+        parse_iterator_attributes
+        (
+          pi_objt_bpmn_id       => pi_proc_bpmn_id
+        , pi_iterator_type      => rec.steps_type
+        , pi_is_sequential      => rec.is_sequential
+        , pi_extension_elements => rec.extension_elements
+        );
+      elsif rec.source_ref is null then -- assume objects don't have a sourceRef attribute
 
         -- Parse additional information from child elements
         -- relevant for e.g. terminateEndEvent
@@ -1878,6 +1909,19 @@ as
   )
   as
   begin
+
+    if g_log_enabled then
+
+      flow_parser_util.log
+      (
+        pi_plog_dgrm_id    => g_dgrm_id
+      , pi_plog_bpmn_id    => pi_parent_id
+      , pi_plog_parse_step => 'parse_xml'
+      , pi_plog_payload    => pi_xml
+      );
+
+    end if;
+
     if pi_parent_id is null then
       for rec in (
                  select proc.proc_id
