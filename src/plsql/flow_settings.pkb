@@ -27,6 +27,7 @@ as
   as
     l_return    expression_details_t;
   begin
+    apex_debug.enter ('get_expression_details','pi_expr_json',pi_expr_json.to_string);
     l_return.expr_type := pi_expr_json.get_string( key => 'expressionType' );
 
     case pi_expr_json.get_type( key => 'expression' )
@@ -517,14 +518,14 @@ as
   end get_endpoint;
 
   function get_iteration_settings
-  ( pi_expr          flow_objects.objt_attributes%type
+  ( pi_expr          sys.json_object_t
   ) return   flow_types_pkg.t_iteration_vars
   is
     l_settings       flow_types_pkg.t_iteration_vars;
     l_details        expression_details_t;
   begin
     apex_debug.enter ( 'get_iteration_settings');
-    l_details := get_expression_details ( pi_expr_data  => pi_expr);
+    l_details := get_expression_details ( pi_expr_json  => pi_expr);
 
     l_settings.type              := l_details.expr_type;
     l_settings.collection_var    := l_details.expr_value;

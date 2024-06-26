@@ -55,14 +55,6 @@ as
   function loop_complete_step
   ( p_sbfl_info             in flow_subflows%rowtype
   ) return flow_types_pkg.t_iteration_status;
-
-  function create_iteration_array
-  ( pi_prcs_id              in flow_processes.prcs_id%type
-  , pi_sbfl_id              in flow_subflows.sbfl_id%type
-  , pi_expr                 in varchar2
-  , pi_scope                in flow_subflows.sbfl_scope%type default 0
-  , pi_iteration_type       in flow_subflows.sbfl_iteration_type%type
-  ) return   sys.json_array_t;  
   
   function get_iteration_array
   ( pi_prcs_id              in flow_processes.prcs_id%type
@@ -90,14 +82,6 @@ as
   , pi_loop_counter     in flow_subflows.sbfl_loop_counter%type
   , pi_new_status       in varchar2
   );
-
-  function iteration_completion_condition_met
-  ( pi_prcs_id           in flow_processes.prcs_id%type
-  , pi_iteration_def     in varchar2
-  , pi_iter_array        in sys.json_array_t
-  , pi_loop_counter      in flow_subflows.sbfl_loop_counter%type
-  , pi_scope             in flow_subflows.sbfl_scope%type
-  ) return boolean;
 
 end flow_iteration;
 /

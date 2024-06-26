@@ -329,24 +329,39 @@ end get_object_tag;
   ( p_step_info         flow_types_pkg.flow_step_info
   ) return varchar2
   is
-    l_iteration_type     varchar2(10);
+    l_iteration_type          varchar2(10);
+    l_sequential              boolean;
+    l_target_objt_attributes  sys.json_object_t;
+    l_target_iter_attributes  sys.json_object_t;
+    l_multi_attributes        sys.json_object_t;
   begin
     -- get loop characteristics
-    if json_exists (p_step_info.target_objt_attributes, '$.apex.standardLoopCharacteristics') then
-      l_iteration_type := flow_constants_pkg.gc_iteration_loop;
-    elsif json_exists (p_step_info.target_objt_attributes, '$.apex.multiInstanceLoopCharacteristics') then
-      case json_value (p_step_info.target_objt_attributes, '$.apex.multiInstanceLoopCharacteristics.isSequential' returning boolean)
-      when true then
-        l_iteration_type := flow_constants_pkg.gc_iteration_sequential;
-      when false then
-        l_iteration_type := flow_constants_pkg.gc_iteration_parallel;
-      end case;
+    l_target_objt_attributes := sys.json_object_t.parse(p_step_info.target_objt_attributes);
+    apex_debug.message (p_message => 'l_target_objt_atributes: %0', p0 => l_target_objt_attributes.to_string);
+    if l_target_objt_attributes.has('apex') then
+      apex_debug.message (p_message => 'has apex');
+      l_target_iter_attributes := l_target_objt_attributes.get_object('apex');
+      if l_target_objt_attributes.get_object('apex').has('standardLoopCharacteristics') then
+        apex_debug.message (p_message => 'has standardLoop');
+        l_iteration_type := flow_constants_pkg.gc_iteration_loop;
+      elsif l_target_objt_attributes.get_object('apex').has('multiInstanceLoopCharacteristics') then
+        apex_debug.message (p_message => 'has multiIstanceLoop');
+        l_multi_attributes := l_target_objt_attributes.get_object('apex').get_object('multiInstanceLoopCharacteristics');
+        l_sequential := l_multi_attributes.get_boolean('isSequential');
+        case l_sequential
+        when true then
+          l_iteration_type := flow_constants_pkg.gc_iteration_sequential;
+        when false then
+          l_iteration_type := flow_constants_pkg.gc_iteration_parallel;
+        end case;
+      end if;
     else 
       l_iteration_type := null;
     end if;
     apex_debug.message (p_message => 'Iteration Type: %0', p0 => l_iteration_type);
     return l_iteration_type;
   end get_iteration_type;
+
 
   function subflow_start
     ( 

@@ -49,7 +49,7 @@ as
   ) return   flow_types_pkg.t_bpmn_attribute_vc2;  
 
   function get_iteration_settings
-  ( pi_expr          flow_objects.objt_attributes%type
+  ( pi_expr          sys.json_object_t
   ) return   flow_types_pkg.t_iteration_vars;    
 
 end flow_settings;
