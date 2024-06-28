@@ -171,6 +171,7 @@ as
   gc_apex_iterator_input            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'inputCollection';
   gc_apex_iterator_output           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'outputCollection';
   gc_apex_iterator_completion_cond  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'completionCondition';
+  gc_apex_iterator_description      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'description';
 
   -- Custom Extension Tag
   gc_apex_custom_extension            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'customExtension';
@@ -191,6 +192,7 @@ as
   gc_iteration_sequential             constant flow_types_pkg.t_vc20 := 'sequential';
   gc_iteration_loop                   constant flow_types_pkg.t_vc20 := 'loop';
 
+  gc_iteration_status_not_started     constant flow_types_pkg.t_vc20 := 'notStarted';
   gc_iteration_status_running         constant flow_types_pkg.t_vc20 := 'running';
   gc_iteration_status_completed       constant flow_types_pkg.t_vc20 := 'completed';
   gc_iteration_status_terminated      constant flow_types_pkg.t_vc20 := 'terminated';

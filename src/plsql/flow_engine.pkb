@@ -1143,12 +1143,14 @@ begin
   , p3  => p_step_info.target_objt_ref
   );
   apex_debug.trace
-  ( p_message => 'Running Step Info - target_objt_tag : %0 (treat like %2 ), target_objt_subtag : %1, iteration: %3 (loop: %4)'
+  ( p_message => 'Running Step Info - target_objt_tag : %0 (treat like %2 ), target_objt_subtag : %1, iteration: %3 (loop: %4), iteration path %5, iteration var %6'
   , p0 => p_step_info.target_objt_tag
   , p1 => p_step_info.target_objt_subtag
   , p2 => coalesce (p_step_info.target_objt_treat_as_tag, p_step_info.target_objt_tag)
   , p3 => nvl ( p_step_info.target_objt_iteration, 'None')
   , p4 => p_sbfl_rec.sbfl_loop_counter
+  , p5 => p_sbfl_rec.sbfl_iteration_path
+  , p6 => p_sbfl_rec.sbfl_iteration_var
   );
   apex_debug.trace
   ( p_message => 'Running Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
@@ -1412,6 +1414,7 @@ begin
                                                                   , pi_current         => l_step_info.target_objt_ref
                                                                   );
         -- control iteration progression
+        l_existing_iteration_path := l_sbfl_rec.sbfl_iteration_path;
         case l_step_info.target_objt_iteration 
         when flow_constants_pkg.gc_iteration_sequential then
           if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref
@@ -1447,13 +1450,13 @@ begin
             l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
             l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
             l_next_step_confirmed  := true;
+            -- trim existing iteration path to remove previous iterations of the same parent
+            if l_existing_iteration_path is not null and  l_existing_iteration_path like '%:%' then
+              l_existing_iteration_path := substr(l_existing_iteration_path, 1, instr(l_existing_iteration_path, ':', -1) - 1);
+            else 
+              l_existing_iteration_path := null;
+            end if;
           end if; -- loop counter
-          l_existing_iteration_path := l_sbfl_rec.sbfl_iteration_path;
-          if l_existing_iteration_path is not null and  l_existing_iteration_path like '%:%' then
-            l_existing_iteration_path := substr(l_existing_iteration_path, 1, instr(l_existing_iteration_path, ':', -1) - 1);
-          else 
-            l_existing_iteration_path := null;
-          end if;
           l_new_iteration_path := trim (':' from
                                        l_existing_iteration_path||':'||l_step_info.target_objt_name||'['||l_next_loop_counter||']');
         when flow_constants_pkg.gc_iteration_parallel then
@@ -1508,11 +1511,17 @@ begin
           l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances; 
           l_next_step_confirmed  := true;
           if l_iteration_status.is_complete then
+              apex_debug.message ('non iteration step - existing iteration path...  %0',p0=> l_existing_iteration_path);
               if l_existing_iteration_path is not null and  l_existing_iteration_path like '%:%' then
-                l_existing_iteration_path := substr(l_existing_iteration_path, 1, instr(l_existing_iteration_path, ':', -1) - 1);
+                l_new_iteration_path := substr(l_existing_iteration_path, 1, instr(l_existing_iteration_path, ':', -1) - 1);
+                apex_debug.message ('stripping one level from iteration path...  New path %0',p0=> l_existing_iteration_path);
               else 
-                l_existing_iteration_path := null;
+                l_new_iteration_path := null;
+                apex_debug.message ('resetting iteration path...  New path %0',p0=> l_existing_iteration_path);
               end if;
+              l_iteration_status.iteration_var := null;
+              l_iteration_status.var_scope := null;
+              l_iteration_status.is_complete := false;
           else
               l_new_iteration_path := l_sbfl_rec.sbfl_iteration_path;
           end if;

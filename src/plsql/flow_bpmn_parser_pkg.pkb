@@ -1027,7 +1027,7 @@ as
 
       l_ext_object := sys.json_object_t();
 
-      if rec.extension_exp_type != 'description' then
+      if rec.extension_exp_type != flow_constants_pkg.gc_apex_iterator_description then
         l_ext_object.put( key => 'expressionType', val => rec.extension_exp_type );
 
         if rec.extension_exp_type in ( flow_constants_pkg.gc_expr_type_sql, flow_constants_pkg.gc_expr_type_sql_delimited_list
@@ -1047,7 +1047,7 @@ as
         l_iterator_object.put( key => rec.extension_type, val => l_ext_object );
       else
         if rec.extension_text is not null then
-          l_iterator_object.put( key => 'description', val => rec.extension_text );
+          l_iterator_object.put( key => flow_constants_pkg.gc_apex_iterator_description, val => rec.extension_text );
         end if;
       end if;
     end loop;
