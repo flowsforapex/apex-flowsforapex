@@ -119,7 +119,10 @@ CREATE TABLE flow_subflow_log (
     sflg_iteration_var          VARCHAR2(50 CHAR),
     sflg_last_updated           DATE,
     sflg_notes                  VARCHAR2(200)
+
 );
+
+create index flow_sflg_iter_ix on flow_subflow_log (sflg_prcs_id, sflg_dgrm_id  , sflg_diagram_level ,sflg_sbfl_iteration_path );
 
 CREATE TABLE flow_subflows (
     sbfl_id                         NUMBER
