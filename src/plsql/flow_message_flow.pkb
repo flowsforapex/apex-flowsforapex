@@ -177,7 +177,7 @@ create or replace package body flow_message_flow as
       , p2 => l_current
       , p3 => l_scope
       , p4 => l_msub.msub_id
-      , p5 => p_msub.msub_callback_par
+      , p5 => l_msub.msub_callback_par
       );
       flow_message_util.intermed_save_payload_and_callback
       ( p_msub     => l_msub

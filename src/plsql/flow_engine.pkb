@@ -13,6 +13,8 @@ create or replace package body flow_engine as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  e_feature_requires_ee exception;
+
   function flow_get_matching_link_object
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -1188,7 +1190,6 @@ procedure run_step
 , p_step_info         in flow_types_pkg.flow_step_info
 )
 is
-  e_feature_requires_ee exception;
 begin
   apex_debug.enter 
   ( 'run_step'
