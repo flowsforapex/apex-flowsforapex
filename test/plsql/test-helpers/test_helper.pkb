@@ -2,9 +2,11 @@ create or replace package body test_helper as
 /* 
 -- Flows for APEX - test_helper.pkb
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2020,2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates,  2024.
 --
 -- Created 18-May-2022   Richard Allen, Oracle
+-- Edited  02-Aug-2024   Richard Allen, Flowquest Limited
 --
 */
   -- basic model setup and movement
@@ -57,6 +59,29 @@ create or replace package body test_helper as
          from flow_subflows sbfl
         where sbfl.sbfl_prcs_id = pi_prcs_id
           and sbfl.sbfl_current = pi_current;
+     -- step it forward
+      step_forward 
+      ( pi_prcs_id => pi_prcs_id
+      , pi_sbfl_id => l_subflow
+      );
+   end step_forward;
+
+  -- step the model forward from an object given the object ID and iteration path
+   procedure step_forward 
+   ( pi_prcs_id         in  flow_processes.prcs_id%type
+   , pi_current         in  flow_subflows.sbfl_current%type
+   , pi_iteration_path  in  flow_subflows.sbfl_iteration_path%type
+   )
+   is
+     l_subflow     flow_subflows.sbfl_id%type;
+   begin
+     -- find the subflow having pi_sbfl_current as its current object
+       select sbfl.sbfl_id
+         into l_subflow
+         from flow_subflows sbfl
+        where sbfl.sbfl_prcs_id        = pi_prcs_id
+          and sbfl.sbfl_current        = pi_current
+          and sbfl.sbfl_iteration_path = pi_iteration_path;
      -- step it forward
       step_forward 
       ( pi_prcs_id => pi_prcs_id

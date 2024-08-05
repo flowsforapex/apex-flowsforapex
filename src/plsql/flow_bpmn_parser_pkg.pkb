@@ -1047,7 +1047,7 @@ as
         l_iterator_object.put( key => rec.extension_type, val => l_ext_object );
       else
         if rec.extension_text is not null then
-          l_iterator_object.put( key => flow_constants_pkg.gc_apex_iterator_description, val => rec.extension_text );
+          l_iterator_object.put( key => 'description', val => rec.extension_text );
         end if;
       end if;
     end loop;

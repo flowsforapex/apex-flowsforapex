@@ -2,9 +2,12 @@ create or replace package test_helper as
 /* 
 -- Flows for APEX - test_helper.pks
 -- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2020,2022.
+-- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates,  2024.
+
 --
 -- Created 18-May-2022   Richard Allen, Oracle
+-- Edited  02-Aug-2024   Richard Allen, Flowquest Limited
 --
 */
 
@@ -24,6 +27,13 @@ create or replace package test_helper as
    procedure step_forward 
    ( pi_prcs_id   in  flow_processes.prcs_id%type
    , pi_current   in  flow_subflows.sbfl_current%type
+   );
+
+  -- step the model forward from an object given the object ID and iteration path
+   procedure step_forward 
+   ( pi_prcs_id         in  flow_processes.prcs_id%type
+   , pi_current         in  flow_subflows.sbfl_current%type
+   , pi_iteration_path  in  flow_subflows.sbfl_iteration_path%type
    );
 
   -- restart and step the model forward from an object given the object ID
