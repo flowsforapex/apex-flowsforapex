@@ -1,5 +1,4 @@
 {
-  "editor.tabSize": 2,
   "editor.renderFinalNewline": "on",
   "[javascript]": {
     "editor.formatOnSave": false,
@@ -10,5 +9,6 @@
       "source.fixAll.eslint"
     ]
   },
-  "svn.ignoreMissingSvnWarning": true
+  "svn.ignoreMissingSvnWarning": true,
+  "editor.tabSize": 2
 }
