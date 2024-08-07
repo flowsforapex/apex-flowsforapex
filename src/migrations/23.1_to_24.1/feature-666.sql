@@ -13,10 +13,12 @@ PROMPT >> Database Changes
 
   CREATE TABLE flow_iterations (
       fita_prcs_id        NUMBER NOT NULL,
+      fita_diagram_level  NUMBER NOT NULL,
+      fita_dgrm_id        NUMBER NOT NULL,
       fita_parent_bpmn_id VARCHAR2(50 CHAR) not null,
       fita_step_key       VARCHAR2(20 CHAR) not null,
       fita_iteration_var  VARCHAR2(50 CHAR) not null,
-      fita_var_scope          NUMBER not null
+      fita_var_scope      NUMBER not null
   );
 
   alter table flow_iterations

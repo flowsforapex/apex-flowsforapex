@@ -133,6 +133,9 @@ comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_PRCS_ID is ' ';
 
 comment on column flow_iterations.fita_prcs_id is 'The parent process instance ID. Foreign Key to flow_processes.   Each process instance must be used to describe iterations or loops in one and only one proces instance.';
 comment on column flow_iterations.fita_parent_bpmn_id is 'The parent object (object bpmn id) for this iteration, i.e., the object that is being iterated or looped over.';
+comment on column flow_iterations.fita_diagram_level is 'The Diagram Level of the object being iterated.';
+comment on column flow_iterations.fita_dgrm_id is 'The Diagram ID containing the object being iterated.';
+
 comment on column flow_iterations.fita_step_key       is 'The step key of the parent object for this iteration';
 comment on column flow_iterations.fita_iteration_var  is 'The process variable name containing the iteration array for this iteration or loop as a json variable.';
 comment on column flow_iterations.fita_var_scope    is 'The process variable scope containing the iteration array for this iteration or loop as a json variable.';
