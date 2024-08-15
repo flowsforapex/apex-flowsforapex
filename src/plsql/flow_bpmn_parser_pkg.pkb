@@ -901,7 +901,7 @@ as
       -- Task Subtypes
       elsif rec.extension_type in ( flow_constants_pkg.gc_apex_usertask_apex_page
                                   , flow_constants_pkg.gc_apex_usertask_apex_approval
-                                  , flow_constants_pkg.gc_apex_usertask_simple_form
+                                  , flow_constants_pkg.gc_apex_usertask_apex_simple_form
                                   , flow_constants_pkg.gc_apex_usertask_external_url
                                   , flow_constants_pkg.gc_apex_servicetask_send_mail
                                   , flow_constants_pkg.gc_apex_task_execute_plsql
