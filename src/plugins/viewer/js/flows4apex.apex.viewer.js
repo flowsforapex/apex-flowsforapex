@@ -48,7 +48,8 @@
       this.canvasId    = this.regionId + "_canvas";
       this.enabledModules = [
         bpmnViewer.customModules.drilldownCentering,
-        bpmnViewer.customModules.multiInstanceModule
+        bpmnViewer.customModules.multiInstanceModule,
+        bpmnViewer.customModules.userTaskModule
       ];
 
       if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
@@ -229,6 +230,7 @@
           var oldLoaded = true;
 
           this.bpmnViewer$.get('multiInstanceModule').setWidget(this);
+          this.bpmnViewer$.get('userTaskModule').setWidget(this);
           
           // use call activities
           if ( this.options.enableCallActivities ) {
