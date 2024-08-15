@@ -1,5 +1,6 @@
 var bpmnViewer;
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "./lib/viewerPalette/PaletteProvider.js":
@@ -8,7 +9,6 @@ var bpmnViewer;
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ PaletteProvider)
@@ -75,7 +75,7 @@ function PaletteProvider(
           title: translate('Download SVG'),
           action: {
             click: function (event) {
-              downloadAsSVG();
+              downloadAsSVG(event);
             },
           },
         }
@@ -106,7 +106,6 @@ PaletteProvider.$inject = [
   \************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -134,7 +133,6 @@ __webpack_require__.r(__webpack_exports__);
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CustomDrilldown)
@@ -393,7 +391,6 @@ CustomDrilldown.$inject = [
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -414,7 +411,6 @@ __webpack_require__.r(__webpack_exports__);
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DrilldownCentering)
@@ -447,7 +443,6 @@ DrilldownCentering.$inject = ['eventBus', 'canvas'];
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -462,77 +457,494 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./modules/multiInstanceModule/MultiInstanceModule.js":
+/*!************************************************************!*\
+  !*** ./modules/multiInstanceModule/MultiInstanceModule.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MultiInstanceModule)
+/* harmony export */ });
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+
+
+
+
+
+function MultiInstanceModule(
+  canvas, eventBus, elementRegistry, translate, overlays
+) {
+  this._canvas = canvas;
+  this._eventBus = eventBus;
+  this._elementRegistry = elementRegistry;
+  this._translate = translate;
+  this._overlays = overlays;
+
+  var _self = this;
+
+  const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`
+    <div id="modal">
+      <div id ="modal-content">
+        <div id="iteration-title">
+          <span></span>
+          <button class="fa fa-times"></button>
+        </div>
+        <div id="iteration-search">
+          <input type="text" placeholder="Search.."/>
+        </div>
+        <div id="iteration-list">
+            <table>
+              <thead>
+                <tr>
+                  <th>Loop Counter</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // append content
+  canvas.getContainer().appendChild(modal);
+
+  eventBus.on('import.render.complete', function () {
+    // add search listener for filtering
+    const searchbar = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-search input');
+    searchbar.addEventListener('keyup', function (event) {
+      _self.filterIterations(event);
+    });
+    // add close listener
+    const closeButton = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-title button.fa-times');
+    closeButton.addEventListener('click', function (event) {
+      _self.closeIterations();
+    });
+  });
+
+  // when diagram root changes
+  eventBus.on('root.set', function (event) {
+    const element = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(event.element);
+    // if drilled down into subprocess
+    if ((0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:SubProcess') && _self.hasIterationData(element)) {
+      _self.addBreadcrumbButton(element);
+    }
+  });
+}
+
+MultiInstanceModule.prototype.addOverlays = function () {
+  
+  const _this = this;
+  
+  this._elementRegistry.filter(function (e) {
+    return !((0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(e, 'bpmn:SubProcess')) && _this.hasIterationData(e);
+  }).forEach(function (el) {
+    _this.addOverlay(el);
+  });
+};
+
+MultiInstanceModule.prototype.isMultiInstanceSubProcess = function (element) {
+  const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+  return (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(businessObject, 'bpmn:SubProcess') && this.hasIterationData(businessObject);
+};
+
+MultiInstanceModule.prototype.addOverlay = function (element) {
+
+  const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<button class="bjs-drilldown fa fa-list"></button>');
+
+  const _this = this;
+
+  button.addEventListener('click', function (event) {
+    _this.openIterations(element);
+  });
+
+  // add overlay
+  this._overlays.add(element, 'iterations', {
+    position: {
+      bottom: -7,
+      right: -8
+    },
+    html: button
+  });
+};
+
+MultiInstanceModule.prototype.addBreadcrumbButton = function (element) {
+
+  const breadcrumb = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.bjs-breadcrumbs li:last-child'); // TODO fix selector for excluding call activity breadcrumb
+
+  const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<button class="bjs-drilldown fa fa-list"></button>');
+
+  const _this = this;
+
+  button.addEventListener('click', function (event) {
+    _this.openIterations(element);
+  });
+
+  breadcrumb.appendChild(button);
+};
+
+MultiInstanceModule.prototype.hasIterationData = function (element) {
+  return (this._widget.iterationData && this._widget.iterationData[element.id]);
+};
+
+MultiInstanceModule.prototype.setWidget = function (widget) {
+  this._widget = widget;
+};
+
+MultiInstanceModule.prototype.openDialog = function () {
+
+  const searchbar = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-search input');
+  const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#modal');
+
+  // clear searchbar
+  searchbar.value = '';
+  // show modal
+  modal.style.display = 'flex';
+};
+
+MultiInstanceModule.prototype.loadTable = function (data) {
+
+  const tbody = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-list tbody');
+
+  const addOnClick = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(this.currentElement, 'bpmn:SubProcess');
+
+  tbody.replaceChildren(
+    ...data.map((d) => {
+      const row = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`
+        <tr ${addOnClick ? 'class="clickable"' : ''}>
+          <td>${d.loopCounter}</td>
+          <td>${d.description}</td>
+          <td>${d.status}</td>
+        </tr>
+      `);
+
+      const _this = this;
+
+      if (addOnClick) {
+        row.addEventListener('click', function (event) {
+          _this.loadIteration(d.stepKey);
+          _this.closeIterations();
+        });
+      }
+
+      return row;
+    }));
+
+  
+};
+
+MultiInstanceModule.prototype.openIterations = function (element) {
+
+  const {id} = element;
+  
+  const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+  
+  const {name} = businessObject;
+  
+  // TODO retrieve data by using <id>
+  const subProcessData = this._widget.iterationData[id];
+
+  if (subProcessData) {
+
+    // set reference
+    this.currentElement = element;
+
+    // store for later
+    this._widget.subProcessData = subProcessData;
+
+    this.loadTable(subProcessData);
+
+    // set title
+    const title = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-title span');
+    title.textContent = name;
+
+    this.openDialog();
+
+  } else {
+    // TODO do anything here?
+  }
+
+};
+
+MultiInstanceModule.prototype.closeIterations = function () {
+
+  const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#modal');
+
+  modal.style.display = 'none';
+};
+
+MultiInstanceModule.prototype.loadIteration = function (value) {
+
+  if (value) {
+
+    const iterationData = this._widget.subProcessData.find(v => v.stepKey == value);
+
+    // TODO extract this out of sub process data using <value>
+    const highlightingData = iterationData.highlighting;
+
+    if (highlightingData) {
+      // set new diagram properties
+      // TODO probably need to set the currently selected instance as well
+      const {current, completed, error} = highlightingData;
+
+      this._widget.updateColors(current, completed, error);
+
+      // TODO update breadcrumb
+      const breadcrumb = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.bjs-breadcrumbs li:last-child'); // TODO fix selector for excluding call activity breadcrumb
+
+      const element = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`<span class="bjs-crumb iteration" style="margin-left: 8px;">
+        <a>${iterationData.description}</a>
+      </span>`);
+
+      if (breadcrumb.lastChild.classList.contains('iteration')) {
+        breadcrumb.lastChild.replaceWith(element);
+      } else {
+        breadcrumb.appendChild(element);
+      }
+    }
+  }
+};
+
+MultiInstanceModule.prototype.filterIterations = function (event) {
+
+  const {value} = event.target;
+
+  const filtered = this._widget.subProcessData.filter(
+    d => d.description.includes(value) || d.status.includes(value)
+  ); // TODO make other columns searchable as well
+
+  this.loadTable(filtered);
+};
+
+MultiInstanceModule.$inject = ['canvas', 'eventBus', 'elementRegistry', 'translate', 'overlays'];
+
+/***/ }),
+
+/***/ "./modules/multiInstanceModule/index.js":
+/*!**********************************************!*\
+  !*** ./modules/multiInstanceModule/index.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _MultiInstanceModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MultiInstanceModule */ "./modules/multiInstanceModule/MultiInstanceModule.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['multiInstanceModule'],
+  multiInstanceModule: ['type', _MultiInstanceModule__WEBPACK_IMPORTED_MODULE_0__["default"]],
+});
+
+/***/ }),
+
+/***/ "./modules/rightClickModule/RightClickModule.js":
+/*!******************************************************!*\
+  !*** ./modules/rightClickModule/RightClickModule.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ RightClickModule)
+/* harmony export */ });
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+
+
+
+function RightClickModule(
+  canvas, eventBus, translate
+) {
+  this._canvas = canvas;
+  this._eventBus = eventBus;
+  this._translate = translate;
+
+  var _self = this;
+
+  // create and append context menu container
+  this._menu = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<div id="context-menu"></div>');
+  this._options = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<ul class="menu-options"></ul>');
+  
+  this._menu.appendChild(this._options);
+  
+  canvas.getContainer().appendChild(this._menu);
+
+  this.closeContextMenu();
+
+  eventBus.on('element.contextmenu', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    _self.openContextMenu(event);
+  });
+
+  eventBus.on('element.click', (event) => {
+    _self.closeContextMenu(event);
+  });
+}
+
+RightClickModule.prototype.openContextMenu = function (event) {
+
+  const { element } = event;
+  const { id } = element;
+
+  const x = event.originalEvent.pageX;
+  const y = event.originalEvent.pageY;
+
+  const contextMenuData = this._widget.contextMenuData[id];
+
+  if (contextMenuData) {
+
+    this._options.replaceChildren(
+      ...contextMenuData.map((d) => {
+        if (d.type === 'link') {
+          return (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`<li class="menu-option"><a href="${d.url}" target="${d.target}">${d.label}</a></li>`);
+        }
+        return null;
+      }) 
+    );
+
+    this._menu.style.left = `${x}px`;
+    this._menu.style.top = `${y}px`;
+
+    this._menu.style.display = 'block';
+  } else {
+    this.closeContextMenu();
+  }
+};
+
+RightClickModule.prototype.closeContextMenu = function () {
+  this._menu.style.display = 'none';
+};
+
+RightClickModule.prototype.setWidget = function (widget) {
+  this._widget = widget;
+};
+
+RightClickModule.$inject = ['canvas', 'eventBus', 'translate'];
+
+/***/ }),
+
+/***/ "./modules/rightClickModule/index.js":
+/*!*******************************************!*\
+  !*** ./modules/rightClickModule/index.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _RightClickModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RightClickModule */ "./modules/rightClickModule/RightClickModule.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['rightClickModule'],
+  rightClickModule: ['type', _RightClickModule__WEBPACK_IMPORTED_MODULE_0__["default"]],
+});
+
+/***/ }),
+
 /***/ "./modules/styleModule/StyleModule.js":
 /*!********************************************!*\
   !*** ./modules/styleModule/StyleModule.js ***!
   \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ StyleModule)
 /* harmony export */ });
-function StyleModule(config) {
+function StyleModule(config, bpmnRenderer, elementRegistry) {
 
-  function addStyleToElements(elements, css) {
+  // set global css variables
+  const canvas = document.querySelector('.canvas');
+
+  canvas.style.setProperty('--highlight-current-fill', config.currentStyle.fill);
+  canvas.style.setProperty('--highlight-current-border', config.currentStyle.border);
+  canvas.style.setProperty('--highlight-current-label', config.currentStyle.label);
+  canvas.style.setProperty('--highlight-completed-fill', config.completedStyle.fill);
+  canvas.style.setProperty('--highlight-completed-border', config.completedStyle.border);
+  canvas.style.setProperty('--highlight-completed-label', config.completedStyle.label);
+  canvas.style.setProperty('--highlight-error-fill', config.errorStyle.fill);
+  canvas.style.setProperty('--highlight-error-border', config.errorStyle.border);
+  canvas.style.setProperty('--highlight-error-label', config.errorStyle.label);
+
+  this.addStyleToElements = function (elements, className) {
+
+    let element;
+
     for (const e of elements) {
-      var rect = document.querySelector(
-        `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > rect`
-      );
-      var circles = document.querySelectorAll(
-        `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > circle`
-      );
-      var polygons = document.querySelectorAll(
-        `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > polygon`
-      );
-      var text = document.querySelector(
-        `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > text`
-      );
-      var paths = document.querySelectorAll(
-        `g[data-element-id="${e}"]:not(.djs-connection) .djs-visual > path`
-      );
-  
-      if (css.fill !== undefined) {
-        if (rect) rect.style.fill = css.fill;
-        if (circles.length > 0) circles.forEach(c => (c.style.fill = css.fill));
-        if (polygons.length > 0) { polygons.forEach(p => (p.style.fill = css.fill)); }
-        if (rect && paths.length > 0) { paths.forEach(p => (p.style.fill = css.fill)); }
-      }
-  
-      if (css.border !== undefined) {
-        if (rect) rect.style.stroke = css.border;
-        if (circles.length > 0) { circles.forEach(c => (c.style.stroke = css.border)); }
-        if (polygons.length > 0) { polygons.forEach(p => (p.style.stroke = css.border)); }
-      }
-  
-      if (css.label !== undefined) {
-        if (text) text.style.fill = css.label;
-        if (paths.length > 0) paths.forEach(p => (p.style.stroke = css.label));
-        if (polygons.length > 0 && paths.length > 0) { paths.forEach(p => (p.style.fill = css.label)); }
+
+      element = document.querySelector(`g[data-element-id="${e}"]:not(.djs-connection) .djs-visual`);
+
+      if (element) {
+        element.classList.add(className);
       }
     }
-  }
+  };
   
   this.highlightElements = function (current, completed, error) {
-    addStyleToElements(current, config.currentStyle);
-    addStyleToElements(completed, config.completedStyle);
-    addStyleToElements(error, config.errorStyle);
+    if (current && current.length > 0) this.addStyleToElements(current, 'highlight-current');
+    if (completed && completed.length > 0) this.addStyleToElements(completed, 'highlight-completed');
+    if (error && error.length > 0) this.addStyleToElements(error, 'highlight-error');
+  };
+
+  this.resetHighlighting = function () {
+
+    const elements = Object.keys(elementRegistry._elements);
+    let element;
+
+    for (const e of elements) {
+
+      element = document.querySelector(`g[data-element-id="${e}"]:not(.djs-connection) .djs-visual`);
+
+      if (element) {
+        element.classList.remove('highlight-current');
+        element.classList.remove('highlight-completed');
+        element.classList.remove('highlight-error');
+      }
+    }
+  };
+
+  this.resetBPMNcolors = function () {
+
+    const elements = Object.keys(elementRegistry._elements);
+    let element;
+
+    for (const e of elements) {
+
+      element = document.querySelector(`g[data-element-id="${e}"]:not(.djs-connection) .djs-visual`);
+
+      if (element) {
+
+        element.classList.add('reset-bpmn-colors');
+      }
+    }
   };
 
   this.addStyleToSVG = function (svg) {
-    var parser = new DOMParser();
-    var xmlDoc = parser.parseFromString(svg, 'text/xml');
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(svg, 'text/xml');
   
-    var defs = xmlDoc.getElementsByTagName('defs')[0];
+    const [defs] = xmlDoc.getElementsByTagName('defs');
   
-    var styleNode = document.createElement('style');
+    const styleNode = document.createElement('style');
     styleNode.setAttribute('type', 'text/css');
-    var content = document.createTextNode('.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
+
+    const content = document.createTextNode('.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
     styleNode.appendChild(content);
+    
     defs.appendChild(styleNode);
   
-    var xmlText = new XMLSerializer().serializeToString(xmlDoc);
+    const xmlText = new XMLSerializer().serializeToString(xmlDoc);
   
     return xmlText;
   };
@@ -540,7 +952,9 @@ function StyleModule(config) {
 
 StyleModule.$inject = [
   // custom viewer properties nested inside parent config object
-  'config.config'
+  'config.config',
+  'config.bpmnRenderer',
+  'elementRegistry'
 ];
 
 
@@ -552,7 +966,6 @@ StyleModule.$inject = [
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -568,26 +981,109 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./modules/userTaskModule/UserTaskModule.js":
+/*!**************************************************!*\
+  !*** ./modules/userTaskModule/UserTaskModule.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UserTaskModule)
+/* harmony export */ });
+/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+
+
+
+
+function UserTaskModule(
+  canvas, eventBus, elementRegistry, translate, overlays
+) {
+  this._canvas = canvas;
+  this._eventBus = eventBus;
+  this._elementRegistry = elementRegistry;
+  this._translate = translate;
+  this._overlays = overlays;
+}
+
+UserTaskModule.prototype.addOverlays = function () {
+
+  const _this = this;
+
+  const {userTaskData, iterationData} = this._widget;
+  
+  this._elementRegistry.filter(function (e) {
+    return (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(e, 'bpmn:UserTask') && userTaskData[e.id] && !iterationData[e.id];
+  }).forEach(function (el) {
+    _this.addOverlay(el, userTaskData[el.id]);
+  });
+};
+
+UserTaskModule.prototype.addOverlay = function (element, data) {
+
+  const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<button class="bjs-drilldown fa fa-external-link"></button>');
+
+  button.addEventListener('click', function () {
+    window.open(data.url, data.target);
+  });
+
+  // add overlay
+  this._overlays.add(element, 'iterations', {
+    position: {
+      bottom: -7,
+      right: -8
+    },
+    html: button
+  });
+};
+
+UserTaskModule.prototype.setWidget = function (widget) {
+  this._widget = widget;
+};
+
+UserTaskModule.$inject = ['canvas', 'eventBus', 'elementRegistry', 'translate', 'overlays'];
+
+/***/ }),
+
+/***/ "./modules/userTaskModule/index.js":
+/*!*****************************************!*\
+  !*** ./modules/userTaskModule/index.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _UserTaskModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UserTaskModule */ "./modules/userTaskModule/UserTaskModule.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['userTaskModule'],
+  userTaskModule: ['type', _UserTaskModule__WEBPACK_IMPORTED_MODULE_0__["default"]],
+});
+
+/***/ }),
+
 /***/ "./node_modules/bpmn-js/lib/BaseViewer.js":
 /*!************************************************!*\
   !*** ./node_modules/bpmn-js/lib/BaseViewer.js ***!
   \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ BaseViewer)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var diagram_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js */ "./node_modules/diagram-js/lib/Diagram.js");
-/* harmony import */ var bpmn_moddle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! bpmn-moddle */ "./node_modules/bpmn-moddle/dist/index.esm.js");
+/* harmony import */ var bpmn_moddle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-moddle */ "./node_modules/bpmn-moddle/dist/index.esm.js");
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "./node_modules/inherits-browser/dist/index.es.js");
-/* harmony import */ var _import_Importer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./import/Importer */ "./node_modules/bpmn-js/lib/import/Importer.js");
-/* harmony import */ var _util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/CompatibilityUtil */ "./node_modules/bpmn-js/lib/util/CompatibilityUtil.js");
-/* harmony import */ var _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./util/PoweredByUtil */ "./node_modules/bpmn-js/lib/util/PoweredByUtil.js");
+/* harmony import */ var _import_Importer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./import/Importer */ "./node_modules/bpmn-js/lib/import/Importer.js");
+/* harmony import */ var _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./util/PoweredByUtil */ "./node_modules/bpmn-js/lib/util/PoweredByUtil.js");
 /**
  * The code in the <project-logo></project-logo> area
  * must not be changed.
@@ -607,41 +1103,125 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @template T
+ *
+ * @typedef { import('diagram-js/lib/core/EventBus').default<T> } EventBus
+ */
 
-
+/**
+ * @template T
+ *
+ * @typedef {import('diagram-js/lib/core/EventBus').EventBusEventCallback<T>} EventBusEventCallback
+ */
 
 /**
  * @typedef {import('didi').ModuleDeclaration} ModuleDeclaration
  *
- * @typedef {import('./BaseViewer').BaseModelerOptions} BaseModelerOptions
- * @typedef {import('./BaseViewer').ModdleElement} ModdleElement
- * @typedef {import('./BaseViewer').ImportXMLResult} ImportXMLResult
- * @typedef {import('./BaseViewer').ImportXMLError} ImportXMLError
- * @typedef {import('./BaseViewer').ImportDefinitionsResult} ImportDefinitionsResult
- * @typedef {import('./BaseViewer').ImportDefinitionsError} ImportDefinitionsError
- * @typedef {import('./BaseViewer').ModdleElement} ModdleElement
- * @typedef {import('./BaseViewer').ModdleElementsById} ModdleElementsById
- * @typedef {import('./BaseViewer').OpenResult} OpenResult
- * @typedef {import('./BaseViewer').OpenError} OpenError
- * @typedef {import('./BaseViewer').SaveXMLOptions} SaveXMLOptions
- * @typedef {import('./BaseViewer').SaveXMLResult} SaveXMLResult
+ * @typedef {import('./model/Types').Moddle} Moddle
+ * @typedef {import('./model/Types').ModdleElement} ModdleElement
+ * @typedef {import('./model/Types').ModdleExtension} ModdleExtension
+ *
+ * @typedef { {
+ *   width?: number|string;
+ *   height?: number|string;
+ *   position?: string;
+ *   container?: string|HTMLElement;
+ *   moddleExtensions?: ModdleExtensions;
+ *   additionalModules?: ModuleDeclaration[];
+ * } & Record<string, any> } BaseViewerOptions
+ *
+ * @typedef {Record<string, ModdleElement>} ModdleElementsById
+ *
+ * @typedef { {
+ *   [key: string]: ModdleExtension;
+ * } } ModdleExtensions
+ *
+ * @typedef { {
+ *   warnings: string[];
+ * } } ImportXMLResult
+ *
+ * @typedef {ImportXMLResult & Error} ImportXMLError
+ *
+ * @typedef {ImportXMLResult} ImportDefinitionsResult
+ *
+ * @typedef {ImportXMLError} ImportDefinitionsError
+ *
+ * @typedef {ImportXMLResult} OpenResult
+ *
+ * @typedef {ImportXMLError} OpenError
+ *
+ * @typedef { {
+ *   format?: boolean;
+ *   preamble?: boolean;
+ * } } SaveXMLOptions
+ *
+ * @typedef { {
+ *   xml?: string;
+ *   error?: Error;
+ * } } SaveXMLResult
+ *
+ * @typedef { {
+ *   svg: string;
+ * } } SaveSVGResult
+ *
+ * @typedef { {
+ *   xml: string;
+ * } } ImportParseStartEvent
+ *
+ * @typedef { {
+ *   error?: ImportXMLError;
+ *   definitions?: ModdleElement;
+ *   elementsById?: ModdleElementsById;
+ *   references?: ModdleElement[];
+ *   warnings: string[];
+ * } } ImportParseCompleteEvent
+ *
+ * @typedef { {
+ *   error?: ImportXMLError;
+ *   warnings: string[];
+ * } } ImportDoneEvent
+ *
+ * @typedef { {
+ *   definitions: ModdleElement;
+ * } } SaveXMLStartEvent
+ *
+ * @typedef {SaveXMLResult} SaveXMLDoneEvent
+ *
+ * @typedef { {
+ *   error?: Error;
+ *   svg: string;
+ * } } SaveSVGDoneEvent
+ */
+
+/**
+ * @template Type
+ *
+ * @typedef { Type extends { eventBus: EventBus<infer X> } ? X : never } EventMap
  */
 
 /**
  * A base viewer for BPMN 2.0 diagrams.
  *
- * Have a look at {@link Viewer}, {@link NavigatedViewer} or {@link Modeler} for
+ * Have a look at {@link bpmn-js/lib/Viewer}, {@link bpmn-js/lib/NavigatedViewer} or {@link bpmn-js/lib/Modeler} for
  * bundles that include actual features.
  *
- * @param {BaseModelerOptions} [options] The options to configure the viewer.
+ * @template [ServiceMap=null]
+ *
+ * @extends Diagram<ServiceMap>
+ *
+ * @param {BaseViewerOptions} [options] The options to configure the viewer.
  */
 function BaseViewer(options) {
 
   /**
-   * @type {BaseModelerOptions}
+   * @type {BaseViewerOptions}
    */
   options = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, DEFAULT_OPTIONS, options);
 
+  /**
+   * @type {Moddle}
+   */
   this._moddle = this._createModdle(options);
 
   /**
@@ -680,44 +1260,23 @@ function BaseViewer(options) {
  *
  * @throws {ImportXMLError} An error thrown during the import of the XML.
  *
- * @fires BaseViewer#ImportParseStart
- * @fires BaseViewer#ImportParseComplete
- * @fires Importer#ImportRenderStart
- * @fires Importer#ImportRenderComplete
- * @fires BaseViewer#ImportDone
+ * @fires BaseViewer#ImportParseStartEvent
+ * @fires BaseViewer#ImportParseCompleteEvent
+ * @fires Importer#ImportRenderStartEvent
+ * @fires Importer#ImportRenderCompleteEvent
+ * @fires BaseViewer#ImportDoneEvent
  *
  * @param {string} xml The BPMN 2.0 XML to be imported.
  * @param {ModdleElement|string} [bpmnDiagram] The optional diagram or Id of the BPMN diagram to open.
  *
  * @return {Promise<ImportXMLResult>} A promise resolving with warnings that were produced during the import.
  */
-BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function importXML(xml, bpmnDiagram) {
+BaseViewer.prototype.importXML = async function importXML(xml, bpmnDiagram) {
 
   const self = this;
 
   function ParseCompleteEvent(data) {
-
-    const event = self.get('eventBus').createEvent(data);
-
-    // TODO(nikku): remove with future bpmn-js version
-    Object.defineProperty(event, 'context', {
-      enumerable: true,
-      get: function() {
-
-        console.warn(new Error(
-          'import.parse.complete <context> is deprecated ' +
-          'and will be removed in future library versions'
-        ));
-
-        return {
-          warnings: data.warnings,
-          references: data.references,
-          elementsById: data.elementsById
-        };
-      }
-    });
-
-    return event;
+    return self.get('eventBus').createEvent(data);
   }
 
   let aggregatedWarnings = [];
@@ -729,9 +1288,8 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
     /**
      * A `import.parse.start` event.
      *
-     * @event BaseViewer#ImportParseStart
-     * @type {Object}
-     * @property {string} xml The XML that is to be parsed.
+     * @event BaseViewer#ImportParseStartEvent
+     * @type {ImportParseStartEvent}
      */
     xml = this._emit('import.parse.start', { xml: xml }) || xml;
 
@@ -759,13 +1317,8 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
     /**
      * A `import.parse.complete` event.
      *
-     * @event BaseViewer#ImportParseComplete
-     * @type {Object}
-     * @property {Error|null} error An error thrown when parsing the XML.
-     * @property {ModdleElement} definitions The definitions model element.
-     * @property {ModdleElementsById} elementsById The model elements by ID.
-     * @property {ModdleElement[]} references The referenced model elements.
-     * @property {string[]} warnings The warnings produced when parsing the XML.
+     * @event BaseViewer#ImportParseCompleteEvent
+     * @type {ImportParseCompleteEvent}
      */
     definitions = this._emit('import.parse.complete', ParseCompleteEvent({
       error: null,
@@ -782,10 +1335,8 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
     /**
      * A `import.parse.complete` event.
      *
-     * @event BaseViewer#ImportDone
-     * @type {Object}
-     * @property {ImportXMLError|null} error An error thrown during import.
-     * @property {string[]} warnings The warnings.
+     * @event BaseViewer#ImportDoneEvent
+     * @type {ImportDoneEvent}
      */
     this._emit('import.done', { error: null, warnings: aggregatedWarnings });
 
@@ -801,7 +1352,7 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
 
     throw error;
   }
-});
+};
 
 
 /**
@@ -826,12 +1377,12 @@ BaseViewer.prototype.importXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MO
  *
  * @return {Promise<ImportDefinitionsResult>} A promise resolving with warnings that were produced during the import.
  */
-BaseViewer.prototype.importDefinitions = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function importDefinitions(definitions, bpmnDiagram) {
+BaseViewer.prototype.importDefinitions = async function importDefinitions(definitions, bpmnDiagram) {
   this._setDefinitions(definitions);
   const result = await this.open(bpmnDiagram);
 
   return { warnings: result.warnings };
-});
+};
 
 
 /**
@@ -855,7 +1406,7 @@ BaseViewer.prototype.importDefinitions = (0,_util_CompatibilityUtil__WEBPACK_IMP
  *
  * @return {Promise<OpenResult>} A promise resolving with warnings that were produced during opening.
  */
-BaseViewer.prototype.open = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function open(bpmnDiagramOrId) {
+BaseViewer.prototype.open = async function open(bpmnDiagramOrId) {
 
   const definitions = this._definitions;
   let bpmnDiagram = bpmnDiagramOrId;
@@ -889,10 +1440,10 @@ BaseViewer.prototype.open = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_
   }
 
   // perform graphical import
-  const { warnings } = await (0,_import_Importer__WEBPACK_IMPORTED_MODULE_4__.importBpmnDiagram)(this, definitions, bpmnDiagram);
+  const { warnings } = await (0,_import_Importer__WEBPACK_IMPORTED_MODULE_3__.importBpmnDiagram)(this, definitions, bpmnDiagram);
 
   return { warnings };
-});
+};
 
 /**
  * Export the currently displayed BPMN 2.0 diagram as
@@ -917,7 +1468,7 @@ BaseViewer.prototype.open = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_
  *
  * @return {Promise<SaveXMLResult>} A promise resolving with the XML.
  */
-BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function saveXML(options) {
+BaseViewer.prototype.saveXML = async function saveXML(options) {
 
   options = options || {};
 
@@ -934,9 +1485,8 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
     /**
      * A `saveXML.start` event.
      *
-     * @event BaseViewer#SaveXMLStart
-     * @type {Object}
-     * @property {ModdleElement} definitions The definitions model element.
+     * @event BaseViewer#SaveXMLStartEvent
+     * @type {SaveXMLStartEvent}
      */
     definitions = this._emit('saveXML.start', {
       definitions
@@ -957,10 +1507,8 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
   /**
    * A `saveXML.done` event.
    *
-   * @event BaseViewer#SaveXMLDone
-   * @type {Object}
-   * @property {Error} [error] An error thrown when saving the XML.
-   * @property {string} [xml] The saved XML.
+   * @event BaseViewer#SaveXMLDoneEvent
+   * @type {SaveXMLDoneEvent}
    */
   this._emit('saveXML.done', result);
 
@@ -969,7 +1517,7 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
   }
 
   return result;
-});
+};
 
 
 /**
@@ -991,7 +1539,7 @@ BaseViewer.prototype.saveXML = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
  *
  * @return {Promise<SaveSVGResult>} A promise resolving with the SVG.
  */
-BaseViewer.prototype.saveSVG = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODULE_3__.wrapForCompatibility)(async function saveSVG() {
+BaseViewer.prototype.saveSVG = async function saveSVG() {
   this._emit('saveSVG.start');
 
   let svg, err;
@@ -1000,10 +1548,10 @@ BaseViewer.prototype.saveSVG = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
     const canvas = this.get('canvas');
 
     const contentNode = canvas.getActiveLayer(),
-          defsNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.query)('defs', canvas._svg);
+          defsNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)('defs', canvas._svg);
 
-    const contents = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_6__.innerSVG)(contentNode),
-          defs = defsNode ? '<defs>' + (0,tiny_svg__WEBPACK_IMPORTED_MODULE_6__.innerSVG)(defsNode) + '</defs>' : '';
+    const contents = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(contentNode),
+          defs = defsNode ? '<defs>' + (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(defsNode) + '</defs>' : '';
 
     const bbox = contentNode.getBBox();
 
@@ -1023,10 +1571,8 @@ BaseViewer.prototype.saveSVG = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
   /**
    * A `saveSVG.done` event.
    *
-   * @event BaseViewer#SaveSVGDone
-   * @type {Object}
-   * @property {Error} [error] An error thrown when saving the SVG.
-   * @property {string} [svg] The saved SVG.
+   * @event BaseViewer#SaveSVGDoneEvent
+   * @type {SaveSVGDoneEvent}
    */
   this._emit('saveSVG.done', {
     error: err,
@@ -1038,39 +1584,7 @@ BaseViewer.prototype.saveSVG = (0,_util_CompatibilityUtil__WEBPACK_IMPORTED_MODU
   }
 
   return { svg };
-});
-
-/**
- * Get a named diagram service.
- *
- * @example
- *
- * const elementRegistry = viewer.get('elementRegistry');
- * const startEventShape = elementRegistry.get('StartEvent_1');
- *
- * @param {string} name
- *
- * @return {Object} diagram service instance
- *
- * @method BaseViewer#get
- */
-
-/**
- * Invoke a function in the context of this viewer.
- *
- * @example
- *
- * viewer.invoke(function(elementRegistry) {
- *   const startEventShape = elementRegistry.get('StartEvent_1');
- * });
- *
- * @param {Function} fn to be invoked
- *
- * @return {Object} the functions return value
- *
- * @method BaseViewer#invoke
- */
-
+};
 
 BaseViewer.prototype._setDefinitions = function(definitions) {
   this._definitions = definitions;
@@ -1112,18 +1626,48 @@ BaseViewer.prototype.destroy = function() {
   diagram_js__WEBPACK_IMPORTED_MODULE_2__["default"].prototype.destroy.call(this);
 
   // dom detach
-  (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.remove)(this._container);
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.remove)(this._container);
 };
 
 /**
- * Register an event listener.
+ * @overlord
  *
- * Remove an event listener via {@link BaseViewer#off}.
+ * Register an event listener for events with the given name.
+ *
+ * The callback will be invoked with `event, ...additionalArguments`
+ * that have been passed to {@link EventBus#fire}.
+ *
+ * Returning false from a listener will prevent the events default action
+ * (if any is specified). To stop an event from being processed further in
+ * other listeners execute {@link Event#stopPropagation}.
+ *
+ * Returning anything but `undefined` from a listener will stop the listener propagation.
+ *
+ * @template T
  *
  * @param {string|string[]} events The event(s) to listen to.
  * @param {number} [priority] The priority with which to listen.
- * @param {EventCallback} callback The callback.
- * @param {*} [that] Value of `this` the callback will be called with.
+ * @param {EventBusEventCallback<T>} callback The callback.
+ * @param {any} [that] Value of `this` the callback will be called with.
+ */
+/**
+ * Register an event listener for events with the given name.
+ *
+ * The callback will be invoked with `event, ...additionalArguments`
+ * that have been passed to {@link EventBus#fire}.
+ *
+ * Returning false from a listener will prevent the events default action
+ * (if any is specified). To stop an event from being processed further in
+ * other listeners execute {@link Event#stopPropagation}.
+ *
+ * Returning anything but `undefined` from a listener will stop the listener propagation.
+ *
+ * @template {keyof EventMap<ServiceMap>} EventName
+ *
+ * @param {EventName} events to subscribe to
+ * @param {number} [priority=1000] listen priority
+ * @param {EventBusEventCallback<(EventMap<ServiceMap>)[EventName]>} callback
+ * @param {any} [that] callback context
  */
 BaseViewer.prototype.on = function(events, priority, callback, that) {
   return this.get('eventBus').on(events, priority, callback, that);
@@ -1160,7 +1704,7 @@ BaseViewer.prototype.attachTo = function(parentNode) {
   }
 
   if (typeof parentNode === 'string') {
-    parentNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.query)(parentNode);
+    parentNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)(parentNode);
   }
 
   parentNode.appendChild(this._container);
@@ -1173,7 +1717,7 @@ BaseViewer.prototype.attachTo = function(parentNode) {
 /**
  * Get the definitions model element.
  *
- * @returns {ModdleElement} The definitions model element.
+ * @return {ModdleElement} The definitions model element.
  */
 BaseViewer.prototype.getDefinitions = function() {
   return this._definitions;
@@ -1242,11 +1786,16 @@ BaseViewer.prototype._emit = function(type, event) {
   return this.get('eventBus').fire(type, event);
 };
 
+/**
+ * @param {BaseViewerOptions} options
+ *
+ * @return {HTMLElement}
+ */
 BaseViewer.prototype._createContainer = function(options) {
 
-  const container = (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.domify)('<div class="bjs-container"></div>');
+  const container = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.domify)('<div class="bjs-container"></div>');
 
-  (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.assignStyle)(container, {
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.assignStyle)(container, {
     width: ensureUnit(options.width),
     height: ensureUnit(options.height),
     position: options.position
@@ -1255,10 +1804,15 @@ BaseViewer.prototype._createContainer = function(options) {
   return container;
 };
 
+/**
+ * @param {BaseViewerOptions} options
+ *
+ * @return {Moddle}
+ */
 BaseViewer.prototype._createModdle = function(options) {
   const moddleOptions = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, this._moddleExtensions, options.moddleExtensions);
 
-  return new bpmn_moddle__WEBPACK_IMPORTED_MODULE_7__["default"](moddleOptions);
+  return new bpmn_moddle__WEBPACK_IMPORTED_MODULE_6__["default"](moddleOptions);
 };
 
 BaseViewer.prototype._modules = [];
@@ -1336,7 +1890,7 @@ function findBPMNDiagram(definitions, diagramId) {
  * @param {Element} container
  */
 function addProjectLogo(container) {
-  const img = _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_8__.BPMNIO_IMG;
+  const img = _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_7__.BPMNIO_IMG;
 
   const linkMarkup =
     '<a href="http://bpmn.io" ' +
@@ -1347,10 +1901,10 @@ function addProjectLogo(container) {
     img +
     '</a>';
 
-  const linkElement = (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.domify)(linkMarkup);
+  const linkElement = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.domify)(linkMarkup);
 
-  (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.assignStyle)((0,min_dom__WEBPACK_IMPORTED_MODULE_5__.query)('svg', linkElement), _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_8__.LOGO_STYLES);
-  (0,min_dom__WEBPACK_IMPORTED_MODULE_5__.assignStyle)(linkElement, _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_8__.LINK_STYLES, {
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.assignStyle)((0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)('svg', linkElement), _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_7__.LOGO_STYLES);
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.assignStyle)(linkElement, _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_7__.LINK_STYLES, {
     position: 'absolute',
     bottom: '15px',
     right: '15px',
@@ -1359,8 +1913,8 @@ function addProjectLogo(container) {
 
   container.appendChild(linkElement);
 
-  min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(linkElement, 'click', function(event) {
-    (0,_util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_8__.open)();
+  min_dom__WEBPACK_IMPORTED_MODULE_4__.event.bind(linkElement, 'click', function(event) {
+    (0,_util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_7__.open)();
 
     event.preventDefault();
   });
@@ -1377,18 +1931,19 @@ function addProjectLogo(container) {
   \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Viewer)
 /* harmony export */ });
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "./node_modules/inherits-browser/dist/index.es.js");
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core */ "./node_modules/bpmn-js/lib/core/index.js");
-/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js");
-/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "./node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var _features_drilldown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./features/drilldown */ "./node_modules/bpmn-js/lib/features/drilldown/index.js");
+/* harmony import */ var _features_outline__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./features/outline */ "./node_modules/bpmn-js/lib/features/outline/index.js");
 /* harmony import */ var diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/features/overlays */ "./node_modules/diagram-js/lib/features/overlays/index.js");
-/* harmony import */ var _features_drilldown__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./features/drilldown */ "./node_modules/bpmn-js/lib/features/drilldown/index.js");
+/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "./node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js");
 /* harmony import */ var _BaseViewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BaseViewer */ "./node_modules/bpmn-js/lib/BaseViewer.js");
+
 
 
 
@@ -1407,7 +1962,7 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * A viewer for BPMN 2.0 diagrams.
  *
- * Have a look at {@link NavigatedViewer} or {@link Modeler} for bundles that include
+ * Have a look at {@link bpmn-js/lib/NavigatedViewer} or {@link bpmn-js/lib/Modeler} for bundles that include
  * additional features.
  *
  *
@@ -1443,6 +1998,10 @@ __webpack_require__.r(__webpack_exports__);
  * bpmnViewer.importXML(...);
  * ```
  *
+ * @template [ServiceMap=null]
+ *
+ * @extends BaseViewer<ServiceMap>
+ *
  * @param {BaseViewerOptions} [options] The options to configure the viewer.
  */
 function Viewer(options) {
@@ -1454,10 +2013,11 @@ function Viewer(options) {
 // modules the viewer is composed of
 Viewer.prototype._modules = [
   _core__WEBPACK_IMPORTED_MODULE_2__["default"],
-  diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_3__["default"],
-  diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_4__["default"],
+  _features_drilldown__WEBPACK_IMPORTED_MODULE_3__["default"],
+  _features_outline__WEBPACK_IMPORTED_MODULE_4__["default"],
   diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_5__["default"],
-  _features_drilldown__WEBPACK_IMPORTED_MODULE_6__["default"]
+  diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__["default"],
+  diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_7__["default"]
 ];
 
 // default moddle extensions the viewer is composed of
@@ -1471,7 +2031,6 @@ Viewer.prototype._moddleExtensions = {};
   \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -1496,22 +2055,25 @@ __webpack_require__.r(__webpack_exports__);
   \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "black": () => (/* binding */ black),
-/* harmony export */   "getCirclePath": () => (/* binding */ getCirclePath),
-/* harmony export */   "getDi": () => (/* reexport safe */ _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi),
-/* harmony export */   "getDiamondPath": () => (/* binding */ getDiamondPath),
-/* harmony export */   "getFillColor": () => (/* binding */ getFillColor),
-/* harmony export */   "getLabelColor": () => (/* binding */ getLabelColor),
-/* harmony export */   "getRectPath": () => (/* binding */ getRectPath),
-/* harmony export */   "getRoundRectPath": () => (/* binding */ getRoundRectPath),
-/* harmony export */   "getSemantic": () => (/* binding */ getSemantic),
-/* harmony export */   "getStrokeColor": () => (/* binding */ getStrokeColor),
-/* harmony export */   "isCollection": () => (/* binding */ isCollection),
-/* harmony export */   "isThrowEvent": () => (/* binding */ isThrowEvent),
-/* harmony export */   "isTypedEvent": () => (/* binding */ isTypedEvent)
+/* harmony export */   black: () => (/* binding */ black),
+/* harmony export */   getBounds: () => (/* binding */ getBounds),
+/* harmony export */   getCirclePath: () => (/* binding */ getCirclePath),
+/* harmony export */   getDi: () => (/* reexport safe */ _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi),
+/* harmony export */   getDiamondPath: () => (/* binding */ getDiamondPath),
+/* harmony export */   getFillColor: () => (/* binding */ getFillColor),
+/* harmony export */   getHeight: () => (/* binding */ getHeight),
+/* harmony export */   getLabelColor: () => (/* binding */ getLabelColor),
+/* harmony export */   getRectPath: () => (/* binding */ getRectPath),
+/* harmony export */   getRoundRectPath: () => (/* binding */ getRoundRectPath),
+/* harmony export */   getSemantic: () => (/* reexport safe */ _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject),
+/* harmony export */   getStrokeColor: () => (/* binding */ getStrokeColor),
+/* harmony export */   getWidth: () => (/* binding */ getWidth),
+/* harmony export */   isCollection: () => (/* binding */ isCollection),
+/* harmony export */   isThrowEvent: () => (/* binding */ isThrowEvent),
+/* harmony export */   isTypedEvent: () => (/* binding */ isTypedEvent),
+/* harmony export */   white: () => (/* binding */ white)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
@@ -1522,74 +2084,116 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// re-export getDi for compatibility
+
+/**
+ * @typedef {import('../model').ModdleElement} ModdleElement
+ * @typedef {import('../model').Element} Element
+ *
+ * @typedef {import('../model').ShapeLike} ShapeLike
+ *
+ * @typedef {import('diagram-js/lib/util/Types').Dimensions} Dimensions
+ * @typedef {import('diagram-js/lib/util/Types').Rect} Rect
+ */
+
+// re-export for compatibility
+
 
 
 var black = 'hsl(225, 10%, 15%)';
+var white = 'white';
 
 // element utils //////////////////////
 
 /**
  * Checks if eventDefinition of the given element matches with semantic type.
  *
- * @return {boolean} true if element is of the given semantic type
+ * @param {ModdleElement} event
+ * @param {string} eventDefinitionType
+ *
+ * @return {boolean}
  */
-function isTypedEvent(event, eventDefinitionType, filter) {
-
-  function matches(definition, filter) {
-    return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.every)(filter, function(val, key) {
-
-      // we want a == conversion here, to be able to catch
-      // undefined == false and friends
-      /* jshint -W116 */
-      return definition[key] == val;
-    });
-  }
-
+function isTypedEvent(event, eventDefinitionType) {
   return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.some)(event.eventDefinitions, function(definition) {
-    return definition.$type === eventDefinitionType && matches(event, filter);
+    return definition.$type === eventDefinitionType;
   });
 }
 
+/**
+ * Check if element is a throw event.
+ *
+ * @param {ModdleElement} event
+ *
+ * @return {boolean}
+ */
 function isThrowEvent(event) {
   return (event.$type === 'bpmn:IntermediateThrowEvent') || (event.$type === 'bpmn:EndEvent');
 }
 
+/**
+ * Check if element is a throw event.
+ *
+ * @param {ModdleElement} element
+ *
+ * @return {boolean}
+ */
 function isCollection(element) {
   var dataObject = element.dataObjectRef;
 
   return element.isCollection || (dataObject && dataObject.isCollection);
 }
 
-function getSemantic(element) {
-  return element.businessObject;
-}
-
 
 // color access //////////////////////
 
-function getFillColor(element, defaultColor) {
+/**
+ * @param {Element} element
+ * @param {string} [defaultColor]
+ * @param {string} [overrideColor]
+ *
+ * @return {string}
+ */
+function getFillColor(element, defaultColor, overrideColor) {
   var di = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi)(element);
 
-  return di.get('color:background-color') || di.get('bioc:fill') || defaultColor || 'white';
+  return overrideColor || di.get('color:background-color') || di.get('bioc:fill') || defaultColor || white;
 }
 
-function getStrokeColor(element, defaultColor) {
+/**
+ * @param {Element} element
+ * @param {string} [defaultColor]
+ * @param {string} [overrideColor]
+ *
+ * @return {string}
+ */
+function getStrokeColor(element, defaultColor, overrideColor) {
   var di = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi)(element);
 
-  return di.get('color:border-color') || di.get('bioc:stroke') || defaultColor || black;
+  return overrideColor || di.get('color:border-color') || di.get('bioc:stroke') || defaultColor || black;
 }
 
-function getLabelColor(element, defaultColor, defaultStrokeColor) {
+/**
+ * @param {Element} element
+ * @param {string} [defaultColor]
+ * @param {string} [defaultStrokeColor]
+ * @param {string} [overrideColor]
+ *
+ * @return {string}
+ */
+function getLabelColor(element, defaultColor, defaultStrokeColor, overrideColor) {
   var di = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi)(element),
       label = di.get('label');
 
-  return label && label.get('color:color') || defaultColor ||
+  return overrideColor || (label && label.get('color:color')) || defaultColor ||
     getStrokeColor(element, defaultStrokeColor);
 }
 
 // cropping path customizations //////////////////////
 
+/**
+ * @param {ShapeLike} shape
+ *
+ * @return {string} path
+ */
 function getCirclePath(shape) {
 
   var cx = shape.x + shape.width / 2,
@@ -1607,6 +2211,12 @@ function getCirclePath(shape) {
   return (0,diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_2__.componentsToPath)(circlePath);
 }
 
+/**
+ * @param {ShapeLike} shape
+ * @param {number} [borderRadius]
+ *
+ * @return {string} path
+ */
 function getRoundRectPath(shape, borderRadius) {
 
   var x = shape.x,
@@ -1630,6 +2240,11 @@ function getRoundRectPath(shape, borderRadius) {
   return (0,diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_2__.componentsToPath)(roundRectPath);
 }
 
+/**
+ * @param {ShapeLike} shape
+ *
+ * @return {string} path
+ */
 function getDiamondPath(shape) {
 
   var width = shape.width,
@@ -1650,6 +2265,11 @@ function getDiamondPath(shape) {
   return (0,diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_2__.componentsToPath)(diamondPath);
 }
 
+/**
+ * @param {ShapeLike} shape
+ *
+ * @return {string} path
+ */
 function getRectPath(shape) {
   var x = shape.x,
       y = shape.y,
@@ -1667,6 +2287,45 @@ function getRectPath(shape) {
   return (0,diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_2__.componentsToPath)(rectPath);
 }
 
+/**
+ * Get width and height from element or overrides.
+ *
+ * @param {Dimensions|Rect|ShapeLike} bounds
+ * @param {Object} overrides
+ *
+ * @returns {Dimensions}
+ */
+function getBounds(bounds, overrides = {}) {
+  return {
+    width: getWidth(bounds, overrides),
+    height: getHeight(bounds, overrides)
+  };
+}
+
+/**
+ * Get width from element or overrides.
+ *
+ * @param {Dimensions|Rect|ShapeLike} bounds
+ * @param {Object} overrides
+ *
+ * @returns {number}
+ */
+function getWidth(bounds, overrides = {}) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.has)(overrides, 'width') ? overrides.width : bounds.width;
+}
+
+/**
+ * Get height from element or overrides.
+ *
+ * @param {Dimensions|Rect|ShapeLike} bounds
+ * @param {Object} overrides
+ *
+ * @returns {number}
+ */
+function getHeight(bounds, overrides = {}) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.has)(overrides, 'height') ? overrides.height : bounds.height;
+}
+
 /***/ }),
 
 /***/ "./node_modules/bpmn-js/lib/draw/BpmnRenderer.js":
@@ -1675,7 +2334,6 @@ function getRectPath(shape) {
   \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ BpmnRenderer)
@@ -1683,14 +2341,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! inherits-browser */ "./node_modules/inherits-browser/dist/index.es.js");
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var diagram_js_lib_draw_BaseRenderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/draw/BaseRenderer */ "./node_modules/diagram-js/lib/draw/BaseRenderer.js");
-/* harmony import */ var _util_DiUtil__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util/DiUtil */ "./node_modules/bpmn-js/lib/util/DiUtil.js");
-/* harmony import */ var _features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../features/label-editing/LabelUtil */ "./node_modules/bpmn-js/lib/features/label-editing/LabelUtil.js");
-/* harmony import */ var _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./BpmnRenderUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _util_DiUtil__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../util/DiUtil */ "./node_modules/bpmn-js/lib/util/DiUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util/LabelUtil */ "./node_modules/bpmn-js/lib/util/LabelUtil.js");
+/* harmony import */ var _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./BpmnRenderUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 /* harmony import */ var diagram_js_lib_util_RenderUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/util/RenderUtil */ "./node_modules/diagram-js/lib/util/RenderUtil.js");
 /* harmony import */ var _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BpmnRenderUtil */ "./node_modules/bpmn-js/lib/draw/BpmnRenderUtil.js");
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! diagram-js/lib/util/SvgTransformUtil */ "./node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+/* harmony import */ var diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! diagram-js/lib/util/SvgTransformUtil */ "./node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 /* harmony import */ var ids__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ids */ "./node_modules/ids/dist/index.esm.js");
 
 
@@ -1718,16 +2376,47 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var RENDERER_IDS = new ids__WEBPACK_IMPORTED_MODULE_0__["default"]();
+var rendererIds = new ids__WEBPACK_IMPORTED_MODULE_0__["default"]();
 
-var TASK_BORDER_RADIUS = 10;
-var INNER_OUTER_DIST = 3;
+var ELEMENT_LABEL_DISTANCE = 10,
+    INNER_OUTER_DIST = 3,
+    PARTICIPANT_STROKE_WIDTH = 1.5,
+    TASK_BORDER_RADIUS = 10;
 
-var DEFAULT_FILL_OPACITY = .95,
-    HIGH_FILL_OPACITY = .35;
+var DEFAULT_OPACITY = 0.95,
+    FULL_OPACITY = 1,
+    LOW_OPACITY = 0.25;
 
-var ELEMENT_LABEL_DISTANCE = 10;
+/**
+ * @typedef { Partial<{
+ *   defaultFillColor: string,
+ *   defaultStrokeColor: string,
+ *   defaultLabelColor: string
+ * }> } BpmnRendererConfig
+ *
+ * @typedef { Partial<{
+ *   fill: string,
+ *   stroke: string,
+ *   width: string,
+ *   height: string
+ * }> } Attrs
+ */
 
+/**
+ * @typedef { import('../model/Types').Element } Element
+ */
+
+/**
+ * A renderer for BPMN elements
+ *
+ * @param {BpmnRendererConfig} config
+ * @param {import('diagram-js/lib/core/EventBus').default} eventBus
+ * @param {import('diagram-js/lib/draw/Styles').default} styles
+ * @param {import('./PathMap').default} pathMap
+ * @param {import('diagram-js/lib/core/Canvas').default} canvas
+ * @param {import('./TextRenderer').default} textRenderer
+ * @param {number} [priority]
+ */
 function BpmnRenderer(
     config, eventBus, styles, pathMap,
     canvas, textRenderer, priority) {
@@ -1738,7 +2427,7 @@ function BpmnRenderer(
       defaultStrokeColor = config && config.defaultStrokeColor,
       defaultLabelColor = config && config.defaultLabelColor;
 
-  var rendererId = RENDERER_IDS.next();
+  var rendererId = rendererIds.next();
 
   var markers = {};
 
@@ -1796,7 +2485,7 @@ function BpmnRenderer(
   function colorEscape(str) {
 
     // only allow characters and numbers
-    return str.replace(/[^0-9a-zA-z]+/g, '_');
+    return str.replace(/[^0-9a-zA-Z]+/g, '_');
   }
 
   function marker(type, fill, stroke) {
@@ -1834,7 +2523,7 @@ function BpmnRenderer(
         cy: 6,
         r: 3.5,
         ...shapeStyle({
-          fill: fill,
+          fill,
           stroke: stroke,
           strokeWidth: 1,
 
@@ -1854,7 +2543,7 @@ function BpmnRenderer(
       var messageflowEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
         d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z',
         ...shapeStyle({
-          fill: fill,
+          fill,
           stroke: stroke,
           strokeWidth: 1,
 
@@ -1875,7 +2564,7 @@ function BpmnRenderer(
         d: 'M 11 5 L 1 10 L 11 15',
         ...lineStyle({
           fill: 'none',
-          stroke: stroke,
+          stroke,
           strokeWidth: 1.5,
 
           // fix for safari / chrome / firefox bug not correctly
@@ -1896,7 +2585,7 @@ function BpmnRenderer(
         d: 'M 1 5 L 11 10 L 1 15',
         ...lineStyle({
           fill: 'none',
-          stroke: stroke,
+          stroke,
           strokeWidth: 1.5,
 
           // fix for safari / chrome / firefox bug not correctly
@@ -1916,7 +2605,7 @@ function BpmnRenderer(
       var conditionalFlowMarker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
         d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z',
         ...shapeStyle({
-          fill: fill,
+          fill,
           stroke: stroke
         })
       });
@@ -1944,7 +2633,7 @@ function BpmnRenderer(
     }
   }
 
-  function drawCircle(parentGfx, width, height, offset, attrs) {
+  function drawCircle(parentGfx, width, height, offset, attrs = {}) {
 
     if ((0,min_dash__WEBPACK_IMPORTED_MODULE_5__.isObject)(offset)) {
       attrs = offset;
@@ -1954,10 +2643,6 @@ function BpmnRenderer(
     offset = offset || 0;
 
     attrs = shapeStyle(attrs);
-
-    if (attrs.fill === 'none') {
-      delete attrs.fillOpacity;
-    }
 
     var cx = width / 2,
         cy = height / 2;
@@ -2058,7 +2743,6 @@ function BpmnRenderer(
   }
 
   function drawPath(parentGfx, d, attrs) {
-
     attrs = lineStyle(attrs);
 
     var path = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
@@ -2080,169 +2764,13 @@ function BpmnRenderer(
   }
 
   function as(type) {
-    return function(parentGfx, element) {
-      return renderer(type)(parentGfx, element);
+    return function(parentGfx, element, attrs) {
+      return renderer(type)(parentGfx, element, attrs);
     };
   }
 
-  function renderEventContent(element, parentGfx) {
-
-    var event = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
-    var isThrowing = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isThrowEvent)(event);
-
-    if (event.eventDefinitions && event.eventDefinitions.length > 1) {
-      if (event.parallelMultiple) {
-        return renderer('bpmn:ParallelMultipleEventDefinition')(parentGfx, element, isThrowing);
-      }
-      else {
-        return renderer('bpmn:MultipleEventDefinition')(parentGfx, element, isThrowing);
-      }
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:MessageEventDefinition')) {
-      return renderer('bpmn:MessageEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:TimerEventDefinition')) {
-      return renderer('bpmn:TimerEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:ConditionalEventDefinition')) {
-      return renderer('bpmn:ConditionalEventDefinition')(parentGfx, element);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:SignalEventDefinition')) {
-      return renderer('bpmn:SignalEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:EscalationEventDefinition')) {
-      return renderer('bpmn:EscalationEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:LinkEventDefinition')) {
-      return renderer('bpmn:LinkEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:ErrorEventDefinition')) {
-      return renderer('bpmn:ErrorEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:CancelEventDefinition')) {
-      return renderer('bpmn:CancelEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:CompensateEventDefinition')) {
-      return renderer('bpmn:CompensateEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(event, 'bpmn:TerminateEventDefinition')) {
-      return renderer('bpmn:TerminateEventDefinition')(parentGfx, element, isThrowing);
-    }
-
-    return null;
-  }
-
-  function renderLabel(parentGfx, label, options) {
-
-    options = (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.assign)({
-      size: {
-        width: 100
-      }
-    }, options);
-
-    var text = textRenderer.createText(label || '', options);
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(text).add('djs-label');
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, text);
-
-    return text;
-  }
-
-  function renderEmbeddedLabel(parentGfx, element, align) {
-    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
-
-    return renderLabel(parentGfx, semantic.name, {
-      box: element,
-      align: align,
-      padding: 7,
-      style: {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
-      }
-    });
-  }
-
-  function renderExternalLabel(parentGfx, element) {
-
-    var box = {
-      width: 90,
-      height: 30,
-      x: element.width / 2 + element.x,
-      y: element.height / 2 + element.y
-    };
-
-    return renderLabel(parentGfx, (0,_features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_7__.getLabel)(element), {
-      box: box,
-      fitBox: true,
-      style: (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.assign)(
-        {},
-        textRenderer.getExternalStyle(),
-        {
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
-        }
-      )
-    });
-  }
-
-  function renderLaneLabel(parentGfx, text, element) {
-    var textBox = renderLabel(parentGfx, text, {
-      box: {
-        height: 30,
-        width: element.height
-      },
-      align: 'center-middle',
-      style: {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
-      }
-    });
-
-    var top = -1 * element.height;
-
-    (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__.transform)(textBox, 0, -top, 270);
-  }
-
-  var handlers = this.handlers = {
-    'bpmn:Event': function(parentGfx, element, attrs) {
-
-      if (!('fillOpacity' in attrs)) {
-        attrs.fillOpacity = DEFAULT_FILL_OPACITY;
-      }
-
-      return drawCircle(parentGfx, element.width, element.height, attrs);
-    },
-    'bpmn:StartEvent': function(parentGfx, element) {
-      var attrs = {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      };
-
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
-
-      if (!semantic.isInterrupting) {
-        attrs = {
-          strokeDasharray: '6',
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-        };
-      }
-
-      var circle = renderer('bpmn:Event')(parentGfx, element, attrs);
-
-      renderEventContent(element, parentGfx);
-
-      return circle;
-    },
-    'bpmn:MessageEventDefinition': function(parentGfx, element, isThrowing) {
+  var eventIconRenderers = {
+    'bpmn:MessageEventDefinition': function(parentGfx, element, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_MESSAGE', {
         xScaleFactor: 0.9,
         yScaleFactor: 0.9,
@@ -2254,22 +2782,27 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor) : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor);
-      var stroke = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor) : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
+      var fill = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill);
+
+      var stroke = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke);
 
       var messagePath = drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: fill,
-        stroke: stroke
+        fill,
+        stroke,
+        strokeWidth: 1
       });
 
       return messagePath;
     },
-    'bpmn:TimerEventDefinition': function(parentGfx, element) {
+    'bpmn:TimerEventDefinition': function(parentGfx, element, attrs = {}) {
       var circle = drawCircle(parentGfx, element.width, element.height, 0.2 * element.height, {
-        strokeWidth: 2,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 2
       });
 
       var pathData = pathMap.getScaledPath('EVENT_TIMER_WH', {
@@ -2284,12 +2817,11 @@ function BpmnRenderer(
       });
 
       drawPath(parentGfx, pathData, {
-        strokeWidth: 2,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 2
       });
 
-      for (var i = 0;i < 12; i++) {
-
+      for (var i = 0; i < 12; i++) {
         var linePathData = pathMap.getScaledPath('EVENT_TIMER_LINE', {
           xScaleFactor: 0.75,
           yScaleFactor: 0.75,
@@ -2301,19 +2833,19 @@ function BpmnRenderer(
           }
         });
 
-        var width = element.width / 2;
-        var height = element.height / 2;
+        var width = element.width / 2,
+            height = element.height / 2;
 
         drawPath(parentGfx, linePathData, {
           strokeWidth: 1,
-          transform: 'rotate(' + (i * 30) + ',' + height + ',' + width + ')',
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+          transform: 'rotate(' + (i * 30) + ',' + height + ',' + width + ')'
         });
       }
 
       return circle;
     },
-    'bpmn:EscalationEventDefinition': function(parentGfx, event, isThrowing) {
+    'bpmn:EscalationEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_ESCALATION', {
         xScaleFactor: 1,
         yScaleFactor: 1,
@@ -2325,15 +2857,17 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill);
 
       return drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
     },
-    'bpmn:ConditionalEventDefinition': function(parentGfx, event) {
+    'bpmn:ConditionalEventDefinition': function(parentGfx, event, attrs = {}) {
       var pathData = pathMap.getScaledPath('EVENT_CONDITIONAL', {
         xScaleFactor: 1,
         yScaleFactor: 1,
@@ -2346,11 +2880,12 @@ function BpmnRenderer(
       });
 
       return drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
     },
-    'bpmn:LinkEventDefinition': function(parentGfx, event, isThrowing) {
+    'bpmn:LinkEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_LINK', {
         xScaleFactor: 1,
         yScaleFactor: 1,
@@ -2362,15 +2897,17 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill);
 
       return drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
     },
-    'bpmn:ErrorEventDefinition': function(parentGfx, event, isThrowing) {
+    'bpmn:ErrorEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_ERROR', {
         xScaleFactor: 1.1,
         yScaleFactor: 1.1,
@@ -2382,15 +2919,17 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill);
 
       return drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
     },
-    'bpmn:CancelEventDefinition': function(parentGfx, event, isThrowing) {
+    'bpmn:CancelEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_CANCEL_45', {
         xScaleFactor: 1.0,
         yScaleFactor: 1.0,
@@ -2402,19 +2941,19 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke) : 'none';
 
       var path = drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
 
-      (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__.rotate)(path, 45);
+      (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_7__.rotate)(path, 45);
 
       return path;
     },
-    'bpmn:CompensateEventDefinition': function(parentGfx, event, isThrowing) {
+    'bpmn:CompensateEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_COMPENSATION', {
         xScaleFactor: 1,
         yScaleFactor: 1,
@@ -2426,15 +2965,17 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill);
 
       return drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
     },
-    'bpmn:SignalEventDefinition': function(parentGfx, event, isThrowing) {
+    'bpmn:SignalEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_SIGNAL', {
         xScaleFactor: 0.9,
         yScaleFactor: 0.9,
@@ -2446,15 +2987,17 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill);
 
       return drawPath(parentGfx, pathData, {
         strokeWidth: 1,
-        fill: fill,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke)
       });
     },
-    'bpmn:MultipleEventDefinition': function(parentGfx, event, isThrowing) {
+    'bpmn:MultipleEventDefinition': function(parentGfx, event, attrs = {}, isThrowing) {
       var pathData = pathMap.getScaledPath('EVENT_MULTIPLE', {
         xScaleFactor: 1.1,
         yScaleFactor: 1.1,
@@ -2466,14 +3009,16 @@ function BpmnRenderer(
         }
       });
 
-      var fill = isThrowing ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor) : 'none';
+      var fill = isThrowing
+        ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke)
+        : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill);
 
       return drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: fill
+        fill,
+        strokeWidth: 1
       });
     },
-    'bpmn:ParallelMultipleEventDefinition': function(parentGfx, event) {
+    'bpmn:ParallelMultipleEventDefinition': function(parentGfx, event, attrs = {}) {
       var pathData = pathMap.getScaledPath('EVENT_PARALLEL_MULTIPLE', {
         xScaleFactor: 1.2,
         yScaleFactor: 1.2,
@@ -2486,276 +3031,592 @@ function BpmnRenderer(
       });
 
       return drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(event, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
     },
-    'bpmn:EndEvent': function(parentGfx, element) {
-      var circle = renderer('bpmn:Event')(parentGfx, element, {
-        strokeWidth: 4,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-
-      renderEventContent(element, parentGfx, true);
-
-      return circle;
-    },
-    'bpmn:TerminateEventDefinition': function(parentGfx, element) {
+    'bpmn:TerminateEventDefinition': function(parentGfx, element, attrs = {}) {
       var circle = drawCircle(parentGfx, element.width, element.height, 8, {
-        strokeWidth: 4,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 4
       });
 
       return circle;
-    },
-    'bpmn:IntermediateEvent': function(parentGfx, element) {
-      var outer = renderer('bpmn:Event')(parentGfx, element, {
-        strokeWidth: 1.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
+    }
+  };
 
-      /* inner */
-      drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, {
-        strokeWidth: 1.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, 'none'),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
+  function renderEventIcon(element, parentGfx, attrs = {}) {
+    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element),
+        isThrowing = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isThrowEvent)(semantic);
 
-      renderEventContent(element, parentGfx);
-
-      return outer;
-    },
-    'bpmn:IntermediateCatchEvent': as('bpmn:IntermediateEvent'),
-    'bpmn:IntermediateThrowEvent': as('bpmn:IntermediateEvent'),
-
-    'bpmn:Activity': function(parentGfx, element, attrs) {
-
-      attrs = attrs || {};
-
-      if (!('fillOpacity' in attrs)) {
-        attrs.fillOpacity = DEFAULT_FILL_OPACITY;
+    if (semantic.get('eventDefinitions') && semantic.get('eventDefinitions').length > 1) {
+      if (semantic.get('parallelMultiple')) {
+        return eventIconRenderers[ 'bpmn:ParallelMultipleEventDefinition' ](parentGfx, element, attrs, isThrowing);
       }
+      else {
+        return eventIconRenderers[ 'bpmn:MultipleEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      }
+    }
 
-      return drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, attrs);
-    },
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:MessageEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:MessageEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-    'bpmn:Task': function(parentGfx, element) {
-      var attrs = {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      };
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:TimerEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:TimerEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      var rect = renderer('bpmn:Activity')(parentGfx, element, attrs);
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:ConditionalEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:ConditionalEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      renderEmbeddedLabel(parentGfx, element, 'center-middle');
-      attachTaskMarkers(parentGfx, element);
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:SignalEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:SignalEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      return rect;
-    },
-    'bpmn:ServiceTask': function(parentGfx, element) {
-      var task = renderer('bpmn:Task')(parentGfx, element);
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:EscalationEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:EscalationEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      var pathDataBG = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
-        abspos: {
-          x: 12,
-          y: 18
-        }
-      });
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:LinkEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:LinkEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      /* service bg */ drawPath(parentGfx, pathDataBG, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:ErrorEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:ErrorEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      var fillPathData = pathMap.getScaledPath('TASK_TYPE_SERVICE_FILL', {
-        abspos: {
-          x: 17.2,
-          y: 18
-        }
-      });
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:CancelEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:CancelEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      /* service fill */ drawPath(parentGfx, fillPathData, {
-        strokeWidth: 0,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor)
-      });
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:CompensateEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:CompensateEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      var pathData = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
-        abspos: {
-          x: 17,
-          y: 22
-        }
-      });
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:TerminateEventDefinition')) {
+      return eventIconRenderers[ 'bpmn:TerminateEventDefinition' ](parentGfx, element, attrs, isThrowing);
+    }
 
-      /* service */ drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
+    return null;
+  }
 
-      return task;
-    },
-    'bpmn:UserTask': function(parentGfx, element) {
-      var task = renderer('bpmn:Task')(parentGfx, element);
+  var taskMarkerRenderers = {
+    'ParticipantMultiplicityMarker': function(parentGfx, element, attrs = {}) {
+      var width = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+          height = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs);
 
-      var x = 15;
-      var y = 12;
-
-      var pathData = pathMap.getScaledPath('TASK_TYPE_USER_1', {
-        abspos: {
-          x: x,
-          y: y
-        }
-      });
-
-      /* user path */ drawPath(parentGfx, pathData, {
-        strokeWidth: 0.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-
-      var pathData2 = pathMap.getScaledPath('TASK_TYPE_USER_2', {
-        abspos: {
-          x: x,
-          y: y
-        }
-      });
-
-      /* user2 path */ drawPath(parentGfx, pathData2, {
-        strokeWidth: 0.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-
-      var pathData3 = pathMap.getScaledPath('TASK_TYPE_USER_3', {
-        abspos: {
-          x: x,
-          y: y
-        }
-      });
-
-      /* user3 path */ drawPath(parentGfx, pathData3, {
-        strokeWidth: 0.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-
-      return task;
-    },
-    'bpmn:ManualTask': function(parentGfx, element) {
-      var task = renderer('bpmn:Task')(parentGfx, element);
-
-      var pathData = pathMap.getScaledPath('TASK_TYPE_MANUAL', {
-        abspos: {
-          x: 17,
-          y: 15
-        }
-      });
-
-      /* manual path */ drawPath(parentGfx, pathData, {
-        strokeWidth: 0.5, // 0.25,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-
-      return task;
-    },
-    'bpmn:SendTask': function(parentGfx, element) {
-      var task = renderer('bpmn:Task')(parentGfx, element);
-
-      var pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
+      var markerPath = pathMap.getScaledPath('MARKER_PARALLEL', {
         xScaleFactor: 1,
         yScaleFactor: 1,
-        containerWidth: 21,
-        containerHeight: 14,
+        containerWidth: width,
+        containerHeight: height,
         position: {
-          mx: 0.285,
-          my: 0.357
+          mx: ((width / 2 - 6) / width),
+          my: (height - 15) / height
         }
       });
 
-      /* send path */ drawPath(parentGfx, pathData, {
+      drawMarker('participant-multiplicity', parentGfx, markerPath, {
+        strokeWidth: 2,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      });
+    },
+    'SubProcessMarker': function(parentGfx, element, attrs = {}) {
+      var markerRect = drawRect(parentGfx, 14, 14, 0, {
         strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
       });
 
-      return task;
+      (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_7__.translate)(markerRect, element.width / 2 - 7.5, element.height - 20);
+
+      var markerPath = pathMap.getScaledPath('MARKER_SUB_PROCESS', {
+        xScaleFactor: 1.5,
+        yScaleFactor: 1.5,
+        containerWidth: element.width,
+        containerHeight: element.height,
+        position: {
+          mx: (element.width / 2 - 7.5) / element.width,
+          my: (element.height - 20) / element.height
+        }
+      });
+
+      drawMarker('sub-process', parentGfx, markerPath, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      });
     },
-    'bpmn:ReceiveTask' : function(parentGfx, element) {
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
+    'ParallelMarker': function(parentGfx, element, attrs) {
+      var width = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+          height = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs);
 
-      var task = renderer('bpmn:Task')(parentGfx, element);
-      var pathData;
+      var markerPath = pathMap.getScaledPath('MARKER_PARALLEL', {
+        xScaleFactor: 1,
+        yScaleFactor: 1,
+        containerWidth: width,
+        containerHeight: height,
+        position: {
+          mx: ((width / 2 + attrs.parallel) / width),
+          my: (height - 20) / height
+        }
+      });
 
-      if (semantic.instantiate) {
-        drawCircle(parentGfx, 28, 28, 20 * 0.22, { strokeWidth: 1 });
+      drawMarker('parallel', parentGfx, markerPath, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      });
+    },
+    'SequentialMarker': function(parentGfx, element, attrs) {
+      var markerPath = pathMap.getScaledPath('MARKER_SEQUENTIAL', {
+        xScaleFactor: 1,
+        yScaleFactor: 1,
+        containerWidth: element.width,
+        containerHeight: element.height,
+        position: {
+          mx: ((element.width / 2 + attrs.seq) / element.width),
+          my: (element.height - 19) / element.height
+        }
+      });
 
-        pathData = pathMap.getScaledPath('TASK_TYPE_INSTANTIATING_SEND', {
-          abspos: {
-            x: 7.77,
-            y: 9.52
-          }
-        });
-      } else {
+      drawMarker('sequential', parentGfx, markerPath, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      });
+    },
+    'CompensationMarker': function(parentGfx, element, attrs) {
+      var markerMath = pathMap.getScaledPath('MARKER_COMPENSATION', {
+        xScaleFactor: 1,
+        yScaleFactor: 1,
+        containerWidth: element.width,
+        containerHeight: element.height,
+        position: {
+          mx: ((element.width / 2 + attrs.compensation) / element.width),
+          my: (element.height - 13) / element.height
+        }
+      });
 
-        pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
-          xScaleFactor: 0.9,
-          yScaleFactor: 0.9,
-          containerWidth: 21,
-          containerHeight: 14,
-          position: {
-            mx: 0.3,
-            my: 0.4
-          }
-        });
+      drawMarker('compensation', parentGfx, markerMath, {
+        strokeWidth: 1,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      });
+    },
+    'LoopMarker': function(parentGfx, element, attrs) {
+      var width = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+          height = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs);
+
+      var markerPath = pathMap.getScaledPath('MARKER_LOOP', {
+        xScaleFactor: 1,
+        yScaleFactor: 1,
+        containerWidth: width,
+        containerHeight: height,
+        position: {
+          mx: ((width / 2 + attrs.loop) / width),
+          my: (height - 7) / height
+        }
+      });
+
+      drawMarker('loop', parentGfx, markerPath, {
+        strokeWidth: 1.5,
+        fill: 'none',
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeMiterlimit: 0.5
+      });
+    },
+    'AdhocMarker': function(parentGfx, element, attrs) {
+      var width = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+          height = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs);
+
+      var markerPath = pathMap.getScaledPath('MARKER_ADHOC', {
+        xScaleFactor: 1,
+        yScaleFactor: 1,
+        containerWidth: width,
+        containerHeight: height,
+        position: {
+          mx: ((width / 2 + attrs.adhoc) / width),
+          my: (height - 15) / height
+        }
+      });
+
+      drawMarker('adhoc', parentGfx, markerPath, {
+        strokeWidth: 1,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      });
+    }
+  };
+
+  function renderTaskMarker(type, parentGfx, element, attrs) {
+    taskMarkerRenderers[ type ](parentGfx, element, attrs);
+  }
+
+  function renderTaskMarkers(parentGfx, element, taskMarkers, attrs = {}) {
+    attrs = {
+      fill: attrs.fill,
+      stroke: attrs.stroke,
+      width: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+      height: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs)
+    };
+
+    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+    var subprocess = taskMarkers && taskMarkers.includes('SubProcessMarker');
+
+    if (subprocess) {
+      attrs = {
+        ...attrs,
+        seq: -21,
+        parallel: -22,
+        compensation: -42,
+        loop: -18,
+        adhoc: 10
+      };
+    } else {
+      attrs = {
+        ...attrs,
+        seq: -5,
+        parallel: -6,
+        compensation: -27,
+        loop: 0,
+        adhoc: 10
+      };
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.forEach)(taskMarkers, function(marker) {
+      renderTaskMarker(marker, parentGfx, element, attrs);
+    });
+
+    if (semantic.get('isForCompensation')) {
+      renderTaskMarker('CompensationMarker', parentGfx, element, attrs);
+    }
+
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(semantic, 'bpmn:AdHocSubProcess')) {
+      renderTaskMarker('AdhocMarker', parentGfx, element, attrs);
+    }
+
+    var loopCharacteristics = semantic.get('loopCharacteristics'),
+        isSequential = loopCharacteristics && loopCharacteristics.get('isSequential');
+
+    if (loopCharacteristics) {
+
+      if (isSequential === undefined) {
+        renderTaskMarker('LoopMarker', parentGfx, element, attrs);
       }
 
-      /* receive path */ drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
+      if (isSequential === false) {
+        renderTaskMarker('ParallelMarker', parentGfx, element, attrs);
+      }
 
-      return task;
-    },
-    'bpmn:ScriptTask': function(parentGfx, element) {
-      var task = renderer('bpmn:Task')(parentGfx, element);
+      if (isSequential === true) {
+        renderTaskMarker('SequentialMarker', parentGfx, element, attrs);
+      }
+    }
+  }
 
-      var pathData = pathMap.getScaledPath('TASK_TYPE_SCRIPT', {
-        abspos: {
-          x: 15,
-          y: 20
+  function renderLabel(parentGfx, label, attrs = {}) {
+    attrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.assign)({
+      size: {
+        width: 100
+      }
+    }, attrs);
+
+    var text = textRenderer.createText(label || '', attrs);
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(text).add('djs-label');
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, text);
+
+    return text;
+  }
+
+  function renderEmbeddedLabel(parentGfx, element, align, attrs = {}) {
+    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+    var box = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getBounds)({
+      x: element.x,
+      y: element.y,
+      width: element.width,
+      height: element.height
+    }, attrs);
+
+    return renderLabel(parentGfx, semantic.name, {
+      align,
+      box,
+      padding: 7,
+      style: {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+      }
+    });
+  }
+
+  function renderExternalLabel(parentGfx, element, attrs = {}) {
+    var box = {
+      width: 90,
+      height: 30,
+      x: element.width / 2 + element.x,
+      y: element.height / 2 + element.y
+    };
+
+    return renderLabel(parentGfx, (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_9__.getLabel)(element), {
+      box: box,
+      fitBox: true,
+      style: (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.assign)(
+        {},
+        textRenderer.getExternalStyle(),
+        {
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+        }
+      )
+    });
+  }
+
+  function renderLaneLabel(parentGfx, text, element, attrs = {}) {
+    var isHorizontalLane = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isHorizontal)(element);
+
+    var textBox = renderLabel(parentGfx, text, {
+      box: {
+        height: 30,
+        width: isHorizontalLane ? (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs) : (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+      },
+      align: 'center-middle',
+      style: {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+      }
+    });
+
+    if (isHorizontalLane) {
+      var top = -1 * (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs);
+      (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_7__.transform)(textBox, 0, -top, 270);
+    }
+  }
+
+  function renderActivity(parentGfx, element, attrs = {}) {
+    var {
+      width,
+      height
+    } = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getBounds)(element, attrs);
+
+    return drawRect(parentGfx, width, height, TASK_BORDER_RADIUS, {
+      ...attrs,
+      fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+      fillOpacity: DEFAULT_OPACITY,
+      stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+    });
+  }
+
+  function renderAssociation(parentGfx, element, attrs = {}) {
+    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+    var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke);
+
+    if (semantic.get('associationDirection') === 'One' ||
+        semantic.get('associationDirection') === 'Both') {
+      attrs.markerEnd = marker('association-end', fill, stroke);
+    }
+
+    if (semantic.get('associationDirection') === 'Both') {
+      attrs.markerStart = marker('association-start', fill, stroke);
+    }
+
+    attrs = pickAttrs(attrs, [
+      'markerStart',
+      'markerEnd'
+    ]);
+
+    return drawConnectionSegments(parentGfx, element.waypoints, {
+      ...attrs,
+      stroke,
+      strokeDasharray: '0, 5'
+    });
+  }
+
+  function renderDataObject(parentGfx, element, attrs = {}) {
+    var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke);
+
+    var pathData = pathMap.getScaledPath('DATA_OBJECT_PATH', {
+      xScaleFactor: 1,
+      yScaleFactor: 1,
+      containerWidth: element.width,
+      containerHeight: element.height,
+      position: {
+        mx: 0.474,
+        my: 0.296
+      }
+    });
+
+    var dataObject = drawPath(parentGfx, pathData, {
+      fill,
+      fillOpacity: DEFAULT_OPACITY,
+      stroke
+    });
+
+    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isCollection)(semantic)) {
+      var collectionPathData = pathMap.getScaledPath('DATA_OBJECT_COLLECTION_PATH', {
+        xScaleFactor: 1,
+        yScaleFactor: 1,
+        containerWidth: element.width,
+        containerHeight: element.height,
+        position: {
+          mx: 0.33,
+          my: (element.height - 18) / element.height
         }
       });
 
-      /* script path */ drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      drawPath(parentGfx, collectionPathData, {
+        strokeWidth: 2,
+        fill,
+        stroke
       });
+    }
 
-      return task;
+    return dataObject;
+  }
+
+  function renderEvent(parentGfx, element, attrs = {}) {
+    return drawCircle(parentGfx, element.width, element.height, {
+      fillOpacity: DEFAULT_OPACITY,
+      ...attrs,
+      fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+      stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+    });
+  }
+
+  function renderGateway(parentGfx, element, attrs = {}) {
+    return drawDiamond(parentGfx, element.width, element.height, {
+      fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+      fillOpacity: DEFAULT_OPACITY,
+      stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+    });
+  }
+
+  function renderLane(parentGfx, element, attrs = {}) {
+    var lane = drawRect(parentGfx, (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs), (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs), 0, {
+      fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+      fillOpacity: attrs.fillOpacity || DEFAULT_OPACITY,
+      stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+      strokeWidth: 1.5
+    });
+
+    var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+    if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(semantic, 'bpmn:Lane')) {
+      var text = semantic.get('name');
+
+      renderLaneLabel(parentGfx, text, element, attrs);
+    }
+
+    return lane;
+  }
+
+  function renderSubProcess(parentGfx, element, attrs = {}) {
+    var activity = renderActivity(parentGfx, element, attrs);
+
+    if ((0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isEventSubProcess)(element)) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(activity, {
+        strokeDasharray: '0, 5.5',
+        strokeWidth: 2.5
+      });
+    }
+
+    var expanded = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element);
+
+    renderEmbeddedLabel(parentGfx, element, expanded ? 'center-top' : 'center-middle', attrs);
+
+    if (expanded) {
+      renderTaskMarkers(parentGfx, element, undefined, attrs);
+    } else {
+      renderTaskMarkers(parentGfx, element, [ 'SubProcessMarker' ], attrs);
+    }
+
+    return activity;
+  }
+
+  function renderTask(parentGfx, element, attrs = {}) {
+    var activity = renderActivity(parentGfx, element, attrs);
+
+    renderEmbeddedLabel(parentGfx, element, 'center-middle', attrs);
+
+    renderTaskMarkers(parentGfx, element, undefined, attrs);
+
+    return activity;
+  }
+
+  var handlers = this.handlers = {
+    'bpmn:AdHocSubProcess': function(parentGfx, element, attrs = {}) {
+      if ((0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element)) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke',
+          'width',
+          'height'
+        ]);
+      } else {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+      }
+
+      return renderSubProcess(parentGfx, element, attrs);
     },
-    'bpmn:BusinessRuleTask': function(parentGfx, element) {
-      var task = renderer('bpmn:Task')(parentGfx, element);
+    'bpmn:Association': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var headerPathData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_HEADER', {
-        abspos: {
-          x: 8,
-          y: 8
-        }
+      return renderAssociation(parentGfx, element, attrs);
+    },
+    'bpmn:BoundaryEvent': function(parentGfx, element, attrs = {}) {
+      var { renderIcon = true } = attrs;
+
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element),
+          cancelActivity = semantic.get('cancelActivity');
+
+      attrs = {
+        strokeWidth: 1.5,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        fillOpacity: FULL_OPACITY,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      };
+
+      if (!cancelActivity) {
+        attrs.strokeDasharray = '6';
+      }
+
+      var event = renderEvent(parentGfx, element, attrs);
+
+      drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, {
+        ...attrs,
+        fill: 'none'
       });
 
-      var businessHeaderPath = drawPath(parentGfx, headerPathData);
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(businessHeaderPath, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, '#aaaaaa'),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
+      if (renderIcon) {
+        renderEventIcon(element, parentGfx, attrs);
+      }
+
+      return event;
+    },
+    'bpmn:BusinessRuleTask': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var task = renderTask(parentGfx, element, attrs);
 
       var headerData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_MAIN', {
         abspos: {
@@ -2765,162 +3626,48 @@ function BpmnRenderer(
       });
 
       var businessPath = drawPath(parentGfx, headerData);
+
       (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(businessPath, {
-        strokeWidth: 1,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
+      });
+
+      var headerPathData = pathMap.getScaledPath('TASK_TYPE_BUSINESS_RULE_HEADER', {
+        abspos: {
+          x: 8,
+          y: 8
+        }
+      });
+
+      var businessHeaderPath = drawPath(parentGfx, headerPathData);
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(businessHeaderPath, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
 
       return task;
     },
-    'bpmn:SubProcess': function(parentGfx, element, attrs) {
-      attrs = {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        ...attrs
-      };
+    'bpmn:CallActivity': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var rect = renderer('bpmn:Activity')(parentGfx, element, attrs);
-
-      var expanded = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_9__.isExpanded)(element);
-
-      if ((0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_9__.isEventSubProcess)(element)) {
-        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(rect, {
-          strokeDasharray: '0, 5.5',
-          strokeWidth: 2.5
-        });
-      }
-
-      renderEmbeddedLabel(parentGfx, element, expanded ? 'center-top' : 'center-middle');
-
-      if (expanded) {
-        attachTaskMarkers(parentGfx, element);
-      } else {
-        attachTaskMarkers(parentGfx, element, [ 'SubProcessMarker' ]);
-      }
-
-      return rect;
-    },
-    'bpmn:AdHocSubProcess': function(parentGfx, element) {
-      return renderer('bpmn:SubProcess')(parentGfx, element);
-    },
-    'bpmn:Transaction': function(parentGfx, element) {
-      var outer = renderer('bpmn:SubProcess')(parentGfx, element, { strokeWidth: 1.5 });
-
-      var innerAttrs = styles.style([ 'no-fill', 'no-events' ], {
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        strokeWidth: 1.5
-      });
-
-      /* inner path */ drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS - 3, INNER_OUTER_DIST, innerAttrs);
-
-      return outer;
-    },
-    'bpmn:CallActivity': function(parentGfx, element) {
-      return renderer('bpmn:SubProcess')(parentGfx, element, {
-        strokeWidth: 5
-      });
-    },
-    'bpmn:Participant': function(parentGfx, element) {
-
-      var strokeWidth = 1.5;
-
-      var attrs = {
-        fillOpacity: DEFAULT_FILL_OPACITY,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        strokeWidth
-      };
-
-      var lane = renderer('bpmn:Lane')(parentGfx, element, attrs);
-
-      var expandedPool = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_9__.isExpanded)(element);
-
-      if (expandedPool) {
-        drawLine(parentGfx, [
-          { x: 30, y: 0 },
-          { x: 30, y: element.height }
-        ], {
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-          strokeWidth
-        });
-        var text = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).name;
-        renderLaneLabel(parentGfx, text, element);
-      } else {
-
-        // collapsed pool draw text inline
-        var text2 = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).name;
-        renderLabel(parentGfx, text2, {
-          box: element, align: 'center-middle',
-          style: {
-            fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
-          }
-        });
-      }
-
-      var participantMultiplicity = !!((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).participantMultiplicity);
-
-      if (participantMultiplicity) {
-        renderer('ParticipantMultiplicityMarker')(parentGfx, element);
-      }
-
-      return lane;
-    },
-    'bpmn:Lane': function(parentGfx, element, attrs) {
-      var rect = drawRect(parentGfx, element.width, element.height, 0, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        fillOpacity: HIGH_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        strokeWidth: 1.5,
+      return renderSubProcess(parentGfx, element, {
+        strokeWidth: 5,
         ...attrs
       });
-
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
-
-      if (semantic.$type === 'bpmn:Lane') {
-        var text = semantic.name;
-        renderLaneLabel(parentGfx, text, element);
-      }
-
-      return rect;
     },
-    'bpmn:InclusiveGateway': function(parentGfx, element) {
-      var diamond = renderer('bpmn:Gateway')(parentGfx, element);
+    'bpmn:ComplexGateway': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      /* circle path */
-      drawCircle(parentGfx, element.width, element.height, element.height * 0.24, {
-        strokeWidth: 2.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-
-      return diamond;
-    },
-    'bpmn:ExclusiveGateway': function(parentGfx, element) {
-      var diamond = renderer('bpmn:Gateway')(parentGfx, element);
-
-      var pathData = pathMap.getScaledPath('GATEWAY_EXCLUSIVE', {
-        xScaleFactor: 0.4,
-        yScaleFactor: 0.4,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: 0.32,
-          my: 0.3
-        }
-      });
-
-      if (((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.getDi)(element).isMarkerVisible)) {
-        drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-        });
-      }
-
-      return diamond;
-    },
-    'bpmn:ComplexGateway': function(parentGfx, element) {
-      var diamond = renderer('bpmn:Gateway')(parentGfx, element);
+      var gateway = renderGateway(parentGfx, element, attrs);
 
       var pathData = pathMap.getScaledPath('GATEWAY_COMPLEX', {
         xScaleFactor: 0.5,
@@ -2933,50 +3680,142 @@ function BpmnRenderer(
         }
       });
 
-      /* complex path */ drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      drawPath(parentGfx, pathData, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
 
-      return diamond;
+      return gateway;
     },
-    'bpmn:ParallelGateway': function(parentGfx, element) {
-      var diamond = renderer('bpmn:Gateway')(parentGfx, element);
+    'bpmn:DataInput': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var pathData = pathMap.getScaledPath('GATEWAY_PARALLEL', {
-        xScaleFactor: 0.6,
-        yScaleFactor:0.6,
+      var arrowPathData = pathMap.getRawPath('DATA_ARROW');
+
+      var dataObject = renderDataObject(parentGfx, element, attrs);
+
+      drawPath(parentGfx, arrowPathData, {
+        fill: 'none',
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
+      });
+
+      return dataObject;
+    },
+    'bpmn:DataInputAssociation': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      return renderAssociation(parentGfx, element, {
+        ...attrs,
+        markerEnd: marker('association-end', (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill), (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke))
+      });
+    },
+    'bpmn:DataObject': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      return renderDataObject(parentGfx, element, attrs);
+    },
+    'bpmn:DataObjectReference': as('bpmn:DataObject'),
+    'bpmn:DataOutput': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var arrowPathData = pathMap.getRawPath('DATA_ARROW');
+
+      var dataObject = renderDataObject(parentGfx, element, attrs);
+
+      drawPath(parentGfx, arrowPathData, {
+        strokeWidth: 1,
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
+      });
+
+      return dataObject;
+    },
+    'bpmn:DataOutputAssociation': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      return renderAssociation(parentGfx, element, {
+        ...attrs,
+        markerEnd: marker('association-end', (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill), (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke))
+      });
+    },
+    'bpmn:DataStoreReference': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var dataStorePath = pathMap.getScaledPath('DATA_STORE', {
+        xScaleFactor: 1,
+        yScaleFactor: 1,
         containerWidth: element.width,
         containerHeight: element.height,
         position: {
-          mx: 0.46,
-          my: 0.2
+          mx: 0,
+          my: 0.133
         }
       });
 
-      /* parallel path */ drawPath(parentGfx, pathData, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      return drawPath(parentGfx, dataStorePath, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        fillOpacity: DEFAULT_OPACITY,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 2
       });
-
-      return diamond;
     },
-    'bpmn:EventBasedGateway': function(parentGfx, element) {
+    'bpmn:EndEvent': function(parentGfx, element, attrs = {}) {
+      var { renderIcon = true } = attrs;
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var diamond = renderer('bpmn:Gateway')(parentGfx, element);
-
-      /* outer circle path */ drawCircle(parentGfx, element.width, element.height, element.height * 0.20, {
-        strokeWidth: 1,
-        fill: 'none',
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      var event = renderEvent(parentGfx, element, {
+        ...attrs,
+        strokeWidth: 4
       });
 
-      var type = semantic.eventGatewayType;
-      var instantiate = !!semantic.instantiate;
+      if (renderIcon) {
+        renderEventIcon(element, parentGfx, attrs);
+      }
+
+      return event;
+    },
+    'bpmn:EventBasedGateway': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+      var diamond = renderGateway(parentGfx, element, attrs);
+
+      drawCircle(parentGfx, element.width, element.height, element.height * 0.20, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, 'none', attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
+      });
+
+      var type = semantic.get('eventGatewayType'),
+          instantiate = !!semantic.get('instantiate');
 
       function drawEvent() {
 
@@ -2991,18 +3830,17 @@ function BpmnRenderer(
           }
         });
 
-        /* event path */ drawPath(parentGfx, pathData, {
-          strokeWidth: 2,
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, 'none'),
-          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        drawPath(parentGfx, pathData, {
+          fill: 'none',
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 2
         });
       }
 
       if (type === 'Parallel') {
-
         var pathData = pathMap.getScaledPath('GATEWAY_PARALLEL', {
           xScaleFactor: 0.4,
-          yScaleFactor:0.4,
+          yScaleFactor: 0.4,
           containerWidth: element.width,
           containerHeight: element.height,
           position: {
@@ -3012,16 +3850,16 @@ function BpmnRenderer(
         });
 
         drawPath(parentGfx, pathData, {
-          strokeWidth: 1,
-          fill: 'none'
+          fill: 'none',
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
         });
       } else if (type === 'Exclusive') {
-
         if (!instantiate) {
           drawCircle(parentGfx, element.width, element.height, element.height * 0.26, {
-            strokeWidth: 1,
             fill: 'none',
-            stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+            stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+            strokeWidth: 1
           });
         }
 
@@ -3031,104 +3869,163 @@ function BpmnRenderer(
 
       return diamond;
     },
-    'bpmn:Gateway': function(parentGfx, element) {
-      return drawDiamond(parentGfx, element.width, element.height, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        fillOpacity: DEFAULT_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-    },
-    'bpmn:SequenceFlow': function(parentGfx, element) {
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
+    'bpmn:ExclusiveGateway': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var path = drawConnectionSegments(parentGfx, element.waypoints, {
-        markerEnd: marker('sequenceflow-end', fill, stroke),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
+      var gateway = renderGateway(parentGfx, element, attrs);
 
-      var sequenceFlow = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
-
-      var source;
-
-      if (element.source) {
-        source = element.source.businessObject;
-
-        // conditional flow marker
-        if (sequenceFlow.conditionExpression && source.$instanceOf('bpmn:Activity')) {
-          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(path, {
-            markerStart: marker('conditional-flow-marker', fill, stroke)
-          });
+      var pathData = pathMap.getScaledPath('GATEWAY_EXCLUSIVE', {
+        xScaleFactor: 0.4,
+        yScaleFactor: 0.4,
+        containerWidth: element.width,
+        containerHeight: element.height,
+        position: {
+          mx: 0.32,
+          my: 0.3
         }
+      });
 
-        // default marker
-        if (source.default && (source.$instanceOf('bpmn:Gateway') || source.$instanceOf('bpmn:Activity')) &&
-            source.default === sequenceFlow) {
-          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(path, {
-            markerStart: marker('conditional-default-flow-marker', fill, stroke)
-          });
+      var di = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getDi)(element);
+
+      if (di.get('isMarkerVisible')) {
+        drawPath(parentGfx, pathData, {
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
+      }
+
+      return gateway;
+    },
+    'bpmn:Gateway': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      return renderGateway(parentGfx, element, attrs);
+    },
+    'bpmn:Group': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke',
+        'width',
+        'height'
+      ]);
+
+      return drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, {
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1.5,
+        strokeDasharray: '10, 6, 0, 6',
+        fill: 'none',
+        pointerEvents: 'none',
+        width: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+        height: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs)
+      });
+    },
+    'bpmn:InclusiveGateway': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var gateway = renderGateway(parentGfx, element, attrs);
+
+      drawCircle(parentGfx, element.width, element.height, element.height * 0.24, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 2.5
+      });
+
+      return gateway;
+    },
+    'bpmn:IntermediateEvent': function(parentGfx, element, attrs = {}) {
+      var { renderIcon = true } = attrs;
+
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var outer = renderEvent(parentGfx, element, {
+        ...attrs,
+        strokeWidth: 1.5
+      });
+
+      drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, {
+        fill: 'none',
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1.5
+      });
+
+      if (renderIcon) {
+        renderEventIcon(element, parentGfx, attrs);
+      }
+
+      return outer;
+    },
+    'bpmn:IntermediateCatchEvent': as('bpmn:IntermediateEvent'),
+    'bpmn:IntermediateThrowEvent': as('bpmn:IntermediateEvent'),
+    'bpmn:Lane': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke',
+        'width',
+        'height'
+      ]);
+
+      return renderLane(parentGfx, element, {
+        ...attrs,
+        fillOpacity: LOW_OPACITY
+      });
+    },
+    'bpmn:ManualTask': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var task = renderTask(parentGfx, element, attrs);
+
+      var pathData = pathMap.getScaledPath('TASK_TYPE_MANUAL', {
+        abspos: {
+          x: 17,
+          y: 15
         }
-      }
-
-      return path;
-    },
-    'bpmn:Association': function(parentGfx, element, attrs) {
-
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
-
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
-
-      attrs = {
-        strokeDasharray: '0, 5',
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        ...attrs
-      };
-
-      if (semantic.associationDirection === 'One' ||
-          semantic.associationDirection === 'Both') {
-        attrs.markerEnd = marker('association-end', fill, stroke);
-      }
-
-      if (semantic.associationDirection === 'Both') {
-        attrs.markerStart = marker('association-start', fill, stroke);
-      }
-
-      return drawConnectionSegments(parentGfx, element.waypoints, attrs);
-    },
-    'bpmn:DataInputAssociation': function(parentGfx, element) {
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
-
-      return renderer('bpmn:Association')(parentGfx, element, {
-        markerEnd: marker('association-end', fill, stroke)
       });
-    },
-    'bpmn:DataOutputAssociation': function(parentGfx, element) {
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
 
-      return renderer('bpmn:Association')(parentGfx, element, {
-        markerEnd: marker('association-end', fill, stroke)
+      drawPath(parentGfx, pathData, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 0.5
       });
+
+      return task;
     },
-    'bpmn:MessageFlow': function(parentGfx, element) {
+    'bpmn:MessageFlow': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element),
-          di = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.getDi)(element);
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element),
+          di = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getDi)(element);
 
-      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor);
+      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke);
 
       var path = drawConnectionSegments(parentGfx, element.waypoints, {
         markerEnd: marker('messageflow-end', fill, stroke),
         markerStart: marker('messageflow-start', fill, stroke),
+        stroke,
         strokeDasharray: '10, 11',
-        strokeWidth: 1.5,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        strokeWidth: 1.5
       });
 
-      if (semantic.messageRef) {
+      if (semantic.get('messageRef')) {
         var midPoint = path.getPointAtLength(path.getTotalLength() / 2);
 
         var markerPathData = pathMap.getScaledPath('MESSAGE_FLOW_MARKER', {
@@ -3138,24 +4035,28 @@ function BpmnRenderer(
           }
         });
 
-        var messageAttrs = { strokeWidth: 1 };
+        var messageAttrs = {
+          strokeWidth: 1
+        };
 
-        if (di.messageVisibleKind === 'initiating') {
-          messageAttrs.fill = 'white';
-          messageAttrs.stroke = _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.black;
+        if (di.get('messageVisibleKind') === 'initiating') {
+          messageAttrs.fill = fill;
+          messageAttrs.stroke = stroke;
         } else {
-          messageAttrs.fill = '#888';
-          messageAttrs.stroke = 'white';
+          messageAttrs.fill = stroke;
+          messageAttrs.stroke = fill;
         }
 
         var message = drawPath(parentGfx, markerPathData, messageAttrs);
 
-        var labelText = semantic.messageRef.name;
-        var label = renderLabel(parentGfx, labelText, {
+        var messageRef = semantic.get('messageRef'),
+            name = messageRef.get('name');
+
+        var label = renderLabel(parentGfx, name, {
           align: 'center-top',
           fitBox: true,
           style: {
-            fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultLabelColor, defaultStrokeColor)
+            fill: stroke
           }
         });
 
@@ -3165,142 +4066,365 @@ function BpmnRenderer(
         var translateX = midPoint.x - labelBounds.width / 2,
             translateY = midPoint.y + messageBounds.height / 2 + ELEMENT_LABEL_DISTANCE;
 
-        (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__.transform)(label, translateX, translateY, 0);
-
+        (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_7__.transform)(label, translateX, translateY, 0);
       }
 
       return path;
     },
-    'bpmn:DataObject': function(parentGfx, element) {
-      var pathData = pathMap.getScaledPath('DATA_OBJECT_PATH', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
+    'bpmn:ParallelGateway': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var diamond = renderGateway(parentGfx, element, attrs);
+
+      var pathData = pathMap.getScaledPath('GATEWAY_PARALLEL', {
+        xScaleFactor: 0.6,
+        yScaleFactor: 0.6,
         containerWidth: element.width,
         containerHeight: element.height,
         position: {
-          mx: 0.474,
-          my: 0.296
+          mx: 0.46,
+          my: 0.2
         }
       });
 
-      var elementObject = drawPath(parentGfx, pathData, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        fillOpacity: DEFAULT_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      drawPath(parentGfx, pathData, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
+      return diamond;
+    },
+    'bpmn:Participant': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke',
+        'width',
+        'height'
+      ]);
 
-      if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isCollection)(semantic)) {
-        renderDataItemCollection(parentGfx, element);
+      var participant = renderLane(parentGfx, element, attrs);
+
+      var expandedParticipant = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element);
+      var horizontalParticipant = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isHorizontal)(element);
+
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element),
+          name = semantic.get('name');
+
+      if (expandedParticipant) {
+        var waypoints = horizontalParticipant ? [
+          {
+            x: 30,
+            y: 0
+          },
+          {
+            x: 30,
+            y: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs)
+          }
+        ] : [
+          {
+            x: 0,
+            y: 30
+          },
+          {
+            x: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+            y: 30
+          }
+        ];
+
+        drawLine(parentGfx, waypoints, {
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: PARTICIPANT_STROKE_WIDTH
+        });
+
+        renderLaneLabel(parentGfx, name, element, attrs);
+      } else {
+        var bounds = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getBounds)(element, attrs);
+
+        if (!horizontalParticipant) {
+          bounds.height = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs);
+          bounds.width = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs);
+        }
+
+        var textBox = renderLabel(parentGfx, name, {
+          box: bounds,
+          align: 'center-middle',
+          style: {
+            fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
+          }
+        });
+
+        if (!horizontalParticipant) {
+          var top = -1 * (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs);
+          (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_7__.transform)(textBox, 0, -top, 270);
+        }
       }
 
-      return elementObject;
+      if (semantic.get('participantMultiplicity')) {
+        renderTaskMarker('ParticipantMultiplicityMarker', parentGfx, element, attrs);
+      }
+
+      return participant;
     },
-    'bpmn:DataObjectReference': as('bpmn:DataObject'),
-    'bpmn:DataInput': function(parentGfx, element) {
+    'bpmn:ReceiveTask' : function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var arrowPathData = pathMap.getRawPath('DATA_ARROW');
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
 
-      // page
-      var elementObject = renderer('bpmn:DataObject')(parentGfx, element);
+      var task = renderTask(parentGfx, element, attrs);
 
-      /* input arrow path */ drawPath(parentGfx, arrowPathData, { strokeWidth: 1 });
+      var pathData;
 
-      return elementObject;
-    },
-    'bpmn:DataOutput': function(parentGfx, element) {
-      var arrowPathData = pathMap.getRawPath('DATA_ARROW');
+      if (semantic.get('instantiate')) {
+        drawCircle(parentGfx, 28, 28, 20 * 0.22, {
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+          stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+          strokeWidth: 1
+        });
 
-      // page
-      var elementObject = renderer('bpmn:DataObject')(parentGfx, element);
+        pathData = pathMap.getScaledPath('TASK_TYPE_INSTANTIATING_SEND', {
+          abspos: {
+            x: 7.77,
+            y: 9.52
+          }
+        });
+      } else {
+        pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
+          xScaleFactor: 0.9,
+          yScaleFactor: 0.9,
+          containerWidth: 21,
+          containerHeight: 14,
+          position: {
+            mx: 0.3,
+            my: 0.4
+          }
+        });
+      }
 
-      /* output arrow path */ drawPath(parentGfx, arrowPathData, {
-        strokeWidth: 1,
-        fill: _BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.black
+      drawPath(parentGfx, pathData, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
       });
 
-      return elementObject;
+      return task;
     },
-    'bpmn:DataStoreReference': function(parentGfx, element) {
-      var DATA_STORE_PATH = pathMap.getScaledPath('DATA_STORE', {
+    'bpmn:ScriptTask': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var task = renderTask(parentGfx, element, attrs);
+
+      var pathData = pathMap.getScaledPath('TASK_TYPE_SCRIPT', {
+        abspos: {
+          x: 15,
+          y: 20
+        }
+      });
+
+      drawPath(parentGfx, pathData, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
+      });
+
+      return task;
+    },
+    'bpmn:SendTask': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var task = renderTask(parentGfx, element, attrs);
+
+      var pathData = pathMap.getScaledPath('TASK_TYPE_SEND', {
         xScaleFactor: 1,
         yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
+        containerWidth: 21,
+        containerHeight: 14,
         position: {
-          mx: 0,
-          my: 0.133
+          mx: 0.285,
+          my: 0.357
         }
       });
 
-      var elementStore = drawPath(parentGfx, DATA_STORE_PATH, {
-        strokeWidth: 2,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        fillOpacity: DEFAULT_FILL_OPACITY,
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      drawPath(parentGfx, pathData, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        strokeWidth: 1
       });
 
-      return elementStore;
+      return task;
     },
-    'bpmn:BoundaryEvent': function(parentGfx, element) {
+    'bpmn:SequenceFlow': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
 
-      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element),
-          cancel = semantic.cancelActivity;
+      var fill = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+          stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke);
 
-      var attrs = {
-        strokeWidth: 1.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      };
+      var connection = drawConnectionSegments(parentGfx, element.waypoints, {
+        markerEnd: marker('sequenceflow-end', fill, stroke),
+        stroke
+      });
 
-      if (!cancel) {
-        attrs.strokeDasharray = '6';
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+      var { source } = element;
+
+      if (source) {
+        var sourceSemantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(source);
+
+        // conditional flow marker
+        if (semantic.get('conditionExpression') && (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(sourceSemantic, 'bpmn:Activity')) {
+          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(connection, {
+            markerStart: marker('conditional-flow-marker', fill, stroke)
+          });
+        }
+
+        // default marker
+        if (sourceSemantic.get('default') && ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(sourceSemantic, 'bpmn:Gateway') || (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(sourceSemantic, 'bpmn:Activity')) &&
+            sourceSemantic.get('default') === semantic) {
+          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(connection, {
+            markerStart: marker('conditional-default-flow-marker', fill, stroke)
+          });
+        }
       }
 
-      // apply fillOpacity
-      var outerAttrs = {
-        ...attrs,
-        fillOpacity: 1
-      };
-
-      // apply no-fill
-      var innerAttrs = {
-        ...attrs,
-        fill: 'none'
-      };
-
-      var outer = renderer('bpmn:Event')(parentGfx, element, outerAttrs);
-
-      /* inner path */ drawCircle(parentGfx, element.width, element.height, INNER_OUTER_DIST, innerAttrs);
-
-      renderEventContent(element, parentGfx);
-
-      return outer;
+      return connection;
     },
-    'bpmn:Group': function(parentGfx, element) {
-      return drawRect(parentGfx, element.width, element.height, TASK_BORDER_RADIUS, {
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        strokeWidth: 1.5,
-        strokeDasharray: '10,6,0,6',
+    'bpmn:ServiceTask': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var task = renderTask(parentGfx, element, attrs);
+
+      drawCircle(parentGfx, 10, 10, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: 'none',
+        transform: 'translate(6, 6)'
+      });
+
+      var pathDataService1 = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
+        abspos: {
+          x: 12,
+          y: 18
+        }
+      });
+
+      drawPath(parentGfx, pathDataService1, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
+      });
+
+      drawCircle(parentGfx, 10, 10, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: 'none',
+        transform: 'translate(11, 10)'
+      });
+
+      var pathDataService2 = pathMap.getScaledPath('TASK_TYPE_SERVICE', {
+        abspos: {
+          x: 17,
+          y: 22
+        }
+      });
+
+      drawPath(parentGfx, pathDataService2, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1
+      });
+
+      return task;
+    },
+    'bpmn:StartEvent': function(parentGfx, element, attrs = {}) {
+      var { renderIcon = true } = attrs;
+
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element);
+
+      if (!semantic.get('isInterrupting')) {
+        attrs = {
+          ...attrs,
+          strokeDasharray: '6'
+        };
+      }
+
+      var event = renderEvent(parentGfx, element, attrs);
+
+      if (renderIcon) {
+        renderEventIcon(element, parentGfx, attrs);
+      }
+
+      return event;
+    },
+    'bpmn:SubProcess': function(parentGfx, element, attrs = {}) {
+      if ((0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element)) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke',
+          'width',
+          'height'
+        ]);
+      } else {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+      }
+
+      return renderSubProcess(parentGfx, element, attrs);
+    },
+    'bpmn:Task': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      return renderTask(parentGfx, element, attrs);
+    },
+    'bpmn:TextAnnotation': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke',
+        'width',
+        'height'
+      ]);
+
+      var {
+        width,
+        height
+      } = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getBounds)(element, attrs);
+
+      var textElement = drawRect(parentGfx, width, height, 0, 0, {
         fill: 'none',
-        pointerEvents: 'none'
-      });
-    },
-    'label': function(parentGfx, element) {
-      return renderExternalLabel(parentGfx, element);
-    },
-    'bpmn:TextAnnotation': function(parentGfx, element) {
-      var textElement = drawRect(parentGfx, element.width, element.height, 0, 0, {
-        'fill': 'none',
-        'stroke': 'none'
+        stroke: 'none'
       });
 
       var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
         xScaleFactor: 1,
         yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
+        containerWidth: width,
+        containerHeight: height,
         position: {
           mx: 0.0,
           my: 0.0
@@ -3308,232 +4432,121 @@ function BpmnRenderer(
       });
 
       drawPath(parentGfx, textPathData, {
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke)
       });
 
-      var text = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element).text || '';
+      var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element),
+          text = semantic.get('text') || '';
+
       renderLabel(parentGfx, text, {
-        box: element,
         align: 'left-top',
+        box: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getBounds)(element, attrs),
         padding: 7,
         style: {
-          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor)
+          fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getLabelColor)(element, defaultLabelColor, defaultStrokeColor, attrs.stroke)
         }
       });
 
       return textElement;
     },
-    'ParticipantMultiplicityMarker': function(parentGfx, element) {
-      var markerPath = pathMap.getScaledPath('MARKER_PARALLEL', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: ((element.width / 2) / element.width),
-          my: (element.height - 15) / element.height
-        }
-      });
+    'bpmn:Transaction': function(parentGfx, element, attrs = {}) {
+      if ((0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element)) {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke',
+          'width',
+          'height'
+        ]);
+      } else {
+        attrs = pickAttrs(attrs, [
+          'fill',
+          'stroke'
+        ]);
+      }
 
-      drawMarker('participant-multiplicity', parentGfx, markerPath, {
-        strokeWidth: 2,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-    },
-    'SubProcessMarker': function(parentGfx, element) {
-      var markerRect = drawRect(parentGfx, 14, 14, 0, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-
-      // Process marker is placed in the middle of the box
-      // therefore fixed values can be used here
-      (0,diagram_js_lib_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_8__.translate)(markerRect, element.width / 2 - 7.5, element.height - 20);
-
-      var markerPath = pathMap.getScaledPath('MARKER_SUB_PROCESS', {
-        xScaleFactor: 1.5,
-        yScaleFactor: 1.5,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: (element.width / 2 - 7.5) / element.width,
-          my: (element.height - 20) / element.height
-        }
-      });
-
-      drawMarker('sub-process', parentGfx, markerPath, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-    },
-    'ParallelMarker': function(parentGfx, element, position) {
-      var markerPath = pathMap.getScaledPath('MARKER_PARALLEL', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: ((element.width / 2 + position.parallel) / element.width),
-          my: (element.height - 20) / element.height
-        }
-      });
-
-      drawMarker('parallel', parentGfx, markerPath, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-    },
-    'SequentialMarker': function(parentGfx, element, position) {
-      var markerPath = pathMap.getScaledPath('MARKER_SEQUENTIAL', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: ((element.width / 2 + position.seq) / element.width),
-          my: (element.height - 19) / element.height
-        }
-      });
-
-      drawMarker('sequential', parentGfx, markerPath, {
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-    },
-    'CompensationMarker': function(parentGfx, element, position) {
-      var markerMath = pathMap.getScaledPath('MARKER_COMPENSATION', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: ((element.width / 2 + position.compensation) / element.width),
-          my: (element.height - 13) / element.height
-        }
-      });
-
-      drawMarker('compensation', parentGfx, markerMath, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
-      });
-    },
-    'LoopMarker': function(parentGfx, element, position) {
-      var markerPath = pathMap.getScaledPath('MARKER_LOOP', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: ((element.width / 2 + position.loop) / element.width),
-          my: (element.height - 7) / element.height
-        }
-      });
-
-      drawMarker('loop', parentGfx, markerPath, {
+      var outer = renderSubProcess(parentGfx, element, {
         strokeWidth: 1.5,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        strokeMiterlimit: 0.5
+        ...attrs
       });
+
+      var innerAttrs = styles.style([ 'no-fill', 'no-events' ], {
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 1.5
+      });
+
+      var expanded = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element);
+
+      if (!expanded) {
+        attrs = {};
+      }
+
+      drawRect(
+        parentGfx,
+        (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getWidth)(element, attrs),
+        (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getHeight)(element, attrs),
+        TASK_BORDER_RADIUS - INNER_OUTER_DIST,
+        INNER_OUTER_DIST,
+        innerAttrs
+      );
+
+      return outer;
     },
-    'AdhocMarker': function(parentGfx, element, position) {
-      var markerPath = pathMap.getScaledPath('MARKER_ADHOC', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: ((element.width / 2 + position.adhoc) / element.width),
-          my: (element.height - 15) / element.height
+    'bpmn:UserTask': function(parentGfx, element, attrs = {}) {
+      attrs = pickAttrs(attrs, [
+        'fill',
+        'stroke'
+      ]);
+
+      var task = renderTask(parentGfx, element, attrs);
+
+      var x = 15;
+      var y = 12;
+
+      var pathDataUser1 = pathMap.getScaledPath('TASK_TYPE_USER_1', {
+        abspos: {
+          x: x,
+          y: y
         }
       });
 
-      drawMarker('adhoc', parentGfx, markerPath, {
-        strokeWidth: 1,
-        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor),
-        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor)
+      drawPath(parentGfx, pathDataUser1, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 0.5
       });
+
+      var pathDataUser2 = pathMap.getScaledPath('TASK_TYPE_USER_2', {
+        abspos: {
+          x: x,
+          y: y
+        }
+      });
+
+      drawPath(parentGfx, pathDataUser2, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 0.5
+      });
+
+      var pathDataUser3 = pathMap.getScaledPath('TASK_TYPE_USER_3', {
+        abspos: {
+          x: x,
+          y: y
+        }
+      });
+
+      drawPath(parentGfx, pathDataUser3, {
+        fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
+        strokeWidth: 0.5
+      });
+
+      return task;
+    },
+    'label': function(parentGfx, element, attrs = {}) {
+      return renderExternalLabel(parentGfx, element, attrs);
     }
   };
-
-  function attachTaskMarkers(parentGfx, element, taskMarkers) {
-    var obj = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getSemantic)(element);
-
-    var subprocess = taskMarkers && taskMarkers.indexOf('SubProcessMarker') !== -1;
-    var position;
-
-    if (subprocess) {
-      position = {
-        seq: -21,
-        parallel: -22,
-        compensation: -42,
-        loop: -18,
-        adhoc: 10
-      };
-    } else {
-      position = {
-        seq: -3,
-        parallel: -6,
-        compensation: -27,
-        loop: 0,
-        adhoc: 10
-      };
-    }
-
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_5__.forEach)(taskMarkers, function(marker) {
-      renderer(marker)(parentGfx, element, position);
-    });
-
-    if (obj.isForCompensation) {
-      renderer('CompensationMarker')(parentGfx, element, position);
-    }
-
-    if (obj.$type === 'bpmn:AdHocSubProcess') {
-      renderer('AdhocMarker')(parentGfx, element, position);
-    }
-
-    var loopCharacteristics = obj.loopCharacteristics,
-        isSequential = loopCharacteristics && loopCharacteristics.isSequential;
-
-    if (loopCharacteristics) {
-
-      if (isSequential === undefined) {
-        renderer('LoopMarker')(parentGfx, element, position);
-      }
-
-      if (isSequential === false) {
-        renderer('ParallelMarker')(parentGfx, element, position);
-      }
-
-      if (isSequential === true) {
-        renderer('SequentialMarker')(parentGfx, element, position);
-      }
-    }
-  }
-
-  function renderDataItemCollection(parentGfx, element) {
-
-    var yPosition = (element.height - 18) / element.height;
-
-    var pathData = pathMap.getScaledPath('DATA_OBJECT_COLLECTION_PATH', {
-      xScaleFactor: 1,
-      yScaleFactor: 1,
-      containerWidth: element.width,
-      containerHeight: element.height,
-      position: {
-        mx: 0.33,
-        my: yPosition
-      }
-    });
-
-    /* collection path */ drawPath(parentGfx, pathData, {
-      strokeWidth: 2
-    });
-  }
-
 
   // extension API, use at your own risk
   this._drawPath = drawPath;
@@ -3554,43 +4567,89 @@ BpmnRenderer.$inject = [
 ];
 
 
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
 BpmnRenderer.prototype.canRender = function(element) {
-  return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.is)(element, 'bpmn:BaseElement');
+  return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(element, 'bpmn:BaseElement');
 };
 
-BpmnRenderer.prototype.drawShape = function(parentGfx, element) {
-  var type = element.type;
-  var h = this._renderer(type);
+/**
+ * Draw shape into parentGfx.
+ *
+ * @param {SVGElement} parentGfx
+ * @param {Element} element
+ * @param {Attrs} [attrs]
+ *
+ * @return {SVGElement} mainGfx
+ */
+BpmnRenderer.prototype.drawShape = function(parentGfx, element, attrs = {}) {
+  var { type } = element;
 
-  /* jshint -W040 */
-  return h(parentGfx, element);
+  var handler = this._renderer(type);
+
+  return handler(parentGfx, element, attrs);
 };
 
-BpmnRenderer.prototype.drawConnection = function(parentGfx, element) {
-  var type = element.type;
-  var h = this._renderer(type);
+/**
+ * Draw connection into parentGfx.
+ *
+ * @param {SVGElement} parentGfx
+ * @param {Element} element
+ * @param {Attrs} [attrs]
+ *
+ * @return {SVGElement} mainGfx
+ */
+BpmnRenderer.prototype.drawConnection = function(parentGfx, element, attrs = {}) {
+  var { type } = element;
 
-  /* jshint -W040 */
-  return h(parentGfx, element);
+  var handler = this._renderer(type);
+
+  return handler(parentGfx, element, attrs);
 };
 
+/**
+ * Get shape path.
+ *
+ * @param {Element} element
+ *
+ * @return {string} path
+ */
 BpmnRenderer.prototype.getShapePath = function(element) {
-
-  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.is)(element, 'bpmn:Event')) {
+  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(element, 'bpmn:Event')) {
     return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getCirclePath)(element);
   }
 
-  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.is)(element, 'bpmn:Activity')) {
+  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(element, 'bpmn:Activity')) {
     return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRoundRectPath)(element, TASK_BORDER_RADIUS);
   }
 
-  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_10__.is)(element, 'bpmn:Gateway')) {
+  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(element, 'bpmn:Gateway')) {
     return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getDiamondPath)(element);
   }
 
   return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRectPath)(element);
 };
 
+/**
+ * Pick attributes if they exist.
+ *
+ * @param {Object} attrs
+ * @param {string[]} keys
+ *
+ * @returns {Object}
+ */
+function pickAttrs(attrs, keys = []) {
+  return keys.reduce((pickedAttrs, key) => {
+    if (attrs[ key ]) {
+      pickedAttrs[ key ] = attrs[ key ];
+    }
+
+    return pickedAttrs;
+  }, {});
+}
 
 /***/ }),
 
@@ -3600,15 +4659,13 @@ BpmnRenderer.prototype.getShapePath = function(element) {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ PathMap)
 /* harmony export */ });
 /**
- * Map containing SVG paths needed by BpmnRenderer.
+ * Map containing SVG paths needed by BpmnRenderer
  */
-
 function PathMap() {
 
   /**
@@ -3950,6 +5007,13 @@ function PathMap() {
     }
   };
 
+  /**
+   * Return raw path for the given ID.
+   *
+   * @param {string} pathId
+   *
+   * @return {string} raw path
+   */
   this.getRawPath = function getRawPath(pathId) {
     return this.pathMap[pathId].d;
   };
@@ -4002,6 +5066,7 @@ function PathMap() {
    *   </ul>
    * </p>
    *
+   * @return {string} scaled path
    */
   this.getScaledPath = function getScaledPath(pathId, param) {
     var rawPath = this.pathMap[pathId];
@@ -4086,7 +5151,6 @@ function format(str, obj) {
   \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ TextRenderer)
@@ -4102,7 +5166,30 @@ var LINE_HEIGHT_RATIO = 1.2;
 
 var MIN_TEXT_ANNOTATION_HEIGHT = 30;
 
+/**
+ * @typedef { {
+ *   fontFamily: string;
+ *   fontSize: number;
+ *   fontWeight: string;
+ *   lineHeight: number;
+ * } } TextRendererStyle
+ *
+ * @typedef { {
+ *   defaultStyle?: Partial<TextRendererStyle>;
+ *   externalStyle?: Partial<TextRendererStyle>;
+ * } } TextRendererConfig
+ *
+ * @typedef { import('diagram-js/lib/util/Text').TextLayoutConfig } TextLayoutConfig
+ *
+ * @typedef { import('diagram-js/lib/util/Types').Rect } Rect
+ */
 
+
+/**
+ * Renders text and computes text bounding boxes.
+ *
+ * @param {TextRendererConfig} [config]
+ */
 function TextRenderer(config) {
 
   var defaultStyle = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({
@@ -4126,19 +5213,17 @@ function TextRenderer(config) {
    * Get the new bounds of an externally rendered,
    * layouted label.
    *
-   * @param  {Bounds} bounds
-   * @param  {string} text
+   * @param {Rect} bounds
+   * @param {string} text
    *
-   * @return {Bounds}
+   * @return {Rect}
    */
   this.getExternalLabelBounds = function(bounds, text) {
 
     var layoutedDimensions = textUtil.getDimensions(text, {
       box: {
         width: 90,
-        height: 30,
-        x: bounds.width / 2 + bounds.x,
-        y: bounds.height / 2 + bounds.y
+        height: 30
       },
       style: externalStyle
     });
@@ -4156,10 +5241,10 @@ function TextRenderer(config) {
   /**
    * Get the new bounds of text annotation.
    *
-   * @param  {Bounds} bounds
-   * @param  {string} text
+   * @param {Rect} bounds
+   * @param {string} text
    *
-   * @return {Bounds}
+   * @return {Rect}
    */
   this.getTextAnnotationBounds = function(bounds, text) {
 
@@ -4182,7 +5267,7 @@ function TextRenderer(config) {
    * Create a layouted text element.
    *
    * @param {string} text
-   * @param {Object} [options]
+   * @param {TextLayoutConfig} [options]
    *
    * @return {SVGElement} rendered text
    */
@@ -4218,7 +5303,6 @@ TextRenderer.$inject = [
   \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4247,7 +5331,6 @@ __webpack_require__.r(__webpack_exports__);
   \*****************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DrilldownBreadcrumbs)
@@ -4264,32 +5347,40 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('diagram-js/lib/core/Canvas').default} Canvas
+ * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
+ *
+ * @typedef {import('../../model/Types').Element} Element
+ * @typedef {import('../../model/Types').Shape} Shape
+ */
+
 var OPEN_CLASS = 'bjs-breadcrumbs-shown';
 
 
 /**
  * Adds overlays that allow switching planes on collapsed subprocesses.
  *
- * @param {eventBus} eventBus
- * @param {elementRegistry} elementRegistry
- * @param {overlays} overlays
- * @param {canvas} canvas
+ * @param {EventBus} eventBus
+ * @param {ElementRegistry} elementRegistry
+ * @param {Canvas} canvas
  */
-function DrilldownBreadcrumbs(eventBus, elementRegistry, overlays, canvas) {
+function DrilldownBreadcrumbs(eventBus, elementRegistry, canvas) {
   var breadcrumbs = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<ul class="bjs-breadcrumbs"></ul>');
   var container = canvas.getContainer();
   var containerClasses = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(container);
   container.appendChild(breadcrumbs);
 
-  var boParents = [];
+  var businessObjectParents = [];
 
   // update breadcrumbs if name or ID of the primary shape changes
-  eventBus.on('element.changed', function(e) {
-    var shape = e.element,
-        bo = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(shape);
+  eventBus.on('element.changed', function(event) {
+    var shape = event.element,
+        businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(shape);
 
-    var isPresent = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.find)(boParents, function(el) {
-      return el === bo;
+    var isPresent = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.find)(businessObjectParents, function(element) {
+      return element === businessObject;
     });
 
     if (!isPresent) {
@@ -4303,14 +5394,14 @@ function DrilldownBreadcrumbs(eventBus, elementRegistry, overlays, canvas) {
    * Updates the displayed breadcrumbs. If no element is provided, only the
    * labels are updated.
    *
-   * @param {djs.model.Base} [element]
+   * @param {Element} [element]
    */
   function updateBreadcrumbs(element) {
     if (element) {
-      boParents = getBoParentChain(element);
+      businessObjectParents = getBusinessObjectParentChain(element);
     }
 
-    var path = boParents.map(function(parent) {
+    var path = businessObjectParents.map(function(parent) {
       var title = (0,diagram_js_lib_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3__.escapeHTML)(parent.name || parent.id);
       var link = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<li><span class="bjs-crumb"><a title="' + title + '">' + title + '</a></span></li>');
 
@@ -4320,8 +5411,9 @@ function DrilldownBreadcrumbs(eventBus, elementRegistry, overlays, canvas) {
       // element in the elementRegisty. Instead, we search for the corresponding participant
       if (!parentPlane && (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(parent, 'bpmn:Process')) {
         var participant = elementRegistry.find(function(element) {
-          var bo = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
-          return bo && bo.processRef && bo.processRef === parent;
+          var businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+
+          return businessObject && businessObject.get('processRef') && businessObject.get('processRef') === parent;
         });
 
         parentPlane = canvas.findRoot(participant.id);
@@ -4338,10 +5430,11 @@ function DrilldownBreadcrumbs(eventBus, elementRegistry, overlays, canvas) {
 
     // show breadcrumbs and expose state to .djs-container
     var visible = path.length > 1;
+
     containerClasses.toggle(OPEN_CLASS, visible);
 
-    path.forEach(function(el) {
-      breadcrumbs.appendChild(el);
+    path.forEach(function(element) {
+      breadcrumbs.appendChild(element);
     });
   }
 
@@ -4351,7 +5444,7 @@ function DrilldownBreadcrumbs(eventBus, elementRegistry, overlays, canvas) {
 
 }
 
-DrilldownBreadcrumbs.$inject = [ 'eventBus', 'elementRegistry', 'overlays', 'canvas' ];
+DrilldownBreadcrumbs.$inject = [ 'eventBus', 'elementRegistry', 'canvas' ];
 
 
 // helpers //////////
@@ -4360,16 +5453,16 @@ DrilldownBreadcrumbs.$inject = [ 'eventBus', 'elementRegistry', 'overlays', 'can
  * Returns the parents for the element using the business object chain,
  * starting with the root element.
  *
- * @param {djs.model.Shape} child
+ * @param {Shape} child
  *
- * @returns {Array<djs.model.Shape>} parents
+ * @return {Shape}
  */
-function getBoParentChain(child) {
-  var bo = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(child);
+function getBusinessObjectParentChain(child) {
+  var businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(child);
 
   var parents = [];
 
-  for (var element = bo; element; element = element.$parent) {
+  for (var element = businessObject; element; element = element.$parent) {
     if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:SubProcess') || (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Process')) {
       parents.push(element);
     }
@@ -4386,7 +5479,6 @@ function getBoParentChain(child) {
   \***************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DrilldownCentering)
@@ -4395,12 +5487,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
+ * @typedef {import('diagram-js/lib/core/Canvas').default} Canvas
+ * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
+ */
+
+/**
  * Move collapsed subprocesses into view when drilling down.
  *
  * Zoom and scroll are saved in a session.
  *
- * @param {eventBus} eventBus
- * @param {canvas} canvas
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
  */
 function DrilldownCentering(eventBus, canvas) {
 
@@ -4519,7 +5616,6 @@ function Map() {
   \*********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DrilldownOverlayBehavior)
@@ -4536,11 +5632,28 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('diagram-js/lib/core/Canvas').default} Canvas
+ * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
+ * @typedef {import('diagram-js/lib/features/overlays/Overlays').default} Overlays
+ *
+ * @typedef {import('../../model/Types').Element} Element
+ * @typedef {import('../../model/Types').Parent} Parent
+ * @typedef {import('../../model/Types').Shape} Shape
+ */
+
 var LOW_PRIORITY = 250;
 var ARROW_DOWN_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.81801948,3.50735931 L10.4996894,9.1896894 L10.5,4 L12,4 L12,12 L4,12 L4,10.5 L9.6896894,10.4996894 L3.75735931,4.56801948 C3.46446609,4.27512627 3.46446609,3.80025253 3.75735931,3.50735931 C4.05025253,3.21446609 4.52512627,3.21446609 4.81801948,3.50735931 Z"/></svg>';
 
 var EMPTY_MARKER = 'bjs-drilldown-empty';
 
+/**
+ * @param {Canvas} canvas
+ * @param {EventBus} eventBus
+ * @param {ElementRegistry} elementRegistry
+ * @param {Overlays} overlays
+ */
 function DrilldownOverlayBehavior(
     canvas, eventBus, elementRegistry, overlays
 ) {
@@ -4557,10 +5670,10 @@ function DrilldownOverlayBehavior(
     var shape = context.shape;
 
     // Add overlay to the collapsed shape
-    if (self.canDrillDown(shape)) {
-      self.addOverlay(shape);
+    if (self._canDrillDown(shape)) {
+      self._addOverlay(shape);
     } else {
-      self.removeOverlay(shape);
+      self._removeOverlay(shape);
     }
   }, true);
 
@@ -4569,10 +5682,10 @@ function DrilldownOverlayBehavior(
     var shape = context.shape;
 
     // Add overlay to the collapsed shape
-    if (self.canDrillDown(shape)) {
-      self.addOverlay(shape);
+    if (self._canDrillDown(shape)) {
+      self._addOverlay(shape);
     } else {
-      self.removeOverlay(shape);
+      self._removeOverlay(shape);
     }
   }, true);
 
@@ -4584,13 +5697,13 @@ function DrilldownOverlayBehavior(
           shape = context.shape;
 
       // Add overlay to the collapsed shape
-      if (self.canDrillDown(shape)) {
-        self.addOverlay(shape);
+      if (self._canDrillDown(shape)) {
+        self._addOverlay(shape);
       }
 
-      self.updateDrilldownOverlay(oldParent);
-      self.updateDrilldownOverlay(newParent);
-      self.updateDrilldownOverlay(shape);
+      self._updateDrilldownOverlay(oldParent);
+      self._updateDrilldownOverlay(newParent);
+      self._updateDrilldownOverlay(shape);
     }, true);
 
 
@@ -4601,21 +5714,21 @@ function DrilldownOverlayBehavior(
           shape = context.shape;
 
       // Add overlay to the collapsed shape
-      if (self.canDrillDown(shape)) {
-        self.addOverlay(shape);
+      if (self._canDrillDown(shape)) {
+        self._addOverlay(shape);
       }
 
-      self.updateDrilldownOverlay(oldParent);
-      self.updateDrilldownOverlay(newParent);
-      self.updateDrilldownOverlay(shape);
+      self._updateDrilldownOverlay(oldParent);
+      self._updateDrilldownOverlay(newParent);
+      self._updateDrilldownOverlay(shape);
     }, true);
 
 
   eventBus.on('import.render.complete', function() {
     elementRegistry.filter(function(e) {
-      return self.canDrillDown(e);
+      return self._canDrillDown(e);
     }).map(function(el) {
-      self.addOverlay(el);
+      self._addOverlay(el);
     });
   });
 
@@ -4623,7 +5736,10 @@ function DrilldownOverlayBehavior(
 
 (0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(DrilldownOverlayBehavior, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
-DrilldownOverlayBehavior.prototype.updateDrilldownOverlay = function(shape) {
+/**
+ * @param {Shape} shape
+ */
+DrilldownOverlayBehavior.prototype._updateDrilldownOverlay = function(shape) {
   var canvas = this._canvas;
 
   if (!shape) {
@@ -4631,51 +5747,61 @@ DrilldownOverlayBehavior.prototype.updateDrilldownOverlay = function(shape) {
   }
 
   var root = canvas.findRoot(shape);
+
   if (root) {
-    this.updateOverlayVisibility(root);
+    this._updateOverlayVisibility(root);
   }
 };
 
-
-DrilldownOverlayBehavior.prototype.canDrillDown = function(element) {
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
+DrilldownOverlayBehavior.prototype._canDrillDown = function(element) {
   var canvas = this._canvas;
+
   return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(element, 'bpmn:SubProcess') && canvas.findRoot((0,_util_DrilldownUtil__WEBPACK_IMPORTED_MODULE_3__.getPlaneIdFromShape)(element));
 };
 
 /**
- * Updates visibility of the drilldown overlay. If the plane has no elements,
- * the drilldown will be only shown when the element is selected.
+ * Update the visibility of the drilldown overlay. If the plane has no elements,
+ * the drilldown will only be shown when the element is selected.
  *
- * @param {djs.model.Shape|djs.model.Root} element collapsed shape or root element
+ * @param {Parent} element The collapsed root or shape.
  */
-DrilldownOverlayBehavior.prototype.updateOverlayVisibility = function(element) {
+DrilldownOverlayBehavior.prototype._updateOverlayVisibility = function(element) {
   var overlays = this._overlays;
 
-  var bo = element.businessObject;
+  var businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.getBusinessObject)(element);
 
-  var overlay = overlays.get({ element: bo.id, type: 'drilldown' })[0];
+  var overlay = overlays.get({ element: businessObject.id, type: 'drilldown' })[0];
 
   if (!overlay) {
     return;
   }
 
-  var hasContent = bo && bo.flowElements && bo.flowElements.length;
-  (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.classes)(overlay.html).toggle(EMPTY_MARKER, !hasContent);
+  var hasFlowElements = businessObject
+    && businessObject.get('flowElements')
+    && businessObject.get('flowElements').length;
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.classes)(overlay.html).toggle(EMPTY_MARKER, !hasFlowElements);
 };
 
 /**
- * Attaches a drilldown button to the given element. We assume that the plane has
- * the same id as the element.
+ * Add a drilldown button to the given element assuming the plane has the same
+ * ID as the element.
  *
- * @param {djs.model.Shape} element collapsed shape
+ * @param {Shape} element The collapsed shape.
  */
-DrilldownOverlayBehavior.prototype.addOverlay = function(element) {
-  var canvas = this._canvas;
-  var overlays = this._overlays;
+DrilldownOverlayBehavior.prototype._addOverlay = function(element) {
+  var canvas = this._canvas,
+      overlays = this._overlays;
 
   var existingOverlays = overlays.get({ element: element, type: 'drilldown' });
+
   if (existingOverlays.length) {
-    this.removeOverlay(element);
+    this._removeOverlay(element);
   }
 
   var button = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.domify)('<button class="bjs-drilldown">' + ARROW_DOWN_SVG + '</button>');
@@ -4692,10 +5818,10 @@ DrilldownOverlayBehavior.prototype.addOverlay = function(element) {
     html: button
   });
 
-  this.updateOverlayVisibility(element);
+  this._updateOverlayVisibility(element);
 };
 
-DrilldownOverlayBehavior.prototype.removeOverlay = function(element) {
+DrilldownOverlayBehavior.prototype._removeOverlay = function(element) {
   var overlays = this._overlays;
 
   overlays.remove({
@@ -4719,7 +5845,6 @@ DrilldownOverlayBehavior.$inject = [
   \********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SubprocessCompatibility)
@@ -4730,6 +5855,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
+ * @typedef {import('../../model/Types').Moddle} Moddle
+ *
+ * @typedef {import('../../model/Types').Element} Element
+ * @typedef {import('../../model/Types').Shape} Shape
+ *
+ * @typedef {import('diagram-js/lib/core/Canvas').CanvasPlane} CanvasPlane
+ *
+ * @typedef {import('diagram-js/lib/util/Types').Rect} Rect
+ */
+
 var DEFAULT_POSITION = {
   x: 180,
   y: 160
@@ -4737,10 +5874,10 @@ var DEFAULT_POSITION = {
 
 /**
  * Hook into `import.render.start` and create new planes for diagrams with
- * collapsed subprocesses and all dis on the same plane.
+ * collapsed subprocesses and all DI elements on the same plane.
  *
- * @param {eventBus} eventBus
- * @param {moddle} moddle
+ * @param {EventBus} eventBus
+ * @param {Moddle} moddle
  */
 function SubprocessCompatibility(eventBus, moddle) {
   this._eventBus = eventBus;
@@ -4749,11 +5886,14 @@ function SubprocessCompatibility(eventBus, moddle) {
   var self = this;
 
   eventBus.on('import.render.start', 1500, function(e, context) {
-    self.handleImport(context.definitions);
+    self._handleImport(context.definitions);
   });
 }
 
-SubprocessCompatibility.prototype.handleImport = function(definitions) {
+/**
+ * @param {ModdleElement} definitions
+ */
+SubprocessCompatibility.prototype._handleImport = function(definitions) {
   if (!definitions.diagrams) {
     return;
   }
@@ -4770,14 +5910,12 @@ SubprocessCompatibility.prototype.handleImport = function(definitions) {
     self._processToDiagramMap[diagram.plane.bpmnElement.id] = diagram;
   });
 
-  var newDiagrams = [];
-  definitions.diagrams.forEach(function(diagram) {
-    var createdDiagrams = self.createNewDiagrams(diagram.plane);
-    Array.prototype.push.apply(newDiagrams, createdDiagrams);
-  });
+  var newDiagrams = definitions.diagrams
+    .filter(diagram => diagram.plane)
+    .flatMap(diagram => self._createNewDiagrams(diagram.plane));
 
   newDiagrams.forEach(function(diagram) {
-    self.movePlaneElementsToOrigin(diagram.plane);
+    self._movePlaneElementsToOrigin(diagram.plane);
   });
 };
 
@@ -4785,29 +5923,30 @@ SubprocessCompatibility.prototype.handleImport = function(definitions) {
 /**
  * Moves all DI elements from collapsed subprocesses to a new plane.
  *
- * @param {Object} plane
- * @return {Array} new diagrams created for the collapsed subprocesses
+ * @param {CanvasPlane} plane
+ *
+ * @return {ModdleElement[]} new diagrams created for the collapsed subprocesses
  */
-SubprocessCompatibility.prototype.createNewDiagrams = function(plane) {
+SubprocessCompatibility.prototype._createNewDiagrams = function(plane) {
   var self = this;
 
   var collapsedElements = [];
   var elementsToMove = [];
 
   plane.get('planeElement').forEach(function(diElement) {
-    var bo = diElement.bpmnElement;
+    var businessObject = diElement.bpmnElement;
 
-    if (!bo) {
+    if (!businessObject) {
       return;
     }
 
-    var parent = bo.$parent;
+    var parent = businessObject.$parent;
 
-    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(bo, 'bpmn:SubProcess') && !diElement.isExpanded) {
-      collapsedElements.push(bo);
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(businessObject, 'bpmn:SubProcess') && !diElement.isExpanded) {
+      collapsedElements.push(businessObject);
     }
 
-    if (shouldMoveToPlane(bo, plane)) {
+    if (shouldMoveToPlane(businessObject, plane)) {
 
       // don't change the array while we iterate over it
       elementsToMove.push({ diElement: diElement, parent: parent });
@@ -4818,9 +5957,11 @@ SubprocessCompatibility.prototype.createNewDiagrams = function(plane) {
 
   // create new planes for all collapsed subprocesses, even when they are empty
   collapsedElements.forEach(function(element) {
-    if (!self._processToDiagramMap[element.id]) {
-      var diagram = self.createDiagram(element);
+    if (!self._processToDiagramMap[ element.id ]) {
+      var diagram = self._createDiagram(element);
+
       self._processToDiagramMap[element.id] = diagram;
+
       newDiagrams.push(diagram);
     }
   });
@@ -4839,14 +5980,18 @@ SubprocessCompatibility.prototype.createNewDiagrams = function(plane) {
       return;
     }
 
-    var diagram = self._processToDiagramMap[parent.id];
-    self.moveToDiPlane(diElement, diagram.plane);
+    var diagram = self._processToDiagramMap[ parent.id ];
+
+    self._moveToDiPlane(diElement, diagram.plane);
   });
 
   return newDiagrams;
 };
 
-SubprocessCompatibility.prototype.movePlaneElementsToOrigin = function(plane) {
+/**
+ * @param {CanvasPlane} plane
+ */
+SubprocessCompatibility.prototype._movePlaneElementsToOrigin = function(plane) {
   var elements = plane.get('planeElement');
 
   // get bounding box of all elements
@@ -4870,33 +6015,50 @@ SubprocessCompatibility.prototype.movePlaneElementsToOrigin = function(plane) {
   });
 };
 
-
-SubprocessCompatibility.prototype.moveToDiPlane = function(diElement, newPlane) {
+/**
+ * @param {ModdleElement} diElement
+ * @param {CanvasPlane} newPlane
+ */
+SubprocessCompatibility.prototype._moveToDiPlane = function(diElement, newPlane) {
   var containingDiagram = findRootDiagram(diElement);
 
   // remove DI from old Plane and add it to the new one
   var parentPlaneElement = containingDiagram.plane.get('planeElement');
+
   parentPlaneElement.splice(parentPlaneElement.indexOf(diElement), 1);
+
   newPlane.get('planeElement').push(diElement);
 };
 
+/**
+ * @param {ModdleElement} businessObject
+ *
+ * @return {ModdleElement}
+ */
+SubprocessCompatibility.prototype._createDiagram = function(businessObject) {
+  var plane = this._moddle.create('bpmndi:BPMNPlane', {
+    bpmnElement: businessObject
+  });
 
-SubprocessCompatibility.prototype.createDiagram = function(bo) {
-  var plane = this._moddle.create('bpmndi:BPMNPlane', { bpmnElement: bo });
   var diagram = this._moddle.create('bpmndi:BPMNDiagram', {
     plane: plane
   });
+
   plane.$parent = diagram;
-  plane.bpmnElement = bo;
+
+  plane.bpmnElement = businessObject;
+
   diagram.$parent = this._definitions;
+
   this._definitions.diagrams.push(diagram);
+
   return diagram;
 };
 
 SubprocessCompatibility.$inject = [ 'eventBus', 'moddle' ];
 
 
-// helpers //////////////////////////
+// helpers //////////
 
 function findRootDiagram(element) {
   if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(element, 'bpmndi:BPMNDiagram')) {
@@ -4906,6 +6068,11 @@ function findRootDiagram(element) {
   }
 }
 
+/**
+ * @param {CanvasPlane} plane
+ *
+ * @return {Rect}
+ */
 function getPlaneBounds(plane) {
   var planeTrbl = {
     top: Infinity,
@@ -4928,8 +6095,14 @@ function getPlaneBounds(plane) {
   return (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asBounds)(planeTrbl);
 }
 
-function shouldMoveToPlane(bo, plane) {
-  var parent = bo.$parent;
+/**
+ * @param {ModdleElement} businessObject
+ * @param {CanvasPlane} plane
+ *
+ * @return {boolean}
+ */
+function shouldMoveToPlane(businessObject, plane) {
+  var parent = businessObject.$parent;
 
   // don't move elements that are already on the plane
   if (!(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(parent, 'bpmn:SubProcess') || parent === plane.bpmnElement) {
@@ -4938,7 +6111,7 @@ function shouldMoveToPlane(bo, plane) {
 
   // dataAssociations are children of the subprocess but rendered on process level
   // cf. https://github.com/bpmn-io/bpmn-js/issues/1619
-  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.isAny)(bo, [ 'bpmn:DataInputAssociation', 'bpmn:DataOutputAssociation' ])) {
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.isAny)(businessObject, [ 'bpmn:DataInputAssociation', 'bpmn:DataOutputAssociation' ])) {
     return false;
   }
 
@@ -4954,7 +6127,6 @@ function shouldMoveToPlane(bo, plane) {
   \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4986,86 +6158,263 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/bpmn-js/lib/features/label-editing/LabelUtil.js":
+/***/ "./node_modules/bpmn-js/lib/features/outline/OutlineProvider.js":
 /*!**********************************************************************!*\
-  !*** ./node_modules/bpmn-js/lib/features/label-editing/LabelUtil.js ***!
+  !*** ./node_modules/bpmn-js/lib/features/outline/OutlineProvider.js ***!
   \**********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getLabel": () => (/* binding */ getLabel),
-/* harmony export */   "setLabel": () => (/* binding */ setLabel)
+/* harmony export */   "default": () => (/* binding */ OutlineProvider)
 /* harmony export */ });
-/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/LabelUtil */ "./node_modules/diagram-js/lib/util/ModelUtil.js");
+/* harmony import */ var _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./OutlineUtil */ "./node_modules/bpmn-js/lib/features/outline/OutlineUtil.js");
 
 
-function getLabelAttr(semantic) {
-  if (
-    (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:FlowElement') ||
-    (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:Participant') ||
-    (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:Lane') ||
-    (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:SequenceFlow') ||
-    (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:MessageFlow') ||
-    (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:DataInput') ||
-    (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:DataOutput')
-  ) {
-    return 'name';
-  }
 
-  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:TextAnnotation')) {
-    return 'text';
-  }
 
-  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:Group')) {
-    return 'categoryValueRef';
-  }
+
+
+
+
+
+
+const DEFAULT_OFFSET = 5;
+
+/**
+ * BPMN-specific outline provider.
+ *
+ * @implements {BaseOutlineProvider}
+ *
+ * @param {Outline} outline
+ * @param {Styles} styles
+ */
+function OutlineProvider(outline, styles) {
+
+  this._styles = styles;
+  outline.registerProvider(this);
 }
 
-function getCategoryValue(semantic) {
-  var categoryValueRef = semantic['categoryValueRef'];
+OutlineProvider.$inject = [
+  'outline',
+  'styles'
+];
 
-  if (!categoryValueRef) {
-    return '';
+/**
+ * Returns outline for a given element.
+ *
+ * @param {Element} element
+ *
+ * @return {Outline}
+ */
+OutlineProvider.prototype.getOutline = function(element) {
+
+  const OUTLINE_STYLE = this._styles.cls('djs-outline', [ 'no-fill' ]);
+
+  var outline;
+
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_0__.isLabel)(element)) {
+    return;
   }
 
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Gateway')) {
+    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('rect');
 
-  return categoryValueRef.value || '';
-}
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(outline.style, {
+      'transform-box': 'fill-box',
+      'transform': 'rotate(45deg)',
+      'transform-origin': 'center'
+    });
 
-function getLabel(element) {
-  var semantic = element.businessObject,
-      attr = getLabelAttr(semantic);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
+      x: 2,
+      y: 2,
+      rx: 4,
+      width: element.width - 4,
+      height: element.height - 4,
+    }, OUTLINE_STYLE));
 
-  if (attr) {
+  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, [ 'bpmn:Task', 'bpmn:SubProcess', 'bpmn:Group', 'bpmn:CallActivity' ])) {
+    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('rect');
 
-    if (attr === 'categoryValueRef') {
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
+      x: -DEFAULT_OFFSET,
+      y: -DEFAULT_OFFSET,
+      rx: 14,
+      width: element.width + DEFAULT_OFFSET * 2,
+      height: element.height + DEFAULT_OFFSET * 2
+    }, OUTLINE_STYLE));
 
-      return getCategoryValue(semantic);
-    }
+  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:EndEvent')) {
 
-    return semantic[attr] || '';
+    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('circle');
+
+    // Extra 1px offset needed due to increased stroke-width of end event
+    // which makes it bigger than other events.
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
+      cx: element.width / 2,
+      cy: element.height / 2,
+      r: element.width / 2 + DEFAULT_OFFSET + 1
+    }, OUTLINE_STYLE));
+
+  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Event')) {
+    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('circle');
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
+      cx: element.width / 2,
+      cy: element.height / 2,
+      r: element.width / 2 + DEFAULT_OFFSET
+    }, OUTLINE_STYLE));
+
+  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:DataObjectReference') && isStandardSize(element, 'bpmn:DataObjectReference')) {
+
+    outline = (0,_OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.createPath)(
+      _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_OBJECT_REFERENCE_OUTLINE_PATH,
+      { x: -6, y: -6 },
+      OUTLINE_STYLE
+    );
+
+  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:DataStoreReference') && isStandardSize(element, 'bpmn:DataStoreReference')) {
+
+    outline = (0,_OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.createPath)(
+      _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_STORE_REFERENCE_OUTLINE_PATH,
+      { x: -6, y: -6 },
+      OUTLINE_STYLE
+    );
   }
-}
 
+  return outline;
+};
 
-function setLabel(element, text, isExternal) {
-  var semantic = element.businessObject,
-      attr = getLabelAttr(semantic);
+/**
+ * Updates the outline for a given element.
+ * Returns true if the update for the given element was handled by this provider.
+ *
+ * @param {Element} element
+ * @param {Outline} outline
+ * @returns {boolean}
+ */
+OutlineProvider.prototype.updateOutline = function(element, outline) {
 
-  if (attr) {
-
-    if (attr === 'categoryValueRef') {
-      semantic['categoryValueRef'].value = text;
-    } else {
-      semantic[attr] = text;
-    }
-
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_0__.isLabel)(element)) {
+    return;
   }
 
-  return element;
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, [ 'bpmn:SubProcess', 'bpmn:Group' ])) {
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, {
+      width: element.width + DEFAULT_OFFSET * 2,
+      height: element.height + DEFAULT_OFFSET * 2
+    });
+
+    return true;
+
+  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, [
+    'bpmn:Event',
+    'bpmn:Gateway',
+    'bpmn:DataStoreReference',
+    'bpmn:DataObjectReference'
+  ])) {
+    return true;
+  }
+
+  return false;
+};
+
+
+// helpers //////////
+
+function isStandardSize(element, type) {
+  var standardSize;
+
+  if (type === 'bpmn:DataObjectReference') {
+    standardSize = _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_OBJECT_REFERENCE_STANDARD_SIZE;
+  } else if (type === 'bpmn:DataStoreReference') {
+    standardSize = _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_STORE_REFERENCE_STANDARD_SIZE;
+  }
+
+  return element.width === standardSize.width
+          && element.height === standardSize.height;
 }
+
+/***/ }),
+
+/***/ "./node_modules/bpmn-js/lib/features/outline/OutlineUtil.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/bpmn-js/lib/features/outline/OutlineUtil.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DATA_OBJECT_REFERENCE_OUTLINE_PATH: () => (/* binding */ DATA_OBJECT_REFERENCE_OUTLINE_PATH),
+/* harmony export */   DATA_OBJECT_REFERENCE_STANDARD_SIZE: () => (/* binding */ DATA_OBJECT_REFERENCE_STANDARD_SIZE),
+/* harmony export */   DATA_STORE_REFERENCE_OUTLINE_PATH: () => (/* binding */ DATA_STORE_REFERENCE_OUTLINE_PATH),
+/* harmony export */   DATA_STORE_REFERENCE_STANDARD_SIZE: () => (/* binding */ DATA_STORE_REFERENCE_STANDARD_SIZE),
+/* harmony export */   createPath: () => (/* binding */ createPath)
+/* harmony export */ });
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+
+
+const DATA_OBJECT_REFERENCE_OUTLINE_PATH = 'M44.7648 11.3263L36.9892 2.64074C36.0451 1.58628 34.5651 0.988708 33.1904 0.988708H5.98667C3.22688 0.988708 0.989624 3.34892 0.989624 6.26039V55.0235C0.989624 57.9349 3.22688 60.2952 5.98667 60.2952H40.966C43.7257 60.2952 45.963 57.9349 45.963 55.0235V14.9459C45.963 13.5998 45.6407 12.3048 44.7648 11.3263Z';
+const DATA_STORE_REFERENCE_OUTLINE_PATH = 'M1.03845 48.1347C1.03845 49.3511 1.07295 50.758 1.38342 52.064C1.69949 53.3938 2.32428 54.7154 3.56383 55.6428C6.02533 57.4841 10.1161 58.7685 14.8212 59.6067C19.5772 60.4538 25.1388 60.8738 30.6831 60.8738C36.2276 60.8738 41.7891 60.4538 46.545 59.6067C51.2504 58.7687 55.3412 57.4842 57.8028 55.6429C59.0424 54.7156 59.6673 53.3938 59.9834 52.064C60.2938 50.7579 60.3285 49.351 60.3285 48.1344V13.8415C60.3285 12.6249 60.2938 11.218 59.9834 9.91171C59.6673 8.58194 59.0423 7.2602 57.8027 6.33294C55.341 4.49168 51.2503 3.20723 46.545 2.36914C41.7891 1.522 36.2276 1.10204 30.6831 1.10205C25.1388 1.10206 19.5772 1.52206 14.8213 2.36923C10.1162 3.20734 6.02543 4.49183 3.5639 6.33314C2.32433 7.26038 1.69951 8.58206 1.38343 9.91181C1.07295 11.2179 1.03845 12.6247 1.03845 13.8411V48.1347Z';
+
+/**
+ * @type {Dimensions}
+ */
+const DATA_OBJECT_REFERENCE_STANDARD_SIZE = { width: 36, height: 50 };
+
+/**
+ * @type {Dimensions}
+ */
+const DATA_STORE_REFERENCE_STANDARD_SIZE = { width: 50, height: 50 };
+
+/**
+ * Create a path element with given attributes.
+ * @param {string} path
+ * @param {Object} attrs
+ * @param {Object} OUTLINE_STYLE
+ * @return {SVGElement}
+ */
+function createPath(path, attrs, OUTLINE_STYLE) {
+  return (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('path', {
+    d: path,
+    strokeWidth: 2,
+    transform: `translate(${attrs.x}, ${attrs.y})`,
+    ...OUTLINE_STYLE
+  });
+}
+
+/***/ }),
+
+/***/ "./node_modules/bpmn-js/lib/features/outline/index.js":
+/*!************************************************************!*\
+  !*** ./node_modules/bpmn-js/lib/features/outline/index.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_outline__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/outline */ "./node_modules/diagram-js/lib/features/outline/index.js");
+/* harmony import */ var _OutlineProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./OutlineProvider */ "./node_modules/bpmn-js/lib/features/outline/OutlineProvider.js");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    diagram_js_lib_features_outline__WEBPACK_IMPORTED_MODULE_0__["default"]
+  ],
+  __init__: [ 'outlineProvider' ],
+  outlineProvider: [ 'type', _OutlineProvider__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
 
 /***/ }),
 
@@ -5075,7 +6424,6 @@ function setLabel(element, text, isExternal) {
   \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ BpmnImporter)
@@ -5085,7 +6433,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/LabelUtil */ "./node_modules/bpmn-js/lib/util/LabelUtil.js");
 /* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "./node_modules/diagram-js/lib/layout/LayoutUtil.js");
 /* harmony import */ var _util_DiUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/DiUtil */ "./node_modules/bpmn-js/lib/util/DiUtil.js");
-/* harmony import */ var _features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../features/label-editing/LabelUtil */ "./node_modules/bpmn-js/lib/features/label-editing/LabelUtil.js");
 /* harmony import */ var _Util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Util */ "./node_modules/bpmn-js/lib/import/Util.js");
 
 
@@ -5099,8 +6446,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
+/**
+ * @typedef {import('diagram-js/lib/core/Canvas').default} Canvas
+ * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
+ *
+ * @typedef {import('../features/modeling/ElementFactory').default} ElementFactory
+ * @typedef {import('../draw/TextRenderer').default} TextRenderer
+ *
+ * @typedef {import('../model/Types').Element} Element
+ * @typedef {import('../model/Types').Label} Label
+ * @typedef {import('../model/Types').Shape} Shape
+ * @typedef {import('../model/Types').Connection} Connection
+ * @typedef {import('../model/Types').Root} Root
+ * @typedef {import('../model/Types').ModdleElement} ModdleElement
+ */
 
 /**
  * @param {ModdleElement} semantic
@@ -5131,12 +6491,10 @@ function getWaypoints(di, source, target) {
   });
 }
 
-function notYetDrawn(translate, semantic, refSemantic, property) {
-  return new Error(translate('element {element} referenced by {referenced}#{property} not yet drawn', {
-    element: (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(refSemantic),
-    referenced: (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(semantic),
-    property: property
-  }));
+function notYetDrawn(semantic, refSemantic, property) {
+  return new Error(
+    `element ${ (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(refSemantic) } referenced by ${ (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(semantic) }#${ property } not yet drawn`
+  );
 }
 
 
@@ -5147,18 +6505,16 @@ function notYetDrawn(translate, semantic, refSemantic, property) {
  * @param {Canvas} canvas
  * @param {ElementFactory} elementFactory
  * @param {ElementRegistry} elementRegistry
- * @param {Function} translate
  * @param {TextRenderer} textRenderer
  */
 function BpmnImporter(
     eventBus, canvas, elementFactory,
-    elementRegistry, translate, textRenderer) {
+    elementRegistry, textRenderer) {
 
   this._eventBus = eventBus;
   this._canvas = canvas;
   this._elementFactory = elementFactory;
   this._elementRegistry = elementRegistry;
-  this._translate = translate;
   this._textRenderer = textRenderer;
 }
 
@@ -5167,18 +6523,22 @@ BpmnImporter.$inject = [
   'canvas',
   'elementFactory',
   'elementRegistry',
-  'translate',
   'textRenderer'
 ];
 
 
 /**
- * Add bpmn element (semantic) to the canvas onto the
- * specified parent shape.
+ * Add a BPMN element (semantic) to the canvas making it a child of the
+ * given parent.
+ *
+ * @param {ModdleElement} semantic
+ * @param {ModdleElement} di
+ * @param {Shape} parentElement
+ *
+ * @return {Shape | Root | Connection}
  */
 BpmnImporter.prototype.add = function(semantic, di, parentElement) {
   var element,
-      translate = this._translate,
       hidden;
 
   var parentIndex;
@@ -5264,17 +6624,15 @@ BpmnImporter.prototype.add = function(semantic, di, parentElement) {
 
     this._canvas.addConnection(element, parentElement, parentIndex);
   } else {
-    throw new Error(translate('unknown di {di} for element {semantic}', {
-      di: (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(di),
-      semantic: (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(semantic)
-    }));
+    throw new Error(
+      `unknown di ${ (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(di) } for element ${ (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(semantic) }`
+    );
   }
 
   // (optional) LABEL
-  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_5__.isLabelExternal)(semantic) && (0,_features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_6__.getLabel)(element)) {
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_5__.isLabelExternal)(semantic) && (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_5__.getLabel)(element)) {
     this.addLabel(semantic, di, element);
   }
-
 
   this._eventBus.fire('bpmnElement.added', { element: element });
 
@@ -5283,26 +6641,25 @@ BpmnImporter.prototype.add = function(semantic, di, parentElement) {
 
 
 /**
- * Attach the boundary element to the given host
+ * Attach a boundary element to the given host.
  *
  * @param {ModdleElement} boundarySemantic
- * @param {djs.model.Base} boundaryElement
+ * @param {Shape} boundaryElement
  */
 BpmnImporter.prototype._attachBoundary = function(boundarySemantic, boundaryElement) {
-  var translate = this._translate;
   var hostSemantic = boundarySemantic.attachedToRef;
 
   if (!hostSemantic) {
-    throw new Error(translate('missing {semantic}#attachedToRef', {
-      semantic: (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(boundarySemantic)
-    }));
+    throw new Error(
+      `missing ${ (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(boundarySemantic) }#attachedToRef`
+    );
   }
 
   var host = this._elementRegistry.get(hostSemantic.id),
       attachers = host && host.attachers;
 
   if (!host) {
-    throw notYetDrawn(translate, boundarySemantic, hostSemantic, 'attachedToRef');
+    throw notYetDrawn(boundarySemantic, hostSemantic, 'attachedToRef');
   }
 
   // wire element.host <> host.attachers
@@ -5319,7 +6676,13 @@ BpmnImporter.prototype._attachBoundary = function(boundarySemantic, boundaryElem
 
 
 /**
- * add label for an element
+ * Add a label to a given element.
+ *
+ * @param {ModdleElement} semantic
+ * @param {ModdleElement} di
+ * @param {Element} element
+ *
+ * @return {Label}
  */
 BpmnImporter.prototype.addLabel = function(semantic, di, element) {
   var bounds,
@@ -5328,7 +6691,7 @@ BpmnImporter.prototype.addLabel = function(semantic, di, element) {
 
   bounds = (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_5__.getExternalLabelBounds)(di, element);
 
-  text = (0,_features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_6__.getLabel)(element);
+  text = (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_5__.getLabel)(element);
 
   if (text) {
 
@@ -5340,7 +6703,7 @@ BpmnImporter.prototype.addLabel = function(semantic, di, element) {
     id: semantic.id + '_label',
     labelTarget: element,
     type: 'label',
-    hidden: element.hidden || !(0,_features_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_6__.getLabel)(element),
+    hidden: element.hidden || !(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_5__.getLabel)(element),
     x: Math.round(bounds.x),
     y: Math.round(bounds.y),
     width: Math.round(bounds.width),
@@ -5351,16 +6714,18 @@ BpmnImporter.prototype.addLabel = function(semantic, di, element) {
 };
 
 /**
- * Return the drawn connection end based on the given side.
+ * Get the source or target of the given connection.
  *
- * @throws {Error} if the end is not yet drawn
+ * @param {ModdleElement} semantic
+ * @param {'source' | 'target'} side
+ *
+ * @return {Element}
  */
-BpmnImporter.prototype._getEnd = function(semantic, side) {
+BpmnImporter.prototype._getConnectedElement = function(semantic, side) {
 
   var element,
       refSemantic,
-      type = semantic.$type,
-      translate = this._translate;
+      type = semantic.$type;
 
   refSemantic = semantic[side + 'Ref'];
 
@@ -5383,21 +6748,20 @@ BpmnImporter.prototype._getEnd = function(semantic, side) {
   }
 
   if (refSemantic) {
-    throw notYetDrawn(translate, semantic, refSemantic, side + 'Ref');
+    throw notYetDrawn(semantic, refSemantic, side + 'Ref');
   } else {
-    throw new Error(translate('{semantic}#{side} Ref not specified', {
-      semantic: (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(semantic),
-      side: side
-    }));
+    throw new Error(
+      `${ (0,_Util__WEBPACK_IMPORTED_MODULE_2__.elementToString)(semantic) }#${ side } Ref not specified`
+    );
   }
 };
 
 BpmnImporter.prototype._getSource = function(semantic) {
-  return this._getEnd(semantic, 'source');
+  return this._getConnectedElement(semantic, 'source');
 };
 
 BpmnImporter.prototype._getTarget = function(semantic) {
-  return this._getEnd(semantic, 'target');
+  return this._getConnectedElement(semantic, 'target');
 };
 
 
@@ -5422,6 +6786,7 @@ function isFrameElement(semantic) {
   return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(semantic, 'bpmn:Group');
 }
 
+
 /***/ }),
 
 /***/ "./node_modules/bpmn-js/lib/import/BpmnTreeWalker.js":
@@ -5430,7 +6795,6 @@ function isFrameElement(semantic) {
   \***********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ BpmnTreeWalker)
@@ -5444,12 +6808,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../model/Types').ModdleElement} ModdleElement
+ */
 
 /**
- * Returns true if an element has the given meta-model type
+ * Returns true if an element is of the given meta-model type.
  *
- * @param  {ModdleElement}  element
- * @param  {string}         type
+ * @param {ModdleElement} element
+ * @param {string} type
  *
  * @return {boolean}
  */
@@ -5461,6 +6828,10 @@ function is(element, type) {
 /**
  * Find a suitable display candidate for definitions where the DI does not
  * correctly specify one.
+ *
+ * @param {ModdleElement} definitions
+ *
+ * @return {ModdleElement}
  */
 function findDisplayCandidate(definitions) {
   return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(definitions.rootElements, function(e) {
@@ -5468,8 +6839,10 @@ function findDisplayCandidate(definitions) {
   });
 }
 
-
-function BpmnTreeWalker(handler, translate) {
+/**
+ * @param {Record<'element' | 'root' | 'error', Function>} handler
+ */
+function BpmnTreeWalker(handler) {
 
   // list of containers already walked
   var handledElements = {};
@@ -5503,7 +6876,7 @@ function BpmnTreeWalker(handler, translate) {
     // avoid multiple rendering of elements
     if (gfx) {
       throw new Error(
-        translate('already rendered {element}', { element: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(element) })
+        `already rendered ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(element) }`
       );
     }
 
@@ -5523,11 +6896,10 @@ function BpmnTreeWalker(handler, translate) {
       handled(element);
 
       return gfx;
-    } catch (e) {
-      logError(e.message, { element: element, error: e });
+    } catch (error) {
+      logError(error.message, { element, error });
 
-      console.error(translate('failed to import {element}', { element: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(element) }));
-      console.error(e);
+      console.error(`failed to import ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(element) }`, error);
     }
   }
 
@@ -5537,15 +6909,13 @@ function BpmnTreeWalker(handler, translate) {
 
   // DI handling //////////////////////
 
-  function registerDi(di) {
+  var registerDi = this.registerDi = function registerDi(di) {
     var bpmnElement = di.bpmnElement;
 
     if (bpmnElement) {
       if (diMap[bpmnElement.id]) {
         logError(
-          translate('multiple DI elements defined for {element}', {
-            element: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(bpmnElement)
-          }),
+          `multiple DI elements defined for ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(bpmnElement) }`,
           { element: bpmnElement }
         );
       } else {
@@ -5555,13 +6925,11 @@ function BpmnTreeWalker(handler, translate) {
       }
     } else {
       logError(
-        translate('no bpmnElement referenced in {element}', {
-          element: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(di)
-        }),
+        `no bpmnElement referenced in ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(di) }`,
         { element: di }
       );
     }
-  }
+  };
 
   function handleDiagram(diagram) {
     handlePlane(diagram.plane);
@@ -5581,21 +6949,21 @@ function BpmnTreeWalker(handler, translate) {
   // Semantic handling //////////////////////
 
   /**
-   * Handle definitions and return the rendered diagram (if any)
+   * Handle definitions and return the rendered diagram (if any).
    *
    * @param {ModdleElement} definitions to walk and import
    * @param {ModdleElement} [diagram] specific diagram to import and display
    *
    * @throws {Error} if no diagram to display could be found
    */
-  function handleDefinitions(definitions, diagram) {
+  this.handleDefinitions = function handleDefinitions(definitions, diagram) {
 
     // make sure we walk the correct bpmnElement
 
     var diagrams = definitions.diagrams;
 
     if (diagram && diagrams.indexOf(diagram) === -1) {
-      throw new Error(translate('diagram not part of bpmn:Definitions'));
+      throw new Error('diagram not part of <bpmn:Definitions />');
     }
 
     if (!diagram && diagrams && diagrams.length) {
@@ -5604,7 +6972,7 @@ function BpmnTreeWalker(handler, translate) {
 
     // no diagram -> nothing to import
     if (!diagram) {
-      throw new Error(translate('no diagram to display'));
+      throw new Error('no diagram to display');
     }
 
     // load DI from selected diagram only
@@ -5615,10 +6983,9 @@ function BpmnTreeWalker(handler, translate) {
     var plane = diagram.plane;
 
     if (!plane) {
-      throw new Error(translate(
-        'no plane for {element}',
-        { element: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(diagram) }
-      ));
+      throw new Error(
+        `no plane for ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(diagram) }`
+      );
     }
 
     var rootElement = plane.bpmnElement;
@@ -5629,14 +6996,11 @@ function BpmnTreeWalker(handler, translate) {
       rootElement = findDisplayCandidate(definitions);
 
       if (!rootElement) {
-        throw new Error(translate('no process or collaboration to display'));
+        throw new Error('no process or collaboration to display');
       } else {
 
         logError(
-          translate('correcting missing bpmnElement on {plane} to {rootElement}', {
-            plane: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(plane),
-            rootElement: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(rootElement)
-          })
+          `correcting missing bpmnElement on ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(plane) } to ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(rootElement) }`
         );
 
         // correct DI on the fly
@@ -5657,18 +7021,15 @@ function BpmnTreeWalker(handler, translate) {
       handleUnhandledProcesses(definitions.rootElements, ctx);
     } else {
       throw new Error(
-        translate('unsupported bpmnElement for {plane}: {rootElement}', {
-          plane: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(plane),
-          rootElement: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(rootElement)
-        })
+        `unsupported bpmnElement for ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(plane) }: ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(rootElement) }`
       );
     }
 
     // handle all deferred elements
     handleDeferred(deferred);
-  }
+  };
 
-  function handleDeferred() {
+  var handleDeferred = this.handleDeferred = function handleDeferred() {
 
     var fn;
 
@@ -5678,7 +7039,7 @@ function BpmnTreeWalker(handler, translate) {
 
       fn();
     }
-  }
+  };
 
   function handleProcess(process, context) {
     handleFlowElementsContainer(process, context);
@@ -5754,10 +7115,10 @@ function BpmnTreeWalker(handler, translate) {
     (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(ioSpecification.dataOutputs, contextual(handleDataOutput, context));
   }
 
-  function handleSubProcess(subProcess, context) {
+  var handleSubProcess = this.handleSubProcess = function handleSubProcess(subProcess, context) {
     handleFlowElementsContainer(subProcess, context);
     handleArtifacts(subProcess.artifacts, context);
-  }
+  };
 
   function handleFlowNode(flowNode, context) {
     var childCtx = visitIfDi(flowNode, context);
@@ -5822,31 +7183,31 @@ function BpmnTreeWalker(handler, translate) {
   }
 
   function handleFlowElements(flowElements, context) {
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(flowElements, function(e) {
-      if (is(e, 'bpmn:SequenceFlow')) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(flowElements, function(flowElement) {
+      if (is(flowElement, 'bpmn:SequenceFlow')) {
         deferred.push(function() {
-          handleSequenceFlow(e, context);
+          handleSequenceFlow(flowElement, context);
         });
-      } else if (is(e, 'bpmn:BoundaryEvent')) {
+      } else if (is(flowElement, 'bpmn:BoundaryEvent')) {
         deferred.unshift(function() {
-          handleFlowNode(e, context);
+          handleFlowNode(flowElement, context);
         });
-      } else if (is(e, 'bpmn:FlowNode')) {
-        handleFlowNode(e, context);
-      } else if (is(e, 'bpmn:DataObject')) {
+      } else if (is(flowElement, 'bpmn:FlowNode')) {
+        handleFlowNode(flowElement, context);
+      } else if (is(flowElement, 'bpmn:DataObject')) {
 
         // SKIP (assume correct referencing via DataObjectReference)
-      } else if (is(e, 'bpmn:DataStoreReference')) {
-        handleDataElement(e, context);
-      } else if (is(e, 'bpmn:DataObjectReference')) {
-        handleDataElement(e, context);
+      } else if (is(flowElement, 'bpmn:DataStoreReference')) {
+        handleDataElement(flowElement, context);
+      } else if (is(flowElement, 'bpmn:DataObjectReference')) {
+        handleDataElement(flowElement, context);
       } else {
         logError(
-          translate('unrecognized flowElement {element} in context {context}', {
-            element: (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(e),
-            context: (context ? (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(context.businessObject) : 'null')
-          }),
-          { element: e, context: context }
+          `unrecognized flowElement ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(flowElement) } in context ${ (0,_Util__WEBPACK_IMPORTED_MODULE_1__.elementToString)(context && context.businessObject) }`,
+          {
+            element: flowElement,
+            context
+          }
         );
       }
     });
@@ -5885,16 +7246,8 @@ function BpmnTreeWalker(handler, translate) {
       }
     });
   }
-
-  // API //////////////////////
-
-  return {
-    handleDeferred: handleDeferred,
-    handleDefinitions: handleDefinitions,
-    handleSubProcess: handleSubProcess,
-    registerDi: registerDi
-  };
 }
+
 
 /***/ }),
 
@@ -5904,10 +7257,9 @@ function BpmnTreeWalker(handler, translate) {
   \*****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "importBpmnDiagram": () => (/* binding */ importBpmnDiagram)
+/* harmony export */   importBpmnDiagram: () => (/* binding */ importBpmnDiagram)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _BpmnTreeWalker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BpmnTreeWalker */ "./node_modules/bpmn-js/lib/import/BpmnTreeWalker.js");
@@ -5920,38 +7272,31 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * The importBpmnDiagram result.
+ * @typedef {import('../model/Types').ModdleElement} ModdleElement
  *
- * @typedef {Object} ImportBPMNDiagramResult
+ * @typedef { {
+ *   warnings: string[];
+ * } } ImportBPMNDiagramResult
  *
- * @property {Array<string>} warnings
+ * @typedef {ImportBPMNDiagramResult & Error} ImportBPMNDiagramError
  */
-
-/**
-* The importBpmnDiagram error.
-*
-* @typedef {Error} ImportBPMNDiagramError
-*
-* @property {Array<string>} warnings
-*/
 
 /**
  * Import the definitions into a diagram.
  *
  * Errors and warnings are reported through the specified callback.
  *
- * @param  {djs.Diagram} diagram
- * @param  {ModdleElement<Definitions>} definitions
- * @param  {ModdleElement<BPMNDiagram>} [bpmnDiagram] the diagram to be rendered
- * (if not provided, the first one will be rendered)
+ * @param {ModdleElement} diagram
+ * @param {ModdleElement} definitions
+ * @param {ModdleElement} [bpmnDiagram] The diagram to be rendered (if not
+ * provided, the first one will be rendered).
  *
- * Returns {Promise<ImportBPMNDiagramResult, ImportBPMNDiagramError>}
+ * @return {Promise<ImportBPMNDiagramResult>}
  */
 function importBpmnDiagram(diagram, definitions, bpmnDiagram) {
 
   var importer,
       eventBus,
-      translate,
       canvas;
 
   var error,
@@ -5961,8 +7306,8 @@ function importBpmnDiagram(diagram, definitions, bpmnDiagram) {
    * Walk the diagram semantically, importing (=drawing)
    * all elements you encounter.
    *
-   * @param {ModdleElement<Definitions>} definitions
-   * @param {ModdleElement<BPMNDiagram>} bpmnDiagram
+   * @param {ModdleElement} definitions
+   * @param {ModdleElement} bpmnDiagram
    */
   function render(definitions, bpmnDiagram) {
 
@@ -5981,7 +7326,7 @@ function importBpmnDiagram(diagram, definitions, bpmnDiagram) {
       }
     };
 
-    var walker = new _BpmnTreeWalker__WEBPACK_IMPORTED_MODULE_0__["default"](visitor, translate);
+    var walker = new _BpmnTreeWalker__WEBPACK_IMPORTED_MODULE_0__["default"](visitor);
 
 
     bpmnDiagram = bpmnDiagram || (definitions.diagrams && definitions.diagrams[0]);
@@ -5989,7 +7334,7 @@ function importBpmnDiagram(diagram, definitions, bpmnDiagram) {
     var diagramsToImport = getDiagramsToImport(definitions, bpmnDiagram);
 
     if (!diagramsToImport) {
-      throw new Error(translate('no diagram to display'));
+      throw new Error('no diagram to display');
     }
 
     // traverse BPMN 2.0 document model,
@@ -6012,7 +7357,6 @@ function importBpmnDiagram(diagram, definitions, bpmnDiagram) {
     try {
       importer = diagram.get('bpmnImporter');
       eventBus = diagram.get('eventBus');
-      translate = diagram.get('translate');
       canvas = diagram.get('canvas');
 
       eventBus.fire('import.render.start', { definitions: definitions });
@@ -6037,13 +7381,13 @@ function importBpmnDiagram(diagram, definitions, bpmnDiagram) {
  * Returns all diagrams in the same hierarchy as the requested diagram.
  * Includes all parent and sub process diagrams.
  *
- * @param {Array} definitions
- * @param {Object} bpmnDiagram
+ * @param {ModdleElement} definitions
+ * @param {ModdleElement} bpmnDiagram
  *
- * @returns {Array<Object>}
+ * @return {ModdleElement[]}
  */
 function getDiagramsToImport(definitions, bpmnDiagram) {
-  if (!bpmnDiagram) {
+  if (!bpmnDiagram || !bpmnDiagram.plane) {
     return;
   }
 
@@ -6091,6 +7435,11 @@ function getDiagramsToImport(definitions, bpmnDiagram) {
   var handledElements = [ bpmnElement ];
 
   (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(definitions.diagrams, function(diagram) {
+
+    if (!diagram.plane) {
+      return;
+    }
+
     var businessObject = diagram.plane.bpmnElement;
 
     if (
@@ -6134,6 +7483,7 @@ function findRootProcess(element) {
   }
 }
 
+
 /***/ }),
 
 /***/ "./node_modules/bpmn-js/lib/import/Util.js":
@@ -6142,10 +7492,9 @@ function findRootProcess(element) {
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "elementToString": () => (/* binding */ elementToString)
+/* harmony export */   elementToString: () => (/* binding */ elementToString)
 /* harmony export */ });
 function elementToString(e) {
   if (!e) {
@@ -6163,7 +7512,6 @@ function elementToString(e) {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -6189,72 +7537,27 @@ __webpack_require__.r(__webpack_exports__);
   \************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ensureCompatDiRef": () => (/* binding */ ensureCompatDiRef),
-/* harmony export */   "wrapForCompatibility": () => (/* binding */ wrapForCompatibility)
+/* harmony export */   ensureCompatDiRef: () => (/* binding */ ensureCompatDiRef)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
-// TODO(nikku): remove with future bpmn-js version
-
 /**
- * Wraps APIs to check:
- *
- * 1) If a callback is passed -> Warn users about callback deprecation.
- * 2) If Promise class is implemented in current environment.
- *
- * @private
+ * @typedef {import('../model/Types').ModdleElement} ModdleElement
  */
-function wrapForCompatibility(api) {
-
-  return function() {
-
-    if (!window.Promise) {
-      throw new Error('Promises is not supported in this environment. Please polyfill Promise.');
-    }
-
-    var argLen = arguments.length;
-    if (argLen >= 1 && (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(arguments[argLen - 1])) {
-
-      var callback = arguments[argLen - 1];
-
-      console.warn(new Error(
-        'Passing callbacks to ' + api.name + ' is deprecated and will be removed in a future major release. ' +
-        'Please switch to promises: https://bpmn.io/l/moving-to-promises.html'
-      ));
-
-      var argsWithoutCallback = Array.prototype.slice.call(arguments, 0, -1);
-
-      api.apply(this, argsWithoutCallback).then(function(result) {
-
-        var firstKey = Object.keys(result)[0];
-
-        // The APIs we are wrapping all resolve a single item depending on the API.
-        // For instance, importXML resolves { warnings } and saveXML returns { xml }.
-        // That's why we can call the callback with the first item of result.
-        return callback(null, result[firstKey]);
-
-        // Passing a second paramter instead of catch because we don't want to
-        // catch errors thrown by callback().
-      }, function(err) {
-
-        return callback(err, err.warnings);
-      });
-    } else {
-
-      return api.apply(this, arguments);
-    }
-  };
-}
 
 
 // TODO(nikku): remove with future bpmn-js version
 
 var DI_ERROR_MESSAGE = 'Tried to access di from the businessObject. The di is available through the diagram element only. For more information, see https://github.com/bpmn-io/bpmn-js/issues/1472';
 
+/**
+ * @private
+ *
+ * @param {ModdleElement} businessObject
+ */
 function ensureCompatDiRef(businessObject) {
 
   // bpmnElement can have multiple independent DIs
@@ -6276,16 +7579,16 @@ function ensureCompatDiRef(businessObject) {
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "hasCompensateEventDefinition": () => (/* binding */ hasCompensateEventDefinition),
-/* harmony export */   "hasErrorEventDefinition": () => (/* binding */ hasErrorEventDefinition),
-/* harmony export */   "hasEscalationEventDefinition": () => (/* binding */ hasEscalationEventDefinition),
-/* harmony export */   "hasEventDefinition": () => (/* binding */ hasEventDefinition),
-/* harmony export */   "isEventSubProcess": () => (/* binding */ isEventSubProcess),
-/* harmony export */   "isExpanded": () => (/* binding */ isExpanded),
-/* harmony export */   "isInterrupting": () => (/* binding */ isInterrupting)
+/* harmony export */   hasCompensateEventDefinition: () => (/* binding */ hasCompensateEventDefinition),
+/* harmony export */   hasErrorEventDefinition: () => (/* binding */ hasErrorEventDefinition),
+/* harmony export */   hasEscalationEventDefinition: () => (/* binding */ hasEscalationEventDefinition),
+/* harmony export */   hasEventDefinition: () => (/* binding */ hasEventDefinition),
+/* harmony export */   isEventSubProcess: () => (/* binding */ isEventSubProcess),
+/* harmony export */   isExpanded: () => (/* binding */ isExpanded),
+/* harmony export */   isHorizontal: () => (/* binding */ isHorizontal),
+/* harmony export */   isInterrupting: () => (/* binding */ isInterrupting)
 /* harmony export */ });
 /* harmony import */ var _ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
@@ -6293,7 +7596,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef {import('../model/Types').Element} Element
+ * @typedef {import('../model/Types').ModdleElement} ModdleElement
+ */
 
+/**
+ * @param {Element} element
+ * @param {ModdleElement} [di]
+ *
+ * @return {boolean}
+ */
 function isExpanded(element, di) {
 
   if ((0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(element, 'bpmn:CallActivity')) {
@@ -6317,37 +7630,81 @@ function isExpanded(element, di) {
   return true;
 }
 
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
+function isHorizontal(element) {
+
+  if (!(0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(element, 'bpmn:Participant') && !(0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(element, 'bpmn:Lane')) {
+    return undefined;
+  }
+
+  var isHorizontal = (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi)(element).isHorizontal;
+
+  if (isHorizontal === undefined) {
+    return true;
+  }
+
+  return isHorizontal;
+}
+
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
 function isInterrupting(element) {
   return element && (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element).isInterrupting !== false;
 }
 
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
 function isEventSubProcess(element) {
   return element && !!(0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element).triggeredByEvent;
 }
 
+/**
+ * @param {Element} element
+ * @param {string} eventType
+ *
+ * @return {boolean}
+ */
 function hasEventDefinition(element, eventType) {
-  var bo = (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element),
-      hasEventDefinition = false;
+  var eventDefinitions = (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element).eventDefinitions;
 
-  if (bo.eventDefinitions) {
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(bo.eventDefinitions, function(event) {
-      if ((0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(event, eventType)) {
-        hasEventDefinition = true;
-      }
-    });
-  }
-
-  return hasEventDefinition;
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.some)(eventDefinitions, function(event) {
+    return (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(event, eventType);
+  });
 }
 
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
 function hasErrorEventDefinition(element) {
   return hasEventDefinition(element, 'bpmn:ErrorEventDefinition');
 }
 
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
 function hasEscalationEventDefinition(element) {
   return hasEventDefinition(element, 'bpmn:EscalationEventDefinition');
 }
 
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
 function hasCompensateEventDefinition(element) {
   return hasEventDefinition(element, 'bpmn:CompensateEventDefinition');
 }
@@ -6361,27 +7718,30 @@ function hasCompensateEventDefinition(element) {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getPlaneIdFromShape": () => (/* binding */ getPlaneIdFromShape),
-/* harmony export */   "getShapeIdFromPlane": () => (/* binding */ getShapeIdFromPlane),
-/* harmony export */   "isPlane": () => (/* binding */ isPlane),
-/* harmony export */   "planeSuffix": () => (/* binding */ planeSuffix),
-/* harmony export */   "toPlaneId": () => (/* binding */ toPlaneId)
+/* harmony export */   getPlaneIdFromShape: () => (/* binding */ getPlaneIdFromShape),
+/* harmony export */   getShapeIdFromPlane: () => (/* binding */ getShapeIdFromPlane),
+/* harmony export */   isPlane: () => (/* binding */ isPlane),
+/* harmony export */   planeSuffix: () => (/* binding */ planeSuffix),
+/* harmony export */   toPlaneId: () => (/* binding */ toPlaneId)
 /* harmony export */ });
 /* harmony import */ var _ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
 
+/**
+ * @typedef {import('../model/Types').Element} Element
+ * @typedef {import('../model/Types').ModdleElement} ModdleElement
+ */
 
 var planeSuffix = '_plane';
 
 /**
  * Get primary shape ID for a plane.
  *
- * @param  {djs.model.Base|ModdleElement} element
+ * @param  {Element|ModdleElement} element
  *
- * @returns {String}
+ * @return {string}
  */
 function getShapeIdFromPlane(element) {
   var id = element.id;
@@ -6392,9 +7752,9 @@ function getShapeIdFromPlane(element) {
 /**
  * Get plane ID for a primary shape.
  *
- * @param  {djs.model.Base|ModdleElement} element
+ * @param  {Element|ModdleElement} element
  *
- * @returns {String}
+ * @return {string}
  */
 function getPlaneIdFromShape(element) {
   var id = element.id;
@@ -6409,9 +7769,9 @@ function getPlaneIdFromShape(element) {
 /**
  * Get plane ID for primary shape ID.
  *
- * @param {String} id
+ * @param {string} id
  *
- * @returns {String}
+ * @return {string}
  */
 function toPlaneId(id) {
   return addPlaneSuffix(id);
@@ -6420,9 +7780,9 @@ function toPlaneId(id) {
 /**
  * Check wether element is plane.
  *
- * @param  {djs.model.Base|ModdleElement} element
+ * @param  {Element|ModdleElement} element
  *
- * @returns {Boolean}
+ * @return {boolean}
  */
 function isPlane(element) {
   var di = (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getDi)(element);
@@ -6446,25 +7806,38 @@ function removePlaneSuffix(id) {
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DEFAULT_LABEL_SIZE": () => (/* binding */ DEFAULT_LABEL_SIZE),
-/* harmony export */   "FLOW_LABEL_INDENT": () => (/* binding */ FLOW_LABEL_INDENT),
-/* harmony export */   "getExternalLabelBounds": () => (/* binding */ getExternalLabelBounds),
-/* harmony export */   "getExternalLabelMid": () => (/* binding */ getExternalLabelMid),
-/* harmony export */   "getFlowLabelPosition": () => (/* binding */ getFlowLabelPosition),
-/* harmony export */   "getWaypointsMid": () => (/* binding */ getWaypointsMid),
-/* harmony export */   "hasExternalLabel": () => (/* binding */ hasExternalLabel),
-/* harmony export */   "isLabel": () => (/* binding */ isLabel),
-/* harmony export */   "isLabelExternal": () => (/* binding */ isLabelExternal)
+/* harmony export */   DEFAULT_LABEL_SIZE: () => (/* binding */ DEFAULT_LABEL_SIZE),
+/* harmony export */   FLOW_LABEL_INDENT: () => (/* binding */ FLOW_LABEL_INDENT),
+/* harmony export */   getExternalLabelBounds: () => (/* binding */ getExternalLabelBounds),
+/* harmony export */   getExternalLabelMid: () => (/* binding */ getExternalLabelMid),
+/* harmony export */   getFlowLabelPosition: () => (/* binding */ getFlowLabelPosition),
+/* harmony export */   getLabel: () => (/* binding */ getLabel),
+/* harmony export */   getWaypointsMid: () => (/* binding */ getWaypointsMid),
+/* harmony export */   hasExternalLabel: () => (/* binding */ hasExternalLabel),
+/* harmony export */   isLabel: () => (/* reexport safe */ diagram_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.isLabel),
+/* harmony export */   isLabelExternal: () => (/* binding */ isLabelExternal),
+/* harmony export */   setLabel: () => (/* binding */ setLabel)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var diagram_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/util/ModelUtil */ "./node_modules/diagram-js/lib/util/ModelUtil.js");
 
 
 
 
+
+
+
+
+/**
+ * @typedef {import('diagram-js/lib/util/Types').Point} Point
+ * @typedef {import('diagram-js/lib/util/Types').Rect} Rect
+ *
+ * @typedef {import('../model/Types').Element} Element
+ * @typedef {import('../model/Types').ModdleElement} ModdleElement
+ */
 
 var DEFAULT_LABEL_SIZE = {
   width: 90,
@@ -6475,38 +7848,41 @@ var FLOW_LABEL_INDENT = 15;
 
 
 /**
- * Returns true if the given semantic has an external label
+ * Return true if the given semantic has an external label.
  *
- * @param {BpmnElement} semantic
- * @return {boolean} true if has label
+ * @param {Element} semantic
+ *
+ * @return {boolean}
  */
 function isLabelExternal(semantic) {
-  return (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:Event') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:Gateway') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:DataStoreReference') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:DataObjectReference') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:DataInput') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:DataOutput') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:SequenceFlow') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:MessageFlow') ||
-         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(semantic, 'bpmn:Group');
+  return (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:Event') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:Gateway') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:DataStoreReference') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:DataObjectReference') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:DataInput') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:DataOutput') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:SequenceFlow') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:MessageFlow') ||
+         (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:Group');
 }
 
 /**
- * Returns true if the given element has an external label
+ * Return true if the given element has an external label.
  *
- * @param {djs.model.shape} element
- * @return {boolean} true if has label
+ * @param {Element} element
+ *
+ * @return {boolean}
  */
 function hasExternalLabel(element) {
-  return isLabel(element.label);
+  return (0,diagram_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.isLabel)(element.label);
 }
 
 /**
- * Get the position for sequence flow labels
+ * Get the position of a sequence flow label.
  *
- * @param  {Array<Point>} waypoints
- * @return {Point} the label position
+ * @param  {Point[]} waypoints
+ *
+ * @return {Point}
  */
 function getFlowLabelPosition(waypoints) {
 
@@ -6536,10 +7912,11 @@ function getFlowLabelPosition(waypoints) {
 
 
 /**
- * Get the middle of a number of waypoints
+ * Get the middle of a number of waypoints.
  *
- * @param  {Array<Point>} waypoints
- * @return {Point} the mid point
+ * @param  {Point[]} waypoints
+ *
+ * @return {Point}
  */
 function getWaypointsMid(waypoints) {
 
@@ -6554,12 +7931,18 @@ function getWaypointsMid(waypoints) {
   };
 }
 
-
+/**
+ * Get the middle of the external label of an element.
+ *
+ * @param {Element} element
+ *
+ * @return {Point}
+ */
 function getExternalLabelMid(element) {
 
   if (element.waypoints) {
     return getFlowLabelPosition(element.waypoints);
-  } else if ((0,_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(element, 'bpmn:Group')) {
+  } else if ((0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Group')) {
     return {
       x: element.x + element.width / 2,
       y: element.y + DEFAULT_LABEL_SIZE.height / 2
@@ -6574,11 +7957,13 @@ function getExternalLabelMid(element) {
 
 
 /**
- * Returns the bounds of an elements label, parsed from the elements DI or
+ * Return the bounds of an elements label, parsed from the elements DI or
  * generated from its bounds.
  *
- * @param {BpmndDi} di
- * @param {djs.model.Base} element
+ * @param {ModdleElement} di
+ * @param {Element} element
+ *
+ * @return {Rect}
  */
 function getExternalLabelBounds(di, element) {
 
@@ -6606,14 +7991,97 @@ function getExternalLabelBounds(di, element) {
     size = DEFAULT_LABEL_SIZE;
   }
 
-  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({
     x: mid.x - size.width / 2,
     y: mid.y - size.height / 2
   }, size);
 }
 
-function isLabel(element) {
-  return element && !!element.labelTarget;
+/**
+ * @param {ModdleElement} semantic
+ *
+ * @returns {string}
+ */
+function getLabelAttr(semantic) {
+  if (
+    (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:FlowElement') ||
+    (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:Participant') ||
+    (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:Lane') ||
+    (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:SequenceFlow') ||
+    (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:MessageFlow') ||
+    (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:DataInput') ||
+    (0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:DataOutput')
+  ) {
+    return 'name';
+  }
+
+  if ((0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:TextAnnotation')) {
+    return 'text';
+  }
+
+  if ((0,_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(semantic, 'bpmn:Group')) {
+    return 'categoryValueRef';
+  }
+}
+
+/**
+ * @param {ModdleElement} semantic
+ *
+ * @returns {string}
+ */
+function getCategoryValue(semantic) {
+  var categoryValueRef = semantic['categoryValueRef'];
+
+  if (!categoryValueRef) {
+    return '';
+  }
+
+
+  return categoryValueRef.value || '';
+}
+
+/**
+ * @param {Element} element
+ *
+ * @return {string}
+ */
+function getLabel(element) {
+  var semantic = element.businessObject,
+      attr = getLabelAttr(semantic);
+
+  if (attr) {
+
+    if (attr === 'categoryValueRef') {
+
+      return getCategoryValue(semantic);
+    }
+
+    return semantic[attr] || '';
+  }
+}
+
+
+/**
+ * @param {Element} element
+ * @param {string} text
+ *
+ * @return {Element}
+ */
+function setLabel(element, text) {
+  var semantic = element.businessObject,
+      attr = getLabelAttr(semantic);
+
+  if (attr) {
+
+    if (attr === 'categoryValueRef') {
+      semantic['categoryValueRef'].value = text;
+    } else {
+      semantic[attr] = text;
+    }
+
+  }
+
+  return element;
 }
 
 
@@ -6625,22 +8093,25 @@ function isLabel(element) {
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getBusinessObject": () => (/* binding */ getBusinessObject),
-/* harmony export */   "getDi": () => (/* binding */ getDi),
-/* harmony export */   "is": () => (/* binding */ is),
-/* harmony export */   "isAny": () => (/* binding */ isAny)
+/* harmony export */   getBusinessObject: () => (/* binding */ getBusinessObject),
+/* harmony export */   getDi: () => (/* binding */ getDi),
+/* harmony export */   is: () => (/* binding */ is),
+/* harmony export */   isAny: () => (/* binding */ isAny)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
+/**
+ * @typedef { import('../model/Types').Element } Element
+ * @typedef { import('../model/Types').ModdleElement } ModdleElement
+ */
 
 /**
  * Is an element of the given BPMN type?
  *
- * @param  {djs.model.Base|ModdleElement} element
+ * @param  {Element|ModdleElement} element
  * @param  {string} type
  *
  * @return {boolean}
@@ -6655,8 +8126,8 @@ function is(element, type) {
 /**
  * Return true if element has any of the given types.
  *
- * @param {djs.model.Base} element
- * @param {Array<string>} types
+ * @param {Element|ModdleElement} element
+ * @param {string[]} types
  *
  * @return {boolean}
  */
@@ -6669,7 +8140,7 @@ function isAny(element, types) {
 /**
  * Return the business object for a given element.
  *
- * @param  {djs.model.Base|ModdleElement} element
+ * @param {Element|ModdleElement} element
  *
  * @return {ModdleElement}
  */
@@ -6680,7 +8151,7 @@ function getBusinessObject(element) {
 /**
  * Return the di object for a given element.
  *
- * @param  {djs.model.Base} element
+ * @param {Element} element
  *
  * @return {ModdleElement}
  */
@@ -6696,13 +8167,12 @@ function getDi(element) {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BPMNIO_IMG": () => (/* binding */ BPMNIO_IMG),
-/* harmony export */   "LINK_STYLES": () => (/* binding */ LINK_STYLES),
-/* harmony export */   "LOGO_STYLES": () => (/* binding */ LOGO_STYLES),
-/* harmony export */   "open": () => (/* binding */ open)
+/* harmony export */   BPMNIO_IMG: () => (/* binding */ BPMNIO_IMG),
+/* harmony export */   LINK_STYLES: () => (/* binding */ LINK_STYLES),
+/* harmony export */   LOGO_STYLES: () => (/* binding */ LOGO_STYLES),
+/* harmony export */   open: () => (/* binding */ open)
 /* harmony export */ });
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 /**
@@ -6809,12 +8279,11 @@ function open() {
   \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Diagram)
 /* harmony export */ });
-/* harmony import */ var didi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! didi */ "./node_modules/didi/dist/index.esm.js");
+/* harmony import */ var didi__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! didi */ "./node_modules/didi/dist/index.js");
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./core */ "./node_modules/diagram-js/lib/core/index.js");
 
 
@@ -6825,7 +8294,19 @@ __webpack_require__.r(__webpack_exports__);
  * @typedef {import('didi').LocalsMap} LocalsMap
  * @typedef {import('didi').ModuleDeclaration} ModuleDeclaration
  *
- * @typedef {import('./Diagram').DiagramOptions} DiagramOptions
+ * @typedef { {
+ *   modules?: ModuleDeclaration[];
+ * } & Record<string, any> } DiagramOptions
+ */
+
+/**
+ * @template T
+ * @typedef {import('didi').FactoryFunction<T>} FactoryFunction
+ */
+
+/**
+ * @template T
+ * @typedef {import('didi').ArrayFunc<T>} ArrayFunc
  */
 
 /**
@@ -6846,14 +8327,18 @@ function bootstrap(modules) {
 /**
  * Creates an injector from passed options.
  *
+ * @template ServiceMap
  * @param {DiagramOptions} [options]
  *
- * @return {Injector}
+ * @return {Injector<ServiceMap>}
  */
 function createInjector(options) {
 
   options = options || {};
 
+  /**
+   * @type { ModuleDeclaration }
+   */
   var configModule = {
     'config': [ 'value', options ]
   };
@@ -6872,12 +8357,12 @@ function createInjector(options) {
  *
  * @class
  * @constructor
+ * @template [ServiceMap=null]
  *
- * @example
+ * @example Creating a plug-in that logs whenever a shape is added to the canvas.
  *
- * <caption>Creating a plug-in that logs whenever a shape is added to the canvas.</caption>
- *
- * // plug-in implemenentation
+ * ```javascript
+ * // plug-in implementation
  * function MyLoggingPlugin(eventBus) {
  *   eventBus.on('shape.added', function(event) {
  *     console.log('shape ', event.shape, ' was added to the diagram');
@@ -6889,10 +8374,11 @@ function createInjector(options) {
  *   __init__: [ 'myLoggingPlugin' ],
  *     myLoggingPlugin: [ 'type', MyLoggingPlugin ]
  * };
+ * ```
  *
+ * Use the plug-in in a Diagram instance:
  *
- * // instantiate the diagram with the new plug-in
- *
+ * ```javascript
  * import MyLoggingModule from 'path-to-my-logging-plugin';
  *
  * var diagram = new Diagram({
@@ -6907,43 +8393,19 @@ function createInjector(options) {
  * });
  *
  * // 'shape ... was added to the diagram' logged to console
+ * ```
  *
  * @param {DiagramOptions} [options]
- * @param {ModuleDeclaration[]} [options.modules] External modules to instantiate with the diagram.
- * @param {Injector} [injector] An (optional) injector to bootstrap the diagram with.
+ * @param {Injector<ServiceMap>} [injector] An (optional) injector to bootstrap the diagram with.
  */
 function Diagram(options, injector) {
 
-  // create injector unless explicitly specified
-  this.injector = injector = injector || createInjector(options);
-
-  // API
-
   /**
-   * Resolves a diagram service.
-   *
-   * @method Diagram#get
-   *
-   * @param {string} name The name of the service to get.
-   * @param {boolean} [strict=true] If false, resolve missing services to null.
+   * @type {Injector<ServiceMap>}
    */
-  this.get = injector.get;
-
-  /**
-   * Executes a function with its dependencies injected.
-   *
-   * @method Diagram#invoke
-   *
-   * @param {Function} fn The function to be executed.
-   * @param {InjectionContext} [context] The context.
-   * @param {LocalsMap} [locals] The locals.
-   */
-  this.invoke = injector.invoke;
+  this._injector = injector || createInjector(options);
 
   // init
-
-  // indicate via event
-
 
   /**
    * An event indicating that all plug-ins are loaded.
@@ -6956,20 +8418,96 @@ function Diagram(options, injector) {
    *
    * @example
    *
+   * ```javascript
    * eventBus.on('diagram.init', function() {
    *   eventBus.fire('my-custom-event', { foo: 'BAR' });
    * });
+   * ```
    *
    * @type {Object}
    */
   this.get('eventBus').fire('diagram.init');
 }
 
+/**
+ * @overlord
+ *
+ * Resolves a diagram service.
+ *
+ * @template T
+ *
+ * @param {string} name The name of the service to get.
+ *
+ * @return {T}
+ */
+/**
+ * @overlord
+ *
+ * Resolves a diagram service.
+ *
+ * @template T
+ *
+ * @param {string} name The name of the service to get.
+ * @param {true} strict If false, resolve missing services to null.
+ *
+ * @return {T}
+ */
+/**
+ * @overlord
+ *
+ * Resolves a diagram service.
+ *
+ * @template T
+ *
+ * @param {string} name The name of the service to get.
+ * @param {boolean} strict If false, resolve missing services to null.
+ *
+ * @return {T|null}
+ */
+/**
+ * Resolves a diagram service.
+ *
+ * @template {keyof ServiceMap} Name
+ *
+ * @param {Name} name The name of the service to get.
+ *
+ * @return {ServiceMap[Name]}
+ */
+Diagram.prototype.get = function(name, strict) {
+  return this._injector.get(name, strict);
+};
+
+/**
+ * @overlord
+ *
+ * Invoke the given function, injecting dependencies. Return the result.
+ *
+ * @template T
+ *
+ * @param {FactoryFunction<T>} func
+ * @param {InjectionContext} [context]
+ * @param {LocalsMap} [locals]
+ *
+ * @return {T}
+ */
+/**
+ * Invoke the given function, injecting dependencies provided in
+ * array notation. Return the result.
+ *
+ * @template T
+ *
+ * @param {ArrayFunc<T>} func function to be invoked
+ * @param {InjectionContext} [context] context of the invocation
+ * @param {LocalsMap} [locals] locals provided
+ *
+ * @return {T}
+ */
+Diagram.prototype.invoke = function(func, context, locals) {
+  return this._injector.invoke(func, context, locals);
+};
 
 /**
  * Destroys the diagram
- *
- * @method  Diagram#destroy
  */
 Diagram.prototype.destroy = function() {
   this.get('eventBus').fire('diagram.destroy');
@@ -6991,7 +8529,6 @@ Diagram.prototype.clear = function() {
   \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CommandInterceptor)
@@ -7000,9 +8537,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
+ * @typedef {import('../core/Types').ElementLike} ElementLike
  * @typedef {import('../core/EventBus').default} EventBus
- * @typedef {import(./CommandInterceptor).HandlerFunction} HandlerFunction
- * @typedef {import(./CommandInterceptor).ComposeHandlerFunction} ComposeHandlerFunction
+ * @typedef {import('./CommandStack').CommandContext} CommandContext
+ *
+ * @typedef {string|string[]} Events
+ * @typedef { (context: CommandContext) => ElementLike[] | void } HandlerFunction
+ * @typedef { (context: CommandContext) => void } ComposeHandlerFunction
  */
 
 var DEFAULT_PRIORITY = 1000;
@@ -7014,10 +8555,9 @@ var DEFAULT_PRIORITY = 1000;
  * @class
  * @constructor
  *
- * @param {EventBus} eventBus
- *
  * @example
  *
+ * ```javascript
  * import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
  *
  * class CommandLogger extends CommandInterceptor {
@@ -7028,6 +8568,9 @@ var DEFAULT_PRIORITY = 1000;
  *     console.log('commandStack.shape-create.preExecute', event);
  *   });
  * }
+ * ```
+ *
+ * @param {EventBus} eventBus
  */
 function CommandInterceptor(eventBus) {
 
@@ -7045,16 +8588,17 @@ function unwrapEvent(fn, that) {
   };
 }
 
+
 /**
-   * Intercept a command during one of the phases.
-   *
-   * @param {string|string[]} [events] One or more commands to intercept.
-   * @param {string} [hook] Phase during which to intercept command.
-   * @param {number} [priority] Priority with which command will be intercepted.
-   * @param {ComposeHandlerFunction|HandlerFunction} handlerFn Callback.
-   * @param {boolean} [unwrap] Whether the event should be unwrapped.
-   * @param {*} [that] `this` value the callback will be called with.
-   */
+ * Intercept a command during one of the phases.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {string} [hook] phase to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
 CommandInterceptor.prototype.on = function(events, hook, priority, handlerFn, unwrap, that) {
 
   if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(hook) || (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(hook)) {
@@ -7096,35 +8640,130 @@ CommandInterceptor.prototype.on = function(events, hook, priority, handlerFn, un
   });
 };
 
+/**
+ * Add a <canExecute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.canExecute = createHook('canExecute');
 
-var hooks = [
-  'canExecute',
-  'preExecute',
-  'preExecuted',
-  'execute',
-  'executed',
-  'postExecute',
-  'postExecuted',
-  'revert',
-  'reverted'
-];
+/**
+ * Add a <preExecute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.preExecute = createHook('preExecute');
+
+/**
+ * Add a <preExecuted> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.preExecuted = createHook('preExecuted');
+
+/**
+ * Add a <execute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.execute = createHook('execute');
+
+/**
+ * Add a <executed> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.executed = createHook('executed');
+
+/**
+ * Add a <postExecute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.postExecute = createHook('postExecute');
+
+/**
+ * Add a <postExecuted> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.postExecuted = createHook('postExecuted');
+
+/**
+ * Add a <revert> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.revert = createHook('revert');
+
+/**
+ * Add a <reverted> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.reverted = createHook('reverted');
 
 /*
  * Add prototype methods for each phase of command execution (e.g. execute,
  * revert).
+ *
+ * @param {string} hook
+ *
+ * @return { (
+ *   events?: Events,
+ *   priority?: number,
+ *   handlerFn: ComposeHandlerFunction|HandlerFunction,
+ *   unwrap?: boolean
+ * ) => any }
  */
-(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(hooks, function(hook) {
+function createHook(hook) {
 
   /**
-   * Add prototype method for a specific phase of command execution.
+   * @this {CommandInterceptor}
    *
-   * @param {string|string[]} [events] One or more commands to intercept.
-   * @param {number} [priority] Priority with which command will be intercepted.
-   * @param {ComposeHandlerFunction|HandlerFunction} handlerFn Callback.
-   * @param {boolean} [unwrap] Whether the event should be unwrapped.
-   * @param {*} [that] `this` value the callback will be called with.
+   * @param {Events} [events]
+   * @param {number} [priority]
+   * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+   * @param {boolean} [unwrap]
+   * @param {any} [that]
    */
-  CommandInterceptor.prototype[hook] = function(events, priority, handlerFn, unwrap, that) {
+  const hookFn = function(events, priority, handlerFn, unwrap, that) {
 
     if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(events) || (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(events)) {
       that = unwrap;
@@ -7136,7 +8775,9 @@ var hooks = [
 
     this.on(events, hook, priority, handlerFn, unwrap, that);
   };
-});
+
+  return hookFn;
+}
 
 
 /***/ }),
@@ -7147,7 +8788,6 @@ var hooks = [
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Canvas)
@@ -7172,16 +8812,36 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
- * @typedef {import('.').ConnectionLike} ConnectionLike
- * @typedef {import('.').RootLike} RootLike
- * @typedef {import('.').ShapeLike} ShapeLike
+ * @typedef {import('./Types').ConnectionLike} ConnectionLike
+ * @typedef {import('./Types').RootLike} RootLike
+ * @typedef {import('./Types').ParentLike } ParentLike
+ * @typedef {import('./Types').ShapeLike} ShapeLike
  *
- * @typedef {import('./Canvas').CanvasConfig} CanvasConfig
- * @typedef {import('./Canvas').CanvasLayer} CanvasLayer
- * @typedef {import('./Canvas').CanvasLayers} CanvasLayers
- * @typedef {import('./Canvas').CanvasPlane} CanvasPlane
- * @typedef {import('./Canvas').CanvasViewbox} CanvasViewbox
+ * @typedef { {
+ *   container?: HTMLElement;
+ *   deferUpdate?: boolean;
+ *   width?: number;
+ *   height?: number;
+ * } } CanvasConfig
+ * @typedef { {
+ *   group: SVGElement;
+ *   index: number;
+ *   visible: boolean;
+ * } } CanvasLayer
+ * @typedef { {
+ *   [key: string]: CanvasLayer;
+ * } } CanvasLayers
+ * @typedef { {
+ *   rootElement: ShapeLike;
+ *   layer: CanvasLayer;
+ * } } CanvasPlane
+ * @typedef { {
+ *   scale: number;
+ *   inner: Rect;
+ *   outer: Dimensions;
+ * } & Rect } CanvasViewbox
  *
  * @typedef {import('./ElementRegistry').default} ElementRegistry
  * @typedef {import('./EventBus').default} EventBus
@@ -7191,6 +8851,7 @@ __webpack_require__.r(__webpack_exports__);
  * @typedef {import('../util/Types').Point} Point
  * @typedef {import('../util/Types').Rect} Rect
  * @typedef {import('../util/Types').RectTRBL} RectTRBL
+ * @typedef {import('../util/Types').ScrollDelta} ScrollDelta
  */
 
 function round(number, resolution) {
@@ -7343,9 +9004,9 @@ Canvas.prototype._init = function(config) {
 
   const viewport = this._viewport = createGroup(svg, 'viewport');
 
-  // debounce canvas.viewbox.changed events
-  // for smoother diagram interaction
-  if (config.deferUpdate !== false) {
+  // debounce canvas.viewbox.changed events when deferUpdate is set
+  // to help with potential performance issues
+  if (config.deferUpdate) {
     this._viewboxChanged = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.debounce)((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.bind)(this._viewboxChanged, this), 300);
   }
 
@@ -7522,7 +9183,7 @@ Canvas.prototype._createLayer = function(name, index) {
 /**
  * Shows a given layer.
  *
- * @param {string} layer The name of the layer.
+ * @param {string} name The name of the layer.
  *
  * @return {SVGElement} The SVG element of the layer.
  */
@@ -7558,7 +9219,7 @@ Canvas.prototype.showLayer = function(name) {
 /**
  * Hides a given layer.
  *
- * @param {string} layer The name of the layer.
+ * @param {string} name The name of the layer.
  *
  * @return {SVGElement} The SVG element of the layer.
  */
@@ -7700,7 +9361,7 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
    *
    * @event element.marker.update
    * @type {Object}
-   * @property {Base} element the shape
+   * @property {Element} element the shape
    * @property {SVGElement} gfx the graphical representation of the shape
    * @property {string} marker
    * @property {boolean} add true if the marker was added, false if it got removed
@@ -7717,11 +9378,13 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
  *
  * @example
  *
+ * ```javascript
  * canvas.addMarker('foo', 'some-marker');
  *
  * const fooGfx = canvas.getGraphics('foo');
  *
  * fooGfx; // <g class="... some-marker"> ... </g>
+ * ```
  *
  * @param {ShapeLike|ConnectionLike|string} element The element or its ID.
  * @param {string} marker The marker.
@@ -7806,7 +9469,7 @@ Canvas.prototype.getRootElement = function() {
 /**
  * Adds a given root element and returns it.
  *
- * @param {ShapeLike} [rootElement] The root element to be added.
+ * @param {RootLike} [rootElement] The root element to be added.
  *
  * @return {RootLike} The added root element or an implicit root element.
  */
@@ -7842,9 +9505,9 @@ Canvas.prototype.addRootElement = function(rootElement) {
 /**
  * Removes a given root element and returns it.
  *
- * @param {ShapeLike|string} rootElement The root element or its ID.
+ * @param {RootLike|string} rootElement element or element ID
  *
- * @return {ShapeLike|undefined} The removed root element.
+ * @return {RootLike|undefined} removed element
  */
 Canvas.prototype.removeRootElement = function(rootElement) {
 
@@ -7886,14 +9549,10 @@ Canvas.prototype.removeRootElement = function(rootElement) {
  *
  * @return {RootLike} The set root element.
  */
-Canvas.prototype.setRootElement = function(rootElement, override) {
-
-  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(override)) {
-    throw new Error('override not supported');
-  }
+Canvas.prototype.setRootElement = function(rootElement) {
 
   if (rootElement === this._rootElement) {
-    return;
+    return rootElement;
   }
 
   let plane;
@@ -8047,7 +9706,7 @@ Canvas.prototype._addElement = function(type, element, parent, parentIndex) {
  * Adds a shape to the canvas.
  *
  * @param {ShapeLike} shape The shape to be added
- * @param {ShapeLike} [parent] The shape's parent.
+ * @param {ParentLike} [parent] The shape's parent.
  * @param {number} [parentIndex] The index at which to add the shape to the parent's children.
  *
  * @return {ShapeLike} The added shape.
@@ -8060,7 +9719,7 @@ Canvas.prototype.addShape = function(shape, parent, parentIndex) {
  * Adds a connection to the canvas.
  *
  * @param {ConnectionLike} connection The connection to be added.
- * @param {ShapeLike} [parent] The connection's parent.
+ * @param {ParentLike} [parent] The connection's parent.
  * @param {number} [parentIndex] The index at which to add the connection to the parent's children.
  *
  * @return {ConnectionLike} The added connection.
@@ -8131,7 +9790,7 @@ Canvas.prototype.removeShape = function(shape) {
    *
    * @memberOf Canvas
    *
-   * @event ShapeRemoved
+   * @event ShapeRemovedEvent
    * @type {Object}
    * @property {ShapeLike} element The shape.
    * @property {SVGElement} gfx The graphical element.
@@ -8168,7 +9827,7 @@ Canvas.prototype.removeConnection = function(connection) {
    *
    * @memberOf Canvas
    *
-   * @event connection.removed
+   * @event ConnectionRemovedEvent
    * @type {Object}
    * @property {ConnectionLike} element The connection.
    * @property {SVGElement} gfx The graphical element.
@@ -8227,6 +9886,7 @@ Canvas.prototype._viewboxChanged = function() {
  *
  * @example
  *
+ * ```javascript
  * canvas.viewbox({ x: 100, y: 100, width: 500, height: 500 })
  *
  * // sets the visible area of the diagram to (100|100) -> (600|100)
@@ -8254,6 +9914,7 @@ Canvas.prototype._viewboxChanged = function() {
  *   width: zoomedAndScrolledViewbox.outer.width,
  *   height: zoomedAndScrolledViewbox.outer.height
  * });
+ * ```
  *
  * @param {Rect} [box] The viewbox to be set.
  *
@@ -8326,7 +9987,7 @@ Canvas.prototype.viewbox = function(box) {
 /**
  * Gets or sets the scroll of the canvas.
  *
- * @param {Point} [delta] The scroll to be set.
+ * @param {ScrollDelta} [delta] The scroll to be set.
  *
  * @return {Point}
  */
@@ -8367,6 +10028,11 @@ Canvas.prototype.scrollToElement = function(element, padding) {
 
   if (rootElement !== this.getRootElement()) {
     this.setRootElement(rootElement);
+  }
+
+  // element is rootElement, do not change viewport
+  if (rootElement === element) {
+    return;
   }
 
   if (!padding) {
@@ -8427,7 +10093,7 @@ Canvas.prototype.scrollToElement = function(element, padding) {
  * The getter may return a cached zoom level. Call it with `false` as the first
  * argument to force recomputation of the current level.
  *
- * @param {number|string} [newScale] The new zoom level, either a number,
+ * @param {number|'fit-viewport'} [newScale] The new zoom level, either a number,
  * i.e. 0.9, or `fit-viewport` to adjust the size to fit the current viewport.
  * @param {Point} [center] The reference point { x: ..., y: ...} to zoom to.
  *
@@ -8628,7 +10294,6 @@ Canvas.prototype.resized = function() {
   \************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ElementFactory)
@@ -8640,22 +10305,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * @typedef {import('../model/index').Base} Base
- * @typedef {import('../model/index').Connection} Connection
- * @typedef {import('../model/index').Label} Label
- * @typedef {import('../model/index').Root} Root
- * @typedef {import('../model/index').Shape} Shape
- * @typedef {import('../model/index').ModelAttrsConnection} ModelAttrsConnection
- * @typedef {import('../model/index').ModelAttrsLabel} ModelAttrsLabel
- * @typedef {import('../model/index').ModelAttrsRoot} ModelAttrsRoot
- * @typedef {import('../model/index').ModelAttrsShape} ModelAttrsShape
+ * @typedef {import('../model/Types').Element} Element
+ * @typedef {import('../model/Types').Connection} Connection
+ * @typedef {import('../model/Types').Label} Label
+ * @typedef {import('../model/Types').Root} Root
+ * @typedef {import('../model/Types').Shape} Shape
  */
 
 /**
  * A factory for model elements.
  *
- * @class
- * @constructor
+ * @template {Connection} [T=Connection]
+ * @template {Label} [U=Label]
+ * @template {Root} [V=Root]
+ * @template {Shape} [W=Shape]
  */
 function ElementFactory() {
   this._uid = 12;
@@ -8664,9 +10327,9 @@ function ElementFactory() {
 /**
  * Create a root element.
  *
- * @param {ModelAttrsRoot} attrs The attributes of the root element to be created.
+ * @param {Partial<Root>} [attrs]
  *
- * @return {Root} The created root element.
+ * @return {V} The created root element.
  */
 ElementFactory.prototype.createRoot = function(attrs) {
   return this.create('root', attrs);
@@ -8675,9 +10338,9 @@ ElementFactory.prototype.createRoot = function(attrs) {
 /**
  * Create a label.
  *
- * @param {ModelAttrsLabel} attrs The attributes of the label to be created.
+ * @param {Partial<Label>} [attrs]
  *
- * @return {Label} The created label.
+ * @return {U} The created label.
  */
 ElementFactory.prototype.createLabel = function(attrs) {
   return this.create('label', attrs);
@@ -8686,9 +10349,9 @@ ElementFactory.prototype.createLabel = function(attrs) {
 /**
  * Create a shape.
  *
- * @param {ModelAttrsShape} attrs The attributes of the shape to be created.
+ * @param {Partial<Shape>} [attrs]
  *
- * @return {Shape} The created shape.
+ * @return {W} The created shape.
  */
 ElementFactory.prototype.createShape = function(attrs) {
   return this.create('shape', attrs);
@@ -8697,21 +10360,44 @@ ElementFactory.prototype.createShape = function(attrs) {
 /**
  * Create a connection.
  *
- * @param {ModelAttrsConnection} attrs The attributes of the connection to be created.
+ * @param {Partial<Connection>} [attrs]
  *
- * @return {Connection} The created connection.
+ * @return {T} The created connection.
  */
 ElementFactory.prototype.createConnection = function(attrs) {
   return this.create('connection', attrs);
 };
 
 /**
- * Create a model element of the given type with the given attributes.
+ * Create a root element.
  *
- * @param {string} type The type of the model element.
- * @param {Object} attrs The attributes of the model element.
+ * @overlord
+ * @param {'root'} type
+ * @param {Partial<Root>} [attrs]
+ * @return {V}
+ */
+/**
+ * Create a shape.
  *
- * @return {Connection|Label|Root|Shape} The created model element.
+ * @overlord
+ * @param {'shape'} type
+ * @param {Partial<Shape>} [attrs]
+ * @return {W}
+ */
+/**
+ * Create a connection.
+ *
+ * @overlord
+ * @param {'connection'} type
+ * @param {Partial<Connection>} [attrs]
+ * @return {T}
+ */
+/**
+ * Create a label.
+ *
+ * @param {'label'} type
+ * @param {Partial<Label>} [attrs]
+ * @return {U}
  */
 ElementFactory.prototype.create = function(type, attrs) {
 
@@ -8732,7 +10418,6 @@ ElementFactory.prototype.create = function(type, attrs) {
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ElementRegistry)
@@ -8743,11 +10428,12 @@ var ELEMENT_ID = 'data-element-id';
 
 
 /**
- * @typedef {import('.').ElementLike} ElementLike
+ * @typedef {import('./Types').ElementLike} ElementLike
  *
  * @typedef {import('./EventBus').default} EventBus
  *
- * @typedef {import('./ElementRegistry').ElementRegistryCallback} ElementRegistryCallback
+ * @typedef { (element: ElementLike, gfx: SVGElement) => boolean|any } ElementRegistryFilterCallback
+ * @typedef { (element: ElementLike, gfx: SVGElement) => any } ElementRegistryForEachCallback
  */
 
 /**
@@ -8759,6 +10445,16 @@ var ELEMENT_ID = 'data-element-id';
  * @param {EventBus} eventBus
  */
 function ElementRegistry(eventBus) {
+
+  /**
+   * @type { {
+   *   [id: string]: {
+   *     element: ElementLike;
+   *     gfx?: SVGElement;
+   *     secondaryGfx?: SVGElement;
+   *   }
+   * } }
+   */
   this._elements = {};
 
   this._eventBus = eventBus;
@@ -8844,7 +10540,7 @@ ElementRegistry.prototype.updateId = function(element, newId) {
 /**
  * Update the graphical representation of an element.
  *
- * @param {ElementLike|string} element The element or its ID.
+ * @param {ElementLike|string} filter The element or its ID.
  * @param {SVGElement} gfx The new graphical representation.
  * @param {boolean} [secondary=false] Whether to update the secondary graphical representation.
  */
@@ -8871,9 +10567,11 @@ ElementRegistry.prototype.updateGraphics = function(filter, gfx, secondary) {
  *
  * @example
  *
+ * ```javascript
  * elementRegistry.get('SomeElementId_1');
  *
  * elementRegistry.get(gfx);
+ * ```
  *
  * @param {string|SVGElement} filter The elements ID or graphical representation.
  *
@@ -8895,7 +10593,7 @@ ElementRegistry.prototype.get = function(filter) {
 /**
  * Return all elements that match a given filter function.
  *
- * @param {ElementRegistryCallback} fn The filter function.
+ * @param {ElementRegistryFilterCallback} fn The filter function.
  *
  * @return {ElementLike[]} The matching elements.
  */
@@ -8915,7 +10613,7 @@ ElementRegistry.prototype.filter = function(fn) {
 /**
  * Return the first element that matches the given filter function.
  *
- * @param {Function} fn The filter function.
+ * @param {ElementRegistryFilterCallback} fn The filter function.
  *
  * @return {ElementLike|undefined} The matching element.
  */
@@ -8947,7 +10645,7 @@ ElementRegistry.prototype.getAll = function() {
 /**
  * Execute a given function for each element.
  *
- * @param {Function} fn The function to execute.
+ * @param {ElementRegistryForEachCallback} fn The function to execute.
  */
 ElementRegistry.prototype.forEach = function(fn) {
 
@@ -8967,11 +10665,13 @@ ElementRegistry.prototype.forEach = function(fn) {
  *
  * @example
  *
+ * ```javascript
  * elementRegistry.getGraphics('SomeElementId_1');
  *
  * elementRegistry.getGraphics(rootElement); // <g ...>
  *
  * elementRegistry.getGraphics(rootElement, true); // <svg ...>
+ * ```
  *
  * @param {ElementLike|string} filter The element or its ID.
  * @param {boolean} [secondary=false] Whether to return the secondary graphical representation.
@@ -9011,7 +10711,6 @@ ElementRegistry.prototype._validateId = function(id) {
   \******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ EventBus)
@@ -9026,13 +10725,27 @@ var DEFAULT_PRIORITY = 1000;
 var slice = Array.prototype.slice;
 
 /**
- * @typedef {import('./EventBus').Event} Event
- * @typedef {import('./EventBus').EventCallback} EventCallback
+ * @typedef { {
+ *   stopPropagation(): void;
+ *   preventDefault(): void;
+ *   cancelBubble: boolean;
+ *   defaultPrevented: boolean;
+ *   returnValue: any;
+ * } } Event
+ */
+
+/**
+ * @template E
  *
- * @typedef {Object} EventListener
- * @property {Function} callback
- * @property {EventListener|null} next
- * @property {number} priority
+ * @typedef { (event: E & Event, ...any) => any } EventBusEventCallback
+ */
+
+/**
+ * @typedef { {
+ *  priority: number;
+ *  next: EventBusListener | null;
+ *  callback: EventBusEventCallback<any>;
+ * } } EventBusListener
  */
 
 /**
@@ -9117,8 +10830,14 @@ var slice = Array.prototype.slice;
  * var sum = eventBus.fire('sum', 1, 2);
  * console.log(sum); // 3
  * ```
+ *
+ * @template [EventMap=null]
  */
 function EventBus() {
+
+  /**
+   * @type { Record<string, EventBusListener> }
+   */
   this._listeners = {};
 
   // cleanup on destroy on lowest priority to allow
@@ -9126,7 +10845,27 @@ function EventBus() {
   this.on('diagram.destroy', 1, this._destroy, this);
 }
 
-
+/**
+ * @overlord
+ *
+ * Register an event listener for events with the given name.
+ *
+ * The callback will be invoked with `event, ...additionalArguments`
+ * that have been passed to {@link EventBus#fire}.
+ *
+ * Returning false from a listener will prevent the events default action
+ * (if any is specified). To stop an event from being processed further in
+ * other listeners execute {@link Event#stopPropagation}.
+ *
+ * Returning anything but `undefined` from a listener will stop the listener propagation.
+ *
+ * @template T
+ *
+ * @param {string|string[]} events to subscribe to
+ * @param {number} [priority=1000] listen priority
+ * @param {EventBusEventCallback<T>} callback
+ * @param {any} [that] callback context
+ */
 /**
  * Register an event listener for events with the given name.
  *
@@ -9139,10 +10878,12 @@ function EventBus() {
  *
  * Returning anything but `undefined` from a listener will stop the listener propagation.
  *
- * @param {string|string[]} events The event(s) to listen to.
- * @param {number} [priority=1000] The priority with which to listen.
- * @param {EventCallback} callback The callback.
- * @param {*} [that] Value of `this` the callback will be called with.
+ * @template {keyof EventMap} EventName
+ *
+ * @param {EventName} events to subscribe to
+ * @param {number} [priority=1000] listen priority
+ * @param {EventBusEventCallback<EventMap[EventName]>} callback
+ * @param {any} [that] callback context
  */
 EventBus.prototype.on = function(events, priority, callback, that) {
 
@@ -9180,16 +10921,29 @@ EventBus.prototype.on = function(events, priority, callback, that) {
   });
 };
 
-
+/**
+ * @overlord
+ *
+ * Register an event listener that is called only once.
+ *
+ * @template T
+ *
+ * @param {string|string[]} events to subscribe to
+ * @param {number} [priority=1000] the listen priority
+ * @param {EventBusEventCallback<T>} callback
+ * @param {any} [that] callback context
+ */
 /**
  * Register an event listener that is called only once.
  *
- * @param {string} event The event to listen to.
- * @param {number} [priority=1000] The priority with which to listen.
- * @param {EventCallback} callback The callback.
- * @param {*} [that] Value of `this` the callback will be called with.
+ * @template {keyof EventMap} EventName
+ *
+ * @param {EventName} events to subscribe to
+ * @param {number} [priority=1000] listen priority
+ * @param {EventBusEventCallback<EventMap[EventName]>} callback
+ * @param {any} [that] callback context
  */
-EventBus.prototype.once = function(event, priority, callback, that) {
+EventBus.prototype.once = function(events, priority, callback, that) {
   var self = this;
 
   if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(priority)) {
@@ -9207,7 +10961,7 @@ EventBus.prototype.once = function(event, priority, callback, that) {
 
     var result = callback.apply(that, arguments);
 
-    self.off(event, wrappedCallback);
+    self.off(events, wrappedCallback);
 
     return result;
   }
@@ -9217,7 +10971,7 @@ EventBus.prototype.once = function(event, priority, callback, that) {
   // callback
   wrappedCallback[FN_REF] = callback;
 
-  this.on(event, priority, wrappedCallback);
+  this.on(events, priority, wrappedCallback);
 };
 
 
@@ -9226,8 +10980,8 @@ EventBus.prototype.once = function(event, priority, callback, that) {
  *
  * If no callback is given, all listeners for a given event name are being removed.
  *
- * @param {string|string[]} events The events.
- * @param {EventCallback} [callback] The callback.
+ * @param {string|string[]} events
+ * @param {EventBusEventCallback} [callback]
  */
 EventBus.prototype.off = function(events, callback) {
 
@@ -9263,6 +11017,7 @@ EventBus.prototype.createEvent = function(data) {
  *
  * @example
  *
+ * ```javascript
  * // fire event by name
  * events.fire('foo');
  *
@@ -9280,12 +11035,13 @@ EventBus.prototype.createEvent = function(data) {
  * });
  *
  * events.fire({ type: 'foo' }, 'I am bar!');
+ * ```
  *
- * @param {string} [type] The event type.
- * @param {Object} [data] The event or event data.
- * @param {...*} additional Additional arguments the callback will be called with.
+ * @param {string} [type] event type
+ * @param {Object} [data] event or event data
+ * @param {...any} [args] additional arguments the callback will be called with.
  *
- * @return {*} The return value. Will be set to `false` if the default was prevented.
+ * @return {any} The return value. Will be set to `false` if the default was prevented.
  */
 EventBus.prototype.fire = function(type, data) {
   var event,
@@ -9366,6 +11122,13 @@ EventBus.prototype._destroy = function() {
   this._listeners = {};
 };
 
+/**
+ * @param {Event} event
+ * @param {any[]} args
+ * @param {EventBusListener} listener
+ *
+ * @return {any}
+ */
 EventBus.prototype._invokeListeners = function(event, args, listener) {
 
   var returnValue;
@@ -9385,6 +11148,13 @@ EventBus.prototype._invokeListeners = function(event, args, listener) {
   return returnValue;
 };
 
+/**
+ * @param {Event} event
+ * @param {any[]} args
+ * @param {EventBusListener} listener
+ *
+ * @return {any}
+ */
 EventBus.prototype._invokeListener = function(event, args, listener) {
 
   var returnValue;
@@ -9433,7 +11203,7 @@ EventBus.prototype._invokeListener = function(event, args, listener) {
  *    * after: [ 1500, 1500, (new=1300), 1000, 1000, (new=1000) ]
  *
  * @param {string} event
- * @param {EventListener} listener
+ * @param {EventBusListener} newListener
  */
 EventBus.prototype._addListener = function(event, newListener) {
 
@@ -9473,10 +11243,19 @@ EventBus.prototype._addListener = function(event, newListener) {
 };
 
 
+/**
+ * @param {string} name
+ *
+ * @return {EventBusListener}
+ */
 EventBus.prototype._getListeners = function(name) {
   return this._listeners[name];
 };
 
+/**
+ * @param {string} name
+ * @param {EventBusListener} listener
+ */
 EventBus.prototype._setListeners = function(name, listener) {
   this._listeners[name] = listener;
 };
@@ -9539,9 +11318,9 @@ InternalEvent.prototype.init = function(data) {
  * Invoke function. Be fast...
  *
  * @param {Function} fn
- * @param {*[]} args
+ * @param {any[]} args
  *
- * @return {*}
+ * @return {any}
  */
 function invokeFunction(fn, args) {
   return fn.apply(null, args);
@@ -9556,7 +11335,6 @@ function invokeFunction(fn, args) {
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ GraphicsFactory)
@@ -9580,13 +11358,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * @typedef {import('../model').ModelType} ModelType
- * @typedef {import('../model').ModelTypeConnection} ModelTypeConnection
- * @typedef {import('../model').ModelTypeShape} ModelTypeShape
- *
- * @typedef {import('.').ConnectionLike} ConnectionLike
- * @typedef {import('.').ElementLike} ElementLike
- * @typedef {import('.').ShapeLike} ShapeLike
+ * @typedef {import('./Types').ConnectionLike} ConnectionLike
+ * @typedef {import('./Types').ElementLike} ElementLike
+ * @typedef {import('./Types').ShapeLike} ShapeLike
  *
  * @typedef {import('./ElementRegistry').default} ElementRegistry
  * @typedef {import('./EventBus').default} EventBus
@@ -9605,7 +11379,10 @@ function GraphicsFactory(eventBus, elementRegistry) {
 
 GraphicsFactory.$inject = [ 'eventBus' , 'elementRegistry' ];
 
-
+/**
+ * @param { { parent?: any } } element
+ * @return {SVGElement}
+ */
 GraphicsFactory.prototype._getChildrenContainer = function(element) {
 
   var gfx = this._elementRegistry.getGraphics(element);
@@ -9702,7 +11479,7 @@ GraphicsFactory.prototype._createContainer = function(
 /**
  * Create a graphical element.
  *
- * @param {ModelType} type The type of the element.
+ * @param { 'shape' | 'connection' | 'label' | 'root' } type The type of the element.
  * @param {ElementLike} element The element.
  * @param {number} [parentIndex] The index at which to add the graphical element to its parent's children.
  *
@@ -9758,11 +11535,14 @@ GraphicsFactory.prototype.updateContainments = function(elements) {
  *
  * @param {SVGElement} visual The graphical element.
  * @param {ShapeLike} element The shape.
+ * @param {Object} attrs Optional attributes.
+ *
+ * @return {SVGElement}
  */
-GraphicsFactory.prototype.drawShape = function(visual, element) {
+GraphicsFactory.prototype.drawShape = function(visual, element, attrs = {}) {
   var eventBus = this._eventBus;
 
-  return eventBus.fire('render.shape', { gfx: visual, element: element });
+  return eventBus.fire('render.shape', { gfx: visual, element, attrs });
 };
 
 /**
@@ -9783,17 +11563,20 @@ GraphicsFactory.prototype.getShapePath = function(element) {
  *
  * @param {SVGElement} visual The graphical element.
  * @param {ConnectionLike} element The connection.
+ * @param {Object} attrs Optional attributes.
+ *
+ * @return {SVGElement}
  */
-GraphicsFactory.prototype.drawConnection = function(visual, element) {
+GraphicsFactory.prototype.drawConnection = function(visual, element, attrs = {}) {
   var eventBus = this._eventBus;
 
-  return eventBus.fire('render.connection', { gfx: visual, element: element });
+  return eventBus.fire('render.connection', { gfx: visual, element, attrs });
 };
 
 /**
  * Get the path of a connection.
  *
- * @param {ConnectionLike} element The connection.
+ * @param {ConnectionLike} connection The connection.
  *
  * @return {string} The path of the connection.
  */
@@ -9806,9 +11589,9 @@ GraphicsFactory.prototype.getConnectionPath = function(connection) {
 /**
  * Update an elements graphical representation.
  *
- * @param {ModelTypeShape|ModelTypeConnection} type The type of the element.
- * @param {ElementLike} element The element.
- * @param {SVGElement} gfx The graphical representation.
+ * @param {'shape'|'connection'} type
+ * @param {ElementLike} element
+ * @param {SVGElement} gfx
  */
 GraphicsFactory.prototype.update = function(type, element, gfx) {
 
@@ -9825,8 +11608,7 @@ GraphicsFactory.prototype.update = function(type, element, gfx) {
 
     // update positioning
     (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_5__.translate)(gfx, element.x, element.y);
-  } else
-  if (type === 'connection') {
+  } else if (type === 'connection') {
     this.drawConnection(visual, element);
   } else {
     throw new Error('unknown type: ' + type);
@@ -9875,7 +11657,6 @@ function prependTo(newNode, parentNode, siblingNode) {
   \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -9894,6 +11675,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __depends__: [ _draw__WEBPACK_IMPORTED_MODULE_0__["default"] ],
   __init__: [ 'canvas' ],
@@ -9912,7 +11696,6 @@ __webpack_require__.r(__webpack_exports__);
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ BaseRenderer)
@@ -9920,9 +11703,9 @@ __webpack_require__.r(__webpack_exports__);
 var DEFAULT_RENDER_PRIORITY = 1000;
 
 /**
- * @typedef {import('../model').Base} Base
- * @typedef {import('../model').Connection} Connection
- * @typedef {import('../model').Shape} Shape
+ * @typedef {import('../core/Types').ElementLike} Element
+ * @typedef {import('../core/Types').ConnectionLike} Connection
+ * @typedef {import('../core/Types').ShapeLike} Shape
  *
  * @typedef {import('../core/EventBus').default} EventBus
  */
@@ -9967,9 +11750,9 @@ function BaseRenderer(eventBus, renderPriority) {
 /**
  * Checks whether an element can be rendered.
  *
- * @param {Base} element The element to be rendered.
+ * @param {Element} element The element to be rendered.
  *
- * @returns {boolean} Whether the element can be rendered.
+ * @return {boolean} Whether the element can be rendered.
  */
 BaseRenderer.prototype.canRender = function(element) {};
 
@@ -9979,7 +11762,7 @@ BaseRenderer.prototype.canRender = function(element) {};
  * @param {SVGElement} visuals The SVG element to draw the shape into.
  * @param {Shape} shape The shape to be drawn.
  *
- * @returns {SVGElement} The SVG element of the shape drawn.
+ * @return {SVGElement} The SVG element of the shape drawn.
  */
 BaseRenderer.prototype.drawShape = function(visuals, shape) {};
 
@@ -9989,7 +11772,7 @@ BaseRenderer.prototype.drawShape = function(visuals, shape) {};
  * @param {SVGElement} visuals The SVG element to draw the connection into.
  * @param {Connection} connection The connection to be drawn.
  *
- * @returns {SVGElement} The SVG element of the connection drawn.
+ * @return {SVGElement} The SVG element of the connection drawn.
  */
 BaseRenderer.prototype.drawConnection = function(visuals, connection) {};
 
@@ -10020,7 +11803,6 @@ BaseRenderer.prototype.getConnectionPath = function(connection) {};
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DefaultRenderer)
@@ -10060,7 +11842,6 @@ var DEFAULT_RENDER_PRIORITY = 1;
  */
 function DefaultRenderer(eventBus, styles) {
 
-  //
   _BaseRenderer__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus, DEFAULT_RENDER_PRIORITY);
 
   this.CONNECTION_STYLE = styles.style([ 'no-fill' ], { strokeWidth: 5, stroke: 'fuchsia' });
@@ -10071,10 +11852,16 @@ function DefaultRenderer(eventBus, styles) {
 (0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(DefaultRenderer, _BaseRenderer__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 
+/**
+ * @private
+ */
 DefaultRenderer.prototype.canRender = function() {
   return true;
 };
 
+/**
+ * @private
+ */
 DefaultRenderer.prototype.drawShape = function drawShape(visuals, element, attrs) {
   var rect = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('rect');
 
@@ -10096,6 +11883,9 @@ DefaultRenderer.prototype.drawShape = function drawShape(visuals, element, attrs
   return rect;
 };
 
+/**
+ * @private
+ */
 DefaultRenderer.prototype.drawConnection = function drawConnection(visuals, connection, attrs) {
 
   var line = (0,_util_RenderUtil__WEBPACK_IMPORTED_MODULE_5__.createLine)(connection.waypoints, (0,min_dash__WEBPACK_IMPORTED_MODULE_4__.assign)({}, this.CONNECTION_STYLE, attrs || {}));
@@ -10104,6 +11894,9 @@ DefaultRenderer.prototype.drawConnection = function drawConnection(visuals, conn
   return line;
 };
 
+/**
+ * @private
+ */
 DefaultRenderer.prototype.getShapePath = function getShapePath(shape) {
 
   var x = shape.x,
@@ -10122,6 +11915,9 @@ DefaultRenderer.prototype.getShapePath = function getShapePath(shape) {
   return (0,_util_RenderUtil__WEBPACK_IMPORTED_MODULE_5__.componentsToPath)(shapePath);
 };
 
+/**
+ * @private
+ */
 DefaultRenderer.prototype.getConnectionPath = function getConnectionPath(connection) {
   var waypoints = connection.waypoints;
 
@@ -10139,7 +11935,6 @@ DefaultRenderer.prototype.getConnectionPath = function getConnectionPath(connect
   return (0,_util_RenderUtil__WEBPACK_IMPORTED_MODULE_5__.componentsToPath)(connectionPath);
 };
 
-
 DefaultRenderer.$inject = [ 'eventBus', 'styles' ];
 
 
@@ -10151,7 +11946,6 @@ DefaultRenderer.$inject = [ 'eventBus', 'styles' ];
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Styles)
@@ -10181,13 +11975,14 @@ function Styles() {
   var self = this;
 
   /**
-   * Builds a style definition from a className, a list of traits and an object of additional attributes.
+   * Builds a style definition from a className, a list of traits and an object
+   * of additional attributes.
    *
    * @param {string} className
-   * @param {Array<string>} traits
-   * @param {Object} additionalAttrs
+   * @param {string[]} [traits]
+   * @param {Object} [additionalAttrs]
    *
-   * @return {Object} the style defintion
+   * @return {Object} the style definition
    */
   this.cls = function(className, traits, additionalAttrs) {
     var attrs = this.style(traits, additionalAttrs);
@@ -10196,12 +11991,13 @@ function Styles() {
   };
 
   /**
-   * Builds a style definition from a list of traits and an object of additional attributes.
+   * Builds a style definition from a list of traits and an object of additional
+   * attributes.
    *
-   * @param {Array<string>} traits
+   * @param {string[]} [traits]
    * @param {Object} additionalAttrs
    *
-   * @return {Object} the style defintion
+   * @return {Object} the style definition
    */
   this.style = function(traits, additionalAttrs) {
 
@@ -10217,6 +12013,17 @@ function Styles() {
     return additionalAttrs ? (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(attrs, additionalAttrs) : attrs;
   };
 
+
+  /**
+   * Computes a style definition from a list of traits and an object of
+   * additional attributes, with custom style definition object.
+   *
+   * @param {Object} custom
+   * @param {string[]} [traits]
+   * @param {Object} defaultStyles
+   *
+   * @return {Object} the style definition
+   */
   this.computeStyle = function(custom, traits, defaultStyles) {
     if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(traits)) {
       defaultStyles = traits;
@@ -10236,7 +12043,6 @@ function Styles() {
   \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -10246,6 +12052,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'defaultRenderer' ],
   defaultRenderer: [ 'type', _DefaultRenderer__WEBPACK_IMPORTED_MODULE_0__["default"] ],
@@ -10261,7 +12070,6 @@ __webpack_require__.r(__webpack_exports__);
   \******************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ChangeSupport)
@@ -10348,7 +12156,6 @@ ChangeSupport.$inject = [
   \**********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -10356,6 +12163,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ChangeSupport__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChangeSupport */ "./node_modules/diagram-js/lib/features/change-support/ChangeSupport.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'changeSupport' ],
   changeSupport: [ 'type', _ChangeSupport__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -10369,7 +12180,6 @@ __webpack_require__.r(__webpack_exports__);
   \**************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ InteractionEvents)
@@ -10390,11 +12200,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * @typedef {import('../../model').Base} Base
+ * @typedef {import('../../model/Types').Element} Element
  *
  * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
  * @typedef {import('../../core/EventBus').default} EventBus
  * @typedef {import('../../draw/Styles').default} Styles
+ *
+ * @typedef {import('../../util/Types').Point} Point
  */
 
 function allowAll(event) { return true; }
@@ -10438,7 +12250,7 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
    *
    * @param {string} type local event name, e.g. element.click.
    * @param {MouseEvent|TouchEvent} event native event
-   * @param {Base} [element] the diagram element to emit the event on;
+   * @param {Element} [element] the diagram element to emit the event on;
    *                                   defaults to the event target
    */
   function fire(type, event, element) {
@@ -10521,7 +12333,7 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
    *
    * @param {string} eventName the name of the triggered DOM event
    * @param {MouseEvent|TouchEvent} event
-   * @param {Base} targetElement
+   * @param {Element} targetElement
    */
   function triggerMouseEvent(eventName, event, targetElement) {
 
@@ -10687,7 +12499,7 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
   /**
    * Create default hit for the given element.
    *
-   * @param {Base} element
+   * @param {Element} element
    * @param {SVGElement} gfx
    *
    * @return {SVGElement} created hit
@@ -10714,7 +12526,7 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
    * Create hits for the given waypoints.
    *
    * @param {SVGElement} gfx
-   * @param {Array<Point>} waypoints
+   * @param {Point[]} waypoints
    *
    * @return {SVGElement}
    */
@@ -10733,7 +12545,7 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
    * Create hits for a box.
    *
    * @param {SVGElement} gfx
-   * @param {string} hitType
+   * @param {string} type
    * @param {Object} attrs
    *
    * @return {SVGElement}
@@ -10759,7 +12571,7 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
   /**
    * Update default hit of the element.
    *
-   * @param {Base} element
+   * @param {Element} element
    * @param {SVGElement} gfx
    *
    * @return {SVGElement} updated hit
@@ -10808,7 +12620,7 @@ InteractionEvents.$inject = [
  * @event element.hover
  *
  * @type {Object}
- * @property {Base} element
+ * @property {Element} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10819,7 +12631,7 @@ InteractionEvents.$inject = [
  * @event element.out
  *
  * @type {Object}
- * @property {Base} element
+ * @property {Element} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10830,7 +12642,7 @@ InteractionEvents.$inject = [
  * @event element.click
  *
  * @type {Object}
- * @property {Base} element
+ * @property {Element} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10841,7 +12653,7 @@ InteractionEvents.$inject = [
  * @event element.dblclick
  *
  * @type {Object}
- * @property {Base} element
+ * @property {Element} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10852,7 +12664,7 @@ InteractionEvents.$inject = [
  * @event element.mousedown
  *
  * @type {Object}
- * @property {Base} element
+ * @property {Element} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10863,7 +12675,7 @@ InteractionEvents.$inject = [
  * @event element.mouseup
  *
  * @type {Object}
- * @property {Base} element
+ * @property {Element} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10875,7 +12687,7 @@ InteractionEvents.$inject = [
  * @event element.contextmenu
  *
  * @type {Object}
- * @property {Base} element
+ * @property {Element} element
  * @property {SVGElement} gfx
  * @property {Event} originalEvent
  */
@@ -10888,7 +12700,6 @@ InteractionEvents.$inject = [
   \**************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -10896,6 +12707,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _InteractionEvents__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./InteractionEvents */ "./node_modules/diagram-js/lib/features/interaction-events/InteractionEvents.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'interactionEvents' ],
   interactionEvents: [ 'type', _InteractionEvents__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -10909,7 +12724,6 @@ __webpack_require__.r(__webpack_exports__);
   \*****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Outline)
@@ -10928,9 +12742,12 @@ var LOW_PRIORITY = 500;
 
 
 
+var DEFAULT_PRIORITY = 1000;
+
 /**
- * @typedef {import('../../model').Base} Base
+ * @typedef {import('../../model/Types').Element} Element
  *
+ * @typedef {import('./OutlineProvider').default} OutlineProvider
  * @typedef {import('../../core/EventBus').default} EventBus
  * @typedef {import('../../draw/Styles').default} Styles
  */
@@ -10946,24 +12763,29 @@ var LOW_PRIORITY = 500;
  */
 function Outline(eventBus, styles) {
 
-  this.offset = 6;
+  this._eventBus = eventBus;
+
+  this.offset = 5;
 
   var OUTLINE_STYLE = styles.cls('djs-outline', [ 'no-fill' ]);
 
   var self = this;
 
-  function createOutline(gfx, bounds) {
+  /**
+   * @param {SVGElement} gfx
+   *
+   * @return {SVGElement} outline
+   */
+  function createOutline(gfx) {
     var outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('rect');
 
     (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({
-      x: 10,
-      y: 10,
+      x: 0,
+      y: 0,
       rx: 4,
       width: 100,
       height: 100
     }, OUTLINE_STYLE));
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(gfx, outline);
 
     return outline;
   }
@@ -10977,7 +12799,8 @@ function Outline(eventBus, styles) {
     var outline = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)('.djs-outline', gfx);
 
     if (!outline) {
-      outline = createOutline(gfx, element);
+      outline = self.getOutline(element) || createOutline(gfx);
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(gfx, outline);
     }
 
     self.updateShapeOutline(outline, element);
@@ -10990,7 +12813,8 @@ function Outline(eventBus, styles) {
     var outline = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)('.djs-outline', gfx);
 
     if (!outline) {
-      outline = createOutline(gfx, element);
+      outline = createOutline(gfx);
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(gfx, outline);
     }
 
     self.updateConnectionOutline(outline, element);
@@ -11003,29 +12827,38 @@ function Outline(eventBus, styles) {
  * element and an outline offset.
  *
  * @param {SVGElement} outline
- * @param {Base} element
+ * @param {Element} element
  */
 Outline.prototype.updateShapeOutline = function(outline, element) {
 
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, {
-    x: -this.offset,
-    y: -this.offset,
-    width: element.width + this.offset * 2,
-    height: element.height + this.offset * 2
-  });
+  var updated = false;
+  var providers = this._getProviders();
 
+  if (providers.length) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(providers, function(provider) {
+      updated = updated || provider.updateOutline(element, outline);
+    });
+  }
+
+  if (!updated) {
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, {
+      x: -this.offset,
+      y: -this.offset,
+      width: element.width + this.offset * 2,
+      height: element.height + this.offset * 2
+    });
+  }
 };
-
 
 /**
  * Updates the outline of a connection respecting the bounding box of
  * the connection and an outline offset.
+ * Register an outline provider with the given priority.
  *
  * @param {SVGElement} outline
- * @param {Base} element
+ * @param {Element} connection
  */
 Outline.prototype.updateConnectionOutline = function(outline, connection) {
-
   var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_3__.getBBox)(connection);
 
   (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, {
@@ -11034,9 +12867,61 @@ Outline.prototype.updateConnectionOutline = function(outline, connection) {
     width: bbox.width + this.offset * 2,
     height: bbox.height + this.offset * 2
   });
-
 };
 
+/**
+ * Register an outline provider with the given priority.
+ *
+ * @param {number} priority
+ * @param {OutlineProvider} provider
+ */
+Outline.prototype.registerProvider = function(priority, provider) {
+  if (!provider) {
+    provider = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  this._eventBus.on('outline.getProviders', priority, function(event) {
+    event.providers.push(provider);
+  });
+};
+
+/**
+ * Returns the registered outline providers.
+ *
+ * @returns {OutlineProvider[]}
+ */
+Outline.prototype._getProviders = function() {
+  var event = this._eventBus.createEvent({
+    type: 'outline.getProviders',
+    providers: []
+  });
+
+  this._eventBus.fire(event);
+
+  return event.providers;
+};
+
+/**
+ * Returns the outline for an element.
+ *
+ * @param {Element} element
+ */
+Outline.prototype.getOutline = function(element) {
+  var outline;
+  var providers = this._getProviders();
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(providers, function(provider) {
+
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isFunction)(provider.getOutline)) {
+      return;
+    }
+
+    outline = outline || provider.getOutline(element);
+  });
+
+  return outline;
+};
 
 Outline.$inject = [ 'eventBus', 'styles', 'elementRegistry' ];
 
@@ -11048,7 +12933,6 @@ Outline.$inject = [ 'eventBus', 'styles', 'elementRegistry' ];
   \***************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -11056,6 +12940,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Outline__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Outline */ "./node_modules/diagram-js/lib/features/outline/Outline.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'outline' ],
   outline: [ 'type', _Outline__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -11069,7 +12957,6 @@ __webpack_require__.r(__webpack_exports__);
   \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Overlays)
@@ -11096,12 +12983,54 @@ var LOW_PRIORITY = 500;
  * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
  * @typedef {import('../../core/EventBus').default} EventBus
  *
- * @typedef {import('./Overlays').Overlay} Overlay
- * @typedef {import('./Overlays').OverlayAttrs} OverlayAttrs
- * @typedef {import('./Overlays').OverlayContainer} OverlayContainer
- * @typedef {import('./Overlays').OverlaysConfig} OverlaysConfig
- * @typedef {import('./Overlays').OverlaysConfigDefault} OverlaysConfigDefault
- * @typedef {import('./Overlays').OverlaysFilter} OverlaysFilter
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef { {
+ *   minZoom?: number,
+ *   maxZoom?: number
+ * } } OverlaysConfigShow
+ *
+ * @typedef { {
+ *   min?: number,
+ *   max?: number
+ * } } OverlaysConfigScale
+ *
+ * @typedef { {
+*   id: string,
+*   type: string | null,
+*   element: Element | string
+* } & OverlayAttrs } Overlay
+*
+ * @typedef { {
+ *   html: HTMLElement | string,
+ *   position: {
+ *     top?: number,
+ *     right?: number,
+ *     bottom?: number,
+ *     left?: number
+ *   }
+ * } & OverlaysConfigDefault } OverlayAttrs
+ *
+ * @typedef { {
+ *   html: HTMLElement,
+ *   element: Element,
+ *   overlays: Overlay[]
+ * } } OverlayContainer
+ *
+ * @typedef {{
+ *   defaults?: OverlaysConfigDefault
+ * }} OverlaysConfig
+ *
+ * @typedef { {
+ *  show?: OverlaysConfigShow,
+ *  scale?: OverlaysConfigScale | boolean
+ * } } OverlaysConfigDefault
+ *
+ * @typedef { {
+ *   id?: string;
+ *   element?: Element | string;
+ *   type?: string;
+ * } | string } OverlaysFilter
  */
 
 /**
@@ -11111,6 +13040,7 @@ var LOW_PRIORITY = 500;
  *
  * @example
  *
+ * ```javascript
  * // add a pink badge on the top left of the shape
  *
  * overlays.add(someShape, {
@@ -11140,8 +13070,9 @@ var LOW_PRIORITY = 500;
  *   }
  *   html: '<div style="width: 10px; background: fuchsia; color: white;">0</div>'
  * });
+ * ```
  *
- *
+ * ```javascript
  * // remove an overlay
  *
  * var id = overlays.add(...);
@@ -11163,6 +13094,7 @@ var LOW_PRIORITY = 500;
  *       }
  *     }
  * }
+ * ```
  *
  * @param {OverlaysConfig} config
  * @param {EventBus} eventBus
@@ -11189,7 +13121,7 @@ function Overlays(config, eventBus, canvas, elementRegistry) {
   }, config && config.defaults);
 
   /**
-   * @type {Map<string, Overlay>}
+   * @type {Record<string, Overlay>}
    */
   this._overlays = {};
 
@@ -11221,6 +13153,7 @@ Overlays.$inject = [
  *
  * @example
  *
+ * ```javascript
  * // return the single overlay with the given ID
  * overlays.get('some-id');
  *
@@ -11232,6 +13165,7 @@ Overlays.$inject = [
  *
  * // shape can also be specified as ID
  * overlays.get({ element: 'element-id', type: 'badge' });
+ * ```
  *
  * @param {OverlaysFilter} search The filter to be used to find the overlay(s).
  *
@@ -11256,8 +13190,7 @@ Overlays.prototype.get = function(search) {
     } else {
       return [];
     }
-  } else
-  if (search.type) {
+  } else if (search.type) {
     return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(this._overlays, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.matchPattern)({ type: search.type }));
   } else {
 
@@ -11269,7 +13202,7 @@ Overlays.prototype.get = function(search) {
 /**
  * Adds an HTML overlay to an element.
  *
- * @param {Base|string} element The element to add the overlay to.
+ * @param {Element|string} element The element to add the overlay to.
  * @param {string} [type] An optional type that can be used to filter.
  * @param {OverlayAttrs} overlay The overlay.
  *
@@ -11357,7 +13290,7 @@ Overlays.prototype.remove = function(filter) {
 /**
  * Checks whether overlays are shown.
  *
- * @returns {boolean} Whether overlays are shown.
+ * @return {boolean} Whether overlays are shown.
  */
 Overlays.prototype.isShown = function() {
   return this._overlayRoot.style.display !== 'none';
@@ -11758,7 +13691,6 @@ function setTransform(el, transform) {
   \****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -11766,6 +13698,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Overlays__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Overlays */ "./node_modules/diagram-js/lib/features/overlays/Overlays.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'overlays' ],
   overlays: [ 'type', _Overlays__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -11779,7 +13715,6 @@ __webpack_require__.r(__webpack_exports__);
   \*****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Palette)
@@ -11796,6 +13731,9 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * @typedef {import('../../core/Canvas').default} Canvas
  * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('./PaletteProvider').PaletteEntries} PaletteEntries
+ * @typedef {import('./PaletteProvider').default} PaletteProvider
  */
 
 var TOGGLE_SELECTOR = '.djs-palette-toggle',
@@ -11843,29 +13781,21 @@ function Palette(eventBus, canvas) {
 
 Palette.$inject = [ 'eventBus', 'canvas' ];
 
+/**
+ * @overlord
+ *
+ * Register a palette provider with default priority. See
+ * {@link PaletteProvider} for examples.
+ *
+ * @param {PaletteProvider} provider
+ */
 
 /**
- * Register a provider with the palette
+ * Register a palette provider with the given priority. See
+ * {@link PaletteProvider} for examples.
  *
- * @param {number} [priority=1000]
+ * @param {number} priority
  * @param {PaletteProvider} provider
- *
- * @example
- * const paletteProvider = {
- *   getPaletteEntries: function() {
- *     return function(entries) {
- *       return {
- *         ...entries,
- *         'entry-1': {
- *           label: 'My Entry',
- *           action: function() { alert("I have been clicked!"); }
- *         }
- *       };
- *     }
- *   }
- * };
- *
- * palette.registerProvider(800, paletteProvider);
  */
 Palette.prototype.registerProvider = function(priority, provider) {
   if (!provider) {
@@ -11882,9 +13812,9 @@ Palette.prototype.registerProvider = function(priority, provider) {
 
 
 /**
- * Returns the palette entries
+ * Returns the palette entries.
  *
- * @return {Object<string, PaletteEntryDescriptor>} map of entries
+ * @return {PaletteEntries}
  */
 Palette.prototype.getEntries = function() {
   var providers = this._getProviders();
@@ -11912,7 +13842,7 @@ Palette.prototype._rebuild = function() {
 };
 
 /**
- * Initialize
+ * Initialize palette.
  */
 Palette.prototype._init = function() {
 
@@ -11970,7 +13900,10 @@ Palette.prototype._getProviders = function(id) {
 /**
  * Update palette state.
  *
- * @param {Object} [state] { open, twoColumn }
+ * @param { {
+ *   open?: boolean;
+ *   twoColumn?: boolean;
+ * } } [state]
  */
 Palette.prototype._toggleState = function(state) {
 
@@ -12065,6 +13998,7 @@ Palette.prototype._update = function() {
  *
  * @param {string} action
  * @param {Event} event
+ * @param {boolean} [autoActivate=false]
  */
 Palette.prototype.trigger = function(action, event, autoActivate) {
   var entry,
@@ -12081,6 +14015,12 @@ Palette.prototype.trigger = function(action, event, autoActivate) {
   return this.triggerEntry(entry, action, originalEvent, autoActivate);
 };
 
+/**
+ * @param {string} entryId
+ * @param {string} action
+ * @param {Event} event
+ * @param {boolean} [autoActivate=false]
+ */
 Palette.prototype.triggerEntry = function(entryId, action, event, autoActivate) {
   var entries = this._entries,
       entry,
@@ -12122,7 +14062,7 @@ Palette.prototype._layoutChanged = function() {
  * Do we need to collapse to two columns?
  *
  * @param {number} availableHeight
- * @param {Object} entries
+ * @param {PaletteEntries} entries
  *
  * @return {boolean}
  */
@@ -12139,26 +14079,26 @@ Palette.prototype._needsCollapse = function(availableHeight, entries) {
 };
 
 /**
- * Close the palette
+ * Close the palette.
  */
 Palette.prototype.close = function() {
-
   this._toggleState({
     open: false,
     twoColumn: false
   });
 };
 
-
 /**
- * Open the palette
+ * Open the palette.
  */
 Palette.prototype.open = function() {
   this._toggleState({ open: true });
 };
 
-
-Palette.prototype.toggle = function(open) {
+/**
+ * Toggle the palette.
+ */
+Palette.prototype.toggle = function() {
   if (this.isOpen()) {
     this.close();
   } else {
@@ -12166,10 +14106,18 @@ Palette.prototype.toggle = function(open) {
   }
 };
 
+/**
+ * @param {string} tool
+ *
+ * @return {boolean}
+ */
 Palette.prototype.isActiveTool = function(tool) {
   return tool && this._activeTool === tool;
 };
 
+/**
+ * @param {string} name
+ */
 Palette.prototype.updateToolHighlight = function(name) {
   var entriesContainer,
       toolsContainer;
@@ -12203,26 +14151,28 @@ Palette.prototype.updateToolHighlight = function(name) {
 
 
 /**
- * Return true if the palette is opened.
+ * Return `true` if the palette is opened.
  *
  * @example
  *
+ * ```javascript
  * palette.open();
  *
  * if (palette.isOpen()) {
  *   // yes, we are open
  * }
+ * ```
  *
- * @return {boolean} true if palette is opened
+ * @return {boolean}
  */
 Palette.prototype.isOpen = function() {
   return (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(this._container).has(PALETTE_OPEN_CLS);
 };
 
 /**
- * Get container the palette lives in.
+ * Get parent element of palette.
  *
- * @return {Element}
+ * @return {HTMLElement}
  */
 Palette.prototype._getParentContainer = function() {
   return this._canvas.getContainer();
@@ -12273,7 +14223,6 @@ function addPaletteEntries(entries, provider) {
   \***************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -12281,6 +14230,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Palette */ "./node_modules/diagram-js/lib/features/palette/Palette.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'palette' ],
   palette: [ 'type', _Palette__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -12295,7 +14248,6 @@ __webpack_require__.r(__webpack_exports__);
   \************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ RootElementsBehavior)
@@ -12354,7 +14306,6 @@ RootElementsBehavior.$inject = [ 'canvas', 'injector' ];
   \*********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -12362,6 +14313,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _RootElementsBehavior__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RootElementsBehavior */ "./node_modules/diagram-js/lib/features/root-elements/RootElementsBehavior.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'rootElementsBehavior' ],
   rootElementsBehavior: [ 'type', _RootElementsBehavior__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -12376,7 +14331,6 @@ __webpack_require__.r(__webpack_exports__);
   \*********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Selection)
@@ -12385,6 +14339,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
+ * @typedef {import('../../core/Canvas').default} Canvas
  * @typedef {import('../../core/EventBus').default} EventBus
  */
 
@@ -12392,15 +14347,17 @@ __webpack_require__.r(__webpack_exports__);
  * A service that offers the current selection in a diagram.
  * Offers the api to control the selection, too.
  *
- * @class
- *
  * @param {EventBus} eventBus
+ * @param {Canvas} canvas
  */
 function Selection(eventBus, canvas) {
 
   this._eventBus = eventBus;
   this._canvas = canvas;
 
+  /**
+   * @type {Object[]}
+   */
   this._selectedElements = [];
 
   var self = this;
@@ -12417,7 +14374,11 @@ function Selection(eventBus, canvas) {
 
 Selection.$inject = [ 'eventBus', 'canvas' ];
 
-
+/**
+ * Deselect an element.
+ *
+ * @param {Object} element The element to deselect.
+ */
 Selection.prototype.deselect = function(element) {
   var selectedElements = this._selectedElements;
 
@@ -12432,26 +14393,33 @@ Selection.prototype.deselect = function(element) {
   }
 };
 
-
+/**
+ * Get the selected elements.
+ *
+ * @return {Object[]} The selected elements.
+ */
 Selection.prototype.get = function() {
   return this._selectedElements;
 };
 
+/**
+ * Check whether an element is selected.
+ *
+ * @param {Object} element The element.
+ *
+ * @return {boolean} Whether the element is selected.
+ */
 Selection.prototype.isSelected = function(element) {
   return this._selectedElements.indexOf(element) !== -1;
 };
 
 
 /**
- * This method selects one or more elements on the diagram.
+ * Select one or many elements.
  *
- * By passing an additional add parameter you can decide whether or not the element(s)
- * should be added to the already existing selection or not.
- *
- * @method Selection#select
- *
- * @param {Object|Object[]} elements element or array of elements to be selected
- * @param {boolean} [add] whether the element(s) should be appended to the current selection, defaults to false
+ * @param {Object|Object[]} elements The element(s) to select.
+ * @param {boolean} [add] Whether to add the element(s) to the selected elements.
+ * Defaults to `false`.
  */
 Selection.prototype.select = function(elements, add) {
   var selectedElements = this._selectedElements,
@@ -12499,7 +14467,6 @@ Selection.prototype.select = function(elements, add) {
   \*****************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SelectionBehavior)
@@ -12592,8 +14559,8 @@ function SelectionBehavior(eventBus, selection, canvas, elementRegistry) {
     var isSelected = selection.isSelected(element),
         isMultiSelect = selection.get().length > 1;
 
-    // Add to selection if CTRL or SHIFT pressed
-    var add = (0,_util_Mouse__WEBPACK_IMPORTED_MODULE_1__.hasPrimaryModifier)(event) || (0,_util_Mouse__WEBPACK_IMPORTED_MODULE_1__.hasSecondaryModifier)(event);
+    // Add to selection if SHIFT pressed
+    var add = (0,_util_Mouse__WEBPACK_IMPORTED_MODULE_1__.hasSecondaryModifier)(event);
 
     if (isSelected && isMultiSelect) {
       if (add) {
@@ -12638,7 +14605,6 @@ function isShown(element) {
   \****************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SelectionVisuals)
@@ -12788,7 +14754,6 @@ function addSelectionOutlinePadding(bBox) {
   \*****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -12806,6 +14771,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'selectionVisuals', 'selectionBehavior' ],
   __depends__: [
@@ -12826,7 +14794,6 @@ __webpack_require__.r(__webpack_exports__);
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -12834,6 +14801,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _translate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./translate */ "./node_modules/diagram-js/lib/i18n/translate/translate.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   translate: [ 'value', _translate__WEBPACK_IMPORTED_MODULE_0__["default"] ]
 });
@@ -12846,13 +14817,14 @@ __webpack_require__.r(__webpack_exports__);
   \*****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ translate)
 /* harmony export */ });
 /**
- * @typedef {import('./').Replacements} Replacements
+ * @typedef { {
+ *   [key: string]: string;
+ * } } TranslateReplacements
  */
 
 /**
@@ -12862,14 +14834,16 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @example
  *
+ * ```javascript
  * // use it inside any diagram component by injecting `translate`.
  *
  * function MyService(translate) {
  *   alert(translate('HELLO {you}', { you: 'You!' }));
  * }
+ * ```
  *
  * @param {string} template to interpolate
- * @param {Replacements} [replacements] a map with substitutes
+ * @param {TranslateReplacements} [replacements] a map with substitutes
  *
  * @return {string} the translated string
  */
@@ -12890,25 +14864,26 @@ function translate(template, replacements) {
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "asBounds": () => (/* binding */ asBounds),
-/* harmony export */   "asTRBL": () => (/* binding */ asTRBL),
-/* harmony export */   "filterRedundantWaypoints": () => (/* binding */ filterRedundantWaypoints),
-/* harmony export */   "getBoundsMid": () => (/* binding */ getBoundsMid),
-/* harmony export */   "getConnectionMid": () => (/* binding */ getConnectionMid),
-/* harmony export */   "getElementLineIntersection": () => (/* binding */ getElementLineIntersection),
-/* harmony export */   "getIntersections": () => (/* binding */ getIntersections),
-/* harmony export */   "getMid": () => (/* binding */ getMid),
-/* harmony export */   "getOrientation": () => (/* binding */ getOrientation),
-/* harmony export */   "roundBounds": () => (/* binding */ roundBounds),
-/* harmony export */   "roundPoint": () => (/* binding */ roundPoint)
+/* harmony export */   asBounds: () => (/* binding */ asBounds),
+/* harmony export */   asTRBL: () => (/* binding */ asTRBL),
+/* harmony export */   filterRedundantWaypoints: () => (/* binding */ filterRedundantWaypoints),
+/* harmony export */   getBoundsMid: () => (/* binding */ getBoundsMid),
+/* harmony export */   getConnectionMid: () => (/* binding */ getConnectionMid),
+/* harmony export */   getElementLineIntersection: () => (/* binding */ getElementLineIntersection),
+/* harmony export */   getIntersections: () => (/* binding */ getIntersections),
+/* harmony export */   getMid: () => (/* binding */ getMid),
+/* harmony export */   getOrientation: () => (/* binding */ getOrientation),
+/* harmony export */   roundBounds: () => (/* binding */ roundBounds),
+/* harmony export */   roundPoint: () => (/* binding */ roundPoint)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/Geometry */ "./node_modules/diagram-js/lib/util/Geometry.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/Geometry */ "./node_modules/diagram-js/lib/util/Geometry.js");
 /* harmony import */ var path_intersection__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! path-intersection */ "./node_modules/path-intersection/intersect.js");
-/* harmony import */ var path_intersection__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path_intersection__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/ModelUtil */ "./node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
 
 
 
@@ -12916,14 +14891,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * @typedef {import('../model').Connection} Connection
+ * @typedef {import('../core/Types').ElementLike} Element
+ * @typedef {import('../core/Types').ConnectionLike} Connection
  *
  * @typedef {import('../util/Types').DirectionTRBL} DirectionTRBL
+ * @typedef {import('../util/Types').Intersection} Intersection
  * @typedef {import('../util/Types').Point} Point
  * @typedef {import('../util/Types').Rect} Rect
  * @typedef {import('../util/Types').RectTRBL} RectTRBL
  */
 
+/**
+ * @param {Rect} bounds
+ *
+ * @returns {Rect}
+ */
 function roundBounds(bounds) {
   return {
     x: Math.round(bounds.x),
@@ -12933,7 +14915,11 @@ function roundBounds(bounds) {
   };
 }
 
-
+/**
+ * @param {Point} point
+ *
+ * @returns {Point}
+ */
 function roundPoint(point) {
 
   return {
@@ -13054,12 +15040,12 @@ function getConnectionMid(connection) {
 /**
  * Get the mid of the given Element.
  *
- * @param {Connection} connection
+ * @param {Element} element
  *
  * @return {Point}
  */
 function getMid(element) {
-  if (isConnection(element)) {
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element)) {
     return getConnectionMid(element);
   }
 
@@ -13079,7 +15065,7 @@ function getMid(element) {
  * @param {Rect} reference
  * @param {Point|number} padding
  *
- * @return {DirectionTRBL} the orientation; one of top, top-left, left, ..., bottom, right or intersect.
+ * @return {DirectionTRBL|Intersection} the orientation; one of top, top-left, left, ..., bottom, right or intersect.
  */
 function getOrientation(rect, reference, padding) {
 
@@ -13087,7 +15073,7 @@ function getOrientation(rect, reference, padding) {
 
   // make sure we can use an object, too
   // for individual { x, y } padding
-  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isObject)(padding)) {
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_2__.isObject)(padding)) {
     padding = { x: padding, y: padding };
   }
 
@@ -13133,13 +15119,13 @@ function getElementLineIntersection(elementPath, linePath, cropStart) {
   // none -> ok (fallback to point itself)
   if (intersections.length === 1) {
     return roundPoint(intersections[0]);
-  } else if (intersections.length === 2 && (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointDistance)(intersections[0], intersections[1]) < 1) {
+  } else if (intersections.length === 2 && (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_3__.pointDistance)(intersections[0], intersections[1]) < 1) {
     return roundPoint(intersections[0]);
   } else if (intersections.length > 1) {
 
     // sort by intersections based on connection segment +
     // distance from start
-    intersections = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.sortBy)(intersections, function(i) {
+    intersections = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.sortBy)(intersections, function(i) {
       var distance = Math.floor(i.t2 * 100) || 1;
 
       distance = 100 - distance;
@@ -13160,7 +15146,7 @@ function getElementLineIntersection(elementPath, linePath, cropStart) {
 
 
 function getIntersections(a, b) {
-  return path_intersection__WEBPACK_IMPORTED_MODULE_0___default()(a, b);
+  return (0,path_intersection__WEBPACK_IMPORTED_MODULE_0__["default"])(a, b);
 }
 
 
@@ -13179,8 +15165,8 @@ function filterRedundantWaypoints(waypoints) {
     previousPoint = waypoints[idx - 1];
     nextPoint = waypoints[idx + 1];
 
-    if ((0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointDistance)(point, nextPoint) === 0 ||
-        (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointsOnLine)(previousPoint, nextPoint, point)) {
+    if ((0,_util_Geometry__WEBPACK_IMPORTED_MODULE_3__.pointDistance)(point, nextPoint) === 0 ||
+        (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_3__.pointsOnLine)(previousPoint, nextPoint, point)) {
 
       // remove point, if overlapping with {nextPoint}
       // or on line with {previousPoint} -> {point} -> {nextPoint}
@@ -13199,10 +15185,6 @@ function distance(a, b) {
   return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 }
 
-function isConnection(element) {
-  return !!element.waypoints;
-}
-
 /***/ }),
 
 /***/ "./node_modules/diagram-js/lib/model/index.js":
@@ -13211,44 +15193,45 @@ function isConnection(element) {
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Base": () => (/* binding */ Base),
-/* harmony export */   "Connection": () => (/* binding */ Connection),
-/* harmony export */   "Label": () => (/* binding */ Label),
-/* harmony export */   "Root": () => (/* binding */ Root),
-/* harmony export */   "Shape": () => (/* binding */ Shape),
-/* harmony export */   "create": () => (/* binding */ create)
+/* harmony export */   create: () => (/* binding */ create),
+/* harmony export */   isModelElement: () => (/* binding */ isModelElement)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "./node_modules/inherits-browser/dist/index.es.js");
-/* harmony import */ var object_refs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! object-refs */ "./node_modules/object-refs/index.js");
-/* harmony import */ var object_refs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(object_refs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var object_refs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! object-refs */ "./node_modules/object-refs/dist/index.js");
 
 
 
 
 
-var parentRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'children', enumerable: true, collection: true }, { name: 'parent' }),
-    labelRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'labels', enumerable: true, collection: true }, { name: 'labelTarget' }),
-    attacherRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'attachers', collection: true }, { name: 'host' }),
-    outgoingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'outgoing', collection: true }, { name: 'source' }),
-    incomingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'incoming', collection: true }, { name: 'target' });
+var parentRefs = new object_refs__WEBPACK_IMPORTED_MODULE_0__.Refs({ name: 'children', enumerable: true, collection: true }, { name: 'parent' }),
+    labelRefs = new object_refs__WEBPACK_IMPORTED_MODULE_0__.Refs({ name: 'labels', enumerable: true, collection: true }, { name: 'labelTarget' }),
+    attacherRefs = new object_refs__WEBPACK_IMPORTED_MODULE_0__.Refs({ name: 'attachers', collection: true }, { name: 'host' }),
+    outgoingRefs = new object_refs__WEBPACK_IMPORTED_MODULE_0__.Refs({ name: 'outgoing', collection: true }, { name: 'source' }),
+    incomingRefs = new object_refs__WEBPACK_IMPORTED_MODULE_0__.Refs({ name: 'incoming', collection: true }, { name: 'target' });
+
+/**
+ * @typedef {import('./Types').Element} Element
+ * @typedef {import('./Types').Shape} Shape
+ * @typedef {import('./Types').Root} Root
+ * @typedef {import('./Types').Label} Label
+ * @typedef {import('./Types').Connection} Connection
+ */
 
 /**
  * The basic graphical representation
  *
  * @class
- *
- * @abstract
+ * @constructor
  */
-function Base() {
+function ElementImpl() {
 
   /**
    * The object that backs up the shape
    *
-   * @name Base#businessObject
+   * @name Element#businessObject
    * @type Object
    */
   Object.defineProperty(this, 'businessObject', {
@@ -13259,7 +15242,7 @@ function Base() {
   /**
    * Single label support, will mapped to multi label array
    *
-   * @name Base#label
+   * @name Element#label
    * @type Object
    */
   Object.defineProperty(this, 'label', {
@@ -13282,7 +15265,7 @@ function Base() {
   /**
    * The parent shape
    *
-   * @name Base#parent
+   * @name Element#parent
    * @type Shape
    */
   parentRefs.bind(this, 'parent');
@@ -13290,7 +15273,7 @@ function Base() {
   /**
    * The list of labels
    *
-   * @name Base#labels
+   * @name Element#labels
    * @type Label
    */
   labelRefs.bind(this, 'labels');
@@ -13298,7 +15281,7 @@ function Base() {
   /**
    * The list of outgoing connections
    *
-   * @name Base#outgoing
+   * @name Element#outgoing
    * @type Array<Connection>
    */
   outgoingRefs.bind(this, 'outgoing');
@@ -13306,7 +15289,7 @@ function Base() {
   /**
    * The list of incoming connections
    *
-   * @name Base#incoming
+   * @name Element#incoming
    * @type Array<Connection>
    */
   incomingRefs.bind(this, 'incoming');
@@ -13319,40 +15302,40 @@ function Base() {
  * @class
  * @constructor
  *
- * @extends Base
+ * @extends ElementImpl
  */
-function Shape() {
-  Base.call(this);
+function ShapeImpl() {
+  ElementImpl.call(this);
 
   /**
    * Indicates frame shapes
    *
-   * @name Shape#isFrame
+   * @name ShapeImpl#isFrame
    * @type boolean
    */
 
   /**
    * The list of children
    *
-   * @name Shape#children
-   * @type Array<Base>
+   * @name ShapeImpl#children
+   * @type Element[]
    */
   parentRefs.bind(this, 'children');
 
   /**
-   * @name Shape#host
+   * @name ShapeImpl#host
    * @type Shape
    */
   attacherRefs.bind(this, 'host');
 
   /**
-   * @name Shape#attachers
+   * @name ShapeImpl#attachers
    * @type Shape
    */
   attacherRefs.bind(this, 'attachers');
 }
 
-(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Shape, Base);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(ShapeImpl, ElementImpl);
 
 
 /**
@@ -13361,13 +15344,21 @@ function Shape() {
  * @class
  * @constructor
  *
- * @extends Shape
+ * @extends ElementImpl
  */
-function Root() {
-  Shape.call(this);
+function RootImpl() {
+  ElementImpl.call(this);
+
+  /**
+   * The list of children
+   *
+   * @name RootImpl#children
+   * @type Element[]
+   */
+  parentRefs.bind(this, 'children');
 }
 
-(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Root, Shape);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(RootImpl, ShapeImpl);
 
 
 /**
@@ -13376,21 +15367,21 @@ function Root() {
  * @class
  * @constructor
  *
- * @extends Shape
+ * @extends ShapeImpl
  */
-function Label() {
-  Shape.call(this);
+function LabelImpl() {
+  ShapeImpl.call(this);
 
   /**
    * The labeled element
    *
-   * @name Label#labelTarget
-   * @type Base
+   * @name LabelImpl#labelTarget
+   * @type Element
    */
   labelRefs.bind(this, 'labelTarget');
 }
 
-(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Label, Shape);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(LabelImpl, ShapeImpl);
 
 
 /**
@@ -13399,45 +15390,70 @@ function Label() {
  * @class
  * @constructor
  *
- * @extends Base
+ * @extends ElementImpl
  */
-function Connection() {
-  Base.call(this);
+function ConnectionImpl() {
+  ElementImpl.call(this);
 
   /**
    * The element this connection originates from
    *
-   * @name Connection#source
-   * @type Base
+   * @name ConnectionImpl#source
+   * @type Element
    */
   outgoingRefs.bind(this, 'source');
 
   /**
    * The element this connection points to
    *
-   * @name Connection#target
-   * @type Base
+   * @name ConnectionImpl#target
+   * @type Element
    */
   incomingRefs.bind(this, 'target');
 }
 
-(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Connection, Base);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(ConnectionImpl, ElementImpl);
 
 
 var types = {
-  connection: Connection,
-  shape: Shape,
-  label: Label,
-  root: Root
+  connection: ConnectionImpl,
+  shape: ShapeImpl,
+  label: LabelImpl,
+  root: RootImpl
 };
 
 /**
- * Creates a model element of the given type.
+ * Creates a root element.
  *
- * @method create
+ * @overlord
  *
  * @example
  *
+ * ```javascript
+ * import * as Model from 'diagram-js/lib/model';
+ *
+ * const root = Model.create('root', {
+ *   x: 100,
+ *   y: 100,
+ *   width: 100,
+ *   height: 100
+ * });
+ * ```
+ *
+ * @param {'root'} type
+ * @param {any} [attrs]
+ *
+ * @return {Root}
+ */
+
+/**
+ * Creates a connection.
+ *
+ * @overlord
+ *
+ * @example
+ *
+ * ```javascript
  * import * as Model from 'diagram-js/lib/model';
  *
  * const connection = Model.create('connection', {
@@ -13446,6 +15462,45 @@ var types = {
  *     { x: 200, y: 100 }
  *   ]
  * });
+ * ```
+ *
+ * @param {'connection'} type
+ * @param {any} [attrs]
+ *
+ * @return {Connection}
+ */
+
+/**
+ * Creates a shape.
+ *
+ * @overlord
+ *
+ * @example
+ *
+ * ```javascript
+ * import * as Model from 'diagram-js/lib/model';
+ *
+ * const shape = Model.create('shape', {
+ *   x: 100,
+ *   y: 100,
+ *   width: 100,
+ *   height: 100
+ * });
+ * ```
+ *
+ * @param {'shape'} type
+ * @param {any} [attrs]
+ *
+ * @return {Shape}
+ */
+
+/**
+ * Creates a label.
+ *
+ * @example
+ *
+ * ```javascript
+ * import * as Model from 'diagram-js/lib/model';
  *
  * const label = Model.create('label', {
  *   x: 100,
@@ -13454,25 +15509,12 @@ var types = {
  *   height: 100,
  *   labelTarget: shape
  * });
+ * ```
  *
- * const root = Model.create('root', {
- *   x: 100,
- *   y: 100,
- *   width: 100,
- *   height: 100
- * });
+ * @param {'label'} type
+ * @param {Object} [attrs]
  *
- * const shape = Model.create('shape', {
- *   x: 100,
- *   y: 100,
- *   width: 100,
- *   height: 100
- * });
- *
- * @param {string} type The type of model element to be created.
- * @param {Object} attrs Attributes to create the model element with.
- *
- * @return {Connection|Label|Root|Shape} The created model element.
+ * @return {Label}
  */
 function create(type, attrs) {
   var Type = types[type];
@@ -13480,6 +15522,17 @@ function create(type, attrs) {
     throw new Error('unknown type: <' + type + '>');
   }
   return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(new Type(), attrs);
+}
+
+/**
+ * Checks whether an object is a model instance.
+ *
+ * @param {any} obj
+ *
+ * @return {boolean}
+ */
+function isModelElement(obj) {
+  return obj instanceof ElementImpl;
 }
 
 /***/ }),
@@ -13490,7 +15543,6 @@ function create(type, attrs) {
   \*************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MoveCanvas)
@@ -13637,7 +15689,6 @@ function length(point) {
   \********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -13645,6 +15696,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MoveCanvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MoveCanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/MoveCanvas.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'moveCanvas' ],
   moveCanvas: [ 'type', _MoveCanvas__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -13658,15 +15713,17 @@ __webpack_require__.r(__webpack_exports__);
   \*************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ZoomScroll)
 /* harmony export */ });
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _ZoomUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ZoomUtil */ "./node_modules/diagram-js/lib/navigation/zoomscroll/ZoomUtil.js");
-/* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Math */ "./node_modules/diagram-js/lib/util/Math.js");
+/* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/Math */ "./node_modules/diagram-js/lib/util/Math.js");
+/* harmony import */ var _util_Platform__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Platform */ "./node_modules/diagram-js/lib/util/Platform.js");
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+
+
 
 
 
@@ -13678,6 +15735,9 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * @typedef {import('../../core/Canvas').default} Canvas
  * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ * @typedef {import('../../util/Types').ScrollDelta} ScrollDelta
  */
 
 var sign = Math.sign || function(n) {
@@ -13731,6 +15791,9 @@ ZoomScroll.$inject = [
   'canvas'
 ];
 
+/**
+ * @param {ScrollDelta} delta
+ */
 ZoomScroll.prototype.scroll = function scroll(delta) {
   this._canvas.scroll(delta);
 };
@@ -13744,7 +15807,7 @@ ZoomScroll.prototype.reset = function reset() {
  * Zoom depending on delta.
  *
  * @param {number} delta
- * @param {Object} position
+ * @param {Point} position
  */
 ZoomScroll.prototype.zoom = function zoom(delta, position) {
 
@@ -13777,7 +15840,7 @@ ZoomScroll.prototype._handleWheel = function handleWheel(event) {
   // pinch to zoom is mapped to wheel + ctrlKey = true
   // in modern browsers (!)
 
-  var isZoom = event.ctrlKey;
+  var isZoom = event.ctrlKey || ((0,_util_Platform__WEBPACK_IMPORTED_MODULE_3__.isMac)() && event.metaKey);
 
   var isHorizontalScroll = event.shiftKey;
 
@@ -13828,8 +15891,8 @@ ZoomScroll.prototype._handleWheel = function handleWheel(event) {
 /**
  * Zoom with fixed step size.
  *
- * @param {number} delta - Zoom delta (1 for zooming in, -1 for out).
- * @param {Object} position
+ * @param {number} delta Zoom delta (1 for zooming in, -1 for zooming out).
+ * @param {Point} [position]
  */
 ZoomScroll.prototype.stepZoom = function stepZoom(delta, position) {
 
@@ -13843,7 +15906,7 @@ ZoomScroll.prototype.stepZoom = function stepZoom(delta, position) {
  * Zoom in/out given a step size.
  *
  * @param {number} delta
- * @param {Object} position
+ * @param {Point} [position]
  * @param {number} stepSize
  */
 ZoomScroll.prototype._zoom = function(delta, position, stepSize) {
@@ -13851,7 +15914,7 @@ ZoomScroll.prototype._zoom = function(delta, position, stepSize) {
 
   var direction = delta > 0 ? 1 : -1;
 
-  var currentLinearZoomLevel = (0,_util_Math__WEBPACK_IMPORTED_MODULE_3__.log10)(canvas.zoom());
+  var currentLinearZoomLevel = (0,_util_Math__WEBPACK_IMPORTED_MODULE_4__.log10)(canvas.zoom());
 
   // snap to a proximate zoom step
   var newLinearZoomLevel = Math.round(currentLinearZoomLevel / stepSize) * stepSize;
@@ -13910,11 +15973,10 @@ ZoomScroll.prototype._init = function(newEnabled) {
   \***********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "cap": () => (/* binding */ cap),
-/* harmony export */   "getStepSize": () => (/* binding */ getStepSize)
+/* harmony export */   cap: () => (/* binding */ cap),
+/* harmony export */   getStepSize: () => (/* binding */ getStepSize)
 /* harmony export */ });
 /* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Math */ "./node_modules/diagram-js/lib/util/Math.js");
 
@@ -13925,6 +15987,7 @@ __webpack_require__.r(__webpack_exports__);
  * @param {Object} range
  * @param {number} range.min
  * @param {number} range.max
+ * @param {number} steps
  */
 function getStepSize(range, steps) {
 
@@ -13936,6 +15999,12 @@ function getStepSize(range, steps) {
   return absoluteLinearRange / steps;
 }
 
+/**
+ * @param {Object} range
+ * @param {number} range.min
+ * @param {number} range.max
+ * @param {number} scale
+ */
 function cap(range, scale) {
   return Math.max(range.min, Math.min(range.max, scale));
 }
@@ -13949,7 +16018,6 @@ function cap(range, scale) {
   \********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -13957,6 +16025,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ZoomScroll__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ZoomScroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/ZoomScroll.js");
 
 
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: [ 'zoomScroll' ],
   zoomScroll: [ 'type', _ZoomScroll__WEBPACK_IMPORTED_MODULE_0__["default"] ]
@@ -13970,17 +16042,23 @@ __webpack_require__.r(__webpack_exports__);
   \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "install": () => (/* binding */ install)
+/* harmony export */   install: () => (/* binding */ install)
 /* harmony export */ });
+/**
+ * @typedef {import('../core/EventBus').default} EventBus
+ */
+
 var TRAP_PRIORITY = 5000;
 
 /**
  * Installs a click trap that prevents a ghost click following a dragging operation.
  *
- * @return {Function} a function to immediately remove the installed trap.
+ * @param {EventBus} eventBus
+ * @param {string} [eventName='element.click']
+ *
+ * @return {() => void} a function to immediately remove the installed trap.
  */
 function install(eventBus, eventName) {
 
@@ -14005,12 +16083,11 @@ function install(eventBus, eventName) {
   \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "add": () => (/* binding */ add),
-/* harmony export */   "indexOf": () => (/* binding */ indexOf),
-/* harmony export */   "remove": () => (/* binding */ remove)
+/* harmony export */   add: () => (/* binding */ add),
+/* harmony export */   indexOf: () => (/* binding */ indexOf),
+/* harmony export */   remove: () => (/* binding */ remove)
 /* harmony export */ });
 /**
  * Failsafe remove an element from a collection
@@ -14041,7 +16118,7 @@ function remove(collection, element) {
  *
  * @param {Array<Object>} collection
  * @param {Object} element
- * @param {number} idx
+ * @param {number} [idx]
  */
 function add(collection, element, idx) {
 
@@ -14114,19 +16191,20 @@ function indexOf(collection, element) {
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "has": () => (/* binding */ has),
-/* harmony export */   "set": () => (/* binding */ set),
-/* harmony export */   "unset": () => (/* binding */ unset)
+/* harmony export */   has: () => (/* binding */ has),
+/* harmony export */   set: () => (/* binding */ set),
+/* harmony export */   unset: () => (/* binding */ unset)
 /* harmony export */ });
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 
 
 var CURSOR_CLS_PATTERN = /^djs-cursor-.*$/;
 
-
+/**
+ * @param {string} mode
+ */
 function set(mode) {
   var classes = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(document.body);
 
@@ -14141,6 +16219,11 @@ function unset() {
   set(null);
 }
 
+/**
+ * @param {string} mode
+ *
+ * @return {boolean}
+ */
 function has(mode) {
   var classes = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(document.body);
 
@@ -14156,37 +16239,45 @@ function has(mode) {
   \******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "add": () => (/* binding */ add),
-/* harmony export */   "eachElement": () => (/* binding */ eachElement),
-/* harmony export */   "getBBox": () => (/* binding */ getBBox),
-/* harmony export */   "getClosure": () => (/* binding */ getClosure),
-/* harmony export */   "getEnclosedElements": () => (/* binding */ getEnclosedElements),
-/* harmony export */   "getParents": () => (/* binding */ getParents),
-/* harmony export */   "getType": () => (/* binding */ getType),
-/* harmony export */   "isFrameElement": () => (/* binding */ isFrameElement),
-/* harmony export */   "selfAndAllChildren": () => (/* binding */ selfAndAllChildren),
-/* harmony export */   "selfAndChildren": () => (/* binding */ selfAndChildren),
-/* harmony export */   "selfAndDirectChildren": () => (/* binding */ selfAndDirectChildren)
+/* harmony export */   add: () => (/* binding */ add),
+/* harmony export */   eachElement: () => (/* binding */ eachElement),
+/* harmony export */   getBBox: () => (/* binding */ getBBox),
+/* harmony export */   getClosure: () => (/* binding */ getClosure),
+/* harmony export */   getEnclosedElements: () => (/* binding */ getEnclosedElements),
+/* harmony export */   getParents: () => (/* binding */ getParents),
+/* harmony export */   getType: () => (/* binding */ getType),
+/* harmony export */   isFrameElement: () => (/* binding */ isFrameElement),
+/* harmony export */   selfAndAllChildren: () => (/* binding */ selfAndAllChildren),
+/* harmony export */   selfAndChildren: () => (/* binding */ selfAndChildren),
+/* harmony export */   selfAndDirectChildren: () => (/* binding */ selfAndDirectChildren)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
 /**
- * @typedef {import('../../model').Base} Base
- * @typedef {import('../../model').Shape} Shape
+ * @typedef {import('../model/Types').Connection} Connection
+ * @typedef {import('../model/Types').Element} Element
+ * @typedef {import('../model/Types').Shape} Shape
  *
- * @typedef {import('../../type/Types').Rect} Rect
+ * @typedef {import('../util/Types').Rect} Rect
+ *
+ * @typedef { {
+ *   allShapes: Record<string, Shape>,
+ *   allConnections: Record<string, Connection>,
+ *   topLevel: Record<string, Element>,
+ *   enclosedConnections: Record<string, Connection>,
+ *   enclosedElements: Record<string, Element>
+ * } } Closure
  */
 
 /**
  * Get parent elements.
  *
- * @param {Base[]} elements
+ * @param {Element[]} elements
  *
- * @returns {Base[]}
+ * @return {Element[]}
  */
 function getParents(elements) {
 
@@ -14221,14 +16312,14 @@ function getParent(element, parent) {
  * element was added.
  *
  * @param {Object[]} elements
- * @param {Object} e
- * @param {boolean} unique
+ * @param {Object} element
+ * @param {boolean} [unique]
  */
-function add(elements, e, unique) {
-  var canAdd = !unique || elements.indexOf(e) === -1;
+function add(elements, element, unique) {
+  var canAdd = !unique || elements.indexOf(element) === -1;
 
   if (canAdd) {
-    elements.push(e);
+    elements.push(element);
   }
 
   return canAdd;
@@ -14241,8 +16332,8 @@ function add(elements, e, unique) {
  *
  * Recurse into all elements that are returned by `fn`.
  *
- * @param {Object|Object[]} elements
- * @param {Function} fn iterator function called with (element, index, recursionDepth)
+ * @param {Element|Element[]} elements
+ * @param {(element: Element, index: number, depth: number) => Element[] | boolean | undefined} fn
  * @param {number} [depth] maximum recursion depth
  */
 function eachElement(elements, fn, depth) {
@@ -14266,11 +16357,11 @@ function eachElement(elements, fn, depth) {
 /**
  * Collects self + child elements up to a given depth from a list of elements.
  *
- * @param {Base|Base[]} elements the elements to select the children from
+ * @param {Element|Element[]} elements the elements to select the children from
  * @param {boolean} unique whether to return a unique result set (no duplicates)
  * @param {number} maxDepth the depth to search through or -1 for infinite
  *
- * @return {Base[]} found elements
+ * @return {Element[]} found elements
  */
 function selfAndChildren(elements, unique, maxDepth) {
   var result = [],
@@ -14297,10 +16388,10 @@ function selfAndChildren(elements, unique, maxDepth) {
 /**
  * Return self + direct children for a number of elements
  *
- * @param {Base[]} elements to query
- * @param {boolean} allowDuplicates to allow duplicates in the result set
+ * @param {Element[]} elements to query
+ * @param {boolean} [allowDuplicates] to allow duplicates in the result set
  *
- * @return {Base[]} the collected elements
+ * @return {Element[]} the collected elements
  */
 function selfAndDirectChildren(elements, allowDuplicates) {
   return selfAndChildren(elements, !allowDuplicates, 1);
@@ -14310,10 +16401,10 @@ function selfAndDirectChildren(elements, allowDuplicates) {
 /**
  * Return self + ALL children for a number of elements
  *
- * @param {Base[]} elements to query
- * @param {boolean} allowDuplicates to allow duplicates in the result set
+ * @param {Element[]} elements to query
+ * @param {boolean} [allowDuplicates] to allow duplicates in the result set
  *
- * @return {Base[]} the collected elements
+ * @return {Element[]} the collected elements
  */
 function selfAndAllChildren(elements, allowDuplicates) {
   return selfAndChildren(elements, !allowDuplicates, -1);
@@ -14324,11 +16415,11 @@ function selfAndAllChildren(elements, allowDuplicates) {
  * Gets the the closure for all selected elements,
  * their enclosed children and connections.
  *
- * @param {Base[]} elements
+ * @param {Element[]} elements
  * @param {boolean} [isTopLevel=true]
- * @param {Object} [existingClosure]
+ * @param {Closure} [closure]
  *
- * @return {Object} newClosure
+ * @return {Closure} newClosure
  */
 function getClosure(elements, isTopLevel, closure) {
 
@@ -14407,7 +16498,7 @@ function getClosure(elements, isTopLevel, closure) {
  * Returns the surrounding bbox for all elements in
  * the array or the element primitive.
  *
- * @param {Base|Base[]} elements
+ * @param {Element|Element[]} elements
  * @param {boolean} [stopRecursion=false]
  *
  * @return {Rect}
@@ -14469,10 +16560,10 @@ function getBBox(elements, stopRecursion) {
  *   * If only bbox.x or bbox.y is specified, method return all elements with
  *     e.x > bbox.x or e.y > bbox.y
  *
- * @param {Base[]} elements List of Elements to search through
+ * @param {Element[]} elements List of Elements to search through
  * @param {Rect} bbox the enclosing bbox.
  *
- * @return {Base[]} enclosed elements
+ * @return {Element[]} enclosed elements
  */
 function getEnclosedElements(elements, bbox) {
 
@@ -14507,7 +16598,13 @@ function getEnclosedElements(elements, bbox) {
   return filteredElements;
 }
 
-
+/**
+ * Get the element's type
+ *
+ * @param {Element} element
+ *
+ * @return {'connection' | 'shape' | 'root'}
+ */
 function getType(element) {
 
   if ('waypoints' in element) {
@@ -14521,8 +16618,12 @@ function getType(element) {
   return 'root';
 }
 
+/**
+ * @param {Element} element
+ *
+ * @return {boolean}
+ */
 function isFrameElement(element) {
-
   return !!(element && element.isFrame);
 }
 
@@ -14532,6 +16633,7 @@ function copyObject(src1, src2) {
   return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, src1 || {}, src2 || {});
 }
 
+
 /***/ }),
 
 /***/ "./node_modules/diagram-js/lib/util/EscapeUtil.js":
@@ -14540,15 +16642,15 @@ function copyObject(src1, src2) {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "escapeCSS": () => (/* binding */ escapeCSS),
-/* harmony export */   "escapeHTML": () => (/* binding */ escapeHTML)
+/* harmony export */   escapeCSS: () => (/* binding */ escapeCSS),
+/* harmony export */   escapeHTML: () => (/* binding */ escapeHTML)
 /* harmony export */ });
 /**
  * @param {string} str
- * @returns {string}
+ *
+ * @return {string}
  */
 function escapeCSS(str) {
   return CSS.escape(str);
@@ -14562,6 +16664,11 @@ var HTML_ESCAPE_MAP = {
   '\'': '&#39;'
 };
 
+/**
+ * @param {string} str
+ *
+ * @return {string}
+ */
 function escapeHTML(str) {
   str = '' + str;
 
@@ -14579,13 +16686,16 @@ function escapeHTML(str) {
   \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getOriginal": () => (/* binding */ getOriginal),
-/* harmony export */   "stopPropagation": () => (/* binding */ stopPropagation),
-/* harmony export */   "toPoint": () => (/* binding */ toPoint)
+/* harmony export */   getOriginal: () => (/* binding */ getOriginal),
+/* harmony export */   stopPropagation: () => (/* binding */ stopPropagation),
+/* harmony export */   toPoint: () => (/* binding */ toPoint)
 /* harmony export */ });
+/**
+ * @typedef {import('../util/Types').Point} Point
+ */
+
 function __stopPropagation(event) {
   if (!event || typeof event.stopPropagation !== 'function') {
     return;
@@ -14594,18 +16704,28 @@ function __stopPropagation(event) {
   event.stopPropagation();
 }
 
-
+/**
+ * @param {import('../core/EventBus').Event} event
+ *
+ * @return {Event}
+ */
 function getOriginal(event) {
   return event.originalEvent || event.srcEvent;
 }
 
-
-function stopPropagation(event, immediate) {
-  __stopPropagation(event, immediate);
-  __stopPropagation(getOriginal(event), immediate);
+/**
+ * @param {Event|import('../core/EventBus').Event} event
+ */
+function stopPropagation(event) {
+  __stopPropagation(event);
+  __stopPropagation(getOriginal(event));
 }
 
-
+/**
+ * @param {Event} event
+ *
+ * @return {Point|null}
+ */
 function toPoint(event) {
 
   if (event.pointers && event.pointers.length) {
@@ -14630,15 +16750,14 @@ function toPoint(event) {
   \******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getMidPoint": () => (/* binding */ getMidPoint),
-/* harmony export */   "pointDistance": () => (/* binding */ pointDistance),
-/* harmony export */   "pointInRect": () => (/* binding */ pointInRect),
-/* harmony export */   "pointsAligned": () => (/* binding */ pointsAligned),
-/* harmony export */   "pointsAlignedOnAxis": () => (/* binding */ pointsAlignedOnAxis),
-/* harmony export */   "pointsOnLine": () => (/* binding */ pointsOnLine)
+/* harmony export */   getMidPoint: () => (/* binding */ getMidPoint),
+/* harmony export */   pointDistance: () => (/* binding */ pointDistance),
+/* harmony export */   pointInRect: () => (/* binding */ pointInRect),
+/* harmony export */   pointsAligned: () => (/* binding */ pointsAligned),
+/* harmony export */   pointsAlignedOnAxis: () => (/* binding */ pointsAlignedOnAxis),
+/* harmony export */   pointsOnLine: () => (/* binding */ pointsOnLine)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
@@ -14652,8 +16771,8 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Computes the distance between two points.
  *
- * @param {Point} p
- * @param {Point} q
+ * @param {Point} a
+ * @param {Point} b
  *
  * @return {number} The distance between the two points.
  */
@@ -14780,11 +16899,10 @@ function getMidPoint(p, q) {
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getChildren": () => (/* binding */ getChildren),
-/* harmony export */   "getVisual": () => (/* binding */ getVisual)
+/* harmony export */   getChildren: () => (/* binding */ getChildren),
+/* harmony export */   getVisual: () => (/* binding */ getVisual)
 /* harmony export */ });
 /**
  * SVGs for elements are generated by the {@link GraphicsFactory}.
@@ -14822,7 +16940,6 @@ function getChildren(gfx) {
   \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ IdGenerator)
@@ -14835,7 +16952,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * The ids can be customized via a given prefix and contain a random value to avoid collisions.
  *
- * @param {string} prefix a prefix to prepend to generated ids (for better readability)
+ * @param {string} [prefix] a prefix to prepend to generated ids (for better readability)
  */
 function IdGenerator(prefix) {
 
@@ -14846,7 +16963,7 @@ function IdGenerator(prefix) {
 /**
  * Returns a next unique ID.
  *
- * @returns {string} the id
+ * @return {string} the id
  */
 IdGenerator.prototype.next = function() {
   return this._prefix + (++this._counter);
@@ -14861,11 +16978,10 @@ IdGenerator.prototype.next = function() {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "log10": () => (/* binding */ log10),
-/* harmony export */   "substract": () => (/* reexport safe */ _PositionUtil__WEBPACK_IMPORTED_MODULE_0__.delta)
+/* harmony export */   log10: () => (/* binding */ log10),
+/* harmony export */   substract: () => (/* reexport safe */ _PositionUtil__WEBPACK_IMPORTED_MODULE_0__.delta)
 /* harmony export */ });
 /* harmony import */ var _PositionUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PositionUtil */ "./node_modules/diagram-js/lib/util/PositionUtil.js");
 /**
@@ -14882,22 +16998,71 @@ function log10(x) {
 
 /***/ }),
 
+/***/ "./node_modules/diagram-js/lib/util/ModelUtil.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/diagram-js/lib/util/ModelUtil.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isConnection: () => (/* binding */ isConnection),
+/* harmony export */   isLabel: () => (/* binding */ isLabel),
+/* harmony export */   isRoot: () => (/* binding */ isRoot)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * Checks whether a value is an instance of Connection.
+ *
+ * @param {any} value
+ *
+ * @return {boolean}
+ */
+function isConnection(value) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(value) && (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.has)(value, 'waypoints');
+}
+
+/**
+ * Checks whether a value is an instance of Label.
+ *
+ * @param {any} value
+ *
+ * @return {boolean}
+ */
+function isLabel(value) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(value) && (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.has)(value, 'labelTarget');
+}
+
+/**
+ * Checks whether a value is an instance of Root.
+ *
+ * @param {any} value
+ *
+ * @return {boolean}
+ */
+function isRoot(value) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(value) && (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNil)(value.parent);
+}
+
+/***/ }),
+
 /***/ "./node_modules/diagram-js/lib/util/Mouse.js":
 /*!***************************************************!*\
   !*** ./node_modules/diagram-js/lib/util/Mouse.js ***!
   \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "hasPrimaryModifier": () => (/* binding */ hasPrimaryModifier),
-/* harmony export */   "hasSecondaryModifier": () => (/* binding */ hasSecondaryModifier),
-/* harmony export */   "isAuxiliaryButton": () => (/* binding */ isAuxiliaryButton),
-/* harmony export */   "isButton": () => (/* binding */ isButton),
-/* harmony export */   "isMac": () => (/* reexport safe */ _Platform__WEBPACK_IMPORTED_MODULE_0__.isMac),
-/* harmony export */   "isPrimaryButton": () => (/* binding */ isPrimaryButton),
-/* harmony export */   "isSecondaryButton": () => (/* binding */ isSecondaryButton)
+/* harmony export */   hasPrimaryModifier: () => (/* binding */ hasPrimaryModifier),
+/* harmony export */   hasSecondaryModifier: () => (/* binding */ hasSecondaryModifier),
+/* harmony export */   isAuxiliaryButton: () => (/* binding */ isAuxiliaryButton),
+/* harmony export */   isButton: () => (/* binding */ isButton),
+/* harmony export */   isMac: () => (/* reexport safe */ _Platform__WEBPACK_IMPORTED_MODULE_0__.isMac),
+/* harmony export */   isPrimaryButton: () => (/* binding */ isPrimaryButton),
+/* harmony export */   isSecondaryButton: () => (/* binding */ isSecondaryButton)
 /* harmony export */ });
 /* harmony import */ var _Event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Event */ "./node_modules/diagram-js/lib/util/Event.js");
 /* harmony import */ var _Platform__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Platform */ "./node_modules/diagram-js/lib/util/Platform.js");
@@ -14907,28 +17072,54 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @param {MouseEvent} event
+ * @param {string} button
+ *
+ * @return {boolean}
+ */
 function isButton(event, button) {
   return ((0,_Event__WEBPACK_IMPORTED_MODULE_1__.getOriginal)(event) || event).button === button;
 }
 
+/**
+ * @param {MouseEvent} event
+ *
+ * @return {boolean}
+ */
 function isPrimaryButton(event) {
 
   // button === 0 -> left áka primary mouse button
   return isButton(event, 0);
 }
 
+/**
+ * @param {MouseEvent} event
+ *
+ * @return {boolean}
+ */
 function isAuxiliaryButton(event) {
 
   // button === 1 -> auxiliary áka wheel button
   return isButton(event, 1);
 }
 
+/**
+ * @param {MouseEvent} event
+ *
+ * @return {boolean}
+ */
 function isSecondaryButton(event) {
 
   // button === 2 -> right áka secondary button
   return isButton(event, 2);
 }
 
+/**
+ * @param {MouseEvent} event
+ *
+ * @return {boolean}
+ */
 function hasPrimaryModifier(event) {
   var originalEvent = (0,_Event__WEBPACK_IMPORTED_MODULE_1__.getOriginal)(event) || event;
 
@@ -14944,7 +17135,11 @@ function hasPrimaryModifier(event) {
   }
 }
 
-
+/**
+ * @param {MouseEvent} event
+ *
+ * @return {boolean}
+ */
 function hasSecondaryModifier(event) {
   var originalEvent = (0,_Event__WEBPACK_IMPORTED_MODULE_1__.getOriginal)(event) || event;
 
@@ -14960,10 +17155,9 @@ function hasSecondaryModifier(event) {
   \******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "isMac": () => (/* binding */ isMac)
+/* harmony export */   isMac: () => (/* binding */ isMac)
 /* harmony export */ });
 function isMac() {
   return (/mac/i).test(navigator.platform);
@@ -14977,12 +17171,20 @@ function isMac() {
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "center": () => (/* binding */ center),
-/* harmony export */   "delta": () => (/* binding */ delta)
+/* harmony export */   center: () => (/* binding */ center),
+/* harmony export */   delta: () => (/* binding */ delta)
 /* harmony export */ });
+/**
+ * @typedef {import('../util/Types').Point} Point
+ * @typedef {import('../util/Types').Rect} Rect
+ */
+
+/**
+ * @param {Rect} bounds
+ * @return {Point}
+ */
 function center(bounds) {
   return {
     x: bounds.x + (bounds.width / 2),
@@ -14991,12 +17193,18 @@ function center(bounds) {
 }
 
 
+/**
+ * @param {Point} a
+ * @param {Point} b
+ * @return {Point}
+ */
 function delta(a, b) {
   return {
     x: a.x - b.x,
     y: a.y - b.y
   };
 }
+
 
 /***/ }),
 
@@ -15006,16 +17214,16 @@ function delta(a, b) {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "componentsToPath": () => (/* binding */ componentsToPath),
-/* harmony export */   "createLine": () => (/* binding */ createLine),
-/* harmony export */   "toSVGPoints": () => (/* binding */ toSVGPoints),
-/* harmony export */   "updateLine": () => (/* binding */ updateLine)
+/* harmony export */   componentsToPath: () => (/* binding */ componentsToPath),
+/* harmony export */   createLine: () => (/* binding */ createLine),
+/* harmony export */   toSVGPoints: () => (/* binding */ toSVGPoints),
+/* harmony export */   updateLine: () => (/* binding */ updateLine)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
+
 
 
 
@@ -15027,7 +17235,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
- * @param {Component[]} elements
+ * @param {Component[] | Component[][]} elements
  *
  * @return {string}
  */
@@ -15035,6 +17243,11 @@ function componentsToPath(elements) {
   return elements.flat().join(',').replace(/,?([A-z]),?/g, '$1');
 }
 
+/**
+ * @param {Point[]} points
+ *
+ * @return {string}
+ */
 function toSVGPoints(points) {
   var result = '';
 
@@ -15045,18 +17258,40 @@ function toSVGPoints(points) {
   return result;
 }
 
+/**
+ * @param {Point} point
+ *
+ * @return {Component[]}
+ */
 function move(point) {
   return [ 'M', point.x, point.y ];
 }
 
+/**
+ * @param {Point} point
+ *
+ * @return {Component[]}
+ */
 function lineTo(point) {
   return [ 'L', point.x, point.y ];
 }
 
+/**
+ * @param {Point} p1
+ * @param {Point} p2
+ * @param {Point} p3
+ *
+ * @return {Component[]}
+ */
 function curveTo(p1, p2, p3) {
   return [ 'C', p1.x, p1.y, p2.x, p2.y, p3.x, p3.y ];
 }
 
+/**
+ * @param {Point[]} waypoints
+ * @param {number} [cornerRadius]
+ * @return {Component[][]}
+ */
 function drawPath(waypoints, cornerRadius) {
   const pointCount = waypoints.length;
 
@@ -15120,7 +17355,7 @@ function vectorLength(x, y) {
 
 /**
  * @param {Point[]} points
- * @param {*} [attrs]
+ * @param {number|Object} [attrs]
  * @param {number} [radius]
  *
  * @return {SVGElement}
@@ -15171,24 +17406,23 @@ function updateLine(gfx, points) {
   \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "rotate": () => (/* binding */ rotate),
-/* harmony export */   "scale": () => (/* binding */ scale),
-/* harmony export */   "transform": () => (/* binding */ transform),
-/* harmony export */   "translate": () => (/* binding */ translate)
+/* harmony export */   rotate: () => (/* binding */ rotate),
+/* harmony export */   scale: () => (/* binding */ scale),
+/* harmony export */   transform: () => (/* binding */ transform),
+/* harmony export */   translate: () => (/* binding */ translate)
 /* harmony export */ });
 /* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
 
 
 
 /**
- * @param {SVGElement} element
+ * @param {SVGElement} gfx
  * @param {number} x
  * @param {number} y
- * @param {number} angle
- * @param {number} amount
+ * @param {number} [angle]
+ * @param {number} [amount]
  */
 function transform(gfx, x, y, angle, amount) {
   var translate = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.createTransform)();
@@ -15205,7 +17439,7 @@ function transform(gfx, x, y, angle, amount) {
 
 
 /**
- * @param {SVGElement} element
+ * @param {SVGElement} gfx
  * @param {number} x
  * @param {number} y
  */
@@ -15218,7 +17452,7 @@ function translate(gfx, x, y) {
 
 
 /**
- * @param {SVGElement} element
+ * @param {SVGElement} gfx
  * @param {number} angle
  */
 function rotate(gfx, angle) {
@@ -15230,7 +17464,7 @@ function rotate(gfx, angle) {
 
 
 /**
- * @param {SVGElement} element
+ * @param {SVGElement} gfx
  * @param {number} amount
  */
 function scale(gfx, amount) {
@@ -15240,6 +17474,7 @@ function scale(gfx, amount) {
   (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.transform)(gfx, scale);
 }
 
+
 /***/ }),
 
 /***/ "./node_modules/diagram-js/lib/util/Text.js":
@@ -15248,7 +17483,6 @@ function scale(gfx, amount) {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Text)
@@ -15262,8 +17496,44 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * @typedef {import('../util/Types').Dimensions} Dimensions
+ *
+ * @typedef { {
+ *   top: number;
+ *   left: number;
+ *   right: number;
+ *   bottom: number;
+ * } } Padding
+ *
+ * @typedef { number | Partial<Padding> } PaddingConfig
+ *
+ * @typedef { {
+ *   horizontal: 'center' | 'left' | 'right';
+ *   vertical: 'top' | 'middle';
+ * } } Alignment
+ *
+ *  @typedef { 'center-middle' | 'center-top' } AlignmentConfig
+ *
+ * @typedef { Partial<{
+ *   align: AlignmentConfig;
+ *   style: Record<string, number | string>;
+ *   padding: PaddingConfig;
+ * }> } BaseTextConfig
+ *
+ * @typedef { BaseTextConfig & Partial<{
+ *   size: Dimensions;
+ * }> } TextConfig
+ *
+ * @typedef { BaseTextConfig & Partial<{
+ *   box: Dimensions;
+ *   fitBox: boolean;
+ * }> } TextLayoutConfig
+ *
+ *  @typedef { Dimensions & {
+ *  text: string;
+ * } } LineDescriptor
  */
 
 var DEFAULT_BOX_PADDING = 0;
@@ -15274,6 +17544,10 @@ var DEFAULT_LABEL_SIZE = {
 };
 
 
+/**
+ * @param {AlignmentConfig} align
+ * @return {Alignment}
+ */
 function parseAlign(align) {
 
   var parts = align.split('-');
@@ -15284,6 +17558,11 @@ function parseAlign(align) {
   };
 }
 
+/**
+ * @param {PaddingConfig} padding
+ *
+ * @return {Padding}
+ */
 function parsePadding(padding) {
 
   if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(padding)) {
@@ -15298,6 +17577,12 @@ function parsePadding(padding) {
   }
 }
 
+/**
+ * @param {string} text
+ * @param {SVGTextElement} fakeText
+ *
+ * @return {import('../util/Types').Dimensions}
+ */
 function getTextBBox(text, fakeText) {
 
   fakeText.textContent = text;
@@ -15340,8 +17625,10 @@ function getTextBBox(text, fakeText) {
  * Alters the lines passed.
  *
  * @param {string[]} lines
+ * @param {number} maxWidth
+ * @param {SVGTextElement} fakeText
  *
- * @return {Object} the line descriptor, an object { width, height, text }
+ * @return {LineDescriptor} the line descriptor
  */
 function layoutNext(lines, maxWidth, fakeText) {
 
@@ -15364,6 +17651,14 @@ function layoutNext(lines, maxWidth, fakeText) {
   }
 }
 
+/**
+ * @param {string[]} lines
+ * @param {string} fitLine
+ * @param {string} originalLine
+ * @param {Dimensions} textBBox
+ *
+ * @return {LineDescriptor}
+ */
 function fit(lines, fitLine, originalLine, textBBox) {
   if (fitLine.length < originalLine.length) {
     var remainder = originalLine.slice(fitLine.length).trim();
@@ -15427,6 +17722,13 @@ function semanticShorten(line, maxLength) {
 }
 
 
+/**
+ * @param {string} line
+ * @param {number} width
+ * @param {number} maxWidth
+ *
+ * @return {string}
+ */
 function shortenLine(line, width, maxWidth) {
   var length = Math.max(line.length * (maxWidth / width), 1);
 
@@ -15443,6 +17745,9 @@ function shortenLine(line, width, maxWidth) {
 }
 
 
+/**
+ * @return {SVGSVGElement}
+ */
 function getHelperSvg() {
   var helperSvg = document.getElementById('helper-svg');
 
@@ -15470,11 +17775,7 @@ function getHelperSvg() {
 /**
  * Creates a new label utility
  *
- * @param {Object} config
- * @param {Dimensions} config.size
- * @param {number} config.padding
- * @param {Object} config.style
- * @param {string} config.align
+ * @param {TextConfig} [config]
  */
 function Text(config) {
 
@@ -15490,7 +17791,7 @@ function Text(config) {
  * Returns the layouted text as an SVG element.
  *
  * @param {string} text
- * @param {Object} options
+ * @param {TextLayoutConfig} options
  *
  * @return {SVGElement}
  */
@@ -15502,7 +17803,7 @@ Text.prototype.createText = function(text, options) {
  * Returns a labels layouted dimensions.
  *
  * @param {string} text to layout
- * @param {Object} options
+ * @param {TextLayoutConfig} options
  *
  * @return {Dimensions}
  */
@@ -15513,18 +17814,13 @@ Text.prototype.getDimensions = function(text, options) {
 /**
  * Creates and returns a label and its bounding box.
  *
- * @method Text#createText
- *
  * @param {string} text the text to render on the label
- * @param {Object} options
- * @param {string} options.align how to align in the bounding box.
- *                               Any of { 'center-middle', 'center-top' },
- *                               defaults to 'center-top'.
- * @param {string} options.style style to be applied to the text
- * @param {boolean} options.fitBox indicates if box will be recalculated to
- *                                 fit text
+ * @param {TextLayoutConfig} options
  *
- * @return {Object} { element, dimensions }
+ * @return { {
+ *   element: SVGElement,
+ *   dimensions: Dimensions
+ * } }
  */
 Text.prototype.layoutText = function(text, options) {
   var box = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, this._config.size, options.box),
@@ -15635,487 +17931,6 @@ function getLineHeight(style) {
   }
 }
 
-/***/ }),
-
-/***/ "./node_modules/didi/dist/index.esm.js":
-/*!*********************************************!*\
-  !*** ./node_modules/didi/dist/index.esm.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Injector": () => (/* binding */ Injector),
-/* harmony export */   "annotate": () => (/* binding */ annotate),
-/* harmony export */   "parseAnnotations": () => (/* binding */ parseAnnotations)
-/* harmony export */ });
-const CLASS_PATTERN = /^class[ {]/;
-
-
-/**
- * @param {function} fn
- *
- * @return {boolean}
- */
-function isClass(fn) {
-  return CLASS_PATTERN.test(fn.toString());
-}
-
-/**
- * @param {any} obj
- *
- * @return {boolean}
- */
-function isArray(obj) {
-  return Array.isArray(obj);
-}
-
-/**
- * @param {any} obj
- * @param {string} prop
- *
- * @return {boolean}
- */
-function hasOwnProp(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-/**
- * @typedef {import('./index').InjectAnnotated } InjectAnnotated
- */
-
-/**
- * @template T
- *
- * @params {[...string[], T] | ...string[], T} args
- *
- * @return {T & InjectAnnotated}
- */
-function annotate(...args) {
-
-  if (args.length === 1 && isArray(args[0])) {
-    args = args[0];
-  }
-
-  args = [ ...args ];
-
-  const fn = args.pop();
-
-  fn.$inject = args;
-
-  return fn;
-}
-
-
-// Current limitations:
-// - can't put into "function arg" comments
-// function /* (no parenthesis like this) */ (){}
-// function abc( /* xx (no parenthesis like this) */ a, b) {}
-//
-// Just put the comment before function or inside:
-// /* (((this is fine))) */ function(a, b) {}
-// function abc(a) { /* (((this is fine))) */}
-//
-// - can't reliably auto-annotate constructor; we'll match the
-// first constructor(...) pattern found which may be the one
-// of a nested class, too.
-
-const CONSTRUCTOR_ARGS = /constructor\s*[^(]*\(\s*([^)]*)\)/m;
-const FN_ARGS = /^(?:async\s+)?(?:function\s*[^(]*)?(?:\(\s*([^)]*)\)|(\w+))/m;
-const FN_ARG = /\/\*([^*]*)\*\//m;
-
-/**
- * @param {unknown} fn
- *
- * @return {string[]}
- */
-function parseAnnotations(fn) {
-
-  if (typeof fn !== 'function') {
-    throw new Error(`Cannot annotate "${fn}". Expected a function!`);
-  }
-
-  const match = fn.toString().match(isClass(fn) ? CONSTRUCTOR_ARGS : FN_ARGS);
-
-  // may parse class without constructor
-  if (!match) {
-    return [];
-  }
-
-  const args = match[1] || match[2];
-
-  return args && args.split(',').map(arg => {
-    const argMatch = arg.match(FN_ARG);
-    return (argMatch && argMatch[1] || arg).trim();
-  }) || [];
-}
-
-/**
- * @typedef { import('./index').ModuleDeclaration } ModuleDeclaration
- * @typedef { import('./index').ModuleDefinition } ModuleDefinition
- * @typedef { import('./index').InjectorContext } InjectorContext
- */
-
-/**
- * Create a new injector with the given modules.
- *
- * @param {ModuleDefinition[]} modules
- * @param {InjectorContext} [parent]
- */
-function Injector(modules, parent) {
-  parent = parent || {
-    get: function(name, strict) {
-      currentlyResolving.push(name);
-
-      if (strict === false) {
-        return null;
-      } else {
-        throw error(`No provider for "${ name }"!`);
-      }
-    }
-  };
-
-  const currentlyResolving = [];
-  const providers = this._providers = Object.create(parent._providers || null);
-  const instances = this._instances = Object.create(null);
-
-  const self = instances.injector = this;
-
-  const error = function(msg) {
-    const stack = currentlyResolving.join(' -> ');
-    currentlyResolving.length = 0;
-    return new Error(stack ? `${ msg } (Resolving: ${ stack })` : msg);
-  };
-
-  /**
-   * Return a named service.
-   *
-   * @param {string} name
-   * @param {boolean} [strict=true] if false, resolve missing services to null
-   *
-   * @return {any}
-   */
-  function get(name, strict) {
-    if (!providers[name] && name.indexOf('.') !== -1) {
-      const parts = name.split('.');
-      let pivot = get(parts.shift());
-
-      while (parts.length) {
-        pivot = pivot[parts.shift()];
-      }
-
-      return pivot;
-    }
-
-    if (hasOwnProp(instances, name)) {
-      return instances[name];
-    }
-
-    if (hasOwnProp(providers, name)) {
-      if (currentlyResolving.indexOf(name) !== -1) {
-        currentlyResolving.push(name);
-        throw error('Cannot resolve circular dependency!');
-      }
-
-      currentlyResolving.push(name);
-      instances[name] = providers[name][0](providers[name][1]);
-      currentlyResolving.pop();
-
-      return instances[name];
-    }
-
-    return parent.get(name, strict);
-  }
-
-  function fnDef(fn, locals) {
-
-    if (typeof locals === 'undefined') {
-      locals = {};
-    }
-
-    if (typeof fn !== 'function') {
-      if (isArray(fn)) {
-        fn = annotate(fn.slice());
-      } else {
-        throw error(`Cannot invoke "${ fn }". Expected a function!`);
-      }
-    }
-
-    const inject = fn.$inject || parseAnnotations(fn);
-    const dependencies = inject.map(dep => {
-      if (hasOwnProp(locals, dep)) {
-        return locals[dep];
-      } else {
-        return get(dep);
-      }
-    });
-
-    return {
-      fn: fn,
-      dependencies: dependencies
-    };
-  }
-
-  function instantiate(Type) {
-    const {
-      fn,
-      dependencies
-    } = fnDef(Type);
-
-    // instantiate var args constructor
-    const Constructor = Function.prototype.bind.apply(fn, [ null ].concat(dependencies));
-
-    return new Constructor();
-  }
-
-  function invoke(func, context, locals) {
-    const {
-      fn,
-      dependencies
-    } = fnDef(func, locals);
-
-    return fn.apply(context, dependencies);
-  }
-
-  /**
-   * @param {Injector} childInjector
-   *
-   * @return {Function}
-   */
-  function createPrivateInjectorFactory(childInjector) {
-    return annotate(key => childInjector.get(key));
-  }
-
-  /**
-   * @param {ModuleDefinition[]} modules
-   * @param {string[]} [forceNewInstances]
-   *
-   * @return {Injector}
-   */
-  function createChild(modules, forceNewInstances) {
-    if (forceNewInstances && forceNewInstances.length) {
-      const fromParentModule = Object.create(null);
-      const matchedScopes = Object.create(null);
-
-      const privateInjectorsCache = [];
-      const privateChildInjectors = [];
-      const privateChildFactories = [];
-
-      let provider;
-      let cacheIdx;
-      let privateChildInjector;
-      let privateChildInjectorFactory;
-
-      for (let name in providers) {
-        provider = providers[name];
-
-        if (forceNewInstances.indexOf(name) !== -1) {
-          if (provider[2] === 'private') {
-            cacheIdx = privateInjectorsCache.indexOf(provider[3]);
-            if (cacheIdx === -1) {
-              privateChildInjector = provider[3].createChild([], forceNewInstances);
-              privateChildInjectorFactory = createPrivateInjectorFactory(privateChildInjector);
-              privateInjectorsCache.push(provider[3]);
-              privateChildInjectors.push(privateChildInjector);
-              privateChildFactories.push(privateChildInjectorFactory);
-              fromParentModule[name] = [ privateChildInjectorFactory, name, 'private', privateChildInjector ];
-            } else {
-              fromParentModule[name] = [ privateChildFactories[cacheIdx], name, 'private', privateChildInjectors[cacheIdx] ];
-            }
-          } else {
-            fromParentModule[name] = [ provider[2], provider[1] ];
-          }
-          matchedScopes[name] = true;
-        }
-
-        if ((provider[2] === 'factory' || provider[2] === 'type') && provider[1].$scope) {
-          /* jshint -W083 */
-          forceNewInstances.forEach(scope => {
-            if (provider[1].$scope.indexOf(scope) !== -1) {
-              fromParentModule[name] = [ provider[2], provider[1] ];
-              matchedScopes[scope] = true;
-            }
-          });
-        }
-      }
-
-      forceNewInstances.forEach(scope => {
-        if (!matchedScopes[scope]) {
-          throw new Error('No provider for "' + scope + '". Cannot use provider from the parent!');
-        }
-      });
-
-      modules.unshift(fromParentModule);
-    }
-
-    return new Injector(modules, self);
-  }
-
-  const factoryMap = {
-    factory: invoke,
-    type: instantiate,
-    value: function(value) {
-      return value;
-    }
-  };
-
-  /**
-   * @param {ModuleDefinition} moduleDefinition
-   * @param {Injector} injector
-   */
-  function createInitializer(moduleDefinition, injector) {
-
-    const initializers = moduleDefinition.__init__ || [];
-
-    return function() {
-      initializers.forEach(initializer => {
-
-        // eagerly resolve component (fn or string)
-        if (typeof initializer === 'string') {
-          injector.get(initializer);
-        } else {
-          injector.invoke(initializer);
-        }
-      });
-    };
-  }
-
-  /**
-   * @param {ModuleDefinition} moduleDefinition
-   */
-  function loadModule(moduleDefinition) {
-
-    const moduleExports = moduleDefinition.__exports__;
-
-    // private module
-    if (moduleExports) {
-      const nestedModules = moduleDefinition.__modules__;
-
-      const clonedModule = Object.keys(moduleDefinition).reduce((clonedModule, key) => {
-
-        if (key !== '__exports__' && key !== '__modules__' && key !== '__init__' && key !== '__depends__') {
-          clonedModule[key] = moduleDefinition[key];
-        }
-
-        return clonedModule;
-      }, Object.create(null));
-
-      const childModules = (nestedModules || []).concat(clonedModule);
-
-      const privateInjector = createChild(childModules);
-      const getFromPrivateInjector = annotate(function(key) {
-        return privateInjector.get(key);
-      });
-
-      moduleExports.forEach(function(key) {
-        providers[key] = [ getFromPrivateInjector, key, 'private', privateInjector ];
-      });
-
-      // ensure child injector initializes
-      const initializers = (moduleDefinition.__init__ || []).slice();
-
-      initializers.unshift(function() {
-        privateInjector.init();
-      });
-
-      moduleDefinition = Object.assign({}, moduleDefinition, {
-        __init__: initializers
-      });
-
-      return createInitializer(moduleDefinition, privateInjector);
-    }
-
-    // normal module
-    Object.keys(moduleDefinition).forEach(function(key) {
-
-      if (key === '__init__' || key === '__depends__') {
-        return;
-      }
-
-      if (moduleDefinition[key][2] === 'private') {
-        providers[key] = moduleDefinition[key];
-        return;
-      }
-
-      const type = moduleDefinition[key][0];
-      const value = moduleDefinition[key][1];
-
-      providers[key] = [ factoryMap[type], arrayUnwrap(type, value), type ];
-    });
-
-    return createInitializer(moduleDefinition, self);
-  }
-
-  /**
-   * @param {ModuleDefinition[]} moduleDefinitions
-   * @param {ModuleDefinition} moduleDefinition
-   *
-   * @return {ModuleDefinition[]}
-   */
-  function resolveDependencies(moduleDefinitions, moduleDefinition) {
-
-    if (moduleDefinitions.indexOf(moduleDefinition) !== -1) {
-      return moduleDefinitions;
-    }
-
-    moduleDefinitions = (moduleDefinition.__depends__ || []).reduce(resolveDependencies, moduleDefinitions);
-
-    if (moduleDefinitions.indexOf(moduleDefinition) !== -1) {
-      return moduleDefinitions;
-    }
-
-    return moduleDefinitions.concat(moduleDefinition);
-  }
-
-  /**
-   * @param {ModuleDefinition[]} moduleDefinitions
-   *
-   * @return { () => void } initializerFn
-   */
-  function bootstrap(moduleDefinitions) {
-
-    const initializers = moduleDefinitions
-      .reduce(resolveDependencies, [])
-      .map(loadModule);
-
-    let initialized = false;
-
-    return function() {
-
-      if (initialized) {
-        return;
-      }
-
-      initialized = true;
-
-      initializers.forEach(initializer => initializer());
-    };
-  }
-
-  // public API
-  this.get = get;
-  this.invoke = invoke;
-  this.instantiate = instantiate;
-  this.createChild = createChild;
-
-  // setup
-  this.init = bootstrap(modules);
-}
-
-
-// helpers ///////////////
-
-function arrayUnwrap(type, value) {
-  if (type !== 'value' && isArray(value)) {
-    value = annotate(value.slice());
-  }
-
-  return value;
-}
-
-
-
 
 /***/ }),
 
@@ -16125,7 +17940,6 @@ function arrayUnwrap(type, value) {
   \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -16206,15 +18020,14 @@ hat.rack = function (bits, base, expandBy) {
  *
  * @param {Seed} seed
  */
-
 function Ids(seed) {
   if (!(this instanceof Ids)) {
     return new Ids(seed);
   }
-
   seed = seed || [128, 36, 1];
   this._seed = seed.length ? hat_1.rack(seed[0], seed[1], seed[2]) : seed;
 }
+
 /**
  * Generate a next id.
  *
@@ -16222,10 +18035,10 @@ function Ids(seed) {
  *
  * @return {String} id
  */
-
 Ids.prototype.next = function (element) {
   return this._seed(element || true);
 };
+
 /**
  * Generate a next id with a given prefix.
  *
@@ -16233,61 +18046,54 @@ Ids.prototype.next = function (element) {
  *
  * @return {String} id
  */
-
-
 Ids.prototype.nextPrefixed = function (prefix, element) {
   var id;
-
   do {
     id = prefix + this.next(true);
-  } while (this.assigned(id)); // claim {prefix}{random}
+  } while (this.assigned(id));
 
+  // claim {prefix}{random}
+  this.claim(id, element);
 
-  this.claim(id, element); // return
-
+  // return
   return id;
 };
+
 /**
  * Manually claim an existing id.
  *
  * @param {String} id
  * @param {String} [element] element the id is claimed by
  */
-
-
 Ids.prototype.claim = function (id, element) {
   this._seed.set(id, element || true);
 };
+
 /**
  * Returns true if the given id has already been assigned.
  *
  * @param  {String} id
  * @return {Boolean}
  */
-
-
 Ids.prototype.assigned = function (id) {
   return this._seed.get(id) || false;
 };
+
 /**
  * Unclaim an id.
  *
  * @param  {String} id the id to unclaim
  */
-
-
 Ids.prototype.unclaim = function (id) {
   delete this._seed.hats[id];
 };
+
 /**
  * Clear all claimed ids.
  */
-
-
 Ids.prototype.clear = function () {
   var hats = this._seed.hats,
-      id;
-
+    id;
   for (id in hats) {
     this.unclaim(id);
   }
@@ -16305,7 +18111,6 @@ Ids.prototype.clear = function () {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ e)
@@ -16322,21 +18127,20 @@ function e(e,t){t&&(e.super_=t,e.prototype=Object.create(t.prototype,{constructo
   \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assignStyle": () => (/* binding */ assign),
-/* harmony export */   "attr": () => (/* binding */ attr),
-/* harmony export */   "classes": () => (/* binding */ classes),
-/* harmony export */   "clear": () => (/* binding */ clear),
-/* harmony export */   "closest": () => (/* binding */ closest),
-/* harmony export */   "delegate": () => (/* binding */ delegate),
-/* harmony export */   "domify": () => (/* binding */ domify$1),
-/* harmony export */   "event": () => (/* binding */ event),
-/* harmony export */   "matches": () => (/* binding */ matches),
-/* harmony export */   "query": () => (/* binding */ query),
-/* harmony export */   "queryAll": () => (/* binding */ all),
-/* harmony export */   "remove": () => (/* binding */ remove)
+/* harmony export */   assignStyle: () => (/* binding */ assign),
+/* harmony export */   attr: () => (/* binding */ attr),
+/* harmony export */   classes: () => (/* binding */ classes),
+/* harmony export */   clear: () => (/* binding */ clear),
+/* harmony export */   closest: () => (/* binding */ closest),
+/* harmony export */   delegate: () => (/* binding */ delegate),
+/* harmony export */   domify: () => (/* binding */ domify$1),
+/* harmony export */   event: () => (/* binding */ event),
+/* harmony export */   matches: () => (/* binding */ matches),
+/* harmony export */   query: () => (/* binding */ query),
+/* harmony export */   queryAll: () => (/* binding */ all),
+/* harmony export */   remove: () => (/* binding */ remove)
 /* harmony export */ });
 function _mergeNamespaces(n, m) {
   m.forEach(function (e) {
@@ -16907,1309 +18711,16 @@ function remove(el) {
 
 /***/ }),
 
-/***/ "./node_modules/object-refs/index.js":
-/*!*******************************************!*\
-  !*** ./node_modules/object-refs/index.js ***!
-  \*******************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-module.exports = __webpack_require__(/*! ./lib/refs */ "./node_modules/object-refs/lib/refs.js");
-
-module.exports.Collection = __webpack_require__(/*! ./lib/collection */ "./node_modules/object-refs/lib/collection.js");
-
-/***/ }),
-
-/***/ "./node_modules/object-refs/lib/collection.js":
-/*!****************************************************!*\
-  !*** ./node_modules/object-refs/lib/collection.js ***!
-  \****************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * An empty collection stub. Use {@link RefsCollection.extend} to extend a
- * collection with ref semantics.
- *
- * @class RefsCollection
- */
-
-/**
- * Extends a collection with {@link Refs} aware methods
- *
- * @memberof RefsCollection
- * @static
- *
- * @param  {Array<Object>} collection
- * @param  {Refs} refs instance
- * @param  {Object} property represented by the collection
- * @param  {Object} target object the collection is attached to
- *
- * @return {RefsCollection<Object>} the extended array
- */
-function extend(collection, refs, property, target) {
-
-  var inverseProperty = property.inverse;
-
-  /**
-   * Removes the given element from the array and returns it.
-   *
-   * @method RefsCollection#remove
-   *
-   * @param {Object} element the element to remove
-   */
-  Object.defineProperty(collection, 'remove', {
-    value: function(element) {
-      var idx = this.indexOf(element);
-      if (idx !== -1) {
-        this.splice(idx, 1);
-
-        // unset inverse
-        refs.unset(element, inverseProperty, target);
-      }
-
-      return element;
-    }
-  });
-
-  /**
-   * Returns true if the collection contains the given element
-   *
-   * @method RefsCollection#contains
-   *
-   * @param {Object} element the element to check for
-   */
-  Object.defineProperty(collection, 'contains', {
-    value: function(element) {
-      return this.indexOf(element) !== -1;
-    }
-  });
-
-  /**
-   * Adds an element to the array, unless it exists already (set semantics).
-   *
-   * @method RefsCollection#add
-   *
-   * @param {Object} element the element to add
-   * @param {Number} optional index to add element to
-   *                 (possibly moving other elements around)
-   */
-  Object.defineProperty(collection, 'add', {
-    value: function(element, idx) {
-
-      var currentIdx = this.indexOf(element);
-
-      if (typeof idx === 'undefined') {
-
-        if (currentIdx !== -1) {
-          // element already in collection (!)
-          return;
-        }
-
-        // add to end of array, as no idx is specified
-        idx = this.length;
-      }
-
-      // handle already in collection
-      if (currentIdx !== -1) {
-
-        // remove element from currentIdx
-        this.splice(currentIdx, 1);
-      }
-
-      // add element at idx
-      this.splice(idx, 0, element);
-
-      if (currentIdx === -1) {
-        // set inverse, unless element was
-        // in collection already
-        refs.set(element, inverseProperty, target);
-      }
-    }
-  });
-
-  // a simple marker, identifying this element
-  // as being a refs collection
-  Object.defineProperty(collection, '__refs_collection', {
-    value: true
-  });
-
-  return collection;
-}
-
-
-function isExtended(collection) {
-  return collection.__refs_collection === true;
-}
-
-module.exports.extend = extend;
-
-module.exports.isExtended = isExtended;
-
-/***/ }),
-
-/***/ "./node_modules/object-refs/lib/refs.js":
-/*!**********************************************!*\
-  !*** ./node_modules/object-refs/lib/refs.js ***!
-  \**********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Collection = __webpack_require__(/*! ./collection */ "./node_modules/object-refs/lib/collection.js");
-
-function hasOwnProperty(e, property) {
-  return Object.prototype.hasOwnProperty.call(e, property.name || property);
-}
-
-function defineCollectionProperty(ref, property, target) {
-
-  var collection = Collection.extend(target[property.name] || [], ref, property, target);
-
-  Object.defineProperty(target, property.name, {
-    enumerable: property.enumerable,
-    value: collection
-  });
-
-  if (collection.length) {
-
-    collection.forEach(function(o) {
-      ref.set(o, property.inverse, target);
-    });
-  }
-}
-
-
-function defineProperty(ref, property, target) {
-
-  var inverseProperty = property.inverse;
-
-  var _value = target[property.name];
-
-  Object.defineProperty(target, property.name, {
-    configurable: property.configurable,
-    enumerable: property.enumerable,
-
-    get: function() {
-      return _value;
-    },
-
-    set: function(value) {
-
-      // return if we already performed all changes
-      if (value === _value) {
-        return;
-      }
-
-      var old = _value;
-
-      // temporary set null
-      _value = null;
-
-      if (old) {
-        ref.unset(old, inverseProperty, target);
-      }
-
-      // set new value
-      _value = value;
-
-      // set inverse value
-      ref.set(_value, inverseProperty, target);
-    }
-  });
-
-}
-
-/**
- * Creates a new references object defining two inversly related
- * attribute descriptors a and b.
- *
- * <p>
- *   When bound to an object using {@link Refs#bind} the references
- *   get activated and ensure that add and remove operations are applied
- *   reversely, too.
- * </p>
- *
- * <p>
- *   For attributes represented as collections {@link Refs} provides the
- *   {@link RefsCollection#add}, {@link RefsCollection#remove} and {@link RefsCollection#contains} extensions
- *   that must be used to properly hook into the inverse change mechanism.
- * </p>
- *
- * @class Refs
- *
- * @classdesc A bi-directional reference between two attributes.
- *
- * @param {Refs.AttributeDescriptor} a property descriptor
- * @param {Refs.AttributeDescriptor} b property descriptor
- *
- * @example
- *
- * var refs = Refs({ name: 'wheels', collection: true, enumerable: true }, { name: 'car' });
- *
- * var car = { name: 'toyota' };
- * var wheels = [{ pos: 'front-left' }, { pos: 'front-right' }];
- *
- * refs.bind(car, 'wheels');
- *
- * car.wheels // []
- * car.wheels.add(wheels[0]);
- * car.wheels.add(wheels[1]);
- *
- * car.wheels // [{ pos: 'front-left' }, { pos: 'front-right' }]
- *
- * wheels[0].car // { name: 'toyota' };
- * car.wheels.remove(wheels[0]);
- *
- * wheels[0].car // undefined
- */
-function Refs(a, b) {
-
-  if (!(this instanceof Refs)) {
-    return new Refs(a, b);
-  }
-
-  // link
-  a.inverse = b;
-  b.inverse = a;
-
-  this.props = {};
-  this.props[a.name] = a;
-  this.props[b.name] = b;
-}
-
-/**
- * Binds one side of a bi-directional reference to a
- * target object.
- *
- * @memberOf Refs
- *
- * @param  {Object} target
- * @param  {String} property
- */
-Refs.prototype.bind = function(target, property) {
-  if (typeof property === 'string') {
-    if (!this.props[property]) {
-      throw new Error('no property <' + property + '> in ref');
-    }
-    property = this.props[property];
-  }
-
-  if (property.collection) {
-    defineCollectionProperty(this, property, target);
-  } else {
-    defineProperty(this, property, target);
-  }
-};
-
-Refs.prototype.ensureRefsCollection = function(target, property) {
-
-  var collection = target[property.name];
-
-  if (!Collection.isExtended(collection)) {
-    defineCollectionProperty(this, property, target);
-  }
-
-  return collection;
-};
-
-Refs.prototype.ensureBound = function(target, property) {
-  if (!hasOwnProperty(target, property)) {
-    this.bind(target, property);
-  }
-};
-
-Refs.prototype.unset = function(target, property, value) {
-
-  if (target) {
-    this.ensureBound(target, property);
-
-    if (property.collection) {
-      this.ensureRefsCollection(target, property).remove(value);
-    } else {
-      target[property.name] = undefined;
-    }
-  }
-};
-
-Refs.prototype.set = function(target, property, value) {
-
-  if (target) {
-    this.ensureBound(target, property);
-
-    if (property.collection) {
-      this.ensureRefsCollection(target, property).add(value);
-    } else {
-      target[property.name] = value;
-    }
-  }
-};
-
-module.exports = Refs;
-
-
-/**
- * An attribute descriptor to be used specify an attribute in a {@link Refs} instance
- *
- * @typedef {Object} Refs.AttributeDescriptor
- * @property {String} name
- * @property {boolean} [collection=false]
- * @property {boolean} [enumerable=false]
- */
-
-/***/ }),
-
-/***/ "./node_modules/path-intersection/intersect.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/path-intersection/intersect.js ***!
-  \*****************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * This file contains source code adapted from Snap.svg (licensed Apache-2.0).
- *
- * @see https://github.com/adobe-webplatform/Snap.svg/blob/master/src/path.js
- */
-
-/* eslint no-fallthrough: "off" */
-
-var p2s = /,?([a-z]),?/gi,
-    toFloat = parseFloat,
-    math = Math,
-    PI = math.PI,
-    mmin = math.min,
-    mmax = math.max,
-    pow = math.pow,
-    abs = math.abs,
-    pathCommand = /([a-z])[\s,]*((-?\d*\.?\d*(?:e[-+]?\d+)?[\s]*,?[\s]*)+)/ig,
-    pathValues = /(-?\d*\.?\d*(?:e[-+]?\d+)?)[\s]*,?[\s]*/ig;
-
-var isArray = Array.isArray || function(o) { return o instanceof Array; };
-
-function hasProperty(obj, property) {
-  return Object.prototype.hasOwnProperty.call(obj, property);
-}
-
-function clone(obj) {
-
-  if (typeof obj == 'function' || Object(obj) !== obj) {
-    return obj;
-  }
-
-  var res = new obj.constructor;
-
-  for (var key in obj) {
-    if (hasProperty(obj, key)) {
-      res[key] = clone(obj[key]);
-    }
-  }
-
-  return res;
-}
-
-function repush(array, item) {
-  for (var i = 0, ii = array.length; i < ii; i++) if (array[i] === item) {
-    return array.push(array.splice(i, 1)[0]);
-  }
-}
-
-function cacher(f) {
-
-  function newf() {
-
-    var arg = Array.prototype.slice.call(arguments, 0),
-        args = arg.join('\u2400'),
-        cache = newf.cache = newf.cache || {},
-        count = newf.count = newf.count || [];
-
-    if (hasProperty(cache, args)) {
-      repush(count, args);
-      return cache[args];
-    }
-
-    count.length >= 1e3 && delete cache[count.shift()];
-    count.push(args);
-    cache[args] = f.apply(0, arg);
-
-    return cache[args];
-  }
-  return newf;
-}
-
-function parsePathString(pathString) {
-
-  if (!pathString) {
-    return null;
-  }
-
-  var pth = paths(pathString);
-
-  if (pth.arr) {
-    return clone(pth.arr);
-  }
-
-  var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, q: 4, s: 4, t: 2, v: 1, z: 0 },
-      data = [];
-
-  if (isArray(pathString) && isArray(pathString[0])) { // rough assumption
-    data = clone(pathString);
-  }
-
-  if (!data.length) {
-
-    String(pathString).replace(pathCommand, function(a, b, c) {
-      var params = [],
-          name = b.toLowerCase();
-
-      c.replace(pathValues, function(a, b) {
-        b && params.push(+b);
-      });
-
-      if (name == 'm' && params.length > 2) {
-        data.push([b].concat(params.splice(0, 2)));
-        name = 'l';
-        b = b == 'm' ? 'l' : 'L';
-      }
-
-      while (params.length >= paramCounts[name]) {
-        data.push([b].concat(params.splice(0, paramCounts[name])));
-        if (!paramCounts[name]) {
-          break;
-        }
-      }
-    });
-  }
-
-  data.toString = paths.toString;
-  pth.arr = clone(data);
-
-  return data;
-}
-
-function paths(ps) {
-  var p = paths.ps = paths.ps || {};
-
-  if (p[ps]) {
-    p[ps].sleep = 100;
-  } else {
-    p[ps] = {
-      sleep: 100
-    };
-  }
-
-  setTimeout(function() {
-    for (var key in p) {
-      if (hasProperty(p, key) && key != ps) {
-        p[key].sleep--;
-        !p[key].sleep && delete p[key];
-      }
-    }
-  });
-
-  return p[ps];
-}
-
-function rectBBox(x, y, width, height) {
-
-  if (arguments.length === 1) {
-    y = x.y;
-    width = x.width;
-    height = x.height;
-    x = x.x;
-  }
-
-  return {
-    x: x,
-    y: y,
-    width: width,
-    height: height,
-    x2: x + width,
-    y2: y + height
-  };
-}
-
-function pathToString() {
-  return this.join(',').replace(p2s, '$1');
-}
-
-function pathClone(pathArray) {
-  var res = clone(pathArray);
-  res.toString = pathToString;
-  return res;
-}
-
-function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
-  var t1 = 1 - t,
-      t13 = pow(t1, 3),
-      t12 = pow(t1, 2),
-      t2 = t * t,
-      t3 = t2 * t,
-      x = t13 * p1x + t12 * 3 * t * c1x + t1 * 3 * t * t * c2x + t3 * p2x,
-      y = t13 * p1y + t12 * 3 * t * c1y + t1 * 3 * t * t * c2y + t3 * p2y;
-
-  return {
-    x: fixError(x),
-    y: fixError(y)
-  };
-}
-
-function bezierBBox(points) {
-
-  var bbox = curveBBox.apply(null, points);
-
-  return rectBBox(
-    bbox.x0,
-    bbox.y0,
-    bbox.x1 - bbox.x0,
-    bbox.y1 - bbox.y0
-  );
-}
-
-function isPointInsideBBox(bbox, x, y) {
-  return x >= bbox.x &&
-    x <= bbox.x + bbox.width &&
-    y >= bbox.y &&
-    y <= bbox.y + bbox.height;
-}
-
-function isBBoxIntersect(bbox1, bbox2) {
-  bbox1 = rectBBox(bbox1);
-  bbox2 = rectBBox(bbox2);
-  return isPointInsideBBox(bbox2, bbox1.x, bbox1.y)
-    || isPointInsideBBox(bbox2, bbox1.x2, bbox1.y)
-    || isPointInsideBBox(bbox2, bbox1.x, bbox1.y2)
-    || isPointInsideBBox(bbox2, bbox1.x2, bbox1.y2)
-    || isPointInsideBBox(bbox1, bbox2.x, bbox2.y)
-    || isPointInsideBBox(bbox1, bbox2.x2, bbox2.y)
-    || isPointInsideBBox(bbox1, bbox2.x, bbox2.y2)
-    || isPointInsideBBox(bbox1, bbox2.x2, bbox2.y2)
-    || (bbox1.x < bbox2.x2 && bbox1.x > bbox2.x
-        || bbox2.x < bbox1.x2 && bbox2.x > bbox1.x)
-    && (bbox1.y < bbox2.y2 && bbox1.y > bbox2.y
-        || bbox2.y < bbox1.y2 && bbox2.y > bbox1.y);
-}
-
-function base3(t, p1, p2, p3, p4) {
-  var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4,
-      t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
-  return t * t2 - 3 * p1 + 3 * p2;
-}
-
-function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
-
-  if (z == null) {
-    z = 1;
-  }
-
-  z = z > 1 ? 1 : z < 0 ? 0 : z;
-
-  var z2 = z / 2,
-      n = 12,
-      Tvalues = [-.1252,.1252,-.3678,.3678,-.5873,.5873,-.7699,.7699,-.9041,.9041,-.9816,.9816],
-      Cvalues = [0.2491,0.2491,0.2335,0.2335,0.2032,0.2032,0.1601,0.1601,0.1069,0.1069,0.0472,0.0472],
-      sum = 0;
-
-  for (var i = 0; i < n; i++) {
-    var ct = z2 * Tvalues[i] + z2,
-        xbase = base3(ct, x1, x2, x3, x4),
-        ybase = base3(ct, y1, y2, y3, y4),
-        comb = xbase * xbase + ybase * ybase;
-
-    sum += Cvalues[i] * math.sqrt(comb);
-  }
-
-  return z2 * sum;
-}
-
-
-function intersectLines(x1, y1, x2, y2, x3, y3, x4, y4) {
-
-  if (
-    mmax(x1, x2) < mmin(x3, x4) ||
-      mmin(x1, x2) > mmax(x3, x4) ||
-      mmax(y1, y2) < mmin(y3, y4) ||
-      mmin(y1, y2) > mmax(y3, y4)
-  ) {
-    return;
-  }
-
-  var nx = (x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4),
-      ny = (x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4),
-      denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-
-  if (!denominator) {
-    return;
-  }
-
-  var px = fixError(nx / denominator),
-      py = fixError(ny / denominator),
-      px2 = +px.toFixed(2),
-      py2 = +py.toFixed(2);
-
-  if (
-    px2 < +mmin(x1, x2).toFixed(2) ||
-      px2 > +mmax(x1, x2).toFixed(2) ||
-      px2 < +mmin(x3, x4).toFixed(2) ||
-      px2 > +mmax(x3, x4).toFixed(2) ||
-      py2 < +mmin(y1, y2).toFixed(2) ||
-      py2 > +mmax(y1, y2).toFixed(2) ||
-      py2 < +mmin(y3, y4).toFixed(2) ||
-      py2 > +mmax(y3, y4).toFixed(2)
-  ) {
-    return;
-  }
-
-  return { x: px, y: py };
-}
-
-function fixError(number) {
-  return Math.round(number * 100000000000) / 100000000000;
-}
-
-function findBezierIntersections(bez1, bez2, justCount) {
-  var bbox1 = bezierBBox(bez1),
-      bbox2 = bezierBBox(bez2);
-
-  if (!isBBoxIntersect(bbox1, bbox2)) {
-    return justCount ? 0 : [];
-  }
-
-  // As an optimization, lines will have only 1 segment
-
-  var l1 = bezlen.apply(0, bez1),
-      l2 = bezlen.apply(0, bez2),
-      n1 = isLine(bez1) ? 1 : ~~(l1 / 5) || 1,
-      n2 = isLine(bez2) ? 1 : ~~(l2 / 5) || 1,
-      dots1 = [],
-      dots2 = [],
-      xy = {},
-      res = justCount ? 0 : [];
-
-  for (var i = 0; i < n1 + 1; i++) {
-    var p = findDotsAtSegment.apply(0, bez1.concat(i / n1));
-    dots1.push({ x: p.x, y: p.y, t: i / n1 });
-  }
-
-  for (i = 0; i < n2 + 1; i++) {
-    p = findDotsAtSegment.apply(0, bez2.concat(i / n2));
-    dots2.push({ x: p.x, y: p.y, t: i / n2 });
-  }
-
-  for (i = 0; i < n1; i++) {
-
-    for (var j = 0; j < n2; j++) {
-      var di = dots1[i],
-          di1 = dots1[i + 1],
-          dj = dots2[j],
-          dj1 = dots2[j + 1],
-          ci = abs(di1.x - di.x) < .01 ? 'y' : 'x',
-          cj = abs(dj1.x - dj.x) < .01 ? 'y' : 'x',
-          is = intersectLines(di.x, di.y, di1.x, di1.y, dj.x, dj.y, dj1.x, dj1.y),
-          key;
-
-      if (is) {
-        key = is.x.toFixed(9) + '#' + is.y.toFixed(9);
-
-        if (xy[key]) {
-          continue;
-        }
-
-        xy[key] = true;
-
-        var t1 = di.t + abs((is[ci] - di[ci]) / (di1[ci] - di[ci])) * (di1.t - di.t),
-            t2 = dj.t + abs((is[cj] - dj[cj]) / (dj1[cj] - dj[cj])) * (dj1.t - dj.t);
-
-        if (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1) {
-
-          if (justCount) {
-            res++;
-          } else {
-            res.push({
-              x: is.x,
-              y: is.y,
-              t1: t1,
-              t2: t2
-            });
-          }
-        }
-      }
-    }
-  }
-
-  return res;
-}
-
-
-/**
- * Find or counts the intersections between two SVG paths.
- *
- * Returns a number in counting mode and a list of intersections otherwise.
- *
- * A single intersection entry contains the intersection coordinates (x, y)
- * as well as additional information regarding the intersecting segments
- * on each path (segment1, segment2) and the relative location of the
- * intersection on these segments (t1, t2).
- *
- * The path may be an SVG path string or a list of path components
- * such as `[ [ 'M', 0, 10 ], [ 'L', 20, 0 ] ]`.
- *
- * @example
- *
- * var intersections = findPathIntersections(
- *   'M0,0L100,100',
- *   [ [ 'M', 0, 100 ], [ 'L', 100, 0 ] ]
- * );
- *
- * // intersections = [
- * //   { x: 50, y: 50, segment1: 1, segment2: 1, t1: 0.5, t2: 0.5 }
- * // ]
- *
- * @param {String|Array<PathDef>} path1
- * @param {String|Array<PathDef>} path2
- * @param {Boolean} [justCount=false]
- *
- * @return {Array<Intersection>|Number}
- */
-function findPathIntersections(path1, path2, justCount) {
-  path1 = pathToCurve(path1);
-  path2 = pathToCurve(path2);
-
-  var x1, y1, x2, y2, x1m, y1m, x2m, y2m, bez1, bez2,
-      res = justCount ? 0 : [];
-
-  for (var i = 0, ii = path1.length; i < ii; i++) {
-    var pi = path1[i];
-
-    if (pi[0] == 'M') {
-      x1 = x1m = pi[1];
-      y1 = y1m = pi[2];
-    } else {
-
-      if (pi[0] == 'C') {
-        bez1 = [x1, y1].concat(pi.slice(1));
-        x1 = bez1[6];
-        y1 = bez1[7];
-      } else {
-        bez1 = [x1, y1, x1, y1, x1m, y1m, x1m, y1m];
-        x1 = x1m;
-        y1 = y1m;
-      }
-
-      for (var j = 0, jj = path2.length; j < jj; j++) {
-        var pj = path2[j];
-
-        if (pj[0] == 'M') {
-          x2 = x2m = pj[1];
-          y2 = y2m = pj[2];
-        } else {
-
-          if (pj[0] == 'C') {
-            bez2 = [x2, y2].concat(pj.slice(1));
-            x2 = bez2[6];
-            y2 = bez2[7];
-          } else {
-            bez2 = [x2, y2, x2, y2, x2m, y2m, x2m, y2m];
-            x2 = x2m;
-            y2 = y2m;
-          }
-
-          var intr = findBezierIntersections(bez1, bez2, justCount);
-
-          if (justCount) {
-            res += intr;
-          } else {
-
-            for (var k = 0, kk = intr.length; k < kk; k++) {
-              intr[k].segment1 = i;
-              intr[k].segment2 = j;
-              intr[k].bez1 = bez1;
-              intr[k].bez2 = bez2;
-            }
-
-            res = res.concat(intr);
-          }
-        }
-      }
-    }
-  }
-
-  return res;
-}
-
-
-function pathToAbsolute(pathArray) {
-  var pth = paths(pathArray);
-
-  if (pth.abs) {
-    return pathClone(pth.abs);
-  }
-
-  if (!isArray(pathArray) || !isArray(pathArray && pathArray[0])) { // rough assumption
-    pathArray = parsePathString(pathArray);
-  }
-
-  if (!pathArray || !pathArray.length) {
-    return [['M', 0, 0]];
-  }
-
-  var res = [],
-      x = 0,
-      y = 0,
-      mx = 0,
-      my = 0,
-      start = 0,
-      pa0;
-
-  if (pathArray[0][0] == 'M') {
-    x = +pathArray[0][1];
-    y = +pathArray[0][2];
-    mx = x;
-    my = y;
-    start++;
-    res[0] = ['M', x, y];
-  }
-
-  for (var r, pa, i = start, ii = pathArray.length; i < ii; i++) {
-    res.push(r = []);
-    pa = pathArray[i];
-    pa0 = pa[0];
-
-    if (pa0 != pa0.toUpperCase()) {
-      r[0] = pa0.toUpperCase();
-
-      switch (r[0]) {
-      case 'A':
-        r[1] = pa[1];
-        r[2] = pa[2];
-        r[3] = pa[3];
-        r[4] = pa[4];
-        r[5] = pa[5];
-        r[6] = +pa[6] + x;
-        r[7] = +pa[7] + y;
-        break;
-      case 'V':
-        r[1] = +pa[1] + y;
-        break;
-      case 'H':
-        r[1] = +pa[1] + x;
-        break;
-      case 'M':
-        mx = +pa[1] + x;
-        my = +pa[2] + y;
-      default:
-        for (var j = 1, jj = pa.length; j < jj; j++) {
-          r[j] = +pa[j] + ((j % 2) ? x : y);
-        }
-      }
-    } else {
-      for (var k = 0, kk = pa.length; k < kk; k++) {
-        r[k] = pa[k];
-      }
-    }
-    pa0 = pa0.toUpperCase();
-
-    switch (r[0]) {
-    case 'Z':
-      x = +mx;
-      y = +my;
-      break;
-    case 'H':
-      x = r[1];
-      break;
-    case 'V':
-      y = r[1];
-      break;
-    case 'M':
-      mx = r[r.length - 2];
-      my = r[r.length - 1];
-    default:
-      x = r[r.length - 2];
-      y = r[r.length - 1];
-    }
-  }
-
-  res.toString = pathToString;
-  pth.abs = pathClone(res);
-
-  return res;
-}
-
-function isLine(bez) {
-  return (
-    bez[0] === bez[2] &&
-    bez[1] === bez[3] &&
-    bez[4] === bez[6] &&
-    bez[5] === bez[7]
-  );
-}
-
-function lineToCurve(x1, y1, x2, y2) {
-  return [
-    x1, y1, x2,
-    y2, x2, y2
-  ];
-}
-
-function qubicToCurve(x1, y1, ax, ay, x2, y2) {
-  var _13 = 1 / 3,
-      _23 = 2 / 3;
-
-  return [
-    _13 * x1 + _23 * ax,
-    _13 * y1 + _23 * ay,
-    _13 * x2 + _23 * ax,
-    _13 * y2 + _23 * ay,
-    x2,
-    y2
-  ];
-}
-
-function arcToCurve(x1, y1, rx, ry, angle, large_arc_flag, sweep_flag, x2, y2, recursive) {
-
-  // for more information of where this math came from visit:
-  // http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
-  var _120 = PI * 120 / 180,
-      rad = PI / 180 * (+angle || 0),
-      res = [],
-      xy,
-      rotate = cacher(function(x, y, rad) {
-        var X = x * math.cos(rad) - y * math.sin(rad),
-            Y = x * math.sin(rad) + y * math.cos(rad);
-
-        return { x: X, y: Y };
-      });
-
-  if (!recursive) {
-    xy = rotate(x1, y1, -rad);
-    x1 = xy.x;
-    y1 = xy.y;
-    xy = rotate(x2, y2, -rad);
-    x2 = xy.x;
-    y2 = xy.y;
-
-    var x = (x1 - x2) / 2,
-        y = (y1 - y2) / 2;
-
-    var h = (x * x) / (rx * rx) + (y * y) / (ry * ry);
-
-    if (h > 1) {
-      h = math.sqrt(h);
-      rx = h * rx;
-      ry = h * ry;
-    }
-
-    var rx2 = rx * rx,
-        ry2 = ry * ry,
-        k = (large_arc_flag == sweep_flag ? -1 : 1) *
-            math.sqrt(abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x))),
-        cx = k * rx * y / ry + (x1 + x2) / 2,
-        cy = k * -ry * x / rx + (y1 + y2) / 2,
-        f1 = math.asin(((y1 - cy) / ry).toFixed(9)),
-        f2 = math.asin(((y2 - cy) / ry).toFixed(9));
-
-    f1 = x1 < cx ? PI - f1 : f1;
-    f2 = x2 < cx ? PI - f2 : f2;
-    f1 < 0 && (f1 = PI * 2 + f1);
-    f2 < 0 && (f2 = PI * 2 + f2);
-
-    if (sweep_flag && f1 > f2) {
-      f1 = f1 - PI * 2;
-    }
-    if (!sweep_flag && f2 > f1) {
-      f2 = f2 - PI * 2;
-    }
-  } else {
-    f1 = recursive[0];
-    f2 = recursive[1];
-    cx = recursive[2];
-    cy = recursive[3];
-  }
-
-  var df = f2 - f1;
-
-  if (abs(df) > _120) {
-    var f2old = f2,
-        x2old = x2,
-        y2old = y2;
-
-    f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
-    x2 = cx + rx * math.cos(f2);
-    y2 = cy + ry * math.sin(f2);
-    res = arcToCurve(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [f2, f2old, cx, cy]);
-  }
-
-  df = f2 - f1;
-
-  var c1 = math.cos(f1),
-      s1 = math.sin(f1),
-      c2 = math.cos(f2),
-      s2 = math.sin(f2),
-      t = math.tan(df / 4),
-      hx = 4 / 3 * rx * t,
-      hy = 4 / 3 * ry * t,
-      m1 = [x1, y1],
-      m2 = [x1 + hx * s1, y1 - hy * c1],
-      m3 = [x2 + hx * s2, y2 - hy * c2],
-      m4 = [x2, y2];
-
-  m2[0] = 2 * m1[0] - m2[0];
-  m2[1] = 2 * m1[1] - m2[1];
-
-  if (recursive) {
-    return [m2, m3, m4].concat(res);
-  } else {
-    res = [m2, m3, m4].concat(res).join().split(',');
-    var newres = [];
-
-    for (var i = 0, ii = res.length; i < ii; i++) {
-      newres[i] = i % 2 ? rotate(res[i - 1], res[i], rad).y : rotate(res[i], res[i + 1], rad).x;
-    }
-
-    return newres;
-  }
-}
-
-// Returns bounding box of cubic bezier curve.
-// Source: http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html
-// Original version: NISHIO Hirokazu
-// Modifications: https://github.com/timo22345
-function curveBBox(x0, y0, x1, y1, x2, y2, x3, y3) {
-  var tvalues = [],
-      bounds = [[], []],
-      a, b, c, t, t1, t2, b2ac, sqrtb2ac;
-
-  for (var i = 0; i < 2; ++i) {
-
-    if (i == 0) {
-      b = 6 * x0 - 12 * x1 + 6 * x2;
-      a = -3 * x0 + 9 * x1 - 9 * x2 + 3 * x3;
-      c = 3 * x1 - 3 * x0;
-    } else {
-      b = 6 * y0 - 12 * y1 + 6 * y2;
-      a = -3 * y0 + 9 * y1 - 9 * y2 + 3 * y3;
-      c = 3 * y1 - 3 * y0;
-    }
-
-    if (abs(a) < 1e-12) {
-
-      if (abs(b) < 1e-12) {
-        continue;
-      }
-
-      t = -c / b;
-
-      if (0 < t && t < 1) {
-        tvalues.push(t);
-      }
-
-      continue;
-    }
-
-    b2ac = b * b - 4 * c * a;
-    sqrtb2ac = math.sqrt(b2ac);
-
-    if (b2ac < 0) {
-      continue;
-    }
-
-    t1 = (-b + sqrtb2ac) / (2 * a);
-
-    if (0 < t1 && t1 < 1) {
-      tvalues.push(t1);
-    }
-
-    t2 = (-b - sqrtb2ac) / (2 * a);
-
-    if (0 < t2 && t2 < 1) {
-      tvalues.push(t2);
-    }
-  }
-
-  var j = tvalues.length,
-      jlen = j,
-      mt;
-
-  while (j--) {
-    t = tvalues[j];
-    mt = 1 - t;
-    bounds[0][j] = (mt * mt * mt * x0) + (3 * mt * mt * t * x1) + (3 * mt * t * t * x2) + (t * t * t * x3);
-    bounds[1][j] = (mt * mt * mt * y0) + (3 * mt * mt * t * y1) + (3 * mt * t * t * y2) + (t * t * t * y3);
-  }
-
-  bounds[0][jlen] = x0;
-  bounds[1][jlen] = y0;
-  bounds[0][jlen + 1] = x3;
-  bounds[1][jlen + 1] = y3;
-  bounds[0].length = bounds[1].length = jlen + 2;
-
-  return {
-    x0: mmin.apply(0, bounds[0]),
-    y0: mmin.apply(0, bounds[1]),
-    x1: mmax.apply(0, bounds[0]),
-    y1: mmax.apply(0, bounds[1])
-  };
-}
-
-function pathToCurve(path) {
-
-  var pth = paths(path);
-
-  // return cached curve, if existing
-  if (pth.curve) {
-    return pathClone(pth.curve);
-  }
-
-  var curvedPath = pathToAbsolute(path),
-      attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null },
-      processPath = function(path, d, pathCommand) {
-        var nx, ny;
-
-        if (!path) {
-          return ['C', d.x, d.y, d.x, d.y, d.x, d.y];
-        }
-
-        !(path[0] in { T: 1, Q: 1 }) && (d.qx = d.qy = null);
-
-        switch (path[0]) {
-        case 'M':
-          d.X = path[1];
-          d.Y = path[2];
-          break;
-        case 'A':
-          path = ['C'].concat(arcToCurve.apply(0, [d.x, d.y].concat(path.slice(1))));
-          break;
-        case 'S':
-          if (pathCommand == 'C' || pathCommand == 'S') {
-
-            // In 'S' case we have to take into account, if the previous command is C/S.
-            nx = d.x * 2 - d.bx;
-
-            // And reflect the previous
-            ny = d.y * 2 - d.by;
-
-            // command's control point relative to the current point.
-          }
-          else {
-
-            // or some else or nothing
-            nx = d.x;
-            ny = d.y;
-          }
-          path = ['C', nx, ny].concat(path.slice(1));
-          break;
-        case 'T':
-          if (pathCommand == 'Q' || pathCommand == 'T') {
-
-            // In 'T' case we have to take into account, if the previous command is Q/T.
-            d.qx = d.x * 2 - d.qx;
-
-            // And make a reflection similar
-            d.qy = d.y * 2 - d.qy;
-
-            // to case 'S'.
-          }
-          else {
-
-            // or something else or nothing
-            d.qx = d.x;
-            d.qy = d.y;
-          }
-          path = ['C'].concat(qubicToCurve(d.x, d.y, d.qx, d.qy, path[1], path[2]));
-          break;
-        case 'Q':
-          d.qx = path[1];
-          d.qy = path[2];
-          path = ['C'].concat(qubicToCurve(d.x, d.y, path[1], path[2], path[3], path[4]));
-          break;
-        case 'L':
-          path = ['C'].concat(lineToCurve(d.x, d.y, path[1], path[2]));
-          break;
-        case 'H':
-          path = ['C'].concat(lineToCurve(d.x, d.y, path[1], d.y));
-          break;
-        case 'V':
-          path = ['C'].concat(lineToCurve(d.x, d.y, d.x, path[1]));
-          break;
-        case 'Z':
-          path = ['C'].concat(lineToCurve(d.x, d.y, d.X, d.Y));
-          break;
-        }
-
-        return path;
-      },
-
-      fixArc = function(pp, i) {
-
-        if (pp[i].length > 7) {
-          pp[i].shift();
-          var pi = pp[i];
-
-          while (pi.length) {
-            pathCommands[i] = 'A'; // if created multiple C:s, their original seg is saved
-            pp.splice(i++, 0, ['C'].concat(pi.splice(0, 6)));
-          }
-
-          pp.splice(i, 1);
-          ii = curvedPath.length;
-        }
-      },
-
-      pathCommands = [], // path commands of original path p
-      pfirst = '', // temporary holder for original path command
-      pathCommand = ''; // holder for previous path command of original path
-
-  for (var i = 0, ii = curvedPath.length; i < ii; i++) {
-    curvedPath[i] && (pfirst = curvedPath[i][0]); // save current path command
-
-    if (pfirst != 'C') // C is not saved yet, because it may be result of conversion
-    {
-      pathCommands[i] = pfirst; // Save current path command
-      i && (pathCommand = pathCommands[i - 1]); // Get previous path command pathCommand
-    }
-    curvedPath[i] = processPath(curvedPath[i], attrs, pathCommand); // Previous path command is inputted to processPath
-
-    if (pathCommands[i] != 'A' && pfirst == 'C') pathCommands[i] = 'C'; // A is the only command
-    // which may produce multiple C:s
-    // so we have to make sure that C is also C in original path
-
-    fixArc(curvedPath, i); // fixArc adds also the right amount of A:s to pathCommands
-
-    var seg = curvedPath[i],
-        seglen = seg.length;
-
-    attrs.x = seg[seglen - 2];
-    attrs.y = seg[seglen - 1];
-    attrs.bx = toFloat(seg[seglen - 4]) || attrs.x;
-    attrs.by = toFloat(seg[seglen - 3]) || attrs.y;
-  }
-
-  // cache curve
-  pth.curve = pathClone(curvedPath);
-
-  return curvedPath;
-}
-
-module.exports = findPathIntersections;
-
-
-/***/ }),
-
 /***/ "./node_modules/saxen/dist/index.esm.js":
 /*!**********************************************!*\
   !*** ./node_modules/saxen/dist/index.esm.js ***!
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Parser": () => (/* binding */ Parser),
-/* harmony export */   "decode": () => (/* binding */ decodeEntities)
+/* harmony export */   Parser: () => (/* binding */ Parser),
+/* harmony export */   decode: () => (/* binding */ decodeEntities)
 /* harmony export */ });
 var fromCharCode = String.fromCharCode;
 
@@ -19303,29 +19814,28 @@ function Parser(options) {
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "append": () => (/* binding */ append),
-/* harmony export */   "appendTo": () => (/* binding */ appendTo),
-/* harmony export */   "attr": () => (/* binding */ attr),
-/* harmony export */   "classes": () => (/* binding */ classes),
-/* harmony export */   "clear": () => (/* binding */ clear),
-/* harmony export */   "clone": () => (/* binding */ clone),
-/* harmony export */   "create": () => (/* binding */ create),
-/* harmony export */   "createMatrix": () => (/* binding */ createMatrix),
-/* harmony export */   "createPoint": () => (/* binding */ createPoint),
-/* harmony export */   "createTransform": () => (/* binding */ createTransform),
-/* harmony export */   "innerSVG": () => (/* binding */ innerSVG),
-/* harmony export */   "off": () => (/* binding */ off),
-/* harmony export */   "on": () => (/* binding */ on),
-/* harmony export */   "prepend": () => (/* binding */ prepend),
-/* harmony export */   "prependTo": () => (/* binding */ prependTo),
-/* harmony export */   "remove": () => (/* binding */ remove),
-/* harmony export */   "replace": () => (/* binding */ replace),
-/* harmony export */   "select": () => (/* binding */ select),
-/* harmony export */   "selectAll": () => (/* binding */ selectAll),
-/* harmony export */   "transform": () => (/* binding */ transform)
+/* harmony export */   append: () => (/* binding */ append),
+/* harmony export */   appendTo: () => (/* binding */ appendTo),
+/* harmony export */   attr: () => (/* binding */ attr),
+/* harmony export */   classes: () => (/* binding */ classes),
+/* harmony export */   clear: () => (/* binding */ clear),
+/* harmony export */   clone: () => (/* binding */ clone),
+/* harmony export */   create: () => (/* binding */ create),
+/* harmony export */   createMatrix: () => (/* binding */ createMatrix),
+/* harmony export */   createPoint: () => (/* binding */ createPoint),
+/* harmony export */   createTransform: () => (/* binding */ createTransform),
+/* harmony export */   innerSVG: () => (/* binding */ innerSVG),
+/* harmony export */   off: () => (/* binding */ off),
+/* harmony export */   on: () => (/* binding */ on),
+/* harmony export */   prepend: () => (/* binding */ prepend),
+/* harmony export */   prependTo: () => (/* binding */ prependTo),
+/* harmony export */   remove: () => (/* binding */ remove),
+/* harmony export */   replace: () => (/* binding */ replace),
+/* harmony export */   select: () => (/* binding */ select),
+/* harmony export */   selectAll: () => (/* binding */ selectAll),
+/* harmony export */   transform: () => (/* binding */ transform)
 /* harmony export */ });
 function ensureImported(element, target) {
 
@@ -20108,7 +20618,6 @@ function transform(node, transforms) {
   \****************************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ simple)
@@ -21035,7 +21544,6 @@ var types$5 = [
 			{
 				name: "target",
 				type: "LinkEventDefinition",
-				isAttr: true,
 				isReference: true
 			},
 			{
@@ -23867,59 +24375,571 @@ function simple(additionalPackages, options) {
 
 /***/ }),
 
+/***/ "./node_modules/didi/dist/index.js":
+/*!*****************************************!*\
+  !*** ./node_modules/didi/dist/index.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Injector: () => (/* binding */ Injector),
+/* harmony export */   annotate: () => (/* binding */ annotate),
+/* harmony export */   parseAnnotations: () => (/* binding */ parseAnnotations)
+/* harmony export */ });
+const CLASS_PATTERN = /^class[ {]/;
+
+
+/**
+ * @param {function} fn
+ *
+ * @return {boolean}
+ */
+function isClass(fn) {
+  return CLASS_PATTERN.test(fn.toString());
+}
+
+/**
+ * @param {any} obj
+ *
+ * @return {boolean}
+ */
+function isArray(obj) {
+  return Array.isArray(obj);
+}
+
+/**
+ * @param {any} obj
+ * @param {string} prop
+ *
+ * @return {boolean}
+ */
+function hasOwnProp(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+/**
+ * @typedef {import('./index.js').InjectAnnotated } InjectAnnotated
+ */
+
+/**
+ * @template T
+ *
+ * @params {[...string[], T] | ...string[], T} args
+ *
+ * @return {T & InjectAnnotated}
+ */
+function annotate(...args) {
+
+  if (args.length === 1 && isArray(args[0])) {
+    args = args[0];
+  }
+
+  args = [ ...args ];
+
+  const fn = args.pop();
+
+  fn.$inject = args;
+
+  return fn;
+}
+
+
+// Current limitations:
+// - can't put into "function arg" comments
+// function /* (no parenthesis like this) */ (){}
+// function abc( /* xx (no parenthesis like this) */ a, b) {}
+//
+// Just put the comment before function or inside:
+// /* (((this is fine))) */ function(a, b) {}
+// function abc(a) { /* (((this is fine))) */}
+//
+// - can't reliably auto-annotate constructor; we'll match the
+// first constructor(...) pattern found which may be the one
+// of a nested class, too.
+
+const CONSTRUCTOR_ARGS = /constructor\s*[^(]*\(\s*([^)]*)\)/m;
+const FN_ARGS = /^(?:async\s+)?(?:function\s*[^(]*)?(?:\(\s*([^)]*)\)|(\w+))/m;
+const FN_ARG = /\/\*([^*]*)\*\//m;
+
+/**
+ * @param {unknown} fn
+ *
+ * @return {string[]}
+ */
+function parseAnnotations(fn) {
+
+  if (typeof fn !== 'function') {
+    throw new Error(`Cannot annotate "${fn}". Expected a function!`);
+  }
+
+  const match = fn.toString().match(isClass(fn) ? CONSTRUCTOR_ARGS : FN_ARGS);
+
+  // may parse class without constructor
+  if (!match) {
+    return [];
+  }
+
+  const args = match[1] || match[2];
+
+  return args && args.split(',').map(arg => {
+    const argMatch = arg.match(FN_ARG);
+    return (argMatch && argMatch[1] || arg).trim();
+  }) || [];
+}
+
+/**
+ * @typedef { import('./index.js').ModuleDeclaration } ModuleDeclaration
+ * @typedef { import('./index.js').ModuleDefinition } ModuleDefinition
+ * @typedef { import('./index.js').InjectorContext } InjectorContext
+ *
+ * @typedef { import('./index.js').TypedDeclaration<any, any> } TypedDeclaration
+ */
+
+/**
+ * Create a new injector with the given modules.
+ *
+ * @param {ModuleDefinition[]} modules
+ * @param {InjectorContext} [_parent]
+ */
+function Injector(modules, _parent) {
+
+  const parent = _parent || /** @type InjectorContext */ ({
+    get: function(name, strict) {
+      currentlyResolving.push(name);
+
+      if (strict === false) {
+        return null;
+      } else {
+        throw error(`No provider for "${ name }"!`);
+      }
+    }
+  });
+
+  const currentlyResolving = [];
+  const providers = this._providers = Object.create(parent._providers || null);
+  const instances = this._instances = Object.create(null);
+
+  const self = instances.injector = this;
+
+  const error = function(msg) {
+    const stack = currentlyResolving.join(' -> ');
+    currentlyResolving.length = 0;
+    return new Error(stack ? `${ msg } (Resolving: ${ stack })` : msg);
+  };
+
+  /**
+   * Return a named service.
+   *
+   * @param {string} name
+   * @param {boolean} [strict=true] if false, resolve missing services to null
+   *
+   * @return {any}
+   */
+  function get(name, strict) {
+    if (!providers[name] && name.includes('.')) {
+
+      const parts = name.split('.');
+      let pivot = get(/** @type { string } */ (parts.shift()));
+
+      while (parts.length) {
+        pivot = pivot[/** @type { string } */ (parts.shift())];
+      }
+
+      return pivot;
+    }
+
+    if (hasOwnProp(instances, name)) {
+      return instances[name];
+    }
+
+    if (hasOwnProp(providers, name)) {
+      if (currentlyResolving.indexOf(name) !== -1) {
+        currentlyResolving.push(name);
+        throw error('Cannot resolve circular dependency!');
+      }
+
+      currentlyResolving.push(name);
+      instances[name] = providers[name][0](providers[name][1]);
+      currentlyResolving.pop();
+
+      return instances[name];
+    }
+
+    return parent.get(name, strict);
+  }
+
+  function fnDef(fn, locals) {
+
+    if (typeof locals === 'undefined') {
+      locals = {};
+    }
+
+    if (typeof fn !== 'function') {
+      if (isArray(fn)) {
+        fn = annotate(fn.slice());
+      } else {
+        throw error(`Cannot invoke "${ fn }". Expected a function!`);
+      }
+    }
+
+    /**
+     * @type {string[]}
+     */
+    const inject = fn.$inject || parseAnnotations(fn);
+    const dependencies = inject.map(dep => {
+      if (hasOwnProp(locals, dep)) {
+        return locals[dep];
+      } else {
+        return get(dep);
+      }
+    });
+
+    return {
+      fn: fn,
+      dependencies
+    };
+  }
+
+  /**
+   * Instantiate the given type, injecting dependencies.
+   *
+   * @template T
+   *
+   * @param { Function | [...string[], Function ]} type
+   *
+   * @return T
+   */
+  function instantiate(type) {
+    const {
+      fn,
+      dependencies
+    } = fnDef(type);
+
+    // instantiate var args constructor
+    const Constructor = Function.prototype.bind.call(fn, null, ...dependencies);
+
+    return new Constructor();
+  }
+
+  /**
+   * Invoke the given function, injecting dependencies. Return the result.
+   *
+   * @template T
+   *
+   * @param { Function | [...string[], Function ]} func
+   * @param { Object } [context]
+   * @param { Object } [locals]
+   *
+   * @return {T} invocation result
+   */
+  function invoke(func, context, locals) {
+    const {
+      fn,
+      dependencies
+    } = fnDef(func, locals);
+
+    return fn.apply(context, dependencies);
+  }
+
+  /**
+   * @param {Injector} childInjector
+   *
+   * @return {Function}
+   */
+  function createPrivateInjectorFactory(childInjector) {
+    return annotate(key => childInjector.get(key));
+  }
+
+  /**
+   * @param {ModuleDefinition[]} modules
+   * @param {string[]} [forceNewInstances]
+   *
+   * @return {Injector}
+   */
+  function createChild(modules, forceNewInstances) {
+    if (forceNewInstances && forceNewInstances.length) {
+      const fromParentModule = Object.create(null);
+      const matchedScopes = Object.create(null);
+
+      const privateInjectorsCache = [];
+      const privateChildInjectors = [];
+      const privateChildFactories = [];
+
+      let provider;
+      let cacheIdx;
+      let privateChildInjector;
+      let privateChildInjectorFactory;
+
+      for (let name in providers) {
+        provider = providers[name];
+
+        if (forceNewInstances.indexOf(name) !== -1) {
+          if (provider[2] === 'private') {
+            cacheIdx = privateInjectorsCache.indexOf(provider[3]);
+            if (cacheIdx === -1) {
+              privateChildInjector = provider[3].createChild([], forceNewInstances);
+              privateChildInjectorFactory = createPrivateInjectorFactory(privateChildInjector);
+              privateInjectorsCache.push(provider[3]);
+              privateChildInjectors.push(privateChildInjector);
+              privateChildFactories.push(privateChildInjectorFactory);
+              fromParentModule[name] = [ privateChildInjectorFactory, name, 'private', privateChildInjector ];
+            } else {
+              fromParentModule[name] = [ privateChildFactories[cacheIdx], name, 'private', privateChildInjectors[cacheIdx] ];
+            }
+          } else {
+            fromParentModule[name] = [ provider[2], provider[1] ];
+          }
+          matchedScopes[name] = true;
+        }
+
+        if ((provider[2] === 'factory' || provider[2] === 'type') && provider[1].$scope) {
+          /* jshint -W083 */
+          forceNewInstances.forEach(scope => {
+            if (provider[1].$scope.indexOf(scope) !== -1) {
+              fromParentModule[name] = [ provider[2], provider[1] ];
+              matchedScopes[scope] = true;
+            }
+          });
+        }
+      }
+
+      forceNewInstances.forEach(scope => {
+        if (!matchedScopes[scope]) {
+          throw new Error('No provider for "' + scope + '". Cannot use provider from the parent!');
+        }
+      });
+
+      modules.unshift(fromParentModule);
+    }
+
+    return new Injector(modules, self);
+  }
+
+  const factoryMap = {
+    factory: invoke,
+    type: instantiate,
+    value: function(value) {
+      return value;
+    }
+  };
+
+  /**
+   * @param {ModuleDefinition} moduleDefinition
+   * @param {Injector} injector
+   */
+  function createInitializer(moduleDefinition, injector) {
+
+    const initializers = moduleDefinition.__init__ || [];
+
+    return function() {
+      initializers.forEach(initializer => {
+
+        // eagerly resolve component (fn or string)
+        if (typeof initializer === 'string') {
+          injector.get(initializer);
+        } else {
+          injector.invoke(initializer);
+        }
+      });
+    };
+  }
+
+  /**
+   * @param {ModuleDefinition} moduleDefinition
+   */
+  function loadModule(moduleDefinition) {
+
+    const moduleExports = moduleDefinition.__exports__;
+
+    // private module
+    if (moduleExports) {
+      const nestedModules = moduleDefinition.__modules__;
+
+      const clonedModule = Object.keys(moduleDefinition).reduce((clonedModule, key) => {
+
+        if (key !== '__exports__' && key !== '__modules__' && key !== '__init__' && key !== '__depends__') {
+          clonedModule[key] = moduleDefinition[key];
+        }
+
+        return clonedModule;
+      }, Object.create(null));
+
+      const childModules = (nestedModules || []).concat(clonedModule);
+
+      const privateInjector = createChild(childModules);
+      const getFromPrivateInjector = annotate(function(key) {
+        return privateInjector.get(key);
+      });
+
+      moduleExports.forEach(function(key) {
+        providers[key] = [ getFromPrivateInjector, key, 'private', privateInjector ];
+      });
+
+      // ensure child injector initializes
+      const initializers = (moduleDefinition.__init__ || []).slice();
+
+      initializers.unshift(function() {
+        privateInjector.init();
+      });
+
+      moduleDefinition = Object.assign({}, moduleDefinition, {
+        __init__: initializers
+      });
+
+      return createInitializer(moduleDefinition, privateInjector);
+    }
+
+    // normal module
+    Object.keys(moduleDefinition).forEach(function(key) {
+
+      if (key === '__init__' || key === '__depends__') {
+        return;
+      }
+
+      const typeDeclaration = /** @type { TypedDeclaration } */ (
+        moduleDefinition[key]
+      );
+
+      if (typeDeclaration[2] === 'private') {
+        providers[key] = typeDeclaration;
+        return;
+      }
+
+      const type = typeDeclaration[0];
+      const value = typeDeclaration[1];
+
+      providers[key] = [ factoryMap[type], arrayUnwrap(type, value), type ];
+    });
+
+    return createInitializer(moduleDefinition, self);
+  }
+
+  /**
+   * @param {ModuleDefinition[]} moduleDefinitions
+   * @param {ModuleDefinition} moduleDefinition
+   *
+   * @return {ModuleDefinition[]}
+   */
+  function resolveDependencies(moduleDefinitions, moduleDefinition) {
+
+    if (moduleDefinitions.indexOf(moduleDefinition) !== -1) {
+      return moduleDefinitions;
+    }
+
+    moduleDefinitions = (moduleDefinition.__depends__ || []).reduce(resolveDependencies, moduleDefinitions);
+
+    if (moduleDefinitions.indexOf(moduleDefinition) !== -1) {
+      return moduleDefinitions;
+    }
+
+    return moduleDefinitions.concat(moduleDefinition);
+  }
+
+  /**
+   * @param {ModuleDefinition[]} moduleDefinitions
+   *
+   * @return { () => void } initializerFn
+   */
+  function bootstrap(moduleDefinitions) {
+
+    const initializers = moduleDefinitions
+      .reduce(resolveDependencies, [])
+      .map(loadModule);
+
+    let initialized = false;
+
+    return function() {
+
+      if (initialized) {
+        return;
+      }
+
+      initialized = true;
+
+      initializers.forEach(initializer => initializer());
+    };
+  }
+
+  // public API
+  this.get = get;
+  this.invoke = invoke;
+  this.instantiate = instantiate;
+  this.createChild = createChild;
+
+  // setup
+  this.init = bootstrap(modules);
+}
+
+
+// helpers ///////////////
+
+function arrayUnwrap(type, value) {
+  if (type !== 'value' && isArray(value)) {
+    value = annotate(value.slice());
+  }
+
+  return value;
+}
+
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./node_modules/min-dash/dist/index.esm.js":
 /*!*************************************************!*\
   !*** ./node_modules/min-dash/dist/index.esm.js ***!
   \*************************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assign": () => (/* binding */ assign),
-/* harmony export */   "bind": () => (/* binding */ bind),
-/* harmony export */   "debounce": () => (/* binding */ debounce),
-/* harmony export */   "ensureArray": () => (/* binding */ ensureArray),
-/* harmony export */   "every": () => (/* binding */ every),
-/* harmony export */   "filter": () => (/* binding */ filter),
-/* harmony export */   "find": () => (/* binding */ find),
-/* harmony export */   "findIndex": () => (/* binding */ findIndex),
-/* harmony export */   "flatten": () => (/* binding */ flatten),
-/* harmony export */   "forEach": () => (/* binding */ forEach),
-/* harmony export */   "get": () => (/* binding */ get),
-/* harmony export */   "groupBy": () => (/* binding */ groupBy),
-/* harmony export */   "has": () => (/* binding */ has),
-/* harmony export */   "isArray": () => (/* binding */ isArray),
-/* harmony export */   "isDefined": () => (/* binding */ isDefined),
-/* harmony export */   "isFunction": () => (/* binding */ isFunction),
-/* harmony export */   "isNil": () => (/* binding */ isNil),
-/* harmony export */   "isNumber": () => (/* binding */ isNumber),
-/* harmony export */   "isObject": () => (/* binding */ isObject),
-/* harmony export */   "isString": () => (/* binding */ isString),
-/* harmony export */   "isUndefined": () => (/* binding */ isUndefined),
-/* harmony export */   "keys": () => (/* binding */ keys),
-/* harmony export */   "map": () => (/* binding */ map),
-/* harmony export */   "matchPattern": () => (/* binding */ matchPattern),
-/* harmony export */   "merge": () => (/* binding */ merge),
-/* harmony export */   "omit": () => (/* binding */ omit),
-/* harmony export */   "pick": () => (/* binding */ pick),
-/* harmony export */   "reduce": () => (/* binding */ reduce),
-/* harmony export */   "set": () => (/* binding */ set),
-/* harmony export */   "size": () => (/* binding */ size),
-/* harmony export */   "some": () => (/* binding */ some),
-/* harmony export */   "sortBy": () => (/* binding */ sortBy),
-/* harmony export */   "throttle": () => (/* binding */ throttle),
-/* harmony export */   "unionBy": () => (/* binding */ unionBy),
-/* harmony export */   "uniqueBy": () => (/* binding */ uniqueBy),
-/* harmony export */   "values": () => (/* binding */ values),
-/* harmony export */   "without": () => (/* binding */ without)
+/* harmony export */   assign: () => (/* binding */ assign),
+/* harmony export */   bind: () => (/* binding */ bind),
+/* harmony export */   debounce: () => (/* binding */ debounce),
+/* harmony export */   ensureArray: () => (/* binding */ ensureArray),
+/* harmony export */   every: () => (/* binding */ every),
+/* harmony export */   filter: () => (/* binding */ filter),
+/* harmony export */   find: () => (/* binding */ find),
+/* harmony export */   findIndex: () => (/* binding */ findIndex),
+/* harmony export */   flatten: () => (/* binding */ flatten),
+/* harmony export */   forEach: () => (/* binding */ forEach),
+/* harmony export */   get: () => (/* binding */ get),
+/* harmony export */   groupBy: () => (/* binding */ groupBy),
+/* harmony export */   has: () => (/* binding */ has),
+/* harmony export */   isArray: () => (/* binding */ isArray),
+/* harmony export */   isDefined: () => (/* binding */ isDefined),
+/* harmony export */   isFunction: () => (/* binding */ isFunction),
+/* harmony export */   isNil: () => (/* binding */ isNil),
+/* harmony export */   isNumber: () => (/* binding */ isNumber),
+/* harmony export */   isObject: () => (/* binding */ isObject),
+/* harmony export */   isString: () => (/* binding */ isString),
+/* harmony export */   isUndefined: () => (/* binding */ isUndefined),
+/* harmony export */   keys: () => (/* binding */ keys),
+/* harmony export */   map: () => (/* binding */ map),
+/* harmony export */   matchPattern: () => (/* binding */ matchPattern),
+/* harmony export */   merge: () => (/* binding */ merge),
+/* harmony export */   omit: () => (/* binding */ omit),
+/* harmony export */   pick: () => (/* binding */ pick),
+/* harmony export */   reduce: () => (/* binding */ reduce),
+/* harmony export */   set: () => (/* binding */ set),
+/* harmony export */   size: () => (/* binding */ size),
+/* harmony export */   some: () => (/* binding */ some),
+/* harmony export */   sortBy: () => (/* binding */ sortBy),
+/* harmony export */   throttle: () => (/* binding */ throttle),
+/* harmony export */   unionBy: () => (/* binding */ unionBy),
+/* harmony export */   uniqueBy: () => (/* binding */ uniqueBy),
+/* harmony export */   values: () => (/* binding */ values),
+/* harmony export */   without: () => (/* binding */ without)
 /* harmony export */ });
 /**
  * Flatten array, one level deep.
  *
  * @template T
  *
- * @param {T[][]} arr
+ * @param {T[][] | T[] | null} [arr]
  *
  * @return {T[]}
  */
@@ -24796,11 +25816,10 @@ function merge(target, ...sources) {
   \***************************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Reader": () => (/* binding */ Reader),
-/* harmony export */   "Writer": () => (/* binding */ Writer)
+/* harmony export */   Reader: () => (/* binding */ Reader),
+/* harmony export */   Writer: () => (/* binding */ Writer)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var saxen__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! saxen */ "./node_modules/saxen/dist/index.esm.js");
@@ -26609,14 +27628,13 @@ function Writer(options) {
   \***********************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Moddle": () => (/* binding */ Moddle),
-/* harmony export */   "coerceType": () => (/* binding */ coerceType),
-/* harmony export */   "isBuiltInType": () => (/* binding */ isBuiltIn),
-/* harmony export */   "isSimpleType": () => (/* binding */ isSimple),
-/* harmony export */   "parseNameNS": () => (/* binding */ parseName)
+/* harmony export */   Moddle: () => (/* binding */ Moddle),
+/* harmony export */   coerceType: () => (/* binding */ coerceType),
+/* harmony export */   isBuiltInType: () => (/* binding */ isBuiltIn),
+/* harmony export */   isSimpleType: () => (/* binding */ isSimple),
+/* harmony export */   parseNameNS: () => (/* binding */ parseName)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
@@ -27102,7 +28120,9 @@ Registry.prototype.registerType = function(type, pkg) {
   });
 
   (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(type.extends, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.bind)(function(extendsName) {
-    var extended = this.typeMap[extendsName];
+    var extendsNameNs = parseName(extendsName, ns.prefix);
+
+    var extended = this.typeMap[extendsNameNs.name];
 
     extended.traits = extended.traits || [];
     extended.traits.push(name);
@@ -27520,6 +28540,12 @@ Moddle.prototype.createAny = function(name, nsUri, properties) {
     $type: name,
     $instanceOf: function(type) {
       return type === this.$type;
+    },
+    get: function(key) {
+      return this[key];
+    },
+    set: function(key, value) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.set)(this, [ key ], value);
     }
   };
 
@@ -27535,6 +28561,8 @@ Moddle.prototype.createAny = function(name, nsUri, properties) {
 
   this.properties.defineDescriptor(element, descriptor);
   this.properties.defineModel(element, this);
+  this.properties.define(element, 'get', { enumerable: false, writable: true });
+  this.properties.define(element, 'set', { enumerable: false, writable: true });
   this.properties.define(element, '$parent', { enumerable: false, writable: true });
   this.properties.define(element, '$instanceOf', { enumerable: false, writable: true });
 
@@ -27609,6 +28637,1233 @@ Moddle.prototype.getTypeDescriptor = function(type) {
 //# sourceMappingURL=index.esm.js.map
 
 
+/***/ }),
+
+/***/ "./node_modules/object-refs/dist/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/object-refs/dist/index.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Collection: () => (/* binding */ collection),
+/* harmony export */   Refs: () => (/* binding */ Refs)
+/* harmony export */ });
+/**
+ * Extends a collection with {@link Refs} aware methods
+ *
+ * @param {Array<Object>} collection
+ * @param {Refs} refs instance
+ * @param {Object} property represented by the collection
+ * @param {Object} target object the collection is attached to
+ *
+ * @return {RefsCollection<Object>} the extended array
+ */
+function extend(collection, refs, property, target) {
+  var inverseProperty = property.inverse;
+
+  /**
+   * Removes the given element from the array and returns it.
+   *
+   * @method RefsCollection#remove
+   *
+   * @param {Object} element the element to remove
+   */
+  Object.defineProperty(collection, 'remove', {
+    value: function (element) {
+      var idx = this.indexOf(element);
+      if (idx !== -1) {
+        this.splice(idx, 1);
+
+        // unset inverse
+        refs.unset(element, inverseProperty, target);
+      }
+      return element;
+    }
+  });
+
+  /**
+   * Returns true if the collection contains the given element
+   *
+   * @method RefsCollection#contains
+   *
+   * @param {Object} element the element to check for
+   */
+  Object.defineProperty(collection, 'contains', {
+    value: function (element) {
+      return this.indexOf(element) !== -1;
+    }
+  });
+
+  /**
+   * Adds an element to the array, unless it exists already (set semantics).
+   *
+   * @method RefsCollection#add
+   *
+   * @param {Object} element the element to add
+   * @param {Number} optional index to add element to
+   *                 (possibly moving other elements around)
+   */
+  Object.defineProperty(collection, 'add', {
+    value: function (element, idx) {
+      var currentIdx = this.indexOf(element);
+      if (typeof idx === 'undefined') {
+        if (currentIdx !== -1) {
+          // element already in collection (!)
+          return;
+        }
+
+        // add to end of array, as no idx is specified
+        idx = this.length;
+      }
+
+      // handle already in collection
+      if (currentIdx !== -1) {
+        // remove element from currentIdx
+        this.splice(currentIdx, 1);
+      }
+
+      // add element at idx
+      this.splice(idx, 0, element);
+      if (currentIdx === -1) {
+        // set inverse, unless element was
+        // in collection already
+        refs.set(element, inverseProperty, target);
+      }
+    }
+  });
+
+  // a simple marker, identifying this element
+  // as being a refs collection
+  Object.defineProperty(collection, '__refs_collection', {
+    value: true
+  });
+  return collection;
+}
+
+/**
+ * Checks if a given collection is extended
+ *
+ * @param {Array<Object>} collection
+ *
+ * @return {boolean}
+ */
+function isExtended(collection) {
+  return collection.__refs_collection === true;
+}
+
+var collection = {
+  __proto__: null,
+  extend: extend,
+  isExtended: isExtended
+};
+
+function hasOwnProperty(e, property) {
+  return Object.prototype.hasOwnProperty.call(e, property.name || property);
+}
+function defineCollectionProperty(ref, property, target) {
+  var collection = extend(target[property.name] || [], ref, property, target);
+  Object.defineProperty(target, property.name, {
+    enumerable: property.enumerable,
+    value: collection
+  });
+  if (collection.length) {
+    collection.forEach(function (o) {
+      ref.set(o, property.inverse, target);
+    });
+  }
+}
+function defineProperty(ref, property, target) {
+  var inverseProperty = property.inverse;
+  var _value = target[property.name];
+  Object.defineProperty(target, property.name, {
+    configurable: property.configurable,
+    enumerable: property.enumerable,
+    get: function () {
+      return _value;
+    },
+    set: function (value) {
+      // return if we already performed all changes
+      if (value === _value) {
+        return;
+      }
+      var old = _value;
+
+      // temporary set null
+      _value = null;
+      if (old) {
+        ref.unset(old, inverseProperty, target);
+      }
+
+      // set new value
+      _value = value;
+
+      // set inverse value
+      ref.set(_value, inverseProperty, target);
+    }
+  });
+}
+
+/**
+ * Creates a new references object defining two inversly related
+ * attribute descriptors a and b.
+ *
+ * <p>
+ *   When bound to an object using {@link Refs#bind} the references
+ *   get activated and ensure that add and remove operations are applied
+ *   reversely, too.
+ * </p>
+ *
+ * <p>
+ *   For attributes represented as collections {@link Refs} provides the
+ *   {@link RefsCollection#add}, {@link RefsCollection#remove} and {@link RefsCollection#contains} extensions
+ *   that must be used to properly hook into the inverse change mechanism.
+ * </p>
+ *
+ * @class Refs
+ *
+ * @classdesc A bi-directional reference between two attributes.
+ *
+ * @param {Refs.AttributeDescriptor} a property descriptor
+ * @param {Refs.AttributeDescriptor} b property descriptor
+ *
+ * @example
+ *
+ * var refs = Refs({ name: 'wheels', collection: true, enumerable: true }, { name: 'car' });
+ *
+ * var car = { name: 'toyota' };
+ * var wheels = [{ pos: 'front-left' }, { pos: 'front-right' }];
+ *
+ * refs.bind(car, 'wheels');
+ *
+ * car.wheels // []
+ * car.wheels.add(wheels[0]);
+ * car.wheels.add(wheels[1]);
+ *
+ * car.wheels // [{ pos: 'front-left' }, { pos: 'front-right' }]
+ *
+ * wheels[0].car // { name: 'toyota' };
+ * car.wheels.remove(wheels[0]);
+ *
+ * wheels[0].car // undefined
+ */
+function Refs(a, b) {
+  if (!(this instanceof Refs)) {
+    return new Refs(a, b);
+  }
+
+  // link
+  a.inverse = b;
+  b.inverse = a;
+  this.props = {};
+  this.props[a.name] = a;
+  this.props[b.name] = b;
+}
+
+/**
+ * Binds one side of a bi-directional reference to a
+ * target object.
+ *
+ * @memberOf Refs
+ *
+ * @param  {Object} target
+ * @param  {String} property
+ */
+Refs.prototype.bind = function (target, property) {
+  if (typeof property === 'string') {
+    if (!this.props[property]) {
+      throw new Error('no property <' + property + '> in ref');
+    }
+    property = this.props[property];
+  }
+  if (property.collection) {
+    defineCollectionProperty(this, property, target);
+  } else {
+    defineProperty(this, property, target);
+  }
+};
+Refs.prototype.ensureRefsCollection = function (target, property) {
+  var collection = target[property.name];
+  if (!isExtended(collection)) {
+    defineCollectionProperty(this, property, target);
+  }
+  return collection;
+};
+Refs.prototype.ensureBound = function (target, property) {
+  if (!hasOwnProperty(target, property)) {
+    this.bind(target, property);
+  }
+};
+Refs.prototype.unset = function (target, property, value) {
+  if (target) {
+    this.ensureBound(target, property);
+    if (property.collection) {
+      this.ensureRefsCollection(target, property).remove(value);
+    } else {
+      target[property.name] = undefined;
+    }
+  }
+};
+Refs.prototype.set = function (target, property, value) {
+  if (target) {
+    this.ensureBound(target, property);
+    if (property.collection) {
+      this.ensureRefsCollection(target, property).add(value);
+    } else {
+      target[property.name] = value;
+    }
+  }
+};
+
+/**
+ * An attribute descriptor to be used specify an attribute in a {@link Refs} instance
+ *
+ * @typedef {Object} Refs.AttributeDescriptor
+ * @property {String} name
+ * @property {boolean} [collection=false]
+ * @property {boolean} [enumerable=false]
+ */
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/path-intersection/intersect.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/path-intersection/intersect.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ findPathIntersections)
+/* harmony export */ });
+/**
+ * This file contains source code adapted from Snap.svg (licensed Apache-2.0).
+ *
+ * @see https://github.com/adobe-webplatform/Snap.svg/blob/master/src/path.js
+ */
+
+/* eslint no-fallthrough: "off" */
+
+var p2s = /,?([a-z]),?/gi,
+    toFloat = parseFloat,
+    math = Math,
+    PI = math.PI,
+    mmin = math.min,
+    mmax = math.max,
+    pow = math.pow,
+    abs = math.abs,
+    pathCommand = /([a-z])[\s,]*((-?\d*\.?\d*(?:e[-+]?\d+)?[\s]*,?[\s]*)+)/ig,
+    pathValues = /(-?\d*\.?\d*(?:e[-+]?\d+)?)[\s]*,?[\s]*/ig;
+
+var isArray = Array.isArray || function(o) { return o instanceof Array; };
+
+function hasProperty(obj, property) {
+  return Object.prototype.hasOwnProperty.call(obj, property);
+}
+
+function clone(obj) {
+
+  if (typeof obj == 'function' || Object(obj) !== obj) {
+    return obj;
+  }
+
+  var res = new obj.constructor;
+
+  for (var key in obj) {
+    if (hasProperty(obj, key)) {
+      res[key] = clone(obj[key]);
+    }
+  }
+
+  return res;
+}
+
+function repush(array, item) {
+  for (var i = 0, ii = array.length; i < ii; i++) if (array[i] === item) {
+    return array.push(array.splice(i, 1)[0]);
+  }
+}
+
+function cacher(f) {
+
+  function newf() {
+
+    var arg = Array.prototype.slice.call(arguments, 0),
+        args = arg.join('\u2400'),
+        cache = newf.cache = newf.cache || {},
+        count = newf.count = newf.count || [];
+
+    if (hasProperty(cache, args)) {
+      repush(count, args);
+      return cache[args];
+    }
+
+    count.length >= 1e3 && delete cache[count.shift()];
+    count.push(args);
+    cache[args] = f(...arguments);
+
+    return cache[args];
+  }
+  return newf;
+}
+
+function parsePathString(pathString) {
+
+  if (!pathString) {
+    return null;
+  }
+
+  var pth = paths(pathString);
+
+  if (pth.arr) {
+    return clone(pth.arr);
+  }
+
+  var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, q: 4, s: 4, t: 2, v: 1, z: 0 },
+      data = [];
+
+  if (isArray(pathString) && isArray(pathString[0])) { // rough assumption
+    data = clone(pathString);
+  }
+
+  if (!data.length) {
+
+    String(pathString).replace(pathCommand, function(a, b, c) {
+      var params = [],
+          name = b.toLowerCase();
+
+      c.replace(pathValues, function(a, b) {
+        b && params.push(+b);
+      });
+
+      if (name == 'm' && params.length > 2) {
+        data.push([ b, ...params.splice(0, 2) ]);
+        name = 'l';
+        b = b == 'm' ? 'l' : 'L';
+      }
+
+      while (params.length >= paramCounts[name]) {
+        data.push([ b, ...params.splice(0, paramCounts[name]) ]);
+        if (!paramCounts[name]) {
+          break;
+        }
+      }
+    });
+  }
+
+  data.toString = paths.toString;
+  pth.arr = clone(data);
+
+  return data;
+}
+
+function paths(ps) {
+  var p = paths.ps = paths.ps || {};
+
+  if (p[ps]) {
+    p[ps].sleep = 100;
+  } else {
+    p[ps] = {
+      sleep: 100
+    };
+  }
+
+  setTimeout(function() {
+    for (var key in p) {
+      if (hasProperty(p, key) && key != ps) {
+        p[key].sleep--;
+        !p[key].sleep && delete p[key];
+      }
+    }
+  });
+
+  return p[ps];
+}
+
+function rectBBox(x, y, width, height) {
+
+  if (arguments.length === 1) {
+    y = x.y;
+    width = x.width;
+    height = x.height;
+    x = x.x;
+  }
+
+  return {
+    x: x,
+    y: y,
+    width: width,
+    height: height,
+    x2: x + width,
+    y2: y + height
+  };
+}
+
+function pathToString() {
+  return this.join(',').replace(p2s, '$1');
+}
+
+function pathClone(pathArray) {
+  var res = clone(pathArray);
+  res.toString = pathToString;
+  return res;
+}
+
+function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
+  var t1 = 1 - t,
+      t13 = pow(t1, 3),
+      t12 = pow(t1, 2),
+      t2 = t * t,
+      t3 = t2 * t,
+      x = t13 * p1x + t12 * 3 * t * c1x + t1 * 3 * t * t * c2x + t3 * p2x,
+      y = t13 * p1y + t12 * 3 * t * c1y + t1 * 3 * t * t * c2y + t3 * p2y;
+
+  return {
+    x: fixError(x),
+    y: fixError(y)
+  };
+}
+
+function bezierBBox(points) {
+
+  var bbox = curveBBox(...points);
+
+  return rectBBox(
+    bbox.x0,
+    bbox.y0,
+    bbox.x1 - bbox.x0,
+    bbox.y1 - bbox.y0
+  );
+}
+
+function isPointInsideBBox(bbox, x, y) {
+  return x >= bbox.x &&
+    x <= bbox.x + bbox.width &&
+    y >= bbox.y &&
+    y <= bbox.y + bbox.height;
+}
+
+function isBBoxIntersect(bbox1, bbox2) {
+  bbox1 = rectBBox(bbox1);
+  bbox2 = rectBBox(bbox2);
+  return isPointInsideBBox(bbox2, bbox1.x, bbox1.y)
+    || isPointInsideBBox(bbox2, bbox1.x2, bbox1.y)
+    || isPointInsideBBox(bbox2, bbox1.x, bbox1.y2)
+    || isPointInsideBBox(bbox2, bbox1.x2, bbox1.y2)
+    || isPointInsideBBox(bbox1, bbox2.x, bbox2.y)
+    || isPointInsideBBox(bbox1, bbox2.x2, bbox2.y)
+    || isPointInsideBBox(bbox1, bbox2.x, bbox2.y2)
+    || isPointInsideBBox(bbox1, bbox2.x2, bbox2.y2)
+    || (bbox1.x < bbox2.x2 && bbox1.x > bbox2.x
+        || bbox2.x < bbox1.x2 && bbox2.x > bbox1.x)
+    && (bbox1.y < bbox2.y2 && bbox1.y > bbox2.y
+        || bbox2.y < bbox1.y2 && bbox2.y > bbox1.y);
+}
+
+function base3(t, p1, p2, p3, p4) {
+  var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4,
+      t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
+  return t * t2 - 3 * p1 + 3 * p2;
+}
+
+function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
+
+  if (z == null) {
+    z = 1;
+  }
+
+  z = z > 1 ? 1 : z < 0 ? 0 : z;
+
+  var z2 = z / 2,
+      n = 12,
+      Tvalues = [ -.1252,.1252,-.3678,.3678,-.5873,.5873,-.7699,.7699,-.9041,.9041,-.9816,.9816 ],
+      Cvalues = [ 0.2491,0.2491,0.2335,0.2335,0.2032,0.2032,0.1601,0.1601,0.1069,0.1069,0.0472,0.0472 ],
+      sum = 0;
+
+  for (var i = 0; i < n; i++) {
+    var ct = z2 * Tvalues[i] + z2,
+        xbase = base3(ct, x1, x2, x3, x4),
+        ybase = base3(ct, y1, y2, y3, y4),
+        comb = xbase * xbase + ybase * ybase;
+
+    sum += Cvalues[i] * math.sqrt(comb);
+  }
+
+  return z2 * sum;
+}
+
+
+function intersectLines(x1, y1, x2, y2, x3, y3, x4, y4) {
+
+  if (
+    mmax(x1, x2) < mmin(x3, x4) ||
+      mmin(x1, x2) > mmax(x3, x4) ||
+      mmax(y1, y2) < mmin(y3, y4) ||
+      mmin(y1, y2) > mmax(y3, y4)
+  ) {
+    return;
+  }
+
+  var nx = (x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4),
+      ny = (x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4),
+      denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+  if (!denominator) {
+    return;
+  }
+
+  var px = fixError(nx / denominator),
+      py = fixError(ny / denominator),
+      px2 = +px.toFixed(2),
+      py2 = +py.toFixed(2);
+
+  if (
+    px2 < +mmin(x1, x2).toFixed(2) ||
+      px2 > +mmax(x1, x2).toFixed(2) ||
+      px2 < +mmin(x3, x4).toFixed(2) ||
+      px2 > +mmax(x3, x4).toFixed(2) ||
+      py2 < +mmin(y1, y2).toFixed(2) ||
+      py2 > +mmax(y1, y2).toFixed(2) ||
+      py2 < +mmin(y3, y4).toFixed(2) ||
+      py2 > +mmax(y3, y4).toFixed(2)
+  ) {
+    return;
+  }
+
+  return { x: px, y: py };
+}
+
+function fixError(number) {
+  return Math.round(number * 100000000000) / 100000000000;
+}
+
+function findBezierIntersections(bez1, bez2, justCount) {
+  var bbox1 = bezierBBox(bez1),
+      bbox2 = bezierBBox(bez2);
+
+  if (!isBBoxIntersect(bbox1, bbox2)) {
+    return justCount ? 0 : [];
+  }
+
+  // As an optimization, lines will have only 1 segment
+
+  var l1 = bezlen(...bez1),
+      l2 = bezlen(...bez2),
+      n1 = isLine(bez1) ? 1 : ~~(l1 / 5) || 1,
+      n2 = isLine(bez2) ? 1 : ~~(l2 / 5) || 1,
+      dots1 = [],
+      dots2 = [],
+      xy = {},
+      res = justCount ? 0 : [];
+
+  for (var i = 0; i < n1 + 1; i++) {
+    var p = findDotsAtSegment(...bez1, i / n1);
+    dots1.push({ x: p.x, y: p.y, t: i / n1 });
+  }
+
+  for (i = 0; i < n2 + 1; i++) {
+    p = findDotsAtSegment(...bez2, i / n2);
+    dots2.push({ x: p.x, y: p.y, t: i / n2 });
+  }
+
+  for (i = 0; i < n1; i++) {
+
+    for (var j = 0; j < n2; j++) {
+      var di = dots1[i],
+          di1 = dots1[i + 1],
+          dj = dots2[j],
+          dj1 = dots2[j + 1],
+          ci = abs(di1.x - di.x) < .01 ? 'y' : 'x',
+          cj = abs(dj1.x - dj.x) < .01 ? 'y' : 'x',
+          is = intersectLines(di.x, di.y, di1.x, di1.y, dj.x, dj.y, dj1.x, dj1.y),
+          key;
+
+      if (is) {
+        key = is.x.toFixed(9) + '#' + is.y.toFixed(9);
+
+        if (xy[key]) {
+          continue;
+        }
+
+        xy[key] = true;
+
+        var t1 = di.t + abs((is[ci] - di[ci]) / (di1[ci] - di[ci])) * (di1.t - di.t),
+            t2 = dj.t + abs((is[cj] - dj[cj]) / (dj1[cj] - dj[cj])) * (dj1.t - dj.t);
+
+        if (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1) {
+
+          if (justCount) {
+            res++;
+          } else {
+            res.push({
+              x: is.x,
+              y: is.y,
+              t1: t1,
+              t2: t2
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+
+/**
+ * Find or counts the intersections between two SVG paths.
+ *
+ * Returns a number in counting mode and a list of intersections otherwise.
+ *
+ * A single intersection entry contains the intersection coordinates (x, y)
+ * as well as additional information regarding the intersecting segments
+ * on each path (segment1, segment2) and the relative location of the
+ * intersection on these segments (t1, t2).
+ *
+ * The path may be an SVG path string or a list of path components
+ * such as `[ [ 'M', 0, 10 ], [ 'L', 20, 0 ] ]`.
+ *
+ * @example
+ *
+ * var intersections = findPathIntersections(
+ *   'M0,0L100,100',
+ *   [ [ 'M', 0, 100 ], [ 'L', 100, 0 ] ]
+ * );
+ *
+ * // intersections = [
+ * //   { x: 50, y: 50, segment1: 1, segment2: 1, t1: 0.5, t2: 0.5 }
+ * // ]
+ *
+ * @param {String|Array<PathDef>} path1
+ * @param {String|Array<PathDef>} path2
+ * @param {Boolean} [justCount=false]
+ *
+ * @return {Array<Intersection>|Number}
+ */
+function findPathIntersections(path1, path2, justCount) {
+  path1 = pathToCurve(path1);
+  path2 = pathToCurve(path2);
+
+  var x1, y1, x2, y2, x1m, y1m, x2m, y2m, bez1, bez2,
+      res = justCount ? 0 : [];
+
+  for (var i = 0, ii = path1.length; i < ii; i++) {
+    var pi = path1[i];
+
+    if (pi[0] == 'M') {
+      x1 = x1m = pi[1];
+      y1 = y1m = pi[2];
+    } else {
+
+      if (pi[0] == 'C') {
+        bez1 = [ x1, y1, ...pi.slice(1) ];
+        x1 = bez1[6];
+        y1 = bez1[7];
+      } else {
+        bez1 = [ x1, y1, x1, y1, x1m, y1m, x1m, y1m ];
+        x1 = x1m;
+        y1 = y1m;
+      }
+
+      for (var j = 0, jj = path2.length; j < jj; j++) {
+        var pj = path2[j];
+
+        if (pj[0] == 'M') {
+          x2 = x2m = pj[1];
+          y2 = y2m = pj[2];
+        } else {
+
+          if (pj[0] == 'C') {
+            bez2 = [ x2, y2, ...pj.slice(1) ];
+            x2 = bez2[6];
+            y2 = bez2[7];
+          } else {
+            bez2 = [ x2, y2, x2, y2, x2m, y2m, x2m, y2m ];
+            x2 = x2m;
+            y2 = y2m;
+          }
+
+          var intr = findBezierIntersections(bez1, bez2, justCount);
+
+          if (justCount) {
+            res += intr;
+          } else {
+
+            for (var k = 0, kk = intr.length; k < kk; k++) {
+              intr[k].segment1 = i;
+              intr[k].segment2 = j;
+              intr[k].bez1 = bez1;
+              intr[k].bez2 = bez2;
+            }
+
+            res = res.concat(intr);
+          }
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+
+function pathToAbsolute(pathArray) {
+  var pth = paths(pathArray);
+
+  if (pth.abs) {
+    return pathClone(pth.abs);
+  }
+
+  if (!isArray(pathArray) || !isArray(pathArray && pathArray[0])) { // rough assumption
+    pathArray = parsePathString(pathArray);
+  }
+
+  if (!pathArray || !pathArray.length) {
+    return [ [ 'M', 0, 0 ] ];
+  }
+
+  var res = [],
+      x = 0,
+      y = 0,
+      mx = 0,
+      my = 0,
+      start = 0,
+      pa0;
+
+  if (pathArray[0][0] == 'M') {
+    x = +pathArray[0][1];
+    y = +pathArray[0][2];
+    mx = x;
+    my = y;
+    start++;
+    res[0] = [ 'M', x, y ];
+  }
+
+  for (var r, pa, i = start, ii = pathArray.length; i < ii; i++) {
+    res.push(r = []);
+    pa = pathArray[i];
+    pa0 = pa[0];
+
+    if (pa0 != pa0.toUpperCase()) {
+      r[0] = pa0.toUpperCase();
+
+      switch (r[0]) {
+      case 'A':
+        r[1] = pa[1];
+        r[2] = pa[2];
+        r[3] = pa[3];
+        r[4] = pa[4];
+        r[5] = pa[5];
+        r[6] = +pa[6] + x;
+        r[7] = +pa[7] + y;
+        break;
+      case 'V':
+        r[1] = +pa[1] + y;
+        break;
+      case 'H':
+        r[1] = +pa[1] + x;
+        break;
+      case 'M':
+        mx = +pa[1] + x;
+        my = +pa[2] + y;
+      default:
+        for (var j = 1, jj = pa.length; j < jj; j++) {
+          r[j] = +pa[j] + ((j % 2) ? x : y);
+        }
+      }
+    } else {
+      for (var k = 0, kk = pa.length; k < kk; k++) {
+        r[k] = pa[k];
+      }
+    }
+    pa0 = pa0.toUpperCase();
+
+    switch (r[0]) {
+    case 'Z':
+      x = +mx;
+      y = +my;
+      break;
+    case 'H':
+      x = r[1];
+      break;
+    case 'V':
+      y = r[1];
+      break;
+    case 'M':
+      mx = r[r.length - 2];
+      my = r[r.length - 1];
+    default:
+      x = r[r.length - 2];
+      y = r[r.length - 1];
+    }
+  }
+
+  res.toString = pathToString;
+  pth.abs = pathClone(res);
+
+  return res;
+}
+
+function isLine(bez) {
+  return (
+    bez[0] === bez[2] &&
+    bez[1] === bez[3] &&
+    bez[4] === bez[6] &&
+    bez[5] === bez[7]
+  );
+}
+
+function lineToCurve(x1, y1, x2, y2) {
+  return [
+    x1, y1, x2,
+    y2, x2, y2
+  ];
+}
+
+function qubicToCurve(x1, y1, ax, ay, x2, y2) {
+  var _13 = 1 / 3,
+      _23 = 2 / 3;
+
+  return [
+    _13 * x1 + _23 * ax,
+    _13 * y1 + _23 * ay,
+    _13 * x2 + _23 * ax,
+    _13 * y2 + _23 * ay,
+    x2,
+    y2
+  ];
+}
+
+function arcToCurve(x1, y1, rx, ry, angle, large_arc_flag, sweep_flag, x2, y2, recursive) {
+
+  // for more information of where this math came from visit:
+  // http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
+  var _120 = PI * 120 / 180,
+      rad = PI / 180 * (+angle || 0),
+      res = [],
+      xy,
+      rotate = cacher(function(x, y, rad) {
+        var X = x * math.cos(rad) - y * math.sin(rad),
+            Y = x * math.sin(rad) + y * math.cos(rad);
+
+        return { x: X, y: Y };
+      });
+
+  if (!recursive) {
+    xy = rotate(x1, y1, -rad);
+    x1 = xy.x;
+    y1 = xy.y;
+    xy = rotate(x2, y2, -rad);
+    x2 = xy.x;
+    y2 = xy.y;
+
+    var x = (x1 - x2) / 2,
+        y = (y1 - y2) / 2;
+
+    var h = (x * x) / (rx * rx) + (y * y) / (ry * ry);
+
+    if (h > 1) {
+      h = math.sqrt(h);
+      rx = h * rx;
+      ry = h * ry;
+    }
+
+    var rx2 = rx * rx,
+        ry2 = ry * ry,
+        k = (large_arc_flag == sweep_flag ? -1 : 1) *
+            math.sqrt(abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x))),
+        cx = k * rx * y / ry + (x1 + x2) / 2,
+        cy = k * -ry * x / rx + (y1 + y2) / 2,
+        f1 = math.asin(((y1 - cy) / ry).toFixed(9)),
+        f2 = math.asin(((y2 - cy) / ry).toFixed(9));
+
+    f1 = x1 < cx ? PI - f1 : f1;
+    f2 = x2 < cx ? PI - f2 : f2;
+    f1 < 0 && (f1 = PI * 2 + f1);
+    f2 < 0 && (f2 = PI * 2 + f2);
+
+    if (sweep_flag && f1 > f2) {
+      f1 = f1 - PI * 2;
+    }
+    if (!sweep_flag && f2 > f1) {
+      f2 = f2 - PI * 2;
+    }
+  } else {
+    f1 = recursive[0];
+    f2 = recursive[1];
+    cx = recursive[2];
+    cy = recursive[3];
+  }
+
+  var df = f2 - f1;
+
+  if (abs(df) > _120) {
+    var f2old = f2,
+        x2old = x2,
+        y2old = y2;
+
+    f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
+    x2 = cx + rx * math.cos(f2);
+    y2 = cy + ry * math.sin(f2);
+    res = arcToCurve(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [ f2, f2old, cx, cy ]);
+  }
+
+  df = f2 - f1;
+
+  var c1 = math.cos(f1),
+      s1 = math.sin(f1),
+      c2 = math.cos(f2),
+      s2 = math.sin(f2),
+      t = math.tan(df / 4),
+      hx = 4 / 3 * rx * t,
+      hy = 4 / 3 * ry * t,
+      m1 = [ x1, y1 ],
+      m2 = [ x1 + hx * s1, y1 - hy * c1 ],
+      m3 = [ x2 + hx * s2, y2 - hy * c2 ],
+      m4 = [ x2, y2 ];
+
+  m2[0] = 2 * m1[0] - m2[0];
+  m2[1] = 2 * m1[1] - m2[1];
+
+  if (recursive) {
+    return [ m2, m3, m4 ].concat(res);
+  } else {
+    res = [ m2, m3, m4 ].concat(res).join().split(',');
+    var newres = [];
+
+    for (var i = 0, ii = res.length; i < ii; i++) {
+      newres[i] = i % 2 ? rotate(res[i - 1], res[i], rad).y : rotate(res[i], res[i + 1], rad).x;
+    }
+
+    return newres;
+  }
+}
+
+// Returns bounding box of cubic bezier curve.
+// Source: http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html
+// Original version: NISHIO Hirokazu
+// Modifications: https://github.com/timo22345
+function curveBBox(x0, y0, x1, y1, x2, y2, x3, y3) {
+  var tvalues = [],
+      bounds = [ [], [] ],
+      a, b, c, t, t1, t2, b2ac, sqrtb2ac;
+
+  for (var i = 0; i < 2; ++i) {
+
+    if (i == 0) {
+      b = 6 * x0 - 12 * x1 + 6 * x2;
+      a = -3 * x0 + 9 * x1 - 9 * x2 + 3 * x3;
+      c = 3 * x1 - 3 * x0;
+    } else {
+      b = 6 * y0 - 12 * y1 + 6 * y2;
+      a = -3 * y0 + 9 * y1 - 9 * y2 + 3 * y3;
+      c = 3 * y1 - 3 * y0;
+    }
+
+    if (abs(a) < 1e-12) {
+
+      if (abs(b) < 1e-12) {
+        continue;
+      }
+
+      t = -c / b;
+
+      if (0 < t && t < 1) {
+        tvalues.push(t);
+      }
+
+      continue;
+    }
+
+    b2ac = b * b - 4 * c * a;
+    sqrtb2ac = math.sqrt(b2ac);
+
+    if (b2ac < 0) {
+      continue;
+    }
+
+    t1 = (-b + sqrtb2ac) / (2 * a);
+
+    if (0 < t1 && t1 < 1) {
+      tvalues.push(t1);
+    }
+
+    t2 = (-b - sqrtb2ac) / (2 * a);
+
+    if (0 < t2 && t2 < 1) {
+      tvalues.push(t2);
+    }
+  }
+
+  var j = tvalues.length,
+      jlen = j,
+      mt;
+
+  while (j--) {
+    t = tvalues[j];
+    mt = 1 - t;
+    bounds[0][j] = (mt * mt * mt * x0) + (3 * mt * mt * t * x1) + (3 * mt * t * t * x2) + (t * t * t * x3);
+    bounds[1][j] = (mt * mt * mt * y0) + (3 * mt * mt * t * y1) + (3 * mt * t * t * y2) + (t * t * t * y3);
+  }
+
+  bounds[0][jlen] = x0;
+  bounds[1][jlen] = y0;
+  bounds[0][jlen + 1] = x3;
+  bounds[1][jlen + 1] = y3;
+  bounds[0].length = bounds[1].length = jlen + 2;
+
+  return {
+    x0: mmin(...bounds[0]),
+    y0: mmin(...bounds[1]),
+    x1: mmax(...bounds[0]),
+    y1: mmax(...bounds[1])
+  };
+}
+
+function pathToCurve(path) {
+
+  var pth = paths(path);
+
+  // return cached curve, if existing
+  if (pth.curve) {
+    return pathClone(pth.curve);
+  }
+
+  var curvedPath = pathToAbsolute(path),
+      attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null },
+      processPath = function(path, d, pathCommand) {
+        var nx, ny;
+
+        if (!path) {
+          return [ 'C', d.x, d.y, d.x, d.y, d.x, d.y ];
+        }
+
+        !(path[0] in { T: 1, Q: 1 }) && (d.qx = d.qy = null);
+
+        switch (path[0]) {
+        case 'M':
+          d.X = path[1];
+          d.Y = path[2];
+          break;
+        case 'A':
+          path = [ 'C', ...arcToCurve(d.x, d.y, ...path.slice(1)) ];
+          break;
+        case 'S':
+          if (pathCommand == 'C' || pathCommand == 'S') {
+
+            // In 'S' case we have to take into account, if the previous command is C/S.
+            nx = d.x * 2 - d.bx;
+
+            // And reflect the previous
+            ny = d.y * 2 - d.by;
+
+            // command's control point relative to the current point.
+          }
+          else {
+
+            // or some else or nothing
+            nx = d.x;
+            ny = d.y;
+          }
+          path = [ 'C', nx, ny, ...path.slice(1) ];
+          break;
+        case 'T':
+          if (pathCommand == 'Q' || pathCommand == 'T') {
+
+            // In 'T' case we have to take into account, if the previous command is Q/T.
+            d.qx = d.x * 2 - d.qx;
+
+            // And make a reflection similar
+            d.qy = d.y * 2 - d.qy;
+
+            // to case 'S'.
+          }
+          else {
+
+            // or something else or nothing
+            d.qx = d.x;
+            d.qy = d.y;
+          }
+          path = [ 'C', ...qubicToCurve(d.x, d.y, d.qx, d.qy, path[1], path[2]) ];
+          break;
+        case 'Q':
+          d.qx = path[1];
+          d.qy = path[2];
+          path = [ 'C', ...qubicToCurve(d.x, d.y, path[1], path[2], path[3], path[4]) ];
+          break;
+        case 'L':
+          path = [ 'C', ...lineToCurve(d.x, d.y, path[1], path[2]) ];
+          break;
+        case 'H':
+          path = [ 'C', ...lineToCurve(d.x, d.y, path[1], d.y) ];
+          break;
+        case 'V':
+          path = [ 'C', ...lineToCurve(d.x, d.y, d.x, path[1]) ];
+          break;
+        case 'Z':
+          path = [ 'C', ...lineToCurve(d.x, d.y, d.X, d.Y) ];
+          break;
+        }
+
+        return path;
+      },
+
+      fixArc = function(pp, i) {
+
+        if (pp[i].length > 7) {
+          pp[i].shift();
+          var pi = pp[i];
+
+          while (pi.length) {
+            pathCommands[i] = 'A'; // if created multiple C:s, their original seg is saved
+            pp.splice(i++, 0, [ 'C', ...pi.splice(0, 6) ]);
+          }
+
+          pp.splice(i, 1);
+          ii = curvedPath.length;
+        }
+      },
+
+      pathCommands = [], // path commands of original path p
+      pfirst = '', // temporary holder for original path command
+      pathCommand = ''; // holder for previous path command of original path
+
+  for (var i = 0, ii = curvedPath.length; i < ii; i++) {
+    curvedPath[i] && (pfirst = curvedPath[i][0]); // save current path command
+
+    if (pfirst != 'C') // C is not saved yet, because it may be result of conversion
+    {
+      pathCommands[i] = pfirst; // Save current path command
+      i && (pathCommand = pathCommands[i - 1]); // Get previous path command pathCommand
+    }
+    curvedPath[i] = processPath(curvedPath[i], attrs, pathCommand); // Previous path command is inputted to processPath
+
+    if (pathCommands[i] != 'A' && pfirst == 'C') pathCommands[i] = 'C'; // A is the only command
+    // which may produce multiple C:s
+    // so we have to make sure that C is also C in original path
+
+    fixArc(curvedPath, i); // fixArc adds also the right amount of A:s to pathCommands
+
+    var seg = curvedPath[i],
+        seglen = seg.length;
+
+    attrs.x = seg[seglen - 2];
+    attrs.y = seg[seglen - 1];
+    attrs.bx = toFloat(seg[seglen - 4]) || attrs.x;
+    attrs.by = toFloat(seg[seglen - 3]) || attrs.y;
+  }
+
+  // cache curve
+  pth.curve = pathClone(curvedPath);
+
+  return curvedPath;
+}
+
 /***/ })
 
 /******/ 	});
@@ -27638,18 +29893,6 @@ Moddle.prototype.getTypeDescriptor = function(type) {
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -27680,9 +29923,8 @@ Moddle.prototype.getTypeDescriptor = function(type) {
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
 /*!******************!*\
   !*** ./index.js ***!
   \******************/
@@ -27690,13 +29932,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
-/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
-/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
 /* harmony import */ var _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/viewerPalette */ "./lib/viewerPalette/index.js");
 /* harmony import */ var _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/callActivityModule */ "./modules/callActivityModule/index.js");
 /* harmony import */ var _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/drilldownCentering */ "./modules/drilldownCentering/index.js");
 /* harmony import */ var _modules_styleModule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/styleModule */ "./modules/styleModule/index.js");
+/* harmony import */ var _modules_multiInstanceModule__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/multiInstanceModule */ "./modules/multiInstanceModule/index.js");
+/* harmony import */ var _modules_rightClickModule__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/rightClickModule */ "./modules/rightClickModule/index.js");
+/* harmony import */ var _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/userTaskModule/ */ "./modules/userTaskModule/index.js");
+
+
+
 
 
 
@@ -27707,14 +29955,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var bpmnViewer = {
-  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_4__["default"],
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_7__["default"],
   customModules: {
-    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_5__["default"],
-    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_6__["default"],
+    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_8__["default"],
+    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_9__["default"],
     drilldownCentering: _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__["default"],
     callActivityModule: _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__["default"],
+    multiInstanceModule: _modules_multiInstanceModule__WEBPACK_IMPORTED_MODULE_4__["default"],
     styleModule: _modules_styleModule__WEBPACK_IMPORTED_MODULE_3__["default"],
-    customPaletteProviderModule: _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__["default"]
+    customPaletteProviderModule: _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__["default"],
+    // rightClickModule,
+    userTaskModule: _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_6__["default"]
   },
 };
 

@@ -1,5 +1,20 @@
+.djs-parent {
+  --bjsl-color-info: var(--color-blue-205-100-45);
+  --bjsl-color-warning: #f7c71a;
+  --bjsl-color-error: var(--color-red-360-100-40);
+  --bjsl-color-success: #52b415;
+
+  --bjsl-font-color: var(--color-grey-225-10-15);
+  --bjsl-font-family: 'Arial', sans-serif;
+  --bjsl-font-size: 13px;
+}
+
 .bjsl-overlay {
   z-index: 500;
+}
+
+.bjsl-overlay * {
+  box-sizing: border-box;
 }
 
 .bjsl-overlay:hover {
@@ -17,36 +32,42 @@
 
 .bjsl-issues {
   padding: 8px;
-  color: #444;
-  font-family: 'Arial', sans-serif;
-  font-size: 12px;
-  background: #FAFAFA;
-  border: solid 1px #CCC;
+  color: var(--bjsl-font-color);
+  font-family: var(--bjsl-font-family);
+  font-size: var(--bjsl-font-size);
+  background: var(--color-grey-225-10-97);
+  border: solid 1px var(--color-grey-225-10-75);
   border-radius: 2px;
 }
 
 .bjsl-icon {
-  background: white;
+  --icon-color: white;
+  background: var(--icon-bg-color);
+  color: var(--icon-color);
   border-radius: 100%;
   height: 20px;
   width: 20px;
+  padding: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.bjsl-icon-error {
-  background-color: #cc3300;
-  color: white;
+.bjsl-icon svg {
+  width: 100%;
+  height: 100%;
+}
 
-  /* color: #cc3300; */
+.bjsl-icon-error {
+  --icon-bg-color: var(--bjsl-color-error);
 }
 
 .bjsl-icon-warning {
-  background-color: #f7c71a;
-  color: white;
+  --icon-bg-color: var(--bjsl-color-warning);
+}
 
-  /* color: #f7c71a; */
+.bjsl-icon-info {
+  --icon-bg-color: var(--bjsl-color-info);
 }
 
 .bjsl-overlay {
@@ -100,23 +121,35 @@
 }
 
 .bjsl-issues .icon {
-  display: flex;
+  width: 1em;
+  height: 1em;
+  margin-top: 1px;
 }
 
 .bjsl-issues li + li {
   margin-top: .5rem;
 }
 
-.bjsl-issues .error svg {
-  color: #cc3300;
+.bjsl-issues .icon {
+  --icon-color: var(--bjsl-font-color);
+
+  color: var(--icon-color);
 }
 
-.bjsl-issues .warning svg {
-  color: #f7c71a;
+.bjsl-issues .error .icon {
+  --icon-color: var(--bjsl-color-error);
+}
+
+.bjsl-issues .warning .icon {
+  --icon-color: var(--bjsl-color-warning);
+}
+
+.bjsl-issues .info .icon {
+  --icon-color: var(--bjsl-color-info);
 }
 
 .bjsl-issues a {
-  color: #444;
+  color: var(--bjsl-font-color);
   margin-left: 8px;
   text-decoration: none;
 }
@@ -167,31 +200,33 @@
   border: none;
   color: #ddd;
   display: flex;
-  align-items: center;
   outline: none;
   font-weight: bold;
+  font-size: var(--bjsl-font-size);
 }
 
 .bjsl-button-inactive:hover {
   color: #444;
 }
 
-.bjsl-button svg {
-  margin-top: -1px;
+.bjsl-button .icon {
   margin-right: 10px;
+  margin-top: 1px;
+  width: .9em;
+  height: .9em;
 }
 
 .bjsl-button-success {
-  background-color: #52b415;
+  background-color: var(--bjsl-color-success);
   color: white;
 }
 
 .bjsl-button-error {
-  background-color: #cc3300;
+  background-color: var(--bjsl-color-error);
   color: white;
 }
 
 .bjsl-button-warning {
-  background-color: #f7c71a;
+  background-color: var(--bjsl-color-warning);
   color: white;
 }

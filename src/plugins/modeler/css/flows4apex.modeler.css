@@ -111,6 +111,12 @@
 .bio-properties-panel-scroll-container > .bio-properties-panel-group > .bio-properties-panel-group-header > .bio-properties-panel-group-header-title {
   font-weight: 600;
 }
+/**
+ * Remove border at the end of pageItems group
+ */
+.bio-properties-panel-group[data-group-id="group-pageItems"] {
+  border-bottom-style: none;
+}
 /** 
  * monaco editor
  */
@@ -305,4 +311,8 @@ button.dialog.fa {
 }
 .FLOWS-DARK button.dialog:hover {
   color: var(--color-flows-button-green);
+}
+/* Overwrite text color when using bpmn extension */
+.djs-visual > *:not([style*="stroke: var(--default-stroke-color);"]) + text {
+  --default-stroke-color: black;
 }
