@@ -153,6 +153,10 @@
           this.bpmnViewer$.get('multiInstanceModule').addOverlays();
         }
 
+        if (this.userTaskData) {
+          this.bpmnViewer$.get('userTaskModule').addOverlays();
+        }
+
         // trigger load event
         event.trigger( "#" + this.regionId, "mtbv_diagram_loaded", 
           { 
@@ -276,6 +280,13 @@
           }
           catch(e) {
             this.iterationData = null;
+          }
+          
+          try {
+            this.userTaskData = JSON.parse(diagram.userTaskData); // TODO possible to to this in plsql already?
+          }
+          catch(e) {
+            this.userTaskData = null;
           }
 
           // load diagram

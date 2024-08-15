@@ -60,6 +60,17 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
        and fita_iteration_var = prov_var_name
        and fita_var_scope = prov_scope
      group by fita_prcs_id
+), user_tasks as (
+    select sbfl_prcs_id as prcs_id
+         , json_objectagg
+           (
+               key sbfl_current
+               value link_text
+               absent on null
+               returning clob
+           ) as user_task_urls
+      from flow_task_inbox_vw
+     group by sbfl_prcs_id
 )
   select prcs.prcs_id
        , prcs.prcs_name
@@ -97,6 +108,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
          ) as all_errors
        , prov.prov_var_vc2 as prcs_business_ref
        , iter.iteration_data
+       , usta.user_task_urls
     from flow_processes prcs
     join flow_instance_diagrams prdg
       on prdg.prdg_prcs_id = prcs.prcs_id
@@ -109,4 +121,6 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
      and prov.prov_scope    = 0
     left join iterations iter
       on prcs.prcs_id = iter.prcs_id
+    left join user_tasks usta
+      on prcs.prcs_id = usta.prcs_id
 with read only;
