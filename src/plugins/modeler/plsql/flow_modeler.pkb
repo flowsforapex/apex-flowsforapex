@@ -503,15 +503,15 @@ as
   procedure get_form_templates
   as
     l_result clob;
-    cursor c_form_templates is select * from form_templates order by ftpl_name;
-    l_form_template form_templates%rowtype;
+    cursor c_form_templates is select * from flow_simple_form_templates order by sfte_name;
+    l_form_template flow_simple_form_templates%rowtype;
   begin
     l_result := '[{"label":"","value":""},';
     open c_form_templates;
     loop
         fetch c_form_templates into l_form_template;
         exit when c_form_templates%NOTFOUND;
-        l_result := l_result || '{"label":"' || l_form_template.ftpl_name || '","value":"' || l_form_template.ftpl_id || '"},';
+        l_result := l_result || '{"label":"' || l_form_template.sfte_name || '","value":"' || l_form_template.sfte_static_id || '"},';
     end loop;
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
