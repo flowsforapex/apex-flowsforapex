@@ -1762,6 +1762,44 @@ as
   end has_error;
 
 
+  /* page 51 */
+  
+
+  procedure process_page_p51
+  (
+    pio_sfte_id       in out nocopy flow_simple_form_templates.sfte_id%type
+  , pi_sfte_name      in flow_simple_form_templates.sfte_name%type
+  , pi_sfte_static_id in flow_simple_form_templates.sfte_static_id%type
+  , pi_sfte_content   in flow_simple_form_templates.sfte_content%type
+  , pi_request        in varchar2)
+  as
+  begin
+    case pi_request
+      when 'CREATE' then
+        pio_sfte_id := flow_simple_form_template.create_template(
+                         pi_sfte_name => pi_sfte_name,
+                         pi_sfte_static_id => pi_sfte_static_id,
+                         pi_sfte_content => pi_sfte_content);
+      when 'SAVE' then
+        flow_simple_form_template.edit_template(
+          pi_sfte_id => pio_sfte_id,
+          pi_sfte_name => pi_sfte_name,
+          pi_sfte_static_id => pi_sfte_static_id,
+          pi_sfte_content => pi_sfte_content);
+      when 'DELETE' then
+        flow_simple_form_template.delete_template(
+          pi_sfte_id => pio_sfte_id);
+      else
+        raise_application_error(-20002, 'Unknown operation requested.');
+    end case;
+    exception
+      when flow_simple_form_template.template_exists then
+        apex_error.add_error(
+            p_message => apex_lang.message('APP_ERR_TEMPLATE_EXIST', pi_sfte_name)
+            , p_display_location => apex_error.c_on_error_page);
+  end process_page_p51;
+
+
   /* configuration */
 
 
