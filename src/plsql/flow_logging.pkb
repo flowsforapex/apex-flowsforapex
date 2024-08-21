@@ -168,7 +168,13 @@ create or replace package body flow_logging as
   , p_notes             in flow_subflow_log.sflg_notes%type default null
   )
   is 
+    l_notes    varchar2(20);
   begin
+    if p_iteration_status.is_complete then 
+      l_notes := 'COMPLETE'; 
+    else 
+      l_notes := null;
+    end if;
     -- current instance status / progress logging
     insert into flow_subflow_log sflg
     ( sflg_prcs_id
@@ -193,7 +199,7 @@ create or replace package body flow_logging as
          , sbfl.sbfl_iteration_path
          , coalesce (p_iteration_status.var_scope, sbfl.sbfl_iteration_var_scope, null)
          , coalesce (p_iteration_status.iteration_var, sbfl.sbfl_iteration_var, null)
-         , p_notes
+         , coalesce (to_char(sbfl.sbfl_loop_counter,'999'), p_notes, null)
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
     ;

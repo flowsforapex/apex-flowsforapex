@@ -46,7 +46,8 @@ begin
                          sbfl_iteration_type             VARCHAR2(10 CHAR),
                          sbfl_loop_counter               NUMBER,
                          sbfl_loop_total_instances       NUMBER,
-                         sbfl_iteration_path             VARCHAR2(4000 CHAR)                     
+                         sbfl_iteration_path             VARCHAR2(4000 CHAR),
+                         sbfl_parent_iteration_level     VARCHAR2(4000 CHAR),                    
                          )';
   end if;
 
@@ -95,7 +96,8 @@ begin
 
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_subflow_log add (
-                             sflg_sbfl_iteration_path    VARCHAR2(4000 CHAR)                    
+                             sflg_sbfl_iteration_path    VARCHAR2(4000 CHAR),
+                             sflg_parent_iteration_level VARCHAR2(4000 CHAR)                    
                          )';
   end if;
 
