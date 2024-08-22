@@ -23,12 +23,22 @@ function scope_is_valid
 is 
   l_count number;
 begin
+  -- first check if the scope is valid from a call activity
   select count(prdg_id)
     into l_count
     from flow_instance_diagrams
    where prdg_prcs_id = pi_prcs_id
-     and prdg_diagram_level = pi_scope
-  ;
+     and prdg_diagram_level = pi_scope;
+  -- if not, check if it comes from an iteration
+  -- initially check by seeing if a variable already exists in the scope
+  -- replace this later with a check on the iteration scopes
+  if l_count = 0 then 
+    select count (prov_var_name)
+      into l_count
+      from flow_process_variables
+     where prov_prcs_id = pi_prcs_id
+       and prov_scope   = pi_scope;
+  end if;
   return (l_count > 0);
 end;
 
