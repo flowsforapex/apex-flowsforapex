@@ -23,7 +23,10 @@ as
                                           end
                   , sbfl.sbfl_current 
                   ) as sbfl_current_name
-        , sbfl.sbfl_iteration_path
+        , iter.iter_display_name as sbfl_iteration_path
+        , sbfl.sbfl_iter_id    -- remove from prod
+        , sbfl.sbfl_iobj_id    -- remove from prod
+        , sbfl.sbfl_iteration_type -- remove from prod
         , sbfl.sbfl_step_key
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_became_current
@@ -73,5 +76,7 @@ left join flow_timers timr
        on timr.timr_prcs_id = sbfl.sbfl_prcs_id
       and timr.timr_sbfl_id = sbfl.sbfl_id
       and timr.timr_status in ('C', 'A', 'B')
+left join flow_iterations iter
+       on iter.iter_id = sbfl.sbfl_iter_id
 with read only
 ;

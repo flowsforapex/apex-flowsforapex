@@ -184,10 +184,9 @@ create or replace package body flow_logging as
     , sflg_last_updated
     , sflg_dgrm_id
     , sflg_diagram_level
-    , sflg_sbfl_iteration_path
-    , sflg_scope
-    , sflg_iteration_var
     , sflg_notes
+    , sflg_iter_id
+    , sflg_iobj_id
     )
     select p_process_id
          , p_completed_object
@@ -196,10 +195,9 @@ create or replace package body flow_logging as
          , sysdate
          , sbfl.sbfl_dgrm_id
          , sbfl.sbfl_diagram_level
-         , sbfl.sbfl_iteration_path
-         , coalesce (p_iteration_status.var_scope, sbfl.sbfl_iteration_var_scope, null)
-         , coalesce (p_iteration_status.iteration_var, sbfl.sbfl_iteration_var, null)
-         , coalesce (to_char(sbfl.sbfl_loop_counter,'999'), p_notes, null)
+         , p_notes
+         , sbfl.sbfl_iter_id
+         , sbfl.sbfl_iobj_id
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
     ;

@@ -61,6 +61,8 @@ as
   type t_iteration_status is record
   ( iteration_var   flow_process_variables.prov_var_name%type
   , var_scope       flow_subflows.sbfl_scope%type
+  , iobj_id         flow_iterated_objects.iobj_id%type
+  , num_iterations  number
   , is_complete     boolean
   );
 

@@ -52,22 +52,22 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level, sbfl_iteration_path
      and sbfl_status = 'error'
 group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level, sbfl_iteration_path
 ), iteration_paths as (
-select i.fita_prcs_id as prcs_id
-     , i.fita_parent_bpmn_id
-     , i.fita_iteration_var
-     , i.fita_var_scope
-     , i.fita_step_key
+select i.iobj_prcs_id as prcs_id
+     , i.iobj_parent_bpmn_id
+     , i.iobj_iteration_var
+     , i.iobj_var_scope
+     , i.iobj_step_key
      , iter.stepKey iteration_step_key
      , iter.loopCounter loopCounter
      , iter.description description
 --     , iav.prov_var_json
      , iter.iteration_path as iter_path
      , iter.status
-from   flow_iterations i 
+from   flow_iterated_objects i 
 join   flow_process_variables iav
-on     i.fita_prcs_id       = iav.prov_prcs_id
-and    i.fita_iteration_var = iav.prov_var_name
-and    i.fita_var_scope     = iav.prov_scope
+on     i.iobj_prcs_id       = iav.prov_prcs_id
+and    i.iobj_iteration_var = iav.prov_var_name
+and    i.iobj_var_scope     = iav.prov_scope
 and    iav.prov_var_type = 'JSON'
 join   json_table (iav.prov_var_json, '$[*]' 
        columns 

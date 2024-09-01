@@ -29,11 +29,11 @@ create or replace package test_helper as
    , pi_current   in  flow_subflows.sbfl_current%type
    );
 
-  -- step the model forward from an object given the object ID and iteration path
+  -- step the model forward from an object given the object ID and iteration ID
    procedure step_forward 
    ( pi_prcs_id         in  flow_processes.prcs_id%type
    , pi_current         in  flow_subflows.sbfl_current%type
-   , pi_iteration_path  in  flow_subflows.sbfl_iteration_path%type
+   , pi_iter_id         in  flow_subflows.sbfl_iter_id%type
    );
 
   -- restart and step the model forward from an object given the object ID

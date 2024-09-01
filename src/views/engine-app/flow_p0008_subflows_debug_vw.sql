@@ -4,27 +4,24 @@ create or replace view flow_p0008_subflows_debug_vw
 as
   select sbfl.sbfl_id
        , sbfl.sbfl_prcs_id
-       , sbfl.sbfl_process_name
-       , sbfl.sbfl_dgrm_id
-       , sbfl.sbfl_sbfl_dgrm_id
-       , sbfl.sbfl_dgrm_name
-       , sbfl.sbfl_dgrm_version
-       , sbfl.sbfl_dgrm_status
-       , sbfl.sbfl_dgrm_category
-       , sbfl.sbfl_route
-       , sbfl.sbfl_route_name
-       , sbfl.sbfl_last_completed
-       , sbfl.sbfl_last_completed_name
-       , sbfl.sbfl_current
-       , sbfl.sbfl_current_name 
+       , sbfl.sbfl_current_name as sbfl_current
+       , sbfl.sbfl_iteration_path
        , sbfl.sbfl_step_key
-       , sbfl.sbfl_current_tag_name
-       , sbfl.sbfl_starting_object
-       , sbfl.sbfl_starting_object_name 
-       , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update
-       , sbfl.sbfl_current_lane
-       , sbfl.sbfl_current_lane_name
+       , sbfl.sbfl_sbfl_dgrm_id
+       , sbfl.sbfl_diagram_level
        , sbfl.sbfl_process_level
+       , sbfl.sbfl_loop_counter
+       , sbfl.sbfl_loop_total_instances
+       , sbfl.sbfl_scope
+       , sbfl.sbfl_calling_sbfl
+       , ( select nvl(objt.objt_name ,'Main Diagram')
+             from flow_objects objt
+             join flow_instance_diagrams prdg 
+               on prdg.prdg_calling_objt = objt.objt_bpmn_id
+              and prdg.prdg_calling_dgrm = objt.objt_dgrm_id
+            where prdg.prdg_diagram_level = sbfl.sbfl_diagram_level ) as Calling_object
+       , sbfl.sbfl_starting_object_name as sbfl_starting_object
+       , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update
        , sbfl.sbfl_status
        , case sbfl.sbfl_status
              when 'running' then 'fa-play-circle-o'
@@ -34,26 +31,46 @@ as
              when 'error' then 'fa-exclamation-circle-o'
              when 'split' then 'fa fa-share-alt'
              when 'in subprocess' then 'fa fa-share-alt'
+             when 'in call activity' then 'fa fa-share-alt'
              when 'waiting at gateway' then 'fa fa-hand-stop-o'
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
              when 'waiting for approval' then 'fa fa-question-square-o'
+             when 'waiting for message' then 'fa fa-envelope-o'
+             when 'waiting iterations' then 'fa fa-align-justify fa-rotate-90'
+             when 'iterating' then 'fa fa-align-justify fa-rotate-90'
          end as sbfl_status_icon
+       , sbfl.sbfl_iter_id
+       , sbfl.sbfl_iobj_id
+       , sbfl.sbfl_iteration_type
+       , sbfl.sbfl_priority
+       , sbfl.sbfl_due_on
+       , sbfl.timr_start_on at time zone sessiontimezone as sbfl_timr_start_on
+       , sbfl.sbfl_current_lane_name as sbfl_current_lane
        , sbfl.sbfl_reservation
+       , sbfl.sbfl_potential_users
+       , sbfl.sbfl_potential_groups
+       , sbfl.sbfl_excluded_users
        , null as actions   
-       , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
+       , apex_item.checkbox2(p_idx => 2, p_value => sbfl.sbfl_id, p_attributes => 'data-status="'|| sbfl.sbfl_status ||'" data-prcs="'|| sbfl.sbfl_prcs_id ||'" data-key="'|| sbfl.sbfl_step_key ||'" data-reservation="'|| sbfl.sbfl_reservation ||'"') as checkbox
         , case 
             when sbfl.sbfl_status = 'error' then 'fa-redo-arrow'
             when sbfl.sbfl_status = 'running' then 'fa-sign-out'
+            when sbfl.sbfl_status = 'waiting for timer' then 'fa-clock-o'
           end as quick_action_icon 
         , case 
             when sbfl.sbfl_status = 'error' then apex_lang.message('APP_RESTART_STEP')
             when sbfl.sbfl_status = 'running' then apex_lang.message('APP_COMPLETE_STEP')
+            when sbfl.sbfl_status = 'waiting for timer' then apex_lang.message('APP_RESCHEDULE_TIMER')
           end as quick_action_label 
         , case 
             when sbfl.sbfl_status = 'error' then 'restart-step'
             when sbfl.sbfl_status = 'running' then 'complete-step'
+            when sbfl.sbfl_status = 'waiting for timer' then 'reschedule-timer'
           end as quick_action 
+        , case when sbfl.sbfl_status = 'waiting for timer' then ' @ ' || sbfl.timr_start_on at time zone sessiontimezone end as timer_status_info
     from flow_subflows_vw sbfl
 with read only
+;
+
 ;

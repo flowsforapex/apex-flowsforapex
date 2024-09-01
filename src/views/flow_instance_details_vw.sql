@@ -81,6 +81,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
               and aerr.diagram_level =  prdg.prdg_diagram_level
          ) as all_errors
        , prov.prov_var_vc2 as prcs_business_ref
+       , null as iteration_data
     from flow_processes prcs
     join flow_instance_diagrams prdg
       on prdg.prdg_prcs_id = prcs.prcs_id

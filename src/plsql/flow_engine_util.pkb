@@ -380,9 +380,10 @@ end get_object_tag;
     , p_follows_ebg               in boolean default false
     , p_loop_counter              in number default null
     , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
-    , p_iteration_path            in varchar2 default null
     , p_iteration_var             in flow_process_variables.prov_var_name%type default null
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
+    , p_iter_id                   in flow_iterations.iter_id%type default null    
+    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null                 
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
@@ -398,7 +399,7 @@ end get_object_tag;
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_is_new_scope        varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_follows_ebg         flow_subflows.sbfl_is_following_ebg%type;
-    l_new_iteration_path  flow_subflows.sbfl_iteration_path%type;
+    l_new_iter_id         flow_iterations.iter_id%type;
   begin
     apex_debug.enter 
     ( 'subflow_start'
@@ -451,8 +452,8 @@ end get_object_tag;
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
                 when 'N' then sbfl.sbfl_calling_sbfl
-             end
-           , trim (':' from sbfl_iteration_path || ':' || p_iteration_path)   
+             end 
+           , nvl2(p_iter_id,p_iter_id, sbfl_iter_id)
         into l_process_level
            , l_diagram_level
            , l_scope
@@ -461,7 +462,7 @@ end get_object_tag;
            , l_lane_isRole
            , l_lane_role
            , l_level_parent
-           , l_new_iteration_path
+           , l_new_iter_id
         from flow_subflows sbfl
        where sbfl.sbfl_id = p_parent_subflow;
     end if;
@@ -493,9 +494,10 @@ end get_object_tag;
          , sbfl_is_following_ebg
          , sbfl_loop_counter
          , sbfl_iteration_type
-         , sbfl_iteration_path
          , sbfl_iteration_var
          , sbfl_iteration_var_scope
+         , sbfl_iter_id
+         , sbfl_iobj_id
          )
     values
          ( p_process_id
@@ -524,9 +526,10 @@ end get_object_tag;
          , l_follows_ebg
          , p_loop_counter
          , p_iteration_type
-         , l_new_iteration_path   
          , p_iteration_var
-         , p_iteration_var_scope            
+         , p_iteration_var_scope
+         , l_new_iter_id  
+         , p_iterated_object         
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 
@@ -554,7 +557,7 @@ end get_object_tag;
     end if;
 
     apex_debug.info
-    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6.'
+    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7'
     , p0        => p_process_id
     , p1        => l_new_subflow_context.sbfl_id
     , p2        => l_new_subflow_context.step_key
@@ -562,6 +565,7 @@ end get_object_tag;
     , p4        => l_lane
     , p5        => l_lane_name
     , p6        => p_loop_counter
+    , p7        => l_new_iter_id
     );
     return l_new_subflow_context;
   end subflow_start;

@@ -14,6 +14,12 @@ as
   , p_sbfl_rec              in            flow_subflows%rowtype
   );
 
+  function get_iteration_id 
+  ( p_prcs_id        in flow_processes.prcs_id%type
+  , p_iobj_id        in flow_iterated_objects.iobj_id%type 
+  , p_loop_counter   in flow_subflows.sbfl_loop_counter%type 
+  ) return flow_iterations.iter_id%type;
+
   procedure parallel_split
   ( p_subflow_id            in flow_subflows.sbfl_id%type 
   , p_sbfl_info             in flow_subflows%rowtype
@@ -28,7 +34,7 @@ as
   function sequential_init
   ( p_sbfl_info             in flow_subflows%rowtype
   , p_step_info             in flow_types_pkg.flow_step_info
-  ) return flow_subflows.sbfl_loop_total_instances%type;
+  ) return flow_types_pkg.t_iteration_status;
 
   procedure sequential_start_step
   ( p_sbfl_info             in flow_subflows%rowtype
@@ -41,7 +47,7 @@ as
   function loop_init
   ( p_sbfl_info             in flow_subflows%rowtype
   , p_step_info             in flow_types_pkg.flow_step_info
-  ) return flow_subflows.sbfl_loop_total_instances%type;
+  ) return flow_types_pkg.t_iteration_status;
 
   procedure loop_start_step
   ( p_sbfl_info             in flow_subflows%rowtype
@@ -59,15 +65,15 @@ as
   ) return sys.json_array_t;  
 
 
-  procedure set_iteration_array_status 
+  procedure set_iteration_status 
   ( pi_prcs_id          in flow_processes.prcs_id%type
   , pi_sbfl_id          in flow_subflows.sbfl_id%type default null
   , pi_step_key         in flow_subflows.sbfl_step_key%type default null
   , pi_scope            in flow_subflows.sbfl_scope%type
   , pi_prov_var_name    in flow_process_variables.prov_var_name%type
   , pi_loop_counter     in flow_subflows.sbfl_loop_counter%type
-  , pi_iteration_path   in flow_subflows.sbfl_iteration_path%type default null
   , pi_new_status       in varchar2
+  , pi_iobj_id          in flow_iterated_objects.iobj_id%type default null -- remove default null later
   );
 
 end flow_iteration;

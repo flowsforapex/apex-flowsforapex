@@ -1143,14 +1143,15 @@ begin
   , p3  => p_step_info.target_objt_ref
   );
   apex_debug.trace
-  ( p_message => 'Running Step Info - target_objt_tag : %0 (treat like %2 ), target_objt_subtag : %1, iteration: %3 (loop: %4), iteration path %5, iteration var %6'
+  ( p_message => 'Running Step Info - target_objt_tag : %0 (treat like %2 ), target_objt_subtag : %1, iteration: %3 (loop: %4), iter_id: %5, iobj_id: %6 iteration var %7'
   , p0 => p_step_info.target_objt_tag
   , p1 => p_step_info.target_objt_subtag
   , p2 => coalesce (p_step_info.target_objt_treat_as_tag, p_step_info.target_objt_tag)
   , p3 => nvl ( p_step_info.target_objt_iteration, 'None')
   , p4 => p_sbfl_rec.sbfl_loop_counter
-  , p5 => p_sbfl_rec.sbfl_iteration_path
-  , p6 => p_sbfl_rec.sbfl_iteration_var
+  , p5 => p_sbfl_rec.sbfl_iter_id
+  , p6 => p_sbfl_rec.sbfl_iobj_id
+  , p7 => p_sbfl_rec.sbfl_iteration_var
   );
   apex_debug.trace
   ( p_message => 'Running Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
@@ -1334,11 +1335,14 @@ is
   l_step_key                  flow_subflows.sbfl_step_key%type;
   l_previous_step             flow_objects.objt_bpmn_id%type;  
   l_next_loop_counter         number;
+  l_existing_iter_id          flow_iterations.iter_id%type;
+  l_existing_iobj_id          flow_iterated_objects.iobj_id%type;
+  l_next_iter_id              flow_iterations.iter_id%type;
+  l_next_iobj_id              flow_iterated_objects.iobj_id%type;
   l_total_loop_instances      number;
   l_iteration_status          flow_types_pkg.t_iteration_status;
+  l_iter_info                 flow_types_pkg.t_iteration_status;
   l_next_step_confirmed       boolean := false;
-  l_existing_iteration_path   flow_subflows.sbfl_iteration_path%type;
-  l_new_iteration_path        flow_subflows.sbfl_iteration_path%type;
  -- l_prcs_check_id         flow_processes.prcs_id%type;
 begin
   apex_debug.enter 
@@ -1414,7 +1418,8 @@ begin
                                                                   , pi_current         => l_step_info.target_objt_ref
                                                                   );
         -- control iteration progression
-        l_existing_iteration_path := l_sbfl_rec.sbfl_iteration_path;
+        l_existing_iter_id        := l_sbfl_rec.sbfl_iter_id;
+        l_existing_iobj_id        := l_sbfl_rec.sbfl_iobj_id;
         case l_step_info.target_objt_iteration 
         when flow_constants_pkg.gc_iteration_sequential then
           if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref
@@ -1424,12 +1429,14 @@ begin
             -- to set loop info on the original subflow. 
             -- sequential iteration info is set when iteration subflows are created
 
-            l_total_loop_instances := flow_iteration.sequential_init ( p_sbfl_info => l_sbfl_rec
-                                                                      , p_step_info => l_step_info
-                                                                      );
+            l_iter_info := flow_iteration.sequential_init ( p_sbfl_info => l_sbfl_rec
+                                                          , p_step_info => l_step_info
+                                                          );
+            l_total_loop_instances := l_iter_info.num_iterations;
             l_next_loop_counter    := 1;
+            l_next_iobj_id         := l_iter_info.iobj_id;
             if l_total_loop_instances = 0 then
-              -- next step is a sequential loop of 0 members - move on to next step
+              -- next step is an empty collection (sequential loop of 0 members) - move on to next step
               apex_debug.message ( p_message => 'Loop Collection is empty - skipping process step %0.'
                                  , p0 => l_step_info.target_objt_ref);
               -- log current step as completed before releasing the reservation
@@ -1441,41 +1448,46 @@ begin
               -- set old step to the step to be skipped, then repeat the loop to get to the following step
               l_previous_step := l_step_info.target_objt_ref;
               continue;
-            end if; -- empty collection
+            end if; -- end empty collection
             -- new non-empty collection...
-            l_next_step_confirmed  := true;            
+            l_next_step_confirmed  := true;  
+            l_next_iter_id := flow_iteration.get_iteration_id ( p_prcs_id      => p_process_id
+                                                               , p_iobj_id      => l_next_iobj_id
+                                                               , p_loop_counter => l_next_loop_counter
+                                                               );          
           else 
             -- loop counter has value - so iteration is in progress
             -- next step is the next sequential iteration of an existing iteration
             l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
             l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
+            l_next_iobj_id         := l_existing_iobj_id;
             l_next_step_confirmed  := true;
-            -- trim existing iteration path to remove previous iterations of the same parent
-            if l_existing_iteration_path is not null and  l_existing_iteration_path like '%:%' then
-              l_existing_iteration_path := substr(l_existing_iteration_path, 1, instr(l_existing_iteration_path, ':', -1) - 1);
-            else 
-              l_existing_iteration_path := null;
-            end if;
+
+            l_next_iter_id := flow_iteration.get_iteration_id ( p_prcs_id      => p_process_id
+                                                               , p_iobj_id      => l_next_iobj_id
+                                                               , p_loop_counter => l_next_loop_counter
+                                                               );       
           end if; -- loop counter
-          l_new_iteration_path := trim (':' from
-                                       l_existing_iteration_path||':'||l_step_info.target_objt_name||'['||l_next_loop_counter||']');
         when flow_constants_pkg.gc_iteration_parallel then
           if p_reset_step_key then
             -- the next step is the iterating object (not the 2nd phase ogf the implicit parallel gateway)
             -- so reset the step key in the iteration array
-            flow_iteration.set_iteration_array_status
+            apex_debug.message ('call from flow_engine...');
+            flow_iteration.set_iteration_status
             ( pi_prcs_id        => p_process_id
             , pi_loop_counter   => l_sbfl_rec.sbfl_loop_counter
             , pi_new_status     => flow_constants_pkg.gc_iteration_status_running 
             , pi_step_key       => l_step_info.target_objt_step_key
             , pi_scope          => l_sbfl_rec.sbfl_iteration_var_scope
             , pi_prov_var_name  => l_sbfl_rec.sbfl_iteration_var
+            , pi_iobj_id        => l_sbfl_rec.sbfl_iobj_id
             );
           end if;
           l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
           l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
           l_next_step_confirmed  := true;
-          l_new_iteration_path := l_sbfl_rec.sbfl_iteration_path;
+          l_next_iobj_id         := l_existing_iobj_id;
+          l_next_iter_id         := l_existing_iter_id;
         when flow_constants_pkg.gc_iteration_loop then
           if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref then
             -- next step is a new bpmn loop 
@@ -1483,11 +1495,12 @@ begin
             -- to set loop info on the original subflow. 
             -- loop iteration info is set when iteration subflows are created
 
-            l_total_loop_instances := flow_iteration.loop_init ( p_sbfl_info => l_sbfl_rec
-                                                                , p_step_info => l_step_info
-                                                                );
+            l_iter_info  := flow_iteration.loop_init ( p_sbfl_info => l_sbfl_rec
+                                                     , p_step_info => l_step_info
+                                                     );
             l_next_loop_counter    := 1;
             l_total_loop_instances := 1;
+            l_next_iobj_id         := l_iter_info.iobj_id;
             -- new non-empty collection...
             l_next_step_confirmed  := true;            
           else 
@@ -1495,35 +1508,39 @@ begin
             -- loop counter has value - so iteration is in progress
             l_next_loop_counter    := l_sbfl_rec.sbfl_loop_counter +1;
             l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances +1;
+            l_next_iobj_id         := l_existing_iobj_id;
             l_next_step_confirmed  := true;
           end if; -- loop counter
-          l_existing_iteration_path := l_sbfl_rec.sbfl_iteration_path;
-          if l_existing_iteration_path is not null and  l_existing_iteration_path like '%:%' then
-            l_existing_iteration_path := substr(l_existing_iteration_path, 1, instr(l_existing_iteration_path, ':', -1) - 1);
-          else 
-            l_existing_iteration_path := null;
-          end if;
-          l_new_iteration_path := trim ( ':' from 
-                                       l_existing_iteration_path||':'||l_step_info.target_objt_name||'['||l_next_loop_counter||']');          
+      --      l_next_iter_id := flow_iteration.get_iteration_id ( p_prcs_id      => p_process_id
+      --                                                         , p_iobj_id      => l_next_iobj_id
+      --                                                         , p_loop_counter => l_next_loop_counter
+      --                                                         );       
+    
         else 
+          apex_debug.message (p_message => 'next step not an iteration or loop');
           -- next step is not an iteration or loop 
           l_next_loop_counter := null;
           l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances; 
           l_next_step_confirmed  := true;
           if l_iteration_status.is_complete then
-              apex_debug.message ('non iteration step - existing iteration path...  %0',p0=> l_existing_iteration_path);
-              if l_existing_iteration_path is not null and  l_existing_iteration_path like '%:%' then
-                l_new_iteration_path := substr(l_existing_iteration_path, 1, instr(l_existing_iteration_path, ':', -1) - 1);
-                apex_debug.message ('stripping one level from iteration path...  New path %0',p0=> l_existing_iteration_path);
-              else 
-                l_new_iteration_path := null;
-                apex_debug.message ('resetting iteration path...  New path %0',p0=> l_existing_iteration_path);
-              end if;
+
+              -- check if iteration was nested inside a parent iteration... if so reset to that iteration.
+              begin 
+                select iter_parent_iter_id
+                  into l_next_iter_id
+                  from flow_iterations
+                 where iter_id = l_existing_iter_id;
+              exception
+                when others then
+                  apex_debug.message ('failed to get parent iteration info');
+              end;
+
               l_iteration_status.iteration_var := null;
               l_iteration_status.var_scope := null;
               l_iteration_status.is_complete := false;
+              l_next_iobj_id := null;
           else
-              l_new_iteration_path := l_sbfl_rec.sbfl_iteration_path;
+              l_next_iter_id := l_existing_iter_id;
           end if;
         end case; -- iteration type
       end loop;
@@ -1567,13 +1584,14 @@ begin
                                           when 'false' then null
                                           else coalesce( sbfl.sbfl_lane_role   , null)
                                           end
+        , sbfl.sbfl_iter_id             = l_next_iter_id
+        , sbfl.sbfl_iobj_id             = l_next_iobj_id                                  
         , sbfl.sbfl_loop_counter        = l_next_loop_counter
         , sbfl.sbfl_iteration_type      = l_step_info.target_objt_iteration
         , sbfl.sbfl_loop_total_instances
                                         = l_total_loop_instances
         , sbfl.sbfl_iteration_var       = l_iteration_status.iteration_var
         , sbfl.sbfl_iteration_var_scope = l_iteration_status.var_scope
-        , sbfl.sbfl_iteration_path      = l_new_iteration_path
         , sbfl.sbfl_last_update         = l_timestamp
         , sbfl.sbfl_last_update_by      = coalesce ( sys_context('apex$session','app_user') 
                                                  , sys_context('userenv','os_user')

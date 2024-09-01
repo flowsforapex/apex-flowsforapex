@@ -494,8 +494,8 @@ create or replace package body flow_instances as
     ;
     -- clean up iteration arrays
     delete
-      from flow_iterations
-     where fita_prcs_id = p_process_id
+      from flow_iterated_objects
+     where iobj_prcs_id = p_process_id
      ;
     -- delete the subflows
     delete
@@ -695,8 +695,8 @@ create or replace package body flow_instances as
     ;
     -- clear out any iterations
     delete
-      from flow_iterations
-     where fita_prcs_id = p_process_id
+      from flow_iterated_objects
+     where iobj_prcs_id = p_process_id
      ;
     delete
       from flow_subflows sbfl

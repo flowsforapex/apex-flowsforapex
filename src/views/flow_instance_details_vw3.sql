@@ -15,7 +15,7 @@ with iter_comp_steps as (
     select distinct sflg.sflg_prcs_id as prcs_id
                   , sflg.sflg_dgrm_id  as dgrm_id
                   , sflg.sflg_diagram_level as diagram_level
-                  , sflg.sflg_sbfl_iteration_path as iter_path
+                  , sflg.sflg_iter_id as iter_id
                   , sflg.sflg_objt_id as objt_id
       from flow_subflow_log sflg
      where sflg.sflg_objt_id not in (   
@@ -23,36 +23,41 @@ with iter_comp_steps as (
                                         from flow_subflows sbfl
                                        where sbfl.sbfl_prcs_id = sflg.sflg_prcs_id
                                          and sbfl.sbfl_diagram_level = sflg.sflg_diagram_level
-                                         and sbfl.sbfl_iteration_path = sflg.sflg_sbfl_iteration_path
+                                         and sbfl.sbfl_iter_id = sflg.sflg_iter_id
                                          and sbfl.sbfl_current is not null
                                     )
-       and sflg.sflg_sbfl_iteration_path is not null
+       and sflg.sflg_iter_id is not null
 ), iter_comp as (
-  select prcs_id, dgrm_id, diagram_level, iter_path
+  select prcs_id, dgrm_id, diagram_level, iter_id
       , json_arrayagg( objt_id order by objt_id returning varchar2(2000)) as bpmn_ids
     from iter_comp_steps
-   group by prcs_id, dgrm_id, diagram_level, iter_path
-),iter_current as (
-    select sbfl_prcs_id as prcs_id
-         , sbfl_dgrm_id as dgrm_id
-         , sbfl_diagram_level as diagram_level 
-         , sbfl_iteration_path as iter_path
-         , json_arrayagg(sbfl_current order by sbfl_current returning varchar2(2000)) as bpmn_ids
-      from flow_subflows
-     where sbfl_current is not null  
-       and sbfl_iteration_path is not null
-  group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level, sbfl_iteration_path
+   group by prcs_id, dgrm_id, diagram_level, iter_id
+)
+,iter_current as (
+    select sbfl.sbfl_prcs_id as prcs_id
+         , sbfl.sbfl_dgrm_id as dgrm_id
+         , sbfl.sbfl_diagram_level as diagram_level 
+         , sbfl.sbfl_iter_id as iter_id
+         , json_arrayagg(sbfl.sbfl_current order by sbfl.sbfl_current returning varchar2(2000)) as bpmn_ids
+      from flow_subflows   sbfl
+      join flow_iterations iter
+        on sbfl.sbfl_iter_id = iter.iter_id
+     where sbfl.sbfl_current is not null  
+       and sbfl.sbfl_iter_id is not null
+       and (   sbfl.sbfl_iobj_id is null
+           or  sbfl.sbfl_iobj_id != iter.iter_iobj_id )
+  group by sbfl.sbfl_prcs_id, sbfl.sbfl_dgrm_id, sbfl.sbfl_diagram_level, sbfl.sbfl_iter_id
 ), iter_errors as (
   select sbfl_prcs_id as prcs_id
        , sbfl_dgrm_id as dgrm_id
        , sbfl_diagram_level as diagram_level
-       , sbfl_iteration_path as iter_path
+       , sbfl_iter_id as iter_id
        , json_arrayagg(sbfl_current order by sbfl_current returning varchar2(2000)) as bpmn_ids
     from flow_subflows
    where sbfl_current is not null
      and sbfl_status = 'error'
-     and sbfl_iteration_path is not null
-group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level, sbfl_iteration_path
+     and sbfl_iter_id is not null
+group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level, sbfl_iter_id
 ), completed_objects as (
         select distinct sflg.sflg_prcs_id as prcs_id
                       , sflg.sflg_dgrm_id  as dgrm_id
@@ -66,7 +71,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level, sbfl_iteration_path
                                              and sbfl.sbfl_diagram_level = sflg.sflg_diagram_level
                                              and sbfl.sbfl_current is not null
                                         )
-           and sflg.sflg_sbfl_iteration_path is null
+           --and sflg.sflg_iter_id is null ------------------------------------------
 ), all_completed as ( 
     select prcs_id, dgrm_id, diagram_level
          , listagg( objt_id, ':') within group (order by objt_id) as bpmn_ids
@@ -89,45 +94,28 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
    where sbfl_current is not null
      and sbfl_status = 'error'
 group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
-), iter_arrays as (        -----  gets the iteration arrays from the process's process variables
-select it.iobj_parent_bpmn_id object_id
-     , it.iobj_step_key step_key
-     , it.iobj_diagram_level diagram_level
-     , it.iobj_dgrm_id  dgrm_id
-     , pv.prov_var_json iter_array
-     , it.iobj_prcs_id prcs_id
-  from flow_process_variables pv
-  join flow_iterated_objects it
-    on pv.prov_prcs_id = it.iobj_prcs_id
-   and pv.prov_scope   = it.iobj_var_scope
-   and pv.prov_var_name = it.iobj_iteration_var
-   and pv.prov_var_type = 'JSON'
-), iter_lines as (         -- gets all the components out of the iteration arrays that we need
-select i.object_id
-     , i.diagram_level
-     , i.dgrm_id
-     , jt.stepKey
-     , jt.loopCounter
-     , jt.description
-     , jt.status
-     , jt.iterationPath
-     , i.prcs_id
-  from iter_arrays i,
-       json_table (i.iter_array, '$[*]'
-         columns (
-            loopCounter number path '$.loopCounter',
-            description varchar2(150) path '$.description',
-            stepKey varchar2(20) path '$.stepKey',
-            status  varchar2(20) path '$.status', 
-            iterationPath varchar2(2000) path '$.iterationPath'
-            )) as jt
---  where jt.iterationPath is not null
+), iterations as (
+select iobj.iobj_prcs_id         prcs_id
+     , iobj.iobj_parent_bpmn_id
+     , iobj.iobj_step_key
+     , iobj.iobj_diagram_level
+     , iobj.iobj_dgrm_id
+     , iter.iter_id
+     , iter.iter_step_Key
+     , iter.iter_loop_Counter
+     , iter.iter_description
+     , iter.iter_status
+     , iter.iter_display_name
+  from flow_iterations iter
+  join flow_iterated_objects iobj
+    on iter.iter_iobj_id = iobj.iobj_id
 ), iteration_objt_status as (      ---- puts the json together again for iteration objects
-       select json_object( 'stepKey'        value il.stepKey
-                         , 'loopCounter'    value il.loopCounter
-                         , 'description'    value il.description 
-                         , 'iterationPath'  value il.iterationPath
-                         , 'status'         value il.status
+       select json_object( 'stepKey'        value il.iter_step_Key
+                         , 'loopCounter'    value il.iter_loop_Counter
+                         , 'description'    value il.iter_description 
+                         , 'parentStepKey'  value il.iobj_step_key
+                         , 'iterationPath'  value il.iter_display_name
+                         , 'status'         value il.iter_status
                          , 'highlighting'     value json_object 
                            ( 'completed'      value icomp.bpmn_ids 
                            , 'current'        value icurr.bpmn_ids 
@@ -135,30 +123,30 @@ select i.object_id
                           returning varchar2(4000))
                           format json returning CLOB)  
                           iteration_info
-            , il.prcs_id
-            , il.object_id
-            , il.diagram_level
-            , il.dgrm_id
-            , il.iterationPath
-            , il.loopCounter
-         from iter_lines il
+            , il.prcs_id              prcs_id
+            , il.iobj_parent_bpmn_id  object_id
+            , il.iobj_diagram_level   diagram_level
+            , il.iobj_dgrm_id         dgrm_id
+            , il.iter_display_name
+            , il.iter_loop_Counter    loop_counter
+         from iterations il
          left join iter_comp icomp    
-           on il.prcs_id       = icomp.prcs_id 
-          and il.dgrm_id       = icomp.dgrm_id  
-          and il.diagram_level = icomp.diagram_level
-          and il.iterationPath = icomp.iter_path
+           on il.prcs_id            = icomp.prcs_id 
+          and il.iobj_dgrm_id       = icomp.dgrm_id  
+          and il.iobj_diagram_level = icomp.diagram_level
+          and il.iter_id            = icomp.iter_id
          left join iter_current icurr   
-           on il.prcs_id       = icurr.prcs_id 
-          and il.dgrm_id       = icurr.dgrm_id  
-          and il.diagram_level = icurr.diagram_level    
-          and il.iterationPath = icurr.iter_path      
+           on il.prcs_id            = icurr.prcs_id 
+          and il.iobj_dgrm_id       = icurr.dgrm_id  
+          and il.iobj_diagram_level = icurr.diagram_level    
+          and il.iter_id            = icurr.iter_id      
          left join iter_errors ierr   
-           on il.prcs_id       = ierr.prcs_id 
-          and il.dgrm_id       = ierr.dgrm_id  
-          and il.diagram_level = ierr.diagram_level
-          and il.iterationPath = ierr.iter_path             
+           on il.prcs_id            = ierr.prcs_id 
+          and il.iobj_dgrm_id       = ierr.dgrm_id  
+          and il.iobj_diagram_level = ierr.diagram_level
+          and il.iter_id            = ierr.iter_id             
 ), iter_info as (
-  select json_arrayagg (os.iteration_info order by os.loopCounter returning clob)  iter_info_json
+  select json_arrayagg (os.iteration_info order by os.loop_Counter returning clob)  iter_info_json
        , os.prcs_id
        , os.dgrm_id
        , os.diagram_level

@@ -119,9 +119,10 @@ as
     , p_follows_ebg               in boolean default false
     , p_loop_counter              in number default null
     , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
-    , p_iteration_path            in varchar2 default null
     , p_iteration_var             in flow_process_variables.prov_var_name%type default null
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
+    , p_iter_id                   in flow_iterations.iter_id%type default null
+    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null
     ) return flow_types_pkg.t_subflow_context
     ;
 

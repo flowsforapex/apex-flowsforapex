@@ -192,6 +192,9 @@ as
   gc_iteration_sequential             constant flow_types_pkg.t_vc20 := 'sequential';
   gc_iteration_loop                   constant flow_types_pkg.t_vc20 := 'loop';
 
+  gc_iteration_object_task            constant flow_types_pkg.t_vc20 := 'task';
+  gc_iteration_object_subprocess      constant flow_types_pkg.t_vc20 := 'subProcess';
+
   gc_iteration_status_not_started     constant flow_types_pkg.t_vc20 := 'notStarted';
   gc_iteration_status_running         constant flow_types_pkg.t_vc20 := 'running';
   gc_iteration_status_completed       constant flow_types_pkg.t_vc20 := 'completed';

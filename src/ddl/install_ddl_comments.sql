@@ -30,7 +30,7 @@ comment on table flow_step_stats            is 'Flows for APEX table containing 
 comment on table flow_stats_history         is 'Flows for APEX table containing details on when flow statistics were gathered.';
 comment on table flow_configuration         is 'Flows for APEX table containing system configuration options currently active for the Flows for APEX system';
 comment on table flow_messages              is 'Flows for APEX table containing language-specific error and warning messages used by Flows for APEX.';
-comment on table flow_iterations      is 'Flows for APEX table containing live run-time state of all iteration arrays created for a process instance.';
+comment on table flow_iterated_objects      is 'Flows for APEX table containing live run-time state of all objects that are iterated or looped.';
 
 comment on column flow_diagrams.dgrm_id           is 'Unique reference number for a diagram'; 
 comment on column flow_diagrams.dgrm_name         is 'diagram name - often the business process name'; 
@@ -131,14 +131,14 @@ comment on column FLOW_INSTANCE_DIAGRAMS_LOV.CALLING_DIAGRAM is ' ';
 comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_ID is ' ';               
 comment on column FLOW_INSTANCE_DIAGRAMS_LOV.PRDG_PRCS_ID is ' ';  
 
-comment on column flow_iterations.fita_prcs_id is 'The parent process instance ID. Foreign Key to flow_processes.   Each process instance must be used to describe iterations or loops in one and only one proces instance.';
-comment on column flow_iterations.fita_parent_bpmn_id is 'The parent object (object bpmn id) for this iteration, i.e., the object that is being iterated or looped over.';
-comment on column flow_iterations.fita_diagram_level is 'The Diagram Level of the object being iterated.';
-comment on column flow_iterations.fita_dgrm_id is 'The Diagram ID containing the object being iterated.';
-
-comment on column flow_iterations.fita_step_key       is 'The step key of the parent object for this iteration';
-comment on column flow_iterations.fita_iteration_var  is 'The process variable name containing the iteration array for this iteration or loop as a json variable.';
-comment on column flow_iterations.fita_var_scope    is 'The process variable scope containing the iteration array for this iteration or loop as a json variable.';
+comment on column flow_iterated_objects.iobj_id is 'The unique numeric id for an iterated object within a process instance.';
+comment on column flow_iterated_objects.iobj_prcs_id is 'The parent process instance ID. Foreign Key to flow_processes.   Each process instance must be used to describe iterations or loops in one and only one proces instance.';
+comment on column flow_iterated_objects.iobj_parent_bpmn_id is 'The parent object (object bpmn id) for this iteration, i.e., the object that is being iterated or looped over.';
+comment on column flow_iterated_objects.iobj_diagram_level is 'The Diagram Level of the object being iterated.';
+comment on column flow_iterated_objects.iobj_dgrm_id is 'The Diagram ID containing the object being iterated.';
+comment on column flow_iterated_objects.iobj_step_key       is 'The step key of the parent object for this iteration';
+comment on column flow_iterated_objects.iobj_iteration_var  is 'The process variable name containing the iteration array for this iteration or loop as a json variable.';
+comment on column flow_iterated_objects.iobj_var_scope    is 'The process variable scope containing the iteration array for this iteration or loop as a json variable.';
 
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_PRCS_ID is ' ';             
 comment on column FLOW_INSTANCE_EVENT_LOG.LGPR_OBJT_ID is ' ';             
@@ -452,7 +452,9 @@ comment on column FLOW_SUBFLOWS.SBFL_LOOP_COUNTER is 'The Loop Counter (1 to n) 
 comment on column FLOW_SUBFLOWS.SBFL_LOOP_TOTAL_INSTANCES is 'Total number of iterations to be made on the current object. ';    
 comment on column FLOW_SUBFLOWS.SBFL_LAST_UPDATE is ' ';             
 comment on column FLOW_SUBFLOWS.SBFL_LAST_UPDATE_BY is ' ';          
-comment on column FLOW_SUBFLOWS.SBFL_ITERATION_PATH is 'Path of current subflow if any parent objects are iterations or loops.  Each upstream instance is in format <iterating object bpmn id>[loop_counter]';   
+comment on column FLOW_SUBFLOWS.SBFL_ITER_ID is 'Parent iteration of this subflow.  Set for any subflows running inside an iteration.  You can walk the flow_iterations tree to get full iteration path. Foreign Key to flow_iterations table.';
+comment on column FLOW_SUBFLOWS.SBFL_IOBJ_ID is 'Link to Current iteration on this subflow.  Only set for any subflows currently being iterated.  Foreign Key to flow_iterated_objects table.';
+
 
 comment on column FLOW_SUBFLOWS_VW.SBFL_ID is ' ';                   
 comment on column FLOW_SUBFLOWS_VW.SBFL_SBFL_ID is ' ';              
@@ -472,7 +474,6 @@ comment on column FLOW_SUBFLOWS_VW.SBFL_LAST_COMPLETED is ' ';
 comment on column FLOW_SUBFLOWS_VW.SBFL_LAST_COMPLETED_NAME is ' ';     
 comment on column FLOW_SUBFLOWS_VW.SBFL_CURRENT is ' ';                 
 comment on column FLOW_SUBFLOWS_VW.SBFL_CURRENT_NAME is ' ';            
-comment on column FLOW_SUBFLOWS_VW.SBFL_ITERATION_PATH is ' ';          
 comment on column FLOW_SUBFLOWS_VW.SBFL_STEP_KEY is ' ';                
 comment on column FLOW_SUBFLOWS_VW.SBFL_CURRENT_TAG_NAME is ' ';        
 comment on column FLOW_SUBFLOWS_VW.SBFL_BECAME_CURRENT is ' ';          
