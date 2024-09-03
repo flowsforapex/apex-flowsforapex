@@ -1795,7 +1795,7 @@ as
     exception
       when flow_simple_form_template.template_exists then
         apex_error.add_error(
-            p_message => apex_lang.message('APP_ERR_TEMPLATE_EXIST', pi_sfte_name)
+            p_message => apex_lang.message('APP_ERR_TEMPLATE_EXIST', pi_sfte_static_id)
             , p_display_location => apex_error.c_on_error_page);
   end process_page_p51;
 
