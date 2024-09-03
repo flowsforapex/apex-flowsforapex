@@ -52,26 +52,32 @@
         bpmnViewer.customModules.userTaskModule
       ];
 
+      // add style module if addHighlighting or bpmnColors options is enabled
       if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
         this.enabledModules.push(bpmnViewer.customModules.styleModule);
       }
 
+      // add callActivityModule if call activities option is enabled
       if ( this.options.enableCallActivities ) {
         this.enabledModules.push(bpmnViewer.customModules.callActivityModule);
       }
 
+      // set default colors
       this.bpmnRenderer = {
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
         defaultLabelColor: "var(--default-stroke-color)",
       }
 
+      // add custom palette if showToolbar option is enabled
       if ( this.options.showToolbar ) {
         this.enabledModules.push(bpmnViewer.customModules.customPaletteProviderModule);
       }
+      // add zoomScroll module if mouse wheel zoom option is enabled
       if ( this.options.enableMousewheelZoom ) {
         this.enabledModules.push(bpmnViewer.customModules.ZoomScrollModule);
       }
+      // add move canvas module if showToolbar option or mouse wheel zoom option is enabled
       if ( this.options.showToolbar || this.options.enableMousewheelZoom) {
         this.enabledModules.push(bpmnViewer.customModules.MoveCanvasModule);
       }
@@ -84,7 +90,7 @@
       });
 
       // prevent page submit + reload after button click
-      $( document ).on( "apexbeforepagesubmit", ( event, request ) => {
+      $( document ).on( "apexbeforepagesubmit", ( _, request ) => {
         if (!request) apex.event.gCancelFlag = true;
       } );
 
@@ -106,6 +112,7 @@
         type: "flows4apex.viewer"
       });
     },
+
     loadDiagram: async function() {
       
       $( "#" + this.canvasId ).show();
@@ -123,23 +130,28 @@
         
         this.zoom( "fit-viewport" );
         
+        // if any color option is enabled
         if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
+          // get viewer modules
           const eventBus = bpmnViewer$.get('eventBus');
           const multiInstanceModule = bpmnViewer$.get('multiInstanceModule');
           const styleModule = bpmnViewer$.get('styleModule');
 
+          // update colors with the current highlighting info
           this.updateColors(this.current, this.completed, this.error);
           
+          // root.set -> drilled down into or moved out from sub process
           eventBus.on('root.set', (event) => {
-            const element = event.element;
-
+            const {element} = event;
+            // reset bpmn colors if option is not enabled
             if (!this.options.useBPMNcolors) {
               styleModule.resetBPMNcolors();
             }
-
+            // reset highlighting
             styleModule.resetHighlighting();
-
+            // if current element is not iterating
             if (!multiInstanceModule.isMultiInstanceSubProcess(element)) {
+              // add highlighting if option is enabled
               if (this.options.addHighlighting) {
                 styleModule.highlightElements(this.current, this.completed, this.error);
               }
@@ -147,12 +159,15 @@
           });
         }
 
+        // DEBUG
         console.log(this);
 
+        // add overlays if iterationData is existing
         if (this.iterationData) {
           this.bpmnViewer$.get('multiInstanceModule').addOverlays();
         }
 
+        // add overlays if userTaskData is existing
         if (this.userTaskData) {
           this.bpmnViewer$.get('userTaskModule').addOverlays();
         }
@@ -172,24 +187,24 @@
     },
 
     updateColors: function(current, completed, error) {
-
+      // get viewer module
       const styleModule = this.bpmnViewer$.get('styleModule');
-
+      // reset current colors
       this.resetColors();
-
+      // add highlighting if option is enabled
       if (this.options.addHighlighting) {
         styleModule.highlightElements(current, completed, error);
       }
     },
 
     resetColors: function() {
-
+      // get viewer module
       const styleModule = this.bpmnViewer$.get('styleModule');
-
+      // reset bpmn colors if option is not enabled
       if (!this.options.useBPMNcolors) {
         styleModule.resetBPMNcolors();
       }
-
+      // reset highlighting
       styleModule.resetHighlighting();
     },
 
@@ -199,14 +214,13 @@
 
     getSVG: async function() {
 
-      const bpmnViewer$ = this.bpmnViewer$;
-      
       try {
-        const result = await bpmnViewer$.saveSVG({ format: true });
+        const result = await this.bpmnViewer$.saveSVG({ format: true });
         const { svg } = result;
         
+        // add highlighting colors to image if option is enabled
         if ( this.options.addHighlighting ) {
-          return bpmnViewer$.get('styleModule').addStyleToSVG(svg);
+          return this.bpmnViewer$.get('styleModule').addStyleToSVG(svg);
         }
 
         return svg;
@@ -233,12 +247,13 @@
           var diagram;
           var oldLoaded = true;
 
+          // set widget reference
           this.bpmnViewer$.get('multiInstanceModule').setWidget(this);
           this.bpmnViewer$.get('userTaskModule').setWidget(this);
           
-          // use call activities
-          if ( this.options.enableCallActivities ) {
-            // set widget reference to viewer module
+          // if call activities option enabled
+          if (this.options.enableCallActivities) {
+            // set widget reference
             this.bpmnViewer$.get('callActivityModule').setWidget(this);
             // load old diagram (if possible)
             diagram = pData.data.find(d => d.diagramIdentifier === this.diagramIdentifier);
@@ -253,20 +268,21 @@
             this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
             this.callingObjectId = diagram.callingObjectId;
 
-            // reset breadcrumb
+            // reset & update breadcrumb
             if (!oldLoaded) {
                 this.bpmnViewer$.get('callActivityModule').resetBreadcrumb();
                 this.bpmnViewer$.get('callActivityModule').updateBreadcrumb();
             }
           }
+          // call activities not activated
           else {
             // get first (only) entry
             diagram = pData.data[0];
             this.diagramIdentifier = diagram.diagramIdentifier;
           }
 
-          // add highlighting
-          if ( this.options.addHighlighting ) {
+          // add highlighting if option is enabled
+          if (this.options.addHighlighting) {
             this.current   = diagram.current;
             this.completed = diagram.completed;
             this.error     = diagram.error;
@@ -275,15 +291,17 @@
           // set diagram content
           this.diagram = diagram.diagram;
 
+          // parse iterationData and attach to instance
           try {
-            this.iterationData = JSON.parse(diagram.iterationData); // TODO possible to to this in plsql already?
+            this.iterationData = JSON.parse(diagram.iterationData);
           }
           catch(e) {
             this.iterationData = null;
           }
           
+          // parse userTaskData and attach to instance
           try {
-            this.userTaskData = JSON.parse(diagram.userTaskData); // TODO possible to to this in plsql already?
+            this.userTaskData = JSON.parse(diagram.userTaskData);
           }
           catch(e) {
             this.userTaskData = null;
