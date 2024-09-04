@@ -680,6 +680,7 @@ create or replace package body flow_api_pkg as
         l_task.process_id              := l_row.prcs_id;
         l_task.subflow_id              := l_row.sbfl_id;
         l_task.step_key                := l_row.sbfl_step_key;
+        l_task.current_obj             := l_row.sbfl_current;
 
     end process_row;
 

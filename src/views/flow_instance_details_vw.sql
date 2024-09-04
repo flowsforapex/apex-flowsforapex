@@ -61,16 +61,16 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
        and fita_var_scope = prov_scope
      group by fita_prcs_id
 ), user_tasks as (
-    select sbfl_prcs_id as prcs_id
+    select process_id as prcs_id
          , json_objectagg
            (
-               key sbfl_current
-               value link_text
+               key current_obj
+               value details_link_target
                absent on null
                returning clob
            ) as user_task_urls
-      from flow_task_inbox_vw
-     group by sbfl_prcs_id
+      from flow_apex_my_combined_task_list_vw
+     group by process_id
 )
   select prcs.prcs_id
        , prcs.prcs_name
