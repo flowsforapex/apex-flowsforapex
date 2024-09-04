@@ -135,7 +135,6 @@
           // get viewer modules
           const eventBus = bpmnViewer$.get('eventBus');
           const multiInstanceModule = bpmnViewer$.get('multiInstanceModule');
-          const styleModule = bpmnViewer$.get('styleModule');
 
           // update colors with the current highlighting info
           this.updateColors(this.current, this.completed, this.error);
@@ -143,18 +142,10 @@
           // root.set -> drilled down into or moved out from sub process
           eventBus.on('root.set', (event) => {
             const {element} = event;
-            // reset bpmn colors if option is not enabled
-            if (!this.options.useBPMNcolors) {
-              styleModule.resetBPMNcolors();
-            }
-            // reset highlighting
-            styleModule.resetHighlighting();
-            // if current element is not iterating
+            // if current element is not iterating -> iterating elements are handled inside module
             if (!multiInstanceModule.isMultiInstanceSubProcess(element)) {
-              // add highlighting if option is enabled
-              if (this.options.addHighlighting) {
-                styleModule.highlightElements(this.current, this.completed, this.error);
-              }
+              // update colors
+              this.updateColors(this.current, this.completed, this.error);
             }
           });
         }
