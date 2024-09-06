@@ -1183,6 +1183,12 @@ textarea.bio-properties-panel-input {
   white-space: pre-wrap;
 }
 
+.bio-properties-panel-tooltip-content h1 {
+  font-size: var(--text-size-base);
+  font-weight: bold;
+  margin: 0;
+}
+
 .bio-properties-panel-tooltip-content code,
 .bio-properties-panel-tooltip-content pre {
   color: var(--description-color);

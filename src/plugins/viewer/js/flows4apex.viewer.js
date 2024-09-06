@@ -465,7 +465,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ MultiInstanceModule)
+/* harmony export */   MultiInstanceModule: () => (/* binding */ MultiInstanceModule)
 /* harmony export */ });
 /* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
@@ -474,252 +474,323 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function MultiInstanceModule(
-  canvas, eventBus, elementRegistry, translate, overlays
-) {
-  this._canvas = canvas;
-  this._eventBus = eventBus;
-  this._elementRegistry = elementRegistry;
-  this._translate = translate;
-  this._overlays = overlays;
+class MultiInstanceModule {
+  
+  constructor(canvas, eventBus, elementRegistry, translate, overlays) {
+    this._canvas = canvas;
+    this._eventBus = eventBus;
+    this._elementRegistry = elementRegistry;
+    this._translate = translate;
+    this._overlays = overlays;
 
-  var _self = this;
+    this.breadcrumbIteration = [];
+    this.breadcrumbSelection = [];
 
-  const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`
-    <div id="modal">
-      <div id ="modal-content">
-        <div id="iteration-title">
-          <span></span>
-          <button class="fa fa-times"></button>
-        </div>
-        <div id="iteration-search">
-          <input type="text" placeholder="Search.."/>
-        </div>
-        <div id="iteration-list">
-            <table>
-              <thead>
-                <tr>
-                  <th>Loop Counter</th>
-                  <th>Description</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-          </table>
+    const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`
+      <div id="modal">
+        <div id ="modal-content">
+          <div id="iteration-title">
+            <span></span>
+            <button class="fa fa-times"></button>
+          </div>
+          <div id="iteration-search">
+            <input type="text" placeholder="Search.."/>
+          </div>
+          <div id="iteration-list">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Loop Counter</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  `);
+    `);
 
-  // append content
-  canvas.getContainer().appendChild(modal);
+    // append content
+    canvas.getContainer().appendChild(modal);
 
-  eventBus.on('import.render.complete', function () {
-    // add search listener for filtering
-    const searchbar = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-search input');
-    searchbar.addEventListener('keyup', function (event) {
-      _self.filterIterations(event);
+    eventBus.on('import.render.complete', () => {
+      // add search listener for filtering
+      const searchbar = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-search input');
+      searchbar.addEventListener('keyup', (event) => {
+        this.filterIterations(event);
+      });
+      // add close listener
+      const closeButton = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-title button.fa-times');
+      closeButton.addEventListener('click', (event) => {
+        this.closeIterations();
+      });
     });
-    // add close listener
-    const closeButton = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-title button.fa-times');
-    closeButton.addEventListener('click', function (event) {
-      _self.closeIterations();
-    });
-  });
 
-  // when diagram root changes
-  eventBus.on('root.set', function (event) {
-    const element = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(event.element);
-    // if drilled down into subprocess
-    if ((0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:SubProcess') && _self.hasIterationData(element)) {
-      _self.addBreadcrumbButton(element);
+    // when diagram root changes
+    eventBus.on('root.set', (event) => {
+      const { element } = event;
+
+      // reset breadcrumb data (null all entries above the current)
+      this.resetBreadcrumbData();
+
+      // if drilled down into subprocess
+      if ((0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:SubProcess')) {
+        if (this.hasIterationData(element)) {
+          // update breadcrumb data: mark current entry as iterating
+          this.breadcrumbIteration[this.getLastBreadcrumbIndex()] = true;
+          // update breadcrumb: add button (if last element)
+          this.appendBreadcrumbButton(element);
+        }
+        this.updateBreadcrumb();
+      }
+
+      // update highlighting (from current iteration)
+      this.updateHighlighting();
+    });
+  }
+
+  /* Initialisation */
+
+  setWidget(widget) {
+    this._widget = widget;
+  }
+
+  /* Helper */
+
+  getIterationData(element) {
+
+    const { id } = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+
+    // get parent iteration from breadcrumb
+    const parentIteration = this.breadcrumbSelection[this.getLastBreadcrumbIndex() - 1];
+
+    // retrieve data from widget by using id and stepKey
+    return (this._widget.iterationData &&
+      this._widget.iterationData[id] &&
+      this._widget.iterationData[id].filter(
+        i => ((!parentIteration && !i.parentStepKey) || (parentIteration && i.parentStepKey == parentIteration.stepKey))
+      )) || [];
+  }
+
+  /* Overlays */
+
+  addOverlays() {
+    this._elementRegistry
+      // id element is no subprocess and has iteration data
+      .filter(element => !((0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:SubProcess')) && this.hasIterationData(element))
+      .forEach((element) => {
+        this.addOverlay(element);
+      });
+  }
+
+  addOverlay(element) {
+
+    const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<button class="bjs-drilldown fa fa-list"></button>');
+
+    // add onclick listener
+    button.addEventListener('click', (_) => {
+      this.openIterations(element);
+    });
+
+    // add overlay
+    this._overlays.add(element, 'iterations', {
+      position: {
+        bottom: -7,
+        right: -8
+      },
+      html: button
+    });
+  }
+
+  /* Boolean functions */
+
+  isMultiInstanceSubProcess(element) {
+    const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+    return (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:SubProcess') && businessObject.loopCharacteristics;
+  }
+
+  hasIterationData(element) {
+    return this.getIterationData(element).length > 0;
+  }
+
+  /* Breadcrumb */
+
+  getBreadcrumbElements() {
+    const breadcrumb = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.bjs-breadcrumbs'); // TODO fix selector for excluding call activity breadcrumb
+    return [...breadcrumb.children];
+  }
+
+  getLastBreadcrumbIndex() {
+    const elements = this.getBreadcrumbElements();
+    return elements.length - 1;
+  }
+
+  resetBreadcrumbData() {
+    const lastIndex = this.getLastBreadcrumbIndex();
+
+    this.breadcrumbIteration.splice(lastIndex + 1);
+    this.breadcrumbSelection.splice(lastIndex + 1);
+  }
+
+  appendBreadcrumbButton(element) {
+
+    const lastElement = this.getBreadcrumbElements().pop();
+
+    // if element existing (might be null on diagram load)
+    if (lastElement) {
+      // create button
+      const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<button class="bjs-drilldown fa fa-list"></button>');
+      // add event listener
+      button.addEventListener('click', (_) => {
+        // open iterations for this element
+        this.openIterations(element);
+      });
+
+      lastElement.append(button);
     }
-  });
-}
+  }
 
-MultiInstanceModule.prototype.addOverlays = function () {
-  
-  const _this = this;
-  
-  this._elementRegistry.filter(function (e) {
-    return !((0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(e, 'bpmn:SubProcess')) && _this.hasIterationData(e);
-  }).forEach(function (el) {
-    _this.addOverlay(el);
-  });
-};
+  updateBreadcrumb() {
 
-MultiInstanceModule.prototype.isMultiInstanceSubProcess = function (element) {
-  const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
-  return (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(businessObject, 'bpmn:SubProcess') && this.hasIterationData(businessObject);
-};
+    const elements = this.getBreadcrumbElements();
 
-MultiInstanceModule.prototype.addOverlay = function (element) {
+    for (let i = 0; i < elements.length; i++) {
 
-  const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<button class="bjs-drilldown fa fa-list"></button>');
+      const data = this.breadcrumbIteration[i];
 
-  const _this = this;
+      // if current breadcrumb entry has iteration data & is not last element
+      if (data && i < elements.length - 1) {
 
-  button.addEventListener('click', function (event) {
-    _this.openIterations(element);
-  });
+        const existing = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('span.iteration-button', elements[i]);
 
-  // add overlay
-  this._overlays.add(element, 'iterations', {
-    position: {
-      bottom: -7,
-      right: -8
-    },
-    html: button
-  });
-};
+        const span = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<span class="bjs-crumb iteration-button fa fa-list"></span>');
+        
+        // append span or replace text if existing
+        if (!existing) elements[i].append(span);
+        else existing.replaceWith(span);
+      }
 
-MultiInstanceModule.prototype.addBreadcrumbButton = function (element) {
+      const selected = this.breadcrumbSelection[i];
 
-  const breadcrumb = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.bjs-breadcrumbs li:last-child'); // TODO fix selector for excluding call activity breadcrumb
+      // if current breadcrumb entry has selected iteration
+      if (selected) {
 
-  const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<button class="bjs-drilldown fa fa-list"></button>');
+        const existing = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('span.iteration-desc', elements[i]);
 
-  const _this = this;
+        const span = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`<span class="bjs-crumb iteration-desc">${selected.description}</span>`);
 
-  button.addEventListener('click', function (event) {
-    _this.openIterations(element);
-  });
+        // append span or replace text if existing
+        if (!existing) elements[i].append(span);
+        else existing.replaceWith(span);
+      }
+    }
+  }
 
-  breadcrumb.appendChild(button);
-};
+  /* dialog */
 
-MultiInstanceModule.prototype.hasIterationData = function (element) {
-  return (this._widget.iterationData && this._widget.iterationData[element.id]);
-};
+  openDialog() {
 
-MultiInstanceModule.prototype.setWidget = function (widget) {
-  this._widget = widget;
-};
+    const searchbar = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-search input');
+    const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#modal');
 
-MultiInstanceModule.prototype.openDialog = function () {
+    // clear searchbar
+    searchbar.value = '';
+    // show modal
+    modal.style.display = 'flex';
+  }
 
-  const searchbar = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-search input');
-  const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#modal');
+  loadTable(data) {
 
-  // clear searchbar
-  searchbar.value = '';
-  // show modal
-  modal.style.display = 'flex';
-};
+    const tbody = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-list tbody');
 
-MultiInstanceModule.prototype.loadTable = function (data) {
-
-  const tbody = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-list tbody');
-
-  const addOnClick = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(this.currentElement, 'bpmn:SubProcess');
-
-  tbody.replaceChildren(
-    ...data.map((d) => {
-      const row = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`
-        <tr ${addOnClick ? 'class="clickable"' : ''}>
+    // build table body
+    tbody.replaceChildren(
+      ...(data || this.dialogData).map((d) => {
+        const row = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`
+        <tr ${this.dialogClickable ? 'class="clickable"' : ''}>
           <td>${d.loopCounter}</td>
           <td>${d.description}</td>
           <td>${d.status}</td>
         </tr>
       `);
 
-      const _this = this;
+        // add onclick listener if rows are clickable (sub processes)
+        if (this.dialogClickable) {
+          row.addEventListener('click', (_) => {
+            this.loadIteration(d.loopCounter);
+            this.closeIterations();
+          });
+        }
 
-      if (addOnClick) {
-        row.addEventListener('click', function (event) {
-          _this.loadIteration(d.stepKey);
-          _this.closeIterations();
-        });
-      }
-
-      return row;
-    }));
-
-  
-};
-
-MultiInstanceModule.prototype.openIterations = function (element) {
-
-  const {id} = element;
-  
-  const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
-  
-  const {name} = businessObject;
-  
-  // TODO retrieve data by using <id>
-  const subProcessData = this._widget.iterationData[id];
-
-  if (subProcessData) {
-
-    // set reference
-    this.currentElement = element;
-
-    // store for later
-    this._widget.subProcessData = subProcessData;
-
-    this.loadTable(subProcessData);
-
-    // set title
-    const title = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-title span');
-    title.textContent = name;
-
-    this.openDialog();
-
-  } else {
-    // TODO do anything here?
+        return row;
+      }));
   }
 
-};
+  openIterations(element) {
 
-MultiInstanceModule.prototype.closeIterations = function () {
+    // store data and clickable info for later
+    this.dialogData = this.getIterationData(element);
+    this.dialogClickable = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:SubProcess');
 
-  const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#modal');
+    if (this.dialogData) {
 
-  modal.style.display = 'none';
-};
+      this.loadTable();
 
-MultiInstanceModule.prototype.loadIteration = function (value) {
+      // set title
+      const title = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#iteration-title span');
+      title.textContent = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element).name;
 
-  if (value) {
+      this.openDialog();
+    }
+  }
 
-    const iterationData = this._widget.subProcessData.find(v => v.stepKey == value);
+  closeIterations() {
 
-    // TODO extract this out of sub process data using <value>
-    const highlightingData = iterationData.highlighting;
+    const modal = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('#modal');
 
-    if (highlightingData) {
-      // set new diagram properties
-      // TODO probably need to set the currently selected instance as well
-      const {current, completed, error} = highlightingData;
+    modal.style.display = 'none';
+  }
 
-      this._widget.updateColors(current, completed, error);
+  loadIteration(loopCounter) {
 
-      // TODO update breadcrumb
-      const breadcrumb = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.bjs-breadcrumbs li:last-child'); // TODO fix selector for excluding call activity breadcrumb
+    const selectedIteration = this.dialogData.find(v => v.loopCounter == loopCounter);
 
-      const element = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`<span class="bjs-crumb iteration" style="margin-left: 8px;">
-        <a>${iterationData.description}</a>
-      </span>`);
+    this.breadcrumbSelection[this.getLastBreadcrumbIndex()] = selectedIteration;
 
-      if (breadcrumb.lastChild.classList.contains('iteration')) {
-        breadcrumb.lastChild.replaceWith(element);
+    this.updateBreadcrumb();
+    this.updateHighlighting();
+  }
+
+  filterIterations(event) {
+
+    const { value } = event.target;
+
+    const filtered = this.dialogData.filter(
+      d => d.description.includes(value) || d.status.includes(value)
+    );
+
+    this.loadTable(filtered);
+  }
+
+  /* Util */
+  
+  updateHighlighting() {
+
+    if (this._widget) {
+
+      const currentIteration = this.breadcrumbSelection[this.getLastBreadcrumbIndex()];
+
+      if (currentIteration) {
+        const { current, completed, error } = currentIteration.highlighting;
+        this._widget.updateColors(current, completed, error);
       } else {
-        breadcrumb.appendChild(element);
+        this._widget.resetColors();
       }
     }
   }
-};
-
-MultiInstanceModule.prototype.filterIterations = function (event) {
-
-  const {value} = event.target;
-
-  const filtered = this._widget.subProcessData.filter(
-    d => d.description.includes(value) || d.status.includes(value)
-  ); // TODO make other columns searchable as well
-
-  this.loadTable(filtered);
-};
+}
 
 MultiInstanceModule.$inject = ['canvas', 'eventBus', 'elementRegistry', 'translate', 'overlays'];
 
@@ -740,114 +811,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: ['multiInstanceModule'],
-  multiInstanceModule: ['type', _MultiInstanceModule__WEBPACK_IMPORTED_MODULE_0__["default"]],
-});
-
-/***/ }),
-
-/***/ "./modules/rightClickModule/RightClickModule.js":
-/*!******************************************************!*\
-  !*** ./modules/rightClickModule/RightClickModule.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ RightClickModule)
-/* harmony export */ });
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
-
-
-
-function RightClickModule(
-  canvas, eventBus, translate
-) {
-  this._canvas = canvas;
-  this._eventBus = eventBus;
-  this._translate = translate;
-
-  var _self = this;
-
-  // create and append context menu container
-  this._menu = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<div id="context-menu"></div>');
-  this._options = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<ul class="menu-options"></ul>');
-  
-  this._menu.appendChild(this._options);
-  
-  canvas.getContainer().appendChild(this._menu);
-
-  this.closeContextMenu();
-
-  eventBus.on('element.contextmenu', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    _self.openContextMenu(event);
-  });
-
-  eventBus.on('element.click', (event) => {
-    _self.closeContextMenu(event);
-  });
-}
-
-RightClickModule.prototype.openContextMenu = function (event) {
-
-  const { element } = event;
-  const { id } = element;
-
-  const x = event.originalEvent.pageX;
-  const y = event.originalEvent.pageY;
-
-  const contextMenuData = this._widget.contextMenuData[id];
-
-  if (contextMenuData) {
-
-    this._options.replaceChildren(
-      ...contextMenuData.map((d) => {
-        if (d.type === 'link') {
-          return (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(`<li class="menu-option"><a href="${d.url}" target="${d.target}">${d.label}</a></li>`);
-        }
-        return null;
-      }) 
-    );
-
-    this._menu.style.left = `${x}px`;
-    this._menu.style.top = `${y}px`;
-
-    this._menu.style.display = 'block';
-  } else {
-    this.closeContextMenu();
-  }
-};
-
-RightClickModule.prototype.closeContextMenu = function () {
-  this._menu.style.display = 'none';
-};
-
-RightClickModule.prototype.setWidget = function (widget) {
-  this._widget = widget;
-};
-
-RightClickModule.$inject = ['canvas', 'eventBus', 'translate'];
-
-/***/ }),
-
-/***/ "./modules/rightClickModule/index.js":
-/*!*******************************************!*\
-  !*** ./modules/rightClickModule/index.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _RightClickModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RightClickModule */ "./modules/rightClickModule/RightClickModule.js");
-
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: ['rightClickModule'],
-  rightClickModule: ['type', _RightClickModule__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  multiInstanceModule: ['type', _MultiInstanceModule__WEBPACK_IMPORTED_MODULE_0__.MultiInstanceModule],
 });
 
 /***/ }),
@@ -989,7 +953,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ UserTaskModule)
+/* harmony export */   UserTaskModule: () => (/* binding */ UserTaskModule)
 /* harmony export */ });
 /* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
@@ -997,50 +961,56 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function UserTaskModule(
-  canvas, eventBus, elementRegistry, translate, overlays
-) {
-  this._canvas = canvas;
-  this._eventBus = eventBus;
-  this._elementRegistry = elementRegistry;
-  this._translate = translate;
-  this._overlays = overlays;
+class UserTaskModule {
+
+  constructor(canvas, eventBus, elementRegistry, translate, overlays) {
+    this._canvas = canvas;
+    this._eventBus = eventBus;
+    this._elementRegistry = elementRegistry;
+    this._translate = translate;
+    this._overlays = overlays;
+  }
+
+  addOverlays() {
+
+    const { userTaskData } = this._widget;
+
+    this._elementRegistry.filter((element) => {
+      const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element);
+      /* only show link button if
+       * - element is userTask
+       * - link is existing
+       * - element is not iterating
+       * - parent is not iterating
+       */
+      return (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(element, 'bpmn:UserTask') && (userTaskData && userTaskData[element.id]) && !bo.loopCharacteristics && !bo.$parent.loopCharacteristics;
+    }).forEach((element) => {
+      this.addOverlay(element, userTaskData[element.id]);
+    });
+  }
+
+  addOverlay(element, url) {
+
+    const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<button class="bjs-drilldown fa fa-external-link"></button>');
+
+    button.addEventListener('click', function () {
+      window.open(url, '_self');
+    });
+
+    // add overlay
+    this._overlays.add(element, 'iterations', {
+      position: {
+        bottom: -7,
+        right: -8
+      },
+      html: button
+    });
+  }
+
+  setWidget(widget) {
+    this._widget = widget;
+  }
 }
-
-UserTaskModule.prototype.addOverlays = function () {
-
-  const _this = this;
-
-  const {userTaskData, iterationData} = this._widget;
-  
-  this._elementRegistry.filter(function (e) {
-    return (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(e, 'bpmn:UserTask') && (userTaskData && userTaskData[e.id]) && (!iterationData || !iterationData[e.id]);
-  }).forEach(function (el) {
-    _this.addOverlay(el, userTaskData[el.id]);
-  });
-};
-
-UserTaskModule.prototype.addOverlay = function (element, url) {
-
-  const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<button class="bjs-drilldown fa fa-external-link"></button>');
-
-  button.addEventListener('click', function () {
-    window.open(url, '_self');
-  });
-
-  // add overlay
-  this._overlays.add(element, 'iterations', {
-    position: {
-      bottom: -7,
-      right: -8
-    },
-    html: button
-  });
-};
-
-UserTaskModule.prototype.setWidget = function (widget) {
-  this._widget = widget;
-};
 
 UserTaskModule.$inject = ['canvas', 'eventBus', 'elementRegistry', 'translate', 'overlays'];
 
@@ -1061,7 +1031,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: ['userTaskModule'],
-  userTaskModule: ['type', _UserTaskModule__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  userTaskModule: ['type', _UserTaskModule__WEBPACK_IMPORTED_MODULE_0__.UserTaskModule],
 });
 
 /***/ }),
@@ -1548,7 +1518,7 @@ BaseViewer.prototype.saveSVG = async function saveSVG() {
     const canvas = this.get('canvas');
 
     const contentNode = canvas.getActiveLayer(),
-          defsNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)('defs', canvas._svg);
+          defsNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)(':scope > defs', canvas._svg);
 
     const contents = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(contentNode),
           defs = defsNode ? '<defs>' + (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(defsNode) + '</defs>' : '';
@@ -2376,7 +2346,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var rendererIds = new ids__WEBPACK_IMPORTED_MODULE_0__["default"]();
+var markerIds = new ids__WEBPACK_IMPORTED_MODULE_0__["default"]();
 
 var ELEMENT_LABEL_DISTANCE = 10,
     INNER_OUTER_DIST = 3,
@@ -2427,10 +2397,6 @@ function BpmnRenderer(
       defaultStrokeColor = config && config.defaultStrokeColor,
       defaultLabelColor = config && config.defaultLabelColor;
 
-  var rendererId = rendererIds.next();
-
-  var markers = {};
-
   function shapeStyle(attrs) {
     return styles.computeStyle(attrs, {
       strokeLinecap: 'round',
@@ -2454,7 +2420,8 @@ function BpmnRenderer(
     var {
       ref = { x: 0, y: 0 },
       scale = 1,
-      element
+      element,
+      parentGfx = canvas._svg
     } = options;
 
     var marker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('marker', {
@@ -2469,36 +2436,28 @@ function BpmnRenderer(
 
     (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(marker, element);
 
-    var defs = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)('defs', canvas._svg);
+    var defs = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)(':scope > defs', parentGfx);
 
     if (!defs) {
       defs = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('defs');
 
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(canvas._svg, defs);
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(parentGfx, defs);
     }
 
     (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(defs, marker);
-
-    markers[id] = marker;
   }
 
-  function colorEscape(str) {
+  function marker(parentGfx, type, fill, stroke) {
 
-    // only allow characters and numbers
-    return str.replace(/[^0-9a-zA-Z]+/g, '_');
-  }
 
-  function marker(type, fill, stroke) {
-    var id = type + '-' + colorEscape(fill) + '-' + colorEscape(stroke) + '-' + rendererId;
+    var id = markerIds.nextPrefixed('marker-');
 
-    if (!markers[id]) {
-      createMarker(id, type, fill, stroke);
-    }
+    createMarker(parentGfx, id, type, fill, stroke);
 
     return 'url(#' + id + ')';
   }
 
-  function createMarker(id, type, fill, stroke) {
+  function createMarker(parentGfx, id, type, fill, stroke) {
 
     if (type === 'sequenceflow-end') {
       var sequenceflowEnd = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
@@ -2513,7 +2472,8 @@ function BpmnRenderer(
       addMarker(id, {
         element: sequenceflowEnd,
         ref: { x: 11, y: 10 },
-        scale: 0.5
+        scale: 0.5,
+        parentGfx
       });
     }
 
@@ -2535,7 +2495,8 @@ function BpmnRenderer(
 
       addMarker(id, {
         element: messageflowStart,
-        ref: { x: 6, y: 6 }
+        ref: { x: 6, y: 6 },
+        parentGfx
       });
     }
 
@@ -2555,7 +2516,8 @@ function BpmnRenderer(
 
       addMarker(id, {
         element: messageflowEnd,
-        ref: { x: 8.5, y: 5 }
+        ref: { x: 8.5, y: 5 },
+        parentGfx
       });
     }
 
@@ -2576,7 +2538,8 @@ function BpmnRenderer(
       addMarker(id, {
         element: associationStart,
         ref: { x: 1, y: 10 },
-        scale: 0.5
+        scale: 0.5,
+        parentGfx
       });
     }
 
@@ -2597,7 +2560,8 @@ function BpmnRenderer(
       addMarker(id, {
         element: associationEnd,
         ref: { x: 11, y: 10 },
-        scale: 0.5
+        scale: 0.5,
+        parentGfx
       });
     }
 
@@ -2613,7 +2577,8 @@ function BpmnRenderer(
       addMarker(id, {
         element: conditionalFlowMarker,
         ref: { x: -1, y: 10 },
-        scale: 0.5
+        scale: 0.5,
+        parentGfx
       });
     }
 
@@ -2621,14 +2586,16 @@ function BpmnRenderer(
       var defaultFlowMarker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('path', {
         d: 'M 6 4 L 10 16',
         ...shapeStyle({
-          stroke: stroke
+          stroke: stroke,
+          fill: 'none'
         })
       });
 
       addMarker(id, {
         element: defaultFlowMarker,
         ref: { x: 0, y: 10 },
-        scale: 0.5
+        scale: 0.5,
+        parentGfx
       });
     }
   }
@@ -3416,11 +3383,11 @@ function BpmnRenderer(
 
     if (semantic.get('associationDirection') === 'One' ||
         semantic.get('associationDirection') === 'Both') {
-      attrs.markerEnd = marker('association-end', fill, stroke);
+      attrs.markerEnd = marker(parentGfx, 'association-end', fill, stroke);
     }
 
     if (semantic.get('associationDirection') === 'Both') {
-      attrs.markerStart = marker('association-start', fill, stroke);
+      attrs.markerStart = marker(parentGfx, 'association-start', fill, stroke);
     }
 
     attrs = pickAttrs(attrs, [
@@ -3714,7 +3681,7 @@ function BpmnRenderer(
 
       return renderAssociation(parentGfx, element, {
         ...attrs,
-        markerEnd: marker('association-end', (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill), (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke))
+        markerEnd: marker(parentGfx, 'association-end', (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill), (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke))
       });
     },
     'bpmn:DataObject': function(parentGfx, element, attrs = {}) {
@@ -3752,7 +3719,7 @@ function BpmnRenderer(
 
       return renderAssociation(parentGfx, element, {
         ...attrs,
-        markerEnd: marker('association-end', (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill), (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke))
+        markerEnd: marker(parentGfx, 'association-end', (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill), (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke))
       });
     },
     'bpmn:DataStoreReference': function(parentGfx, element, attrs = {}) {
@@ -4018,8 +3985,8 @@ function BpmnRenderer(
           stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke);
 
       var path = drawConnectionSegments(parentGfx, element.waypoints, {
-        markerEnd: marker('messageflow-end', fill, stroke),
-        markerStart: marker('messageflow-start', fill, stroke),
+        markerEnd: marker(parentGfx, 'messageflow-end', fill, stroke),
+        markerStart: marker(parentGfx, 'messageflow-start', fill, stroke),
         stroke,
         strokeDasharray: '10, 11',
         strokeWidth: 1.5
@@ -4275,7 +4242,7 @@ function BpmnRenderer(
           stroke = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke);
 
       var connection = drawConnectionSegments(parentGfx, element.waypoints, {
-        markerEnd: marker('sequenceflow-end', fill, stroke),
+        markerEnd: marker(parentGfx, 'sequenceflow-end', fill, stroke),
         stroke
       });
 
@@ -4289,7 +4256,7 @@ function BpmnRenderer(
         // conditional flow marker
         if (semantic.get('conditionExpression') && (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(sourceSemantic, 'bpmn:Activity')) {
           (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(connection, {
-            markerStart: marker('conditional-flow-marker', fill, stroke)
+            markerStart: marker(parentGfx, 'conditional-flow-marker', fill, stroke)
           });
         }
 
@@ -4297,7 +4264,7 @@ function BpmnRenderer(
         if (sourceSemantic.get('default') && ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(sourceSemantic, 'bpmn:Gateway') || (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(sourceSemantic, 'bpmn:Activity')) &&
             sourceSemantic.get('default') === semantic) {
           (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(connection, {
-            markerStart: marker('conditional-default-flow-marker', fill, stroke)
+            markerStart: marker(parentGfx, 'conditional-default-flow-marker', fill, stroke)
           });
         }
       }
@@ -5337,9 +5304,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var diagram_js_lib_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/util/EscapeUtil */ "./node_modules/diagram-js/lib/util/EscapeUtil.js");
+/* harmony import */ var diagram_js_lib_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/util/EscapeUtil */ "./node_modules/diagram-js/lib/util/EscapeUtil.js");
 /* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-/* harmony import */ var _util_DrilldownUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/DrilldownUtil */ "./node_modules/bpmn-js/lib/util/DrilldownUtil.js");
+/* harmony import */ var _util_DrilldownUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/DrilldownUtil */ "./node_modules/bpmn-js/lib/util/DrilldownUtil.js");
 
 
 
@@ -5401,23 +5368,30 @@ function DrilldownBreadcrumbs(eventBus, elementRegistry, canvas) {
       businessObjectParents = getBusinessObjectParentChain(element);
     }
 
-    var path = businessObjectParents.map(function(parent) {
-      var title = (0,diagram_js_lib_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3__.escapeHTML)(parent.name || parent.id);
-      var link = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<li><span class="bjs-crumb"><a title="' + title + '">' + title + '</a></span></li>');
+    var path = businessObjectParents.flatMap(function(parent) {
+      var parentPlane =
+        canvas.findRoot((0,_util_DrilldownUtil__WEBPACK_IMPORTED_MODULE_3__.getPlaneIdFromShape)(parent)) ||
+        canvas.findRoot(parent.id);
 
-      var parentPlane = canvas.findRoot((0,_util_DrilldownUtil__WEBPACK_IMPORTED_MODULE_4__.getPlaneIdFromShape)(parent)) || canvas.findRoot(parent.id);
-
-      // when the root is a collaboration, the process does not have a corresponding
-      // element in the elementRegisty. Instead, we search for the corresponding participant
+      // when the root is a collaboration, the process does not have a
+      // corresponding element in the elementRegisty. Instead, we search
+      // for the corresponding participant
       if (!parentPlane && (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(parent, 'bpmn:Process')) {
         var participant = elementRegistry.find(function(element) {
           var businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
 
-          return businessObject && businessObject.get('processRef') && businessObject.get('processRef') === parent;
+          return businessObject && businessObject.get('processRef') === parent;
         });
 
-        parentPlane = canvas.findRoot(participant.id);
+        parentPlane = participant && canvas.findRoot(participant.id);
       }
+
+      if (!parentPlane) {
+        return [];
+      }
+
+      var title = (0,diagram_js_lib_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_4__.escapeHTML)(parent.name || parent.id);
+      var link = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<li><span class="bjs-crumb"><a title="' + title + '">' + title + '</a></span></li>');
 
       link.addEventListener('click', function() {
         canvas.setRootElement(parentPlane);
@@ -5517,8 +5491,8 @@ function DrilldownCentering(eventBus, canvas) {
 
     currentRoot = newRoot;
 
-    // current root was replaced with a collaboration, we don't update the viewbox
-    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(newRoot, 'bpmn:Collaboration') && !storedViewbox) {
+    // Keep viewbox when replacing root elements
+    if (!(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(newRoot, 'bpmn:SubProcess') && !storedViewbox) {
       return;
     }
 
@@ -5637,6 +5611,7 @@ __webpack_require__.r(__webpack_exports__);
  * @typedef {import('diagram-js/lib/core/ElementRegistry').default} ElementRegistry
  * @typedef {import('diagram-js/lib/core/EventBus').default} EventBus
  * @typedef {import('diagram-js/lib/features/overlays/Overlays').default} Overlays
+ * @typedef {import('diagram-js/lib/i18n/translate/translate').default} Translate
  *
  * @typedef {import('../../model/Types').Element} Element
  * @typedef {import('../../model/Types').Parent} Parent
@@ -5653,9 +5628,10 @@ var EMPTY_MARKER = 'bjs-drilldown-empty';
  * @param {EventBus} eventBus
  * @param {ElementRegistry} elementRegistry
  * @param {Overlays} overlays
+ * @param {Translate} translate
  */
 function DrilldownOverlayBehavior(
-    canvas, eventBus, elementRegistry, overlays
+    canvas, eventBus, elementRegistry, overlays, translate
 ) {
   diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
 
@@ -5663,6 +5639,7 @@ function DrilldownOverlayBehavior(
   this._eventBus = eventBus;
   this._elementRegistry = elementRegistry;
   this._overlays = overlays;
+  this._translate = translate;
 
   var self = this;
 
@@ -5796,7 +5773,8 @@ DrilldownOverlayBehavior.prototype._updateOverlayVisibility = function(element) 
  */
 DrilldownOverlayBehavior.prototype._addOverlay = function(element) {
   var canvas = this._canvas,
-      overlays = this._overlays;
+      overlays = this._overlays,
+      bo = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.getBusinessObject)(element);
 
   var existingOverlays = overlays.get({ element: element, type: 'drilldown' });
 
@@ -5804,7 +5782,10 @@ DrilldownOverlayBehavior.prototype._addOverlay = function(element) {
     this._removeOverlay(element);
   }
 
-  var button = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.domify)('<button class="bjs-drilldown">' + ARROW_DOWN_SVG + '</button>');
+  var button = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.domify)('<button type="button" class="bjs-drilldown">' + ARROW_DOWN_SVG + '</button>'),
+      elementName = bo.get('name') || bo.get('id'),
+      title = this._translate('Open {element}', { element: elementName });
+  button.setAttribute('title', title);
 
   button.addEventListener('click', function() {
     canvas.setRootElement(canvas.findRoot((0,_util_DrilldownUtil__WEBPACK_IMPORTED_MODULE_3__.getPlaneIdFromShape)(element)));
@@ -5834,7 +5815,8 @@ DrilldownOverlayBehavior.$inject = [
   'canvas',
   'eventBus',
   'elementRegistry',
-  'overlays'
+  'overlays',
+  'translate'
 ];
 
 /***/ }),
@@ -9337,6 +9319,8 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
     element = this._elementRegistry.get(element);
   }
 
+  element.markers = element.markers || new Set();
+
   // we need to access all
   container = this._elementRegistry._elements[element.id];
 
@@ -9349,8 +9333,10 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
 
       // invoke either addClass or removeClass based on mode
       if (add) {
+        element.markers.add(marker);
         (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(gfx).add(marker);
       } else {
+        element.markers.delete(marker);
         (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(gfx).remove(marker);
       }
     }
@@ -9418,9 +9404,11 @@ Canvas.prototype.hasMarker = function(element, marker) {
     element = this._elementRegistry.get(element);
   }
 
-  const gfx = this.getGraphics(element);
+  if (!element.markers) {
+    return false;
+  }
 
-  return (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(gfx).has(marker);
+  return element.markers.has(marker);
 };
 
 /**
@@ -18160,9 +18148,11 @@ function _mergeNamespaces(n, m) {
 /**
  * Flatten array, one level deep.
  *
- * @param {Array<?>} arr
+ * @template T
  *
- * @return {Array<?>}
+ * @param {T[][] | T[] | null} [arr]
+ *
+ * @return {T[]}
  */
 
 const nativeToString = Object.prototype.toString;
@@ -18193,10 +18183,11 @@ function has(target, key) {
  * Iterate over collection; returning something
  * (non-undefined) will stop iteration.
  *
- * @param  {Array|Object} collection
- * @param  {Function} iterator
+ * @template T
+ * @param {Collection<T>} collection
+ * @param { ((item: T, idx: number) => (boolean|void)) | ((item: T, key: string) => (boolean|void)) } iterator
  *
- * @return {Object} return result that stopped the iteration
+ * @return {T} return result that stopped the iteration
  */
 function forEach(collection, iterator) {
 
@@ -18419,51 +18410,37 @@ ClassList.prototype.contains = function(name) {
 };
 
 /**
- * Remove all children from the given element.
+ * Clear utility
  */
-function clear(el) {
-
-  var c;
-
-  while (el.childNodes.length) {
-    c = el.childNodes[0];
-    el.removeChild(c);
-  }
-
-  return el;
-}
 
 /**
- * @param { HTMLElement } element
- * @param { String } selector
+ * Removes all children from the given element
  *
- * @return { boolean }
+ * @param {Element} element
+ *
+ * @return {Element} the element (for chaining)
  */
-function matches(element, selector) {
-  return element && typeof element.matches === 'function' && element.matches(selector);
+function clear(element) {
+  var child;
+
+  while ((child = element.firstChild)) {
+    element.removeChild(child);
+  }
+
+  return element;
 }
 
 /**
  * Closest
  *
  * @param {Element} el
- * @param {String} selector
- * @param {Boolean} checkYourSelf (optional)
+ * @param {string} selector
+ * @param {boolean} checkYourSelf (optional)
  */
 function closest(element, selector, checkYourSelf) {
-  var currentElem = checkYourSelf ? element : element.parentNode;
+  var actualElement = checkYourSelf ? element : element.parentNode;
 
-  while (currentElem && currentElem.nodeType !== document.DOCUMENT_NODE &&
-      currentElem.nodeType !== document.DOCUMENT_FRAGMENT_NODE) {
-
-    if (matches(currentElem, selector)) {
-      return currentElem;
-    }
-
-    currentElem = currentElem.parentNode;
-  }
-
-  return matches(currentElem, selector) ? currentElem : null;
+  return actualElement && typeof actualElement.closest === 'function' && actualElement.closest(selector) || null;
 }
 
 var componentEvent = {};
@@ -18688,6 +18665,16 @@ function parse(html, doc) {
 }
 
 var domify$1 = domify;
+
+/**
+ * @param { HTMLElement } element
+ * @param { String } selector
+ *
+ * @return { boolean }
+ */
+function matches(element, selector) {
+  return element && typeof element.matches === 'function' && element.matches(selector) || false;
+}
 
 function query(selector, el) {
   el = el || document;
@@ -19857,6 +19844,7 @@ function ensureImported(element, target) {
  * appendTo utility
  */
 
+
 /**
  * Append a node to a target element and return the appended node.
  *
@@ -19872,6 +19860,7 @@ function appendTo(element, target) {
 /**
  * append utility
  */
+
 
 /**
  * Append a node to an element
@@ -20145,16 +20134,6 @@ ClassList.prototype.has =
    return this.list.contains(name);
  };
 
-function remove(element) {
-  var parent = element.parentNode;
-
-  if (parent) {
-    parent.removeChild(element);
-  }
-
-  return element;
-}
-
 /**
  * Clear utility
  */
@@ -20162,14 +20141,14 @@ function remove(element) {
 /**
  * Removes all children from the given element
  *
- * @param  {DOMElement} element
- * @return {DOMElement} the element (for chaining)
+ * @param  {SVGElement} element
+ * @return {Element} the element (for chaining)
  */
 function clear(element) {
   var child;
 
   while ((child = element.firstChild)) {
-    remove(child);
+    element.removeChild(child);
   }
 
   return element;
@@ -20186,6 +20165,7 @@ var ns = {
 /**
  * DOM parsing utility
  */
+
 
 var SVG_START = '<svg xmlns="' + ns.svg + '"';
 
@@ -20238,6 +20218,7 @@ function parseDocument(svg) {
  */
 
 
+
 /**
  * Create a specific type from name or SVG markup.
  *
@@ -20248,6 +20229,8 @@ function parseDocument(svg) {
  */
 function create(name, attrs) {
   var element;
+
+  name = name.trim();
 
   if (name.charAt(0) === '<') {
     element = parse(name).firstChild;
@@ -20278,6 +20261,7 @@ function off(node, event, listener, useCapture) {
 /**
  * Geometry helpers
  */
+
 
 // fake node used to instantiate svg geometry elements
 var node = null;
@@ -20440,6 +20424,7 @@ function serialize(node, output) {
  */
 
 
+
 function set(element, svg) {
 
   var parsed = parse(svg);
@@ -20523,6 +20508,7 @@ function selectAll(node, selector) {
  * prependTo utility
  */
 
+
 /**
  * Prepend a node to a target element and return the prepended node.
  *
@@ -20539,6 +20525,7 @@ function prependTo(node, target) {
  * prepend utility
  */
 
+
 /**
  * Prepend a node to a target element
  *
@@ -20552,9 +20539,20 @@ function prepend(target, node) {
   return target;
 }
 
+function remove(element) {
+  var parent = element.parentNode;
+
+  if (parent) {
+    parent.removeChild(element);
+  }
+
+  return element;
+}
+
 /**
  * Replace utility
  */
+
 
 function replace(element, replacement) {
   element.parentNode.replaceChild(ensureImported(replacement, element), element);
@@ -29923,7 +29921,7 @@ function pathToCurve(path) {
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it declares 'bpmnViewer' on top-level, which conflicts with the current library output.
 (() => {
 /*!******************!*\
   !*** ./index.js ***!
@@ -29932,17 +29930,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
-/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
-/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
 /* harmony import */ var _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/viewerPalette */ "./lib/viewerPalette/index.js");
 /* harmony import */ var _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/callActivityModule */ "./modules/callActivityModule/index.js");
 /* harmony import */ var _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/drilldownCentering */ "./modules/drilldownCentering/index.js");
 /* harmony import */ var _modules_styleModule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/styleModule */ "./modules/styleModule/index.js");
 /* harmony import */ var _modules_multiInstanceModule__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/multiInstanceModule */ "./modules/multiInstanceModule/index.js");
-/* harmony import */ var _modules_rightClickModule__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/rightClickModule */ "./modules/rightClickModule/index.js");
-/* harmony import */ var _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/userTaskModule/ */ "./modules/userTaskModule/index.js");
-
+/* harmony import */ var _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/userTaskModule/ */ "./modules/userTaskModule/index.js");
 
 
 
@@ -29955,17 +29951,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var bpmnViewer = {
-  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_7__["default"],
+  Viewer: bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_6__["default"],
   customModules: {
-    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_8__["default"],
-    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_9__["default"],
+    MoveCanvasModule: diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_7__["default"],
+    ZoomScrollModule: diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_8__["default"],
     drilldownCentering: _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__["default"],
     callActivityModule: _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__["default"],
     multiInstanceModule: _modules_multiInstanceModule__WEBPACK_IMPORTED_MODULE_4__["default"],
     styleModule: _modules_styleModule__WEBPACK_IMPORTED_MODULE_3__["default"],
     customPaletteProviderModule: _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__["default"],
-    // rightClickModule,
-    userTaskModule: _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_6__["default"]
+    userTaskModule: _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_5__["default"]
   },
 };
 
