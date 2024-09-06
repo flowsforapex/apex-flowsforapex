@@ -130,25 +130,23 @@
         
         this.zoom( "fit-viewport" );
         
-        // if any color option is enabled
-        if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
-          // get viewer modules
-          const eventBus = bpmnViewer$.get('eventBus');
-          const multiInstanceModule = bpmnViewer$.get('multiInstanceModule');
+        
+        // get viewer modules
+        const eventBus = bpmnViewer$.get('eventBus');
+        const multiInstanceModule = bpmnViewer$.get('multiInstanceModule');
 
-          // update colors with the current highlighting info
-          this.updateColors(this.current, this.completed, this.error);
+        // update colors with the current highlighting info
+        this.updateColors(this.current, this.completed, this.error);
           
-          // root.set -> drilled down into or moved out from sub process
-          eventBus.on('root.set', (event) => {
-            const {element} = event;
-            // if current element is not iterating -> iterating elements are handled inside module
-            if (!multiInstanceModule.isMultiInstanceSubProcess(element)) {
-              // update colors
-              this.updateColors(this.current, this.completed, this.error);
-            }
-          });
-        }
+        // root.set -> drilled down into or moved out from sub process
+        eventBus.on('root.set', (event) => {
+          const {element} = event;
+          // if current element is not iterating -> iterating elements are handled inside module
+          if (!multiInstanceModule.isMultiInstanceSubProcess(element)) {
+            // update colors
+            this.updateColors(this.current, this.completed, this.error);
+          }
+        });
 
         // DEBUG
         console.log(this);
@@ -178,25 +176,31 @@
     },
 
     updateColors: function(current, completed, error) {
-      // get viewer module
-      const styleModule = this.bpmnViewer$.get('styleModule');
-      // reset current colors
-      this.resetColors();
-      // add highlighting if option is enabled
-      if (this.options.addHighlighting) {
-        styleModule.highlightElements(current, completed, error);
+      // if any color option is enabled
+      if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
+        // get viewer module
+        const styleModule = this.bpmnViewer$.get('styleModule');
+        // reset current colors
+        this.resetColors();
+        // add highlighting if option is enabled
+        if ( this.options.addHighlighting ) {
+          styleModule.highlightElements(current, completed, error);
+        }
       }
     },
 
     resetColors: function() {
-      // get viewer module
-      const styleModule = this.bpmnViewer$.get('styleModule');
-      // reset bpmn colors if option is not enabled
-      if (!this.options.useBPMNcolors) {
-        styleModule.resetBPMNcolors();
+      // if any color option is enabled
+      if ( this.options.addHighlighting || this.options.useBPMNcolors ) {
+        // get viewer module
+        const styleModule = this.bpmnViewer$.get('styleModule');
+        // reset bpmn colors if option is not enabled
+        if ( !this.options.useBPMNcolors ) {
+          styleModule.resetBPMNcolors();
+        }
+        // reset highlighting
+        styleModule.resetHighlighting();
       }
-      // reset highlighting
-      styleModule.resetHighlighting();
     },
 
     zoom: function( zoomOption ) {
