@@ -70,7 +70,7 @@ create or replace package body test_helper as
    procedure step_forward 
    ( pi_prcs_id         in  flow_processes.prcs_id%type
    , pi_current         in  flow_subflows.sbfl_current%type
-   , pi_iter_id         in  flow_subflows.sbfl_iter_id%type
+   , pi_iteration_path  in  flow_iterations.iter_display_name%type
    )
    is
      l_subflow     flow_subflows.sbfl_id%type;
@@ -79,9 +79,11 @@ create or replace package body test_helper as
        select sbfl.sbfl_id
          into l_subflow
          from flow_subflows sbfl
+         join flow_iterations iter
+           on iter.iter_id = sbfl.sbfl_iter_id
         where sbfl.sbfl_prcs_id        = pi_prcs_id
           and sbfl.sbfl_current        = pi_current
-          and sbfl.sbfl_iter_id        = pi_iter_id;
+          and iter.iter_display_name   = pi_iteration_path;
      -- step it forward
       step_forward 
       ( pi_prcs_id => pi_prcs_id

@@ -33,7 +33,7 @@ create or replace package test_helper as
    procedure step_forward 
    ( pi_prcs_id         in  flow_processes.prcs_id%type
    , pi_current         in  flow_subflows.sbfl_current%type
-   , pi_iter_id         in  flow_subflows.sbfl_iter_id%type
+   , pi_iteration_path  in  flow_iterations.iter_display_name%type
    );
 
   -- restart and step the model forward from an object given the object ID

@@ -380,6 +380,7 @@ end get_object_tag;
     , p_follows_ebg               in boolean default false
     , p_loop_counter              in number default null
     , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
+    , p_loop_total_instances      in flow_subflows.sbfl_loop_total_instances%type default null
     , p_iteration_var             in flow_process_variables.prov_var_name%type default null
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     , p_iter_id                   in flow_iterations.iter_id%type default null    
@@ -453,7 +454,7 @@ end get_object_tag;
                 when 'Y' then p_parent_subflow  
                 when 'N' then sbfl.sbfl_calling_sbfl
              end 
-           , nvl2(p_iter_id,p_iter_id, sbfl_iter_id)
+           , coalesce(p_iter_id, sbfl_iter_id)
         into l_process_level
            , l_diagram_level
            , l_scope
@@ -494,6 +495,7 @@ end get_object_tag;
          , sbfl_is_following_ebg
          , sbfl_loop_counter
          , sbfl_iteration_type
+         , sbfl_loop_total_instances
          , sbfl_iteration_var
          , sbfl_iteration_var_scope
          , sbfl_iter_id
@@ -526,6 +528,7 @@ end get_object_tag;
          , l_follows_ebg
          , p_loop_counter
          , p_iteration_type
+         , p_loop_total_instances 
          , p_iteration_var
          , p_iteration_var_scope
          , l_new_iter_id  

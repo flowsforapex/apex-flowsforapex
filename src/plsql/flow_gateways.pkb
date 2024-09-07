@@ -746,6 +746,7 @@ as
               , p_gateway_routes => l_forward_routes
               );
             else
+              -- is a parallel iteration split...
               ---- Add Edition IFDEF code here... If Enterprise compile this
               flow_iteration.parallel_split
               ( p_subflow_id => l_sbfl_id

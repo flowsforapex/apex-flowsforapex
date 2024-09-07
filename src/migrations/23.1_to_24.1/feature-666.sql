@@ -65,15 +65,11 @@ alter table flow_iterations
 
 alter table flow_iterations add constraint iter_iobj_fk foreign key (iter_iobj_id) 
                                            references flow_iterated_objects (iobj_id)
-                                           on delete cascade;  
-
-alter table flow_iterations add constraint iter_parent_iter_id_fk foreign key (iter_parent_iter_id) 
-                                           references flow_iterations (iter_id)
-                                           on delete cascade;         
+                                           on delete cascade;      
 
 alter table flow_iterated_objects add constraint iobj_parent_iter_fk foreign key (iobj_parent_iter_id) 
-references flow_iterations (iter_id)
-on delete cascade;                                                                
+                                           references flow_iterations (iter_id)
+                                           on delete cascade;                                                                 
 
 alter table flow_iterations add constraint iter_inputs_is_json_ck check ( iter_inputs is json );
 

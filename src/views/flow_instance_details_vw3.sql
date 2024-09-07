@@ -95,25 +95,27 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
      and sbfl_status = 'error'
 group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
 ), iterations as (
-select iobj.iobj_prcs_id         prcs_id
-     , iobj.iobj_parent_bpmn_id
-     , iobj.iobj_step_key
-     , iobj.iobj_diagram_level
-     , iobj.iobj_dgrm_id
-     , iter.iter_id
-     , iter.iter_step_Key
-     , iter.iter_loop_Counter
-     , iter.iter_description
-     , iter.iter_status
-     , iter.iter_display_name
-  from flow_iterations iter
-  join flow_iterated_objects iobj
-    on iter.iter_iobj_id = iobj.iobj_id
+select child_iobj.iobj_prcs_id         prcs_id
+     , child_iobj.iobj_parent_bpmn_id
+     , parent_iter.iter_step_key       parent_step_key
+     , child_iobj.iobj_diagram_level
+     , child_iobj.iobj_dgrm_id
+     , child_iter.iter_id
+     , child_iter.iter_step_Key
+     , child_iter.iter_loop_Counter
+     , child_iter.iter_description
+     , child_iter.iter_status
+     , child_iter.iter_display_name
+  from flow_iterations child_iter
+  join flow_iterated_objects child_iobj
+    on child_iter.iter_iobj_id = child_iobj.iobj_id
+  left join flow_iterations parent_iter
+    on child_iobj.iobj_parent_iter_id = parent_iter.iter_id
 ), iteration_objt_status as (      ---- puts the json together again for iteration objects
        select json_object( 'stepKey'        value il.iter_step_Key
                          , 'loopCounter'    value il.iter_loop_Counter
                          , 'description'    value il.iter_description 
-                         , 'parentStepKey'  value il.iobj_step_key
+                         , 'parentStepKey'  value il.parent_step_key
                          , 'iterationPath'  value il.iter_display_name
                          , 'status'         value il.iter_status
                          , 'highlighting'     value json_object 

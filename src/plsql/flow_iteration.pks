@@ -12,6 +12,7 @@ as
   procedure add_iteration_to_step_info
   ( p_step_info             in out NOCOPY flow_types_pkg.flow_step_info
   , p_sbfl_rec              in            flow_subflows%rowtype
+  , p_iteration_is_complete in            boolean default false
   );
 
   function get_iteration_id 
@@ -44,13 +45,18 @@ as
   ( p_sbfl_info             in flow_subflows%rowtype
   ) return flow_types_pkg.t_iteration_status;
 
+  procedure sequential_close_iteration
+  ( p_sbfl_info             in flow_subflows%rowtype
+  , p_step_info             in flow_types_pkg.flow_step_info
+  );
+
   function loop_init
   ( p_sbfl_info             in flow_subflows%rowtype
   , p_step_info             in flow_types_pkg.flow_step_info
   ) return flow_types_pkg.t_iteration_status;
 
   procedure loop_start_step
-  ( p_sbfl_info             in flow_subflows%rowtype
+  ( p_sbfl_info          in out nocopy flow_subflows%rowtype
   );
 
   function loop_complete_step
