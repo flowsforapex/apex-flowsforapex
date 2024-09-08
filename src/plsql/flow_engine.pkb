@@ -808,6 +808,7 @@ end timer_callback;
 function finish_current_step
 ( p_sbfl_rec          in flow_subflows%rowtype
 , p_log_as_completed  in boolean default true
+, p_reset_step_key    in boolean default false
 ) return flow_types_pkg.t_iteration_status
 is
   l_current_step_tag      flow_objects.objt_tag_name%type;
@@ -819,6 +820,7 @@ begin
   , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
   , 'Subflow ID', p_sbfl_rec.sbfl_id
   , 'Current Step', p_sbfl_rec.sbfl_current
+  , 'p_reset_step_key', case p_reset_step_key when true then 'True' when false then 'False' else 'null' end
   );
 
   l_current_step_tag := flow_engine_util.get_object_tag (p_sbfl_info => p_sbfl_rec);
@@ -864,7 +866,10 @@ begin
     when flow_constants_pkg.gc_iteration_sequential then
       l_iteration_status := flow_iteration.sequential_complete_step (p_sbfl_info => p_sbfl_rec);
     when flow_constants_pkg.gc_iteration_loop then 
-      l_iteration_status := flow_iteration.loop_complete_step (p_sbfl_info => p_sbfl_rec); 
+     if not p_reset_step_key then
+        -- skip complete_step on the step after loop_init has run...
+        l_iteration_status := flow_iteration.loop_complete_step (p_sbfl_info => p_sbfl_rec); 
+     end if;
     else 
       null;   
     end case;
@@ -1423,8 +1428,9 @@ begin
 
     -- complete the current step by doing the post-step operations
     l_iteration_status  :=  finish_current_step
-                            ( p_sbfl_rec => l_sbfl_rec
+                            ( p_sbfl_rec         => l_sbfl_rec
                             , p_log_as_completed => p_log_as_completed
+                            , p_reset_step_key   => p_reset_step_key
                             );
 
     if flow_globals.get_step_error then
@@ -1577,7 +1583,7 @@ begin
             -- so reset the step key in the iteration array
             apex_debug.message ('call from flow_engine...');
             l_next_loop_counter    := 1;
-            l_total_loop_instances := 0;
+            l_total_loop_instances := 1;
             l_next_iobj_id         := l_existing_iobj_id;
 
 --           l_next_iter_id := flow_iteration.get_iteration_id ( p_prcs_id      => p_process_id

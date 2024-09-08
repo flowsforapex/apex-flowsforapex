@@ -56,7 +56,7 @@ as
   ) return flow_types_pkg.t_iteration_status;
 
   procedure loop_start_step
-  ( p_sbfl_info          in out nocopy flow_subflows%rowtype
+  ( p_sbfl_info            in flow_subflows%rowtype
   );
 
   function loop_complete_step
