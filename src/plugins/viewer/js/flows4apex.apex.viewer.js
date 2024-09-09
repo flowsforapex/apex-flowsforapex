@@ -148,9 +148,6 @@
           }
         });
 
-        // DEBUG
-        console.log(this);
-
         // add overlays if iterationData is existing
         if (this.iterationData) {
           this.bpmnViewer$.get('multiInstanceModule').addOverlays();
