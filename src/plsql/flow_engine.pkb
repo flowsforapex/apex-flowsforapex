@@ -1449,13 +1449,6 @@ begin
       );      
     else
       l_previous_step := l_sbfl_rec.sbfl_current;
---      while not l_next_step_confirmed loop
-        --
-        -- NOTE TO MAINTAINER - THIS LOOP REPEATS LOOKING FOR THE NEXT STEP UNTIL A VALID NEXT STEP IS CONFIRMED
-        -- IF YOU ADD ANY BRANCHES TO THE CASE ? IF STATEMENTS, YOU NEED TO INCLUDE A l_next_step_confirmed  := true; 
-        -- OTHERWISE YOU COULD CREATE AN INFINITE LOOP - (been there, done  that!)
-        -- If you change something here and get Locking error messages and slow behaviour, you have probably creatd
-        -- an infinite loop.
         --
         -- if next step is an iteration over a collection, check that the collection has members before confirming 
         -- it is the next step.  If not, step forward again by picking the next step
@@ -1477,36 +1470,7 @@ begin
           if l_sbfl_rec.sbfl_current != l_step_info.target_objt_ref
           then
 --            -- next step is a new sequential iteration
---            -- for sequential iteration we use the original subflow for the iterands so need 
---            -- to set loop info on the original subflow. 
---            -- sequential iteration info is set when iteration subflows are created
---
---            l_iter_info := flow_iteration.sequential_init ( p_sbfl_info => l_sbfl_rec
---                                                          , p_step_info => l_step_info
---                                                          );
---            l_total_loop_instances := l_iter_info.num_iterations;
---            l_next_loop_counter    := 1;
---            l_next_iobj_id         := l_iter_info.iobj_id;
---            if l_total_loop_instances = 0 then
---              -- next step is an empty collection (sequential loop of 0 members) - move on to next step
---              apex_debug.message ( p_message => 'Loop Collection is empty - skipping process step %0.'
---                                 , p0 => l_step_info.target_objt_ref);
---              -- log current step as completed before releasing the reservation
---              flow_logging.log_step_completion   
---              ( p_process_id        => l_sbfl_rec.sbfl_prcs_id
---              , p_subflow_id        => l_sbfl_rec.sbfl_id
---              , p_completed_object  => l_step_info.target_objt_ref
---              );
---              -- set old step to the step to be skipped, then repeat the loop to get to the following step
---              l_previous_step := l_step_info.target_objt_ref;
---              continue;
---            end if; -- end empty collection
---            -- new non-empty collection...
---            l_next_step_confirmed  := true;  
---            l_next_iter_id := flow_iteration.get_iteration_id ( p_prcs_id      => p_process_id
---                                                               , p_iobj_id      => l_next_iobj_id
---                                                               , p_loop_counter => l_next_loop_counter
---           
+--            -- sequential iteration info is set when iteration subflows are create
             null;                                                           
           elsif p_reset_step_key then
             -- the next step is the iterating object (not the 2nd phase of sequential init)
@@ -1519,16 +1483,7 @@ begin
             l_next_iter_id := flow_iteration.get_iteration_id ( p_prcs_id      => p_process_id
                                                               , p_iobj_id      => l_next_iobj_id
                                                               , p_loop_counter => l_next_loop_counter
-                                                              );
---            flow_iteration.set_iteration_status
---            ( pi_prcs_id        => p_process_id
---            , pi_loop_counter   => l_sbfl_rec.sbfl_loop_counter
---            , pi_new_status     => flow_constants_pkg.gc_iteration_status_running 
---            , pi_step_key       => l_step_info.target_objt_step_key
---            , pi_scope          => l_sbfl_rec.sbfl_iteration_var_scope
---            , pi_prov_var_name  => l_sbfl_rec.sbfl_iteration_var
---            , pi_iobj_id        => l_sbfl_rec.sbfl_iobj_id
---            );                                                           
+                                                              );                                                         
           elsif l_sbfl_rec.sbfl_loop_counter is not null then
             if l_step_info.target_objt_treat_as_tag = 'sequentialIterationClose' then
               -- this is the extra 'closing gateway' step that we add to close the iteration subflow & return
@@ -1549,7 +1504,6 @@ begin
           else
             null;
           end if; -- loop counter
-
         when flow_constants_pkg.gc_iteration_parallel then
           if p_reset_step_key then
             -- the next step is the iterating object (not the 2nd phase ogf the implicit parallel gateway)
@@ -1585,11 +1539,7 @@ begin
             l_next_loop_counter    := 1;
             l_total_loop_instances := 1;
             l_next_iobj_id         := l_existing_iobj_id;
-
---           l_next_iter_id := flow_iteration.get_iteration_id ( p_prcs_id      => p_process_id
---                                                             , p_iobj_id      => l_next_iobj_id
---                                                             , p_loop_counter => l_next_loop_counter
---                                                             );          
+         
           elsif l_sbfl_rec.sbfl_loop_counter is not null then
             if l_step_info.target_objt_treat_as_tag = 'sequentialIterationClose' then
               -- this is the extra 'closing gateway' step that we add to close the iteration subflow & return
@@ -1609,39 +1559,15 @@ begin
                                                                  , p_loop_counter => l_next_loop_counter
                                                                  );  
             end if; --treat as tag
-
           end if; -- loop counter
-
         else 
           apex_debug.message (p_message => 'next step not an iteration or loop');
           -- next step is not an iteration or loop 
           l_next_loop_counter := null;
           l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances; 
           l_next_step_confirmed  := true;
-          if l_iteration_status.is_complete then
-
-              -- check if iteration was nested inside a parent iteration... if so reset to that iteration.
-              begin 
-                select iobj_parent_iter_id
-                  into l_next_iter_id
-                  from flow_iterations iter
-                  join flow_iterated_objects iobj
-                    on iter.iter_iobj_id = iobj_id
-                 where iter_id = l_existing_iter_id;
-              exception
-                when others then
-                  apex_debug.message ('failed to get parent iteration info');
-              end;
-
-              l_iteration_status.iteration_var := null;
-              l_iteration_status.var_scope := null;
-              l_iteration_status.is_complete := false;
-              l_next_iobj_id := null;
-          else
-              l_next_iter_id := l_existing_iter_id;
-          end if;
+          l_next_iter_id := l_existing_iter_id;
         end case; -- iteration type
---      end loop; 
     end if; -- step error
   end if; -- step key valid
 
@@ -1710,7 +1636,6 @@ begin
                         end
     );
   
-
     -- start of pre-phase for next step
     -- reset step_had_error flag
     flow_globals.set_step_error ( p_has_error => false);
