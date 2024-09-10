@@ -19,6 +19,7 @@ PROMPT >> -------------------------------------------
 
 @@feature-681.sql
 @@feature-666.sql
+@@feature-simple-forms.sql
 
 @@set_flows_version.sql
 
