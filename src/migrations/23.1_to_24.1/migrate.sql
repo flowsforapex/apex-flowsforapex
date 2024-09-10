@@ -3,7 +3,7 @@
 
   Created  Richard Allen, Flowquest    11 Jan 2024
 
-  (c) Copyright Flowquest Consulting Limited and/or its affiliates.  2024.
+  (c) Copyright Flowquest Limited and/or its affiliates.  2024.
 
 */
 
