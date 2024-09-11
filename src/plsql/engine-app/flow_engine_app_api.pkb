@@ -342,7 +342,7 @@ as
         from flow_instances_vw
         where prcs_id = apex_application.g_x02;
         
-        apex_debug.message (p_message => 'after ajax handler befoe status %0 after status %1'
+        apex_debug.message (p_message => 'after ajax handler before status %0 after status %1'
         , p0 => l_before_prcs_status
         , p1 => l_after_prcs_status
         );

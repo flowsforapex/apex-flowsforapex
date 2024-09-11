@@ -4,7 +4,7 @@
   Created  RAllen, Flowquest    11 Jan 2024
 
 
-  (c) Copyright Flowquest Consulting Limited and/or its affiliates.  2024.
+  (c) Copyright Flowquest Limited and/or its affiliates.  2024.
 
 */
 PROMPT >> Create Iterations
@@ -74,33 +74,6 @@ alter table flow_iterated_objects add constraint iobj_parent_iter_fk foreign key
 alter table flow_iterations add constraint iter_inputs_is_json_ck check ( iter_inputs is json );
 
 alter table flow_iterations add constraint iter_outputs_is_json_ck check ( iter_outputs is json );
-
-create table flow_steps (
-    step_prcs_id                number not null,
-    step_step_key               varchar2(20 char) not null,
-    step_sbfl_id                number not null,
-    step_objt_bpmn_id           VARCHAR2(50) NOT NULL,
-    step_dgrm_id                NUMBER,
-    step_scope                  NUMBER,
-    step_diagram_level          NUMBER,
-    step_iter_id                number,
-    step_iteration_var          VARCHAR2(50 CHAR),
-    step_last_updated           timestamp with time zone,
-    step_status                 varchar2(12),
-    step_notes                  VARCHAR2(200)
-);
--- flow_steps will expand post 24.1
-
-alter table flow_steps
-    add constraint flow_steps_pk primary key ( step_prcs_id, step_step_key);
-
-alter table flow_steps add constraint step_prcs_fk foreign key (step_prcs_id)
-                                           references flow_processes (prcs_id)
-                                           on delete cascade;  
-
-alter table flow_steps add constraint step_iter_fk foreign key (step_iter_id) 
-                                           references flow_iterations (iter_id)
-                                           on delete cascade;  
 
 declare
   v_column_exists number := 0;  
