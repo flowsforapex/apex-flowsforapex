@@ -227,7 +227,7 @@ create table flow_iterations (
     iter_step_key       varchar2(20 char),
     iter_status         varchar2(10 char),
     iter_description    varchar2(200 char),
-    iobj_display_name   VARCHAR2 (400 CHAR),
+    iter_display_name   VARCHAR2 (400 CHAR),
     iter_inputs         clob,
     iter_outputs        clob
 );

@@ -186,7 +186,6 @@ create or replace package body flow_logging as
     , sflg_diagram_level
     , sflg_notes
     , sflg_iter_id
-    , sflg_iobj_id
     )
     select p_process_id
          , p_completed_object
@@ -197,7 +196,6 @@ create or replace package body flow_logging as
          , sbfl.sbfl_diagram_level
          , p_notes
          , sbfl.sbfl_iter_id
-         , sbfl.sbfl_iobj_id
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
     ;

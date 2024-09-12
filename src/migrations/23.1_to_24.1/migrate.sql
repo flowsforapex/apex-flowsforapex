@@ -18,10 +18,11 @@ PROMPT >> -------------------------------------------
 
 
 @@feature-681.sql
+@@feature-add-edition.sql
 @@feature-666.sql
+@@feature-685.sql
 @@feature-simple-forms.sql
-@feature-add-edition.sql
-@feature-687.sql
+
 
 @@set_flows_version.sql
 
