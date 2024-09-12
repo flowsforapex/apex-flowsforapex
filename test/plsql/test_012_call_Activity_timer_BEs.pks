@@ -10,7 +10,7 @@ create or replace package test_012_call_Activity_timer_BEs is
 
   --%suite(12 Call Activity Timer Boundary Events)
   --%rollback(manual)
-  --%tag(short,ce,ee,timer)
+  --%tags(short,ce,ee,timer)
 
   --%beforeall
   procedure set_up_process;

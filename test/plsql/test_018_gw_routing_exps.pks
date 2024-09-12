@@ -12,7 +12,7 @@ create or replace package test_018_gw_routing_exps as
 
   --%suite(18 Gateway Routing Expressions)
   --%rollback(manual)
-  --%tag(short,ce,ee)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;

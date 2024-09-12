@@ -12,7 +12,7 @@ create or replace package test_023_custom_extensions as
 
   --%suite(23 Custom Extensions)
   --%rollback(manual)
-  --%tag(short,ce,ee)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;

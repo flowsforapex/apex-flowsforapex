@@ -12,7 +12,7 @@ create or replace package test_006_lanes_roles as
 
   --%suite(06 Lanes and Roles)
   --%rollback(manual)
-  --%tag(short,ce,ee)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;

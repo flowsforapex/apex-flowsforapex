@@ -12,7 +12,7 @@ create or replace package test_005_engine_misc as
 
   --%suite(05 Engine Misc)
   --%rollback(manual)
-  --%tag(short,ce,ee)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;
@@ -36,7 +36,7 @@ create or replace package test_005_engine_misc as
   procedure ICE_types;
 
   --%test(D - Repeating Timer BE)
-  --%tag(timer)
+  --%tags(timer)
   procedure repeating_TimerBE;
 
 

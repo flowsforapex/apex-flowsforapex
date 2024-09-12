@@ -13,7 +13,7 @@ create or replace package test_024_usertask_approval_task as
 
   --%suite(24 usertask - approval task)
   --%rollback(manual)
-  --%tag(short,ce,ee)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;

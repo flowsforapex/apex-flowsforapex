@@ -13,7 +13,7 @@ create or replace package test_003_startEvents is
 
    --%suite(03 Start Events)
    --%rollback(manual)
-   --%tag(short,ce,ee)
+   --%tags(short,ce,ee)
 
    --%beforeall
    procedure setup_tests;
@@ -34,26 +34,26 @@ create or replace package test_003_startEvents is
    procedure incorrect_start_type;
 
    --%test(03e - good timer start event)
-   --%tag(timer)
+   --%tags(timer)
    procedure good_timer_start;
 
    --%test(03f - timer start event with bad timer definition)
    --%throws(-20987)
-   --%tag(timer)
+   --%tags(timer)
    procedure bad_timer_definition;
 
    --%test(03g - startEvent with bad on-event var exp)
    --%throws(-20987)
-   --%tag(timer)
+   --%tags(timer)
    procedure bad_on_event_var_exp;
 
    --%test(03h-1 - timer startEvent with bad before-event var exp - throw)
    --%throws(-20987)
-   --%tag(timer)
+   --%tags(timer)
    procedure bad_before_event_1;
 
    --%test(03h-2 - timer startEvent with bad before-event var exp - restart)
-   --%tag(timer)
+   --%tags(timer)
    procedure bad_before_event_2;
 
    --%test(03i - attempt to start a running process)
