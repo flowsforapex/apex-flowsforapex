@@ -859,6 +859,7 @@ begin
     from flow_timers timr 
    where timr.timr_prcs_id = p_process_id
      and timr.timr_sbfl_id = p_subflow_id
+     and timr.timr_status = flow_timers_pkg.c_created
      for update wait 5
   ;
   if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
@@ -1101,7 +1102,8 @@ end reschedule_timer;
     begin
       select enabled
         into l_status
-        from sys.all_scheduler_jobs
+--        from sys.all_scheduler_jobs
+        from user_scheduler_jobs
        where job_name = 'APEX_FLOW_STEP_TIMERS_J';
     exception 
       when no_data_found then

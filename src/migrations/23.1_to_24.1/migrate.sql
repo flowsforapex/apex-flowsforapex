@@ -1,10 +1,9 @@
 /*
   Migration Script for Release 23.1 to 24.1
 
-  Created  RAllen   19 Sep 2023
+  Created  Richard Allen, Flowquest    11 Jan 2024
 
-
-  (c) Copyright Oracle Corporation and/or its affiliates.  2023.
+  (c) Copyright Flowquest Limited and/or its affiliates.  2024.
 
 */
 
@@ -17,8 +16,11 @@ PROMPT >> ------------------------------------------------------
 PROMPT >> Running Schema Upgrade from 23.1 to 24.1
 PROMPT >> -------------------------------------------
 
+
+@@feature-681.sql
+@@feature-666.sql
+@@feature-simple-forms.sql
 @feature-add-edition.sql
-@feature-681.sql
 @feature-687.sql
 
 @@set_flows_version.sql

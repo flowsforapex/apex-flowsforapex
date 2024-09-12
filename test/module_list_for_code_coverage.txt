@@ -1,7 +1,11 @@
 cut and paste the list below into the code coverage tool to include all Flows for APEX packages...
 
 
-flow_admin_api, flow_apex_session, flow_api_pkg, flow_boundary_events, flow_bpmn_parser_pkg, flow_call_activities, flow_db_exec, flow_diagram,
+flow_apex_session, flow_api_pkg, flow_boundary_events, flow_bpmn_parser_pkg, flow_call_activities, flow_db_exec, flow_diagram,
 flow_engine_util, flow_engine, flow_errors, flow_expressions, flow_gateways, flow_globals, flow_instances, fow_log_admin, flow_logging,
 flow_message_flow, flow_message_util, flow_parser_util, flow_plsql_runner_pkg, flow_proc_vars_int, flow_process_vars, flow_reservations
-flow_services, flow_settings, flow_statistics, flow_subprocesses, flow_tasks, flow_timers_pkg, flow_usertask_pkg
+flow_services, flow_settings,  flow_subprocesses, flow_tasks, flow_timers_pkg, flow_usertask_pkg, flow_iteration
+
+currently omitted
+
+flow_statistics, flow_admin_api,

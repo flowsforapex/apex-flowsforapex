@@ -23,12 +23,14 @@ as
   , pi_scope    in flow_subflows.sbfl_scope%type default 0
   ) return varchar2
   as
-    l_application flow_types_pkg.t_bpmn_attribute_vc2;
-    l_page        flow_types_pkg.t_bpmn_attribute_vc2;
-    l_request     flow_types_pkg.t_bpmn_attribute_vc2;
-    l_clear_cache flow_types_pkg.t_bpmn_attribute_vc2;
-    l_items       flow_types_pkg.t_bpmn_attribute_vc2;
-    l_values      flow_types_pkg.t_bpmn_attribute_vc2;
+    l_application        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_page               flow_types_pkg.t_bpmn_attribute_vc2;
+    l_request            flow_types_pkg.t_bpmn_attribute_vc2;
+    l_clear_cache        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_items              flow_types_pkg.t_bpmn_attribute_vc2;
+    l_values             flow_types_pkg.t_bpmn_attribute_vc2;
+    l_form_template_item flow_types_pkg.t_bpmn_attribute_vc2;
+    l_form_template_id   flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     select max(ut_application)
          , max(ut_page_id)
@@ -36,25 +38,31 @@ as
          , max(ut_clear_cache)
          , listagg( ut_item_name, ',' ) within group ( order by order_key ) as item_names
          , listagg( ut_item_value, ',' ) within group ( order by order_key ) as item_values
+         , max(ut_form_template_item)
+         , max(ut_form_template_id)
       into l_application
          , l_page
          , l_request
          , l_clear_cache
          , l_items
          , l_values
+         , l_form_template_item
+         , l_form_template_id
       from flow_objects objt
       join json_table( objt.objt_attributes
            , '$.apex'
              columns
-               ut_application varchar2(4000) path '$.applicationId'
-             , ut_page_id     varchar2(4000) path '$.pageId'
-             , ut_request     varchar2(4000) path '$.request'
-             , ut_clear_cache varchar2(4000) path '$.cache'
+               ut_application        varchar2(4000) path '$.applicationId'
+             , ut_page_id            varchar2(4000) path '$.pageId'
+             , ut_request            varchar2(4000) path '$.request'
+             , ut_clear_cache        varchar2(4000) path '$.cache'
              , nested path '$.pageItems[*]'
                  columns ( order_key for ordinality
                          , ut_item_name varchar2(4000) path '$.name'
                          , ut_item_value varchar2(4000) path '$.value'
                          )
+             , ut_form_template_item varchar2(4000) path '$.formTemplateItem'
+             , ut_form_template_id   varchar2(4000) path '$.formTemplateId'
            ) jt
         on objt.objt_id = pi_objt_id
     ;
@@ -66,6 +74,27 @@ as
     flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_clear_cache );
     flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_items );
     flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_values );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_form_template_item );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_form_template_id );
+
+    -- apex_simple_form
+    if l_form_template_id is not null
+       and
+       l_form_template_item is not null
+    then
+      -- append item name
+      if l_items is null then
+        l_items := l_form_template_item;
+      else
+        l_items := l_items || ',' || l_form_template_item;
+      end if;
+      -- append item value
+      if l_values is null then
+        l_values := l_form_template_id;
+      else
+        l_values := l_values || ',' || l_form_template_id;
+      end if;
+    end if;
 
     return
       apex_page.get_url

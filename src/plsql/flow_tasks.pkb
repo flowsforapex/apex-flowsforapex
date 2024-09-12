@@ -170,6 +170,11 @@ create or replace package body flow_tasks as
        ( p_sbfl_info => p_sbfl_info
        , p_step_info => p_step_info
        );
+      when flow_constants_pkg.gc_apex_usertask_apex_simple_form then
+       flow_usertask_pkg.process_apex_page_task
+       ( p_sbfl_info => p_sbfl_info
+       , p_step_info => p_step_info
+       );
       else
         null;
     end case;

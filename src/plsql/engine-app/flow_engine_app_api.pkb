@@ -215,6 +215,7 @@ as
           , p_subflow_id    => apex_application.g_x03
           , p_step_key      => apex_application.g_x04
           );
+                  apex_debug.message (p_message => 'ajax handler happy');
         when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
           (
@@ -334,11 +335,17 @@ as
           );
       end case;
 
+        apex_debug.message (p_message => 'after ajax handler case end');
       if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
         select prcs_status
         into l_after_prcs_status
         from flow_instances_vw
         where prcs_id = apex_application.g_x02;
+        
+        apex_debug.message (p_message => 'after ajax handler before status %0 after status %1'
+        , p0 => l_before_prcs_status
+        , p1 => l_after_prcs_status
+        );
 
         if l_before_prcs_status != l_after_prcs_status then
           l_reload := true;
@@ -1760,6 +1767,44 @@ as
               
     return l_has_error = 1;
   end has_error;
+
+
+  /* page 51 */
+  
+
+  procedure process_page_p51
+  (
+    pio_sfte_id       in out nocopy flow_simple_form_templates.sfte_id%type
+  , pi_sfte_name      in flow_simple_form_templates.sfte_name%type
+  , pi_sfte_static_id in flow_simple_form_templates.sfte_static_id%type
+  , pi_sfte_content   in flow_simple_form_templates.sfte_content%type
+  , pi_request        in varchar2)
+  as
+  begin
+    case pi_request
+      when 'CREATE' then
+        pio_sfte_id := flow_simple_form_template.create_template(
+                         pi_sfte_name => pi_sfte_name,
+                         pi_sfte_static_id => pi_sfte_static_id,
+                         pi_sfte_content => pi_sfte_content);
+      when 'SAVE' then
+        flow_simple_form_template.edit_template(
+          pi_sfte_id => pio_sfte_id,
+          pi_sfte_name => pi_sfte_name,
+          pi_sfte_static_id => pi_sfte_static_id,
+          pi_sfte_content => pi_sfte_content);
+      when 'DELETE' then
+        flow_simple_form_template.delete_template(
+          pi_sfte_id => pio_sfte_id);
+      else
+        raise_application_error(-20002, 'Unknown operation requested.');
+    end case;
+    exception
+      when flow_simple_form_template.template_exists then
+        apex_error.add_error(
+            p_message => apex_lang.message('APP_ERR_TEMPLATE_EXIST', pi_sfte_static_id)
+            , p_display_location => apex_error.c_on_error_page);
+  end process_page_p51;
 
 
   /* configuration */

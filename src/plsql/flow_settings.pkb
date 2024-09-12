@@ -4,19 +4,47 @@ as
 -- Flows for APEX - flow_settings.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created    23-Nov-2022  Richard Allen (Oracle)
 -- Modified   13-Apr-2023  Moritz Klein (MT GmbH)
+-- Modified   11-Feb-2024  Richard Allen (Flowquest Consulting)
 --
 */
 
   type expression_details_t is
     record
     (
-      expr_type  flow_types_pkg.t_bpmn_attribute_vc2
-    , expr_value clob
-    , expr_fmt   flow_types_pkg.t_bpmn_attribute_vc2
+      expr_type         flow_types_pkg.t_bpmn_attribute_vc2
+    , expr_value        clob
+    , expr_fmt          flow_types_pkg.t_bpmn_attribute_vc2
+    , expr_inside_var   flow_types_pkg.t_bpmn_attribute_vc2
+    , expr_description  flow_types_pkg.t_bpmn_attribute_vc2
     );
+
+  function get_expression_details( pi_expr_json in json_object_t )
+    return expression_details_t
+  as
+    l_return    expression_details_t;
+  begin
+    apex_debug.enter ('get_expression_details','pi_expr_json',pi_expr_json.to_string);
+    l_return.expr_type := pi_expr_json.get_string( key => 'expressionType' );
+
+    case pi_expr_json.get_type( key => 'expression' )
+      when 'SCALAR' then
+        l_return.expr_value := pi_expr_json.get_string( key => 'expression' );
+      when 'ARRAY' then
+        l_return.expr_value := flow_engine_util.json_array_join( pi_expr_json.get_array( key => 'expression' ) );
+      else
+       null;
+    end case;
+    
+    l_return.expr_fmt               := pi_expr_json.get_string( key => 'formatMask' );
+    l_return.expr_inside_var        := pi_expr_json.get_string( key => 'insideVariable' );
+    l_return.expr_description       := pi_expr_json.get_string( key => 'description');
+
+    return l_return;
+  end get_expression_details;
 
   function get_expression_details( pi_expr_data in flow_objects.objt_attributes%type )
     return expression_details_t
@@ -25,20 +53,7 @@ as
     l_return    expression_details_t;
   begin
     l_expr_json        := sys.json_object_t( jsn => pi_expr_data );
-    l_return.expr_type := l_expr_json.get_string( key => 'expressionType' );
-
-    case l_expr_json.get_type( key => 'expression' )
-      when 'SCALAR' then
-        l_return.expr_value := l_expr_json.get_string( key => 'expression' );
-      when 'ARRAY' then
-        l_return.expr_value := flow_engine_util.json_array_join( l_expr_json.get_array( key => 'expression' ) );
-      else
-       null;
-    end case;
-    
-    l_return.expr_fmt := l_expr_json.get_string( key => 'formatMask' );
-
-    return l_return;
+    return get_expression_details (pi_expr_json => l_expr_json);
   end get_expression_details;
 
   function get_due_on
@@ -78,7 +93,7 @@ as
                                    , flow_constants_pkg.gc_date_value_type_interval
                                    , flow_constants_pkg.gc_date_value_type_oracle_scheduler
                                    ) then
-      -- static types - timestamp, duration & scheduler statics - start by doing substitutions
+      -- static types - timestamp, duration and scheduler statics - start by doing substitutions
       flow_proc_vars_int.do_substitution
         ( pi_prcs_id => pi_prcs_id
         , pi_sbfl_id => pi_sbfl_id
@@ -501,6 +516,23 @@ as
                               , pi_scope       => pi_scope
                               );
   end get_endpoint;
+
+  function get_iteration_settings
+  ( pi_expr          sys.json_object_t
+  ) return   flow_types_pkg.t_iteration_vars
+  is
+    l_settings       flow_types_pkg.t_iteration_vars;
+    l_details        expression_details_t;
+  begin
+    apex_debug.enter ( 'get_iteration_settings');
+    l_details := get_expression_details ( pi_expr_json  => pi_expr);
+
+    l_settings.type              := l_details.expr_type;
+    l_settings.collection_var    := l_details.expr_value;
+    l_settings.inside_var        := l_details.expr_inside_var;
+    l_settings.description       := l_details.expr_description;
+    return l_settings;
+  end get_iteration_settings;   
 
 end flow_settings;
 /

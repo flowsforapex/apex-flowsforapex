@@ -8,8 +8,8 @@
             <apex:varSequence>0</apex:varSequence>
             <apex:varName>Ste24_Test_App_ID</apex:varName>
             <apex:varDataType>VARCHAR2</apex:varDataType>
-            <apex:varExpressionType>static</apex:varExpressionType>
-            <apex:varExpression>101</apex:varExpression>
+            <apex:varExpressionType>plsqlRawExpression</apex:varExpressionType>
+            <apex:varExpression>test_constants.gc_Ste24_Test_App_ID</apex:varExpression>
           </apex:processVariable>
         </apex:onEvent>
       </bpmn:extensionElements>

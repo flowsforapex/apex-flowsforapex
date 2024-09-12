@@ -5,9 +5,11 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created  April-2021  Richard Allen (Flowquest) - from flow_engine.pkb
 -- Modified 2022-07-18  Moritz Klein (MT AG)
+-- Modified 09-Jan-2024  Richard Allen, Flowquest Consulting
 --
 */
   lock_timeout exception;
@@ -135,7 +137,6 @@ as
     return ( l_cnt = 1 );
   end check_subflow_exists;
 
-
 function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
@@ -224,6 +225,21 @@ procedure get_number_of_connections
     return l_objt_tag_name;
   end get_object_tag;
 
+function get_object_tag
+( p_sbfl_info   in flow_subflows%rowtype
+) return flow_objects.objt_tag_name%type
+is
+  l_objt_tag_name   flow_objects.objt_tag_name%type;
+begin
+  select objt.objt_tag_name
+    into l_objt_tag_name
+    from flow_objects objt
+   where objt.objt_bpmn_id = p_sbfl_info.sbfl_current
+     and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+  ;
+  return l_objt_tag_name;
+end get_object_tag;
+  
   function get_subflow_info
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -309,6 +325,44 @@ procedure get_number_of_connections
       -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
   end get_subflow_info;
 
+  function get_iteration_type
+  ( p_step_info         flow_types_pkg.flow_step_info
+  ) return varchar2
+  is
+    l_iteration_type          varchar2(10);
+    l_sequential              boolean;
+    l_target_objt_attributes  sys.json_object_t;
+    l_target_iter_attributes  sys.json_object_t;
+    l_multi_attributes        sys.json_object_t;
+  begin
+    -- get loop characteristics
+    l_target_objt_attributes := sys.json_object_t.parse(p_step_info.target_objt_attributes);
+    apex_debug.message (p_message => 'l_target_objt_atributes: %0', p0 => l_target_objt_attributes.to_string);
+    if l_target_objt_attributes.has('apex') then
+      apex_debug.message (p_message => 'has apex');
+      l_target_iter_attributes := l_target_objt_attributes.get_object('apex');
+      if l_target_objt_attributes.get_object('apex').has('standardLoopCharacteristics') then
+        apex_debug.message (p_message => 'has standardLoop');
+        l_iteration_type := flow_constants_pkg.gc_iteration_loop;
+      elsif l_target_objt_attributes.get_object('apex').has('multiInstanceLoopCharacteristics') then
+        apex_debug.message (p_message => 'has multiIstanceLoop');
+        l_multi_attributes := l_target_objt_attributes.get_object('apex').get_object('multiInstanceLoopCharacteristics');
+        l_sequential := l_multi_attributes.get_boolean('isSequential');
+        case l_sequential
+        when true then
+          l_iteration_type := flow_constants_pkg.gc_iteration_sequential;
+        when false then
+          l_iteration_type := flow_constants_pkg.gc_iteration_parallel;
+        end case;
+      end if;
+    else 
+      l_iteration_type := null;
+    end if;
+    apex_debug.message (p_message => 'Iteration Type: %0', p0 => l_iteration_type);
+    return l_iteration_type;
+  end get_iteration_type;
+
+
   function subflow_start
     ( 
       p_process_id                in flow_processes.prcs_id%type
@@ -324,6 +378,13 @@ procedure get_number_of_connections
     , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     , p_follows_ebg               in boolean default false
+    , p_loop_counter              in number default null
+    , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
+    , p_loop_total_instances      in flow_subflows.sbfl_loop_total_instances%type default null
+    , p_iteration_var             in flow_process_variables.prov_var_name%type default null
+    , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
+    , p_iter_id                   in flow_iterations.iter_id%type default null    
+    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null                 
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
@@ -339,11 +400,13 @@ procedure get_number_of_connections
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_is_new_scope        varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_follows_ebg         flow_subflows.sbfl_is_following_ebg%type;
+    l_new_iter_id         flow_iterations.iter_id%type;
   begin
     apex_debug.enter 
     ( 'subflow_start'
     , 'Process', p_process_id
     , 'Parent Subflow', p_parent_subflow 
+    , 'Loop Counter', p_loop_counter
     );
     
     -- convert boolean in parameters to varchar2 for use in SQL
@@ -390,7 +453,8 @@ procedure get_number_of_connections
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
                 when 'N' then sbfl.sbfl_calling_sbfl
-             end
+             end 
+           , coalesce(p_iter_id, sbfl_iter_id)
         into l_process_level
            , l_diagram_level
            , l_scope
@@ -399,6 +463,7 @@ procedure get_number_of_connections
            , l_lane_isRole
            , l_lane_role
            , l_level_parent
+           , l_new_iter_id
         from flow_subflows sbfl
        where sbfl.sbfl_id = p_parent_subflow;
     end if;
@@ -428,6 +493,13 @@ procedure get_number_of_connections
          , sbfl_lane_isRole
          , sbfl_lane_role
          , sbfl_is_following_ebg
+         , sbfl_loop_counter
+         , sbfl_iteration_type
+         , sbfl_loop_total_instances
+         , sbfl_iteration_var
+         , sbfl_iteration_var_scope
+         , sbfl_iter_id
+         , sbfl_iobj_id
          )
     values
          ( p_process_id
@@ -454,6 +526,13 @@ procedure get_number_of_connections
          , l_lane_isRole
          , l_lane_role
          , l_follows_ebg
+         , p_loop_counter
+         , p_iteration_type
+         , p_loop_total_instances 
+         , p_iteration_var
+         , p_iteration_var_scope
+         , l_new_iter_id  
+         , p_iterated_object         
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 
@@ -481,13 +560,15 @@ procedure get_number_of_connections
     end if;
 
     apex_debug.info
-    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ).'
+    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7'
     , p0        => p_process_id
     , p1        => l_new_subflow_context.sbfl_id
     , p2        => l_new_subflow_context.step_key
     , p3        => l_new_subflow_context.scope
     , p4        => l_lane
     , p5        => l_lane_name
+    , p6        => p_loop_counter
+    , p7        => l_new_iter_id
     );
     return l_new_subflow_context;
   end subflow_start;
@@ -511,7 +592,12 @@ procedure get_number_of_connections
           from flow_subflows parent_sbfl
           join flow_subflows child_sbfl
             on parent_sbfl.sbfl_current = child_sbfl.sbfl_starting_object
-         where parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
+           and parent_sbfl.sbfl_prcs_id = child_sbfl.sbfl_prcs_id
+           and parent_sbfl.sbfl_id      = child_sbfl.sbfl_calling_sbfl
+--         where parent_sbfl.sbfl_status =  flow_constants_pkg.gc_sbfl_status_in_subprocess
+         where parent_sbfl.sbfl_status in ( flow_constants_pkg.gc_sbfl_status_in_subprocess
+                                          , flow_constants_pkg.gc_sbfl_status_in_callactivity 
+                                          , flow_constants_pkg.gc_sbfl_status_iterating)
            and parent_sbfl.sbfl_process_level = p_process_level
            and parent_sbfl.sbfl_prcs_id = p_process_id
       )
@@ -592,6 +678,7 @@ procedure get_number_of_connections
     l_remaining_siblings              number;
     l_current_object                  flow_subflows.sbfl_current%type;
     l_current_subflow_status          flow_subflows.sbfl_status%type;
+    l_current_subflow_process_level   flow_subflows.sbfl_process_level%type;
     l_parent_subflow_id               flow_subflows.sbfl_sbfl_id%type;
     l_parent_subflow_status           flow_subflows.sbfl_status%type;
     l_parent_subflow_last_completed   flow_subflows.sbfl_last_completed%type;
@@ -604,9 +691,11 @@ procedure get_number_of_connections
     select sbfl.sbfl_sbfl_id
          , sbfl.sbfl_current
          , sbfl.sbfl_status
+         , sbfl.sbfl_process_level
       into l_parent_subflow_id
          , l_current_object
          , l_current_subflow_status
+         , l_current_subflow_process_level
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
        and sbfl.sbfl_prcs_id = p_process_id
@@ -646,11 +735,13 @@ procedure get_number_of_connections
         from flow_subflows sbfl
        where sbfl.sbfl_prcs_id = p_process_id
          and sbfl.sbfl_starting_object = l_parent_subflow_last_completed
+         and sbfl.sbfl_process_level   = l_current_subflow_process_level
       ;
       
       if (   l_remaining_siblings = 0
          and l_parent_subflow_status =  flow_constants_pkg.gc_sbfl_status_split    
-         and l_current_subflow_status != flow_constants_pkg.gc_sbfl_status_waiting_gateway
+         and l_current_subflow_status not in ( flow_constants_pkg.gc_sbfl_status_waiting_gateway
+                                             , flow_constants_pkg.gc_sbfl_status_waiting_iter )
          )
       then
         -- call subflow_complete again recursively in case it has orphan grandparent

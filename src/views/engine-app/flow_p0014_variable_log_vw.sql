@@ -13,6 +13,7 @@ as
            when lgvr_var_num is not null then cast(lgvr_var_num as varchar2(4000))
            when lgvr_var_date is not null then cast(lgvr_var_date as varchar2(4000))
            when lgvr_var_clob is not null then '[clob]'
+           when lgvr_var_json is not null then cast(dbms_lob.substr(lgvr_var_json, 4000) as  varchar2(4000))
          end as lgvr_value
     from flow_variable_event_log
 with read only;
