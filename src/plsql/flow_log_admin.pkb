@@ -3,9 +3,10 @@ create or replace package body flow_log_admin as
   -- Flows for APEX - flow_log_admin.pkb
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
-
+  -- (c) Copyright Flowquest Consulting Limited. 2024
   --
-  -- Created    18-Feb-2021  Richard Allen (Oracle)
+  -- Created    18-Feb-2023  Richard Allen (Oracle)
+  -- Modified   11-Feb-2024  Richard Allen (Flowquest Consulting)
   --
   -- Package flow_log_admin manaes the Flows for APEX log tables, including
   --    - creation of instance archive summary
@@ -140,6 +141,7 @@ create or replace package body flow_log_admin as
                                                           when 'DATE'                       then to_char(lgvr.lgvr_var_date,'YYYY-MM-DD"T"HH24:MI:SS"Z"')
                                                           when 'TIMESTAMP WITH TIME ZONE'   then to_char(lgvr.lgvr_var_tstz,'YYYY-MM-DD"T"HH24:MI:SSTZR')
                                                           when 'CLOB'                       then 'CLOB Value'
+                                                          when 'JSON'                       then cast(dbms_lob.substr(lgvr_var_json, 4000) as  varchar2(4000))
                                                           end 
                                                )
                                            order by lgvr.lgvr_timestamp 

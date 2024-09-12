@@ -5,9 +5,11 @@ as /*
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
+-- (c) Copyright Flowquest Consulting Limited and / or its affiliates.  2020-2024.
 --
 -- Created 22-SEP-2020  Richard Allen (Flowquest) 
 -- Edited  13-APR-2022 - Richard Allen (Oracle)
+-- edited  24-May-2024 - Richard Allen (Flowquest)
 --
 */
 /*
@@ -519,6 +521,124 @@ declare
    l_value flow_process_variables.prov_var_clob%type;
 begin
    l_value := flow_process_vars.get_var_clob(
+                   pi_prcs_id   => 1
+                 , pi_sbfl_id   => 12
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+**/
+
+function get_var_json
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return flow_process_variables.prov_var_json%type;
+/**
+SIGNATURE 1 - Using Scope.
+
+This function is used to get the value of a JSON process variable in string format (CLOB).  To get as a JSON object (json_element_t) see 
+get_var_json_element.
+
+EXAMPLE
+
+This example will get the value of the process variable "MY_VAR" in the main diagram scope.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_json%type;
+begin
+   l_value := flow_process_vars.get_var_json(
+                   pi_prcs_id   => 1
+                 , pi_scope     => 0
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+**/
+
+
+function get_var_json
+( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
+, pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+, pi_exception_on_null in boolean default false                       -- If true, return an exception if null
+) return flow_process_variables.prov_var_json%type;
+/**
+SIGNATURE 2 - Using Subflow_id.
+
+This function is used to get the value of a JSON process variable in string format (CLOB).  To get as a JSON object (json_element_t) see 
+get_var_json_element.
+
+EXAMPLE
+
+This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_json%type;
+begin
+   l_value := flow_process_vars.get_var_json(
+                   pi_prcs_id   => 1
+                 , pi_sbfl_id   => 12
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+**/
+
+function get_var_json_element
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return sys.json_element_t;
+/**
+SIGNATURE 1 - Using Scope.
+
+This function is used to get the value of a JSON process variable as a JSON object (json_element_t).  To get in string format (CLOB) see 
+get_var_json.
+
+EXAMPLE
+
+This example will get the value of the process variable "MY_VAR" in the main diagram scope.
+
+```sql
+declare
+   l_value sys.json_element_t;
+begin
+   l_value := flow_process_vars.get_var_json_element(
+                   pi_prcs_id   => 1
+                 , pi_scope     => 0
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+**/
+
+
+function get_var_json_element
+( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
+, pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+, pi_exception_on_null in boolean default false                       -- If true, return an exception if null
+) return sys.json_element_t;
+/**
+SIGNATURE 2 - Using Subflow_id.
+
+This function is used to get the value of a JSON process variable as a JSON object (json_element_t).  To get as a string, see 
+get_var_json.
+
+EXAMPLE
+
+This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
+
+```sql
+declare
+   l_value sys.json_elent_t;
+begin
+   l_value := flow_process_vars.get_var_json_element(
                    pi_prcs_id   => 1
                  , pi_sbfl_id   => 12
                  , pi_var_name  => 'MY_VAR'

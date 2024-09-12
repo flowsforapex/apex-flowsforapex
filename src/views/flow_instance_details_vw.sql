@@ -7,6 +7,9 @@
 -- Created    Nov-2020 Moritz Klein,  MT AG
 -- Edited  16-Mar-2022 Richard Allen, Oracle Corporation  
 --
+-- NOTE THAT THIS VIEW HAS AN ENTERPRISE EDITION VERSION WHICH INCLUDES COMPLEX
+-- PROCESSING TO GENERATE THE ITERATION_DATA COLUMN.
+-- ANY CHAGES TO THIS VIEW SHOULD ALSO UPDATE THE ENTERPRISE EDITION VERSION IN ADDITION.
 */
 create or replace view flow_instance_details_vw
 as
@@ -81,6 +84,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
               and aerr.diagram_level =  prdg.prdg_diagram_level
          ) as all_errors
        , prov.prov_var_vc2 as prcs_business_ref
+       , null as iteration_data
     from flow_processes prcs
     join flow_instance_diagrams prdg
       on prdg.prdg_prcs_id = prcs.prcs_id

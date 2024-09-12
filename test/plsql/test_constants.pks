@@ -13,7 +13,7 @@ as
 */
 
   -- APEX AppIDs of Apps used in Tests
-  gc_Ste24_Test_App_ID                  constant varchar2(5) := '101';
+  gc_Ste24_Test_App_ID                  constant varchar2(5) := '110';
 
   -- APEX UserIDs used for Test Suite 24 (APEX Human Tasks)
   gc_tester1                            constant varchar2(20) := 'FLOWSTESTER1';

@@ -1099,7 +1099,8 @@ end reschedule_timer;
     begin
       select enabled
         into l_status
-        from sys.all_scheduler_jobs
+--        from sys.all_scheduler_jobs
+        from user_scheduler_jobs
        where job_name = 'APEX_FLOW_STEP_TIMERS_J';
     exception 
       when no_data_found then

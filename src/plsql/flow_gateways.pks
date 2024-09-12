@@ -1,16 +1,17 @@
+create or replace package flow_gateways
 /* 
 -- Flows for APEX - flow_gateways.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created    06-May-2021  Richard Allen (Flowquest, for MT AG)
+-- Modified   20-Jan-2024  Richard Allen, Flowquest Consulting Limited
 --
 */
-
-create or replace package flow_gateways
   authid definer
-  accessible by (flow_engine)
+  accessible by (flow_engine, flow_settings)
 as 
 
 procedure process_para_incl_Gateway

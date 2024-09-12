@@ -9,6 +9,7 @@ as
        , prov.prov_var_date
        , prov.prov_var_tstz
        , prov.prov_var_clob
+       , prov.prov_var_json
        , prcs.prcs_name
        , prcs.prcs_status
     from flow_process_variables prov
