@@ -4,8 +4,10 @@ as
 -- Flows for APEX - flow_settings.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created    21-Nov-2022  Richard Allen (Oracle)
+-- Modified   11-Feb-2024  Richard Allen (Flowquest Consulting)
 --
 */
 
@@ -45,6 +47,10 @@ as
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2
   , pi_scope         flow_subflows.sbfl_scope%type default 0
   ) return   flow_types_pkg.t_bpmn_attribute_vc2;  
+
+  function get_iteration_settings
+  ( pi_expr          sys.json_object_t
+  ) return   flow_types_pkg.t_iteration_vars;    
 
 end flow_settings;
 /

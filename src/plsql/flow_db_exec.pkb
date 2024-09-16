@@ -4,9 +4,11 @@ as
 -- Flows for APEX - flow_db_exec.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created  08-Dec-2022  Richard Allen (Oracle Corporation)
 -- Changed  21-FEB-2023  Moritz Klein (MT GmbH)
+-- Changed  11-Feb-2024  Richard Allen (Flowquest)
 --
 */
 
@@ -64,8 +66,11 @@ as
                       , p_total_row_count   => true
                       );
 
-    -- check only 1 row and 1 column returned
-    if apex_exec.get_column_count (p_context => l_context) <> 1 then
+    -- check row and column limits for single and list options for 
+    if (   pi_expr_type in ( flow_constants_pkg.gc_expr_type_sql 
+                           , flow_constants_pkg.gc_expr_type_sql_delimited_list)
+       and apex_exec.get_column_count (p_context => l_context) <> 1 )
+    then
       raise e_var_exp_must_return_one_column;
     end if;
     if (   pi_expr_type = flow_constants_pkg.gc_expr_type_sql 
@@ -192,7 +197,15 @@ as
                             , p_sep => ':'
                             );
       apex_debug.message(p_message => 'Delimited String created %s', p0 => l_result_rec.var_vc2, p_level => 3);
-
+    elsif pi_expr_type = flow_constants_pkg.gc_expr_type_sql_json_array  then
+      
+      apex_json.initialize_clob_output (p_preserve => true);
+      apex_json.write_context ( p_name       => null
+                              , p_context    => l_context
+                              , p_write_null => true);
+      l_result_rec.var_json := apex_json.get_clob_output;
+      apex_json.free_output;
+      apex_debug.message(p_message => 'JSON Array created %s', p0 => l_result_rec.var_json, p_level => 3);
     end if;
     -- close the cursor
     apex_exec.close (l_context);
@@ -447,6 +460,62 @@ as
     return l_result_rec;   
   end exec_flows_plsql_tstz;
 
+  function exec_flows_plsql_bool
+  ( pi_prcs_id        flow_processes.prcs_id%type default null
+  , pi_sbfl_id        flow_subflows.sbfl_id%type default null
+  , pi_plsql_text     varchar2
+  , pi_scope          flow_subflows.sbfl_scope%type default 0
+  , pi_expr_type      flow_types_pkg.t_expr_type
+  , pi_bind_parameters apex_exec.t_parameters
+  ) return flow_proc_vars_int.t_proc_var_value
+  is
+    l_wrap_begin      varchar2(100);
+    l_wrap_end        varchar2(100);
+    l_expr            varchar2(4000) := pi_plsql_text;
+    l_bind_parameters apex_exec.t_parameters := pi_bind_parameters;
+    l_result_rec      flow_proc_vars_int.t_proc_var_value;
+  begin
+    apex_debug.enter
+    ( 'flow_db_exec.exec_flows_plsql_bool'
+    , 'plsql text', pi_plsql_text
+    );
+    case pi_expr_type 
+    when flow_constants_pkg.gc_expr_type_plsql_expression then
+      -- legacy mode - expression will return a vc2 in our format
+      l_wrap_begin  := c_wrap_bool_expr_pre;
+      l_wrap_end    := c_wrap_bool_expr_post;
+  --  when flow_constants_pkg.gc_expr_type_plsql_raw_expression then
+  --    -- new 'raw' mode - expression will return a date
+  --    l_wrap_begin  := c_wrap_bool_raw_expr_pre;
+  --    l_wrap_end    := c_wrap_bool_raw_expr_post;
+  --  when flow_constants_pkg.gc_expr_type_plsql_function_body then
+  --    -- legacy mode - function will return a vc2 in our format
+  --    l_wrap_begin  := c_wrap_bool_func_pre;
+  --    l_wrap_end    := c_wrap_bool_func_post;
+  --  when flow_constants_pkg.gc_expr_type_plsql_raw_function_body then
+  --    -- new 'raw' mode - function will return a date
+  --    l_wrap_begin  := c_wrap_bool_raw_func_pre;
+  --    l_wrap_end    := c_wrap_bool_raw_func_post;
+    end case;
+
+    apex_exec.add_parameter ( l_bind_parameters, 'BIND_OUT_VAR','');
+
+    apex_exec.execute_plsql(
+        p_plsql_code      => l_wrap_begin||pi_plsql_text||l_wrap_end,
+        p_auto_bind_items => false,
+        p_sql_parameters  => l_bind_parameters );
+
+    l_result_rec.var_vc2  :=  apex_exec.get_parameter_varchar2
+                              ( p_parameters => l_bind_parameters
+                              , p_name       => 'BIND_OUT_VAR')
+                              ; 
+
+    l_result_rec.var_name   := 'result';
+    l_result_rec.var_type   := flow_constants_pkg.gc_prov_var_type_varchar2;
+
+    return l_result_rec;   
+  end exec_flows_plsql_bool;
+
   function exec_flows_plsql
   ( pi_prcs_id        flow_processes.prcs_id%type default null
   , pi_sbfl_id        flow_subflows.sbfl_id%type default null
@@ -454,6 +523,7 @@ as
   , pi_result_type    varchar2  
   , pi_scope          flow_subflows.sbfl_scope%type default 0
   , pi_expr_type      flow_types_pkg.t_expr_type
+  , pi_state_params   apex_exec.t_parameters default apex_exec.c_empty_parameters
   ) return flow_proc_vars_int.t_proc_var_value
   is
     l_wrap_begin      varchar2(100);
@@ -489,6 +559,7 @@ as
                               , pi_prcs_id            => pi_prcs_id
                               , pi_sbfl_id            => pi_sbfl_id
                               , pi_scope              => pi_scope
+                              , pi_state_params       => pi_state_params
                               );    
     end if;
 
@@ -525,6 +596,22 @@ as
                                             , pi_expr_type       => pi_expr_type 
                                             , pi_bind_parameters => l_bind_parameters
                                             );
+    when flow_constants_pkg.gc_prov_var_type_json then -- use vc2
+      l_result_rec := exec_flows_plsql_vc2  ( pi_prcs_id         => pi_prcs_id
+                                            , pi_sbfl_id         => pi_sbfl_id
+                                            , pi_plsql_text      => l_expr
+                                            , pi_scope           => pi_scope
+                                            , pi_expr_type       => pi_expr_type
+                                            , pi_bind_parameters => l_bind_parameters
+                                            );    
+    when flow_constants_pkg.gc_prov_var_type_boolean then 
+      l_result_rec := exec_flows_plsql_bool ( pi_prcs_id         => pi_prcs_id
+                                            , pi_sbfl_id         => pi_sbfl_id
+                                            , pi_plsql_text      => l_expr
+                                            , pi_scope           => pi_scope
+                                            , pi_expr_type       => pi_expr_type
+                                            , pi_bind_parameters => l_bind_parameters
+                                            );                                          
     end case;    
     return l_result_rec;
   exception

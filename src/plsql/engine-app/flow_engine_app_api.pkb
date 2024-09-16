@@ -215,6 +215,7 @@ as
           , p_subflow_id    => apex_application.g_x03
           , p_step_key      => apex_application.g_x04
           );
+                  apex_debug.message (p_message => 'ajax handler happy');
         when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
           (
@@ -296,6 +297,19 @@ as
               , pi_clob_value => l_clob
               , pi_scope      => apex_application.g_x06
               );
+            when 'JSON' then
+              for i in apex_application.g_f01.first..apex_application.g_f01.last
+              loop
+                l_clob := l_clob || apex_application.g_f01(i);
+              end loop;
+              /*Using internal for now since we don't have public API for that*/
+              flow_proc_vars_int.set_var
+              (
+                pi_prcs_id    => apex_application.g_x02
+              , pi_var_name   => apex_application.g_x03
+              , pi_json_value => l_clob
+              , pi_scope      => apex_application.g_x06
+              );  
             else
               null;
           end case;
@@ -334,11 +348,17 @@ as
           );
       end case;
 
+        apex_debug.message (p_message => 'after ajax handler case end');
       if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
         select prcs_status
         into l_after_prcs_status
         from flow_instances_vw
         where prcs_id = apex_application.g_x02;
+        
+        apex_debug.message (p_message => 'after ajax handler before status %0 after status %1'
+        , p0 => l_before_prcs_status
+        , p1 => l_after_prcs_status
+        );
 
         if l_before_prcs_status != l_after_prcs_status then
           l_reload := true;
@@ -1591,6 +1611,7 @@ as
     l_prov_var_date flow_process_variables.prov_var_date%type;
     l_prov_var_tstz flow_process_variables.prov_var_tstz%type;
     l_prov_var_clob flow_process_variables.prov_var_clob%type;
+    l_prov_var_json flow_process_variables.prov_var_json%type;
   begin
     -- Initialize
     l_prov_prcs_id  := apex_application.g_x01;
@@ -1624,6 +1645,11 @@ as
                                pi_prcs_id  => l_prov_prcs_id,
                                pi_var_name => l_prov_var_name,
                                pi_scope    => l_prov_scope);
+      when 'JSON' then
+          l_prov_var_json := flow_process_vars.get_var_json(
+                               pi_prcs_id  => l_prov_prcs_id,
+                               pi_var_name => l_prov_var_name,
+                               pi_scope    => l_prov_scope);                         
     end case;
     
     apex_json.open_object;
@@ -1633,6 +1659,7 @@ as
     apex_json.write( p_name => 'date_value', p_value => to_char(l_prov_var_date, v('APP_DATE_TIME_FORMAT')));
     apex_json.write( p_name => 'tstz_value', p_value => to_char(l_prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format));
     apex_json.write( p_name => 'clob_value', p_value => l_prov_var_clob);
+    apex_json.write( p_name => 'json_value', p_value => l_prov_var_json);
     apex_json.close_all;
     
   end pass_variable;
@@ -1760,6 +1787,44 @@ as
               
     return l_has_error = 1;
   end has_error;
+
+
+  /* page 51 */
+  
+
+  procedure process_page_p51
+  (
+    pio_sfte_id       in out nocopy flow_simple_form_templates.sfte_id%type
+  , pi_sfte_name      in flow_simple_form_templates.sfte_name%type
+  , pi_sfte_static_id in flow_simple_form_templates.sfte_static_id%type
+  , pi_sfte_content   in flow_simple_form_templates.sfte_content%type
+  , pi_request        in varchar2)
+  as
+  begin
+    case pi_request
+      when 'CREATE' then
+        pio_sfte_id := flow_simple_form_template.create_template(
+                         pi_sfte_name => pi_sfte_name,
+                         pi_sfte_static_id => pi_sfte_static_id,
+                         pi_sfte_content => pi_sfte_content);
+      when 'SAVE' then
+        flow_simple_form_template.edit_template(
+          pi_sfte_id => pio_sfte_id,
+          pi_sfte_name => pi_sfte_name,
+          pi_sfte_static_id => pi_sfte_static_id,
+          pi_sfte_content => pi_sfte_content);
+      when 'DELETE' then
+        flow_simple_form_template.delete_template(
+          pi_sfte_id => pio_sfte_id);
+      else
+        raise_application_error(-20002, 'Unknown operation requested.');
+    end case;
+    exception
+      when flow_simple_form_template.template_exists then
+        apex_error.add_error(
+            p_message => apex_lang.message('APP_ERR_TEMPLATE_EXIST', pi_sfte_static_id)
+            , p_display_location => apex_error.c_on_error_page);
+  end process_page_p51;
 
 
   /* configuration */

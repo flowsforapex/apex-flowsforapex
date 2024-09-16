@@ -12,7 +12,8 @@ create or replace package flow_logging
   authid definer
   accessible by ( flow_diagram, flow_engine, flow_instances, flow_proc_vars_int, flow_expressions 
                 , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
-                , flow_call_activities, flow_subprocesses , flow_usertask_pkg, flow_settings)
+                , flow_call_activities, flow_subprocesses , flow_usertask_pkg, flow_settings
+                , flow_iteration )
 as
 
   procedure log_diagram_event
@@ -38,6 +39,7 @@ as
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
+  , p_iteration_status  in flow_types_pkg.t_iteration_status default null
   , p_notes             in flow_subflow_log.sflg_notes%type default null
   );
 
@@ -54,6 +56,7 @@ as
   , p_var_date          in flow_process_variables.prov_var_date%type default null
   , p_var_clob          in flow_process_variables.prov_var_clob%type default null
   , p_var_tstz          in flow_process_variables.prov_var_tstz%type default null
+  , p_var_json          in flow_process_variables.prov_var_json%type default null
   );
 
 end flow_logging;

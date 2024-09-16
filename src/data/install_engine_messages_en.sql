@@ -263,6 +263,12 @@ begin
     values ( 'msgflow-endpoint-not-supported', c_load_lang, q'[MessageFlow Endpoint specified ( %0 ) is not supported.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var-bad-scope', c_load_lang, q'[Invalid scope (%0) supplied for process variable.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var_exp_json_format', c_load_lang, q'[Error setting Process Variable %1: Incorrect JSON Format (Subflow: %0, Set: %3.)]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'iter_lock_error', c_load_lang, q'['Error locking iteration detail (iter %0 loop %2) for process id %1.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'iter_close_error', c_load_lang, q'['Internal error processing iteration closurey on subflow %0]' );
 
   commit;
 end;
