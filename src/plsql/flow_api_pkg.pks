@@ -60,6 +60,7 @@ type t_task_list_item is record
    , process_id              number
    , subflow_id              number
    , step_key                varchar2(20)
+   , current_obj             varchar2(50)
 );
 
  type t_task_list_items is table of t_task_list_item;

@@ -72,6 +72,12 @@ as
                   , p_value     => ( p_region.attribute_15 = 'Y' )
                   , p_add_comma => true
                   ) ||
+                  apex_javascript.add_attribute
+                  (
+                    p_name      => 'useBPMNcolors'
+                  , p_value     => ( p_region.attribute_16 = 'Y' )
+                  , p_add_comma => true
+                  ) ||
                   '"config":' || p_region.init_javascript_code || '({})' ||
                 '})'
     );
@@ -97,6 +103,8 @@ as
     l_calling_objt_col_idx     pls_integer;
     l_breadcrumb_col_idx       pls_integer;
     l_sub_prcs_insight_col_idx pls_integer;
+    l_iteration_data_col_idx   pls_integer;
+    l_user_task_urls_col_idx   pls_integer;
 
     l_current_nodes   apex_t_varchar2;
     l_completed_nodes apex_t_varchar2;
@@ -194,6 +202,22 @@ as
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_number
       );
+    l_iteration_data_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_17
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_clob
+      );
+    l_user_task_urls_col_idx :=
+      apex_exec.get_column_position
+      (
+        p_context     => l_context
+      , p_column_name => p_region.attribute_18
+      , p_is_required => false
+      , p_data_type   => apex_exec.c_data_type_clob
+      );
 
     apex_json.open_object;
 
@@ -273,6 +297,22 @@ as
               (
                 p_name  => 'insight'
               , p_value => apex_exec.get_number( p_context => l_context, p_column_idx => l_sub_prcs_insight_col_idx )
+              );
+          end if;
+
+          if l_iteration_data_col_idx is not null then
+              apex_json.write
+              (
+                p_name  => 'iterationData'
+              , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_iteration_data_col_idx )
+              );
+          end if;
+
+          if l_user_task_urls_col_idx is not null then
+              apex_json.write
+              (
+                p_name  => 'userTaskData'
+              , p_value => apex_exec.get_clob( p_context => l_context, p_column_idx => l_user_task_urls_col_idx )
               );
           end if;
 

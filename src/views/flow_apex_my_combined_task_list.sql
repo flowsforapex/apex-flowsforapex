@@ -75,6 +75,7 @@ as select
      , null
      , null
      , null
+     , null
     from table ( apex_approval.get_tasks ( p_context => 'MY_TASKS' ) )
     UNION ALL
     select  
@@ -115,5 +116,6 @@ as select
      , process_id
      , subflow_id
      , step_key
+     , current_obj
      from table ( flow_api_pkg.get_current_tasks ( p_context => 'MY_TASKS'))
      ;
