@@ -1140,11 +1140,12 @@ begin
       ;
       flow_timers_pkg.reschedule_timer
       ( 
-        p_process_id       => p_sbfl_rec.sbfl_prcs_id
-      , p_subflow_id      => p_sbfl_rec.sbfl_id
-      , p_step_key     => p_sbfl_rec.sbfl_step_key
-      , p_is_immediate  => true
-      , p_comment       => 'Restart Immediate Broken Timer'
+        p_process_id          => p_sbfl_rec.sbfl_prcs_id
+      , p_subflow_id          => p_sbfl_rec.sbfl_id
+      , p_step_key            => p_sbfl_rec.sbfl_step_key
+      , p_restart_immediate   => true
+      , p_is_immediate        => true
+      , p_comment             => 'Restart Immediate Broken Timer'
       );
 
 end restart_failed_timer_step;
