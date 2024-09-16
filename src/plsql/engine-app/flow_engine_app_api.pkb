@@ -297,6 +297,19 @@ as
               , pi_clob_value => l_clob
               , pi_scope      => apex_application.g_x06
               );
+            when 'JSON' then
+              for i in apex_application.g_f01.first..apex_application.g_f01.last
+              loop
+                l_clob := l_clob || apex_application.g_f01(i);
+              end loop;
+              /*Using internal for now since we don't have public API for that*/
+              flow_proc_vars_int.set_var
+              (
+                pi_prcs_id    => apex_application.g_x02
+              , pi_var_name   => apex_application.g_x03
+              , pi_json_value => l_clob
+              , pi_scope      => apex_application.g_x06
+              );  
             else
               null;
           end case;
@@ -1598,6 +1611,7 @@ as
     l_prov_var_date flow_process_variables.prov_var_date%type;
     l_prov_var_tstz flow_process_variables.prov_var_tstz%type;
     l_prov_var_clob flow_process_variables.prov_var_clob%type;
+    l_prov_var_json flow_process_variables.prov_var_json%type;
   begin
     -- Initialize
     l_prov_prcs_id  := apex_application.g_x01;
@@ -1631,6 +1645,11 @@ as
                                pi_prcs_id  => l_prov_prcs_id,
                                pi_var_name => l_prov_var_name,
                                pi_scope    => l_prov_scope);
+      when 'JSON' then
+          l_prov_var_json := flow_process_vars.get_var_json(
+                               pi_prcs_id  => l_prov_prcs_id,
+                               pi_var_name => l_prov_var_name,
+                               pi_scope    => l_prov_scope);                         
     end case;
     
     apex_json.open_object;
@@ -1640,6 +1659,7 @@ as
     apex_json.write( p_name => 'date_value', p_value => to_char(l_prov_var_date, v('APP_DATE_TIME_FORMAT')));
     apex_json.write( p_name => 'tstz_value', p_value => to_char(l_prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format));
     apex_json.write( p_name => 'clob_value', p_value => l_prov_var_clob);
+    apex_json.write( p_name => 'json_value', p_value => l_prov_var_json);
     apex_json.close_all;
     
   end pass_variable;

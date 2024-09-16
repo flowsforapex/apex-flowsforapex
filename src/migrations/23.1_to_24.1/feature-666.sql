@@ -141,7 +141,7 @@ begin
 
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_subflow_log add (
-                             sflg_iter_id    NUMBER,                 
+                             sflg_iter_id    NUMBER                 
                          )';
   end if;
 
