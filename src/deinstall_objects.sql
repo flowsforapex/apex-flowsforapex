@@ -40,6 +40,7 @@ drop package flow_apex_env;
 drop package flow_log_admin;
 drop package flow_process_vars;
 drop package flow_statistics;
+drop package flow_simple_form_template;
 drop package flow_rest_constants;
 drop package flow_rest;
 drop package flow_rest_auth;
@@ -107,6 +108,9 @@ drop view flow_rest_message_subscriptions_vw;
 drop view flow_rest_process_vars_vw;
 drop view flow_rest_processes_vw;
 drop view flow_rest_subflows_vw;
+drop view flow_apex_my_combined_task_list;
+drop view flow_apex_task_inbox_my_tasks_vw;
+drop view flow_apex_task_inbox_vw;
 
 
 PROMPT >> Tables
@@ -133,6 +137,9 @@ drop table flow_parser_log cascade constraints;
 drop table flow_stats_history cascade constraints;
 drop table flow_step_stats cascade constraints;
 drop table flow_rest_event_log cascade constraints;
+drop table flow_iterations cascade constraints;
+drop table flow_iterated_objects cascade constraints;
+drop table flow_simple_form_templates cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
