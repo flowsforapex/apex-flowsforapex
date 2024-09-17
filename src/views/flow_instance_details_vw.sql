@@ -5,7 +5,8 @@
 -- (c) Copyright MT AG, 2021-2022.
 --
 -- Created    Nov-2020 Moritz Klein,  MT AG
--- Edited  16-Mar-2022 Richard Allen, Oracle Corporation  
+-- Edited  16-Mar-2022 Richard Allen, Oracle Corporation
+-- Edited  21-Jun-2024 Dennis Amthor, Hyand Solutions GmbH
 --
 -- NOTE THAT THIS VIEW HAS AN ENTERPRISE EDITION VERSION WHICH INCLUDES COMPLEX
 -- PROCESSING TO GENERATE THE ITERATION_DATA COLUMN.
@@ -48,6 +49,17 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
    where sbfl_current is not null
      and sbfl_status = 'error'
 group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
+), user_tasks as (
+    select process_id as prcs_id
+         , json_objectagg
+           (
+               key current_obj
+               value details_link_target
+               absent on null
+               returning clob
+           ) as user_task_urls
+      from flow_apex_my_combined_task_list_vw
+     group by process_id
 )
   select prcs.prcs_id
        , prcs.prcs_name
@@ -84,6 +96,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
               and aerr.diagram_level =  prdg.prdg_diagram_level
          ) as all_errors
        , prov.prov_var_vc2 as prcs_business_ref
+       , usta.user_task_urls
        , null as iteration_data
     from flow_processes prcs
     join flow_instance_diagrams prdg
@@ -95,4 +108,6 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
      and prov.prov_var_name = 'BUSINESS_REF'
      and prov.prov_var_type = 'VARCHAR2'
      and prov.prov_scope    = 0
+    left join user_tasks usta
+      on prcs.prcs_id = usta.prcs_id
 with read only;
