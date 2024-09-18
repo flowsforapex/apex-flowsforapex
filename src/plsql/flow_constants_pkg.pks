@@ -357,6 +357,7 @@ as
   gc_config_stats_retain_summary_daily  constant varchar2(50 char) := 'stats_retain_daily_summaries_days';
   gc_config_stats_retain_summary_month  constant varchar2(50 char) := 'stats_retain_monthly_summaries_months';
   gc_config_stats_retain_summary_qtr    constant varchar2(50 char) := 'stats_retain_quarterly_summaries_months';
+  gc_config_edition                     constant varchar2(50 char) := 'license_edition';
 
 
 -- Config Parameter Valid Values (when not true / false or numeric)
@@ -372,7 +373,8 @@ as
   gc_config_archive_destination_table        constant varchar2(2000 char) := 'TABLE';       -- To Database Table
   gc_config_archive_destination_oci_api      constant varchar2(2000 char) := 'OCI-API';     -- OCI using API Key
   gc_config_archive_destination_oci_preauth  constant varchar2(2000 char) := 'OCI-PREAUTH'; -- OCI using PreAuth
-
+  gc_config_edition_community                constant varchar2(2000 char) := 'community';
+  gc_config_edition_enterprise               constant varchar2(2000 char) := 'enterprise';
 
 -- Config Parameter Default Values
 

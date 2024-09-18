@@ -209,3 +209,4 @@ create or replace package body test_helper as
   end;
 
 end test_helper;
+/

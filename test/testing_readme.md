@@ -25,7 +25,7 @@ Using the github repository, go through the following steps to install the test 
    
 7. Using the Configurations Panel > Engine.   Make sure that the default parameters use a valid AppID, App Page and Default User ID on the system undertest.
    
-8. Edit the Test Constants file (test_constants.pks) to set any appropriate User IDs and APEX APP IDs for the testing environment.
+8. Edit the Test Constants file (`test\plsql\test_constants.pks`) to set any appropriate User IDs and APEX APP IDs for the testing environment.
 
 
 7. You should now be able to run all of the tests.
@@ -36,6 +36,7 @@ Using the github repository, go through the following steps to install the test 
 - create one or more models for the suite.  You can see the naming conventions...
 - add the models to the `import.sql` manifest file
 - if necessary, add any applications...
+- make sure the `pkb` and `pks` files end with a line containing a `\` followed by a blank line.
 
 ## Old Installation Instructions - Installing the BPMN Files
 

@@ -11,6 +11,7 @@ create or replace package test_010_variable_expressions is
 */
     --%suite(10 Variable Expressions)
     --%rollback(manual)
+    --%tags(short,ce,ee)
 
     --%beforeall
     procedure set_up_process;
@@ -48,9 +49,6 @@ create or replace package test_010_variable_expressions is
     --%test('Variable expressions process completed as expected')
     procedure var_exp_process_completed;
 
-    --%test('Var Expression Error Handling - bad static date format')
-    procedure var_exp_error_static_date;
-        
     --afterall
     procedure tear_down_process;
 

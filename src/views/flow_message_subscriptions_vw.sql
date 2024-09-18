@@ -7,6 +7,7 @@ as
           mes.msub_prcs_id,
           mes.msub_sbfl_id,
           mes.msub_step_key,
+          mes.msub_dgrm_id,
           mes.msub_callback,
           mes.msub_callback_par,
           mes.msub_payload_var,

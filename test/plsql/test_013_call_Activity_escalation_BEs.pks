@@ -10,6 +10,7 @@ create or replace package test_013_call_Activity_escalation_BEs is
 
   --%suite(13 Call Activity Ecalation Boundary Events)
   --%rollback(manual)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_process;

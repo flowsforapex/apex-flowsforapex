@@ -1,3 +1,4 @@
+create or replace package flow_diagram
 /* 
 -- Flows for APEX - flow_diagram.pks
 -- 
@@ -9,7 +10,6 @@
 -- Modified 16-Mar-2023  Richard Allen - Oracle 
 --
 */
-create or replace package flow_diagram
   authid definer
 as
 
@@ -106,10 +106,18 @@ as
   procedure archive_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type);   
 
+  -- get_start_event
+  --
+  -- gets the start event for a diagram. returning the object as a flow_objects rowtype
+  -- if p_event_starting_object is null (default), this will return the null start event or a timer start event - the main starting object in the diagram
+  -- if p_event_starting_object is specified, it will return the row for that object.   You would use this if, for example, you were getting the message start 
+  --    event from a model containing multiple start events.
+  --
   function get_start_event(
-    pi_dgrm_id    in flow_diagrams.dgrm_id%type,
-    pi_prcs_id    in flow_processes.prcs_id%type)
-  return flow_objects.objt_bpmn_id%type;
+    p_dgrm_id               in flow_diagrams.dgrm_id%type,
+    p_process_id           in flow_processes.prcs_id%type,
+    p_event_starting_object in flow_objects.objt_bpmn_id%type default null)
+  return flow_objects%rowtype;
 
 -- get the current dgrm_id to be used for a diagram name.
 -- returns the current 'released' diagram or a 'draft' of version '0' 

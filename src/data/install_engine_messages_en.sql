@@ -105,7 +105,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'start-not-created', c_load_lang, q'[You tried to start a process (id %0) that does not exist.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'start-type-unsupported', c_load_lang, q'[Unsupported start event type (%0). Only None (standard) Start Event and Timer Start Event are currently supported.]' );
+    values ( 'start-type-unsupported', c_load_lang, q'[Unsupported start event type (%0). Only None (standard), Message and Timer Start Event are currently supported.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'startwork-sbfl-not-found', c_load_lang, q'[Start Work time recording unsuccessful.  Subflow %0 in Process %1 not found.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -269,6 +269,8 @@ begin
     values ( 'iter_lock_error', c_load_lang, q'['Error locking iteration detail (iter %0 loop %2) for process id %1.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'iter_close_error', c_load_lang, q'['Internal error processing iteration closurey on subflow %0]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'feature-requires-ee', c_load_lang, q'[Processing this feature requires licensing Flows for APEX Enterprise Edition.]' );
 
   commit;
 end;

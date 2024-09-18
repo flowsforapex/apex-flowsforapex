@@ -63,8 +63,8 @@ as
            and par_sbfl.sbfl_prcs_id = p_process_id
            and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_error_event_definition
         ;
-        -- first remove any non-interrupting timers that are on the parent event
-        flow_boundary_events.unset_boundary_timers (p_process_id, p_sbfl_context_par.sbfl_id);
+        -- first remove any non-interrupting events that are on the parent event
+        flow_boundary_events.unset_boundary_events (p_process_id, p_sbfl_context_par.sbfl_id);
         -- set current event on parent process to the error Boundary Event
         update flow_subflows sbfl
         set sbfl.sbfl_current         = l_boundary_event
@@ -140,8 +140,8 @@ as
       , po_step_key         => l_parent_step_key
       , po_is_interrupting  => l_end_is_interrupted
       );
-    elsif p_step_info.target_objt_subtag is null then 
-      -- sub process - normal end event
+    else 
+      -- sub process - null or other (inc message) end event
       flow_engine_util.subflow_complete
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
@@ -260,10 +260,11 @@ as
     -- Reason: A subflow could immediately disappear if we're stepping through it completely.
     -- check for any errors on the step
     if not flow_globals.get_step_error then 
-      -- set boundaryEvent Timers, if any
-      flow_boundary_events.set_boundary_timers 
+      -- set boundaryEvent events, if any
+      flow_boundary_events.set_boundary_events 
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
+      , p_sbfl_info  => p_sbfl_info
       );  
       if not flow_globals.get_step_error then 
         -- Check again, then Update parent subflow

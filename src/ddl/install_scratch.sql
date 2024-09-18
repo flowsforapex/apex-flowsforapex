@@ -6,7 +6,7 @@
 -- edited by Richard Allen (Oracle) Feb 2022
 -- (c) Copyright, Oracle Corporation and/or its associates.  2020-2023.
 -- edited by Richard Allen (Flowquest) Jan 2024
--- (c) Copyright, Flowquest Consulting Limited. 2024
+-- (c) Copyright, Flowquest Limited. 2024
 
 
 -- predefined type, no DDL - SDO_GEOMETRY
@@ -290,11 +290,13 @@ create table flow_message_subscriptions (
     msub_prcs_id	        number,	
     msub_sbfl_id	        number,	
     msub_step_key	        varchar2( 20 char),	
+    msub_dgrm_id            number,
     msub_callback           varchar2(200 char),
     msub_callback_par       varchar2(200 char),
     msub_payload_var        varchar2(50 char),
     msub_created	        timestamp with time zone	
 );
+
 
 alter table flow_message_subscriptions
   add constraint flow_msub_pk primary key ( msub_id )
@@ -304,6 +306,7 @@ alter table flow_message_subscriptions
     add constraint flow_msub_uk UNIQUE (msub_message_name, msub_key_name, msub_key_value);
 
 create index flow_msub_prcs_sbfl_ix on flow_message_subscriptions( msub_prcs_id, msub_sbfl_id );  
+
 
 
 ALTER TABLE flow_connections
@@ -387,7 +390,11 @@ alter table flow_message_subscriptions
         references flow_subflows (sbfl_id)
             ON DELETE CASCADE;
 
-
+alter table flow_message_subscriptions
+    add constraint flow_msub_dgrm_fk FOREIGN KEY ( msub_dgrm_id )
+        references flow_diagrams (dgrm_id)
+            ON DELETE CASCADE;
+            
 -- Oracle SQL Developer Data Modeler Summary Report: 
 -- 
 -- CREATE TABLE                             8

@@ -15,7 +15,9 @@ create or replace package flow_message_flow as
   , prcs_id       flow_message_subscriptions.msub_prcs_id%type
   , sbfl_id       flow_message_subscriptions.msub_sbfl_id%type
   , step_key      flow_message_subscriptions.msub_step_key%type
+  , dgrm_id       flow_message_subscriptions.msub_dgrm_id%type
   , callback      flow_message_subscriptions.msub_callback%type
+  , callback_par  flow_message_subscriptions.msub_callback_par%type
   , payload_var   flow_message_subscriptions.msub_payload_var%type
   );   
 
@@ -30,6 +32,7 @@ create or replace package flow_message_flow as
   e_msgflow_msg_not_correlated exception;
   e_msgflow_correlated_msg_locked exception;
   e_msgflow_mag_already_consumed exception;
+  e_msgflow_feature_requires_ee exception;
 
   function subscribe
   ( p_subscription_details     in t_subscription_details

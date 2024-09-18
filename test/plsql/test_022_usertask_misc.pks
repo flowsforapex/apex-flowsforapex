@@ -12,6 +12,7 @@ create or replace package test_022_usertask_misc as
 
   --%suite(22 Usertask Misc Features)
   --%rollback(manual)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;
@@ -29,3 +30,4 @@ create or replace package test_022_usertask_misc as
   procedure tear_down_tests;
 
 end test_022_usertask_misc;
+/

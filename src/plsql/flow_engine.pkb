@@ -15,6 +15,8 @@ create or replace package body flow_engine as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  e_feature_requires_ee exception;
+
   function flow_get_matching_link_object
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -160,6 +162,27 @@ end flow_process_link_event;
       , p_subflow_id => p_subflow_id
       , p_current    => p_sbfl_info.sbfl_current
       );
+    -- process any variable expressions in the onEvent set
+    flow_expressions.process_expressions
+    ( pi_objt_id     => p_step_info.target_objt_id
+    , pi_set         => flow_constants_pkg.gc_expr_set_on_event
+    , pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+    , pi_var_scope   => p_sbfl_info.sbfl_scope
+    , pi_expr_scope  => p_sbfl_info.sbfl_scope
+    );
+    -- check for message throw end Event
+    if p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_message_event_definition then
+      $IF flow_apex_env.ee $THEN
+        flow_message_util_ee.end_event_send_message
+        ( p_sbfl_info  => p_sbfl_info
+        , p_step_info  => p_step_info
+        ); 
+      $ELSE
+        raise e_feature_requires_ee;
+      $END 
+    end if;
+
     -- update the subflow before logging
      update flow_subflows sbfl
         set sbfl.sbfl_last_completed = p_sbfl_info.sbfl_current
@@ -179,15 +202,6 @@ end flow_process_link_event;
       , p_subflow_id => p_subflow_id
       , p_completed_object => p_step_info.target_objt_ref
       );  
-    -- process any variable expressions in the onEvent set
-    flow_expressions.process_expressions
-    ( pi_objt_id     => p_step_info.target_objt_id
-    , pi_set         => flow_constants_pkg.gc_expr_set_on_event
-    , pi_prcs_id     => p_process_id
-    , pi_sbfl_id     => p_subflow_id
-    , pi_var_scope   => p_sbfl_info.sbfl_scope
-    , pi_expr_scope  => p_sbfl_info.sbfl_scope
-    );
 
     if p_sbfl_info.sbfl_calling_sbfl = 0 then   
       -- in a top level process on the starting diagram
@@ -209,7 +223,7 @@ end flow_process_link_event;
           p_process_id     => p_process_id
         , p_process_level  => p_sbfl_info.sbfl_process_level
         );
-      elsif p_step_info.target_objt_subtag is null then
+      else 
         -- top process level but not a terminate end...
         flow_engine_util.subflow_complete
         ( p_process_id => p_process_id
@@ -666,19 +680,24 @@ procedure timer_callback
   , p_step_key   in flow_subflows.sbfl_step_key%type
   , p_timr_id    in flow_timers.timr_id%type default null
   , p_run        in flow_timers.timr_run%type default null
+  , p_callback      in flow_timers.timr_callback%type default null
+  , p_callback_par  in flow_timers.timr_callback_par%type default null
+  , p_event_type    in flow_objects.objt_sub_tag_name%type
   ) 
 is
-  l_parent_subflow        flow_subflows.sbfl_id%type;
-  l_prev_objt_tag_name    flow_objects.objt_tag_name%type;
-  l_curr_objt_tag_name    flow_objects.objt_tag_name%type;
-  l_sbfl_current          flow_subflows.sbfl_current%type;
-  l_follows_ebg           flow_subflows.sbfl_is_following_ebg%type;
+  l_parent_subflow          flow_subflows.sbfl_id%type;
+  l_prev_objt_tag_name      flow_objects.objt_tag_name%type;
+  l_curr_objt_tag_name      flow_objects.objt_tag_name%type;
+  l_curr_objt_sub_tag_name  flow_objects.objt_sub_tag_name%type;
+  l_sbfl_current            flow_subflows.sbfl_current%type;
+  l_follows_ebg             flow_subflows.sbfl_is_following_ebg%type;
 begin
   -- currently handles callbacks from flow_timers and flow_message_flow when a timer fires / message is received
   apex_debug.enter 
   ( 'flow_handle_event'
   , 'subflow_id', p_subflow_id
   , 'process_id', p_process_id
+  , 'event_type', p_event_type
   );
   -- look at current event to check if it is a startEvent.  (this also has no previous event!)
   -- if not, examine previous event on the subflow to determine if it was eventBasedGateway (eBG)
@@ -702,10 +721,12 @@ begin
   if flow_engine_util.lock_subflow(p_subflow_id) then
     -- subflow_locked
     select curr_objt.objt_tag_name
+         , curr_objt.objt_sub_tag_name
          , sbfl.sbfl_sbfl_id
          , sbfl.sbfl_current
          , sbfl.sbfl_is_following_ebg
       into l_curr_objt_tag_name
+         , l_curr_objt_sub_tag_name
          , l_parent_subflow
          , l_sbfl_current
          , l_follows_ebg
@@ -755,9 +776,10 @@ begin
           -- because non-interupting timers are set on the boundary event itself
       then
       -- we have an interrupting timer boundary event
-      flow_boundary_events.handle_interrupting_timer 
+      flow_boundary_events.handle_interrupting_boundary_event
       ( p_process_id => p_process_id
       , p_subflow_id => p_subflow_id
+      , p_event_type => p_event_type
       );
     elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event  then 
       -- we need to look at previous step to see if this follows an eventBasedGateway...
@@ -856,7 +878,7 @@ begin
       ( p_message => 'boundary event cleanup triggered for subflow %0'
       , p0        => p_sbfl_rec.sbfl_id
       );
-      flow_boundary_events.unset_boundary_timers 
+      flow_boundary_events.unset_boundary_events 
       ( p_process_id => p_sbfl_rec.sbfl_prcs_id
       , p_subflow_id => p_sbfl_rec.sbfl_id);
   end if;
@@ -1357,6 +1379,13 @@ begin
       , p0 => p_sbfl_rec.sbfl_id
       );
       -- $F4AMESSAGE 'no_next_step_found' || 'No Next Step Found on subflow %0.  Check your process diagram.'  
+    when e_feature_requires_ee then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
+      , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_message_key => 'feature-requires-ee'
+      );
+      -- $F4AMESSAGE 'no_next_step_found' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.' 
     when flow_plsql_runner_pkg.e_plsql_script_failed then
       null;
   -- let error run back to run_step
