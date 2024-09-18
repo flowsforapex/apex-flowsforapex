@@ -108,7 +108,7 @@ drop view flow_rest_message_subscriptions_vw;
 drop view flow_rest_process_vars_vw;
 drop view flow_rest_processes_vw;
 drop view flow_rest_subflows_vw;
-drop view flow_apex_my_combined_task_list;
+drop view flow_apex_my_combined_task_list_vw;
 drop view flow_apex_task_inbox_my_tasks_vw;
 drop view flow_apex_task_inbox_vw;
 

@@ -67,7 +67,7 @@ PROMPT >> Installing Views
 @views/flow_diagram_categories_lov.sql
 @views/flow_apex_task_inbox_vw.sql
 @views/flow_apex_task_inbox_my_tasks_vw.sql
-@views/flow_apex_my_combined_task_list.sql
+@views/flow_apex_my_combined_task_list_vw.sql
 @views/flow_instance_details_vw.sql
 @views/flow_instance_variables_vw.sql
 @views/flow_task_inbox_vw.sql
