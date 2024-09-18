@@ -303,7 +303,7 @@ as
                 l_clob := l_clob || apex_application.g_f01(i);
               end loop;
               /*Using internal for now since we don't have public API for that*/
-              flow_proc_vars.set_var
+              flow_process_vars.set_var
               (
                 pi_prcs_id    => apex_application.g_x02
               , pi_var_name   => apex_application.g_x03
