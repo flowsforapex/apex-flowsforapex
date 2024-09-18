@@ -47,6 +47,7 @@ PROMPT >> Engine
 @plsql/flow_admin_api.pks
 @plsql/flow_statistics.pks
 @plsql/flow_iteration.pks
+@plsql/flow_simple_form_template.pks
 
 PROMPT >>
 PROMPT >> REST API Support
@@ -64,6 +65,9 @@ PROMPT >> Installing Views
 @views/flow_subflows_vw.sql
 @views/flow_diagrams_parsed_lov.sql
 @views/flow_diagram_categories_lov.sql
+@views/flow_apex_task_inbox_vw.sql
+@views/flow_apex_task_inbox_my_tasks_vw.sql
+@views/flow_apex_my_combined_task_list.sql
 @views/flow_instance_details_vw.sql
 @views/flow_instance_variables_vw.sql
 @views/flow_task_inbox_vw.sql
@@ -116,6 +120,7 @@ PROMPT >> Engine
 @plsql/flow_log_admin.pkb
 @plsql/flow_admin_api.pkb
 @plsql/flow_statistics.pkb
+@plsql/flow_simple_form_template.pkb
 
 PROMPT >>
 PROMPT >> REST API Support

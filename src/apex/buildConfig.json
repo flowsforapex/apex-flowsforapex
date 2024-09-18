@@ -71,6 +71,8 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_log_admin.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_admin_api.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_statistics.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_iteration.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_simple_form_template.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_constants.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_auth.pks", "add_show_errors": false }
@@ -107,6 +109,9 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_subflows_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_diagrams_parsed_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_diagram_categories_lov.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_apex_task_inbox_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_apex_task_inbox_my_tasks_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_apex_my_combined_task_list.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_details_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_variables_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_task_inbox_vw.sql", "add_show_errors": false }
@@ -198,6 +203,7 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_log_admin.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_admin_api.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_statistics.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_simple_form_template.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_auth.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rest_logging.pkb", "add_show_errors": false }
@@ -238,6 +244,7 @@
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 3b - Substitution and Bind Syntax_23.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4a - Tasks Get Your Work Done!_23.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4b - Reminders and Timeouts_23.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4c - Task Priority and Due Dates_23.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5a - Structure your Process with Sub Processes and Calls_23.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5b - Introducing Sub Processes_23.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5c - Handling Sub Process Error and Escalation Events_23.1.sql", "add_show_errors": false }

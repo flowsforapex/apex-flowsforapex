@@ -36,6 +36,7 @@ create or replace view flow_apex_my_combined_task_list_vw
      , process_id
      , subflow_id
      , step_key
+     , current_obj
      )
 as select   
       'APEX' as manager
