@@ -99,6 +99,12 @@ as
     pi_dgrm_id in flow_diagrams.dgrm_id%type);
 
 
+  -- Exposed as Public API through flow_admin_api
+  procedure release_diagram(
+    pi_dgrm_name    in flow_diagrams.dgrm_name%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type default '0');
+
+
   procedure deprecate_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type);
 

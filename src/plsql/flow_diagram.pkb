@@ -606,6 +606,19 @@ as
 
   end release_diagram;
 
+  procedure release_diagram(
+    pi_dgrm_name    in flow_diagrams.dgrm_name%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type default '0')
+  is
+    l_dgrm_id  flow_diagrams.dgrm_id%type;
+  begin
+    l_dgrm_id :=  get_current_diagram
+                  ( pi_dgrm_name              => pi_dgrm_name
+                  , pi_dgrm_calling_method    => flow_constants_pkg.gc_dgrm_version_named_version
+                  , pi_dgrm_version           => pi_dgrm_version
+                  );
+    release_diagram (pi_dgrm_id => l_dgrm_id);
+  end release_diagram;
 
   procedure deprecate_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type)
