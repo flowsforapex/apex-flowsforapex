@@ -5,10 +5,12 @@ create or replace package body flow_process_vars as
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
 -- (c) Copyright Flowquest Consulting Limited, 2020-2024.
+-- (c) Copyright Insum Solutions 2020-2024.
 --
 -- Created september-2020  Richard Allen (Flowquest) 
 -- Edited  April 2022 - Richard Allen (Oracle)
 -- Edited 24-May-2024 - Richard Allen (Flowquest Consulting Limited)
+-- Edited  18-Sep-2024 - Louis Moreaux (Insum Solutions)
 --
 */
   lock_timeout exception;
@@ -388,6 +390,84 @@ begin
     ( pi_prcs_id      => pi_prcs_id
     , pi_var_name     => pi_var_name
     , pi_tstz_value   => pi_tstz_value
+    , pi_scope        => l_scope
+    , pi_sbfl_id      => pi_sbfl_id
+    , pi_objt_bpmn_id => l_current
+    );
+exception
+  when no_data_found then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_sbfl_id     => pi_sbfl_id
+      , pi_message_key => 'engine-util-sbfl-not-found'
+      , p0 => pi_sbfl_id
+      , p1 => pi_prcs_id
+      );
+      -- $F4AMESSAGE 'engine-util-sbfl-not-found' || 'Subflow ID supplied ( %0 ) not found. Check for process events that changed process flow (timeouts, errors, escalations).'  
+end set_var;
+
+-- Signature 6a - set JSON process variable with known or default scope
+
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_json_value in flow_process_variables.prov_var_json%type
+, pi_scope      in flow_process_variables.prov_scope%type default 0
+)
+is 
+  l_current     flow_subflows.sbfl_current%type;
+  e_bad_scope   exception;
+begin
+  -- if scope is not 0, validate
+  if pi_scope = 0 
+  or  flow_proc_vars_int.scope_is_valid (pi_prcs_id => pi_prcs_id, pi_scope => pi_scope) then
+    -- call internal set_var signature 4
+    flow_proc_vars_int.set_var
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_var_name     => pi_var_name
+      , pi_json_value   => pi_json_value
+      , pi_scope        => pi_scope
+      );
+  else
+    raise e_bad_scope;
+  end if;
+exception
+  when e_bad_scope then
+    flow_errors.handle_instance_error
+      ( pi_prcs_id     => pi_prcs_id
+      , pi_message_key => 'var-bad-scope'
+      , p0 => pi_scope
+      , p1 => pi_var_name 
+      );
+      -- $F4AMESSAGE 'var-bad-scope' || 'Invalid scope (%0) supplied for process variable %1.'  
+end set_var;
+
+-- signature 6b - set JSON process variable using subflow_id for scope
+
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type
+, pi_var_name   in flow_process_variables.prov_var_name%type
+, pi_json_value  in flow_process_variables.prov_var_json%type
+, pi_sbfl_id    in flow_subflows.sbfl_id%type 
+)
+is 
+  l_scope       flow_process_variables.prov_scope%type;
+  l_current     flow_subflows.sbfl_current%type;
+begin
+  -- get the scope and current object for the supplied subflow
+  select sbfl.sbfl_scope
+       , sbfl.sbfl_current
+    into l_scope
+       , l_current
+    from flow_subflows sbfl
+   where sbfl.sbfl_id = pi_sbfl_id
+     and sbfl.sbfl_prcs_id = pi_prcs_id
+  ;
+  -- call internal set_var signature 4
+  flow_proc_vars_int.set_var
+    ( pi_prcs_id      => pi_prcs_id
+    , pi_var_name     => pi_var_name
+    , pi_json_value   => pi_json_value
     , pi_scope        => l_scope
     , pi_sbfl_id      => pi_sbfl_id
     , pi_objt_bpmn_id => l_current
