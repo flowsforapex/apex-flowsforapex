@@ -462,7 +462,41 @@ create or replace package body flow_plugin_manage_instance_variables as
                                           );
                            end;'
                         );
-                  end case;                   
+                  end case;   
+               when 'json' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prov_var_name
+                     , p1 => l_prov_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_clob('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_json(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
+                  );
+                  case l_attribute4
+                     when 'set' then
+                        flow_process_vars.set_var(
+                          pi_prcs_id    => l_prcs_id
+						      , pi_scope      => l_prov_scope									
+                        , pi_var_name   => l_prov_var_name
+                        , pi_json_value => l_process_variable.get_clob('value')
+                        );
+                     when 'get' then
+                        apex_exec.execute_plsql('begin
+                           :' || l_item_name || ' := flow_process_vars.get_var_json(
+                                               pi_prcs_id  => '|| l_prcs_id ||'
+											            , pi_scope    => '|| l_prov_scope ||'									   
+                                             , pi_var_name => '''|| l_prov_var_name ||'''
+                                          );
+                           end;'
+                        );
+                  end case;                      
                else
                   raise e_incorrect_variable_type;
             end case;
@@ -735,6 +769,40 @@ create or replace package body flow_plugin_manage_instance_variables as
                         end;]'
                      );
                end case;
+            when 'JSON' then
+               apex_debug.info(
+                  p_message => '......Name: %s - Type: %s - Value %s'
+                  , p0 => l_prov_var_name
+                  , p1 => l_prov_var_type
+                  , p2 => case l_attribute4
+                             when 'set' 
+                                then apex_util.get_session_state( p_item => l_item_name )
+                              when 'get' 
+                                 then flow_process_vars.get_var_json(
+                                           pi_prcs_id  => l_prcs_id
+										           , pi_scope    => l_prov_scope  
+                                         , pi_var_name => l_prov_var_name
+                                      )
+                          end 
+               );
+               case l_attribute4
+                  when 'set' then
+                     flow_process_vars.set_var(
+                          pi_prcs_id     => l_prcs_id
+						      , pi_scope       => l_prov_scope
+                        , pi_var_name    => l_prov_var_name
+                        , pi_json_value  => apex_util.get_session_state( p_item => l_item_name )
+                     );
+                  when 'get' then
+                     apex_exec.execute_plsql('begin
+                        :' || l_item_name || q'[ := ']' || flow_process_vars.get_var_json(
+                                            pi_prcs_id  => l_prcs_id
+										            , pi_scope    => l_prov_scope	 
+                                          , pi_var_name => l_prov_var_name
+                                       ) || q'[';
+                        end;]'
+                     );
+               end case;   
             end case;
          end loop;
       end if;
