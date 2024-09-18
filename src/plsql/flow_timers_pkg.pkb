@@ -1051,7 +1051,7 @@ end reschedule_timer;
     begin
       select repeat_interval
         into l_repeat_interval
-        from sys.all_scheduler_jobs
+        from sys.user_scheduler_jobs
        where job_name = 'APEX_FLOW_STEP_TIMERS_J';
     exception
       when no_data_found then
@@ -1120,13 +1120,12 @@ end reschedule_timer;
   function get_timer_status
   return varchar2
   as
-    l_status  sys.all_scheduler_jobs.enabled%type;
+    l_status  sys.user_scheduler_jobs.enabled%type;
   begin
     begin
       select enabled
         into l_status
---        from sys.all_scheduler_jobs
-        from user_scheduler_jobs
+        from sys.user_scheduler_jobs
        where job_name = 'APEX_FLOW_STEP_TIMERS_J';
     exception 
       when no_data_found then
