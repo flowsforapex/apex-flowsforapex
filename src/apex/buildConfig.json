@@ -111,7 +111,7 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_diagram_categories_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_apex_task_inbox_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_apex_task_inbox_my_tasks_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "/", "name": "flow_apex_my_combined_task_list.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_apex_my_combined_task_list_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_details_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_instance_variables_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_task_inbox_vw.sql", "add_show_errors": false }
