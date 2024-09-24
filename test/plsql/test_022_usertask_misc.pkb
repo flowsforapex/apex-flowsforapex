@@ -242,7 +242,7 @@ create or replace package body test_022_usertask_misc as
   procedure pagetask_substitutions_2
   is
   begin
-    g_prcs_id_a1 := pagetask_substitution_runner ( p_path        => 'B'
+    g_prcs_id_a2 := pagetask_substitution_runner ( p_path        => 'B'
                                                 , p_app_id      => '200'
                                                 , p_page_id     => '2'
                                                 , p_request     => 'UPDATE'

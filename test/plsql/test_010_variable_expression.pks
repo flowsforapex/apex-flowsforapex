@@ -49,7 +49,7 @@ create or replace package test_010_variable_expressions is
     --%test('Variable expressions process completed as expected')
     procedure var_exp_process_completed;
 
-    --afterall
+    --%afterall
     procedure tear_down_process;
 
 end test_010_variable_expressions;

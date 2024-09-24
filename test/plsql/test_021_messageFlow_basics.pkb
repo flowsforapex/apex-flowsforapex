@@ -782,6 +782,7 @@ create or replace package body test_021_messageFlow_basics as
     -- tear down processes
 
     flow_api_pkg.flow_delete(p_process_id  =>  l_prcs_tx,  p_comment  => 'Ran by utPLSQL as Test Suite 021');    
+    flow_api_pkg.flow_delete(p_process_id  =>  l_prcs_rx,  p_comment  => 'Ran by utPLSQL as Test Suite 021');    
   end basic_send_without_receive_payload_restart;
 
 
@@ -885,6 +886,7 @@ create or replace package body test_021_messageFlow_basics as
     -- tear down processes
 
     flow_api_pkg.flow_delete(p_process_id  =>  l_prcs_tx,  p_comment  => 'Ran by utPLSQL as Test Suite 021');    
+    flow_api_pkg.flow_delete(p_process_id  =>  l_prcs_rx,  p_comment  => 'Ran by utPLSQL as Test Suite 021');    
   end basic_ITE_without_receive_payload_restart;
 
 
