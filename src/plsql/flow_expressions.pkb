@@ -5,7 +5,7 @@ as
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
   -- (c) Copyright MT AG, 2021-2022.
-  -- (c) Copyright Flowquest Consulting Limited. 2021-2024.
+  -- (c) Copyright Flowquest Limited. 2021-2024.
   --
   -- Created    22-Mar-2021  Richard Allen (Flowquest, for MT AG)
   -- Modified   12-Apr-2022  Richard Allen (Oracle)
@@ -391,9 +391,10 @@ as
     if l_expressions.count > 0 then 
       -- set context
       flow_globals.set_context
-      ( pi_prcs_id => pi_prcs_id
-      , pi_sbfl_id => pi_sbfl_id
-      , pi_scope   => pi_expr_scope
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_sbfl_id      => pi_sbfl_id
+      , pi_scope        => pi_expr_scope
+      , pi_loop_counter => flow_engine_util.get_loop_counter(pi_sbfl_id => pi_sbfl_id)
       );
       apex_debug.trace 
       ( p_message => 'l_expressions.count: %0'

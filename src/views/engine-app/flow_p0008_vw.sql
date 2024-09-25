@@ -10,6 +10,7 @@ as
        , calling_objt
        , breadcrumb
        , drilldown_allowed
+       , iteration_data
        , prdg_id
        , prdg_prdg_id
        , user_task_urls

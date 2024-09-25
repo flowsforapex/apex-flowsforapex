@@ -13,11 +13,12 @@ create or replace package flow_globals
   authid definer
 as
 
-  process_id flow_processes.prcs_id%type;
-  subflow_id flow_subflows.sbfl_id%type;
-  step_key   flow_subflows.sbfl_step_key%type;
-  scope      flow_subflows.sbfl_scope%type;
-  rest_call  boolean;
+  process_id    flow_processes.prcs_id%type;
+  subflow_id    flow_subflows.sbfl_id%type;
+  step_key      flow_subflows.sbfl_step_key%type;
+  scope         flow_subflows.sbfl_scope%type;
+  rest_call     boolean;
+  loop_counter  flow_subflows.sbfl_loop_counter%type;
 
   function business_ref
   (pi_scope       flow_subflows.sbfl_scope%type default 0)
@@ -28,10 +29,11 @@ as
   return flow_process_variables.prov_var_vc2%type;
 
   procedure set_context
-  ( pi_prcs_id  in flow_processes.prcs_id%type
-  , pi_sbfl_id  in flow_subflows.sbfl_id%type default null
-  , pi_step_key in flow_subflows.sbfl_step_key%type default null
-  , pi_scope    in flow_subflows.sbfl_scope%type default null
+  ( pi_prcs_id      in flow_processes.prcs_id%type
+  , pi_sbfl_id      in flow_subflows.sbfl_id%type default null
+  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
+  , pi_scope        in flow_subflows.sbfl_scope%type default null
+  , pi_loop_counter in flow_subflows.sbfl_loop_counter%type default null
   );
 
   procedure set_step_error

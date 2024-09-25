@@ -137,7 +137,10 @@ as
     apex_debug.enter( p_routine_name => 'send_email', p_name01 => 'pi_objt_id', p_value01 => pi_objt_id );
 
     l_scope := flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id );
-    flow_globals.set_context( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_scope => l_scope );
+    flow_globals.set_context( pi_prcs_id        => pi_prcs_id
+                            , pi_sbfl_id        => pi_sbfl_id
+                            , pi_scope          => l_scope 
+                            , pi_loop_counter   => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_id));
 
     -- Pull all configuration from objt_attributes JSON structure
     get_config

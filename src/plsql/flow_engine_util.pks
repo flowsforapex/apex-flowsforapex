@@ -79,6 +79,10 @@ as
   ( p_step_info     in flow_types_pkg.flow_step_info
   ) return varchar2;
 
+  function get_loop_counter
+  ( pi_sbfl_id       in  flow_subflows.sbfl_id%type
+  ) return flow_subflows.sbfl_loop_counter%type;
+
   function step_key
   ( pi_sbfl_id        in flow_subflows.sbfl_id%type default null
   , pi_current        in flow_subflows.sbfl_current%type default null

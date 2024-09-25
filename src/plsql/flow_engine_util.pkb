@@ -362,6 +362,25 @@ end get_object_tag;
     return l_iteration_type;
   end get_iteration_type;
 
+  function get_loop_counter
+  ( pi_sbfl_id       in  flow_subflows.sbfl_id%type
+  ) return flow_subflows.sbfl_loop_counter%type
+  is
+    l_loop_counter   flow_subflows.sbfl_loop_counter%type;
+  begin
+    select it.iter_loop_counter
+      into l_loop_counter
+      from flow_iterations it
+      join flow_subflows s
+        on s.sbfl_iter_id = it.iter_id
+     where s.sbfl_id = pi_sbfl_id;
+    apex_debug.message (p_message=>'--> get_loop_counter - value = %0', p0=> l_loop_counter);
+    return l_loop_counter;
+  exception
+    when others then
+      return null;
+  end get_loop_counter;
+
 
   function subflow_start
     ( 
