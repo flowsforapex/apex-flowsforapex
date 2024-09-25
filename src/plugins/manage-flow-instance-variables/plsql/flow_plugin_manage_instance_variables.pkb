@@ -128,6 +128,7 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_process_variables json_array_t;
       l_process_variable  json_object_t;
       l_json_element      json_element_t;
+      l_dummy_num         number;
 
       --variables
       l_prcs_id         flow_processes.prcs_id%type;
@@ -324,14 +325,28 @@ create or replace package body flow_plugin_manage_instance_variables as
                   case l_attribute4
                      when 'set' then
                         l_json_element := l_process_variable.get('value');
-                        if ( l_json_element.is_Number() = false ) then
-                           raise e_invalid_number;
+                        if ( l_json_element.is_String and l_process_variable.get_String('value') is not null 
+                           ) then
+                           l_process_variable.On_error(3);
+                           begin
+                              l_dummy_num := l_process_variable.get_Number('value');
+                           exception
+                              when others then
+                                l_process_variable.On_error(0);
+                                raise e_invalid_number;
+                           end;
                         end if;
                         flow_process_vars.set_var(
                              pi_prcs_id   => l_prcs_id
 						         , pi_scope     => l_prov_scope	 
                            , pi_var_name  => l_prov_var_name
-                           , pi_num_value => l_process_variable.get_number('value')
+                           , pi_num_value => case 
+                                                when l_process_variable.get_String('value') is null 
+                                                   then 
+                                                      null 
+                                             else 
+                                                l_process_variable.get_number('value') 
+                                             end
                         );
                      when 'get' then
                         apex_util.set_session_state( 
@@ -342,7 +357,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                                            , pi_var_name => l_prov_var_name
                                         ) 
                         );
-                  end case;
+                  end case;   
                when 'date' then
                   apex_debug.info(
                      p_message => '......Name: %s - Type: %s - Value %s'
