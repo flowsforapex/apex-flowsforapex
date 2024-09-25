@@ -25,12 +25,13 @@
         bpmnModeler.customModules.translationModule,
         bpmnModeler.customModules.xmlModule,
         bpmnModeler.customModules.drilldownCentering,
-        bpmnModeler.customModules.bpmnDiOrdering
+        bpmnModeler.customModules.bpmnDiOrdering,
+        bpmnModeler.customModules.colorPickerModule
       ];
 
       this.exporter = {
         name: 'Flows for APEX',
-        version: '23.1.0',
+        version: '24.1.0',
       };
 
       this.moddleExtensions = {

@@ -3,9 +3,10 @@ create or replace package body flow_log_admin as
   -- Flows for APEX - flow_log_admin.pkb
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
-
+  -- (c) Copyright Flowquest Consulting Limited. 2024
   --
-  -- Created    18-Feb-2021  Richard Allen (Oracle)
+  -- Created    18-Feb-2023  Richard Allen (Oracle)
+  -- Modified   11-Feb-2024  Richard Allen (Flowquest Consulting)
   --
   -- Package flow_log_admin manaes the Flows for APEX log tables, including
   --    - creation of instance archive summary
@@ -53,7 +54,7 @@ create or replace package body flow_log_admin as
        'processID'    value p.prcs_id,
        'mainDiagram'  value p.prcs_dgrm_id,
        'processName'  value p.prcs_name,
-       'businessID'   value prov.prov.prov_var_vc2,
+       'businessID'   value prov.prov_var_vc2,
        'priority'     value p.prcs_priority,
        'prcs_status'  value p.prcs_status,
        'prcs_init_ts' value p.prcs_init_ts,
@@ -100,6 +101,7 @@ create or replace package body flow_log_admin as
                            (
                            'object'                     value lgsf_objt_id,
                            'subflowID'                  value lgsf_sbfl_id,
+                           'stepKey'                    value lgsf_step_key,
                            'processLevel'               value lgsf_sbfl_process_level,
                            'priority'                   value lgsf_priority,
                            'lastCompleted'              value lgsf_last_completed,
@@ -109,6 +111,8 @@ create or replace package body flow_log_admin as
                            'statusWhenComplete'         Value lgsf_status_when_complete,
                            'subflowDiagram'             value lgsf_sbfl_dgrm_id,
                            'reservation'                value lgsf_reservation,
+                           'priority'                   value lgsf_priority,
+                           'dueOn'                      value lgsf_due_on,
                            'user'                       value lgsf_user,
                            'comment'                    value lgsf_comment absent on null
                            ) order by lgsf_was_current
@@ -137,6 +141,7 @@ create or replace package body flow_log_admin as
                                                           when 'DATE'                       then to_char(lgvr.lgvr_var_date,'YYYY-MM-DD"T"HH24:MI:SS"Z"')
                                                           when 'TIMESTAMP WITH TIME ZONE'   then to_char(lgvr.lgvr_var_tstz,'YYYY-MM-DD"T"HH24:MI:SSTZR')
                                                           when 'CLOB'                       then 'CLOB Value'
+                                                          when 'JSON'                       then cast(dbms_lob.substr(lgvr_var_json, 4000) as  varchar2(4000))
                                                           end 
                                                )
                                            order by lgvr.lgvr_timestamp 

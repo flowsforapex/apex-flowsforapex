@@ -19,8 +19,10 @@ PROMPT >> =============================
 PROMPT >> DDL and Data Migration
 @migrations/^from_version._to_^to_version./migrate.sql
 
-PROMPT >> Common Objects
+PROMPT >> Update Common Objects
 @common_db.sql
+PROMPT >> Update Comments
+@ddl/install_ddl_comments.sql
 
 PROMPT >> Reparse all Diagrams so everything fits to current Flows Version
 @parse_all_diagrams.sql

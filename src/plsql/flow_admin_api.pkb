@@ -101,5 +101,19 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
                                              );       
   end get_config_value;
 
+  -- Diagram Release
+
+  procedure release_diagram
+  ( pi_dgrm_name    in flow_diagrams.dgrm_name%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type default '0' 
+  )
+  is
+  begin 
+    flow_diagram.release_diagram
+    ( pi_dgrm_name    => pi_dgrm_name
+    , pi_dgrm_version => pi_dgrm_version
+    );
+  end release_diagram;
+
 end flow_admin_api;
 /

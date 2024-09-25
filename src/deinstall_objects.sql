@@ -16,6 +16,7 @@ drop package flow_settings;
 drop package flow_db_exec;
 drop package flow_message_flow;
 drop package flow_message_util;
+drop package flow_message_util_ee;
 drop package flow_proc_vars_int;
 drop package flow_instances;
 drop package flow_engine;
@@ -24,6 +25,7 @@ drop package flow_admin_api;
 drop package flow_timers_pkg;
 drop package flow_reservations;
 drop package flow_gateways;
+drop package flow_iteration;
 drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
@@ -39,6 +41,7 @@ drop package flow_apex_env;
 drop package flow_log_admin;
 drop package flow_process_vars;
 drop package flow_statistics;
+drop package flow_simple_form_template;
 drop package flow_rest_constants;
 drop package flow_rest;
 drop package flow_rest_auth;
@@ -106,6 +109,9 @@ drop view flow_rest_message_subscriptions_vw;
 drop view flow_rest_process_vars_vw;
 drop view flow_rest_processes_vw;
 drop view flow_rest_subflows_vw;
+drop view flow_apex_my_combined_task_list_vw;
+drop view flow_apex_task_inbox_my_tasks_vw;
+drop view flow_apex_task_inbox_vw;
 
 
 PROMPT >> Tables
@@ -113,6 +119,8 @@ drop table flow_connections cascade constraints;
 drop table flow_objects cascade constraints;
 drop table flow_message_subscriptions cascade constraints;
 drop table flow_processes cascade constraints;
+drop table flow_iterations cascade constraints;
+drop table flow_iterated_objects cascade constraints;
 drop table flow_subflows cascade constraints;
 drop table flow_subflow_log cascade constraints;
 drop table flow_diagrams cascade constraints;
@@ -132,6 +140,9 @@ drop table flow_parser_log cascade constraints;
 drop table flow_stats_history cascade constraints;
 drop table flow_step_stats cascade constraints;
 drop table flow_rest_event_log cascade constraints;
+drop table flow_iterations cascade constraints;
+drop table flow_iterated_objects cascade constraints;
+drop table flow_simple_form_templates cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================

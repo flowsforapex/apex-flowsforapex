@@ -36,6 +36,7 @@ create or replace view flow_apex_my_combined_task_list_vw
      , process_id
      , subflow_id
      , step_key
+     , current_obj
      )
 as select   
       'APEX' as manager
@@ -72,6 +73,7 @@ as select
      , created_on
      , last_updated_by
      , last_updated_on
+     , null
      , null
      , null
      , null
@@ -115,5 +117,6 @@ as select
      , process_id
      , subflow_id
      , step_key
+     , current_obj
      from table ( flow_api_pkg.get_current_tasks ( p_context => 'MY_TASKS'))
      ;

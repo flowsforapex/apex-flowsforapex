@@ -5,9 +5,11 @@ as
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
   -- (c) Copyright MT AG, 2021-2022.
+  -- (c) Copyright Flowquest Limited. 2021-2024.
   --
   -- Created    22-Mar-2021  Richard Allen (Flowquest, for MT AG)
   -- Modified   12-Apr-2022  Richard Allen (Oracle)
+  -- Modified   11-Feb-2024  Richard Allen (Flowquest)
   --
   */  
   type t_expr_rec is record
@@ -112,13 +114,24 @@ as
           if l_expression_text != to_char ( to_timestamp_tz ( l_expression_text
                                           , flow_constants_pkg.gc_prov_default_tstz_format )
                                           , flow_constants_pkg.gc_prov_default_tstz_format ) then 
-          raise e_var_exp_date_format_error;
+            raise e_var_exp_date_format_error;
           end if;
         exception
           when others then
             raise e_var_exp_date_format_error;
         end;
         l_result_rec.var_tstz := to_timestamp_tz(l_expression_text, flow_constants_pkg.gc_prov_default_tstz_format);
+    when flow_constants_pkg.gc_prov_var_type_json then
+        -- test is correct json (lax)
+        begin
+          if l_expression_text is not json then
+            raise e_var_exp_json_format_error;
+          end if;
+        exception
+          when others then
+            raise e_var_exp_json_format_error;
+        end;
+        l_result_rec.var_json := l_expression_text;
     end case;
     -- set proc variable
     flow_proc_vars_int.set_var 
@@ -139,7 +152,17 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
-      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'      
+      -- $F4AMESSAGE 'var_exp_date_format' || 'Error setting Process Variable %1: Incorrect Date Format (Subflow: %0, Set: %3.)'   
+    when e_var_exp_json_format_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_json_format'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_json_format' || 'Error setting Process Variable %1: Incorrect JSON Format (Subflow: %0, Set: %3.)'     
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
@@ -202,6 +225,12 @@ as
                                     , pi_var_name => pi_expression.expr_expression
                                     , pi_scope    => pi_expr_scope
                                     );  
+    when flow_constants_pkg.gc_prov_var_type_json then
+        l_result_rec.var_json  := flow_proc_vars_int.get_var_json 
+                                    ( pi_prcs_id  => pi_prcs_id
+                                    , pi_var_name => pi_expression.expr_expression
+                                    , pi_scope    => pi_expr_scope
+                                    );
     end case; 
     -- set proc variable
     flow_proc_vars_int.set_var 
@@ -362,9 +391,10 @@ as
     if l_expressions.count > 0 then 
       -- set context
       flow_globals.set_context
-      ( pi_prcs_id => pi_prcs_id
-      , pi_sbfl_id => pi_sbfl_id
-      , pi_scope   => pi_expr_scope
+      ( pi_prcs_id      => pi_prcs_id
+      , pi_sbfl_id      => pi_sbfl_id
+      , pi_scope        => pi_expr_scope
+      , pi_loop_counter => flow_engine_util.get_loop_counter(pi_sbfl_id => pi_sbfl_id)
       );
       apex_debug.trace 
       ( p_message => 'l_expressions.count: %0'
@@ -392,6 +422,7 @@ as
             );
           when l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql  
             or l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql_delimited_list
+            or l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_sql_json_array
           then
             set_sql
             ( pi_prcs_id      => pi_prcs_id

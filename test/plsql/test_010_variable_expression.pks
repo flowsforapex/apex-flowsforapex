@@ -6,10 +6,12 @@ create or replace package test_010_variable_expressions is
 --
 -- Created 10-Mar-2022   Louis Moreaux - Insum
 -- Edited  09-May-2022   Richard Allen - Oracle
+-- Edited  23 May 2024   Richard Allen - Flowquest Consulting Limited
 --
 */
     --%suite(10 Variable Expressions)
     --%rollback(manual)
+    --%tags(short,ce,ee)
 
     --%beforeall
     procedure set_up_process;
@@ -29,6 +31,9 @@ create or replace package test_010_variable_expressions is
     --%test('SQL Multi type expressions')
     procedure var_exp_sqlmulti;
     
+    --%test('SQL JSON Array type expressions')
+    procedure var_exp_sqlarray;
+
     --%test('PL/SQL Expression (legacy) type expressions')
     procedure var_exp_expression;
     
@@ -43,8 +48,9 @@ create or replace package test_010_variable_expressions is
         
     --%test('Variable expressions process completed as expected')
     procedure var_exp_process_completed;
-        
-    --afterall
+
+    --%afterall
     procedure tear_down_process;
 
 end test_010_variable_expressions;
+/

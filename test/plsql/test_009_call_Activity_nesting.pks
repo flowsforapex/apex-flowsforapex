@@ -12,6 +12,7 @@ create or replace package test_009_call_Activity_nesting as
 
   --%suite(09 Call Activity Nesting)
   --%rollback(manual)
+  --%tags(short,ce,ee)
 
   --%beforeall
   --%disabled
@@ -60,3 +61,4 @@ create or replace package test_009_call_Activity_nesting as
   procedure tear_down_tests;
 
 end test_009_call_Activity_nesting;
+/

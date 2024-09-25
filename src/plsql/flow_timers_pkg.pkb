@@ -290,11 +290,14 @@ create or replace package body flow_timers_pkg as
         end if;
         flow_engine.timer_callback
         (
-          p_process_id => l_timers.timr_prcs_id
-        , p_subflow_id => l_timers.timr_sbfl_id
-        , p_step_key   => l_timers.timr_step_key
-        , p_timr_id    => l_timr_id
-        , p_run        => l_timr_run
+          p_process_id    => l_timers.timr_prcs_id
+        , p_subflow_id    => l_timers.timr_sbfl_id
+        , p_step_key      => l_timers.timr_step_key
+        , p_timr_id       => l_timr_id
+        , p_run           => l_timr_run
+        , p_callback      => l_timers.timr_callback
+        , p_callback_par  => l_timers.timr_callback_par
+        , p_event_type    => flow_constants_pkg.gc_bpmn_timer_event_definition
         );
         -- drop the session
         if l_apex_session is not null then
@@ -830,12 +833,13 @@ create or replace package body flow_timers_pkg as
 
 procedure reschedule_timer
 (
-    p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_step_key      in flow_subflows.sbfl_step_key%type default null
-  , p_is_immediate  in boolean default false
-  , p_new_timestamp in flow_timers.timr_start_on%type default null
-  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+    p_process_id        in flow_processes.prcs_id%type
+  , p_subflow_id        in flow_subflows.sbfl_id%type
+  , p_step_key          in flow_subflows.sbfl_step_key%type default null
+  , p_is_immediate      in boolean default false
+  , p_restart_immediate in boolean default false
+  , p_new_timestamp     in flow_timers.timr_start_on%type default null
+  , p_comment           in flow_instance_event_log.lgpr_comment%type default null
 )
 is
   l_timer_rec       flow_timers%rowtype;
@@ -851,13 +855,39 @@ begin
   , 'New Timestamp', p_new_timestamp
   );
   -- lock the timer
-  select *
-    into l_timer_rec
-    from flow_timers timr 
-   where timr.timr_prcs_id = p_process_id
-     and timr.timr_sbfl_id = p_subflow_id
-     for update wait 5
-  ;
+  -- first try to lock a current active (i.e., 'created') timer on the subflow
+  begin
+    select *
+      into l_timer_rec
+      from flow_timers timr 
+     where timr.timr_prcs_id = p_process_id
+       and timr.timr_sbfl_id = p_subflow_id
+       and timr.timr_status = flow_timers_pkg.c_created
+       for update wait 5
+    ;
+  exception
+    when no_data_found then
+      if p_restart_immediate then
+        -- handle timer event restarts where timer has already fired but step needs to be re-started
+        -- requires the old 'nded' timer to be restarted with an imediate schedule. (See test case 3h2 Issue #710)
+        select *
+          into l_timer_rec
+          from flow_timers timr 
+         where timr.timr_last_run = ( select max (timr_last_run )
+                                      from   flow_timers 
+                                      where  timr_prcs_id = p_process_id
+                                      and    timr_sbfl_id = p_subflow_id
+                                      and    timr.timr_status = flow_timers_pkg.c_ended
+                                    )
+           and timr_prcs_id = p_process_id
+           and timr_sbfl_id = p_subflow_id
+           and timr.timr_status = flow_timers_pkg.c_ended
+           for update wait 5
+        ;
+      else
+        raise;
+      end if;
+  end;
   if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
                                     , pi_sbfl_id  => p_subflow_id
                                     , pi_step_key_supplied  => p_step_key
@@ -1024,7 +1054,7 @@ end reschedule_timer;
     begin
       select repeat_interval
         into l_repeat_interval
-        from sys.all_scheduler_jobs
+        from sys.user_scheduler_jobs
        where job_name = 'APEX_FLOW_STEP_TIMERS_J';
     exception
       when no_data_found then
@@ -1093,12 +1123,12 @@ end reschedule_timer;
   function get_timer_status
   return varchar2
   as
-    l_status  sys.all_scheduler_jobs.enabled%type;
+    l_status  sys.user_scheduler_jobs.enabled%type;
   begin
     begin
       select enabled
         into l_status
-        from sys.all_scheduler_jobs
+        from sys.user_scheduler_jobs
        where job_name = 'APEX_FLOW_STEP_TIMERS_J';
     exception 
       when no_data_found then

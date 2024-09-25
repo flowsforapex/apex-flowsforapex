@@ -10,7 +10,9 @@ as
        , calling_objt
        , breadcrumb
        , drilldown_allowed
+       , iteration_data
        , prdg_id
        , prdg_prdg_id
+       , user_task_urls
     from flow_instance_details_vw
 with read only;

@@ -226,24 +226,24 @@ create or replace package body flow_instances as
   end create_process;
 
   procedure start_process
-  ( p_process_id    in flow_processes.prcs_id%type
+  ( p_process_id              in flow_processes.prcs_id%type
+  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null  -- only for messageStart, etc.
   )
   is
     l_dgrm_id               flow_diagrams.dgrm_id%type;
     l_process_status        flow_processes.prcs_status%type;
-    l_objt_bpmn_id          flow_objects.objt_bpmn_id%type;
-    l_objt_id               flow_objects.objt_id%type;
-    l_objt_sub_tag_name     flow_objects.objt_sub_tag_name%type;
     l_main_subflow          flow_types_pkg.t_subflow_context;
     l_new_subflow_status    flow_subflows.sbfl_status%type;
     l_priority_json         flow_types_pkg.t_bpmn_attribute_vc2;
     l_priority              flow_processes.prcs_priority%type;
     l_due_on_json           flow_types_pkg.t_bpmn_attribute_vc2;
     l_due_on                flow_processes.prcs_due_on%type;
+    l_starting_object       flow_objects%rowtype;
   begin
     apex_debug.enter
     ('start_process'
     , 'Process_ID', p_process_id 
+    , 'Event Starting Object' , p_event_starting_object
     );
     -- check process exists, is not running, and lock it
     begin
@@ -267,6 +267,7 @@ create or replace package body flow_instances as
         );
         -- $F4AMESSAGE 'start-already-running' || 'You tried to start a process (id %0) that is already running.'
       end if;
+      
     exception
       when no_data_found then
         flow_errors.handle_general_error
@@ -281,15 +282,21 @@ create or replace package body flow_instances as
         );
         -- $F4AMESSAGE 'start-multiple-already-running' || 'You tried to start a process (id %0) with multiple copies already running.' 
     end;
+
+    l_starting_object := flow_diagram.get_start_event ( p_dgrm_id               => l_dgrm_id
+                                                      , p_process_id            => p_process_id
+                                                      , p_event_starting_object => p_event_starting_object);
+
     begin
-      -- get instance scheduling information
+      -- get instance scheduling information for the process being started
       select objt.objt_attributes."apex"."priority"
            , objt.objt_attributes."apex"."dueOn"
         into l_priority_json
            , l_due_on_json
         from flow_objects objt
-       where objt.objt_dgrm_id = l_dgrm_id
+       where objt.objt_dgrm_id  = l_dgrm_id
          and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         and objt.objt_id       = l_starting_object.objt_objt_id
       ;
       if l_priority_json is not null then
         l_priority := flow_settings.get_priority ( pi_prcs_id => p_process_id, pi_expr => l_priority_json);
@@ -299,40 +306,8 @@ create or replace package body flow_instances as
       end if;
       apex_debug.info (p_message => 'Process Priority : %0  Due On : %1', p0 => l_priority, p1 => l_due_on );
     end;
-    begin
-      -- get the starting object 
-      select objt.objt_bpmn_id
-           , objt.objt_sub_tag_name
-           , objt.objt_id
-        into l_objt_bpmn_id
-           , l_objt_sub_tag_name
-           , l_objt_id
-        from flow_objects objt
-        join flow_objects parent
-          on objt.objt_objt_id = parent.objt_id
-       where objt.objt_dgrm_id = l_dgrm_id
-         and parent.objt_dgrm_id = l_dgrm_id
-         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_start_event  
-         and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-      ;
-    exception
-      when too_many_rows then
-        flow_errors.handle_instance_error
-        ( pi_prcs_id        => p_process_id
-        , pi_message_key    => 'start-multiple-start-events'
-        );
-        -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
-      when no_data_found then
-        flow_errors.handle_instance_error
-        ( pi_prcs_id        => p_process_id
-        , pi_message_key    => 'start-no-start-event'
-        );
-        -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
-    end;
-    apex_debug.info
-    ( p_message => 'Found starting object %0'
-    , p0 =>l_objt_bpmn_id
-    );
+
+
     -- mark process as running
     update flow_processes prcs
        set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_running
@@ -344,8 +319,8 @@ create or replace package body flow_instances as
                                                  )  
          , prcs.prcs_priority       = l_priority
          , prcs.prcs_due_on         = l_due_on
-     where prcs.prcs_dgrm_id = l_dgrm_id
-       and prcs.prcs_id = p_process_id
+     where prcs.prcs_dgrm_id   = l_dgrm_id
+       and prcs.prcs_id        = p_process_id
          ;    
     -- log the start
     flow_logging.log_instance_event
@@ -354,9 +329,10 @@ create or replace package body flow_instances as
     );
     -- create the status for new subflow based on start subtype
     case
-      when l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
+      when l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
         l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
-      when l_objt_sub_tag_name is null then
+      when (   l_starting_object.objt_sub_tag_name is null 
+           or  l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition ) then
         l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_running;
       else
         raise e_unsupported_start_event;
@@ -365,8 +341,8 @@ create or replace package body flow_instances as
     l_main_subflow := flow_engine_util.subflow_start 
       ( p_process_id => p_process_id
       , p_parent_subflow => null
-      , p_starting_object => l_objt_bpmn_id
-      , p_current_object => l_objt_bpmn_id
+      , p_starting_object => l_starting_object.objt_bpmn_id
+      , p_current_object  => l_starting_object.objt_bpmn_id
       , p_route => 'main'
       , p_last_completed => null
       , p_status => l_new_subflow_status 
@@ -380,10 +356,10 @@ create or replace package body flow_instances as
     , p0 => l_main_subflow.sbfl_id
     , p1 => l_main_subflow.step_key
     );
-    if l_objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
+    if l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
       -- process any before-event variable expressions on the starting object
       flow_expressions.process_expressions
-      ( pi_objt_bpmn_id   => l_objt_bpmn_id
+      ( pi_objt_bpmn_id   => l_starting_object.objt_bpmn_id
       , pi_set            => flow_constants_pkg.gc_expr_set_before_event
       , pi_prcs_id        => p_process_id
       , pi_sbfl_id        => l_main_subflow.sbfl_id
@@ -397,15 +373,16 @@ create or replace package body flow_instances as
           pi_prcs_id    => p_process_id
         , pi_sbfl_id    => l_main_subflow.sbfl_id
         , pi_step_key   => l_main_subflow.step_key
-        , pi_callback     => flow_constants_pkg.gc_bpmn_start_event
+        , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
         ); 
       end if;       
 
-    elsif l_objt_sub_tag_name is null then
-      -- plain (none) startEvent
+    elsif (  l_starting_object.objt_sub_tag_name is null 
+          or l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition ) then
+      -- plain (none) startEvent or messageStartEvent
       -- process any variable expressions on the starting object
       flow_expressions.process_expressions
-      ( pi_objt_bpmn_id  => l_objt_bpmn_id
+      ( pi_objt_bpmn_id  => l_starting_object.objt_bpmn_id
       , pi_set           => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id       => p_process_id
       , pi_sbfl_id       => l_main_subflow.sbfl_id
@@ -433,9 +410,9 @@ create or replace package body flow_instances as
       ( pi_prcs_id        => p_process_id
       , pi_sbfl_id        => l_main_subflow.sbfl_id
       , pi_message_key    => 'start-type-unsupported'
-      , p0                => l_objt_sub_tag_name       
+      , p0                => l_starting_object.objt_sub_tag_name       
       );
-      -- $F4AMESSAGE 'start-type-unsupported' || 'Unsupported start event type (%0). Only None (standard) Start Event and Timer Start Event are currently supported.'
+      -- $F4AMESSAGE 'start-type-unsupported' || 'Unsupported start event type (%0). Only None (standard) Start Event, Message and Timer Start Event are currently supported.'
   end start_process;
 
   procedure reset_process
@@ -492,6 +469,11 @@ create or replace package body flow_instances as
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
     ;
+    -- clean up iteration arrays
+    delete
+      from flow_iterated_objects
+     where iobj_prcs_id = p_process_id
+     ;
     -- delete the subflows
     delete
       from flow_subflows sbfl
@@ -688,6 +670,11 @@ create or replace package body flow_instances as
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
     ;
+    -- clear out any iterations
+    delete
+      from flow_iterated_objects
+     where iobj_prcs_id = p_process_id
+     ;
     delete
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id

@@ -17,7 +17,16 @@ as
         , sbfl.sbfl_last_completed
         , coalesce( objt_last.objt_name, sbfl.sbfl_last_completed ) as sbfl_last_completed_name
         , sbfl.sbfl_current
-        , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as sbfl_current_name
+        , coalesce( objt_curr.objt_name ||case 
+                                          when sbfl_loop_counter is null then ''
+                                          else '['||sbfl_loop_counter||']'
+                                          end
+                  , sbfl.sbfl_current 
+                  ) as sbfl_current_name
+        , iter.iter_display_name as sbfl_iteration_path
+        , sbfl.sbfl_iter_id    -- remove from prod
+        , sbfl.sbfl_iobj_id    -- remove from prod
+        , sbfl.sbfl_iteration_type -- remove from prod
         , sbfl.sbfl_step_key
         , objt_curr.objt_tag_name as sbfl_current_tag_name
         , sbfl.sbfl_became_current
@@ -32,7 +41,10 @@ as
         , sbfl.sbfl_lane_role
         , sbfl.sbfl_process_level
         , sbfl.sbfl_diagram_level
+        , sbfl.sbfl_loop_counter
+        , sbfl.sbfl_loop_total_instances
         , sbfl.sbfl_scope
+        , sbfl.sbfl_calling_sbfl
         , sbfl.sbfl_reservation
         , sbfl.sbfl_potential_users
         , sbfl.sbfl_potential_groups
@@ -64,5 +76,7 @@ left join flow_timers timr
        on timr.timr_prcs_id = sbfl.sbfl_prcs_id
       and timr.timr_sbfl_id = sbfl.sbfl_id
       and timr.timr_status in ('C', 'A', 'B')
+left join flow_iterations iter
+       on iter.iter_id = sbfl.sbfl_iter_id
 with read only
 ;

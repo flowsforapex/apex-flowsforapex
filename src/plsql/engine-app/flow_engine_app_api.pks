@@ -248,6 +248,17 @@ as
     pi_objt_id in flow_subflows.sbfl_current%type)
   return boolean;
 
+  /* page 51 */
+
+  procedure process_page_p51
+  (
+    pio_sfte_id       in out nocopy flow_simple_form_templates.sfte_id%type
+  , pi_sfte_name      in flow_simple_form_templates.sfte_name%type
+  , pi_sfte_static_id in flow_simple_form_templates.sfte_static_id%type
+  , pi_sfte_content   in flow_simple_form_templates.sfte_content%type
+  , pi_request        in varchar2
+  );
+
   /* configuration */
   procedure set_logging_settings(
     pi_logging_language          in flow_configuration.cfig_value%type

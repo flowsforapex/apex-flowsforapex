@@ -3,16 +3,18 @@ create or replace package flow_constants_pkg
 -- Flows for APEX - flow_constants_pkg.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
+-- (c) Copyright Flowquest Consulting Limited. 2024.
 --
 -- Created 2020        Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
 -- Edited  10-Mar-2023 Moritz Klein, MT GmbH
+-- Edited  03-Jan-2024 R Allen, Flowquest Consulting
 --
 */
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '23.1';
+  gc_version constant varchar2(10 char) := '24.1';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';
@@ -80,6 +82,9 @@ as
   
   gc_bpmn_text                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'text';
 
+  gc_bpmn_multi_instance_loop         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'multiInstanceLoopCharacteristics';
+  gc_bpmn_standard_loop               constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'standardLoopCharacteristics';
+
   -- APEX Extensions to BPMN
   -- bpmnProcess
   gc_apex_process_workspace           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'workspace';
@@ -90,6 +95,7 @@ as
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
   gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';
+  gc_apex_usertask_apex_simple_form   constant flow_types_pkg.t_bpmn_id := 'apexSimpleForm';
   gc_apex_usertask_external_url       constant flow_types_pkg.t_bpmn_id := 'externalUrl';
 
   gc_apex_usertask_application_id     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
@@ -162,6 +168,12 @@ as
   gc_apex_called_diagram_version_selection  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersionSelection';
   gc_apex_called_diagram_version            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagramVersion';
 
+  -- Iterator Tags
+  gc_apex_iterator_input            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'inputCollection';
+  gc_apex_iterator_output           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'outputCollection';
+  gc_apex_iterator_completion_cond  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'completionCondition';
+  gc_apex_iterator_description      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'description';
+
   -- Custom Extension Tag
   gc_apex_custom_extension            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'customExtension';
 
@@ -177,15 +189,32 @@ as
 
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
+  gc_iteration_parallel               constant flow_types_pkg.t_vc20 := 'parallel';
+  gc_iteration_sequential             constant flow_types_pkg.t_vc20 := 'sequential';
+  gc_iteration_loop                   constant flow_types_pkg.t_vc20 := 'loop';
+
+  gc_iteration_object_task            constant flow_types_pkg.t_vc20 := 'task';
+  gc_iteration_object_subprocess      constant flow_types_pkg.t_vc20 := 'subProcess';
+
+  gc_iteration_status_not_started     constant flow_types_pkg.t_vc20 := 'notStarted';
+  gc_iteration_status_running         constant flow_types_pkg.t_vc20 := 'running';
+  gc_iteration_status_completed       constant flow_types_pkg.t_vc20 := 'completed';
+  gc_iteration_status_terminated      constant flow_types_pkg.t_vc20 := 'terminated';
+
   -- Flows 4 APEX Substitution Strings
-  gc_substitution_flow_identifier     constant varchar2(10 char)                    := 'F4A$';
-  gc_substitution_prefix              constant flow_types_pkg.t_single_vc2          := '&';
-  gc_substitution_postfix             constant flow_types_pkg.t_single_vc2          := '.';
-  gc_substitution_process_id          constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_ID';
-  gc_substitution_subflow_id          constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
-  gc_substitution_step_key            constant flow_types_pkg.t_bpmn_attributes_key := 'STEP_KEY';
-  gc_substitution_scope               constant flow_types_pkg.t_bpmn_attributes_key := 'SCOPE';
-  gc_substitution_process_priority    constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_PRIORITY';
+  gc_substitution_flow_identifier       constant varchar2(10 char)                    := 'F4A$';
+  gc_substitution_prefix                constant flow_types_pkg.t_single_vc2          := '&';
+  gc_substitution_postfix               constant flow_types_pkg.t_single_vc2          := '.';
+  gc_substitution_process_id            constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_ID';
+  gc_substitution_subflow_id            constant flow_types_pkg.t_bpmn_attributes_key := 'SUBFLOW_ID';
+  gc_substitution_step_key              constant flow_types_pkg.t_bpmn_attributes_key := 'STEP_KEY';
+  gc_substitution_scope                 constant flow_types_pkg.t_bpmn_attributes_key := 'SCOPE';
+  gc_substitution_process_priority      constant flow_types_pkg.t_bpmn_attributes_key := 'PROCESS_PRIORITY';
+  gc_substitution_loop_counter          constant flow_types_pkg.t_bpmn_attributes_key := 'LOOP_COUNTER';
+  gc_substitution_total_instances       constant flow_types_pkg.t_bpmn_attributes_key := 'TOTAL_INSTANCES';
+  gc_substitution_active_instances      constant flow_types_pkg.t_bpmn_attributes_key := 'ACTIVE_INSTANCES';
+  gc_substitution_completed_instances   constant flow_types_pkg.t_bpmn_attributes_key := 'COMPLETED_INSTANCES';
+  gc_substitution_terminated_instances  constant flow_types_pkg.t_bpmn_attributes_key := 'TERMINATED_INSTANCES';
   
 
   gc_substitution_pattern             constant flow_types_pkg.t_bpmn_attributes_key := gc_substitution_prefix || 'F4A\$([a-zA-Z0-9:\_\-]+)' || gc_substitution_postfix;
@@ -206,8 +235,10 @@ as
   gc_sbfl_status_waiting_event        constant  varchar2(20 char) := 'waiting for event';
   gc_sbfl_status_waiting_approval     constant  varchar2(20 char) := 'waiting for approval';
   gc_sbfl_status_waiting_message      constant  varchar2(20 char) := 'waiting for message';
+  gc_sbfl_status_waiting_iter         constant  varchar2(20 char) := 'waiting iterations';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
+  gc_sbfl_status_iterating            constant  varchar2(20 char) := 'iterating';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
   gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
@@ -243,9 +274,14 @@ as
   gc_prov_var_type_number             constant  varchar2(50 char) := 'NUMBER';
   gc_prov_var_type_clob               constant  varchar2(50 char) := 'CLOB';
   gc_prov_var_type_tstz               constant  varchar2(50 char) := 'TIMESTAMP WITH TIME ZONE';
+  gc_prov_var_type_json               constant  varchar2(50 char) := 'JSON';
+  gc_prov_var_type_boolean            constant  varchar2(50 char) := 'BOOLEAN';   -- not a proper Proc Var type
 
   gc_prov_default_date_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS';
   gc_prov_default_tstz_format         constant  varchar2(30 char) := 'YYYY-MM-DD HH24:MI:SS TZR';
+
+  gc_prov_content_list                constant  varchar2(50 char) := 'LIST';
+  gc_prov_content_array               constant  varchar2(50 char) := 'ARRAY';
 
   -- Standard Process Variables
 
@@ -267,8 +303,11 @@ as
   gc_expr_type_static                   constant flow_types_pkg.t_expr_type := 'static';
   gc_expr_type_proc_var                 constant flow_types_pkg.t_expr_type := 'processVariable';
   gc_expr_type_item                     constant flow_types_pkg.t_expr_type := 'item';
+  gc_expr_type_array                    constant flow_types_pkg.t_expr_type := 'processVariableArray';
+  gc_expr_type_list                     constant flow_types_pkg.t_expr_type := 'processVariableList';
   gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
   gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
+  gc_expr_type_sql_json_array           constant flow_types_pkg.t_expr_type := 'sqlQueryArray';
   gc_expr_type_plsql_function_body      constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';  -- vc2 typed functionbody (e.g., date returns vc2)
   gc_expr_type_plsql_expression         constant flow_types_pkg.t_expr_type := 'plsqlExpression';    -- vc2 typed expression  (e.g., date returns vc2)
   gc_expr_type_plsql_raw_function_body  constant flow_types_pkg.t_expr_type := 'plsqlRawFunctionBody';  -- raw functionbody  (e.g., date returns date)
@@ -318,6 +357,7 @@ as
   gc_config_stats_retain_summary_daily  constant varchar2(50 char) := 'stats_retain_daily_summaries_days';
   gc_config_stats_retain_summary_month  constant varchar2(50 char) := 'stats_retain_monthly_summaries_months';
   gc_config_stats_retain_summary_qtr    constant varchar2(50 char) := 'stats_retain_quarterly_summaries_months';
+  gc_config_edition                     constant varchar2(50 char) := 'license_edition';
 
 
 -- Config Parameter Valid Values (when not true / false or numeric)
@@ -333,7 +373,8 @@ as
   gc_config_archive_destination_table        constant varchar2(2000 char) := 'TABLE';       -- To Database Table
   gc_config_archive_destination_oci_api      constant varchar2(2000 char) := 'OCI-API';     -- OCI using API Key
   gc_config_archive_destination_oci_preauth  constant varchar2(2000 char) := 'OCI-PREAUTH'; -- OCI using PreAuth
-
+  gc_config_edition_community                constant varchar2(2000 char) := 'community';
+  gc_config_edition_enterprise               constant varchar2(2000 char) := 'enterprise';
 
 -- Config Parameter Default Values
 
@@ -373,14 +414,15 @@ as
 
   -- Default XML for new diagrams
   gc_default_xml constant varchar2(4000) := '<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="' || gc_version || '">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" 
+exporter="Flows for APEX" exporterVersion="' || gc_version || '">
 <bpmn:process id="Process_#RANDOM_PRCS_ID#" isExecutable="false" />
 <bpmndi:BPMNDiagram id="BPMNDiagram_1">
 <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_#RANDOM_PRCS_ID#" />
 </bpmndi:BPMNDiagram>
 </bpmn:definitions>
 ';
-
 
 end flow_constants_pkg;
 /

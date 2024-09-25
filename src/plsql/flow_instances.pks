@@ -9,7 +9,7 @@ create or replace package flow_instances
 --
 */
   authid definer
-  accessible by (flow_api_pkg, flow_engine, flow_proc_vars_int, flow_diagram)
+  accessible by (flow_api_pkg, flow_engine, flow_proc_vars_int, flow_diagram, flow_message_util_ee)
 as
 
   function create_process
@@ -19,7 +19,8 @@ as
     ;
 
   procedure start_process
-    ( p_process_id    in flow_processes.prcs_id%type
+    ( p_process_id             in flow_processes.prcs_id%type
+    , p_event_starting_object  in flow_objects.objt_bpmn_id%type default null    -- only for messageStart, etc.
     );
 
   procedure reset_process

@@ -16,8 +16,19 @@ Using the github repository, go through the following steps to install the test 
 
 3. Install the Test Scripts into your workspace.
    1. Run the `install_all_tests.sql` script (contained in `\test`).  This installs the test_helper package, plus a package for each test suite.
-4. Install any Test Apps in the `test/apps` folder.   These contain things like APEX Approval Task Definitions.   You will need to install the version of these files that matches the APEX version installed in your test environment.
-5. You should now be able to run all of the tests.
+   
+4. Install the EMP/DEPT Sample Dataset (use APEX or a script)
+
+5. Install any Test Apps in the `test/apps` folder.   These contain things like APEX Approval Task Definitions.   You will need to install the version of these files that matches the APEX version installed in your test environment.
+   
+6. Using the Configurations Panel > Timers (or otherwise) make sure that your timers are enabled and running every 10 seconds.
+   
+7. Using the Configurations Panel > Engine.   Make sure that the default parameters use a valid AppID, App Page and Default User ID on the system undertest.
+   
+8. Edit the Test Constants file (`test\plsql\test_constants.pks`) to set any appropriate User IDs and APEX APP IDs for the testing environment.
+
+
+7. You should now be able to run all of the tests.
 
 ## Adding New Tests ##
 
@@ -25,6 +36,7 @@ Using the github repository, go through the following steps to install the test 
 - create one or more models for the suite.  You can see the naming conventions...
 - add the models to the `import.sql` manifest file
 - if necessary, add any applications...
+- make sure the `pkb` and `pks` files end with a line containing a `\` followed by a blank line.
 
 ## Old Installation Instructions - Installing the BPMN Files
 

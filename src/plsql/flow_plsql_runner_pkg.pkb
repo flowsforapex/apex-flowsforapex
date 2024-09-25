@@ -115,10 +115,11 @@ as
     );
 
     flow_globals.set_context 
-    ( pi_prcs_id  => pi_prcs_id
-    , pi_sbfl_id  => pi_sbfl_id 
-    , pi_step_key => pi_step_key
-    , pi_scope    => flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id)
+    ( pi_prcs_id      => pi_prcs_id
+    , pi_sbfl_id      => pi_sbfl_id 
+    , pi_step_key     => pi_step_key
+    , pi_scope        => flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id)
+    , pi_loop_counter => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_id)
     );
 
     get_runner_config

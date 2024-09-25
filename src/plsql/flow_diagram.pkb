@@ -12,8 +12,6 @@ as
 --
 */
   
-
-
   function upload_diagram
   (
     pi_dgrm_name       in flow_diagrams.dgrm_name%type
@@ -294,44 +292,59 @@ as
     end if;
   end diagram_is_modifiable;
 
-  function get_start_event(
-    pi_dgrm_id    in flow_diagrams.dgrm_id%type,
-    pi_prcs_id    in flow_processes.prcs_id%type)
-  return flow_objects.objt_bpmn_id%type
-  is
-    e_unsupported_start_type exception;
-    l_objt_bpmn_id           flow_subflows.sbfl_current%type;
+  function get_start_event
+  ( p_dgrm_id                 in flow_diagrams.dgrm_id%type
+  , p_process_id              in flow_processes.prcs_id%type
+  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null
+  ) return flow_objects%rowtype
+  is 
+    l_starting_object     flow_objects%rowtype;
   begin
-      -- get the starting object 
-      select objt.objt_bpmn_id
-        into l_objt_bpmn_id
-        from flow_objects objt
-        join flow_objects parent
-          on objt.objt_objt_id = parent.objt_id
-       where objt.objt_dgrm_id = pi_dgrm_id
-         and parent.objt_dgrm_id = pi_dgrm_id
-         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_start_event  
-         and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-         ;
-    apex_debug.info
-    ( p_message => 'Found starting object %0 in diagram %1'
-    , p0 => l_objt_bpmn_id
-    , p1 => pi_dgrm_id
-    );
-    return l_objt_bpmn_id;
-  exception
-    when too_many_rows then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'start-multiple-start-events'
+    begin
+      if p_event_starting_object is null then 
+        -- get the starting object 
+        select objt.*
+          into l_starting_object
+          from flow_objects objt
+          join flow_objects parent
+            on parent.objt_id       = objt.objt_objt_id
+           and parent.objt_dgrm_id  = objt.objt_dgrm_id
+           and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         where objt.objt_dgrm_id    = p_dgrm_id
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event  
+           and (    objt.objt_sub_tag_name is null 
+               or   objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition )
+        ;
+      else 
+        -- get the specified starting object
+        select objt.*
+          into l_starting_object
+          from flow_objects objt
+         where objt.objt_dgrm_id = p_dgrm_id
+           and objt.objt_bpmn_id = p_event_starting_object
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event 
+        ;
+      end if;
+
+      apex_debug.info
+      ( p_message => 'Found starting object %0'
+      , p0 =>l_starting_object.objt_bpmn_id
       );
-      -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
-    when no_data_found then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => pi_prcs_id
-      , pi_message_key    => 'start-no-start-event'
-      );
-      -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
+    exception
+      when too_many_rows then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-multiple-start-events'
+        );
+        -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
+      when no_data_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-no-start-event'
+        );
+        -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
+    end;
+    return l_starting_object;
   end get_start_event;
 
   function get_current_diagram
@@ -483,6 +496,43 @@ as
 
   end edit_diagram;
 
+  procedure subscribe_diagram_message_starts
+  ( pi_dgrm_id        in flow_diagrams.dgrm_id%type
+  , pi_draft_suffix   in varchar2 default null
+  )
+  is
+    l_subscription    flow_message_flow.t_subscription_details;
+    l_msub_id         flow_message_subscriptions.msub_id%type;
+  begin
+    for message_start_events in 
+      ( select objt.objt_dgrm_id
+             , objt.objt_bpmn_id
+             , objt.objt_sub_tag_name
+             , objt.objt_attributes."apex"."messageName"."expression" message_name
+             , objt.objt_attributes."apex"."payloadVariable" payload_var
+          from flow_objects objt
+         where objt_dgrm_id      = pi_dgrm_id
+           and objt_tag_name     = flow_constants_pkg.gc_bpmn_start_event
+           and objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition
+      )
+    loop
+
+      l_subscription.message_name := message_start_events.message_name;
+      l_subscription.dgrm_id      := pi_dgrm_id;
+      l_subscription.callback     := flow_constants_pkg.gc_bpmn_start_event;
+      l_subscription.callback_par := message_start_events.objt_bpmn_id;
+      l_subscription.payload_var  := message_start_events.payload_var;
+
+      l_msub_id := flow_message_flow.subscribe (p_subscription_details => l_subscription);
+
+      apex_debug.message ( p_message => 'Message Start Event - Diagram %0 Start Event %1 Subscribed msub_id = %2.)'
+      , p0 => pi_dgrm_id
+      , p1 => message_start_events.objt_bpmn_id
+      , p2 => l_msub_id
+      );
+    end loop;
+  end subscribe_diagram_message_starts;
+
 
   procedure release_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type)
@@ -490,7 +540,7 @@ as
     l_dgrm_id_deprecated  flow_diagrams.dgrm_id%type;
     l_dgrm_content        clob;
   begin
-    update flow_diagrams
+/*    update flow_diagrams
        set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated
      where dgrm_name = (
            select dgrm_name 
@@ -510,6 +560,25 @@ as
       , p_dgrm_status     => flow_constants_pkg.gc_dgrm_status_deprecated
       , p_comment         => 'Diagram deprecated when dgrm_id '||pi_dgrm_id||' released.'
       );
+    end if; */
+
+    -- deprecate existing released version of model if one exists
+    begin
+      select dgrm_id
+        into l_dgrm_id_deprecated
+        from flow_diagrams
+       where dgrm_status = flow_constants_pkg.gc_dgrm_status_released
+         and dgrm_name = (
+             select dgrm_name 
+               from flow_diagrams
+              where dgrm_id = pi_dgrm_id);
+    exception
+      when no_data_found then
+        l_dgrm_id_deprecated := null;
+    end;
+
+    if l_dgrm_id_deprecated is not null then
+      deprecate_diagram (pi_dgrm_id => l_dgrm_id_deprecated );
     end if;
 
     -- logging needs to include copy of the new production diagram for secure modes
@@ -522,6 +591,12 @@ as
        set dgrm_status = flow_constants_pkg.gc_dgrm_status_released
      where dgrm_id = pi_dgrm_id;
 
+    subscribe_diagram_message_starts (pi_dgrm_id => pi_dgrm_id );
+
+    apex_debug.message ( p_message => 'Release Diagram - Diagram %0 released.)'
+    , p0 => pi_dgrm_id
+    );
+
     flow_logging.log_diagram_event 
     ( p_dgrm_id         => pi_dgrm_id
     , p_dgrm_status     => flow_constants_pkg.gc_dgrm_status_released
@@ -531,14 +606,39 @@ as
 
   end release_diagram;
 
+  procedure release_diagram(
+    pi_dgrm_name    in flow_diagrams.dgrm_name%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type default '0')
+  is
+    l_dgrm_id  flow_diagrams.dgrm_id%type;
+  begin
+    l_dgrm_id :=  get_current_diagram
+                  ( pi_dgrm_name              => pi_dgrm_name
+                  , pi_dgrm_calling_method    => flow_constants_pkg.gc_dgrm_version_named_version
+                  , pi_dgrm_version           => pi_dgrm_version
+                  );
+    release_diagram (pi_dgrm_id => l_dgrm_id);
+  end release_diagram;
 
   procedure deprecate_diagram(
     pi_dgrm_id in flow_diagrams.dgrm_id%type)
   as
   begin
+
+    $IF flow_apex_env.ee $THEN
+      flow_message_util_ee.cancel_diagram_subscriptions 
+      ( p_dgrm_id   => pi_dgrm_id
+      , p_callback  => flow_constants_pkg.gc_bpmn_start_event
+      );
+    $END
+
     update flow_diagrams
        set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated
      where dgrm_id = pi_dgrm_id;
+
+    apex_debug.message ( p_message => 'Release Diagram - Diagram %0 deprecated.)'
+    , p0 => pi_dgrm_id
+    );
 
     flow_logging.log_diagram_event 
     ( p_dgrm_id         => pi_dgrm_id

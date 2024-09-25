@@ -117,10 +117,11 @@ create or replace package body flow_tasks as
     ( 'process_task'
     , 'object: ', p_step_info.target_objt_tag 
     );
-    -- set boundaryEvent Timers, if any
-    flow_boundary_events.set_boundary_timers
+    -- set boundaryEvent Events, if any
+    flow_boundary_events.set_boundary_events
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_sbfl_info  => p_sbfl_info
     );  
   end process_task;
 
@@ -144,10 +145,11 @@ create or replace package body flow_tasks as
     , 'p_step_info.target_objt_tag'   , p_step_info.target_objt_tag 
     , 'p_step_info.target_objt_subtag', p_step_info.target_objt_subtag 
     );
-    -- set boundaryEvent Timers, if any
-    flow_boundary_events.set_boundary_timers 
+    -- set boundaryEvent Events, if any
+    flow_boundary_events.set_boundary_events 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_sbfl_info  => p_sbfl_info
     );  
     -- get the userTask subtype  
     select objt.objt_attributes."taskType"
@@ -164,6 +166,11 @@ create or replace package body flow_tasks as
        , p_step_info => p_step_info
        );
       when flow_constants_pkg.gc_apex_usertask_apex_page then
+       flow_usertask_pkg.process_apex_page_task
+       ( p_sbfl_info => p_sbfl_info
+       , p_step_info => p_step_info
+       );
+      when flow_constants_pkg.gc_apex_usertask_apex_simple_form then
        flow_usertask_pkg.process_apex_page_task
        ( p_sbfl_info => p_sbfl_info
        , p_step_info => p_step_info
@@ -424,10 +431,11 @@ create or replace package body flow_tasks as
     -- current implementation of manualTask performs exactly like a standard Task, without attached boundary timers
     -- future implementation could include auto-call of an APEX page telling you what the manual task is and providing information about it?
 
-    -- set boundaryEvent Timers, if any
-    flow_boundary_events.set_boundary_timers 
+    -- set boundaryEvent Events, if any
+    flow_boundary_events.set_boundary_events 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_sbfl_info  => p_sbfl_info
     );  
   end process_manualTask;
 
@@ -596,10 +604,11 @@ create or replace package body flow_tasks as
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
 
-    -- set boundaryEvent Timers, if any
-    flow_boundary_events.set_boundary_timers 
+    -- set boundaryEvent Events, if any
+    flow_boundary_events.set_boundary_events
     ( p_process_id => p_sbfl_info.sbfl_prcs_id
     , p_subflow_id => p_sbfl_info.sbfl_id
+    , p_sbfl_info  => p_sbfl_info
     );  
         
     case get_task_type( p_step_info.target_objt_id )

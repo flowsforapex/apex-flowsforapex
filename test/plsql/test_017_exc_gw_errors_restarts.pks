@@ -12,6 +12,7 @@ create or replace package test_017_exc_gw_errors_restarts as
 
   --%suite(17 Exclusive Gateway Errors and Restarts)
   --%rollback(manual)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;
@@ -56,3 +57,4 @@ create or replace package test_017_exc_gw_errors_restarts as
   procedure tear_down_tests;
 
 end test_017_exc_gw_errors_restarts;
+/
