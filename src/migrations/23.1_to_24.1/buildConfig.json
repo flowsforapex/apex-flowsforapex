@@ -5,10 +5,10 @@
   [
     {
       "base_path": "/"
-    , "search_path": "/"
+    , "search_path": "../../"
     , "build_type": "concat"
     , "build_path": "/"
-    , "script_path": "/"
+    , "script_path": "no-sql-migration"
     , "script_name": "01_migrate_engine_231_241"
     , "script_extension": "sql"
     , "log_extension": "log"
@@ -96,10 +96,10 @@
     },
     {
       "base_path": "/"
-    , "search_path": "/"
+    , "search_path": "../../"
     , "build_type": "concat"
     , "build_path": "/"
-    , "script_path": "/"
+    , "script_path": "no-sql-migration"
     , "script_name": "02_migrate_engine_231_241"
     , "script_extension": "sql"
     , "log_extension": "log"
@@ -128,10 +128,10 @@
     },
     {
       "base_path": "/"
-    , "search_path": "/"
+    , "search_path": "../../"
     , "build_type": "concat"
     , "build_path": "/"
-    , "script_path": "/"
+    , "script_path": "no-sql-migration"
     , "script_name": "03_migrate_engine_231_241"
     , "script_extension": "sql"
     , "log_extension": "log"
@@ -170,10 +170,10 @@
     },
     {
       "base_path": "/"
-    , "search_path": "/"
+    , "search_path": "../../"
     , "build_type": "concat"
     , "build_path": "/"
-    , "script_path": "/"
+    , "script_path": "no-sql-migration"
     , "script_name": "04_migrate_engine_app_and_data_231_241"
     , "script_extension": "sql"
     , "log_extension": "log"
@@ -220,10 +220,10 @@
     },
     {
       "base_path": "/"
-    , "search_path": "/"
+    , "search_path": "../../"
     , "build_type": "concat"
     , "build_path": "/"
-    , "script_path": "/"
+    , "script_path": "no-sql-migration"
     , "script_name": "05_migrate_engine_app_and_data_231_241"
     , "script_extension": "sql"
     , "log_extension": "log"
