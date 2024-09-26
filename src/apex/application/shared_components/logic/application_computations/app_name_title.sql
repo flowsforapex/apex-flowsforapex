@@ -3,16 +3,16 @@ begin
 --   Manifest
 --     APPLICATION COMPUTATION: APP_NAME_TITLE
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_flow_computation(
- p_id=>wwv_flow_api.id(34570910330109834)
+wwv_flow_imp_shared.create_flow_computation(
+ p_id=>wwv_flow_imp.id(34570910330109834)
 ,p_computation_sequence=>10
 ,p_computation_item=>'APP_NAME_TITLE'
 ,p_computation_point=>'AFTER_LOGIN'
@@ -20,6 +20,6 @@ wwv_flow_api.create_flow_computation(
 ,p_computation_processed=>'REPLACE_EXISTING'
 ,p_computation=>'Flows for APEX'
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /

@@ -3,16 +3,16 @@ begin
 --   Manifest
 --     LABEL TEMPLATE: HIDDEN
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_field_template(
- p_id=>wwv_flow_api.id(12495523145758880138)
+wwv_flow_imp_shared.create_field_template(
+ p_id=>wwv_flow_imp.id(12495523145758880138)
 ,p_template_name=>'Hidden'
 ,p_internal_name=>'HIDDEN'
 ,p_template_body1=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -35,6 +35,6 @@ wwv_flow_api.create_field_template(
 ,p_reference_id=>2039339104148359505
 ,p_translate_this_template=>'N'
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /

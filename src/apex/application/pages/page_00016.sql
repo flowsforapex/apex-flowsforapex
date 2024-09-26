@@ -3,33 +3,33 @@ begin
 --   Manifest
 --     PAGE: 00016
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_page(
+wwv_flow_imp_page.create_page(
  p_id=>16
-,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
+,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Process Statistics'
 ,p_alias=>'PROCESS-STATISTICS'
 ,p_step_title=>'Process Statistics'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'C##RALLEN'
-,p_last_upd_yyyymmddhh24miss=>'20230406094425'
+,p_page_component_map=>'04'
+,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
+,p_last_upd_yyyymmddhh24miss=>'20240926144145'
 );
-wwv_flow_api.create_page_plug(
- p_id=>wwv_flow_api.id(2143958569493923)
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(2143958569493923)
 ,p_plug_name=>'Process Performance (Period Summaries)'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_escape_on_http_output=>'Y'
-,p_plug_template=>wwv_flow_api.id(12495582446800880234)
+,p_plug_template=>wwv_flow_imp.id(12495582446800880234)
 ,p_plug_display_sequence=>20
-,p_plug_display_point=>'BODY'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' with summary_dates as',
@@ -120,9 +120,9 @@ wwv_flow_api.create_page_plug(
 ,p_plug_query_num_rows=>15
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
-wwv_flow_api.create_jet_chart(
- p_id=>wwv_flow_api.id(2144034250493924)
-,p_region_id=>wwv_flow_api.id(2143958569493923)
+wwv_flow_imp_page.create_jet_chart(
+ p_id=>wwv_flow_imp.id(2144034250493924)
+,p_region_id=>wwv_flow_imp.id(2143958569493923)
 ,p_chart_type=>'combo'
 ,p_height=>'400'
 ,p_animation_on_display=>'auto'
@@ -133,7 +133,9 @@ wwv_flow_api.create_jet_chart(
 ,p_hide_and_show_behavior=>'withRescale'
 ,p_hover_behavior=>'dim'
 ,p_stack=>'on'
+,p_stack_label=>'off'
 ,p_connect_nulls=>'Y'
+,p_value_position=>'auto'
 ,p_sorting=>'label-asc'
 ,p_fill_multi_series_gaps=>true
 ,p_zoom_and_scroll=>'off'
@@ -141,12 +143,24 @@ wwv_flow_api.create_jet_chart(
 ,p_show_series_name=>true
 ,p_show_group_name=>true
 ,p_show_value=>true
+,p_show_label=>true
+,p_show_row=>true
+,p_show_start=>true
+,p_show_end=>true
+,p_show_progress=>true
+,p_show_baseline=>true
 ,p_legend_rendered=>'on'
 ,p_legend_position=>'auto'
+,p_overview_rendered=>'off'
+,p_horizontal_grid=>'auto'
+,p_vertical_grid=>'auto'
+,p_gauge_orientation=>'circular'
+,p_gauge_plot_area=>'on'
+,p_show_gauge_value=>true
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2144120727493925)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2144120727493925)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_seq=>10
 ,p_name=>'Instances Started'
 ,p_location=>'REGION_SOURCE'
@@ -161,10 +175,12 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2144430910493928)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2144430910493928)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_seq=>20
 ,p_name=>'Instances Completed'
 ,p_location=>'REGION_SOURCE'
@@ -180,10 +196,12 @@ wwv_flow_api.create_jet_chart_series(
 ,p_stack_category=>'completions'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2144581361493929)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2144581361493929)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_seq=>30
 ,p_name=>'Instances Terminated'
 ,p_location=>'REGION_SOURCE'
@@ -199,10 +217,12 @@ wwv_flow_api.create_jet_chart_series(
 ,p_stack_category=>'completions'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2144612523493930)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2144612523493930)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_seq=>40
 ,p_name=>'Instances Errors'
 ,p_location=>'REGION_SOURCE'
@@ -218,10 +238,12 @@ wwv_flow_api.create_jet_chart_series(
 ,p_stack_category=>'completions'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2144795267493931)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2144795267493931)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_seq=>50
 ,p_name=>'Median Duration'
 ,p_location=>'REGION_SOURCE'
@@ -236,10 +258,12 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'on'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2144947294493933)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2144947294493933)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_seq=>60
 ,p_name=>'90pc Duration'
 ,p_location=>'REGION_SOURCE'
@@ -254,10 +278,12 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'on'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 );
-wwv_flow_api.create_jet_chart_axis(
- p_id=>wwv_flow_api.id(2144270836493926)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_axis(
+ p_id=>wwv_flow_imp.id(2144270836493926)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_axis=>'x'
 ,p_is_rendered=>'on'
 ,p_format_scaling=>'auto'
@@ -268,10 +294,18 @@ wwv_flow_api.create_jet_chart_axis(
 ,p_tick_label_rendered=>'on'
 ,p_tick_label_rotation=>'auto'
 ,p_tick_label_position=>'outside'
+,p_zoom_order_seconds=>false
+,p_zoom_order_minutes=>false
+,p_zoom_order_hours=>false
+,p_zoom_order_days=>false
+,p_zoom_order_weeks=>false
+,p_zoom_order_months=>false
+,p_zoom_order_quarters=>false
+,p_zoom_order_years=>false
 );
-wwv_flow_api.create_jet_chart_axis(
- p_id=>wwv_flow_api.id(2144335477493927)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_axis(
+ p_id=>wwv_flow_imp.id(2144335477493927)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_axis=>'y'
 ,p_is_rendered=>'on'
 ,p_title=>'Instances'
@@ -284,10 +318,18 @@ wwv_flow_api.create_jet_chart_axis(
 ,p_major_tick_rendered=>'on'
 ,p_minor_tick_rendered=>'off'
 ,p_tick_label_rendered=>'on'
+,p_zoom_order_seconds=>false
+,p_zoom_order_minutes=>false
+,p_zoom_order_hours=>false
+,p_zoom_order_days=>false
+,p_zoom_order_weeks=>false
+,p_zoom_order_months=>false
+,p_zoom_order_quarters=>false
+,p_zoom_order_years=>false
 );
-wwv_flow_api.create_jet_chart_axis(
- p_id=>wwv_flow_api.id(2144842592493932)
-,p_chart_id=>wwv_flow_api.id(2144034250493924)
+wwv_flow_imp_page.create_jet_chart_axis(
+ p_id=>wwv_flow_imp.id(2144842592493932)
+,p_chart_id=>wwv_flow_imp.id(2144034250493924)
 ,p_axis=>'y2'
 ,p_is_rendered=>'on'
 ,p_title=>'sec'
@@ -299,26 +341,33 @@ wwv_flow_api.create_jet_chart_axis(
 ,p_minor_tick_rendered=>'off'
 ,p_tick_label_rendered=>'on'
 ,p_split_dual_y=>'auto'
+,p_zoom_order_seconds=>false
+,p_zoom_order_minutes=>false
+,p_zoom_order_hours=>false
+,p_zoom_order_days=>false
+,p_zoom_order_weeks=>false
+,p_zoom_order_months=>false
+,p_zoom_order_quarters=>false
+,p_zoom_order_years=>false
 );
-wwv_flow_api.create_page_plug(
- p_id=>wwv_flow_api.id(2549667804373355)
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(2549667804373355)
 ,p_plug_name=>'Breadcrumb'
 ,p_region_template_options=>'#DEFAULT#:t-BreadcrumbRegion--useBreadcrumbTitle'
 ,p_component_template_options=>'#DEFAULT#'
-,p_plug_template=>wwv_flow_api.id(12495573047450880221)
+,p_plug_template=>wwv_flow_imp.id(12495573047450880221)
 ,p_plug_display_sequence=>10
 ,p_plug_display_point=>'REGION_POSITION_01'
-,p_menu_id=>wwv_flow_api.id(12495636486941880396)
+,p_menu_id=>wwv_flow_imp.id(12495636486941880396)
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
-,p_menu_template_id=>wwv_flow_api.id(12495520300515880126)
+,p_menu_template_id=>wwv_flow_imp.id(12495520300515880126)
 );
-wwv_flow_api.create_page_plug(
- p_id=>wwv_flow_api.id(2550204271373356)
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(2550204271373356)
 ,p_plug_name=>'Task Step Performance (current month) - &P16_DGRM_NAME_VERSION. (dgrm_id : &P16_DGRM_ID. )'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
-,p_plug_template=>wwv_flow_api.id(12495582446800880234)
+,p_plug_template=>wwv_flow_imp.id(12495582446800880234)
 ,p_plug_display_sequence=>10
-,p_plug_display_point=>'BODY'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select stsf_objt_bpmn_id||'' (''||stsf_tag_name || '')'' label',
@@ -342,9 +391,9 @@ wwv_flow_api.create_page_plug(
 ,p_ajax_items_to_submit=>'P16_DGRM_ID,P16_PERIOD'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
-wwv_flow_api.create_jet_chart(
- p_id=>wwv_flow_api.id(2550693860373356)
-,p_region_id=>wwv_flow_api.id(2550204271373356)
+wwv_flow_imp_page.create_jet_chart(
+ p_id=>wwv_flow_imp.id(2550693860373356)
+,p_region_id=>wwv_flow_imp.id(2550204271373356)
 ,p_chart_type=>'bar'
 ,p_height=>'400'
 ,p_animation_on_display=>'auto'
@@ -373,13 +422,14 @@ wwv_flow_api.create_jet_chart(
 ,p_overview_rendered=>'off'
 ,p_horizontal_grid=>'auto'
 ,p_vertical_grid=>'auto'
+,p_gauge_orientation=>'circular'
 ,p_gauge_indicator_size=>1
 ,p_gauge_plot_area=>'on'
 ,p_show_gauge_value=>true
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2552379943373356)
-,p_chart_id=>wwv_flow_api.id(2550693860373356)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2552379943373356)
+,p_chart_id=>wwv_flow_imp.id(2550693860373356)
 ,p_seq=>10
 ,p_name=>'10 Percentile'
 ,p_location=>'REGION_SOURCE'
@@ -389,12 +439,14 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 ,p_link_target=>'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
 ,p_link_target_type=>'REDIRECT_PAGE'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2143658369493920)
-,p_chart_id=>wwv_flow_api.id(2550693860373356)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2143658369493920)
+,p_chart_id=>wwv_flow_imp.id(2550693860373356)
 ,p_seq=>20
 ,p_name=>'50 Percentile'
 ,p_location=>'REGION_SOURCE'
@@ -404,12 +456,14 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 ,p_link_target=>'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
 ,p_link_target_type=>'REDIRECT_PAGE'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2143732834493921)
-,p_chart_id=>wwv_flow_api.id(2550693860373356)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2143732834493921)
+,p_chart_id=>wwv_flow_imp.id(2550693860373356)
 ,p_seq=>30
 ,p_name=>'90 Percentile'
 ,p_location=>'REGION_SOURCE'
@@ -419,12 +473,14 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 ,p_link_target=>'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
 ,p_link_target_type=>'REDIRECT_PAGE'
 );
-wwv_flow_api.create_jet_chart_series(
- p_id=>wwv_flow_api.id(2143869603493922)
-,p_chart_id=>wwv_flow_api.id(2550693860373356)
+wwv_flow_imp_page.create_jet_chart_series(
+ p_id=>wwv_flow_imp.id(2143869603493922)
+,p_chart_id=>wwv_flow_imp.id(2550693860373356)
 ,p_seq=>40
 ,p_name=>'Max'
 ,p_location=>'REGION_SOURCE'
@@ -434,12 +490,14 @@ wwv_flow_api.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
+,p_items_label_display_as=>'PERCENT'
+,p_threshold_display=>'onIndicator'
 ,p_link_target=>'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
 ,p_link_target_type=>'REDIRECT_PAGE'
 );
-wwv_flow_api.create_jet_chart_axis(
- p_id=>wwv_flow_api.id(2551102899373356)
-,p_chart_id=>wwv_flow_api.id(2550693860373356)
+wwv_flow_imp_page.create_jet_chart_axis(
+ p_id=>wwv_flow_imp.id(2551102899373356)
+,p_chart_id=>wwv_flow_imp.id(2550693860373356)
 ,p_axis=>'x'
 ,p_is_rendered=>'on'
 ,p_baseline_scaling=>'zero'
@@ -455,9 +513,9 @@ wwv_flow_api.create_jet_chart_axis(
 ,p_zoom_order_quarters=>true
 ,p_zoom_order_years=>false
 );
-wwv_flow_api.create_jet_chart_axis(
- p_id=>wwv_flow_api.id(2551732940373356)
-,p_chart_id=>wwv_flow_api.id(2550693860373356)
+wwv_flow_imp_page.create_jet_chart_axis(
+ p_id=>wwv_flow_imp.id(2551732940373356)
+,p_chart_id=>wwv_flow_imp.id(2550693860373356)
 ,p_axis=>'y'
 ,p_is_rendered=>'on'
 ,p_format_type=>'decimal'
@@ -477,24 +535,22 @@ wwv_flow_api.create_jet_chart_axis(
 ,p_zoom_order_quarters=>false
 ,p_zoom_order_years=>false
 );
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(2143450803493918)
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(2143450803493918)
 ,p_name=>'P16_DGRM_ID'
 ,p_item_sequence=>10
-,p_item_plug_id=>wwv_flow_api.id(2550204271373356)
+,p_item_plug_id=>wwv_flow_imp.id(2550204271373356)
 ,p_display_as=>'NATIVE_HIDDEN'
-,p_encrypt_session_state_yn=>'Y'
 ,p_attribute_01=>'Y'
 );
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(2143539142493919)
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(2143539142493919)
 ,p_name=>'P16_DGRM_NAME_VERSION'
 ,p_item_sequence=>20
-,p_item_plug_id=>wwv_flow_api.id(2550204271373356)
+,p_item_plug_id=>wwv_flow_imp.id(2550204271373356)
 ,p_display_as=>'NATIVE_HIDDEN'
-,p_encrypt_session_state_yn=>'Y'
 ,p_attribute_01=>'Y'
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /
