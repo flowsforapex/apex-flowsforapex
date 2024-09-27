@@ -3,16 +3,16 @@ begin
 --   Manifest
 --     TEMPLATE: LOGIN
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_template(
- p_id=>wwv_flow_api.id(12495629732925880320)
+wwv_flow_imp_shared.create_template(
+ p_id=>wwv_flow_imp.id(12495629732925880320)
 ,p_theme_id=>42
 ,p_name=>'Login'
 ,p_internal_name=>'LOGIN'
@@ -35,8 +35,12 @@ wwv_flow_api.create_template(
 '  #HEAD#',
 '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
 '</head>',
-'<body class="t-PageBody--login no-anim #PAGE_CSS_CLASSES#" #TEXT_DIRECTION# #ONLOAD#>',
-'#FORM_OPEN#'))
+'<body class="t-PageBody--login t-PageTemplate--login no-anim #PAGE_CSS_CLASSES#" #TEXT_DIRECTION# #ONLOAD#>',
+'#FORM_OPEN#',
+'<div class="t-Login-bg">',
+'  #BACKGROUND_IMAGE#',
+'  <div class="t-Login-bgImg"></div>',
+'</div>'))
 ,p_box=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div class="t-Login-container">',
 '  <header class="t-Login-containerHeader">#REGION_POSITION_01#</header>',
@@ -124,43 +128,61 @@ wwv_flow_api.create_template(
 '#ROWS#',
 '</div>'))
 ,p_grid_row_template=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<div class="row">',
+'<div class="row #CSS_CLASSES#">',
 '#COLUMNS#',
 '</div>'))
-,p_grid_column_template=>'<div class="col col-#COLUMN_SPAN_NUMBER# #CSS_CLASSES#" #ATTRIBUTES#>#CONTENT#</div>'
-,p_grid_first_column_attributes=>'alpha'
-,p_grid_last_column_attributes=>'omega'
-,p_dialog_js_init_code=>'apex.navigation.dialog(#PAGE_URL#,{title:#TITLE#,height:#DIALOG_HEIGHT#,width:#DIALOG_WIDTH#,maxWidth:#DIALOG_MAX_WIDTH#,modal:#IS_MODAL#,dialog:#DIALOG#,#DIALOG_ATTRIBUTES#},#DIALOG_CSS_CLASSES#,#TRIGGERING_ELEMENT#);'
-,p_dialog_js_close_code=>'apex.navigation.dialog.close(#IS_MODAL#,#TARGET#);'
-,p_dialog_js_cancel_code=>'apex.navigation.dialog.cancel(#IS_MODAL#);'
+,p_grid_column_template=>'<div class="col col-#COLUMN_SPAN_NUMBER# #CSS_CLASSES# #FIRST_LAST_COLUMN_ATTRIBUTES#" #ATTRIBUTES#>#CONTENT#</div>'
+,p_grid_first_column_attributes=>'col-start'
+,p_grid_last_column_attributes=>'col-end'
 ,p_dialog_browser_frame=>'MODAL'
 ,p_reference_id=>2099711150063350616
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1647514431043208)
-,p_page_template_id=>wwv_flow_api.id(12495629732925880320)
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9924271629536041)
+,p_page_template_id=>wwv_flow_imp.id(12495629732925880320)
+,p_name=>'Background Image'
+,p_placeholder=>'BACKGROUND_IMAGE'
+,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
+,p_glv_new_row=>false
+,p_max_fixed_grid_columns=>12
+);
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9924708943536041)
+,p_page_template_id=>wwv_flow_imp.id(12495629732925880320)
 ,p_name=>'Content Body'
 ,p_placeholder=>'BODY'
 ,p_has_grid_support=>true
+,p_has_region_support=>true
+,p_has_item_support=>true
+,p_has_button_support=>true
 ,p_glv_new_row=>true
 ,p_max_fixed_grid_columns=>12
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1648071646043208)
-,p_page_template_id=>wwv_flow_api.id(12495629732925880320)
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9925217172536041)
+,p_page_template_id=>wwv_flow_imp.id(12495629732925880320)
 ,p_name=>'Body Header'
 ,p_placeholder=>'REGION_POSITION_01'
 ,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
 ,p_glv_new_row=>true
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1648528577043208)
-,p_page_template_id=>wwv_flow_api.id(12495629732925880320)
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9925766033536041)
+,p_page_template_id=>wwv_flow_imp.id(12495629732925880320)
 ,p_name=>'Body Footer'
 ,p_placeholder=>'REGION_POSITION_02'
 ,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
 ,p_glv_new_row=>true
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /

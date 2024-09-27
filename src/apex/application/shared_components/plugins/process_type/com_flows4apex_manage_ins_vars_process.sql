@@ -3,16 +3,16 @@ begin
 --   Manifest
 --     PLUGIN: COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_plugin(
- p_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin(
+ p_id=>wwv_flow_imp.id(84719765847460987)
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_name=>'COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance Variables'
@@ -24,12 +24,12 @@ wwv_flow_api.create_plugin(
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage <i>Flows for APEX</i> Flow Instance Variable(s). The plug-in allows you to get or set variable(s).'
-,p_version_identifier=>'23.1'
+,p_version_identifier=>'24.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84720010618460990)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84720010618460990)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -53,25 +53,25 @@ wwv_flow_api.create_plugin_attribute(
 '',
 '<p>Specify which method you will use to supply the Flow Instance context (process_id and subflow_id)?</p>'))
 );
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84720344241460990)
-,p_plugin_attribute_id=>wwv_flow_api.id(84720010618460990)
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(84720344241460990)
+,p_plugin_attribute_id=>wwv_flow_imp.id(84720010618460990)
 ,p_display_sequence=>10
 ,p_display_value=>'In Page Items'
 ,p_return_value=>'item'
 ,p_help_text=>'Use this when the Flow Instance context (process_id and subflow_id) are stored in APEX Page Items.'
 );
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84720839343460990)
-,p_plugin_attribute_id=>wwv_flow_api.id(84720010618460990)
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(84720839343460990)
+,p_plugin_attribute_id=>wwv_flow_imp.id(84720010618460990)
 ,p_display_sequence=>20
 ,p_display_value=>'from SQL Query'
 ,p_return_value=>'sql'
 ,p_help_text=>'Use this when the Flow Instance context (process_id and subflow_id) are to be returned by a SQL Query.'
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84721419455460990)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84721419455460990)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
@@ -79,7 +79,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84720010618460990)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(84720010618460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
@@ -93,9 +93,9 @@ wwv_flow_api.create_plugin_attribute(
 '<li>A Page Item on your page.</li>',
 '</ul>'))
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84721742466460990)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84721742466460990)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
@@ -105,7 +105,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_sql_min_column_count=>1
 ,p_sql_max_column_count=>2
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84720010618460990)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(84720010618460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
@@ -116,9 +116,9 @@ wwv_flow_api.create_plugin_attribute(
 '<li>Second column may contain the Subflow Id (sbfl_id)</li>',
 '</ul>'))
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84820717881541566)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84820717881541566)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>5
@@ -130,25 +130,25 @@ wwv_flow_api.create_plugin_attribute(
 ,p_lov_type=>'STATIC'
 ,p_help_text=>'This attributes allows you to define if you want to set or to get the process variables.'
 );
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84820967609542287)
-,p_plugin_attribute_id=>wwv_flow_api.id(84820717881541566)
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(84820967609542287)
+,p_plugin_attribute_id=>wwv_flow_imp.id(84820717881541566)
 ,p_display_sequence=>10
 ,p_display_value=>'Set'
 ,p_return_value=>'set'
 ,p_help_text=>'Use this when you want to set a process variable(s)'
 );
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84821401852542882)
-,p_plugin_attribute_id=>wwv_flow_api.id(84820717881541566)
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(84821401852542882)
+,p_plugin_attribute_id=>wwv_flow_imp.id(84820717881541566)
 ,p_display_sequence=>20
 ,p_display_value=>'Get'
 ,p_return_value=>'get'
 ,p_help_text=>'Use this when you want to get a process variable(s)'
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84722146745460990)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84722146745460990)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>5
 ,p_display_sequence=>50
@@ -161,33 +161,33 @@ wwv_flow_api.create_plugin_attribute(
 ,p_lov_type=>'STATIC'
 ,p_help_text=>'This attribute allows you to define the way to manage the variables.'
 );
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84722577900460991)
-,p_plugin_attribute_id=>wwv_flow_api.id(84722146745460990)
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(84722577900460991)
+,p_plugin_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_display_sequence=>10
 ,p_display_value=>'APEX item(s)'
 ,p_return_value=>'item'
 ,p_help_text=>'Use this when you want to manage a process variable(s) using APEX item(s)'
 );
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84723065598460991)
-,p_plugin_attribute_id=>wwv_flow_api.id(84722146745460990)
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(84723065598460991)
+,p_plugin_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_display_sequence=>20
 ,p_display_value=>'JSON'
 ,p_return_value=>'json'
 ,p_help_text=>'Use this when you want to manage a process variable(s) using JSON.'
 );
-wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(84723558763460991)
-,p_plugin_attribute_id=>wwv_flow_api.id(84722146745460990)
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(84723558763460991)
+,p_plugin_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_display_sequence=>30
 ,p_display_value=>'SQL Query'
 ,p_return_value=>'sql'
 ,p_help_text=>'Use this when you want to manage a process variable(s) using a SQL Query.'
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84724051277460991)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84724051277460991)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>6
 ,p_display_sequence=>60
@@ -196,7 +196,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>true
 ,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84722146745460990)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
@@ -205,9 +205,9 @@ wwv_flow_api.create_plugin_attribute(
 '',
 '<p>Note that process variable name is case sensitive and the order will have an impact on which APEX item will manage that value.</p>'))
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84724525114460991)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84724525114460991)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>7
 ,p_display_sequence=>70
@@ -216,7 +216,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>true
 ,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84722146745460990)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
@@ -230,9 +230,9 @@ wwv_flow_api.create_plugin_attribute(
 '<li>A Page Item on your page.</li>',
 '</ul>'))
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84724858440460993)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84724858440460993)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>8
 ,p_display_sequence=>80
@@ -241,7 +241,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_required=>true
 ,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84722146745460990)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'json'
@@ -273,45 +273,19 @@ wwv_flow_api.create_plugin_attribute(
 '		"name": "Example_clob_var",',
 '		"type": "clob",',
 '		"value": "long text"',
-'	}',
-']',
-'</pre>',
-'',
-'<p>JSON when action is get</p>',
-'<pre>',
-'[',
-'	{',
-'		"name": "Example_vc2_var",',
-'		"type": "varchar2",',
-'		"item": "ITEM_NAME"',
 '	},',
 '	{',
-'		"name": "Example_num_var",',
-'		"type": "number",',
-'		"item": "ITEM_NAME"',
-'	},',
-'	{',
-'		"name": "Example_date_var",',
-'		"type": "date",',
-'		"item": "ITEM_NAME"',
-'	},',
-'	{',
-'		"name": "Example_timestamp_var",',
-'		"type": "timestamp",',
-'		"item": "ITEM_NAME"',
-'	},',
-'	{',
-'		"name": "Example_clob_var",',
-'		"type": "clob",',
-'		"item": "ITEM_NAME"',
+'		"name": "Example_json_var",',
+'		"type": "json",',
+'		"value": "{\"myAttribue\":\"myAttributeValue\"}"',
 '	}',
 ']',
 '</pre>'))
 ,p_help_text=>'Enter a JSON array that contains one or more process variables, their types, and values (when action is set) or item (when action is get).'
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(84725241650460993)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(84725241650460993)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>9
 ,p_display_sequence=>90
@@ -322,13 +296,11 @@ wwv_flow_api.create_plugin_attribute(
 ,p_sql_max_column_count=>1
 ,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84722146745460990)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
 ,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<p>SQL Query when action is Set</p>',
-'<pre>',
 'select json_array(',
 '    json_object(',
 '          key ''name'' value ''example_vc2_var''',
@@ -351,49 +323,22 @@ wwv_flow_api.create_plugin_attribute(
 '        , key ''value'' value ''2021-04-07T22:07:29.961Z''',
 '        ),',
 '    json_object(',
-'          key ''name'' value ''examnple_clob_var''',
+'          key ''name'' value ''example_clob_var''',
 '        , key ''type'' value ''clob''',
 '        , key ''value'' value to_clob(''this is a clob'')',
-'        )',
-'returning clob) as json',
-'from dual;',
-'</pre>',
-'<p>SQL Query when action is Get</p>',
-'<pre>',
-'select json_array(',
-'    json_object(',
-'          key ''name'' value ''example_vc2_var''',
-'        , key ''type'' value ''varchar2''',
-'        , key ''item'' value ''ITEM_NAME''',
 '        ),',
 '    json_object(',
-'          key ''name'' value ''example_num_var''',
-'        , key ''type'' value ''number''',
-'       , key ''item'' value ''ITEM_NAME''',
-'        ),',
-'    json_object(',
-'          key ''name'' value ''example_date_var''',
-'        , key ''type'' value ''date''',
-'        , key ''item'' value ''ITEM_NAME''',
-'        ),',
-'    json_object(',
-'          key ''name'' value ''example_timestamp_var''',
-'        , key ''type'' value ''timestamp''',
-'        , key ''item'' value ''ITEM_NAME''',
-'        ),',
-'    json_object(',
-'          key ''name'' value ''examnple_clob_var''',
-'        , key ''type'' value ''clob''',
-'        , key ''item'' value ''ITEM_NAME''',
-'        )',
-'returning clob) as json',
-'from dual;',
-'</pre>'))
+'          key ''name'' value ''example_json_var''',
+'        , key ''type'' value ''json''',
+'        , key ''value'' value ''{"myAttribue":"myAttributeValue"}''',
+'    )',
+'returning clob)',
+'from dual;'))
 ,p_help_text=>'SQL query that returns the array containing the instance variables.'
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(100919570706200019)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(100919570706200019)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>10
 ,p_display_sequence=>100
@@ -403,9 +348,9 @@ wwv_flow_api.create_plugin_attribute(
 ,p_is_translatable=>false
 ,p_help_text=>'This attribute is deprecated starting from Flows for APEX 22.2 and will probably be removed in a future release.'
 );
-wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(62243875274673859)
-,p_plugin_id=>wwv_flow_api.id(84719765847460987)
+wwv_flow_imp_shared.create_plugin_attribute(
+ p_id=>wwv_flow_imp.id(62243875274673859)
+,p_plugin_id=>wwv_flow_imp.id(84719765847460987)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>11
 ,p_display_sequence=>25
@@ -413,7 +358,7 @@ wwv_flow_api.create_plugin_attribute(
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>false
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_api.id(84720010618460990)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(84720010618460990)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'item'
@@ -427,6 +372,6 @@ wwv_flow_api.create_plugin_attribute(
 '<li>A Page Item on your page.</li>',
 '</ul>'))
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /

@@ -3,16 +3,16 @@ begin
 --   Manifest
 --     APPLICATION PROCESS: SWITCH_THEME_MODE
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_flow_process(
- p_id=>wwv_flow_api.id(5593447532877397)
+wwv_flow_imp_shared.create_flow_process(
+ p_id=>wwv_flow_imp.id(5593447532877397)
 ,p_process_sequence=>1
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_PLSQL'
@@ -22,6 +22,6 @@ wwv_flow_api.create_flow_process(
 ,p_process_when=>'LIGHT_MODE DARK_MODE'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /
