@@ -3,10 +3,10 @@ create or replace package flow_types_pkg
 -- Flows for APEX - flow_types_pkg.pks
 -- 
 -- (c) Copyright MT AG, 2020-2022.
--- (c) Copyright Flowquest Consulting Limited. 2024.
+-- (c) Copyright Flowquest Limited. 2024.
 --
 -- Created  11-Sep-2020  Moritz Klein (MT AG)
--- Modified 09-Jan-2024  Richard Allen, Flowquest Consulting
+-- Modified 09-Jan-2024  Richard Allen, Flowquest Limited
 --
 */
   authid definer
@@ -51,9 +51,21 @@ as
   , scope             flow_subflows.sbfl_scope%type
   );
 
+  -- Type              -- t_iteration_vars
+  -- Purpose           -- used to hold the input, output, or description expression sub-components of an iteration definition
+  -- type              -- gc_expr_type_sql_json_array
+                       -- gc_expr_type_list
+                       -- gc_expr_type_array 
+  -- collection_var    -- if the expression is a process varuable, this contains the variable name
+  -- collection_expr   -- if the expression is a SQL Query, PLSql function, etc., this contains the expression text
+                       -- note that the expresion can be longer than a variable name, so you need to use this for the actual
+                       -- expression
+  -- inside_var        -- variable name to be used inside the iteration (so inport to these / export from these)
+  -- description       -- the description string, typically contains substitution parameters
   type t_iteration_vars is record
   ( type            flow_types_pkg.t_vc20
   , collection_var  flow_process_variables.prov_var_name%type
+  , collection_expr t_bpmn_attribute_vc2
   , inside_var      flow_process_variables.prov_var_name%type
   , description     varchar2(4000)
   );
