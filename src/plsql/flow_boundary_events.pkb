@@ -79,7 +79,8 @@ is
                                                                                       , p_dgrm_id  => boundary_events.sbfl_dgrm_id
                                                                                       , p_sbfl_info  => p_sbfl_info
                                                                                       );
-              l_subscription_detail.callback  := flow_constants_pkg.gc_bpmn_boundary_event;
+              l_subscription_detail.callback     := flow_constants_pkg.gc_bpmn_boundary_event;
+              l_subscription_detail.callback_par := boundary_events.objt_bpmn_id;
               l_msg_sub := flow_message_flow.subscribe ( p_subscription_details  => l_subscription_detail);
   
               l_parent_tag := ':SIM';  -- (Self, Interrupting, Message)
@@ -143,7 +144,8 @@ is
                                                                                       , p_dgrm_id             => boundary_events.sbfl_dgrm_id
                                                                                       , p_sbfl_info           => l_new_non_int_event_sbfl_info
                                                                                       );  
-              l_subscription_detail.callback  := flow_constants_pkg.gc_bpmn_boundary_event;
+              l_subscription_detail.callback      := flow_constants_pkg.gc_bpmn_boundary_event;
+              l_subscription_detail.callback_par  := boundary_events.objt_bpmn_id;
               l_msg_sub := flow_message_flow.subscribe(p_subscription_details  => l_subscription_detail);
             end case;
 
@@ -278,11 +280,12 @@ is
   end lock_child_boundary_timers; 
 
   procedure handle_interrupting_boundary_event
-    ( p_process_id in flow_processes.prcs_id%type
-    , p_subflow_id in flow_subflows.sbfl_id%type
-    , p_event_type in flow_objects.objt_sub_tag_name%type
+    ( p_process_id      in flow_processes.prcs_id%type
+    , p_subflow_id      in flow_subflows.sbfl_id%type
+    , p_event_type      in flow_objects.objt_sub_tag_name%type
+    , p_boundary_object in flow_objects.objt_bpmn_id%type default null
     ) 
-      -- used for Interrupting Timer   Boundary events, called by flow_engine.flow_handle_events
+      -- used for Interrupting Timer   Boundary events, called by flow_engine.timer_callback
       -- used for Interrupting Message Boundary events, called by flow_message_flow.receive_message
   is
     l_boundary_objt_bpmn_id  flow_objects.objt_bpmn_id%type;
@@ -297,27 +300,57 @@ is
     ( 'handle_interrupting_boundary_event'
     , 'subflow', p_subflow_id
     , 'event type', p_event_type
+    , 'boundary object',p_boundary_object
     );
-    select boundary_objt.objt_bpmn_id
-         , main_objt.objt_tag_name
-         , main_objt.objt_bpmn_id
-         , sbfl.sbfl_scope
-      into l_boundary_objt_bpmn_id
-         , l_parent_objt_tag
-         , l_parent_objt_bpmn_id
-         , l_scope
-      from flow_subflows sbfl
-      join flow_objects main_objt
-        on main_objt.objt_bpmn_id = sbfl.sbfl_current
-       and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
-      join flow_objects boundary_objt
-        on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
-       and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
-     where sbfl.sbfl_id = p_subflow_id
-       and sbfl.sbfl_prcs_id = p_process_id
-       and boundary_objt.objt_sub_tag_name = p_event_type
-       and boundary_objt.objt_interrupting = 1
-        ;
+    -- we are migrating boundary event callback structure over next few releases but will handle old and new way
+    -- result will be to allow multiple boundary events of the same type on an object
+    if p_boundary_object is null or p_boundary_object in ('interrupting', 'non-interrupting') then 
+      -- old style - should be only one event of type on parent
+      select boundary_objt.objt_bpmn_id
+           , main_objt.objt_tag_name
+           , main_objt.objt_bpmn_id
+           , sbfl.sbfl_scope
+        into l_boundary_objt_bpmn_id
+           , l_parent_objt_tag
+           , l_parent_objt_bpmn_id
+           , l_scope
+        from flow_subflows sbfl
+        join flow_objects main_objt
+          on main_objt.objt_bpmn_id = sbfl.sbfl_current
+         and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+        join flow_objects boundary_objt
+          on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
+         and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+         and boundary_objt.objt_sub_tag_name = p_event_type
+         and boundary_objt.objt_interrupting = 1
+          ;
+    else
+      -- newstyle - event callback contained a bpmn id of the object to callback
+      select boundary_objt.objt_bpmn_id
+           , main_objt.objt_tag_name
+           , main_objt.objt_bpmn_id
+           , sbfl.sbfl_scope
+        into l_boundary_objt_bpmn_id
+           , l_parent_objt_tag
+           , l_parent_objt_bpmn_id
+           , l_scope
+        from flow_subflows sbfl
+        join flow_objects main_objt
+          on main_objt.objt_bpmn_id = sbfl.sbfl_current
+         and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+        join flow_objects boundary_objt
+          on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
+         and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+         and boundary_objt.objt_bpmn_id = p_boundary_object
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+         and boundary_objt.objt_sub_tag_name = p_event_type
+         and boundary_objt.objt_interrupting = 1
+          ;
+    end if;
+
     if l_parent_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
                             , flow_constants_pkg.gc_bpmn_call_activity )
     then
