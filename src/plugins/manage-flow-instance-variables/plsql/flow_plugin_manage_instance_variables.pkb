@@ -257,7 +257,13 @@ create or replace package body flow_plugin_manage_instance_variables as
                join flow_process_variables prcs_var 
                on prcs_var.prov_var_name = set_var.name 
                and prcs_var.prov_prcs_id = l_prcs_id
-               where prcs_var.prov_var_type != upper( set_var.type )
+               where 
+                  case 
+                     when prcs_var.prov_var_type = 'TIMESTAMP WITH TIME ZONE' then 
+                        'TIMESTAMP'
+                  else
+                     prcs_var.prov_var_type
+                  end != upper( set_var.type )
 			   and prcs_var.prov_scope = l_prov_scope;
             
             -- Raise exception if incoherent value found
@@ -550,7 +556,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                , case
                      when aapi.display_as_code = 'NATIVE_NUMBER_FIELD'    then
                         'NUMBER'
-                     when aapi.display_as_code = 'NATIVE_DATE_PICKER'     then
+                     when aapi.display_as_code in ('NATIVE_DATE_PICKER', 'NATIVE_DATE_PICKER_JET')     then
                         'DATE'
                      else
                         'VARCHAR2'
