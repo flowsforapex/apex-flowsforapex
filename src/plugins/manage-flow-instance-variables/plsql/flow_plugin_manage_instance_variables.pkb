@@ -554,9 +554,9 @@ create or replace package body flow_plugin_manage_instance_variables as
          for rec in (
             select column_value as item_name
                , case
-                     when aapi.display_as_code = 'NATIVE_NUMBER_FIELD'    then
+                     when aapi.display_as_code = 'NATIVE_NUMBER_FIELD' then
                         'NUMBER'
-                     when aapi.display_as_code in ('NATIVE_DATE_PICKER', 'NATIVE_DATE_PICKER_JET')     then
+                     when aapi.display_as_code in ('NATIVE_DATE_PICKER', 'NATIVE_DATE_PICKER_JET', 'NATIVE_DATE_PICKER_APEX') then
                         'DATE'
                      else
                         'VARCHAR2'
@@ -572,14 +572,15 @@ create or replace package body flow_plugin_manage_instance_variables as
          )
          loop
             l_items(rec.item_name).item_type   := rec.item_type;
-            l_items(rec.item_name).format_mask := case rec.item_type 
+            l_items(rec.item_name).format_mask := rec.format_mask;
+                                                  /*case rec.item_type 
                                                      when 'DATE' 
                                                         then coalesce( rec.format_mask, v('APP_NLS_DATE_FORMAT') )
                                                      when 'TIMESTAMP WITH TIME ZONE' 
                                                         then coalesce( rec.format_mask, v('APP_NLS_TIMESTAMP_TZ_FORMAT') ) 
                                                      else
                                                          rec.format_mask
-                                                  end;
+                                                  end;*/
                
          end loop;
 
@@ -593,10 +594,26 @@ create or replace package body flow_plugin_manage_instance_variables as
             -- Look for variable type
             begin
                l_prov_var_type := l_prcs_var( l_prov_var_name );
+               l_items ( l_item_name ).format_mask  :=
+                  case l_prov_var_type
+                     when 'date' 
+                        then coalesce( l_items ( l_item_name ).format_mask, v('APP_NLS_DATE_FORMAT') )
+                     when 'timestamp'
+                        then coalesce( l_items ( l_item_name ).format_mask, v('APP_NLS_TIMESTAMP_TZ_FORMAT') ) 
+                  else
+                     l_items ( l_item_name ).format_mask
+                  end;
             exception 
                -- Look for item type
                when no_data_found then
                   l_prov_var_type := l_items ( l_item_name ).item_type;
+                  l_items ( l_item_name ).format_mask := 
+                     case l_prov_var_type
+                        when 'DATE' 
+                           then coalesce( l_items ( l_item_name ).format_mask, v('APP_NLS_DATE_FORMAT') )
+                     else
+                        l_items ( l_item_name ).format_mask
+                     end;
             end;
             
             case l_prov_var_type 
