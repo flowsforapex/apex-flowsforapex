@@ -573,15 +573,6 @@ create or replace package body flow_plugin_manage_instance_variables as
          loop
             l_items(rec.item_name).item_type   := rec.item_type;
             l_items(rec.item_name).format_mask := rec.format_mask;
-                                                  /*case rec.item_type 
-                                                     when 'DATE' 
-                                                        then coalesce( rec.format_mask, v('APP_NLS_DATE_FORMAT') )
-                                                     when 'TIMESTAMP WITH TIME ZONE' 
-                                                        then coalesce( rec.format_mask, v('APP_NLS_TIMESTAMP_TZ_FORMAT') ) 
-                                                     else
-                                                         rec.format_mask
-                                                  end;*/
-               
          end loop;
 
          -- Loop through variables
