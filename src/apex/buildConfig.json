@@ -235,30 +235,32 @@
     , "keepTempFiles": false
     , "content":
       [
-        { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 1  - Getting Started_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2a - Basic Navigation with Gateways_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2b - Parallel Gateways_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2c - Inclusive Gateways_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2d - Making your process pause_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 3a - Setting Process Variables from your Model_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 3b - Substitution and Bind Syntax_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4a - Tasks Get Your Work Done!_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4b - Reminders and Timeouts_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4c - Task Priority and Due Dates_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5a - Structure your Process with Sub Processes and Calls_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5b - Introducing Sub Processes_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5c - Handling Sub Process Error and Escalation Events_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5d - Using CallActivities to call another diagram_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5e - ship Goods (Called by Tutorial 5d)_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5f - Making a Diagram Callable_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6a - Collaborations, Lanes and Reservations_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6b - Lanes and More Lanes_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6c - User Assignment - Putting it all together_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7a - MessageFlow Concepts_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7b - MessageFlow - Supplier Response (Start before 7c)_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7c - MessageFlow - Purchasing Process (start 7b first)_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 8a - The Full Monty (the top half!)_23.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 8c - Background Session Configuration_23.1.sql", "add_show_errors": false }
+        { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 1  - Getting Started_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2a - Basic Navigation with Gateways_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2b - Parallel Gateways_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2c - Inclusive Gateways_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 2d - Making your process pause_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 3a - Setting Process Variables from your Model_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 3b - Substitution and Bind Syntax_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4a - Tasks Get Your Work Done!_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4b - Reminders and Timeouts_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 4c - Task Priority and Due Dates_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5a - Structure your Process with Sub Processes and Calls_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5b - Introducing Sub Processes_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5c - Handling Sub Process Error and Escalation Events_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5d - Using CallActivities to call another diagram_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5e - ship Goods (Called by Tutorial 5d)_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 5f - Making a Diagram Callable_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6a - Collaborations, Lanes and Reservations_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6b - Lanes and More Lanes_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6c - User Assignment - Putting it all together_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7a - MessageFlow Basics_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7b - Process Collaboration and MessageFlow Example_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7e - Introduction to Iterations and Tasks_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7f - Iterations and Looped Sub Processes_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7g - Iterations and Looped Nested Sub Processes_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 8a - The Full Monty (the top half!)_24.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 8c - Background Session Configuration_24.1.sql", "add_show_errors": false }
       ]
     }
   ]
