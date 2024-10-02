@@ -28,7 +28,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   20:31 Wednesday September 18, 2024
+--   Date and Time:   22:31 Wednesday October 2, 2024
 --   Exported By:     MOREAUX.LOUIS@GMAIL.COM
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -314,6 +314,37 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '		"value": "{\"myAttribue\":\"myAttributeValue\"}"',
 '	}',
 ']',
+'</pre>',
+'',
+'<p>JSON when action is get</p>',
+'<pre>',
+'[',
+'	{',
+'		"name": "Example_vc2_var",',
+'		"type": "varchar2",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_num_var",',
+'		"type": "number",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_date_var",',
+'		"type": "date",',
+'		"item": "ITEM_NAME"',
+'	},',
+'	{',
+'		"name": "Example_clob_var",',
+'		"type": "clob",',
+'		"item": "ITEM_NAME"',
+'	},',
+'        {',
+'		"name": "Example_json_var",',
+'		"type": "json",',
+'		"item": "ITEM_NAME"',
+'	}',
+']',
 '</pre>'))
 ,p_help_text=>'Enter a JSON array that contains one or more process variables, their types, and values (when action is set) or item (when action is get).'
 );
@@ -335,6 +366,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'sql'
 ,p_examples=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<p>SQL Query when action is Set</p>',
+'<pre>',
 'select json_array(',
 '    json_object(',
 '          key ''name'' value ''example_vc2_var''',
@@ -366,8 +399,45 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '        , key ''type'' value ''json''',
 '        , key ''value'' value ''{"myAttribue":"myAttributeValue"}''',
 '    )',
-'returning clob)',
-'from dual;'))
+'returning clob) as json',
+'from dual;',
+'</pre>',
+'<p>SQL Query when action is Get</p>',
+'<pre>',
+'select json_array(',
+'    json_object(',
+'          key ''name'' value ''example_vc2_var''',
+'        , key ''type'' value ''varchar2''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_num_var''',
+'        , key ''type'' value ''number''',
+'       , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_date_var''',
+'        , key ''type'' value ''date''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''example_timestamp_var''',
+'        , key ''type'' value ''timestamp''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''examnple_clob_var''',
+'        , key ''type'' value ''clob''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        ),',
+'    json_object(',
+'          key ''name'' value ''examnple_json_var''',
+'        , key ''type'' value ''json''',
+'        , key ''item'' value ''ITEM_NAME''',
+'        )',
+'returning clob) as json',
+'from dual;',
+'</pre>'))
 ,p_help_text=>'SQL query that returns the array containing the instance variables.'
 );
 wwv_flow_imp_shared.create_plugin_attribute(
