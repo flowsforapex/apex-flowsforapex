@@ -128,6 +128,7 @@ create or replace package body flow_plugin_manage_instance_variables as
       l_process_variables json_array_t;
       l_process_variable  json_object_t;
       l_json_element      json_element_t;
+      l_dummy_num         number;
 
       --variables
       l_prcs_id         flow_processes.prcs_id%type;
@@ -256,7 +257,13 @@ create or replace package body flow_plugin_manage_instance_variables as
                join flow_process_variables prcs_var 
                on prcs_var.prov_var_name = set_var.name 
                and prcs_var.prov_prcs_id = l_prcs_id
-               where prcs_var.prov_var_type != upper( set_var.type )
+               where 
+                  case 
+                     when prcs_var.prov_var_type = 'TIMESTAMP WITH TIME ZONE' then 
+                        'TIMESTAMP'
+                  else
+                     prcs_var.prov_var_type
+                  end != upper( set_var.type )
 			   and prcs_var.prov_scope = l_prov_scope;
             
             -- Raise exception if incoherent value found
@@ -324,14 +331,28 @@ create or replace package body flow_plugin_manage_instance_variables as
                   case l_attribute4
                      when 'set' then
                         l_json_element := l_process_variable.get('value');
-                        if ( l_json_element.is_Number() = false ) then
-                           raise e_invalid_number;
+                        if ( l_json_element.is_String and l_process_variable.get_String('value') is not null 
+                           ) then
+                           l_process_variable.On_error(3);
+                           begin
+                              l_dummy_num := l_process_variable.get_Number('value');
+                           exception
+                              when others then
+                                l_process_variable.On_error(0);
+                                raise e_invalid_number;
+                           end;
                         end if;
                         flow_process_vars.set_var(
                              pi_prcs_id   => l_prcs_id
 						         , pi_scope     => l_prov_scope	 
                            , pi_var_name  => l_prov_var_name
-                           , pi_num_value => l_process_variable.get_number('value')
+                           , pi_num_value => case 
+                                                when l_process_variable.get_String('value') is null 
+                                                   then 
+                                                      null 
+                                             else 
+                                                l_process_variable.get_number('value') 
+                                             end
                         );
                      when 'get' then
                         apex_util.set_session_state( 
@@ -342,7 +363,7 @@ create or replace package body flow_plugin_manage_instance_variables as
                                            , pi_var_name => l_prov_var_name
                                         ) 
                         );
-                  end case;
+                  end case;   
                when 'date' then
                   apex_debug.info(
                      p_message => '......Name: %s - Type: %s - Value %s'
@@ -462,7 +483,41 @@ create or replace package body flow_plugin_manage_instance_variables as
                                           );
                            end;'
                         );
-                  end case;                   
+                  end case;   
+               when 'json' then
+                  apex_debug.info(
+                     p_message => '......Name: %s - Type: %s - Value %s'
+                     , p0 => l_prov_var_name
+                     , p1 => l_prov_var_type
+                     , p2 => case l_attribute4
+                                when 'set' 
+                                   then l_process_variable.get_clob('value')
+                                 when 'get' 
+                                    then flow_process_vars.get_var_json(
+                                              pi_prcs_id  => l_prcs_id
+											           , pi_scope    => l_prov_scope  
+                                            , pi_var_name => l_prov_var_name
+                                         )
+                             end 
+                  );
+                  case l_attribute4
+                     when 'set' then
+                        flow_process_vars.set_var(
+                          pi_prcs_id    => l_prcs_id
+						      , pi_scope      => l_prov_scope									
+                        , pi_var_name   => l_prov_var_name
+                        , pi_json_value => l_process_variable.get_clob('value')
+                        );
+                     when 'get' then
+                        apex_exec.execute_plsql('begin
+                           :' || l_item_name || ' := flow_process_vars.get_var_json(
+                                               pi_prcs_id  => '|| l_prcs_id ||'
+											            , pi_scope    => '|| l_prov_scope ||'									   
+                                             , pi_var_name => '''|| l_prov_var_name ||'''
+                                          );
+                           end;'
+                        );
+                  end case;                      
                else
                   raise e_incorrect_variable_type;
             end case;
@@ -499,9 +554,9 @@ create or replace package body flow_plugin_manage_instance_variables as
          for rec in (
             select column_value as item_name
                , case
-                     when aapi.display_as_code = 'NATIVE_NUMBER_FIELD'    then
+                     when aapi.display_as_code = 'NATIVE_NUMBER_FIELD' then
                         'NUMBER'
-                     when aapi.display_as_code = 'NATIVE_DATE_PICKER'     then
+                     when aapi.display_as_code in ('NATIVE_DATE_PICKER', 'NATIVE_DATE_PICKER_JET', 'NATIVE_DATE_PICKER_APEX') then
                         'DATE'
                      else
                         'VARCHAR2'
@@ -517,15 +572,7 @@ create or replace package body flow_plugin_manage_instance_variables as
          )
          loop
             l_items(rec.item_name).item_type   := rec.item_type;
-            l_items(rec.item_name).format_mask := case rec.item_type 
-                                                     when 'DATE' 
-                                                        then coalesce( rec.format_mask, v('APP_NLS_DATE_FORMAT') )
-                                                     when 'TIMESTAMP WITH TIME ZONE' 
-                                                        then coalesce( rec.format_mask, v('APP_NLS_TIMESTAMP_TZ_FORMAT') ) 
-                                                     else
-                                                         rec.format_mask
-                                                  end;
-               
+            l_items(rec.item_name).format_mask := rec.format_mask;
          end loop;
 
          -- Loop through variables
@@ -538,10 +585,26 @@ create or replace package body flow_plugin_manage_instance_variables as
             -- Look for variable type
             begin
                l_prov_var_type := l_prcs_var( l_prov_var_name );
+               l_items ( l_item_name ).format_mask  :=
+                  case l_prov_var_type
+                     when 'date' 
+                        then coalesce( l_items ( l_item_name ).format_mask, v('APP_NLS_DATE_FORMAT') )
+                     when 'timestamp'
+                        then coalesce( l_items ( l_item_name ).format_mask, v('APP_NLS_TIMESTAMP_TZ_FORMAT') ) 
+                  else
+                     l_items ( l_item_name ).format_mask
+                  end;
             exception 
                -- Look for item type
                when no_data_found then
                   l_prov_var_type := l_items ( l_item_name ).item_type;
+                  l_items ( l_item_name ).format_mask := 
+                     case l_prov_var_type
+                        when 'DATE' 
+                           then coalesce( l_items ( l_item_name ).format_mask, v('APP_NLS_DATE_FORMAT') )
+                     else
+                        l_items ( l_item_name ).format_mask
+                     end;
             end;
             
             case l_prov_var_type 
@@ -735,6 +798,40 @@ create or replace package body flow_plugin_manage_instance_variables as
                         end;]'
                      );
                end case;
+            when 'JSON' then
+               apex_debug.info(
+                  p_message => '......Name: %s - Type: %s - Value %s'
+                  , p0 => l_prov_var_name
+                  , p1 => l_prov_var_type
+                  , p2 => case l_attribute4
+                             when 'set' 
+                                then apex_util.get_session_state( p_item => l_item_name )
+                              when 'get' 
+                                 then flow_process_vars.get_var_json(
+                                           pi_prcs_id  => l_prcs_id
+										           , pi_scope    => l_prov_scope  
+                                         , pi_var_name => l_prov_var_name
+                                      )
+                          end 
+               );
+               case l_attribute4
+                  when 'set' then
+                     flow_process_vars.set_var(
+                          pi_prcs_id     => l_prcs_id
+						      , pi_scope       => l_prov_scope
+                        , pi_var_name    => l_prov_var_name
+                        , pi_json_value  => apex_util.get_session_state( p_item => l_item_name )
+                     );
+                  when 'get' then
+                     apex_exec.execute_plsql('begin
+                        :' || l_item_name || q'[ := ']' || flow_process_vars.get_var_json(
+                                            pi_prcs_id  => l_prcs_id
+										            , pi_scope    => l_prov_scope	 
+                                          , pi_var_name => l_prov_var_name
+                                       ) || q'[';
+                        end;]'
+                     );
+               end case;   
             end case;
          end loop;
       end if;
