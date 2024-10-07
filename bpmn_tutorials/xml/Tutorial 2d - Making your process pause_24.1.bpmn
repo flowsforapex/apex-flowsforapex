@@ -133,7 +133,7 @@ See documentation for ISO 8601 Time specs - or Google 'ISO 8601'.
       <bpmn:incoming>Flow_0exp2j4</bpmn:incoming>
       <bpmn:outgoing>Flow_083i9d5</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0kqfp2i">
-        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">20230901H13:30:20</bpmn:timeDate>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">20250901T13:30:20</bpmn:timeDate>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:endEvent id="Event_0dozg9s">
@@ -149,7 +149,9 @@ A timer delay / pause can be specified as either:
  - a DURATION -- how long you want to pause the process  (e.g., wait for 2 Hours),or 
  - a TIME that the process flow should wait before restarting  (e.g., wait until 31-DEC-2025 23:59:59 ).
 
-This First Timer is set for 10 seconds.  Move onto the timer event.    After a few seconds, select the Refresh option on the Actions menu to refresh the screen.   The timer actually checks to see which processes should proceed every 10 seconds -- so you might need to wait unto an additional 10 seconds for the timer to fire.   If it still hasn't fired after 30 seconds, timers might not be enabled currently on your system - ask to your system administrator or read the documentation on setting up theScheduler...</bpmn:text>
+This First Timer is set for 10 seconds.  Move onto the timer event.    After a few seconds, select the Refresh option on the Actions menu to refresh the screen.   The timer actually checks to see which processes should proceed every 10 seconds* -- so you might need to wait unto an additional 10 seconds for the timer to fire.   If it still hasn't fired after 30* seconds, timers might not be enabled currently on your system - ask to your system administrator or read the documentation on setting up theScheduler...
+
+* The interval at which timers are checked would typically be 10 seconds on a production system - but you can see how your system is set up if you Click on Configuration - Timers.  On public demo systems like apex.oracle.com (and apex.oraclecorp.com) you will have to wait a bit longer - the timer checking interval is every minute.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_07h0he2" sourceRef="Activity_16kndlc" targetRef="TextAnnotation_0b87nxd" />
     <bpmn:textAnnotation id="TextAnnotation_0pb1xw1">
@@ -267,9 +269,10 @@ We'll also look at how to make a process wait for a message from another process
       <bpmndi:BPMNShape id="Event_0dozg9s_di" bpmnElement="Event_0dozg9s" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="1102" y="762" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0b87nxd_di" bpmnElement="TextAnnotation_0b87nxd">
-        <dc:Bounds x="330" y="60" width="599.9631958007812" height="236.9852752685547" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_07h0he2_di" bpmnElement="Association_07h0he2">
+        <di:waypoint x="387" y="410" />
+        <di:waypoint x="379" y="320" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_0pb1xw1_di" bpmnElement="TextAnnotation_0pb1xw1">
         <dc:Bounds x="520" y="330" width="99.99999237060547" height="67.99632263183594" />
       </bpmndi:BPMNShape>
@@ -356,10 +359,6 @@ We'll also look at how to make a process wait for a message from another process
         <di:waypoint x="1038" y="780" />
         <di:waypoint x="1102" y="780" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_07h0he2_di" bpmnElement="Association_07h0he2">
-        <di:waypoint x="388" y="410" />
-        <di:waypoint x="381" y="297" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1ex81lj_di" bpmnElement="Association_1ex81lj">
         <di:waypoint x="519" y="435" />
         <di:waypoint x="540" y="398" />
@@ -389,6 +388,10 @@ We'll also look at how to make a process wait for a message from another process
         <di:waypoint x="1120" y="880" />
         <di:waypoint x="1190" y="880" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0b87nxd_di" bpmnElement="TextAnnotation_0b87nxd">
+        <dc:Bounds x="269" y="10" width="722" height="310" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

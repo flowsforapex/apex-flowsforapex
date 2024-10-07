@@ -80,7 +80,7 @@
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_1k22ii5" sourceRef="Activity_0jjqteg" targetRef="Activity_1nwkvy9" />
     <bpmn:sequenceFlow id="Flow_1uwqiy2" sourceRef="Activity_1nwkvy9" targetRef="Activity_0wtd4in" />
-    <bpmn:callActivity id="Activity_1xsihhy" name="Call Another Process Diagram" apex:manualInput="false" apex:calledDiagramVersionSelection="latestVersion">
+    <bpmn:callActivity id="Activity_1xsihhy" name="Call Another Process Diagram" apex:manualInput="true" apex:calledDiagram="Tutorial 5e - ship Goods (Called by Tutorial 5d)" apex:calledDiagramVersionSelection="latestVersion">
       <bpmn:incoming>Flow_156het6</bpmn:incoming>
       <bpmn:outgoing>Flow_18q8g04</bpmn:outgoing>
     </bpmn:callActivity>
@@ -181,7 +181,7 @@ A Call activity is a link to another Process Diagram.
 
 When the Call Activity becomes the current object in the workflow, the process then executes the process defined in that other diagram;   When the called diagram is complete, the process returns to the calling diagram and continues.
 
-Adding Call Activities allows processes to be shared and reused by other processes.   We'll look into this in more detail in Tutorial 4c...</bpmn:text>
+Adding Call Activities allows processes to be shared and reused by other processes.   We'll look into this in more detail in Tutorial 5d...</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_03losbj" sourceRef="Activity_1xsihhy" targetRef="TextAnnotation_0u7euj0" />
     <bpmn:textAnnotation id="TextAnnotation_0u2xfsn">
@@ -310,7 +310,8 @@ Collapsed SubProcesses can run multiple times, once for each item in a collectio
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0u7euj0_di" bpmnElement="TextAnnotation_0u7euj0">
-        <dc:Bounds x="2050" y="130" width="350" height="181" />
+        <dc:Bounds x="2050" y="130" width="349.9883180023521" height="180.6334792926747" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0u2xfsn_di" bpmnElement="TextAnnotation_0u2xfsn">
         <dc:Bounds x="1530" y="150" width="389.99944217438957" height="197.0693355172924" />
