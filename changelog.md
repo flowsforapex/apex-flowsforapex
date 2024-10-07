@@ -1,10 +1,16 @@
 # Flows for APEX - Changelog
 
-## v24.1
+## v24.1 Community Edition
 
 - Adds JSON-typed process variables.
+- Adds APEX Simple Form type of BPMN UserTask, allowing a user input form to be specified as a JSON document.
 - Adds BPMN-Color support into the Modeler and Viewer, allowing shading of BPMN objects on a diagram.  Colors can optionally then also be shown in the process viewer.
+- Enables Flows for APEX Enterprise Edition features for loops and iterations, BPMN Message Flow start, end and boundary events.
+- Enhancements to BPMN Viewer to support visualization of nested iterations and loops.
+- Enhancement to BPMN Viewer to allow task start from the viewer.
 - Enhances flow_admin_api so that a diagram can be 'released' from the API.  This is useful for remote deployment of diagrams into production environments.
+- Fixes a bug preventing rescheduling interuptable timers on subflows having a previous interrupting timer event.
+- Adds a new example application that can be used as a process hub for end users to start new processes.
 - Required APEX version increased to APEX v22.1
 
 ## v23.1
@@ -61,7 +67,7 @@
 - Improves Timer Usability, by allowing timers to be specified using Oracle data and interval syntax in addition to ISO 8601 format.
 - Improves multi-user integrity by adding a unique Step Key as part of the context for each process object.
 - Improvements to the Flow Engine Application, with enhancements to the Flow Modeler:
-  
+
   - Addition of the Monaco text editor for PL/SQL input to variable expressions and script code entry.
   - Use of APEX metadata in UI for specifying links to APEX pages and page items.
 - Enhances the step operations plugin so that it can issue the flow_start_step command.
@@ -73,7 +79,7 @@
 
 - Introduces model-based declarative process variable expressions to set process variables before and after each step.
 - Introduces 3 process plugins to ease application integration:
-  
+
   - Manage Flow Instance, for controlling instance creation, starting, termination, reset and deletion.
   - Manage Flow Instance Step, for controlling step statrt, reservation, release and completion.
   - Manage Flow Instance Variables, for transferring process variable content to and from APEX page items.
@@ -83,7 +89,7 @@
 - Steps halted with error status can be re-started after an administrator fixes the problem.
 - Introduces Monitoring and Auditing event logs of Instances, instance steps, and process variables
 - Major upgrade of the Flow Engine Application, with enhancements to the modeler, viewer, and the app UI.
-  
+
   - App: enhanced UI, including support for dark mode
   - App: Flow Monitor additionally supports side-by-side and multi-monitor support for administering larger systems.
   - Modeler: Properties panel can now be expanded by dragging
@@ -207,4 +213,3 @@
 ## v1.0
 
 - Initial Release
-
