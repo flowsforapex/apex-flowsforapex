@@ -573,7 +573,7 @@ function addProcessVariable(action, focusElement){
       apex.item( "P8_PROV_VAR_NAME" ).enable();
       apex.item( "P8_PROV_VAR_TYPE" ).setValue("VARCHAR2");
       apex.item( "P8_PROV_VAR_TYPE" ).enable();
-      apex.item( "P8_PROV_SCOPE"    ).setValue("0");
+      apex.item( "P8_PROV_SCOPE"    ).setValue(apex.items.P8_DIAGRAM_LEVEL.isEmpty() ? "0" : apex.items.P8_DIAGRAM_LEVEL.value );
       apex.item( "P8_PROV_SCOPE"    ).enable();
       apex.jQuery( "#add-prov-var-btn" ).show();
       apex.jQuery( "#save-prov-var-btn" ).hide();
