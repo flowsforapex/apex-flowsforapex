@@ -91,6 +91,7 @@ drop view flow_p0014_variable_log_vw;
 drop view flow_p0020_instance_timeline_vw;
 drop view flow_task_inbox_vw;
 drop view flow_instance_connections_lov;
+drop view flow_instance_scopes_vw;
 drop view flow_instance_gateways_lov;
 drop view flow_instance_details_vw;
 drop view flow_instance_timeline_vw;
