@@ -74,6 +74,7 @@ PROMPT >> Installing Views
 @views/flow_task_inbox_vw.sql
 @views/flow_instance_connections_lov.sql
 @views/flow_instance_gateways_lov.sql
+@views/flow_instance_scopes_vw.sql
 @views/flow_diagrams_vw.sql
 @views/flow_instance_diagrams_lov.sql
 @views/flow_diagrams_instanciated_lov.sql
