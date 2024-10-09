@@ -357,7 +357,10 @@ as
   gc_config_stats_retain_summary_daily  constant varchar2(50 char) := 'stats_retain_daily_summaries_days';
   gc_config_stats_retain_summary_month  constant varchar2(50 char) := 'stats_retain_monthly_summaries_months';
   gc_config_stats_retain_summary_qtr    constant varchar2(50 char) := 'stats_retain_quarterly_summaries_months';
-  gc_config_edition                     constant varchar2(50 char) := 'license_edition';
+  gc_config_license_edition             constant varchar2(50 char) := 'license_edition';
+  gc_config_license_key                 constant varchar2(50 char) := 'license_key';
+  gc_config_licensed_to                 constant varchar2(50 char) := 'licensed_to';
+  gc_config_license_expiry_date         constant varchar2(50 char) := 'license_expiry_date';
 
 
 -- Config Parameter Valid Values (when not true / false or numeric)

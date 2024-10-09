@@ -3,16 +3,16 @@ begin
 --   Manifest
 --     TEMPLATE: MINIMAL_NO_NAVIGATION
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_template(
- p_id=>wwv_flow_api.id(12495616037696880296)
+wwv_flow_imp_shared.create_template(
+ p_id=>wwv_flow_imp.id(12495616037696880296)
 ,p_theme_id=>42
 ,p_name=>'Minimal (No Navigation)'
 ,p_internal_name=>'MINIMAL_NO_NAVIGATION'
@@ -35,7 +35,7 @@ wwv_flow_api.create_template(
 '  #HEAD#',
 '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
 '</head>',
-'<body class="t-PageBody t-PageBody--hideLeft t-PageBody--hideActions no-anim #PAGE_CSS_CLASSES# t-PageBody--noNav" #TEXT_DIRECTION# #ONLOAD# id="t_PageBody">',
+'<body class="t-PageBody t-PageBody--hideLeft t-PageBody--hideActions no-anim #PAGE_CSS_CLASSES# t-PageBody--noNav t-PageTemplate--minimal" #TEXT_DIRECTION# #ONLOAD# id="t_PageBody">',
 '<a href="#main" id="t_Body_skipToContent">&APP_TEXT$UI_PAGE_SKIP_TO_CONTENT.</a>',
 '#FORM_OPEN#',
 '<header class="t-Header" id="t_Header" role="banner">',
@@ -47,8 +47,13 @@ wwv_flow_api.create_template(
 '    </div>',
 '    <div class="t-Header-logo">',
 '      <a href="#HOME_LINK#" class="t-Header-logo-link">#LOGO#</a>',
+'      #AFTER_LOGO#',
 '    </div>',
-'    <div class="t-Header-navBar">#NAVIGATION_BAR#</div>',
+'    <div class="t-Header-navBar">',
+'      <div class="t-Header-navBar--start">#BEFORE_NAVIGATION_BAR#</div>',
+'      <div class="t-Header-navBar--center">#NAVIGATION_BAR#</div>',
+'      <div class="t-Header-navBar--end">#AFTER_NAVIGATION_BAR#</div>',
+'    </div>',
 '  </div>',
 '</header>',
 '    '))
@@ -62,7 +67,7 @@ wwv_flow_api.create_template(
 '        <div class="t-Body-fullContent">#REGION_POSITION_08#</div>',
 '        <div class="t-Body-contentInner">#BODY#</div>',
 '      </main>',
-'      <footer class="t-Footer" role="contentinfo">',
+'      <footer class="t-Footer" id="t_Footer" role="contentinfo">',
 '        <div class="t-Footer-body">',
 '          <div class="t-Footer-content">#REGION_POSITION_05#</div>',
 '          <div class="t-Footer-apex">',
@@ -78,7 +83,7 @@ wwv_flow_api.create_template(
 '    </div>',
 '  </div>',
 '</div>',
-'<div class="t-Body-inlineDialogs">#REGION_POSITION_04#</div>'))
+'<div class="t-Body-inlineDialogs" id="t_Body_inlineDialogs">#REGION_POSITION_04#</div>'))
 ,p_footer_template=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '#FORM_CLOSE#',
 '#DEVELOPER_TOOLBAR#',
@@ -176,78 +181,132 @@ wwv_flow_api.create_template(
 '#ROWS#',
 '</div>'))
 ,p_grid_row_template=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<div class="row">',
+'<div class="row #CSS_CLASSES#">',
 '#COLUMNS#',
 '</div>'))
-,p_grid_column_template=>'<div class="col col-#COLUMN_SPAN_NUMBER# #CSS_CLASSES#" #ATTRIBUTES#>#CONTENT#</div>'
-,p_grid_first_column_attributes=>'alpha'
-,p_grid_last_column_attributes=>'omega'
-,p_dialog_js_init_code=>'apex.navigation.dialog(#PAGE_URL#,{title:#TITLE#,height:#DIALOG_HEIGHT#,width:#DIALOG_WIDTH#,maxWidth:#DIALOG_MAX_WIDTH#,modal:#IS_MODAL#,dialog:#DIALOG#,#DIALOG_ATTRIBUTES#},#DIALOG_CSS_CLASSES#,#TRIGGERING_ELEMENT#);'
-,p_dialog_js_close_code=>'apex.navigation.dialog.close(#IS_MODAL#,#TARGET#);'
-,p_dialog_js_cancel_code=>'apex.navigation.dialog.cancel(#IS_MODAL#);'
+,p_grid_column_template=>'<div class="col col-#COLUMN_SPAN_NUMBER# #CSS_CLASSES# #FIRST_LAST_COLUMN_ATTRIBUTES#" #ATTRIBUTES#>#CONTENT#</div>'
+,p_grid_first_column_attributes=>'col-start'
+,p_grid_last_column_attributes=>'col-end'
 ,p_dialog_browser_frame=>'MODAL'
 ,p_reference_id=>2977628563533209425
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1682485212043218)
-,p_page_template_id=>wwv_flow_api.id(12495616037696880296)
-,p_name=>'Content Body'
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9964172158536050)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'After Logo'
+,p_placeholder=>'AFTER_LOGO'
+,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>true
+,p_has_button_support=>true
+,p_glv_new_row=>true
+,p_max_fixed_grid_columns=>4
+);
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9964608916536050)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'After Navigation Bar'
+,p_placeholder=>'AFTER_NAVIGATION_BAR'
+,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>true
+,p_has_button_support=>true
+,p_glv_new_row=>false
+,p_max_fixed_grid_columns=>4
+);
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9965167066536050)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'Before Navigation Bar'
+,p_placeholder=>'BEFORE_NAVIGATION_BAR'
+,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>true
+,p_has_button_support=>true
+,p_glv_new_row=>false
+,p_max_fixed_grid_columns=>4
+);
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9965622286536050)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'Body'
 ,p_placeholder=>'BODY'
 ,p_has_grid_support=>true
+,p_has_region_support=>true
+,p_has_item_support=>true
+,p_has_button_support=>true
 ,p_glv_new_row=>true
 ,p_max_fixed_grid_columns=>12
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1682949956043219)
-,p_page_template_id=>wwv_flow_api.id(12495616037696880296)
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9966124946536050)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
 ,p_name=>'Breadcrumb Bar'
 ,p_placeholder=>'REGION_POSITION_01'
 ,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
 ,p_glv_new_row=>true
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1683496158043219)
-,p_page_template_id=>wwv_flow_api.id(12495616037696880296)
-,p_name=>'Inline Dialogs'
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9966668390536051)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'Dialogs, Drawers and Popups'
 ,p_placeholder=>'REGION_POSITION_04'
 ,p_has_grid_support=>true
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
 ,p_glv_new_row=>true
 ,p_max_fixed_grid_columns=>12
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1683959534043219)
-,p_page_template_id=>wwv_flow_api.id(12495616037696880296)
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9967112628536051)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
 ,p_name=>'Footer'
 ,p_placeholder=>'REGION_POSITION_05'
 ,p_has_grid_support=>true
+,p_has_region_support=>true
+,p_has_item_support=>true
+,p_has_button_support=>true
 ,p_glv_new_row=>true
 ,p_max_fixed_grid_columns=>12
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1684494142043219)
-,p_page_template_id=>wwv_flow_api.id(12495616037696880296)
-,p_name=>'Page Navigation'
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9967685564536051)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'Top Navigation'
 ,p_placeholder=>'REGION_POSITION_06'
 ,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
 ,p_glv_new_row=>true
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1684936266043219)
-,p_page_template_id=>wwv_flow_api.id(12495616037696880296)
-,p_name=>'Page Header'
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9968166923536051)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'Banner'
 ,p_placeholder=>'REGION_POSITION_07'
 ,p_has_grid_support=>false
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
 ,p_glv_new_row=>true
 );
-wwv_flow_api.create_page_tmpl_display_point(
- p_id=>wwv_flow_api.id(1685451459043219)
-,p_page_template_id=>wwv_flow_api.id(12495616037696880296)
-,p_name=>'Before Content Body'
+wwv_flow_imp_shared.create_page_tmpl_display_point(
+ p_id=>wwv_flow_imp.id(9968620747536051)
+,p_page_template_id=>wwv_flow_imp.id(12495616037696880296)
+,p_name=>'Full Width Content'
 ,p_placeholder=>'REGION_POSITION_08'
 ,p_has_grid_support=>true
+,p_has_region_support=>true
+,p_has_item_support=>false
+,p_has_button_support=>false
 ,p_glv_new_row=>true
 ,p_max_fixed_grid_columns=>12
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /

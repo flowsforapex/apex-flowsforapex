@@ -3,29 +3,29 @@ begin
 --   Manifest
 --     LIST: P4_ACTION_MENU
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_list(
- p_id=>wwv_flow_api.id(7959288629726086)
+wwv_flow_imp_shared.create_list(
+ p_id=>wwv_flow_imp.id(7959288629726086)
 ,p_name=>'P4_ACTION_MENU'
 ,p_list_status=>'PUBLIC'
 );
-wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(7959427446726087)
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(7959427446726087)
 ,p_list_item_display_sequence=>10
 ,p_list_item_link_text=>'View Source'
 ,p_list_item_link_target=>'javascript:apex.region( ''modeler'' ).getDiagram().then( ( xml ) => { apex.item( ''P4_DIAGRAM_XML'' ).setValue( xml );apex.theme.openRegion(''diagram_xml_region''); } );'
 ,p_list_item_icon=>'fa-cloud-download'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
-wwv_flow_api.create_list_item(
- p_id=>wwv_flow_api.id(7959824792726090)
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(7959824792726090)
 ,p_list_item_display_sequence=>20
 ,p_list_item_link_text=>'Download (SVG)'
 ,p_list_item_link_target=>'javascript:apex.region( ''modeler'' ).getSVG().then( ( svg ) => {'||wwv_flow.LF||
@@ -42,6 +42,6 @@ wwv_flow_api.create_list_item(
 ,p_list_item_icon=>'fa-image'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /

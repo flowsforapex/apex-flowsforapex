@@ -26,7 +26,10 @@ begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'rest_base'                                     ,p_value => null );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_archive_location'                      ,p_value => null );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_bpmn_location'                         ,p_value => null );
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'licence_edition'                               ,p_value => 'community' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_edition'                               ,p_value => 'community' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_key'                                   ,p_value => '' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'licensed_to'                                   ,p_value => '' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_expiry_date'                           ,p_value => '' );
 
   commit;
 end;

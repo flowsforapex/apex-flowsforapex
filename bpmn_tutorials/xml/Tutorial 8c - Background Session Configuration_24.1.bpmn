@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="24.1.0">
+  <bpmn:process id="Process_Tutorial8c" name="Tutorial 8c Configuring Background Session Info." isExecutable="false" apex:isCallable="false" apex:manualInput="false">
+    <bpmn:startEvent id="Event_0azvr6s">
+      <bpmn:outgoing>Flow_1pbkya4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_13a72nr" name="A&#10;What is Background Session Configuration?">
+      <bpmn:incoming>Flow_1pbkya4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f3f33h</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1pbkya4" sourceRef="Event_0azvr6s" targetRef="Activity_13a72nr" />
+    <bpmn:task id="Activity_1dbvyye">
+      <bpmn:incoming>Flow_0f3f33h</bpmn:incoming>
+      <bpmn:outgoing>Flow_08rm783</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0f3f33h" sourceRef="Activity_13a72nr" targetRef="Activity_1dbvyye" />
+    <bpmn:task id="Activity_0hd37ul" name="B:&#10;General Rules">
+      <bpmn:incoming>Flow_08rm783</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e6jmr0</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_08rm783" sourceRef="Activity_1dbvyye" targetRef="Activity_0hd37ul" />
+    <bpmn:exclusiveGateway id="Gateway_0408kh3" name="Object Configs exist?">
+      <bpmn:incoming>Flow_0e6jmr0</bpmn:incoming>
+      <bpmn:outgoing>Flow_101nook</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1dby9g9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0e6jmr0" sourceRef="Activity_0hd37ul" targetRef="Gateway_0408kh3" />
+    <bpmn:exclusiveGateway id="Gateway_1pi1ivj" name="Process (Diagram) level Configs Exist?">
+      <bpmn:incoming>Flow_101nook</bpmn:incoming>
+      <bpmn:outgoing>Flow_08uig3a</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1mtbcgj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_101nook" sourceRef="Gateway_0408kh3" targetRef="Gateway_1pi1ivj" apex:sequence="10" />
+    <bpmn:exclusiveGateway id="Gateway_0h7d4f3" name="System Defaults Exist?">
+      <bpmn:incoming>Flow_08uig3a</bpmn:incoming>
+      <bpmn:outgoing>Flow_168zmuv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0tmn4zn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_08uig3a" sourceRef="Gateway_1pi1ivj" targetRef="Gateway_0h7d4f3" apex:sequence="10" />
+    <bpmn:sequenceFlow id="Flow_168zmuv" sourceRef="Gateway_0h7d4f3" targetRef="Event_1pvxays" apex:sequence="10" />
+    <bpmn:endEvent id="Event_1pvxays">
+      <bpmn:incoming>Flow_168zmuv</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_081aaqh" />
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_16017fe" name="Use Them">
+      <bpmn:incoming>Flow_1mtbcgj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ohelsh</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1mtbcgj" sourceRef="Gateway_1pi1ivj" targetRef="Activity_16017fe" apex:sequence="20" />
+    <bpmn:task id="Activity_0ft0taj" name="Use them!">
+      <bpmn:incoming>Flow_1dby9g9</bpmn:incoming>
+      <bpmn:outgoing>Flow_05f1t7n</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1dby9g9" sourceRef="Gateway_0408kh3" targetRef="Activity_0ft0taj" apex:sequence="20" />
+    <bpmn:task id="Activity_1x1pob2" name="Use Them">
+      <bpmn:incoming>Flow_0tmn4zn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a0c6c3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0tmn4zn" sourceRef="Gateway_0h7d4f3" targetRef="Activity_1x1pob2" apex:sequence="20" />
+    <bpmn:exclusiveGateway id="Gateway_041nvwb">
+      <bpmn:incoming>Flow_05f1t7n</bpmn:incoming>
+      <bpmn:incoming>Flow_0ohelsh</bpmn:incoming>
+      <bpmn:incoming>Flow_0a0c6c3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rb49i4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_05f1t7n" sourceRef="Activity_0ft0taj" targetRef="Gateway_041nvwb" />
+    <bpmn:sequenceFlow id="Flow_0ohelsh" sourceRef="Activity_16017fe" targetRef="Gateway_041nvwb" />
+    <bpmn:sequenceFlow id="Flow_0a0c6c3" sourceRef="Activity_1x1pob2" targetRef="Gateway_041nvwb" />
+    <bpmn:task id="Activity_09djncc" name="C:&#10;Setting Them...">
+      <bpmn:incoming>Flow_0rb49i4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ecpkxy</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1doqhpb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1v5txna</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0rb49i4" sourceRef="Gateway_041nvwb" targetRef="Activity_09djncc" apex:sequence="10" />
+    <bpmn:task id="Activity_0i579u9" name="Process Variables">
+      <bpmn:incoming>Flow_0ecpkxy</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ecpkxy" sourceRef="Activity_09djncc" targetRef="Activity_0i579u9" />
+    <bpmn:task id="Activity_0mjj8b3" name="Process object &#10;in&#10;Process Diagrams">
+      <bpmn:incoming>Flow_1doqhpb</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1doqhpb" sourceRef="Activity_09djncc" targetRef="Activity_0mjj8b3" />
+    <bpmn:task id="Activity_0fr1c0z" name="System Configuration Parameters">
+      <bpmn:incoming>Flow_1v5txna</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1v5txna" sourceRef="Activity_09djncc" targetRef="Activity_0fr1c0z" />
+    <bpmn:textAnnotation id="TextAnnotation_0gf319s">
+      <bpmn:text>Tutorial 8c - Advanced Topics - Session Parameters
+
+Many steps in your workflow will be started by a user, from an APEX Session -- because the application that they are running starts a process instance, executes a user Task, or causes subsequent steps to occur after a step that they started.  Any steps like this use the APEX Session from the user.
+
+However, some steps are executed from outside APEX.   For example, if the step executes as the result of a timer firing, there was no APEX Session.  Some features of Flows for APEX use APEX features tat require an APEX Session - such as executing variable expressions based on a pl/sql expression or function body, or evaluating gateway routing expressions.
+
+Flows for APEX now uses session configuration information to create an APEX session when the user is not accessing Flows for APEX from an APEX Application.
+
+We are not storing passwords or user credentials (don't panic!) - but APEX does need a username, an application id, and a page id to create a APEX Session.
+
+This tutorial shows how you specify these, and other issues.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1h3277z" sourceRef="Activity_13a72nr" targetRef="TextAnnotation_0gf319s" />
+    <bpmn:textAnnotation id="TextAnnotation_1s4fcmh">
+      <bpmn:text>For a Timer, you can give Flows for APEX session configuration information for a specific timer by creating process variables before the timer starts.
+
+You do this by creating / setting 3 process variables BEFORE the timer starts: These are based on the bpmn_id of the timer:   Let's assume for this that our timer has a BPMN ID of 'Timer_1ar3df'.  The variables would be:
+- Timer_1ar3df:applicationId - set to the application ID you want to use
+- Timer_1ar3df:pageId - set to the page ID of a page in the app
+- Timer_1ar3df:username - set to the username of the user.
+
+These could be set in your application, maybe using variable expressions before the timer starts.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_01q6512" sourceRef="Activity_0ft0taj" targetRef="TextAnnotation_1s4fcmh" />
+    <bpmn:textAnnotation id="TextAnnotation_1a1kyv3">
+      <bpmn:text>If Flows for APEX can't find these process variables contains valid content, it looks to see if process-level default values were created as part of the diagram information.  These would be stored in the Property Panel &gt; General Tab &gt; Background Task Session on the Process object of your diagram.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0yzpwh1" sourceRef="Activity_16017fe" targetRef="TextAnnotation_1a1kyv3" />
+    <bpmn:textAnnotation id="TextAnnotation_0enm3v8">
+      <bpmn:text>And if Flows for APEX still can't find them after looking at the process variables and at process-level, it looks to see if system-wide configuration defaults have been specified.
+
+These are added in the Flows for APEX Application (probably the app that you are using to read this!) -- See the 'Configuration' button in the top right hand page menu.  
+
+You can specify default values here -- which you might want to do in your test and development environment only,  On your secure, production installation you might want to leave these not configured, which will cause an error to occur.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1fapr8o" sourceRef="Activity_1x1pob2" targetRef="TextAnnotation_0enm3v8" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Tutorial8c">
+      <bpmndi:BPMNShape id="Event_0azvr6s_di" bpmnElement="Event_0azvr6s">
+        <dc:Bounds x="432" y="532" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13a72nr_di" bpmnElement="Activity_13a72nr" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="520" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dbvyye_di" bpmnElement="Activity_1dbvyye" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="680" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hd37ul_di" bpmnElement="Activity_0hd37ul" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="890" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0408kh3_di" bpmnElement="Gateway_0408kh3" isMarkerVisible="true" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1155" y="435" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1094" y="416" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1pi1ivj_di" bpmnElement="Gateway_1pi1ivj" isMarkerVisible="true" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1155" y="595" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1082" y="580" width="75" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0h7d4f3_di" bpmnElement="Gateway_0h7d4f3" isMarkerVisible="true" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1155" y="755" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1090" y="736" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0df2rf6_di" bpmnElement="Event_1pvxays">
+        <dc:Bounds x="1162" y="862" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16017fe_di" bpmnElement="Activity_16017fe" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1260" y="580" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ft0taj_di" bpmnElement="Activity_0ft0taj" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1260" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x1pob2_di" bpmnElement="Activity_1x1pob2" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1260" y="740" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_041nvwb_di" bpmnElement="Gateway_041nvwb" isMarkerVisible="true" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1525" y="525" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09djncc_di" bpmnElement="Activity_09djncc" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1730" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0i579u9_di" bpmnElement="Activity_0i579u9" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1890" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mjj8b3_di" bpmnElement="Activity_0mjj8b3" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1890" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fr1c0z_di" bpmnElement="Activity_0fr1c0z" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1890" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0gf319s_di" bpmnElement="TextAnnotation_0gf319s">
+        <dc:Bounds x="560" y="90" width="511.9668884277344" height="279.9999694824219" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1s4fcmh_di" bpmnElement="TextAnnotation_1s4fcmh">
+        <dc:Bounds x="1310" y="120" width="499.9999694824219" height="180.9926300048828" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1a1kyv3_di" bpmnElement="TextAnnotation_1a1kyv3">
+        <dc:Bounds x="1550" y="820" width="395.9742431640625" height="81.98529052734375" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0enm3v8_di" bpmnElement="TextAnnotation_0enm3v8">
+        <dc:Bounds x="1480" y="960" width="409.9815979003906" height="180.97425842285156" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1pbkya4_di" bpmnElement="Flow_1pbkya4">
+        <di:waypoint x="468" y="550" />
+        <di:waypoint x="520" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f3f33h_di" bpmnElement="Flow_0f3f33h">
+        <di:waypoint x="620" y="550" />
+        <di:waypoint x="680" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08rm783_di" bpmnElement="Flow_08rm783">
+        <di:waypoint x="780" y="550" />
+        <di:waypoint x="890" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e6jmr0_di" bpmnElement="Flow_0e6jmr0">
+        <di:waypoint x="990" y="550" />
+        <di:waypoint x="1090" y="550" />
+        <di:waypoint x="1090" y="460" />
+        <di:waypoint x="1155" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_101nook_di" bpmnElement="Flow_101nook">
+        <di:waypoint x="1180" y="485" />
+        <di:waypoint x="1180" y="595" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08uig3a_di" bpmnElement="Flow_08uig3a">
+        <di:waypoint x="1180" y="645" />
+        <di:waypoint x="1180" y="755" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_168zmuv_di" bpmnElement="Flow_168zmuv">
+        <di:waypoint x="1180" y="805" />
+        <di:waypoint x="1180" y="862" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mtbcgj_di" bpmnElement="Flow_1mtbcgj">
+        <di:waypoint x="1205" y="620" />
+        <di:waypoint x="1260" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dby9g9_di" bpmnElement="Flow_1dby9g9">
+        <di:waypoint x="1205" y="460" />
+        <di:waypoint x="1260" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tmn4zn_di" bpmnElement="Flow_0tmn4zn">
+        <di:waypoint x="1205" y="780" />
+        <di:waypoint x="1260" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05f1t7n_di" bpmnElement="Flow_05f1t7n">
+        <di:waypoint x="1360" y="460" />
+        <di:waypoint x="1470" y="460" />
+        <di:waypoint x="1470" y="550" />
+        <di:waypoint x="1525" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ohelsh_di" bpmnElement="Flow_0ohelsh">
+        <di:waypoint x="1360" y="620" />
+        <di:waypoint x="1470" y="620" />
+        <di:waypoint x="1470" y="550" />
+        <di:waypoint x="1525" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a0c6c3_di" bpmnElement="Flow_0a0c6c3">
+        <di:waypoint x="1360" y="780" />
+        <di:waypoint x="1470" y="780" />
+        <di:waypoint x="1470" y="550" />
+        <di:waypoint x="1525" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rb49i4_di" bpmnElement="Flow_0rb49i4">
+        <di:waypoint x="1575" y="550" />
+        <di:waypoint x="1730" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ecpkxy_di" bpmnElement="Flow_0ecpkxy">
+        <di:waypoint x="1830" y="550" />
+        <di:waypoint x="1860" y="550" />
+        <di:waypoint x="1860" y="380" />
+        <di:waypoint x="1890" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1doqhpb_di" bpmnElement="Flow_1doqhpb">
+        <di:waypoint x="1830" y="550" />
+        <di:waypoint x="1890" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v5txna_di" bpmnElement="Flow_1v5txna">
+        <di:waypoint x="1830" y="550" />
+        <di:waypoint x="1860" y="550" />
+        <di:waypoint x="1860" y="730" />
+        <di:waypoint x="1890" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1h3277z_di" bpmnElement="Association_1h3277z">
+        <di:waypoint x="574" y="510" />
+        <di:waypoint x="586" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_01q6512_di" bpmnElement="Association_01q6512">
+        <di:waypoint x="1316" y="420" />
+        <di:waypoint x="1334" y="301" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0yzpwh1_di" bpmnElement="Association_0yzpwh1">
+        <di:waypoint x="1360" y="640" />
+        <di:waypoint x="1510" y="700" />
+        <di:waypoint x="1510" y="835" />
+        <di:waypoint x="1550" y="835" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1fapr8o_di" bpmnElement="Association_1fapr8o">
+        <di:waypoint x="1354" y="819" />
+        <di:waypoint x="1513" y="960" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

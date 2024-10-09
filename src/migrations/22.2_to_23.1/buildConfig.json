@@ -77,6 +77,7 @@
       , { "content_type": "plaintext", "path": "views/", "name": "flow_task_inbox_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_instance_connections_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_instance_gateways_lov.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/", "name": "flow_instance_scopes_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_instance_diagrams_lov.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_diagrams_instanciated_lov.sql", "add_show_errors": false }

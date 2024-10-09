@@ -695,9 +695,11 @@ begin
   -- currently handles callbacks from flow_timers and flow_message_flow when a timer fires / message is received
   apex_debug.enter 
   ( 'flow_handle_event'
-  , 'subflow_id', p_subflow_id
-  , 'process_id', p_process_id
-  , 'event_type', p_event_type
+  , 'subflow_id',     p_subflow_id
+  , 'process_id',     p_process_id
+  , 'event_type',     p_event_type
+  , 'p_callback',     p_callback
+  , 'p_callback_par', p_callback_par
   );
   -- look at current event to check if it is a startEvent.  (this also has no previous event!)
   -- if not, examine previous event on the subflow to determine if it was eventBasedGateway (eBG)
@@ -777,9 +779,10 @@ begin
       then
       -- we have an interrupting timer boundary event
       flow_boundary_events.handle_interrupting_boundary_event
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
-      , p_event_type => p_event_type
+      ( p_process_id      => p_process_id
+      , p_subflow_id      => p_subflow_id
+      , p_event_type      => p_event_type
+      , p_boundary_object => p_callback_par
       );
     elsif l_curr_objt_tag_name = flow_constants_pkg.gc_bpmn_intermediate_catch_event  then 
       -- we need to look at previous step to see if this follows an eventBasedGateway...
