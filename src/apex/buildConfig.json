@@ -128,6 +128,7 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_process_vars_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_processes_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_subflows_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_instance_scopes_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0002_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_diagrams_var_vw.sql", "add_show_errors": false }

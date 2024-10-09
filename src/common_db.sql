@@ -85,6 +85,7 @@ PROMPT >> Installing Views
 @views/flow_rest_process_vars_vw.sql
 @views/flow_rest_processes_vw.sql
 @views/flow_rest_subflows_vw.sql
+@views/flow_instance_scopesvw.sql
 
 PROMPT >> Installing Package Bodies
 PROMPT >>
