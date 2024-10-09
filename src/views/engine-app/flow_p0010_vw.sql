@@ -13,5 +13,6 @@ as
        , prdg_id
        , prdg_prdg_id
        , user_task_urls
+       , iteration_data
     from flow_instance_details_vw
 with read only;
