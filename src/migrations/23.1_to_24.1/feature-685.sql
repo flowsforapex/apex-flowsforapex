@@ -20,17 +20,3 @@ begin
   end if;
 end;
 /
-
-comment on column flow_message_subscriptions.msub_id                is 'Message Subscription ID';
-comment on column flow_message_subscriptions.msub_message_name      is 'Message Name that must be supplied with received message';
-comment on column flow_message_subscriptions.msub_key_name          is 'Message Key Name that must be supplied with intermediate message';
-comment on column flow_message_subscriptions.msub_key_value         is 'Message Key Value that must be supplied with intermediate message';
-comment on column flow_message_subscriptions.msub_prcs_id           is 'Process ID to call back for intermediate message';
-comment on column flow_message_subscriptions.msub_sbfl_id           is 'Subflow ID to call back for intermediate message';
-comment on column flow_message_subscriptions.msub_step_key          is 'Step Key  to call back for intermediate message';
-comment on column flow_message_subscriptions.msub_dgrm_id           is 'Diagram ID to use for message start event';
-comment on column flow_message_subscriptions.msub_callback          is 'routine to use for callback';
-comment on column flow_message_subscriptions.msub_callback_par      is 'parameter to use on callback';
-comment on column flow_message_subscriptions.msub_payload_var       is 'process variable to return payload variable into';
-comment on column flow_message_subscriptions.msub_created           is 'timestamp of subscription creation';
-/
