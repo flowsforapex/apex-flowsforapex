@@ -96,7 +96,7 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
               and aerr.diagram_level =  prdg.prdg_diagram_level
          ) as all_errors
        , usta.user_task_urls
-       , to_clob(null) as iteration_data
+       , cast(null as clob) as iteration_data
        , prov.prov_var_vc2 as prcs_business_ref
     from flow_processes prcs
     join flow_instance_diagrams prdg
