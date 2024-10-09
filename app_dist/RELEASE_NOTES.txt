@@ -10,19 +10,19 @@ DOCUMENTATION / SOURCE CODE / FURTHER INFORMATION
 
 PREREQUISITES
 - Oracle Database 19c or higher (all editions supported)
-- Oracle Application Express 20.2 or higher
+- Oracle Application Express 22.1 or higher
 - APEX workspace with at least 50 MB space
 - Google Chrome 85+ / Firefox 77+ / Edge 85+ / Safari 13.1 - if possible, use the latest version
 
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
 - In the Application Builder, click on "Import"
-- Import the application file "flowsforapex_apex202.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- Import the application file "flowsforapex_apex221.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
-- Refresh the theme when installing the app in APEX versions 21.1 or higher
+- Refresh the theme when installing the app in APEX versions 22.2 or higher
   Note: switching the theme style is not supported.
-- Optionally, you can now import the demo app in the same way by using file "flowsforapex_sample_app_apex202.sql"
+- Optionally, you can now import the demo app in the same way by using file "flowsforapex_sample_app_apex221.sql"
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the supplied script enable_timers.sql in your workspace schema
 - Optionally, you can enable REST access by enabling this through SQL Workshop>RESTful Services and executing the supplied script REST_v1.sql in your workspace schema  
 
@@ -31,14 +31,25 @@ MIGRATING EXISTING INSTALLATIONS
 - Download the source code at https://github.com/flowsforapex/apex-flowsforapex
 - Start sqlcl and connect with the workspace schema where Flows for APEX is installed
 - Run migrate_all.sql
+- As always, test your migration with a copy of your system in a test environment before migrating your production systems!
 
 Migration notes:
-- Please be aware that you can only migrate to the subsequent release (ie. 23.1 to 24.1 , but not 22.1 to 24.1)
+- Please be aware that you can only migrate to the subsequent release (ie. 23.1 to 24.1 , but not 22.1 to 24.1 in one go)
 
 
 HISTORY
 
-* v24.1
+* v24.1 Community Edition
+  - Adds JSON-typed process variables.
+  - Adds APEX Simple Form type of BPMN UserTask, allowing a user input form to be specified as a JSON document.
+  - Adds BPMN-Color support into the Modeler and Viewer, allowing shading of BPMN objects on a diagram.  Colors can optionally then also be shown in the process viewer.
+  - Enables Flows for APEX Enterprise Edition features for loops and iterations, BPMN Message Flow start, end and boundary events.
+  - Enhancements to BPMN Viewer to support visualization of nested iterations and loops.
+  - Enhancement to BPMN Viewer to allow task start from the viewer.
+  - Enhances flow_admin_api so that a diagram can be 'released' from the API.  This is useful for remote deployment of diagrams into production environments.
+  - Fixes a bug preventing rescheduling interuptable timers on subflows having a previous interrupting timer event.
+  - Adds a new example application that can be used as a process hub for end users to start new processes.
+  - Required APEX version increased to APEX v22.1
 
 * v23.1
   - Adds Due Dates and Priorities to bpmn:processes and to bpmn:userTasks, allowing declarative tracking of scheduling, priority and due dates.
