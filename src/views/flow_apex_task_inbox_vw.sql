@@ -35,6 +35,8 @@ create or replace view flow_apex_task_inbox_vw
      , subflow_id
      , step_key
      , lane_name
+     , lane_role
+     , business_ref
      )
 as
 select null as app_id
@@ -100,14 +102,16 @@ select null as app_id
      , sbfl.sbfl_id
      , sbfl.sbfl_step_key
      , sbfl.sbfl_lane_name
+     , sbfl.sbfl_lane_role
+     , bref.prov_var_vc2
      from flow_subflows sbfl
      join flow_processes prcs
        on prcs.prcs_id = sbfl.sbfl_prcs_id
+     join flow_diagrams dgrm 
+       on dgrm.dgrm_id = prcs.prcs_dgrm_id  
 left join flow_objects objt_curr
        on objt_curr.objt_bpmn_id = sbfl.sbfl_current
       and objt_curr.objt_dgrm_id = sbfl.sbfl_dgrm_id
-     join flow_diagrams dgrm 
-       on dgrm.dgrm_id = prcs.prcs_dgrm_id
 left join flow_process_variables bref
        on bref.prov_prcs_id = sbfl.sbfl_prcs_id
       and bref.prov_var_name = 'BUSINESS_REF'
