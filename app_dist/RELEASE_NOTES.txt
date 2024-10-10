@@ -25,7 +25,7 @@ INSTALLING THE APPLICATION
 - Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the supplied script enable_timers.sql in your workspace schema
 - Optionally, you can enable REST access by enabling this through SQL Workshop>RESTful Services and executing the supplied script REST_v1.sql in your workspace schema
 
-INSTALLING OTHER LANGUAGES
+INSTALLING ADDITIONAL LANGUAGES
 - By default, the Flows for APEX application is installed in the English language.
 - Additional languages can be made available by going to "Shared Components" > "Application Translations" > "Publish Translated Applications". Here you can select and publish the required languages.
 
