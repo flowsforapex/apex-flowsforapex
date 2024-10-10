@@ -2,11 +2,9 @@
 *                                                 *
 *            Flows for APEX v24.1                 *
 *          Installation instructions              *
+*              flowsforapex.org                   *
 *                                                 *
 ***************************************************
-
-DOCUMENTATION / SOURCE CODE / FURTHER INFORMATION
-- Have a look here: https://github.com/flowsforapex/apex-flowsforapex
 
 PREREQUISITES
 - Oracle Database 19c or higher (all editions supported)
