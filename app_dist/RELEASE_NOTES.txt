@@ -32,9 +32,6 @@ INSTALLING ADDITIONAL LANGUAGES
 MIGRATING EXISTING INSTALLATIONS
 - Follow the instructions at https://flowsforapex.org/latest/migration/
 
-Migration notes:
-- Please be aware that you can only migrate to the subsequent release (ie. 23.1 to 24.1 , but not 22.1 to 24.1 in one go)
-
 HISTORY
 
 * v24.1 Community Edition
