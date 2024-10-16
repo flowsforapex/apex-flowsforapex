@@ -448,17 +448,18 @@ $END
           , p0 => l_apex_task_id
           );  
 
-          flow_proc_vars_int.set_var 
-          ( pi_prcs_id      => l_prcs_id
-          , pi_scope        => l_scope
-          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
-          , pi_num_value    => l_apex_task_id
-          , pi_sbfl_id      => l_sbfl_id
-          , pi_objt_bpmn_id => p_step_info.target_objt_ref
-          );
+--          flow_proc_vars_int.set_var 
+--          ( pi_prcs_id      => l_prcs_id
+--          , pi_scope        => l_scope
+--          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
+--          , pi_num_value    => l_apex_task_id
+--          , pi_sbfl_id      => l_sbfl_id
+--          , pi_objt_bpmn_id => p_step_info.target_objt_ref
+--          );
           -- set the status to 'waiting for approval'
           update flow_subflows sbfl
              set sbfl.sbfl_last_update    = systimestamp
+               , sbfl.sbfl_apex_task_id   = l_apex_task_id
                , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_approval
                , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
                                                       , sys_context('userenv','os_user')
@@ -574,53 +575,58 @@ $END
       apex_debug.enter
       (p_routine_name => 'return_approval_result'
       );
-      -- check task belongs to this process by looking for a process variable with content = task id and name ending in task id suffix.
-      begin
-        select prov.prov_var_name
-             , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current
-             , prov.prov_scope
-          into l_var_name
-             , l_potential_current
-             , l_scope
-          from flow_process_variables prov
-         where prov.prov_prcs_id = p_process_id
-           and prov.prov_var_num = p_apex_task_id
-           and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
-           and prov.prov_var_name like '%'||flow_constants_pkg.gc_prov_suffix_task_id
-        ;
-        apex_debug.info 
-        ( p_message => '--- Returning Approval Result - Found current step %0 scope %1'
-        , p0 => l_potential_current
-        , p1 => l_scope
-        );
-      exception
-        when no_data_found then
-          raise e_task_id_proc_var_not_found;
-        when too_many_rows then
-          raise e_task_id_duplicate_found;
-      end;
+--      -- check task belongs to this process by looking for a process variable with content = task id and name ending in task id suffix.
+--      begin
+--        select prov.prov_var_name
+--             , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current
+--             , prov.prov_scope
+--          into l_var_name
+--             , l_potential_current
+--             , l_scope
+--          from flow_process_variables prov
+--         where prov.prov_prcs_id = p_process_id
+--           and prov.prov_var_num = p_apex_task_id
+--           and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
+--           and prov.prov_var_name like '%'||flow_constants_pkg.gc_prov_suffix_task_id
+--        ;
+--        apex_debug.info 
+--        ( p_message => '--- Returning Approval Result - Found current step %0 scope %1'
+--        , p0 => l_potential_current
+--        , p1 => l_scope
+--        );
+--      exception
+--        when no_data_found then
+--          raise e_task_id_proc_var_not_found;
+--        when too_many_rows then
+--          raise e_task_id_duplicate_found;
+--      end;
 
       begin
         -- find and lock the subflow
         select sbfl.sbfl_id
              , sbfl.sbfl_step_key
              , sbfl.sbfl_dgrm_id
+             , sbfl.sbfl_scope
           into l_sbfl_id
              , l_step_key
              , l_dgrm_id
+             , l_scope
           from flow_subflows sbfl
          where sbfl.sbfl_prcs_id = p_process_id
-           and sbfl.sbfl_scope = l_scope
-           and sbfl.sbfl_current = l_potential_current
+--           and sbfl.sbfl_scope = l_scope
+--           and sbfl.sbfl_current = l_potential_current
+           and sbfl.sbfl_apex_task_id = p_apex_task_id
         for update of sbfl.sbfl_step_key wait 5;
       exception
         when no_data_found then
           raise e_task_not_current_step;
+        when too_many_rows then
+          raise e_task_id_duplicate_found;
         when e_lock_timeout then
           raise e_lock_timeout;
       end;
       apex_debug.info 
-      ( p_message => '--- Returning Approval Result - Found Subflow %0 step Key %1 Diagram %2'
+      ( p_message => '--- Returning Approval Outcome - Found Subflow %0 step Key %1 Diagram %2'
       , p0 => l_sbfl_id
       , p1 => l_step_key
       , p2 => l_dgrm_id
@@ -633,7 +639,7 @@ $END
          where objt.objt_bpmn_id = l_potential_current
            and objt.objt_dgrm_id = l_dgrm_id;
         apex_debug.info 
-        ( p_message => '--- Returning Approval Result - Found result variable id %0'
+        ( p_message => '--- Returning Approval Outcome - Found result variable id %0'
         , p0 => l_result_var
         );
       exception
