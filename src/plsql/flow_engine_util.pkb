@@ -634,6 +634,7 @@ end get_object_tag;
           select sbfl.sbfl_id
                , sbfl.sbfl_current
                , sbfl.sbfl_scope
+               , sbfl.sbfl_apex_task_i
                , objt.objt_tag_name
                , objt.objt_sub_tag_name
                , objt.objt_attributes."taskType" tasktype
@@ -646,33 +647,24 @@ end get_object_tag;
              and objt.objt_tag_name in ( flow_constants_pkg.gc_bpmn_usertask
                                        , flow_constants_pkg.gc_bpmn_receiveTask
                                        , flow_constants_pkg.gc_bpmn_intermediate_catch_event )
---             and objt.objt_sub_tag_name = flow_constants_pkg.gc_apex_usertask_apex_approval
         )
         loop
-          -- clear any approval tasks (only runs on APEX 22.1 upwards)
-          $IF NOT FLOW_APEX_ENV.VER_LE_21_2  
-          $THEN
-            if subflows_with_tasks.tasktype = flow_constants_pkg.gc_apex_usertask_apex_approval then
-              -- get apex taskID
-              l_apex_task_id := flow_proc_vars_int.get_var_num
-                                  ( pi_prcs_id   => p_process_id
-                                  , pi_var_name  => subflows_with_tasks.sbfl_current||flow_constants_pkg.gc_prov_suffix_task_id
-                                  , pi_scope     => subflows_with_tasks.sbfl_scope
-                                  );
-              -- cancel apex workflow task
-              flow_usertask_pkg.cancel_apex_task
-              ( p_process_id    => p_process_id
-              , p_objt_bpmn_id  => subflows_with_tasks.sbfl_current
-              , p_apex_task_id  => l_apex_task_id
-              );
-            end if;
-          $END 
-          -- cancel any message subscriptions
-          if subflows_with_tasks.tasktype = flow_constants_pkg.gc_simple_message then
+          -- clear any approval tasks 
+          case subflows_with_tasks.tasktype 
+          when flow_constants_pkg.gc_apex_usertask_apex_approval then
+            -- cancel apex workflow task
+            flow_usertask_pkg.cancel_apex_task
+            ( p_process_id    => p_process_id
+            , p_objt_bpmn_id  => subflows_with_tasks.sbfl_current
+            , p_apex_task_id  => subflows_with_tasks.sbfl_apex_task_id
+            );
+          when flow_constants_pkg.gc_simple_message then
             flow_message_util.cancel_subscription ( p_process_id  => p_process_id 
                                                   , p_subflow_id  => subflows_with_tasks.sbfl_id
                                                   );
-          end if;
+          else
+            null;
+          end case;
         end loop;
       end;
 
