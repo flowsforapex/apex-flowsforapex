@@ -38,7 +38,11 @@ begin
                                                                )
     where sbfl_status = 'waiting for approval';
 
+    commit;
+
   end if;
+
+
 
 end;
 /
