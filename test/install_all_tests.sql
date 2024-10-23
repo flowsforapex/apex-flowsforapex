@@ -46,7 +46,7 @@ PROMPT >> Installing Package Bodies
 @plsql/test_007_procvars.pkb
 @plsql/test_008_subproc_misc.pkb
 @plsql/test_009_call_activity_nesting.pkb
-@plsql/test_010_variable_expression.pkb
+@plsql/test_010_variable_expressions.pkb
 @plsql/test_011_var_exps_in_callActivities.pkb
 @plsql/test_012_call_activity_timer_BEs.pkb
 @plsql/test_013_call_Activity_escalation_BEs.pkb
