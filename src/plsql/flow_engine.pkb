@@ -1633,6 +1633,7 @@ begin
         , sbfl.sbfl_potential_users     = null
         , sbfl.sbfl_potential_groups    = null
         , sbfl.sbfl_excluded_users      = null
+        , sbfl.sbfl_apex_task_id        = null
         , sbfl.sbfl_lane                = coalesce( l_step_info.target_objt_lane       , sbfl.sbfl_lane        , null)
         , sbfl.sbfl_lane_name           = coalesce( l_step_info.target_objt_lane_name  , sbfl.sbfl_lane_name   , null)
         , sbfl.sbfl_lane_isRole         = coalesce( l_step_info.target_objt_lane_isRole, sbfl.sbfl_lane_isRole , null)

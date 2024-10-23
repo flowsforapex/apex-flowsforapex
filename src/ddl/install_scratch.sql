@@ -153,6 +153,7 @@ CREATE TABLE flow_subflows (
     sbfl_potential_users            VARCHAR2(4000 CHAR),
     sbfl_potential_groups           VARCHAR2(4000 CHAR),
     sbfl_excluded_users             VARCHAR2(4000 CHAR),
+    sbfl_apex_task_id               NUMBER,
     sbfl_iteration_type             VARCHAR2(10 CHAR),
     sbfl_iobj_id                    NUMBER,
     sbfl_iter_id                    NUMBER,

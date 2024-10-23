@@ -10,5 +10,8 @@
     ]
   },
   "svn.ignoreMissingSvnWarning": true,
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "githubPullRequests.ignoredPullRequestBranches": [
+    "development"
+  ]
 }
