@@ -9,6 +9,7 @@
 - Enhancements to BPMN Viewer to support visualization of nested iterations and loops.
 - Enhancement to BPMN Viewer to allow task start from the viewer.
 - Enhances flow_admin_api so that a diagram can be 'released' from the API.  This is useful for remote deployment of diagrams into production environments.
+- Change internal storage of the APEX Task Id from a process variable to flow_subflows.sbfl_apex_task_id when APEX Human Tasks are used in UserTasks.
 - Fixes a bug preventing rescheduling interuptable timers on subflows having a previous interrupting timer event.
 - Adds a new example application that can be used as a process hub for end users to start new processes.
 - Required APEX version increased to APEX v22.1

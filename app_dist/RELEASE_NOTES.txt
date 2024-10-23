@@ -40,6 +40,7 @@ HISTORY
   - Adds BPMN-Color support into the Modeler and Viewer, allowing shading of BPMN objects on a diagram.  Colors can optionally then also be shown in the process viewer.
   - Enhancement to BPMN Viewer to allow task start from the viewer.
   - Enhances flow_admin_api so that a diagram can be 'released' from the API.  This is useful for remote deployment of diagrams into production environments.
+  - Change storage of the APEX Task ID from a process variable to inside flow_subflows for use of APEX Human Tasks.
   - Fixes a bug preventing rescheduling interuptable timers on subflows having a previous interrupting timer event.
   - Adds a new example application that can be used as a process hub for end users to start new processes.
   - Required APEX version increased to APEX v22.1
