@@ -634,7 +634,7 @@ end get_object_tag;
           select sbfl.sbfl_id
                , sbfl.sbfl_current
                , sbfl.sbfl_scope
-               , sbfl.sbfl_apex_task_i
+               , sbfl.sbfl_apex_task_id
                , objt.objt_tag_name
                , objt.objt_sub_tag_name
                , objt.objt_attributes."taskType" tasktype
