@@ -25,6 +25,7 @@ is
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   , p_event_type in flow_objects.objt_sub_tag_name%type
+  , p_boundary_object in flow_objects.objt_bpmn_id%type default null
   );
   procedure process_escalation
   ( pi_sbfl_info        in  flow_subflows%rowtype

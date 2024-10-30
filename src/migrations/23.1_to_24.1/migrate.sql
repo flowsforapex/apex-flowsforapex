@@ -22,6 +22,7 @@ PROMPT >> -------------------------------------------
 @@feature-666.sql
 @@feature-685.sql
 @@feature-simple-forms.sql
+@@fix-apex-task-id.sql
 
 
 @@set_flows_version.sql

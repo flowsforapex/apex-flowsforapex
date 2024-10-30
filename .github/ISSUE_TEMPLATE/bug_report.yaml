@@ -12,12 +12,13 @@ body:
     attributes:
       label: Flows for APEX version
       options:
-        - 5.1.1
+        - 5.1.1 
         - 5.1.2
         - 21.1 
         - 22.1
         - 22.2
-        - 23.1 (latest)
+        - 23.1 
+        - 24.1
         - Current Development
     validations:
       required: true
@@ -30,7 +31,7 @@ body:
         - 18c or lower (unsupported)
         - 19c
         - 21c
-        - 23c
+        - 23ai
     validations:
       required: true
   - type: dropdown
@@ -40,13 +41,15 @@ body:
       description: We only support Oracle APEX 20.2 and higher
       options:
         - 19.2 and lower (unsupported)
-        - 20.1 (unsupported)
-        - 20.2
-        - 21.1
-        - 21.2
-        - 22.1
+        - 20.1 (unsupported from F4A 23.1)
+        - 20.2 (unsupported from F4A 24.1)
+        - 21.1 (unsupported from F4A 24.1)
+        - 21.2 (unsupported from F4A 24.1)
+        - 22.1 
         - 22.2
         - 23.1
+        - 23.2
+        - 24.1
         - newer
     validations:
       required: true

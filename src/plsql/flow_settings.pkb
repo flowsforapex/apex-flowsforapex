@@ -4,11 +4,11 @@ as
 -- Flows for APEX - flow_settings.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
--- (c) Copyright Flowquest Consulting Limited. 2024
+-- (c) Copyright Flowquest Limited. 2024
 --
 -- Created    23-Nov-2022  Richard Allen (Oracle)
 -- Modified   13-Apr-2023  Moritz Klein (MT GmbH)
--- Modified   11-Feb-2024  Richard Allen (Flowquest Consulting)
+-- Modified   11-Feb-2024  Richard Allen (Flowquest Limited)
 --
 */
 
@@ -43,6 +43,13 @@ as
     l_return.expr_inside_var        := pi_expr_json.get_string( key => 'insideVariable' );
     l_return.expr_description       := pi_expr_json.get_string( key => 'description');
 
+    apex_debug.message (p_message => 'get_expression_details - results.  expr_value %0 expr_type %1 expr_fmt %2 expr_inside_var %3 expr_desc %4'
+    , p0 => l_return.expr_value
+    , p1 => l_return.expr_type
+    , p2 => l_return.expr_fmt
+    , p3 => l_return.expr_inside_var
+    , p4 => l_return.expr_description
+    );
     return l_return;
   end get_expression_details;
 
@@ -528,7 +535,12 @@ as
     l_details := get_expression_details ( pi_expr_json  => pi_expr);
 
     l_settings.type              := l_details.expr_type;
-    l_settings.collection_var    := l_details.expr_value;
+    case  l_settings.type 
+    when flow_constants_pkg.gc_expr_type_sql_json_array then
+          l_settings.collection_expr   := l_details.expr_value;
+    else 
+          l_settings.collection_var    := l_details.expr_value;
+    end case;
     l_settings.inside_var        := l_details.expr_inside_var;
     l_settings.description       := l_details.expr_description;
     return l_settings;

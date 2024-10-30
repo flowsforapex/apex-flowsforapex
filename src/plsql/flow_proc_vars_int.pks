@@ -220,6 +220,7 @@ procedure set_vars_from_json_object
 , pi_json         in sys.json_object_t
 , pi_objt_bpmn_id in flow_objects.objt_bpmn_id%type default null
 );
+-- note  that if a json element is null, the process variable does not get created.
 
 procedure delete_all_for_process
 ( pi_prcs_id in flow_processes.prcs_id%type

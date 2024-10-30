@@ -1007,6 +1007,9 @@ end lock_var;
         when pi_json.get(l_keys(i)).is_timestamp then
           l_var.var_type  := flow_constants_pkg.gc_prov_var_type_tstz;
           l_var.var_tstz  := pi_json.get_timestamp(l_keys(i));  
+        when  pi_json.get(l_keys(i)).is_null then
+          apex_debug.info (p_message => 'Element name %0 is null - not creating proc var', p0 => l_var.var_name);
+          continue;
         end case;
       when 'OBJECT' then
           l_var.var_type  := flow_constants_pkg.gc_prov_var_type_json;
@@ -1021,7 +1024,7 @@ end lock_var;
       , p0        => l_var.var_name
       , p1        => l_var.var_type
       );
-
+      
       set_var 
       ( pi_prcs_id      => pi_prcs_id
       , pi_var_value    => l_var
