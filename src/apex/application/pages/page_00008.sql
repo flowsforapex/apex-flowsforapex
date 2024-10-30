@@ -35,7 +35,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'23'
 ,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
+,p_last_upd_yyyymmddhh24miss=>'20241009095549'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(3510821361851721)
@@ -1608,6 +1608,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_attribute_14=>'Y'
 ,p_attribute_15=>'N'
 ,p_attribute_16=>'Y'
+,p_attribute_17=>'ITERATION_DATA'
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(5981427830464471)
@@ -2321,14 +2322,17 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P8_PROV_SCOPE'
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(8394514514345632)
+,p_item_default=>'P8_DIAGRAM_LEVEL'
+,p_item_default_type=>'ITEM'
 ,p_prompt=>'Scope'
 ,p_display_as=>'NATIVE_SELECT_LIST'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select prdg_diagram_level d, prdg_diagram_level r',
-'from flow_instance_diagrams',
-'where prdg_prcs_id = :P8_PRCS_ID',
-'and prdg_diagram_level is not null',
-'order by prdg_diagram_level '))
+'select ',
+'   iscp_valid_scope as d, ',
+'   iscp_valid_scope as r',
+'from flow_instance_scopes_vw',
+'where iscp_prcs_id = :P8_PRCS_ID',
+'order by 1'))
 ,p_cHeight=>1
 ,p_field_template=>wwv_flow_imp.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#'

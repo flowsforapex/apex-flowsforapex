@@ -23,7 +23,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'16'
 ,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
+,p_last_upd_yyyymmddhh24miss=>'20240930133238'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(5590953265964017)
@@ -46,12 +46,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_parent_plug_id=>wwv_flow_imp.id(5590953265964017)
 ,p_region_template_options=>'#DEFAULT#:t-Alert--horizontal:t-Alert--defaultIcons:t-Alert--info:t-Alert--removeHeading js-removeLandmark'
 ,p_plug_template=>wwv_flow_imp.id(12495613507239880288)
-,p_plug_display_sequence=>50
-,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'A syntax overview of the JSON to define the form structure can be found <a href="https://github.com/simonuwe/oracle-apex-json-region/blob/main/docu/docu.md" target="_blank">here</a>.',
-'<br/>',
-'For an easy way to build your own form definitions declaratively, you can use the <a href="https://flowsforapex.com/ords/preview/r/simple-form-builder/json-sfb" target="_blank"><span style="white-space: nowrap">Simple Form Builder</span></a> to gener'
-||'ate the required JSON.'))
+,p_plug_display_sequence=>70
+,p_plug_source=>'For an easy way to build your own form definitions declaratively, you can use the <a href="https://flowsforapex.com/ords/preview/r/simple-form-builder/json-sfb" target="_blank"><span style="white-space: nowrap">Simple Form Builder</span></a> to gener'
+||'ate the required JSON.'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
@@ -133,7 +130,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P51_SFTE_STATIC_ID'
 ,p_source_data_type=>'VARCHAR2'
 ,p_is_required=>true
-,p_item_sequence=>30
+,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_imp.id(5590953265964017)
 ,p_item_source_plug_id=>wwv_flow_imp.id(5590953265964017)
 ,p_prompt=>'Static ID'
@@ -197,7 +194,7 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(5592198462964018)
 ,p_name=>'P51_SFTE_CONTENT'
 ,p_source_data_type=>'CLOB'
-,p_item_sequence=>40
+,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_imp.id(5590953265964017)
 ,p_item_source_plug_id=>wwv_flow_imp.id(5590953265964017)
 ,p_prompt=>'JSON'

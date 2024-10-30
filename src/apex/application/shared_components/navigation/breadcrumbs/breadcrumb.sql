@@ -103,6 +103,13 @@ wwv_flow_imp_shared.create_menu_option(
 ,p_page_id=>8
 );
 wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(11482636344804668)
+,p_parent_id=>wwv_flow_imp.id(11904723133918726)
+,p_short_name=>'Configuration - Licence'
+,p_link=>'f?p=&APP_ID.:39:&APP_SESSION.::&DEBUG.:::'
+,p_page_id=>39
+);
+wwv_flow_imp_shared.create_menu_option(
  p_id=>wwv_flow_imp.id(11904723133918726)
 ,p_parent_id=>0
 ,p_short_name=>'Configuration'
