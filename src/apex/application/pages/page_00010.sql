@@ -28,7 +28,7 @@ wwv_flow_imp_page.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
+,p_last_upd_yyyymmddhh24miss=>'20241009095530'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(6177850959209923)
@@ -110,6 +110,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_attribute_14=>'Y'
 ,p_attribute_15=>'N'
 ,p_attribute_16=>'Y'
+,p_attribute_17=>'ITERATION_DATA'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(12493545854579486121)

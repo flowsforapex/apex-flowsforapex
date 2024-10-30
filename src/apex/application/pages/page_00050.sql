@@ -21,8 +21,8 @@ wwv_flow_imp_page.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
-,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
+,p_last_updated_by=>'XUANBACH.LE@HYAND.COM'
+,p_last_upd_yyyymmddhh24miss=>'20240930074949'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(5570494030899126)
@@ -50,9 +50,13 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(12495584334308880235)
 ,p_plug_display_sequence=>20
-,p_query_type=>'TABLE'
-,p_query_table=>'FLOW_SIMPLE_FORM_TEMPLATES'
-,p_include_rowid_column=>false
+,p_query_type=>'SQL'
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select sfte.sfte_id,',
+'       sfte.sfte_name,',
+'       sfte.sfte_static_id,',
+'       sfte.sfte_content',
+'  from flow_simple_form_templates sfte'))
 ,p_plug_source_type=>'NATIVE_IR'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_prn_content_disposition=>'ATTACHMENT'
@@ -159,7 +163,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'56042'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'SFTE_NAME:SFTE_STATIC_ID:'
+,p_report_columns=>'SFTE_NAME:SFTE_STATIC_ID'
 ,p_sort_column_1=>'SFTE_NAME'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'SFTE_STATIC_ID'
