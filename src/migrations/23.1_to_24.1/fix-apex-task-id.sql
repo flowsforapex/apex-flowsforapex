@@ -11,7 +11,6 @@ PROMPT >> Move APEX Human Task IDs into flow_subflows
 
 declare
   v_column_exists          number := 0; 
-  l_num_active_apex_tasks  number 
 begin
   select count(*) 
     into v_column_exists
@@ -22,7 +21,12 @@ begin
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_subflows add (sbfl_apex_task_id number)';
   end if;
+end;
+/
 
+declare
+  l_num_active_apex_tasks  number ;
+begin
   select count(sbfl_id)
     into l_num_active_apex_tasks
     from flow_subflows
@@ -34,16 +38,12 @@ begin
     set     sbfl_apex_task_id = flow_proc_vars_int.get_var_num ( pi_prcs_id => sbfl_prcs_id
                                                                , pi_var_name => sbfl_current ||flow_constants_pkg.gc_prov_suffix_task_id
                                                                , pi_scope   => sbfl_scope
-                                                               , pi_exception_on_null => true
                                                                )
     where sbfl_status = 'waiting for approval';
 
     commit;
 
   end if;
-
-
-
 end;
 /
 
