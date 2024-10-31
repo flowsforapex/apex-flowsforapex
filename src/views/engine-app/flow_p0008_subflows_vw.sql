@@ -8,6 +8,7 @@ as
        , sbfl.sbfl_sbfl_dgrm_id
        , sbfl.sbfl_diagram_level
        , sbfl.sbfl_process_level
+       , sbfl.sbfl_apex_task_id
        , sbfl.sbfl_loop_counter
        , sbfl.sbfl_loop_total_instances
        , sbfl.sbfl_scope

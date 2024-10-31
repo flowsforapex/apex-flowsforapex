@@ -228,10 +228,12 @@ create or replace package body test_024_usertask_approval_task as
 
         -- check for task Id returned
 
-        l_task_id :=      flow_process_vars.get_var_num ( pi_prcs_id => l_prcs_id
-                                                        , pi_var_name => 'Activity_Approval_A24'||p_path||':task_id'
-                                                        , pi_sbfl_id => l_sbfl_id
-                                                        );
+        select sbfl_apex_task_id
+          into l_task_id
+          from flow_subflows
+         where sbfl_prcs_id = l_prcs_id
+           and sbfl_current = 'Activity_Approval_A24'||p_path;
+
         ut.expect(l_task_id).to_be_not_null();
 
         -- change session to the approver
@@ -284,7 +286,7 @@ create or replace package body test_024_usertask_approval_task as
                                                         , pi_var_name => 'Return_'||p_path
                                                         , pi_sbfl_id => l_sbfl_id
                                                         );
-        ut.expect(l_task_id).to_be_not_null();
+        ut.expect(l_actual_vc2).to_be_not_null();
 
         -- step forward to End
 
@@ -502,9 +504,13 @@ create or replace package body test_024_usertask_approval_task as
        and sbfl_status not in ( 'split', 'in subprocess');
     ut.expect( l_actual ).to_equal( l_expected ).unordered;   
     -- check for task Id returned
-    l_task_id :=      flow_process_vars.get_var_num ( pi_prcs_id => l_prcs_id
-                                                    , pi_var_name => 'Activity_Approval_A24'||l_path||':task_id'
-                                                    );
+
+        select sbfl_apex_task_id
+          into l_task_id
+          from flow_subflows
+         where sbfl_prcs_id = l_prcs_id
+           and sbfl_current = 'Activity_Approval_A24'||l_path;
+
     ut.expect(l_task_id).to_be_not_null();     
 
     -- check task exists in apex

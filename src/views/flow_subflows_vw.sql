@@ -39,6 +39,7 @@ as
         , sbfl.sbfl_lane_name as sbfl_current_lane_name
         , sbfl.sbfl_lane_isrole
         , sbfl.sbfl_lane_role
+        , sbfl.sbfl_apex_task_id
         , sbfl.sbfl_process_level
         , sbfl.sbfl_diagram_level
         , sbfl.sbfl_loop_counter
