@@ -575,31 +575,6 @@ $END
       apex_debug.enter
       (p_routine_name => 'return_approval_result'
       );
---      -- check task belongs to this process by looking for a process variable with content = task id and name ending in task id suffix.
---      begin
---        select prov.prov_var_name
---             , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current
---             , prov.prov_scope
---          into l_var_name
---             , l_potential_current
---             , l_scope
---          from flow_process_variables prov
---         where prov.prov_prcs_id = p_process_id
---           and prov.prov_var_num = p_apex_task_id
---           and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
---           and prov.prov_var_name like '%'||flow_constants_pkg.gc_prov_suffix_task_id
---        ;
---        apex_debug.info 
---        ( p_message => '--- Returning Approval Result - Found current step %0 scope %1'
---        , p0 => l_potential_current
---        , p1 => l_scope
---        );
---      exception
---        when no_data_found then
---          raise e_task_id_proc_var_not_found;
---        when too_many_rows then
---          raise e_task_id_duplicate_found;
---      end;
 
       begin
         -- find and lock the subflow
@@ -607,14 +582,14 @@ $END
              , sbfl.sbfl_step_key
              , sbfl.sbfl_dgrm_id
              , sbfl.sbfl_scope
+             , sbfl.sbfl_current
           into l_sbfl_id
              , l_step_key
              , l_dgrm_id
              , l_scope
+             , l_current_bpmn_id 
           from flow_subflows sbfl
          where sbfl.sbfl_prcs_id = p_process_id
---           and sbfl.sbfl_scope = l_scope
---           and sbfl.sbfl_current = l_potential_current
            and sbfl.sbfl_apex_task_id = p_apex_task_id
         for update of sbfl.sbfl_step_key wait 5;
       exception
@@ -636,7 +611,7 @@ $END
         select objt.objt_attributes."apex"."resultVariable"
           into l_result_var
           from flow_objects objt
-         where objt.objt_bpmn_id = l_potential_current
+         where objt.objt_bpmn_id = l_current_bpmn_id 
            and objt.objt_dgrm_id = l_dgrm_id;
         apex_debug.info 
         ( p_message => '--- Returning Approval Outcome - Found result variable id %0'

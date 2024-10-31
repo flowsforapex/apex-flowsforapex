@@ -19,7 +19,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_007_procvars.pks
 @plsql/test_008_subproc_misc.pks
 @plsql/test_009_call_activity_nesting.pks
-@plsql/test_010_variable_expression.pks
+@plsql/test_010_variable_expressions.pks
 @plsql/test_011_var_exps_in_callActivities.pks
 @plsql/test_012_call_activity_timer_BEs.pks
 @plsql/test_013_call_Activity_escalation_BEs.pks
