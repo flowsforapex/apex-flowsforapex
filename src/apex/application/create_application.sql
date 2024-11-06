@@ -58,7 +58,7 @@ wwv_flow_imp.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Workflow'
 ,p_last_updated_by=>'MOREAUX.LOUIS@GMAIL.COM'
-,p_last_upd_yyyymmddhh24miss=>'20241030113452'
+,p_last_upd_yyyymmddhh24miss=>'20241106110242'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>1124
 ,p_ui_type_name => null

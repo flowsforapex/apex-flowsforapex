@@ -400,7 +400,7 @@ wwv_flow_imp_shared.create_message(
 unistr('<li>ausgef\00FChrte Version: %0.%1</li>'),
 '<li>gespeicherte Version: %2.%3</li>',
 '</ul>',
-unistr('Sie m\00FCssen die Dokumentation <a href="#" >hier</a> befolgen, um dies aufzul\00F6sen.')))
+unistr('Sie m\00FCssen die Dokumentation <a href="https://flowsforapex.org/latest/apex-upgrade/" >hier</a> befolgen, um dies aufzul\00F6sen.')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(3703354379634692)
@@ -411,7 +411,7 @@ wwv_flow_imp_shared.create_message(
 '<li>running version: %0.%1</li>',
 '<li>stored version: %2.%3</li>',
 '</ul>',
-'You must follow the documentation <a href="#" >here</a> to resolve it.'))
+'You must follow the documentation <a href="https://flowsforapex.org/latest/apex-upgrade/" >here</a> to resolve it.'))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15927748742119467)
@@ -423,7 +423,7 @@ unistr('Se ha detectado una actualizaci\00F3n de APEX:'),
 '<li>running version: %0.%1</li>',
 unistr('<li>versi\00F3n almacenada: %2.%3</li>'),
 '</ul>',
-unistr('Debe seguir la documentaci\00F3n <a href="#" >aqu\00ED</a> para resolverla.')))
+unistr('Debe seguir la documentaci\00F3n <a href="https://flowsforapex.org/latest/apex-upgrade/" >aqu\00ED</a> para resolverla.')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15877517907115497)
@@ -435,7 +435,7 @@ unistr('Une mise \00E0 niveau APEX a \00E9t\00E9 d\00E9tect\00E9e :'),
 unistr('<li>ex\00E9cution de la version : %0.%1</li>'),
 unistr('<li>version stock\00E9e : %2.%3</li>'),
 '</ul>',
-unistr('Vous devez suivre la documentation <a href="#" >ici</a> pour la r\00E9soudre.')))
+unistr('Vous devez suivre la documentation <a href="https://flowsforapex.org/latest/apex-upgrade/" >ici</a> pour la r\00E9soudre.')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15894160287116914)
@@ -447,7 +447,7 @@ unistr('\00C8 stato rilevato un aggiornamento APEX:'),
 '<li>versione di esecuzione: %0.%1</li>',
 '<li>versione memorizzata: %2.%3</li>',
 '</ul>',
-unistr('Per risolvere il problema, \00E8 necessario seguire la documentazione <a href="#" >qui</a>.')))
+unistr('Per risolvere il problema, \00E8 necessario seguire la documentazione <a href="https://flowsforapex.org/latest/apex-upgrade/" >qui</a>.')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15902418009117431)
@@ -459,7 +459,7 @@ unistr('APEX\30A2\30C3\30D7\30B0\30EC\30FC\30C9\304C\691C\51FA\3055\308C\307E\30
 unistr('<li>\5B9F\884C\4E2D\30D0\30FC\30B8\30E7\30F3: %0.%1</li>'),
 unistr('<li>\683C\7D0D\3055\308C\305F\30D0\30FC\30B8\30E7\30F3: %2.%3</li>'),
 '</ul>',
-unistr('\89E3\6C7A\3059\308B\306B\306F\3001\30C9\30AD\30E5\30E1\30F3\30C8<a href="#" >\3053\3053</a>\306B\5F93\3046\5FC5\8981\304C\3042\308A\307E\3059\3002')))
+unistr('\89E3\6C7A\3059\308B\306B\306F\3001\30C9\30AD\30E5\30E1\30F3\30C8<a href="https://flowsforapex.org/latest/apex-upgrade/" >\3053\3053</a>\306B\5F93\3046\5FC5\8981\304C\3042\308A\307E\3059\3002')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15911172118118156)
@@ -471,7 +471,7 @@ unistr('APEX \C5C5\ADF8\B808\C774\B4DC\AC00 \AC10\C9C0\B418\C5C8\C2B5\B2C8\B2E4.
 unistr('<li>\C2E4\D589 \C911\C778 \BC84\C804: %0.%1</li>'),
 unistr('<li>\C800\C7A5\B41C \BC84\C804: %2.%3</li>'),
 '</ul>',
-unistr('\D574\ACB0\D558\B824\BA74 \C124\BA85\C11C <a href="#" >\C5EC\AE30</a>\B97C \B530\B77C\C57C \D569\B2C8\B2E4.')))
+unistr('\D574\ACB0\D558\B824\BA74 \C124\BA85\C11C <a href="https://flowsforapex.org/latest/apex-upgrade/" >\C5EC\AE30</a>\B97C \B530\B77C\C57C \D569\B2C8\B2E4.')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15919462003118761)
@@ -483,7 +483,7 @@ wwv_flow_imp_shared.create_message(
 unistr('<li>vers\00E3o em execu\00E7\00E3o: %0.%1</li>'),
 unistr('<li>vers\00E3o armazenada: %2.%3</li>'),
 '</ul>',
-unistr('\00C9 necess\00E1rio seguir a documenta\00E7\00E3o <a href="#" >aqui</a> para resolv\00EA-la.')))
+unistr('\00C9 necess\00E1rio seguir a documenta\00E7\00E3o <a href="https://flowsforapex.org/latest/apex-upgrade/" >aqui</a> para resolv\00EA-la.')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15860937540114210)
@@ -495,7 +495,7 @@ unistr('\68C0\6D4B\5230 APEX \5347\7EA7\FF1A '),
 unistr(' <li> \8FD0\884C\7248\672C\FF1A%0.%1</li>'),
 unistr(' <li> \5B58\50A8\7684\7248\672C\FF1A%2.%3</li>'),
 ' </ul>',
-unistr(' \60A8\5FC5\987B\9075\5FAA\6587\6863 <a href="#" > \6B64\5904 </a> \6765\89E3\51B3\6B64\95EE\9898\3002')))
+unistr(' \60A8\5FC5\987B\9075\5FAA\6587\6863 <a href="https://flowsforapex.org/latest/apex-upgrade/" > \6B64\5904 </a> \6765\89E3\51B3\6B64\95EE\9898\3002')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15869262291114899)
@@ -507,7 +507,7 @@ unistr('\5075\6E2C\5230 APEX \5347\7D1A\FF1A '),
 unistr(' <li> \57F7\884C\4E2D\7248\672C\FF1A%0.%1</li>'),
 unistr(' <li> \5132\5B58\7684\7248\672C\FF1A%2.%3</li>'),
 ' </ul>',
-unistr(' \60A8\5FC5\9808\4F9D\7167 <a href="#" > \6B64\8655 </a> \52A0\4EE5\89E3\6C7A\3002')))
+unistr(' \60A8\5FC5\9808\4F9D\7167 <a href="https://flowsforapex.org/latest/apex-upgrade/" > \6B64\8655 </a> \52A0\4EE5\89E3\6C7A\3002')))
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15892589212116077)
@@ -1109,13 +1109,6 @@ wwv_flow_imp_shared.create_message(
 ,p_message_text=>unistr('\ADF8\B7EC\BA74 \D50C\B85C\C6B0 \C778\C2A4\D134\C2A4\AC00 \C7AC\C124\C815\B429\B2C8\B2E4. \C124\BA85\C744 \CD94\AC00\D558\ACE0(\C120\D0DD\C0AC\D56D) \D655\C778\C744 \B204\B974\C2ED\C2DC\C624.')
 ,p_is_js_message=>true
 );
-wwv_flow_imp_shared.create_message(
- p_id=>wwv_flow_imp.id(15919619408118761)
-,p_name=>'APP_CONFIRM_RESET_INSTANCE'
-,p_message_language=>'pt-br'
-,p_message_text=>unistr('Isto reiniciar\00E1 a inst\00E2ncia de fluxo. Favor adicionar um coment\00E1rio (opcional) e clicar em confirmar.')
-,p_is_js_message=>true
-);
 wwv_flow_imp.component_end;
 end;
 /
@@ -1127,6 +1120,13 @@ wwv_flow_imp.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_imp_shared.create_message(
+ p_id=>wwv_flow_imp.id(15919619408118761)
+,p_name=>'APP_CONFIRM_RESET_INSTANCE'
+,p_message_language=>'pt-br'
+,p_message_text=>unistr('Isto reiniciar\00E1 a inst\00E2ncia de fluxo. Favor adicionar um coment\00E1rio (opcional) e clicar em confirmar.')
+,p_is_js_message=>true
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15861150159114210)
@@ -1991,6 +1991,18 @@ wwv_flow_imp_shared.create_message(
 ,p_message_text=>'Wert muss eine Zahl sein'
 ,p_is_js_message=>true
 );
+wwv_flow_imp.component_end;
+end;
+/
+begin
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(7385007498873734)
 ,p_name=>'APP_ERR_PROV_VAR_NUM_NOT_NUMBER'
@@ -2003,18 +2015,6 @@ wwv_flow_imp_shared.create_message(
 ,p_message_language=>'es'
 ,p_message_text=>unistr('El valor debe ser un n\00FAmero')
 ,p_is_js_message=>true
-);
-wwv_flow_imp.component_end;
-end;
-/
-begin
-wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15879657491115498)
@@ -2990,13 +2990,6 @@ wwv_flow_imp_shared.create_message(
 ,p_message_text=>unistr('\C0C8 \BC84\C804\C774 \CD94\AC00\B418\C5C8\C2B5\B2C8\B2E4.')
 ,p_is_js_message=>true
 );
-wwv_flow_imp_shared.create_message(
- p_id=>wwv_flow_imp.id(15926261517118763)
-,p_name=>'APP_NEW_VERSION_ADDED'
-,p_message_language=>'pt-br'
-,p_message_text=>unistr('Nova vers\00E3o adicionada.')
-,p_is_js_message=>true
-);
 wwv_flow_imp.component_end;
 end;
 /
@@ -3008,6 +3001,13 @@ wwv_flow_imp.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_imp_shared.create_message(
+ p_id=>wwv_flow_imp.id(15926261517118763)
+,p_name=>'APP_NEW_VERSION_ADDED'
+,p_message_language=>'pt-br'
+,p_message_text=>unistr('Nova vers\00E3o adicionada.')
+,p_is_js_message=>true
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15867732517114212)
@@ -3997,13 +3997,6 @@ wwv_flow_imp_shared.create_message(
 ,p_message_text=>unistr('\D504\B85C\C138\C2A4 \BCC0\C218\AC00 \C800\C7A5\B418\C5C8\C2B5\B2C8\B2E4.')
 ,p_is_js_message=>true
 );
-wwv_flow_imp_shared.create_message(
- p_id=>wwv_flow_imp.id(15920704553118762)
-,p_name=>'APP_PROCESS_VARIABLE_SAVED'
-,p_message_language=>'pt-br'
-,p_message_text=>unistr('Vari\00E1vel de processo salva.')
-,p_is_js_message=>true
-);
 wwv_flow_imp.component_end;
 end;
 /
@@ -4015,6 +4008,13 @@ wwv_flow_imp.component_begin (
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
+);
+wwv_flow_imp_shared.create_message(
+ p_id=>wwv_flow_imp.id(15920704553118762)
+,p_name=>'APP_PROCESS_VARIABLE_SAVED'
+,p_message_language=>'pt-br'
+,p_message_text=>unistr('Vari\00E1vel de processo salva.')
+,p_is_js_message=>true
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15862217749114210)
@@ -5049,6 +5049,18 @@ unistr('\00C8 stato rilevato che la versione dell''applicazione, il modello dati
 '</ul>',
 'Contattare l''amministratore per evitare problemi.'))
 );
+wwv_flow_imp.component_end;
+end;
+/
+begin
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
+,p_default_workspace_id=>2400405578329584
+,p_default_application_id=>100
+,p_default_id_offset=>0
+,p_default_owner=>'FLOWS4APEX'
+);
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15902316014117431)
 ,p_name=>'APP_VERSION_MISMATCH'
@@ -5061,18 +5073,6 @@ unistr('<li>\30C7\30FC\30BF\30FB\30E2\30C7\30EB\30FB\30D0\30FC\30B8\30E7\30F3: %
 unistr('<li>\30B3\30FC\30C9\30FB\30D0\30FC\30B8\30E7\30F3: %2</li>'),
 '</ul>',
 unistr('\554F\984C\3092\56DE\907F\3059\308B\306B\306F\3001\7BA1\7406\8005\306B\9023\7D61\3057\3066\304F\3060\3055\3044\3002')))
-);
-wwv_flow_imp.component_end;
-end;
-/
-begin
-wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_imp_shared.create_message(
  p_id=>wwv_flow_imp.id(15911050623118155)
